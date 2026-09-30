@@ -1,0 +1,37 @@
+docs(spec-003): 拓扑优化闭环走完 Spec Kit 全路径（objective ① 的最后一块）
+
+## 为什么补这篇
+objective ① 要求「**每一个特性**都走 Spec Kit 全路径，产出落 specs/<NNN>-<slug>/」。
+而**本轮最大的特性（拓扑闭环）此前只以探针 + 文档形式存在，没走全路径** —— 这是真实缺口。
+
+## 产出 `specs/003-topology-closed-loop/`
+| 制品 | 内容 |
+|---|---|
+| `spec.md` | 3 个 User Story（闭环 / 回读判据 / 节流安全）+ 8 条 FR + 5 条 SC |
+| `plan.md` | 与既有实现的关系（**不重造**）、技术路径逐条带出处、证据形态、节流措施、**明确划界** |
+| `tasks.md` | 20 个任务**全部完成**，每条带可跑的验收命令 |
+
+`feature.json` 已指向 `specs/003-topology-closed-loop`。
+
+## 本特性的核心判据（与 spec 的 SC 逐条对应）
+- **SC-001/002**：`python tools/capture_topology_evidence.py` ⇒ `verdict: pass`，
+  且 `material_mass_plot.ok == true`（`matched_plots` 含 Material Mass 图名）
+- **SC-003**：`topology_optimization.level == "verified"`，`evidence` 指向命令行（不只是文字）
+- **SC-004**：四项门禁 + 回归与基线逐条相同
+- **SC-005**：无许可时非零退出且能看出是许可问题
+
+## 逐条跑过 spec 003 里写的验收命令（**不是宣称**）
+    T-017 清单等级      ['verified']
+    T-013 无许可非零退出  命中 1 处
+    T-014 内存守护常量    命中 2 处
+    T-002 签名查询      ByVal NUnits As Long / DElementSize As Double / DTolerance As Double
+    T-020 四项门禁      全 exit=0
+
+## 明确划界（写进 spec 与 plan，不是含糊带过）
+- **多实体零件/装配体**：官方硬约束「只能对单实体零件做」⇒ 不做
+- **导出类结果**（`Export Smoothed Mesh` / 收敛曲线）：**四源**均未查到公开方法 ⇒ 铁律 5 记查不到
+- **不进 pytest**：单次约 3 分钟且需许可 ⇒ 由人按需跑（FR-007）
+
+## 依赖（用户侧，已写进 tasks）
+`SOLIDWORKS Simulation Professional/Premium` 许可；**改许可设置后必须重启 SolidWorks**
+（许可在启动时签出）。
