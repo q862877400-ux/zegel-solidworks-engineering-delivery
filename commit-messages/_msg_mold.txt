@@ -1,0 +1,53 @@
+feat(mold): 并入模具域的「生成」侧 —— 引用来源思路、签名全照出厂反射
+
+## 起因：P3 的前提被证伪，改判据后找到真缺口
+P3 原计划「把焊件域搬进来」。**动手第一步就证伪了**：本仓库**早就有**
+`scripts/sw_weldment.py`（666 行 / 20 函数），而且 `capabilities.yaml` 里
+`weldments` 是 **verified**（SW2026 SP01.1 真机验过 InsertStructuralWeldment5 等）。
+
+**根因**是广度地图的计数口径：`tools/build_union_map.py` 的 `_our_tools()`
+只数 `mcp-server/server.py` 里的**工具名**，而我们的能力在 `scripts/` 里、没暴露成 MCP 工具
+（AGENTS.md 已知事实 25 记的正是这个交集为 0）。
+
+⇒ **「339 缺口」是 MCP 暴露面之差，不是能力缺口。** 逐域核实：
+    焊件    地图说缺 5   实际有 14 个函数（且 verified）
+    草图    地图说缺 42  实际有 57 个函数
+    装配    地图说缺 19  实际有 54 个函数
+    工程图  地图说缺 49  实际有 44 个函数
+    模具    地图说缺 3   **实际只有 1 个（且是误分类）⇒ 真缺口**
+本仓库真实能力面：**72 个 scripts/sw_*.py 模块 / 814 个公开函数**。
+已把该更正写进长期记忆（Correction 文档），并新增工作区工具
+`capability_gap.py`（两个口径并存、各自标注，不合并成一个数）。
+
+## 并入：模具域的「生成」侧
+`mold_tools` 条目原写「**不生成型芯型腔实体**」—— 只做校验。
+新增 `scripts/sw_mold.py` 补上生成侧：分型线 / 分型面 / 补孔面 / 型芯型腔分割 /
+拔模分析 / 底切检测 + 只读证据采集。
+
+## ⚠ 来源的方法名**两个都错**（本轮第二次撞上）
+     来源写的                     官方真名
+     InsertPartingLines            InsertMoldPartingLine(Boolean)
+     InsertShutOffSurfaces         InsertMoldShutOffSurface()
+⇒ 加上上一轮焊件域 4/5 错，该来源是**系统性使用不存在的方法名**
+  （0 测试文件、未声明验证环境）。
+⇒ **本模块引用它的思路，签名一律照出厂反射**；并照反射**补全**来源未覆盖的四个入口。
+⇒ 已建 `D:\AI\SW\_raw\source-defects\Eduardof0nt.md`（7 条记录 + 可重跑核对命令），
+  模板的纪律就此定型：**思路取自来源，签名取自反射**。
+
+## 诚实标注（不猜）
+- `MoldDraftAnalysis` 返回 Int32 但**官方未给返回码枚举** ⇒ 原样返回，不判定成败
+- `MoldUndercutDetect` 官方是 **Void** ⇒ 检测结果不在返回值里、如何获取未查证
+- `InsertMoldPartingSurface` 的 5 个参数、`InsertMoldCoreCavitySolids` 的 4 个参数
+  **语义全部未查证** ⇒ docstring 逐个标注，不猜
+- **未在本机实测** ⇒ `level` 维持 `stitched`（不升 verified）
+
+## 许可义务同步
+`THIRD-PARTY-NOTICES.md`：Eduardof0nt 从「已评估但尚未并入」迁到「**部分并入**」，
+并写明「**代码未移植、只引用思路**」与改动文件名录（MIT 版权声明已留）。
+
+## 验证
+- `scripts/check_member_names.py` **[PASS]**（614 个调用点，全部能在官方反射里查到）
+  —— 这正是与来源的根本差别
+- 新增 `tests/test_sw_mold_contract.py`：**9 passed**（含一条「来源错名不得出现」的反自证锚点）
+- 五项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 758 passed / 15 skipped**（749→758 即新增的 9 条；失败列表与基线逐条相同）
