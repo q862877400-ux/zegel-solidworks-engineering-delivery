@@ -1,0 +1,50 @@
+fix(topology): 真机定出拓扑约束失败的**真因**，修两个假通过
+
+## 起因
+P1/P2 真机验证时 `set_topology_goal` 失败。用「每个约束一个全新研究」的隔离法
+（`probe_topology_clean_sequence.py`）把机制试出来了，**不是猜的**：
+
+    实验 1 · 只建质量约束              → tsm.EndEdit = 0   ✓
+    实验 2 · 只建 FOS 约束             → CreateFactorOfSafetyConstraint ✓（之前返回 None）
+    实验 3 · 建 → RemoveConstraint → 再建 → 全部 EndEdit = 0
+    实验 4 · CreateGoal(1) + 质量约束   → tsm.EndEdit = 7
+
+## 两条真因
+1. **同类约束已存在时 `Create*` 静默返回 None** ⇒ 必须先 `RemoveConstraint`。
+   官方示例原文即此序（先移除 Stress 约束，再建 FOS 约束顶替它）。
+2. **`EndEdit` 的返回值是错误码**，非 0 即事务未提交 —— 本模块的 `_edit` 早已检查
+   （`code not in (None, 0)` 就抛），这一点本轮确认无误。
+   ⚠ 实测**目标与约束之间存在兼容性约束**：`CreateGoal(1)`（最小化最大位移）之后再建
+   质量约束，`EndEdit` 返回 **7**；而干净研究里同一个质量约束返回 **0**。
+   **7 的确切语义在 CHM 里查不到** —— `api\cworksapi.chm` 解包 2790 页，无错误码枚举页。
+   ⇒ 按铁律 5 不猜语义，把非 0 抛出来交给调用方。
+
+## 修掉的两个「假通过」
+1. `list_topology_constraints_and_controls` 里 `get_com_member(manager, getter, str(kind), 0)`
+   传**裸 0** 当 `Int32&` 出参 ⇒ 必抛类型不匹配，**而 `except` 把异常吞成 None**
+   ⇒ 该函数此前**永远返回全 None**（看起来「没有约束」）。改用 `out_i4()`，
+   并把「取不到」与「调用失败」分开记（新增 `<kind>__error` 键），不再混为一谈。
+   ⚠ 这个调用点是我上一轮的扫描器**漏掉的**：成员名是变量 `getter` 而非字符串字面量，
+   静态比对按字面量匹配故未命中 ⇒ 已在发现里记录该扫描器的已知盲区。
+2. 同上函数的默认约束名：原来传 `str(kind)`（英文键名）永远取不到。
+   新增 `_DEFAULT_CONSTRAINT_NAMES`，用**真机实测的中文默认名**
+   （`质量约束 1` / `安全系数约束 1` / …）；名字随 UI 语言变，
+   与 AGENTS.md 已知事实 9 的基准面名同类问题，换语言需重测。
+
+## 试过并**否定**的一条
+把 `RemoveConstraint` 移到 `BeginEdit` **之外**（照官方示例的字面行序）⇒
+同一场景**首次即失败**（`EndEdit` = 7）。示例文本无缩进语义，其实际事务归属
+**无法从文本确定** ⇒ 以实测为准，保持事务内。这条已写进源码注释。
+
+## 已知限制（如实记录，不掩饰）
+**同一研究上第二次配置失败**（`Create*` 返回 None）。官方示例亦为「每研究配置一次」，
+未见重复配置用法 ⇒ 不视为缺陷，但调用方需知：改参数应新建研究。
+
+## 验证
+- 真机：首次 `set_topology_goal(减重75)` ✓ `goal=0` `mass=True` `removed=['质量约束 1']`
+- 真机：`list_topology_constraints_and_controls` 修复后**真读到** `mass ✓ 有`
+  （修复前永远全 None）
+- 契约测试 `test_sw_topology_contract.py`：8 passed
+- 全量回归：**6 failed / 749 passed / 15 skipped**，与基线逐条相同
+- 门禁：`check_union_conventions` / `check_provenance` / `check_member_names` 全 PASS
+- `compileall -W error::SyntaxWarning` exit 0

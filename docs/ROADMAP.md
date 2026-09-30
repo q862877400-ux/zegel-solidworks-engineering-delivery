@@ -46,20 +46,23 @@
 ## 一 · 游标（**唯一必须维护的字段**）
 
 ```
-当前阶段:  P1（P0 已完成）
-状态:      ✅ P0 完成 · 🟢 P2 部分达成（拓扑研究能建成，整链未通）
-下一步:    实现「看结果」三件事：Material Mass 图 / View Convergence Data and Graph /
-           Export Smoothed Mesh（`smatrtsmooth.dll` 是后者的实现）
-阻塞:      无 —— SolidWorks 2026 SP4.1 已确认可用，Simulation 加载项可取到
+当前阶段:  P1（P0 已完成；P2 已推进到「能设目标与约束」）
+状态:      ✅ P0 · 🟢 P2 大幅推进（研究建成 + 目标与约束可真机设上；整链仍未通）
+下一步:    P1 —— 实现「看结果」三件事（Material Mass 图 / View Convergence Data and Graph /
+           Export Smoothed Mesh）。⚠ 已在 cworksapi.chm 2780 页里搜过这三个名字，**零命中**
+           ⇒ 先核 `ICWStudy.get_Results()` 一族，核不到就按铁律 5 写「查不到」并转做 P3
+阻塞:      无
 
 最近三次交接:
-  2026-10-01  e587a0f/b25dc64  P0 完成 + 修掉一族潜伏缺陷：官方 Int32& 出参传裸值必抛
-                              类型不匹配，全项目 18 处中招；真机裁决唯一可用形态
-                              VARIANT(VT_BYREF|VT_I4, 0)。顺带证实 sw_simulation 的
-                              create_static_study 修复前从未跑通过。
-  2026-10-01  e0fe617          Spec Kit 接入（工作区 .specify/）；宪法写成「薄」的；
-                              规格老化模型选 Flow-forward
-  2026-10-01  df4a5ce          拓扑优化代码 + 8 条契约测试就位（level=stitched）
+  2026-10-01  1024436/7d75619  拓扑约束失败的**两个真因**用隔离实验定出：
+                             ① 同类约束已存在时 Create* 静默返回 None（须先 RemoveConstraint）
+                             ② EndEdit 的返回值是错误码；CreateGoal(1) 后建质量约束返回 7
+                             （干净研究返回 0）⇒ 目标与约束有兼容性约束。7 的语义 CHM 查不到。
+                             顺带修掉 list_topology_constraints_and_controls 的**假通过**
+                             （出参传裸 0 + except 吞异常 ⇒ 永远返回全 None）
+  2026-10-01  e587a0f/b25dc64  P0 完成 + 修一族潜伏缺陷：Int32& 出参传裸值必抛类型不匹配，
+                             全项目 18 处中招；真机裁决唯一可用形态 VARIANT(VT_BYREF|VT_I4, 0)
+  2026-10-01  e0fe617          Spec Kit 接入（工作区 .specify/）；规格老化模型选 Flow-forward
 ```
 
 ## 一·B 本轮新增的**关键事实**（写代码直接用，别重新推导）

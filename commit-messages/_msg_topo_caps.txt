@@ -1,0 +1,10 @@
+docs(capabilities): topology_optimization 二轮真机证据 —— 等级仍为 stitched
+
+补 evidence：set_topology_goal(减重75%) ✓；list_topology_constraints_and_controls
+修复后真读到约束（此前因出参传裸 0 + except 吞异常而永远全 None）。
+
+补 limitations：① 同类约束已存在时官方 Create* 静默返回 None，须先 RemoveConstraint；
+② 目标与约束有兼容性约束（CreateGoal(1) 后建质量约束 → EndEdit 返回 7，干净研究返回 0），
+   7 的语义在 CHM 里查不到，不猜；③ 同一研究第二次配置必失败。
+
+**整链仍未通**（网格 / 求解 / 看结果未验）⇒ 维持 stitched，不升 verified（A7）。
