@@ -130,7 +130,7 @@
 | R2 | 每条 `level` ∈ 五值枚举；且 `scripts/capabilities.py` 的 `VALID_LEVELS` 与 `scripts/check_union_conventions.py` 的 `LEVELS` 两个副本与枚举同集合（`pilot` / `reference_only` 不得再合法） | `能力 <id> 的 level=<值> 不在五级枚举内` / `枚举副本不一致：capabilities.py=<集合>，check_union_conventions.py=<集合>` |
 | R3 | `id` 全局唯一，且是稳定 slug（`^[a-z][a-z0-9_]*$`）；改 id 会断掉 `operation_routes[].capability_ids` 的引用与既有 provenance 指向 | `能力 id 重复：<id>` / `能力 id 不是稳定 slug：<id>` |
 | R4 | 条数 ≥ 10 | `能力清单 ID 重复或数量不足`（沿用 `scripts/release_check.py` 的现有断言与文案） |
-| R5 | `verified` ⇒ `evidence` 非空 且 `verified_versions` 非空（第四节） | `能力 <id> 标 verified 但 evidence 为空` / `能力 <id> 标 verified 但 verified_versions 为空 —— 「跑过」必须有版本证据` |
+| R5 | `verified` ⇒ `evidence` 非空；`backends` 含 CAD 后端时另要 `verified_versions` 非空（第四节） | 标 `verified` 但缺 `evidence`；或 CAD 后端的条目缺 `verified_versions` |
 | R6 | `level == source_verified` ⇒ `provenance` 非空；任何带 `provenance` 的条目，其 `repo` 必须是 `owner/repo`、`license` 在白名单、`files` 非空、`upstream_verified` 字段必须存在（可为空串） | 外部来源派生的能力没有出处，或出处形状不合法 |
 | R7 | `not_implemented` ⇒ `limitations` 非空 | `能力 <id> 标 not_implemented 但没写原因` |
 | R8 | 审计（第三节）：`docs/union-level-audit.md` 出现一行 `高报` 即红；报告重生成后与提交内容不一致也红 | `能力 <id> 的人标 level=<人标> 高于自动算出的 <自动>（依据 <字段>）—— 不得高报` / `union-level-audit.md 与数据不同步 —— 重跑 tools/build_union_map.py 并提交` |
@@ -161,7 +161,7 @@
 }
 ```
 
-**after**：`level` 不动（它本来就是新枚举里的值，且这条是我们自研、我们跑过）；补上 `evidence` 与一个非空的 `verified_versions`；它不是来源派生，因此不给 `provenance`。
+**after**：`level` 不动（它本来就是新枚举里的值，且这条是我们自研、我们跑过）；补上 `evidence`（本条 `backends` 是 `local-agent`，按 §四 只要求非空 `evidence`，不要求 `verified_versions` —— 给代理层填「SolidWorks 版本」是给字段安它没有的含义）；它不是来源派生，因此不给 `provenance`。
 
 ```
 {
@@ -170,7 +170,7 @@
   "level": "verified",
   "evidence": ["<我们自己的运行证据：命令 + 结果摘要>"],
   "backends": ["local-agent"],
-  "verified_versions": ["<我们实际跑过的运行时版本>"],
+  "verified_versions": [],
   "dependencies": ["python"],
   "limitations": ["关键尺寸、公差、载荷和安全参数仍需人工确认"],
   "allowed_modes": ["interactive", "reviewed"]
