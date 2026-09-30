@@ -1,0 +1,19 @@
+docs: pilot 迁移简版（一句话要裁 + 一句话要知）—— 长版留作备查
+
+长版（AGENTS-pilot-migration-report.md，141 行）里大部分是备查，不是要他行动。
+用户问「这份还发不发」，判：发，但砍一半 —— 只有两件非他不可：
+
+一、要裁：那 6 条自研 stitched 填不出 provenance（dfm_checks / surface_modeling /
+   mold_tools / autocad_headless_preview / dxf_preview_scene / routing）。
+   B2 要求 stitched 必须有 provenance，但它们没有来源仓，四个字段一个都填不出真值
+   ⇒ R6 一落地就红。给了三条路（A 给 B2 加「只在来源派生时必填」的限定，我倾向）。
+
+二、要知：这个仓库的测试基线不稳定。我上一份报告说 2 failed 是错的；
+   用 git stash 干净对照后实测改动前是 6 failed / 734 passed。那 4 个 CLI 测试
+   subprocess 起子进程，同一份未改动代码先后跑出 2 与 6。
+   ⇒ 若他的体检有「测试必须 N 绿」的硬数字会误判；建议改成「失败列表与基线逐条相同」。
+
+三、一行现状：迁移已完成，verified 21 / stitched 6 / not_implemented 1；
+   授权判据有 4 条路径（不是我上一份说的 1 条），都已改完。
+
+长版保留，供他复审 R1-R10 时翻。
