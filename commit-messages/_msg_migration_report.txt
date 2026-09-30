@@ -1,0 +1,40 @@
+docs: pilot 迁移完成报告 —— 4 条授权路径 + stitched 无 provenance 的新空档
+
+迁移已完成并提交（代码副本 469064f）。裁断三条要求全部满足，但过程中发现两条他没预料到的事。
+
+## 一、裁断要求三说「unattended_allowed() 的全部调用点」—— 实际是 4 条路径
+我上一份报告只报了 1 条，那是不完整的。动手时被测试逼出全部 4 条：
+  1 scripts/capabilities.py      unattended_allowed()        （唯一有名字的）
+  2 apps/.../queue_worker.py:96  任务门禁直接按 level 放行    → 会静默解除 13 条的复核要求
+  3 scripts/sw_capability_probe.py:142  内联 ready_for_unattended_use  → 会静默发授权
+  4 apps/.../engineering_orchestrator.py:331  _normalise_level 不认识 stitched，靠 fallback 碰巧对
+②③ 是测试逼出来的：只改 ① 后 test_job_is_blocked_for_reference_only_capability 与
+test_sw_capability_probe 立刻红 —— 正是它们在挡这次泄漏。若只按上一份报告那 1 条去改，
+这 13 条会在队列与探针里被静默解除复核要求，而测试是绿的。
+⇒ 建议 R11 补「授权真源是 allowed_modes，任何按 level 推断授权的写法都违规」+ 静态检查（形态归他）。
+
+## 二、新空档（要他裁）：stitched 必须有 provenance，但那 6 条填不出来
+B2 要求 source_verified/stitched/indexed 的 provenance 必须非空；
+但那 6 条 stitched（dfm_checks/surface_modeling/mold_tools/autocad_headless_preview/
+dxf_preview_scene/routing）全是自研，没有来源仓，四个字段一个都填不出真值。
+⇒ R6 一落地就会在它们上面红。三条路：A 给 B2 加「只在来源派生时必填」的限定（我倾向）；
+B 填指向本仓库的 provenance（违反他自己写的「本项目自身不作为 provenance 来源」）；
+C 改别的 level（没有更贴切的）。
+现在没给它们填任何 provenance（填假值比空着坏），R6 还没实现在代码里，门禁当前是绿的。
+
+## 三、迁移内容
+数据: 13 条 pilot+有证据 → verified+evidence；6 条 → stitched；原 8 条 verified 补 unattended；
+      原 19 条 pilot 不补。结果 verified 21 / stitched 6 / not_implemented 1。
+evidence 全指向真跑过的测试文件（21 条对应测试合起来实跑 158 passed / 1 failed，那 1 个是基线失败）。
+等价性: freeze_unattended_baseline.py 冻结 + test_unattended_equivalence.py 7 条（两路径互校 + R11）。
+门禁: compileall 0 / 成员名 PASS / 来源 PASS(271) / diff 记号 PASS(241) / 并入规范 0 / A7 核查 0 违规。
+
+## 四、基线更正（我上一份报告写错了）
+上一份说基线 2 failed，错。用 git stash 做干净对照后实测改动前是 6 failed / 734 passed。
+那 4 个 CLI 测试不稳定（subprocess 起子进程，同一份未改动代码先后跑出 2 与 6）。
+⇒ 判据改为「失败列表与基线逐条相同」；迁移后失败 6 个与基线完全一致，+7 passed 是新增测试。
+⚠ 提醒他：若体检有「测试必须 N 绿」的判据，这个仓库的 N 是不稳的，且不是本次引入。
+
+## 五、未做
+R6 的代码实现（卡在第二节）；B3/R8 的生成器 union-level-audit.md；provenance 字段本身（现有 28 条
+一条都不需要，它是给 B 级并入的条目用的）。
