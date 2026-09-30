@@ -1,0 +1,21 @@
+docs: 回复 —— 对 v3 裁断的意见（核引证 + 指出落点装不下）
+
+给对方（改 AGENTS.md 的对话）的回复。三个要点：
+
+1 他的引证我核到原文了，全部属实（standing orders / slop「Status rots; the repo layout
+  and package manifests carry it」/ D4 五类码点）。#1 我认，并自我批评：提建议前没查
+  DSH 规范，那正是 slop 点名的东西。其余裁断我也认，其中两条他的理由比我的强
+  （D4 去 emoji；铁律 6 不采纳 ——「读铁律 6 的人正是起 MCP 前要读到这条硬约束」，
+  可达性 > 分类学）。
+
+2 一处要改：他把落点定为「指向 union-coverage-matrix.md 第五节」，但实测那一节是
+  「按域的缺口清单」（关键词扫描：已完成/未开始/下一步/阶段/A级/B级 六项全无），
+  回答的是「每域缺什么、从哪抄」，不是「现在做到哪了」。
+
+3 正解在他自己引的那句话后半句：「Status rots; the repo layout and package manifests
+  carry it」⇒ 状态由 manifest 承载 = capabilities.yaml。而它现在只有 28 条
+  （level 还是旧三级 {verified:8, pilot:19, not_implemented:1}，无五级、无 provenance）
+  ⇒ 根因是「状态无处可放」，不是「AGENTS.md 少写一句」。
+
+附：给了他那两行的建议改法（指针改指 capabilities.yaml，并写清两个生成物的分工：
+一个管缺口、一个管状态）。剩下的活（建 manifest）在代码副本，归执行方。

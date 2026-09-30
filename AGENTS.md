@@ -47,6 +47,10 @@
 | A9 | 空白域护城河有可跑的工程实现（拓扑优化优先），不是只有文档 | 对应 `scripts/` 模块 + `tests/` |
 | A10 | 按需搬取：每一件搬进来的东西都过一遍「并入六条规则」，冲突在搬进来的当时解决 | `scripts/check_union_conventions.py` 退出码 0 + 并入清单逐条核对 |
 
+> A1–A10 是交付判据，不是每轮都要全绿：A3（门禁）是可执行的不变量，任何时候都该绿；其余随并入逐条满足。
+
+进度与下一步的真相在 `docs/union-coverage-matrix.md` 第五节的「并入清单」（生成物，随并入更新）；未完成的条目按 `level` 标 `stitched`。
+
 ## 二、六条铁律
 
 ### 铁律 1 · 只做「缝合」，不做「发明」
@@ -73,11 +77,13 @@
 
 ### 铁律 3 · 结构按顶层白名单，不临时起目录
 
-顶层目录只允许这 17 个：`.github` `agents` `ai_team` `apps` `assets` `docs` `dotnet` `examples` `mcp-server` `references` `scripts` `subskills` `tests` `tools` `.api-signatures` `output` `.pytest_cache`（前 13 个是上游就有的，后 4 个是我们加的）。新增白名单外的顶层目录，要在本节登记它是什么、为什么放不进已有目录，再动手。
+**结构目录**只允许这 14 个：`.github` `agents` `ai_team` `apps` `assets` `docs` `dotnet` `examples` `mcp-server` `references` `scripts` `subskills` `tests` `tools`（前 13 个上游就有，`tools` 是我们加的）。新增白名单外的顶层目录，要在本节登记它是什么、为什么放不进已有目录，再动手。
+
+**产物 / 缓存目录**允许存在于工作树，但必须 gitignore、不入库：`.api-signatures`（签名索引）、`output`（构建产物）、`.pytest_cache`（pytest 缓存，须 ignore）。
 
 新文件落进已有位置：能力实现进 `scripts/`，知识文档进 `references/`，测试进 `tests/`，说明与生成物进 `docs/`。上游目录树与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)（对照参考，不是约束来源）。
 
-### 铁律 4 · 签名以官方文档为准，两套源都要用
+### 铁律 4 · 签名三源互证，冲突以出厂类型库为准
 
 本机有两套官方离线源，各有长短，都要查：`D:\AI\SW\AI Solidworks\官方文档\`（CHM 解包，权威、带说明与示例，查语义与用法）与 `C:\swapi\`（结构化 markdown，查精确签名与枚举值）。各源覆盖范围与检索入口见 [docs/sources.md](docs/sources.md)。
 
@@ -172,7 +178,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 | 16 | CHM 的 `cosworks` 册只有 47 个文件、只覆盖 `ICWLoadsAndRestraintsManager` 一个接口族（34 接口页 + 13 枚举页），不等于 cosworks 全貌（DLL 里 168 接口 / 363 枚举） | `swdoc.ps1 -List` + 对 DLL 反射 |
 | 17 | `C:\swapi` 不含 cosworks，只覆盖 12 个程序集；`D:\AI\SW\AI Solidworks\官方文档\` 才是全的 | `by_assembly.md` + `swdoc.ps1 -List` |
 | 18 | 四家外部 MCP 项目的工具数与验证口径：Eduardof0nt/Solidworks-MCP-Server 187 / MIT / 测试文件 0 个 / 未声明环境；andrewbartels1/SolidworksMCP-python 128 / MIT / 147（7 live）/ 未声明；vespo92/SolidworksMCP-TS 103 / MIT / 7（0 live）/ 未声明；Slacker-LLC/solidworks-mcp 92 / Apache-2.0 / 2（1 live）/ SW 2026 SP3.2 简体中文。工具最多的那家测试文件为 0，README 却写「Verified on SolidWorks 2024」 | 逐份读真实 LICENSE 文件与仓库树 |
-| 19 | 域覆盖矩阵（去重归一后 384 个操作，域定义见下方代码块）：本仓库只有 `高级/专项` 一域领先（3，四家 0–1），其余 15 个域都不领先 —— `草图` / `钣金` / `焊件` / `模具` / `参考` 为 0，`尺寸` / `零件` / `宏` 为 1，`工程图` 3 对四家的 15–18 | `tools/build_union_map.py` 生成 `docs/union-coverage-matrix.md` |
+| 19 | 域覆盖矩阵（去重归一后 384 个操作，域定义见下方代码块）：本仓库只有 `高级/专项` 一域领先（3，四家全 0），其余 15 个域都不领先 —— `草图` / `钣金` / `焊件` / `模具` / `参考` 为 0，`尺寸` / `零件` / `宏` 为 1，`工程图` 3 对四家的 15–18 | `tools/build_union_map.py` 生成 `docs/union-coverage-matrix.md` |
 | 20 | `高级/专项`（拓扑优化 / DFM / Costing / PDM / 路由 / DimXpert / GD&T）是唯一「四家全空、只有本仓库有」的域 | 同上 |
 | 21 | 真正全网空白的只有三个域：拓扑优化（`andrewbartels1` 明确列在 "Not Yet / Simulated"）、动画导出 AVI（Motion Study 创建有人做，出片没搜到）、Costing（PDM 被 `Eduardof0nt` 的 Contributing 列为 missing） | 上网核实 + 四家仓库源码 |
 | 22 | 「草图完全定义」这条纪律 `andrewbartels1`（MIT）有实现且带测试：`_check_sketch_fully_defined_impl` 多探针（`ISketch.IsFullyConstrained` SW2018+ / `ISketch.GetStatus` / `ISketch.FullyDefined`）经 `_probe_to_flag` 归一 bool/int/float/string，返回 `{sketch_name, fully_defined, state, source_api}`，并接进 `checkpoint_service` 与 `parameter_repair_service`；本仓库 grep `完全定义\|fully defined\|欠定义` 0 命中 | 其源码 `src/solidworks_mcp/adapters/solidworks/sketch.py` + 三个测试用例 |
