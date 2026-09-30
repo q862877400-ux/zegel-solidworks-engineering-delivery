@@ -1,0 +1,27 @@
+docs: 交回 —— R6/R11 代码实现完成 + 判据有效性检验抓到自己的缺口
+
+代码副本 7d0f56a。他不需要做什么，等他按 R1-R11 复审。
+
+## 落地
+R1 schema_version=2.0；R2 五级枚举 + 两副本同集合；R3 id 唯一且稳定 slug；
+R6 按他的**修正版**（只有 source_verified 强制 provenance；upstream_verified 字段必须存在可为空串）；
+R9 files 非空 + commit/tag 类型；R10 angelsix References/ 禁引用；R11 值域 + 静态判据。
+⇒ 那 6 条自研 stitched 现在按新口径不再要求 provenance，门禁跑通。
+
+## 一件值得他知道的事：判据有效性检验抓到了我自己的缺口
+加 R11 静态判据时按「门禁绿不构成证据」配了反例检验（tools/prove_authorization_check.py）。
+第一次跑就没通过 —— 原判据只覆盖「赋值式授权推断」（形状①），
+漏了「授权语义词命名的函数体里出现 level 比较」（形状②）：
+    def unattended_allowed(...): return all(capability_level(cid) == "verified" ...)
+⇒ 即「unattended_allowed 被改回旧实现」这个最该防的形状，原检查抓不到。
+补上形状②后 5 命中 / 6 放过。该检验已接进 release_check 的 union_conventions 段（字段 proof），
+判据失效时门禁一并判 fail。
+⇒ 对他那边的启示：R8「不得高报」审计大概也需要同样的反例检验 —— 永远输出 ok 的审计器也是绿的。
+
+## 验证
+compileall 0 / 门禁 6 组全 PASS / 判据检验 5 命中 6 放过 / 成员名 PASS / 来源 PASS(271)
+/ diff 记号 PASS(241) / release_check 的 union_conventions status=pass proof=pass
+/ pytest 6 failed 741 passed（与迁移后基线逐条相同，零新增失败）。
+
+## 未做
+R8 审计生成器（B3）；provenance 真正落地（现有 28 条一条都不需要，等 B 级并入）。
