@@ -1,0 +1,32 @@
+docs(T-011): 暴露已有能力成 MCP 工具的评估 + 最小示例草稿
+
+## 问题（已知事实 25 的直接后果）
+    server.py          引用 25 个 scripts 模块，暴露 45 个工具
+    scripts/sw_*.py    75 个模块 / 814 个公开函数
+    ⇒ **61 个模块未被引用**（含护城河 sw_topology、sw_simulation、sw_weldment、sw_mold）
+
+## 评估结论（成本已量化）
+- server.py 2455 行 / 45 工具 = **54.6 行/工具** ⇒ 手工注册 814 个 ≈ **44,408 行，不现实**
+- **三条硬约束挡住自动注册**：规则 1（名字要人工判域）· 规则 2（`_mm`/`_deg` 逐参判）·
+  规则 3（必须声明式 `selection`，而很多函数以「调用方先选好实体」为前置）
+- **真实工作量 ~120 个函数**（不是 814）—— 新立一条**暴露判据**：
+  「该函数是不是『用户会用一句自然语言要求的**动作**』？」
+  12 个 `sw_api_*`（API 索引）、13 个 `sw_jlcfa_*`（GUI 步骤）、门禁工具 ⇒ **不暴露**
+- **不做**「泛型调用」工具：违规则 3，且把整个 scripts/ 变成远程执行面
+
+## 产出两份
+1. `docs/T-011-expose-capabilities-assessment.md` —— 含三批判选与代价表
+2. `mcp-tool-draft/topology_tools.py` —— 3 个护城河工具的**可复制草稿**
+   （`solidworks_topology_create_study` / `_set_goal` / `_evidence`）
+
+## ⚠ 明确**未做**接入（并说明理由）
+`mcp-server/server.py` 正是本会话 `mcp__solidworks__*` 工具的来源。
+改它会动**正在运行的** MCP 表面；「单源运行」原则下（已知事实 24）重启需确保无任务在跑。
+⇒ 草稿里写明三步接法，**接入时机由人决定**。
+
+## 草稿的自我约束（避免「看起来完整、实际跑不通」）
+草稿里有三处留了 TODO 而非臆造：取 `ISldWorks` 的写法、取研究的入口、取活动文档的写法
+—— 它们在 server.py / sw_simulation.py 里**已有先例**，接入时照抄即可。
+**已核实引用不虚**：`sw_topology` 的 `create_topology_study` / `set_topology_goal` /
+`collect_topology_evidence` 都存在；`sw_simulation` 的 `iter_studies` / `get_study_by_name`
+都存在；原文误引的 `get_study_manager`（在 sw_topology 里**没有**）已删并改正。

@@ -75,10 +75,28 @@
 
 ## Phase 4: User Story 3 —— 厘清「已有能力 → MCP 工具」（P3）
 
-- [ ] **T-011** [US3] 评估把既有函数暴露成 MCP 工具的路径与代价
-  （已知事实 25：`mcp-server/server.py` 只引用 25 个模块，我们后补的 58+ 个一个都没进）
-  **产出**：一份具体评估（改哪个文件、有无门禁约束、最小示例）
-  `→ 验收:` 给出「改哪个文件 + 最小可跑示例 + 代价估计」三段
+- [x] **T-011** [US3] 评估把既有函数暴露成 MCP 工具的路径与代价
+  **✅ 已完成** —— 产出两份：评估文档 + 最小可跑示例的草稿。
+  **结论**：
+  - `server.py` 45 个工具 / 2455 行 = **54.6 行/工具** ⇒ 手工注册 814 个函数 ≈ **44,408 行，不现实**
+  - **三条硬约束挡住自动注册**：规则 1（名字要人工判域）、规则 2（`_mm`/`_deg` 后缀逐参判）、
+    规则 3（必须声明式 `selection`，而很多函数以「调用方先选好实体」为前置）
+  - **真实工作量是 ~120 个函数**（不是 814）—— 按新立的**暴露判据**筛：
+    「该函数是不是『用户会用一句自然语言要求的**动作**』？」是 ⇒ 候选；内部索引
+    （12 个 `sw_api_*`）、GUI 步骤（13 个 `sw_jlcfa_*`）、门禁工具 ⇒ 不暴露
+  - **不做**「泛型调用」工具（违规则 3 + 把整个 `scripts/` 变成远程执行面）
+  `→ 验收:`
+  ```powershell
+  # 评估文档（含成本量化与三批判选）
+  Select-String D:\AI\SW\docs\T-011-expose-capabilities-assessment.md -Pattern '44,408'
+  # 最小示例草稿（3 个护城河工具，未接入在跑的服务）
+  Select-String D:\AI\SW\mcp-tool-draft\topology_tools.py -Pattern 'solidworks_topology_'
+  # 草稿引用的函数均已核实存在
+  Select-String C:\swprojects\sw-skill-fork\scripts\sw_simulation.py -Pattern 'def (iter_studies|get_study_by_name)\('
+  ```
+  **⚠ 未接入** `mcp-server/server.py` —— 那正是本会话 `mcp__solidworks__*` 工具的来源，
+  改它会动**正在运行的** MCP 表面；「单源运行」原则下（已知事实 24）重启需确保无任务在跑
+  ⇒ **接入时机由人决定**（草稿里已写明三步接法）。
 
 ---
 
