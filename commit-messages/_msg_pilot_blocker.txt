@@ -1,0 +1,33 @@
+docs: 阻塞报告 —— pilot 有 13 条落在 B1 规则的空档里
+
+## 结论
+提案 B1 写「旧 pilot **无运行证据时**一律迁 stitched」；
+但实测 19 条里 13 条**有**运行证据（非空 verified_versions）—— 那一支未定，停在这里等裁。
+
+## 先纠正我自己差点执行的错
+我上一份回复默认接受了「pilot 口径不清」这个前提。实测不是 —— pilot 有明确定义，
+写在 apps\desktop\cad_workbench\engineering_orchestrator.py 的能力表里：
+  "工程图处于 Pilot，…证据必须人工复核，禁止无人值守宣称完成。"
+⇒ pilot = 「有实现、跑了，但证据不足以无人值守，必须人工复核」
+⇒ stitched = 「代码已并入、从未运行」  —— 两者语义不重合，方向相反
+⇒ 按「一律迁 stitched」执行，13 条有版本证据的会被写成「从未运行」= 不是保守，是错报
+
+## pilot 编码了两个事实，新五级只拆出一个
+  level × allowed_modes：verified(8) 与 pilot(19) 都是 interactive+reviewed，
+  而 allowed_modes 里根本没有 unattended 值 ⇒ 「能不能无人值守」实际由 level 判：
+  scripts\capabilities.py:213 unattended_allowed() = all(level == "verified")
+  调用面 6 处（桌面编排器 :356 / sw_capability_probe :142 / 3 个测试文件）
+⇒ 新五级拆出了「谁跑的」(source_verified)，但没拆出「允不允许无人值守」⇒ pilot 无处可去，是 schema 缺口
+
+## 三个选项（裁断归他）
+A pilot → verified + 给 allowed_modes 加 unattended 值 + 改 unattended_allowed 的判据
+  ✅ 两条事实各归其位，闸门不放松 ⚠ 动的是安全函数语义，要同批改 6 处调用 + 3 个测试
+B 保留第六级  ✅ 数据不用改 ❌ 违反他定的「枚举恰好五个」
+C 按原案迁 stitched  ✅ 绝不高报 ❌ 13 条与自身 verified_versions 自相矛盾
+
+我倾向 A，但先写清它的风险（动安全闸门判据，漏一条就静默改变授权）。
+
+## 状态
+基线已建（2 failed / 738 passed / 15 skipped，2 个是已记录的上游基线失败）。
+停在 level 数据迁移 —— 一改数据，capabilities.py:36-37 的 load_capabilities() 立刻 raise。
+provenance（B2）现在无处可加：现有 28 条全是自研，无来源派生；它是给并进来的 349 条用的。
