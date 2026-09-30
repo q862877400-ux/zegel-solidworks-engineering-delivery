@@ -1,0 +1,43 @@
+feat(mcp): T-011 注入语义建模 —— batch1 从 3 条 extra_op 降为 **0 条**，全声明式
+
+## 做了什么
+上一轮 batch1 有 3 条（拓扑）不得不用 `extra_op`，因为它们的入参是
+`(sw_app, …)` / `(study, …)` —— 需要**注入宿主对象**，而注册器只支持 `needs_model` 一种注入。
+本轮把注入**建模**出来：
+
+    ToolSpec(..., inject="sw_app")   # 注入 ISldWorks
+    ToolSpec(..., inject="study")    # 按 study_name 解析研究
+    ToolSpec(..., inject="model")    # 注入活动文档（needs_model 的等价写法）
+
+**关键设计：注册器不硬编码宿主 API** —— 注入解析器由**调用方**提供
+（`register(..., resolvers={"model": …, "sw_app": …, "study": …})`），
+故 `tool_registry` 保持**宿主无关、可独立测试**（自测用假解析器）。
+
+## 配套：`param_alias`（对外名 → 实现名，显式映射）
+MCP 表面用 `study_name` 比 `name` 清楚、`element_size_mm` 比 `element_size` 合规（规则 2），
+而**实现里的名字不该为了对外好看去改** ⇒ 加显式别名映射：
+    param_alias={"study_name": "name", "element_size_mm": "element_size", ...}
+值 `None` = **由解析器消费、不传给目标函数**（如 `study_name`）。
+**⚠ 别名必须写出来** —— 否则与「拼错了参数名」无法区分。
+
+## 结果（实测）
+    声明数 8 ; 门禁问题 0 ; **extra_op 条数: 0**
+    inject 分布: topology→sw_app/study · mold→model · simulation→model
+    解析器: ['model', 'study', 'sw_app']
+**⇒ 「~10 行一个工具」真的成立了**（评估里说的那个目标）。
+
+## 门禁加强
+`check_spec` 新增三条：`inject` 必须是合法标识符 · `inject` 与 `extra_op` **互斥** ·
+`param_alias` 不得指向未声明参数 / 非法形参名 / 被省略的形参。
+`inject` 与兼容别名 `needs_model` 同时给且冲突 ⇒ **抛错，不静默取其一**。
+
+## 测试
+- `tests/test_tool_registry.py` + `tests/test_tool_specs_batch1.py` = **35 passed**
+- 新增断言：**本批不该再有任何 `extra_op`**（这条就是本轮改动的目的）
+- 新增端到端：用假解析器验「注入真的按关键字传进目标函数」
+  与「`param_alias[x]=None` 的参数真的不进目标函数」
+- ⚠ 又踩到「替身不够真」两次（缺 `response_format`）—— 同一教训已在本会话出现 **5 次**
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下。**仍未接入 `server.py`**（单源原则，已知事实 24）

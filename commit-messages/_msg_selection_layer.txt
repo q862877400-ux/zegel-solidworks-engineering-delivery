@@ -1,0 +1,33 @@
+feat(selection): 声明式面选择解析层 —— 解决 T-011 暴露的规则 3 冲突
+
+## 冲突回顾
+`select_face_at(model, x, y, z, …)` 的入参是**裸坐标**，违反规则 3
+（「选择用声明式 `selection`，不写裸坐标」）⇒ 直接暴露成 MCP 工具会被本项目门禁拒掉。
+**但这不是 bug**：官方 `SelectByID2` 对 `FACE` **必须**给面上一点
+（给原点选不中任何面 —— 真机证据见 `select_face_at` 的来源块）。
+
+**⇒ 正解是加一层显式解析：对外收「哪个面」，内部算成坐标。**
+
+## 新增（`scripts/sw_simulation.py`）
+- `FACE_SELECTORS = ("+x","-x","+y","-y","+z","-z")` —— **外法向**命名（不是「上/下」这类视角相关词）
+- `resolve_face_selector(model, selector) -> (x,y,z) | None`
+  用**轴对齐包围盒**（`IBody2.GetBodyBox()`）取该面**中心点**
+- `select_face_by_selector(model, selection, …) -> int`
+  组合上面两个；非法选择器**抛 `ValueError`**（而不是静默不选）；返回**选区计数**
+
+**⇒ 解析规则是显式的**（写在来源块里），不是藏在默认值里。
+
+## ⚠ 诚实标注
+`resolve_face_selector` 与 `select_face_by_selector` **未在本机实测**（组合层没跑过；
+两个被组合的函数各自已实测）⇒ 来源块里写明，MCP 声明里不得写成「已验证」。
+**已知限制**：只对**轴对齐**实体可靠；曲面/斜面上「包围盒那面的中心」未必落在零件表面
+⇒ 此时选区计数为 0，**调用方必须检查计数**。
+
+## ⚠ 本会话**第三次**踩同一个 provenance 坑
+又双叒把常量（`FACE_SELECTORS`）夹在来源块与 `def` 之间
+⇒ `check_provenance` 的 `_extend_to_code` 把常量当成被说明对象，`def` 反而落空。
+**⇒ 这不该再靠「记一条」，该让机器抓**（下一轮把这条做成门禁的明确报错）。
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下
