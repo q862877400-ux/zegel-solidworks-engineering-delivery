@@ -1,0 +1,20 @@
+docs(capabilities): 按 2026-10-01 真机结果回写两条 —— 只改事实，不抬等级
+
+## simulation_and_fea（level 保持 verified）
+它的 `verified` 指的是 **CalculiX/Elmer** 那条链（`verified_versions: ["CalculiX 2.23"]`，
+证据 `pytest tests/test_fea_analysis.py`），**本次不碰**。
+但它名下的 `solidworks-simulation-adapter` 后端此前是坏的：把官方 `Int32&` 出参按裸值传，
+在 SW 2026 SP4.1 上必然抛类型不匹配 ⇒ **该后端修复前从未跑通过，当时却被 verified 覆盖**。
+已如实写进 limitations：修复后 `create_static_study` + `create_mesh` + `run_analysis` 通过，
+但 `apply_fixed_restraint` 在有效选区（计数=1）下仍返回 None ⇒ **整链尚未端到端跑通，
+不得据本条目的 verified 推定该后端可用。**
+
+## topology_optimization（level 保持 stitched）
+真机首验：`CreateNewStudy3(name, 13, 0, out_i4())` ✓ `AnalysisType == 13` ✓
+管理器/选项可取 ✓ 证据采集函数 ✓。
+但 **`set_topology_goal` 的 `CreateFactorOfSafetyConstraint` 返回 None、
+`set_topology_iteration_options` 抛 0x80010105**，且官方要求的「看结果」尚未实现
+⇒ **不得升 verified**（A7 + 停止条件 6）。原「未在本机实测」的限制已删除（不再成立）。
+
+=> 依据：AGENTS.md 验收 A4（`verified` 必须有我们自己的运行证据）与 A7
+（不得把 source_verified / stitched 写成 verified）。本轮**两个条目的等级都没动**。

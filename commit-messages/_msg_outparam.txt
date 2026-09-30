@@ -1,0 +1,54 @@
+fix(com): `Int32&` 出参与空 Dispatch 的正确形态 —— 真机裁决，修 18 处潜伏缺陷
+
+## 起因
+护城河域「拓扑优化」真机验证时，`CreateNewStudy3(name, 13, 0, 0)` 抛
+`类型不匹配 (arg 4)`。逐一试五种候选形态，**只有一种通过**：
+
+    VARIANT(VT_BYREF | VT_I4, 0)   ✓
+    VARIANT(VT_I4, 0)              ✗ 类型不匹配
+    VARIANT(VT_BYREF | VT_VARIANT) ✗
+    VARIANT(VT_EMPTY, None)        ✗
+    裸 int / 裸 0                   ✗
+    省略该参数                      ✗ DISP_E_PARAMNOTOPTIONAL（「非选择性的参数」）
+
+⇒ 该参数**必需（不能省）**，且必须按引用传 `VT_I4`。
+
+## 这推翻了两处既有认识
+1. **本仓库既有做法是错的**：`sw_simulation.create_static_study` /
+   `apply_fixed_restraint` / `apply_normal_force` 都传裸 `0` ⇒ **从未跑通过**。
+   真机复现：修复前 `create_static_study` 抛类型不匹配；修复后返回
+   `(<COMObject>, 'CreateNewStudy3', 0)`。
+   ⚠ 而 `capabilities.yaml` 里 `simulation_and_fea` 标的是 `verified` —— **声明与事实不符**。
+2. **`audit_call_arity.py` 的口径也不全对**：它算 arity 时排除 `&` 出参是对的，
+   但**调用方仍须传一个 byref VARIANT**；「排除」不等于「可省略」。
+
+## 另一族：空 Dispatch 参数（已知事实 12 的实机确认）
+    SelectByID2 第 8 参 Callout：裸 None ✗ / create_empty_dispatch_variant() ✓（选区计数 = 1）
+    AddRestraint 第 3 参 Object：裸 None ✗ / 空 Dispatch ✓
+    AddRestraint 第 2 参 Object：裸 None **可以**（实测 `None, empty ✗`、`empty, None ✗`、
+                                                  `None, empty ✓`、`empty, empty ✓`）
+⇒ 精确到**哪一参**，不搞「凡 None 都包」。
+
+## 改动
+- `scripts/sw_connect.py`：新增 `out_i4()`（含实测记录与来源块）
+- `scripts/sw_simulation.py`：6 处出参 + `AddRestraint`/`AddForce` 第 3 参；补 fallback 导入
+- `scripts/sw_topology.py`：11 处出参
+- `scripts/sw_render_material.py`：1 处出参 + 补 fallback 导入
+- 三处契约测试：断言从「照反射推断的裸 int」改为**真机验证的 byref VARIANT**；
+  并改用语义谓词（`repr` 判 `VARIANT(16387`）而非写死字面量 —— 因为
+  单独跑时 `sw_connect` 是测试桩、全量跑时是真模块，写死任一种都会「单独绿、全量红」
+  （本轮实际撞了）。两个测试桩补上 `out_i4` / `create_empty_dispatch_variant`。
+
+## 顺带发现（未修，已记录）
+源码里 21 处「给 `&` 出参传裸值」清单是本轮用
+`D:\AI\SW\find_bare_outparam_sites.py` 交叉比对反射得出的；首版把
+`get_com_member(obj, "GetFaces")`（只有 2 个实参）误报为违规 ——
+**只有 2 个实参时 args[-1] 是成员名字符串本身，不是出参**，已在脚本里修。
+
+## 验证
+- 真机（SW 2026 SP4.1 / 34.4.1）：`create_topology_study` ✓ `AnalysisType=13` ✓
+  `get_topology_study_manager` / `get_topology_study_options` ✓
+  `list_topology_constraints_and_controls` ✓ `collect_topology_evidence` ✓（study_count=2）
+- 修复前后对照：`create_static_study` ✗ → ✓
+- 全量回归：**6 failed / 749 passed / 15 skipped**，与基线逐条相同（那 6 个是既有失败）
+- 门禁：`check_provenance` [PASS] · `check_union_conventions` 通过 · `compileall` exit 0

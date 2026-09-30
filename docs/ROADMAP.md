@@ -46,16 +46,32 @@
 ## 一 · 游标（**唯一必须维护的字段**）
 
 ```
-当前阶段:  P0
-状态:      ⬜ 未开始
-下一步:    写 THIRD-PARTY-NOTICES.md
-阻塞:      无
+当前阶段:  P1（P0 已完成）
+状态:      ✅ P0 完成 · 🟢 P2 部分达成（拓扑研究能建成，整链未通）
+下一步:    实现「看结果」三件事：Material Mass 图 / View Convergence Data and Graph /
+           Export Smoothed Mesh（`smatrtsmooth.dll` 是后者的实现）
+阻塞:      无 —— SolidWorks 2026 SP4.1 已确认可用，Simulation 加载项可取到
 
 最近三次交接:
-  2026-10-01  df4a5ce  拓扑优化代码+8条契约测试就位（level=stitched，未实测）
-  2026-10-01  7d0f56a  R1-R3/R6/R9/R10 + R11 授权真源静态判据（含判据有效性检验）
-  2026-10-01  469064f  pilot→五级迁移（13→verified / 6→stitched）
+  2026-10-01  e587a0f/b25dc64  P0 完成 + 修掉一族潜伏缺陷：官方 Int32& 出参传裸值必抛
+                              类型不匹配，全项目 18 处中招；真机裁决唯一可用形态
+                              VARIANT(VT_BYREF|VT_I4, 0)。顺带证实 sw_simulation 的
+                              create_static_study 修复前从未跑通过。
+  2026-10-01  e0fe617          Spec Kit 接入（工作区 .specify/）；宪法写成「薄」的；
+                              规格老化模型选 Flow-forward
+  2026-10-01  df4a5ce          拓扑优化代码 + 8 条契约测试就位（level=stitched）
 ```
+
+## 一·B 本轮新增的**关键事实**（写代码直接用，别重新推导）
+
+| 事实 | 依据 |
+|---|---|
+| 官方 `Int32&` 出参**必须**传 `VARIANT(VT_BYREF\|VT_I4, 0)`（`sw_connect.out_i4()`）；裸值或省略都失败 | 真机五形态裁决 · `probe_outparam_convention.py` |
+| 空 Dispatch 参数**要精确到哪一参**：`SelectByID2` 第 8 参、`AddRestraint` **第 3** 参须包 `VARIANT(VT_DISPATCH, None)`；`AddRestraint` 第 2 参传裸 `None` **可以** | 真机四形态裁决 · `probe_dispatch_variant.py` |
+| `CreateNewStudy3(name, 13, 0, out_i4())` 能建成拓扑研究，`AnalysisType == 13` | 真机 · SW 2026 SP4.1 |
+| 拓扑整链**未通**：`CreateFactorOfSafetyConstraint` 返回 None；`SetIterationOption` 抛 `0x80010105` | 同上 |
+| 本机 Simulation **完整安装**：`Simulation\Topology\` 下有 `SMATsoFortranCoreCore/Prep/Opt.dll` 与 **`smatrtsmooth.dll`**（Export Smoothed Mesh 的实现） | 磁盘 + 真机 `GetAddInObject` ✓ |
+| 嘉立创FA插件「卡住」= **预加载数百张分类缩略图**，不是文件锁、不是断网 | 其 `Logs\20261001.log`：`NetworkCheck Status OK 114ms` + `图片加载统计 累计150张 成功=150` |
 
 **格式约定**：状态取值 `⬜ 未开始` / `🟡 进行中` / `✅ 完成` / `⏸️ 阻塞（写原因）`。
 「最近三次交接」只留三条，滚动覆盖 —— 它给的是**时间感**，不是历史（历史在 git log）。

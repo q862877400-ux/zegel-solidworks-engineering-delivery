@@ -1,0 +1,48 @@
+chore(speckit): 接入 Spec Kit —— 可评审基线（init + 本项目宪法）
+
+用户装上 Spec Kit（specify 1.0.13）并要求在本项目用上。按官方
+《Adopting Spec Kit in an Existing Project》第 1 步「Start from a Reviewable
+Baseline」：init 单独一个提交，便于正常代码评审。
+
+## 落点：工作区 D:\AI\SW（不是代码副本）
+理由：代码副本有铁律 3 的顶层目录白名单（14 个），加 .specify/ 要改 AGENTS.md；
+工作区无此约束，且计划层本来就住这里（算 ROADMAP.md 的同层）。
+命令目录收进 .specify/commands/ ⇒ **只新增一个顶层目录**，不散。
+
+```
+specify init . --force --non-interactive --integration generic \
+  --integration-options="--commands-dir .specify/commands/" --ignore-agent-tools
+⇒ 30 个文件：
+    commands/     10 个命令的过程定义（agent 的作业指导书，非终端命令）
+    scripts/      4 个 powershell 脚本（create-new-feature / setup-plan / setup-tasks / check-prerequisites）
+    templates/    5 个模板（spec / plan / tasks / checklist / constitution）
+    memory/       constitution.md（已按本项目改写）
+    workflows/    工作流定义
+```
+
+## 宪法（memory/constitution.md）—— 刻意写成「薄」的
+官方既有项目指南明确要求：「**Do not invent standards merely to fill the
+constitution template**。用仓库已有的 README / 架构决策 / CI 配置作依据」。
+⇒ 本宪法**不重述六条铁律**，只声明 SDD 流程如何服从它们，并声明三处不许写
+（不写进度、不重述铁律、不重述已知事实），避免「一个事实两个家」。
+
+新增的只有两样（Spec Kit 要求的必答项）：
+1. **SDD 制品 ↔ 既有载体的接口表**（spec/plan/tasks 各接到哪）
+2. **规格老化模型 = Flow-forward**（完成的特性目录不可变，新需求开新目录）
+   —— 选它的理由是治本项目最痛的病：Flow-back 下双方反复改同一批文档，
+   产出过 13 轮往返（见 ROADMAP §五 反模式）。冻结 ⇒ 没有漂移。
+
+## DSH 里的调用方式（写进宪法了）
+DSH 没有 /speckit.* 斜杠命令。命令文件是**过程定义**，官方原话
+「These are agent skills, not terminal commands」⇒ 读 .specify/commands/speckit.<名>.md
+按它执行，产出落 specs/<NNN>-<slug>/。**执行者就是 agent，命令文件是作业指导书。**
+不去 DSH skill 目录复制一份 —— 那会造第二个家。
+
+本项目默认走**全路径**（含 clarify / checklist / analyze 三道质量闸）：
+我们的特性都涉及官方签名核验与许可，clarify 与 analyze 恰好挡住「凭印象写 API」。
+
+## 依据的官方文档（都读过原文，非印象）
+- quickstart.md —— 两条路径（5 步简化 / 9 步生产）；feature.json 跟踪当前特性（非 git 分支）
+- guides/existing-projects.md —— 既有项目五步法
+- reference/agentic-sdd.md —— 每个命令的职责、产出、交互（analyze 只读、converge 只追加）
+- concepts/spec-persistence.md —— 三个老化模型
