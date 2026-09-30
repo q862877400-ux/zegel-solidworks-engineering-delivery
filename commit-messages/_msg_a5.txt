@@ -1,0 +1,47 @@
+docs(audit): A5 刷新 —— arity 口径按类型修正 + 批次 7（含一条未查证的遗留）
+
+## 修了一个**口径错误**（批次 5/6 留下的未裁定冲突）
+`audit_call_arity.py` 的旧规则是「**排除所有** by-ref 出参」，而 `sw_simulation.py` 等
+**传了** `Int32&` 出参、批次 6 把它归为「11 个存疑」但没裁定。
+
+**2026-10-01 真机裁断**（`probe_outparam_convention.py`，五形态逐一试）：
+    VARIANT(VT_BYREF|VT_I4, 0)   ✓
+    其余四种 + 裸值               ✗ 类型不匹配
+    **省略该参数**                ✗ DISP_E_PARAMNOTOPTIONAL（「非选择性的参数」）
+
+⇒ 标量出参（`Int32&` 等）**调用方必须传**；纯 out 容器（`Object&` 等）不传。
+
+**修正后**（按类型分）：
+    sw_mold.py        17 → **17/17**
+    sw_topology.py    33 → **45/45**（12 处存疑全清）
+    sw_simulation.py  28 → **34/34**
+    sw_weldment.py    70 → **71/71**
+    sw_connect.py     15 → **21/21**
+
+## 判据有效性检验（**证明这不是把门禁调绿**）
+喂三个真实反例，修正后仍全部抓住：
+    CreateNewStudy3 少传（3 vs 官方 4）      ✅ 报「存疑 · 官方 arity=4」
+    InsertWeldmentFeature 多传（1 vs 0）      ✅ 报「存疑 · 官方 arity=0」
+    TotallyBogusMemberName（不存在）          ✅ 报「查不到」
+
+## 一条方法学教训（已写进审计）
+此前跑 `sw_costing`(26 查不到) / `sw_pdm`(7) / `sw_routing`(13) 时**只传了 2 份反射** ——
+Costing/PDM/Routing 的成员在**别的** interop 程序集里。
+**传入全部 15 份后这三个模块全清。** ⇒ 跑本工具必须传全 `_raw` 下所有 `iface_*.txt`。
+
+## 剩余 13 处存疑的逐条裁定（写进审计）
+- `Next()` ×5 / `Get()` ×2 → **假阳性**：那是 **OCCT（OpenCASCADE）** 的
+  `TopExp_Explorer.Next()` 与 `Bnd_Box.Get()`，**不是 SolidWorks COM**（工具按名字跨库撞名）
+- `sw_delivery` 的 `IGetDocumentNames` / `OpenDoc6` ×2 → **有意为之**（批次 6 已记）
+- `sw_hole_features` ×4 → ⚠ **未查证**（见下）
+
+## ⚠ 一条**未查证**的遗留（如实记，不猜）
+`sw_hole_features.py` 的 4 处**传了** `Object&` 出参，而修正后的规则把 `Object&` 排除。
+两种可能无法从静态证据区分：① `Object&` 也必须传 ⇒ 规则对它也错、代码对；
+② `Object&` 不必传 ⇒ 代码多传了无用参数。**本轮未做真机实验判定 ⇒ 不猜（铁律 5）**，
+实验设计已写进审计（照 `probe_outparam_convention.py` 的玩法）。
+
+## 验证
+- 全量回归 **6 failed / 758 passed / 15 skipped**（与上轮基线逐条相同）
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- `signature-audit.md` 30.2 KB（原 24.2 KB），含批次 7
