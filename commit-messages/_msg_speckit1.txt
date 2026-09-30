@@ -1,0 +1,28 @@
+docs(spec-kit): 第一个特性 001-topology-result-readout + 六步错误码定位表
+
+## Spec Kit 全路径首次落地（目标①）
+产出落 `specs/001-topology-result-readout/`：spec.md / plan.md / tasks.md，
+并按 speckit.specify 的收尾要求写 `.specify/feature.json`（当前特性指针）。
+
+spec 的**核心是四源取证表**（比铁律 4 的三源多一关运行期）：
+  ① cosworks 接口清单 → SmoothedMesh/MaterialMass/Convergence 0 命中
+  ② DLL 二进制 → `ExportSmoothedMesh` 12 处命中**全是 `swsExportSmoothedMesh_*` 枚举值名**
+     （对照组：真方法名如 `CreateMassConstraint` 在 #Strings 堆里各 1 处）
+  ③ CHM API 参考 2790 页 → `Smoothed` 0 命中
+  ④ 运行期 `get_com_member` 试探 → ICWStudy 上 6 个候选名全「名字不存在」
+     ⚠ 但 ICWResults 那关因 `study.Results` 为空而**未测到**（已知取证缺口，即 T-002）
+
+## T-002 的六步错误码定位表（写进 tasks.md）
+每一步都是「撞错误码 → 查 enum_cosworks.txt → 修」：
+  建研究     类型不匹配(arg4) → Int32& 出参 → out_i4()
+  设目标约束  EndEdit=7        → OnlyOneMassConstraintCanBeDefined → 改目标自带的那个
+  施夹具     返回 None        → DispArray 传了 None → 传对象列表
+  施载荷     返回 None        → 同上 + 力类型须为 1
+  写属性     <unknown>.set_X  → 迟到绑定 → 属性赋值
+  CreateMesh 5                → SpecifyPositiveValue → 尺寸为正
+  RunAnalysis 19              → MaterialNotDefined → 先赋材料
+⇒ 全部真源在 `enum_cosworks.txt`（3113 行 / 363 枚举）。
+
+## 真机证据（本轮实际观察）
+SolidWorks 窗口 `零件25 *`，**`cwbcbfmesh` 进程 CPU 已烧 1204 秒 / 内存 2947 MB**
+⇒ 优化**真的在求解**（不是挂起）。`study.Results` 待其完成后才有值。

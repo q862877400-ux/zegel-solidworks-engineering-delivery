@@ -1,0 +1,52 @@
+fix(simulation): 夹具/载荷链**首次真机跑通** —— 两个真因，都是「官方写法 ≠ pywin32 写法」
+
+## 起因
+跑真机完整优化时 `apply_fixed_restraint` / `apply_normal_force` 都建不出对象。
+按官方 VB 示例（`_raw/cworksapi/Create_Topology_Study_Example_VBA.txt` L153-158）逐形态实测。
+
+## 真因 1：`DispArray`（第 2 参）必须是**选中对象的数组**
+官方原文：
+```vb
+Set DispatchObj1 = Part.SelectionManager.GetSelectedObject6(1, -1)
+DispArray = Array(DispatchObj1, DispatchObj2)
+Set CWRestraintObj = LoadsAndRestraintsManagerObj.AddRestraint(0, (DispArray), Nothing, ErrorCodeObj)
+```
+六形态实测（`D:\AI\SW\probe_disparray_forms.py`）：
+    None, None, out_i4()                            ✗ 类型不匹配 (arg 3)
+    list(objs), None, out_i4()                      ✗ 类型不匹配 (arg 3)
+    tuple(objs), None, out_i4()                     ✗ 类型不匹配 (arg 3)
+    VARIANT(VT_ARRAY|VT_DISPATCH,[o]), None         ✗ 类型不匹配 (arg 3)
+    **list(objs), empty_dispatch(), out_i4()        ✓ 返回对象，Count == 1**
+    只传 2 参                                        ✗ 非选择性的参数
+⇒ **两个都要对**：第 2 参给实体列表，第 3 参（`RefGeom`）必须包空 Dispatch。
+  官方 VB 写 `Nothing`，那 ≡ pywin32 的 `VARIANT(VT_DISPATCH, None)`（裸 `None` 不行）。
+  传 None 给第 2 参时**不抛异常但返回 None** —— 这就是此前「静默失败」的来源。
+
+新增 `_selected_dispatch_array(model)`：用 `GetSelectedObject6(i, -1)` 逐下标取选区实体。
+`apply_fixed_restraint` / `apply_normal_force` 新增 `model=` 参数（不传则退回旧行为并**明说建不出来**）。
+
+## 真因 2：写成员只能用**属性赋值**，`set_X` / `put_X` 都取不到
+`ICWForce` 反射里是 `set_ForceType(Int32)` / `set_Unit(Int32)` / `set_NormalForceOrTorqueValue(Double)`，
+但真机三形态实测（`D:\AI\SW\probe_setter_forms.py`）：
+    get_com_member(f, "set_ForceType", 1)   ✗ `<unknown>.set_ForceType`
+    get_com_member(f, "put_ForceType", 1)   ✗ `<unknown>.put_ForceType`
+    **f.ForceType = 1（属性赋值）             ✓ 唯一可行**
+⇒ 这是 AGENTS.md 已知事实 4 的**对偶面**：读用 `get_com_member`，**写要属性赋值**。
+新增 `sw_connect.set_com_member()`，并在源码里与该事实互相引用。
+
+另：`apply_normal_force` 的力类型**必须是 `swsForceTypeNormal = 1`** ——
+实测类型 0/2/3 都返回 None、只有 1 成功（常量表本来就写对，是原代码路径没走通）。
+
+## 验证（真机，SW 2026 SP4.1 / 34.4.1）
+    目标+质量约束 ✓ 复用自带=True
+    ✓ 夹具建成 True
+    ✓ 载荷建成 True
+    **LoadsAndRestraintsManager.Count = 2**   ← 两者都真的建上了
+契约测试 `test_sw_simulation_signature_contract.py` / `test_sw_topology_contract.py` 全绿
+全量回归 6 failed / 749 passed / 15 skipped（与基线逐条相同）
+门禁 check_union_conventions / check_provenance / check_member_names 全 PASS
+compileall -W error::SyntaxWarning exit 0
+
+## 测试桩同步
+两个测试文件的 `sw_connect` 桩补上 `safe_get_com_member` / `set_com_member`
+（否则被测模块 import 就失败 —— 单独跑绿、全量跑红的老问题，本轮又撞一次）。

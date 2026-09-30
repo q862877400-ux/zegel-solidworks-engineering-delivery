@@ -46,31 +46,28 @@
 ## 一 · 游标（**唯一必须维护的字段**）
 
 ```
-当前阶段:  P1（P0 已完成；P2 已打通「目标 + 质量约束」链）
-状态:      ✅ P0 · 🟢 P2 打通目标与质量约束；整链仍未通（网格/求解/看结果）
-下一步:    P1 —— 「看结果」三件事。入口已定：`ICWStudy.get_Results()` → `ICWResults`
-           （107 个成员）；建图用 `CreatePlot(Int32 类型, Int32, Int32, Boolean, Int32&)`；
-           读数用 `GetMinMax*` 一族与 `GetTimeOrFrequencyAtEachStep`（疑似收敛数据）。
-           ⚠ `SmoothedMesh` / `MaterialMass` 在反射里**零命中** ⇒ Export Smoothed Mesh
-           大概率要按铁律 5 写「查不到」；Material Mass 可能对应某个 CreatePlot 类型值。
+当前阶段:  P1（用 Spec Kit 全路径跑 —— specs/001-topology-result-readout/）
+状态:      ✅ P0 · 🟢 P2 **夹具/载荷链首次真机跑通**；P1 用 Spec Kit 在做
+下一步:    P1 的 T-002 —— 跑通一次完整优化拿到结果（材料 + 正网格尺寸已补，见下）
+           然后做 P1 的核心判定：在**有结果的** ICWResults 上试探「看结果」三个入口
 阻塞:      无
 
 最近三次交接:
-  2026-10-01  cb91c58/d90fa10  拓扑质量约束失败**根因定位并修掉**：`CreateGoal(0/1)`
-                              **自带一个质量约束**，而 `CreateMassConstraint` 不查重
-                              ⇒ 「目标 + 再建」= 两个 ⇒ EndEdit 错误码 7
-                              （= `swsTopoErrCode_OnlyOneMassConstraintCanBeDefined`，
-                              真源 `enum_cosworks.txt` 的 `swsTopologyStudyError_e`）。
-                              正解是「取目标自带的那个直接改参数」⇒ 连续三次全部成功。
-  2026-10-01  1024436/7d75619  拓扑约束失败的初步定位（两个真因）+ 修掉
-                              `list_topology_constraints_and_controls` 的**假通过**
-  2026-10-01  e587a0f/b25dc64  P0 完成 + 修一族潜伏缺陷：Int32& 出参传裸值必抛类型不匹配
-                              （全项目 18 处）；真机裁决唯一可用形态 VARIANT(VT_BYREF|VT_I4, 0)
+  2026-10-01  dacf975        **夹具/载荷链首次真机跑通**（Count = 2）。两个真因：
+                           ① `DispArray`（第 2 参）必须是 `GetSelectedObject6(i,-1)` 的
+                              **对象列表** —— 传 None 不抛异常但返回 None（静默失败之源）
+                           ② 写 COM 成员**只能用属性赋值**（`set_` / `put_` 都取不到）
+                              ⇒ 新增 `sw_connect.set_com_member()`，与已知事实 4 成对
+  2026-10-01  cb91c58/d90fa10  拓扑质量约束失败根因：`CreateGoal(0/1)` **自带一个质量约束**，
+                              而 `CreateMassConstraint` 不查重 ⇒ 两个 ⇒ EndEdit=7
+                              （`swsTopoErrCode_OnlyOneMassConstraintCanBeDefined`）
+  2026-10-01  e587a0f/b25dc64  P0 完成 + 修一族潜伏缺陷：`Int32&` 出参传裸值必抛类型不匹配
+                              （全项目 18 处）；正确形态 `VARIANT(VT_BYREF|VT_I4, 0)`
 
-⚠ 一条我犯过并更正的错（教训写在这里，避免重犯）：
-   我曾把「错误码 7 的语义」判为**查不到**，实际它就在手边的
-   `D:\AI\SW\_raw\topo-reflect\enum_cosworks.txt`（3113 行 / 363 枚举）里。
-   ⇒ **「查不到」之前必须先搜手边已有的结构化转储**，并列出搜过哪些源。
+⚠ **本轮靠「错误码 → 查枚举 → 修」循环推进，六步全部定位到根因**：
+   出参形态 → 约束重复 → 选区数组 → 属性写形态 → 网格尺寸为正 → 赋材料。
+   全部真源在 `D:\AI\SW\_raw\topo-reflect\enum_cosworks.txt`（3113 行 / 363 枚举）。
+   ⇒ **教训（已犯过一次）：「查不到」之前必须先搜手边已有的结构化转储。**
 ```
 
 ## 一·B 本轮新增的**关键事实**（写代码直接用，别重新推导）
