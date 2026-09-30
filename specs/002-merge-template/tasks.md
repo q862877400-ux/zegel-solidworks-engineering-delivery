@@ -1,87 +1,107 @@
-# Tasks: P3 · 并入模板定型（焊件域）
+# Tasks: P3 · 并入模板定型（**改判据版**）
 
-**Input**: [spec.md](spec.md) · [plan.md](plan.md)
+**Input**: [spec.md](spec.md)（已修订）· [plan.md](plan.md)
 
-**格式**：`[ID] [P?] [Story] 描述` —— 每个任务必须带 `→ 验收:`
+**格式**：`[ID] [P?] [Story] 描述` —— 每个任务带 `→ 验收:`
 
-**⚠ 本特性的模板价值 > 焊件本身**：后面 15 个域都会照它做。所以宁可少搬几个函数，
-也要把六条规则与来源头注释的**形状**定准。
-
----
-
-## Phase 1: Setup
-
-- [x] **T-001** 逐成员核反射，定出官方签名表（**已完成**，见 spec 的背景表）
-  `→ 验收:` `Select-String iface_sldworks.txt -Pattern 'InsertStructuralWeldment\('` 有命中，
-  而 `InsertStructuralMember3` **无**命中
+**⚠ 本特性的第一版前提是错的**（见 spec 的修订说明）：原以为焊件是缺口，
+实际本仓库早有 `sw_weldment.py` 且 `weldments` 是 `verified`。
+**⇒ 任务表随之重排：先修判据，再并入真缺口。**
 
 ---
 
-## Phase 2: Foundational
+## Phase 1: Setup —— 修判据（**阻塞全部后续**）
 
-- [x] **T-002** 确认四个目标域在来源里的实际实现清单（**已完成**）
-  焊件 6 / 模具 1 / 参考几何 5 / 仿真 3（用 `async def sw_*` 全量抽取，不靠关键词猜）
-  `→ 验收:` `Select-String server.py -Pattern '^\s*async def sw_\w+\(' | Measure-Object` 得 187
+- [x] **T-001** 核实「焊件是缺口」这个前提
+  **✅ 已证伪** —— `scripts/sw_weldment.py`（666 行 / 20 函数）；
+  `capabilities.yaml` 的 `weldments` = **verified**（`verified_versions: ["2026"]`，
+  真机验过 `InsertStructuralWeldment5` 等）
+  `→ 验收:` `Select-String capabilities.yaml -Pattern '"id": "weldments"' -Context 0,3` 显示 verified
 
-- [ ] **T-003** 记录来源缺陷（可复核）
-  新增 `D:\AI\SW\_raw\source-defects\Eduardof0nt.md`：逐条「来源写的 / 官方真名 / 核对命令」
-  `→ 验收:` 该文件含 ≥4 条记录，每条都能用给出的命令重跑复核
+- [x] **T-002** 定位根因：地图的「本仓库」列怎么算的
+  **✅** `tools/build_union_map.py` 的 `_our_tools()` 只数 `mcp-server/server.py` 的工具名
+  `→ 验收:` `Select-String tools\build_union_map.py -Pattern 'def _our_tools' -Context 0,3`
 
----
+- [x] **T-003** 建立**能力口径**的对照（两个口径并存、各自标注）
+  **✅** 新增 `D:\AI\SW\capability_gap.py`
+  `→ 验收:` `python D:\AI\SW\capability_gap.py` 输出逐域表，
+  且焊件行显示「我们函数 14」而地图缺口 5
+  ```powershell
+  python D:\AI\SW\capability_gap.py    # 72 模块 / 814 函数；焊件 14 / 模具 1
+  ```
 
-## Phase 3: User Story 1 —— 焊件域按官方签名实现（P1，MVP）
+- [x] **T-004** 更新记忆与文档（判据更正要留痕）
+  **✅** 长期记忆已提交 Correction；`ROADMAP.md` §一 新增「重大调整」段、§五 新增 3 条反模式
+  `→ 验收:` `Select-String docs\ROADMAP.md -Pattern '口径不清的数字'` 有命中
 
-- [ ] **T-004** [US1] 写 `scripts\sw_weldment.py`
-  - 走项目既有模式：双路 import / `get_com_member` / `_select_by_id`（若需选区）
-  - 六个公开函数，**名字与签名一律照反射**：
-    | 函数 | 官方成员 | 官方签名 |
-    |---|---|---|
-    | `insert_weldment_feature` | `InsertWeldmentFeature` | `Feature InsertWeldmentFeature()` |
-    | `add_structural_member` | `InsertStructuralWeldment` | `Feature InsertStructuralWeldment(String, Int32, Double)` |
-    | `add_gusset` | `InsertGussetFeature` | `Feature InsertGussetFeature(Double, Int16, Int16, Boolean, Double, Double, Double, Double, Double, Boolean, Double, Int32, Boolean, Boolean, Boolean)` |
-    | `add_end_cap` | `InsertEndCapFeature` | `Feature InsertEndCapFeature(Double, Boolean, Boolean, Double, Double, Double)` |
-    | `trim_weldment` | `InsertWeldmentTrimFeature2` | `Feature InsertWeldmentTrimFeature2(Int32, Int32, Double, Object, Object)` |
-    | `set_weldment_profile_path` | `set_WeldmentProfilePath` | `Void set_WeldmentProfilePath(String)` |
-  - 每个函数带**来源头注释**：来源 repo/文件/许可 + **更正说明**（原名字是什么、为何按反射改）
-  `→ 验收:` `python scripts\check_member_names.py` exit 0；`compileall -W error::SyntaxWarning` exit 0
-
-- [ ] **T-005** [US1] 建特征后查重建（并入规则 6：不静默成功）
-  `EditRebuild3` + `GetWhatsWrong2`
-  `→ 验收:` 源码里每个建特征函数都调到这两个
+**Checkpoint**：判据已改 ✅ —— 可以开始并入真缺口
 
 ---
 
-## Phase 4: User Story 2 —— 每处并入可追溯（P2）
+## Phase 2: User Story 1 —— 找出**真的**缺的域（P1）
 
-- [ ] **T-006** [US2] 契约测试 `tests\test_sw_weldment_contract.py`
-  断言每个函数的**官方 arity 与参数类型**（照 `test_sw_topology_contract.py` 的形状）
-  `→ 验收:` `python -m pytest tests\test_sw_weldment_contract.py -q` 全绿，用例数 ≥ 5
+- [x] **T-005** [US1] 按能力口径排序各域，选出模板域
+  **✅** 模具：地图缺口 3、本仓库仅 1 个函数（且那 1 个是 `core_only` 误分类）
+  ⇒ 满足 US2 的三条件：① 本仓库≈0 ② 有来源 ③ 最小
+  `→ 验收:` `capability_gap.py` 的模具行「我们函数 1」
 
-- [ ] **T-007** [US2] `capabilities.yaml` 登记焊件域条目
-  `provenance` 四字段齐全；`level` = `stitched`；`limitations` 写明「来源未声明验证 + 未实测」
-  `→ 验收:` `check_union_conventions.py` exit 0（它的 R6/R9/R10 校验 provenance）
+- [x] **T-006** [US1] 核实来源在该域的实现，并**逐成员核反射**
+  **✅ 来源 2/2 个方法名都是错的**：`InsertPartingLines` → 官方 `InsertMoldPartingLine(Boolean)`；
+  `InsertShutOffSurfaces` → 官方 `InsertMoldShutOffSurface()`
+  `→ 验收:` 见 T-007 的记录文件
+
+- [x] **T-007** [US1] 记录来源缺陷（可复核）
+  **✅** `D:\AI\SW\_raw\source-defects\Eduardof0nt.md` —— 7 条记录 + 逐条可重跑命令
+  `→ 验收:` 该文件含「焊件 4/5 错 · 模具 2/2 错」与三组复核命令
 
 ---
 
-## Phase 5: User Story 3 —— 来源缺陷被记录（P3）
+## Phase 3: User Story 2 —— 并入模板域（P2）
 
-- [ ] **T-008** [US3] 来源头注释里逐处写明「原名字 → 官方名字」
-  `→ 验收:` `grep -c "官方真名\|按反射更正" scripts\sw_weldment.py` ≥ 4
+- [x] **T-008** [US2] 写 `scripts/sw_mold.py`（**签名全照反射**）
+  七个入口：`insert_parting_line` / `insert_parting_surface` / `insert_shut_off_surface` /
+  `insert_core_cavity_solids` / `mold_draft_analysis` / `mold_undercut_detect` / `mold_evidence`
+  `→ 验收:` `python scripts\check_member_names.py` **[PASS]**（614 个调用点全部命中官方反射）
+
+- [x] **T-009** [US2] 契约测试 `tests/test_sw_mold_contract.py`
+  **✅ 9 passed**，含一条**反自证锚点**：断言来源的错名不得作为成员名出现在本模块
+  `→ 验收:` `python -m pytest tests\test_sw_mold_contract.py -q` → 9 passed
+
+- [x] **T-010** [US2] `capabilities.yaml` 更新 `mold_tools` 条目
+  补上「生成侧」；`provenance` 为**数组**（门禁要求）；`level` **维持 `stitched`**（未实测）
+  `→ 验收:` `python scripts\check_union_conventions.py` exit 0
 
 ---
 
-## Phase 6: Polish（**本特性会改变许可义务，别漏**）
+## Phase 4: User Story 3 —— 厘清「已有能力 → MCP 工具」（P3）
 
-- [ ] **T-009** 更新 `THIRD-PARTY-NOTICES.md`
-  Eduardof0nt 从「已评估但尚未并入」**迁到「实际包含」**，写明改动文件
-  `→ 验收:` 该文件里 Eduardof0nt 出现在 §一（实际包含）且含 `Copyright (c) 2026 Eduardo Font Cruz`
+- [ ] **T-011** [US3] 评估把既有函数暴露成 MCP 工具的路径与代价
+  （已知事实 25：`mcp-server/server.py` 只引用 25 个模块，我们后补的 58+ 个一个都没进）
+  **产出**：一份具体评估（改哪个文件、有无门禁约束、最小示例）
+  `→ 验收:` 给出「改哪个文件 + 最小可跑示例 + 代价估计」三段
 
-- [ ] **T-010** 更新 `docs\union-coverage-matrix.md` 的焊件节（标为已并入）+ 重新生成地图
-  `→ 验收:` `python tools\build_union_map.py` 后焊件节的「本仓库」列 > 0
+---
 
-- [ ] **T-011** 五项门禁 + 全量回归
-  `→ 验收:` `check_member_names` / `check_provenance` / `check_diff_markers` /
-  `check_union_conventions` 全 exit 0；回归 6 failed / 749 passed / 15 skipped（与基线逐条相同）
+## Phase 5: Polish
 
-- [ ] **T-012** 两仓库各自 commit；回写 `ROADMAP.md` 游标 + 调整记录
+- [x] **T-012** 更新 `THIRD-PARTY-NOTICES.md`
+  Eduardof0nt 从「已评估但尚未并入」**迁到「部分并入」**，写明「**代码未移植、只引用思路**」
+  与改动文件名录（MIT 版权声明已留）
+  `→ 验收:` 该文件 §一 有 Eduardof0nt 一节；§二 表格该行改为「部分并入」
+
+- [x] **T-013** 五项门禁 + 全量回归
+  **✅** 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0；
+  回归 **6 failed / 758 passed / 15 skipped**（749→758 即新增的 9 条；失败列表与基线逐条相同）
+  `→ 验收:` 上述命令的实际输出
+
+- [x] **T-014** 两仓库 commit + 回写 ROADMAP 游标与调整记录
+  **✅** 代码副本 `4b2e71d`；工作区 `d89f558`
   `→ 验收:` 两个 `git status --porcelain` 都为空
+
+---
+
+## 未完成 / 已改写（如实记）
+
+- **T-011** 未做（US3 属评估类，本轮优先把 US1+US2 做实）
+- **原第一版的「焊件并入」任务全部作废** —— 前提错，见 spec 修订说明
+- **模具域未做实测** ⇒ `level` 维持 `stitched`（不升 `verified`）
