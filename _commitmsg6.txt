@@ -1,0 +1,67 @@
+docs(usage-guide): 补上「使用指南」这一半 —— 官方示例索引 2,839 个
+
+用户指出我只做了接口清单、没做使用指南。属实：
+  C:\swapi\examples 的 2,839 个官方示例、CHM 的 2,742 个 Example 页,
+  **本项目此前一次都没用过** —— AGENTS.md §四 4.1 明写
+  「★ Example 页比方法页有用 10 倍」, 而我只走了 member/type/enum/find/domain。
+
+## 新增 docs/usage-guide.md（513 行）
+按域给出「官方示例清单 + 关键成员 + 本仓库对应模块 + 该域的前置步骤」。
+与 capability-matrix.md 的分工已在文首写明:
+  capability-matrix.md = 有哪些成员、参数什么顺序(接口清单)
+  usage-guide.md       = 这件事官方怎么用(使用指南)
+
+## 归类方法（三次迭代才对）
+1) 按文件名关键词 -> 2,839 个里 866 个(30%)落进未分类
+2) 按示例里的类型声明 -> 几乎每个示例都只声明 swApp/swModel 样板类型,
+   1,188/2,839 全被判成「应用与会话」
+3) 剔除样板类型 -> 反过来 2,808/2,829 落进未分类
+   ⇒ 真正稳定的信号是**成员调用**: FeatureExtrusion3 -> 零件特征、
+     CreateDrawViewFromModelView3 -> 工程图、AddRestraint -> 仿真
+最终: 反射清单(20,627 成员 + 宿主接口)建 member -> interface -> 域 的反查表,
+按「该域被该示例调用的成员数」加权做**多标签**归类(一个示例天然横跨多域)。
+
+## 域覆盖(强相关示例数)
+  应用与会话 2368 · 零件特征 971 · 装配 915 · 工程图 902 · 草图 951
+  几何与拓扑 778 · 曲面 529 · 焊件 460 · 钣金 434 · 孔与螺纹 391
+  配置材料 382 · 质量属性导出 14
+  **仿真(需许可证) 0** · **路由/Composer/PDM 0**
+
+⚠ 后两个 0 本身就是重要结论: 不是没写指南, 是**官方在这个域就没给示例**
+  (示例集只覆盖 sldworks 等 12 个程序集, cosworks / SWRoutingLib /
+   sldcostingapi 都不在收录范围)。与 capability-matrix 记录的
+   「两套官方源同时失效」同根。
+
+## 读示例直接改掉的两处实现
+
+1) create_swept_flange 属性装配与官方不符
+   官方 Create_Swept_Flange_Example_VBNET 第 37-88 行:
+     InsertSheetMetalBaseFlange2 -> 选轮廓 -> 选路径 -> CreateDefinition
+     -> 设 14 个属性 -> CreateFeature
+   · **官方根本不设 Thickness**(走 UseMaterialSheetMetalParameters 从基体法兰继承)
+     我初版设了 => 删掉, 改为 thickness=None 表示继承
+   · 我漏了 7 个属性 => 补 FlangePosition / FlattenAlongPath /
+     TrimSideBends / UseDefaultBendRelief / UseGaugeTable /
+     UseMaterialSheetMetalParameters / OverrideDefaultSheetMetalParameters
+   · 我多设了 ReliefRatio => 删(官方走 UseDefaultBendRelief=True)
+   · 官方这条路径**不**调 AccessSelections/ReleaseSelectionAccess => 我也不调
+   · 新增 SWS_SWEPT_FLANGE_POSITIONS 枚举(1/2/3, 取自 swSweptFlangePositionTypes_e)
+   · start_offset 的下界从 >0 放宽到 >=0(官方示例里 StartOffset=0)
+
+2) sw_surface.py 的路线表述过于绝对, 已更正
+   读 Create_Radiate_Surface / Create_Planar_Surface_Feature /
+   Create_Trimmed_Surface_Feature / Access_Selections 四个官方示例后发现:
+   曲面域有**两条互补路线**
+     路线 A 脚本造几何曲面  = IModeler.Create*Surface (本模块实现)
+     路线 B 界面创建+脚本参数化 = GetDefinition() + AccessSelections
+   Radiate/Planar/Extend/Knit/Fill **没有脚本创建入口**(官方一律界面建好
+   脚本再 GetDefinition 取回)。唯一例外是 IFeatureManager.PostTrimSurface(Boolean)
+   —— 扫 263 个方法, 曲面类 Post* 只有这一个。
+   ⇒ 早前「无接口返回 ISurface*FeatureData ⇒ 不是创建入口」结论对,
+     但由此推断「官方不用它们」是错的, 已在 sw_surface.py 与使用指南中更正。
+
+## 验证
+  来源门禁 50 块 / 0 违规
+  compileall 通过
+  全量测试 521 passed / 2 failed(均为既有)
+  A6 禁词 0 命中

@@ -1,0 +1,44 @@
+fix(drawing): 全仓「查不到」清零 —— 修 1 处错名，删 1 个两套源都查不到的成员
+
+## 修的 1 处：`GetScaleDecimal` → `ScaleDecimal`
+`sw_drawing_view.get_scale_decimal` 调的是 `GetScaleDecimal`，
+该成员在 **`IView` 上不存在**。反射实测的真实成员是 `ScaleDecimal`
+（零参属性），与同族 `ScaleRatio` / `UseSheetScale` / `UseParentScale` 同形。
+
+## 删的 1 个：`IView.OrientToward`
+初稿的 `get_orient_toward` 调 `IView.OrientToward(Object, Double, Double)`。
+按**铁律 4 查两套官方源**：
+
+| 源 | 结果 |
+|---|---|
+| 对 sldworks.dll 的纯元数据反射 | **全程序集无此成员名** |
+| CHM 全文检索 `OrientToward` | **无结果** |
+
+⇒ 按**铁律 5「查不到就写查不到并停」**，**删除该封装**，不拿相似名字蒙混。
+源码里写明「为什么不做」，并列出 `IView` 上真实的定向相关成员
+（`ScaleDecimal` / `ScaleRatio` / `GetOrientationName` / `GetMirrorViewOrientation` …）。
+
+⚠ **「把视图转向另一个视图」这个能力，本机两套官方源都查不到对应成员名** ——
+本轮标为**查不到**，不编。这是 A7「仍然空缺」里新增的一条。
+
+## 测试锁住这个决定
+`test_orient_toward_is_removed_because_it_cannot_be_found` ——
+断言该函数**不存在**、源码里**不出现** `"OrientToward"`、且**写明「查不到」**。
+防止以后有人再加回来。
+
+## 全仓 A3 终态（修正后口径，6 份反射源）
+    通过 673 / 存疑 31 / 查不到 0
+
+「查不到」从本轮开始的 145 → **0**。
+
+**存疑 31** 全部在上游模块，且其中一部分是「by-ref 槽位两种口径」问题
+（如 `sw_connect.py:456 LoadFile4()` 故意多传一个 `[out] long` 占位，
+AGENTS.md §六 事实 11 有记）⇒ **要定口径才能逐个核，不能一刀切改**。
+这 31 条**不在本任务新增的代码里**，修它们要动上游行为 ⇒ 显式留作待办。
+
+## 验证
+- `sw_drawing_view`：通过 11 / **存疑 0 / 查不到 0**
+- tests/test_sw_drawing_view_contract.py **15/15**（含新增的「锁住删除」断言）
+- 全量测试 **838 passed / 2 failed**（2 个为上游既有）
+- 三门禁全绿：diff 记号 PASS(228 文件) / 来源门禁 290 块 0 违规 / release_check 已接
+- A6 我的新增行 0 命中

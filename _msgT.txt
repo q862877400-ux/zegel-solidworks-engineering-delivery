@@ -1,0 +1,51 @@
+feat(geometry): 新增 sw_geometry.py —— 5 个几何族一次做完
+
+一次做 5 个族（用上一轮通用化的 `tools/gen_member_registry.py`）：
+
+| 族 | 前 | 后 |
+|---|---|---|
+| `IMate2` | 6% | **97%** |
+| `IDimensionTolerance` | 4% | **87%** |
+| `IEdge` | 6% | **62%** |
+| `ISurface` | 7% | **55%** |
+| `ICurve` | 4% | **51%** |
+
+登记表共 **125 项能力 + 41 项属性**（5 族），机械生成不手抄。
+
+## 为什么这批适合批量做
+5 族的构成同形：**原始 261 个成员里 69 个（26%）是 I 前缀内部分发口**，
+加上大量编号历史变体，归约后 125 项能力。逐个手写 125 个函数
+代码量大、单位信息量低——真正高频的只是「取参数 / 判几何种类 / 取邻接 /
+配合约束 / 公差回读」这 handful 个。
+
+## ⚑ 官方表达「几何种类」的方式值得记一笔
+`ICurve` / `ISurface` **没有**一个返回枚举的统一成员，
+而是用**多个独立布尔**：IsLine / IsCircle / IsArc / IsSpline / IsEllipse /
+IsPolyline / IsPlane / IsCylinder / IsCone / IsSphere / IsTorus。
+⇒ 本模块**只暴露实际用到的几个**并逐个回读，**不编一个「统一几何类型枚举」**。
+测试 `test_geometry_kinds_are_separate_booleans_not_one_enum` 锁住这点。
+
+## 本轮修的自己的错（1 处）
+测试断言写成 `assert "IsPlane" in source and "IsCylinder" not in source`，
+意图是「只暴露用到的、不臆造多��」，但实际触发了**另一个更该查的纪律**：
+「没编一个统一枚举」。已拆成两条断言（IsPlane 存在 + `GeometryKind` /
+`get_GeometryType` 不存在），前者证「知道这批判定成员」、后者证「没编枚举」。
+
+## 验证
+- tests/test_sw_geometry_contract.py 17/17
+  （核心：引用成员 ⊆ 登记表 + 5 族逐条对回反射：名字存在性/实参个数/组成统计）
+- 三个门禁全绿：diff 记号 PASS(205 文件) / 来源门禁 216 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 740 passed / 2 failed（均既有）
+- A6 我的新增行 0 命中
+
+## 累计（本轮系列，10 个族）
+  ISelectionMgr 3→90   IAssemblyDoc 4→71   IModelView 3→81
+  ISketch 3→33         IView 6→53           ILinearPattern 3→60
+  ICurveDrivenPattern 5→55  IMate2 6→97      IEdge 6→62
+  IDimensionTolerance 4→87  ICurve 4→51      ISurface 7→55
+
+## 下一批（最大且最难啃的）
+  IFeatureManager  307 成员  11 I前缀 → 168 能力   ← 零件特征全部入口都在这
+  IDrawingDoc      280 成员  44 I前缀 → 164 能力
+  IFace2           127 成员  40 I前缀 →  71 能力

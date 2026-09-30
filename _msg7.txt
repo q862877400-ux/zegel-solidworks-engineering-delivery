@@ -1,0 +1,37 @@
+feat(release-check): 把来源门禁接入发布前检查 —— 铁律 1 从「手动跑过」变「仓库永久强制」
+
+## 为什么做这个
+铁律 1「每加一个能力必须能指认出处」如果只靠我手动跑一次门禁，
+必然随时间衰减。接进 release_check 才成为仓库自身的约束。
+
+## release_check.py 的两处扩展
+1) **必需文件清单**补上本任务的 17 个文件（4 份早期文档 + usage-guide /
+   api-map / family-coverage / provenance-index + 4 个新模块 + 2 个门禁工具
+   + 3 份契约测试），防被静默丢弃。
+2) **新增来源可追溯性阶段**：_run_provenance_gate() 调 check_provenance.py，
+   status=pass 放行 / fail 抛错 / skipped 显式写进结果（不静默放行）。
+   锚点取环境变量 PROVENANCE_ANCHOR，默认 origin/main。
+   ⚑ 放在 bundled-skill 检查**之前**：本工作副本的 bundled-skill 检查是
+   「既有失败」（上游基线同样失败），放后面会被它先抛的异常挡住，
+   **一个跑不到的门禁等于没有门禁**。
+
+## ⚠ 一个被实测推翻的前提（已写进代码与 SKILL.md，勿改成严格版）
+我原以为 A6 禁词可以做成全仓严格检查、顺手挂进发布门禁。
+实测**不成立**：上游基线 C:\swprojects\sw-automation-skill（8be39ac）自身在
+scripts/subskills/tests/examples/docs/references 下就有 **23 处**命中 A6 词
+（advanced_geometry_ocp.py 2 处、dfm_review.py 1 处、advanced.md 2 处…），
+capabilities.yaml 另有 37 处。全仓严格会因**上游既有内容**失败 ——
+那不是新增代码的问题。
+⇒ A6 只能作用于「相对锚点的新增/修改行」，必须靠 git diff 判断。
+⇒ 这也是 check_provenance.py 依赖 git 锚点的原因，不是设计冗余。
+
+## 验证（双向）
+- 正向: _run_provenance_gate → status=pass, anchor=origin/main
+- 负向: 往 sw_surface.py 注入一段无出处函数 → status=fail 并带出
+        具体 file:line 与修法；恢复后 → pass
+- 端到端 run_release_check:
+  · 正常时 provenance 先过，落到上游既有的 bundled-skill 失败
+  · 注入违规时 **provenance 先报**（顺序生效）
+- 来源门禁 82 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 521 passed / 2 failed（均为既有，与上轮相同）

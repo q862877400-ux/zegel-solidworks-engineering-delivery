@@ -1,0 +1,53 @@
+feat(weldment): 补齐 4 个此前未触及的焊件接口族（焊件域 10/14 -> 14/14）
+
+docs/family-coverage.md 量出焊件域 10/14，未触及的 4 个族是**具体能力**而非
+「入口查不到」，故本轮补齐：
+  IStructureSystemMemberProfile(17) 型材定义
+  IStructureSystemSplitMember(8)     构件分割
+  IProfileCenterMateFeatureData(5)   型材中心配合
+  ICutListSortOptions(3)             下料表排序选项
+
+## 新增（scripts/sw_weldment.py）
+- SW_FM_PROFILE_FEATURE=65 / SW_FM_WELD_MEMBER_FEAT=72 / SW_FM_MATE_PROFILE_CENTER=101
+  （由 swconst 反射取得；C:\swapi\enums\swFeatureNameID_e.md 只有名称列无数值列，
+   故不以该文件为取值依据）
+- _create_from_definition: 与 sw_sheet_metal 同构的共用骨架
+- configure_member_profile: 事后调整型材定义（ProfileStandard/Type/Size、镜像、
+  对齐类型与角度、穿刺点偏移）
+- create_profile_center_mate: CreateDefinition(swFmMateProfileCenter=101)
+  + EntitiesToMate / MateAlignment / OffsetDistance / FlipDimension / LockRotation
+- configure_split_member: SetSplitReferences / SplitLength /
+  NumberofSplitInstances / SplitLengthRevDirection / DimensionType / MemberType
+- create_cut_list: InsertWeldmentCutList2(Object SortOptions) + CollectIdenticalBodies
+- create_sub_weld_folder: InsertSubWeldFolder2(Object Folder)
+
+## ⚑ 写这批时被自己的工具抓出一个错误实现（已删除）
+我曾写 create_weld_member：用 CreateDefinition(swFmWeldMemberFeat=72) 拿
+FeatureData 后赋值 data.MemberProfile。**赋不进去** ——
+IStructureSystemMemberFeatureData 只有 get_MemberProfile()、**没有 setter**
+（该接口的 setter 仅 IsSplit / StartEndExtendD1 / StartEndExtendD2）。
+由 audit_call_arity.py 报「同名成员存在但 arity 全对不上」当场抓出。
+
+顺带查明两件事并写进注释:
+1. 构件创建的真实入口是 InsertStructuralWeldment5
+   (String Path, Int32, Boolean, Object Groups, String)，**型材按路径字符串给**，
+   而不是 FeatureData 对象
+2. **上游 create_weldment_members 已经在正确使用它**（本文件既有代码），
+   所以那个 create_weld_member 既错又多余 —— 已整段删除，
+   configure_member_profile 改为「事后调整」语义
+
+SW_FM_PROFILE_FEATURE 与 SW_FM_WELD_MEMBER_FEAT 现无人使用，
+已在来源块里说明为什么保留（记录「官方枚举里确有这两个 fm 条目」这一事实，
+我正是据 swFmWeldMemberFeat 误写出了不成立的入口）。
+
+## 顺带修正我自己的错误断言
+文件里原写「现有 sw_weldment.py 走的是 InsertWeldmentFeature 旧路径」——**不准确**：
+上游同时有 InsertWeldmentFeature（另一函数）与 InsertStructuralWeldment5。
+已在段落注释里更正。
+
+## 验证
+- 焊件域接口族触及率 10/14 -> **14/14**（family-coverage 重新生成确认）
+- sw_weldment arity 审计 71/71 全清，0 存疑（修正前有 1 处存疑，即上述 bug）
+- 来源门禁 61 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 521 passed / 2 failed（均为既有）

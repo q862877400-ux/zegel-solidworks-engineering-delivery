@@ -1,0 +1,25 @@
+feat(sheet-metal): 补齐扫掠法兰 + 记录设计表「查不到」结论
+
+新增:
+- SweptFlangeSpec (thickness/start_offset/end_offset/bend_radius/
+  relief_ratio/use_default_radius, 含 validate)
+- create_swept_flange(model, path_ref, profile_ref, spec)
+  官方签名对照 C:\swapi\types\ISweptFlangeFeatureData\ (32 成员):
+  Thickness / StartOffset / EndOffset / UseDefaultRadius / BendRadius /
+  UseReliefRatio / ReliefRatio / Path / Profile —— 逐个取自成员目录, 未臆造。
+  该接口无 Initialize 成员(sw_know 报 [SWK_NOT_FOUND]), 故只设属性。
+  path_ref / profile_ref 为 None 时跳过 Path/Profile 赋值。
+
+G11 设计表「查不到」的查证过程(记录在 gap-analysis.md):
+  IDesignTable 类型在 C:\swapi 有 40 个成员页, 看着完整 —— 但接口名不等于入口:
+  ① interop DLL 反射扫全部 1032 个接口 -> 无任何接口声明返回 IDesignTable
+  ② CHM sldworksapi 册 -> 只有 IDesignTable 自己的 4 个页,
+     无任何接口的 ~GetDesignTable 页; 仅见 DPartDocEvents_OpenDesignTableNotify
+     一类**事件**页
+  ⇒ 官方只把设计表暴露成文档级事件, 没有脚本创建入口。
+  按铁律 5 不提供任何设计表封装。
+  (与域 7 曲面同一条教训: 接口叫什么不重要, 谁返回它才决定它是不是入口)
+
+验证: 来源门禁 47 块 / 0 违规; compileall 通过;
+      非法参数(start_offset=0 / thickness=0 / relief_ratio=0)均被拒绝;
+      合法参数通过; 全量测试 521 passed / 2 failed(均为既有, 已在上游基线确认)。

@@ -1,0 +1,49 @@
+feat(appearance): 新增 sw_render_material.py —— 现代外观路线（补最大未触及族 103 成员）
+
+docs/family-coverage.md 量出 IRenderMaterial(103) 是**最大的单个未触及族**。
+核实后确认是**真缺口**而非统计假象：scripts/sw_appearance.py 走的是
+**旧式 MaterialPropertyValues** 路线（颜色/环境光/高光的裸值数组），
+完全没碰 IRenderMaterial 对象模型。
+
+## 新增 scripts/sw_render_material.py（现代路线）
+官方调用序列（全部经 sldworks.dll 纯元数据反射核对）:
+  1) ext   = model.Extension                                    ← 属性
+  2) mat   = ext.CreateRenderMaterial(String Name)              ← 1 参
+  3) 设 mat 的 Double 属性（Ambient/Diffuse/Specular/Roughness/
+     Transparency/Emission）
+  4) ext.AddRenderMaterial(mat, Int32& Count)                   ← 2 参
+  5) ext.UpdateRenderMaterialsInSceneGraph(Boolean)             ← 刷新场景图
+
+函数: get_extension / create_render_material / add_render_material /
+      refresh_scene_graph / list_render_materials / delete_render_material /
+      apply_visual_properties / collect_appearance_evidence
+数据类: RenderMaterialSpec（冻结 dataclass + validate，沿用 BaseFlangeSpec 形状）
+预设表: RENDER_MATERIAL_PRESETS（matte / glossy / metallic）
+
+顺带覆盖 IMaterialVisualPropertiesData(8 成员) —— 通过 apply_visual_properties，
+该域因此从 6/8 升到 7/8。
+
+## ⚑ 又一次被自己的工具抓出「凭记忆写 API」
+本模块初稿把镜面锐度属性写成 **Shininess** —— 这是我凭对 SolidWorks 外观
+API 的印象写的。`audit_call_arity.py` 报「Shininess 查不到」，查反射清单确认
+**该成员在官方 API 中根本不存在**。反射确认的 Double 属性只有 7 个:
+  Ambient / Brightness / Diffuse / Emission / Roughness / Specular / Transparency
+镜面锐度对应的是 **Roughness**。已改，并在代码与来源块里记下这次更正。
+⇒ 这是本项目「不凭记忆写 API」纪律的第 3 次实证
+  （前两次: RunAnalysis 零参被当有参、COSMOSWORKS 大小写）。
+
+## 刻意不做的
+- 不做「应用回文档」的封装简化: AddRenderMaterial 末位是 Int32& 出参，
+  迟到绑定下不保证回写，故不据其判成败，只透传返回值
+- UpdateRenderMaterialsInSceneGraph 的 Boolean 语义两套官方源都未说明，
+  默认传 True 并在来源块标注为待确认
+- GetMaterial(Int32, String) 两个参数的语义未查到，只透传不解释
+- RENDER_MATERIAL_PRESETS 的数值是**中性占位不是官方推荐值**，已在来源块说明
+
+## 验证
+- sw_render_material arity 19/19 通过，0 查不到（改 Shininess 前有 2 处查不到）
+- 来源门禁 67 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 521 passed / 2 failed（均为既有）
+- A6 我��新增行 0 命中
+- family-coverage 重算: 配置/材料 6/8 → 7/8

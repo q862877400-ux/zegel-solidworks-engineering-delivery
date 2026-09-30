@@ -1,0 +1,41 @@
+feat(surface): 新增 scripts/sw_surface.py 覆盖原生曲面创建（域 7）
+
+A1 里剩余最大且最实的缺口。修正了一处入口误判。
+
+**入口误判（本轮核心发现）**:
+此前把域 7 的接口族记成 ISurfaceTrimFeatureData / ISurfaceKnitFeatureData
+等 13 个 *FeatureData 接口。对 sldworks.dll 全部 1032 个接口做全量扫描后确认:
+**没有任何接口声明返回这 13 个类型**。它们是编辑既有曲面特征时由
+IFeature.GetDefinition() 取回的定义对象, 不是创建入口。
+真正的创建入口是 IModeler 上的 19 个非指针 Create*Surface 方法。
+教训: 接口叫什么不重要, 谁返回它才决定它是不是入口。
+
+**入口取得**: ISldWorks.GetModeler() -> Object (Automation 友好);
+IGetModeler() -> Modeler 指针版属进程内非托管 C++ 专用, 不收录。
+与上游 capabilities.yaml 里「默认优先同名非 I 方法」的路由设计一致。
+
+**新增**:
+- SURFACE_CREATION_METHODS: 19 个方法的官方签名表, 逐条照录
+- 14 个薄封装: 平面/圆柱/球/圆锥/圆环/偏置/拉伸/旋转/直纹/扫掠/
+  B样条/Coons/加厚
+- _invoke: 集中式参数自检, 参数个数错立刻抛带方法名的 TypeError
+- get_modeler / collect_surface_evidence
+- 默认不收录: 18 参的 Loft 与 14 参的 RuledSurfaceFromEdge 只登记不包装
+  (避免半成品); 指针版 ICreate*Surface 一律不收录
+
+**门禁新增组作用域标记**: 来源块可写「覆盖: 后续同级定义」, 覆盖到下一个
+来源块为止。用于「下列 N 个薄封装」这类成组声明 —— 逐个贴块是噪声,
+但也不能因此默认放行, 所以要求显式写出作用域。
+负向验证: 在文件尾追加无出处函数仍被拦下(组作用域不会外溢到块外)。
+
+**门禁修正**: 模块 docstring 检测现支持 r\"\"\" 等字符串前缀,
+此前只认裸 \"\"\", 导致原始字符串 docstring 整体漏判。
+
+**测试**: tests/test_sw_surface_signature_contract.py 14/14 通过, 零 pytest 依赖。
+其中 test_registered_methods_match_official_arity_exactly 是反自证锚点 ——
+初稿把 CreateRuledSurfaceFromEdge 的返回类型 Int32 误抄进参数表(15 vs 14),
+被该断言当场抓出。
+
+**验证**: 来源门禁 44 块 / 0 违规 / 退出码 0; arity 审计三模块
+(drawing 137/140、simulation 34/34、surface 1/1) 全部 0 存疑 0 查不到;
+compileall 通过; 契约测试 8/8 + 13/13 + 14/14; A6 禁词 0 命中。

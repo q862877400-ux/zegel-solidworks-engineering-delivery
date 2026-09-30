@@ -1,0 +1,118 @@
+来源门禁 · 锚点 origin/main · 受检 .py 文件 89 个（其中未跟踪 2 个）
+合规来源块 257 个
+
+[FAIL] 55 行新增代码没有可追溯的出处：
+
+  scripts/sw_toolbox_index.py:34
+      def load_index(path: Path | None = None) -> dict[str, Any]:
+  scripts/sw_toolbox_index.py:35
+          """读入索引。⚠ 文件不存在时**明说**，不返回空壳冒充成功。"""
+  scripts/sw_toolbox_index.py:36
+          p = Path(path) if path else INDEX_PATH
+  scripts/sw_toolbox_index.py:37
+          if not p.is_file():
+  scripts/sw_toolbox_index.py:38
+              raise FileNotFoundError(
+  scripts/sw_toolbox_index.py:39
+                  f"Toolbox 索引不存在：{p}\n"
+  scripts/sw_toolbox_index.py:40
+                  f"⚠ SolidWorks Toolbox 装在 D:\\SOLIDWORKS Data\\。\n"
+  scripts/sw_toolbox_index.py:41
+                  f"  若刚装 Toolbox，用 tools/build_toolbox_index.py 重建。")
+  scripts/sw_toolbox_index.py:42
+          return json.loads(p.read_text(encoding="utf-8"))
+  scripts/sw_toolbox_index.py:45
+      def list_standards(index: dict[str, Any] | None = None) -> dict[str, int]:
+  scripts/sw_toolbox_index.py:46
+          """返回 {标准名: 零件数}。"""
+  scripts/sw_toolbox_index.py:47
+          data = index if index is not None else load_index()
+  scripts/sw_toolbox_index.py:48
+          out: dict[str, int] = {}
+  scripts/sw_toolbox_index.py:49
+          for item in data["parts"]:
+  scripts/sw_toolbox_index.py:50
+              out[item["standard"]] = out.get(item["standard"], 0) + 1
+  scripts/sw_toolbox_index.py:51
+          return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+  scripts/sw_toolbox_index.py:54
+      def search(keyword: str, standard: str = "", category: str = "",
+  scripts/sw_toolbox_index.py:55
+                 index: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+  scripts/sw_toolbox_index.py:56
+          """按关键词 / 标准 / 大类查零件。**关键词只匹配零件名，不做模糊拼写纠正**。
+  scripts/sw_toolbox_index.py:58
+          返回的每条含 ``part`` / ``code`` / ``path`` / ``standard`` / ``category``。
+  scripts/sw_toolbox_index.py:59
+          ⚠ 官方命名里**不含尺寸**（尺寸是文件内配置）⇒ 按「Φ20」这种查不到，
+  scripts/sw_toolbox_index.py:60
+             要按零件名关键词（如 ``ball bearing``、``hex head``）。
+  scripts/sw_toolbox_index.py:61
+          """
+  scripts/sw_toolbox_index.py:62
+          data = index if index is not None else load_index()
+  scripts/sw_toolbox_index.py:63
+          kw = keyword.strip().lower()
+  scripts/sw_toolbox_index.py:64
+          hits = []
+  scripts/sw_toolbox_index.py:65
+          for item in data["parts"]:
+  scripts/sw_toolbox_index.py:66
+              if standard and item["standard"].lower() != standard.strip().lower():
+  scripts/sw_toolbox_index.py:67
+                  continue
+  scripts/sw_toolbox_index.py:68
+              if category and item["category"].lower() != category.strip().lower():
+  scripts/sw_toolbox_index.py:69
+                  continue
+  scripts/sw_toolbox_index.py:70
+              if kw and kw not in item["part"].lower() and kw not in item["code"].lower():
+  scripts/sw_toolbox_index.py:71
+                  continue
+  scripts/sw_toolbox_index.py:72
+              hits.append(item)
+  scripts/sw_toolbox_index.py:73
+          return hits
+  scripts/sw_toolbox_index.py:76
+      def part_path(standard: str, part_name: str,
+  scripts/sw_toolbox_index.py:77
+                    index: dict[str, Any] | None = None) -> str:
+  scripts/sw_toolbox_index.py:78
+          """取某个零件的**完整路径**（供 `IAssemblyDoc.AddComponent5` 的 File 参数用）。
+  scripts/sw_toolbox_index.py:80
+          ⚠ 查不到就抛错，**不返回猜测的路径** —— 猜出来的路径插进装配会静默失败。
+  scripts/sw_toolbox_index.py:81
+          """
+  scripts/sw_toolbox_index.py:82
+          data = index if index is not None else load_index()
+  scripts/sw_toolbox_index.py:83
+          hits = [i for i in data["parts"]
+  scripts/sw_toolbox_index.py:84
+                  if i["standard"].lower() == standard.strip().lower()
+  scripts/sw_toolbox_index.py:85
+                  and i["part"].lower() == part_name.strip().lower()]
+  scripts/sw_toolbox_index.py:86
+          if not hits:
+  scripts/sw_toolbox_index.py:87
+              near = search(part_name, standard=standard, index=data)[:5]
+  scripts/sw_toolbox_index.py:88
+              hint = ("；相近的: " + ", ".join(h["part"] for h in near)) if near else ""
+  scripts/sw_toolbox_index.py:89
+              raise KeyError(
+  scripts/sw_toolbox_index.py:90
+                  f"Toolbox 里没有 {standard} / {part_name}{hint}\n"
+  scripts/sw_toolbox_index.py:91
+                  f"⚠ 尺寸是零件文件内的配置，不在文件名里 —— "
+  scripts/sw_toolbox_index.py:92
+                  f"用 list_standards() + search() 先定位零件名。")
+  scripts/sw_toolbox_index.py:93
+          if len(hits) > 1:
+  scripts/sw_toolbox_index.py:94
+              paths = "\n    ".join(h["path"] for h in hits[:5])
+  scripts/sw_toolbox_index.py:95
+              raise KeyError(f"{standard} / {part_name} 命中多个，请写全路径:\n    {paths}")
+  scripts/sw_toolbox_index.py:96
+          return hits[0]["path"]
+
+修法：在该段代码上方加 AGENTS.md §四 4.3 规定的来源块，
+      必须含 仓库 / 文件 / 定位 / 未在本机实测 四个字段。

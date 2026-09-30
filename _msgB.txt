@@ -1,0 +1,67 @@
+feat(simulation): 纠正「cosworks 文档是空壳」的误判，补齐 24 个载荷夹具方法
+
+## ⚑ 本轮最重要的一件事：一次误判的纠正
+此前交付的文档写着「cosworks 册是空壳、27 个 Add* 方法签名不可得」。
+**该判断是错的。**
+
+`SWhelp\cosworks\ICWLoadsAndRestraintsManager~<成员>.html` 单页近 1MB，
+含 `Syntax` / `Parameters` / `Return Value` / `Remarks` 全文
+（`AddBearingLoad.html` 实测 967,851 字节）。
+它看起来是空壳，是因为**正文以 JSON 转义（`\u003c` = `<`）嵌在 script 标签里**，
+按 `<script>` 抓、再按 `<[^>]+>` 去标签，自然只留下真 HTML 的导航栏。
+⇒ 是**解码路径错了**，不是**内容缺失**。
+
+AGENTS.md §四.1 其实早就写了「cosworks 册薄得刚刚好、正中载荷那个坑」，
+我却只抽查 1 个页面就下了全局结论。**该相信的原文我跳过了。**
+
+## 纠正工具（本机，已落 D:\AI\SW\tools\）
+- extract_cosworks_docs.py  JSON 转义还原 → 去标签 → 纯文本；**42 页成功**（≥1500 字符）
+- parse_cosworks_signatures.py  解析 VB 声明 + Parameters 段；**31 个方法**签名与参数说明
+  ⚠ 两次自踩：① 扁平化续行后仍带 `^` 行首锚点 → 31 个方法参数全解析成空
+            ② `vb_declaration` 返回值解包数量不一致 → ValueError
+
+## 新增 scripts/sw_simulation_loads.py（27 个封装）
+每个签名**照抄官方 VB 声明**，参数语义**照抄官方 Parameters 段**：
+
+```
+AddRestraint(NRestraintType:Int32, DispArray:Object, RefGeom:Object, ErrorCode:Int32&) -> CWRestraint
+AddForce(NForceType:Int32, DispArray:Object, RefGeom:Object, ErrorCode:Int32&)           -> CWForce
+AddRemoteLoad(NLoadType, DispArray, NLocationUnits, DXValue, DYValue, DZValue, ErrorCode&)
+AddBearingLoad(CoordinateSystem, FirstFace, ErrorCode&)
+…共 24 个 Add* + 2 个 Get + 1 个 Copy
+```
+
+## 顺带解掉了 sw_simulation.py 里「语义未查到」的悬空标注
+官方 Parameters 段原文：
+  RefGeom — Reference geometry entity for direction;
+             **valid only if NRestraintType is swsRestraintTypeReferenceGeometry**
+  BearingLoad 的 Remarks — The Z-axis of CoordinateSystem must coincide with
+             the axes of the faces in the FirstFace array（**全模块唯一有方向前提的载荷**）
+
+## 枚举值：CHM 册没有枚举页，只能靠反射
+`enum_cosworks.txt`（对 interop 纯元数据反射）拿到 5 张表：
+  swsRestraintType_e 10 项 / swsForceType_e 3 项 / swsPressureType_e 2 项 /
+  swsRadiationType_e 2 项 / swsSpringSubType_e 3 项
+
+## 内置开发期护栏 _check
+`_check(manager, "AddX", N, ...)` 在**发起 COM 调用之前**校核实参个数，
+与模块内 `OFFICIAL_LOAD_SIGNATURES` 对不上直接报错。
+⚠ 该护栏也带来一个副作用：成员名变成变量后，`audit_call_arity.py` 的静态正则
+**看不见真实调用点**（只看到 3 处直接 get_com_member）。
+⇒ 改用契约测试做对账：把源码里每个 `_check` 的 N 与官方签名表逐项比对。
+
+## 验证
+- **27/27 封装函数的实参个数与官方签名一致，不一致 0 处**
+- tests/test_sw_simulation_loads_contract.py 9/9
+  （含「签名表与官方 VB 声明交叉校验」「护栏先于 COM 报错」
+   「参考几何夹具传 RefGeom、其余传 None」「重力收单实体不收数组」）
+- 来源门禁 106 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 555 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 仍缺（下一轮的活）
+cosworks 程序集共 168 接口 / 363 枚举 / 9,281 成员；
+本模块只覆盖官方文档化的 `ICWLoadsAndRestraintsManager` 一个接口族。
+其余接口族（研究管理、网格、结果、收敛）**官方 CHM 无页**，
+需先穷尽 interop 反射 + 本地 4 个 MIT 项目的用法，再谈覆盖。

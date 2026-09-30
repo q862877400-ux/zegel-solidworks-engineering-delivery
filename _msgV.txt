@@ -1,0 +1,56 @@
+feat(drawing): 新增 sw_drawing_annotations.py —— 工程图标注/尺寸/表格 6 族
+
+    族                    前     后
+    ITableAnnotation     20%   **100%**
+    IDisplayDimension     9%    **94%**
+    ISheet               13%    **89%**
+    IAnnotation          19%    **87%**
+    IBomTableAnnotation  20%    **84%**
+    IDimension           15%    **75%**
+
+登记表共 **310 项能力 + 102 项属性**（6 族），机械生成不手抄。
+
+## 本批的结构特点：属性占比很高
+`ITableAnnotation` 是 44 属性 / 59 方法，`IDisplayDimension` 76 / 93。
+属性多意味着「读样式 / 改显示」场景多；方法多意味着「造表 / 排版」场景多。
+⇒ **属性单独成表**（`ANNOTATION_PROPERTIES`），不与方法表混在一起 ——
+混表会导致「属性被当成零参方法调用」这类错误。
+测试 `test_property_table_is_separate_from_method_table` 锁住。
+
+## ⚑ 第 6 次「凭印象写 API」，这次整段都是编的
+初稿有 **8 个**不存在的成员，其中最严重的一处是**整段能力都是虚构的**：
+
+| 我凭印象写的 | 官方实际 |
+|---|---|
+| `IDisplayDimension.GetValue` | `GetOverrideValue()`（零参） |
+| `IDisplayDimension.SetText2` | `SetText(String, String)` |
+| `ISheet.GetSheetSize` | `GetSize(Int32)` —— `GetSheetSize` **不存在** |
+| `ISheet` 的 `Name` **属性** | `GetName()` 是**零参方法**，`Name` 不是 ISheet 的属性 |
+| `IAnnotation.IsVisible` / `IsDrawn` | **都不在 IAnnotation 上**（在 IView 上） |
+| `IAnnotation.LeaderStyle` 属性 | `GetLeaderStyle()` 是方法 |
+| **`ITableAnnotation.GetText` / `SetText`** | **整个接口都没有读写单元格文本的方法** |
+
+最后一条最要紧：那个「按行列读写单元格」的封装是**纯编造**的 ——
+`ITableAnnotation` 只有 `GetColumnTitle` / `GetColumnWidth` / `GetRowHeight` /
+`GetCellRange` / `GetCellTextFormat` 这类成员。已**整个删除**，
+并写明「为什么不提供」，测试 `test_no_cell_text_accessor_is_fabricated` 锁住。
+
+## 刻意不提供「万能尺寸 setter」
+尺寸的**文字 / 数值 / 显示格式**分属不同成员且有官方约定（占位符 `<>` 等），
+一个万能 setter 会把它们混起来 ⇒ 只逐个提供（GetText / SetText /
+GetTextFormat / GetLowerText / GetOverrideValue）。
+
+## 验证
+- tests/test_sw_drawing_annotations_contract.py 16/16
+- 三个门禁全绿：diff 记号 PASS(209 文件) / 来源门禁 234 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 772 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+- **本轮会「凭印象写 API」已累计 6 次、约 30 个成员名**，
+  全部由「引用成员 ⊆ 登记表」这条断言抓出
+
+## 下一批
+  零件特征域 12 个族（ISweepFeatureData / ILoftFeatureData /
+  IBoundaryBossFeatureData / IMidSurface3 / IRevolveFeatureData2 /
+  IChainPatternFeatureData …）
+  IFace2(120, 18%)  IBody2(220, 15%)  IChainPatternFeatureData(24, 17%)

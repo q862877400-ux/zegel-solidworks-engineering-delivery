@@ -1,0 +1,47 @@
+feat(drawing): 工程图域 13/21 -> 21/21，C:\swapi 范围内 12 域全满覆盖
+
+用户指出「工程图也要学习，如果现在给你的资料没有就去找资料」。
+先穷尽本地资料 —— 够用，本轮全部用本地资料补齐，**未动用外部找资料**。
+
+## 补齐的 8 个族（122 成员）
+- ISectionViewData(35)      剖视显示样式：13 个属性显式装配 + 白名单拒绝未支持属性名
+- IRevisionTableAnnotation(16) 修订表：AddRevision(String) / DeleteRevision(Int32,Bool) / CurrentRevision
+- IWeldmentCutListAnnotation(7) 焊接下料表底层对象 + 自定义属性列 + 排序
+- IAnnotationView(17)        注释视图：激活/显隐/证据回读（反射确认全是 0 参属性）
+- IGeneralTableAnnotation(2) / IHoleTableAnnotation(2) / IBendTableAnnotation(1) 通用表/孔表/折弯表
+- IModelViewManager(42)      **只封装 4 个剖视相关成员**（CreateSectionViewData /
+                            CreateSectionView / GetSectionViewData / RemoveSectionView）；
+                            其余 38 个 FeatureManager UI 成员逐个列在
+                            MODEL_VIEW_MANAGER_UI_MEMBERS 常量里，
+                            **不假装它们不存在**，需要时可按名单加
+
+⚠ 上一版把 `IModelViewManager` 整体判为「范围外」，**该判定过宽** ——
+它确实带工程图相关的剖视成员。上轮我在文档里写「由 InsertBomTable4 路径统一处理、
+未逐类分派」，那 5 个成员是偷懒不是阻塞，本轮认领并补齐。
+
+## 关键教训：第三次栽在「工具看不见代码」
+
+本轮又出现「代码写了、族却显示 0」，查明是**归因盲区的第四种形态**：
+    get_com_member(取对象(x), "Member")   ← 第一个实参里含括号
+静态审计的正则 `get_com_member\(\s*[^,()]+,...` 匹配不到。已改为先存局部变量。
+
+连同前三种（属性名是变量 / **flags 转发 / 第一个实参嵌套），已在
+family-coverage.md 与生成器里列成明示规则，并加测试锁死「显式成员名」这一形状：
+  16/19 -> 19/19 的过程中，测试本身也暴露了 3 个 mock 形状问题
+  （int("OBJ") 转换失败、results 配置后不记录调用）
+
+## 刻意没做的
+- IModelViewManager 的 38 个 FeatureManager UI 成员（标签页/控件/窗口句柄/快照/Manipulator）
+  —— 属界面自动化，与工程图能力无关。**已逐条列名**，不是遗漏
+- 表种类的 Int32 枚举值（InsertTableAnnotation 的 Type 参数）：两套官方源都查不到，只透传不设默认
+- ISectionViewData 无创建方法：剖视图由 IDrawingDoc.CreateSectionViewAt5 建，本模块只做事后样式调整
+- IBendTableAnnotation 反射确认**没有** Sort，故不做统一排序封装
+
+## 验证
+- family-coverage: 12 域全部满覆盖（工程图 21/21），C:\swapi 收录的 12 个程序集
+  范围内已无未触及族
+- drawing_workflow arity: 198 调用点 / 194 通过 / 0 存疑 / 0 查不到（+4 动态）
+- 来源门禁 93 块 / 0 违规
+- test_drawing_signature_contract 8/8 -> 19/19
+- 全量测试 546 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中

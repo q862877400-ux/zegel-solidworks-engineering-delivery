@@ -1,0 +1,59 @@
+feat(routing): 新增 sw_routing.py —— 域 14 的第一份真实 API 封装
+
+## ⚑ 域 14 此前是「名字像、实际零覆盖」
+仓库里既有的 `scripts/routing_review.py` 名字里有 routing，但它
+**完全不使用 COM API** —— 只静态检查 `SWRoutingLib.tlb` 是否存在、
+读注册表看加载项有没有注册。
+本模块是域 14 第一次真的把接口族用起来。已写进模块 docstring，
+并用 `test_existing_routing_review_is_documented_as_non_com` 锁住这条说明。
+
+## ⚠⚑ 入口 ProgID **查不到**，按铁律 5 不硬编
+`IRouteManager` 正常该由 `ISldWorks.GetAddInObject(<ProgID>)` 取得，但：
+- 读 `HKLM:\SOFTWARE\SOLIDWORKS\AddIns` 下 Description 含 Routing/Route 的条目
+  → **0 条**（SolidWorks Routers 是独立许可产品，本机没装）
+- 反射清单里只有接口与 coclass，**没有任何 addin 回调接口**
+  （对比 Simulation 有 `ICwAddincallback`）
+
+⇒ 本模块**不代为取得 RouteManager**，全部函数**接收调用方传进来的对象**。
+`get_routing_component_manager` 直接抛 NotImplementedError 并说明查证过程 ——
+不编一个「看起来对」的 ProgID。
+
+## 覆盖 8 个族 / 全库 28 个
+IRouteManager(22) · IRoutingComponentManager(20) · IWire(20) ·
+IRouteProperty(11) · ICovering(8) · ICable(7) · ICableProperty(5) · IWireProperty(5)
+
+签名全部来自 SWRoutingLib interop 纯元数据反射（AGENTS.md §四.1③）。
+
+## ⚠ 本族官方 CHM 无文档页 ⇒ 只按位置透传
+四册 CHM 里没有 routing 册。`CreateFlattenRoute` 的 11 参、
+`CreatePipeDrawingforPipeRoute` 的 12 参、两个 Double 与五个 String 的含义
+两套源都查不到 ⇒ **只按位置透传，注释里不编解释**。
+
+## 本轮修的自己的错（5 处）
+1. 又把 diff 记号 ` * ` 写进注释 → IndentationError（这是第 2 次同类）
+2. 签名表**漏登记** `GetCableProperty` / `GetCoresCount` / `GetCorePropertyCount`
+   —— 反射里确实有，是漏的
+3. 测试 `test_zero_arg_getters_...` 的 mock 对会被 int() 的返回值给了 "OBJ"
+4. `test_source_never_contains_a_hardcoded_progid` 断言「源码不含 GetAddInObject」
+   —— 但 docstring 里要解释**为什么不用**它，那处提及是必需的。
+   改成只查「调用」不查「提及」
+5. **用例看着在测拦空、实际测的是参数个数**：`set_bend_radius(None)` 先撞上
+   「缺 radius 参数」的 TypeError，压根没走到 None 检查。必须给足位置参数。
+   另外编辑时产生了一个**重复的测试定义**，删错了版本 —— 逐条用 grep 数定义数才发现
+
+## 验证
+- tests/test_sw_routing_contract.py 14/14
+  （含「登记表不得出现反射清单之外的成员」「零参方法不加括号」
+   「未查到的取用路径必须抛 NotImplementedError」「源码不得硬编 ProgID」）
+- arity 审计（SWRoutingLib 反射）18/18 通过，0 存疑 0 查不到
+- 来源门禁 150 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 615 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 域 14 剩余规模（反射实测）
+  SWRoutingLib    28 接口 /  142 成员（本轮覆盖 8 族）
+  sldcostingapi   28 接口 /  296 成员（Composer 成本，未动）
+  swdocumentmgr  296 接口 / 3771 成员（PDM，未动 —— 这是最大的一块）
+  fworks           2 接口 /    7 成员
+下一轮按「Composer 成本 → PDM」的顺序推进。

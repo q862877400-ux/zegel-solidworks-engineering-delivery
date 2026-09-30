@@ -1,0 +1,58 @@
+feat(part): 新增 sw_part_features.py —— 零件特征域 8 族
+
+    族                        前     后
+    IChainPatternFeatureData   17%  **100%**
+    IBoundaryBossFeatureData    8%  **100%**
+    ISweepFeatureData           8%   **89%**
+    ILoftFeatureData            8%   **83%**
+    IRevolveFeatureData2       14%   **82%**
+    IFace2                     18%   **63%**
+    IBody2                     15%   **63%**
+    IMidSurface3                9%   **57%**
+
+登记表 **290 项能力 + 103 项属性**（8 族），机械生成不手抄。
+
+## ⚑ 八族结构差异极大，不能照抄同一套封装
+方法数从 4（IChainPatternFeatureData）到 136（IBody2），
+属性数从 0（IMidSurface3）到 57（ISweepFeatureData）。
+所以本模块**只提供三样共用的东西**：
+
+1. **两张分开的登记表** —— 「特征参数族」与「几何遍历族」不混。
+   混表会让「拿几何族的名字去查特征族」静默通过；
+   测试 `test_using_wrong_table_raises` 专门锁这个。
+2. 两个通用访问器 `call_feature_data()` / `call_entity()`
+3. **共用的选区事务** `edit_feature_selection()` —— 5 个 FeatureData
+   的 `AccessSelections(Object, Object)`（2 参）+
+   `ReleaseSelectionAccess()`（0 参）**签名完全同形**，可共用一个上下文管理器，
+   异常路径也释放。
+
+## 第 7 次「凭印象写 API」，这次是两个
+| 我凭印象写的 | 官方实际 |
+|---|---|
+| `IBody2.GetBodyType()` | `GetType()`（零参方法） |
+| `IFace2.GetNormal(x,y,z)` | `Normal` 是**属性**，拿不到坐标 |
+
+第二个尤其要注意：我原本要写「取面上某点法线」，
+但 `GetNormal` 末位是 by-ref 出参、迟到绑定不保证回写 ⇒ 已**整个删除**该函数，
+改为只提供 `GetSurface()` / `GetLoopCount()`，
+并写明「为什么不做法线取点」。
+
+## 一处设计改进（被测试逼出来的）
+`edit_feature_selection()` 初版**只在进入上下文时**校验族名 ——
+于是「给没有选区事务的族（IFace2）建了事务对象却不报错」，
+错误推迟到真正 `__enter__` 才炸。已改成**构造时校验**。
+
+## 刻意不提供「通用特征创建」封装
+各 FeatureData 参数结构完全不同（扫描有导引曲线类型 / 放样有端部约束 /
+旋转有壁厚 …），万能 setter 只会把它们混起来。
+
+## 验证
+- tests/test_sw_part_features_contract.py 16/16
+- 三个门禁全绿：diff 记号 PASS(211 文件) / 来源门禁 240 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 788 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+- **「凭印象写 API」累计 7 次、约 32 个成员名**，全部由「引用成员 ⊆ 登记表」抓出
+
+## 下一批
+草图域 14 个族 / 钣金域 13 个族 / 仿真域 11 个族（都是同一套登记表做法）

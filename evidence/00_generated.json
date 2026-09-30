@@ -1,0 +1,38 @@
+{
+ "tag": "generated",
+ "note": "生成预览后",
+ "kind": "SELECT",
+ "state": {
+  "pct": 100,
+  "n_codes": 0,
+  "codes": [],
+  "combos": {},
+  "buttons": [
+   "关闭",
+   "最小化",
+   "最大化",
+   "清除所有",
+   "选型PDF",
+   "保存",
+   "生成预览",
+   "插入",
+   "搜索",
+   "去官网"
+  ],
+  "n_categories": 44,
+  "categories": [
+   "EGH15SAZ0C",
+   "EGH15SAZ0C",
+   "EGH15SAZ0C",
+   "ParameterFilterOffForm2",
+   "上银(HIWIN) EGH系列 低组装型直线导轨 单滑块四方型/短四方型",
+   "个备选型号",
+   "个备选型号",
+   "个备选型号",
+   "个备选型号",
+   "个备选型号",
+   "产品型号：",
+   "代码"
+  ]
+ }
+}

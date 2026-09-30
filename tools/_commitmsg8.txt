@@ -1,0 +1,45 @@
+docs(api-map): 官方成员 → 本仓库函数 反向索引
+
+C:\swapi\types\<Type>\<Member>.md 已经是参数级文档, 再抄一遍没意义。
+真正缺的是另一半: 拿着官方文档里的 CreateDrawViewFromModelView3,
+想知道本仓库哪个函数能调到它。这张表回答这个。
+
+## 数据来源(都是本任务已落盘、可复算)
+  ① _raw\reflect_sldworks\iface_sldworks.txt   20,627 成员 + 宿主接口
+  ② _raw\reflect\iface_cosworks.txt            cosworks 成员
+  ③ AST 解析 74 个 .py -> 函数/类行号区间
+  ④ 成员名与调用点对撞, 反查调用点属于哪个函数
+结果: **207 个官方成员 / 616 处调用点**
+
+## 覆盖形态(踩过的坑)
+首版只用 `[.\s]([A-Z]\w+)\s*\(` 匹配 obj.Member( 形态, 只得 117 成员。
+原因: 上游**大量代码走反射式取成员** —— get_com_member(obj, "Name"),
+成员名是字符串字面量而非调用形态。补上 WRAPPER 正则后 117 -> 207。
+
+## 生成时抓到的三个自己的 bug
+1) **假阳性**: 产出过一条
+   | `Get` | `ICustomPropertyManager` | advanced_geometry_ocp.py::_shape_evidence |
+   而该文件根本没有 get_com_member —— 是正则匹配到了 OCP 的 `face.Get(0)`。
+   与 docs/signature-audit.md 记录的假阳性同源(OCP 迭代器 Next / pythoncom
+   GetNames)。修法: 加 SUSPECT_MODULE_PATTERNS, 只出现在非 COM 模块里的
+   匹配标注为「⚠ 疑似撞名」, 且不计入域汇总。
+2) **归因错误**: 同名成员在多个接口上存在时, 原实现只留第一个, 导致
+   `RunAnalysis` 被标成宿主 `ICwAddincallback` 而真正对应的是 `ICWStudy`。
+   修法: 记录全部宿主接口; 参数个数不一致时显式标注。
+3) 顺带由表自身暴露一条新事实:
+   `GetBodies2` 在 **IComponent2 上是 1 参、在 IPartDoc 上是 2 参**
+   (表中标为「⚠各接口不一致: IComponent2(1); IPartDoc(2)」)。
+   这与 AGENTS.md §六 事实 6「GetBodies2 在 IPartDoc 上, 不在 IModelDoc2 上」
+   相互印证, 且本仓库全用 2 参形式。
+
+## 表的已知边界(文档内已写明)
+· 只统计「形态可静态识别」的调用, 不统计 FeatureData 的属性赋值
+  (data.Thickness = 0.001) —— 那部分由各模块的 SURFACE_CREATION_METHODS /
+  SWS_* 签名表逐条登记
+· 207/20,627 是**下界不是全集**; 完整的签名级核对见 signature-audit.md
+
+## 验证
+  来源门禁 54 块 / 0 违规
+  A6 禁词 0 命中
+  全量测试 521 passed / 2 failed(均为既有)
+  sw_part arity 复审 41/41 全清

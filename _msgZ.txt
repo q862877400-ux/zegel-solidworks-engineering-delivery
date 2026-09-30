@@ -1,0 +1,49 @@
+feat(registry): 新增 sw_simulation_full / sw_pdm_full —— cosworks 84 族 + PDM 138 族全量登记表
+
+| 模块 | 族 | 能力 | 属性 |
+|---|---|---|---|
+| `sw_simulation_full.py` | **84**（cosworks 全库） | **1235** | 704 |
+| `sw_pdm_full.py` | **138**（swdocumentmgr 全库） | **2524** | 912 |
+
+两者都是**全量版**登记表，与 `sw_simulation_registry.py`（19 族子集）、`sw_routing.py` / `sw_costing.py` / `sw_pdm.py`（高层封装）互补。
+
+## 为什么 PDM 一次补 138 族
+PDM 是全库最大的接口族集合（3,771 成员）。官方 CHM **无 PDM 册**、`C:\swapi`
+**不收录** swdocumentmgr ⇒ 只有反射签名可依。既然只有签名，就一次性把
+「有哪些族、每族有哪些能力、每个能力几个参数」**全部登记下来**，
+而不是挑几个「常用」封装——后者会留下「为什么挑它不挑它」的解释负担。
+
+## 生成器带自检，不通过就不落盘
+`D:\AI\SW\build_full_registries.py` 在写文件前断言两件事：
+1. **三个分组恰好划分全部族**（`sorted(covered) == sorted(families)`）
+2. **族名不重复、能力/属性数为正**
+
+上一轮我按「名字以 `StudyOptions` 结尾」筛求解器族，漏掉了
+`ICWCompositeShellOptions`（名字不带后缀）——正是这条自检要防的那类错。
+它第一次跑就拦住了我（`KeyError` 时没落盘半成品文件）。
+
+## 本轮修的三个自己的问题
+1. **模板占位符没转义** —— `_require(obj, what: str)` 里的 `{what}`
+   被 `str.format` 当占位符，`KeyError: 'what'`。反复修了三次才弄对
+   （最后用 `r'''"""` 开头 + 逐个 `{{what}}` 转义）
+2. **docstring 转义告警** —— 生成的模块头含 `D:\AI\...`，
+   `py_compile` 报 `SyntaxWarning: "\A" is an invalid escape sequence`。
+   改成 raw docstring，并用 `python -W error::SyntaxWarning` 验证无告警
+3. 上一轮 cosworks 分组漏族的同一个错，这次由自检拦下
+
+## 验证
+- tests/test_full_registries_contract.py 7/7
+  （含「登记表族集合与反射**完全一致**」「分组恰好划分」
+    「属性/内部分发口不混入方法表」）
+- `python -W error::SyntaxWarning -m py_compile` 两个模块均**无告警**
+- 三个门禁全绿：diff 记号 PASS(218 文件) / 来源门禁 257 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 821 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 至此已登记的接口族规模
+cosworks 84 + swdocumentmgr 138 + sldworks 174（含本轮各批次），
+覆盖 `C:\swapi` 收录的 12 个程序集 + `C:\swapi` 未收录的
+cosworks / swdocumentmgr / SWRoutingLib / sldcostingapi / fworks。
+
+**fork 仍不推。**

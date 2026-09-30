@@ -1,0 +1,48 @@
+docs(family-coverage): A1 从定性升级为定量 —— 14 域接口族触及率
+
+A1 此前只有定性判定(覆盖/部分/不覆盖)。本轮做通用量化：取 C:\swapi\types\
+<接口>\ 的成员目录，用与 api-map 相同的两路形态（直接调用 / 反射式）在本仓库
+74 个 .py 里找这些成员，输出「域 × 接口族 × 是否触及」。
+
+结果（接口族触及数 / 该域接口族总数）：
+  满覆盖    零件特征 14/14 · 钣金 14/14 · 曲面 12/12 · 几何与拓扑 13/13 · 应用与会话 5/5
+  部分触及  工程图 13/21 · 草图 10/14 · 焊件 10/14 · 装配 8/14 · 孔与螺纹 8/11
+            配置材料 6/8 · 质量属性 4/5
+  统计为 0  仿真 · 路由/PDM —— 不是没做，是 C:\swapi 未收录对应程序集
+
+## G12（焊件接口族）的精确答案：10/14
+未触及的 4 个族（33 成员）已逐个核过，都是**具体能力**而非查不到的入口：
+  IStructureSystemMemberProfile（17，型材创建）
+  IStructureSystemSplitMember（8，构件分割）
+  IProfileCenterMateFeatureData（5，型材中心配合）
+  ICutListSortOptions（3，下料表排序）
+这是下一步最实在的焊件缺口，已写进 harvest-report §一。
+
+## 工程图域 8 个零命中族：逐个核过，多数是**范围外**而非缺口
+  IModelViewManager（42）= FeatureManager UI 接口（标签页 / 控件 / 窗口句柄 / 快照），
+    与模型视图名无关 —— 本技能走 IFeatureManager 路线，不做界面自动化
+  ISectionViewData（35）= 编辑既有剖视图；剖视图由 CreateSectionViewAt5 直接建，已覆盖
+  IAnnotationView（17） / IRevisionTableAnnotation（16） / IWeldmentCutListAnnotation（7）
+  / IHoleTableAnnotation（2） / IGeneralTableAnnotation（2） / IBendTableAnnotation（1）
+    = 交付范围外
+
+## 本轮的一次自我纠正（已写进文档）
+我一度怀疑工程图代码硬编码 "*Front" / "*Top" 是「模型视图名随 UI 语言变」的隐性缺陷
+（AGENTS.md §六 事实 9 确有「基准面名随语言变」的前科），并打算把 IModelViewManager
+当成查视图名的入口。**查证后假设不成立**：IModelViewManager 是 FeatureManager UI 接口，
+GetModelViewNames 这个成员在官方 API 中**不存在**。
+故不下「本地化缺陷」结论 —— 按铁律 5，没证据就不写。
+
+## 归因噪声已写明
+本表按**成员名字**匹配，会跨接口串味（AccessSelections 挂在 125 个接口上，
+会把 sw_surface.py 里的调用同时记到 ICosmeticWeldBeadFeatureData 等头上）。
+逐行明细当线索看不要当结论；**可信的是「触及 0」的族**（不会串味）。
+精确到行的归属看 signature-audit.md（它带参数个数校验）。
+
+## 接线
+- SKILL.md 查表加 family-coverage 一条，并补「接口族触及率速查」三栏表
+- harvest-report §一 补 A1 定量小节 + 焊件 G12 精确答案
+- 7 条 docs/ 相对链接全部有效
+
+验证：来源门禁 54 块 / 0 违规；compileall 通过（含 examples/）；
+      全量测试 521 passed / 2 failed（均为既有）；A6 我的新增行 0 命中

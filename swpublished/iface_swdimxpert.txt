@@ -1,0 +1,462 @@
+# 反射清单 :: SolidWorks.Interop.swdimxpert 34.4.1.1011
+# 由 reflect-interop.ps1 生成 —— 纯元数据枚举，未实例化任何 COM 对象。
+# 格式：<接口> :: <返回类型> <方法名>(<参数类型>, ...)
+# read-status: complete
+
+## DimXpertAngleBetweenCircularDimTol
+
+## DimXpertAngleBetweenDimTol
+
+## DimXpertAnnotation
+
+## DimXpertAutoDimSchemeOption
+
+## DimXpertBestfitPlaneFeature
+
+## DimXpertBlockTolerances
+
+## DimXpertChamferDimTol
+
+## DimXpertChamferFeature
+
+## DimXpertCompositeDistanceBetweenDimTol
+
+## DimXpertCompositeLineProfileTolerance
+
+## DimXpertCompositePositionTolerance
+
+## DimXpertCompositeSurfaceProfileTolerance
+
+## DimXpertCompoundClosedSlot3DFeature
+
+## DimXpertCompoundHoleFeature
+
+## DimXpertCompoundNotchFeature
+
+## DimXpertCompoundWidthFeature
+
+## DimXpertConcentricityTolerance
+
+## DimXpertConeFeature
+
+## DimXpertCounterBoreDimTol
+
+## DimXpertCounterSinkAngleDimTol
+
+## DimXpertCounterSinkDiameterDimTol
+
+## DimXpertCylinderFeature
+
+## DimXpertDatum
+
+## DimXpertDepthDimTol
+
+## DimXpertDiameterDimTol
+
+## DimXpertDimensionOption
+
+## DimXpertDimensionTolerance
+
+## DimXpertDistanceBetweenDimTol
+
+## DimXpertExtrudeFeature
+
+## DimXpertFeature
+
+## DimXpertFilletFeature
+
+## DimXpertFlatnessTolerance
+
+## DimXpertGtol
+
+## DimXpertIntersectCircleFeature
+
+## DimXpertIntersectLineFeature
+
+## DimXpertIntersectPlaneFeature
+
+## DimXpertIntersectPointFeature
+
+## DimXpertLineProfileTolerance
+
+## DimXpertOrientationTolerance
+
+## DimXpertPart
+
+## DimXpertPatternFeature
+
+## DimXpertPlaneFeature
+
+## DimXpertPositionTolerance
+
+## DimXpertRadiusDimTol
+
+## DimXpertRefPlaneFeature
+
+## DimXpertSphereFeature
+
+## DimXpertStraightnessTolerance
+
+## DimXpertSurfaceProfileTolerance
+
+## DimXpertSymmetryTolerance
+
+## DimXpertTangencyTolerance
+
+## DimXpertTolerance
+
+## IDimXpertAngleBetweenCircularDimTol
+  DimXpertFeature get_CenterFeature()
+  DimXpertFeature get_OriginFeature()
+  Boolean get_Supplement()
+  Boolean GetActPlaneVector(Double&, Double&, Double&)
+  Boolean GetNomPlaneVector(Double&, Double&, Double&)
+
+## IDimXpertAngleBetweenDimTol
+  DimXpertFeature get_OriginFeature()
+  Boolean get_Supplement()
+  Boolean GetDirectionVector(Double&, Double&, Double&)
+
+## IDimXpertAnnotation
+  DimXpertFeature get_Feature()
+  String get_Name()
+  swDimXpertAnnotationType_e get_Type()
+  Int32 GetAppliedAnnotationCount()
+  Object GetAppliedAnnotations()
+  Object GetDisplayEntity()
+  Object GetModelFeature()
+  DimXpertAnnotation IGetAppliedAnnotations(Int32)
+  Boolean IsFreeState()
+  Boolean IsStatistical()
+  Boolean IsSuppressed()
+  Boolean IsToBeInspected()
+
+## IDimXpertAutoDimSchemeOption
+  Int32 get_FeatureFilters()
+  Int32 get_PartType()
+  Int32 get_PatternType()
+  Int32 get_PolarPatternHoleCount()
+  Boolean get_ScopeAllFeature()
+  Int32 get_ToleranceType()
+  Void set_FeatureFilters(Int32)
+  Void set_PartType(Int32)
+  Void set_PatternType(Int32)
+  Void set_PolarPatternHoleCount(Int32)
+  Void set_ScopeAllFeature(Boolean)
+  Void set_ToleranceType(Int32)
+
+## IDimXpertBestfitPlaneFeature
+  Boolean GetNominalPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+  Int32 GetSubFeatureCount()
+  Object GetSubFeatures()
+  DimXpertFeature IGetSubFeatures(Int32)
+
+## IDimXpertBlockTolerances
+  swDimXpertBlockToleranceType_e get_Type()
+  Boolean GetISO2768PartType(swDimXpertISO2768PartType_e&)
+  Boolean GetToleranceValues(Double&, Int32&, Double&, Int32&, Double&, Int32&, Double&)
+
+## IDimXpertChamferDimTol
+  swDimXpertChamferDimensionType_e get_ChamferType()
+
+## IDimXpertChamferFeature
+  Double get_Angle()
+  swDimXpertChamferAngleType_e get_AngleType()
+  swDimXpertChamferType_e get_ChamferType()
+  Double get_Distance1()
+  Double get_Distance2()
+
+## IDimXpertCompositeDistanceBetweenDimTol
+  Int32 get_BlockToleranceDecimalPlacesIntraFeature()
+  swDimXpertDimensionToleranceType_e get_DimensionTypeIntraFeature()
+  String get_LimitsAndFitsCodeIntraFeature()
+  Boolean GetDirectionVector(Double&, Double&, Double&)
+  Boolean GetFeature(DimXpertFeature&, swDimXpertDistanceFosUsage_e&)
+  Boolean GetIntraFeature(DimXpertFeature&, swDimXpertDistanceFosUsage_e&)
+  Double GetNominalValueIntraFeature()
+  Boolean GetOriginFeature(DimXpertFeature&, swDimXpertDistanceFosUsage_e&)
+  Boolean GetPlusAndMinusToleranceIntraFeature(Double&, Double&)
+  Boolean GetUpperAndLowerLimitIntraFeature(Double&, Double&)
+
+## IDimXpertCompositeLineProfileTolerance
+  Double get_OuterToleranceValue()
+  Double get_OuterToleranceValueLowerTier()
+  Boolean get_PrimaryInLowerTier()
+  Boolean get_SecondaryInLowerTier()
+  Boolean get_TertiaryInLowerTier()
+  Double get_ToleranceLowerTier()
+  Boolean GetPlanarZoneVector(Double&, Double&, Double&)
+
+## IDimXpertCompositePositionTolerance
+  swDimXpertMaterialConditionModifier_e get_Modifier()
+  swDimXpertMaterialConditionModifier_e get_ModifierLowerTier()
+  Boolean get_PrimaryInLowerTier()
+  Boolean get_SecondaryInLowerTier()
+  Boolean get_TertiaryInLowerTier()
+  Double get_ToleranceLowerTier()
+  swDimXpertPositionZoneType_e get_ZoneType()
+  Boolean GetMaxTolerance(Boolean&, Double&)
+  Boolean GetMaxToleranceLowerTier(Boolean&, Double&)
+  Boolean GetPlanarZoneVector(Double&, Double&, Double&)
+  Boolean GetProjectedZone(Boolean&, Double&)
+
+## IDimXpertCompositeSurfaceProfileTolerance
+  Double get_OuterToleranceValue()
+  Double get_OuterToleranceValueLowerTier()
+  Boolean get_PrimaryInLowerTier()
+  Boolean get_SecondaryInLowerTier()
+  Boolean get_TertiaryInLowerTier()
+  Double get_ToleranceLowerTier()
+
+## IDimXpertCompoundClosedSlot3DFeature
+  Boolean get_Blind()
+  DimXpertFeature GetBottomFeature()
+  Boolean GetEndFeatures(DimXpertFeature&, DimXpertFeature&)
+  Boolean GetNominalBottomPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetNominalClosedSlot(Double&, Double&, Double&, Double&, Double&, Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetNominalTopPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetPlaneFeatures(DimXpertPlaneFeature&, DimXpertPlaneFeature&)
+
+## IDimXpertCompoundHoleFeature
+  Boolean get_Blind()
+  swDimXpertCompoundHoleType_e get_CompoundHoleType()
+  DimXpertFeature GetBottomFeature()
+  DimXpertFeature GetReferenceFeature()
+  Int32 GetSubFeatureCount()
+  Object GetSubFeatures()
+  DimXpertFeature IGetSubFeatures(Int32)
+
+## IDimXpertCompoundNotchFeature
+  Boolean get_Blind()
+  DimXpertFeature GetBottomFeature()
+  DimXpertFeature GetEndFeature()
+  Boolean GetNominalBottomPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetNominalNotch(Double&, Double&, Double&, Double&, Double&, Double&, Double&, Double&, Double&, Double&, Double&)
+  DimXpertFeature GetOpenSideReferenceFeature()
+  Boolean GetPlaneFeatures(DimXpertPlaneFeature&, DimXpertPlaneFeature&)
+  DimXpertFeature GetTopReferenceFeature()
+
+## IDimXpertCompoundWidthFeature
+  Boolean get_Inner()
+  Boolean GetNominalCompoundWidth(Double&, Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetNominalLongitude(Double&, Double&, Double&)
+  Boolean GetPlaneFeatures(DimXpertPlaneFeature&, DimXpertPlaneFeature&)
+
+## IDimXpertConcentricityTolerance
+  swDimXpertMaterialConditionModifier_e get_Modifier()
+  Boolean GetMaxTolerance(Boolean&, Double&)
+
+## IDimXpertConeFeature
+  Boolean get_Inner()
+  Boolean GetNominalBottomPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetNominalCone(Double&, Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetNominalTopPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+
+## IDimXpertCounterBoreDimTol
+  DimXpertFeature get_ReferenceFeature()
+
+## IDimXpertCounterSinkAngleDimTol
+  DimXpertFeature get_ReferenceFeature()
+
+## IDimXpertCounterSinkDiameterDimTol
+  DimXpertFeature get_ReferenceFeature()
+
+## IDimXpertCylinderFeature
+  Boolean get_Inner()
+  Boolean GetNominalBottomPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetNominalCylinder(Double&, Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetNominalTopPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetThread(Boolean&, String&, Double&)
+
+## IDimXpertDatum
+  String get_Identifier()
+
+## IDimXpertDepthDimTol
+  DimXpertFeature get_ReferenceFeature()
+  Boolean IsThreadDepth()
+
+## IDimXpertDiameterDimTol
+  Boolean get_EnvelopeRequirement()
+  Boolean get_IndependencyRequirement()
+  swDimXpertPatternTreatmentType_e get_PatternTreatment()
+
+## IDimXpertDimensionOption
+  Double get_DatumLength()
+  Int32 get_DimensionPositionOption()
+  Int32 get_DimensionPositionOption2()
+  Object get_FeatureSelectorOptions()
+  Object get_TextPosition()
+  Void set_DatumLength(Double)
+  Void set_DimensionPositionOption(Int32)
+  Void set_DimensionPositionOption2(Int32)
+  Void set_FeatureSelectorOptions(Object)
+  Void set_TextPosition(Object)
+
+## IDimXpertDimensionTolerance
+  Int32 get_BlockToleranceDecimalPlaces()
+  swDimXpertDimensionToleranceType_e get_DimensionType()
+  String get_LimitsAndFitsCode()
+  Double GetNominalValue()
+  Boolean GetPlusAndMinusTolerance(Double&, Double&)
+  Boolean GetUpperAndLowerLimit(Double&, Double&)
+
+## IDimXpertDistanceBetweenDimTol
+  swDimXpertPatternTreatmentType_e get_PatternTreatment()
+  Boolean GetDirectionVector(Double&, Double&, Double&)
+  Boolean GetFeature(DimXpertFeature&, swDimXpertDistanceFosUsage_e&)
+  Boolean GetOriginFeature(DimXpertFeature&, swDimXpertDistanceFosUsage_e&)
+
+## IDimXpertExtrudeFeature
+  Boolean get_Blind()
+  DimXpertFeature GetBottomBlends()
+  DimXpertFeature GetBottomFeature()
+  DimXpertFeature GetReferenceFeature()
+  Int32 GetSubFeatureCount()
+  Object GetSubFeatures()
+  DimXpertFeature GetTopBlends()
+  DimXpertFeature IGetSubFeatures(Int32)
+
+## IDimXpertFeature
+  String get_Name()
+  swDimXpertFeatureType_e get_Type()
+  Int32 GetAppliedAnnotationCount()
+  Object GetAppliedAnnotations()
+  Int32 GetAppliedFeatureCount()
+  Object GetAppliedFeatures()
+  Int32 GetFaceCount()
+  Object GetFaces()
+  Object GetModelFeature()
+  DimXpertAnnotation IGetAppliedAnnotations(Int32)
+  DimXpertFeature IGetAppliedFeatures(Int32)
+  Object IGetFaces(Int32)
+  Boolean IsCombinedAnnotation()
+  Boolean IsSuppressed()
+  Int32 SetCombineAnnotation(Boolean)
+
+## IDimXpertFilletFeature
+  Boolean get_Inner()
+  Double get_Radius()
+
+## IDimXpertFlatnessTolerance
+  Boolean GetPerUnitArea(Boolean&, Double&, Double&, Double&, Double&, Double&)
+
+## IDimXpertGtol
+  Object get_Annotation()
+
+## IDimXpertIntersectCircleFeature
+  Boolean GetIntersectFeature(DimXpertFeature&)
+  Boolean GetNominalCircle(Double&, Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetPlaneFeature(DimXpertPlaneFeature&)
+
+## IDimXpertIntersectLineFeature
+  Boolean GetNominalLine(Double&, Double&, Double&, Double&, Double&, Double&)
+  Boolean GetPlaneFeatures(DimXpertPlaneFeature&, DimXpertPlaneFeature&)
+
+## IDimXpertIntersectPlaneFeature
+  Boolean GetFeatures(DimXpertFeature&, DimXpertFeature&)
+  Boolean GetNominalPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+
+## IDimXpertIntersectPointFeature
+  Boolean GetFeatures(DimXpertFeature&, DimXpertFeature&)
+  Boolean GetNominalPoint(Double&, Double&, Double&)
+  Boolean GetNominalVector(Double&, Double&, Double&)
+
+## IDimXpertLineProfileTolerance
+  Double get_OuterToleranceValue()
+  Boolean GetPlanarZoneVector(Double&, Double&, Double&)
+
+## IDimXpertOrientationTolerance
+  swDimXpertMaterialConditionModifier_e get_Modifier()
+  swDimXpertOrientationZoneType_e get_ZoneType()
+  Boolean GetMaxTolerance(Boolean&, Double&)
+  Boolean GetPlanarZoneVector(Double&, Double&, Double&)
+  Boolean GetProjectedZone(Boolean&, Double&)
+  Boolean IsTangentPlane()
+
+## IDimXpertPart
+  Boolean AutoDimensionScheme(DimXpertAutoDimSchemeOption)
+  Boolean DeleteAllTolerances()
+  Boolean get_ShowToleranceStatus()
+  DimXpertAnnotation GetAnnotation(String)
+  Int32 GetAnnotationCount()
+  Object GetAnnotations()
+  DimXpertAutoDimSchemeOption GetAutoDimSchemeOption()
+  DimXpertBlockTolerances GetBlockTolerances()
+  DimXpertDimensionOption GetDimOption()
+  DimXpertFeature GetFeature(String)
+  Int32 GetFeatureCount()
+  Object GetFeatures()
+  DimXpertAnnotation IGetAnnotations(Int32)
+  DimXpertFeature IGetFeatures(Int32)
+  Boolean ImportScheme(String, String)
+  Boolean InsertAngleDimension(DimXpertDimensionOption)
+  Boolean InsertBasicDimension(DimXpertDimensionOption)
+  Boolean InsertDatum(DimXpertDimensionOption)
+  DimXpertAnnotation InsertGtol(Int32)
+  Boolean InsertLocationDimension(DimXpertDimensionOption)
+  Boolean InsertPattern(DimXpertDimensionOption, Int32, Boolean)
+  Boolean InsertSizeDimension(DimXpertDimensionOption)
+  Void set_ShowToleranceStatus(Boolean)
+
+## IDimXpertPatternFeature
+  swDimXpertFeatureType_e get_PatternType()
+  Int32 GetSubFeatureCount()
+  Object GetSubFeatures()
+  DimXpertFeature IGetSubFeatures(Int32)
+
+## IDimXpertPlaneFeature
+  Boolean GetNominalPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+
+## IDimXpertPositionTolerance
+  swDimXpertMaterialConditionModifier_e get_Modifier()
+  swDimXpertPositionZoneType_e get_ZoneType()
+  Boolean GetMaxTolerance(Boolean&, Double&)
+  Boolean GetPlanarZoneVector(Double&, Double&, Double&)
+  Boolean GetProjectedZone(Boolean&, Double&)
+
+## IDimXpertRadiusDimTol
+  swDimXpertPatternTreatmentType_e get_PatternTreatment()
+
+## IDimXpertRefPlaneFeature
+  Boolean GetNominalPlane(Double&, Double&, Double&, Double&, Double&, Double&)
+
+## IDimXpertSphereFeature
+  Boolean get_Inner()
+  Boolean GetNominalSphere(Double&, Double&, Double&, Double&)
+
+## IDimXpertStraightnessTolerance
+  swDimXpertMaterialConditionModifier_e get_Modifier()
+  swDimXpertStraightnessZoneType_e get_ZoneType()
+  Boolean GetMaxTolerance(Boolean&, Double&)
+  Boolean GetPerUnitLength(Boolean&, Double&)
+  Boolean GetPlanarZoneVector(Double&, Double&, Double&)
+
+## IDimXpertSurfaceProfileTolerance
+  Double get_OuterToleranceValue()
+
+## IDimXpertSymmetryTolerance
+  swDimXpertMaterialConditionModifier_e get_Modifier()
+  Boolean GetMaxTolerance(Boolean&, Double&)
+  Boolean GetZoneDirection(Double&, Double&, Double&)
+
+## IDimXpertTangencyTolerance
+  DimXpertFeature get_OriginFeature()
+
+## IDimXpertTolerance
+  Double get_Tolerance()
+  Int32 GetPrimaryDatumCount()
+  Object GetPrimaryDatumModifiers()
+  Object GetPrimaryDatums()
+  Int32 GetSecondaryDatumCount()
+  Object GetSecondaryDatumModifiers()
+  Object GetSecondaryDatums()
+  Int32 GetTertiaryDatumCount()
+  Object GetTertiaryDatumModifiers()
+  Object GetTertiaryDatums()
+  swDimXpertMaterialConditionModifier_e IGetPrimaryDatumModifiers(Int32)
+  DimXpertDatum IGetPrimaryDatums(Int32)
+  swDimXpertMaterialConditionModifier_e IGetSecondaryDatumModifiers(Int32)
+  DimXpertDatum IGetSecondaryDatums(Int32)
+  swDimXpertMaterialConditionModifier_e IGetTertiaryDatumModifiers(Int32)
+  DimXpertDatum IGetTertiaryDatums(Int32)
+

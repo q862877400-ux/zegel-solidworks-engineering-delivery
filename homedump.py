@@ -1,0 +1,20 @@
+import sys, time, warnings
+sys.stdout.reconfigure(encoding="utf-8")
+sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+import sw_jlcfa_locate as L, sw_jlcfa_steps as S, sw_jlcfa_click as K
+warnings.filterwarnings("ignore")
+h, w = L.connect()
+S.cache_drop()
+st = S.read_state(w)
+print("当前 %s" % S.page_kind(st))
+# 点返回（用 locate 挑的最小可见那个）
+r = L.locate(w, "返回")
+print("返回控件 %s" % (r.rectangle() if r else None))
+S.ensure_front(h)
+K.click_control(r, 1.5)
+S.cache_drop(); h, w = L.connect()
+st = S.read_state(w)
+print("点后 %s  cards=%d  codes=%d" % (S.page_kind(st), len(st["categories"]), len(st["codes"])))
+print("可见名: %s" % sorted(st["visible"])[:26])
+print("卡片: %s" % st["categories"][:20])
+print("容器: %s" % (st["container"],))

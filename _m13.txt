@@ -1,0 +1,44 @@
+fix(com): 记录实跑确认的 by-ref 调用规则（本轮唯一被证伪的索引口径）
+
+## 本轮实跑（撤销铁律 2 后第一次端到端）
+SolidWorks 2026 SP4.1，`D:\SOLIDWORKS Data\browser\` 的 GB 垫圈：
+
+    OpenDoc6(path, 1, 1, "")            -> -2147352561 DISP_E_PARAMNOTOPTIONAL（参数太少）
+    OpenDoc6(path, 1, 1, "", None, None) -> -2147352571（类型不匹配）
+    OpenDoc6(path, 1, 1, "", byref_pair()) -> **成功**
+       Title  = lock washers external teeth gb.sldprt
+       配置   = ('Default', 'PreviewCfg')
+       Path   = D:\SOLIDWORKS Data\browser\GB\...
+
+## ⇒ 一条索引层面的规则（已写进 sw_com_traps.byref_long 的 docstring）
+**arity 表排除 by-ref 是「文档口径」，不是「调用口径」。**
+调用时**必须**为每个 by-ref 出参补占位实参，且占位要造
+`VARIANT(VT_BYREF|VT_I4, n)` —— 传 None 会类型不匹配。
+
+⚑ 这条规则**早就写进 sw_com_traps**（来自外部调研），
+   但**从没验过**；撤销铁律 2 后第一次实跑就证实了它。
+   同时说明：12 份索引的 arity 数字本身没错（是文档口径），
+   **但调用侧需要另一套规则** —— 这一层目前**还没有在 call_index 里实现**。
+
+## 顺带证实的三件事
+1. `NewDocument` 的**模板名不能为空**：传 "" 静默返回 None；传真实
+   `C:\ProgramData\SolidWorks\SOLIDWORKS 2026\templates\gb_assembly.asmdot`
+   才能建出装配。
+2. **尺寸确实在零件文件内的配置里**（见上方配置列表），印证了
+   `toolbox_index.json` 里写的边界说明。
+3. `GetTitle` / `GetDocuments` 是**属性形态** —— `get_com_member` 本就处理对了
+   （`callable()` 为假即当属性读）。⚠ **我前两次自己绕过它直接加括号，
+   于是把「属性形态」误报成 bug —— 这是本会话第三次犯这个错。**
+
+## 尚未解决（如实记）
+`IAssemblyDoc.AddComponent5(path, 0, "", True, "", 0,0,0)` 返回 **None 且未插入**，
+`AddComponent4` / `AddComponent2` / 改 `UseSpeed` 四种传法均同。
+⇒ **Toolbox 零件的「插入装配」这一步还没通**，
+需要进一步查 Toolbox 特有的插入语义（官方 API 无「按标准+尺寸插入」的入口）。
+零件**打开**已通，**插入**未通 —— 两者不要混为一谈。
+
+## 验证
+- 护栏全程有效：NewDocument 3 参被拦（真值 4）、GetComponents2 不存在被拦、
+  OpenDoc6 6 参被拦 —— 三次都是**当场拦住我的凭印象**
+- 三门禁全绿 · 全量测试 721 passed / 2 failed（上游既有）· A6 0 命中
+- 收尾规范：每次实跑都 `CommandInProgress=False` + `ExitApp`，**无残留进程**

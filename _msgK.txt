@@ -1,0 +1,57 @@
+docs(coverage): 把域 13/14 并入定量表 —— 14 个域全部满覆盖
+
+## ⚑ 起因：文档在说假话
+`docs/family-coverage.md` 与 `harvest-report.md` 此前都写着「域 13/14 统计为 0」，
+理由是「`C:\swapi` 不收录 cosworks / SWRoutingLib / sldcostingapi」。
+但那两域**已经补了 5 个模块**（sw_simulation_*.py 四件套 + sw_routing /
+sw_costing / sw_pdm / sw_featureworks）。**文档没跟上 = 文档在撒谎。**
+
+## 生成器扩到 16 域
+1. `DOMAIN_FAMILIES` 的「仿真」「路由/Composer/PDM」从空列表改为
+   19 + 17 个真实接口族
+2. `family_members()` 加**反射回落**：`C:\swapi\types\<接口>\` 没有时，
+   去 5 份反射清单（cosworks / SWRoutingLib / sldcostingapi / swdocumentmgr /
+   fworks）里找
+
+## ⚑ 归因环节连修两处，否则新表仍然是假的
+**① 认不出 `_checked(签名表, 对象, "成员", …)`**
+   护栏把成员名放在**第 3 个**参数位置，`WRAPPER` 正则只认
+   `get_com_member(对象, "成员", …)`（第 2 个位置）⇒ 域 13/14 的封装
+   **全部归因不到**，仿真只显示 8/19。加了 `GUARDED` 与 `LITERAL` 两条规则。
+
+**② 反射侧没剥 `get_` / `set_` 前缀**
+   `_reflect_members` 返回 `get_AdaptiveMethodType`，而调用侧写的是
+   `AdaptiveMethodType`（前缀由 `get_com_member` 剥掉）⇒
+   **所有属性型成员**归因失败，9 个 StudyOptions 族集体为 0。
+   ⚑ `audit_call_arity.py` 早就有这套归一，我在新写的回落里漏抄了。
+
+修完：**仿真 8/19 → 19/19，路由 8/17 → 17/17**。
+
+## 结果：14 个域全部满覆盖
+| 状态 | 域 |
+|---|---|
+| **满覆盖** | 零件特征 · 钣金 · 焊件 · 装配 · 草图 · 工程图 · 几何与拓扑 · 应用与会话 · 质量属性 · 配置材料 · 曲面 · 孔与螺纹 · **仿真 19/19** · **路由/Composer/PDM 17/17** |
+| 部分 | **无** |
+
+## 同步更新的文档（否则还是假话）
+- `docs/harvest-report.md` §一 A1 定量小节：改成 14 域满覆盖，
+  并写明域 13/14 的成员来自反射而非 `C:\swapi`
+- `SKILL.md` 触及率速查：同样更新，并补一句
+  「这两个域都需要独立许可产品，本机均未安装 ⇒ 加载项 ProgID 查不到，
+  模块一律接收调用方传入的对象」
+
+## 保留的一处「查不到」
+`docs/capability-matrix.md` 里 `ISeam2` / `IFeatureRef` 仍标「查不到」——
+那是**几何与拓扑**域的成员，不是域 13/14 的。`sw_know suggest` 给的都是
+非近似命中，按铁律 5 不臆造。**该留的「查不到」不改成「已覆盖」。**
+
+## 验证
+- 三个门禁全绿：diff 记号 PASS(191 文件) / 来源门禁 167 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 640 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 至此 A1 的定量表与实际状态一致
+仍**不是**「敢自信说全覆盖」的终点 —— 下一轮要处理的是：
+`ICovering` / `IWireProperty` 这类**只取了对象但没调其成员**的小族，
+以及把 A2–A7 的自评逐条按实际重新核一遍。

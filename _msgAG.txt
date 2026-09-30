@@ -1,0 +1,40 @@
+feat(drawing): 新增 sw_section_view.py —— 剖视图 / 注释视图 / 模型视图管理
+
+目标里点名的三个族，此前**只在登记表里可查、没有任何封装**。本轮做掉：
+
+| 族 | 总成员 | 直接调 | 护栏可达 | 已编目 |
+|---|---|---|---|---|
+| `ISectionViewData` | 35 | 18 | 4 | 35 |
+| `IAnnotationView` | 17 | 7 | 9 | 15 |
+| `IModelViewManager` | 42 | 4 | 36 | 41 |
+
+## 每族实测出来的结构特点
+**`ISectionViewData`：62 个反射成员里 62 个是零参属性** ⇒ 剖视图**基本只有
+设值、没有动作方法**。所以本模块封装「读一组」，
+**不假装它有方法**；写侧留给调用方按反射填——
+因为 `set_First*` 的实参类型逐个不同（Object/Double/Boolean/Int32），
+写错类型在迟到绑定下会**静默失败而不报错**。
+
+**`IAnnotationView`：`get_AnnotationCount` 与 `GetAnnotationCount` 是两个成员**
+（前者属性形态、后者方法形态）⇒ 两个都登记、都不混用，**不猜**。
+
+**`IModelViewManager`：快照是模型视图的基准画面**（保存后可用于恢复/对比/出图），
+是这个族最有工程价值的四个成员，优先封装。
+⚠ 官方是 **`AddSnapShot`（大写 S）**，不是 AddSnapshot——已在代码与文档里标注。
+
+## 验证
+- 剖视证据回读实测：读到 `FirstRotationX/Y` / `FirstPlane` / `FirstOffset` /
+  `FirstReverseDirection` / `ExcludeSelectedItems` 六个属性，值正确
+- 快照列表返回 `['a','b']`，调用落成 `GetSnapShotNames` 零参
+- 护栏：错 arity 被拦、None 目标被拦
+- 三门禁全绿：diff 记号 PASS(226 文件) / 来源门禁 287 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 827 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 覆盖合计（三列，不合并）
+| 口径 | 成员 |
+|---|---|
+| 编目录 | 12,870 / 16,615 |
+| 护栏可调 | 9,228 |
+| 直接调 | **2,642**（上一轮 2,637） |

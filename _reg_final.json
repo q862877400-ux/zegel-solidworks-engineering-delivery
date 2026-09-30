@@ -1,0 +1,1741 @@
+{
+  "IAttributeDef": {
+    "interface": "IAttributeDef",
+    "raw_members": 14,
+    "internal_dispatch": 4,
+    "property_count": 0,
+    "method_count": 10,
+    "distinct_capabilities": 10,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "AddCallback",
+        "arity": 3
+      },
+      {
+        "name": "AddParameter",
+        "arity": 4
+      },
+      {
+        "name": "CreateInstance",
+        "arity": 3
+      },
+      {
+        "name": "CreateInstance2",
+        "arity": 4
+      },
+      {
+        "name": "CreateInstance3",
+        "arity": 6
+      },
+      {
+        "name": "CreateInstance4",
+        "arity": 5
+      },
+      {
+        "name": "CreateInstance5",
+        "arity": 5
+      },
+      {
+        "name": "GetOption",
+        "arity": 1
+      },
+      {
+        "name": "Register",
+        "arity": 0
+      },
+      {
+        "name": "SetOption",
+        "arity": 2
+      }
+    ]
+  },
+  "IBomTableSortData": {
+    "interface": "IBomTableSortData",
+    "raw_members": 12,
+    "internal_dispatch": 0,
+    "property_count": 12,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "Ascending",
+      "ColumnIndex",
+      "DoNotChangeItemNumber",
+      "ItemGroups",
+      "SaveCurrentSortParameters",
+      "SortMethod"
+    ],
+    "members": []
+  },
+  "IBSurfParamData": {
+    "interface": "IBSurfParamData",
+    "raw_members": 11,
+    "internal_dispatch": 1,
+    "property_count": 9,
+    "method_count": 1,
+    "distinct_capabilities": 1,
+    "folded": false,
+    "properties": [
+      "ControlPointColumnCount",
+      "ControlPointDimension",
+      "ControlPointRowCount",
+      "UKnots",
+      "UOrder",
+      "UPeriodicity",
+      "VKnots",
+      "VOrder",
+      "VPeriodicity"
+    ],
+    "members": [
+      {
+        "name": "GetControlPoints",
+        "arity": 2
+      }
+    ]
+  },
+  "IClearanceVerificationMgr": {
+    "interface": "IClearanceVerificationMgr",
+    "raw_members": 11,
+    "internal_dispatch": 0,
+    "property_count": 6,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "CheckClearanceBetween",
+      "IgnoreClearanceEqualToSpecifiedValue",
+      "TreatSubAssembliesAsComponents"
+    ],
+    "members": [
+      {
+        "name": "CalculateClearances",
+        "arity": 0
+      },
+      {
+        "name": "GetComponentsOrFacesToCheck",
+        "arity": 0
+      },
+      {
+        "name": "GetMinimumAcceptableClearance",
+        "arity": 0
+      },
+      {
+        "name": "SetComponentsOrFacesToCheck",
+        "arity": 3
+      },
+      {
+        "name": "SetMinimumAcceptableClearance",
+        "arity": 1
+      }
+    ]
+  },
+  "IColorTable": {
+    "interface": "IColorTable",
+    "raw_members": 12,
+    "internal_dispatch": 2,
+    "property_count": 0,
+    "method_count": 10,
+    "distinct_capabilities": 10,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetBasicColorCount",
+        "arity": 0
+      },
+      {
+        "name": "GetBasicColors",
+        "arity": 0
+      },
+      {
+        "name": "GetColorRefAtIndex",
+        "arity": 1
+      },
+      {
+        "name": "GetCount",
+        "arity": 0
+      },
+      {
+        "name": "GetCustomColorCount",
+        "arity": 0
+      },
+      {
+        "name": "GetCustomColors",
+        "arity": 0
+      },
+      {
+        "name": "GetNameAtIndex",
+        "arity": 1
+      },
+      {
+        "name": "GetStandardCount",
+        "arity": 0
+      },
+      {
+        "name": "SetColorRefAtIndex",
+        "arity": 3
+      },
+      {
+        "name": "SetCustomColor",
+        "arity": 2
+      }
+    ]
+  },
+  "ICommandManager": {
+    "interface": "ICommandManager",
+    "raw_members": 24,
+    "internal_dispatch": 3,
+    "property_count": 2,
+    "method_count": 19,
+    "distinct_capabilities": 19,
+    "folded": false,
+    "properties": [
+      "NumberOfFlyoutGroups",
+      "NumberOfGroups"
+    ],
+    "members": [
+      {
+        "name": "AddCommandTab",
+        "arity": 2
+      },
+      {
+        "name": "AddContextMenu",
+        "arity": 2
+      },
+      {
+        "name": "CommandTabs",
+        "arity": 1
+      },
+      {
+        "name": "CreateCommandGroup",
+        "arity": 5
+      },
+      {
+        "name": "CreateCommandGroup2",
+        "arity": 7
+      },
+      {
+        "name": "CreateFlyoutGroup",
+        "arity": 10
+      },
+      {
+        "name": "CreateFlyoutGroup2",
+        "arity": 8
+      },
+      {
+        "name": "GetCommandGroup",
+        "arity": 1
+      },
+      {
+        "name": "GetCommandIDsCount",
+        "arity": 1
+      },
+      {
+        "name": "GetCommandTab",
+        "arity": 2
+      },
+      {
+        "name": "GetCommandTabCount",
+        "arity": 1
+      },
+      {
+        "name": "GetFlyoutGroup",
+        "arity": 1
+      },
+      {
+        "name": "GetFlyoutGroups",
+        "arity": 0
+      },
+      {
+        "name": "GetGroupDataFromRegistry",
+        "arity": 2
+      },
+      {
+        "name": "GetGroups",
+        "arity": 0
+      },
+      {
+        "name": "RemoveCommandGroup",
+        "arity": 1
+      },
+      {
+        "name": "RemoveCommandGroup2",
+        "arity": 2
+      },
+      {
+        "name": "RemoveCommandTab",
+        "arity": 1
+      },
+      {
+        "name": "RemoveFlyoutGroup",
+        "arity": 1
+      }
+    ]
+  },
+  "ICommandTabBox": {
+    "interface": "ICommandTabBox",
+    "raw_members": 6,
+    "internal_dispatch": 3,
+    "property_count": 0,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "AddCommands",
+        "arity": 2
+      },
+      {
+        "name": "GetCommands",
+        "arity": 2
+      },
+      {
+        "name": "RemoveCommands",
+        "arity": 1
+      }
+    ]
+  },
+  "IComplexCornerTreatmentFeatureData": {
+    "interface": "IComplexCornerTreatmentFeatureData",
+    "raw_members": 12,
+    "internal_dispatch": 0,
+    "property_count": 6,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "PlanarTrimOption",
+      "PlanarTrimToolType",
+      "UserDefinedTrimFaces"
+    ],
+    "members": [
+      {
+        "name": "GetBodyTrimMembers",
+        "arity": 0
+      },
+      {
+        "name": "GetPlanarTrimMembers",
+        "arity": 0
+      },
+      {
+        "name": "GetTrimToolMember",
+        "arity": 1
+      },
+      {
+        "name": "SetBodyTrimMembers",
+        "arity": 1
+      },
+      {
+        "name": "SetPlanarTrimMembers",
+        "arity": 1
+      },
+      {
+        "name": "SetTrimToolMember",
+        "arity": 1
+      }
+    ]
+  },
+  "ICornerMember": {
+    "interface": "ICornerMember",
+    "raw_members": 5,
+    "internal_dispatch": 0,
+    "property_count": 4,
+    "method_count": 1,
+    "distinct_capabilities": 1,
+    "folded": false,
+    "properties": [
+      "TrimOrder",
+      "WeldGap"
+    ],
+    "members": [
+      {
+        "name": "GetUnderlyingMemberFeature",
+        "arity": 0
+      }
+    ]
+  },
+  "IDiagnoseResult": {
+    "interface": "IDiagnoseResult",
+    "raw_members": 4,
+    "internal_dispatch": 1,
+    "property_count": 0,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetCoEdgesAtGap",
+        "arity": 1
+      },
+      {
+        "name": "GetCoEdgesCountAtGap",
+        "arity": 1
+      },
+      {
+        "name": "GetGapsCount",
+        "arity": 0
+      }
+    ]
+  },
+  "IEnvironment": {
+    "interface": "IEnvironment",
+    "raw_members": 15,
+    "internal_dispatch": 6,
+    "property_count": 0,
+    "method_count": 9,
+    "distinct_capabilities": 9,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetIsBound",
+        "arity": 2
+      },
+      {
+        "name": "GetSymArcs",
+        "arity": 1
+      },
+      {
+        "name": "GetSymArcs2",
+        "arity": 1
+      },
+      {
+        "name": "GetSymCircles",
+        "arity": 1
+      },
+      {
+        "name": "GetSymEdgeCounts",
+        "arity": 1
+      },
+      {
+        "name": "GetSymLines",
+        "arity": 1
+      },
+      {
+        "name": "GetSymText",
+        "arity": 1
+      },
+      {
+        "name": "GetSymTextPoints",
+        "arity": 1
+      },
+      {
+        "name": "GetSymTriangles",
+        "arity": 1
+      }
+    ]
+  },
+  "IFlyoutGroup": {
+    "interface": "IFlyoutGroup",
+    "raw_members": 21,
+    "internal_dispatch": 0,
+    "property_count": 16,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "ButtonCount",
+      "CmdID",
+      "FlyoutType",
+      "IconList",
+      "LargeIconList",
+      "LargeMainIcon",
+      "MainIconList",
+      "SmallIconList",
+      "SmallMainIcon"
+    ],
+    "members": [
+      {
+        "name": "AddCommandItem",
+        "arity": 5
+      },
+      {
+        "name": "AddContextMenuFlyout",
+        "arity": 2
+      },
+      {
+        "name": "RemoveAllCommandItems",
+        "arity": 0
+      },
+      {
+        "name": "RemoveCommandItem",
+        "arity": 1
+      },
+      {
+        "name": "ReplaceCommandItem",
+        "arity": 6
+      }
+    ]
+  },
+  "IGeneralToleranceTableAnnotation": {
+    "interface": "IGeneralToleranceTableAnnotation",
+    "raw_members": 1,
+    "internal_dispatch": 0,
+    "property_count": 1,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "GeneralToleranceTableFeature"
+    ],
+    "members": []
+  },
+  "IGtolFrame": {
+    "interface": "IGtolFrame",
+    "raw_members": 9,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 9,
+    "distinct_capabilities": 9,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "AddIndicator",
+        "arity": 3
+      },
+      {
+        "name": "DeleteIndicator",
+        "arity": 1
+      },
+      {
+        "name": "GetFrameToleranceType",
+        "arity": 1
+      },
+      {
+        "name": "GetIndicator",
+        "arity": 4
+      },
+      {
+        "name": "GetIndicatorCount",
+        "arity": 0
+      },
+      {
+        "name": "GetSymbolXml",
+        "arity": 0
+      },
+      {
+        "name": "SetFrameToleranceType",
+        "arity": 1
+      },
+      {
+        "name": "SetIndicator",
+        "arity": 4
+      },
+      {
+        "name": "SetSymbolXml",
+        "arity": 1
+      }
+    ]
+  },
+  "IImportStepData": {
+    "interface": "IImportStepData",
+    "raw_members": 2,
+    "internal_dispatch": 0,
+    "property_count": 2,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "MapConfigurationData"
+    ],
+    "members": []
+  },
+  "IInstanceToVaryOptions": {
+    "interface": "IInstanceToVaryOptions",
+    "raw_members": 15,
+    "internal_dispatch": 0,
+    "property_count": 4,
+    "method_count": 11,
+    "distinct_capabilities": 11,
+    "folded": false,
+    "properties": [
+      "D1SpacingIncrement",
+      "D2SpacingIncrement"
+    ],
+    "members": [
+      {
+        "name": "GetD1IncrementDimensions",
+        "arity": 2
+      },
+      {
+        "name": "GetD1ModifiedSpacingValue",
+        "arity": 1
+      },
+      {
+        "name": "GetD2IncrementDimensions",
+        "arity": 2
+      },
+      {
+        "name": "GetD2ModifiedSpacingValue",
+        "arity": 1
+      },
+      {
+        "name": "GetModifiedDimensions",
+        "arity": 3
+      },
+      {
+        "name": "GetModifiedInstances",
+        "arity": 1
+      },
+      {
+        "name": "ModifyD1SpacingValue",
+        "arity": 2
+      },
+      {
+        "name": "ModifyD2SpacingValue",
+        "arity": 2
+      },
+      {
+        "name": "ModifyDimensions",
+        "arity": 3
+      },
+      {
+        "name": "SetD1IncrementDimensions",
+        "arity": 2
+      },
+      {
+        "name": "SetD2IncrementDimensions",
+        "arity": 2
+      }
+    ]
+  },
+  "ILightDialog": {
+    "interface": "ILightDialog",
+    "raw_members": 2,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 2,
+    "distinct_capabilities": 2,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "AddSubDialog",
+        "arity": 1
+      },
+      {
+        "name": "GetLightId",
+        "arity": 0
+      }
+    ]
+  },
+  "ILinearCouplerMateFeatureData": {
+    "interface": "ILinearCouplerMateFeatureData",
+    "raw_members": 14,
+    "internal_dispatch": 0,
+    "property_count": 14,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "CouplerRatioDenominator",
+      "CouplerRatioNumerator",
+      "MateEntity1",
+      "MateEntity2",
+      "ReferenceComponent1",
+      "ReferenceComponent2",
+      "Reverse"
+    ],
+    "members": []
+  },
+  "IMathTransform": {
+    "interface": "IMathTransform",
+    "raw_members": 14,
+    "internal_dispatch": 5,
+    "property_count": 4,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "ArrayData",
+      "IArrayData"
+    ],
+    "members": [
+      {
+        "name": "GetData",
+        "arity": 5
+      },
+      {
+        "name": "GetData2",
+        "arity": 5
+      },
+      {
+        "name": "Inverse",
+        "arity": 0
+      },
+      {
+        "name": "Multiply",
+        "arity": 1
+      },
+      {
+        "name": "SetData",
+        "arity": 5
+      }
+    ]
+  },
+  "IMBDSTEP242Data": {
+    "interface": "IMBDSTEP242Data",
+    "raw_members": 12,
+    "internal_dispatch": 0,
+    "property_count": 12,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "CustomPropertiesToPublish",
+      "ExportFaceEdgeProperties",
+      "PublishFileName",
+      "PublishWithAllCustomProperties",
+      "STEP242Edition",
+      "SplitPeriodicFaces"
+    ],
+    "members": []
+  },
+  "IMouse": {
+    "interface": "IMouse",
+    "raw_members": 3,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "MouseWheelXYZ",
+        "arity": 5
+      },
+      {
+        "name": "Move",
+        "arity": 3
+      },
+      {
+        "name": "MoveXYZ",
+        "arity": 4
+      }
+    ]
+  },
+  "IPLMObjectSpecification": {
+    "interface": "IPLMObjectSpecification",
+    "raw_members": 2,
+    "internal_dispatch": 0,
+    "property_count": 2,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "PLMID"
+    ],
+    "members": []
+  },
+  "IPMIDatumData": {
+    "interface": "IPMIDatumData",
+    "raw_members": 3,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetDatumFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetDatumTarget",
+        "arity": 0
+      },
+      {
+        "name": "GetDatumType",
+        "arity": 0
+      }
+    ]
+  },
+  "IPMIDimensionData": {
+    "interface": "IPMIDimensionData",
+    "raw_members": 4,
+    "internal_dispatch": 0,
+    "property_count": 2,
+    "method_count": 2,
+    "distinct_capabilities": 2,
+    "folded": false,
+    "properties": [
+      "DimensionText"
+    ],
+    "members": [
+      {
+        "name": "GetDimensionItemAtIndex",
+        "arity": 1
+      },
+      {
+        "name": "GetDimensionItemCount",
+        "arity": 0
+      }
+    ]
+  },
+  "IPMIFrameData": {
+    "interface": "IPMIFrameData",
+    "raw_members": 8,
+    "internal_dispatch": 0,
+    "property_count": 4,
+    "method_count": 4,
+    "distinct_capabilities": 4,
+    "folded": false,
+    "properties": [
+      "FrameNumber",
+      "GeometricCharacteristic"
+    ],
+    "members": [
+      {
+        "name": "GetGtolBoxAtIndex",
+        "arity": 1
+      },
+      {
+        "name": "GetGtolBoxCount",
+        "arity": 0
+      },
+      {
+        "name": "GetGtolDatumAtIndex",
+        "arity": 1
+      },
+      {
+        "name": "GetGtolDatumCount",
+        "arity": 0
+      }
+    ]
+  },
+  "IPrimaryMemberFacePlaneIntersectionFeatureData": {
+    "interface": "IPrimaryMemberFacePlaneIntersectionFeatureData",
+    "raw_members": 7,
+    "internal_dispatch": 0,
+    "property_count": 2,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "MergeTangentMembers"
+    ],
+    "members": [
+      {
+        "name": "GetIntersectingObjectTypes",
+        "arity": 0
+      },
+      {
+        "name": "GetIntersectingPlanesAndFaces",
+        "arity": 0
+      },
+      {
+        "name": "GetParameterFaces",
+        "arity": 0
+      },
+      {
+        "name": "SetIntersectingPlanesAndFaces",
+        "arity": 1
+      },
+      {
+        "name": "SetParameterFaces",
+        "arity": 1
+      }
+    ]
+  },
+  "IPrimaryMemberPathSegmentFeatureData": {
+    "interface": "IPrimaryMemberPathSegmentFeatureData",
+    "raw_members": 5,
+    "internal_dispatch": 0,
+    "property_count": 2,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [
+      "MergeTangentMembers"
+    ],
+    "members": [
+      {
+        "name": "GetPathSegments",
+        "arity": 0
+      },
+      {
+        "name": "GetPathSegmentsTypes",
+        "arity": 0
+      },
+      {
+        "name": "SetPathSegments",
+        "arity": 1
+      }
+    ]
+  },
+  "IPrimaryMemberRefPlaneFeatureData": {
+    "interface": "IPrimaryMemberRefPlaneFeatureData",
+    "raw_members": 9,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 9,
+    "distinct_capabilities": 9,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetReferenceAxes",
+        "arity": 0
+      },
+      {
+        "name": "GetReferenceAxesTypes",
+        "arity": 0
+      },
+      {
+        "name": "GetReferenceLocations",
+        "arity": 0
+      },
+      {
+        "name": "GetReferenceLocationsTypes",
+        "arity": 0
+      },
+      {
+        "name": "GetStartAndEndReferences",
+        "arity": 0
+      },
+      {
+        "name": "GetStartAndEndReferencesTypes",
+        "arity": 0
+      },
+      {
+        "name": "SetReferenceAxes",
+        "arity": 1
+      },
+      {
+        "name": "SetReferenceLocations",
+        "arity": 1
+      },
+      {
+        "name": "SetStartAndEndReferences",
+        "arity": 1
+      }
+    ]
+  },
+  "IPrimaryStructuralMemberFeatureData": {
+    "interface": "IPrimaryStructuralMemberFeatureData",
+    "raw_members": 1,
+    "internal_dispatch": 0,
+    "property_count": 1,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "PrimaryMemberType"
+    ],
+    "members": []
+  },
+  "IPrint3DDialog": {
+    "interface": "IPrint3DDialog",
+    "raw_members": 1,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 1,
+    "distinct_capabilities": 1,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "UpdateDialog",
+        "arity": 0
+      }
+    ]
+  },
+  "IPrintSpecification": {
+    "interface": "IPrintSpecification",
+    "raw_members": 35,
+    "internal_dispatch": 0,
+    "property_count": 32,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [
+      "Collate",
+      "ConvertToHighQuality",
+      "CurrentSheet",
+      "FromScale",
+      "NumberOfCopies",
+      "PrintBackground",
+      "PrintCrossHatchOnOutOfDateViews",
+      "PrintFile",
+      "PrintRange",
+      "PrintToFile",
+      "PrintWhiteItemsBlack",
+      "PrinterQueue",
+      "ScaleMethod",
+      "SheetCount",
+      "ToScale",
+      "XOrigin",
+      "YOrigin"
+    ],
+    "members": [
+      {
+        "name": "AddPrintRange",
+        "arity": 2
+      },
+      {
+        "name": "ResetPrintRange",
+        "arity": 0
+      },
+      {
+        "name": "RestoreDefaults",
+        "arity": 0
+      }
+    ]
+  },
+  "IPropertyManagerPageBitmap": {
+    "interface": "IPropertyManagerPageBitmap",
+    "raw_members": 2,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 2,
+    "distinct_capabilities": 2,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "SetBitmapByName",
+        "arity": 2
+      },
+      {
+        "name": "SetStandardBitmap",
+        "arity": 1
+      }
+    ]
+  },
+  "IPropertyManagerPageBitmapButton": {
+    "interface": "IPropertyManagerPageBitmapButton",
+    "raw_members": 10,
+    "internal_dispatch": 0,
+    "property_count": 4,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "Checked",
+      "IsCheckable"
+    ],
+    "members": [
+      {
+        "name": "SetBitmaps",
+        "arity": 4
+      },
+      {
+        "name": "SetBitmapsByName",
+        "arity": 3
+      },
+      {
+        "name": "SetBitmapsByName2",
+        "arity": 2
+      },
+      {
+        "name": "SetBitmapsByName3",
+        "arity": 2
+      },
+      {
+        "name": "SetBitmapsx64",
+        "arity": 4
+      },
+      {
+        "name": "SetStandardBitmaps",
+        "arity": 1
+      }
+    ]
+  },
+  "IPunchTableAnnotation": {
+    "interface": "IPunchTableAnnotation",
+    "raw_members": 1,
+    "internal_dispatch": 0,
+    "property_count": 1,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "PunchTable"
+    ],
+    "members": []
+  },
+  "IRayTraceRenderer": {
+    "interface": "IRayTraceRenderer",
+    "raw_members": 7,
+    "internal_dispatch": 0,
+    "property_count": 1,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "RayTraceRendererOptions"
+    ],
+    "members": [
+      {
+        "name": "AbortFinalRender",
+        "arity": 0
+      },
+      {
+        "name": "CloseFinalRenderWindow",
+        "arity": 0
+      },
+      {
+        "name": "CloseRayTraceRender",
+        "arity": 0
+      },
+      {
+        "name": "DisplayPreviewWindow",
+        "arity": 0
+      },
+      {
+        "name": "InvokeFinalRender",
+        "arity": 0
+      },
+      {
+        "name": "RenderToFile",
+        "arity": 3
+      }
+    ]
+  },
+  "IRayTraceRendererOptions": {
+    "interface": "IRayTraceRendererOptions",
+    "raw_members": 71,
+    "internal_dispatch": 0,
+    "property_count": 70,
+    "method_count": 1,
+    "distinct_capabilities": 1,
+    "folded": false,
+    "properties": [
+      "AlphaOutput",
+      "BloomEnabled",
+      "BloomRadius",
+      "BloomThreshold",
+      "CausticAmount",
+      "CausticQuality",
+      "ClientWorkload",
+      "ContourCartoonRenderingEnabled",
+      "ContourEnabled",
+      "ContourLineColor",
+      "ContourLineThickness",
+      "CustomRenderSettings",
+      "DefaultImagePath",
+      "DirectCaustics",
+      "FinalRenderQuality",
+      "Gamma",
+      "HasCartoonEdges",
+      "HasCartoonShading",
+      "ImageFormat",
+      "ImageHeight",
+      "ImageWidth",
+      "IncludeAnnotationsInRendering",
+      "NetworkRendering",
+      "NetworkSharedDirectory",
+      "NumberOfReflections",
+      "NumberOfRefractions",
+      "OffloadedRendering",
+      "OutputAmbientOcclusion",
+      "PreviewRenderQuality",
+      "RenderAnnotationsToSeparateImage",
+      "RenderType",
+      "SendDataForNetworkJob",
+      "ShadedContour",
+      "UseSceneBackgroundImageAspectRatio",
+      "UseSolidWorksViewAspectRatio"
+    ],
+    "members": [
+      {
+        "name": "UpdateGraphics",
+        "arity": 0
+      }
+    ]
+  },
+  "IRefAxis": {
+    "interface": "IRefAxis",
+    "raw_members": 4,
+    "internal_dispatch": 1,
+    "property_count": 0,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetRefAxisParams",
+        "arity": 0
+      },
+      {
+        "name": "GetTempAxisReferenceFace",
+        "arity": 0
+      },
+      {
+        "name": "IsTempAxis",
+        "arity": 0
+      }
+    ]
+  },
+  "IRefPoint": {
+    "interface": "IRefPoint",
+    "raw_members": 1,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 1,
+    "distinct_capabilities": 1,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetRefPoint",
+        "arity": 0
+      }
+    ]
+  },
+  "IRenamedDocumentReferences": {
+    "interface": "IRenamedDocumentReferences",
+    "raw_members": 12,
+    "internal_dispatch": 0,
+    "property_count": 6,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "CompletionAction",
+      "IncludeFileLocations",
+      "UpdateWhereUsedReferences"
+    ],
+    "members": [
+      {
+        "name": "AddSearchFolder",
+        "arity": 1
+      },
+      {
+        "name": "GetSearchPath",
+        "arity": 0
+      },
+      {
+        "name": "ReferencesArray",
+        "arity": 0
+      },
+      {
+        "name": "RemoveReference",
+        "arity": 1
+      },
+      {
+        "name": "RemoveSearchFolder",
+        "arity": 1
+      },
+      {
+        "name": "Search",
+        "arity": 0
+      }
+    ]
+  },
+  "IRoutingSettings": {
+    "interface": "IRoutingSettings",
+    "raw_members": 13,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 13,
+    "distinct_capabilities": 13,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetFromToListHeaderDefinitions",
+        "arity": 12
+      },
+      {
+        "name": "GetRoutingUserPreferenceDoubleValue",
+        "arity": 1
+      },
+      {
+        "name": "GetRoutingUserPreferenceIntegerValue",
+        "arity": 1
+      },
+      {
+        "name": "GetRoutingUserPreferenceStringValue",
+        "arity": 2
+      },
+      {
+        "name": "GetRoutingUserPreferenceToggle",
+        "arity": 1
+      },
+      {
+        "name": "LoadDefaultRoutingSettings",
+        "arity": 0
+      },
+      {
+        "name": "LoadRoutingSettingsFromFile",
+        "arity": 1
+      },
+      {
+        "name": "SaveRoutingSettingsToFile",
+        "arity": 1
+      },
+      {
+        "name": "SetFromToListHeaderDefinitions",
+        "arity": 12
+      },
+      {
+        "name": "SetRoutingUserPreferenceDoubleValue",
+        "arity": 2
+      },
+      {
+        "name": "SetRoutingUserPreferenceIntegerValue",
+        "arity": 2
+      },
+      {
+        "name": "SetRoutingUserPreferenceStringValue",
+        "arity": 2
+      },
+      {
+        "name": "SetRoutingUserPreferenceToggle",
+        "arity": 2
+      }
+    ]
+  },
+  "ISafeArrayUtility": {
+    "interface": "ISafeArrayUtility",
+    "raw_members": 21,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 21,
+    "distinct_capabilities": 21,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetBoolean",
+        "arity": 2
+      },
+      {
+        "name": "GetBstr",
+        "arity": 2
+      },
+      {
+        "name": "GetByte",
+        "arity": 2
+      },
+      {
+        "name": "GetDispatch",
+        "arity": 2
+      },
+      {
+        "name": "GetDouble",
+        "arity": 2
+      },
+      {
+        "name": "GetInfo",
+        "arity": 3
+      },
+      {
+        "name": "GetLong",
+        "arity": 2
+      },
+      {
+        "name": "GetLongLong",
+        "arity": 2
+      },
+      {
+        "name": "GetShort",
+        "arity": 2
+      },
+      {
+        "name": "GetUNKNOWN",
+        "arity": 2
+      },
+      {
+        "name": "PackVariant",
+        "arity": 4
+      },
+      {
+        "name": "PutBoolean",
+        "arity": 3
+      },
+      {
+        "name": "PutBstr",
+        "arity": 3
+      },
+      {
+        "name": "PutByte",
+        "arity": 3
+      },
+      {
+        "name": "PutDispatch",
+        "arity": 3
+      },
+      {
+        "name": "PutDouble",
+        "arity": 3
+      },
+      {
+        "name": "PutLong",
+        "arity": 3
+      },
+      {
+        "name": "PutLongLong",
+        "arity": 3
+      },
+      {
+        "name": "PutShort",
+        "arity": 3
+      },
+      {
+        "name": "PutUNKNOWN",
+        "arity": 3
+      },
+      {
+        "name": "UnPackVariant",
+        "arity": 2
+      }
+    ]
+  },
+  "ISecondaryMemberBetweenPointsFeatureData": {
+    "interface": "ISecondaryMemberBetweenPointsFeatureData",
+    "raw_members": 22,
+    "internal_dispatch": 0,
+    "property_count": 20,
+    "method_count": 2,
+    "distinct_capabilities": 2,
+    "folded": false,
+    "properties": [
+      "DistanceMember1",
+      "DistanceMember2",
+      "LengthRatioMember1",
+      "LengthRatioMember2",
+      "RevDirectionDistanceMember1",
+      "RevDirectionDistanceMember2",
+      "RevDirectionLengthRatioMember1",
+      "RevDirectionLengthRatioMember2",
+      "SecondaryMemberOffsetType",
+      "UnChainMemberPairs"
+    ],
+    "members": [
+      {
+        "name": "GetMemberPairs",
+        "arity": 0
+      },
+      {
+        "name": "SetMemberPairs",
+        "arity": 1
+      }
+    ]
+  },
+  "ISecondaryMemberSupportPlaneFeatureData": {
+    "interface": "ISecondaryMemberSupportPlaneFeatureData",
+    "raw_members": 7,
+    "internal_dispatch": 0,
+    "property_count": 2,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "UnChainMemberPairs"
+    ],
+    "members": [
+      {
+        "name": "GetIntersectingObjectTypes",
+        "arity": 0
+      },
+      {
+        "name": "GetIntersectingPlanesAndFaces",
+        "arity": 0
+      },
+      {
+        "name": "GetMemberPairs",
+        "arity": 0
+      },
+      {
+        "name": "SetIntersectingPlanesAndFaces",
+        "arity": 1
+      },
+      {
+        "name": "SetMemberPairs",
+        "arity": 1
+      }
+    ]
+  },
+  "ISecondaryMemberUpToMembersFeatureData": {
+    "interface": "ISecondaryMemberUpToMembersFeatureData",
+    "raw_members": 18,
+    "internal_dispatch": 0,
+    "property_count": 12,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "DistanceMember",
+      "LengthRatioMember",
+      "MemberPointParametersType",
+      "RevDirectionDistanceMember",
+      "RevDirectionLengthRatioMember",
+      "SecondaryMemberOffsetType"
+    ],
+    "members": [
+      {
+        "name": "GetFromPoint",
+        "arity": 2
+      },
+      {
+        "name": "GetFromPointMembers",
+        "arity": 0
+      },
+      {
+        "name": "GetPointMemberPairs",
+        "arity": 3
+      },
+      {
+        "name": "SetFromPoint",
+        "arity": 1
+      },
+      {
+        "name": "SetFromPointMembers",
+        "arity": 1
+      },
+      {
+        "name": "SetPointMemberPairs",
+        "arity": 2
+      }
+    ]
+  },
+  "ISecondaryStructuralMemberFeatureData": {
+    "interface": "ISecondaryStructuralMemberFeatureData",
+    "raw_members": 1,
+    "internal_dispatch": 0,
+    "property_count": 1,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "SecondaryMemberType"
+    ],
+    "members": []
+  },
+  "ISelectionSetFolder": {
+    "interface": "ISelectionSetFolder",
+    "raw_members": 2,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 2,
+    "distinct_capabilities": 2,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetSelectionSetByName",
+        "arity": 1
+      },
+      {
+        "name": "GetSelectionSets",
+        "arity": 0
+      }
+    ]
+  },
+  "ISelectionSetItem": {
+    "interface": "ISelectionSetItem",
+    "raw_members": 2,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 2,
+    "distinct_capabilities": 2,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetCorrespondingItem",
+        "arity": 0
+      },
+      {
+        "name": "RemoveFromSelectionSet",
+        "arity": 0
+      }
+    ]
+  },
+  "ISensor": {
+    "interface": "ISensor",
+    "raw_members": 14,
+    "internal_dispatch": 0,
+    "property_count": 11,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [
+      "SensorAlertEnabled",
+      "SensorAlertState",
+      "SensorAlertType",
+      "SensorAlertValue1",
+      "SensorAlertValue2",
+      "SensorType"
+    ],
+    "members": [
+      {
+        "name": "GetSensorFeatureData",
+        "arity": 0
+      },
+      {
+        "name": "GetSensorValue",
+        "arity": 2
+      },
+      {
+        "name": "UpdateSensor",
+        "arity": 0
+      }
+    ]
+  },
+  "ISimpleCornerTreatmentFeatureData": {
+    "interface": "ISimpleCornerTreatmentFeatureData",
+    "raw_members": 10,
+    "internal_dispatch": 0,
+    "property_count": 10,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "CornerTreatmentTrimType",
+      "PlanarTrimOption",
+      "PlanarTrimToolType",
+      "UserDefinedTrimFaces",
+      "WeldTrimGap"
+    ],
+    "members": []
+  },
+  "ISurfaceParameterizationData": {
+    "interface": "ISurfaceParameterizationData",
+    "raw_members": 12,
+    "internal_dispatch": 0,
+    "property_count": 12,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "UMax",
+      "UMaxBoundType",
+      "UMin",
+      "UMinBoundType",
+      "UProperties",
+      "UPropertyNumber",
+      "VMax",
+      "VMaxBoundType",
+      "VMin",
+      "VMinBoundType",
+      "VProperties",
+      "VPropertyNumber"
+    ],
+    "members": []
+  },
+  "ISwPEClassFactory": {
+    "interface": "ISwPEClassFactory",
+    "raw_members": 1,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 1,
+    "distinct_capabilities": 1,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "SetPartnerKey",
+        "arity": 2
+      }
+    ]
+  },
+  "ITitleBlockTableAnnotation": {
+    "interface": "ITitleBlockTableAnnotation",
+    "raw_members": 1,
+    "internal_dispatch": 0,
+    "property_count": 1,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "TitleBlockTableFeature"
+    ],
+    "members": []
+  },
+  "ITriadManipulator": {
+    "interface": "ITriadManipulator",
+    "raw_members": 15,
+    "internal_dispatch": 0,
+    "property_count": 12,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [
+      "Cursor",
+      "DoNotShow",
+      "Origin",
+      "PreviousDragPoint",
+      "XAxis",
+      "YAxis",
+      "ZAxis"
+    ],
+    "members": [
+      {
+        "name": "SetColorRefAtIndex",
+        "arity": 2
+      },
+      {
+        "name": "UpdatePosition",
+        "arity": 0
+      },
+      {
+        "name": "UpdateScale",
+        "arity": 1
+      }
+    ]
+  },
+  "ITwoMemberCornerTreatmentFeatureData": {
+    "interface": "ITwoMemberCornerTreatmentFeatureData",
+    "raw_members": 10,
+    "internal_dispatch": 0,
+    "property_count": 8,
+    "method_count": 2,
+    "distinct_capabilities": 2,
+    "folded": false,
+    "properties": [
+      "CornerTreatmentTrimType",
+      "MiterTrimPlanePoint",
+      "PlanarTrimOption",
+      "WeldTrimGap"
+    ],
+    "members": [
+      {
+        "name": "GetCornerGroupMembers",
+        "arity": 0
+      },
+      {
+        "name": "SwapMembers",
+        "arity": 0
+      }
+    ]
+  },
+  "IUserProgressBar": {
+    "interface": "IUserProgressBar",
+    "raw_members": 4,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 4,
+    "distinct_capabilities": 4,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "End",
+        "arity": 0
+      },
+      {
+        "name": "Start",
+        "arity": 3
+      },
+      {
+        "name": "UpdateProgress",
+        "arity": 1
+      },
+      {
+        "name": "UpdateTitle",
+        "arity": 1
+      }
+    ]
+  }
+}

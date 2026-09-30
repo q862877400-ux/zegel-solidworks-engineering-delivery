@@ -1,0 +1,52 @@
+feat(simulation): 新增 sw_simulation_registry.py —— cosworks 19 族的成员级登记表
+
+登记表 **427 项能力 + 395 项属性**（19 族），从 cosworks 反射机械生成。
+
+## 本模块在 Simulation 域的位置
+本仓库 Simulation 域是「高层封装 + 成员级登记表」两层：
+
+    sw_simulation.py               addin 入口 + 端到端骨架
+    sw_simulation_loads.py         载荷夹具 24 个 Add*（创建）
+    sw_simulation_study.py         研究管理与求解
+    sw_simulation_results.py       结果云图与网格质量
+    sw_simulation_loadprops.py     载荷对象属性
+    sw_simulation_study_options.py 242 个求解器设置
+    sw_simulation_registry.py     （本文件）19 族成员级登记表 ← 补全「全族可用」
+
+并覆盖了此前**没有任何封装**的族：`ICWResults`(107 成员) / `ICWMaterial` /
+`ICWMesh` / `ICWDynamicStudyOptions`(119) 等。
+
+## ⚑ 纠正一个我说错的数
+初稿写「覆盖 19 族，即 cosworks 全库」——**错**。独立复算：cosworks 反射里
+**有成员**的接口段共 **84 个**（其余 149 个段成员数为 0，是 coclass）。
+本轮登记的是 `family-coverage.md` 里**已列出**的那 19 族，
+**其余 65 族尚未纳入本仓库的域映射**。两个数现在在测试里分开记
+（`EXPECTED_REGISTERED=19` / `EXPECTED_REFLECTION_FAMILIES=84`）。
+
+⚑ 我早先把 19 当成全库去断言反射，断言必然红——那是**期望值口径写错**，
+不是数据错。已改。
+
+## 本轮还修了三处自己的问题
+1. **分组漏族**：我按「名字以 `StudyOptions` 结尾」筛求解器族，
+   结果 `ICWCompositeShellOptions`（名字不带后缀）和一次改写时漏掉的
+   `ICWDropTestStudyOptions` 都没进组。已改为**显式列举 + 注入器自检**
+   （`assert sorted(covered) == sorted(fams)`，不通过就不生成文件）。
+2. **反复打补丁把文件改坏**：连续几次按行号截断替换导致常量跑到文件头、
+   括号不配对。改为**从模板一次性重新生成**。
+3. 证据回读的成员名写成 `GetName`/`GetAnalysisType` 这类**去掉 `get_` 前缀**的
+   形式，与登记表的 `get_` 形态不一致。已统一为登记表形态。
+
+## 验证
+- tests/test_sw_simulation_registry_contract.py 11/11
+- 三个门禁全绿：diff 记号 PASS(215 文件) / 来源门禁 249 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 814 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 累计（本轮系列，24 个族）
+工程图 6 + 零件特征 8 + 草图 15 + 钣金 12 + 仿真 19 + 几何 5 + 总线 2
+IFeatureManager 96%  IDrawingDoc 84%  ISelectionMgr 90%  IModelView 81%
+ITableAnnotation 100%  IMate2 97%  IDisplayDimension 94%  IView 53%
+
+## 下一批
+其余低于 60% 的族 —— 主要是 cosworks 剩余 65 族 + 路由/PDM 侧

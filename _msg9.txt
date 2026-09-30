@@ -1,0 +1,44 @@
+feat(tools): 签名清单刷新工具收进仓库 —— arity 审计换机器也能跑
+
+## 问题
+scripts/audit_call_arity.py 需要一份「成员名 → 宿主接口 + 参数类型序列」清单，
+但该清单此前是**仓库外**的 D:\AI\SW\_raw\reflect\*.txt —— 换机器、换人、
+fork 出去之后就失效了。这让 arity 审计无法成为常驻门禁（而
+check_provenance 已经通过 release_check 常驻了）。
+
+## 解法：工具进仓库、产物留本地
+新增 scripts/refresh_api_signatures.py：探测本机 SolidWorks 安装目录下的
+interop DLL，用一段内联的 PowerShell 反射脚本生成清单。
+
+⚠ **产物不提交**（.gitignore 加了 .api-signatures/）。理由：清单是从达索
+interop 程序集派生的内容 —— 虽属事实性签名而非创作性表达，但把 700KB+
+派生件塞进 MIT 仓库是不必要的分发风险。**任何人装了 SolidWorks 一条命令即可复现**，
+既可复现又不外发。
+
+## 已真实跑通（不是只写了脚本）
+  iface_sldworks.txt  709,979 字节 / 17,766 行
+  iface_cosworks.txt   106,910 字节 /  2,690 行
+  → audit_call_arity 端到端消费正常
+    sw_simulation.py 34 调用点（33 通过 + 1 动态）
+    sw_weldment.py   71 调用点 71/71 通过
+
+## 内联 PowerShell 反射脚本的两个关键点（都写进注释了）
+1. **handler 内只能用纯 .NET API**：任何 cmdlet / New-Object 都会触发
+   PowerShell 模块自动加载 → 重入同一个 handler → 无限递归。
+   本任务在 cosworks 域清单那次已踩过一次（栈溢出 + 数百行递归栈）。
+2. **-OutFile 必须传绝对路径**：初稿传相对路径 + 子进程 cwd 设为输出目录，
+   结果生成 `.api-signatures/.api-signatures/iface_*.txt`。
+   本轮第一次真跑就撞上了，已修。
+
+## 顺带
+- release_check 的必需文件清单加入 refresh_api_signatures.py
+- SKILL.md「代码体检工具」节改写：说明清单的生成方式、为何不提交、
+  以及三个门禁各自的依赖条件（provenance 需要 git 锚点，
+  arity 需要本机 SolidWorks）
+
+## 验证
+- 来源门禁 84 块 / 0 违规
+- 产物确认未进 git（.api-signatures/ 被忽略）
+- compileall 通过（含 examples/）
+- 全量测试 535 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中

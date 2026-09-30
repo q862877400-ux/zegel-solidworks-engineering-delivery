@@ -1,0 +1,41 @@
+test: 补齐 3 个模块的签名契约测试（sw_render_material / sketch_relations / 焊件扩写）
+
+本任务新增/扩展了 6 个模块，但只有 3 个有契约测试（sw_simulation 13/13、
+sw_surface 14/14、drawing 8/8），另外 3 个此前只有 arity 审计。
+本文件把它们拉到同一标准：14/14。
+
+覆盖内容（断言依据全部照抄反射清单的 Signature 行）:
+- sw_render_material: AddRenderMaterial 必须 2 参、UpdateRenderMaterialsInSceneGraph 1 参、
+  建材质对象时**恰好**设那 7 个已确认的 Double 属性（多一个少一个都能看出来）
+- sketch_relations: AddRelation 2 参、AddTangencyControl 3 参、
+  槽/关系实体枚举项数与官方一致（3 / 2 / 6）
+- sw_hole_features: IHoleStandardsData 的 4 个查询方法实参个数逐个对齐（2/3/3/4）、
+  直/锥攻丝分别设 7 / 5 个属性
+- sw_weldment: 三个 fm 常量 = 65 / 72 / 101（反射值，非印象）、
+  **断言 create_weld_member 不得存在**（被审计器抓出后已删除的错误实现，防复活）
+
+## 两个「防复发」断言值得单说
+1) `test_render_material_spec_has_no_hallucinated_property` — 断言 spec 里
+   **没有** shininess、**有** roughness。把「Shininess 在官方 API 中不存在」
+   这条教训固化成可执行断言，防止后人按印象改回去。
+2) `test_weldment_has_no_create_weld_member` — 断言那个错误函数**不得复活**。
+   它当时错在 IStructureSystemMemberFeatureData 只有 get_MemberProfile()、没有 setter。
+3) `test_mass_property_override_uses_real_member_name` — 断言源码里用
+   GetMassProperties 而不是凭印象写的 MassProperties。
+
+## 开发本测试时自己踩的三个坑（都写进注释了）
+1. **桩不调用方法**: get_com_member 桩只做 getattr 时，方法对象被原样返回，
+   被测代码拿不到返回值 ⇒ 8 个用例一起红。必须「可调用则调用」。
+2. **桩成员列举太脆**: 逐个列 sw_part 的成员，连栽两次
+   （`_select_com_object`、`extrude_cut`）。改成「问什么给什么」的 _StubModule。
+3. **全局状态污染**（最隐蔽）: 只靠 `sys.modules.setdefault` 装桩时，
+   全量 pytest 下别的测试若已导入真实 sw_connect，桩装不上 ——
+   表现为**单独跑 14/14 全绿、全量跑挂 1 个**。
+   可靠修法是拿到模块对象后**直接替换它自己持有的 `get_com_member` 引用**，
+   与 import 顺序无关。
+
+## 验证
+- 单独跑 14/14；与其它测试同跑 22 passed；全量 535 passed / 2 failed
+  （2 个均为既有：test_cad_reliability / test_release_check）
+- 来源门禁 84 块 / 0 违规
+- compileall 通过（含 examples/）

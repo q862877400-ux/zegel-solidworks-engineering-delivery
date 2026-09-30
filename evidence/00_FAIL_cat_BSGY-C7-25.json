@@ -1,0 +1,26 @@
+{
+ "tag": "FAIL_cat_BSGY-C7-25",
+ "note": "进分类失败(直线运动零件)",
+ "kind": "GENERATED",
+ "state": {
+  "pct": 100,
+  "n_codes": 0,
+  "codes": [],
+  "combos": {},
+  "buttons": [
+   "关闭",
+   "清除所有",
+   "选型PDF",
+   "保存",
+   "生成预览",
+   "插入",
+   "搜索",
+   "去官网",
+   "联系我们"
+  ],
+  "n_categories": 1,
+  "categories": [
+   "普通级"
+  ]
+ }
+}

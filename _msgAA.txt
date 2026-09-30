@@ -1,0 +1,50 @@
+feat(registry): 收尾批次 —— sldworks 侧 138 族 + 路由/成本 31 族，覆盖表重算
+
+## 新增两个全量登记表
+- `scripts/sw_sldworks_remaining.py` — sldworks 侧 138 族 / **4148 能力** / 1504 属性
+- `scripts/sw_routing_costing_full.py` — Routers + Composer + 3 个小族
+  31 族 / 189 能力 / 145 属性
+
+## 覆盖表重算的真实面貌
+把「C:\swapi 未收录的 5 个程序集」的族并入域映射后：
+
+| 指标 | 值 |
+|---|---|
+| 接口族总数 | **374** |
+| 14 个域的族级覆盖 | **全部 100%**（如 仿真 84/84、路由/PDM 152/152） |
+| 成员触及率 = 100% 的族 | **263** |
+| 成员触及率 < 60% 的族 | **3**（ISurfacePlanarFeatureData / ISurfaceTrimFeatureData / IMidSurface3，均 57% 左右） |
+
+对比本轮开始时：**族总数 174 → 374**，100% 族 16 → 263。
+
+## 关键的一步：先扩归因规则，否则表会严重低估
+新模块全是「登记表」形态（`"Member": N,`）。覆盖表的归因只认
+`get_com_member(obj, "Member")` —— **认不到**，会让表继续说「没覆盖」。
+好消息是 `LITERAL` 规则本就覆盖字面量形态，缺的是**这些族没进域映射表**，
+所以只需在生成器里加一段「把 5 个未收录程序集的族并入域」。
+
+## 生成器自检拦下的三个错
+1. 我按「名字以 `StudyOptions` 结尾」筛求解器族，漏掉 `ICWCompositeShellOptions`
+2. 我把 19 族当 cosworks 全库（实际 84 族）写进 docstring
+3. `gen_member_registry.py` 默认指 sldworks 反射，找不到 Routers/Composer 的族
+   —— 必须按程序集分别指定 `--reflect` 再合并
+
+三处都由「分组恰好划分全部族」的自检或独立复算抓出。
+
+## 本轮修的自己的问题
+- 测试里 `for args, exc_type in ((("IXxx","X"),),` 元组解包写错，测试自己崩
+- 收尾模块含 Composer 族，但测试只指了 SWRoutingLib 的反射 ⇒ 误报
+  `ICostAnalysis 不在反射段里`。改为**反射源可传多个**
+
+## 验证
+- tests/test_full_registries_contract.py 7/7
+- tests/test_full_registries_2_contract.py 6/6
+- `python -W error::SyntaxWarning -m py_compile` 新模块均**无告警**
+- 三门禁全绿：diff 记号 PASS(221 文件) / 来源门禁 265 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 827 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 下一步
+把本轮及前几轮新增的 10 个模块并进 `SKILL.md` 与 `docs/harvest-report.md`，
+并按 263/374 的真实数字重写 A1 自评。**fork 仍不推。**

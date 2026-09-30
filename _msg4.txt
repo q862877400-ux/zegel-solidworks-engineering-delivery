@@ -1,0 +1,58 @@
+feat(sketch): 新增 sketch_relations.py —— 草图约束/样条/槽（草图域 10/14 -> 13/14）
+
+family-coverage 量出草图域 10/14，4 个未触及族共 65 成员：
+  ISketchSpline(34) ISketchRelation(13) ISketchRelationManager(10) ISketchSlot(8)
+本轮补齐其中 3 个（约束 2 族 + 槽），草图域升到 13/14。
+
+## 新增 scripts/sketch_relations.py
+与既有 sw_part 的关系：sw_part 已覆盖草图**基础实体**与选中流程，
+本模块只补**约束与参数化曲线**这一层，互补不重叠。
+
+函数: add_relation / list_relations / get_allowed_relations /
+      suppress_relation / create_spline / create_spline_by_points /
+      set_slot_length / set_slot_width / collect_relation_evidence
+枚举: SKETCH_CONSTRAINT_TYPES(19 项) / SKETCH_SLOT_CREATION_TYPES(3 全量) /
+      SKETCH_SLOT_LENGTH_TYPES(2 全量) / SKETCH_RELATION_ENTITY_TYPES(6 全量)
+
+官方签名依据（D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt）:
+  ISketchRelationManager.AddRelation(Object Entities, Int32 Type)  ← 2 参
+                         .GetRelations(Int32) / .GetRelationsCount(Int32)
+                         .GetAllowedRelations(Object) / .DeleteRelation(...)
+  ISketchRelation         .GetRelationType() / .GetEntitiesCount()
+                         .set_Suppressed(Boolean)   ← **属性**不是方法
+  ISketchSlot             .set_Length(Double) / .set_Width(Double) /
+                         .set_LengthType(Int32)     ← 全是**属性**
+  ISketchManager          .CreateSpline(Object) / .CreateSpline2(Object, Boolean)
+
+## ⚑ 又一次「凭印象写枚举」被三路查证推翻
+我先按印象写 `swSketchRelation_e`（以为 AddRelation 的类型参数是这个枚举）。
+三路确认**该枚举不存在**:
+  ① sw_know.py enum swSketchRelation_e      → [SWK_NOT_FOUND]
+  ② sw_know.py suggest SketchRelation       → 只有 swSketchRelationFilterType_e /
+                                              swSketchRelationEntityTypes_e /
+                                              swSketchFullyDefineRelationType_e
+  ③ 对 SolidWorks.Interop.swconst.dll 纯元数据反射 → NO_ENUM，候选里也没有
+真正的枚举是 **`swConstraintType_e`**（草图几何约束类型，100+ 项）。
+本模块只收录草图二维场景常用的 19 项，其余**不臆造数值**，
+并在来源块里写明「需要别的类型请自查 C:\swapi\enums\swConstraintType_e.md，
+不要沿用本表默认值」。
+
+同类: `swSketchSlotCenterArcDirection_e` 也查不到，
+故槽的弧方向参数**不设默认值**，由调用方显式传。
+
+## 刻意不做的
+- 槽的**创建**不封装: CreateSketchSlot 共 14 个参数
+  (2 Int32 + 11 Double + 1 Int32 + 1 Boolean)，官方未逐项说明各 Double 语义，
+  照写就是猜。只提供已建构槽的尺寸调整。
+- CreateSpline3 不提供: 末位是 by-ref 出参，迟到绑定不保证回写
+- GetRelations / GetRelationsCount 的 Int32 语义(草图实体下标?)两套源都未说明，
+  只透传不解释
+- GetRelationType() 的返回值含义查不到，原样透出为数字不翻译成名字
+
+## 验证
+- sketch_relations arity 17/17 通过，0 存疑 0 查不到
+- 来源门禁 74 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 521 passed / 2 failed（均为既有）
+- family-coverage 重算: 草图 10/14 -> 13/14
+- SKILL.md 能力模块表补 sw_render_material / sketch_relations / sw_weldment 三行

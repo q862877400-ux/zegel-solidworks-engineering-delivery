@@ -1,0 +1,60 @@
+feat(coverage): 补齐 7 个接口族 —— 装配 14/14、质量属性 5/5、孔与螺纹 10/11
+
+按 docs/family-coverage.md 的剩余清单清理，触及率大幅提升:
+  装配        8/14 -> 14/14  满覆盖
+  质量属性     4/5  -> 5/5   满覆盖
+  孔与螺纹     8/11 -> 10/11
+  草图       10/14 -> 13/14（上一轮）
+  配置/材料   6/8  -> 7/8 （上一轮）
+
+## 新增（分散到对应域的既有模块，不新建文件）
+- sw_hole_features.py: configure_straight_tap / configure_tapered_tap /
+  query_hole_standards
+  → IHoleStandardsData(4) IStraightTapElementData(7) ITaperedTapElementData(5)
+- sw_assembly.py: collect_mate_entity_evidence / configure_mate_feature_data /
+  collect_mate_in_place_evidence
+  → IMateEntity2(7) IMateFeatureData(2) IMateInPlace(5)
+- sw_export.py: get_mass_property_override_options / set_mass_property_override
+  → IMassPropertyOverrideOptions(13)
+
+官方签名依据（D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt），
+本批查到的关键取用路径:
+  IModelDocExtension.GetMassProperties(Double Accuracy)  -> IMassProperty2
+  IMassProperty2.GetOverrideOptions()                    -> 覆盖选项
+  IMassProperty2.SetOverrideOptions(Object, Int32, Object) -> 写回
+  IHoleStandardsData 的 4 个查询方法末位**全是 by-ref 出参**
+  IMateFeatureData 只有 TypeName 一个 setter，其余是只读
+  IMateEntity2 **无 setter** —— 配合实体建好后不可改，只能删了重建
+
+## ⚑ 又一次「凭印象写成员」被审计器抓出
+get_mass_property_override_options 初稿取的是
+`IModelDocExtension.MassProperties` —— 该成员**在官方 API 中不存在**。
+`audit_call_arity.py` 报「查不到」当场抓出；正确成员是
+`GetMassProperties(Double Accuracy)`（2 参版 GetMassProperties2 另有
+out status / useSelected）。已改并在函数内记下这次更正。
+⇒ 本项目「不凭记忆写 API」纪律的第 4 次实证
+  （前三次: RunAnalysis 零参 / COSMOSWORKS 大小写 / Shininess 不存在）
+
+## 顺带修一个「工具盲区」，并改代码避开它
+初稿的 configure_straight_tap / configure_tapered_tap /
+apply_visual_properties 都用 `mapping` 字典 + 循环赋值，
+**属性名是变量而非字符串字面量** ⇒ 静态审计无法归因，
+这三个族在 family-coverage 里会一直显示「未触及」——
+**代码明明写了，工具却看不见**。
+已改成显式逐项赋值：既让工具能核对（孔与螺纹因此从 8/11 真的升到 10/11），
+也更好读。
+
+## 刻意没做的
+- IHoleStandardsData 的 4 个查询方法**只透传不判成功**：末位全是 by-ref 出参，
+  迟到绑定不保证回写（与 AGENTS.md §六 事实 8 同源问题）
+- 也不代为分配 by-ref 输出缓冲：COM 的 VARIANT 分配规则在两套官方源里都查不到
+- 攻丝参数 CustomSizing / EndShape / Equation / ThreadClass 的枚举查不到
+  ⇒ 只 int 透传不设默认值
+- IMateEntity2 无 setter，不提供改引用的函数
+
+## 验证
+- 三个模块 arity: sw_hole_features 21/21、sw_assembly 35/35、sw_export 28/28
+  全部 0 存疑 0 查不到
+- 来源门禁 79 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 521 passed / 2 failed（均为既有）

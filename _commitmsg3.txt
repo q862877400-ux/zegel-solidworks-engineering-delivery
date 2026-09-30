@@ -1,0 +1,38 @@
+test: 首次跑通全量测试套件，修掉 6 个测试桩里的虚构接口
+
+本机此前从未装过 pytest, 上游 62 个 test_*.py 一直没有整体执行过。
+装上 pytest + ezdxf 后首次全量运行, 立刻发现 6 个测试失败 —— 是本任务的
+改动造成的, 而根因是一处**测试与生产代码互相印证了虚构接口**。
+
+基线对照(先用未改动的上游克隆 C:\swprojects\sw-automation-skill @ 8be39ac
+跑同一批测试, 区分既有失败与本任务引入的失败):
+
+  test_cad_reliability::...injected_filesystem  上游❌ 本任务❌  既有环境问题
+  test_release_check::...current_tree           上游❌ 本任务❌  既有(缺bundled-skill)
+  test_sw_drawing_structure (6 个)              上游✅47passed 本任务❌6failed
+
+根因:
+  tests/test_sw_drawing_structure.py 的 8 处模拟文档作
+      def GetSheet(self, _name): return FakeSheet()
+  而生产代码也是 _safe_member(drawing_model, "GetSheet", sheet_name)。
+  **两边错得一模一样, 于是测试全绿** —— 绿灯掩盖的是一个查不到的接口。
+
+两套官方源交叉确认(铁律 4):
+  ① interop DLL 纯元数据反射: IDrawingDoc 段只有 Sheet get_Sheet(String Name);
+     GetSheet 仅存在于 IFamilyTableAnnotation / IRevisionTableAnnotation,
+     且均为零参版本。
+  ② CHM sldworksapi 册: 有 IDrawingDoc~Sheet.html, 标题
+     「Sheet Property (IDrawingDoc)」, 说明「Name of sheet /
+     Gets the specified sheet.」; **无 IDrawingDoc~GetSheet.html**。
+  ⇒ 生产代码的修正是对的, 测试桩须改用官方属性名 Sheet。8 处已改。
+
+结果: 521 passed / 2 failed / 15 skipped
+  2 个 failed 即上表标注的既有失败, 在未改动的上游克隆上同样失败。
+  本任务零回归, 并顺带修掉一个「测试自洽但与官方 API 脱节」的隐性缺陷。
+
+教训(已写入 harvest-report §四之补):
+  **测试通过 ≠ 接口存在。** 共享同一错误假设的一对代码, 任何回归门禁都是绿的,
+  测试是最不可能发现问题的组合。全量跑一次既有测试套件是低成本手段。
+
+同时在 harvest-report 记录 A6 口径: pytest 全量运行不改变 A6 结论 ——
+禁词检查仍只针对本轮新增/修改文件, 且已复检 0 命中。

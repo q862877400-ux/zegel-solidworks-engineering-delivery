@@ -1,0 +1,46 @@
+feat(mde): 新增 sw_model_doc_extension.py，并修正三处与流传资料不一致的签名
+
+用户提供了 IModelDocExtension 的调研资料。按铁律 4，**只拿它当结构参考**，
+签名一律回反射核 —— 核出**三处不一致**：
+
+| 流传资料 | 反射实测 |
+|---|---|
+| `SelectByID2(名称,类型,x,y,z,追加,mark,Callout,选择选项)` = 9 参 | **11 参**（那是 VBA6 册的旧签名；.NET interop 整行 11 参） |
+| `ClearSelection2` 列在 IModelDocExtension | **在 IModelDoc2 上**，本接口没有 |
+| `CustomPropertyManager` 无参 | `get_CustomPropertyManager(String)` **带配置名**，`""` 指文档级 |
+
+⇒ 照资料写会错。已按反射实现，并把这三处差异写进模块 docstring。
+
+## 模块内容
+选择（转发 sw_part）/ 自定义属性 / 重建状态 / 错误计数 / 持久引用。
+`MDE_ARITY` 20 项，含 9 参的 `SelectByID2`。
+
+## 刻意不做
+- **不复制选中逻辑**：`sw_part._select_by_id` 已带「基准面名随 UI 语言变」的
+  候选名机制（AGENTS.md §六 事实 9），复制会得到会漂移的两份逻辑 ⇒ 只转发。
+- **不提供「取错误文本」**：`GetWhatsWrong` 三个末位是 by-ref 出参，
+  迟到绑定不保证回写 ⇒ 只提供 `GetWhatsWrongCount`。
+
+## ⚑ 覆盖表的「真调用」计数**没有随之上涨**，原因要说清
+2636 → 2637。本模块的成员走 `_checked(target, member, …)`，成员名是**变量**，
+而覆盖工具的归因只认**字符串字面量** ⇒ 这些调用**它看不见**。
+
+⇒ **「真调用」那一列是下界，不是精确值。**
+之前报 2,636/16,615 时同样有这个偏差，只是这轮才暴露出来。
+要修得改归因规则，但那样会把「登记在表里」也算进「真调用」——
+回到我上一轮刚拆开的那个混淆。**暂时保持下界，标注清楚。**
+
+## 本轮修的两处自己的问题
+- `sw_hubs.py` 的 `__all__` 排在来源块之前 ⇒ 门禁判 72 行无出处。
+  我用脚本挪块，**连续两次把 docstring 挪到顶部**（SyntaxError），
+  第三次改为手工精确编辑才对。已把这条写进文件注释。
+- `sw_document_core.select_by_id` 只写相对导入 ⇒ 单文件测试加载时
+  `ImportError`。已改成两级导入。
+
+## 验证
+- 新模块护栏逐项手测：SelectByID2 / GetCustomPropertyManager / SelectAll
+  错 arity 全被拦，None 目标全被拦
+- 三门禁全绿：diff 记号 PASS(224 文件) / 来源门禁 278 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 827 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中

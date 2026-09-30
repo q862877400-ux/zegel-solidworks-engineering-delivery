@@ -1,0 +1,60 @@
+fix(coverage): 修掉覆盖表里 6 个族被重复登记的数据 bug
+
+## ⚑ 本轮修的是**数据本身错了**
+逐族查构成时发现覆盖表里 `ISurface` **出现两次**（曲面 + 几何与拓扑）。
+顺着查出**共 6 个族被同时登记在两个域**：
+
+    ISurface                 曲面 / 几何与拓扑
+    ICenterOfMass            几何与拓扑 / 质量属性与导出
+    IModelDoc2               应用与会话 / 配置材料
+    IModelDocExtension       应用与会话 / 质量属性与导出
+    ISldWorks                应用与会话 / 质量属性与导出
+    ISurfaceCutFeatureData   钣金 / 曲面
+
+后果两个，都直接影响我给用户的数字：
+1. 族总数**虚增 13**（187 → 真实 **174**）
+2. 「低于 50% 的族有多少个」被**报大 6 个**（121 → 真实 **115**）
+
+也就是说：我上一轮汇报「121 个族低于 50%」这个数**是错的**。
+
+## 改法
+一族一域，归属按「主用场景」定；交叉场景在该族自身的来源块里说明。
+`IModelDocExtension` / `ISldWorks` / `IModelDoc2` 是**通用句柄**而非质量属性专有，
+归「应用与会话」。
+
+## ⚑ 加回归护栏
+生成器里新增 `_assert_no_duplicate_families()`，`main()` 第一行就调它。
+发现重复直接 `SystemExit` 并列出是哪几个、挂在哪些域 ——
+数据表靠人眼查重迟早会漏，交给机器。
+
+## 顺带量化了「登记表做法」的适用范围
+本轮一次查了**所有低于 50% 的族**的构成（前 14 个）：
+
+    族                    原始   I前缀  属性  方法  归约能力
+    ICurve                 69     25     4    40      31
+    IDimensionTolerance    27      0     8    19      16
+    IEdge                  47     15     1    31      27
+    IMate2                 35      1    17    17      17
+    ISurface               83     28    11    44      34
+    IFeatureManager       307     11    40   256     168
+    IDrawingDoc           280     44     9   227     164
+    IFace2                127     40    13    74      71
+
+⇒ 共同形态（**大量 I 前缀 + 大量编号变体**）在**大族**上尤其明显：
+`IFeatureManager` 307→168、`IDrawingDoc` 280→164，**归约率约 45–58%**。
+所以后续按族批量做时，登记表 + 通用访问器是主线，
+只对少量高频能力做显式包装。
+
+⚠ 另注：`ICWResults` 在 sldworks 反射里查不到（它是 cosworks 接口），
+本轮统计脚本把它算成 0 —— 那是脚本的锅，不是缺口。
+
+## 验证
+- 三个门禁全绿：diff 记号 PASS(203 文件) / 来源门禁 208 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 723 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+- 覆盖表族总数 187 → 174，低于 50% 的族 121 → 115（数字已同步进 harvest-report）
+
+## 下一批
+一次做 5 个几何族（登记表做法，已查好构成）：
+  ICurve 31 · ISurface 34 · IEdge 27 · IMate2 17 · IDimensionTolerance 16

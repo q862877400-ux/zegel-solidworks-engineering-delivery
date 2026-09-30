@@ -1,0 +1,57 @@
+feat(simulation): 新增 sw_simulation_results.py —— 结果云图与网格质量诊断
+
+## 新增模块
+- ICWResults(107 成员): create_plot / create_deformed_body / activate_plot /
+  delete_plot / get_displacement_at_points / get_buckling_load_factors /
+  collect（证据回读）
+- ICWMesh(91 成员): get_worst_jacobian_ratio / is_component_failed /
+  get_mesh_node_location / get_mesh_element_location / collect_mesh_evidence
+- 枚举: SWS_NODAL_STRESS_COMPONENTS(9) / SWS_MESH_QUALITY(2) / SWS_MESHER_TYPES(3)
+
+签名全部来自 interop 纯元数据反射（AGENTS.md §四.1③）。
+
+## ⚠ 刻意「不封装」的三处，各有理由
+1. **GetNodeLocation / GetElementLocation 不给坐标解析封装**
+   官方是 `(Int32, Double& X, Double& Y, Double& Z)`，三个 by-ref 出参。
+   迟到绑定不保证回写，而 by-ref VARIANT 的分配规则两套源都查不到
+   ⇒ 只透传返回（None），**不编一个"应该能拿到坐标"的假象**。
+   这两个方法留在 MESH_ARITY 里是为了保留签名事实，不是为了取到坐标。
+2. **CreatePlot 的 (PlotType, Component, Step) 只按位置透传**
+   本族**无官方文档页**，这三个 Int32 分别指什么查不到。
+   注释里不给它们编「合理解释」。
+3. **PlotType 的枚举名 `swsResultPlotType_e` 在反射 dump 里不存在**，
+   位移分量枚举名同样查不到 ⇒ 只 int 透传，不臆造枚举名。
+   应力分量有 `swsStaticResultNodalStressComponentTypes_e` 有据，故收录。
+
+## 一个容易踩的官方细节，已写进测试锁住
+`IsComponentFailed` 返回 **Int32**，`IsComponentFailed2` 返回 **Boolean** ——
+官方就是两个**不同返回类型**的方法，**不是新旧版互相替代**。
+本封装固定用 2 号，`test_component_failed_uses_variant_two_returning_boolean` 锁住。
+
+## 顺带核实（我的担心不成立）
+反射里接口名是 `ICwAddincallback`（**小写 w**），我担心既有 sw_simulation.py
+写成了大写 W，查证后发现**它本来就写对了**（`ICwAddincallback`）。
+⇒ 不改。这条记下来是因为「凭印象以为有错」也是错。
+
+## 验证
+- tests/test_sw_simulation_results_contract.py 11/11
+  （含「签名表 ↔ 反射三方对账」「零参方法」「by-ref 方法只传 1 参」
+   「护栏拦 None 目标」「证据回读里全是零参成员」）
+- arity 审计 16/16 通过，0 存疑 0 查不到
+- 来源门禁 125 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 578 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 域 13 盘点（本次新增）
+cosworks 反射 dump 实测：**168 接口 / 2,520 成员 / 363 枚举**
+（AGENTS.md §四.1③ 记的 9,281 成员是含 coclass 的口径，本 dump 只列接口）
+按成员数前 5: ICWDynamicStudyOptions(153) · ICwAddincallback(121) ·
+ICWStaticStudyOptions(112) · ICWResults(107) · ICWNonLinearStudyOptions(95)
+
+已覆盖 4/168 个族（占成员数约 305/2,520 = 12%）：
+  ICWLoadsAndRestraintsManager / ICWStudyManager / ICWStudy / ICWResults / ICWMesh
+未覆盖且**值得下一轮做**（签名清楚、语义无文档但可透传）：
+  ICWMaterial(54)、ICWForce(42)、ICWPressure(40)、ICWHeatFlux(40)、
+  ICWContactSet(45) —— 载荷对象的属性设置，工程师直接用得上的那一层
+仍需逐族评估：各 *StudyOptions（合计 560+ 成员，多为求解器设置）

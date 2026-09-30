@@ -1,0 +1,54 @@
+feat(simulation): 新增 sw_simulation_loadprops.py，并补正 apply_normal_force 缺失的编辑事务
+
+## ⚑ 本轮最重要的发现：**我自己的代码漏了官方的编辑事务**
+反射 `ICWForce` 段的**头两个成员**是：
+    Void  ForceBeginEdit()    ← 零参
+    Int32  ForceEndEdit()     ← 零参
+`ICWContactSet` 段**头两个**是同形的 `ContactSetBeginEdit()` / `ContactSetEndEdit()`。
+**同形的一对** ⇒ 这是载荷/接触对象的**通用约定**，不是某接口的特例。
+
+而 `sw_simulation.py::apply_normal_force` 初稿是直接设属性、**没开事务**。
+已补正为 `begin → 设 → finally end`（异常路径也收尾，不让事务悬着）。
+测试 `test_apply_normal_force_in_simulation_module_also_opens_transaction` 锁住不反弹。
+
+## 新增 sw_simulation_loadprops.py
+24 个 Add* 只负责「造出对象」，**数值/单位/方向/摩擦这些真正的工程参数
+是在返回对象上设属性**的 —— 这层不做，「能创建载荷」只是句空话。
+- ICWForce(42): configure_force（10 个 setter 全覆盖，自动包事务）
+- ICWPressure(40) / ICWHeatFlux(40) / ICWContactSet(45) / ICWMaterial(54): 回读
+- edit_transaction() 上下文管理器：异常路径也调 EndEdit
+
+## ⚠ 三个族的反射**没有任何 setter**，本模块**显式拒绝**而不是静默忽略
+ICWPressure / ICWHeatFlux / ICWContactSet 三段的反射清单里只有 get_ 属性。
+- configure_pressure 收到不支持的参数会 **raise**，并在错误信息里说明
+  「压力方向当前不可通过脚本设置」—— 比静默忽略安全得多
+- ICWContactSet 更奇怪：**有编辑事务入口却没有 setter**。
+  两种可能（setter 在别的接口 / 本版本未导出）都没排除，
+  故只如实说「本族反射未见 setter」，**不下「不可写」的结论**。
+
+## 顺带纠正我自己一个错误断言
+我一度说「audit_call_arity 只收一张反射表，是工具缺口」——**说错了**。
+`main()` 本来就是 `sys.argv[2:]`，收多张表。是我用法错。
+正确用法（跨程序集模块必须这样）：
+    python scripts\audit_call_arity.py scripts\sw_simulation.py \
+        D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt .api-signatures/iface_cosworks.txt
+按两张表审：sw_simulation 36/36、loadprops 46/46、results 16/16、study 12/12，
+**全部 0 存疑 0 查不到**。
+
+## 测试里的三个坑（都写进注释）
+1. `_CallResult` 的 setter 强制要求 1 个值 ⇒ 零参的 `ForceBeginEdit()` 直接 TypeError。
+   改成哨兵参数区分「零参方法调用」与「带值属性写入」
+2. 排序断言用**裸词** `ForceBeginEdit` 找位置 ⇒ 命中补正说明的**注释块**
+   （偏移 16079/16098）而非真正的调用（16324/16609）。
+   注释里 Begin/End 挨着，于是 `begin < 设置 < end` 判假失败。
+   改用**带引号**形式。**量错了地方，不是代码有问题** —— 差点改坏能跑的代码
+3. 编辑 mock 时把 docstring 改坏（残留裸文本）⇒ SyntaxError
+
+## 验证
+- tests/test_sw_simulation_loadprops_contract.py 10/10
+- tests/test_sw_simulation_signature_contract.py 13/13
+- arity（两张反射表）: 36/36 · 46/46 · 16/16 · 12/12，0 存疑 0 查不到
+- 来源门禁 134 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 588 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中

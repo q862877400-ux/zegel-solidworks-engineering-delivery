@@ -1,0 +1,54 @@
+feat(pattern): 新增 sw_pattern.py —— 线性/沿曲线阵列 3%·5% -> 60%·55%
+
+## 补齐的两个族
+  ILinearPatternFeatureData      60 成员  3% → **60%**（36 个成员）
+  ICurveDrivenPatternFeatureData 44 成员  5% → **55%**（24 个成员）
+
+走的是**现代 FeatureData 路径**（CreateDefinition → 设属性 → CreateFeature）；
+上游 sw_part.py 用的是 `IFeatureManager.FeaturePattern2` 那类**旧式方法入口**。
+两条路径官方并存，本模块补的是前者。
+
+## ⚑ 两族形状不同，刻意不合并
+- `ILinearPatternFeatureData` 用 **D1\*/D2\* 前缀**：轴、间距、**总数**、
+  **端条件**、**端参考**、**种子参考**
+- `ICurveDrivenPatternFeatureData` **没有**这些，取而代之的是
+  **等间距 IsEqualSpaced** 与 D1Direction / D1FaceNormal
+
+把它们塞进一个「通用 setter」只会掩盖差异 ⇒ 分开封装，
+并用两个测试**双向锁住**（「线性阵列里不许出现 IsEqualSpaced」
+/「沿曲线里不许出现 TotalInstances」）。
+
+## 选区事务已编码进实现
+两族的 `AccessSelections(Object, Object)` 都是 **2 参**，
+配套 `ReleaseSelectionAccess()` **零参** ⇒ 全部装配函数走
+`edit_selection` 上下文管理器：**异常路径也释放**，不让事务悬着。
+测试用「setter 抛异常」验证 Release 仍被调用。
+
+## ⚑ 枚举名又一次是查出来的，不是记出来的
+我先按印象写 `swPatternObjectType_e` / `swPatternDirection_e`，
+sw_know 两者都报无。真实名字是：
+  端条件 `swPatternEndCondition_e`（**全库只有 2 项**：0=按间距+实例数 / 1=到参考）
+  阵列元素 `swPatternElementSelection_e`
+  可阵列特征 `swFeaturesToPatternType_e`
+**而「方向」方向的枚举名本机查不到**（`sw_know find PatternDirection`
+只返回 `IFillPatternFeatureData` 的两个成员，不是枚举）⇒
+方向参数一律 `int` 透传，**不臆造枚举名**。
+
+## 刻意不提供的
+`I*` 前缀的成员（IAccessSelections / ISetPatternFaceArray /
+IGetSkippedItemArray …）—— COM 内部分发口，不给调用方。测试锁住。
+
+## 验证
+- tests/test_sw_pattern_contract.py 11/11
+- 三个门禁全绿：diff 记号 PASS(195 文件) / 来源门禁 183 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 665 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 下一批（当前最低 6 个）
+  ISketch            104 成员  3%
+  IModelView          75 成员  3%
+  IAssemblyDoc       196 成员  4%
+  ICurve              68 成员  4%
+  IDimensionTolerance 23 成员  4%
+  IView              461 成员  6%   ← 单族最大

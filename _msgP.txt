@@ -1,0 +1,58 @@
+feat(view): 新增 sw_view.py —— IModelView 3% -> 81%
+
+## 补了什么
+IModelView 共 75 个成员，本轮覆盖 61 个（**3% → 81%**）。视图操纵
+（缩放/旋转/相机/显示模式）是**自动化出图与截图的前置**——「把模型摆到某个角度
+再导出」全靠它，上游代码里几乎没有这一层。
+
+分组覆盖：
+- 激活与重绘：Activate / GraphicsRedraw / InitializeShading / DrawHighlightedItems
+- 窗口几何：FrameLeft/Top/Width/Height/State（**全是属性**）
+- 显示模式：DisplayMode / HlrQuality / Scale / ZebraStripes / XorHighlight …
+- 操纵：ZoomByFactor(1) / TranslateBy(2) / TurnBy(2) / RollBy(1) /
+  RotateAboutCenter(2) / RotateAboutPoint(5) / RotateAboutAxis(7)
+- 相机姿态：Camera / SetCameraByName(1) / Orientation3 / Translation3 / Transform
+- 透视与动态：Add/Remove/HasPerspective / Start/StopDynamics
+- 遍历：GetNext / GetModelDoc / GetEyePoint / SetEyePoint / GetVisibleBox
+
+## ⚑ 本轮抓到一处我自己的归属错误（测试抓的）
+我把 **`SetCallout(Int32, Callout)` 登记进了 `VIEW_ARITY`**，
+但逐行解析反射清单后确认：**它属于 `ISelectionMgr`，不属于 `IModelView`**。
+（它在 `sw_selection.py` 的 `SELECTION_ARITY` 里本来就是对的，是我写 view 模块时
+凭印象加错了。）已从 `VIEW_ARITY` 移除，并加了一条专门测试断言这个归属。
+
+**顺带修了一个测试方法的缺陷**：原来用正则切反射段
+（``(?=\r?\n## |\Z)``）会**提前截断**——实测把 116 行的 IModelView 段截成
+3761 字符，于是 `SetCallout` 被误判成「不在 IModelView」。
+改用**逐行解析**，无歧义，而且正是它让上面的归属错误暴露出来。
+
+## ⚑ 三组「不封装」，性质不同，理由分开写
+1. **I 前缀内部分发口**（IGetEyePoint / IGetNext / IGraphicsRedraw …）—— 7 项
+2. **by-ref 出参**（ProjectModelPoint / UnprojectModelPoint / GetDIBHeader* /
+   GetStripsOfDIB*）—— 迟到绑定不保证回写
+3. **纯界面自动化**（GetViewHWnd / GetViewDIB / GetMouse / MagnifyingGlass）
+   —— 依赖可见窗口句柄，headless 下无意义
+
+测试 `test_unwrapped_reasons_are_self_contained` 要求**每条理由能独立成立**，
+不许写「同上」—— 改这一条时顺带把 7 条 I 前缀的理由补全成
+「COM 内部分发口；对应非 I 版的 XXX」，比原来的「COM 内部分发口」有用。
+
+## 官方三代 API 不替调用方删
+`Orientation` / `Orientation2` / `Orientation3`、
+`Translation` / `Translation2` / `Translation3`、
+`Xform` / `IXform` / `Transform` —— 官方未说明取舍
+⇒ 本模块**以 3 号为准**（MathTransform / MathVector），其余在注释里点名。
+
+## 验证
+- tests/test_sw_view_contract.py 16/16
+- 三个门禁全绿：diff 记号 PASS(199 文件) / 来源门禁 197 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 693 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+- **IModelView 成员触及率 3% → 81%**
+
+## 下一批
+  IAssemblyDoc         196 成员  4%
+  ICurve                68 成员  4%
+  IDimensionTolerance   23 成员  4%
+  IView                461 成员  6%   ← 单族最大

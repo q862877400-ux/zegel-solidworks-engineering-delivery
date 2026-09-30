@@ -1,0 +1,15 @@
+[   0.0s] ═══ 1/2  传动零部件 / 平皮带/圆皮带 / CPDH-A9
+[  17.2s]       找不到搜索框（UIA）
+[  17.2s]   => ✗  搜索框不可用                 17s  
+[  17.2s] ═══ 2/2  直线运动零件 / 花键 / BHJF
+[  19.8s]   => ✗  异常:50, in connect
+    hwnd = sw_hwnd()
+  File "D:\AI\SW\ctl.py", line 44, in sw_hwnd
+    raise RuntimeError("找不到 SolidWorks 主窗口")
+RuntimeError: 找不到 SolidWorks 主窗口
+ 0s  
+[  19.8s] ════ 汇总（总 20s）════
+[  19.8s]   ✗ 传动零部件      平皮带/圆皮带        CPDH-A9        17s  搜索框不可用
+[  19.8s]   ✗ 直线运动零件     花键             BHJF           0s  异常:50, in connect
+    hwnd = s
+[  19.8s] 成功 0/2

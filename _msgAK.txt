@@ -1,0 +1,52 @@
+fix(audit): A3 验收工具有同一个 by-ref 口径 bug —— 全仓扫描又查出 10 处不存在的成员
+
+## ⚑ 上一轮修了生成器，同一个 bug 就在 **A3 验收依赖的工具**里
+`scripts/audit_call_arity.py:77`
+
+    count = 0 if not params.strip() else len(params.split(","))
+
+⇒ **A3「COM 调用参数与官方对齐」一直是按错口径在量**：
+既会误判「多了参数」，也会漏判「真少了参数」。已修为与生成器、
+各契约测试**同一条规则**（排除 by-ref 出参）。
+
+## ⚑⚑ 修好工具后做**全仓扫描**，又查出 10 处凭印象造的成员
+`sw_geometry` —— 一个我早先标成「做完了」的模块：
+
+| 我写的 | 官方实际 |
+|---|---|
+| `MinValue` / `MaxValue` | `GetMinValue()` / `GetMaxValue()` |
+| `GetAdjacentFace`（单数） | `GetAdjacentFaces()`（复数） |
+| `MateType` | `Type()` |
+| `ToleranceName` / `DisplayFormat` / `MinType` / `MaxType` / `EnableFeatureScope` | **都不存在** |
+| `IsArc` / `IsSpline` / `IsPolyline` | **都不存在** ⇒ 真实是 `IsCircle` / `IsBcurve` / `IsEllipse` / `IsTrimmedCurve` |
+
+> ⚠ 尤其 `IsArc`：**官方没有「圆弧」这个独立类型**，
+> 整圆与圆弧都走 `CircleParams` 区分。初稿是我按几何常识脑补的。
+
+**这 10 处的价值在于：单文件审计查不出，全仓扫描才查得出。**
+上一轮补的 5 个模块测试，一次就抓到 25 处同类问题——同一个动作重复做。
+
+## 一个必须说清的反例
+`sw_connect.py:456 LoadFile4() 实参 4 / 官方 3` **不是错** ——
+上游**故意多传一个 by-ref 槽位**（AGENTS.md §六 事实 11 记的就是
+`LoadFile4` 的 `[out] long` 要占位）。⇒ **两种口径在本仓库共存**：
+有的调用方传 by-ref 槽位，有的不传。单一口径对谁都不是全对。
+
+本次**没有动上游模块的调用**，只把它如实留在「存疑」栏里。
+
+## 验证
+- `sw_geometry`：通过 18 / **存疑 0 / 查不到 0**
+- tests/test_sw_geometry_contract.py **17/17**（含新增的
+  「锁住三个幽灵成员不得调用」断言）
+- 全量测试 **838 passed / 2 failed**（2 个为上游既有）
+- 三门禁全绿：diff 记号 PASS(228 文件) / 来源门禁 290 块 0 违规 / release_check 已接
+- A6 我的新增行 0 命中
+
+## 尚未处理（如实列出）
+全仓 A3 审计按修正后口径：**通过 289 / 存疑 31 / 查不到 14**。
+- **存疑 31** 多数在上游模块（sw_connect 6 / sw_export 6 / sw_simulation 6 /
+  sw_hole_features 4 / sw_assembly 3 …），其中一部分是上面说的
+  「by-ref 槽位两种口径」问题 ⇒ **需要先定口径，再逐个核**，不能一刀切改
+- **查不到 14** 分布在 sw_geometry（已清零）/ sw_drawing_view（2）与其余模块
+- 这两项**都不在本轮新增的代码里**，修它们要动上游行为 ⇒ 留作显式待办，
+  写进 `docs/harvest-report.md` 的「仍然空缺」段

@@ -1,0 +1,54 @@
+feat(gate): 新增第三道门禁 check_member_names.py，并接进 release_check
+
+## 动机：前三轮的真正教训
+连续三轮都是同一个模式 —— **审计工具本身出错 → 修好工具 → 查出真错误**。
+但那些审计都是**手动跑**的，跑不跑看心情。
+⇒ 本轮把「成员名在官方反射里查不到」变成**门禁**，接进 `release_check.py`。
+
+## 新门禁 `scripts/check_member_names.py`
+扫 `scripts/` 下所有 ``get_com_member(obj, "X")`` 的 X，
+逐个到 **6 份官方反射清单**里查（10,685 个官方成员）。
+查不到 ⇒ 失败并点名文件与行号。
+
+当前状态：**598 个调用点，全部 PASS**。
+
+## ⚑ 门禁经**负向验证**（这很重要）
+一个不会失败的门禁毫无价值。本机实测：
+
+    注入探针 ThisMemberDefinitelyDoesNotExist
+      → [FAIL] 1 个成员名查不到：_probe_gate.py:4   exit=1
+    删除探针
+      → [PASS] 全部成员名都能查到                   exit=0
+
+## 它拦的是什么
+本任务「凭印象写 API」栽过 **9 次**，典型：
+
+| 凭印象写的 | 官方实际 |
+|---|---|
+| `IDisplayDimension.GetValue` | 不存在 |
+| `ISectionViewData.AccessSelections` 等 5 个 | 全是从别的族搬来的 |
+| `IModelDocExtension.MateType` | `Type()` |
+| `ICurve.IsArc` / `IsSpline` / `IsPolyline` | **官方没有这些类型** |
+| `IView.OrientToward` | 两套源都查不到（已按铁律 5 删除） |
+
+⚑ **这些单文件契约测试全都抓不到** —— 契约测试只验「引用的成员在登记表里」，
+而登记表本身就可能是错的。**只有全仓扫描才查得出。**
+
+## 与另两道门禁的分工
+    check_provenance.py   —— 新增代码有没有出处（来源可追溯）
+    check_diff_markers.py —— 来源块注释有没有把 patch 记号带进来
+    check_member_names.py —— 成员名在官方反射里查不查得到   ← 本轮新增
+    audit_call_arity.py   —— arity 对不对（不接门禁，手动按需跑）
+
+## 验证
+- 门禁负向验证：注入坏成员 exit=1 并点名行号，删除后 exit=0
+- `release_check.py` 语法 OK，已登记新文件并把结果并入返回值 `member_names`
+- 三门禁全绿：成员名 PASS(598 调用点) / diff 记号 PASS(229 文件) /
+  来源门禁 292 块 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 **838 passed / 2 failed**（2 个为上游既有）
+- A6 我的新增行 0 命中
+
+⚠ `release_check.py` 整体仍报 fail，**但这是既有问题**：
+本机实测在**上一轮提交 234481e** 上同样失败，与本轮改动无关。
+两个既有失败是 `test_cad_reliability` 与 `test_release_check`。

@@ -1,0 +1,52 @@
+feat(sketch): 新增 sw_sketch.py —— ISketch 3% -> 33%
+
+## 补了什么
+ISketch 共 108 个成员，本轮覆盖其中 34 个（**3% → 33%**）。重点是官方那
+**20 多个「按类型分列」的零参取法**：
+
+    GetLines / GetArcs{,2} / GetEllipses{,2,3} / GetParabolas{,2} /
+    GetPolylines / GetSplines / GetSplinesInterpolate /
+    GetSketchPoints{,2} / GetUserPoints{,2} / GetContourEdges(1参) /
+    GetSketchSegments / GetSketchContours / GetSketchRegions /
+    GetSketchHatches / GetSketchSlots / GetSketchPictures / GetSketchPaths /
+    GetSketchBlockInstances / GetSketchTextSegments
+
+**为什么值得单独做**：上游要拿「草图里有哪些线」只能一把抓 `GetSketchSegments`
+再自己按类型过滤；官方本就给了分类型取法，直接用既快又不会漏。
+
+另补：RelationManager（属性）/ Is3D（零参）/ ModelToSketchTransform（属性，读写）
+/ SetAutomaticSolve / MergePoints / GetAutomaticSolve / GetDetachSegmentOnDrag。
+
+## ⚑ 「刻意不封装」的六项，各写明理由
+`SKETCH_UNWRAPPED` 常量把理由写在数据里，测试锁住「有理由」+「不在导出清单」：
+- `GetSplineParams{,2,3,4}`：返回 SAFEARRAY / coclass，官方无文档说明重载差别，
+  SAFEARRAY 的构造与读取规则两套源都查不到
+- `SetWorkingPlaneOrientation`：12 个 Double，参数语义无文档
+- `AutoTraceSketchPicture`：语义与前置条件无文档
+
+## ⚑ 重载不替调用方决定
+`GetArcs` / `GetArcs2`、`GetEllipses{,2,3}`、`GetSplineParams{,2,3,4}` 都是
+多重重载，官方未说明差别 ⇒ **默认取第一个**，其余留在 `SKETCH_GETTERS` 元组里，
+调用方需要时自取。
+
+## 本轮修的自己的错（两处，都是测试抓的）
+1. **16 个分类取法 + `get_contour_edges` 漏了 `None` 检查** ——
+   它们走 `as_sequence(get_com_member(...))`，`None` 会静默变成 `[]`，
+   与模块内其它函数「`None` 抛 ValueError」的行为不一致。
+   `test_public_entries_reject_none` 逐个函数试出来的。
+2. **`GetSplineParams2` 的「不封装理由」只写了「同上」** ——
+   独立文档不该依赖上下文，测试要求每条理由能独立成立。已改写成完整句子。
+
+## 验证
+- tests/test_sw_sketch_contract.py 12/12
+- 三个门禁全绿：diff 记号 PASS(197 文件) / 来源门禁 188 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 677 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 下一批
+  IModelView            75 成员  3%   ← 视图操纵，reflection 签名已在上轮备好
+  IAssemblyDoc         196 成员  4%
+  ICurve                68 成员  4%
+  IDimensionTolerance   23 成员  4%
+  IView                461 成员  6%   ← 单族最大

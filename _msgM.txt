@@ -1,0 +1,54 @@
+feat(selection): 新增 sw_selection.py —— ISelectionMgr 从 3% 提到 90%
+
+## 为什么要先做这个
+上一轮量出「成员触及率最低」的几个族：`ISelectionMgr` 3%(62 成员) ·
+`ISketch` 3%(104) · `IModelView` 3%(75) · `IAssemblyDoc` 4%(196)。
+选中是**所有操作的地基**（拉伸选面、装配选组件、工程图选视图），
+先补它的边际收益最高。
+
+## ISelectionMgr：3% → 90%（56/62 成员）
+反射段共 65 个成员，其中 **20 个是 ``I*`` 前缀的 COM 内部分发口**
+（IDeSelect / IGetSelectedObject* / IGetSelectionPoint* …）——
+那些是给 COM 运行时的，**不提供给调用方**，一律不封装。测试锁住。
+
+覆盖分组：
+- 计数/取对象：GetSelectedObjectCount{,2} / GetSelectedObject{,2..6} /
+  GetSelectedObjectType{,2,3} / GetSelectedObjects{,2}
+- 强类型取项：Face / Component3 / DrawingView2
+- 选区坐标：GetSelectionPoint{,2} / …InSketchSpace{,2} / SetSelectionPoint{,2}
+- 列表：AddSelectionListObject{,s} / SuspendSelectionList / ResumeSelectionList{,2}
+- 颜色与标记：SelectionColor / ClearSelectionColors / SelectedObjectMark
+- 开关：EnableSelection / EnableContourSelection
+- 状态：IsCoordSysElementSelected / IsInEditTarget{,2}
+
+⚠ GetSelectedObject 到 **6 号是六个不同的重载**，官方没有参数类型可依赖
+  （都是 Int32 序号）⇒ 差别**只在返回类型**。本模块默认用 6 号，
+  并把 1 号也显式暴露，**不替调用方猜**。
+
+## ⚑ 两个已知坑编码进实现（不是写在注释里就算）
+1. **事实 8**：`AddSelectionListObject` 的 Boolean 返回值不可信
+   （本机实测 12 次全 False，实际选中 12）⇒ `add_to_selection_list()`
+   **不返回那个布尔值**，返回 `GetSelectedObjectCount2(-1)` 的**回读计数**。
+   测试用「mock 永远返回 False」验证它仍然返回 12。
+2. **事实 4**：`EnableSelection` / `EnableContourSelection` / `SelectionColor`
+   都是**属性** ⇒ 单参数赋值，不加括号。三个断言各锁一个。
+
+## 本轮修的自己的错
+属性型函数（`set_selection_color` / `set_enable_selection` /
+`set_enable_contour_selection` / `clear_selection_colors` /
+`resume_selection_list`）**漏了 None 检查** ——
+它们走 `get_com_member` 直调而没走 `_checked` 护栏，模块内不一致。
+是契约测试的 `test_public_entries_reject_none` 抓到的，已补齐。
+
+## 验证
+- tests/test_sw_selection_contract.py 14/14
+- arity 审计（sldworks 反射）9/9 通过，0 存疑 0 查不到
+  （其余走 `_checked` 护栏，由契约测试对账）
+- 三个门禁全绿：diff 记号 PASS(193 文件) / 来源门禁 176 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 654 passed / 2 failed（均为既有）
+- **ISelectionMgr 成员触及率 3% → 90%**
+
+## 下一批（按触及率从低到高）
+`ISketch` 3%(104) · `IModelView` 3%(75) · `IAssemblyDoc` 4%(196) ·
+`ICurve` 4%(68) · `IMate2` 6%(33) · `IEdge` 6%(47)

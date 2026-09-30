@@ -1,0 +1,33 @@
+chore: 工作区入库 —— 把「做过什么」版本化，免上下文压缩后丢失
+
+## 为什么要建这个仓库
+用户原话：「免得搞了半天上下文一压缩就忘了自己做了什么」。
+D:\AI\SW 是任务工作区（草稿/日志/报告/证据），此前无版本控制；
+代码本体在 C:\swprojects\sw-skill-fork\（独立 git 仓库，origin = 上游只读锚点）。
+
+## 内容
+995 → 最终入库的一批：约 900 个草稿脚本（*.py）、运行日志（*.log）、
+结果报告（*.json）、凭据排查后的文档（AGENTS.md / README.md）、
+以及 evidence/ 与 batch_evidence/ 的**截图取证**（12/12 抽查的证据）。
+
+## 刻意排除（.gitignore，共省下约 398 MB）
+  AI Solidworks/              314.7 MB  第三方官方文档（CHM 解包），只读、可复原
+  shots/                       49.9 MB  探索期截图；关键证据在 evidence/
+  _raw/                        22.2 MB  反射原始转储，结论已固化进 sw_api_*.py
+  interop-dimension-census.json 16.5 MB  同上
+  research/interop-dimensions/  6.0 MB  同上（makepy 产物）
+  cadir/                       10.7 MB  CAD 保真数据，可由嘉立创插件重新导出
+  __pycache__/                          可再生产物
+
+## 入库前核查（实际跑的命令）
+  凭据扫描（*.py/*.json/*.log/*.md/*.env/*.ps1，排除 AI Solidworks）
+      → ✓ 未发现明文凭据；米思米账号在 C:\swprojects\.misumi.env（本工作区之外）
+  体积: 439.7 MB → 41.7 MB → 排除反射转储后约 19 MB
+  大目录排除确认: AI Solidworks / _raw / shots / cadir / __pycache__ 均 0 个文件
+
+## 新增文件
+  README.md    说明本仓库是什么、三处路径别搞混、以及「草稿不是产品」的提醒
+  .gitignore   逐条写明排除原因与体积
+
+## ⚠ 本仓库的 git 配置只设了本仓库（user.name/email），未动全局
+   —— AGENTS.md 红线：不碰系统层。

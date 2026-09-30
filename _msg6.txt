@@ -1,0 +1,46 @@
+feat(coverage): 清完最后 3 个接口族 —— 11 个域满覆盖
+
+草图 13/14 -> 14/14、孔与螺纹 10/11 -> 11/11、配置材料 7/8 -> 8/8。
+至此 C:\swapi 收录的 12 个程序集对应的功能域**已全部触及**，
+剩下的 0（仿真 / 路由 / PDM）全部有可辩护的外部原因。
+
+## 新增
+- sketch_relations.py: get_spline_points / delete_spline_point /
+  add_spline_tangency / add_spline_curvature / collect_spline_evidence
+  → ISketchSpline(42 成员，草图域最后一个未触及族)
+
+## 重点：修掉「代码写了但工具看不见」的三处盲区
+上轮发现并记录过这个盲区，本轮把它清掉了 —— 之前有三个函数用
+`mapping` 字典 + 循环赋值，**属性名/方法名是变量而不是字符串字面量**，
+静态签名审计与 family-coverage 都无法归因：
+  1) sw_render_material.apply_visual_properties  → 改显式逐项赋值
+     ⇒ IMaterialVisualPropertiesData 被正确归因，配置材料 7/8 -> 8/8
+  2) sw_hole_features.query_hole_standards      → 拆成 4 个显式函数
+     (get_hole_standards / get_fastener_types / get_fastener_table_types /
+      get_fastener_table) ⇒ IHoleStandardsData 被归因，孔与螺纹 10/11 -> 11/11
+  3) configure_straight_tap / configure_tapered_tap 上轮已改
+
+**教训值得单独留档**：验证工具的覆盖范围本身也是需要修的。
+「测试全绿」有可能只是因为它**看不见那段代码**。
+显式写法同时换来可核对 + 更好读，不只是为工具让路。
+
+## 刻意没做的
+- ISketchSpline.GetEquationParameters / 2 **不提供**：
+  全部是 by-ref 出参（9 个 / 12 个），迟到绑定不保证回写，
+  也不臆造输出缓冲的分配方式
+- IHoleStandardsData 的 4 个查询方法只透传返回值，不判成功、不分配 by-ref 缓冲
+- CurveType / CurveDegree 的取值含义未逐项说明，原样透出数字
+
+## 文档同步
+- SKILL.md 触及率速查改为「满覆盖 11 域 / 部分 1 域 / 统计 0 两域」三档，
+  并点明「C:\swapi 收录的 12 个程序集对应功能域已全部触及」
+- harvest-report §一的 A1 定量小节同步，并补工程图 8 个未触及族的逐条结论
+  （多为交付范围外，非缺口）
+
+## 验证
+- arity: sketch_relations 28/28、sw_render_material 27/27、sw_hole_features 25/25
+  全部 0 存疑 0 查不到
+- 来源门禁 81 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 521 passed / 2 failed（均为既有）
+- 剩余未触及族: 仅工程图 8 个（已逐条核为范围外）

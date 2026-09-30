@@ -1,0 +1,55 @@
+feat(simulation): 新增 sw_simulation_study.py —— 研究管理与求解，并核出 MIT 项目的 6 处缺陷
+
+## 新增模块（签名全部来自 interop 反射，AGENTS.md §四.1③ 认可的官方源）
+- ICWStudyManager: create_study / v2 / v3 / get_study / delete_study /
+  duplicate_study / rename_study / convert_study / set_active_study
+- ICWStudy: run_analysis(0参) / mesh_and_run(0参) / create_mesh / create_mesh_for_control /
+  get_results_of / get_loads_manager_of / export_study(7参) / generate_report /
+  collect_study_evidence
+- 枚举: SWS_ANALYSIS_STUDY_TYPES(11) / SWS_MESH_TYPES(5) / SWS_RUN_ANALYSIS_ERRORS(8)
+
+⚠ 必须写明的事实: **官方 CHM 的 cosworks 册没有 ICWStudyManager / ICWStudy 的
+接口页**（该册只覆盖 ICWLoadsAndRestraintsManager 一个族），所以这两个接口的
+签名**只能**来自反射，**没有语义说明**。已在模块头写清，避免下游误以为可查。
+
+## ⚑ 对 vespo92/SolidworksMCP-TS 的逐条核对：6 处与官方不符
+该项目 src/tools/vba-advanced.ts 有一份 Simulation 的 VBA 生成器。逐条核对反射签名后：
+
+| 它的写法 | 官方反射/枚举 | 判定 |
+|---|---|---|
+| `swStudy.AddRestraint(type, selMgr)` | 该成员**不在 ICWStudy 上**；AddRestraint 只在 ICWLoadsAndRestraintsManager，**4 参** | ❌ 成员不存在 |
+| `swStudy.AddLoad(type, selMgr)` | `AddLoad` 在**整个 cosworks 程序集里都不存在** | ❌ 成员不存在 |
+| `swStudy.GetMaterial(name)` | 同上，不存在 | ❌ |
+| `swStudy.ApplyMaterial(mat)` | 同上，不存在 | ❌ |
+| 夹具 `roller = 1` | `swsRestraintTypeRoller = 3`（1 是 Immovable） | ❌ 枚举错 |
+| 研究类型 `nonlinear = 4` | `swsAnalysisStudyTypeNonlinear = 5`（4 是 Optimization） | ❌ 枚举错 |
+
+⇒ **不移植其代码**，只把它当作「独立第三方实现存在」的佐证。
+   唯一对的地方：`CreateNewStudy3(name, type, 0, errCode)` 四参形态，已采用。
+⇒ 连带印证了此前的判断：alisamsam 的 7 处缺陷不是孤例，
+   **MIT 项目在这个域普遍是「看着像」而非「查过」**。
+
+## 沿用并强化本项目的既有做法
+`_checked(签名表, target, "成员", *args)` 在**发起 COM 调用之前**校核实参个数。
+⚠ 其副作用（与 sw_simulation_loads 相同）：成员名变变量后，
+   audit_call_arity.py 看不见真实调用点 ⇒ 改由契约测试对账。
+✅ 直接 get_com_member 的调用点仍由 arity 审计覆盖（12/12 通过）。
+
+## 验证
+- tests/test_sw_simulation_study_contract.py 12/12
+  （含「签名表与反射交叉校验」「零参方法不加括号」
+   「ActiveStudy 是属性不是方法」「护栏先于 COM 报错」
+   以及两个专门锁 MIT 项目错误的断言：
+   test_nonlinear_is_five_not_four）
+- arity 审计 12/12 通过，0 存疑 0 查不到
+- 来源门禁 117 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 567 passed / 2 failed（均为既有）
+
+## 域 13 现状
+cosworks 共 168 接口 / 363 枚举 / 9,281 成员。
+已覆盖: ICWLoadsAndRestraintsManager(载荷夹具 24 Add*) + ICWStudyManager +
+         ICWStudy(求解/网格/导出) + 既有 sw_simulation.py 的 addin 入口。
+未覆盖: 结果绘图(ICWResults/CWPlot)、接触/连接管理、网格细化、拓扑优化、
+         疲劳、跌落试验、动态/瞬态 —— 这些**官方 CHM 无页**，只能靠反射签名，
+         需逐族评估「值不值得包」。

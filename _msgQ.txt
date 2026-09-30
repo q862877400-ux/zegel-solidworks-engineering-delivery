@@ -1,0 +1,55 @@
+feat(drawing): 新增 sw_drawing_view.py —— IView 6% -> 53%
+
+## 先查清 IView 到底是什么，再决定怎么补
+IView 是全库**最大的单个接口族**。上轮我说「先查清多少是真能力、多少是历史遗留，
+不查就包 461 个函数是刷数字」—— 本轮先查了：
+
+对反射清单**逐行解析**（不用正则切段，前瞻会提前截断）的实测构成：
+
+    原始成员                496   ← C:\swapi 记的是 461，两边口径不同
+    ├ I 前缀内部分发口      134   （27%，COM 运行时用，不给调用方）
+    ├ 属性（get_/set_）       61
+    └ 方法签名              301
+        └ 编号历史变体       94   （X2 / X3 形态）
+    ── 归约到基础名 = 207 个「不同能力」
+
+⇒ 结论：**不适合手写 207 个函数**。而且其中大量是
+`GetXxxCount` / `GetXxx` 的固定配对（前 40 个能力里占了 20 个）。
+直接包 461 个函数会把「覆盖」刷成一个没有信息量的数字。
+
+## 做法与 StudyOptions 同一套
+1. **能力登记表** `VIEW_MEMBER_ARITY`：207 个能力名 → 实参个数，机械生成不手抄
+2. **受登记表约束的通用访问器** `call_view()` —— 传成员名，先查表校核实参个数
+3. **属性名清单** `VIEW_PROPERTY_NAMES`（34 项，属性不是方法，分开列）
+4. 少量高频能力做显式包装：Scale / Name / GetFirstView / GetNextView /
+   GetAnnotationCount / GetAnnotations / GetVisibleComponentCount /
+   GetScaleDecimal / OrientToward
+
+**IView 6% → 53%**（245/461，登记表本身 207 项 + 34 属性 + 显式包装）
+
+## 编号变体是「明确声明的取舍」，不是「它们等价」
+官方 `GetFirstView` / `GetFirstView2` / `GetFirstView3` 这类变体，官方未说明差别。
+⇒ 登记表把它们**折叠到基础名**，保留**实参最多的那一条**。
+测试 `test_numbered_variants_are_folded_and_declared` 锁住「这是取舍声明」。
+
+## 登记表只说「存在 + 参数个数对得上」，不解释语义
+官方 CHM 对 IView 的说明是按方法页分散的，逐条抄进注释既不现实也不可靠。
+⇒ 语义一律指向官方文档对应方法页，**不编解释**。
+
+## 验证
+- tests/test_sw_drawing_view_contract.py 15/15
+  核心是**把登记表逐条对回反射清单**（名字存在性 + 实参个数 + 组成统计三重复核）
+- 三个门禁全绿：diff 记号 PASS(201 文件) / 来源门禁 202 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 708 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 累计（本轮系列）
+  ISelectionMgr   3% → 90%      ISketch          3% → 33%
+  IModelView      3% → 81%      IView            6% → 53%
+  ILinearPattern  3% → 60%      ICurveDrivenPattern 5% → 55%
+
+## 下一批
+  IAssemblyDoc         196 成员  4%
+  ICurve                68 成员  4%
+  IDimensionTolerance   23 成员  4%

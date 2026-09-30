@@ -1,0 +1,42 @@
+docs(examples): 补上 09/10/11 三份 Python 版使用示例
+
+用户指出「只做了接口清单,没做使用指南」后,补完了缺失的最后一层:
+官方示例是 VB / C#,**没有人写 Python 版的端到端调用序列**。
+
+## 新增 examples/09_sheet_metal.py
+Create_Swept_Flange_Example_VBNET.md 的 Python 迟到绑定翻译。
+步骤编号与官方行号一一对应(37-53 → 步骤1, 60-66 → 步骤2, 68-71 → 步骤3,
+73 → 步骤4, 74-87 → 步骤5, 88 → 步骤6),并说明官方这条路径
+**不**调 AccessSelections / ReleaseSelectionAccess。
+与官方的一处刻意偏差(UseDefaultRadius True vs 官方 False)已在文件末尾
+显式标注为**本仓库的工程判断,不是官方要求**。
+
+## 新增 examples/10_surface_geometry.py
+路线 A(IModeler.Create*Surface)的调用形状,并在 docstring 里说清
+本域有**两条互补路线**,本文件只覆盖路线 A;路线 B(界面创建 +
+GetDefinition)指向 docs/usage-guide.md 的专题节。
+并说明造出的曲面**不自动建实体**,原因与出处置。
+
+## 新增 examples/11_simulation_study.py
+⚠ 本文件在 docstring 里直说: **该域官方示例数为 0**,
+调用序列全部来自 interop DLL 反射而非官方示例;并列出 4 个
+**本文件无法回答、需真机确认**的问题(是否需先切 Simulation 页签、
+是否需先有基体法兰、CreateMesh 三参语义、AddRestraint/AddForce
+第 3 个 Object 参数含义),一律不猜。
+
+## examples/README.md 补上三条索引,含上述警告
+
+## 写示例时当场抓到的两处自己的错
+1) `_select_by_id` 的第一个参数是 **Extension** 不是 model
+   (scripts/sw_part.py:66 签名, :762/:805 上游用法),
+   我初版写成传 model —— 已改
+2) `connect_solidworks()` 返回 **(sw, model)** 不是 (sw, _)
+   (scripts/sw_connect.py:287),已改成正确解包并在 model 为空时才新建文档
+
+## 验证
+- 三份 py_compile 全部通过
+- 用 AST 逐个核对 30 个 `from ... import` 符号是否在目标模块真实存在
+  -> **缺失总数 = 0**(不引入虚构接口,这是本项目的核心纪律)
+- 来源门禁 54 块 / 0 违规(来源块已提到 docstring 之后并声明整文件覆盖)
+- A6 禁词 0 命中
+- 全量测试 521 passed / 2 failed(均为既有)

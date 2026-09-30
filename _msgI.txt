@@ -1,0 +1,56 @@
+feat(pdm): 新增 sw_pdm.py —— PDM 文档/配置/BOM 表；并证明「只覆盖最新世代」是安全的
+
+## ⚑ 本轮最重要的发现：PDM 的 296 个「接口」其实是 31 个世代
+反射清单里 `swdocumentmgr` 有 **296 个段**，看着像 296 个能力族。实际是
+**同一接口的多个世代**：
+
+    ISwDMDocument12 … ISwDMDocument31    ← 31 个世代
+    ISwDMConfiguration7 … Configuration18 ← 18 个世代
+    ISwDMTable6 / ISwDMDocument（无版本号）
+    其余 **158 个段成员数为 0** —— 那些是 coclass，不是独立能力
+
+**已逐成员验证超集关系**（不是抽查）：
+    ISwDMDocument31 ⊇ ISwDMDocument30 ⊇ ISwDMDocument20   （0 个例外）
+⇒ 覆盖最新世代即覆盖全部。逐一包装 31+18 个世代是重复劳动，
+   还会让「覆盖」数字**虚高 12 倍**。
+测试 `test_newest_document_generation_is_a_superset_of_older_ones` 锁住这个判断 ——
+若哪天有人往旧世代加了成员却没加到新世代，测试会红。
+
+## 覆盖
+- ISwDMDocument31(106 成员)：配置管理器 / 自定义属性增删 / 外部引用 / CloseDoc /
+  内置元数据（Title/Author/Subject/Keywords/Comments/FullName/时间戳…）
+- ISwDMTable6(36 成员)：BOM 表名 / 修订行 / 行列增删 / BOM 起始号
+
+## ⚠ 刻意「不封装」的两处，各有硬理由
+1. **`GetAllCustomPropertyNamesAndValues`** 有 **4 个 by-ref 出参**；
+   加行列的四个方法（`AddColumnLeft` / `AddColumnRight` / `AddRowHead` /
+   `AddRowTail`）**只有出参、没有实参**。迟到绑定不保证回写，
+   by-ref VARIANT 的分配规则两套源都查不到 ⇒ 不臆造。
+2. **`GetCellText`** 末位是 `String&` ⇒ **连读单元格都不提供**。
+   宁可没有，也不给一个「看着能读单元格、实际靠猜 by-ref 缓冲」的函数。
+   测试 `test_by_ref_only_members_are_not_wrapped` 锁住。
+
+⚠ `SwDmCustomInfoType` / `SwDMSearchOption` 是**接口上的枚举类型**
+  （不是 swconst），反射只给类型名不给取值 ⇒ 全部要求调用方提供，不设默认。
+
+## 门禁首次实战：立刻抓到我
+写 `sw_pdm.py` 时我**第 4 次**把 diff 记号带进注释块（22 行）。
+新门禁 `check_diff_markers.py` **在 py_compile 之前**就精确报出
+`sw_pdm.py:138` 起 22 行 —— 上一轮我为这个错误建的门禁，这轮第一次派上用场，
+而且证明它比编译器有用（编译器只给一个 IndentationError，不告诉我是哪个来源块）。
+
+## 验证
+- tests/test_sw_pdm_contract.py 13/13
+  （核心是「世代超集」的逐成员验证 + 「by-ref 成员不得被封装」）
+- arity 审计（swdocumentmgr 反射）13/13 通过，0 存疑 0 查不到
+- 三个门禁全绿：diff 记号 PASS(189 文件) / 来源门禁 163 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 628 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 域 14 收官
+  SWRoutingLib    28 接口 /  142 成员  ✅ 8 族
+  sldcostingapi   28 接口 /  296 成员  ✅ 4 族
+  swdocumentmgr  296 接口 / 3771 成员  ✅ 3 族（世代超集，31+18 代无需重复包）
+  fworks           2 接口 /    7 成员  ⬜ **仅剩它**
+下一轮收掉 fworks 后，域 13/14 就都处理完了。

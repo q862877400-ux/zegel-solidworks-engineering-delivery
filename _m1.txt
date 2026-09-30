@@ -1,0 +1,23 @@
+refactor: 删掉 108 个自造短名，全走官方成员名
+
+用户判断正确：短名（get_title / create_cut 那种）**不通用** ——
+官方名到处能用，短名只有这个仓库认。所以是负债不是资产。
+
+删除范围严格限定在**本任务新建的 16 个模块**：
+上游自有的 sw_part / sw_view / sw_sketch / sw_routing / sw_selection /
+sw_hole_features 等**一个字没动** —— 那是项目本来的对外 API，删了等于砸项目。
+
+保留的只有四类：
+  · 登记表（ARITY / PROPERTIES / 枚举常量）—— 抄自官方
+  · 通用入口 call_*（官方名的唯一通道，带 arity 护栏）
+  · 两个 try/finally 的选区事务（真行为，不是别名）
+  · 转发上游 _select_by_id（带「面名随 UI 语言变」候选机制，复制会漂移）
+
+**验证强度不减**：原来测「这个短名调了那个成员、参数对不对」，
+现在测「这个族登记了 N 项，每项名字都能在反射里查到、arity 对得上」
+—— 后者覆盖面更全（多了族名这一层）。
+删除后清理了 34 个依附短名的测试，并补了
+test_registry_is_the_only_path_and_it_is_complete 锁住这个决定。
+
+验证：804 passed / 2 failed（2 个为上游既有）· compileall OK ·
+成员名门禁 PASS · 来源门禁 265 块 0 违规 · A6 0 命中

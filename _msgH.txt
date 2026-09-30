@@ -1,0 +1,59 @@
+feat(costing): 新增 sw_costing.py —— Composer 成本；并把「diff 记号残留」变成门禁
+
+## 一、Composer 成本（域 14 第二块）
+scripts/sw_costing.py，覆盖 4 族 / 全库 12 个接口：
+  ICostManager(7) · ICostPart(13) · ICostAnalysis(23) · ICostingDefaults(22)
+签名全部来自 sldcostingapi interop 纯元数据反射（28 接口 / 296 成员）。
+另含 ICostBody 的只读回读与 AssignCustomCost。
+
+⚠ 反射清单里有 16 个**成员数为 0** 的段（CostManager / CostPart / CostAnalysis …）
+  —— 那些是 **coclass**（具体类），成员定义在对应接口上。已在 docstring 说明。
+⚠ 本族官方 CHM 无文档页 ⇒ 只按位置透传。`CostingType` / `MarkUpType` /
+  `BodyStatus` / `LengthUnit` 等整型取值的含义两套源都查不到，
+  一律原样透出，不解释、不换算。
+⚑ 官方参数名**拼写不一致**，照抄不改：`MarkUpPercent`（大写 U）、
+  `LotSizeForSingleBody` / `LotSizeForMultibody` 这一对。
+⚠ 取用路径同样**查不到 ProgID**（本机没装 Composer）⇒ 接收调用方传入的对象。
+
+## 二、把「diff 记号残留」变成门禁（本轮另一半）
+我写来源块注释时**连续三轮**把 diff/patch 的行首记号带进注释块
+（sw_simulation_loads.py / sw_routing.py / sw_costing.py），
+每次都是 py_compile 报 IndentationError 才发现 —— 编译错误还不告诉我是哪个来源块。
+三轮靠「下次记得」显然没用 ⇒ 新增 scripts/check_diff_markers.py，
+并接进 release_check（字段 `diff_markers`，排在 provenance 之后、bundled-skill 之前）。
+
+### ⚑ 这个门禁的判据改了三版，每版错法都记在文件里
+1. **第 1 版**（行首有缩进 + `*`/`+` 就报）→ 把**合法表达式续行**也报了
+   （`sw_gear.py` 里 `+ int(spec.tip_arc_segments)` 是二元运算符）
+2. **第 2 版**（只查注释行内）→ **漏报**，而漏报比误报更糟。
+   原因是循环论证：`*  Object GetBodies()` **不以 # 开头**，
+   而那正是 diff 记号的特征，于是被「只查注释行」排除掉了。
+   负向测试实测：注入真记号后门禁仍报 PASS，而同一文件 py_compile 报 IndentationError
+   —— **门禁形同虚设**
+3. **第 3 版**（当前）→ 用**语法结构**判断而不猜「像不像注释」：
+   维护括号深度，深度 > 0 时行首 `+`/`*` 判为运算符续行；
+   同时跳过三引号字符串内的示例（否则它会抓自己的文档）
+
+### 双向验证
+- 正向：干净树 PASS（187 个 .py 文件）
+- **负向：注入一行真 diff 记号 → FAIL，并点名 `sw_costing.py:174`**
+  同一文件 py_compile 报 IndentationError —— 两者指向同一问题
+
+## 本轮修的自己的错
+1. 写 sw_costing.py 时**第 3 次**犯 diff 记号（这正是新增门禁的由来）
+2. 门禁第 1、2 版各错一次（误报合法续行 / 漏报真记号），第 3 版才对
+3. 替换 scan() 时把旧函数体残留在文件里 → IndentationError
+
+## 验证
+- arity 审计（sldcostingapi 反射）29/29 通过，0 存疑 0 查不到
+- 三个门禁全绿：diff 记号 PASS / 来源门禁 158 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 615 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 域 14 进度
+  SWRoutingLib    28 接口 /  142 成员  ✅ 本轮前覆盖 8 族
+  sldcostingapi   28 接口 /  296 成员  ✅ 本轮覆盖 4 族
+  swdocumentmgr  296 接口 / 3771 成员  ⬜ **最大的一块，PDM，未动**
+  fworks           2 接口 /    7 成员  ⬜
+下一轮做 PDM。

@@ -1,0 +1,58 @@
+fix(app): 补五个新模块的契约测试，并修 25 处「归一化名」错误
+
+新增 `tests/test_app_and_section_contract.py`（11/11）——
+`sw_sldworks_app` / `sw_model_doc_extension` / `sw_section_view` /
+`sw_table_annotations` / `sw_document_core` 此前**只有临时脚本验证，没进 tests/**，
+而 AGENTS.md §三 要求「补 tests/test_<模块名>.py」。
+
+## ⚑⚑ 补测试的过程里查出一批**系统性的真错**（第 9 次凭印象，且最严重）
+
+**根因：arity 表里写的是「归一化名」，COM 层根本见不到。**
+反射清单有三种写法，COM 只认其中一种：
+
+| 形式 | 例子 | COM 认吗 |
+|---|---|---|
+| .NET 属性 | `get_CustomPropertyManager(String)` | ❌ 实际叫 `CustomPropertyManager` |
+| 我写的 | `GetCustomPropertyManager` | ❌ **谁都不认** |
+| COM 名 | `CustomPropertyManager` | ✅ |
+
+而 `get_com_member` 走的是 `getattr(obj, name)` ⇒ **传错就 AttributeError**。
+
+### 共修 25 处
+1. **17 处成员名归一化错误**（`GetHoleTable`→`HoleTable` 等）
+2. **8 处 arity 口径错误** —— 反射里 `Void GetErrorMessages(Object&,Object&,Object&)`
+   是 **0 参**（全是 by-ref 出参），我手写数成了 3；同类还有
+   `GetLastSaveError` / `GetFirstPlaneParameters` 等 7 个。
+   ⇒ 已用 `recompute_arity.py` **从反射机械重算**，不再手打。
+
+### 其中最严重的一处
+**`ISectionViewData` 上我编了 5 个不存在的成员**
+（`AccessSelections` / `ReleaseSelectionAccess` / `GetFeatures` / `GetBodies` /
+`GetComponents`）—— 那是**凭印象从别的 FeatureData 族搬过来的**。
+反射实测该接口**只有 set_* 属性 + 三个 Get*PlaneParameters**，**没有选区事务**。
+
+### 还删了一个不可能工作的函数
+`get_build_numbers` —— 官方 `GetBuildNumbers(String&, String&)` 的实参**全是
+by-ref 出参**，调用方一个都不传；迟到绑定下回写不保证 ⇒ 拿不到版本号。
+已在 `sw_document_core` 删除，并在表里标注 arity=0。
+
+## ⚑ 补上一个真设计缺口
+四个模块的 `_checked` / `_call` **对不在表里的成员静默放行** ——
+意味着「随便编个成员名也能跑」，护栏形同虚设。
+已全部改为：**未登记成员 → KeyError**，并提示「先回反射核实它存在」。
+（是测试拿一个不存在的 `EditRebuild3` 试出来的。）
+
+## 验证
+- tests/test_app_and_section_contract.py **11/11**
+  （含：能力表逐条对回反射且**按 COM 名归一化** · arity 排除 by-ref ·
+    未登记成员被拒 · 未知枚举名被拒 · 跨模块私有符号不得裸相对导入 ·
+    每个模块都要写明「未在本机实测」）
+- 独立工具 `check_com_names.py`：**不一致 = 0**
+- 三门禁全绿：diff 记号 PASS(228 文件) / 来源门禁 290 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 **838 passed / 2 failed**（2 个为上游既有）
+- A6 我的新增行 0 命中
+
+## 教训（已写进代码注释与测试）
+**否定一个成员存在之前，两种形态都要搜过；确定一个成员的实参个数，
+by-ref 出参不计入。** 这两条我这轮各栽了一次。

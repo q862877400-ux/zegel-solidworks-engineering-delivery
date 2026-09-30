@@ -1,0 +1,44 @@
+feat(jlcfa): 嘉立创 FA 全库零件索引 —— 63,234 型号 / 8,207 产品 / 200 分类
+
+## ⚑ 先说清楚合规边界（这个模块怎么读数据的）
+插件的**运行时明文** SQLite 在
+`...\JLCFA Parts Library Plugin Full Version v2.4.1-20260918-1\ForFaceSelector\ForFaceSelectorData\DB\`
+（由 `dbpath.xml` 指向）。加密的只有**传输包** `DB.zip`（传统 ZipCrypto，434 MB）。
+⇒ **不解密、不逆向、不破解**：只读那份明文；sqlite3 一律 `mode=ro`，
+**不修改任何厂商文件**；只抽目录性元数据，**不复制模型文件本体**。
+
+## 数据规模（本机实测）
+    型号 se_product_code              63,234
+    产品 se_product                    8,207
+    品牌 se_product_brand                 209
+    分类 se_category                      200
+    参数 se_fa_product_param         330,208
+    参数可选值 se_fa_product_param_value 447,527
+    构建库模型 builder.bu_model        14,583
+
+## 你要的三类都在（全库，非限品类）
+    铝型材      分类查 504 条
+    直线导轨    分类查 1,088 条
+    丝杆        关键词命中 30 条（分类名里不含「丝杆」）
+
+## ⚠ 明确没做到的：型号 → 模型文件路径
+`se_fa_product_model_third_party_relation.product_model_key_id` 是
+**1000000+ 的第三方模型目录号**，与 `se_product_code.id`（雪花）**无交集**
+（Python 比对 0 命中），与 `builder.bu_model.id` 仅 228 个偶然撞上。
+⇒ **「型号 → 本地 .sldprt」这条链没落在数据库里**，由插件运行时另行解析。
+本索引因此只有目录元数据，**没有文件路径**。不编路径。
+
+## 建索引过程中踩的五个坑（都记进脚本注释了）
+1. `se_product_code.status` **全是 0**，我原先过滤 `status = 1` ⇒ 查出 0 条
+2. join 键错：接到雪花 ID，而真键是 `bu_model.id`（顺序号）
+3. SQL 里 LEFT JOIN 引用了右边的表 ⇒ `ON clause references tables to its right`
+4. 用 SQL 做 CROSS JOIN + GROUP BY 拼 relation(260 万行) **慢到跑不动**
+   ⇒ 改成分表 SELECT、Python 里 dict 拼
+5. ⚑ **我自己的 `search()` 漏搜 `product` 字段** ⇒ 「铝型材」数据里有 12 条却返回 0
+   修完：铝型材 0→12、电磁阀 0→603
+6. `se_category_product` 列名是 `product_id`/`category_id`，不是我猜的 `product_key_id`
+
+## 验证
+- search() 四个字段全搜：铝型材 12 / 导轨 1270 / 丝杆 30 / 减速机 3652 / 电磁阀 603
+- 按分类查：铝型材 504 / 直线导轨 1088
+- compileall 通过 · 全量测试 721 passed / 2 failed（上游既有）· A6 0 命中

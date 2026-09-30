@@ -1,0 +1,54 @@
+feat(featureworks): 新增 sw_featureworks.py —— 域 14 最后一块（fworks）
+
+## 覆盖
+IFeatureWorksApp 的 **7 个成员全部处理**（fworks 程序集共 2 个段 / 7 成员，
+是域 14 里最小的一块，但它是**独立能力**：一键识别实体特征）。
+另一个段 `FeatureWorksApp` 是 coclass，成员数为 0 —— 与 swdocumentmgr 的
+158 个 coclass 段是同一形态，不是独立能力。
+
+## ⚠ 两条「不编」的纪律，各有硬理由
+1. **ProgID 查不到，且连「待确认」都不给**
+   读 `HKLM:\SOFTWARE\SOLIDWORKS\AddIns`（含 WOW6432Node 镜像）下
+   Title/Description 匹配 FeatureWorks 的条目 → **0 条**；反射清单里
+   也没有任何加载项回调接口。
+   ⇒ 不硬编、不代为取得。
+   ⚑ 与 `sw_simulation.py::SIMULATION_ADDIN_PROGID` 的处理**刻意不同**：
+   那个 ProgID 有 MIT 项目作佐证（alisamsam/Solidworks-MCP），
+   所以能「标注来源 + 显式待确认」；本模块**没有来源可标**，
+   给了「待确认」就是给一个无根的字符串化妆。
+2. **7 个成员里没有一个是可读属性**（5 个带参方法 + 2 个零参回调），
+   所以「回读状态」在反射层面**做不到**。
+   ⇒ `read_featureworks_state()` 改为回读**调用侧痕迹**，
+   并显式断言不出现 `entity_count` / `recognized_count` / `version` /
+   `is_busy` / `last_result` 这类**编造字段**。
+   宁可少报，不伪造「读到了」。
+
+## 两个回调成员不封装
+`BubbleTipCallback()` / `HelpErrCallback(Int32, String, Int32, String)`
+是 SolidWorks 调回宿主的**回调点**，不是脚本 API ⇒ 只在
+`CALLBACK_MEMBERS` 里列名，不登记进 `FEATUREWORKS_ARITY`。
+测试锁住「不得被导出、不得进 arity 表」。
+
+## ⚑ 同一类测试错误我犯了第二次
+`test_source_refuses_to_hardcode_progid` 断言「源码不含 `GetAddInObject`」，
+而我的 docstring 正是要解释**为什么不用它** —— 把自己需要的说明判成违规。
+**同一个错在 `test_sw_routing_contract.py` 上犯过一次**（当时已改对），
+这次没把教训带过来。改成只查「调用」不查「提及」，并把这条写进测试注释。
+
+## 验证
+- tests/test_sw_featureworks_contract.py 12/12
+- arity 审计（fworks 反射）**0 个调用点** —— 全部走 `_checked` 护栏，
+  成员名是变量，静态正则看不见 ⇒ 对账由契约测试做（已知盲区）
+- 三个门禁全绿：diff 记号 PASS(191 文件) / 来源门禁 167 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 640 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 域 14 完成
+  SWRoutingLib    28 接口 /  142 成员  ✅ 8 族
+  sldcostingapi   28 接口 /  296 成员  ✅ 4 族
+  swdocumentmgr  296 接口 / 3771 成员  ✅ 3 族（世代超集，31+18 代不重复包）
+  fworks           2 接口 /    7 成员  ✅ 1 族（本轮）
+⇒ 域 13（Simulation）与域 14（路由/Composer/PDM）的**四个程序集全部有封装**。
+下一步：把这两轮补的模块并进 docs/capability-matrix.md 与 family-coverage，
+让 A1 的定量表反映真实状态。

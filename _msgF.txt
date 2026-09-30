@@ -1,0 +1,56 @@
+feat(simulation): 新增 sw_simulation_study_options.py —— 242 个求解器设置的登记表
+
+## 为什么是「登记表」而不是 110 个包装函数
+cosworks 的求解器设置散在 9 个 *StudyOptions 族里，合计 **242 个 setter**
+（静态 55 · 非线性 40 · 动态 34 · 频率 31 · 屈曲 24 · 热 22 ·
+ 疲劳 14 · 复合材料壳 12 · 跌落 10）。逐个包一层 Python 函数，
+代码量大、单位信息量低。
+
+但「**这个求解器到底能配什么**」本身是权威信息 —— 它决定下游能做到哪一步。
+故本模块做两件事：
+  1. **登记表**（STUDY_OPTION_SETTERS）：把反射确认的 242 个可设项
+     落成**字符串字面量**，可 grep、可被测试逐条核对。
+     刻意**不做运行时反射** —— 那会随 SolidWorks 版本漂移。
+  2. 受登记表约束的通用 setter `set_option()` / `set_options()` +
+     三组高频项的显式包装（静态/频率/屈曲）。
+
+## 登记表是机械生成的，不手抄
+  gen_study_options_registry.py  反射清单 → study_options_setters.json
+  emit_study_options_module.py   json → scripts/sw_simulation_study_options.py
+测试 `test_registry_matches_reflection_entry_by_entry` 独立再数一遍反射清单，
+**逐条比对**「不多不少」—— 少一条是漏，多一条是我编的。
+
+## ⚑ X / X2 成对规律，并只推荐 X2
+多数布尔开关有两个 setter：`X(Int32)` 与 `X2(Boolean)`
+（如 CheckFlowPressure / CheckFlowPressure2）。反射确认这是**两个不同签名的
+成员，不是新旧版替代**（全库 51 个 X2 形）。
+
+**只推荐 X2（Boolean）**，理由：Int32 版的取值语义（0/1/-1？枚举？）查不到，
+Boolean 版没有这个歧义。登记表把 X2 单列为 `BOOLEAN_SETTERS`。
+测试锁住「每个 X2 形都必须有同名的 Int32 基础形」。
+
+## 刻意「不臆造」的两处
+1. **study 取用属性名**：`ICWStudy` 上 `StaticStudyOptions` /
+   `FrequencyStudyOptions` / `BucklingStudyOptions` / `NonLinearStudyOptions` /
+   `DynamicStudyOptions` / `FatigueStudyOptions` / `DropTestStudyOptions`
+   在反射清单里逐个确认了；但**热与复合材料壳的取用名没确认** ⇒
+   `STUDY_OPTIONS_ACCESSORS` 里就不放，`study_options_of` 收到时**抛 KeyError**。
+2. **不解释任何一项的工程含义** —— 这些族官方 CHM 无文档页，
+   含义查不到。只保证「名字确实存在于官方 API 且参数类型对得上」。
+
+## 本轮修的自己的错
+1. 生成器改成 raw string 后，错误信息里的 `\\n` 变成了字面两字符
+   → 改回单反斜杠
+2. 模块 docstring 里的 `D:\AI` 触发 SyntaxWarning → HEADER/FOOTER 改 raw string
+3. **测试用错族**：把 `BucklingModes` 放到静态族去设，模块正确拒绝、我的测试红了。
+   补了一个专门断言「跨族误用必须被拒」的用例
+4. `_MISSING` 哨兵落在测试文件首个来源块之前 → 补来源块
+
+## 验证
+- tests/test_sw_simulation_study_options_contract.py 13/13
+  （核心是「登记表 ⊆ 反射清单」的逐条比对；反射清单不在本机时自动跳过该条）
+- py_compile 以 -W error::SyntaxWarning 通过（无转义告警）
+- 来源门禁 142 块 / 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 601 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中

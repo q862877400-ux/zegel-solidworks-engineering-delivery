@@ -1,0 +1,59 @@
+feat(assembly): 新增 sw_assembly_doc.py —— IAssemblyDoc 4% -> 71%
+
+## 先查构成，再决定手写还是登记表（第三次验证这个做法）
+对反射清单**逐行解析**的实测构成（三个族一起查）：
+
+    接口族               原始   I前缀  属性  方法  编号变体  归约后能力
+    IAssemblyDoc        211     25    13   173     41        133
+    ICurve               69     25     4    40      9         31
+    IDimensionTolerance  27      0     8    19      3         16
+
+共同形态：**大量 I 前缀内部分发口 + 大量编号历史变体** ⇒ 都不适合手写。
+本轮把生成这套的做法**通用化**成 `tools/gen_member_registry.py`（此前已手写两遍）。
+
+## 本轮模块
+`scripts/sw_assembly_doc.py`：133 项能力登记表 + 8 项属性清单 + 通用访问器
+`call_assembly_doc()` + 高频能力显式包装。
+
+**IAssemblyDoc 4% → 71%**
+
+## ⚑ 又一次「凭印象写 API」——第 5 次，被自己的测试抓出
+初稿引用了 **6 个在 IAssemblyDoc 上根本不存在**的成员。官方真实名字是：
+
+| 我凭印象写的 | 官方实际 |
+|---|---|
+| `SuppressMate2(int)` | `SetComponentSuppression(String)` |
+| `MoveComponent(String,3×Double)` | `TranslateComponent()` ← **零参**，交互式拖动 |
+| `DissolveAll()` | `DissolveSubAssembly()` |
+| `HideComponent2(Int32,Boolean)` | `HideComponent()` / `ShowComponent()` ← 零参 |
+| `GetPathName()` | **不在 IAssemblyDoc**（路径在 IModelDoc2） |
+| `GetSuppressions()` | **不在 IAssemblyDoc** |
+
+抓它的是新写的 `test_every_referenced_member_is_in_the_registry` ——
+「源码通过 call_assembly_doc 引用的成员，必须都在登记表里」。
+这条断言的价值高于任何单个功能测试：**它把「凭印象写 API」变成机械可查的**。
+
+## 「不越界取」的自觉
+`GetPathName` 拿不到就不提供，不去 `IModelDoc2` 上凑一个 ——
+「装配文档」不是「文档」，越界取会让调用方误以为拿到的是同一个对象。
+
+## 本轮修的自己的错（两处）
+1. 上面的 6 个凭印象成员（已全部改正并在注释里记下真实名字）
+2. **测试里把两个数搞混**：写成 `len(唯一名) == 行数`（即 8 == 13）——
+   反射里 `get_X`/`set_X` 是**两行、一个属性**。
+   已拆成 `property_lines: 13` 与 `property_names: 8` 两个独立期望值，
+   并加断言锁住这个区别，避免后人再拿错。
+
+## 验证
+- tests/test_sw_assembly_doc_contract.py 15/15
+  （核心是「引用成员 ⊆ 登记表」+「登记表逐条对回反射」+「曾想象的成员不得复活」）
+- 三个门禁全绿：diff 记号 PASS(203 文件) / 来源门禁 208 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 723 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 下一批（已查好构成，适合同一套登记表做法）
+  ICurve               68 成员  4%   （I前缀 25 / 属性 4 / 方法 40 → 31 能力）
+  IDimensionTolerance  23 成员  4%   （I前缀  0 / 属性 8 / 方法 19 → 16 能力）
+  IEdge                47 成员  6%
+  IMate2               33 成员  6%

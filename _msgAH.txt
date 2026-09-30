@@ -1,0 +1,47 @@
+fix+feat(drawing): 更正误删的单元格文本封装，并补齐表注解其余 5 族
+
+## ⚑⚑ 本轮第一件事是更正我自己的一个错
+上一轮我说「**ITableAnnotation 上没有读写单元格文本的东西**」，
+并据此删掉了 `get_table_cell_text` / `set_table_cell_text`。
+
+**那是错的。** 反射实测该接口有**属性形态**的单元格文本访问：
+
+    String get_Text(Int32, Int32)             ← 2 参（行, 列）
+    String get_Text2(Int32, Int32, Boolean)   ← 3 参（行, 列, 布尔）
+    String get_DisplayedText(Int32, Int32)
+    String get_DisplayedText2(Int32, Int32, Boolean)
+
+缺的只是**方法形态**（`GetText` / `SetText`）。我初稿只搜了
+`Get`/`Set` 大写开头的**方法**形态，没搜 `get_`/`set_` 的**属性**形态，
+于是误判为整段功能不存在。
+
+⇒ 这是**第 8 次凭印象判断成员**，方向与前七次相反：前几次是**多写**，
+这次是**删多了**。教训写进代码与测试注释：
+**否定一个成员存在之前，要把两种形态都搜过。**
+
+已恢复 `get_table_cell_text` / `get_table_cell_text2`（走属性形态 + arity 护栏），
+写侧仍不提供（两种形态都确实没有 Set）。测试同步改写。
+
+## 表注解 5 族补齐
+反射实测 sldworks 上共 **7 个**表注解接口（目标里写的「5 类」是估计数）：
+
+| 族 | 成员 | 位置 |
+|---|---|---|
+| `ITableAnnotation` | 103 | `sw_drawing_annotations.py` |
+| `IBomTableAnnotation` | 25 | `sw_drawing_annotations.py` |
+| 其余 5 个 | 各 1~2，合计 8 | **本轮 `sw_table_annotations.py`** |
+
+五族结构高度同形（取底层特征 / 排序 / 取图纸），
+⇒ arity 表**逐族登记**（合表会让「用错族」静默通过），
+但**不写 5 个一模一样的包装函数**，只提供三个带 arity 护栏的转发函数。
+
+⚠ 5 族加起来只有 8 个成员 —— 这是**官方本身如此**，不是漏查。
+
+## 验证
+- 8 项能力逐个按 arity 表传参，全部通过护栏；调用序列与反射逐条一致
+- 四类误用全被拦：错 arity · 未登记族 · 无该成员的族 · None 目标
+- tests/test_sw_drawing_annotations_contract.py 16/16（含更正后的断言）
+- 三门禁全绿：diff 记号 PASS(227 文件) / 来源门禁 289 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 827 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中

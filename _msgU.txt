@@ -1,0 +1,57 @@
+feat(hubs): 新增 sw_hubs.py —— 两个总入口 IFeatureManager 96% / IDrawingDoc 84%
+
+`IFeatureManager` 与 `IDrawingDoc` 是 SolidWorks 脚本的**两个总入口**：
+造特征几乎全从 `IFeatureManager` 出发，画图纸几乎全从 `IDrawingDoc` 出发。
+这两个补上，等于把「零件特征」和「工程图」两域的剩余能力一次性兜住。
+
+    族                前    后
+    IFeatureManager   ?%   96%   (286 成员)
+    IDrawingDoc       ?%   84%   (274 成员)
+
+登记表共 **483 项能力**（256 + 227），机械生成不手抄。
+
+## ⚑⚑ 本轮最重要的一件事：取消「编号变体折叠」
+我此前（sw_view / sw_assembly_doc / sw_geometry）都把编号成员**折叠到基础名**，
+理由是「官方未说明 X2/X3 差别」。**在 IFeatureManager 上这个做法是错的**：
+
+    FeatureExtrusion   20 参   ← 真实存在的另一个版本
+    FeatureExtrusion2  23 参
+    FeatureExtrusion3  23 参
+
+⇒ 折叠会产出「名字真实、但 arity 取自别的成员」的条目
+（如「FeatureExtrusion 23 参」—— 名字对、参数个数错，调用必失败）。
+**SolidWorks 的编号不是重载，是不同版本的不同操作。**
+
+已把 `gen_member_registry.py` 的 `fold` 默认改成 False 并写进 docstring；
+测试 `test_folding_is_declared_off_in_the_generator` 拦回归。
+⚠ 我在核查时一度说「FeatureExtrusion 不存在」——**说错了，它存在（20 参）**，
+问题在于 arity 归属错了。分清这两件事。
+
+## ⚑ 又抓到 2 类自己的错
+1. **6 个凭想象写的成员**（`FeatureCount` / `GetSolidFeatureCount` /
+   `GetSurfaceFeatureCount` / `DefinitionTemplate` / `GetPathName` / `GetTitle`）
+   —— 官方真实名字是 `GetFeatureCount` / `GetSheetCount` / `GetCurrentSheet` /
+   `GetSheetNames` / `GetFirstView`
+2. **把 `GetFeatureCount` 当成零参** —— 官方是 `Int32 GetFeatureCount(Boolean)`，
+   **1 参**。我的证据回读按零参调用，**运行时会直接被自己的 arity 护栏拒掉**。
+   已加 `test_evidence_readers_pass_their_own_arity_guard`：
+   **静态看着对 ≠ 运行不炸**，用 mock 真跑一遍才算数。
+
+## 刻意不提供「通用拉伸」封装
+`FeatureExtrusion3` 与 `FeatureCut4` 的差别不是「参数个数」，而是**做的是另一件事**
+（AGENTS.md §六 事实 1：误用 Extrusion3 的 Flip=True 建出来的东西特征名仍是
+「凸台-拉伸」、体积恒等于原板）。⇒ 一个「通用拉伸」封装**恰恰会诱导用错**。
+测试 `test_no_generic_extrusion_wrapper_that_hides_the_trap` 锁住这一点。
+
+## 验证
+- tests/test_sw_hubs_contract.py 16/16
+  （含「编号变体分别登记」「折叠默认关闭」「特征入口的坑写进 TRAPS」
+    「证据回读能过自己的 arity 护栏」「切除与拉伸调不同成员」）
+- 三个门禁全绿：diff 记号 PASS(207 文件) / 来源门禁 225 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 756 passed / 2 failed（均为既有）
+- A6 我的新增行 0 命中
+
+## 下一批
+  IFace2  127 成员  40 I前缀 →  71 能力
+  域 3 / 域 9 的其余 FeatureData 族（各 20–81 成员，构成同形）

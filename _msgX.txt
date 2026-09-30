@@ -1,0 +1,48 @@
+feat(sketch/sheetmetal): 新增 sw_sketch_sheetmetal.py —— 草图 15 族 + 钣金 12 族
+
+一次做 27 族（用已验证的登记表做法）：
+
+| 域 | 族数 | 能力 | 属性 |
+|---|---|---|---|
+| 草图（域 2） | 15 | 234 | 约 150 |
+| 钣金（域 5） | 12 | 124 | 约 140 |
+| 合计 | **27** | **358** | **291** |
+
+含选区事务的钣金族 11 个（`AccessSelections` 2 参 + `ReleaseSelectionAccess` 0 参，签名完全同形，共用一个上下文管理器）。
+
+## ⚑ 两域**分成两张表**，理由同 sw_part_features
+两域成员名会重名（`GetSketchSegments` 在 `ISketch` 上、`AccessSelections` 在几乎
+所有钣金 FeatureData 上），合成一张表会让「用错域」静默通过。
+测试 `test_calling_with_wrong_domain_family_raises` 双向锁住。
+
+## 一个跨模块引用错误，被测试逼出来
+`collect_sketch_evidence` 初稿调了 `as_sequence` —— 那个函数定义在
+`scripts/sw_sketch.py` 里，**本模块并未导入** ⇒ 运行到那一行直接 `NameError`。
+已改为就地转换，测试 `test_no_cross_module_name_leak` 防回归。
+
+> 这类错误**静态签名比对查不出来**（没有 COM 调用、没有成员名不对），
+> 只有真的用 mock 跑一遍才会暴露。
+
+## 修一处行数错位
+替换 `collect_sketch_evidence` 时按固定偏移截断，尾部多留了一个 `}`
+（`unmatched '}'`）。已删。
+
+## 验证
+- tests/test_sw_sketch_sheetmetal_contract.py 15/15
+  （含「两表不得混」「族名校验在构造时」「异常也释放选区」
+    「登记表逐条对回反射」「证据回读用 mock 真跑不炸」）
+- 三个门禁全绿：diff 记号 PASS(213 文件) / 来源门禁 244 块 0 违规 / release_check 已接
+- compileall 通过（含 examples/）
+- 全量测试 803 passed / 2 failed（均既有）
+- A6 我的新增行 0 命中
+
+## 累计（本轮系列，22 个族）
+  ISelectionMgr 3→90  IAssemblyDoc 4→71  IModelView 3→81  ISketch 3→33
+  IView 6→53  ILinearPattern 3→60  ICurveDrivenPattern 5→55  IMate2 6→97
+  IEdge 6→62  IDimensionTolerance 4→87  ICurve 4→51  ISurface 7→55
+  IFeatureManager ?→96  IDrawingDoc ?→84  ITableAnnotation 20→100
+  IDisplayDimension 9→94  ISheet 13→89  IAnnotation 19→87
+  IBomTableAnnotation 20→84  IDimension 15→75  零件特征 8 族
+
+## 下一批
+仿真域 11 个族（costsworks 反射）+ 其余低于 60% 的族

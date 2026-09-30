@@ -1,0 +1,24 @@
+{
+ "tag": "FAIL_home_MYT-LM35AUU-OP",
+ "note": "回首页失败",
+ "kind": "SELECT",
+ "state": {
+  "pct": null,
+  "n_codes": 0,
+  "codes": [],
+  "combos": {},
+  "buttons": [
+   "关闭",
+   "清除所有",
+   "选型PDF",
+   "保存",
+   "生成预览",
+   "插入",
+   "搜索",
+   "去官网",
+   "联系我们"
+  ],
+  "n_categories": 0,
+  "categories": []
+ }
+}
