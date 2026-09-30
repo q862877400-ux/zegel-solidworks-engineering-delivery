@@ -46,23 +46,31 @@
 ## 一 · 游标（**唯一必须维护的字段**）
 
 ```
-当前阶段:  P1（P0 已完成；P2 已推进到「能设目标与约束」）
-状态:      ✅ P0 · 🟢 P2 大幅推进（研究建成 + 目标与约束可真机设上；整链仍未通）
-下一步:    P1 —— 实现「看结果」三件事（Material Mass 图 / View Convergence Data and Graph /
-           Export Smoothed Mesh）。⚠ 已在 cworksapi.chm 2780 页里搜过这三个名字，**零命中**
-           ⇒ 先核 `ICWStudy.get_Results()` 一族，核不到就按铁律 5 写「查不到」并转做 P3
+当前阶段:  P1（P0 已完成；P2 已打通「目标 + 质量约束」链）
+状态:      ✅ P0 · 🟢 P2 打通目标与质量约束；整链仍未通（网格/求解/看结果）
+下一步:    P1 —— 「看结果」三件事。入口已定：`ICWStudy.get_Results()` → `ICWResults`
+           （107 个成员）；建图用 `CreatePlot(Int32 类型, Int32, Int32, Boolean, Int32&)`；
+           读数用 `GetMinMax*` 一族与 `GetTimeOrFrequencyAtEachStep`（疑似收敛数据）。
+           ⚠ `SmoothedMesh` / `MaterialMass` 在反射里**零命中** ⇒ Export Smoothed Mesh
+           大概率要按铁律 5 写「查不到」；Material Mass 可能对应某个 CreatePlot 类型值。
 阻塞:      无
 
 最近三次交接:
-  2026-10-01  1024436/7d75619  拓扑约束失败的**两个真因**用隔离实验定出：
-                             ① 同类约束已存在时 Create* 静默返回 None（须先 RemoveConstraint）
-                             ② EndEdit 的返回值是错误码；CreateGoal(1) 后建质量约束返回 7
-                             （干净研究返回 0）⇒ 目标与约束有兼容性约束。7 的语义 CHM 查不到。
-                             顺带修掉 list_topology_constraints_and_controls 的**假通过**
-                             （出参传裸 0 + except 吞异常 ⇒ 永远返回全 None）
-  2026-10-01  e587a0f/b25dc64  P0 完成 + 修一族潜伏缺陷：Int32& 出参传裸值必抛类型不匹配，
-                             全项目 18 处中招；真机裁决唯一可用形态 VARIANT(VT_BYREF|VT_I4, 0)
-  2026-10-01  e0fe617          Spec Kit 接入（工作区 .specify/）；规格老化模型选 Flow-forward
+  2026-10-01  cb91c58/d90fa10  拓扑质量约束失败**根因定位并修掉**：`CreateGoal(0/1)`
+                              **自带一个质量约束**，而 `CreateMassConstraint` 不查重
+                              ⇒ 「目标 + 再建」= 两个 ⇒ EndEdit 错误码 7
+                              （= `swsTopoErrCode_OnlyOneMassConstraintCanBeDefined`，
+                              真源 `enum_cosworks.txt` 的 `swsTopologyStudyError_e`）。
+                              正解是「取目标自带的那个直接改参数」⇒ 连续三次全部成功。
+  2026-10-01  1024436/7d75619  拓扑约束失败的初步定位（两个真因）+ 修掉
+                              `list_topology_constraints_and_controls` 的**假通过**
+  2026-10-01  e587a0f/b25dc64  P0 完成 + 修一族潜伏缺陷：Int32& 出参传裸值必抛类型不匹配
+                              （全项目 18 处）；真机裁决唯一可用形态 VARIANT(VT_BYREF|VT_I4, 0)
+
+⚠ 一条我犯过并更正的错（教训写在这里，避免重犯）：
+   我曾把「错误码 7 的语义」判为**查不到**，实际它就在手边的
+   `D:\AI\SW\_raw\topo-reflect\enum_cosworks.txt`（3113 行 / 363 枚举）里。
+   ⇒ **「查不到」之前必须先搜手边已有的结构化转储**，并列出搜过哪些源。
 ```
 
 ## 一·B 本轮新增的**关键事实**（写代码直接用，别重新推导）

@@ -1,0 +1,10 @@
+docs(roadmap): 游标 —— P2 打通目标与质量约束链，并记下我犯过的一条错
+
+- 当前阶段 P1；P2 从「大幅推进」改为「打通目标与质量约束」，整链仍未通
+- 下一步写明入口：ICWStudy.get_Results() → ICWResults（107 成员）；
+  CreatePlot(Int32 类型, Int32, Int32, Boolean, Int32&) 建图；
+  GetMinMax* 与 GetTimeOrFrequencyAtEachStep 读数
+- ⚠ 记下教训：我曾把错误码 7 判为「查不到」，实际它就在手边的
+  enum_cosworks.txt（3113 行/363 枚举）里 ⇒ **「查不到」前必须先搜手边已有的结构化转储**
+
+配套：已向长期记忆提交 Correction；capabilities 已更新（等级仍 stitched）

@@ -1,0 +1,52 @@
+fix(topology): 真因是 `CreateGoal(0/1)` **自带一个质量约束** —— 改它，不要新建
+
+## 我在上一轮把错误码 7 判成「查不到」，那是**错的**
+它在 `D:\AI\SW\_raw\topo-reflect\enum_cosworks.txt` 的 `swsTopologyStudyError_e` 里，
+我只是没搜到对的文件。完整错误码表：
+
+    0  Success                             11 ConstraintDefinitionLimitReached
+    1  ManagerIsNotInitialized             12 ManufacturingControlNotFound
+    2  InvalidGoalType                     13 OnlyOneThicknessControlCanBeDefined
+    3  NoGoalHasBeenSet                    14 OnlyOneDemoldControlCanBeDefined
+    4  MinimizeMassGoalHasNotBeenSet       15 OnlyOneSymmetryControlCanBeDefined
+    5  MaximizeStiffnessGoalHasNotBeenSet  16 OnlyOneFrequencyConstraintCanBeDefined
+    6  MinimizeMaxDisplacementGoalNotSet   17 SetOperationNotSupported
+    7  OnlyOneMassConstraintCanBeDefined  ← 本轮的错误
+    8  OnlyOneDisplacementConstraintWithAutoDefineCanBeDefined
+    9  ConstraintNotFound                  18 CannotCreatFOSIfStressAlrdyPrsnt
+    10 DefaultConstraintCannotBeRemoved    19 CannotCreatStressIfFOSAlrdyPrsnt
+                                          20/21 OnlyOneStress/FOSConstraintCanBeDefined
+
+## 真因（三轮隔离实验定出，全部全新研究、互不污染）
+用 `probe_get_creates_constraint.py` 与 `probe_goal_creates_mass.py` 判定：
+
+    只 GetMassConstraint            → False（**Get 不创建**，第一轮假设被推翻）
+    已有 1 个，再 CreateMassConstraint → EndEdit=**7**（Create **不查重、无条件新建**）
+    无目标 + 质量约束                 → EndEdit=**0** ✓ 合法
+    CreateGoal(0) MaximizeStiffness  建前无质量约束 → **建后有**  ← ★
+    CreateGoal(1) MinimizeMaxDisp    建前无质量约束 → **建后有**  ← ★
+    CreateGoal(2) MinimizeMass       建前无质量约束 → **建后仍无**（只有它不自带）
+
+⇒ **`CreateGoal(0/1)` 会自动创建一个质量约束。** 之后无论 `CreateMassConstraint` 还是
+「先 RemoveConstraint 再 Create」（我上一轮试的两条路）都会落到「提交时两个」⇒ 错误码 7。
+**正解：把目标自带的那个取出来直接改参数。**
+
+## 改动
+- `set_topology_goal`：先用 `GetMassConstraint(默认名)` 取；**取到就改它**，取不到才 `Create`。
+  返回 dict 新增 `mass_constraint_reused` 字段，让调用方知道用的是哪一个。
+- FOS 分支：`_clear("stress")` —— 因为 `CannotCreatFOSIfStressAlrdyPrsnt = 18`
+  与 `CannotCreatStressIfFOSAlrdyPrsnt = 19` 说明两者互斥（官方示例也是先移除 Stress）。
+- 删掉了 `_clear("mass")` 那条弯路（它正是错误码 7 的来源之一）。
+
+## 验证（真机，SW 2026 SP4.1 / 34.4.1）
+    研究建成 ✓  AnalysisType=13 ✓
+    连续三次 set_topology_goal(减重 75%/60%/50%)  → **全部 ✓**
+      约束名='质量约束 1'  复用目标自带的=True（三次都是改同一个，正是期望行为）
+    契约测试 test_sw_topology_contract.py  8 passed
+    全量回归 6 failed / 749 passed / 15 skipped（与基线逐条相同）
+    门禁 check_union_conventions / check_provenance 全 PASS
+    compileall -W error::SyntaxWarning  exit 0
+
+## 仍存在的限制（如实记）
+`CreateFactorOfSafetyConstraint` 仍返回 None。枚举里那两条互斥码（18/19）不适用
+（此处并无 stress 约束），故成因**尚未确定**，不猜。

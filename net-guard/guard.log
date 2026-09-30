@@ -1,0 +1,6 @@
+2026-10-01 03:32:43 已备份注册表代理设置：Enable=1 Server=127.0.0.1:7897
+2026-10-01 03:32:43 已记录 Clash 配置哈希：dns_config.yaml, config.yaml, profiles.yaml, verge.yaml, clash-verge.yaml
+2026-10-01 03:32:43 守护启动：间隔 30s，阈值 3 次，DryRun=True，PID=41748
+2026-10-01 03:34:28 注册表代理备份已存在，不覆盖（保住最初那份）
+2026-10-01 03:34:28 已记录 Clash 配置哈希：clash-verge.yaml, profiles.yaml, verge.yaml, dns_config.yaml, config.yaml
+2026-10-01 03:34:28 守护启动：间隔 30s，阈值 4 次，最长 14 小时，DryRun=False，PID=15460

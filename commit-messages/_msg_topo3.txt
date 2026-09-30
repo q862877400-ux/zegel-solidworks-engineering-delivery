@@ -1,0 +1,11 @@
+docs(capabilities): topology_optimization 三轮真机证据 —— 定位并修掉质量约束失败的根因
+
+补 evidence：`CreateGoal(0/1)` 自带质量约束 + `CreateMassConstraint` 不查重
+⇒ 「目标 + 再建」= 两个 ⇒ EndEdit 错误码 7（OnlyOneMassConstraintCanBeDefined）。
+改为「取目标自带的那个直接改参数」后，**同一研究连续三次 75%/60%/50% 全部成功**。
+
+补 limitations：仍**真的**未解的一条 —— CreateFactorOfSafetyConstraint 在无 stress 约束时
+仍返回 None，成因未定。整链（网格/求解/看结果）未验 ⇒ **维持 stitched**。
+
+配套：已向长期记忆提交 Correction（上一轮把错误码 7 判成「查不到」是错的 ——
+它在 enum_cosworks.txt 的 swsTopologyStudyError_e 里；教训是「查不到」之前要先搜手边的结构化转储）。

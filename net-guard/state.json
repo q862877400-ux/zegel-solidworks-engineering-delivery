@@ -1,0 +1,8 @@
+{
+  "ts": "2026-10-01T03:37:00.8492271+08:00",
+  "proxy_listening": true,
+  "proxy_egress": true,
+  "direct_egress": true,
+  "consecutive_failures": 0,
+  "restored": false
+}
