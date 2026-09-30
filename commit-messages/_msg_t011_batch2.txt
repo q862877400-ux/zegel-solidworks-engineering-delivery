@@ -1,0 +1,38 @@
+feat(mcp): T-011 第二批（5 条）+ **核心建模域的函数分类** —— 修正「~120 个」的乐观估计
+
+## 本批新增 5 条声明（全部 A 类：只收标量/字符串/bool，宿主靠 inject）
+    solidworks_weldment_evidence                只读    inject=model
+    solidworks_weldment_ensure_cut_list         写入    inject=model
+    solidworks_weldment_update_cut_list         写入    inject=model
+    solidworks_weldment_create_sub_weld_folder  写入    inject=model（省略 `folder`）
+    solidworks_sheet_metal_evidence             只读    inject=model
+    solidworks_surface_evidence                 只读    inject=sw_app
+（实际 6 条声明，批次文件里 5 个 ToolSpec + 1 个带 omitted_params 的焊件条目）
+
+## ⚠⚠ 本批最重要的产出是**分类表**，它修正了评估里的一个乐观估计
+第一轮枚举说「32 个模块 / 229 个候选动作函数」，评估说「真实工作量 ~120 个」。
+**看清签名之后，这个数是乐观的。** 核心建模域的公开函数按「能否干净暴露」分四类：
+
+| 类 | 判据（**机器可验或可复核**） | 例子 |
+|---|---|---|
+| **A 直接可暴露** | 只收标量/字符串/bool；宿主靠 inject | `weldment_evidence(model)` |
+| **B 需声明式选择解析** | 入参含**坐标/向量**（point/normal/axis/origin）⇒ 违规则 3 | `create_planar_surface(sw_app, point, normal)` |
+| **C 需 spec 展平层** | 入参含 **typed spec dataclass** | `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` |
+| **D 不该暴露** | 纯 getter / 需「取中间对象」的解析 | `get_sketch_segments(sketch)`、`merge_points(sketch, tol)` |
+
+**⇒ 结论**：能**直接**暴露的（A 类）**远少于 120**；
+**B/C 两类各自需要一层基础设施**（选择解析层 / spec 展平层），那是**独立工作项**，
+不是「多写几条声明」。**D 类不该暴露** —— 暴露 getter 等于把工具的**选择集状态**变成 API
+（违规则 3 的精神）；用户要的是「草图完整吗」「改个尺寸」这类**意图**，
+那类工具应当**新写**，而不是把 getter 搬出来。
+
+## 分类表的守卫（`tests/test_tool_specs_batch2.py`，10 条）
+- **点到的函数必须真存在**（≥30 个逐个 `hasattr` 核）—— 抓最糟的一类错：
+  分类表里写一个不存在的函数名，看起来像做过功课，实际是编的
+- 每类**必须写判据/理由/缺什么**（否则就是「凭感觉分堆」，后续无法照办）
+- 同一个函数**不得**同时落在两类里
+
+## 验证
+- `tests/test_tool_specs_batch2.py` **10 passed**
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下。**仍未接入 `server.py`**（单源原则，已知事实 24）

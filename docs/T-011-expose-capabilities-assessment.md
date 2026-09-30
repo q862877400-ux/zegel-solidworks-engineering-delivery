@@ -164,3 +164,61 @@ server.py 2455 行 / 45 个工具 = 54.6 行/工具
 评估里立的判据：「该函数是不是『用户会用一句自然语言要求的**动作**』？」
 - **排除**：12 个 `sw_api_*`（API 索引）· 13 个 `sw_jlcfa_*`（GUI 步骤）· 门禁工具
 - **保留**：其余 32 个模块
+---
+
+## 九、第二批（2026-10-01）：**修正「~120 个」这个乐观估计**
+
+### 9.1 新增 6 条声明（全部 A 类）
+```
+solidworks_weldment_evidence                只读    inject=model
+solidworks_weldment_ensure_cut_list         写入    inject=model
+solidworks_weldment_update_cut_list         写入    inject=model
+solidworks_weldment_create_sub_weld_folder  写入    inject=model（显式省略 `folder`）
+solidworks_sheet_metal_evidence             只读    inject=model
+solidworks_surface_evidence                 只读    inject=sw_app
+```
+`tests/test_tool_specs_batch1.py` + `batch2.py` + `test_tool_registry.py` 合计 **45 条测试**。
+
+### 9.2 ⚠⚠ 最重要的产出：**四类分类**（修正工作量估计）
+
+第一轮枚举给出「32 个模块 / 229 个候选动作函数」，本档早先说「真实工作量 ~120 个」。
+**看清签名之后，这个数是乐观的。** 核心建模域的公开函数按「能否干净暴露」分四类：
+
+| 类 | **判据**（可复核） | 例子 | 缺什么 |
+|---|---|---|---|
+| **A 直接可暴露** | 只收标量/字符串/bool；宿主对象靠 `inject` | `weldment_evidence(model)` | **无** —— 已做 14 条 |
+| **B 需声明式选择解析** | 入参含**坐标/向量** | `create_planar_surface(sw_app, point, normal)` | 「选择器 → 坐标/向量」解析层（**只有面的雏形**，不覆盖点与方向）|
+| **C 需 spec 展平层** | 入参含 **typed spec dataclass** | `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` | 把 dataclass 字段逐个抄成入参（**不能猜字段**）+ 同时需要 B 层 |
+| **D 不该暴露** | 纯 getter / 需「取中间对象」的解析 | `get_sketch_segments(sketch)`、`merge_points(sketch, tol)` | **不该做** |
+
+**⇒ 结论（比数字重要）**：
+1. **A 类远少于 120** —— 能直接暴露的其实只有「证据类 + 少量模型级动作」。
+2. **B/C 两类各自需要一层基础设施**，是**独立工作项**，不是「多写几条声明」。
+3. **D 类不该暴露**：暴露 getter 等于把工具的**选择集状态**变成 API（违规则 3 的精神）。
+   用户要的是「这个草图完整吗」「改个尺寸」这类**意图** ⇒ 那类工具应当**新写**，
+   而不是把内部 getter 搬出来。
+4. **⇒ 真实工作量应按「新建多少面向意图的工具」估**，而不是按「暴露多少既有函数」估。
+   **这是一个比原估计更可靠的锚。**
+
+### 9.3 分类表的守卫（机器可验的部分）
+`tests/test_tool_specs_batch2.py` 加了三条：
+- **点到的函数必须真存在**（≥30 个逐个 `hasattr` 核）—— 抓最糟的一类错：
+  分类表里写一个**不存在**的函数名，看起来像做过功课，实际是编的
+- **每类必须写判据/理由/缺什么** —— 否则就是「凭感觉分堆」，后续批次无法照办
+- **同一函数不得落在两类**
+
+### 9.4 已建成的两项基础设施（本档 §8.4 的「下一步」已完成）
+| 项 | 状态 |
+|---|---|
+| **注入语义建模** | ✅ `inject="model"/"sw_app"/"study"`，解析器由调用方提供 ⇒ 注册器保持宿主无关 |
+| **声明式选择解析层（面）** | ✅ `sw_simulation.resolve_face_selector` / `select_face_by_selector`（`FACE_SELECTORS` 用**外法向**命名）|
+| 声明式选择解析层（**点 / 方向**） | ⛔ 未做 —— B 类的阻塞点 |
+| spec 展平层 | ⛔ 未做 —— C 类的阻塞点 |
+
+### 9.5 当前规模
+```
+声明式注册器        mcp-server/tool_registry.py        ~300 行（一次性）
+第一批              mcp-server/tool_specs_batch1.py     8 条
+第二批              mcp-server/tool_specs_batch2.py     6 条
+守卫测试            tests/test_tool_*.py                45 条
+```
