@@ -48,6 +48,19 @@
 | `docs/union-conventions.md` 规则 4 的等级表 | 写的就是新五级 | 枚举的散落副本，迁完要与数据一致（现在一致） |
 | 使用旧枚举值的实现与测试（执行方实测 2026-10-01：22 个文件 / 49 处 ＝ 9 个实现 + 13 个测试）| 大量断言直接比旧字符串（例：`test_cad_reliability.py` 断言 7 个 id 的 `level == "pilot"`；`test_sw_capability_probe.py` 断言 `implementation_status == "pilot"`）| 本表上两行只点到其中 2 个测试文件；实际有 13 个测试文件会红，逐条按业务判该断言什么（归执行方）。口径：在代码副本全仓按五个旧枚举值 grep 命中的文件数，复跑命令由执行方补录 |
 
+### 1.2 `pilot` 的迁移：把「证据强度」与「授权」拆开
+
+`pilot` 不是口径不清：它同时编码了两个事实 —— 「跑了，但证据不足以无人值守」与「不许无人值守」。新五级只拆开了前者。裁断走选项 A。
+
+1. 19 条 `pilot` 中有 `verified_versions` 的 13 条迁 `verified`（它们跑过，这是事实）；同批必须为这 13 条补 `evidence` —— 可以是「跑过它的命令或脚本名 + 结果摘要」，不要求重新跑一遍，缺则 B4 立刻红。
+2. 另 6 条（`verified_versions` 为空）迁 `stitched`。
+3. `allowed_modes` 的定值域扩为 `interactive` / `reviewed` / `unattended`；原 8 条 `verified` 补 `unattended`，原 19 条 `pilot` 不补。
+4. `unattended_allowed()` 从「看 `level`」改为「看 `allowed_modes` 含不含 `unattended`」，并同批改它的全部调用点与相关测试文件。
+5. **迁移必须附一条等价性验收测试**：`unattended_allowed()` 为真的 capability_id 集合，迁移前后逐条相同。这是本次改动的验收判据，不是可选项。
+6. 新不变量见 §五 的 R11。
+
+不采纳另两个选项：保留第六级 `pilot` 会把两个事实继续焊在一个字段里（那正是它腐坏的根源）；把 13 条一律迁 `stitched` 会让同一份数据里同时出现「跑过 2024/2026」与「从未运行」—— 那不是保守，是错报。
+
 ## 二 `provenance` 的形状与必填性
 
 **必填规则**：`level` 是 `source_verified` / `stitched` / `indexed` 之一时，`provenance` 必须非空；`verified`（我们自研自跑）与 `not_implemented` 不要求。
@@ -123,6 +136,7 @@
 | R8 | 审计（第三节）：`docs/union-level-audit.md` 出现一行 `高报` 即红；报告重生成后与提交内容不一致也红 | `能力 <id> 的人标 level=<人标> 高于自动算出的 <自动>（依据 <字段>）—— 不得高报` / `union-level-audit.md 与数据不同步 —— 重跑 tools/build_union_map.py 并提交` |
 | R9 | `provenance.files` 为非空数组；`commit` / `tag` 可省略或为空串，若出现必须是字符串 | `能力 <id> 的 provenance.files 是空数组` / `provenance.commit 不是字符串：<值>` |
 | R10 | `provenance.files` 不得落在 `angelsix/solidworks-api` 的 `References/` 下（第二节的例外） | `能力 <id> 的 provenance 引用了 angelsix 的 References/ —— 那是达索财产，只能原样配 SolidDNA 用` |
+| R11 | `allowed_modes` ⊆ {`interactive`, `reviewed`, `unattended`}；且 `level != verified` ⇒ 不含 `unattended` | 非 `verified` 的能力带了无人值守授权 |
 
 **规则落点**：R1–R3、R5–R7、R9、R10 进 `scripts/check_union_conventions.py`（已经在 `release_check.py` 里硬失败的那道门）；R4 留在 `scripts/release_check.py` 的现有断言；R8 读生成物。
 
