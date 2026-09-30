@@ -115,8 +115,11 @@ def main() -> int:
         lrm = get_com_member(study, "LoadsAndRestraintsManager")
         print("[4/5] Count = %r" % get_com_member(lrm, "Count"))
 
-        # ── 6. 网格（★ 尺寸必须为正）──
-        size = 0.005   # 5 mm
+        # ── 6. 网格（★ 尺寸必须为正；**用粗网格**）──
+        # ⚠ 2026-10-01 教训：先用了 5 mm（板 100×60×20 ⇒ 约 4800 单元），
+        #   求解器 `cwbcbfmesh` 烧了 3000+ 秒 CPU 仍未完成 ⇒ 停掉重来。
+        #   本特性的目标是「拿到有结果的研究」而非「精确结果」，故用 15 mm 粗网格。
+        size = 0.015   # 15 mm
         tol = size / 20.0
         code = get_com_member(study, "CreateMesh", 0, float(tol), float(size))
         print("[6] CreateMesh(tol=%.4f, size=%.4f) = %r  (%s)"

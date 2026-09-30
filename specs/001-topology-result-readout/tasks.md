@@ -25,7 +25,7 @@
 ## Phase 2: Foundational（**阻塞全部用户故事**）
 
 - [x] **T-002** ⚠ **跑一次真机拓扑优化，拿到有结果的研究**（闭合 FR-001 的前提）
-  **✅ 2026-10-01 逐段打通**（每一步都先撞错误码、再查枚举、再修）：
+  **⚠ 部分完成 —— 求解步未通过。** 逐段打通了**直到求解之前**的全部环节：
   | 步骤 | 撞到的 | 真因（枚举真源 `enum_cosworks.txt`） | 修法 |
   |---|---|---|---|
   | 建研究 | `类型不匹配 (arg 4)` | `Int32&` 出参 | `out_i4()` = `VARIANT(VT_BYREF\|VT_I4, 0)` |
@@ -35,11 +35,24 @@
   | 写属性 | `<unknown>.set_ForceType` | 迟到绑定的写形态 | **`set_com_member`（属性赋值）** |
   | `CreateMesh` | 返回 **5** | `swsStudyErrorSpecifyPositiveValue` | 尺寸/tol **必须为正** |
   | `RunAnalysis` | 返回 **19** | `swsRunAnalysisErrorMaterialNotDefined` | **先赋材料** `SetFavLibraryMaterialToSelectedEntities` |
-  `→ 验收:` `python D:\AI\SW\probe_run_and_read_results.py` 打印
-  `study.Results 非空 = True`
+  | **网格/求解** | **`cwbcbfmesh` 涨到 20–25 GB / 烧 1000–3000 秒 CPU 仍不收敛** | **未定** | **未解决** |
 
-- [ ] **T-003** [P] 若 T-002 跑不通 ⇒ 记录**卡在哪一步**（错误码 + 现象），
-  并把「运行期未验」作为已知缺口写进 spec 与 limitations
+  **四次尝试，全部同一现象**（研究类型无关，参数无关）：
+  | # | 研究类型 | 网格调用 | 结果 |
+  |---|---|---|---|
+  | 1 | 拓扑 13 | `CreateMesh(0, 0.00025, 0.005)`（5 mm） | 3000+ s CPU，未完成 |
+  | 2 | 拓扑 13 | `CreateMesh(0, 0.00075, 0.015)`（15 mm） | 内存涨到 **25 GB**，未完成 |
+  | 3 | 静力学 0 | `CreateMesh(0, 0.0005, 0.004)`（4 mm） | 20 GB / 1170 s，未完成 |
+  | 4 | 静力学 0 | **`CreateMesh()`（零参，用研究默认）** | 仍是 20 GB / 1175 s，未完成 |
+  ⇒ **研究类型与网格参数都不是成因**。`cwbcbfmesh.exe` 是 Simulation 的网格/求解器，
+    在本机对一块 100×60×20 mm 的板子不该有这个开销 ⇒ **成因未定，不猜**（铁律 5）。
+    ⚠ 每次都在内存涨到 20–25 GB 时由我主动停掉（系统 63.8 GB），**没有让它跑到系统级后果**。
+
+  `→ 验收:` **未达成** —— `study.Results` 始终为空。**但求解之前的 7 步全部真机通过并已修好。**
+
+- [x] **T-003** [P] 记录卡在哪一步，并把「运行期未验」作为已知缺口写进 spec 与 limitations
+  **✅ 已完成** —— 见上表与 `capabilities.yaml` 的 `topology_optimization.limitations`。
+  用词严格：**「运行期未验」**（不是「已验证不存在」）。
   `→ 验收:` `grep -c "运行期未验" D:\AI\SW\specs\001-topology-result-readout\*.md` ≥ 1
 
 ---
