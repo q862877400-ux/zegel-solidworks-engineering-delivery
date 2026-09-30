@@ -1,0 +1,17 @@
+"Tool","Combo","Status","Msg","Geo"
+"create_sketch","plane=Front Plane","FAIL","NO_ACTIVE_DOCUMENT",
+"create_sketch","plane=Top Plane","FAIL","NO_ACTIVE_DOCUMENT",
+"create_sketch","plane=Right Plane","FAIL","NO_ACTIVE_DOCUMENT",
+"create_sketch","on_face +Z 顶面","FAIL","找不到该法向的面",""
+"create_sketch","on_face -Z 底面","FAIL","找不到该法向的面",""
+"create_sketch","on_face +X 侧面","FAIL","找不到该法向的面",""
+"create_sketch","on_face + 坐标","FAIL","没找到 +Z 面",""
+"insert_component","默认(自动位置)","OK","","name=主轴壳体_Housing-1 fixed=True pos=(0,0,-0.055)"
+"insert_component","指定 x/y/z","OK","","name=主轴壳体_Housing-1 fixed=True pos=(0.1,0.05,-0.075)"
+"insert_component","fixed=true","OK","","name=主轴壳体_Housing-1 fixed=True pos=(0,0,-0.055)"
+"insert_component","fixed=false","OK","","name=主轴壳体_Housing-1 fixed=False pos=(0,0,-0.055)"
+"insert_component","config=默认","OK","","name=主轴壳体_Housing-1 fixed=True pos=(0,0,-0.055)"
+"insert_component","config=空串","OK","","name=主轴壳体_Housing-1 fixed=True pos=(0,0,-0.055)"
+"insert_component","config=不存在名","OK","","name=主轴壳体_Housing-1 fixed=True pos=(0,0,-0.055)"
+"bom_from_assembly","无 out_dir","OK","rows=11","out_file= onDisk=0KB"
+"bom_from_assembly","指定 out_dir","OK","rows=11","out_file=C:\Users\Zegel\AppData\Local\Temp\bomtest\换刀主轴装配_BT30_ATC_Assembly_BOM.csv onDisk=1KB"

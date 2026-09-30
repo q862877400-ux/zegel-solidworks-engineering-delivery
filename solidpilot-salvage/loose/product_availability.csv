@@ -1,0 +1,8 @@
+"Product","Loaded","Interfaces","Registered","CoCreate"
+"DimXpert","True","100","❌未注册","0x80040154"
+"DesignChecker","True","12","✅HKLM","✅成功"
+"Costing","True","28","✅HKLM","0x80004002"
+"Routing","True","28","❌未注册","0x80040154"
+"Sustainability","True","18","❌未注册","0x80040154"
+"3D Printer","True","2","❌未注册","0x80040154"
+"Simulation","True","168","add-in","（走 LoadAddIn，已实测 ✅）"

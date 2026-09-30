@@ -1,0 +1,14 @@
+改上游	execution/solidworks/SolidworksExecution/Controllers/ToolController.cs
+改上游	execution/solidworks/SolidworksExecution/Infrastructure/StaExecutor.cs
+改上游	execution/solidworks/SolidworksExecution/Services/SolidWorksService.Assembly.cs
+改上游	execution/solidworks/SolidworksExecution/Services/SolidWorksService.Drawing.cs
+改上游	execution/solidworks/SolidworksExecution/Services/SolidWorksService.Features.cs
+改上游	execution/solidworks/SolidworksExecution/Services/SolidWorksService.SheetMetal.cs
+新增	execution/solidworks/SolidworksExecution/Infrastructure/DialogGuard.cs
+新增	execution/solidworks/SolidworksExecution/Infrastructure/OleMessageFilter.cs
+新增	execution/solidworks/SolidworksExecution/Services/BearingTest.cs
+新增	execution/solidworks/SolidworksExecution/Services/DesignCheck.cs
+新增	execution/solidworks/SolidworksExecution/Services/ProductProbe.cs
+新增	execution/solidworks/SolidworksExecution/Services/RawInvoke.cs
+新增	execution/solidworks/SolidworksExecution/Services/SolidWorksService.Capability.cs
+新增	execution/solidworks/SolidworksExecution/Services/SurfaceFinishService.cs

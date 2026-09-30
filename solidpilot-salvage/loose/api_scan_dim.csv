@@ -1,0 +1,5 @@
+"Suite","Name","Status","Ms","Msg"
+"dim","add_dimension(线段中点)","COMPLETED","342","ok"
+"dim","extrude(带尺寸草图)","COMPLETED","380","凸台-拉伸1"
+"dim","verify(体积)","COMPLETED","518","volume=4E-05"
+"dim","feature_map(非编辑态)","FAILED","233","ROLLBACK_FAILED"

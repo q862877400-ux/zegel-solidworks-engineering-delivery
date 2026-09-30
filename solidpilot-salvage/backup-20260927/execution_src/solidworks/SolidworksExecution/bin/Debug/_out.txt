@@ -1,0 +1,2 @@
+SolidworksExecution server running at http://localhost:5000/
+Press Ctrl+C to stop.
