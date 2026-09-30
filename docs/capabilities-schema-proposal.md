@@ -46,6 +46,7 @@
 | `tests/test_cad_reliability.py` 的 `test_capability_manifest_marks_unverified_workflows` | 逐条断言 7 个 id 的 `level == "pilot"`（`external_spur_gear_geometry`、`parameter_updates`、`custom_properties_and_bom`、`pack_and_go`、`configurations_and_design_tables`、`sheet_metal`、`weldments`） | 这 7 条迁 `stitched` 后测试立刻红 |
 | `tests/test_sw_capability_probe.py` 的 `test_advanced_interfaces_do_not_inherit_unrelated_verified_levels` | 断言 `surface_modeling` / `mold_tools` / `routing` 的 `implementation_status == "pilot"` | 同上 |
 | `docs/union-conventions.md` 规则 4 的等级表 | 写的就是新五级 | 枚举的散落副本，迁完要与数据一致（现在一致） |
+| 使用旧枚举值的实现与测试（执行方实测 2026-10-01：22 个文件 / 49 处 ＝ 9 个实现 + 13 个测试）| 大量断言直接比旧字符串（例：`test_cad_reliability.py` 断言 7 个 id 的 `level == "pilot"`；`test_sw_capability_probe.py` 断言 `implementation_status == "pilot"`）| 本表上两行只点到其中 2 个测试文件；实际有 13 个测试文件会红，逐条按业务判该断言什么（归执行方）。口径：在代码副本全仓按五个旧枚举值 grep 命中的文件数，复跑命令由执行方补录 |
 
 ## 二 `provenance` 的形状与必填性
 
@@ -96,13 +97,13 @@
 
 ## 四 两条硬约束
 
-**`verified` ⇒ `evidence` 非空 且 `verified_versions` 非空**，缺一即红。
+**`verified` ⇒ `evidence` 非空；且 `backends` 含 CAD 后端时 `verified_versions` 非空**。
 
 **`evidence` 的形状**：非空字符串数组，一条一行「命令 + 结果摘要」，与 `limitations` 同型，不新造类型。
 
 **与现有门禁的差别**：`scripts/check_union_conventions.py` 的 `check_capabilities_levels` 现在只在 `backends` 含 CAD 后端时才要求 `verified_versions`（`is_cad` 判断），理由是 `requirements_planning`（`local-agent`）与 `geometry_and_delivery_review`（`local-python`）本来没有 SolidWorks 版本可说。
 
-**这条收紧的直接后果**：上述两条的 `verified_versions` 现在是空数组，按新规则要么补一个「我们实际跑过的运行时版本」，要么降到 `stitched`；取值是业务判断，形状上必须是非空数组。
+**CAD 后端的判据（机判照此实现）**：`backends` 里任一项以 `solidworks` 或 `autocad` 开头 —— 与 `check_capabilities_levels` 现行的 `is_cad` 同一口径。`requirements_planning`（`local-agent`）与 `geometry_and_delivery_review`（`local-python`）不满足它 ⇒ 这两条只要求 `evidence`，不要求 `verified_versions`。给代理层与本地 Python 层填「SolidWorks 版本」是给字段安它没有的含义，与本提案反对的「一个事实两个家」同源。
 
 **`not_implemented` ⇒ 必须写原因**：原因写在已有字段 `limitations` 里，不新起字段 —— 它本来就是记「这条为什么不能用」的地方，`check_capabilities_levels` 也已经在查它。
 
