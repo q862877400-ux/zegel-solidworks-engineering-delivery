@@ -29,8 +29,8 @@
 |---|---|---|
 | `verified` | 我们自己真机跑过 | 非空 `evidence` + 非空 `verified_versions` |
 | `source_verified` | 来源声明跑过，我们未复现 | 带 `upstream_verified` 的 `provenance` |
-| `stitched` | 代码已并入，从未运行 | 记来源文件的 `provenance` |
-| `indexed` | 只有官方成员索引，无实现 | 记官方接口族的 `provenance` |
+| `stitched` | 代码已并入，从未运行 | 记来源文件；该实现若来自外部来源仓，同时写 `provenance` |
+| `indexed` | 只有官方成员索引，无实现 | 记官方接口族，写在 `evidence` |
 | `not_implemented` | 明确不做 | `limitations` 里写原因 |
 
 **载体必须留在 JSON 语法内**：这个文件的读取方都用 `json.loads` 解析（`scripts/capabilities.py` 的 `load_capabilities`、`scripts/check_union_conventions.py` 的 `check_capabilities_levels`、`scripts/release_check.py` 的 `run_release_check`、`scripts/validate_skill.py` 的清单校验），扩展名是 `.yaml` 但内容不得引入锚点、多行标量或注释。
@@ -63,7 +63,7 @@
 
 ## 二 `provenance` 的形状与必填性
 
-**必填规则**：`level` 是 `source_verified` / `stitched` / `indexed` 之一时，`provenance` 必须非空；`verified`（我们自研自跑）与 `not_implemented` 不要求。
+**必填规则**：`level == source_verified` ⇒ `provenance` 必须非空；自研但未运行的 `stitched` 允许为空（它没有来源仓）；`indexed` 的出处写在 `evidence` 里（官方接口族），不是 `provenance`。
 
 | 字段 | 必填性 | 形状 |
 |---|---|---|
