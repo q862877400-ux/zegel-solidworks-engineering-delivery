@@ -143,3 +143,46 @@ CosmosWorksLib~CWStudy~CreateMesh.html
 材料入口已在反射里找到：`ICWSolidBody.SetLibraryMaterial(String, String)` /
 `get_MaterialName()` / `set_MaterialName(String)` —— **下一轮从「选实体」这个环节查**
 （现在的选法是 `_select_by_id(ext, "", "SOLIDBODY", …)`，实体名传空串可能没选中）。
+---
+
+## 二之再补 · 第九次尝试：材料赋值（**仍未通，但卡点精确定位**）
+
+### 网格已确认修好
+```
+CreateMesh(0, 4.9339, 0.2467) → 0，**7,310 个单元**，**耗时 0–1 秒**   ✓
+（对比修之前：19,509,593 个单元 / 233 秒）
+```
+
+### 卡点：材料**从未赋上**（不是 19 的误报）
+```
+零件级材料（改之前）:  model.MaterialIdName = ''      ← 空
+零件级材料（改之后）:  model.MaterialIdName = ''      ← 仍空
+```
+
+| 尝试的路径 | 返回 | 是否真的生效 |
+|---|---|---|
+| `SolidManager.SetFavLibraryMaterialToSelectedEntities(lib, mat)`（选中后再赋） | **0** | ✗ `MaterialIdName` 仍为 `''` |
+| `SolidManager.SetFavLibraryMaterialToAllBodiesByCompName(lib, mat, "")` | **1** | ✗ 仍为 `''` |
+| `Extension.SetMaterialPropertyName2(...)` | ✗ **成员不存在** | — |
+| `SolidManager.GetSolidBodyAt(0)` | ✗ **成员不存在** | — |
+| `SolidManager.SolidBodyCount` | ✗ 读不到（迟到绑定） | — |
+
+**⇒ 得到 0 或 1 都**不代表生效** —— 与 AGENTS.md 已知事实 8
+（`AddSelectionListObject` 的 bool 返回值不可信，须回读计数）同类：
+**这里的返回值同样不可信，判据必须是回读 `MaterialIdName`。**
+
+### 下一轮该做的（已定位到入口）
+反射与 VB6 CHM 都指明：**材料该设在「零件」上，不在研究上**。
+```
+IPartDoc.SetMaterialPropertyName2(String, String, String)   ← ★ 首选（SolidWorks 本体，影响零件）
+ICWSolidBody.SetLibraryMaterial(String SLibWithPathName, String SMaterialName)
+ICWSolidManager.GetSolidBodyByName(String, Int32&) / GetSolidBodyAt(Int32, Int32&)
+```
+⚠ `ICWSolidManager` 的这些成员**在迟到绑定下读不到**（`<unknown>.SolidBodyCount`）——
+本轮未查明是「名字不对」还是「该接口未暴露给 IDispatch」。
+**⇒ 下一轮先试 `IPartDoc.SetMaterialPropertyName2`**（它是 SolidWorks 本体接口，
+迟到绑定支持良好），并**以 `MaterialIdName` 回读为准**判定。
+
+### 本轮的正面结论
+**网格这一段是真跑通了**，且真因（参数顺序 + 毫米单位）有官方 CHM 签名页与真机数据双重支撑。
+`RunAnalysis = 19` 现在有了**明确的、可验证的解释**：材料确实是空的。
