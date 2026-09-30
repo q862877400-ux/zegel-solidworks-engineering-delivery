@@ -1,0 +1,34 @@
+feat(union): 地图补「可执行的并入清单」—— 从「缺什么」到「从哪抄、能不能信」
+
+## 为什么补这一节
+用户指示「先继续打磨 A 级」。地图原有四节只回答了「**缺什么**」，
+没回答 B 级开工前必须知道的两件事：
+  ① 该域**从哪家抄**（谁有货）
+  ② 抄之前**能不能信它**（来源自己声明跑过没有）
+
+## 新增第五节「可执行的并入清单（按域）」
+每个有缺口的域给一张表：
+
+    ### ⑧ 焊件（缺 5）
+
+    | 来源 | 该域有 | 许可 | 来源验证 |
+    |---|---|---|---|
+    | `Eduardof0nt/Solidworks-MCP-Server` | 5 | MIT | **未声明** |
+
+    缺口操作：`end_cap`、`gusset`、`structural_member`、`trim_weldment`、`weld_symbol`
+
+★ 「来源验证」那一列是本节的要点：它直接决定抄进来先标什么等级 ——
+  `未声明` ⇒ 只能先标 `stitched`，**必须我们实测过才能升 `verified`**（规则 4）。
+  这一列把「工具最多的 Eduardof0nt 测试文件为 0」这件事，
+  从一条警示变成了每张表上都看得见的字段。
+
+## 验证（实际跑的命令）
+  python -m compileall -q scripts tools          → OK
+  python scripts/check_union_conventions.py      → 通过 (exit 0)，四组全 PASS
+      含「地图与来源同步」——门禁会重跑生成器比对，防手改
+  python scripts/check_provenance.py             → [PASS]
+  python scripts/check_diff_markers.py           → [PASS] 240 个 .py
+
+## 地图规模
+  299 行 / 17.7 KB（原 127 行）
+  并集 384 操作 / 本仓库缺 339 / 本仓库独家 35
