@@ -1,0 +1,69 @@
+feat(topology): ★★ 拓扑优化闭环跑通并升 verified —— 护城河达成（拿到 Material Mass）
+
+## 里程碑
+SW 2026 SP4.1 / 34.4.1，**100×60×20 mm 单实体板**，一次连续运行：
+    建拓扑研究（CreateNewStudy3(name, 13, 0, …)，AnalysisType == 13，未走降级）
+ → 目标 + 质量约束（复用目标自带的那个；EndEdit = **0** 成功）
+ → 夹具（选区计数 1）→ 载荷（选区计数 1；LoadsAndRestraintsManager.Count == 2）
+ → CreateMesh（**85,748 个单元**，1 秒）
+ → RunAnalysis（187 秒）
+ → **study.Results 非空 · GetPlotCount == 2 · GetPlotNames == ('品质1', '材料质量1')**
+                                              ↑ **材料质量1 = Material Mass 结果图**
+
+**⇒ 知识页记为「主要未决项」的 Material Mass 结果，现在拿到了。**
+`capabilities.yaml` 的 `topology_optimization` 由 `stitched` 升 **`verified`**（verified 21→22）。
+
+## 解除阻塞的两次改动（都不是代码）
+1. **许可**：原先本机只有 `SimulationXpress`，求解时弹「拓扑算例未获许可」、Results 为空，
+   而 `RunAnalysis` **仍返回 0**。用户在 **SolidNetWork License Manager** 里调整并
+   **重启 SolidWorks** 后解除 —— **许可在启动时签出，改设置后必须重启**。
+2. **SolidWorks 重启**：经用户授权；重启前逐个关闭文档（确认只有我的两个探针残留，
+   用户资料未丢），重启后主窗口报 `SOLIDWORKS Design Premium 2026 SP4.1`。
+
+## 新增两个**可跑的**证据脚本（把「真机证据」从文字变成命令）
+- `tools/capture_simulation_evidence.py` → `output/simulation-evidence.json`（verdict: pass）
+- `tools/capture_topology_evidence.py` → `output/topology-evidence.json`（verdict: pass）
+`capabilities.yaml` 的两条 `evidence` 现在指向**命令行**，而不是会过期的文字。
+
+## ⚠ 修掉一个**我自己写的**判据 bug（值得单独记）
+第一版 `capture_topology_evidence.py` 报 `verdict: fail`，但三个子项全 True。
+真机复核（`D:\AI\SW\probe_bool_com.py`）：
+    goal            type=**int**    repr=**0**       bool()=**False**
+    mass_constraint type=CDispatch  repr=<COMObject> bool()=True
+⇒ `set_topology_goal` 的 `goal` 是 `EndEdit` **返回码**，**成功为 0**，而 `bool(0)` 为 `False`
+⇒ 我写成 `bool(res_goal.get("goal") and …)`，**把成功判成了失败**。
+**⇒ 通用纪律：成功码常是 0，永远不要用真假值判成功码 —— 显式比 0 或用 `is not None`。**
+
+## 「返回码撒谎」累计五处（跨协议复现）
+| # | 成员 | 撒谎方式 |
+|---|---|---|
+| 1 | `ISelectionMgr.AddSelectionListObject` | 12 次全 false，而计数 = 12 |
+| 2 | `ICWSolidManager.SetFavLibraryMaterialToSelectedEntities` | 返回 0，材料未变 |
+| 3 | `ICWSolidManager.SetFavLibraryMaterialToAllBodiesByCompName` | 返回 1，材料仍未变 |
+| 4 | `ICWStudy.RunAnalysis` | 夹具/载荷缺失时、**许可缺失时**，都返回 0 |
+| 5 | **HTTP 200（在线 API 帮助）** | 不存在的接口~成员组合也返回 200 的通用「找不到」页 |
+⇒ **判据一律「回读」**：选区计数 / `MaterialIdName` / `Results` 非空 + 图数 / 页面里真有 `Syntax`。
+
+## 新增能力：在线官方 API 签名查询
+`tools/fetch_api_signature.py` —— 取官方 API 参考的成员签名（在线优先，本地 VB6 CHM 兜底）：
+    sldworksapi  → **在线可用**（实测 FeatureCut4 / SaveAs3 / CreateCircle /
+                   SetMaterialPropertyName2 4/4 命中，签名字段正确）
+    cosworksapi  → 在线**无该册**（探测 5 个册名 × 2 个库名均无「真有内容」的页）
+                   ⇒ 本地 `C:\cworks_vb6` 是 Simulation 签名的唯一来源
+⚠ 关键实现细节：`urllib` **不读 Windows 系统代理**（PowerShell 的 `Invoke-WebRequest` 才读）
+⇒ 显式读 `HKCU\...\Internet Settings`（只读，不写注册表）。
+⚠ **命中判据是「签名里真的出现成员名」，不是 HTTP 200**（见上表第 5 行）。
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 758 passed / 15 skipped**（与基线逐条相同）
+- 两个证据脚本**各跑一次 verdict: pass**
+
+## ⚠ 可观察性（用户质疑后的改进）
+用户质疑「静力学整链复现时屏幕上完全没变化 —— 是快还是幻觉？」。
+**三层独立证据证明是真跑了**：① 两个独立进程（我的探针 + DSH 的 MCP 服务）报同一个文档；
+② SolidWorks 自己渲染的 1600×1000 预览图（`previews_not_blank: true`）；
+③ SolidWorks 自己的特征树含 `凸台-拉伸1`（type: Extrusion）。
+**但找到真实原因**：探针都设 `CommandInProgress = True`（铁律 2 要求，抑制弹窗）
+⇒ **副作用是 UI 不刷新**。**⇒ 我承认的不足**：先前只贴控制台输出，不足以让用户核验；
+新增 `probe_visible.py`（不压 UI、每步停 2 秒、出声提示、跑完不关文档）作为「可观察」的范式。
