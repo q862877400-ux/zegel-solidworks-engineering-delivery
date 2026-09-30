@@ -1,6 +1,10 @@
 # 本地资源速查
 
 ```
+★ 上下文压缩 / 新会话后第一个读这个：
+D:\AI\SW\docs\ROADMAP.md                    长程施工计划（游标 = 现在在哪、下一步做什么）
+                                            它不重述规矩，只链接；规矩在 AGENTS.md
+
 D:\AI\SW\AGENTS.md                          根指令文件（唯一真源，勿复制到别处）
 D:\AI\SW\                                   工作区仓库（git，提交 1f86c5d 起）
 C:\swprojects\sw-skill-fork\                代码工作副本（git，唯一改代码的地方）
