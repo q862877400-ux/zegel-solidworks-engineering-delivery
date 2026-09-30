@@ -244,3 +244,48 @@ VB6 类型库 CHM 给出三参数 `(ConfigName, Database, Name)` —— 我的**
 2. **单位与量纲必须来自官方签名页**（VB6 CHM），不能靠「看起来合理」。
 3. **来源块与 `def` 之间不要插常量** —— `check_provenance` 的 `_extend_to_code`
    会把第一个代码单元当成被说明对象（本轮**第二次**踩，说明这条该单独记）。
+---
+
+## 二之四 · **拓扑闭环：定论 —— 被许可证挡住**（2026-10-01）
+
+### 现象
+真机跑闭环时 Simulation 弹「**拓扑算例未获许可。**」（用户截图），`study.Results` 为空。
+
+### 依据（双向确认）
+1. **弹窗**：「拓扑算例未获许可。」
+2. **只读核查许可证注册表** `HKCU:\Software\SolidWorks\Licenses\2026`：
+   ```
+   DriveWorksXpress / DFMXpress / SimulationXpress / FloXpress
+   ```
+   —— **全是各家的 Xpress 简化版**，**没有 `SOLIDWORKS Simulation Professional/Premium`**；
+   **而拓扑优化是 Professional/Premium 才有的功能**。
+3. 拓扑模块的**文件是装了的**（`Simulation\Topology\code\bin\abqsmabas*.dll`、`cwmeshadapt.dll` 等）
+   ⇒ **缺的是许可，不是文件**。
+
+### 闭环其实**只差这一步**
+`probe_topology_loop.py` 的逐段输出：
+```
+① 单实体板 100×60×20 mm
+② 材料 'solidworks materials|AISI 1020|2'                                    ✓
+③ CreateNewStudy3(name, 13, 0, out_i4()) → AnalysisType == 13（入口未走降级）  ✓
+④ 目标/约束 {goal:True, mass_constraint:True, mass_constraint_reused:True}     ✓
+   （复用了目标自带的质量约束，避开 EndEdit 错误 7）
+⑤ 夹具 选区=1 ✓   ⑥ 载荷 选区=1、LoadsAndRestraintsManager.Count = 2          ✓
+⑦ CreateMesh = 0，**85,748 个单元**，1 秒                                       ✓
+⑧ RunAnalysis = 0，39 秒   ← **第四个「返回码撒谎」**
+⑨ study.Results 非空 = False  ✗ ← 因「未获许可」
+```
+
+### 处置
+按 AGENTS.md **停止条件 3**（「需要用户提供授权或接受缺口 ⇒ 停下报告」）
+与 objective 的约束（「不碰只有用户能提供的东西」）⇒ **停下报告，不再硬试**。
+`capabilities.yaml` 的 `topology_optimization` 维持 `stitched`，**理由现在可复核**。
+
+### 「返回码撒谎」已累计四处（值得单独成条通用纪律）
+| # | 成员 | 它撒谎的方式 |
+|---|---|---|
+| 1 | `ISelectionMgr.AddSelectionListObject` | 12 次全返回 false，而计数 = 12 |
+| 2 | `ICWSolidManager.SetFavLibraryMaterialToSelectedEntities` | 返回 0，材料未变 |
+| 3 | `ICWSolidManager.SetFavLibraryMaterialToAllBodiesByCompName` | 返回 1，材料仍未变 |
+| 4 | **`ICWStudy.RunAnalysis`** | **夹具/载荷缺失时、以及许可缺失时，都返回 0** |
+**⇒ 判据一律改为「回读」**：选区计数 / `MaterialIdName` / `study.Results` 非空 + 图数。

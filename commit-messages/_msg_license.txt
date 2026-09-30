@@ -1,0 +1,39 @@
+docs(capabilities): ⛔ 拓扑优化的求解被**许可证**挡住 —— 定论（不是代码问题）
+
+## 定论（用户截图 + 许可证注册表双向确认）
+真机跑闭环时 Simulation 弹「**拓扑算例未获许可。**」，`study.Results` 为空。
+只读核查 `HKCU:\Software\SolidWorks\Licenses\2026`：
+    DriveWorksXpress / DFMXpress / **SimulationXpress** / FloXpress
+—— **全是各家的 Xpress 简化版**，没有 `SOLIDWORKS Simulation Professional/Premium`；
+**而拓扑优化是 Professional/Premium 才有的功能**。
+拓扑模块的**文件是装了的**（`Simulation\Topology\code\bin\abqsmabas*.dll`），**缺的是许可**。
+
+## 闭环其实**只差这一步**（除求解外每一步都真机通过，探针 `probe_topology_loop.py`）
+    ① 单实体板 100×60×20 mm
+    ② 材料 'solidworks materials|AISI 1020|2'                                    ✓
+    ③ CreateNewStudy3(name, 13, 0, out_i4()) → AnalysisType == 13（未走降级）     ✓
+    ④ 目标/约束 {goal:True, mass_constraint:True, mass_constraint_reused:True}    ✓
+       （复用了目标自带的质量约束，避开 EndEdit 错误 7）
+    ⑤ 夹具 选区=1 ✓   ⑥ 载荷 选区=1、Count = 2                                   ✓
+    ⑦ CreateMesh = 0，**85,748 个单元**，1 秒                                      ✓
+    ⑧ RunAnalysis = 0，39 秒   ← **第四个「返回码撒谎」**
+    ⑨ study.Results 非空 = False  ✗ ← 因「未获许可」
+
+## 处置（按 AGENTS.md 停止条件 3 与 objective 的约束）
+许可是**只有用户能提供的东西** ⇒ **停下报告，不再硬试**。
+`capabilities.yaml` 的 `topology_optimization`：
+- `level` 维持 **`stitched`**（**理由现在可复核**，而不是含糊的「未跑通」）
+- `dependencies` 增加「SOLIDWORKS Simulation Professional/Premium 许可（拓扑优化所需）」
+- `limitations` 置顶四条：定论 / 许可证依据 / 整链证据 / **需要用户提供什么**
+
+## 顺带确认（同一批运行）
+**静力学整链重跑复现**（`probe_full_chain.py`，数字与上一轮完全一致）：
+    材料回读 'solidworks materials|AISI 1020|2' · 选区计数 1 · Count = 2
+    CreateMesh = 0，**7,310 个单元**，0 秒 · RunAnalysis = 0，**1 秒**
+    study.Results 非空 · GetPlotCount = 4 · GetPlotNames = ('品质1','应力1','位移1','应变1')
+⇒ `simulation_and_fea` 的 `verified` **可复现**（不是一次性侥幸）。
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 758 passed / 15 skipped**（与基线逐条相同）
+- 核查许可时**只读注册表**，未改任何系统设置（三条红线之一：不碰系统层）
