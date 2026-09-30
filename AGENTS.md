@@ -49,7 +49,7 @@
 
 > A1–A10 是交付判据，不是每轮都要全绿：A3（门禁）是可执行的不变量，任何时候都该绿；其余随并入逐条满足。
 
-进度与下一步的真相在 `docs/union-coverage-matrix.md` 第五节的「并入清单」（生成物，随并入更新）；未完成的条目按 `level` 标 `stitched`。
+进度与下一步看 `capabilities.yaml`（能力清单：每条带 `level`，`verified` 另带 `evidence`）—— 状态由清单承载，不写进本文件。`docs/union-coverage-matrix.md` 第五节的「并入清单」是缺口地图（每域缺什么、从哪抄、该来源声明跑过没有），不是进度。
 
 ## 二、六条铁律
 
