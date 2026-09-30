@@ -131,14 +131,16 @@
 | R3 | `id` 全局唯一，且是稳定 slug（`^[a-z][a-z0-9_]*$`）；改 id 会断掉 `operation_routes[].capability_ids` 的引用与既有 provenance 指向 | `能力 id 重复：<id>` / `能力 id 不是稳定 slug：<id>` |
 | R4 | 条数 ≥ 10 | `能力清单 ID 重复或数量不足`（沿用 `scripts/release_check.py` 的现有断言与文案） |
 | R5 | `verified` ⇒ `evidence` 非空 且 `verified_versions` 非空（第四节） | `能力 <id> 标 verified 但 evidence 为空` / `能力 <id> 标 verified 但 verified_versions 为空 —— 「跑过」必须有版本证据` |
-| R6 | `source_verified` / `stitched` / `indexed` ⇒ `provenance` 非空；每条 `repo` 匹配 `^[\w.-]+/[\w.-]+$`；`license` 归一化后落在白名单内 | `能力 <id> 是 <level> 但没有 provenance` / `provenance.repo 不是 owner/repo 形式：<值>` / `provenance.license 不在白名单：<值>` |
+| R6 | `level == source_verified` ⇒ `provenance` 非空；任何带 `provenance` 的条目，其 `repo` 必须是 `owner/repo`、`license` 在白名单、`files` 非空 | 外部来源派生的能力没有出处，或出处形状不合法 |
 | R7 | `not_implemented` ⇒ `limitations` 非空 | `能力 <id> 标 not_implemented 但没写原因` |
 | R8 | 审计（第三节）：`docs/union-level-audit.md` 出现一行 `高报` 即红；报告重生成后与提交内容不一致也红 | `能力 <id> 的人标 level=<人标> 高于自动算出的 <自动>（依据 <字段>）—— 不得高报` / `union-level-audit.md 与数据不同步 —— 重跑 tools/build_union_map.py 并提交` |
 | R9 | `provenance.files` 为非空数组；`commit` / `tag` 可省略或为空串，若出现必须是字符串 | `能力 <id> 的 provenance.files 是空数组` / `provenance.commit 不是字符串：<值>` |
 | R10 | `provenance.files` 不得落在 `angelsix/solidworks-api` 的 `References/` 下（第二节的例外） | `能力 <id> 的 provenance 引用了 angelsix 的 References/ —— 那是达索财产，只能原样配 SolidDNA 用` |
-| R11 | `allowed_modes` ⊆ {`interactive`, `reviewed`, `unattended`}；且 `level != verified` ⇒ 不含 `unattended` | 非 `verified` 的能力带了无人值守授权 |
+| R11 | `allowed_modes` ⊆ {`interactive`, `reviewed`, `unattended`}；`level != verified` ⇒ 不含 `unattended`；授权真源是 `allowed_modes` —— 任何按 `level` 推断无人值守授权的写法都违规（实测该判据在代码里有 4 条路径，只改 `unattended_allowed()` 抓不全） | 非 `verified` 的能力带了无人值守授权，或出现第二个授权真源 |
 
 **规则落点**：R1–R3、R5–R7、R9、R10 进 `scripts/check_union_conventions.py`（已经在 `release_check.py` 里硬失败的那道门）；R4 留在 `scripts/release_check.py` 的现有断言；R8 读生成物。
+
+**`provenance` 的触发条件（修正）**：只有「实现源自外部来源仓」的条目才要求 `provenance`；自研但未运行的 `stitched`（`dfm_checks`、`surface_modeling`、`mold_tools`、`autocad_headless_preview`、`dxf_preview_scene`、`routing`）允许为空 —— 它们没有来源仓，填一个指向本仓库的值属于给字段安它没有的含义。`indexed` 的出处是官方接口族，记在 `evidence` 里，不是来源仓的 `provenance`。将来 B 级并入产生的 `stitched` 条目由并入生成器写入 `provenance`，由审计规则把关，不靠 `level` 推断。
 
 ## 六 最小样例
 
