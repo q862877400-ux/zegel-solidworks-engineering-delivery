@@ -27,9 +27,9 @@
 
 | level | 含义 | 证据要求 |
 |---|---|---|
-| `verified` | 我们自己真机跑过 | 非空 `evidence` + 非空 `verified_versions` |
+| `verified` | 我们自己真机跑过 | 非空 `evidence`；`backends` 含 CAD 后端时另要非空 `verified_versions` |
 | `source_verified` | 来源声明跑过，我们未复现 | 带 `upstream_verified` 的 `provenance` |
-| `stitched` | 代码已并入，从未运行 | 记来源文件；该实现若来自外部来源仓，同时写 `provenance` |
+| `stitched` | 代码已并入，从未运行 | 外部来源并入的写 `provenance.files`；自研未运行的不强制任何字段 |
 | `indexed` | 只有官方成员索引，无实现 | 记官方接口族，写在 `evidence` |
 | `not_implemented` | 明确不做 | `limitations` 里写原因 |
 
@@ -131,7 +131,7 @@
 | R3 | `id` 全局唯一，且是稳定 slug（`^[a-z][a-z0-9_]*$`）；改 id 会断掉 `operation_routes[].capability_ids` 的引用与既有 provenance 指向 | `能力 id 重复：<id>` / `能力 id 不是稳定 slug：<id>` |
 | R4 | 条数 ≥ 10 | `能力清单 ID 重复或数量不足`（沿用 `scripts/release_check.py` 的现有断言与文案） |
 | R5 | `verified` ⇒ `evidence` 非空 且 `verified_versions` 非空（第四节） | `能力 <id> 标 verified 但 evidence 为空` / `能力 <id> 标 verified 但 verified_versions 为空 —— 「跑过」必须有版本证据` |
-| R6 | `level == source_verified` ⇒ `provenance` 非空；任何带 `provenance` 的条目，其 `repo` 必须是 `owner/repo`、`license` 在白名单、`files` 非空 | 外部来源派生的能力没有出处，或出处形状不合法 |
+| R6 | `level == source_verified` ⇒ `provenance` 非空；任何带 `provenance` 的条目，其 `repo` 必须是 `owner/repo`、`license` 在白名单、`files` 非空、`upstream_verified` 字段必须存在（可为空串） | 外部来源派生的能力没有出处，或出处形状不合法 |
 | R7 | `not_implemented` ⇒ `limitations` 非空 | `能力 <id> 标 not_implemented 但没写原因` |
 | R8 | 审计（第三节）：`docs/union-level-audit.md` 出现一行 `高报` 即红；报告重生成后与提交内容不一致也红 | `能力 <id> 的人标 level=<人标> 高于自动算出的 <自动>（依据 <字段>）—— 不得高报` / `union-level-audit.md 与数据不同步 —— 重跑 tools/build_union_map.py 并提交` |
 | R9 | `provenance.files` 为非空数组；`commit` / `tag` 可省略或为空串，若出现必须是字符串 | `能力 <id> 的 provenance.files 是空数组` / `provenance.commit 不是字符串：<值>` |
