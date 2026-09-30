@@ -289,3 +289,43 @@ VB6 类型库 CHM 给出三参数 `(ConfigName, Database, Name)` —— 我的**
 | 3 | `ICWSolidManager.SetFavLibraryMaterialToAllBodiesByCompName` | 返回 1，材料仍未变 |
 | 4 | **`ICWStudy.RunAnalysis`** | **夹具/载荷缺失时、以及许可缺失时，都返回 0** |
 **⇒ 判据一律改为「回读」**：选区计数 / `MaterialIdName` / `study.Results` 非空 + 图数。
+---
+
+## 二之五 · 「导出类结果查不到」的**重验**（2026-10-01，新增在线源之后）
+
+### 为什么重验
+先前判定「`Export Smoothed Mesh` / 收敛数据曲线 **四源查不到**」时，
+本项目**只有本地源**。2026-10-01 打通了**官方在线 API 参考**
+（`https://help.solidworks.com/2026/english/api/...`，走系统代理可直取）。
+**新源出现 ⇒ 旧结论必须重验**，否则那个「查不到」是**过期的**。
+
+### 重验做法与结果
+```
+① 直接猜 cosworksapi 的导出类候选 URL（判据：页面真有 pagetitle + Syntax）：
+   CosmosWorksLib~CWResults~ExportSmoothedMesh.html     → 通用页（无 pagetitle / 无 Syntax）
+   CosmosWorksLib~ICWResults~ExportSmoothedMesh.html    → 通用页
+   CosmosWorksLib~CWResults~SaveSmoothedMesh.html       → 通用页
+   CosmosWorksLib~ICWResults~GetSmoothedMesh.html       → 通用页
+
+② 帮助站自带搜索端点（?q=<关键词>）：四个查询（ExportSmoothedMesh / SmoothedMesh /
+   ViewConvergenceData / MaterialMass）都返回**同样 1268 字节** ⇒ 不是真搜索结果页。
+```
+**⇒ 在线帮助**不含 cosworks（Simulation）册** —— 与先前「`cosworksapi` 在线无该册」
+（探测 5 个册名 × 2 个库名）的结论一致。**
+
+### 结论（**未被推翻，且证据面扩大**）
+「`Export Smoothed Mesh` / 收敛数据曲线 **查不到可调用的公开方法**」现在由**五源**支撑：
+1. cosworks 接口清单（`iface_cosworks.txt`）
+2. DLL 二进制（12 处 `ExportSmoothedMesh` **全是 `swsExportSmoothedMesh_*` 枚举值名**）
+3. 本地 CHM（`cworksapi.chm` 2790 页 + `C:\cworks_vb6` 3000 页）
+4. 运行期 `GetIDsOfNames`（6 个候选名在 `ICWStudy` 上都不存在）
+5. **在线官方 API 参考（本轮新增）**
+
+**⇒ 仍按铁律 5 记为「查不到」**，不猜。**官方在界面流程里有此功能**（`Results` 里右键 →
+`Export Smoothed Mesh` → 导出为网格 BREP 的 `.SLDPRT`），但**没有对应的公开自动化入口**。
+
+**⚠ 方法学价值（值得单独记）**：
+**「查不到」是有时效的结论** —— 它只在「你查过的那些源」上成立。
+**每当新增一个源（本轮新增在线帮助），就必须回头重验此前的「查不到」。**
+本轮重验**没推翻**结论，但这条纪律本身要留着 —— 否则下一次新增源时，
+就会拿着一个过期的「查不到」继续做事。
