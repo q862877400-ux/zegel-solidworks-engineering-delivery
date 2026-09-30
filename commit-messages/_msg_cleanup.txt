@@ -1,0 +1,34 @@
+chore: 归类提交信息草稿 + 立分类规矩 + 认下操作数口径
+
+回应写作方提的三条（其中两条我认，一条我要指出他误报）。
+
+## ① 操作数「384 / 349 / 339 在漂」—— 我认「没写口径」，但不是漂
+实测三个数各是各的量（一条命令可复现，见 count_caliber.py）：
+    349 = 四家并集（不含本仓库）
+    384 = 四家 ∪ 本仓库
+    339 = 384 里本仓库缺的
+⇒ 他的批评对（我在回复/任务书/地图里各引一个数，确实没写清量的是什么），
+  正好违反我们上一条刚写进 配置索引.md §6 的规矩「写实测数字必须写清量的是什么」。
+⇒ 定稿口径 = 跑 python D:\AI\SW\count_caliber.py，它一次打印三个数各自的定义。
+
+## ② 两条 verified 的 verified_versions 为空 —— 他的 B4 会误报
+他建议「补版本还是降 stitched，是执行方的判断」。但我要指出：**这两条不该有版本**。
+依据是我门禁里已写的规则（check_union_conventions.py 的 check_capabilities_levels）：
+    ⚑ verified_versions **只对 CAD 后端**要求（SolidWorks / AutoCAD）。
+      首次跑本门禁时它误报了 requirements_planning（backend local-agent）和
+      geometry_and_delivery_review（local-python）—— 这两条是代理层与本地 Python
+      层能力，本来就没有「SolidWorks 版本」可言。
+⇒ B4 需加 CAD 限定，否则会误报，并逼我把两条正确的能力降级。
+
+## ③ 仓库根杂物 —— 部分采纳
+他点的是我新加的 _msg_reply.txt / emoji_exact.py / mcp45.py / schema_size.py / yamlchk.py。
+查清后：根目录有 703 个 .py / 98 个 .txt，是**既有模式**（README 写明「根 = 草稿区」）；
+而 tools\ 里 20 个文件全是正式工具（gen_*.py / audit_*.py / eval-*.ps1），
+把一次性量测塞进去反而污染它。
+⇒ 只做一处真正该做的分类：**_msg*.txt / _commitmsg*.txt（提交信息，63 个）→ commit-messages\**，
+  并在 README 里立分类规矩（草稿留根 / 正式工具进 tools\ / 提交信息进 commit-messages\）。
+⇒ ⚠ 并记一条反面教材：desc_caliber.py 被 cordis.patch.yml 注释按 D:\AI\SW\desc_caliber.py 引用
+  ⇒ 必须留根；**有外部引用的草稿，路径就是它的契约**。
+
+## ④ SLDWORKS
+他说 PID 11380 还开着占 COM。实测：**已退出**，无需处理。
