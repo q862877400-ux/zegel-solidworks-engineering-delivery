@@ -1,0 +1,9 @@
+chore: 拓扑优化实现过程的探针脚本（CHM 读取 + 成员核对）
+
+本轮实现护城河域拓扑优化时用的一次性脚本，留作可复核的记录：
+  read_topo.py / read_topo2.py / read_topo3.py   读 C:\topo_en 的 CHM 解包页并提纯文本
+  findtopo.py                                    在官方文档 HTML 里找拓扑成员
+  check_members.py                               把 sw_topology.py 的每个 COM 成员名对反射逐条核
+  probe_dfm*.py                                  排查那 4 个不稳定的 CLI 测试时用的探针
+
+对应代码提交：C:\swprojects\sw-skill-fork 的 df4a5ce。
