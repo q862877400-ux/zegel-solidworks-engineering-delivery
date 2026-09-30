@@ -1,0 +1,37 @@
+docs(A9): 七次真机尝试的完整记录 —— 未跑通，但把现象收敛成确证事实 + 一个明确未解的问题
+
+## 方法学收获（本轮最重要的一条）
+前 4 次都是「换参数组合」（5/15/4 mm、零参），**四次同一现象**。
+按纪律「**两次失败就停下查文档**」—— 我第 5 次才做，去解包了一直没读的
+**Simulation 用户手册**（`lang\english\cworks.chm`，16.8 MB / **2052 页** → `C:\cworks_manual`）。
+**⇒ 前 4 次浪费的时间本可避免。**
+
+## 确证事实（10 条，每条可重跑）
+- 零件确实是 **100×60×20 mm**（`GetBodyBox` 实测）
+- `CreateMesh(0,0,0)` → **5**（`SpecifyPositiveValue`）
+- `CreateMesh(0, 0.2467, 4.9339)` → **0（成功）** 但产出 **19,539,399 单元**
+- `CreateMesh()` 零参 → 失败（三参数**都必需**）
+- **网格设置的真宿主是 `ICWMesh`（`study.Mesh`），不是 `ICWStudy`** —— 在 study 上访问
+  `MesherType`/`AutomaticTransition` 一律 `<unknown>.xxx`
+- 默认值：`MesherType=2`（BCB）· **`AutomaticTransition=False`（默认就关）** ·
+  `ElementSize=0` · `Tolerance=0`
+- `GetDefaultElementSizeAndTolerance(0,…)` 对本零件返回 **4.9339**
+- `MeshAndRun()` 与 `RunAnalysis()` 同现象
+
+## ⚠ 明确未解的核心问题（不猜）
+19.5M 单元 ⇒ 实际单元边长 **≈0.183 mm**，而传入 4.9339 ⇒ **差约 27 倍**。
+**三个候选单位（毫米/米/微米）都解释不了这个 27 倍。**
+⇒ 已列出四个候选方向（第 1 参不是 meshType？size/tol 位置相反？网格类型被误启用？
+   GetDefault* 与 CreateMesh 的单位不同？），**均未验证，不当作结论**。
+
+## 下一步该做的（不是再试参数）
+找 `CreateMesh` 的**官方参数名** —— `cworksapi.chm`（2790 页）里没有该方法的独立页，
+用户手册里的命中都在**界面**说明里。**可能要去 `C:\swapi` 查，或从 VB6 CHM
+（`cworksapivs6.chm`，1.8 MB）取参数名。**
+
+## 副作用（已清理）
+每次尝试都以 Stop-Process 停掉网格器并确认内存回落（最后 40.7 GB 可用）；
+所有脚本都不保存文档；新增 7 个探针脚本都在工作区，非代码副本。
+
+## 对 capabilities 的影响
+`topology_optimization` **维持 `stitched`** —— 本记录不改变结论，只把「为什么未验」写清楚。
