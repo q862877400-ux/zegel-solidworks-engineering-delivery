@@ -1,0 +1,71 @@
+feat(union): A 级广度地图 + 并入规范 + 会执行的门禁
+
+## 背景（用户指示）
+「集众家之所长，把他们的广度全部集合成我们自己的，一个项目替代他们所有，
+  再加上护城河；先做 A 级广度地图，参考 DSH 官方规则设置明确规范，
+  该统一的统一，不能搞成大杂烩，要把所有项目统一成正规军」
+
+## 调研结论（本机实测 + 上网核实）
+与本项目重叠的 MCP 项目四家，**各有各的规矩**：
+  项目              工具  许可         它自己声明跑过      仓库内测试文件
+  Eduardof0nt       187   MIT          未声明              0 个
+  andrewbartels1    128   MIT          未声明              147 个 / 7 live
+  vespo92           103   MIT          未声明              7 个 / 0 live
+  Slacker-LLC        92   Apache-2.0   SW 2026 SP3.2 简中  2 个 / 1 live（全工具实用）
+  ← **工具最多的那个测试文件为零**；只有 Slacker-LLC 声明全工具真机跑过。
+
+## 新增 docs/union-conventions.md —— 六条可机器校验的规则
+  规则 1 命名   统一 solidworks_<域>_<动作>（现有 `sw_`/无前缀/`vba_` 一律归并）
+  规则 2 单位   长度参数必须 `_mm` 结尾、角度 `_deg`，转换只在边界做一次
+  规则 3 选择   必须用声明式 selection，禁止裸坐标（含自动设 mark）
+  规则 4 等级   五级：verified / source_verified / stitched / indexed / not_implemented
+                ★ 最要紧的一条 —— 把「谁跑的」和「跑没跑」分开；
+                  明令禁止把 source_verified 写成 verified（那是转述别人的话）
+  规则 5 出处   每条并入条目带 provenance{repo(owner/repo 全名), license, files,
+                upstream_verified}；许可读**真实 LICENSE 文件**判定，不采信 README 徽章
+  规则 6 失败要响 建特征类工具必须 EditRebuild3 + GetWhatsWrong2；禁止静默成功
+                （依据：Slacker-LLC 实测「Most failures are silent」、
+                  「SketchTrim 成功时返回 False」）
+
+## 新增 docs/union-coverage-matrix.md —— A 级广度地图（生成物）
+由 tools/build_union_map.py 从 tools/union-sources.json 生成，域 × 来源矩阵：
+  并集 384 个操作，本仓库缺 339，本仓库独家 35 个
+  ★ ⑯ 高级/专项域：`| · | · | · | · | 3 | 3 | ✓ |` —— **唯一一个别人全空、我们有的域**
+  我方可直接借力的最大缺口：⑪ 工程图 49 / ⑰ 未归类 44 / ③ 草图 42 / ⑮ 宏 42
+
+## 新增 tools/build_union_sources.py —— 扫描四家产出去重来源清单
+  归一后：187→178 / 128→121 / 103→98 / 92→89，并集 349 操作
+  ⚑ 归一很关键：同一操作四家四个名字（sw_add_annotation / add_annotation /
+    add_note / add_annotations），不归一会得出「每家独有 ~90 个」的假象。
+
+## 新增 scripts/check_union_conventions.py + 接进 release_check
+把 doc 里的规则变成**会执行的门禁**（DSH 原则「可校验的不变量挂到会执行的门上」）。
+接在成员名门禁之后、bundled 校验之前 —— 后者是已知的上游基线失败，
+放它前面才保证这道门跑得到。
+
+## ⚑ 门禁首次运行就抓到真问题（并据此修正了规则本身）
+  初次报 FAIL：`requirements_planning`(backend `local-agent`) 与
+  `geometry_and_delivery_review`(`local-python`) 标 verified 但 verified_versions 为空。
+  核实后确认：这两条是**代理层/本地 Python 层**能力，本来就没有「SolidWorks 版本」。
+  ⇒ 规则收紧为「**只在 backends 含 CAD 后端时**要求版本证据」，
+    并把这次误报写进门禁 docstring（避免下次又被当成真问题）。
+
+## 顺带修正我自己两个错误
+  ① build_union_sources.py 首次运行 SyntaxError：**忘了关模块 docstring**，
+     Python 一路找到第 124 行的 `"""` 才闭合，导致中间的中文被当代码解析。
+  ② 域分类原先 `feature`/`surface` 排在 `mold` 之前，把 `tooling_split`、
+     `shut_off_surface` 抢走 ⇒ 地图上「模具」域显示 0（实际有 3 个）。
+     ⇒ 改为**具体域必须排在笼统域之前**，复核后 ⑨ 模具=3 ✓ ⑧ 焊件=5 ✓ ⑦ 钣金=10 ✓
+
+## 验证（实际跑的命令）
+  python -m compileall -q scripts tools        → OK
+  python scripts/check_member_names.py         → [PASS]
+  python scripts/check_provenance.py           → [PASS] 261 个合规来源块
+  python scripts/check_diff_markers.py         → [PASS] 240 个 .py
+  python scripts/check_union_conventions.py    → 并入规范门禁通过 (exit 0)
+  python -m pytest tests -q                    → 738 passed / 2 failed（均为上游基线）
+  A6 禁词（git diff origin/main 新增行）        → 0 命中
+
+## ⚠ 未做
+  - 未改动 capabilities.yaml（仅加了门禁；339 个缺口的登记属 B 级）
+  - Apache-2.0 的 NOTICE 义务**尚未落地** —— 推送 fork 前必须建 THIRD-PARTY-NOTICES.md
