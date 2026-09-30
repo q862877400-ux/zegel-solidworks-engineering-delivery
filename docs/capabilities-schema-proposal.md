@@ -52,7 +52,7 @@
 
 `pilot` 不是口径不清：它同时编码了两个事实 —— 「跑了，但证据不足以无人值守」与「不许无人值守」。新五级只拆开了前者。裁断走选项 A。
 
-1. 19 条 `pilot` 中有 `verified_versions` 的 13 条迁 `verified`（它们跑过，这是事实）；同批必须为这 13 条补 `evidence` —— 可以是「跑过它的命令或脚本名 + 结果摘要」，不要求重新跑一遍，缺则 B4 立刻红。
+1. 19 条 `pilot` 中有 `verified_versions` 的 13 条迁 `verified`（它们跑过，这是事实）；同批必须为这 13 条补 `evidence` —— 可以是「跑过它的命令或脚本名 + 结果摘要」，不要求重新跑一遍，缺则 §四 的 R5 立刻红。
 2. 另 6 条（`verified_versions` 为空）迁 `stitched`。
 3. `allowed_modes` 的定值域扩为 `interactive` / `reviewed` / `unattended`；原 8 条 `verified` 补 `unattended`，原 19 条 `pilot` 不补。
 4. `unattended_allowed()` 从「看 `level`」改为「看 `allowed_modes` 含不含 `unattended`」，并同批改它的全部调用点与相关测试文件。
