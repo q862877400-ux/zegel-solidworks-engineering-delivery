@@ -11,6 +11,7 @@
 | `C:\swprojects\<owner>\` | 四家外部 MCP 项目的克隆 | 只读对照 |
 | `C:\swprojects\sw-automation-skill\` | 上游的另一份克隆 | 只读对照 |
 | `D:\AI\SW\AI Solidworks\` | SolidWorks 工作区（官方文档 / 手册 / 模型 / 截图） | 只读 |
+| `D:\AI\SW\docs\` | 本文件里 `docs/...` 相对 AGENTS.md 解析到这里（上游结构 / 素材 / 来源标注 / 团队分工 / 资源速查 / 开工模板 6 份）；任务产出（`union-conventions.md` 等）在代码副本的 `C:\swprojects\sw-skill-fork\docs\` | 可改 |
 
 `D:\AI\SW\` 现已是 git 仓库（提交 `1f86c5d` 起），收草稿脚本、运行日志、报告与证据；`.gitignore` 排除了 398 MB（官方文档 / 反射转储 / 探索截图 / CAD 保真数据）。
 
@@ -18,11 +19,16 @@
 
 ## 〇、一句话任务
 
-> 把 `wzyn20051216/solidworks-automation-skill`（1010 星, MIT）补强成「官方 SolidWorks API 全覆盖 + 集四家 MIT/Apache MCP 项目之广度 + 业界空白域护城河」，最后推一个 fork。
+> 自建仓库，把 SolidWorks 自动化做到「官方 SolidWorks API 全覆盖 + 集四家 MIT/Apache MCP 项目之广度 + 业界空白域护城河」；交付形态是我们自己的仓库，上游 `wzyn20051216/solidworks-automation-skill`（1010 星, MIT）与四家外部项目同为来源，一件一件搬、搬一件过一遍并入六条规则。
 
 - 集大成：把四家外部 MCP 项目的能力广度并入本仓库，使单一项目即可替代四家之和，每一步可指认出处（铁律 1）。
 - 建护城河：攻业界空白域 —— 经核实真正全网空白的只有拓扑优化、动画导出（AVI）、Costing 三个。
 - 正规军：不搞大杂烩，命名 / 单位 / 选择 / 验证等级 / 出处五统一，并挂机器门禁（`docs/union-conventions.md` + `scripts/check_union_conventions.py`）。
+- 单源交付：运行时只能有一个 SolidWorks MCP —— 多个进程抢同一 COM 连接会死锁（已知事实 24）。
+
+选按需搬取、不整体继承的理由：整体继承会把上游的目录结构、命名与验证口径整套带进来，与同时要并入的四家外部项目在同一批文件里打架；搬一件过一遍六条规则，冲突在搬的那一刻解决，不留给后面。
+
+「引用各家」不等于不用上游代码：上游 `mcp-server/server.py`（104 KB，45 个工具的现成实现，我们一行没改）与 49 个 `scripts/*.py` 是要用的，只是身份从「本仓库的历史基底」降为来源之一，与四家同等，MIT 版权声明照留。
 
 这仍是缝合项目，不是从零写：能力来自官方文档、外部开源项目与本仓库既有模式。
 
@@ -39,6 +45,7 @@
 | A7 | 全文没有一处把 `source_verified` 或 `stitched` 写成 `verified` | grep 全文，禁词 0 命中 |
 | A8 | 报告写明并入了什么、仍空缺什么、为什么空缺 | `docs/harvest-report.md` |
 | A9 | 空白域护城河有可跑的工程实现（拓扑优化优先），不是只有文档 | 对应 `scripts/` 模块 + `tests/` |
+| A10 | 按需搬取：每一件搬进来的东西都过一遍「并入六条规则」，冲突在搬进来的当时解决 | `scripts/check_union_conventions.py` 退出码 0 + 并入清单逐条核对 |
 
 ## 二、六条铁律
 
@@ -62,11 +69,13 @@
 - 每个 COM 调用设超时 —— COM 是 STA 且线程亲和，调用一旦开始无法强制中止；超时只救「等待」，救不了线程，超时后不要重试同一进程。
 - 收尾必做 —— `CommandInProgress = False`、释放 COM 引用、关掉自己开的文档。
 
-红线：破解相关（SolidWorks-CAD / Solidworks-Crack 类投递页、破解指南）零接触；不动注册表 / 全局环境变量 / 系统层；未经确认不 `git push` / 不建 fork / 不发 release；不删用户数据。
+红线：破解相关（SolidWorks-CAD / Solidworks-Crack 类投递页、破解指南）零接触；不动注册表 / 全局环境变量 / 系统层；未经确认不 `git push` / 不建目标远端仓库 / 不发 release；不删用户数据。
 
-### 铁律 3 · 参照上游结构，不自创结构
+### 铁律 3 · 结构按顶层白名单，不临时起目录
 
-新增文件 / 目录 / 命名 / 文档格式落在上游已有位置（见 [docs/upstream-layout.md](docs/upstream-layout.md)）。不新增顶层目录；确需新功能域时，按上游 `subskills/` 的既有模式扩。
+顶层目录只允许这 17 个：`.github` `agents` `ai_team` `apps` `assets` `docs` `dotnet` `examples` `mcp-server` `references` `scripts` `subskills` `tests` `tools` `.api-signatures` `output` `.pytest_cache`（前 13 个是上游就有的，后 4 个是我们加的）。新增白名单外的顶层目录，要在本节登记它是什么、为什么放不进已有目录，再动手。
+
+新文件落进已有位置：能力实现进 `scripts/`，知识文档进 `references/`，测试进 `tests/`，说明与生成物进 `docs/`。上游目录树与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)（对照参考，不是约束来源）。
 
 ### 铁律 4 · 签名以官方文档为准，两套源都要用
 
@@ -87,11 +96,13 @@
 | AGPL / GPL | 只读思想 | 不抄代码、不抄文本 |
 | 无许可 / 全版权保留 | 只读思想 | 同上 |
 
-Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送 fork 时就要带 `THIRD-PARTY-NOTICES.md` —— 该文件尚未创建。完整许可判定表与来源清单见 [docs/sources.md](docs/sources.md)。
+- **单源运行**：运行时只能有一个 SolidWorks MCP —— 多个进程抢同一 COM 连接会死锁（已知事实 24），所以 MCP 选型就是运行时依赖选型：只在 MIT 那份上跑，AGPL 的 SolidPilot 只读思想。
 
-## 三、上游仓库结构（新增文件落在这里）
+Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端时都要带 `THIRD-PARTY-NOTICES.md` —— 该文件尚未创建；MIT 来源（上游与 `Eduardof0nt` / `andrewbartels1` / `vespo92`）保留各自的版权声明。完整许可判定表与来源清单见 [docs/sources.md](docs/sources.md)。
 
-新增文件 / 命名 / 文档格式必须落在上游已有位置：不新增顶层目录，确需新功能域时按上游 `subskills/` 的既有模式扩。目录树、`scripts/` 现有模块清单与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)。
+## 三、上游仓库结构（对照参考）
+
+上游的目录树、`scripts/` 现有模块清单与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)。它是对照参考与取材地图，不是我们的结构约束 —— 我们自己允许哪些顶层目录，看铁律 3。
 
 ## 四、素材库
 
@@ -111,7 +122,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送 fork 时就�
 
 - 工具最多的那家（187）测试文件数为 0：README 写着「Verified on SolidWorks 2024」，仓库里没有任何测试文件 —— README 说验过不等于验过。
 - 四家里只有 `Slacker-LLC` 声明全工具真机跑过，而它的工具数最少（92）；它的 92 个里没有仿真 / 动画 / 拓扑 / 钣金 / 焊件 / 公差。
-- `Slacker-LLC` 是 Apache-2.0：可抄，但要保留 `NOTICE`（`Copyright 2026 JIALE LIU`）并声明改动了哪些文件；推送 fork 时产生硬性义务，`THIRD-PARTY-NOTICES.md` 尚未创建。
+- `Slacker-LLC` 是 Apache-2.0：可抄，但要保留 `NOTICE`（`Copyright 2026 JIALE LIU`）并声明改动了哪些文件；推送任何远端时产生硬性义务，`THIRD-PARTY-NOTICES.md` 尚未创建。
 
 其余 21 个外部项目克隆的清单、逐项能补什么、许可判定表与 MIT 唯一例外，见 [docs/sources.md](docs/sources.md)。
 
@@ -166,6 +177,10 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送 fork 时就�
 | 21 | 真正全网空白的只有三个域：拓扑优化（`andrewbartels1` 明确列在 "Not Yet / Simulated"）、动画导出 AVI（Motion Study 创建有人做，出片没搜到）、Costing（PDM 被 `Eduardof0nt` 的 Contributing 列为 missing） | 上网核实 + 四家仓库源码 |
 | 22 | 「草图完全定义」这条纪律 `andrewbartels1`（MIT）有实现且带测试：`_check_sketch_fully_defined_impl` 多探针（`ISketch.IsFullyConstrained` SW2018+ / `ISketch.GetStatus` / `ISketch.FullyDefined`）经 `_probe_to_flag` 归一 bool/int/float/string，返回 `{sketch_name, fully_defined, state, source_api}`，并接进 `checkpoint_service` 与 `parameter_repair_service`；本仓库 grep `完全定义\|fully defined\|欠定义` 0 命中 | 其源码 `src/solidworks_mcp/adapters/solidworks/sketch.py` + 三个测试用例 |
 | 23 | 并入规范与门禁的落点：`docs/union-conventions.md`（六条规则全文）、`docs/union-coverage-matrix.md`（生成物）、`tools/build_union_sources.py`、`tools/build_union_map.py`、`tools/union-sources.json`（含每家的许可与验证口径）、`scripts/check_union_conventions.py`（已接进 `release_check.py`） | 工作副本 `C:\swprojects\sw-skill-fork\` |
+| 24 | 运行时只能有一个 SolidWorks MCP：多个进程抢同一 COM 连接会死锁。`Eduardof0nt/Solidworks-MCP-Server` 为此实现 Windows 命名互斥锁 `Local\SolidWorksMCPServer_SingleInstance_v1`；`Slacker-LLC/solidworks-mcp` 把「Two clients driving the same session at once will deadlock it.」写进已知限制 | 两家源码 + README |
+| 25 | 上游 MCP 只引用 25 个 `scripts` 模块（含 `importlib.import_module` 的动态引用），我们后补的 58 个一个都没进，交集 = 0 ⇒「我们补的能力没被 MCP 暴露」是当前最大的结构性缺口 | `mcp-server/server.py` 静态抽取全部 `scripts.*` 记号 + 与 `git diff origin/main` 的新增模块求交 |
+| 26 | 仓库构成：上游原有 389 文件 / 10.0 MB；我们新增 100 文件 / 18.2 MB；改过 13 个。`mcp-server/server.py`（104 KB，45 个工具的实现）是上游的，我们一行没改 | `git diff origin/main --stat`（113 files changed）+ `git ls-tree -r -l origin/main` |
+| 27 | 上游 `origin/main` 顶层目录 13 个；实际工作树多出 4 个：`.api-signatures` / `tools` / `output` / `.pytest_cache`（只有 `tools` 入库，另三个是未入库的工作树目录）⇒ 拿上游结构当准绳永远对不上，顶层目录以铁律 3 的白名单为准 | `git ls-tree -d --name-only origin/main` 对比工作树目录 + `git check-ignore -v` |
 
 ```
               会话  参考  草图  尺寸  零件  曲面  钣金  焊件  模具  装配  工程图  检查  仿真  外观  宏  高级
@@ -177,26 +192,26 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
                                                                                                ↑ 唯一独有
 ```
 
-## 七、Git / Fork 规则
+## 七、Git 规则
 
 ```
 代码工作副本：C:\swprojects\sw-skill-fork\     唯一改代码的地方，已是 shallow clone
-  origin : https://github.com/wzyn20051216/solidworks-automation-skill   ← 刻意保留的只读锚点
-  MIT · fork 目标：<你的 GitHub 账号>/solidworks-automation-skill
+  origin : https://github.com/wzyn20051216/solidworks-automation-skill   ← 来源与对照
+  MIT · 上游是来源之一，不是本仓库的历史基底
 工作区仓库：  D:\AI\SW\                        git 仓库（提交 1f86c5d 起），只放产物
 ```
 
-建 fork 前不要动 origin：`origin` 指向上游是刻意保留的只读锚点，用 `git diff origin/main` 看自己偏离上游多少；要推的远端等 fork 建好后再 `git remote add fork <url>`。origin 还是上游就 `git push` 会误推上游仓库。
+`origin` 指向上游，语义是「来源与对照」：用 `git diff origin/main --stat` 看我们相对上游的增量（当前 100 新增 / 13 改过）。自建仓库的目标远端由用户给定后再 `git remote add <name> <url>`；只有 origin 时 `git push` 会误推上游仓库。
 
 - 三条红线（任何模式都不豁免）：删数据 / 删仓库 / 强推；对外发布；只有用户能提供的东西（凭据、业务口径）。
-- 推送前置义务：并入了 Apache-2.0 来源（`Slacker-LLC/solidworks-mcp`）⇒ fork 要带 `THIRD-PARTY-NOTICES.md`（含 `Copyright 2026 JIALE LIU` 与改动文件清单），该文件尚未创建；MIT 来源保留版权声明。
+- 推送前置义务：并入了 Apache-2.0 来源（`Slacker-LLC/solidworks-mcp`）⇒ 推送任何远端都要带 `THIRD-PARTY-NOTICES.md`（含 `Copyright 2026 JIALE LIU` 与改动文件清单），该文件尚未创建；MIT 来源保留版权声明。这条对上游与四家一体适用。
 - 分支策略：`main` 与上游保持一致便于 rebase；每个功能域一个分支（`feat/simulation`、`feat/drawing-views` …）；每个 PR 一句话写清「补了哪个官方接口族，来源是哪个项目 / 哪套文档」。
 
 | 动作 | 是否需要用户批准 |
 |---|---|
 | 本地 clone / 分支 / commit / `git add` / `git remote add\|remove` | 不需要 |
 | 改文件、跑 `compileall`、跑 `sw_know.py` / `swdoc.ps1` | 不需要 |
-| `gh repo fork`（建 fork） | 要先批准 |
+| 建自建仓库、加目标远端（`gh repo create` / 改 origin） | 要先批准 |
 | `git push`（任何远端） | 要先批准 |
 | 提 PR / 发布 release | 要先批准 |
 
@@ -209,8 +224,8 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 1. 两套官方源都查不到某接口，且 `sw_know suggest` 也给不出合理近似 → 先确认该接口是否存在，再写。
 2. 某个缺口在 21 个项目里都找不到可移植实现，且官方文档也没有示例 → 标为「无法缝合」，写进报告的「仍然空缺」段，不要硬编。
 3. 需要碰 AGPL / GPL / 无许可 / 全版权保留 的代码才能补齐 → 停下，报告「需用户提供授权或接受缺口」。
-4. 需要 `git push` / 建 fork / 提 PR → 停下，等批准。
-5. 发现上游结构与本文「上游仓库结构」描述不符 → 停下报告，以实际仓库为准并更新本文件。
+4. 需要 `git push` / 建目标远端仓库 / 提 PR → 停下，等批准。
+5. 发现实际仓库结构与铁律 3 的顶层白名单不符 → 停下报告，以实际仓库为准并更新本文件。
 6. 来源没有测试、我们又无法本机实测 → 标 `stitched`，不得标 `verified`。
 
 ## 十、本地资源速查

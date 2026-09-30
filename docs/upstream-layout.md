@@ -1,4 +1,4 @@
-# 上游仓库结构（新增文件落在这里）
+# 上游仓库结构（对照参考）
 
 > 来源：工作副本 `C:\swprojects\sw-skill-fork\`（remote `wzyn20051216/solidworks-automation-skill`，390 个上游文件，MIT）；只读对照克隆在 `C:\swprojects\sw-automation-skill\`（395 文件）。
 
@@ -24,7 +24,7 @@ solidworks-automation-skill/
 
 `scripts/` 已有能力模块（补全前先看是否已存在）：`sw_connect sw_preflight sw_session sw_part sw_assembly sw_drawing sw_motion sw_sheet_metal sw_weldment sw_export sw_gear sw_hole_features sw_appearance sw_delivery sw_review sw_document_data sw_entity_reference sw_import_mesh_reference sw_macro_guard sw_diagnostics sw_addin_host sw_capability_probe backend_router capabilities fea_analysis fea_convergence advanced_geometry advanced_geometry_ocp advanced_surface_ocp headless_cad_writer headless_occt_service dxf_preview_scene dfm_review dfm_profiles drawing_spec routing_review cad_studio cad_doctor cad_diagnostics cad_installation stability_regression release_check`。
 
-新增模块的硬性要求：
+新增模块的落位参考（约束来源是 AGENTS.md 铁律 3 的顶层白名单）：
 
 - 命名 `sw_<功能域>.py`，与既有并列；顶部 docstring 写清能力域、对应官方接口族、移植来源、许可。
 - 顶部 import 照抄 `sw_connect.py` 的依赖解析模式（`try: from .x import / except ImportError: from x import`）。
