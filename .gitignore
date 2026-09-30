@@ -38,3 +38,7 @@ cadir/
 .misumi.env
 *credentials*
 *secret*
+
+# 网络守护的**运行时状态**（守护每 30 秒覆写；不是交付物，不入库）
+net-guard/state.json
+net-guard/*.flag

@@ -1,0 +1,22 @@
+fix(gates): 修掉我自己引入的两处门禁红灯（来源块 + 文档里的调用字面量）
+
+## ① check_provenance 红：新增的 import 块没有来源块
+`sw_simulation.py` 的依赖导入块（五个 helper）是新增行，未覆盖 ⇒ 补来源块，
+逐一说明五个 helper 各自的出处（已知事实 4 / 12 / 本轮实测新增的两个）。
+
+## ② check_member_names 红：**我自己文档里的「反例」被当成真调用**
+`sw_connect.py` 的 `set_com_member` docstring 里写了三条对比示例，
+其中两条**故意**是不存在的写法（`set_ForceType` / `put_ForceType`）——
+而该门禁会解析文档里的 `get_com_member(...)` 字面量去核反射 ⇒ 判为「查不到」。
+⇒ 改写为表格形式，**不再出现调用字面量**，并加注说明为什么刻意不写。
+
+⚑ 这条值得记：门禁把**文档**也纳入扫描是好事（防止把不存在的名字写进说明），
+  但「否定性示例」会误伤 ⇒ 写反例时用表格或描述，不要用调用字面量。
+
+## 验证（五项门禁逐一 + 回归）
+    check_member_names      exit=0  [PASS]
+    check_provenance        exit=0  [PASS]
+    check_diff_markers      exit=0  [PASS]
+    check_union_conventions exit=0  通过
+    compileall -W error::SyntaxWarning  exit=0
+    全量回归 6 failed / 749 passed / 15 skipped（与基线逐条相同）
