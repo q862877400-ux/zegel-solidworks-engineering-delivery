@@ -1,0 +1,45 @@
+docs: 对 schema 提案的意见 —— 整体接受，B4 要加 CAD 限定；补全 1.1 的影响面
+
+## 接受
+提案整体接受（B1 原地改值+bump schema_version / B2 provenance 六字段 / B3 生成器是校验者
+不是写者 / B5 R1-R10 / B6 样例 / B7 边界）。只要求改一处 B4。
+
+## 1.1 节是这份提案最有价值的部分 —— 我漏了它
+他列的 5 处「同批必须一起改」我全核实了，全部属实。第一处最要命：
+  scripts\capabilities.py:11  VALID_LEVELS = {"verified","pilot","reference_only","not_implemented"}
+                              L37 raise ValueError("能力清单条目无效")
+  ⇒ 新五级一落盘，load_capabilities() 立刻 raise ⇒ backend_router / sw_capability_probe /
+    桌面应用全部读不到清单。我当时只想着「给 level 加两个值」，没想到有运行时校验卡着。
+
+## 但影响面实测比列出来的大（补充数据）
+  枚举定义: 正好 2 处 —— 他的 R2「两个副本」精确
+    scripts\capabilities.py:11  VALID_LEVELS
+    scripts\check_union_conventions.py:31  LEVELS
+  使用处:   22 个文件 / 49 处（实现 9 + 测试 13）
+    ⇒ 他 1.1 只列了 2 个测试文件，实际 13 个
+  两个不同的失败模式：副本不一致 ⇒ R2 红；使用处没改 ⇒ 13 个测试红。都要管。
+
+## B4 要加 CAD 限定（这条会误报）
+B4 现写「verified ⇒ evidence 非空 且 verified_versions 非空」。
+但 requirements_planning（local-agent）与 geometry_and_delivery_review（local-python）
+本来就没有 SolidWorks 版本可说 —— 依据是他提案第四节自己引的我门禁 docstring（那次误报我撞过）。
+⇒ 不是「补版本还是降 stitched」，而是这两条压根不该有 verified_versions。
+⇒ 建议改成「verified ⇒ evidence 非空；且 backends 含 CAD 后端时 verified_versions 非空」。
+
+## 他驳掉我一条建议，驳得对
+我在任务书 2.5 建议加 level_source / generated 以辨「哪几条是人标的」；
+他回绝「有 evidence 就是我们自己跑的，再加字段就是给同一事实安第二个家」——对，比我简洁。
+
+## 点名两条他裁断比我强的
+B3 生成器是校验者不是写者：我只想到「能不能回写」，他指出真正危险是「静默覆盖人工标注」。
+「不得高报」：我只当它是文档准确性，他指出它是安全属性 —— unattended_allowed() 与
+ready_for_unattended_use 都只认 verified，高报一条等于解锁一条无人值守执行路径。
+
+## 他那三条的处置
+① 操作数 384/349/339：我认「没写口径」（违反刚立的 §6 规矩），但实测三者各是各的量。
+   定稿口径 = python D:\AI\SW\count_caliber.py（一次打印三个定义）。
+② 根目录杂物：部分采纳。根目录 703 个 .py 是既有模式（README 写明根=草稿区），
+   tools\ 20 个全是正式工具，塞进去反而污染。只归档 63 个提交信息 → commit-messages\，
+   并在 README 立分类规矩。附记：desc_caliber.py 被 cordis.patch.yml 按绝对路径引用
+   ⇒ 必须留根 —— 有外部引用的草稿，路径就是它的契约。
+③ SLDWORKS PID 11380：实测已退出。
