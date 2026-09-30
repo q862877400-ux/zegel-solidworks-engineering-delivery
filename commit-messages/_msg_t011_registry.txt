@@ -1,0 +1,55 @@
+feat(mcp): 声明式工具注册器 —— 把「加一个 MCP 工具」从 54 行手写降到 ~10 行声明
+
+## 解决什么
+`AGENTS.md` 已知事实 25：`mcp-server/server.py` 只引用 **25** 个 `scripts` 模块，
+**本仓库后补的 61 个模块一个都没进**（交集 = 0）—— 这是当前最大的结构性缺口。
+
+按老办法补齐要 **~120 个函数 × 54.6 行 ≈ 6480 行**手写样板。
+（`T-011` 评估已定：真实工作量是 **~120 个函数**，不是 814。）
+
+## 新增 `mcp-server/tool_registry.py`（283 行，一次性成本）
+把 `server.py` 既有 45 个工具的形状（`@mcp.tool` + Pydantic 模型 + `op()` 闭包 +
+`_run_locked`）**抽成声明式**：
+
+    ToolSpec(
+        name="solidworks_topology_create_study",
+        title="Create Topology Study",
+        module="sw_topology", function="create_topology_study",
+        params=[Param("study_name", str, default="S1")],
+    )
+
+**⇒ 120 个工具从 ~6480 行降到 ~1200 行 + 一次性 283 行（约 5 倍）。**
+
+## 关键设计：**不自动猜参数语义**
+六条规则里 1/2/3 是**人工判断**，自动猜会造出静默错误：
+- 规则 1（`solidworks_<域>_<动作>`）：自动生成会造出语义不清的名字
+- 规则 2（`_mm` / `_deg`，换算只在边界做一次）：**本项目刚在 `CreateMesh` 上踩过
+  「毫米当米」⇒ 1950 万单元 / 20–25 GB**
+- 规则 3（声明式 `selection`，禁裸坐标）
+
+**⇒ 本模块只做「把已判好的东西写成代码」，不做判断。** 三条机器可判的规则
+做成**注册时即报错**的门禁（`GateError`），且 `register()` **全有或全无** ——
+有坏声明就一个都不注册，不让半套工具进到运行期。
+
+## 明确不做（写进模块头）
+- **不**覆盖有自定义后处理的工具（如 `cadstudio_build_dxf_preview_scene`）—— 给 `extra_op` 逃生口
+- **不**改 `server.py` —— 那正是本会话 `mcp__solidworks__*` 工具的来源，
+  改它会动**正在运行的** MCP 表面（单源原则，已知事实 24）。
+  接入 = `register(mcp, SPECS)` 一行，**由人决定时机**。
+
+## 新增 `tests/test_tool_registry.py`（21 条，**不依赖 `mcp` 库、不连 SolidWorks**）
+覆盖：规则 1 命名（5 个反例）· 规则 3 禁裸坐标（5 个反例）· `solidworks_`/`cadstudio_`
+不混用 · 无可执行体 / 重复参数 / 自己声明 `response_format` · `check_specs` 不短路 ·
+模型字段与必填 · 生成函数真调模块函数 · 全有或全无 · 注解正确 · `extra_op` 逃生口。
+
+## ⚠ 写测试时踩到的同一教训（三次）
+替身要替到「**被依赖的那部分行为**」为止：
+1. `_FakeBase` 写成普通类 ⇒ 生成的模型实例化不了（`TypeError: takes no arguments`）
+2. `_RF` 写成普通类 ⇒ Pydantic 无法生成 schema（`PydanticSchemaGenerationError`）
+3. 对着**类**读字段值 ⇒ Pydantic v2 字段值属于实例（`AttributeError`）
+**⇒ 三次都是「以为有个类就行」。已把这条写进测试注释。**
+
+## 验证
+- `tests/test_tool_registry.py` **21 passed**
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 779 passed / 15 skipped**（758 → 779 = 新增的 21 条；失败列表与基线逐条相同）

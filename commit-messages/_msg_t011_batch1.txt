@@ -1,0 +1,51 @@
+feat(mcp): T-011 第一批工具声明（8 条）+ 守卫测试 —— 声明与真实签名对齐
+
+## 本批做了什么
+`docs/T-011-expose-capabilities-assessment.md` 的第一批（护城河域 + 模具 + 只读证据）落地：
+
+    solidworks_topology_create_study      写入    extra_op
+    solidworks_topology_evidence          只读    extra_op
+    solidworks_topology_run               写入    extra_op
+    solidworks_mold_parting_line          写入    module=sw_mold
+    solidworks_mold_shut_off_surface      写入    module=sw_mold
+    solidworks_mold_draft_analysis        写入    module=sw_mold
+    solidworks_mold_evidence              只读    module=sw_mold
+    solidworks_simulation_set_material    写入    module=sw_simulation
+
+**8 条全部通过注册器自己的门禁**（规则 1 命名 / 规则 3 禁裸坐标 / solidworks_ 与 headless 不混用）。
+
+## ⚠⚠ 本批暴露出一个**真实冲突**（比这批声明本身更有价值）
+`scripts/sw_simulation.py::select_face_at(model, x, y, z, …)` 的入参是**裸坐标**，
+**违反规则 3**（「选择用声明式 `selection`，不写裸坐标」）⇒ 直接暴露会被门禁拒掉。
+
+**⇒ 这不是 bug，是「内部实现」与「对外表面」的合法差异**：
+- **内部**：`SelectByID2("", "FACE", x, y, z, …)` **必须**给面上的点 —— 官方 API 的形状
+- **对外**：入参必须是**声明式选择**（「哪个面」），由工具内部解析成坐标
+
+**⇒ 结论（写进 batch1 模块头）**：**能直接暴露的只有「入参本身就是声明式」的函数**；
+凡内部用坐标/裸索引的，暴露时**必须加一层显式解析**，且解析规则要**写出来**（不能藏在默认值里）。
+`select_face_at` 之类**留到有解析层再做**。
+
+## ⚠ 诚实记录：3 条用了 `extra_op` 而非声明式
+拓扑那三条的入参是 `(sw_app, …)` / `(study, …)` —— 需要**注入宿主对象**，
+而 `tool_registry` 目前只有 `needs_model` 一种注入。
+**⇒ 先显式写 extra_op，理由是诚实：注入语义没有被建模，就不假装它被建模。**
+下一步应把注入抽成 `inject: Literal["model","sw_app","study"]`，再把那三条改回声明式
+—— **那时才是真的「10 行一个工具」**。
+
+## 守卫测试抓到的第一个**真实漂移**（值得记）
+`mold_draft_analysis` 官方第 3 参 `colors` 是 COM `Object`，**故意不暴露**；
+但守卫测试把它报成「声明与真实形参不一致」。
+**⇒ 正确做法不是让测试闭嘴，而是让省略变成显式声明**：
+`ToolSpec` 新增 `omitted_params`，**省略必须显式** ——
+否则「故意省略」与「手抄漏了」无法区分。改完 29 passed。
+
+## 新增文件
+- `mcp-server/tool_specs_batch1.py`（8 条声明；含冲突说明与 extra_op 的理由）
+- `tests/test_tool_specs_batch1.py`（8 条守卫；**核心是用 `inspect.signature`
+  对着真实函数核声明** —— 声明是手抄的，手抄会漂移）
+
+## 验证
+- `tests/test_tool_registry.py` + `tests/test_tool_specs_batch1.py` **29 passed**
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归（见下）；**仍未接入 `server.py`**（单源原则，已知事实 24）
