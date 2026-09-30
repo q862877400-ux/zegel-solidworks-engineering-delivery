@@ -1,0 +1,45 @@
+fix(simulation): CreateMesh 的参数顺序一直是错的 —— 1950 万单元的真因
+
+## 真因（八次尝试后由官方类型库 CHM 定性）
+解包 **VB6 版 API CHM**（`lang\english\api\cworksapivb6.chm`，1.8 MB / 3000 页）——
+那里有**每个方法一页的 VBA 签名，含参数名**（反射只给类型，用户手册只讲界面）：
+
+    CosmosWorksLib~CWStudy~CreateMesh.html
+      Public Function CreateMesh( _
+          ByVal NUnits As Long, _          ' ← 第 1 参是【单位 swsUnit_e】
+          ByVal DElementSize As Double, _  ' ← 第 2 参是【单元尺寸】
+          ByVal DTolerance As Double _     ' ← 第 3 参是【容差】
+      ) As Long
+
+⇒ **第 1 参不是网格类型；后两参的单位是【毫米】。**
+⇒ 我们（和我的探针）一直按 `(meshType, tolerance, size)` 传 ⇒ **后两参颠倒**。
+
+## 真机证据（100×60×20 mm 板，SW 2026 SP4.1）
+    CreateMesh(0, 4.9339, 0.2467)  → 返回 0，**7,219 个单元**、1 秒      ✓ 正常
+    CreateMesh(0, 0.2467, 4.9339)  → 返回 0，**19,509,593 个单元**、233 秒 ✗ 爆炸
+反推：单元体积 = 1.2e5 mm³ ÷ 1.95e7 = 0.00614 mm³ ⇒ 边长 0.183 mm，
+与「ElementSize 被当成 0.2467」同量级 ⇒ **完全吻合**。
+⇒ 这解释了前四次「网格器涨到 20–25 GB、烧 1000–3000 秒」的全部现象。
+
+## 同时更正的另一条
+`CreateMesh` 挂在 **ICWStudy** 上；设置成员（`ElementSize`/`Tolerance`/`Unit`/
+`ElementCount`/`NodeCount`/`MesherType`/`AutomaticTransition`）在 **ICWMesh**
+（`study.Mesh`）上，但那里**没有** `CreateMesh`。
+
+## 改了三处（都写进来源块，含可复核的实测数据）
+- `scripts/sw_simulation.py::create_mesh` —— 签名改 `(study, *, units, element_size, tolerance)`；
+  新增 `default_element_size_and_tolerance()`（取官方建议值）；新增 `SWSU_SI/ENGLISH/METRIC`
+- `scripts/sw_topology.py::run_topology_study` —— 回退路径的同一处错误
+- `scripts/sw_simulation_study.py::create_mesh` + 其来源块注释（原注释把第 1 参写成
+  `MeshType`，并把「单位未查证、只透传」写成了已知限制）
+
+## 顺带修的两条门禁红灯（都是我引入的）
+- `check_provenance` 缺 `未在本机实测` 字面量 + 缺 `覆盖:` 字段
+- **常量夹在来源块与 `def` 之间** ⇒ `_extend_to_code` 把常量当成被说明对象、延伸到常量为止，
+  `def` 反而落空 ⇒ 常量移到块之前（已在该处写注释说明原因）
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 758 passed / 15 skipped**（与基线逐条相同）
+- 契约测试 `test_create_mesh_is_called_on_study_with_three_arguments` 已同步新语义
+  （并新增「NUnits 必须在第 1 位」的位置断言 —— 顺序错了就该红）

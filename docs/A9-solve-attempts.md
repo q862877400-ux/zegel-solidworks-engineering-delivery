@@ -1,7 +1,7 @@
 # A9 求解步：七次真机尝试的完整记录（2026-10-01）
 
-**结论先行**：**仍未跑通。** 但把「为什么跑不通」从一个模糊现象（「网格器涨到 20 GB」）
-收敛成了一组**可复核的确证事实**与**一个明确未解的问题**。
+**结论先行**：**网格已跑通（8,000→7,219 个单元，1 秒）；求解仍卡在材料赋值。**
+真因在第八次尝试时由官方 **VB6 类型库 CHM** 定性（见 §二之补）。
 
 ---
 
@@ -83,3 +83,63 @@ swsRunAnalysisError_e: Successful=0  ...  MaterialNotDefined=19  ...
 - 每次尝试都以 `Stop-Process` 停掉 `cwbcbfmesh` 并确认内存回落（最后一次 40.7 GB 可用）
 - 所有脚本都**不保存**文档（`CloseDoc` 前未 `SaveAs`）
 - 新增探针脚本 7 个，都在 `D:\AI\SW\`（工作区，非代码副本）
+
+---
+
+## 二之补 · **第八次尝试：问题解决**（2026-10-01）
+
+### 转折点：解包 **VB6 版 API CHM**
+
+`lang\english\api\cworksapivb6.chm`（**1.8 MB / 3000 页**）——
+与之前读的两种源都不同，它**每个方法一页，含参数名**：
+
+```
+CosmosWorksLib~CWStudy~CreateMesh.html
+  Public Function CreateMesh( _
+      ByVal NUnits As Long, _          ' ← 第 1 参 = 单位（swsUnit_e）
+      ByVal DElementSize As Double, _  ' ← 第 2 参 = 单元尺寸
+      ByVal DTolerance As Double _     ' ← 第 3 参 = 容差
+  ) As Long
+```
+
+**⇒ 第 1 参不是网格类型；后两参的单位是【毫米】。**
+**⇒ 而前七次（含本仓库既有代码）都按 `(meshType, tolerance, size)` 传 ⇒ 后两参颠倒。**
+
+### 真机裁定（100×60×20 mm 板，SW 2026 SP4.1）
+
+| 调用 | 返回 | 单元数 | 用时 |
+|---|---|---|---|
+| `CreateMesh(0, 4.9339, 0.2467)` | 0 (Succeeded) | **7,219** ✓ | **1 秒** |
+| `CreateMesh(0, 0.2467, 4.9339)` | 0 (Succeeded) | **19,509,593** ✗ | 233 秒 |
+| `CreateMesh(2, 0.0049339, 0.0002467)` | 抛异常 | — | — |
+| `CreateMesh(0, 0, 0)` | **5** (`SpecifyPositiveValue`) | — | — |
+
+**反推闭合**：单元体积 = 1.2e5 mm³ ÷ 1.95e7 = **0.00614 mm³** ⇒ 边长 **0.183 mm**，
+与「`DElementSize` 被当成 0.2467」同量级 ⇒ **完全吻合**。
+**⇒ 前四次「网格器涨到 20–25 GB、烧 1000–3000 秒」的全部现象由此解释。**
+
+### 顺带解决的第二件事：`ICWMesh` 与 `ICWStudy` 的分工
+
+| 接口 | 有什么 | 怎么拿 |
+|---|---|---|
+| **`ICWStudy`** | **`CreateMesh`** / `MeshAndRun` / `RunAnalysis` / `get_Results` / `get_Mesh` | `study` 本身 |
+| **`ICWMesh`** | `ElementSize` / `Tolerance` / `Unit` / `ElementCount` / `NodeCount` / `MesherType` / `AutomaticTransition` / `GetDefaultElementSizeAndTolerance` | **`study.Mesh`** |
+
+**⇒ 设置用 `study.Mesh`，执行用 `study.CreateMesh(...)`。** 在 study 上访问前者一律 `<unknown>.xxx`。
+
+### 一条方法论教训（比结论更值钱）
+
+前面多次「后台线程跑 COM + 主线程守护」的探针全部报
+`AttributeError: <unknown>.CreateMesh`。根因**不是参数** —— 那是
+`dynamic.py` 的 `__getattr__`（**属性查找**）失败，因为 **COM 是 STA + 线程亲和**，
+跨线程访问 COM 对象成员查不到。
+**⇒ 正确设计：COM 调用留在主线程，守护放旁路线程（只读内存、超阈值杀进程）。**
+这几轮的 `<unknown>.CreateMesh` 全是这个原因，与 `CreateMesh` 本身无关。
+
+### 仍未解决（下一步）
+
+`RunAnalysis` 返回 **19**（`swsRunAnalysisErrorMaterialNotDefined`），
+而材料赋值（`SetFavLibraryMaterialToSelectedEntities`）返回 0。
+材料入口已在反射里找到：`ICWSolidBody.SetLibraryMaterial(String, String)` /
+`get_MaterialName()` / `set_MaterialName(String)` —— **下一轮从「选实体」这个环节查**
+（现在的选法是 `_select_by_id(ext, "", "SOLIDBODY", …)`，实体名传空串可能没选中）。
