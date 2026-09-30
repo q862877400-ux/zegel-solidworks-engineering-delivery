@@ -186,3 +186,61 @@ ICWSolidManager.GetSolidBodyByName(String, Int32&) / GetSolidBodyAt(Int32, Int32
 ### 本轮的正面结论
 **网格这一段是真跑通了**，且真因（参数顺序 + 毫米单位）有官方 CHM 签名页与真机数据双重支撑。
 `RunAnalysis = 19` 现在有了**明确的、可验证的解释**：材料确实是空的。
+---
+
+## 二之三 · **第十次尝试：整链跑通**（2026-10-01，里程碑）
+
+### 结果
+SW 2026 SP4.1 / 34.4.1，100×60×20 mm 单实体板：
+
+```
+材料回读 = 'solidworks materials|AISI 1020|2'          ✓
+底面 z=-0.02  SelectByID2=True  选区计数=1             ✓
+顶面 z=0      SelectByID2=True  选区计数=1             ✓
+夹具 → 对象=True   ·   载荷 → 对象=True                ✓
+LoadsAndRestraintsManager.Count = 2                    ✓（两者都进去了）
+CreateMesh = 0   单元 7,310   0 秒                     ✓
+★★★ RunAnalysis = 0 (Successful)   **用时 1 秒**        ✓
+★★★ study.Results 非空 = True                          ✓
+     GetPlotCount = '4'
+     GetPlotNames = ('品质1','应力1','位移1','应变1')     ← 四个结果图
+```
+
+**对比修复前**：`RunAnalysis` 要么卡在 19（MaterialNotDefined），要么网格器涨到 20–25 GB、
+烧 3000 秒 CPU。
+
+### 两个真因
+
+**真因 1 · 材料库名是「显示名」，不是 `.sldmat` 文件名**
+VB6 类型库 CHM 给出三参数 `(ConfigName, Database, Name)` —— 我的**形式**本来就对，
+错在 `Database` 的**值**：
+
+| 库名 | 材料名 | 回读 `MaterialIdName` |
+|---|---|---|
+| `"SOLIDWORKS Materials"` | `"Plain Carbon Steel"` | `''` ✗ |
+| `"SOLIDWORKS Materials"` | `"AISI 1020"` | `'solidworks materials\|AISI 1020\|2'` ✓ |
+
+⇒ **`"Plain Carbon Steel"` 不在该库里**（库里是 `"AISI 1020"` 这类）。
+⇒ 我先前照 `.sldmat` **文件名**传小写 `"solidworks materials"` ⇒ 静默失败。
+⇒ 另：直接写 `set_MaterialIdName` 只赋**标签**、不加载材料属性 ⇒ 求解仍报 19。**不要走那条路。**
+
+**真因 2 · 选面要用「面上的点」，不是原点**
+既有 `_select_by_id(ext, "", "FACE", …)` 走 `SelectByID2("", "FACE", 0, 0, 0, …)`
+—— 原点在实体**内部、不在任何面上** ⇒ **一个面都没选中** ⇒ `DispArray` 为空
+⇒ Simulation 弹「**未定义载荷或规定的位移**」（用户截图确认）并显示失败。
+
+| 调用 | 选区计数 |
+|---|---|
+| `SelectByID2("", "FACE", 0, 0, 0, …)` | **0** |
+| `SelectByID2("", "FACE", 0, 0, -0.02, …)` | **1** ✓ |
+
+### 第三个「返回码撒谎」
+夹具/载荷未定义时 `RunAnalysis` **仍返回 0**，而研究实际失败。
+⇒ **判据必须是 `study.Results` 非空 + 图数**，不是返回码。
+（前两个：`AddSelectionListObject` 的 bool、`SetFavLibraryMaterial*` 的 0/1。）
+
+### 提炼出的通用纪律（已写进代码注释）
+1. **COM 返回值凡不能自证，一律以「回读」为判据**（选区计数、`MaterialIdName`、`Results`）。
+2. **单位与量纲必须来自官方签名页**（VB6 CHM），不能靠「看起来合理」。
+3. **来源块与 `def` 之间不要插常量** —— `check_provenance` 的 `_extend_to_code`
+   会把第一个代码单元当成被说明对象（本轮**第二次**踩，说明这条该单独记）。

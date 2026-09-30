@@ -1,0 +1,44 @@
+feat(simulation): ★ A9 整链跑通 —— 材料库名与选面坐标两个真因（1 秒出 4 个结果图）
+
+## 里程碑
+SW 2026 SP4.1 上，**100×60×20 mm 单实体板**走完：
+    赋材料 → 按面坐标选面 → 夹具 → 载荷（Count=2）→ CreateMesh（**7,310 单元**）
+    → RunAnalysis → **study.Results 非空 / GetPlotCount = 4 /
+       GetPlotNames = ('品质1','应力1','位移1','应变1')**，**全程 1 秒**。
+
+对比修复前：`RunAnalysis` 要么卡在 19（MaterialNotDefined），要么网格器涨到 20–25 GB 烧 3000 秒。
+
+## 两个真因（都不是「换个写法试试」试出来的）
+
+### 真因 1 · 材料库名是**显示名**，不是文件名
+VB6 类型库 CHM（`SldWorks~PartDoc~SetMaterialPropertyName2.html`）给出三参数：
+`(ConfigName, Database, Name)` —— 我的形式本来就对，**错在 `Database` 的值**：
+    库名 "SOLIDWORKS Materials" + 材料 "Plain Carbon Steel" → 回读 MaterialIdName = ''  ✗
+    库名 "SOLIDWORKS Materials" + 材料 "AISI 1020"          → 回读
+        'solidworks materials|AISI 1020|2'                                            ✓
+⇒ **`"Plain Carbon Steel"` 不在该库里**；且库名必须大写带空格，不能照 `.sldmat` 文件名小写。
+⇒ 另：直接写 `set_MaterialIdName` 只赋**标签**、不加载材料属性 ⇒ 求解仍报 19。**不要走那条路。**
+
+### 真因 2 · 选面用「面上的点」，不是原点
+既有 `sw_part._select_by_id(ext, "", "FACE", …)` 走 `SelectByID2("", "FACE", 0, 0, 0, …)`
+—— 原点在实体**内部、不在任何面上** ⇒ 一个面都没选中 ⇒ `DispArray` 为空
+⇒ Simulation 弹「**未定义载荷或规定的位移**」并显示失败。真机对比：
+    SelectByID2("", "FACE", 0, 0, 0,     …) → 选区计数 **0**
+    SelectByID2("", "FACE", 0, 0, -0.02, …) → 选区计数 **1**  ✓
+
+## 第三个「返回码撒谎」
+夹具/载荷未定义时 `RunAnalysis` **仍返回 0**（而研究实际失败）。
+⇒ **判据必须是 `study.Results` 非空 + 图数**，不是返回码。已写进 `run_analysis` 的来源块。
+
+## 新增/更新
+- `scripts/sw_simulation.py`：新增 `set_material()`（**返回回读值**，不是返回码）、
+  `select_face_at()`（**返回选区计数**）、常量 `SWS_MATERIAL_DATABASE`；
+  `run_analysis` 的来源块补上「0 ≠ 成功」
+- `capabilities.yaml`：`simulation_and_fea` 的 limitations 带上完整真机证据链与三条限制
+- 探针（工作区）：`probe_material3.py` / `probe_material_dbname.py` / `probe_full_chain.py`
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 758 passed / 15 skipped**（与基线逐条相同）
+- ⚠ 本轮又踩了一次「常量夹在来源块与 def 之间」的 provenance 坑 ——
+  已在该常量处写明原因（这是第二次，说明这条纪律值得单独记）
