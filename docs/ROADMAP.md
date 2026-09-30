@@ -46,7 +46,7 @@
 ## 一 · 游标（**唯一必须维护的字段**）
 
 ```
-当前阶段:  **A1–A10 全部达成，且 22/29 条能力为 verified**（含护城河 	opology_optimization）；只余 P8
+当前阶段:  **A1–A10 全部达成，且 22/29 条能力为 verified**（含护城河 topology_optimization）；只余 P8
 状态:      ✅ P0 · ✅ P1 · ✅ P2（含求解）· ✅ P3 · ✅ P7 · ✅ **A1–A10 全部达成**
 下一步:    ① ✅ ~~拓扑优化闭环~~ **已完成**（许可解除后闭环跑通，拿到 Material Mass，升 verified）
            ② 拓扑**导出类**结果（Export Smoothed Mesh / 收敛曲线）—— 四源均未查到公开方法，记为查不到
