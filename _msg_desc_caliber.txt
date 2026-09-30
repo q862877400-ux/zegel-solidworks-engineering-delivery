@@ -1,0 +1,17 @@
+chore: desc_caliber.py —— 量 MCP 工具描述的三个口径（草稿工具）
+
+起因：cordis.patch.yml 的 preset-solidworks 注释里有个实测数字「工具描述最长 102 字符」，
+第三人用别的口径量出 303，差点又来回一轮。根因不是数字过期，是**没写口径**。
+
+三个口径（本脚本一次全打印）：
+  口径 A  工具描述 = tools/list 返回的 description 字段           → 最长 102 字符（注入 prompt 的就是这个）
+  口径 B  server.py 里跨行三引号块（AST: Constant(str) 且跨行）   → 最长 303 字符（文件开头的模块 docstring）
+  口径 C  正则扫三引号块（最宽口径）                              → 最长 303 字符（同一个）
+
+头注释两行：
+  用途      —— 谁对那个数字有疑问就跑它；故意不接进技能仓门禁
+  COM 安全  —— 不碰 SolidWorks。实测依据：server.py 的 _coinitialize() 只在 _run_locked()
+               里调，即只有真正调用工具时才初始化 COM；本脚本只发 initialize + tools/list，
+               不进那条路径。跑前跑后 Get-Process SLDWORKS 均为 1，且 PID 比对确认无子进程残留。
+
+同批提交的还有三个本会话的一次性量测脚本（mcp45 / schema_size / yamlchk）。

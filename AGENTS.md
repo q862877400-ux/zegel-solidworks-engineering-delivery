@@ -3,6 +3,7 @@
 本文件是 SolidWorks Automation Skill「集大成 + 建护城河」任务的常驻指令；工作区 `D:\AI\SW\`（已是 git 仓库），代码工作副本 `C:\swprojects\sw-skill-fork\`。跨项目的通用纪律在 `~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）—— 缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
 
 ## 工作区（第一件事，先确认你在哪）
+
 | 路径 | 是什么 | 能改吗 |
 |---|---|---|
 | `D:\AI\SW\` | 本文件所在 · DSH 工作区根 · 任务产物（草稿 / 日志 / 报告 / 证据） | 放产物 |
@@ -16,6 +17,7 @@
 任务报告放 `D:\AI\SW\` 下，代码放 `C:\swprojects\sw-skill-fork\`。`D:\AI\SW\AI Solidworks\` 是模型 / 截图 / 手册，不是代码落点。
 
 ## 〇、一句话任务
+
 > 把 `wzyn20051216/solidworks-automation-skill`（1010 星, MIT）补强成「官方 SolidWorks API 全覆盖 + 集四家 MIT/Apache MCP 项目之广度 + 业界空白域护城河」，最后推一个 fork。
 
 - 集大成：把四家外部 MCP 项目的能力广度并入本仓库，使单一项目即可替代四家之和，每一步可指认出处（铁律 1）。
@@ -25,6 +27,7 @@
 这仍是缝合项目，不是从零写：能力来自官方文档、外部开源项目与本仓库既有模式。
 
 ## 一、验收标准（做完这几条才算完成）
+
 | # | 判据 | 怎么验 |
 |---|---|---|
 | A1 | 四家的能力广度已并入：域覆盖矩阵里本仓库每一格都有来源，或写明「不做 + 原因」 | `docs/union-coverage-matrix.md` 可重新生成且无空白格 |
@@ -38,7 +41,9 @@
 | A9 | 空白域护城河有可跑的工程实现（拓扑优化优先），不是只有文档 | 对应 `scripts/` 模块 + `tests/` |
 
 ## 二、六条铁律
+
 ### 铁律 1 · 只做「缝合」，不做「发明」
+
 每加一个能力，要能指认出处。四种合法来源：
 | 来源 | 怎么用 | 例 |
 |---|---|---|
@@ -50,6 +55,7 @@
 不可接受：凭印象写一个 `FeatureManager.XXX(...)` 然后「看着像对的」。
 
 ### 铁律 2 · 可以实测，但必须先关弹窗、必须有超时
+
 验证顺序：静态签名比对（前置筛查）→ 本机实测（真跑，用 `mcp__solidworks__*` 或直接调 COM）→ 两关都过，才允许在文档里写「已验证 / 实测 / 跑通」。实测的三条安全约束：
 
 - 先置 `ISldWorks.CommandInProgress = True` —— 未抑制的模态对话框会把会话永久挂起，这是无人值守挂起的头号原因。
@@ -59,17 +65,21 @@
 红线：破解相关（SolidWorks-CAD / Solidworks-Crack 类投递页、破解指南）零接触；不动注册表 / 全局环境变量 / 系统层；未经确认不 `git push` / 不建 fork / 不发 release；不删用户数据。
 
 ### 铁律 3 · 参照上游结构，不自创结构
+
 新增文件 / 目录 / 命名 / 文档格式落在上游已有位置（见 [docs/upstream-layout.md](docs/upstream-layout.md)）。不新增顶层目录；确需新功能域时，按上游 `subskills/` 的既有模式扩。
 
 ### 铁律 4 · 签名以官方文档为准，两套源都要用
+
 本机有两套官方离线源，各有长短，都要查：`D:\AI\SW\AI Solidworks\官方文档\`（CHM 解包，权威、带说明与示例，查语义与用法）与 `C:\swapi\`（结构化 markdown，查精确签名与枚举值）。各源覆盖范围与检索入口见 [docs/sources.md](docs/sources.md)。
 
 出厂类型库是第三套源，也是冲突时的裁决者：`FeatureFillet3` 在本机类型库里有 14 个参数，官方文档写 7 个。口径是三源互证 —— 文档、反射、CHM；冲突时以出厂类型库的反射为准。不凭记忆、不凭反射猜参数、不照抄其它项目的注释。
 
 ### 铁律 5 · 查不到就说查不到
+
 两套源都查不到 → 写「查不到」并停下换思路，不要用相似名字蒙混。名字缺席 = 官方 API 里没有这个成员，不是「没写文档」。
 
 ### 铁律 6 · 许可红线，一次都不能越
+
 | 许可 | 能做什么 | 义务 |
 |---|---|---|
 | MIT | 读、抄、改、商用 | 保留版权声明 |
@@ -80,13 +90,17 @@
 Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送 fork 时就要带 `THIRD-PARTY-NOTICES.md` —— 该文件尚未创建。完整许可判定表与来源清单见 [docs/sources.md](docs/sources.md)。
 
 ## 三、上游仓库结构（新增文件落在这里）
+
 新增文件 / 命名 / 文档格式必须落在上游已有位置：不新增顶层目录，确需新功能域时按上游 `subskills/` 的既有模式扩。目录树、`scripts/` 现有模块清单与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)。
 
 ## 四、素材库
+
 ### 4.1 两套官方离线源 + 反射（各管一头）
+
 本机两套官方源都要查：`D:\AI\SW\AI Solidworks\官方文档\`（CHM 解包，权威、带说明与示例，查语义与用法）与 `C:\swapi\`（结构化 markdown，查精确签名与枚举值）；检索入口是 `手册\swdoc.ps1` 与 `mech-design` skill 的 `sw_know.py`。出厂类型库的反射是第三套源，也是冲突时的裁决者。各源的文件量、检索子命令与覆盖缺口见 [docs/sources.md](docs/sources.md)。
 
 ### 4.2 其它项目（`C:\swprojects\`）
+
 四家与本项目重叠的外部 MCP 项目（克隆在 `C:\swprojects\<owner>\`，已逐份读真实 LICENSE 文件，不采信 README 徽章）：
 | 克隆目录 | 项目（owner/repo） | 工具 | 许可 | 测试文件 | 自己声明跑过的环境 |
 |---|---|---|---|---|---|
@@ -102,9 +116,11 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送 fork 时就�
 其余 21 个外部项目克隆的清单、逐项能补什么、许可判定表与 MIT 唯一例外，见 [docs/sources.md](docs/sources.md)。
 
 ### 4.3 来源标注制（每个移植函数都要有）
+
 每个移植函数必须带来源头注释，并入 `capabilities.yaml` 的条目另带结构化 `provenance` 字段；格式模板、字段定义与「未实测」标注规则见 [docs/provenance-format.md](docs/provenance-format.md)。许可必须与来源表一致。
 
 ## 五、工作方法（并入五步）
+
 1. 建全景与对差：`sw_know.py domain --list` 拿 14 个域，`swdoc.ps1` + 反射补 `cosworks` / Routing / Costing / PDM，对照上游 `capabilities.yaml` + `scripts/` + `subskills/` 建 `docs/capability-matrix.md` 与 `docs/gap-analysis.md`（从零建表，不预设缺口结论）。
 2. 找来源：按优先级取素材 —— 上游相邻模块 > MIT 项目现成实现 > MIT 项目文档 / 示例 > Apache-2.0 项目实现（带 NOTICE）> 只读思想（AGPL / GPL / 无许可，绝不抄文本）> 照官方签名自建。
 3. 归一：按「并入六条规则」改造，命名 / 单位 / 选择 / 验证等级 / 出处五统一。
@@ -123,7 +139,8 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送 fork 时就�
 | 5 | 每条并入条目带 `provenance{repo(owner/repo), license, files, upstream_verified}` | `repo` 匹配 `owner/repo`，`license` 在白名单 |
 | 6 | 建特征之后查 `EditRebuild3` + `GetWhatsWrong2`，不静默成功 | 建特征类工具都要调 |
 
-## 六、已知事实（已在本机核实，写代码直接用，不要重新推导）
+## 六、已知事实（上游文档 / 注释里没有或写错的，已在本机核实，写代码直接用，不要重新推导）
+
 | # | 事实 | 依据 |
 |---|---|---|
 | 1 | 切除的正确入口是 `IFeatureManager.FeatureCut4`（27 参数），不是 `FeatureExtrusion3(Flip=true)`：后者建出来是「凸台-拉伸」特征名，体积恒等于原板 | 本机实测 + 上游 `sw_part.extrude_cut` + `swdoc.ps1 -File FeatureCut4` |
@@ -161,6 +178,7 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 ```
 
 ## 七、Git / Fork 规则
+
 ```
 代码工作副本：C:\swprojects\sw-skill-fork\     唯一改代码的地方，已是 shallow clone
   origin : https://github.com/wzyn20051216/solidworks-automation-skill   ← 刻意保留的只读锚点
@@ -183,9 +201,11 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 | 提 PR / 发布 release | 要先批准 |
 
 ## 八、智能体团队分工
+
 角色定义、工具限制、派活维度与 `write_scopes` 登记要求见 [docs/team-roles.md](docs/team-roles.md)。
 
 ## 九、停止条件（遇到就停，不要自行拍板）
+
 1. 两套官方源都查不到某接口，且 `sw_know suggest` 也给不出合理近似 → 先确认该接口是否存在，再写。
 2. 某个缺口在 21 个项目里都找不到可移植实现，且官方文档也没有示例 → 标为「无法缝合」，写进报告的「仍然空缺」段，不要硬编。
 3. 需要碰 AGPL / GPL / 无许可 / 全版权保留 的代码才能补齐 → 停下，报告「需用户提供授权或接受缺口」。
@@ -194,7 +214,9 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 6. 来源没有测试、我们又无法本机实测 → 标 `stitched`，不得标 `verified`。
 
 ## 十、本地资源速查
+
 常用路径 / 脚本 / 命令的速查表见 [docs/local-resources.md](docs/local-resources.md)。
 
 ## 十一、开工第一句话模板
+
 开工第一句话模板见 [docs/kickoff-template.md](docs/kickoff-template.md)。
