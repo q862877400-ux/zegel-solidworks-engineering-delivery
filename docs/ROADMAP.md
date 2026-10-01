@@ -2967,6 +2967,7 @@
                | `get_arcs` | 16 | 32 | **16** |
                | `get_ellipses` | 22 | 44 | **22** |
                ⇒ `get_*` 系列**全都返回数值数组**（元素 `float`）⇒ 已把三个 docstring 写明形状。
+               ⚠⚠ **轮 142 更正**：这句「**全都**」**是错的** —— 见游标 382。
             379 ★★★ **结果 ②：`sketch_spline` 是「静默空操作」**：
                ```
                ① CreateSpline2              ⇒ 返回 **None** ⇒ get_sketch_segments = **0**（不抛异常）
