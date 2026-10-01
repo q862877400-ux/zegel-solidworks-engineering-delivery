@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 21:09:08",
+  "started": "2026-10-01 21:17:00",
   "checks": {
     "新建临时零件（不碰用户文档）": {
       "ok": true,
@@ -15,11 +15,11 @@
     },
     "★★★ **上游前置**：本机能建出**样条**吗（官方要求两条样条草图）": {
       "ok": true,
-      "detail": "建不出 ⇒ 见下（⚠ **要看是哪种「建不出」**）"
+      "detail": "能建 ⇒ 下面的判据有效"
     },
-    "★★ `insert_composite_curve`：前置不可达 ⇒ **不计入通过/失败**": {
-      "ok": true,
-      "detail": "⚠ **本次没复现成功**（TypeError: 'NoneType' object is not ca）⇒ 结论**引用**轮 141 的探针 `tools/probe_spline_creation.py`（它跑到过 `CreateSpline2 返回 None`）"
+    "★ insert_composite_curve（**前置可达**时要求 True）": {
+      "ok": false,
+      "detail": "前置成立 ⇒ **这是真失败** ⇒ RuntimeError: IModelDoc2.InsertCompositeCurve 返回 False ⇒ 合成曲线没建出"
     },
     "⚑ ★★ 读回 `GetEntitiesToJoinCount()`（**不可达就如实标**）": {
       "ok": true,
@@ -27,11 +27,11 @@
     },
     "★ 特征树**能用**（`GetFeatureCount` 是属性）": {
       "ok": true,
-      "detail": "20 个"
+      "detail": "21 个"
     },
     "★ 收尾无残留模态框（事实 64）": {
       "ok": true,
-      "detail": "扫了 188 个窗口 · 无模态框"
+      "detail": "扫了 213 个窗口 · 无模态框"
     }
   },
   "sketch_by_position": [
@@ -42,13 +42,9 @@
     "草图2"
   ],
   "sketch_count": 2,
-  "spline_precondition": {
-    "independently_reproduced": false,
-    "note": "TypeError: 'NoneType' object is not callable"
-  },
   "entities_to_join": null,
-  "passed": 8,
+  "passed": 7,
   "total": 8,
-  "verdict": "pass",
-  "finished": "2026-10-01 21:09:11"
+  "verdict": "fail",
+  "finished": "2026-10-01 21:17:03"
 }

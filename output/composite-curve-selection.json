@@ -1,0 +1,29 @@
+{
+  "trials": [
+    {
+      "form": "① 选**草图段实体**",
+      "segments": 0,
+      "selected": 0,
+      "ret": "False",
+      "features": "20 → 20",
+      "changed": false
+    },
+    {
+      "form": "② 选**草图特征**",
+      "selected": 0,
+      "ret": "False",
+      "features": "20 → 20",
+      "changed": false
+    },
+    {
+      "form": "③ 都不选（对照）",
+      "ret": "False",
+      "changed": false
+    }
+  ],
+  "seg_error": "<unknown>.GetFirstFeature",
+  "cleanup": {
+    "found": 0,
+    "scanned": 213
+  }
+}
