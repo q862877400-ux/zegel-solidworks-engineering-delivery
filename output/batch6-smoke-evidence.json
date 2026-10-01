@@ -1,0 +1,25 @@
+{
+  "started": "2026-10-01 14:17:24",
+  "checks": {
+    "连接 + 活动文档": {
+      "ok": true,
+      "detail": "mcp_avi_asm.SLDASM"
+    },
+    "available_point_selectors（无参）": {
+      "ok": true,
+      "detail": "5 个：['origin', 'bbox:min', 'bbox:max']"
+    },
+    "available_direction_selectors（无参）": {
+      "ok": true,
+      "detail": "6 个：['+x', '-x', '+y']"
+    },
+    "collect_assembly_bom（零件上）": {
+      "ok": true,
+      "detail": "行数=1"
+    }
+  },
+  "passed": 4,
+  "total": 4,
+  "verdict": "pass",
+  "finished": "2026-10-01 14:17:42"
+}
