@@ -1,0 +1,64 @@
+{
+  "trials": [
+    {
+      "label": "type0 默认(角度=0)  d=5",
+      "type": 0,
+      "distance_mm": 5.0,
+      "angle_or_dist": 0.0,
+      "selected": 2,
+      "segments_before": 2,
+      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读*",
+      "tb": [
+        "    ...<3 lines>...",
+        "    )",
+        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读**选区计数，事实 94）。"
+      ],
+      "segments_after": 2,
+      "changed": false
+    },
+    {
+      "label": "type0 角度=45°      d=5",
+      "type": 0,
+      "distance_mm": 5.0,
+      "angle_or_dist": 45.0,
+      "selected": 2,
+      "segments_before": 2,
+      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读*",
+      "tb": [
+        "    ...<3 lines>...",
+        "    )",
+        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读**选区计数，事实 94）。"
+      ],
+      "segments_after": 2,
+      "changed": false
+    },
+    {
+      "label": "type1 距离-距离 5/3",
+      "type": 1,
+      "distance_mm": 5.0,
+      "angle_or_dist": 3.0,
+      "selected": 2,
+      "segments_before": 2,
+      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读*",
+      "tb": [
+        "    ...<3 lines>...",
+        "    )",
+        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读**选区计数，事实 94）。"
+      ],
+      "segments_after": 2,
+      "changed": false
+    },
+    {
+      "label": "type2 距离-相等  d=5",
+      "type": 2,
+      "distance_mm": 5.0,
+      "angle_or_dist": 0.0,
+      "selected": 2,
+      "segments_before": 2,
+      "raised": null,
+      "segments_after": 3,
+      "changed": true
+    }
+  ],
+  "modal_dialogs": []
+}
