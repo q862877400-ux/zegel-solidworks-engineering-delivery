@@ -124,6 +124,11 @@
                  ⇒ 三条约束：只补空不覆盖 / 输出分开报 / 没依据的不许进
                ⇒ **下一步**：剩下 4 条未映射（`swFmDimPattern`/`swFmSolidToSheetMetal`/
                  `swFmRefSurface`/`swFmFillet`）**需要人**逐条核（已列进 T-040 证据文档）
+            ⑫ ★ **接口归属诊断已接进 `release_check.py`**（**非硬失败**，且**假绿可见**）：
+               `_run_interface_ownership_probe()` ⇒ 排在所有硬门禁之后、bundled 检查之前
+               ⇒ 三条差别：不 raise / `checked_nothing` 写进返回体 / 数据源缺失不算违规
+               ★ **它自己就在本轮抓到两处错**：① 用 `in` 判 `[HIT]` ⇒ 误报；
+                 ② 来源块写进 docstring ⇒ 来源门禁报 25 行缺出处（**已记进事实 54**）
                ⇒ 那份提案仍有用：作**人工复核的起点**（21/29 有证据）
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
