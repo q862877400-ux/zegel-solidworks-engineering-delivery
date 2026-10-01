@@ -1,0 +1,23 @@
+{
+  "started": "2026-10-01 18:34:19",
+  "trials": [
+    {
+      "way": "Select4 x2 segments",
+      "returned": 2,
+      "count": 2
+    },
+    {
+      "way": "SelectByID2 name mark=1",
+      "returned": 0,
+      "count_mark1": 0,
+      "count_all": 0
+    }
+  ],
+  "segment_count": 2,
+  "segment_ids": [
+    "(0, 1)",
+    "(1, 2)"
+  ],
+  "result": "false_segments",
+  "modal_dialogs": []
+}
