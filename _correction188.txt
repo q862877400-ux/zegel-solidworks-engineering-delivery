@@ -1,0 +1,19 @@
+ ⚠⚠⚠ **2026-10-01（轮 188）更正上面这一段的措辞** —— 「到不了」**过强**，必须**带绑定层次**限定：
+```
+· pywin32 **迟到绑定**：21 个成员 0/21 可达 + 无 dispinterface ⇒ **到不了**（这半是对的）
+· comtypes **早绑定**（走 sldworks.tlb 类型库）：`tools/probe_safearray_comtypes.py` 实测 ——
+  ① comtypes.client.GetActiveObject('SldWorks.Application') **附着**到**同一个**运行实例
+     （comtypes PID 20456 ⇒ 与运行中的那个同一个；**没起第二个实例** —— 红线：事实 24）
+  ② 类型库模块 comtypes.gen.SldWorks 里**有** ISafeArrayUtility
+  ③ ★★★ **QueryInterface(ISafeArrayUtility) 成功** ⇒ 对象**真的实现**那个 vtable 接口
+⇒ ★★ 所以「接口不存在 / 到不了」是**错的**；正确的是「**pywin32 迟到绑定看不到它**」
+⚠ 但**往返仍未走通**：PutDouble(arr, 0, 1.5) 不报错（类型库说它确实要 3 参、
+  且 VariantArray 是 in,out），而 arr.value=None、GetDouble 读回 0.0
+  ⇒ **in,out 的 VARIANT 数组没回写**（与事实 68 同族）⇒ 按事实 53 不继续凑形态
+★★ **而无论走不走得通，它对我们都没有新增能力** —— 证据（同一探针 ⑥）：
+  pywin32 的 `VARIANT(VT_ARRAY|VT_R8, [...])` 与 `VARIANT(VT_ARRAY|VT_DISPATCH, [...])`
+  **本来就能构造数组**（事实 123 / 167 就是这么修的）⇒
+  ★ 它是**给 C++ 弥补「没有原生数组」**的，脚本语言的绑定层**已经替我们做了**
+```
+⇒ ★★ **结论（本后端仍然「不做」）**：不是「够不到」，而是「**够得到但没有净收益**」——
+ 且**修正后的措辞**才是可引用的（不带层次的「到不了」会被人当成「官方没这个能力」）。

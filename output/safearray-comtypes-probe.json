@@ -1,0 +1,64 @@
+{
+  "steps": [
+    {
+      "step": "① 运行中实例（pywin32 附着）",
+      "ok": true,
+      "detail": "PID=None"
+    },
+    {
+      "step": "① comtypes.client.GetActiveObject ⇒ 附着",
+      "ok": true,
+      "detail": "comtypes._post_coinit.unknwn.POINTER(ISldWorks)"
+    },
+    {
+      "step": "   ↳ 同一个实例？",
+      "ok": true,
+      "detail": "comtypes PID=20456 · pywin32 PID=None ⇒ 同实例"
+    },
+    {
+      "step": "② 类型库模块里的 ISafeArrayUtility",
+      "ok": true,
+      "detail": "ISafeArrayUtility（模块 comtypes.gen.SldWorks）"
+    },
+    {
+      "step": "③ ISldWorks.GetSafeArrayUtility()",
+      "ok": true,
+      "detail": "_Dispatch"
+    },
+    {
+      "step": "④ ★★★ QueryInterface(ISafeArrayUtility) ⇒ **成功**",
+      "ok": true,
+      "detail": "⇒ 对象**真的实现**该 vtable 接口"
+    },
+    {
+      "step": "⑤a PutDouble(arr, 0, 1.5) ⇒ **3 参 + in,out 数组**",
+      "ok": true,
+      "detail": "返回 None · arr.value=None"
+    },
+    {
+      "step": "⑤b ★★ **往返**：PutDouble 写 1.5 ⇒ GetDouble 读回",
+      "ok": false,
+      "detail": "读回 0.0"
+    },
+    {
+      "step": "⑥ 对照：pywin32 原生构造数组（R8 / DISPATCH 两种）",
+      "ok": true,
+      "detail": "VT_ARRAY|VT_R8 ⇒ VARIANT · VT_ARRAY|VT_DISPATCH ⇒ VARIANT"
+    }
+  ],
+  "pid": null,
+  "comtypes_type": "comtypes._post_coinit.unknwn.POINTER(ISldWorks)",
+  "pid_comtypes": 20456,
+  "iface_found": true,
+  "tlb_module": "comtypes.gen.SldWorks",
+  "raw_type": "_Dispatch",
+  "qi_ok": true,
+  "putdouble_ret": "None",
+  "arr_after_put": "None",
+  "roundtrip": "0.0",
+  "pywin32_native_array": "VARIANT(VT_ARRAY|VT_R8|VT_DISPATCH, [...]) 均可构造",
+  "cleanup": {
+    "found": 0,
+    "scanned": 213
+  }
+}
