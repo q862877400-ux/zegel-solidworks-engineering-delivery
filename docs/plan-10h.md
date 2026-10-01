@@ -36,6 +36,10 @@
 > ⇒ 按 Spec Kit **flow-forward（完成的目录不可变、需求变了开新号）**，W4 起**顺移一号**：
 > **W4=135 · W5=136 · W6=137 · W7=138**。
 > ⚠ 这正是「编号必须现场核、不能照计划抄」的一个实例。
+> ★★ **2026-10-01 轮 232 第三次顺移**：W4 后来拆成 **三个特性**（135 建草图 / 136 拉伸 /
+> 137 倒角圆角）⇒ W5–W7 再顺移一号：**W5=138 · W6=139 · W7=140**。
+> ⇒ ★ 教训：**计划里不要写死编号**，写「用当时的下一个空闲号」；
+>   因为**一个 W 可能拆成多个特性**，编号必然漂移（三次顺移都是这个原因）。
 
 ### W1 · 草图只读族（`specs/131`）· **约 90 分钟**
 | 项 | 内容 |
@@ -109,22 +113,43 @@
 验收①：工具数 + 门禁；②：`python tools/capture_feature_evidence.py` ⇒ `verdict: pass`
 ```
 
-### W5 · 检查 / 测量 / 反馈族（`specs/136`）· 约 70 分钟
+### W5 · 检查 / 测量 / 反馈族（`specs/138`）· 约 80 分钟 · ★★ **2026-10-01 轮 232 实测后改范围（见下）**
+
 ```
-取什么：质量属性 / 包围盒 / 干涉检查的只读查询
-★ 本项目**已有** `solidworks_part_bounding_box` 等 ⇒ 本批取的是**缺口里剩下的那几个**
-来源 / license：本项目自身（MIT）
-验收①：工具数 + 门禁；②：证据脚本 `verdict: pass`
+★★★ **改范围的理由（实测）**：⑫inspect 那 16 个缺口名逐个核过 ——
+   ① **已有**：`bbox`（= `solidworks_part_bounding_box`，名字不同）·
+      `view_orientation` / `zoom_to_fit`（视图那批已有）
+   ② **不是只读**：`display_mode`（改视图）· `analyze_draft`（分析，但要选中面）
+   ③ ★★ **真缺且是高频只读需求**：**读质量属性**（`calculate_mass_properties` / `mass_props`）
+      ⇒ ★ 本仓库有 `sw_export.set_mass_property_override`（**改**覆盖值），却**读不出实际值**
+      ⇒ ★ **与 W3 的"能写不能读"同型**（见 `specs/133`）。
+      ⇒ 官方入口在：`IModelDocExtension.CreateMassProperty` → `IMassProperty` / `IMassProperty2`
+        （反射表里都有；`GetMassProperties` 也在）
+      ⇒ 一个零件"多重 / 体积多少 / 重心在哪"是**最常被问的问题之一**，而**答不出来**。
+   ④ 其余（`measure_distance` / `sensors` / `status` / `check_errors` / `reference_geometry` /
+      `analyze_geometry` / `capture_screenshot`）⇒ 留后续批次。
+
+★ **所以 W5 改为**：挂**质量属性读数**（质量 / 体积 / 表面积 / 重心 / 惯性矩）。
+   ★ 照 W1/W3 的教训：**先写真机探针**答两件事 ——
+     ① 从 `model` 怎么拿到 `IMassProperty`；
+     ② ★ **哪些读成员带 by-ref out**（那是 pywin32 的死穴，见事实 8/33/161）。
+★ 验证：★ **数字断言** —— 建一个已知实体（W4 的 `extrude_boss` 已能做）
+  ⇒ 40×20×10 的盒 ⇒ ★ **期望体积 8000 mm³** ⇒ 与读回来的值对；质量随密度而定（要记密度的来源）。
+   ★ 而且这次能**给 W4 续 c 的断言补一个更强的读数**。
+
+来源 / license：本项目自身（MIT）；官方依据 `IMassProperty` / `IMassProperty2` /
+  `IModelDocExtension.CreateMassProperty`（反射与 `C:\swapi` 两源）
+验收①：工具数 + 门禁；②：`python tools/capture_mass_property_evidence.py` ⇒ `verdict: pass`
 ```
 
-### W6 · 装配族（`specs/137`）· 约 85 分钟
+### W6 · 装配族（`specs/139`）· 约 85 分钟
 ```
 取什么：装配结构的只读查询（零部件树 / 配合回读）
 来源 / license：本项目自身（MIT）
 验收①：工具数 + 门禁；②：证据脚本 `verdict: pass`
 ```
 
-### W7 · 仿真载荷包装层（`specs/138`）· 约 95 分钟 · ★ **护城河**
+### W7 · 仿真载荷包装层（`specs/140`）· 约 95 分钟 · ★ **护城河**
 ```
 ★★ 为什么它排最后但最重要：**四家外部项目里 0 个做这块**（实测：只有 Eduardof0nt 有 3 个
    仿真工具，且无一个是"加力/加约束"）⇒ 这块**同时满足护城河的两个条件**（别人没做 + 用户用得上）
