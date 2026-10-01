@@ -1,0 +1,126 @@
+{
+  "trials": [
+    {
+      "border": 0,
+      "tol": 20,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 0,
+      "tol": 22,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 0,
+      "tol": 21,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 0,
+      "tol": 25,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 0,
+      "tol": 13,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 1,
+      "tol": 20,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 1,
+      "tol": 22,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 1,
+      "tol": 21,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 1,
+      "tol": 25,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 1,
+      "tol": 13,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 2,
+      "tol": 20,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 2,
+      "tol": 22,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 2,
+      "tol": 21,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 2,
+      "tol": 25,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 2,
+      "tol": 13,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 3,
+      "tol": 20,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 3,
+      "tol": 22,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 3,
+      "tol": 21,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 3,
+      "tol": 25,
+      "frame": "有",
+      "ret": "False"
+    },
+    {
+      "border": 3,
+      "tol": 13,
+      "frame": "有",
+      "ret": "False"
+    }
+  ],
+  "success": null,
+  "modal_dialogs": []
+}

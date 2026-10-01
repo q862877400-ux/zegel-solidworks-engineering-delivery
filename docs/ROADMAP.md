@@ -3898,6 +3898,48 @@
                下轮候选：① 查 `AddIndicator` 的参数/前置（**先读官方 Remarks**，别再猜）；
                ② 顺同一线索查 `surface_modeling` / `mold_tools`（那两条 `stitched` **连 evidence 都没有**）；
                ③ 回到「真缺」继续补。
+           495 🎯 **Spec Kit `086`：`AddIndicator` 穷尽 20 组后判定「这条后端到不了」—— 并拆出可用那一半**（轮 166）——
+               `085` 把帧路径打通了，但 `AddIndicator` 仍 `False` ⇒ 本轮**先读官方 Remarks**（上轮刚学到的）。
+            496 ★★★ **Remarks 里藏着取值限制**：
+               > TolType may be one of only swGtolGeomCharSymbol_e.:
+               >   swGcsANG(20) · swGcsPARALLEL(22) · swGcsPERP(21) · swGcsCIRCRUNOUT(25) · swGcsSYMMETRY(13)
+               ★★ 而 `GTOL_GEOM_SYMBOL` 里另外 **14** 个（`flatness` / `position` / `straightness` …）
+               **都不在清单里** ⇒ 传它们**必然 `False`` —— 而 ★**契约测试当时正用 `position`(23) 断言它会成功**
+               （又一次「**假对象看不见官方取值限制**」）。
+            497 ★★★ **穷尽式结论**（`tools/probe_gtol_indicator_matrix.py`）：
+               ```
+               BorderType(0..3) × TolType(5 个合法值) = **20 组全试**
+               ★ 每一组的帧**都拿到了**（GetFrame(1) 非 NULL）
+               ⇒ **20 组全返回 False**
+               ⇒ 不是「取值不对」⇒ **这条后端（pywin32 迟到绑定）到不了这一个成员**
+                 （与事实 47 那族同类：多出参 / 需指针的接口）
+               ```
+               ★ **排除法做对了**：第一次改合法值仍 False（⇒ 类型不是唯一卡点）⇒ 才做**穷尽矩阵**
+                 （且**每次新 Gtol**，避状态污染）⇒ **这才有资格说"到不了"**。
+            498 ★ **处置三条**：① 给 `add_gtol_indicator` 加**清单校验**（错值当场 `ValueError`，
+               不再让它表现为模糊的 `False`）· ② **拆出 `gtol_insert`（verified）** 覆盖「新建 GTol + 帧路径」
+               那一半 · ③ `geometric_tolerance` **仍 `stitched`**（含「加指示符」那半）。
+               ★★ 与轮 164 倒角那次**同一决策**：**冒烟只覆盖哪一半，就只升哪一半。**
+            499 ★★★ **「取值/形态不对」被读成「做不到」—— 这已是第三次**：
+               ```
+               事实 104（轮 164）：CreateChamfer —— 「**返回值拿不到**」被读成「接口到不了」
+               事实 105（轮 165）：AddFrame      —— 「**顺序不对**」被读成「帧取不到」
+               事实 106（轮 166）：AddIndicator  —— 「**取值不在清单里**」被读成「到不了」
+               ⇒ ★★ 三次的共同点：**我试的是这个 API 的某一种用法，
+                 却把结论写成了这个 API 的性质。**
+               ⇒ ★ 而三次的**解药都是同一个动作**：**读官方 Remarks**（那里写着用法前提）。
+               ```
+            500 能力 **38 → 39**（verified **32 → 33**）· 门禁 + `release_check` exit 0 · 回归 **1246 passed**。
+               ⚠⚠ **本轮又两次切坏文件**（事实 61）：一次 `sw_gtol.py`、一次 `test_sw_gtol_contract.py`
+               （后者是 `t.find("import ")` **命中了 `from __future__ import` 中间**）
+               ⇒ 两次都靠 `git checkout --` + **改用 `edit` 工具**修好。
+               ★ **「改完先看 `git diff --stat`」这条我仍未养成动作习惯** —— 连着两轮犯规。
+               ⚑ **未查证**：⚠ 只是「这 20 组在**这条后端**上不成」⇒ **不排除**换后端（`comtypes`）能成；
+                 ⚠ 未试 `SetSymbolXml`（XML 路径）—— 但 frame 已拿到 ⇒ **值得下次试**；
+                 ⚠ `gtol_insert` 只证「拿到对象」，**不证公差标得对**。
+               下轮候选：① 试 `SetSymbolXml`（frame 已到手，XML 路径值得一搏）；
+               ② 顺同一线索查 `surface_modeling` / `mold_tools`（那两条 `stitched` **连 evidence 都没有**）；
+               ③ 回到「真缺」继续补。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
