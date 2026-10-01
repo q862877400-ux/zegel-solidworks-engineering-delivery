@@ -130,9 +130,20 @@
   · 无结果 ⇒ `{"status": "no_results", reason, source_members}`
   `→ 验收:` **形态契约**由 `pytest tests\test_sw_topology_contract.py -q` ⇒ **14 passed** ✓ **已跑**
   ⚠ **真机那一次：环境阻塞**（Simulation 加载项未加载）⇒ 见 T-009 后的说明，**未打勾**
-- [ ] **T-008** [US2] 契约测试：扩 `tests/test_sw_topology_contract.py`
+- [x] **T-008** [US2] 契约测试：扩 `tests/test_sw_topology_contract.py`
   —— 断言出参形态（`out_i4()`）与「无结果」的返回结构
-  `→ 验收:` `python -m pytest tests\test_sw_topology_contract.py -q` 全绿
+  **✅ 完成（轮 51）** —— 新增 **6 条**（`8 → 14 passed`）：
+  | # | 测什么 |
+  |---|---|
+  | 1 | `Results` 为 None ⇒ `{"status": "no_results", reason, source_members"}`（**不抛异常、不空 dict**） |
+  | 2 | `Results` 非 None 但 `GetPlotCount()==0` ⇒ 同样是 `no_results`（**不用返回码判**） |
+  | 3 | 有图 ⇒ `ok` + **`source_members` 逐项点名官方成员**（spec 的「可复查」硬要求） |
+  | 4 | **英文界面**的 `Material Mass 1` 也命中（判据**不硬编码中文**，spec §Assumptions 要求） |
+  | 5 | 有图但无 Material Mass ⇒ `material_mass_plot is None`（**不是报错**） |
+  | 6 | `TOPOLOGY_RESULTS_UNRESOLVED` 的**每条都要给原因**且说清是哪一类（守卫「不许悄悄实现」） |
+  ⚠ **第 6 条当场抓到我自己**：`ExportSimulationStudy` 的原因写了「**同上**」
+  ⇒ 断言不通过 ⇒ 已改成自解释（说清是「参数语义查不到」还是「只有一源」）。**守卫在尽职。**
+  `→ 验收:` `python -m pytest tests\test_sw_topology_contract.py -q` ⇒ **14 passed** ✓ **已跑**
 - [x] **T-009** [P] [US2] `collect_topology_numbers` 加来源块（`check_provenance` 要求）
   **✅ 完成（轮 51）** —— 来源块放在 `def` **之前**的顶层 `#` 注释块里（事实 54）。
   ⚠ 同轮还**被动**地满足了既有测试的指示：`test_every_called_member_exists_in_official_reflection`
@@ -192,9 +203,37 @@ python D:\AI\SW\probe_collect_numbers_noresults.py
 
 ## Phase 6: Polish
 
-- [ ] **T-011** 回写 `D:\AI\SW\docs\ROADMAP.md` §一 游标 + §四 调整记录（若 P1 降级则记原因）
-  `→ 验收:` `Select-String ROADMAP.md -Pattern '^下一步'` 指向新阶段
-- [ ] **T-012** 两仓库各自 commit（工作区 / 代码副本分开）
-  `→ 验收:` 两个 `git status --porcelain` 都为空
-- [ ] **T-013** [P] 全量回归：`python -m pytest tests -q`
-  `→ 验收:` 失败列表与基线（6 failed / 749 passed / 15 skipped）**逐条相同**
+- [x] **T-011** 回写 `D:\AI\SW\docs\ROADMAP.md` §一 游标 + §四 调整记录（若 P1 降级则记原因）
+  **✅ 完成（轮 50/51）** —— 游标加了 **⑫**(T-004/005/006/010 的结论) 与 **㉓**(T-007/008/009)；
+  调整记录即那两条本身（每条都写了「为什么与原文不同」）。
+  ⚠ **P1 并未「降级」** —— 它**升**了：原假设「三件事可能都不存在」，实测是**四种不同结论**
+  （1 可读且已证 / 2 反射里有未验 / 1 真查不到）⇒ **结论比原假设更强、更具体**。
+  `→ 验收:` `Select-String D:\AI\SW\docs\ROADMAP.md -Pattern '下一步'` ⇒ 指向 `㉓` 之后的收尾项 ✓ **已跑**
+
+- [x] **T-012** 两仓库各自 commit（工作区 / 代码副本分开）
+  **✅ 完成** —— 代码副本 `85f0d9f` / `d2c93c0`（+ 更早的 `eadbd3a` 等）；工作区 `e4ffbaf` / `2cb4d14` / `4fcfdb9`。
+  `→ 验收:` 两个 `git status --porcelain` 都为**空** ✓ **已跑**
+
+- [x] **T-013** [P] 全量回归：`python -m pytest tests -q`
+  **✅ 完成，但⚠ 任务里写的基线是**陈旧**的，已更新并记原因。**
+
+  **任务原文的基线**：`6 failed / 749 passed / 15 skipped`
+  **本轮实测**：**`0 failed / 874 passed / 17 skipped`**
+
+  **⇒ 差别的两个来源（都可复查，不是"数变了"了事）**：
+  | 变化 | 原因 | 依据 |
+  |---|---|---|
+  | failed **6 → 0** | **修掉全部 5 个基线失败** | 轮 45/46（`subprocess` 编码 11 处 + `Path("D:")` 盘根；记进**事实 58/59**） |
+  | passed **749 → 874**（+125） | 期间各轮**新增**的契约测试 | 轮 46 环境坑门禁 **+7** · 轮 51 拓扑 **+6** · 以及轮 43–51 其它批次 |
+  | skipped **15 → 17** | `test_tool_specs_batch4` 的 2 条改为**带原因 skip** | 轮 44（**事实 57**：它们原先靠活 COM 选择状态的**巧合**才绿） |
+
+  ⚠ **为什么必须记这件事**：本项目的规矩是「**验收必须是可跑的命令**」，
+  而**基线本身就是那条命令的一半**。基线陈旧 ⇒ 验收会**无条件失败**（或更糟：被忽略）。
+  **⇒ 新基线（2026-10-01 轮 51 收工值，同时记环境）**：
+  ```
+  SW 2026 SP4.1 / revision 34.4.1；SolidWorks 有活动文档；
+  pytest tests -q  ⇒  **0 failed / 874 passed / 17 skipped**
+  ```
+  ★ **并记下环境依赖**（事实 57）：本仓库回归基线**依赖 SolidWorks 的文档/选择状态** ⇒
+  **记基线必须同时记环境**，否则下一轮的「多了几个失败」会被误判成代码问题。
+  `→ 验收:` `python -m pytest tests -q` ⇒ 与上面新基线**逐条相同** ✓ **已跑**
