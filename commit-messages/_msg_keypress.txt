@@ -1,0 +1,44 @@
+fix(gui): 修掉 7 处「修饰键/回车可能卡在按下态」的真缺陷 + 新增门禁拦住它再犯
+
+## 起因：用户报告「经常忽然全选全屏文字（蓝底）/ 忽然回车 / 忽然 Ctrl」
+先按要求**只查我自己的代码**，看有没有「隔几分钟注入键鼠」的机制。
+
+### 结论：**没有周期性注入**（硬证据）
+* 注入代码确实存在（**55 处 / 12 个文件**，全在 `sw_jlcfa_*` / `sw_gui_*` 一族）；
+* **但这一族没有任何自动入口**：`sw_jlcfa_batch`/`audit`/`click` **被引用 0 次且无 `__main__`**；
+  `sw_gui_focus`/`sw_jlcfa_gui` **0 引用**；有 `__main__` 的只有 `search`/`cards`（**只有人手跑**）；
+* **MCP server 没有暴露**任何 jlcfa/gui 工具 ⇒ AI 也调不到；
+* **不注册计划任务 / 开机自启**；
+* **`.pyc` 编译时间戳最晚 `2026-10-01 01:01`** ⇒ 凌晨 1 点后从未被 import，重启后更没有。
+
+### 🔴 但找到了**同一族**的 7 处真缺陷：**修饰键/回车会卡在按下态**
+形态一律是 `keybd_event(vk, 0, 0, 0)`（按下）→ `time.sleep(...)` → `keybd_event(vk, 0, KEYUP, 0)`，
+而 **`sleep` 可被中断**（`KeyboardInterrupt` / 线程被停 / 进程退出）⇒ **抬起永远到不了**。
+后果**与用户报告逐一吻合**：**Ctrl 卡住** ⇒ 按 `A` 就是全选；**Alt 卡住** ⇒ 菜单被激活；
+**Enter 卡住** ⇒ **忽然回车**。⚠ **它不需要周期性** —— 一次事故就够，持续到用户单独按一下那个键。
+
+**修掉的 7 处**（按下与抬起改为 `try`/`finally` 配对，或改走安全原语）：
+| 文件 | 修法 |
+|---|---|
+| `sw_gui_input.py` | 新增**异常安全原语** `_press(vk)` / `_hold(mods, vk)`（抬起在 `finally`，抬逆序） |
+| `sw_gui_modal.py` | `Alt` 抬起移进 `finally`；`VK_RETURN`/`VK_ESCAPE` 改走 `_press` ⚠ **它每轮发 Enter+Esc、最多 5 轮** ⇒ 「忽然回车」最强来源 |
+| `sw_gui_focus.py` | `Alt` 抬起移进 `finally` |
+| `sw_jlcfa_locate.py` | `Alt` 抬起移进 `finally`（原来是 `except: pass` 吞掉） |
+| `sw_jlcfa_fill.py` | `_keys` / `_tap` 全改走原语（Ctrl 卡住的那一处） |
+| `sw_jlcfa_select.py` | `pick_first`（Alt+↓/↓/Enter 九段裸调用）与 Tab 提交改走原语 |
+| `sw_jlcfa_search.py` | 逐字符输入改走原语 |
+
+## ★ 新增门禁（`check_env_pitfalls.py` **检查④**）
+* 判据用 **AST**（不靠文本匹配）：函数内有 `keybd_event(...,0,0,0)` 按下，而 `finally` 里没有配对的 KEYUP，
+  且**没有**调用 `_press`/`_hold`/`_tap` ⇒ **报**。
+* ⚠ 用文本匹配会**抓到注释里的示例**（本文件的注释正好写着这个坑）——「门禁抓到自己的文档」是实测撞过的假阳性。
+* **负例已证有牙齿**：`bad()`（无 finally）被抓到、`good()`（finally 里有抬起）没误报、
+  `_press` 调用被正确豁免。
+
+## 过程教训（记进本轮提交）
+⚠ 我在 `check_env_pitfalls.py` 上**连续 4 次**edit 出错（把两行**粘成一行**）⇒ 按**事实 53**（同一处连修 ≥3 次要回退）
+**`git checkout --` 回退该文件**（检查③ 在 HEAD 里已有，不会丢），再**分 3 步重做**，每步验证。
+**根因**：`old_string` 以换行结尾而 `new_string` 不以它结尾 ⇒ **并掉一个换行**。
+⇒ **定则：`edit` 的两边要严格对称地处理行尾。**
+
+⇒ 回归 **925 passed / 17 skipped / 0 failed**（912 + 13）· 九项门禁全 exit 0
