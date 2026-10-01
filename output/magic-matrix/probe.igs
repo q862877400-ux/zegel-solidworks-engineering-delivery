@@ -1,8 +1,8 @@
 SolidWorks IGES file using analytic representation for surfaces         S      1
 1H,,1H;,24Hmagic-matrix-part.SLDPRT,38HD:\AI\SW\output\magic-matrix\probG      1
 e.igs,15HSolidWorks 2026,15HSolidWorks 2026,32,308,15,308,15,24Hmagic-maG      2
-trix-part.SLDPRT,1.,2,2HMM,50,0.125,13H261001.184116,1E-08,499990.,5HZegG      3
-el,,11,0,13H261001.184116;                                              G      4
+trix-part.SLDPRT,1.,2,2HMM,50,0.125,13H261001.210011,1E-08,499990.,5HZegG      3
+el,,11,0,13H261001.210011;                                              G      4
      314       1       0       0       0                        00000200D      1
      314       0       8       1       0                               0D      2
      128       2       0       0       0                        01010000D      3

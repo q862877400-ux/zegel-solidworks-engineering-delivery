@@ -11,5 +11,5 @@
   "manager": true,
   "add_relation_repr": "method",
   "segment_count": 2,
-  "modal_dialogs": []
+  "modal_dialogs": 0
 }

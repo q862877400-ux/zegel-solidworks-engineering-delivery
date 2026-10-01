@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 17:23:59",
+  "started": "2026-10-01 21:00:23",
   "cases": {
     "line_n1_get_lines": {
       "drawn": 1,
@@ -43,19 +43,12 @@
       "element_type": "float",
       "verdict": "★ **数值数组**：每条 22 个"
     },
-    "spline_n1_get_splines": {
-      "drawn": 1,
+    "spline_n0_get_splines": {
+      "drawn": 0,
       "segments": 0,
       "count": 0,
       "element_type": "—",
-      "verdict": "⚠ 取不到该类型"
-    },
-    "spline_n2_get_splines": {
-      "drawn": 2,
-      "segments": 0,
-      "count": 0,
-      "element_type": "—",
-      "verdict": "⚠ 取不到该类型"
+      "verdict": "**对象列表**（正常）"
     }
   },
   "modal_dialogs": []

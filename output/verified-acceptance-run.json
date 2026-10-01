@@ -1,0 +1,225 @@
+{
+  "rows": [
+    {
+      "cmd": "tools/audit_get_com_member_semantics.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/capture_simulation_evidence.py",
+      "exit": 1,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/capture_topology_evidence.py",
+      "exit": 1,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_add_relation_forms.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_chamfer_forms.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_dwg_magic.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_export_magic_matrix.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_getlines_count.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_gtol_frame_order.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_pdf_on_drawing.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_sketch_getter_shapes.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_slot_and_point_shapes.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/probe_window_vs_graphics.py",
+      "exit": 0,
+      "verdict": null,
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/verify_bbox_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 8,
+      "total": 8
+    },
+    {
+      "cmd": "tools/verify_bmp_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 8,
+      "total": 8
+    },
+    {
+      "cmd": "tools/verify_centerline_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 8,
+      "total": 8
+    },
+    {
+      "cmd": "tools/verify_composite_curve_smoke.py",
+      "exit": 1,
+      "verdict": "fail",
+      "passed": 6,
+      "total": 7
+    },
+    {
+      "cmd": "tools/verify_costing_e2e.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": null,
+      "total": null
+    },
+    {
+      "cmd": "tools/verify_dfm_e2e.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 15,
+      "total": 15
+    },
+    {
+      "cmd": "tools/verify_dome_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 9,
+      "total": 9
+    },
+    {
+      "cmd": "tools/verify_dxf_preview_e2e.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 15,
+      "total": 15
+    },
+    {
+      "cmd": "tools/verify_ellipse_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 11,
+      "total": 11
+    },
+    {
+      "cmd": "tools/verify_equation_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "cmd": "tools/verify_gtol_smoke.py",
+      "exit": 1,
+      "verdict": "fail",
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "cmd": "tools/verify_helix_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 13,
+      "total": 13
+    },
+    {
+      "cmd": "tools/verify_hole_standards_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 11,
+      "total": 11
+    },
+    {
+      "cmd": "tools/verify_in_context_reference_smoke.py",
+      "exit": 1,
+      "verdict": "fail",
+      "passed": 9,
+      "total": 12
+    },
+    {
+      "cmd": "tools/verify_png_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 9,
+      "total": 9
+    },
+    {
+      "cmd": "tools/verify_routing_e2e.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 18,
+      "total": 18
+    },
+    {
+      "cmd": "tools/verify_sketch_edit_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 10,
+      "total": 10
+    },
+    {
+      "cmd": "tools/verify_sketch_getters_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 18,
+      "total": 18
+    }
+  ],
+  "pass": 15,
+  "fail": 3,
+  "no_verdict": 13,
+  "missing": 0
+}

@@ -1,10 +1,10 @@
 {
-  "started": "2026-10-01 10:55:36",
+  "started": "2026-10-01 21:00:53",
   "solidworks_revision": "",
   "verdict": "pass",
   "steps": {
     "build_part": {
-      "title": "零件6",
+      "title": "零件278",
       "size_mm": [
         100,
         60,
@@ -67,5 +67,5 @@
     "costing_type_is_a_real_value": true,
     "template_is_a_costing_template": true
   },
-  "finished": "2026-10-01 10:55:37"
+  "finished": "2026-10-01 21:00:56"
 }

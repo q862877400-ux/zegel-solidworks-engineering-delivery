@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 12:39:34",
+  "started": "2026-10-01 21:00:59",
   "checks": {
     "实体数 = 6（3DFACE 被排除）": {
       "ok": true,
@@ -59,11 +59,11 @@
     },
     "CLI 退出码 0 且 status=pass": {
       "ok": true,
-      "detail": "rc=0 payload={'status': 'pass', 'output': 'C:\\\\Users\\\\Zegel\\\\AppData\\\\Local\\\\Temp\\\\tmp_liw1gbq\\\\cli.scene.json', 'entities': 6, 'layers': 3}"
+      "detail": "rc=0 payload={'status': 'pass', 'output': 'C:\\\\Users\\\\Zegel\\\\AppData\\\\Local\\\\Temp\\\\tmpp5m7yr19\\\\cli.scene.json', 'entities': 6, 'layers': 3}"
     }
   },
   "passed": 15,
   "total": 15,
   "verdict": "pass",
-  "finished": "2026-10-01 12:39:34"
+  "finished": "2026-10-01 21:00:59"
 }

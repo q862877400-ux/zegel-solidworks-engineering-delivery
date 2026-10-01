@@ -1,11 +1,11 @@
 {
-  "started": "2026-10-01 18:41:14",
+  "started": "2026-10-01 21:00:09",
   "rows": [
     {
       "format": "step",
       "ext": ".step",
       "error": null,
-      "bytes": 15765,
+      "bytes": 15764,
       "kind": "STEP",
       "head_hex": "49534f2d31303330",
       "head_ascii": "ISO-10303-21;\\r\\nHEADER;\\r\\n"
@@ -32,7 +32,7 @@
       "format": "parasolid",
       "ext": ".x_t",
       "error": null,
-      "bytes": 8209,
+      "bytes": 8221,
       "kind": "Parasolid(text)",
       "head_hex": "2a2a414243444546",
       "head_ascii": "**ABCDEFGHIJKLMNOPQRSTUV"
@@ -40,7 +40,7 @@
     {
       "format": "pdf",
       "ext": ".pdf",
-      "error": "AttributeError: <unknown>.GetSldWorksObject"
+      "error": "AttributeError: <unknown>.GetSheetNames"
     },
     {
       "format": "dxf",
@@ -64,16 +64,16 @@
       "format": "png",
       "ext": ".png",
       "error": null,
-      "bytes": 163073,
+      "bytes": 151789,
       "kind": "PNG",
       "head_hex": "89504e470d0a1a0a",
-      "head_ascii": "�PNG\\r\\n\u001a\\n\u0000\u0000\u0000\\rIHDR\u0000\u0000\u0004�\u0000\u0000\u0004\u0019"
+      "head_ascii": "�PNG\\r\\n\u001a\\n\u0000\u0000\u0000\\rIHDR\u0000\u0000\u0004�\u0000\u0000\u0003�"
     },
     {
       "format": "jpg",
       "ext": ".jpg",
       "error": null,
-      "bytes": 39724,
+      "bytes": 37388,
       "kind": "JPEG",
       "head_hex": "ffd8ffe000104a46",
       "head_ascii": "����\u0000\u0010JFIF\u0000\u0001\u0001\u0001\u0000x\u0000x\u0000\u0000��\u0000C"
@@ -88,5 +88,5 @@
       "head_ascii": "BM6\u0010\u000e\u0000\u0000\u0000\u0000\u00006\u0000\u0000\u0000(\u0000\u0000\u0000�\u0002\u0000\u0000�\u0001"
     }
   ],
-  "modal_dialogs": []
+  "modal_dialogs": 0
 }
