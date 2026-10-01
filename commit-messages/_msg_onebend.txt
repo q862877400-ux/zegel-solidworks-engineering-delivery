@@ -1,0 +1,54 @@
+fix(sheet-metal): `create_one_bend` 的**真因查明并修复** —— 常量用了 `CreateDefinition` 不接受的类型
+
+## 已知事实 34 里那两个「真因尚未查明」，一个已查明
+原记：「`create_one_bend`（`CreateDefinition(33)` 返回 None）……真因**尚未查明**」
+**⇒ 2026-10-01 查明，且有**官方依据**：**
+
+### ① 官方 `CreateDefinition.md` 的 Parameters 段列出**35 个**接受的常量
+```
+有:  swFmSketchBend (sheet metal sketched bend)
+有:  swFmBaseFlange / swFmEdgeFlange / swFmSMGusset / swFmSweptFlange / …
+没有: **swFmOneBend**       ← 模块原用的那个
+没有: **swFmDraft**         ← `create_draft` 用的那个
+```
+⇒ **`CreateDefinition(33)` 返回 None 是**应然的** —— 它是合法枚举成员，
+但不是 `CreateDefinition` 接受的类型。不是 COM 问题、不是权限问题。**
+
+### ② 正确入口：`swFmSketchBend(35)`，接口 `ISketchedBendFeatureData`
+数值来自反射 `enum_values_sldworks.txt`（`swFmSketchBend = 35`）；
+接口由「官方括注 `sheet metal sketched bend` × 接口 `_overview.md` 的 Description」
+**唯一命中**得到（见 `gen_const_iface_map.py` 的 20 条唯一映射）。
+
+### ③ 真机验证（`probe_sketch_bend_entry.py`）
+```
+CreateDefinition(35) → **非 None**      CreateDefinition(33) → None（与官方名单一致）
+读回的属性与 ISketchedBendFeatureData 的 16 个成员**逐一吻合**：
+  BendRadius=0.01 ✓  BendAngle=1.5708 ✓  ReverseDirection=False ✓
+  UseDefaultBendRadius=True ✓  UseDefaultBendAllowance=False ✓
+  FixedFace / BendLine 读不到 —— 因为该接口给的是 **GetFixedFace/SetFixedFace**（方法形式）
+  **⇒ 这一点也有官方依据，不是「属性只读」。**
+```
+**⇒ 而且 `create_one_bend` 的 `_apply` 里那 4 个属性**全部是**该接口的合法成员
+⇒ **错的只有常量**，属性层本来就是对的。**
+
+### ④ 修复后的真机复验：**报错往前推进了一层**
+```
+修前: CreateDefinition(33) 返回 None
+修后: **CreateFeature(35) 创建失败**        ← 已过 CreateDefinition 那一层
+```
+**⚠ 仍标不可用**（真建出折弯还需选中折弯线/固定面，本轮未定型），
+但**原因已从「未查明」变成具体的「缺选择步骤」**。
+
+## 🔴 顺带暴露一条**统一诊断**
+```
+create_one_bend    → CreateFeature(35)  创建失败  ← 与其余两个**同一层**
+create_edge_flange → CreateFeature(37)  创建失败
+create_gusset      → CreateFeature(118) 创建失败
+create_draft       → CreateDefinition(3) 未返回特征数据  ← **它的常量也错**（官方 35 个里无 draft）
+```
+**⇒ 三条现在**卡在同一层**（`CreateFeature`）⇒ 后续应集中攻那一层，而不是逐个猜。**
+
+## 验证
+- 官方 35 个常量名单 + 反射数值 + 真机三方一致
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下

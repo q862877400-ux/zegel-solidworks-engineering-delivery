@@ -65,6 +65,11 @@
                   路线**被官方证实是现代正确路线**（专用方法已标 Obsolete）
                 ⇒ 夹具造不出折弯 ⇒ **未定性**（不宣称能跑，也不宣称不行）
                 · 另：`create_base_flange` 的 ✓ **只对闭轮廓成立**（开放折线实测失败）
+                · ★ **`create_one_bend` 真因已查明并修复**：`swFmOneBend(33)` **不在**
+                  官方列出的 **35 个** `CreateDefinition` 合法常量里 ⇒ 已改用
+                  `swFmSketchBend(35)`，报错**前推**到 `CreateFeature(35)`；
+                  **⇒ 三条现卡在同一层 `CreateFeature`**（`create_draft` 的常量也错）
+                · ★ **可核验的 `CONST→接口` 映射**已生成（官方文本匹配：20 唯一 / 4 歧义 / 11 未映射）
              ④ **运行时可靠性审计**已建：
                 · 裸 by-ref 出参审计（`scripts/audit_byref_args.py`，实测 **0 处 / 674 调用点**）
                 · **四条门禁各有负例测试**（`tests/test_gate_negative_cases.py`，8 条）

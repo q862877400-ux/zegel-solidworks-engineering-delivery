@@ -934,3 +934,47 @@ D:\AI\SW\mcp.py   ← Python 把**当前目录**放在 sys.path[0]
 
 **⇒ 修完 `checked`：0 → 2 → 7；并加了「检查量 < 5 即 FAIL」的下限守卫**
 （与 `audit_byref_args.py` 的「≥300」同源：**检查量太少本身就是假绿**）。
+
+
+---
+
+## 二十五、`create_one_bend` 真因查明并修复 + 一条**可核验的 `CONST → 接口` 映射**（2026-10-01）
+
+### 25.1 官方 `CreateDefinition.md` 只接受 **35 个**常量
+```
+有:  swFmSketchBend (sheet metal sketched bend)
+有:  swFmBaseFlange / EdgeFlange / SMGusset / SweptFlange / …
+**没有: swFmOneBend**   ← 模块原用的那个
+**没有: swFmDraft**     ← create_draft 用的那个
+```
+**⇒ 返回 `None` **是应然的** —— 合法枚举成员 ≠ `CreateDefinition` 接受的类型。**
+
+### 25.2 修复：`SW_FM_ONE_BEND(33)` → `SW_FM_SKETCH_BEND(35)`
+**真机复验：报错**往前推进了一层**：**
+```
+修前: CreateDefinition(33) 返回 None
+修后: **CreateFeature(35) 创建失败**
+```
+**⚠ 仍标不可用**（真建出折弯还需选中折弯线/固定面），但**原因已具体化**。
+
+### 25.3 🔴 统一诊断：三条现在**卡在同一层**
+```
+create_one_bend    → CreateFeature(35)  创建失败
+create_edge_flange → CreateFeature(37)  创建失败
+create_gusset      → CreateFeature(118) 创建失败
+create_draft       → CreateDefinition(3) 未返回特征数据  ← **它的常量也错**
+```
+**⇒ 后续应集中攻 `CreateFeature` 那一层，而不是逐个猜。**
+
+### 25.4 ★ 可核验的 `CONST → 接口` 映射（不手写）
+`D:\AI\SW\gen_const_iface_map.py`：用**两侧官方文本**匹配
+（`CreateDefinition.md` 的括注 × 接口 `_overview.md` 的 Description）：
+**20 条唯一命中 / 4 歧义（不猜）/ 11 未映射（措辞不同）**。
+**⇒ 这正是第 29 轮否定结果（事实 42）所缺的那张表，且**来源可核验**。**
+
+### 25.5 ⚠ 两套官方源在这一族**分工不同**（重要）
+| 源 | 给什么 | 不给什么 |
+|---|---|---|
+| `C:\swapi\enums\swFeatureNameID_e.md` | 成员名 + **描述** | **数值** —— 它的「Value」列**装的是描述** |
+| `D:\AI\SW\_raw\**\enum_values_sldworks.txt`（反射） | **数值**（130 个成员） | 描述 |
+**⇒ 查常量数值必须去反射；查描述去 swapi 枚举页。**
