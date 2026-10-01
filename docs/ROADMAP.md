@@ -67,6 +67,11 @@
                 · 另：`create_base_flange` 的 ✓ **只对闭轮廓成立**（开放折线实测失败）
                 · ★ **`create_one_bend` 真因已查明并修复**：`swFmOneBend(33)` **不在**
                   官方列出的 **35 个** `CreateDefinition` 合法常量里 ⇒ 已改用
+                · ★★ **`create_one_bend`/`create_edge_flange`/`create_gusset` 三条：**pywin32 后端到不了**
+                  （事实 47）——**两轮 20+ 种形态穷尽**：`SetFixedFace` 七种数组包装×两个重载全报
+                  `类型不匹配`；`AccessSelections` 传空 Dispatch 报 **`0x80010105`**（与事实 28 同码）
+                  ⇒ 与 `capabilities.yaml` 早已记录的「不能调用仅进程内非托管 C++ 的指针接口」吻合
+                  ⚠ **不要再用「换个参数试试」继续试** —— 已穷尽
                   `swFmSketchBend(35)`，报错**前推**到 `CreateFeature(35)`；
                   **⇒ 三条现卡在同一层 `CreateFeature`**（`create_draft` 的常量也错）
                 · ★ **gusset 补上官方步骤 3**（`ProfileDimensionScheme` 等）——
