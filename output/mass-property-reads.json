@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-10-02T07:40:02",
+  "steps": {
+    "box": {
+      "built": true,
+      "expect_volume_mm3": 8000.0,
+      "expect_surface_area_mm2": 2800
+    },
+    "getters": {
+      "model.Extension": "拿到",
+      "A_CreateMassProperty（当属性取）": "★ 是质量属性对象",
+      "A_CreateMassProperty2（当属性取）": "★ 是质量属性对象",
+      "C_model.GetMassProperties（12 double 后备）": {
+        "len": 12,
+        "values": [
+          0.0,
+          0.0,
+          -5.0,
+          7999.999999999999,
+          2800.0,
+          7999999.999999999,
+          333333333.33333325,
+          1133333333.3333333,
+          1333333333.333333,
+          -0.0,
+          -0.0,
+          -0.0
+        ]
+      }
+    },
+    "mp_obtained": true,
+    "members": {
+      "Mass": 7999999.999999999,
+      "Volume": 7999.999999999999,
+      "SurfaceArea": 2800.0,
+      "Density": 1000.0,
+      "AccuracyLevel": "AttributeError: <unknown>.AccuracyLevel",
+      "CenterOfMass": [
+        0.0,
+        0.0,
+        -5.0
+      ]
+    },
+    "unit_verdict": {
+      "volume_raw": 7999.999999999999,
+      "surface_area_raw": 2800.0,
+      "volume_matches_mm3": true,
+      "volume_matches_m3": false,
+      "area_matches_mm2": true,
+      "area_matches_m2": false,
+      "★": "盒 40×20×10 mm ⇒ 体积 8000 mm³ = 8e-6 m³；★ 看哪个命中 ⇒ 这就是单位"
+    }
+  }
+}
