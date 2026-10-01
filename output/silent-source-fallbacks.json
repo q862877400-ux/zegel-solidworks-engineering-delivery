@@ -1,0 +1,78 @@
+{
+  "guards": 125,
+  "explained": 7,
+  "candidates": [
+    {
+      "file": "scripts/check_env_pitfalls.py",
+      "line": 258,
+      "guard": "if not FALSY_ZERO_BASELINE.is_file():",
+      "ret": "return set()"
+    },
+    {
+      "file": "scripts/check_interface_member_ownership.py",
+      "line": 418,
+      "guard": "if not d.is_dir():",
+      "ret": "return set()"
+    },
+    {
+      "file": "scripts/check_report_freshness.py",
+      "line": 121,
+      "guard": "if not report.is_file():",
+      "ret": "return None"
+    },
+    {
+      "file": "scripts/check_signature_audit_freshness.py",
+      "line": 84,
+      "guard": "if not raw.is_dir():",
+      "ret": "return []"
+    },
+    {
+      "file": "scripts/check_workspace_shadowing.py",
+      "line": 54,
+      "guard": "if not path.is_file():",
+      "ret": "return set()"
+    },
+    {
+      "file": "scripts/sw_delivery.py",
+      "line": 36,
+      "guard": "if not path.is_file():",
+      "ret": "return None"
+    },
+    {
+      "file": "scripts/sw_export.py",
+      "line": 240,
+      "guard": "if not target.is_file():",
+      "ret": "return None"
+    },
+    {
+      "file": "tools/build_union_sources.py",
+      "line": 150,
+      "guard": "if not root.is_dir():",
+      "ret": "return []"
+    },
+    {
+      "file": "tests/test_sw_assembly_doc_contract.py",
+      "line": 94,
+      "guard": "if not REFLECTION.is_file():",
+      "ret": "return None"
+    },
+    {
+      "file": "tests/test_sw_drawing_view_contract.py",
+      "line": 82,
+      "guard": "if not REFLECTION.is_file():",
+      "ret": "return None"
+    },
+    {
+      "file": "tests/test_sw_pdm_contract.py",
+      "line": 101,
+      "guard": "if not REFLECTION.is_file():",
+      "ret": "return set()"
+    },
+    {
+      "file": "tests/test_sw_simulation_study_options_contract.py",
+      "line": 89,
+      "guard": "if not REFLECTION.is_file():",
+      "ret": "return None"
+    }
+  ]
+}
