@@ -1,0 +1,37 @@
+{
+  "started": "2026-10-01 14:08:05",
+  "checks": {
+    "连接 SolidWorks": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "复用已有文档": {
+      "ok": true,
+      "detail": "mcp_avi_shaft.SLDPRT"
+    },
+    "list_render_materials": {
+      "ok": true,
+      "detail": "ok · 0 个材质 · 0.02s"
+    },
+    "collect_appearance_evidence": {
+      "ok": true,
+      "detail": "dict 3 键"
+    },
+    "current_selection": {
+      "ok": true,
+      "detail": "1 项 · 0.00s"
+    },
+    "clear_selection": {
+      "ok": true,
+      "detail": "ok · 0.00s"
+    },
+    "set_standard_view": {
+      "ok": true,
+      "detail": "ok · 0.53s"
+    }
+  },
+  "passed": 7,
+  "total": 7,
+  "verdict": "pass",
+  "finished": "2026-10-01 14:08:06"
+}
