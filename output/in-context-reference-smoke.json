@@ -1,0 +1,59 @@
+{
+  "started": "2026-10-01 19:04:08",
+  "checks": {
+    "造出 2 个零件并保存（端板 / 型材）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "装配里 2 个组件": {
+      "ok": true,
+      "detail": "组件数 2"
+    },
+    "★ 基线：外部参考计数（**取证用，不一定 0**）": {
+      "ok": true,
+      "detail": "= 0"
+    },
+    "★★ `EditPart2` 返回（原样透出数字，不翻译）": {
+      "ok": true,
+      "detail": "返回码 = -1"
+    },
+    "★★ **在上下文编辑态已生效**（`GetEditTarget` 非空）": {
+      "ok": true,
+      "detail": "GetEditTarget = 非空"
+    },
+    "★ `convert_entities`（**已有实现**，本轮当部件复用）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "add_relation": {
+      "ok": false,
+      "detail": "TypeError: 'NoneType' object is not callable"
+    },
+    "★★ 判据①：`GetRelationsCount` **N → N+1**（空操作不变）": {
+      "ok": false,
+      "detail": "0 → 0"
+    },
+    "★ `EditAssembly()` 退出（零参）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★★ 判据②：外部参考计数 **0 → ≥1**（空操作不变）": {
+      "ok": false,
+      "detail": "0 → 0"
+    },
+    "★ 收尾无残留模态框（事实 64）": {
+      "ok": true,
+      "detail": "扫了 162 个窗口 · 无模态框"
+    }
+  },
+  "refs_before": 0,
+  "edit_part_code": -1,
+  "edit_target": "非空",
+  "relations_before": 0,
+  "relations_after": 0,
+  "refs_after": 0,
+  "passed": 8,
+  "total": 11,
+  "verdict": "fail",
+  "finished": "2026-10-01 19:04:15"
+}
