@@ -1,0 +1,35 @@
+feat(check): 加 `MANUAL_MAP` —— **人工确证**的 7 条映射，覆盖率 24→**31**（且与自动结果**分开报**）
+
+## 结果
+```
+唯一命中 **31**（**自动 24** + **人工确证 7**）/ 歧义 0 / 未映射 4（原 11）
+负例复验：[HIT] 仍精确报出（`swFmSMGusset` ⇒ `ISMGussetFeatureData` + 两个焊件成员）
+```
+
+## 为什么是**人工表**而不是**推断**（这是第 40 轮的教训）
+第 40 轮我加「名字回退」想自动补上这 11 条，**连续改 6 版**都不对，最后**回退**（已记进已知事实 53）。
+**⇒ 根因：**那 11 条里有 7 条需要**领域知识或逐条读官方描述**，不是文本规则能得到。**
+**⇒ 正解：把已读官方描述**确认过的**写进显式的 `MANUAL_MAP`，每条**在代码里注明依据**。**
+
+## `MANUAL_MAP` 的 7 条（每条在代码里有注释依据）
+| 常量 | → 接口 | 依据 |
+|---|---|---|
+| `swFmSweep` | `ISweepFeatureData` | 描述 `Allows access to a sweep feature.` |
+| `swFmSweepCut` | `ISweepFeatureData` | 同扫掠 —— **扫掠切除与扫掠共用同一个 FeatureData** |
+| `swFmSweepThread` | `IThreadFeatureData` | ⚠ **领域判断**：`sweep thread` 是**螺纹**，不是扫掠 |
+| `swFmDerivedLPattern` | `IDerivedPatternFeatureData` | `…a derived pattern feature.`（对照 Part 那个） |
+| `swFmTablePattern` | `ITablePatternFeatureData` | 名字唯一命中 |
+| `swFmFormToolInstance` | `ILibraryFormToolFeatureData` | 名字唯一命中；与 `swFmLibraryFeature` 互相印证 |
+| `swFmMirrorComponent` | `IMirrorComponentFeatureData` | `…a mirror component feature.`；对照 Part/Pattern/Solid |
+
+## ⚠ 三条设计约束（**防止把人工条当成推断**）
+1. **绝不覆盖自动结果** —— 自动有官方文本依据，优先级更高；`MANUAL_MAP` **只补空**。
+2. **输出**分开统计** —— 打印「自动 %d + 人工确证 %d」，并列出是哪 7 条。
+3. **没有依据的不许进来** —— 每条上方必须写明官方描述或对照接口；未确证的 4 条
+   （`swFmDimPattern` / `swFmSolidToSheetMetal` / `swFmRefSurface` / `swFmFillet`）
+   **留在 `unmapped` 里不动**，按**铁律 5** 写「查不到」。
+
+## 验证
+- **负例复验通过**（种入 ⇒ [HIT] 精确报出；还原 ⇒ [OK]；文件已还原为提交状态）
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下
