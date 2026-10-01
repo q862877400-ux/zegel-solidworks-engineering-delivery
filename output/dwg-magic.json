@@ -1,0 +1,19 @@
+{
+  "started": "2026-10-01 18:37:46",
+  "dxf": {
+    "exists": true,
+    "bytes": 20208,
+    "head_ascii": "  0\\r\\nSECTION\\r\\n  ",
+    "kind": "DXF"
+  },
+  "dwg": {
+    "exists": true,
+    "bytes": 272032,
+    "head_ascii": "AC1015\u0000\u0000\u0000\u0000\u0000\u0006\u0001�\u0000\u0000",
+    "kind": "DWG",
+    "version": "AC1015"
+  },
+  "dwg_is_real_dwg": true,
+  "dwg_is_dxf_content": false,
+  "modal_dialogs": []
+}
