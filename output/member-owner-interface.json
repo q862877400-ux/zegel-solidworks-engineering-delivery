@@ -1,0 +1,199 @@
+{
+  "checked": 210,
+  "hits": [
+    {
+      "file": "sw_assembly.py",
+      "line": 267,
+      "owner_iface": "IModelDoc2",
+      "member": "FeatureByName",
+      "actually_on": [
+        "IAssemblyDoc",
+        "IComponent2",
+        "IDrawingDoc",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_assembly_doc.py",
+      "line": 307,
+      "owner_iface": "IModelDoc2",
+      "member": "AddMate5",
+      "actually_on": [
+        "IAssemblyDoc"
+      ]
+    },
+    {
+      "file": "sw_delivery.py",
+      "line": 68,
+      "owner_iface": "IModelDoc2",
+      "member": "GetComponents",
+      "actually_on": [
+        "IAssemblyDoc",
+        "IBomTableAnnotation",
+        "ICollision",
+        "ICollisionDetectionGroup"
+      ]
+    },
+    {
+      "file": "sw_export.py",
+      "line": 107,
+      "owner_iface": "IModelDoc2",
+      "member": "GetSheetNames",
+      "actually_on": [
+        "IDrawingDoc"
+      ]
+    },
+    {
+      "file": "sw_geometry_selectors.py",
+      "line": 129,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_hole_features.py",
+      "line": 99,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_part.py",
+      "line": 995,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_review.py",
+      "line": 806,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_review.py",
+      "line": 791,
+      "owner_iface": "IModelDoc2",
+      "member": "GetPartBox",
+      "actually_on": [
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_selection_spec.py",
+      "line": 151,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_sheet_metal.py",
+      "line": 250,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_simulation.py",
+      "line": 675,
+      "owner_iface": "IModelDoc2",
+      "member": "SetMaterialPropertyName2",
+      "actually_on": [
+        "IJournalManager",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_simulation.py",
+      "line": 755,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_weldment.py",
+      "line": 234,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "sw_weldment.py",
+      "line": 408,
+      "owner_iface": "IModelDoc2",
+      "member": "GetBodies2",
+      "actually_on": [
+        "IComponent2",
+        "IPartDoc"
+      ]
+    },
+    {
+      "file": "capture_simulation_evidence.py",
+      "line": 132,
+      "owner_iface": "IModelDoc2",
+      "member": "StudyManager",
+      "actually_on": []
+    },
+    {
+      "file": "diag_in_context_sketch.py",
+      "line": 56,
+      "owner_iface": "ISketch",
+      "member": "GetSketchSegments2",
+      "actually_on": []
+    },
+    {
+      "file": "probe_results_api_surface.py",
+      "line": 92,
+      "owner_iface": "IModelDoc2",
+      "member": "StudyManager",
+      "actually_on": []
+    },
+    {
+      "file": "verify_motion_avi_e2e.py",
+      "line": 106,
+      "owner_iface": "IPartDoc",
+      "member": "GetTitle",
+      "actually_on": [
+        "IDesignTable",
+        "IModelDoc",
+        "IModelDoc2"
+      ]
+    },
+    {
+      "file": "verify_motion_avi_e2e.py",
+      "line": 122,
+      "owner_iface": "IAssemblyDoc",
+      "member": "GetTitle",
+      "actually_on": [
+        "IDesignTable",
+        "IModelDoc",
+        "IModelDoc2"
+      ]
+    }
+  ]
+}
