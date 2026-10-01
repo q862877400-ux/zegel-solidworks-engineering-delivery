@@ -1,0 +1,37 @@
+fix(surface): **把静默失败变响亮** —— `IModeler.Create*Surface` 返回值真机实测**不可靠**
+
+## 三轮探针把这一族的行为定了性
+| 轮次 | 探针 | 结果 |
+|---|---|---|
+| 13 | `probe_surface_array_shape.py` | `CreateCylindricalSurface` **成功** |
+| 26 | `probe_geometry_selectors_e2e.py` | `spherical` / `toroidal` 成；`cylindrical` / `conical` **None** |
+| 27 | `probe_cyl_none_matrix.py` + `probe_cyl_order_vs_axis.py` | **只有 `axis=(1,0,0)` 成**（受控实验排除了顺序与单例状态）|
+| 27 | `probe_surface2_correct_arity.py` | **只有 `CreateSphericalSurface`（非-2）成**，`*2` 全 **None** |
+
+**⇒ 结论：返回值**不可靠** —— 不是「有些能有些不能」，而是**同一个调用跨次也会变**。**
+
+## 顺带查清的官方事实
+```
+CreateConicalSurface / CreateCylindricalSurface / CreatePlanarSurface / CreateSphericalSurface
+  → 官方标 "**Obsolete. Superseded by …2**"（该族共 18 个，**4 个过时**）
+`*2` 那代**运行期可达**（给错 arity 时报 `非选择性的参数` = DISP_E_PARAMNOTOPTIONAL）
+  → 它**多一个 `RefDirection`**（官方 Parameters 段）
+**⚠ 但按正确 arity 调 `*2`，**仍然返回 None** ⇒ 换一代**解决不了**。**
+```
+
+## ⇒ 修法：**让失败可见**（唯一不依赖 COM 不稳定行为的改进）
+`_invoke` 现在对 `None` 返回值**抛带原因的 `RuntimeError`**：
+```
+"<方法> 返回 None —— **什么都没建出来**。本族真机实测返回值不可靠：同一调用跨次
+ 会成功或返回 None，且官方 *2 新一代同样如此。⇒ 不要把它当成功；换个思路…或重试一次再判。"
+```
+**⇒ 静默失败是本项目反复踩的头号敌人（已知事实 8 / 30 / 40）—— 这一改把它堵在源头。**
+
+## ⚠ 又同步了一次文档串
+`_invoke` 的文档串原本只写「参数个数自检」—— **而它现在做两件事**。
+**⇒ 文档串必须与代码同步（上一轮刚记过这条教训，本轮立刻用上）。**
+
+## 验证
+- 曲面契约测试 **15 passed**（返回值检查不影响桩测：桩返回非 None）
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下

@@ -859,3 +859,36 @@ D:\AI\SW\mcp.py   ← Python 把**当前目录**放在 sys.path[0]
 探针把「期望的报错」记成失败（3 项）⇒ 加 `expect_error`。
 前两次：`test_sw_surface_signature_contract`、曲面探针。
 **⇒ 这次把教训写进了探针本身（免得第四次）。**
+
+
+---
+
+## 二十三、`IModeler.Create*Surface` 的返回值**不可靠**（2026-10-01，四轮探针定性）
+
+### 23.1 四轮探针的结果（**同一个调用跨次会变**）
+| 轮次 | 探针 | 结果 |
+|---|---|---|
+| 13 | `probe_surface_array_shape.py` | `CreateCylindricalSurface` **成功** |
+| 26 | `probe_geometry_selectors_e2e.py` | `spherical` / `toroidal` 成；`cylindrical` / `conical` **None** |
+| 27 | `probe_cyl_none_matrix.py` + `probe_cyl_order_vs_axis.py` | **只有 `axis=(1,0,0)` 成**；受控实验**排除了顺序与单例状态** |
+| 27 | `probe_surface2_correct_arity.py` | **只有 `CreateSphericalSurface`（非-2）成**；`*2` 全 **None** |
+
+**⇒ 结论：返回值**不可靠** —— 不是「有些能有些不能」，而是**同一个调用跨次也会变**。**
+**⚠ 这比「已知事实 30 的可取 ≠ 调用成功」更深一层：**连「这一族里哪些能用」都不是稳定事实**。**
+
+### 23.2 顺带查清的官方事实
+```
+官方标记 Obsolete 的 4 个：CreateConicalSurface / CreateCylindricalSurface /
+                          CreatePlanarSurface / CreateSphericalSurface（该族共 18 个）
+`*2` 后继**运行期可达**（给错 arity 时报 `非选择性的参数` = DISP_E_PARAMNOTOPTIONAL）
+  它**多一个 `RefDirection`**（官方 Parameters 段）
+**⚠ 但按正确 arity 调 `*2`，**仍然返回 None ⇒ 换一代解决不了**。**
+```
+
+### 23.3 ⇒ 修法：**让失败可见**（唯一不依赖 COM 不稳定行为的改进）
+`sw_surface._invoke` 现在对 `None` 返回值**抛带原因的 `RuntimeError`**，而不是把 `None` 悄悄交给调用方。
+**⇒ 静默失败是本项目反复踩的头号敌人（已知事实 8 / 30 / 40）—— 这一改把它堵在源头。**
+
+### 23.4 ⚠ 本轮又一次「文档串必须与代码同步」
+`_invoke` 的文档串原本只写「参数个数自检」—— 而它**现在做两件事**（arity + 返回值检查）。
+**⇒ 上一轮刚记过这条教训，本轮立刻用上。**
