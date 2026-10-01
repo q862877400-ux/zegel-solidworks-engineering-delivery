@@ -18,12 +18,23 @@
 
 ## 二、落盘状态（写这份时**两仓库都干净**）
 
-| 仓库 | HEAD | 未提交 |
-|---|---|---|
-| `D:\AI\SW\`（工作区，只放产物） | `24eb97f` | 0 |
-| `C:\swprojects\sw-skill-fork\`（**唯一改代码的地方**） | `a47beeb` | 0 |
+⚠ **不要在本文件里找 HEAD 哈希** —— 写死的那一刻它就开始过期（**本文件第一版就犯了这个错**：
+写了 `24eb97f`，而我提交这份文件的那次提交立刻让它失真 —— 这是本项目「数字失真」家族的**第 5 例**，
+且是**当场造的**）。 ⇒ **现场取，那才是它的「家」**：
 
-规模：相对上游 `origin/main`（`8be39ac`）= **183 files / +127,711 / −262 · 172 commits**。
+```powershell
+git -C 'D:\AI\SW'                  log --oneline -1     # 工作区（只放产物）
+git -C 'C:\swprojects\sw-skill-fork' log --oneline -1   # 代码副本（唯一改代码的地方）
+git -C 'D:\AI\SW' status --porcelain                    # 期望：空
+git -C 'C:\swprojects\sw-skill-fork' status --porcelain  # 期望：空
+```
+
+规模（相对上游 `origin/main` = `8be39ac`，**这个也要现场取**）：
+```powershell
+git -C 'C:\swprojects\sw-skill-fork' diff origin/main --shortstat
+```
+⚠ 精确值在 `docs/harvest-report.md` 开篇那行，且**它有门禁守着**（`scripts/check_report_freshness.py`）
+—— **别在这里抄一份**（那就又造了一个会腐坏的数字）。
 
 ## 三、下一步（按优先级，来自轮 60 的收工报告）
 
