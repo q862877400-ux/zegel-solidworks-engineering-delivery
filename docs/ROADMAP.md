@@ -129,6 +129,12 @@
                ⇒ 三条差别：不 raise / `checked_nothing` 写进返回体 / 数据源缺失不算违规
                ★ **它自己就在本轮抓到两处错**：① 用 `in` 判 `[HIT]` ⇒ 误报；
                  ② 来源块写进 docstring ⇒ 来源门禁报 25 行缺出处（**已记进事实 54**）
+            ⑬ ★★ **修掉一个**基线失败****（轮 43）：`test_release_check_passes_current_tree`
+               ⇒ 回归 **6 failed / 857 passed → 5 failed / 858 passed**
+               ★ 真因是**构建产物没生成**（`apps/workbench-ui/src-tauri/resources/skill` 在 `.gitignore` 里）
+               ⇒ 跑 `python scripts/sync_bundled_skill.py`（276 文件）即通过，**git 仍干净**
+               ★ 并把报错改成**可执行**的（原来 `<bundled-skill-missing>` 看不出该怎么办）
+               ★ 因此 `release_check` 现在**真的能跑到**轮 42 接的那道接口归属诊断
                ⇒ 那份提案仍有用：作**人工复核的起点**（21/29 有证据）
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 

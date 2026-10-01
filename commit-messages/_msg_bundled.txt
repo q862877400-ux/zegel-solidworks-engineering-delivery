@@ -1,0 +1,47 @@
+fix(release): 修掉**基线失败** `test_release_check_passes_current_tree` + 把报错改成**可执行**的
+
+## 🎯 结果
+```
+release_check.py:      **退出码 0 / status: pass**（原在 bundled 处失败）
+test_release_check.py: **4 passed**（原 1 failed）
+★ 全量回归: **5 failed / 858 passed**（基线 **6 failed / 857 passed**）
+   ⇒ **少一个失败、多一个通过** —— 一个**基线失败**被修掉了
+★ 并且 `interface_ownership: {status: **clean**}` —— 轮 42 接的诊断现在**真跑到了**
+```
+
+## 真因：那是一步**没跑的构建**，不是代码 bug
+```
+目标: apps/workbench-ui/src-tauri/resources/skill
+状态: **不存在**（`.gitignore:23` 把它**忽略**了 ⇒ 它是**构建产物**，不是源码）
+生成: `python scripts/sync_bundled_skill.py` ⇒ 276 个文件
+⇒ 而 `find_bundled_skill_drift` 把「目录不存在」报成 `<bundled-skill-missing>`
+  —— **看不出来那是一步没跑的构建**，新人会以为是代码 bug
+```
+
+## 改了什么
+1. **跑了一次 `sync_bundled_skill.py`**（用**已存在**的基础设施，不是新建）
+   ⇒ 快照生成，`release_check` 通过；**`git status` 干净**（确被 ignore）
+2. **把报错改成可执行的** —— 原来只有一句
+   `桌面内嵌 Skill 与根 Skill 不一致: <bundled-skill-missing>`；
+   现在**分开报两种情况**，各给出**可直接跑的命令**：
+```
+· 快照**尚未生成** ⇒ 「该目录在 .gitignore 里，是**构建产物**（不是源码）⇒ 跑一次：
+     python scripts/sync_bundled_skill.py
+   ⚠ 全新 clone 后必须先跑这一步，release_check 才可能通过。」
+· 源码改了快照没重生成 ⇒ 「⇒ 重跑：python scripts/sync_bundled_skill.py」
+```
+3. **★ 顺手验证了这条提示是对的**：我改完 `release_check.py` 后再跑，
+   它**立刻**报 `与根 Skill 不一致: scripts/release_check.py` —— **检查在尽职**，
+   而新提示给出的命令**正是解法**（重跑后即通过）。
+
+## ⚠ 由此得到一条**工作流纪律**
+```
+**改了任何运行时文件（scripts/ / mcp-server/ / subskills/ …）之后，
+必须重跑 `python scripts/sync_bundled_skill.py`**，否则 `release_check` 会报漂移。
+⚠ 快照在 `.gitignore` 里 ⇒ **这条纪律不会由 git 提醒你**（diff 里看不见）。
+```
+
+## 验证
+- `release_check` 退出码 0；`test_release_check.py` 4 passed
+- 四项门禁全 exit 0；**回归 5 failed / 858 passed**（比基线少 1 个失败）
+- `git status` 干净（除本文件的改动）
