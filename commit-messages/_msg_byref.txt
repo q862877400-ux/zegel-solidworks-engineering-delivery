@@ -1,0 +1,41 @@
+feat(audit): 补上「裸 by-ref 标量出参」审计 —— 记忆里悬着的那条，实测 **0 处**
+
+## 起因：查项目记忆里的**具体未完成项**
+Hindsight 记着一条：「AST 审计发现 **18 个裸出参**（6 在 `sw_simulation.py` /
+11 在 `sw_topology.py` / 1 在 `sw_render_material.py`），`fix_bare_outparams.py` 可修」。
+**⇒ 核实：那个工具**不存在**，所以这条一直悬着。** 本轮把它收口。
+
+## 新增 `scripts/audit_byref_args.py`
+**判据与 `audit_call_arity.py` **同源**（不另立一套）**：
+`Int32&` 这类标量出参**计入**「调用方要传的实参」，`Object&` / `Variant&` / `Dispatch&` **不计入**
+⇒ 于是「第 i 个实参 ↔ 第 i 个计位形参」是确定的，可以逐位核对。
+
+**违规判据**：某计位形参以 `&` 结尾（且是标量）、而对应实参**不是** by-ref 包装器
+（`out_i4()` / `_out_i4()` / `VARIANT(VT_BYREF…)` / 从这些构造赋来的变量）。
+
+**⚠ 为什么值得做**：裸传**有的直接抛错、有的静默无效** —— 而「静默无效」是本项目
+反复踩的头号敌人（已知事实 8 的 `AddSelectionListObject` 12 次 false；已知事实 30 的「可取 ≠ 成功」）。
+
+## 实测结果：**0 处**（检查 674 个调用点）
+**⇒ 当前口径下没有裸传。** 记忆里的 18 处**要么已被后续工作修掉、要么口径不同** ——
+如实记为「记忆快照与当前不一致」，**不宣称是我修的**。
+
+## ⚠ 工具自己犯过 3 个假阳性，全修了（这也是本轮的实质工作）
+| 假阳性 | 真因 | 修法 |
+|---|---|---|
+| `_out_i4()` 被报 | 我的正则只认 `out_` 开头，**没允许前导下划线** | 正则改 `_?out_\w*` |
+| 同一调用点报两遍 | `break` 放在内层循环 | 提出到外层 + `reported` 标志 |
+| `v_size` 被报 | 它在上一行**就是** by-ref 构造的（`VARIANT(VT_BYREF\\|VT_R8, 0.0)`），只是先存进变量 | **加局部数据流** `byref_variables()`（按文件收集，取舍写在注释里）|
+
+## 不变量（`tests/test_no_bare_byref_args.py`，3 条）
+1. **`scripts/` + `tools/` 里 0 处裸传**，且**检查量 ≥300** ——
+   后者防的是「审计器坏了导致假绿」
+2. **负例：种一个裸传进临时文件，审计器必须报出来** ——
+   **这条比第 1 条更重要**：一个永远返回 0 的审计器也能让第 1 条通过
+3. CLI 可跑（`--help`）
+
+## 验证
+- 裸 by-ref 审计：**0 处 / 674 个调用点**
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 844 passed / 15 skipped**（+3，基线失败列表逐条相同）
+- `scripts/audit_byref_args.py` 已登记进 `release_check.py` 的 `REQUIRED_ABILITY_FILES`
