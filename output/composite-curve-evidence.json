@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 21:00:51",
+  "started": "2026-10-01 21:04:47",
   "checks": {
     "新建临时零件（不碰用户文档）": {
       "ok": true,
@@ -13,9 +13,9 @@
       "ok": true,
       "detail": "草图2=True · 草图1=True"
     },
-    "insert_composite_curve": {
+    "★ insert_composite_curve（**前提成立**时要求 True）": {
       "ok": false,
-      "detail": "返回 False —— ⚑ **前提未满足，属应然**（草图数 = 2）；⚠ **这条后端上「能不能建成」仍未查明**"
+      "detail": "前提**成立** ⇒ **这是真失败** ⇒ RuntimeError: IModelDoc2.InsertCompositeCurve 返回 False ⇒ 合成曲线没建出来。⚠ 官方 Rem"
     },
     "⚑ ★★ 读回 `GetEntitiesToJoinCount()`（**不可达就如实标**）": {
       "ok": true,
@@ -42,5 +42,5 @@
   "passed": 6,
   "total": 7,
   "verdict": "fail",
-  "finished": "2026-10-01 21:00:53"
+  "finished": "2026-10-01 21:04:49"
 }
