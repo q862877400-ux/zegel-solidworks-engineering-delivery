@@ -1,0 +1,61 @@
+feat(geometry): B 类「点/方向」声明式解析层 + **修一个真 bug**（守卫写了却从没接上）
+
+## ① 新增 `scripts/sw_geometry_selectors.py`（B 类基础设施）
+`sw_surface` 里 4 个**运行期可达**的创建器都收 `Object` 型的点/向量
+（`CreateCylindricalSurface(origin, axis, r)` / `Spherical(center, r)` /
+`Conical(origin, axis, half_angle, r)` / `Toroidal(origin, axis, center, R, r)`）
+⇒ 直接暴露会**违规则 3**（禁裸坐标）⇒ 加一层**声明式解析**：
+
+| 类别 | 合法选择器 | 说明 |
+|---|---|---|
+| **点** | `origin` / `bbox:min` / `bbox:max` / `bbox:center` / `centroid` | **全部从模型派生** |
+| **方向** | `+x` / `-x` / `+y` / `-y` / `+z` / `-z` | **命名轴**，与 `sw_simulation.FACE_SELECTORS` **同一套命名** |
+
+**⚠⚠ 规则 3 的红线**：本模块**绝不接受裸坐标**。错误信息里明写
+「需要任意坐标时，请先建参照几何再选它」。**非法选择器一律报错，不静默返回原点。**
+
+**⇒ 真机实测 12/12 通过**（`probe_geometry_selectors_e2e.py`）：
+`bbox:min (-0.05,-0.03,-0.02)` / `bbox:max (0.05,0.03,0.0)` / `centroid` 正确。
+
+## ② ⚠⚠ 修一个**真 bug**：守卫写了却**从没被接上**
+```
+真机调 create_planar_surface → TypeError: 'NoneType' object is not callable
+```
+而 `require_runtime_available()` 是**第 13 轮就加的** —— **但没人调它**。
+**⇒ 现在 13 个公开包装器先调守卫**，真机复验：
+```
+RuntimeError: CreatePlanarSurface 在**本机运行期取不到**（getattr 得 None）
+  —— 官方类型库里有它，但迟到绑定拿不到。本机实测可取的入口：[...]
+```
+**⇒ 从「指向不了真因」变成「带原因」。**
+
+## ③ 顺带修一处**文档串说谎**
+`_invoke` 的文档串写着「统一在此处做**两层自检**……2. **运行期可取性**」，
+而第 13 轮为不挡契约测试**把第 2 层撤了、却没改文档串**。
+**⇒ 已改成只讲 arity，并写明「可用性由调用方在调用前问」。**
+**⚠ 文档串与代码不符，比没有文档串更糟。**
+
+## ④ 契约测试改到**新的职责边界**（15 passed，+1 条）
+| 层 | 职责 | 怎么测 |
+|---|---|---|
+| `_invoke` | **形状**：参数个数 + 转发 | 用桩 modeler 调**私有的** `_invoke`（不受守卫影响） |
+| 公开包装器 | **形状 + 守卫** | **新增** `test_unavailable_method_raises_a_reasoned_error` |
+**⇒ 保留了第 13 轮撤守卫的那个理由（形状可测），同时把守卫接上。**
+
+## ⑤ ⚠ 一个新发现（如实记，未定性）
+真机建曲面时：**`spherical` / `toroidal` 返回非 None（真建出来），
+`cylindrical` / `conical` 返回 `None`**。
+**⚠ 而 `sw_surface` 的包装器**不检查返回值** ⇒ 这是**静默失败**类。**
+（已知事实 30 早记过「可取 ≠ 调用成功」，但**没记过「同一批里哪些真的成」**。）
+**⇒ 未定性**：可能与参数（origin 落在体内部 / axis 与半径的组合）有关，**不猜。**
+
+## ⑥ ⚠ 本会话**第三次**犯同一个判定错
+探针把「期望的报错」记成失败（3 项）⇒ 加 `expect_error`。
+**⇒ 前两次：test_sw_surface_signature_contract / 曲面探针。**
+**⇒ 这次在探针里也写明了这条教训（免得第四次）。**
+
+## 验证
+- B 类探针 **12/12 通过**；曲面契约测试 **15 passed**（+1）
+- 四项门禁全 exit 0（含地图重生成 —— 加了新模块）
+- `compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 857 passed / 15 skipped**（+1，基线失败列表逐条相同）
