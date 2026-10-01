@@ -1,0 +1,56 @@
+{
+  "started": "2026-10-01 17:57:50",
+  "checks": {
+    "新建临时零件（不碰用户文档）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "造出 100x60x20 的板（有东西可拍）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "export_to_bmp(800x600) 未抛异常": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★ 文件存在且非空": {
+      "ok": true,
+      "detail": "1440054 字节"
+    },
+    "★★ **定量往返**：BMP 头里的尺寸 == 请求的 800x600": {
+      "ok": true,
+      "detail": "读回 (800, 600)（头 18/22 偏移，小端 int32）"
+    },
+    "★ 官方 Remarks：宽高 ≤ 0 ⇒ 按窗口尺寸（读回一个合理的正数）": {
+      "ok": true,
+      "detail": "读回 (1460, 1049)"
+    },
+    "★ 扩展名不是 .bmp ⇒ 明确拒绝": {
+      "ok": true,
+      "detail": "ValueError"
+    },
+    "★ 收尾无残留模态框（事实 64）": {
+      "ok": true,
+      "detail": "无"
+    }
+  },
+  "bmp": {
+    "path": "D:\\AI\\SW\\output\\smoke-view.bmp",
+    "bytes": 1440054,
+    "size": [
+      800,
+      600
+    ]
+  },
+  "bmp_window": {
+    "path": "D:\\AI\\SW\\output\\smoke-view-window.bmp",
+    "size": [
+      1460,
+      1049
+    ]
+  },
+  "passed": 8,
+  "total": 8,
+  "verdict": "pass",
+  "finished": "2026-10-01 17:57:51"
+}
