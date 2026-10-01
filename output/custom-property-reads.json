@@ -1,0 +1,66 @@
+{
+  "captured_at": "2026-10-02T07:10:02",
+  "steps": {
+    "part": {
+      "title": "零件10"
+    },
+    "managers": {
+      "model.Extension": "拿到对象",
+      "A_当属性取 Extension.CustomPropertyManager": "拿到的是 method（不是管理器）",
+      "B_把它当方法调用 CustomPropertyManager(\"\")": "★ 是管理器",
+      "C_直接带配置名调 Extension.CustomPropertyManager(\"\")": "★ 是管理器",
+      "D_Feature.CustomPropertyManager（官方示例那条）": "拿到的是 NoneType（不是管理器）"
+    },
+    "mgr_obtained": true,
+    "before_write": {
+      "Count": 28,
+      "GetNames": [
+        "Description",
+        "Weight",
+        "Material",
+        "质量",
+        "材料",
+        "单重",
+        "零件号",
+        "设计",
+        "审核",
+        "标准审查",
+        "工艺审查",
+        "批准"
+      ],
+      "★ Get(name)（单返回值）": "",
+      "★ Get6(name,False,'','')（两个 out）": "com_error: (-2147352571, '类型不匹配。', None, 3)",
+      "GetType2(name)": 0
+    },
+    "write": {
+      "ok": true,
+      "ret": 0,
+      "wrote": "DSH_ReadProbe = 'hello-from-probe'"
+    },
+    "after_write": {
+      "Count": 29,
+      "GetNames": [
+        "Description",
+        "Weight",
+        "Material",
+        "质量",
+        "材料",
+        "单重",
+        "零件号",
+        "设计",
+        "审核",
+        "标准审查",
+        "工艺审查",
+        "批准"
+      ],
+      "★ Get(name)（单返回值）": "hello-from-probe",
+      "★ Get6(name,False,'','')（两个 out）": "com_error: (-2147352571, '类型不匹配。', None, 3)",
+      "GetType2(name)": 30
+    },
+    "verdict_readback": {
+      "ok": true,
+      "read": "hello-from-probe",
+      "★": "先 Add3 再读回来 —— 读到才说明整条路通"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "captured_at": "2026-10-02T07:10:44",
+  "capability": "custom_property_read",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_custom_property_get": true,
+        "solidworks_custom_property_list": true
+      }
+    },
+    "part": {
+      "title": "零件11"
+    },
+    "readback": {
+      "ok": true,
+      "count_before": 28,
+      "count_after": 29,
+      "got": {
+        "name": "DSH_EvidenceProp",
+        "value": "evidence-value-133",
+        "type_code": 30,
+        "type": "text",
+        "editable": null
+      },
+      "wrote": {
+        "name": "DSH_EvidenceProp",
+        "value": "evidence-value-133",
+        "type_code": 30
+      },
+      "★": "先 Add3 再读回来 —— 读到才说明整条路通（本批补的正是「能写不能读」）"
+    },
+    "list_all": {
+      "ok": true,
+      "count_reported": 29,
+      "count_read": 29,
+      "wrote_visible": true,
+      "sample_names": [
+        "Description",
+        "Weight",
+        "Material",
+        "质量",
+        "材料",
+        "单重",
+        "零件号",
+        "设计"
+      ]
+    },
+    "negative_missing_name": {
+      "ok": true,
+      "got": {
+        "name": "DSH_NoSuchProp_XYZ",
+        "value": "",
+        "type_code": 0,
+        "type": "unknown",
+        "editable": null
+      },
+      "★": "官方 Get 对不存在的名字回空串 ⇒ 不抛异常是对的（不是静默失败，是原义如此）"
+    },
+    "negative_empty_name": {
+      "ok": true,
+      "msg": "name 不能为空"
+    }
+  },
+  "verdict": "pass"
+}

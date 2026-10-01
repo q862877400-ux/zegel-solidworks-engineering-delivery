@@ -1,0 +1,30 @@
+     ★ 2026-10-01（轮 227 / **Spec Kit `133` / 砌墙 W3**）· **十小时计划的第三批：读文件自定义属性**
+         ▶ **做了什么**：新增 `scripts/sw_custom_property.py`（能力层）与 `mcp-server/tool_specs_batch20.py`
+           （**2 个工具**：读一个 / 读全部）；工具数 **110 → 112** · 能力清单 **40 → 41** 条。
+         ★★★ **本批补的是一个真空白：「能写却不能读」** ——
+           `solidworks_set_custom_properties`（**写**）是上游工具、**早就在**，而能力层里
+           **没有任何"读文件自定义属性"的实现**（`sw_pdm` 那条路要 **PDM 许可证**）
+           ⇒ ★ **能写属性却读不回来验**。★ 而真机验证的第一条就是**先写再读回来**，直接对着它验。
+         ★★★ **真机探针又抓到我一个「假阳性判据」**（与事实 155「恒等于分母」同族）：
+           第一版判据 `not isinstance(v, (str,int,float))` **判不出 method 对象** ⇒
+           真机上 `mgr_obtained=true` 然后**每个读都** `AttributeError: 'function' object ...`
+           ⇒ ★ 修法：判据改成**行为**（`hasattr(obj,"Count")`）⇒
+             **定则：判据要用"行为"，不要用"类型"**。
+         ★★★★ **本轮最值钱的定则（新得出）**：
+           ★ **"官方标了 Obsolete 就换后继"这条不总对 —— 可用性判据是「封送形状」，
+             不是「代数新旧」**：`Get(name)` 虽标 Obsolete 但**单返回值** ⇒ **实测能读** ✓；
+             而更新的 `Get2..Get6` 带 **by-ref out** ⇒ 实测报 `类型不匹配 (-2147352571)`。
+             ⇒ ★ 本特性**故意用那个 Obsolete 的 `Get`**，理由写进 `spec.md` 的 R7 与代码注释。
+             ★ 同族先例：事实 8 / 33 / 47。
+         ★ **另两件**：`Extension.CustomPropertyManager` **必须当方法调用**（传配置名）——
+           当属性取只拿到 method 对象；而官方示例那条 `Feature.CustomPropertyManager` 实测回 `None`。
+         ▶ **验收（两条都绿）**：① `all_specs()` = **67**（65+2）✓ ② 真机
+           `output/custom-property-evidence.json` 的 `verdict == "pass"`（**决定性用例**：
+           `Add3` 写后 `count` 28→29 且**读回写入值** · `count_read == count_reported` ·
+           **2 负例**）✓ · 门禁链 8 条 exit 0 · 全量 **1274 passed / 0 failed**。
+         ★ **本批只有 2 个工具**：`count`/`names` 的结果**已被「读全部」包含** ⇒ 不重复挂（不追指标）。
+         ⚑ **限度**：① 只验了**默认配置** · ② `IsCustomPropertyEditable` **实测没读到** ⇒
+           结果里**如实留 `null`**，写进 limitations，**不假称能读** · ③ 保存类不做 ·
+           ④ **PDM 那一族不做**（需许可证，且官方 swapi 里 `IPDMDocument` **0 命中**）。
+         ▶ **队列续作**：W4 零件特征回读 → W5 检查/测量 → W6 装配 → W7 仿真载荷包装层（★护城河）。
+           ★ 可复用套路已增至 **9 条**。
