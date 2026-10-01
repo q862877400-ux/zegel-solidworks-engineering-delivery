@@ -1,0 +1,277 @@
+[
+  {
+    "iface": "IRefAxis",
+    "examples": [
+      "Get Info on Plane/Axis Example (C++ COM)",
+      "Get Selections for Reference Axis Feature Example (C#)"
+    ],
+    "verdict": "★ 有官方示例 ⇒ 有真实用法"
+  },
+  {
+    "iface": "IRefPlane",
+    "examples": [
+      "Get Info on Plane/Axis Example (C++ COM)",
+      "Get Plane On Which Sketch Created Example (VBA)",
+      "Get Plane or Face for Sketch Example (VBA)"
+    ],
+    "verdict": "★ 有官方示例 ⇒ 有真实用法"
+  },
+  {
+    "iface": "IRefPoint",
+    "examples": [
+      "Get Reference Point Data Example (VBA)"
+    ],
+    "verdict": "★ 有官方示例 ⇒ 有真实用法"
+  },
+  {
+    "iface": "ISimulationMotorFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IMotionStudyResults",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IAttributeDef",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ICalloutStringVariable",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ICollisionDetectionManager",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IComplexCornerTreatmentFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ICornerMember",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ICosmeticWeldBeadFolder",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IDragOperator",
+    "examples": [
+      "Rotate Assembly Component on Axis Using IDragOperator::DragAsUI Example (C#)",
+      "Rotate Assembly Component on Axis Using IDragOperator::DragAsUI Example (VBA)",
+      "Rotate Assembly Component on Axis Using IDragOperator::DragAsUI Example (VB"
+    ],
+    "verdict": "★ 有官方示例 ⇒ 有真实用法"
+  },
+  {
+    "iface": "IFamilyTableAnnotation",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IFeatureFolder",
+    "examples": [
+      "Get Contents of FeatureFolder Example (C#)",
+      "Get Contents of FeatureFolder Example (VB"
+    ],
+    "verdict": "★ 有官方示例 ⇒ 有真实用法"
+  },
+  {
+    "iface": "IFeatureStatistics",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IGeneralToleranceTableAnnotation",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IGraphicsBody",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IHelixFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IImportedCurveFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IInstanceToVaryOptions",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ILight",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ILinearCouplerMateFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IMeshBody",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IMotionPlotFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPMIDatumData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPMIDimensionData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPMIFrameData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPartialEdgeFilletData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPrimaryMemberFacePlaneIntersectionFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPrimaryMemberPathSegmentFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPrimaryMemberRefPlaneFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPrimaryStructuralMemberFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPunchTableAnnotation",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IReferenceCurve",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISMNormalCutGroupData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISecondaryMemberBetweenPointsFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISecondaryMemberSupportPlaneFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISecondaryMemberUpToMembersFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISecondaryStructuralMemberFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISheetMetalGaugeTableParameters",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISimpleCornerTreatmentFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISimulation3DContactFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ISimulationGravityFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ITabAndSlotGroupData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ITitleBlockTableAnnotation",
+    "examples": [
+      "Get Title Block Tables Example (C#)",
+      "Get Title Block Tables Example (VBA)",
+      "Get Title Block Tables Example (VB"
+    ],
+    "verdict": "★ 有官方示例 ⇒ 有真实用法"
+  },
+  {
+    "iface": "ITwoMemberCornerTreatmentFeatureData",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IAVIParameter",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "ICosmosMotionStudyProperties",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IMotionPlotFeatureOutput",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IMotionStudyProperties",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  },
+  {
+    "iface": "IPhysicalSimulationMotionStudyProperties",
+    "examples": [],
+    "verdict": "无示例 ⇒ 疑为数据/查询接口"
+  }
+]

@@ -1,0 +1,1383 @@
+{
+  "with_source": [
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IRefAxis",
+      "members": 3,
+      "families": 1,
+      "hit": 3,
+      "hit_members": [
+        "GetRefAxisParams",
+        "GetTempAxisReferenceFace",
+        "IsTempAxis"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 3,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Reference Geometry"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IRefPlane",
+      "members": 4,
+      "families": 1,
+      "hit": 4,
+      "hit_members": [
+        "BoundingBox",
+        "CornerPoints",
+        "GetRefPlaneParams",
+        "Transform"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 25,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_api_swdocumentmgr.py",
+        "tests/test_sw_view_contract.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Reference Geometry"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IRefPoint",
+      "members": 1,
+      "families": 1,
+      "hit": 1,
+      "hit_members": [
+        "GetRefPoint"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Reference Geometry"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISimulationMotorFeatureData",
+      "members": 20,
+      "families": 1,
+      "hit": 20,
+      "hit_members": [
+        "ConstantSpeedMotor",
+        "DirectionReference",
+        "DistanceMotor",
+        "DriveType",
+        "Expression",
+        "ExternalState",
+        "GetInterpolatedValue",
+        "InterpolatedMotor",
+        "InterpolationScheme",
+        "LoadReferences"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 6,
+      "gated_pct": 30,
+      "used_members": [],
+      "files": [
+        "scripts/cad_installation.py",
+        "scripts/sw_api_cosworks.py",
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    },
+    {
+      "domain": "全量索引/swmotionstudy",
+      "family": "IMotionStudyResults",
+      "members": 9,
+      "families": 1,
+      "hit": 9,
+      "hit_members": [
+        "GetAngularAcceleration",
+        "GetAngularVelocity",
+        "GetCMPosition",
+        "GetEulerAngles",
+        "GetForceFromMate",
+        "GetLinearAcceleration",
+        "GetLinearVelocity",
+        "GetTorqueFromMate",
+        "IsOutOfDate"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 9,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_swmotionstudy.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    }
+  ],
+  "without_source": [
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IAttributeDef",
+      "members": 7,
+      "families": 1,
+      "hit": 7,
+      "hit_members": [
+        "AddParameter",
+        "CreateInstance",
+        "CreateInstance2",
+        "CreateInstance3",
+        "CreateInstance4",
+        "CreateInstance5",
+        "Register"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 7,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Model Interfaces"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ICalloutStringVariable",
+      "members": 1,
+      "families": 1,
+      "hit": 1,
+      "hit_members": [
+        "String"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_simulation_study_options.py"
+      ],
+      "note": "",
+      "official_category": "Annotation Interfaces/IDisplayDimension"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ICollisionDetectionManager",
+      "members": 9,
+      "families": 1,
+      "hit": 9,
+      "hit_members": [
+        "CreateGroup",
+        "GetAssembly",
+        "GetCollisions",
+        "GetGroup",
+        "GetGroupCount",
+        "GraphicsRedrawEnabled",
+        "IsCollisionPresent",
+        "RemoveGroup",
+        "SetAssembly"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 8,
+      "gated_pct": 89,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Assembly Interfaces"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IComplexCornerTreatmentFeatureData",
+      "members": 9,
+      "families": 1,
+      "hit": 9,
+      "hit_members": [
+        "GetBodyTrimMembers",
+        "GetPlanarTrimMembers",
+        "GetTrimToolMember",
+        "PlanarTrimOption",
+        "PlanarTrimToolType",
+        "SetBodyTrimMembers",
+        "SetPlanarTrimMembers",
+        "SetTrimToolMember",
+        "UserDefinedTrimFaces"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 6,
+      "gated_pct": 67,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ICornerMember",
+      "members": 3,
+      "families": 1,
+      "hit": 3,
+      "hit_members": [
+        "GetUnderlyingMemberFeature",
+        "TrimOrder",
+        "WeldGap"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 33,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ICosmeticWeldBeadFolder",
+      "members": 11,
+      "families": 1,
+      "hit": 11,
+      "hit_members": [
+        "CostPerUnitMass",
+        "MassPerUnitLength",
+        "Material",
+        "NumberOfWeldPasses",
+        "Process",
+        "TimePerUnitLength",
+        "TotalCost",
+        "TotalLength",
+        "TotalMass",
+        "TotalNumber"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 9,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_cosworks.py",
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_delivery.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Folders"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IDragOperator",
+      "members": 25,
+      "families": 1,
+      "hit": 25,
+      "hit_members": [
+        "AddComponent",
+        "AddDynamicClearance",
+        "ApplyToThisConfiguration",
+        "BeginDrag",
+        "Clearance",
+        "CollisionDetection",
+        "CollisionDetectionEnabled",
+        "Drag",
+        "DragAsUI",
+        "DragCorrected"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 9,
+      "gated_pct": 36,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Assembly Interfaces"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IFamilyTableAnnotation",
+      "members": 2,
+      "families": 1,
+      "hit": 2,
+      "hit_members": [
+        "FamilyTableFeature",
+        "GetSheet"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 50,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Annotation Interfaces/Table Annotations"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IFeatureFolder",
+      "members": 2,
+      "families": 1,
+      "hit": 2,
+      "hit_members": [
+        "GetFeatureCount",
+        "GetFeatures"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 2,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_api_swdimxpert.py",
+        "scripts/sw_api_swdocumentmgr.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Folders"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IFeatureStatistics",
+      "members": 11,
+      "families": 1,
+      "hit": 11,
+      "hit_members": [
+        "FeatureCount",
+        "FeatureNames",
+        "FeatureTypes",
+        "FeatureUpdatePercentageTimes",
+        "FeatureUpdateTimes",
+        "Features",
+        "PartName",
+        "Refresh",
+        "SolidBodiesCount",
+        "SurfaceBodiesCount"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 9,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Others"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IGeneralToleranceTableAnnotation",
+      "members": 1,
+      "families": 1,
+      "hit": 1,
+      "hit_members": [
+        "GeneralToleranceTableFeature"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Annotation Interfaces/Table Annotations"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IGraphicsBody",
+      "members": 4,
+      "families": 1,
+      "hit": 4,
+      "hit_members": [
+        "GetBody",
+        "GetFacetCount",
+        "GetFacets",
+        "SurfaceFromMesh"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 4,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_api_swdocumentmgr.py"
+      ],
+      "note": "",
+      "official_category": "Model Interfaces"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IHelixFeatureData",
+      "members": 17,
+      "families": 1,
+      "hit": 17,
+      "hit_members": [
+        "AddLastRecord",
+        "Clockwise",
+        "DefinedBy",
+        "DeleteRecord",
+        "GetRegionParameterAtIndex",
+        "Height",
+        "InsertRecord",
+        "Pitch",
+        "PitchCount",
+        "ReverseDirection"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 5,
+      "gated_pct": 29,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_cosworks.py",
+        "scripts/sw_api_sldworks.py",
+        "subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Reference Geometry"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IImportedCurveFeatureData",
+      "members": 3,
+      "families": 1,
+      "hit": 3,
+      "hit_members": [
+        "Curves",
+        "GetCurveCount",
+        "SetBody"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 2,
+      "gated_pct": 67,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Reference Geometry"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IInstanceToVaryOptions",
+      "members": 13,
+      "families": 1,
+      "hit": 13,
+      "hit_members": [
+        "D1SpacingIncrement",
+        "D2SpacingIncrement",
+        "GetD1IncrementDimensions",
+        "GetD1ModifiedSpacingValue",
+        "GetD2IncrementDimensions",
+        "GetD2ModifiedSpacingValue",
+        "GetModifiedDimensions",
+        "GetModifiedInstances",
+        "ModifyD1SpacingValue",
+        "ModifyD2SpacingValue"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 11,
+      "gated_pct": 85,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Patterns and Mirroring"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ILight",
+      "members": 1,
+      "families": 1,
+      "hit": 1,
+      "hit_members": [
+        "GetID"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_api_swdocumentmgr.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Lights and Cameras"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ILinearCouplerMateFeatureData",
+      "members": 7,
+      "families": 1,
+      "hit": 7,
+      "hit_members": [
+        "CouplerRatioDenominator",
+        "CouplerRatioNumerator",
+        "MateEntity1",
+        "MateEntity2",
+        "ReferenceComponent1",
+        "ReferenceComponent2",
+        "Reverse"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Assembly Interfaces/Mates"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IMeshBody",
+      "members": 4,
+      "families": 1,
+      "hit": 4,
+      "hit_members": [
+        "GetBody",
+        "GetFacetCount",
+        "GetFacets",
+        "SurfaceFromMesh"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 4,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_api_swdocumentmgr.py"
+      ],
+      "note": "",
+      "official_category": "Model Interfaces"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IMotionPlotFeatureData",
+      "members": 4,
+      "families": 1,
+      "hit": 4,
+      "hit_members": [
+        "AddYAxis",
+        "GetXAxis",
+        "GetYAxis",
+        "Visibility"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 3,
+      "gated_pct": 75,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_api_swmotionstudy.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPMIDatumData",
+      "members": 3,
+      "families": 1,
+      "hit": 3,
+      "hit_members": [
+        "GetDatumFeature",
+        "GetDatumTarget",
+        "GetDatumType"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 3,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Annotation Interfaces"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPMIDimensionData",
+      "members": 3,
+      "families": 1,
+      "hit": 3,
+      "hit_members": [
+        "DimensionText",
+        "GetDimensionItemAtIndex",
+        "GetDimensionItemCount"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 2,
+      "gated_pct": 67,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Annotation Interfaces"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPMIFrameData",
+      "members": 6,
+      "families": 1,
+      "hit": 6,
+      "hit_members": [
+        "FrameNumber",
+        "GeometricCharacteristic",
+        "GetGtolBoxAtIndex",
+        "GetGtolBoxCount",
+        "GetGtolDatumAtIndex",
+        "GetGtolDatumCount"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 4,
+      "gated_pct": 67,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Annotation Interfaces"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPartialEdgeFilletData",
+      "members": 12,
+      "families": 1,
+      "hit": 12,
+      "hit_members": [
+        "AlongEdgeDirection",
+        "DistanceOffsetEnd",
+        "DistanceOffsetStart",
+        "EndCondition",
+        "PercentOffsetEnd",
+        "PercentOffsetStart",
+        "ReferenceOffsetEnd",
+        "ReferenceOffsetEndType",
+        "ReferenceOffsetStart",
+        "ReferenceOffsetStartType"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 8,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Fillets"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPrimaryMemberFacePlaneIntersectionFeatureData",
+      "members": 6,
+      "families": 1,
+      "hit": 6,
+      "hit_members": [
+        "GetIntersectingObjectTypes",
+        "GetIntersectingPlanesAndFaces",
+        "GetParameterFaces",
+        "MergeTangentMembers",
+        "SetIntersectingPlanesAndFaces",
+        "SetParameterFaces"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 5,
+      "gated_pct": 83,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPrimaryMemberPathSegmentFeatureData",
+      "members": 4,
+      "families": 1,
+      "hit": 4,
+      "hit_members": [
+        "GetPathSegments",
+        "GetPathSegmentsTypes",
+        "MergeTangentMembers",
+        "SetPathSegments"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 3,
+      "gated_pct": 75,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPrimaryMemberRefPlaneFeatureData",
+      "members": 9,
+      "families": 1,
+      "hit": 9,
+      "hit_members": [
+        "GetReferenceAxes",
+        "GetReferenceAxesTypes",
+        "GetReferenceLocations",
+        "GetReferenceLocationsTypes",
+        "GetStartAndEndReferences",
+        "GetStartAndEndReferencesTypes",
+        "SetReferenceAxes",
+        "SetReferenceLocations",
+        "SetStartAndEndReferences"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 9,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPrimaryStructuralMemberFeatureData",
+      "members": 1,
+      "families": 1,
+      "hit": 1,
+      "hit_members": [
+        "PrimaryMemberType"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IPunchTableAnnotation",
+      "members": 1,
+      "families": 1,
+      "hit": 1,
+      "hit_members": [
+        "PunchTable"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Annotation Interfaces/Table Annotations"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "IReferenceCurve",
+      "members": 6,
+      "families": 1,
+      "hit": 6,
+      "hit_members": [
+        "GetFirstSegment",
+        "GetNextSegment",
+        "GetSegmentCount",
+        "GetSegments",
+        "SetColor",
+        "SetVisible"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 6,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_drawing_view.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Reference Geometry"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISMNormalCutGroupData",
+      "members": 2,
+      "families": 1,
+      "hit": 2,
+      "hit_members": [
+        "Faces",
+        "GetGroupName"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 50,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Sheet Metal"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISecondaryMemberBetweenPointsFeatureData",
+      "members": 12,
+      "families": 1,
+      "hit": 12,
+      "hit_members": [
+        "DistanceMember1",
+        "DistanceMember2",
+        "GetMemberPairs",
+        "LengthRatioMember1",
+        "LengthRatioMember2",
+        "RevDirectionDistanceMember1",
+        "RevDirectionDistanceMember2",
+        "RevDirectionLengthRatioMember1",
+        "RevDirectionLengthRatioMember2",
+        "SecondaryMemberOffsetType"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 2,
+      "gated_pct": 17,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISecondaryMemberSupportPlaneFeatureData",
+      "members": 6,
+      "families": 1,
+      "hit": 6,
+      "hit_members": [
+        "GetIntersectingObjectTypes",
+        "GetIntersectingPlanesAndFaces",
+        "GetMemberPairs",
+        "SetIntersectingPlanesAndFaces",
+        "SetMemberPairs",
+        "UnChainMemberPairs"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 5,
+      "gated_pct": 83,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISecondaryMemberUpToMembersFeatureData",
+      "members": 12,
+      "families": 1,
+      "hit": 12,
+      "hit_members": [
+        "DistanceMember",
+        "GetFromPoint",
+        "GetFromPointMembers",
+        "GetPointMemberPairs",
+        "LengthRatioMember",
+        "MemberPointParametersType",
+        "RevDirectionDistanceMember",
+        "RevDirectionLengthRatioMember",
+        "SecondaryMemberOffsetType",
+        "SetFromPoint"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 6,
+      "gated_pct": 50,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISecondaryStructuralMemberFeatureData",
+      "members": 1,
+      "families": 1,
+      "hit": 1,
+      "hit_members": [
+        "SecondaryMemberType"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISheetMetalGaugeTableParameters",
+      "members": 16,
+      "families": 1,
+      "hit": 16,
+      "hit_members": [
+        "GetAvailableGaugeNumbers",
+        "GetAvailableRadii",
+        "GetCurrentGaugeNumber",
+        "GetCurrentRadius",
+        "GetGaugeNumberCount",
+        "GetGaugeTablePath",
+        "GetRadiiCount",
+        "GetThickness",
+        "OverrideRadius",
+        "OverrideThickness"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 12,
+      "gated_pct": 75,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_cosworks.py",
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Sheet Metal"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISimpleCornerTreatmentFeatureData",
+      "members": 5,
+      "families": 1,
+      "hit": 5,
+      "hit_members": [
+        "CornerTreatmentTrimType",
+        "PlanarTrimOption",
+        "PlanarTrimToolType",
+        "UserDefinedTrimFaces",
+        "WeldTrimGap"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISimulation3DContactFeatureData",
+      "members": 14,
+      "families": 1,
+      "hit": 14,
+      "hit_members": [
+        "ContactComponents",
+        "DynamicFrictionCoefficient",
+        "DynamicFrictionVelocity",
+        "Exponent",
+        "FrictionOption",
+        "MaterialID",
+        "MaxDamping",
+        "Penetration",
+        "RestitutionCoefficient",
+        "SpecifyMaterial"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ISimulationGravityFeatureData",
+      "members": 4,
+      "families": 1,
+      "hit": 4,
+      "hit_members": [
+        "Axis",
+        "DirectionReference",
+        "ReverseDirection",
+        "Strength"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_cosworks.py",
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ITabAndSlotGroupData",
+      "members": 21,
+      "families": 1,
+      "hit": 21,
+      "hit_members": [
+        "D1OffsetFromStart",
+        "D2OffsetFromEnd",
+        "Offset",
+        "SelectionEndReferencePoint",
+        "SelectionSlotFace",
+        "SelectionStartReferencePoint",
+        "SelectionTabEdge",
+        "SlotClearance",
+        "Spacing",
+        "SpacingNumberOfInstances"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Others"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ITitleBlockTableAnnotation",
+      "members": 1,
+      "families": 1,
+      "hit": 1,
+      "hit_members": [
+        "TitleBlockTableFeature"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Annotation Interfaces/Table Annotations"
+    },
+    {
+      "domain": "全量索引/sldworks",
+      "family": "ITwoMemberCornerTreatmentFeatureData",
+      "members": 6,
+      "families": 1,
+      "hit": 6,
+      "hit_members": [
+        "CornerTreatmentTrimType",
+        "GetCornerGroupMembers",
+        "MiterTrimPlanePoint",
+        "PlanarTrimOption",
+        "SwapMembers",
+        "WeldTrimGap"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 2,
+      "gated_pct": 33,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py"
+      ],
+      "note": "",
+      "official_category": "Feature Interfaces/Structure Systems"
+    },
+    {
+      "domain": "全量索引/swmotionstudy",
+      "family": "IAVIParameter",
+      "members": 15,
+      "families": 1,
+      "hit": 15,
+      "hit_members": [
+        "AspectRatio",
+        "BlurLength",
+        "BlurOffset",
+        "EndTime",
+        "FramePerSecond",
+        "ImageSize",
+        "MotionBlur",
+        "OutputType",
+        "PreserveRatio",
+        "RendererType"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 1,
+      "gated_pct": 7,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_cosworks.py",
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_api_swmotionstudy.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    },
+    {
+      "domain": "全量索引/swmotionstudy",
+      "family": "ICosmosMotionStudyProperties",
+      "members": 13,
+      "families": 1,
+      "hit": 13,
+      "hit_members": [
+        "AnimateDuringSimulation",
+        "ContactResolution3D",
+        "DeleteRedundantConstraints",
+        "ErrorTolerance",
+        "IntegratorAdaptivity",
+        "IntegratorType",
+        "JacobianEval",
+        "MakeAllMatesFlexible",
+        "MaxIterations",
+        "MaxStepSize"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_swmotionstudy.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    },
+    {
+      "domain": "全量索引/swmotionstudy",
+      "family": "IMotionPlotFeatureOutput",
+      "members": 2,
+      "families": 1,
+      "hit": 2,
+      "hit_members": [
+        "GetXAxis",
+        "GetYAxis"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 2,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_sldworks.py",
+        "scripts/sw_api_swmotionstudy.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    },
+    {
+      "domain": "全量索引/swmotionstudy",
+      "family": "IMotionStudyProperties",
+      "members": 2,
+      "families": 1,
+      "hit": 2,
+      "hit_members": [
+        "GetFrameRate",
+        "SetFrameRate"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 2,
+      "gated_pct": 100,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_swmotionstudy.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    },
+    {
+      "domain": "全量索引/swmotionstudy",
+      "family": "IPhysicalSimulationMotionStudyProperties",
+      "members": 2,
+      "families": 1,
+      "hit": 2,
+      "hit_members": [
+        "GeometricAccuracy",
+        "MateAccuracy"
+      ],
+      "missing_members": [],
+      "pct": 100,
+      "used": 0,
+      "used_pct": 0,
+      "gated": 0,
+      "gated_pct": 0,
+      "used_members": [],
+      "files": [
+        "scripts/sw_api_swmotionstudy.py"
+      ],
+      "note": "",
+      "official_category": "Motion Studies"
+    }
+  ]
+}
