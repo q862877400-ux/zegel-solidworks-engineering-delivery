@@ -1,0 +1,60 @@
+{
+  "started": "2026-10-01 16:49:40",
+  "checks": {
+    "新建临时零件（不碰用户文档）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "start_sketch": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "sketch_circle(半径 25，**未做换算**)": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "end_sketch": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "extrude_boss(10)": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★★ 半径 25 的圆 ⇒ 边界框跨度 **50** ⇒ 输入单位就是**毫米**": {
+      "ok": true,
+      "detail": "实测 size=[10.0, 50.0, 50.0]（若单位是「米」这里会是 50000 量级）"
+    },
+    "（新件）start_sketch": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★ sketch_ellipse（长半轴 40 / 短半轴 20）": {
+      "ok": true,
+      "detail": "返回 CDispatch · 0.20s"
+    },
+    "★★ 往返：`get_ellipses` 读回**至少 1 个**椭圆": {
+      "ok": true,
+      "detail": "读回 22 个（轮 117 时是 0 —— 那时没画）"
+    },
+    "end_sketch（椭圆那个件）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★ 收尾无残留模态框（已知事实 64 的检查）": {
+      "ok": true,
+      "detail": "无"
+    }
+  },
+  "circle_bbox_mm": [
+    10.0,
+    50.0,
+    50.0
+  ],
+  "ellipse_created": true,
+  "ellipses_read_back": 22,
+  "passed": 11,
+  "total": 11,
+  "verdict": "pass",
+  "finished": "2026-10-01 16:49:46"
+}
