@@ -1,0 +1,456 @@
+{
+  "interfaces": 507,
+  "inout_array_params": [
+    {
+      "iface": "IBody2",
+      "member": "GetMiddleSurface",
+      "param": "Face1List",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "IBody2",
+      "member": "GetMiddleSurface",
+      "param": "Face2List",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "IBody2",
+      "member": "GetMiddleSurface",
+      "param": "Thickness",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "IBody2",
+      "member": "IGetMiddleSurface",
+      "param": "Face1List",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "IBody2",
+      "member": "IGetMiddleSurface",
+      "param": "Face2List",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "IBody2",
+      "member": "IGetMiddleSurface",
+      "param": "Thickness",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "IBomFeature",
+      "member": "GetConfigurations",
+      "param": "Visible",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "IConfiguration",
+      "member": "GetCustomProperties",
+      "param": "PropNames",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "IConfiguration",
+      "member": "GetCustomProperties",
+      "param": "PropValues",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "IConfiguration",
+      "member": "GetCustomProperties",
+      "param": "PropTypes",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ICurve",
+      "member": "FindMinimumRadius",
+      "param": "Radius",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ICurve",
+      "member": "FindMinimumRadius",
+      "param": "Location",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ICurve",
+      "member": "FindMinimumRadius",
+      "param": "Parameter",
+      "argtype": "LP_tagVARIANT",
+      "index": 4
+    },
+    {
+      "iface": "ICurve",
+      "member": "IFindMinimumRadius",
+      "param": "Radius",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ICurve",
+      "member": "IFindMinimumRadius",
+      "param": "Location",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ICurve",
+      "member": "IFindMinimumRadius",
+      "param": "Parameter",
+      "argtype": "LP_tagVARIANT",
+      "index": 4
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll",
+      "param": "PropNames",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll",
+      "param": "PropTypes",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll",
+      "param": "PropValues",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll2",
+      "param": "PropNames",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll2",
+      "param": "PropTypes",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll2",
+      "param": "PropValues",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll2",
+      "param": "Resolved",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll3",
+      "param": "PropNames",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll3",
+      "param": "PropTypes",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll3",
+      "param": "PropValues",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll3",
+      "param": "Resolved",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ICustomPropertyManager",
+      "member": "GetAll3",
+      "param": "PropLink",
+      "argtype": "LP_tagVARIANT",
+      "index": 4
+    },
+    {
+      "iface": "IFeature",
+      "member": "GetBox",
+      "param": "BBox",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "IModelDocExtension",
+      "member": "GetSearchData",
+      "param": "AppNames",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "IModelDocExtension",
+      "member": "GetSearchData",
+      "param": "NodeNames",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "IModelDocExtension",
+      "member": "GetSearchData",
+      "param": "NodeValues",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "IModeler",
+      "member": "CheckInterference3",
+      "param": "Body1InterferedFaceArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "IModeler",
+      "member": "CheckInterference3",
+      "param": "Body2InterferedFaceArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 4
+    },
+    {
+      "iface": "IModeler",
+      "member": "CheckInterference3",
+      "param": "IntersectedBodyArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 5
+    },
+    {
+      "iface": "INote",
+      "member": "GetBendLineValues2",
+      "param": "Points",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PackVariant",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutLongLong",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutDispatch",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutBstr",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutBoolean",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutByte",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutLong",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutDouble",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutShort",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutUNKNOWN",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISketchBlockInstance",
+      "member": "GetAttachedEntities",
+      "param": "Entities",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISketchBlockInstance",
+      "member": "GetAttachedEntities",
+      "param": "EntityTypes",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "ISurface",
+      "member": "IntersectSurface",
+      "param": "CurveArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 1
+    },
+    {
+      "iface": "ISurface",
+      "member": "IntersectSurface",
+      "param": "BoundsArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ISurface",
+      "member": "IntersectCurve",
+      "param": "PointArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ISurface",
+      "member": "IntersectCurve",
+      "param": "TArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ISurface",
+      "member": "IntersectCurve",
+      "param": "UvArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 4
+    },
+    {
+      "iface": "ISurface",
+      "member": "IntersectCurve2",
+      "param": "PointArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 2
+    },
+    {
+      "iface": "ISurface",
+      "member": "IntersectCurve2",
+      "param": "TArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ISurface",
+      "member": "IntersectCurve2",
+      "param": "UvArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 4
+    },
+    {
+      "iface": "ISurface",
+      "member": "FindMinimumRadius",
+      "param": "Radius",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ISurface",
+      "member": "FindMinimumRadius",
+      "param": "Location",
+      "argtype": "LP_tagVARIANT",
+      "index": 4
+    },
+    {
+      "iface": "ISurface",
+      "member": "FindMinimumRadius",
+      "param": "UVParameter",
+      "argtype": "LP_tagVARIANT",
+      "index": 5
+    },
+    {
+      "iface": "ISurface",
+      "member": "IFindMinimumRadius",
+      "param": "Radius",
+      "argtype": "LP_tagVARIANT",
+      "index": 3
+    },
+    {
+      "iface": "ISurface",
+      "member": "IFindMinimumRadius",
+      "param": "Location",
+      "argtype": "LP_tagVARIANT",
+      "index": 4
+    },
+    {
+      "iface": "ISurface",
+      "member": "IFindMinimumRadius",
+      "param": "UVParameter",
+      "argtype": "LP_tagVARIANT",
+      "index": 5
+    }
+  ],
+  "called_hits": [
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PackVariant",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    },
+    {
+      "iface": "ISafeArrayUtility",
+      "member": "PutDouble",
+      "param": "VariantArray",
+      "argtype": "LP_tagVARIANT",
+      "index": 0
+    }
+  ],
+  "called_members": 496
+}

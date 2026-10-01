@@ -1,0 +1,39 @@
+**用第 4 套签名源（类型库**方向**信息）复核既有 byref 规则 ⇒ 负结果：规则无害，但机制性反例存在** —— 2026-10-01（轮 189）。
+
+★★ **起因（一个**有机制**的假设）**：`scripts/audit_byref_args.py` 的口径写的是
+> `Int32&` **算**一个（必须传），`Object&` / `Variant&` / `Dispatch&` **不算**（纯出参，不用传）
+
+★ 这条**来自反射文本**，而反射的 `&` **只说明"按引用"、不区分方向** ⇒
+「`Object&` 是否真的"纯出参"」原本是**假设**。而轮 188 用**类型库方法表**（第 4 套源）发现它**给方向**，
+且 `ISafeArrayUtility.PutDouble(VariantArray = **in,out**)` 是一个**必须传**的数组形参
+⇒ ★★ 机制上成立：**那条口径会漏掉 `in,out` 的数组形参**。
+
+★★★ **实测（`tools/audit_inout_array_params.py`，纯静态）**：
+```
+扫了 **507** 个接口
+含 `in,out` 数组类形参（VARIANT / LP_tagVARIANT / POINTER(IDispatch) / POINTER(IUnknown)）的成员 = **62** 条记录
+去重后 = **29** 对 (成员, 接口)，例：IBody2.GetMiddleSurface · IFeature.GetBox ·
+        ICustomPropertyManager.GetAll/GetAll2/GetAll3 · IBomFeature.GetConfigurations …
+★★ 而**本仓库生产代码按字面量调用过的 = 0**
+   （唯一命中的 2 个 `PackVariant` / `PutDouble` 只出现在探针 `tools/probe_safearray_utility.py` 里）
+★ 把检查面**扩大**到「全仓库 · 排除探针/登记表/测试/生成物 · 连点调用也算」⇒ **仍然 0 命中**
+⇒ ★★★ **那条口径在实践中**目前**无害** —— 不是因为它对，而是因为**我们还没碰那 29 对成员**。
+```
+
+★★★ **顺手抓到一处**源间方向分歧**（铁律 4 的具体实例）**：
+```
+同一个 `PutDouble` 的 VariantArray：
+  · swapi md   : `out`        （"void PutDouble( out System.object VariantArray, …)"）
+  · 反射文本   : `Object&`    （只说明按引用，**无方向**）
+  · 类型库     : **`in,out`** （comtypes flag=3；同表里 `GetInfo` 的 Count/Type 是 flag=10=out ⇒ 它**确实在区分**）
+  · 实测(轮188): 传**全新** `VARIANT()` ⇒ **没回写** ⇒ 与 **`in,out`** 一致（需要**已有的**数组才追加）
+⇒ ★ 按**铁律 4**（冲突以**出厂类型库**为准）⇒ **类型库赢**，md 的 `out` 是**简化措辞**。
+```
+
+★ **产出**：
+* `tools/audit_inout_array_params.py`（纯静态；清单落 `output/inout-array-params.json`）；
+* 已把上面这段**写回 `scripts/audit_byref_args.py` 的口径段**（★ 让那条规则从**假设**变成**被查证过**）；
+* ★ **将来若要调那 29 对成员**（它们**必须先传一个已构造的数组**），**先查那张清单**，按 `in,out` 语义传数组。
+
+**依据**：`tools/audit_inout_array_params.py`；`D:/AI/SW/output/inout-array-params.json`；
+`D:/Program Files/SOLIDWORKS Corp/SOLIDWORKS/sldworks.tlb`；`scripts/audit_byref_args.py` 的口径段；事实 68 / 126 / 128
