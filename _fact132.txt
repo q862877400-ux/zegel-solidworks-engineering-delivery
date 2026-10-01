@@ -1,0 +1,33 @@
+**门禁明细的**首行**必须自带分母 —— 而我的「有没有分母」判据本身区分不了分母与编号** —— 2026-10-01（轮 192）。
+
+★ **起因**：闭合轮 191 自己写的限度（「有些门禁的 pass 分支不打印 `output` ⇒ 明细较薄」）。
+★★ **第一版度量（只看**首行**）⇒ 报「5 道没有分母」**：`negative_input_selfproof` ·
+`report_criteria_alignment` · `report_freshness` · `signature_audit_freshness` · `spec_acceptance_paths`。
+⚠⚠ **而按**全文**重量 ⇒ **0 道**没有分母** —— 那 5 道的分母**都在第二行**（例：`report_criteria_alignment`
+  的第二行就写着「权威判据 **N** 条」）⇒ ★ **上一轮那句"明细较薄"是我**首行判据的假阳性**。
+
+★★★ **而那暴露了真问题**：**读者（和我）只看首行** —— 本轮我就因为只看首行而误判了一次
+⇒ ★ 所以该改的不是"让门禁写更多"，而是**让首行承担它该承担的**（分母在手边，只是没提到首行）。
+
+**改动（5 处首行 + 1 处汇总）**：
+```
+negative_input_selfproof   → 「扫 …/tools（**102** 个 .py）」
+report_criteria_alignment  → 「权威来自 AGENTS.md §一（权威判据 **10** 条）」
+report_freshness           → 「harvest-report.md（比对 **4** 个字段：文件/新增/删除/提交）」
+signature_audit_freshness  → 「signature-audit.md（文档列了 **6** 个模块，逐个实跑比对）」
+spec_acceptance_paths      → 「扫 D:/AI/SW/specs（**423** 处 `→ 验收:` 行）」
+union_conventions          → 新增首行「并入规范门禁 · **7** 段检查（规则 5、…、R14）」
+   ⚠ 它原来首行是 `[PASS] 规则 5 · 出处与许可` ⇒ **只看首行会以为它只查了"规则 5"**
+⇒ 改后实测：**16 道门禁，首行没有分母的 = 0 道**
+```
+
+⚠⚠⚠ **而必须记下这条判据的**极限****：
+```
+我的判据是「首行里有没有 \d」——
+★ 而 `union_conventions` 改前的首行 `[PASS] 规则 5 · 出处与许可` **含数字 `5`** ⇒ 判据判它"有分母"，
+  而那个 `5` **是规则编号、不是分母**。
+⇒ ★★ **`\d` 区分不了「分母」与「编号」** ⇒ 本判据**只能当粗筛**，不能当结论。
+★ 如实记（**不假装判据比它实际更强** —— 否则下一个人会以为"首行有数字"就等于"报清了覆盖面"）。
+```
+
+**依据**：`scripts/check_{negative_input_selfproof,report_criteria_alignment,report_freshness,signature_audit_freshness,spec_acceptance_paths,union_conventions}.py`；事实 130 / 131
