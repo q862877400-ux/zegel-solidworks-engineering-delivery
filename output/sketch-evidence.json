@@ -1,0 +1,46 @@
+{
+  "captured_at": "2026-10-02T03:00:24",
+  "capability": "sketch_query",
+  "steps": {
+    "part": {
+      "ok": true,
+      "title": "零件6"
+    },
+    "sketch": {
+      "ok": true,
+      "name": "草图1",
+      "closed": true
+    },
+    "resolve": {
+      "ok": true,
+      "by_name_on_closed_sketch": true,
+      "by_blank_on_closed_sketch": true,
+      "★ 说明": "草图已关闭仍可取到 ⇒ 与探针结论一致（GetActiveSketch2/ActiveSketch 此时为 None）"
+    },
+    "readings": {
+      "ok": true,
+      "got": {
+        "count_lines": 1,
+        "count_arcs": 1,
+        "count_segments": 2,
+        "is_3d": false
+      },
+      "want": {
+        "count_lines": 1,
+        "count_arcs": 1,
+        "count_segments": 2,
+        "is_3d": false
+      }
+    },
+    "negative_bad_name": {
+      "ok": true,
+      "raised": "RuntimeError",
+      "msg": "取不到草图：试过 ['不存在的草图_XYZ']；特征树里也没找到以 Sketch/草图 开头的特征"
+    },
+    "negative_divisor": {
+      "ok": true,
+      "msg": "fake 的返回值长度 13 **不是 12 的整数倍** —— 官方返回结构可能变了；★ 不要圆整，先查 `tools/probe_sketch_getter"
+    }
+  },
+  "verdict": "pass"
+}

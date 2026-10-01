@@ -5751,6 +5751,48 @@
             721 ▶ **队列续作**：A7（`sw_surface` 先定"返回值跨次会变"的行为再挂）· A8（裸坐标→声明式
                selection 的包装层，子代理 `simscan` 正在调研）· A9（把"可注入 34"扫完）· A10（第二类可挂形态）。
                ⚑ 累计：MCP 声明 **58** · 柜台（地图）**96** · 孤立能力 **285** · Spec Kit **130** · known-facts **151**。
+     ★ 2026-10-01（轮 222 / **Spec Kit `131` / 砌墙 W1**）· **十小时计划的第一批：草图只读查询挂成工具**
+         ▶ **做了什么**：`scripts/sw_sketch.py` 加 `sketch_by_name` / `resolve_sketch` /
+           `count_lines` / `count_arcs` / `count_segments` + 常量 `ELEMS_PER_LINE`/`ELEMS_PER_ARC`；
+           新增 `mcp-server/tool_specs_batch18.py`（**4 个只读工具，全声明式**）并注册。
+           工具数 **103 → 107** · ③草图能力面 **62 → 66**。
+         ★★★ **A 与 B 配对（本阶段核心判据）当场付了回报 —— 真机验证抓到两件事，静态门禁一件都没抓到**：
+           当时状态：门禁全绿 · sync 306 · pytest 1274 passed · 62 个工具全部挂载成功
+           ⇒ ★ **然后第一次真机调用就失败**。
+           ① ★ **真 bug**：`sw_part.current_sketch_name` 在**草图已关闭**时回**英文 fallback**
+              「Sketch1」，而中文 UI 下真名是「草图1」⇒ **必然找不到**。
+              ⇒ 新增 `resolve_sketch`（中英文候选名 → 特征树兜底 → 抛错）。
+           ② ★ **我的判据错了**：我以为"画 1 个圆"就不该有弧 ⇒ 断言 `count_arcs == 0`；
+              而**一个圆在 SolidWorks 底层几何里就是一段弧（整圆）**⇒ `1` 才是对的
+              （佐证：`count_segments == 2` 且 `count_lines == 1`）。
+              ⇒ **改正期望值（不是放宽判据）** + 把「整圆算一段弧」写进工具说明。
+              这已是"**判据自己会错**"这个家族在本会话的第 N 次。
+         ★★ **包装层的形状是**真机探针**定的，不是设计出来的**：
+           `tools/probe_sketch_object_routes.py` 实测 —— `GetActiveSketch2` 与 `ActiveSketch`
+           在**草图关闭后都是 `None`**，只有**按名取**（`FeatureByName` → `GetSpecificFeature2`）还活着；
+           而调用方的实际用法（"草图建完了看看里面有什么"）**恰恰发生在关闭之后**
+           ⇒ 若照命名直觉写成 A/B，会做出 4 个"只在草图打开时能用"的工具。
+         ★★ **"只回读数的薄函数"的理由也被实测改写了**：我原以为是"COM 对象过不了 JSON"，
+           实测是 `get_lines`/`get_arcs` **返回数值数组**（每条线 12 个 float / 弧 16 个）
+           ⇒ AI 拿回 36 个浮点数**判断不出"几条线"** ⇒ 薄函数把它翻译成**条数**。
+           ★ 除数有真机证据（`output/sketch-getter-shapes.json`）；长度不整除 ⇒ **抛错，不圆整**。
+         ★ **不用 `extra_op`**：查过 `batch1` 当初不用的原因是「加了 `inject` 之后就不需要了」，
+           不是它有问题 ⇒ 沿用「能力落 `scripts/`、工具声明只做参数搬运」。
+         ★ **注册机制上的三个决定**（都有依据，写进了 `specs/131` 的 plan.md）：
+           `inject` **不设**（默认 `''`）—— 目标函数要 `sketch` 不是 `model`，设了会把 model 当第一个
+           位置参数传 ⇒ `TypeError`；`param_alias` 标记 `sketch_name` 由 `derived_args` 消费；
+           `model` 由 `derived_args` **自己连一次**取（照 `batch4::_model`）。
+         ▶ **验收（两条都绿）**：① 静态 `all_specs() == 62` ✓
+           ② ★ 真机 `output/sketch-evidence.json` 的 `verdict == "pass"`，**且含 2 个负例命中**
+           （坏名字抛错 / 除数不整除抛错）✓ · 门禁链 8 条 exit 0 · 全量 **1274 passed / 0 failed**。
+         ⚑ **限度**：① 本批**没跑**草图的写操作（加几何/约束/尺寸）· ② `sw_sketch` 还有 **21 个**
+           只读函数没挂（同型，照本批包装层可直接扩展）· ③ `current_sketch_name` 的 fallback
+           行为**本身没改**（本批用 `resolve_sketch` 包住它，改它要动既有调用点，建议单独开特性）。
+         ▶ **队列续作**：W2 工程图族（`specs/132`，缺口最大、先只读）· W3 会话/文档 ·
+           W4 零件特征（取回读）· W5 检查/测量 · W6 装配 · W7 仿真载荷包装层（★护城河，四家 0 个）。
+           ★ 可复用套路已写进 `specs/131-sketch-query-batch/converge.md` 第五节：
+           **先写真机探针回答"对象怎么取" → 能力落 `scripts/` → 证据走工具真实路径 → 证据必带负例
+           → ★ 期望值本身也要被怀疑**。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
