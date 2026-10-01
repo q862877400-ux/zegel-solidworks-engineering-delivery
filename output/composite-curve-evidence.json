@@ -1,0 +1,39 @@
+{
+  "started": "2026-10-01 18:19:35",
+  "checks": {
+    "新建临时零件（不碰用户文档）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★★ **真的数**：特征树里有 **2** 个草图": {
+      "ok": false,
+      "detail": "实际 1 个（⚠ 第一版这里硬编码 True ⇒ 不可能失败）"
+    },
+    "★★ 用 **mark=1** 各选一次（官方 Remarks）": {
+      "ok": true,
+      "detail": "草图2=True · 草图1=True"
+    },
+    "insert_composite_curve": {
+      "ok": true,
+      "detail": "返回 False —— ⚑ **前提未满足，属应然**（草图数 = 1）；⚠ **这条后端上「能不能建成」仍未查明**"
+    },
+    "⚑ ★★ 读回 `GetEntitiesToJoinCount()`（**不可达就如实标**）": {
+      "ok": true,
+      "detail": "拿不到：TypeError: 'NoneType' object is not callable ⇒ 标为**不可达**（同轮 143 的 IDomeFeatureData2 那一族）"
+    },
+    "★ 特征树**能用**（`GetFeatureCount` 是属性）": {
+      "ok": true,
+      "detail": "20 个"
+    },
+    "★ 收尾无残留模态框（事实 64）": {
+      "ok": true,
+      "detail": "扫了 49 个窗口 · 无模态框"
+    }
+  },
+  "sketch_count": 1,
+  "entities_to_join": null,
+  "passed": 6,
+  "total": 7,
+  "verdict": "fail",
+  "finished": "2026-10-01 18:19:37"
+}
