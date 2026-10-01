@@ -1,0 +1,58 @@
+{
+  "steps": [
+    {
+      "step": "新建后 GetFrameCount",
+      "count": 1
+    },
+    {
+      "step": "新建后 AddFrame()【旧顺序】",
+      "ret": false
+    },
+    {
+      "step": "新建后 GetFrame(0)",
+      "got": "（见下）"
+    },
+    {
+      "step": "CanConvertFormat()",
+      "ret": true
+    },
+    {
+      "step": "★ ConvertFormat()【先转换】",
+      "ret": 0
+    },
+    {
+      "step": "转换后 GetFrameCount",
+      "count": 0
+    },
+    {
+      "step": "★★ AddFrame()【转换之后】",
+      "ret": true
+    },
+    {
+      "step": "加帧后 GetFrameCount",
+      "count": 2
+    },
+    {
+      "step": "★★ GetFrame(0..3)",
+      "frames": [
+        "None",
+        "有",
+        "有",
+        "None"
+      ]
+    },
+    {
+      "step": "★★★ IGtolFrame.AddIndicator(0,0,'A')",
+      "ret": false
+    }
+  ],
+  "insert_gtol_ok": true,
+  "frames": [
+    "None",
+    "有",
+    "有",
+    "None"
+  ],
+  "add_indicator_ok": false,
+  "modal_dialogs": []
+}

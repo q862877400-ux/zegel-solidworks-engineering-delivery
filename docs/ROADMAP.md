@@ -3854,6 +3854,50 @@
                下轮候选：① 给 `sketch_mirror` / `convert_entities` 各自取证（补上 `sketch_edit_ops` 的另一半）；
                ② 顺 `com_error 0x80010105` 这个线索回查：**还有哪些能力是被"只看异常"误判的**？
                ③ 回到「真缺」继续补。
+           489 🎯 **Spec Kit `085`：★ 「帧取不到」是****顺序问题**** —— `ConvertFormat()` 必须先于 `AddFrame()`**（轮 165）——
+               线索：轮 164 更正 `CreateChamfer` 的误判后，顺 `0x80010105` 回查
+               「**还有哪些能力是被『只看异常』误判的**」。
+               ⚠ 我第一版扫描判据（按「附近有没有回读字样」）⇒ **73 处命中、大多假阳性**
+               （门禁自己的措辞 / 参数校验 / 官方 Remarks 引文）⇒ ★ **又是"邻近文本"式，弃用**。
+            490 ★ **先核实那条值得动手的**（`geometric_tolerance`，`stitched` 之一）：
+               它说「我们在 SW 2026，那条路**不可用**」—— ★ 而它的依据是**官方 Remarks 原文**
+               （`SetFrameSymbols2` > "valid only if … earlier than 2022"），
+               且「到不了」那半**回读了状态**（`GetFrameCount` 1 → 0 · `GetFrame` 全 None）
+               ⇒ ★★ **所以它本来就不是误判 —— 我的扫描误报了它**（已如实记）。
+            491 ★★★ **但**它自己写的「未查证」里藏着真因****：轮 120 的顺序是
+               `AddFrame()`（False）→ `ConvertFormat()`（成功）→ `GetFrame()`（None）。
+               ★ 读官方 `IGtol.AddFrame` 的 Remarks **原文**：
+               > This method is valid only if this Gtol was created in SOLIDWORKS **2022 or later**.
+               ⇒ 新建的 Gtol **默认是旧格式** ⇒ `AddFrame()` 在**转换前**调用**必然 False**
+               ⇒ ★★★ **正确顺序：先 `ConvertFormat()` → 再 `AddFrame()` → 再 `GetFrame(n)`**。
+            492 ★★ **实测**（`tools/probe_gtol_frame_order.py`）：
+               ```
+               新建后 AddFrame()【旧顺序】   ⇒ **False**
+               ConvertFormat()              ⇒ 0（成功）
+               ★★ AddFrame()【转换之后】     ⇒ **True**     ← ★★★ 旧顺序下是 False
+                  加帧后 GetFrameCount      ⇒ **2**
+               ★★ GetFrame(0..3)            ⇒ ['None', '有', '有', 'None']  ← **拿到对象了**
+               ★★★ AddIndicator(0,0,'A')    ⇒ **False**     ← ⚠ 这一层仍未通
+               ```
+               ★ 已修 `ensure_gtol_frame`（先转换再加帧）+ 改掉两句**已过时**的报错
+                 （`GetFrame` / `AddIndicator` 那两句都不再说「不是 2022 格式」—— **我们确实转换过了**）。
+            493 ★★★ **「顺序问题」第二次被误判成「做不到」**：
+               ```
+               事实 104（轮 164）：CreateChamfer —— 把「**返回值拿不到**」读成「**接口到不了**」
+               事实 105（轮 165）：AddFrame      —— 把「**顺序不对**」读成「**帧取不到**」
+               ⇒ ★★ 两次的共同点：**我试的是这个 API 的一种用法，
+                 却把结论写成了这个 API 的性质。**
+               ⇒ ★ 可复用的问句：**「我试的是这个 API 的哪一种用法？」** —— 问完再决定要不要写「做不到」。
+               ```
+            494 ⚠ `geometric_tolerance` **仍为 `stitched`**（3/5）—— ★ **没有**因为"帧通了"就升它：
+               `AddIndicator` 那半仍未通。
+               ⚑ **未查证**：⚠ `IGtolFrame.AddIndicator(Int32, Int32, String)` **仍返回 False**
+                 ⇒ 参数/前置未查明（★ 但**不再**是「帧取不到」）；⚠ 未试 `SetSymbolXml`（XML 路径）；
+                 ⚠ 我那个「按邻近文本扫误判」的判据**已弃用，未接进任何门禁**。
+               能力 **38** 条（verified **32**）· 门禁 + `release_check` exit 0 · 回归 **1246 passed**。
+               下轮候选：① 查 `AddIndicator` 的参数/前置（**先读官方 Remarks**，别再猜）；
+               ② 顺同一线索查 `surface_modeling` / `mold_tools`（那两条 `stitched` **连 evidence 都没有**）；
+               ③ 回到「真缺」继续补。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
