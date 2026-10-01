@@ -1,0 +1,95 @@
+{
+  "captured_at": "2026-10-02T07:51:58",
+  "capability": "assembly_read",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_assembly_list_components": {
+          "resolved": true,
+          "inject": "asm_model"
+        },
+        "solidworks_assembly_list_mates": {
+          "resolved": true,
+          "inject": "model"
+        },
+        "solidworks_assembly_check_interference": {
+          "resolved": true,
+          "inject": "asm_model"
+        }
+      }
+    },
+    "fixture": {
+      "saved": true,
+      "path": "D:\\AI\\SW\\output\\_fixtures\\dsh_asm_fixture_40x20x10.SLDPRT",
+      "★": "★ 只写进 output/_fixtures/（临时夹具），不碰用户目录"
+    },
+    "overlap_case": {
+      "ok": true,
+      "tag": "overlap",
+      "n_components": 2,
+      "components": [
+        {
+          "name": "dsh_asm_fixture_40x20x10-2",
+          "path": "D:\\AI\\SW\\output\\_fixtures\\dsh_asm_fixture_40x20x10.SLDPRT",
+          "suppressed": false,
+          "visible": 1
+        },
+        {
+          "name": "dsh_asm_fixture_40x20x10-1",
+          "path": "D:\\AI\\SW\\output\\_fixtures\\dsh_asm_fixture_40x20x10.SLDPRT",
+          "suppressed": false,
+          "visible": 1
+        }
+      ],
+      "interference": {
+        "status": "warn",
+        "interference_count": 1,
+        "items": [
+          {
+            "index": 0,
+            "volume": 7999.999999999999,
+            "component_count": 2
+          }
+        ],
+        "manual_review_required": true
+      },
+      "n_mates": 1,
+      "★": "★ 两个组件**重叠** ⇒ 期望 status=warn 且 count>=1"
+    },
+    "apart_case": {
+      "ok": true,
+      "tag": "apart",
+      "n_components": 2,
+      "components": [
+        {
+          "name": "dsh_asm_fixture_40x20x10-1",
+          "path": "D:\\AI\\SW\\output\\_fixtures\\dsh_asm_fixture_40x20x10.SLDPRT",
+          "suppressed": false,
+          "visible": 1
+        },
+        {
+          "name": "dsh_asm_fixture_40x20x10-2",
+          "path": "D:\\AI\\SW\\output\\_fixtures\\dsh_asm_fixture_40x20x10.SLDPRT",
+          "suppressed": false,
+          "visible": 1
+        }
+      ],
+      "interference": {
+        "status": "pass",
+        "interference_count": 0,
+        "items": [],
+        "manual_review_required": false
+      },
+      "n_mates": 1,
+      "★": "★ 两个组件**分开** ⇒ 期望 status=pass 且 count==0"
+    },
+    "discriminates": {
+      "ok": true,
+      "overlap_count": 1,
+      "apart_count": 0,
+      "★": "★★ **两个场景给出不同的数**才说明判据在**看几何**；都回 0 ⇒ 仍是静默降级；都回 warn ⇒ 判据不对"
+    }
+  },
+  "verdict": "pass"
+}
