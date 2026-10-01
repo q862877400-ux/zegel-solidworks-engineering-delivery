@@ -1,17 +1,19 @@
 {
-  "started": "2026-10-01 11:42:31",
+  "started": "2026-10-01 11:53:56",
   "verdict": "fail: 导出未产生非零文件（exists=False size=0 returned=False）",
   "steps": {
     "part": {
-      "title": "零件3"
+      "title": "零件5"
     },
     "assembly": {
-      "title": "装配体6"
+      "title": "装配体9"
     },
+    "study_type": 2,
+    "study_type_readback": 2,
     "motor": {
       "ok": true
     },
-    "target_study": "运动算例 2",
+    "target_study": "MCP_AVI_PhysSim",
     "export": {
       "ok": false,
       "returned": false,
@@ -20,5 +22,5 @@
       "path": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\mcp_avi_e2e.avi"
     }
   },
-  "finished": "2026-10-01 11:42:33"
+  "finished": "2026-10-01 11:54:00"
 }
