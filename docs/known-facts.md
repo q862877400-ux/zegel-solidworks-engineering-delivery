@@ -94,3 +94,7 @@
 | # | 事实 | 依据 |
 |---|---|---|
 | 68 | **`Object&` 出参「也是必填的」（与 `Int32&` 同类），正确传法是 `VARIANT(VT_BYREF\|VT_VARIANT, None)`** —— 2026-10-01（轮 123）真机四形态实验：对 `IHoleStandardsData.GetHoleStandards(Object& Standards, Object& Types)`（官方 arity = **2**）—— **A 不传出参 ⇒ `com_error -2147352561`「非选择性的参数」**（= `DISP_E_PARAMNOTOPTIONAL`，**决定性**）；B `VT_BYREF\|VT_DISPATCH` ⇒ 「类型不匹配」；C 裸 `None` ⇒ 「类型不匹配」；**D `VT_BYREF\|VT_VARIANT` ⇒ 返回 `True`** ✓。★ 这**推翻了「两边」**：`audit_call_arity.py` 旧规则「`Object&` 一律排除」**错**；`sw_hole_features.py` 传了但**传的是裸值**也**错**。⇒ 按铁律 4 改为「**arity = 出厂反射的参数个数**」（`count = len(_params)`），负例仍全抓住（**不是把门禁调松**）。⚠ 只证了这一个成员；但「以反射为准」**不需要外推** | `tools/probe_outparam_object_byref.py`；`tools/arity_negative_case.py`（固化的负例）；`tests/test_arity_audit_negative.py`；`docs/signature-audit.md` 同名小节 |
+
+| # | 事实 | 依据 |
+|---|---|---|
+| 69 | **`IHoleStandardsData` 拿到后必须先"热身"：不先调一次 `GetHoleStandards`，直接调 `GetFastenerTypes` 会返回 `False`** —— 2026-10-01（轮 125）真机四组对照：**A 拿到 data 直接调 ⇒ `False`**；**B 先调 `GetHoleStandards` 再调 ⇒ `True`**；C 在 A 那个（未热身的）对象上**再调一次** ⇒ 仍 `False`（⇒ 不是"调一次就好"）；D 换标准名 `'ISO'` ⇒ 仍 `False`（⇒ 不是名字问题）。⇒ ★ 官方文档**没写**这条约束。修法：`scripts/sw_hole_features._hole_standards_data()` **默认顺手调一次 `GetHoleStandards` 当初始化**（`initialize=False` 可跳过）。★ 反向验证已固化进冒烟：**去掉热身 ⇒ `GetFastenerTypes` 返回 `False`**（不是"加了也没坏处"） | `tools/verify_hole_standards_smoke.py`（11/11，含该反向验证）；`_probe_fastener_ordering.py` 的 A/B/C/D 四组；`tests/test_sw_hole_features.py` 的 `test_hole_standards_data_warms_up_by_default` |

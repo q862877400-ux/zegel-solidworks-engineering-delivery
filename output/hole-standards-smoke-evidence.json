@@ -1,9 +1,9 @@
 {
-  "started": "2026-10-01 16:10:13",
+  "started": "2026-10-01 16:18:46",
   "checks": {
     "★ list_hole_standards(0) 跑通": {
       "ok": true,
-      "detail": "15 条 · 0.03s"
+      "detail": "15 条 · 0.06s"
     },
     "★ 返回**非空**": {
       "ok": true,
@@ -20,6 +20,26 @@
     "★★ 含已知标准名（空操作给不出）": {
       "ok": true,
       "detail": "命中 ['ISO', 'DIN'] · 全表 ['ANSI Inch', 'ANSI Metric', 'AS', 'BSI', 'DIN', 'GB', 'IS', 'ISO', 'JIS', 'KS', 'DME', 'HASCO Metric', 'PCS', 'Progressive', 'Superior']"
+    },
+    "★ list_fastener_types('ANSI Inch') 跑通": {
+      "ok": true,
+      "detail": "14 条 · 前 2: [{'id': 4, 'name': '六角精致螺栓'}, {'id': 7, 'name': '六角螺垫螺钉'}]"
+    },
+    "★ 紧固件名**非空且不重复**": {
+      "ok": true,
+      "detail": "唯一 14 / 共 14"
+    },
+    "★ 名称随 UI 语言（本机中文 UI ⇒ 出现中文字符）": {
+      "ok": true,
+      "detail": "例: ['六角精致螺栓', '六角螺垫螺钉', '六角螺栓']"
+    },
+    "★ list_fastener_table_types('ANSI Inch', 4) 跑通": {
+      "ok": true,
+      "detail": "[0, 1, 2]"
+    },
+    "★★ **不热身**时 GetFastenerTypes 返回假值（证明热身步骤真的必要）": {
+      "ok": true,
+      "detail": "未热身 -> False（热身 -> True）"
     },
     "★ 收尾无残留模态框（已知事实 64 的检查）": {
       "ok": true,
@@ -88,8 +108,71 @@
       "name": "Superior"
     }
   ],
-  "passed": 6,
-  "total": 6,
+  "fastener_types": [
+    {
+      "id": 4,
+      "name": "六角精致螺栓"
+    },
+    {
+      "id": 7,
+      "name": "六角螺垫螺钉"
+    },
+    {
+      "id": 3,
+      "name": "六角螺栓"
+    },
+    {
+      "id": 6,
+      "name": "六角螺钉"
+    },
+    {
+      "id": 9,
+      "name": "凹头盖螺钉"
+    },
+    {
+      "id": 10,
+      "name": "凹头轴肩螺钉"
+    },
+    {
+      "id": 1,
+      "name": "圆凹头盖螺钉"
+    },
+    {
+      "id": 2,
+      "name": "圆顶柱头螺钉"
+    },
+    {
+      "id": 12,
+      "name": "大圆头螺钉"
+    },
+    {
+      "id": 8,
+      "name": "平盘十字头"
+    },
+    {
+      "id": 8,
+      "name": "平盘坑头"
+    },
+    {
+      "id": 11,
+      "name": "方头螺栓"
+    },
+    {
+      "id": 5,
+      "name": "粗六角螺栓"
+    },
+    {
+      "id": 0,
+      "name": "联头螺钉"
+    }
+  ],
+  "table_types": [
+    0,
+    1,
+    2
+  ],
+  "passed": 11,
+  "total": 11,
   "verdict": "pass",
-  "finished": "2026-10-01 16:10:13"
+  "finished": "2026-10-01 16:18:46"
 }
