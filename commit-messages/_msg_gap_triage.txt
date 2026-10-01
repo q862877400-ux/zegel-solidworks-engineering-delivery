@@ -1,0 +1,64 @@
+feat(Spec Kit 010): B 级缺口分诊 —— 修掉暴露面低估；把「缺 339」拆成四类
+
+## 起因
+目标 ②「**B 级并入 339 个缺口操作**」是**目标里最大的一块未动**。
+动它之前必须先答：**那 339 里，多少是真的没有、多少是"有但名字/暴露方式不同"？**
+
+## 撞法：**先从最小的域找一个具体反例**（不是"看总数觉得不对"）
+模具域缺口只有 **3** 个 ⇒ 随手一查：**2 个我们明明有**
+```
+parting_line      → solidworks_mold_parting_line     （在 mcp-server/tool_specs_batch1.py）
+shut_off_surface  → solidworks_mold_shut_off_surface （同上）
+tooling_split     → 真的没有
+```
+
+## ★ 真缺陷（已修）：暴露面被低估 **20** 个
+`tools/build_union_map._our_tools()` **只读 `server.py` 的 `@mcp.tool(name=…)` 装饰器形式**，
+而本仓库后补的工具注册在 **`mcp-server/tool_specs_batch*.py`**（`name="solidworks_*"`），
+**与装饰器形式交集 = 0**：
+```
+server.py 装饰器     45 · tool_specs_batch*.py 20 · 合并 **65**   ← 修前只数到 45
+```
+⇒ 已修（两个来源都读）+ docstring 写明**为什么**（**两个口径仍不可合并**）。
+**复算**：并集 **384 → 404** · 本仓库独家 **35 → 55**。
+⚠ 这个数**不降反升** —— 它量的是「我们带进并集的**独家**操作」，属**修正记账**，不是进度。
+
+## 根因：归一**不剥域词** ⇒ 同一条操作在两边是**两个键**
+```
+solidworks_mold_parting_line → mold_parting_line  ≠  parting_line（外部）
+```
+⚠ **但不给主匹配器加模糊启发式** —— 已知事实 53（同一启发式改 ≥3 版就该回退）。
+⇒ `build_union_sources.py` **一个字没动**（`git diff` 验证为空），339 仍是**严格名口径**的诚实数字。
+
+## 分诊结果（三个口径**分开量**）
+| 类 | 个数 | 占比 | 含义 |
+|---|---|---|---|
+| **别名（强）** | **26** | 8% | 多出的词**全是域词** ⇒ 极可能同一操作 |
+| **别名（弱）** | 37 | 11% | 多出的词**含动词** ⇒ 语义可能不同 |
+| **后缀候选（需人工核）** | 144 | 42% | `scripts/sw_*.py` 有同名函数 ⇒ ⚠ **假阳性约一半** |
+| **真缺** | 132 | 39% | 连 `scripts/` 里也没有 ⇒ 要从零实现 |
+
+## ★★ 抽验揭穿了我自己的分类规则（本轮最值钱的一步）
+「后缀候选」抽 10 条 ⇒ **约一半假阳性**（规则只比**最后一个词**）：
+```
+✅ parting_line→insert_parting_line · export_drawing_pdf→export_to_pdf · add_dimension→add_dimension · create_mate→add_mate
+❌ shut_off_surface→create_bspline_surface（都是 surface，但不是 shut-off）
+   · set_material→add_render_material · create_section_view→activate_view
+   · get_mass_properties→apply_visual_properties
+⛔ 正确拒绝: run_simulation · unfold_sheet_metal
+```
+⇒ **按事实 53 不调规则**，改为：① 改名「**后缀候选（需人工核）**」；
+② **把抽验率写进工具输出**（跑的时候就看得到）；③ 报告写明**只用于定范围**。
+
+## ⚠ 我最初的怀疑**只对了一小半**（如实纠正）
+怀疑「339 被命名差异灌水」—— 实测**强别名只有 26（8%）**，
+真正的大头是「**能力在 `scripts/` 里、只是没暴露成 MCP 工具**」（144，42%），
+**而那一类又有一半是后缀假阳性**。
+⇒ **诚实结论：339 不能简单说"灌水"** ——
+它混了**三个口径**（暴露面 / 能力面 / 严格名），**必须先分清口径再谈进度**。
+
+## ⚠ 本轮未查证（如实记录）
+1. **「真缺 132」是上限估计**：语义相同但用词完全不同的操作会被判成真缺；
+2. **`scripts/` 779 个公开函数里有多少没暴露成 MCP 工具** —— 本轮只从"缺口那侧"看了 144 个。
+
+⇒ 十五道门禁全 exit 0 · `release_check` exit 0 · 回归 **970 passed / 17 skipped / 0 failed**
