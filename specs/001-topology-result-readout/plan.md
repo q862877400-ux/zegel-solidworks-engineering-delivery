@@ -61,8 +61,9 @@ C:\swprojects\sw-skill-fork\
 ### Evidence (workspace)
 
 ```
+C:\swprojects\sw-skill-fork\tools\   ← **仓库内**（轮 56 从工作区根搬入）
+├── probe_results_api_surface.py      ← 已有：运行期成员试探（SC-001 点名）
 D:\AI\SW\
-├── probe_results_api_surface.py      ← 已有：运行期成员试探
 ├── probe_run_and_read_results.py     ← 新增：跑一次优化再试探（闭合 FR-001）
 └── _raw\topo-reflect\                ← 反射转储（四源中的两源）
 ```

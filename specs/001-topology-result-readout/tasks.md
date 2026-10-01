@@ -64,7 +64,7 @@
 ## Phase 3: User Story 1 —— 判定有没有 API（P1，MVP）
 
 **Goal**: 对六个候选名逐个给出「存在 / 不存在 + 原文报错」
-**Independent Test**: 重跑 `probe_results_api_surface.py`（**在 T-002 成功的研究上**）
+**Independent Test**: 重跑 `tools/probe_results_api_surface.py`（**在 T-002 成功的研究上**）
 
 - [x] **T-004** [US1] 在 `ICWResults` 上试探六个候选名
   （`ExportSmoothedMesh` / `GetSmoothedMesh` / `ExportSmoothedMesh2` /

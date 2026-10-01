@@ -52,8 +52,13 @@
 那么「写代码去调」就是浪费；若其实有 API 而我没找到，会白丢一个护城河功能。
 **两种情况都必须以证据收尾，不能以「试过了不行」收尾。**
 
-**Independent Test**: 重跑 `probe_results_api_surface.py` 与
+**Independent Test**: 重跑 `tools/probe_results_api_surface.py` 与
 `find_bare_outparam_sites.py` 式的静态比对，核对本文 §背景 的四张表。
+
+> ⚠ **2026-10-01（轮 56）更正**：本行原写裸文件名 `probe_results_api_surface.py`，
+> 而它当时**只在工作区根** `D:\AI\SW\` ⇒ **换机器 / CI 跑不了**。
+> **⇒ 已按仓库规范收进 `tools/`**（可移植路径 + 来源块），并在下方加了一条
+> 「验收命令必须在仓库内」的**门禁**（`scripts/check_spec_acceptance_paths.py`）。
 
 **Acceptance Scenarios**:
 
@@ -150,7 +155,8 @@
 
 ### Measurable Outcomes
 
-- **SC-001**: `probe_results_api_surface.py` 能在**已跑过优化**的研究上跑完，
+- **SC-001**: `tools/probe_results_api_surface.py` 能在**已跑过优化**的研究上跑完，
+  ⚠ **命令来自仓库内**（轮 56 从工作区根搬入；见上方 Independent Test 的更正说明）
   并对六个候选名逐个给出「存在 / 不存在 + 原文报错」。
 - **SC-002**: `capabilities.yaml` 的 `topology_optimization` 条目里，
   「看结果」三件事各有一条**可复查**的结论行（含证据来源）。

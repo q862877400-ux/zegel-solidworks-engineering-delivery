@@ -99,15 +99,22 @@ RuntimeError: GetAddInObject('SldWorks.Simulation') 返回 None
    | 无结果 | 本特性的契约测试（假对象，3 条） | ✅ **静态** |
    ⇒ **合起来覆盖了两条形态，但没有一次运行同时验过两者。**
 
-### ⚠ 2. SC-001 点名的脚本 **不在仓库里**
+### ⚠ 2. SC-001 点名的脚本 **不在仓库里** —— **✅ 已修（轮 56）**
 
 ```powershell
+# 轮 52 实测（搬移前）：
 Test-Path C:\swprojects\sw-skill-fork\tools\probe_results_api_surface.py      # ⇒ False
 Test-Path C:\swprojects\sw-skill-fork\scripts\probe_results_api_surface.py    # ⇒ False
 Test-Path D:\AI\SW\probe_results_api_surface.py                               # ⇒ True
 ```
 
 ⇒ **它只存在于工作区根** ⇒ **换机器 / CI 跑不了** ⇒ **SC-001 连"能跑"这一半都不成立**。
+
+**✅ 2026-10-01（轮 56）已修**：按仓库规范收进 `tools/probe_results_api_surface.py` ——
+· `sys.path.insert(0, r"C:\swprojects\sw-skill-fork")` → `Path(__file__).resolve().parents[1]`（**可移植**）
+· 来源块更新到新位置；**业务逻辑与搬移前逐行相同**（用 `difflib` 核过：差异**只在来源块与路径处理**）
+· `spec.md` / `plan.md` / `tasks.md` 的引用**全部改成仓库内路径**（并留更正说明）
+⇒ **`Test-Path tools/probe_results_api_surface.py` ⇒ True** ✓
 
 ### 🔴 3. **系统性问题：这是第 2 例**
 
