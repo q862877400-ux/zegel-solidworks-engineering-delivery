@@ -98,3 +98,7 @@
 | # | 事实 | 依据 |
 |---|---|---|
 | 69 | **`IHoleStandardsData` 拿到后必须先"热身"：不先调一次 `GetHoleStandards`，直接调 `GetFastenerTypes` 会返回 `False`** —— 2026-10-01（轮 125）真机四组对照：**A 拿到 data 直接调 ⇒ `False`**；**B 先调 `GetHoleStandards` 再调 ⇒ `True`**；C 在 A 那个（未热身的）对象上**再调一次** ⇒ 仍 `False`（⇒ 不是"调一次就好"）；D 换标准名 `'ISO'` ⇒ 仍 `False`（⇒ 不是名字问题）。⇒ ★ 官方文档**没写**这条约束。修法：`scripts/sw_hole_features._hole_standards_data()` **默认顺手调一次 `GetHoleStandards` 当初始化**（`initialize=False` 可跳过）。★ 反向验证已固化进冒烟：**去掉热身 ⇒ `GetFastenerTypes` 返回 `False`**（不是"加了也没坏处"） | `tools/verify_hole_standards_smoke.py`（11/11，含该反向验证）；`_probe_fastener_ordering.py` 的 A/B/C/D 四组；`tests/test_sw_hole_features.py` 的 `test_hole_standards_data_warms_up_by_default` |
+
+| # | 事实 | 依据 |
+|---|---|---|
+| 70 | **`check_provenance` 的覆盖范围语义（含一个我曾判错的点）** —— `scripts/check_provenance.py` 判的是「这一行在不在某个来源块的覆盖范围内」：**不写标记** ⇒ **只覆盖紧随其后的第一个定义**；`# 覆盖: 后续同级定义` ⇒ 覆盖到**下一个来源块起始行之前**，而下一个块**接着往下覆盖**（★ **两块接得上，不存在"被截断"**）；`# 覆盖: 全文件` ⇒ 到文件末尾。⚠⚠ **2026-10-01 轮 125 我判成「`后续同级定义` 会被下一个来源块截断」并写进了 ROADMAP —— 这句是错的**；轮 126 写负例测试时**当场被推翻**：真因是 `t.index("\n\n# ── 来源")` 命中**更靠前**的块 ⇒ 新代码被插到了它的**上方**，而块覆盖的是**下方**。★ **教训：是测试推翻了解释，不是记忆。** ⚠ 另一条同族坑：判据**查「整段实现」会被自己的文档串误伤**（文档串里必须提到那个"不该用的名字"）⇒ 要查**调用形态**或**构造那一行**（轮 119 / 124 各踩一次） | `tests/test_provenance_coverage_semantics.py`（**6 条**，把四种形态都钉住）；量测脚本 `_measure_coverage_truth.py`；`D:\AI\SW\docs\provenance-format.md` 的「覆盖范围」一节（轮 126 补，此前**只有 28 行、一个字都没讲覆盖**）|
