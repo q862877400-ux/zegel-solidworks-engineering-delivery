@@ -1,0 +1,38 @@
+fix(sheet-metal): 查明 gusset 最后一层的**性质** —— 缺的是「折弯的两个面」，不是代码路线错
+
+## 决定性证据（官方文档，两条）
+1. **`ISMGussetFeatureData` 的 Remarks 给出精确创建步骤**：
+   > To create a sheet metal gusset feature:
+   > 1. Call `IFeatureManager::CreateDefinition` to instantiate this feature data object.
+   > 2. **Pre-select** faces…: To specify **the legs**: Two flat faces of a **bend**.
+
+2. **`InsertSheetMetalGussetFeature3` 被官方标注为过时**：
+   > **Obsolete. Superseded by `IFeatureManager::CreateDefinition` and `IFeatureManager::CreateFeature`.**
+
+**⇒ 两条合起来说明：本模块原本的路线（`CreateDefinition` + `CreateFeature`）**是正确的现代路线**；
+官方示例用的那个专用方法**已经过时**。**
+**⇒ 所以 `create_gusset` 的 `CreateFeature(118) 创建失败`**不是路线错**，而是缺前置：
+**必须预先选中「一个折弯的两个平面」**（且官方示例里 Mark 用的是 **0**，不是 1）。**
+
+## 因此：**不宣称它能跑，也不宣称它不行**
+测试夹具是**平板基体法兰**（无折弯）⇒ **选不出「折弯的两个平面」** ⇒ 该前置**无法满足**。
+**⇒ 本轮**未定性**。** 状态表如实写明这一点。
+
+## ⚠ 顺带一条**新发现**：`create_base_flange` 的 `True` **只对闭轮廓成立**
+```
+闭轮廓（平板基体）  → ✓ 建成（特征树出现「钣金6 / 基体-法兰1 / 平展型式6」）
+开放折线（轮廓法兰）→ ✗ `CreateFeature(IBaseFlangeFeatureData) 创建失败`   ← 2026-10-01 补测
+```
+**⇒ 状态表里 `create_base_flange` 的条目已改成「闭轮廓 ✓ / 开放折线 ✗」。**
+（此前那一条的 `True` 是**过度概括** —— 只测了闭轮廓就写成「能跑」。）
+
+## ⚠ 本轮自己踩的两个夹具错（都已修，记下）
+1. **画完草图没调 `InsertSketch(True)` 退出** ⇒ 草图没成型 ⇒ `_ensure_sketch_selected`
+   报「无法选择草图: Sketch1」。**`InsertSketch` 是进出草图的开关。**
+2. **写状态表时把长字符串断成了多行** ⇒ `SyntaxError`。
+   （这是本会话**第三次**在字符串里踩换行 —— 已记进教训。）
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 852 passed / 15 skipped**（与基线失败列表逐条相同）
+- 状态表 7 条逐条复核（见提交时的打印）：2 OK / 4 FAIL / 1 未测
