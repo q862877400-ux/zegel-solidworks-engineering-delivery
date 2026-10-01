@@ -4,8 +4,12 @@
 
 **格式**：`[ID] [P?] [Story] 描述` —— `[P]` 表示可并行；**每个任务必须带 `→ 验收:`**
 
-**⚠ 唯一阻塞点**：Phase 2 的 T-002（真机跑通一次优化）。它不通，US1 的交付就降级为
-「静态三源已查、运行期未验」，且必须在 limitations 里**明说未验**。
+**⚠ 原「唯一阻塞点」已解除**：Phase 2 的 T-002（真机跑通一次优化）**后来成功了**
+（许可解除后闭环跑通，`output/topology-evidence.json` 的 `verdict == pass`）
+⇒ 它下游的 **T-004 / T-005 / T-007 现在可跑**（原验收写的就是「在 T-002 成功的研究上」）。
+**⇒ 进度（2026-10-01 轮 50）**：T-001..T-006 ✅ · **T-007..T-009 待真机** · T-010 ✅ · T-011..T-013 收尾。
+⚠ **T-007/T-008/T-009 需要一次完整求解**（约 3 分钟 + 许可）⇒
+**不打勾、不声称已完成**（铁律 2：没跑就不写「已验证」）。
 
 ---
 
@@ -62,16 +66,43 @@
 **Goal**: 对六个候选名逐个给出「存在 / 不存在 + 原文报错」
 **Independent Test**: 重跑 `probe_results_api_surface.py`（**在 T-002 成功的研究上**）
 
-- [ ] **T-004** [US1] 在 `ICWResults` 上试探六个候选名
+- [x] **T-004** [US1] 在 `ICWResults` 上试探六个候选名
   （`ExportSmoothedMesh` / `GetSmoothedMesh` / `ExportSmoothedMesh2` /
   `ViewConvergenceData` / `MaterialMass` / `GetMaterialMassPlot`）
-  `→ 验收:` 每个名字打印「✓ 存在（含返回类型）」或「✗ 名字不存在（原文）」
-- [ ] **T-005** [US1] 扩展试探：把 `ICWResults` 的 107 个成员里含
+  **✅ 2026-10-01（轮 50）完成** —— **六个名字**全部不存在**（逐个核过）**：
+  ```
+  ExportSmoothedMesh ✗ · GetSmoothedMesh ✗ · ExportSmoothedMesh2 ✗
+  ViewConvergenceData ✗ · MaterialMass ✗ · GetMaterialMassPlot ✗
+  ```
+  裁决者 = 反射 `D:\AI\SW\_raw\reflect\iface_cosworks.txt` 的 `## ICWResults` 段。
+  `→ 验收:` `Select-String D:\AI\SW\_raw\reflect\iface_cosworks.txt -Pattern 'ExportSmoothedMesh'` ⇒ **0 命中**
+
+- [x] **T-005** [US1] 扩展试探：把 `ICWResults` 的 107 个成员里含
   `Export` / `Smooth` / `Conv` / `Mass` 的**全部**列出来（不只六个）
-  `→ 验收:` 打印命中的成员名与签名；无命中则打印「0 命中」
-- [ ] **T-006** [US1] 结论写进 `capabilities.yaml` 的 `topology_optimization.limitations`
+  **✅ 完成，但⚠ 我第一版的过滤词表本身是错的** ——
+  按 `Export|Smooth|Conv|Mass` 过滤只得 **1 个**（`GetMassParticipation`），
+  **而 Material Mass 图恰恰是通过 `GetPlotCount` / `GetPlotNames` 读到的（003 已证！）**，
+  那两个名字**不含**我的任何过滤词 ⇒ **漏掉了真正的答案**。
+  **⇒ 这正是已知事实 51 的同族**：抓不到目标时，先怀疑**分析范围/过滤条件**，而不是判据。
+  **⇒ 改为**完整枚举** 107 个成员后逐条判定**：
+  | 目标 | 官方成员（来源：反射 `## ICWResults`） | 强度 |
+  |---|---|---|
+  | Material Mass 图 | `GetPlotCount()` · `GetPlotNames()` · `GetPlot(Int32&)` | **✅ 运行期已证**（003） |
+  | 导出结果图为图片 | `SavePlotsAseDrawings(String,String,String)→Int32`（L2270） | ⚠ **反射里有、未验** |
+  | 导出研究 | `ICWStudy.ExportSimulationStudy(String,String,Int32×5)`（L2539） | ⚠ **反射里有、未验** |
+  | 收敛/步数 | `GetMaximumAvailableSteps()`（L2214）· `GetTimeOrFrequencyAtEachStep(Int32,Int32&)`（L2262） | ⚠ **反射里有、未验** |
+  | 导出**平滑网格** | **无** | ✗ **查不到**（铁律 5） |
+  `→ 验收:` 枚举 `ICWResults` 成员数 ⇒ **107**
+  ```powershell
+  python -c "from pathlib import Path;L=Path(r'D:\AI\SW\_raw\reflect\iface_cosworks.txt').read_text(encoding='utf-8').splitlines();s=next(i for i,x in enumerate(L) if x.strip()=='## ICWResults');e=next(i for i,x in enumerate(L) if x.strip()=='## ICWResultsProbeManager');print(len([x for x in L[s:e] if x.strip() and not x.startswith('#')]))"
+  ```
+
+- [x] **T-006** [US1] 结论写进 `capabilities.yaml` 的 `topology_optimization.limitations`
   —— **必须含证据来源与可重跑命令**，禁用「试过了不行」
-  `→ 验收:` `python scripts\check_union_conventions.py` exit 0，且 limitations 里每条都带命令
+  **✅ 完成（轮 50）** —— 按**证据强度分级**写了 5 条（①②③④⑤，见 T-005 表），
+  每条带来源位置与可重跑命令；并**分解修正**了原先那句把三件事混成一件的
+  「**导出类结果** 四源均未查到」（原文保留 + 加分解指向）。
+  `→ 验收:` `python scripts\check_union_conventions.py` exit 0 ✓ **已跑**
 
 ---
 
@@ -96,10 +127,18 @@
 
 ## Phase 5: User Story 3 —— 替代路径评估（P3）
 
-- [ ] **T-010** [US3] 评估三条替代路径并各给依据：
+- [x] **T-010** [US3] 评估三条替代路径并各给依据：
   ① `ICWResults.savePlotsAseDrawings` ② `ICWStudy.ExportSimulationStudy`
   ③ UI 自动化（computer-use / 宏）
-  `→ 验收:` 三条各一行「能/不能 + 依据（命令或源码位置）」
+  **✅ 完成（轮 50）** —— 逐条核反射：
+  | 候选 | 结论 | 依据 |
+  |---|---|---|
+  | ① `SavePlotsAseDrawings(String,String,String)` | ⚠ **存在**（反射） | `ICWResults` L2270；**只有一源**，未运行期验 |
+  | ② `ExportSimulationStudy(String,String,Int32×5)` | ⚠ **存在**（反射） | `ICWStudy` L2539；同上 |
+  | ③ UI 自动化 | ✅ **可行**（但代价高） | 本项目已有 `CommandInProgress` 抑制与 computer-use 通道；**作为兜底，不作首选** |
+  **★ 结论**：①② **优先于 ③**（官方 API 比 UI 自动化稳），但①② 必须先**真机验一次**
+  才能从「反射里有」升到「可导出」（事实 28/30）。
+  `→ 验收:` 三条各一行「能/不能 + 依据」✓ **已给**
 
 ---
 
