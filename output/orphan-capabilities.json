@@ -1,0 +1,3181 @@
+{
+  "note": "本文件是**生成物**（tools/probe_unexposed_functions.py 写）；别手改。它只列事实，不判『该不该暴露』。",
+  "counts": {
+    "public": 821,
+    "exposed_lower_bound": 97,
+    "orphans": 298
+  },
+  "orphans": [
+    {
+      "module": "sw_jlcfa_steps.py",
+      "function": "act_with_focus",
+      "params": [
+        "h",
+        "fn",
+        "None]",
+        "what"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_results.py",
+      "function": "activate_plot",
+      "params": [
+        "results",
+        "plot_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "activate_view",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_com_traps.py",
+      "function": "adaptive_arity",
+      "params": [
+        "call",
+        "base",
+        "low",
+        "high"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_bearing_load",
+      "params": [
+        "manager",
+        "coordinate_system",
+        "first_faces"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_bolt_connector",
+      "params": [
+        "manager",
+        "bolt_heads",
+        "bolt_nuts",
+        "bolt_type"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_centrifugal_force",
+      "params": [
+        "manager",
+        "entity"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_motion.py",
+      "function": "add_constant_speed_rotary_motor",
+      "params": [
+        "motion_study",
+        "direction_reference",
+        "load_reference",
+        "rpm",
+        "relative_component",
+        "name",
+        "reverse"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_convection",
+      "params": [
+        "manager",
+        "entities"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_cyclic_symmetry_restraint",
+      "params": [
+        "manager",
+        "first_face",
+        "second_face",
+        "axis"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "add_dimension",
+      "params": [
+        "model",
+        "x",
+        "y"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": true
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_distributed_mass",
+      "params": [
+        "manager",
+        "entities",
+        "mass",
+        "units"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_edge_weld_connector",
+      "params": [
+        "manager",
+        "first_face",
+        "second_face",
+        "edges",
+        "weld_style"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_elastic_connector",
+      "params": [
+        "manager",
+        "entities"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_force",
+      "params": [
+        "manager",
+        "entities",
+        "force_type",
+        "ref_geom"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "add_gear_mate_by_cylinders",
+      "params": [
+        "asm_model",
+        "component_a",
+        "component_b",
+        "teeth_a",
+        "teeth_b",
+        "radius_a",
+        "radius_b",
+        "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_heat_flux",
+      "params": [
+        "manager",
+        "entities"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_heat_power",
+      "params": [
+        "manager",
+        "entities"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_pdm.py",
+      "function": "add_invisible_custom_property",
+      "params": [
+        "pdm_document",
+        "name",
+        "info_type",
+        "value"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_link_connector",
+      "params": [
+        "manager",
+        "first_vertex",
+        "second_vertex"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "add_mate_distance",
+      "params": [
+        "asm_model",
+        "entity1_name",
+        "entity1_type",
+        "entity2_name",
+        "entity2_type",
+        "distance"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "add_mate_parallel",
+      "params": [
+        "asm_model",
+        "face1_name",
+        "face2_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "add_perspective",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_pin_connector",
+      "params": [
+        "manager",
+        "comp1",
+        "comp2"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_prescribed_displacement",
+      "params": [
+        "manager",
+        "displacements",
+        "entities",
+        "length_unit",
+        "ref_geom"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_pressure",
+      "params": [
+        "manager",
+        "entities",
+        "pressure_type",
+        "reg_geom"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_radiation",
+      "params": [
+        "manager",
+        "entities",
+        "radiation_type"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_remote_load",
+      "params": [
+        "manager",
+        "entities",
+        "load_type",
+        "units",
+        "dx",
+        "dy",
+        "dz"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "add_revolute_joint_by_cylinders",
+      "params": [
+        "asm_model",
+        "component_a",
+        "component_b",
+        "radius_a",
+        "radius_b",
+        "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_rigid_connector",
+      "params": [
+        "manager",
+        "source_faces",
+        "target_faces"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "add_sketch_relation",
+      "params": [
+        "model",
+        "relation_type"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_spot_weld_connector",
+      "params": [
+        "manager",
+        "first_face",
+        "second_face",
+        "weld_locations"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_spring_connector",
+      "params": [
+        "manager",
+        "comp1",
+        "comp2",
+        "sub_type"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_pdm.py",
+      "function": "add_table_revision_row",
+      "params": [
+        "table",
+        "revision"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "add_temperature",
+      "params": [
+        "manager",
+        "entities"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "apply_component_transform_x",
+      "params": [
+        "component",
+        "tx",
+        "ty",
+        "tz",
+        "angle_rad"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "apply_covering",
+      "params": [
+        "route_property",
+        "covering"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_appearance.py",
+      "function": "apply_named_appearance",
+      "params": [
+        "target",
+        "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_render_material.py",
+      "function": "apply_visual_properties",
+      "params": [
+        "data",
+        "*",
+        "apply_appearance",
+        "advanced_graphics",
+        "real_view",
+        "blend_color",
+        "apply_material_color_to_part",
+        "apply_material_hatch_to_section",
+        "angle",
+        "scale2"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_preflight.py",
+      "function": "ask_install_permission",
+      "params": [
+        "input_func",
+        "str]",
+        "output_func",
+        "None]"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_gui_focus.py",
+      "function": "assert_focus",
+      "params": [
+        "hwnd",
+        "where"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_gui_modal.py",
+      "function": "assert_no_modal",
+      "params": [
+        "main_hwnd",
+        "where"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "assign_custom_cost",
+      "params": [
+        "cost_body",
+        "amount"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_macro_guard.py",
+      "function": "build_prompt",
+      "params": [
+        "user_request",
+        "model_name",
+        "strict"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_review.py",
+      "function": "build_review_report",
+      "params": [
+        "model",
+        "output_dir",
+        "basename",
+        "views",
+        "expected_outputs"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "build_transform_data_x",
+      "params": [
+        "tx",
+        "ty",
+        "tz",
+        "angle_rad"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_com_traps.py",
+      "function": "byref_long",
+      "params": [
+        "initial"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_com_traps.py",
+      "function": "byref_pair",
+      "params": [],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_drawing_view.py",
+      "function": "call_view_no_args",
+      "params": [
+        "view",
+        "member"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_locate.py",
+      "function": "capture_front",
+      "params": [
+        "path"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_locate.py",
+      "function": "capture_window",
+      "params": [
+        "hwnd",
+        "path"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_grid.py",
+      "function": "card_rows",
+      "params": [
+        "pane",
+        "min_h"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_cards.py",
+      "function": "category_cards",
+      "params": [
+        "win",
+        "allc"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "circular_pattern",
+      "params": [
+        "model",
+        "feature_name",
+        "axis_name",
+        "angle_rad",
+        "count",
+        "equal_spacing"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "clear_selection_colors",
+      "params": [
+        "selection"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_click.py",
+      "function": "click_control",
+      "params": [
+        "ctrl",
+        "pause"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_click.py",
+      "function": "click_point",
+      "params": [
+        "x",
+        "y",
+        "pause"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": true
+    },
+    {
+      "module": "sw_jlcfa_click.py",
+      "function": "click_rect",
+      "params": [
+        "ctrl_rect",
+        "pause"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "close_costing",
+      "params": [
+        "cost_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_cards.py",
+      "function": "code_labels",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "collect_costing_evidence",
+      "params": [
+        "cost_part"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loadprops.py",
+      "function": "collect_load_property_evidence",
+      "params": [
+        "force"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "collect_loads_evidence",
+      "params": [
+        "manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "collect_mate_entity_evidence",
+      "params": [
+        "mate_entity"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "collect_mate_in_place_evidence",
+      "params": [
+        "mate_in_place"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_pattern.py",
+      "function": "collect_pattern_evidence",
+      "params": [
+        "data"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_pdm.py",
+      "function": "collect_pdm_evidence",
+      "params": [
+        "pdm_document"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "collect_routing_evidence",
+      "params": [
+        "route_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "collect_sketch_evidence",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_select.py",
+      "function": "combo_list_rect",
+      "params": [
+        "hwnd"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_gui_input.py",
+      "function": "commit",
+      "params": [
+        "log"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study_options.py",
+      "function": "configure_buckling_solver",
+      "params": [
+        "options",
+        "*",
+        "modes",
+        "positive_only",
+        "reference_pressure"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study_options.py",
+      "function": "configure_frequency_solver",
+      "params": [
+        "options",
+        "*",
+        "decouple",
+        "reference_pressure"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "configure_mate_feature_data",
+      "params": [
+        "mate_data",
+        "type_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_weldment.py",
+      "function": "configure_member_profile",
+      "params": [
+        "profile",
+        "*",
+        "profile_standard",
+        "profile_type",
+        "profile_size",
+        "mirror",
+        "profile_mirror_type",
+        "alignment_type",
+        "alignment_angle",
+        "offset_pierce_point",
+        "pierce_horizontal",
+        "pierce_vertical"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_import_mesh_reference.py",
+      "function": "configure_mesh_import_preferences",
+      "params": [
+        "sw",
+        "*",
+        "units",
+        "model_type",
+        "import_textures",
+        "as_ps_mesh",
+        "segmented"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_weldment.py",
+      "function": "configure_split_member",
+      "params": [
+        "split",
+        "*",
+        "split_references",
+        "split_length",
+        "split_length_reverse",
+        "number_of_instances",
+        "dimension_type",
+        "member_type"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study_options.py",
+      "function": "configure_static_solver",
+      "params": [
+        "options",
+        "*",
+        "free_body_force",
+        "contact_penalty",
+        "reference_pressure"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_locate.py",
+      "function": "container_element",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "convert_study",
+      "params": [
+        "manager",
+        "source",
+        "target_type",
+        "target_name",
+        "options",
+        "config_name",
+        "extra"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_connect.py",
+      "function": "count_residual_dialogs",
+      "params": [
+        "target",
+        "*",
+        "settle_seconds",
+        "poll_ms"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "create_bspline_surface",
+      "params": [
+        "sw_app",
+        "control_points",
+        "weights",
+        "knots",
+        "degree"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "create_conical_surface",
+      "params": [
+        "sw_app",
+        "origin",
+        "axis",
+        "half_angle",
+        "radius"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "create_cost_analysis",
+      "params": [
+        "target",
+        "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "create_covering",
+      "params": [
+        "route_property"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_results.py",
+      "function": "create_deformed_body",
+      "params": [
+        "results",
+        "plot_type",
+        "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "create_demold_control",
+      "params": [
+        "study",
+        "*",
+        "direction"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "create_extrusion_surface",
+      "params": [
+        "sw_app",
+        "profile",
+        "direction"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "create_mesh_for_control",
+      "params": [
+        "study",
+        "control_name"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "create_offset_surface",
+      "params": [
+        "sw_app",
+        "surface",
+        "distance"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "create_revolution_surface",
+      "params": [
+        "sw_app",
+        "profile",
+        "axis",
+        "origin",
+        "angle"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "create_ruled_surface",
+      "params": [
+        "sw_app",
+        "curve_a",
+        "curve_b",
+        "continuity"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "create_stress_constraint",
+      "params": [
+        "study",
+        "*",
+        "value",
+        "comparator"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "create_study",
+      "params": [
+        "manager",
+        "name",
+        "study_type",
+        "config_option"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "create_study_v2",
+      "params": [
+        "manager",
+        "name",
+        "study_type"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "create_study_v3",
+      "params": [
+        "manager",
+        "name",
+        "study_type",
+        "config_option"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "create_swept_surface",
+      "params": [
+        "sw_app",
+        "profile",
+        "path"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "create_symmetry_control",
+      "params": [
+        "study",
+        "*",
+        "symmetry_type"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_select.py",
+      "function": "crop_region",
+      "params": [
+        "img",
+        "rect",
+        "dx",
+        "dy",
+        "w",
+        "h"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation.py",
+      "function": "default_element_size_and_tolerance",
+      "params": [
+        "study",
+        "units"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_pdm.py",
+      "function": "delete_custom_property",
+      "params": [
+        "pdm_document",
+        "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_results.py",
+      "function": "delete_plot",
+      "params": [
+        "results",
+        "plot_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_render_material.py",
+      "function": "delete_render_material",
+      "params": [
+        "model",
+        "index",
+        "cascade"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "delete_study",
+      "params": [
+        "manager",
+        "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "deselect",
+      "params": [
+        "selection",
+        "item",
+        "mark"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_connect.py",
+      "function": "dismiss_residual_dialogs",
+      "params": [
+        "target",
+        "*",
+        "settle_seconds",
+        "poll_ms"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly_doc.py",
+      "function": "dissolve_assembly",
+      "params": [
+        "doc"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_click.py",
+      "function": "dpi_of",
+      "params": [
+        "hwnd"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_gui.py",
+      "function": "drag",
+      "params": [
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+        "steps"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "duplicate_study",
+      "params": [
+        "manager",
+        "source",
+        "target",
+        "config_name",
+        "options"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection_tx.py",
+      "function": "edit_feature_selection",
+      "params": [
+        "data",
+        "model",
+        "family"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly_doc.py",
+      "function": "edit_part_in_context",
+      "params": [
+        "asm_model",
+        "component",
+        "*",
+        "silent",
+        "allow_read_only"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "edit_route",
+      "params": [
+        "route_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection_tx.py",
+      "function": "edit_sheet_metal_selection",
+      "params": [
+        "data",
+        "model",
+        "family"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_automation_knowledge.py",
+      "function": "enter_command_lock",
+      "params": [
+        "sldworks"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection_spec.py",
+      "function": "entities_on_body",
+      "params": [
+        "model",
+        "kind",
+        "*",
+        "body_index"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_review.py",
+      "function": "evaluate_review_report",
+      "params": [
+        "report"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_automation_knowledge.py",
+      "function": "exit_command_lock",
+      "params": [
+        "sldworks"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly_doc.py",
+      "function": "exit_edit_part_in_context",
+      "params": [
+        "asm_model"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "exit_route",
+      "params": [
+        "route_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_com_traps.py",
+      "function": "explain",
+      "params": [
+        "code"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_automation_knowledge.py",
+      "function": "explain_hresult",
+      "params": [
+        "code"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "export_pipe_data",
+      "params": [
+        "route_manager",
+        "path",
+        "a",
+        "b"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "export_tube_data",
+      "params": [
+        "route_manager",
+        "path",
+        "a",
+        "b"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_macro_guard.py",
+      "function": "extract_vba_code",
+      "params": [
+        "text"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_macro_guard.py",
+      "function": "fallback_macro_for_request",
+      "params": [
+        "user_request"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_select.py",
+      "function": "fill_blank",
+      "params": [
+        "hwnd",
+        "rect",
+        "gui"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_select.py",
+      "function": "fill_edit",
+      "params": [
+        "h",
+        "w",
+        "edit",
+        "r",
+        "hint",
+        "log"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_fill.py",
+      "function": "first_missing_label",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly_doc.py",
+      "function": "fix_component",
+      "params": [
+        "doc"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_gui_focus.py",
+      "function": "focus_state",
+      "params": [
+        "want"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_gui_focus.py",
+      "function": "foreground",
+      "params": [],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_misumi.py",
+      "function": "full_text_search",
+      "params": [
+        "keyword",
+        "page",
+        "page_size",
+        "sess"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_macro_guard.py",
+      "function": "generate_macro_with_guard",
+      "params": [
+        "user_request",
+        "model_call",
+        "int]",
+        "str]",
+        "model_name",
+        "timeout_seconds",
+        "max_retries"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "generate_report",
+      "params": [
+        "study",
+        "template",
+        "path",
+        "append"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "get_active_view",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_pdm.py",
+      "function": "get_all_external_references",
+      "params": [
+        "pdm_document",
+        "search_option"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_drawing_view.py",
+      "function": "get_annotation_count",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_drawing_view.py",
+      "function": "get_annotations",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_arcs",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "get_assembly_entity",
+      "params": [
+        "component",
+        "feature_or_face"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "get_auto_route",
+      "params": [
+        "route_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "get_bodies",
+      "params": [
+        "cost_part"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "get_body_count",
+      "params": [
+        "cost_part"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "get_cost_analysis",
+      "params": [
+        "cost_part"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "get_costing_defaults",
+      "params": [
+        "cost_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "get_costing_method",
+      "params": [
+        "cost_part",
+        "method_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "get_costing_model",
+      "params": [
+        "cost_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_pdm.py",
+      "function": "get_custom_property_names_and_values",
+      "params": [
+        "pdm_document"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "get_default_template",
+      "params": [
+        "defaults",
+        "category"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_results.py",
+      "function": "get_displacement_at_points",
+      "params": [
+        "results",
+        "component",
+        "step",
+        "points",
+        "out_values"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "get_display_mode",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "get_edge_weld_connector",
+      "params": [
+        "manager",
+        "index"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "get_electrical_route",
+      "params": [
+        "route_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_ellipses",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_render_material.py",
+      "function": "get_extension",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_drawing_view.py",
+      "function": "get_first_view",
+      "params": [
+        "drawing"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_automation_knowledge.py",
+      "function": "get_flag",
+      "params": [
+        "sldworks",
+        "pref"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "get_loads_and_restraints",
+      "params": [
+        "manager",
+        "index"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "get_loads_manager_of",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_appearance.py",
+      "function": "get_material_property_values",
+      "params": [
+        "target"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_results.py",
+      "function": "get_mesh_element_location",
+      "params": [
+        "mesh",
+        "element_number"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_motion.py",
+      "function": "get_motion_study_manager",
+      "params": [
+        "asm_model",
+        "load_type_library"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_parabolas",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_polylines",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "get_results_of",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "get_route_property",
+      "params": [
+        "route_manager"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_drawing_view.py",
+      "function": "get_scale_decimal",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selected_component",
+      "params": [
+        "selection",
+        "index",
+        "secondary"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selected_face",
+      "params": [
+        "selection",
+        "index",
+        "secondary"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selected_object_mark",
+      "params": [
+        "selection",
+        "index"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selected_object_type",
+      "params": [
+        "selection",
+        "index"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selected_objects",
+      "params": [
+        "selection",
+        "count"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selected_view",
+      "params": [
+        "selection",
+        "index",
+        "secondary"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selection_manager",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selection_point",
+      "params": [
+        "selection",
+        "index",
+        "secondary"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "get_selection_point_in_sketch_space",
+      "params": [
+        "selection",
+        "index",
+        "secondary"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_sketch_block_instances",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_sketch_contours",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_sketch_hatches",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_sketch_paths",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_sketch_pictures",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_sketch_points",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_sketch_regions",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_sketch_slots",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_splines",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "get_study_manager_of",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "get_topology_study_manager",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "get_topology_study_options",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "get_user_points",
+      "params": [
+        "sketch"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "get_view_frame",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "get_view_model_doc",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "get_view_translation",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_drawing_view.py",
+      "function": "get_visible_component_count",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_audit.py",
+      "function": "goto",
+      "params": [
+        "kind",
+        "name",
+        "h",
+        "w",
+        "tries"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_audit.py",
+      "function": "goto_element",
+      "params": [
+        "kind",
+        "name",
+        "h",
+        "w",
+        "back_rounds"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_review.py",
+      "function": "group_coaxial_hole_segments",
+      "params": [
+        "segments",
+        "position_tolerance_mm",
+        "axis_tolerance"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly_doc.py",
+      "function": "hide_component",
+      "params": [
+        "doc",
+        "hidden"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "hole_wizard",
+      "params": [
+        "model",
+        "hole_type",
+        "standard",
+        "fastener_type",
+        "size",
+        "depth",
+        "x",
+        "y",
+        "z"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": true
+    },
+    {
+      "module": "sw_import_mesh_reference.py",
+      "function": "import_mesh_reference",
+      "params": [
+        "mesh_path",
+        "output_sldprt",
+        "*",
+        "review_dir",
+        "units",
+        "model_type",
+        "visible"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "include_body",
+      "params": [
+        "cost_part",
+        "body_name",
+        "include"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "initialize_shading",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "insert_composite_curve",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "insert_dome",
+      "params": [
+        "model",
+        "height",
+        "reverse",
+        "elliptic"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_preflight.py",
+      "function": "install_com_dependencies",
+      "params": [
+        "python_executable",
+        "requirements"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "iter_feature_tree",
+      "params": [
+        "model",
+        "include_subfeatures"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sheet_metal.py",
+      "function": "iter_features",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_weldment.py",
+      "function": "iter_features_recursive",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "linear_pattern",
+      "params": [
+        "model",
+        "feature_name",
+        "d1_x",
+        "d1_y",
+        "d1_z",
+        "d1_spacing",
+        "d1_count",
+        "d2_x",
+        "d2_y",
+        "d2_z",
+        "d2_spacing",
+        "d2_count"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_misumi.py",
+      "function": "list_brands",
+      "params": [
+        "sess"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly_doc.py",
+      "function": "list_external_file_references_count",
+      "params": [
+        "component",
+        "*",
+        "include_hidden"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_toolbox_index.py",
+      "function": "list_standards",
+      "params": [
+        "index",
+        "Any] | None"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "list_templates",
+      "params": [
+        "cost_manager",
+        "category"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "list_topology_constraints_and_controls",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_locate.py",
+      "function": "locate_all",
+      "params": [
+        "win",
+        "name",
+        "ctype"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_grid.py",
+      "function": "locate_card",
+      "params": [
+        "hwnd",
+        "win",
+        "name",
+        "log"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_locate.py",
+      "function": "locate_shape",
+      "params": [
+        "pane_img",
+        "which"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_appearance.py",
+      "function": "material_values",
+      "params": [
+        "color",
+        "ambient",
+        "diffuse",
+        "specular",
+        "shininess",
+        "transparency",
+        "emission"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_appearance.py",
+      "function": "material_variant",
+      "params": [
+        "values"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_select.py",
+      "function": "md5_png",
+      "params": [
+        "img"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "mirror_feature",
+      "params": [
+        "model",
+        "feature_name",
+        "mirror_plane_name"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_fill.py",
+      "function": "model_row",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_motion.py",
+      "function": "motion_member",
+      "params": [
+        "obj",
+        "attr_name",
+        "*args"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly_doc.py",
+      "function": "move_component",
+      "params": [
+        "doc"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_grid.py",
+      "function": "named_cards_in_order",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_fill.py",
+      "function": "param_rows",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_toolbox_index.py",
+      "function": "part_path",
+      "params": [
+        "standard",
+        "part_name",
+        "index",
+        "Any] | None"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_select.py",
+      "function": "pick_first",
+      "params": [
+        "gui"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_preflight.py",
+      "function": "pip_install_command",
+      "params": [
+        "python_executable",
+        "requirements"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "redraw_view",
+      "params": [
+        "view",
+        "scope_or_none"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_gui.py",
+      "function": "refresh_pane",
+      "params": [
+        "hwnd",
+        "rect"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "remove_covering",
+      "params": [
+        "route_property"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "remove_perspective",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_study.py",
+      "function": "rename_study",
+      "params": [
+        "manager",
+        "old_name",
+        "new_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "replace_component",
+      "params": [
+        "asm_model",
+        "old_component_name",
+        "new_part_path"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "require_runtime_available",
+      "params": [
+        "method"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sheet_metal.py",
+      "function": "require_verified",
+      "params": [
+        "entry"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "revolve_boss",
+      "params": [
+        "model",
+        "sketch_name",
+        "angle_rad",
+        "axis_sketch_name"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "rib",
+      "params": [
+        "model",
+        "sketch_name",
+        "thickness",
+        "direction"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_fill.py",
+      "function": "row_for_label",
+      "params": [
+        "win",
+        "label"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_steps.py",
+      "function": "run_step",
+      "params": [
+        "name",
+        "act",
+        "Any]",
+        "None] | None",
+        "expect",
+        "h",
+        "w",
+        "timeout",
+        "heal",
+        "Any]",
+        "None] | None",
+        "tries"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface.py",
+      "function": "runtime_available",
+      "params": [
+        "method"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_gui_modal.py",
+      "function": "screen_png",
+      "params": [
+        "path"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_select.py",
+      "function": "scroll",
+      "params": [
+        "gui",
+        "rect",
+        "amount"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_cards.py",
+      "function": "scroll_card_into_view",
+      "params": [
+        "win",
+        "code",
+        "max_scrolls"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_search.py",
+      "function": "search_box",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_search.py",
+      "function": "search_button",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_search.py",
+      "function": "search_row",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection_spec.py",
+      "function": "select_entity_by_index",
+      "params": [
+        "model",
+        "kind",
+        "index",
+        "*",
+        "body_index",
+        "append"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation.py",
+      "function": "select_face_by_selector",
+      "params": [
+        "model",
+        "selection",
+        "*",
+        "mark",
+        "append"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection_spec.py",
+      "function": "select_object",
+      "params": [
+        "model",
+        "obj",
+        "*",
+        "append"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_macro_guard.py",
+      "function": "select_template_key",
+      "params": [
+        "user_request"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_automation_knowledge.py",
+      "function": "send_message",
+      "params": [
+        "sldworks",
+        "text",
+        "icon",
+        "buttons"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_featureworks.py",
+      "function": "set_advanced_options",
+      "params": [
+        "featureworks",
+        "options"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch.py",
+      "function": "set_automatic_solve",
+      "params": [
+        "sketch",
+        "enabled"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "set_costing_method",
+      "params": [
+        "cost_part",
+        "method_name",
+        "method"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "set_default_lot_size",
+      "params": [
+        "defaults",
+        "single_body",
+        "multibody"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "set_default_manufacturing_method",
+      "params": [
+        "defaults",
+        "category",
+        "method"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "set_default_material",
+      "params": [
+        "defaults",
+        "category",
+        "material_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "set_default_template",
+      "params": [
+        "defaults",
+        "category",
+        "template_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_appearance.py",
+      "function": "set_feature_appearance",
+      "params": [
+        "feature",
+        "color",
+        "configuration"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_automation_knowledge.py",
+      "function": "set_flag",
+      "params": [
+        "sldworks",
+        "pref",
+        "value"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_fill.py",
+      "function": "set_front",
+      "params": [
+        "hwnd",
+        "tries"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "set_lot_size",
+      "params": [
+        "cost_analysis",
+        "lot_size"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "set_markup",
+      "params": [
+        "cost_analysis",
+        "markup_type",
+        "markup_percent"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_export.py",
+      "function": "set_mass_property_override",
+      "params": [
+        "mass_property",
+        "override_options",
+        "*",
+        "override_mass",
+        "override_center_of_mass",
+        "override_moments_of_inertia",
+        "mass_value",
+        "third_argument"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_featureworks.py",
+      "function": "set_performance_options",
+      "params": [
+        "featureworks",
+        "options"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_selection.py",
+      "function": "set_selected_object_mark",
+      "params": [
+        "selection",
+        "index",
+        "mark",
+        "value"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "set_topology_goal",
+      "params": [
+        "study",
+        "*",
+        "goal_type",
+        "mass_reduce_percent",
+        "factor_of_safety"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "set_topology_iteration_options",
+      "params": [
+        "study",
+        "*",
+        "iteration_option",
+        "iteration_limit",
+        "convergence_check"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "set_view_camera_by_name",
+      "params": [
+        "view",
+        "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "set_wire_route_path",
+      "params": [
+        "wire",
+        "path"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_connect.py",
+      "function": "settle_residual_dialogs",
+      "params": [
+        "target",
+        "*",
+        "settle_seconds",
+        "poll_ms"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "shell",
+      "params": [
+        "model",
+        "thickness",
+        "faces_to_remove"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_preflight.py",
+      "function": "shell_command_text",
+      "params": [
+        "command"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "sketch_arc",
+      "params": [
+        "model",
+        "cx",
+        "cy",
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+        "direction"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_part.py",
+      "function": "sketch_centerline",
+      "params": [
+        "model",
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+        "z"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": true
+    },
+    {
+      "module": "sw_part.py",
+      "function": "sketch_polygon",
+      "params": [
+        "model",
+        "cx",
+        "cy",
+        "radius",
+        "sides"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_gui.py",
+      "function": "snap",
+      "params": [
+        "name",
+        "box",
+        "scale"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_connect.py",
+      "function": "solidworks_process_id",
+      "params": [
+        "sw"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "start_dynamics",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_routing.py",
+      "function": "start_route",
+      "params": [
+        "route_manager",
+        "route_type",
+        "from_point"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_view.py",
+      "function": "stop_dynamics",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_misumi.py",
+      "function": "suggest_keywords",
+      "params": [
+        "keyword",
+        "sess"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_misumi.py",
+      "function": "suggest_part",
+      "params": [
+        "keyword",
+        "count",
+        "sess"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_index.py",
+      "function": "summarize",
+      "params": [
+        "index",
+        "Any] | None"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "suppress_component",
+      "params": [
+        "asm_model",
+        "component_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly_doc.py",
+      "function": "suppress_mate",
+      "params": [
+        "doc",
+        "component_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_gui.py",
+      "function": "sw_window",
+      "params": [],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_gui.py",
+      "function": "tab_column",
+      "params": [
+        "hwnd"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_fill.py",
+      "function": "type_into",
+      "params": [
+        "hwnd",
+        "ctl",
+        "rect",
+        "value",
+        "log"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_fill.py",
+      "function": "unfilled",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_assembly.py",
+      "function": "unsuppress_component",
+      "params": [
+        "asm_model",
+        "component_name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_costing.py",
+      "function": "update_cost_for_all_bodies",
+      "params": [
+        "cost_part"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_macro_guard.py",
+      "function": "validate_vba_macro",
+      "params": [
+        "code"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_appearance.py",
+      "function": "verify_appearance",
+      "params": [
+        "target",
+        "color",
+        "tolerance"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_click.py",
+      "function": "verify_click_landed",
+      "params": [
+        "ctrl",
+        "before",
+        "tries"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_cards.py",
+      "function": "visible_codes",
+      "params": [
+        "win"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    }
+  ]
+}

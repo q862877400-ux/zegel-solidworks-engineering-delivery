@@ -343,3 +343,46 @@
 
 **依据**：`output/topology-evidence.json` · `tools/capture_topology_evidence.py` ·
 `scripts/sw_simulation.py` 的 `ensure_simulation_addin` · `C:\swapi\enums\swLoadAddinError_e.md` · 事实 141
+
+| 143 | **挂柜台第一批：先修判据（候选清单 87% 看不见），再挂 4 个** —— 而"同一条链上"≠"这个函数跑过"** —— 2026-10-01（轮 204 / Spec Kit `123`）。
+
+★★★ **本轮最值钱的是"先修判据"这一步**：
+```
+`tools/probe_unexposed_functions.py`（既有工具）印到「孤立能力（前 30）」就停，
+后面写「…（还有 %d 个）」⇒ ★★ 实测共 **302** ⇒ **272 个（87%）读者看不到**
+⇒ "选哪一批暴露"**只能靠感觉** —— 而本项目**明令禁止**靠感觉（事实 53）。
+★ 若直接凭经验挑 4 个挂上，本轮会**看起来一样成功**（柜台 +4、门禁全绿），
+  而那种"成功"是**在看不见的地图上选的路**。
+⇒ 所以本轮**第一件事**是给它加**结构化全量输出**（`D:/AI/SW/output/orphan-capabilities.json`，
+  含**签名**）⇒ "选哪批"从此**可从数据复现**。
+实测拿到之前拿不到的数：302 孤立 · **首参可注入 51** · **含裸坐标（规则 3 会拒）4**。
+```
+
+★★ **第一批 = 拓扑的「目标 / 约束 / 控制」4 个**（`mcp-server/tool_specs_batch11.py`），四条理由：
+① `topology_optimization` 是 `verified` 且**轮 203 真机复验 pass**（85,748 单元 / `材料质量1` / 228.9 s）；
+② `sw_topology` 是**可注入孤立能力最集中**的模块（12 个）；③ ★ **先例已存在**
+（`solidworks_topology_create_study` / `_evidence` / `_run` 三工具在用同一个 `inject="study"` 模板）；
+④ 内聚（同一条真机链的"目标/约束/控制"那一环）。
+
+★★★★ **一处必须诚实修正的自我预期**：
+```
+我原以为"这批都真机跑过" —— **实测不是**：`capture_topology_evidence.py` **直接调用过**的拓扑函数
+**只有 4 个**（create_topology_study · set_topology_goal · set_material · run_analysis），
+而本批这 4 个**不在其中** ⇒ **它们没有直接的真机证据**。
+⇒ ★ 本批**只做"暴露"**，**不声称验证**、**不给任何 `verified` 身份**。
+★ 教训：**"同一条链上"不等于"这个函数跑过"** —— 别用邻接关系代替证据。
+```
+
+★★★ **五处独立口径一致地动 4**（互相印证，不是凑的）：
+```
+被工具引用的公开函数 93→**97** · 孤立能力 302→**298** · 首参可注入 51→**47**
+地图「本仓库(MCP)」86→**90** · 地图「本仓库独家」75→**79** · 缺口 338 **不变**
+```
+★ 两处"钉死数量"的测试**当场报红**（设计意图：让"悄悄多注册工具"可见）⇒ 同步更新（41→45 · 86→90）。
+
+⚠ **限度**：只做了 **4 / 302**（第一刀）· `symmetry_type`/`demold` 的**枚举值未核**（不猜，留批）·
+`sw_part` 那族含 `angle_rad` ⇒ **与规则 2 冲突**要先定换算边界 · `sw_surface` 那族有事实 40
+（返回值跨次会变）⇒ 暴露前要先定行为 · 本批**没跑真机**（暴露 ≠ 验证）。
+
+**依据**：`tools/probe_unexposed_functions.py`（本轮加全量输出）· `mcp-server/tool_specs_batch11.py` ·
+`mcp-server/register_capabilities.py` · `docs/union-coverage-matrix.md` · 事实 40 / 53 / 142
