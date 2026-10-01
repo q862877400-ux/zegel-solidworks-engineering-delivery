@@ -1,0 +1,48 @@
+| 169 | **W6 前置：注册器的注入名**只能是 `RESOLVERS` 的键** —— 所以首参叫 `asm_model` 的函数挂不上，**解法是给那张表加一行** —— 2026-10-01（轮 235）。
+
+★★★ **怎么发现的**：照 W2–W5 的教训**先核缺口本身**（⑩装配那 21 个名字逐个核），查出：
+```
+★ 本仓库装配能力层里**已实现、且首参可注入、却没挂**的有：
+    `sw_assembly.get_components(asm_model, top_level_only=True)`
+    `sw_assembly.get_interference_detection(asm_model)`        ← ★★ **干涉检查**（"这两个零件撞不撞"）
+    `sw_assembly.collect_mate_feature_summary(model)`          ← 配合清单
+    `sw_assembly.replace_component / suppress_component / unsuppress_component`（写操作）
+★ 而已有工具的：`add_component` · `add_*_mate` · `collect_assembly_bom` · `pack_and_go` ·
+  `set_component_fixed` ⇒ ★ 缺的正是**只读的"看装配里有什么 / 撞不撞"**。
+```
+
+★★★★ **而它们中的多数首参叫 `asm_model`，不是 `model`** ⇒ 逼出了下面这条机制结论：
+```
+`tool_registry.py:468`  `fn = make_tool_function(spec, model, run_locked, resolve_model, resolvers)`
+                        ⇒ ★ **`inject_as` 没有被传**（它是 `make_tool_function` 的可选参数、默认 None）
+⇒ 于是 `kwargs[inject_as or inj] = resolver(params)`（L416）实际等价于 **`kwargs[inj] = …`**
+⇒ ★★ **注入名 = `inject` 的字面值**，而 `inject` 只能是 **`RESOLVERS` 的键**
+   （`register_capabilities.py:84` 的 `{"model", "sw_app", "study"}`）
+⇒ ★★★ **结论：目标函数的形参名必须**正好**是 `RESOLVERS` 的某个键**；
+   叫 `asm_model` 的函数**当前挂不上**（会 `TypeError: unexpected keyword argument 'model'`）。
+```
+
+★★★ **解法（本项目的正当用法，不动核心）**：
+```
+`register_capabilities.py:83` 的注释写着：
+   「注入名 → 解析器。`tool_registry` **不硬编码宿主 API**，全从这里供给。」
+⇒ ★ **给 `RESOLVERS` 加一行** `"asm_model": resolve_model`（装配文档同样是 `model`，同一个解析器）
+  ⇒ `inject="asm_model"` ⇒ **注入名正好对上形参名** ✓
+★ 三条候选路径与取舍：
+   (a) ★ **给表加一行** —— 最小、且**正是表的设计用途** ✓ **本特性采用**
+   (b) 改 `tool_registry` 支持 `inject_as` —— ⚠ 动核心，风险大，且要改 468 行那处调用
+   (c) 改能力层形参名 `asm_model`→`model` —— ⚠ 会**动到既有调用点**（与 W4 的定则冲突）
+```
+
+★ **顺带确认的两件事实**（供后续批次用）：
+```
+· `inject_as` **存在但没人用**（`grep inject_as mcp-server/tool_specs_batch*.py` = 0 命中）
+  ⇒ ★ 它是**预留的扩展点**，而当前所有工具都靠"形参名 = RESOLVERS 键"这条路。
+· `sw_assembly_doc.collect_assembly_doc_evidence(doc, configuration='')` 的首参是 `doc`
+  ⇒ ★ 同样的问题 ⇒ 同一解法（给表加 `"doc"` 或改名）。
+```
+
+**依据**：`mcp-server/tool_registry.py` 的 `make_tool_function`（L383/386/416/468）·
+`mcp-server/register_capabilities.py` 的 `RESOLVERS`（L83–88）· `scripts/sw_assembly.py` 的
+`get_components` / `get_interference_detection` / `collect_mate_feature_summary` ·
+`docs/union-coverage-matrix.md` 的 ⑩ 段 · 事实 74（门禁只管名字那一族的近亲：**这里也是"名字对不上"**）
