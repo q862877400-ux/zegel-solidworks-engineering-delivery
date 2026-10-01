@@ -275,3 +275,66 @@ A5 现在只覆盖**签名层**（参数顺序与类型与官方签名对齐）�
 **⇒ 可行的补法**：对**每一个 `verified` 能力**，在其**已确立的对象**上逐个穷举它用到的成员
 （像 `IModeler` 那次），把结果写进该能力的 `evidence`。
 **⇒ 这是**逐能力**的工作，不是**一次全局**的工具。** 登记为待办，本轮不硬塞。
+---
+
+## 十一、第三批（2026-10-01）：C 类落地 2 条 + **C 类精确分类（三种 ref 约定）**
+
+### 11.1 新机制 `ToolSpec.derived_args`（「spec 展平层」）
+C 类函数的入参是 **typed spec dataclass**，MCP 表面收不了 ⇒ 展平成标量入参。
+
+**⚠ 为什么不复用 `extra_op`（本轮守住的东西）**：
+| | `extra_op` | `derived_args` |
+|---|---|---|
+| 作用 | **替换整个调用** | **只派生一个额外实参**（如 `spec=`） |
+| 代价 | 用了就**放弃声明式**（`module`/`function` 都不要了） | `module`/`function`/同名直传**都还在** |
+
+**⇒ 能不退就退。** 单位换算放这里且**只做一次**（规则 2）：spec 说「米」、表面用 `_mm` ⇒ `/1000`；
+角度**本来就是度** ⇒ 原样传。
+
+### 11.2 第三批 2 条
+```
+solidworks_sheet_metal_create_base_flange    derived_args 装回 BaseFlangeSpec（7 字段）
+solidworks_sheet_metal_create_one_bend       derived_args 装回 OneBendSpec（4 字段）
+```
+`sketch_name` → 实现里的 `sketch_ref`（**显式别名**，不靠猜）。
+
+### 11.3 ⚠⚠ 核心发现：**C 类不止「展平 spec」，还有三种互不相同的 ref 约定**
+逐一读函数体后（**不是猜**）：
+
+| 函数 | ref 参数 | 约定 | 能否暴露 |
+|---|---|---|---|
+| `create_base_flange` | `sketch_ref` | **草图名**（转给 `sw_part._ensure_sketch_selected`） | ✅ **已做** |
+| `create_one_bend` | `sketch_ref` | **草图名** | ✅ **已做** |
+| `create_edge_flange` | 无 | 文档串：「调用前必须先用 `_select_by_id` 把目标边入选区」 | ⛔ 需「选择」入参 |
+| `create_gusset` | 无 | 同上（吃当前选区） | ⛔ 同上 |
+| `create_draft` | `face_ref` | **对象** | ⛔ 需「选择→对象」桥 |
+| `create_swept_flange` | `path_ref` / `profile_ref` | **对象**（文档串明写 `GetSelectedObject6(1,-1)` 取得） | ⛔ 同上 |
+
+**⇒ 修正后的判据：C 类要按 ref 约定再分三小类（C1/C2/C3）。6 个里只有 2 个能现在暴露。**
+
+**★ 好消息（这决定了下一步该怎么做）**：另 4 个需要的「selection」概念
+**正是规则 3 要求的形态**，而 `sw_part._ensure_sketch_selected` **已经示范了它的样子**：
+- **按名字选**（而不是坐标）
+- 支持特殊的 `__current_selection__`（复用当前选区，不重选）
+- 有**多级回退**（活动草图 → 缓存 → 按名选特征 → 按候选名选 SKETCH）
+- 选不到就 `ClearSelection2` + **抛带原因的错误**（不静默成功）
+
+**⇒ 照它做一层「按名字/类型选边、选面」的解析层，C2 与 C3 **同源、可一次做成**。**
+
+### 11.4 守卫测试（`tests/test_tool_specs_batch3.py`，8 条）
+最重要的一条：**`spec` 的每个字段都必须在 MCP 表面有对应入参**
+—— 否则**静默丢字段**（用户设不了它，实现用 dataclass 默认值代替，**看代码看不出来**）。
+
+### 11.5 本轮自己踩的两个错（已修，值得记）
+1. **`param_alias={"spec": None}`** —— `spec` **不是**声明参数（由 `derived_args` 提供）
+   ⇒ 门禁红「param_alias 指向未声明的参数」。**门禁抓对了。**
+2. **守卫测试第一版把判据写成 `declared == real`** ⇒ 必然失败，因为声明里的其余入参
+   是 **spec 的字段**、不是函数形参。**⇒ 判据应是「非 spec 形参必须被覆盖」（子集）**。
+   **⚠ 这是「测试自己的逻辑错了，不是代码错了」—— 遇到要先问「这个测试想验什么」。**
+
+### 11.6 当前规模
+```
+声明式注册器    mcp-server/tool_registry.py        ~340 行（一次性）
+第一批 8 条 · 第二批 6 条 · 第三批 2 条            **合计 16 条**
+守卫测试        tests/test_tool_*.py                **53 条**
+```
