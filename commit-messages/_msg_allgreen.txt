@@ -1,0 +1,39 @@
+fix: **修掉全部 5 个基线失败** ⇒ 全量回归 **0 failed / 861 passed / 17 skipped**（首次全绿）
+
+## 🎯 结果
+```
+起点（本轮开工）: **5 failed / 856 passed / 17 skipped**
+现在:            **0 failed / 861 passed / 17 skipped**   ← 首次全绿
+release_check:   退出码 0 / status: pass
+四项门禁:        全 exit 0
+```
+
+## 🔴 根因一：`subprocess.run(text=True)` 缺 `encoding=`（**11 处**，系统性）
+4 个失败（`test_cad_studio_cli` ×3 + `test_dfm_review` ×1）**同源**：
+```
+子进程输出 **UTF-8 中文**，父进程用 `locale.getpreferredencoding()`（本机 **GBK**）去解
+⇒ UnicodeDecodeError ⇒ completed.stdout = **None** ⇒ json.loads(None) 抛 TypeError
+```
+**⇒ 给 11 处补 `encoding="utf-8", errors="replace"`**（6 个文件）。
+⚠ **第一次扫描报了 23 处，是**假阳性**** —— 我按「第一个 `)`」截断调用段，把本来就有 `encoding=`
+的多行调用误判了。**⇒ 改用**括号配对**切分 ⇒ 真值 11 处。**
+
+## 🔴 根因二：`Path("D:")` **不是盘根** —— 一个**真实功能 bug**（第 5 个失败）
+```
+scripts/cad_installation.py: root = Path(drive)          # drive = "D:" / "E:"
+⇒ Path("D:") / "AutoCAD 2024" / "acad.exe"  =  'D:AutoCAD 2024\acad.exe'  ← **缺反斜杠！**
+⇒ **D:/E: 盘上的 AutoCAD / SolidWorks 一直发现不了**（不只是测试问题）
+⇒ 修法: Path(drive + "/")  ⇒ 'D:\AutoCAD 2024\acad.exe'
+```
+**★ 这个 bug 是那个测试**尽职抓到的** —— 它注入的 `exists` 只认精确字符串，
+于是把「路径拼错」暴露成了断言失败。**（测试做得对，代码错了。）**
+
+## ⚠ 顺带踩到并记下的一处
+我的**文本替换扫描改到了自己的来源块散文** —— `scripts/fea_analysis.py` 的注释里
+`subprocess.run(..., text=True)` 被就地替换成了 `text=True, encoding="utf-8", …`，
+让注释变得自相矛盾。**⇒ 已改回；教训：文本替换扫描必须排除注释与字符串。**
+
+## 验证
+- 11 处编码修复 + 1 处盘根修复；`compileall -W error::SyntaxWarning` exit 0
+- **全量回归 0 failed / 861 passed / 17 skipped**；`release_check` pass；四项门禁全绿
+- 按**事实 55** 重跑了 `sync_bundled_skill.py`（改了 `scripts/` 就必须重跑）
