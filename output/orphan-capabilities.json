@@ -2,8 +2,8 @@
   "note": "本文件是**生成物**（tools/probe_unexposed_functions.py 写）；别手改。它只列事实，不判『该不该暴露』。",
   "counts": {
     "public": 821,
-    "exposed_lower_bound": 105,
-    "orphans": 290
+    "exposed_lower_bound": 106,
+    "orphans": 289
   },
   "orphans": [
     {
@@ -513,19 +513,6 @@
         "strict"
       ],
       "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_review.py",
-      "function": "build_review_report",
-      "params": [
-        "model",
-        "output_dir",
-        "basename",
-        "views",
-        "expected_outputs"
-      ],
-      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {
