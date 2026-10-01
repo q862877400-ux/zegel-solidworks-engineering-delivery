@@ -1,0 +1,54 @@
+feat(mcp): T-011 第四批（钣金 C2/C3 共 4 条）+ 修**两个真实运行时 bug**
+
+## 新增机制：`ToolSpec.pre_call`（调用**前的副作用**钩子）
+C2 类的实现里明写「**调用前必须先用 `_select_by_id` 把目标边选入选区**」
+（`create_edge_flange`）、「支撑面须由调用方先用 `SelectByID2` 选好」（`create_gusset`）
+⇒ MCP 工具必须在**调用前**完成选择。
+
+**三个机制各管一件事，不混：**
+| 机制 | 管什么 |
+|---|---|
+| `inject` | 注入**宿主对象**（model / sw_app / study） |
+| `derived_args` | 从已声明入参派生**一个额外实参**（如 `spec=`） |
+| **`pre_call`** | 调用**前**做**副作用**（选中实体），**不产出实参** |
+
+## 第四批 4 条
+    solidworks_sheet_metal_create_edge_flange     C2  pre_call 选边 + spec 展平
+    solidworks_sheet_metal_create_gusset          C2  pre_call 选面 + spec 展平
+    solidworks_sheet_metal_create_draft           C2  pre_call 选面 + spec 展平（省略静默参数）
+    solidworks_sheet_metal_create_swept_flange    C3  两个选择器解析成**对象** + spec 展平
+
+## ⚠⚠ 缺陷 1：`create_draft` 的 `face_ref` 参数**从未被使用**
+逐行读函数体（**不是猜**）：`_apply` 里只用了 `spec.angle` / `spec.reverse_direction`，
+**`face_ref` 从头到尾没出现** —— 一个「看起来有意义、实际什么都不做」的参数。
+**⇒ 本批显式 `omitted_params=("face_ref",)`**，真正的选择由 `pre_call` 的 `selection` 承担
+（与文档串「在**已选中**的面上」一致）。
+**⇒ 不擅自改 `scripts/` 的既有签名**；缺陷本身记进 T-011 文档。
+
+## ⚠⚠ bug 2（**守卫测试抓到的，且 batch3 也中招**）
+```
+TypeError: fake_target() got an unexpected keyword argument 'bend_radius_mm'
+```
+注册器把**所有**声明参数都当 kwarg 传给目标函数，而 **spec 字段由 `derived_args` 消费**、
+目标函数（`create_base_flange(model, sketch_ref, spec)`）**并不接受**它们
+⇒ **真机必炸**。
+
+**⇒ batch3 的 2 条同样中招** —— 它上一轮写的，当时那批测试**只查了单向**
+（「真形参都被覆盖」），**没查反方向**（「声明参数都有归宿」）⇒ 绿灯但真机跑不了。
+
+**修复**：用**已有**的 `param_alias={name: None}`（语义本就是「被消费、不传」），
+新增 `_consumed(*names)` 帮手批量构造。**不新增第 4 个机制 —— 能复用就复用。**
+
+**并回补守卫（双向检查）**：每个声明参数必须有归宿，**没有第四种**：
+① 映射到真形参；② `param_alias[name]=None`；③ 由 `derived_args` 装进 spec。
+
+## ⚠ 本轮自己踩的另外两个错（都记了）
+1. **模块文档串里嵌了 `"""…"""`** ⇒ 把外层文档串提前截断 ⇒ `SyntaxError`
+2. **测试用直接 `sys.modules[...] = fake`** ⇒ 假模块**泄漏到后面的用例**（5 个连带失败）
+   ⇒ 必须用 `monkeypatch.setitem`（测完自动还原）。另：假模块**也要带真的 dataclass**，
+   因为 `derived_args` 会 `from ... import` 它。
+
+## 验证
+- 四批 + 注册器 = **64 passed**；四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 833 passed / 15 skipped**（基线失败列表逐条相同）
+- 本轮**没动 `scripts/`**（只加 `mcp-server/` 与 `tests/`）⇒ 地图无变化，门禁一次就绿

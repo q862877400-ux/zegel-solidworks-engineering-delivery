@@ -394,3 +394,74 @@ solidworks_sheet_metal_create_one_bend       derived_args 装回 OneBendSpec（4
 | **B**（`point` / `normal` / `axis`，坐标向量） | 「选择器 → 坐标/向量」 | 🟡 **一半** —— 面已有（`select_face_by_selector`），**点与方向仍缺** |
 
 **⇒ 下一步明确：C2/C3 已解锁，可以补第三批剩下那 4 条；B 类还差「点 / 方向」。**
+---
+
+## 十三、第四批（2026-10-01）：C2/C3 落地 4 条 + **修两个真实运行时 bug**
+
+### 13.1 新机制 `ToolSpec.pre_call`（调用**前的副作用**钩子）
+C2 类的实现里**明写**「调用前必须先选好」（`create_edge_flange` 的文档串、
+`create_gusset` 的来源块）⇒ MCP 工具必须在**调用前**完成选择。
+
+**三个机制各管一件事（不混、不合并）：**
+| 机制 | 管什么 | 典型 |
+|---|---|---|
+| `inject` | 注入**宿主对象** | `model` / `sw_app` / `study` |
+| `derived_args` | 派生**一个额外实参** | `spec=BaseFlangeSpec(...)` |
+| **`pre_call`** | 调用**前**做**副作用**，**不产出实参** | 选中实体 |
+
+**⚠ 为什么不把选择塞进 `derived_args`**：能跑，但会让「派生实参」这个名字
+**承担它没有的含义** —— 本项目一贯反对给字段安它没有的含义。
+
+### 13.2 第四批 4 条
+```
+solidworks_sheet_metal_create_edge_flange     C2  pre_call 选边 + spec 展平
+solidworks_sheet_metal_create_gusset          C2  pre_call 选面 + spec 展平
+solidworks_sheet_metal_create_draft           C2  pre_call 选面 + spec 展平（省略静默参数）
+solidworks_sheet_metal_create_swept_flange    C3  两个选择器解析成**对象** + spec 展平
+```
+**⇒ C 类 6 条全部落地**（C1 2 条 + C2 3 条 + C3 1 条）。
+
+### 13.3 ⚠⚠ 缺陷 1：`create_draft` 的 `face_ref` **从未被使用**
+逐行读函数体（**不是猜**）：
+```
+def create_draft(model, face_ref, spec: DraftFeatureSpec):
+    spec.validate()
+    def _apply(data):
+        data.Angle = float(spec.angle)                     # 只用了 spec
+        data.ReverseDirection = float(spec.reverse_direction)
+    return _create_from_definition(model, SW_FM_DRAFT, _apply)
+    # ↑ `face_ref` 从头到尾**没出现**
+```
+**⇒ 一个「看起来有意义、实际什么都不做」的参数** —— 本项目纪律要抓的**静默无效**。
+**⇒ 处理**：显式 `omitted_params=("face_ref",)`，工具描述里写明原因；
+真正的选择由 `pre_call` 的 `selection` 承担。**不擅自改 `scripts/` 的既有签名。**
+
+### 13.4 ⚠⚠ 缺陷 2：**被消费的参数必须显式标记，否则真机 TypeError**
+守卫测试抓到：
+```
+TypeError: fake_target() got an unexpected keyword argument 'bend_radius_mm'
+```
+注册器把**所有**声明参数都当 kwarg 传，而 **spec 字段由 `derived_args` 消费**、
+目标函数**并不接受**它们。
+
+**⇒ batch3 的 2 条同样中招** —— 上一轮写的，当时那批测试**只查了单向**
+（「真形参都被覆盖」），**没查反方向**（「声明参数都有归宿」）⇒ 绿灯但真机跑不了。
+
+**⇒ 修复**：用**已有**的 `param_alias={name: None}`（语义本就是「被消费、不传」），
+加 `_consumed(*names)` 帮手批量构造。**不新增第 4 个机制 —— 能复用就复用。**
+
+**⇒ 并回补守卫（双向检查）**：每个声明参数必须有归宿，**没有第四种**：
+① 映射到真形参；② `param_alias[name]=None`；③ 由 `derived_args` 装进 spec。
+
+### 13.5 本轮自己踩的另外两个错
+1. **模块文档串里嵌了 `"""…"""`** ⇒ 外层文档串提前截断 ⇒ `SyntaxError`
+   （**教训**：文档串里引用别的文档串，用 `'''` 或改写，别嵌同类引号）
+2. **测试用直接 `sys.modules[...] = fake`** ⇒ 假模块**泄漏到后面的用例**（5 个连带失败）
+   ⇒ 必须 `monkeypatch.setitem`；且**假模块也要带真的 dataclass**（`derived_args` 会 import 它）
+
+### 13.6 当前规模
+```
+声明式注册器    mcp-server/tool_registry.py        ~370 行（一次性）
+四批声明        8 + 6 + 2 + 4 = **20 条**
+守卫测试        tests/test_tool_*.py                **64 条**
+```
