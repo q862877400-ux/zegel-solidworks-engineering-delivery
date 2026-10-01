@@ -1,0 +1,72 @@
+{
+  "captured_at": "2026-10-02T07:42:08",
+  "capability": "mass_property_read",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_part_mass_properties": true
+      }
+    },
+    "getter": {
+      "ok": true,
+      "has_Mass": true,
+      "has_Volume": true,
+      "★": "★ 记录『当属性取即可』——与 `CustomPropertyManager`（必须当方法调）**相反**"
+    },
+    "numeric_assertions": {
+      "ok": true,
+      "got": {
+        "volume": 7999.999999999999,
+        "surface_area": 2800.0,
+        "center_of_mass": [
+          0.0,
+          0.0,
+          -5.0
+        ],
+        "density": 1000.0,
+        "mass": 7999999.999999999,
+        "units": {
+          "volume": "mm^3",
+          "surface_area": "mm^2",
+          "center_of_mass": "mm",
+          "density": "kg/m^3 (official convention; NOT verified on this machine)",
+          "mass": "★ PHYSICAL UNIT NOT VERIFIED — see scripts/sw_mass_property.py module header"
+        }
+      },
+      "expect": {
+        "volume": 8000.0,
+        "surface_area": 2800.0,
+        "center_of_mass": [
+          0.0,
+          0.0,
+          -5.0
+        ]
+      },
+      "check": {
+        "volume": true,
+        "surface_area": true,
+        "center_of_mass": true
+      }
+    },
+    "mass_unit_puzzle": {
+      "volume": 7999.999999999999,
+      "density": 1000.0,
+      "mass": 7999999.999999999,
+      "volume_times_density": 7999999.999999999,
+      "mass_over_that": 1.0,
+      "★": "★ 如实记录：mass 恰好等于 volume(mm³) × density ⇒ **量纲不成立** ⇒ mass 的物理单位**未确证**，★ 不猜、不给它安一个单位"
+    },
+    "accuracy_level": {
+      "readable": false,
+      "err": "<unknown>.AccuracyLevel",
+      "★": "★ 与探针一致：读不到 ⇒ 不暴露它"
+    },
+    "negative_on_drawing": {
+      "ok": true,
+      "raised": "RuntimeError",
+      "msg": "当前文档是**工程图**，它没有质量属性（GetType()=3；质量属性只有零件(1)与装配(2)有）—— ★ 不要拿工程图的读数当零件用"
+    }
+  },
+  "verdict": "pass"
+}
