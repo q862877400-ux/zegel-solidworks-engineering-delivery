@@ -7,11 +7,11 @@
       "angle_or_dist": 0.0,
       "selected": 2,
       "segments_before": 2,
-      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读*",
+      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。★ 实测：**只有 `distance_equal`(2) ",
       "tb": [
         "    ...<3 lines>...",
         "    )",
-        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读**选区计数，事实 94）。"
+        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。★ 实测：**只有 `distance_equal`(2) 能成**；官方前置是**选中两条草图实体**。"
       ],
       "segments_after": 2,
       "changed": false
@@ -23,11 +23,11 @@
       "angle_or_dist": 45.0,
       "selected": 2,
       "segments_before": 2,
-      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读*",
+      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。★ 实测：**只有 `distance_equal`(2) ",
       "tb": [
         "    ...<3 lines>...",
         "    )",
-        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读**选区计数，事实 94）。"
+        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。★ 实测：**只有 `distance_equal`(2) 能成**；官方前置是**选中两条草图实体**。"
       ],
       "segments_after": 2,
       "changed": false
@@ -39,11 +39,11 @@
       "angle_or_dist": 3.0,
       "selected": 2,
       "segments_before": 2,
-      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读*",
+      "raised": "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。★ 实测：**只有 `distance_equal`(2) ",
       "tb": [
         "    ...<3 lines>...",
         "    )",
-        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。⚠ 官方前置：**必须选中两条草图实体**（选完请**回读**选区计数，事实 94）。"
+        "RuntimeError: ISketchManager.CreateChamfer 返回 None 且**线段数没变**（2 → 2）⇒ 没建成。★ 实测：**只有 `distance_equal`(2) 能成**；官方前置是**选中两条草图实体**。"
       ],
       "segments_after": 2,
       "changed": false
@@ -60,5 +60,5 @@
       "changed": true
     }
   ],
-  "modal_dialogs": []
+  "modal_dialogs": 0
 }

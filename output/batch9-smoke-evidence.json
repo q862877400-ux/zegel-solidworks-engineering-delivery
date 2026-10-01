@@ -1,12 +1,12 @@
 {
-  "started": "2026-10-01 19:53:06",
+  "started": "2026-10-01 20:06:37",
   "checks": {
     "batch9 声明 3 条": {
       "ok": true,
       "detail": "['insert_core_cavity_solids', 'insert_parting_surface', 'mold_undercut_detect']"
     },
     "3 条的 module/function/参数与真实签名一致": {
-      "ok": false,
+      "ok": true,
       "detail": "逐条核过"
     },
     "★ 3 条的**前置条件已记录**（防下一个人再踩弹窗）": {
@@ -27,8 +27,8 @@
     "insert_parting_surface": "需要**已插入分型线** ⇒ 否则弹框",
     "mold_undercut_detect": "⚠⚠ **轮 167 更正**：旧注释写「**不弹框**」是**错的** —— 实测**弹了**「此拔模方向尚未定义。」并卡住会话。根因：第 3 参是官方的 `BCoordInput`，传 `False` = **不启用坐标输入** ⇒ 退回「用模型已定义方向」⇒ 空零件上没定义 ⇒ 弹框。★ 现在**默认 `b_coord_input=True` + 非零方向 (0,0,1)** ⇒ **不依赖模型已定义方向 ⇒ 从根上不弹框**"
   },
-  "passed": 4,
+  "passed": 5,
   "total": 5,
-  "verdict": "fail",
-  "finished": "2026-10-01 19:53:06"
+  "verdict": "pass",
+  "finished": "2026-10-01 20:06:38"
 }
