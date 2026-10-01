@@ -1,0 +1,54 @@
+feat(release): 门禁结果**全部进返回体** + `skipped` **显式可见**（同一问题的第五层）
+
+## 本轮问的第四问：「跳过了」在结果里看得见吗？
+轮 71–73 依次解决了：**接线了没** · **接线方式对不对** · **跳过时算不算数**。
+本轮查：**结果里有没有「跳过」这件事**。
+
+**⚠ 实测 `release_check` 的返回体：**
+```python
+return {
+    "status": "pass",
+    "provenance": provenance,          # ← 只汇总了 **4 个**
+    "diff_markers": markers,
+    "member_names": member_names,
+    "interface_ownership": ownership,
+    "missing": [],
+}
+```
+* 其余 **9 个门禁的状态根本没被汇总**；
+* **没有任何地方统计 `skipped`** ⇒ **「跳过了」是隐形的**。
+
+★ **一个静默跳过的门禁，与没跑等价**（本项目已记录的第三种面孔）。
+
+## 修的两件
+1. **13 个门禁状态一次全列**（`_gate_results` → `gates`），并**容错**：不是 dict 的标 `unknown`
+   （**不谎报 `pass`**）；
+2. **`skipped` 显式列出**：`skipped`（列表）+ `skipped_count`，另附
+   `gates_passed` 与 `gates_diagnostic`（诊断类单独归类，如 `interface_ownership` 的
+   `clean`/`hits`/`checked_nothing`）。
+
+**实测输出**：
+```
+gates: 13 个（12 pass + interface_ownership=clean）
+**skipped: []（0 个）**     ← 现在一眼可见
+gates_passed: 12 · diagnostic: ['interface_ownership']
+```
+
+## 元门禁加**第五层**：汇总完整性
+`aggregated_vars()` 从 AST 取 `_gate_results` 的 value 名集合，与 `run_release_check` 里
+**所有 `_run_*` 赋值**逐一对照 ⇒ **少汇总一个就报**；反向（汇总了不存在的变量）也报。
+
+## ★ 负例已证有牙齿（3 条测试）
+| 用例 | 结果 |
+|---|---|
+| 真仓库：返回体必须汇总 ≥13 个 | ✓ |
+| 假源码漏汇总一个（`{"a": a}` 漏 `b`）| 判据能发现 ✓ |
+| 返回体必须有 `"skipped": skipped` / `skipped_count` / `gates` | ✓ |
+
+## ⚠ 过程中被两道门禁各拦一次（**门禁在尽职的证据**）
+1. 报告数字不符 ⇒ raise（正常流程，同步即可）；
+2. **改了 `release_check.py` 没 `sync_bundled_skill.py`** ⇒
+   `桌面内嵌 Skill 与根 Skill 不一致: scripts/release_check.py` ——
+   这正是**已知事实 55**，而**门禁帮我记着**（该快照在 `.gitignore` 里，git 看不见它）。
+
+⇒ 十二道门禁全 exit 0 · `release_check` exit 0 · 回归 **968 passed / 17 skipped / 0 failed**
