@@ -1,0 +1,28 @@
+fix(caps): R13 抓出 mold_tools 的**字段自相矛盾** + 修我上轮漏掉的 pack_and_go
+
+## 起因：上轮 original 只有 3 条，而护城河域应更多 ⇒ 逐条复核
+★ 一查就查出**我上轮的 2 个错**：
+
+① mold_tools 写 source: original，**而它自己有 provenance**
+   指向 Eduardof0nt/Solidworks-MCP-Server（其 sw_client.py 的 parting_line/shut_off_surface 动作集合）
+   ⇒ **字段之间互相打架**（「原创」与「有来源」是**互斥的陈述**）
+   ⇒ 改为 mixed（思路来自别家、**每一行实现**照 cosworks/sldworks 出厂反射写）
+
+② pack_and_go 写 undetermined，**而我上轮自己跑出的证据是 8 个模块全在 origin/main**
+   （sw_delivery / sw_assembly / sw_export / sw_document_data /
+     sw_session / sw_review / sw_part / sw_connect）
+   ⇒ 轮 58 把 8 条 undetermined 里的 7 条写进了 RESOLVED，**漏了这一条**，
+     还错注「工具已给 upstream」（工具给的其实是 undetermined）
+   ⇒ 改为 upstream
+
+✅ 复核确认**对的**：topology_optimization / simulation_and_fea 的 original
+   —— 它们的实现模块**全不在** origin/main（硬证据），且**无 provenance** ⇒ 自洽
+
+## 新增 R13（加在既有 R12 旁边，**不重造**）
+· source == "original" 且 provenance 非空 ⇒ **报自相矛盾**
+· source == "upstream" 而 provenance 指向**别家** ⇒ **报**（「上游」特指 wzyn20051216）
+★ R13 加完**立刻抓到** mold_tools 那条 —— 证明它有效，不是装饰
+
+⇒ 新分布：upstream=18 · mixed=8 · undetermined=1 · original=2
+⇒ 契约测试 +1（含 2 条负例 + 2 条不该报的正例）
+⇒ 回归 909 passed / 17 skipped / 0 failed
