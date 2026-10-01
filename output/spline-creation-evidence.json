@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 17:24:21",
+  "started": "2026-10-01 21:08:23",
   "cases": {
     "对照·直线": {
       "return": "CDispatch",
@@ -10,7 +10,7 @@
       "splines": 0
     },
     "样条(4 点)": {
-      "return": "NoneType",
+      "return": "EXC: RuntimeError: ISketchManager.CreateSpline2 返回 None ⇒ **样条没建出来**（本机实测，轮 141）。原因：该成员官方已废弃，后继 `CreateSpline",
       "segments": 0,
       "seg_types": [],
       "splines": 0

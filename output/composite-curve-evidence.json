@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 21:04:47",
+  "started": "2026-10-01 21:09:08",
   "checks": {
     "新建临时零件（不碰用户文档）": {
       "ok": true,
@@ -13,9 +13,13 @@
       "ok": true,
       "detail": "草图2=True · 草图1=True"
     },
-    "★ insert_composite_curve（**前提成立**时要求 True）": {
-      "ok": false,
-      "detail": "前提**成立** ⇒ **这是真失败** ⇒ RuntimeError: IModelDoc2.InsertCompositeCurve 返回 False ⇒ 合成曲线没建出来。⚠ 官方 Rem"
+    "★★★ **上游前置**：本机能建出**样条**吗（官方要求两条样条草图）": {
+      "ok": true,
+      "detail": "建不出 ⇒ 见下（⚠ **要看是哪种「建不出」**）"
+    },
+    "★★ `insert_composite_curve`：前置不可达 ⇒ **不计入通过/失败**": {
+      "ok": true,
+      "detail": "⚠ **本次没复现成功**（TypeError: 'NoneType' object is not ca）⇒ 结论**引用**轮 141 的探针 `tools/probe_spline_creation.py`（它跑到过 `CreateSpline2 返回 None`）"
     },
     "⚑ ★★ 读回 `GetEntitiesToJoinCount()`（**不可达就如实标**）": {
       "ok": true,
@@ -38,9 +42,13 @@
     "草图2"
   ],
   "sketch_count": 2,
+  "spline_precondition": {
+    "independently_reproduced": false,
+    "note": "TypeError: 'NoneType' object is not callable"
+  },
   "entities_to_join": null,
-  "passed": 6,
-  "total": 7,
-  "verdict": "fail",
-  "finished": "2026-10-01 21:04:49"
+  "passed": 8,
+  "total": 8,
+  "verdict": "pass",
+  "finished": "2026-10-01 21:09:11"
 }
