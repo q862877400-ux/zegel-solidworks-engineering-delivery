@@ -1,0 +1,43 @@
+fix(release): **故障**不许伪装成 `skipped` —— 5 处「无法启动」改成 `fail` + 元门禁加第四层
+
+## 🔴 本轮抓到的问题（同一问题的**第四层**）
+轮 71 解决「门禁**接线了没**」· 轮 72 解决「**接线的方式**对了没」。
+本轮问第三问：**门禁「跳过」的时候呢？**
+调用点只看 `"fail"`：
+```python
+provenance = _run_provenance_gate()
+if provenance.get("status") == "fail":
+    raise AssertionError(...)
+```
+⇒ **`skipped` 会被静默放行**。而实测 `release_check.py` 里原有 **5 处**：
+```python
+except (subprocess.TimeoutExpired, OSError) as exc:
+    return {"status": "skipped", "reason": f"门禁无法启动: {exc}"}   # ← **故障！**
+```
+**⚠ 「无法启动（超时/OSError）」是故障，不是便携性** ⇒ 它**必须**是 `fail`。
+
+## 修的两件
+1. **5 处「无法启动」⇒ `fail`**（`provenance` / `diff_markers` / `union_conventions` /
+   `member_names` / `interface_ownership` 的 `proof`）。
+   ⇒ 改后全仓只剩 **3 处** `skipped`，全部有**明确条件**：
+   `not _git_available()`（非 git 工作树）· `proc.returncode == 2`（脚本约定）·
+   脚本输出里有 `[SKIP]` 行（诊断的状态分类）。
+2. **元门禁加第四层**：`ALLOWED_SKIP_CONDITIONS` 白名单 ——
+   返回 `skipped` 的分支，其**依据**必须落在白名单内，否则**报**。
+
+## ★ 负例已证有牙齿（3 条测试 + 4 个活体用例）
+| 形态 | 结果 |
+|---|---|
+| **故障（超时/OSError）返回 `skipped`** | 白名单**不命中** ⇒ 判违规 ✓ |
+| 非 git 工作树 | 命中 ✓ |
+| 脚本约定 `returncode == 2` | 命中 ✓ |
+| 脚本自报 `[SKIP]` 驱动变量 | 命中 ✓ |
+
+## ⚠ 判据本身被修了一次（同一个「范围不贴合」的教训）
+第一版只检查 `If.test` ⇒ 把 `_run_interface_ownership_probe` 里那条**合法的**
+`if skipped:`（条件是**变量**，来源在**上一行**）**误报成违规**。
+⇒ 改成看**该分支往上 12 行**（`test` + 变量来源都覆盖在内），并用
+`test_skip_branch_looks_at_the_variable_source_not_only_the_test` **钉死**。
+★ 与已知事实 51 同族：**判据的范围必须贴合它要抓的那件事**。
+
+⇒ 十二道门禁全 exit 0 · `release_check` exit 0 · 回归 **965 passed / 17 skipped / 0 failed**
