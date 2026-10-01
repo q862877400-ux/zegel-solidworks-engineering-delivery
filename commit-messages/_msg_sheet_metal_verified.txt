@@ -1,0 +1,39 @@
+fix(sheet-metal): **真机实测 6 条钣金里只有 2 条能跑** —— 加状态表 + 守卫 + 工具描述标注
+
+## 为什么必须做（上轮的洞）
+上轮把 20 条声明接进 `server.py`（45 → 65）—— 而那 6 条钣金工具的底层模块
+`scripts/sw_sheet_metal.py` **自述「未在本机实测」**。
+**⇒ 工具已在用户面前，底子却是空的。** 本轮在真机上跑了一遍。
+
+## ⚠⚠ 实测结果：**6 条里只有 2 条能跑**
+```
+✓ create_base_flange    → 真建出特征（特征树出现「钣金6 / 基体-法兰1 / 平展型式6」）
+✓ sheet_metal_evidence  → 读回正确（thickness_m=0.002、has_base_flange=True、
+                          all_solid_bodies_are_sheet_metal=True）
+✗ create_one_bend       → CreateDefinition(33) 返回 None
+✗ create_draft          → CreateDefinition(3) 返回 None
+✗ create_edge_flange    → Property 'ReverseDirection' can not be set
+✗ create_gusset         → Property 'Thickness' can not be set
+```
+**⇒ 4 条已暴露的工具真机跑不了 —— 这比不暴露更糟。**
+
+## 改了什么（照 `sw_surface.py` 的先例，**不删任何既有函数**）
+- `scripts/sw_sheet_metal.py`：
+  - 新增 `SHEET_METAL_RUNTIME_STATUS`（入口 → (可用?, 真机原因)）—— **不是「未测」，是「测了，不行」**
+  - 新增 `require_verified(entry)`：调用前守卫，**失败带原因**，
+    而不是让用户看到裸 COM 错误（`Property ... can not be set` **完全指向不了真因**）
+- 5 条工具的描述里**直接写明**实测状态（`*** NOT USABLE ON THE TEST MACHINE ***` + 原因）
+- **不删那 4 个函数** —— 正确形状尚未查明（是 swFm 取值错？FeatureData 属性名错？
+  缺 AccessSelections？），删掉会让线索丢失
+
+## ⚠ 本会话**第 5 次**踩「来源块覆盖范围不足」，这次终于做成机器可抓
+- 本轮触发形式：**一个来源块后面有两个代码单元**（常量 + 函数）⇒ 默认只覆盖第一个
+- **⇒ `check_provenance` 现在直接打印两条最常见原因 + 修法**（并提示
+  「`覆盖: 后续同级定义` 那行**不要**加 markdown 粗体 —— 正则匹配不到 `**`」）
+- 已实测验证：临时制造一处未覆盖，诊断**确实打印**；还原后 PASS
+
+## 验证
+- 四项门禁全 exit 0（含地图重生成 —— 门禁又一次「报红但它是对的」）
+- `compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 841 passed / 15 skipped**（基线失败列表逐条相同）
+- ⚠ 接线仍**未跑 MCP 客户端**；本次是**底层函数**的真机验收

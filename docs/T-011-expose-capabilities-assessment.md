@@ -521,3 +521,41 @@ import server 成功
 守卫测试        tests/test_tool_*.py + test_server_wiring.py   **72 条**
 server 工具数   **45 → 65**
 ```
+---
+
+## 十五、真机验收那 6 条钣金（2026-10-01）：**只有 2 条能跑**
+
+### 15.1 为什么必须做
+上一轮把 20 条声明接进 `server.py`（45 → 65）—— 而那 6 条钣金工具的底层模块
+`scripts/sw_sheet_metal.py` **自述「未在本机实测」**。
+**⇒ 工具已在用户面前，底子却是空的。** 本轮在真机上跑了一遍（`probe_sheet_metal_e2e.py`）。
+
+### 15.2 ⚠⚠ 结果
+| 入口 | 真机结果 |
+|---|---|
+| `create_base_flange` | ✓ **真建出特征**（特征树出现「钣金6 / 基体-法兰1 / 平展型式6」） |
+| `sheet_metal_evidence` | ✓ 读回正确（`thickness_m=0.002`、`has_base_flange=True`、`all_solid_bodies_are_sheet_metal=True`） |
+| `create_one_bend` | ✗ `CreateDefinition(33)` 返回 None |
+| `create_draft` | ✗ `CreateDefinition(3)` 返回 None |
+| `create_edge_flange` | ✗ 设 `ReverseDirection` 报 `Property ... can not be set` |
+| `create_gusset` | ✗ 设 `Thickness` 报同款 |
+
+**⇒ 4 条已暴露的工具真机跑不了 —— 这比不暴露更糟。**
+
+### 15.3 处理（照 `sw_surface.py` 的先例，**不删任何既有函数**）
+1. `SHEET_METAL_RUNTIME_STATUS`（入口 → (可用?, 真机原因)）—— **不是「未测」，是「测了，不行」**
+2. `require_verified(entry)` 守卫：**失败带原因**，而不是让用户看到裸 COM 错误
+   （`Property ... can not be set` **完全指向不了真因**）
+3. 5 条工具的描述里写明 `*** NOT USABLE ON THE TEST MACHINE ***` + 原因
+4. **不删那 4 个函数** —— 正确形状尚未查明（swFm 取值错？FeatureData 属性名错？
+   缺 `AccessSelections`？），删掉会让线索丢失
+
+### 15.4 ⚠ 判据 A5 的又一块拼图
+A5 现在有**两层**：签名对齐（原有）+ **运行期可达/可用**（新增）。
+本轮证明第二层**不是形式主义** —— 6 条里 4 条签名层完全对、运行层直接失败。
+
+### 15.5 本会话**第 5 次**踩「来源块覆盖范围不足」，这次终于机器可抓
+- 形式：**一个来源块后面有两个代码单元**（常量 + 函数）⇒ 默认只覆盖第一个
+- **⇒ `check_provenance` 现在直接打印两条最常见原因 + 修法**（含
+  「`覆盖: 后续同级定义` 那行**不要**加 markdown 粗体」）
+- 已实测验证：临时制造未覆盖 ⇒ 诊断确实打印；还原 ⇒ PASS
