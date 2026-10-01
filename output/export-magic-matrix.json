@@ -1,0 +1,92 @@
+{
+  "started": "2026-10-01 18:41:14",
+  "rows": [
+    {
+      "format": "step",
+      "ext": ".step",
+      "error": null,
+      "bytes": 15765,
+      "kind": "STEP",
+      "head_hex": "49534f2d31303330",
+      "head_ascii": "ISO-10303-21;\\r\\nHEADER;\\r\\n"
+    },
+    {
+      "format": "stl",
+      "ext": ".stl",
+      "error": null,
+      "bytes": 684,
+      "kind": "IGES",
+      "head_hex": "73746c626e207072",
+      "head_ascii": "stlbn probe             "
+    },
+    {
+      "format": "iges",
+      "ext": ".igs",
+      "error": null,
+      "bytes": 22714,
+      "kind": "STL(ascii)",
+      "head_hex": "536f6c6964576f72",
+      "head_ascii": "SolidWorks IGES file usi"
+    },
+    {
+      "format": "parasolid",
+      "ext": ".x_t",
+      "error": null,
+      "bytes": 8209,
+      "kind": "Parasolid(text)",
+      "head_hex": "2a2a414243444546",
+      "head_ascii": "**ABCDEFGHIJKLMNOPQRSTUV"
+    },
+    {
+      "format": "pdf",
+      "ext": ".pdf",
+      "error": "AttributeError: <unknown>.GetSldWorksObject"
+    },
+    {
+      "format": "dxf",
+      "ext": ".dxf",
+      "error": null,
+      "bytes": 20209,
+      "kind": "DXF",
+      "head_hex": "2020300d0a534543",
+      "head_ascii": "  0\\r\\nSECTION\\r\\n  2\\r\\nHEADE"
+    },
+    {
+      "format": "dwg",
+      "ext": ".dwg",
+      "error": null,
+      "bytes": 272032,
+      "kind": "DWG(AC1015)",
+      "head_hex": "4143313031350000",
+      "head_ascii": "AC1015\u0000\u0000\u0000\u0000\u0000\u0006\u0001�\u0000\u0000\u0000!7'\u0000\u0006\u0000\u0000"
+    },
+    {
+      "format": "png",
+      "ext": ".png",
+      "error": null,
+      "bytes": 163073,
+      "kind": "PNG",
+      "head_hex": "89504e470d0a1a0a",
+      "head_ascii": "�PNG\\r\\n\u001a\\n\u0000\u0000\u0000\\rIHDR\u0000\u0000\u0004�\u0000\u0000\u0004\u0019"
+    },
+    {
+      "format": "jpg",
+      "ext": ".jpg",
+      "error": null,
+      "bytes": 39724,
+      "kind": "JPEG",
+      "head_hex": "ffd8ffe000104a46",
+      "head_ascii": "����\u0000\u0010JFIF\u0000\u0001\u0001\u0001\u0000x\u0000x\u0000\u0000��\u0000C"
+    },
+    {
+      "format": "bmp",
+      "ext": ".bmp",
+      "error": null,
+      "bytes": 921654,
+      "kind": "BMP",
+      "head_hex": "424d36100e000000",
+      "head_ascii": "BM6\u0010\u000e\u0000\u0000\u0000\u0000\u00006\u0000\u0000\u0000(\u0000\u0000\u0000�\u0002\u0000\u0000�\u0001"
+    }
+  ],
+  "modal_dialogs": []
+}
