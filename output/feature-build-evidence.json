@@ -1,0 +1,105 @@
+{
+  "captured_at": "2026-10-02T07:26:04",
+  "capability": "feature_build_extrude",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_extrude_boss": {
+          "resolved": true,
+          "aliases": {
+            "depth_mm": "depth"
+          }
+        },
+        "solidworks_extrude_cut": {
+          "resolved": true,
+          "aliases": {
+            "depth_mm": "depth"
+          }
+        },
+        "solidworks_extrude_midplane": {
+          "resolved": true,
+          "aliases": {
+            "total_depth_mm": "total_depth"
+          }
+        }
+      }
+    },
+    "extrude_boss": {
+      "ok": true,
+      "feature": "凸台-拉伸1",
+      "bbox": {
+        "min": [
+          -20.0,
+          -10.0,
+          -10.0
+        ],
+        "max": [
+          20.0,
+          10.0,
+          0.0
+        ],
+        "size": [
+          40.0,
+          20.0,
+          10.0
+        ]
+      },
+      "★": "矩形 40×20 拉伸 10mm ⇒ 期望 40 × 20 × 10；★ 断言见 verdict_bbox"
+    },
+    "extrude_cut_through_all": {
+      "ok": true,
+      "feature": "切除-拉伸1",
+      "n_features_before": 19,
+      "n_features_after": 21,
+      "★": "depth_mm=0 ⇒ 完全贯穿；★ 断言「多了一个特征」"
+    },
+    "extrude_midplane": {
+      "ok": true,
+      "feature": "凸台-拉伸1",
+      "bbox": {
+        "min": [
+          -20.0,
+          -10.0,
+          -5.0
+        ],
+        "max": [
+          20.0,
+          10.0,
+          5.0
+        ],
+        "size": [
+          40.0,
+          20.0,
+          10.0
+        ]
+      },
+      "★": "总深 10 ⇒ 每侧 5 ⇒ 期望 40 × 20 × 10（与 boss 同总数）"
+    },
+    "negative_missing_sketch": {
+      "ok": true,
+      "raised": "ValueError",
+      "msg": "无法选择草图: NoSuchSketch_XYZ。已尝试活动草图对象、缓存草图对象、FeatureByName 和 SelectByID2('SKETCH')。"
+    },
+    "verdict_bbox": {
+      "ok": true,
+      "boss_size_mm": [
+        40.0,
+        20.0,
+        10.0
+      ],
+      "midplane_size_mm": [
+        40.0,
+        20.0,
+        10.0
+      ],
+      "expected": [
+        40.0,
+        20.0,
+        10.0
+      ],
+      "★": "矩形 40×20（对角 -20,-10 → 20,10）拉伸 10 ⇒ 40×20×10；中面拉伸总深 10 也是 40×20×10（每侧 5）"
+    }
+  },
+  "verdict": "pass"
+}
