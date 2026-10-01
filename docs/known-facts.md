@@ -90,3 +90,7 @@
 | # | 事实 | 依据 |
 |---|---|---|
 | 67 | **`ISketchManager.CreateChamfer` 在 pywin32 后台上到不了（架构性限制，与事实 47 同族）** —— 2026-10-01（轮 122）真机：新零件 → 进草图 → 画两条相接直线 → 用 `sw_selection_spec.select_object`（第二条带 `append`）**确认选区计数 = 2** → 调 `CreateChamfer(2, 0.005, 0.0)` ⇒ **`pywintypes.com_error: (-2147417851, '服务器出现意外情况')`**。★ `0x80010105` **正是事实 47（`ISketchedBendFeatureData.AccessSelections`）与事实 28（`CreateBsplineSurface`）那个错误码** ⇒ 归入「pywin32 迟到绑定到不了需要真实指针的接口」。⚠ 按**事实 53** 停手，不再试别的类型/参数组合。⇒ `scripts/sw_sketch_edit.create_sketch_chamfer` **当前不可用**（保留作可复算证据）。⚠ 同模块的 `convert_entities` / `sketch_mirror` **未实测** | `tools/verify_sketch_edit_smoke.py`（8/10）· 定向探针 `_probe_chamfer_types.py`；事实 47 / 28 |
+
+| # | 事实 | 依据 |
+|---|---|---|
+| 68 | **`Object&` 出参「也是必填的」（与 `Int32&` 同类），正确传法是 `VARIANT(VT_BYREF\|VT_VARIANT, None)`** —— 2026-10-01（轮 123）真机四形态实验：对 `IHoleStandardsData.GetHoleStandards(Object& Standards, Object& Types)`（官方 arity = **2**）—— **A 不传出参 ⇒ `com_error -2147352561`「非选择性的参数」**（= `DISP_E_PARAMNOTOPTIONAL`，**决定性**）；B `VT_BYREF\|VT_DISPATCH` ⇒ 「类型不匹配」；C 裸 `None` ⇒ 「类型不匹配」；**D `VT_BYREF\|VT_VARIANT` ⇒ 返回 `True`** ✓。★ 这**推翻了「两边」**：`audit_call_arity.py` 旧规则「`Object&` 一律排除」**错**；`sw_hole_features.py` 传了但**传的是裸值**也**错**。⇒ 按铁律 4 改为「**arity = 出厂反射的参数个数**」（`count = len(_params)`），负例仍全抓住（**不是把门禁调松**）。⚠ 只证了这一个成员；但「以反射为准」**不需要外推** | `tools/probe_outparam_object_byref.py`；`tools/arity_negative_case.py`（固化的负例）；`tests/test_arity_audit_negative.py`；`docs/signature-audit.md` 同名小节 |
