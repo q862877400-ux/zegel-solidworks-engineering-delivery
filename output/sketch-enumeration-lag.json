@@ -1,0 +1,118 @@
+{
+  "started": "2026-10-01 18:25:53",
+  "steps": [
+    {
+      "tag": "新建",
+      "by_position": [],
+      "by_name": [],
+      "active": null,
+      "tree_total": 18
+    },
+    {
+      "tag": "第1轮 start_sketch",
+      "by_position": [],
+      "by_name": [
+        "草图1"
+      ],
+      "active": "草图1",
+      "tree_total": 19
+    },
+    {
+      "tag": "第1轮 画线后",
+      "by_position": [],
+      "by_name": [
+        "草图1"
+      ],
+      "active": "草图1",
+      "tree_total": 19
+    },
+    {
+      "tag": "第1轮 end_sketch",
+      "by_position": [],
+      "by_name": [
+        "草图1"
+      ],
+      "active": null,
+      "tree_total": 19
+    },
+    {
+      "tag": "第2轮 start_sketch",
+      "by_position": [
+        "草图1"
+      ],
+      "by_name": [
+        "草图1",
+        "草图2"
+      ],
+      "active": "草图2",
+      "tree_total": 20
+    },
+    {
+      "tag": "第2轮 画线后",
+      "by_position": [
+        "草图1"
+      ],
+      "by_name": [
+        "草图1",
+        "草图2"
+      ],
+      "active": "草图2",
+      "tree_total": 20
+    },
+    {
+      "tag": "第2轮 end_sketch",
+      "by_position": [
+        "草图1"
+      ],
+      "by_name": [
+        "草图1",
+        "草图2"
+      ],
+      "active": null,
+      "tree_total": 20
+    },
+    {
+      "tag": "第3轮 start_sketch",
+      "by_position": [
+        "草图2",
+        "草图1"
+      ],
+      "by_name": [
+        "草图1",
+        "草图2",
+        "草图3"
+      ],
+      "active": "草图3",
+      "tree_total": 21
+    },
+    {
+      "tag": "第3轮 画线后",
+      "by_position": [
+        "草图2",
+        "草图1"
+      ],
+      "by_name": [
+        "草图1",
+        "草图2",
+        "草图3"
+      ],
+      "active": "草图3",
+      "tree_total": 21
+    },
+    {
+      "tag": "第3轮 end_sketch",
+      "by_position": [
+        "草图2",
+        "草图1"
+      ],
+      "by_name": [
+        "草图1",
+        "草图2",
+        "草图3"
+      ],
+      "active": null,
+      "tree_total": 21
+    }
+  ],
+  "lag_observed": true
+}
