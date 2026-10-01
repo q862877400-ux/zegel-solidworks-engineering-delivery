@@ -1,52 +1,7 @@
 {
-  "total_sites": 733,
-  "no_arg_sites": 471,
+  "total_sites": 709,
+  "no_arg_sites": 447,
   "as_method": [
-    {
-      "member": "Activate",
-      "sites": [
-        {
-          "file": "scripts\\sw_view.py",
-          "line": 199,
-          "member": "Activate",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "AddFrame",
-      "sites": [
-        {
-          "file": "scripts\\sw_gtol.py",
-          "line": 132,
-          "member": "AddFrame",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "AddPerspective",
-      "sites": [
-        {
-          "file": "scripts\\sw_view.py",
-          "line": 406,
-          "member": "AddPerspective",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
     {
       "member": "BeginEdit",
       "sites": [
@@ -54,105 +9,6 @@
           "file": "scripts\\sw_topology.py",
           "line": 315,
           "member": "BeginEdit",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "ClearSelectionColors",
-      "sites": [
-        {
-          "file": "scripts\\sw_selection.py",
-          "line": 336,
-          "member": "ClearSelectionColors",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "CreateCustomBendAllowance",
-      "sites": [
-        {
-          "file": "scripts\\sw_sheet_metal.py",
-          "line": 172,
-          "member": "CreateCustomBendAllowance",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "CreateMassProperty2",
-      "sites": [
-        {
-          "file": "scripts\\sw_geometry_selectors.py",
-          "line": 134,
-          "member": "CreateMassProperty2",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "CreateStructuralMemberGroup",
-      "sites": [
-        {
-          "file": "scripts\\sw_weldment.py",
-          "line": 156,
-          "member": "CreateStructuralMemberGroup",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "EditRebuild3",
-      "sites": [
-        {
-          "file": "scripts\\sw_document_data.py",
-          "line": 102,
-          "member": "EditRebuild3",
-          "no_args": true
-        },
-        {
-          "file": "scripts\\sw_document_data.py",
-          "line": 261,
-          "member": "EditRebuild3",
-          "no_args": true
-        },
-        {
-          "file": "scripts\\sw_document_data.py",
-          "line": 177,
-          "member": "EditRebuild3",
-          "no_args": true
-        },
-        {
-          "file": "scripts\\sw_weldment.py",
-          "line": 180,
-          "member": "EditRebuild3",
-          "no_args": true
-        },
-        {
-          "file": "scripts\\sw_weldment.py",
-          "line": 249,
-          "member": "EditRebuild3",
           "no_args": true
         }
       ],
@@ -256,7 +112,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 496,
+          "line": 497,
           "member": "ForceBeginEdit",
           "no_args": true
         }
@@ -271,7 +127,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 507,
+          "line": 508,
           "member": "ForceEndEdit",
           "no_args": true
         }
@@ -301,7 +157,7 @@
       "sites": [
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 427,
+          "line": 425,
           "member": "GetAnnotationCount",
           "no_args": true
         }
@@ -316,7 +172,7 @@
       "sites": [
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 434,
+          "line": 432,
           "member": "GetAnnotations",
           "no_args": true
         }
@@ -394,7 +250,7 @@
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 739,
+          "line": 740,
           "member": "GetBodyBox",
           "no_args": true
         },
@@ -801,7 +657,7 @@
       "sites": [
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 413,
+          "line": 411,
           "member": "GetFirstView",
           "no_args": true
         }
@@ -912,7 +768,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 440,
+          "line": 438,
           "member": "GetModelDoc",
           "no_args": true
         }
@@ -1014,7 +870,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 434,
+          "line": 432,
           "member": "GetNext",
           "no_args": true
         }
@@ -1071,7 +927,7 @@
       "sites": [
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 420,
+          "line": 418,
           "member": "GetNextView",
           "no_args": true
         }
@@ -1152,7 +1008,7 @@
         },
         {
           "file": "scripts\\sw_connect.py",
-          "line": 633,
+          "line": 681,
           "member": "GetPathName",
           "no_args": true
         },
@@ -1620,7 +1476,7 @@
         },
         {
           "file": "scripts\\sw_connect.py",
-          "line": 390,
+          "line": 438,
           "member": "GetTitle",
           "no_args": true
         },
@@ -1689,7 +1545,7 @@
       "sites": [
         {
           "file": "scripts\\sw_connect.py",
-          "line": 389,
+          "line": 437,
           "member": "GetType",
           "no_args": true
         },
@@ -1836,7 +1692,7 @@
       "sites": [
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 447,
+          "line": 445,
           "member": "GetVisibleComponentCount",
           "no_args": true
         }
@@ -1872,7 +1728,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 400,
+          "line": 398,
           "member": "HasPerspective",
           "no_args": true
         }
@@ -1887,7 +1743,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 213,
+          "line": 211,
           "member": "InitializeShading",
           "no_args": true
         }
@@ -1913,36 +1769,6 @@
       ]
     },
     {
-      "member": "InsertGtol",
-      "sites": [
-        {
-          "file": "scripts\\sw_gtol.py",
-          "line": 111,
-          "member": "InsertGtol",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "Int32",
-        ""
-      ]
-    },
-    {
-      "member": "InsertMoldShutOffSurface",
-      "sites": [
-        {
-          "file": "scripts\\sw_mold.py",
-          "line": 140,
-          "member": "InsertMoldShutOffSurface",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
       "member": "InsertWeldmentCutList2",
       "sites": [
         {
@@ -1955,21 +1781,6 @@
       "sigs": [
         "Object",
         "Object"
-      ]
-    },
-    {
-      "member": "InsertWeldmentFeature",
-      "sites": [
-        {
-          "file": "scripts\\sw_weldment.py",
-          "line": 148,
-          "member": "InsertWeldmentFeature",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
       ]
     },
     {
@@ -2066,41 +1877,11 @@
       ]
     },
     {
-      "member": "MeshAndRun",
-      "sites": [
-        {
-          "file": "scripts\\sw_topology.py",
-          "line": 694,
-          "member": "MeshAndRun",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "RemovePerspective",
-      "sites": [
-        {
-          "file": "scripts\\sw_view.py",
-          "line": 413,
-          "member": "RemovePerspective",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
       "member": "ResumeSelectionList",
       "sites": [
         {
           "file": "scripts\\sw_selection.py",
-          "line": 304,
+          "line": 302,
           "member": "ResumeSelectionList",
           "no_args": true
         }
@@ -2115,13 +1896,13 @@
       "sites": [
         {
           "file": "scripts\\sw_connect.py",
-          "line": 405,
+          "line": 453,
           "member": "RevisionNumber",
           "no_args": true
         },
         {
           "file": "scripts\\sw_connect.py",
-          "line": 318,
+          "line": 366,
           "member": "RevisionNumber",
           "no_args": true
         },
@@ -2147,93 +1928,6 @@
           "file": "mcp-server\\server.py",
           "line": 1451,
           "member": "RevisionNumber",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "RunAnalysis",
-      "sites": [
-        {
-          "file": "scripts\\sw_simulation.py",
-          "line": 804,
-          "member": "RunAnalysis",
-          "no_args": true
-        },
-        {
-          "file": "scripts\\sw_topology.py",
-          "line": 699,
-          "member": "RunAnalysis",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "Scale",
-      "sites": [
-        {
-          "file": "scripts\\sw_drawing_view.py",
-          "line": 391,
-          "member": "Scale",
-          "no_args": true
-        },
-        {
-          "file": "scripts\\sw_view.py",
-          "line": 276,
-          "member": "Scale",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "Double",
-        "Double"
-      ]
-    },
-    {
-      "member": "StartDynamics",
-      "sites": [
-        {
-          "file": "scripts\\sw_view.py",
-          "line": 420,
-          "member": "StartDynamics",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "StopDynamics",
-      "sites": [
-        {
-          "file": "scripts\\sw_view.py",
-          "line": 427,
-          "member": "StopDynamics",
-          "no_args": true
-        }
-      ],
-      "sigs": [
-        "",
-        ""
-      ]
-    },
-    {
-      "member": "UpdateCutList",
-      "sites": [
-        {
-          "file": "scripts\\sw_weldment.py",
-          "line": 350,
-          "member": "UpdateCutList",
           "no_args": true
         }
       ],
@@ -2288,7 +1982,7 @@
       "sites": [
         {
           "file": "scripts\\sw_connect.py",
-          "line": 307,
+          "line": 355,
           "member": "ActiveDoc",
           "no_args": true
         },
@@ -2300,13 +1994,13 @@
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 206,
+          "line": 207,
           "member": "ActiveDoc",
           "no_args": true
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 833,
+          "line": 834,
           "member": "ActiveDoc",
           "no_args": true
         }
@@ -2328,13 +2022,13 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 838,
+          "line": 839,
           "member": "ActiveStudy",
           "no_args": true
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 872,
+          "line": 873,
           "member": "ActiveStudy",
           "no_args": true
         }
@@ -2345,7 +2039,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 179,
+          "line": 177,
           "member": "ActiveView",
           "no_args": true
         }
@@ -2367,7 +2061,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 860,
+          "line": 861,
           "member": "AnalysisType",
           "no_args": true
         },
@@ -2440,7 +2134,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 352,
+          "line": 350,
           "member": "Camera",
           "no_args": true
         }
@@ -2568,7 +2262,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 862,
+          "line": 863,
           "member": "ConfigurationName",
           "no_args": true
         },
@@ -2618,7 +2312,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 188,
+          "line": 189,
           "member": "CosmosWorks",
           "no_args": true
         }
@@ -2662,7 +2356,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 846,
+          "line": 847,
           "member": "Count",
           "no_args": true
         },
@@ -2846,7 +2540,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 263,
+          "line": 261,
           "member": "DisplayMode",
           "no_args": true
         }
@@ -2857,7 +2551,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 461,
+          "line": 459,
           "member": "DisplayZebraStripes",
           "no_args": true
         }
@@ -2912,7 +2606,7 @@
       "sites": [
         {
           "file": "scripts\\sw_selection.py",
-          "line": 397,
+          "line": 395,
           "member": "EnableContourSelection",
           "no_args": true
         }
@@ -2923,7 +2617,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 460,
+          "line": 458,
           "member": "EnableGraphicsUpdate",
           "no_args": true
         }
@@ -2934,7 +2628,7 @@
       "sites": [
         {
           "file": "scripts\\sw_selection.py",
-          "line": 395,
+          "line": 393,
           "member": "EnableSelection",
           "no_args": true
         }
@@ -2945,7 +2639,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 855,
+          "line": 856,
           "member": "EntityCount",
           "no_args": true
         }
@@ -3019,7 +2713,7 @@
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 688,
+          "line": 689,
           "member": "Extension",
           "no_args": true
         }
@@ -3030,43 +2724,43 @@
       "sites": [
         {
           "file": "scripts\\sw_mold.py",
-          "line": 81,
+          "line": 80,
           "member": "FeatureManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 111,
+          "line": 110,
           "member": "FeatureManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 139,
+          "line": 138,
           "member": "FeatureManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 158,
+          "line": 157,
           "member": "FeatureManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 180,
+          "line": 179,
           "member": "FeatureManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 195,
+          "line": 194,
           "member": "FeatureManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 217,
+          "line": 216,
           "member": "FeatureManager",
           "no_args": true
         },
@@ -3141,7 +2835,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 245,
+          "line": 243,
           "member": "FrameHeight",
           "no_args": true
         }
@@ -3152,7 +2846,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 242,
+          "line": 240,
           "member": "FrameLeft",
           "no_args": true
         }
@@ -3163,7 +2857,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 246,
+          "line": 244,
           "member": "FrameState",
           "no_args": true
         }
@@ -3174,7 +2868,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 243,
+          "line": 241,
           "member": "FrameTop",
           "no_args": true
         }
@@ -3185,7 +2879,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 244,
+          "line": 242,
           "member": "FrameWidth",
           "no_args": true
         }
@@ -3306,7 +3000,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 456,
+          "line": 454,
           "member": "HlrQuality",
           "no_args": true
         }
@@ -3427,13 +3121,13 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 342,
+          "line": 343,
           "member": "LoadsAndRestraintsManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 840,
+          "line": 841,
           "member": "LoadsAndRestraintsManager",
           "no_args": true
         },
@@ -3450,7 +3144,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 656,
+          "line": 657,
           "member": "MaterialIdName",
           "no_args": true
         }
@@ -3505,7 +3199,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 596,
+          "line": 597,
           "member": "Mesh",
           "no_args": true
         },
@@ -3544,7 +3238,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 861,
+          "line": 862,
           "member": "MeshType",
           "no_args": true
         },
@@ -3646,7 +3340,7 @@
         },
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 406,
+          "line": 404,
           "member": "Name",
           "no_args": true
         },
@@ -3658,25 +3352,25 @@
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 87,
+          "line": 86,
           "member": "Name",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 128,
+          "line": 127,
           "member": "Name",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 145,
+          "line": 144,
           "member": "Name",
           "no_args": true
         },
         {
           "file": "scripts\\sw_mold.py",
-          "line": 165,
+          "line": 164,
           "member": "Name",
           "no_args": true
         },
@@ -3712,19 +3406,19 @@
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 325,
+          "line": 326,
           "member": "Name",
           "no_args": true
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 859,
+          "line": 860,
           "member": "Name",
           "no_args": true
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 852,
+          "line": 853,
           "member": "Name",
           "no_args": true
         },
@@ -3975,7 +3669,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 364,
+          "line": 362,
           "member": "Orientation3",
           "no_args": true
         }
@@ -4227,7 +3921,7 @@
       "sites": [
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 493,
+          "line": 491,
           "member": "Rotation",
           "no_args": true
         }
@@ -4260,7 +3954,7 @@
       "sites": [
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 461,
+          "line": 459,
           "member": "ScaleDecimal",
           "no_args": true
         }
@@ -4277,7 +3971,7 @@
         },
         {
           "file": "scripts\\sw_selection.py",
-          "line": 157,
+          "line": 155,
           "member": "SelectionManager",
           "no_args": true
         },
@@ -4295,13 +3989,13 @@
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 377,
+          "line": 378,
           "member": "SelectionManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 691,
+          "line": 692,
           "member": "SelectionManager",
           "no_args": true
         }
@@ -4375,7 +4069,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 854,
+          "line": 855,
           "member": "State",
           "no_args": true
         }
@@ -4386,7 +4080,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 309,
+          "line": 310,
           "member": "StudyCount",
           "no_args": true
         },
@@ -4403,13 +4097,13 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 222,
+          "line": 223,
           "member": "StudyManager",
           "no_args": true
         },
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 834,
+          "line": 835,
           "member": "StudyManager",
           "no_args": true
         },
@@ -4525,7 +4219,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 377,
+          "line": 375,
           "member": "Translation3",
           "no_args": true
         }
@@ -4547,7 +4241,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 853,
+          "line": 854,
           "member": "Type",
           "no_args": true
         }
@@ -4636,7 +4330,7 @@
       "sites": [
         {
           "file": "scripts\\sw_simulation.py",
-          "line": 868,
+          "line": 869,
           "member": "VersionNumber",
           "no_args": true
         }
@@ -4692,7 +4386,7 @@
       "sites": [
         {
           "file": "scripts\\sw_drawing_view.py",
-          "line": 494,
+          "line": 492,
           "member": "Xform",
           "no_args": true
         }
@@ -4703,7 +4397,7 @@
       "sites": [
         {
           "file": "scripts\\sw_view.py",
-          "line": 462,
+          "line": 460,
           "member": "XorHighlight",
           "no_args": true
         }
