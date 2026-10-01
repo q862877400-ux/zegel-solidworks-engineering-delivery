@@ -1,0 +1,148 @@
+{
+  "started": "2026-10-01 14:19:41",
+  "rows": [
+    {
+      "module": "sw_geometry_selectors",
+      "function": "available_point_selectors",
+      "result": "ok",
+      "ms": 0,
+      "return_type": "list",
+      "size": 5
+    },
+    {
+      "module": "sw_geometry_selectors",
+      "function": "available_direction_selectors",
+      "result": "ok",
+      "ms": 0,
+      "return_type": "list",
+      "size": 6
+    },
+    {
+      "module": "sw_selection_spec",
+      "function": "clear_selection",
+      "result": "ok",
+      "ms": 1,
+      "return_type": "NoneType",
+      "size": null
+    },
+    {
+      "module": "sw_selection_spec",
+      "function": "current_selection",
+      "result": "ok",
+      "ms": 7,
+      "return_type": "list",
+      "size": 0
+    },
+    {
+      "module": "sw_review",
+      "function": "set_standard_view",
+      "result": "ok",
+      "ms": 503,
+      "return_type": "NoneType",
+      "size": null
+    },
+    {
+      "module": "sw_review",
+      "function": "clear_selection_for_preview",
+      "result": "ok",
+      "ms": 9,
+      "return_type": "NoneType",
+      "size": null
+    },
+    {
+      "module": "sw_review",
+      "function": "activate_model_for_preview",
+      "result": "ok",
+      "ms": 11,
+      "return_type": "bool",
+      "size": null
+    },
+    {
+      "module": "sw_render_material",
+      "function": "get_extension",
+      "result": "raised",
+      "ms": 1,
+      "exc_type": "TypeError",
+      "detail": "This dispatch object does not define a Count method"
+    },
+    {
+      "module": "sw_render_material",
+      "function": "refresh_scene_graph",
+      "result": "ok",
+      "ms": 16,
+      "return_type": "NoneType",
+      "size": null
+    },
+    {
+      "module": "sw_render_material",
+      "function": "list_render_materials",
+      "result": "ok",
+      "ms": 15,
+      "return_type": "list",
+      "size": 0
+    },
+    {
+      "module": "sw_render_material",
+      "function": "collect_appearance_evidence",
+      "result": "ok",
+      "ms": 1,
+      "return_type": "dict",
+      "size": 3
+    },
+    {
+      "module": "sw_weldment",
+      "function": "iter_features_recursive",
+      "result": "ok",
+      "ms": 0,
+      "return_type": "generator",
+      "size": null
+    },
+    {
+      "module": "sw_weldment",
+      "function": "create_cut_list",
+      "result": "raised",
+      "ms": 32,
+      "exc_type": "TypeError",
+      "detail": "'NoneType' object is not callable"
+    },
+    {
+      "module": "sw_assembly",
+      "function": "iter_feature_tree",
+      "result": "ok",
+      "ms": 0,
+      "return_type": "generator",
+      "size": null
+    },
+    {
+      "module": "sw_com_traps",
+      "function": "byref_pair",
+      "result": "ok",
+      "ms": 0,
+      "return_type": "tuple",
+      "size": 2
+    },
+    {
+      "module": "sw_delivery",
+      "function": "collect_assembly_bom",
+      "result": "ok",
+      "ms": 23,
+      "return_type": "list",
+      "size": 1
+    },
+    {
+      "module": "sw_export",
+      "function": "get_mass_property_override_options",
+      "result": "raised",
+      "ms": 1,
+      "exc_type": "com_error",
+      "detail": "(-2147352561, '非选择性的参数。', None, None)"
+    }
+  ],
+  "summary": {
+    "total": 17,
+    "ok": 14,
+    "raised": 3,
+    "needs_doc": 0,
+    "other": 0
+  }
+}
