@@ -1,0 +1,50 @@
+{
+  "rows": [
+    {
+      "who": "fm",
+      "member": "GetPartingLinesCount",
+      "get_": "EXC:AttributeError:<unknown>.GetPartingLinesCount",
+      "call_": "EXC:AttributeError:<unknown>.GetPartingLinesCount"
+    },
+    {
+      "who": "fm",
+      "member": "GetPartingSurfacesCount",
+      "get_": "EXC:AttributeError:<unknown>.GetPartingSurfacesCo",
+      "call_": "EXC:AttributeError:<unknown>.GetPartingSurfacesCo"
+    },
+    {
+      "who": "fm",
+      "member": "GetCavitySurfacesCount",
+      "get_": "EXC:AttributeError:<unknown>.GetCavitySurfacesCou",
+      "call_": "EXC:AttributeError:<unknown>.GetCavitySurfacesCou"
+    },
+    {
+      "who": "fm",
+      "member": "GetCoreSurfacesCount",
+      "get_": "EXC:AttributeError:<unknown>.GetCoreSurfacesCount",
+      "call_": "EXC:AttributeError:<unknown>.GetCoreSurfacesCount"
+    },
+    {
+      "who": "fm",
+      "member": "GetPartingLineCount",
+      "get_": "EXC:AttributeError:<unknown>.GetPartingLineCount",
+      "call_": "EXC:AttributeError:<unknown>.GetPartingLineCount"
+    },
+    {
+      "who": "model",
+      "member": "PartingType",
+      "get_": "EXC:AttributeError:<unknown>.PartingType",
+      "call_": "EXC:AttributeError:<unknown>.PartingType"
+    },
+    {
+      "who": "model",
+      "member": "CoreCavitySplit",
+      "get_": "EXC:AttributeError:<unknown>.CoreCavitySplit",
+      "call_": "EXC:AttributeError:<unknown>.CoreCavitySplit"
+    }
+  ],
+  "cleanup": {
+    "found": 0,
+    "scanned": 188
+  }
+}
