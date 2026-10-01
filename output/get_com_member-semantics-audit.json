@@ -1,0 +1,4730 @@
+{
+  "total_sites": 733,
+  "no_arg_sites": 471,
+  "as_method": [
+    {
+      "member": "Activate",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 199,
+          "member": "Activate",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "AddFrame",
+      "sites": [
+        {
+          "file": "scripts\\sw_gtol.py",
+          "line": 132,
+          "member": "AddFrame",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "AddPerspective",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 406,
+          "member": "AddPerspective",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "BeginEdit",
+      "sites": [
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 315,
+          "member": "BeginEdit",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "ClearSelectionColors",
+      "sites": [
+        {
+          "file": "scripts\\sw_selection.py",
+          "line": 336,
+          "member": "ClearSelectionColors",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "CreateCustomBendAllowance",
+      "sites": [
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 172,
+          "member": "CreateCustomBendAllowance",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "CreateMassProperty2",
+      "sites": [
+        {
+          "file": "scripts\\sw_geometry_selectors.py",
+          "line": 134,
+          "member": "CreateMassProperty2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "CreateStructuralMemberGroup",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 156,
+          "member": "CreateStructuralMemberGroup",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "EditRebuild3",
+      "sites": [
+        {
+          "file": "scripts\\sw_document_data.py",
+          "line": 102,
+          "member": "EditRebuild3",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_document_data.py",
+          "line": 261,
+          "member": "EditRebuild3",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_document_data.py",
+          "line": 177,
+          "member": "EditRebuild3",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 180,
+          "member": "EditRebuild3",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 249,
+          "member": "EditRebuild3",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "EndEdit",
+      "sites": [
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 323,
+          "member": "EndEdit",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 321,
+          "member": "EndEdit",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "EvaluateAll",
+      "sites": [
+        {
+          "file": "scripts\\sw_equation.py",
+          "line": 115,
+          "member": "EvaluateAll",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "FaceInSurfaceSense",
+      "sites": [
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 816,
+          "member": "FaceInSurfaceSense",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "FirstFeature",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 573,
+          "member": "FirstFeature",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 644,
+          "member": "FirstFeature",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 152,
+          "member": "FirstFeature",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 275,
+          "member": "FirstFeature",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 144,
+          "member": "FirstFeature",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "ForceBeginEdit",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 496,
+          "member": "ForceBeginEdit",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "ForceEndEdit",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 507,
+          "member": "ForceEndEdit",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "Get3DExperienceType",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 284,
+          "member": "Get3DExperienceType",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetAnnotationCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 427,
+          "member": "GetAnnotationCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetAnnotations",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 434,
+          "member": "GetAnnotations",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetArcs2",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 254,
+          "member": "GetArcs2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetArea",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 310,
+          "member": "GetArea",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 817,
+          "member": "GetArea",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetAutomaticSolve",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 456,
+          "member": "GetAutomaticSolve",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetBodyBox",
+      "sites": [
+        {
+          "file": "scripts\\sw_geometry_selectors.py",
+          "line": 122,
+          "member": "GetBodyBox",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 985,
+          "member": "GetBodyBox",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 739,
+          "member": "GetBodyBox",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 187,
+          "member": "GetBodyBox",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 196,
+          "member": "GetBodyBox",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetBodyCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 355,
+          "member": "GetBodyCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetConfigurationNames",
+      "sites": [
+        {
+          "file": "scripts\\sw_document_data.py",
+          "line": 45,
+          "member": "GetConfigurationNames",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetCoordinateSystem",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 342,
+          "member": "GetCoordinateSystem",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetCoresCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 327,
+          "member": "GetCoresCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        ""
+      ]
+    },
+    {
+      "member": "GetCostAnalysis",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 435,
+          "member": "GetCostAnalysis",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetCostingManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 159,
+          "member": "GetCostingManager",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_equation.py",
+          "line": 96,
+          "member": "GetCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetCurve",
+      "sites": [
+        {
+          "file": "scripts\\sw_hole_features.py",
+          "line": 103,
+          "member": "GetCurve",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetCutListItems",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 381,
+          "member": "GetCutListItems",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetCuttingLength",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 328,
+          "member": "GetCuttingLength",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 368,
+          "member": "GetCuttingLength",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetDefinition",
+      "sites": [
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 223,
+          "member": "GetDefinition",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetDetachSegmentOnDrag",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 458,
+          "member": "GetDetachSegmentOnDrag",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetDocumentNamesCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 765,
+          "member": "GetDocumentNamesCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetEdgeCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 828,
+          "member": "GetEdgeCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetEdges",
+      "sites": [
+        {
+          "file": "scripts\\sw_hole_features.py",
+          "line": 101,
+          "member": "GetEdges",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetEllipses3",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 279,
+          "member": "GetEllipses3",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetEndPoint2",
+      "sites": [
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 571,
+          "member": "GetEndPoint2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetEntitiesCount",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 275,
+          "member": "GetEntitiesCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetEntityParamsSize",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 779,
+          "member": "GetEntityParamsSize",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetEquationMgr",
+      "sites": [
+        {
+          "file": "scripts\\sw_equation.py",
+          "line": 58,
+          "member": "GetEquationMgr",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetErrorCode",
+      "sites": [
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 208,
+          "member": "GetErrorCode",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 332,
+          "member": "GetErrorCode",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 470,
+          "member": "GetErrorCode",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetFaces",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 298,
+          "member": "GetFaces",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_hole_features.py",
+          "line": 100,
+          "member": "GetFaces",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 808,
+          "member": "GetFaces",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetFirstSubFeature",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 566,
+          "member": "GetFirstSubFeature",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 269,
+          "member": "GetFirstSubFeature",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetFirstView",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 413,
+          "member": "GetFirstView",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetFrameCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_gtol.py",
+          "line": 151,
+          "member": "GetFrameCount",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_gtol.py",
+          "line": 154,
+          "member": "GetFrameCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetInterferenceCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 723,
+          "member": "GetInterferenceCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetLastFeatureAdded",
+      "sites": [
+        {
+          "file": "scripts\\sw_helix.py",
+          "line": 138,
+          "member": "GetLastFeatureAdded",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetLoopCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 827,
+          "member": "GetLoopCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetMateEntityCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 823,
+          "member": "GetMateEntityCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetMaximumAvailableSteps",
+      "sites": [
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 849,
+          "member": "GetMaximumAvailableSteps",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetModelDoc",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 440,
+          "member": "GetModelDoc",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetModelDoc2",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 228,
+          "member": "GetModelDoc2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 81,
+          "member": "GetModelDoc2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetModeler",
+      "sites": [
+        {
+          "file": "scripts\\sw_surface.py",
+          "line": 169,
+          "member": "GetModeler",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetMotionStudyManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_motion.py",
+          "line": 116,
+          "member": "GetMotionStudyManager",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetName",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 431,
+          "member": "GetName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_loads.py",
+          "line": 531,
+          "member": "GetName",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetNames",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 298,
+          "member": "GetNames",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetNext",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 434,
+          "member": "GetNext",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetNextFeature",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 578,
+          "member": "GetNextFeature",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 650,
+          "member": "GetNextFeature",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 158,
+          "member": "GetNextFeature",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetNextSubFeature",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 571,
+          "member": "GetNextSubFeature",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetNextView",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 420,
+          "member": "GetNextView",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetNoOfFailedComponents",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 289,
+          "member": "GetNoOfFailedComponents",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetOverrideOptions",
+      "sites": [
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 456,
+          "member": "GetOverrideOptions",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetPackAndGo",
+      "sites": [
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 708,
+          "member": "GetPackAndGo",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetParabolas2",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 288,
+          "member": "GetParabolas2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetPathName",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 664,
+          "member": "GetPathName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_connect.py",
+          "line": 633,
+          "member": "GetPathName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 957,
+          "member": "GetPathName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 74,
+          "member": "GetPathName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 144,
+          "member": "GetPathName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 243,
+          "member": "GetPathName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 656,
+          "member": "GetPathName",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 956,
+          "member": "GetPathName",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 965,
+          "member": "GetPathName",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetPlotCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 833,
+          "member": "GetPlotCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetPlotNames",
+      "sites": [
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 841,
+          "member": "GetPlotNames",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetPointCount",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 344,
+          "member": "GetPointCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetPoints",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 310,
+          "member": "GetPoints",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 340,
+          "member": "GetPoints",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetPolylines",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 294,
+          "member": "GetPolylines",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetRelationType",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 274,
+          "member": "GetRelationType",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetRenderMaterials",
+      "sites": [
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 227,
+          "member": "GetRenderMaterials",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetRenderMaterialsCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 226,
+          "member": "GetRenderMaterialsCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetRouteErrorsCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 367,
+          "member": "GetRouteErrorsCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        ""
+      ]
+    },
+    {
+      "member": "GetRouteSegmentIDsCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 366,
+          "member": "GetRouteSegmentIDsCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        ""
+      ]
+    },
+    {
+      "member": "GetSWBody",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 434,
+          "member": "GetSWBody",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        ""
+      ]
+    },
+    {
+      "member": "GetSheetNames",
+      "sites": [
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 82,
+          "member": "GetSheetNames",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSketchBlockInstances",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 378,
+          "member": "GetSketchBlockInstances",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSketchContours",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 337,
+          "member": "GetSketchContours",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSketchHatches",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 349,
+          "member": "GetSketchHatches",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSketchPaths",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 372,
+          "member": "GetSketchPaths",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSketchPictures",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 366,
+          "member": "GetSketchPictures",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSketchPoints2",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 314,
+          "member": "GetSketchPoints2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSketchRegions",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 343,
+          "member": "GetSketchRegions",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSketchSegments",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 201,
+          "member": "GetSketchSegments",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "Int32",
+        "Int32"
+      ]
+    },
+    {
+      "member": "GetSketchSlots",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 360,
+          "member": "GetSketchSlots",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSpecificFeature2",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 349,
+          "member": "GetSpecificFeature2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSplines",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 300,
+          "member": "GetSplines",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetStartPoint2",
+      "sites": [
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 570,
+          "member": "GetStartPoint2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetSurface",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 300,
+          "member": "GetSurface",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 810,
+          "member": "GetSurface",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetTimeCurve",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 343,
+          "member": "GetTimeCurve",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetTitle",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 88,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_assembly_doc.py",
+          "line": 372,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_connect.py",
+          "line": 390,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 219,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 345,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_import_mesh_reference.py",
+          "line": 192,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 551,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 655,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_session.py",
+          "line": 158,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_session.py",
+          "line": 162,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 955,
+          "member": "GetTitle",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1673,
+          "member": "GetTitle",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetType",
+      "sites": [
+        {
+          "file": "scripts\\sw_connect.py",
+          "line": 389,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 66,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 119,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_import_mesh_reference.py",
+          "line": 193,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 657,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_loads.py",
+          "line": 532,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 957,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 939,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 947,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 2355,
+          "member": "GetType",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1819,
+          "member": "GetType",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetTypeName2",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 590,
+          "member": "GetTypeName2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 648,
+          "member": "GetTypeName2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 145,
+          "member": "GetTypeName2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 143,
+          "member": "GetTypeName2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 342,
+          "member": "GetTypeName2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 212,
+          "member": "GetTypeName2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 314,
+          "member": "GetTypeName2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 372,
+          "member": "GetTypeName2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetUserPoints2",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 323,
+          "member": "GetUserPoints2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GetVisibleComponentCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 447,
+          "member": "GetVisibleComponentCount",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "GraphicsRedraw2",
+      "sites": [
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 530,
+          "member": "GraphicsRedraw2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 544,
+          "member": "GraphicsRedraw2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "HasPerspective",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 400,
+          "member": "HasPerspective",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "InitializeShading",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 213,
+          "member": "InitializeShading",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "InsertDome",
+      "sites": [
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 1136,
+          "member": "InsertDome",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "Double, Boolean, Boolean",
+        "Double, Boolean, Boolean"
+      ]
+    },
+    {
+      "member": "InsertGtol",
+      "sites": [
+        {
+          "file": "scripts\\sw_gtol.py",
+          "line": 111,
+          "member": "InsertGtol",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "Int32",
+        ""
+      ]
+    },
+    {
+      "member": "InsertMoldShutOffSurface",
+      "sites": [
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 140,
+          "member": "InsertMoldShutOffSurface",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "InsertWeldmentCutList2",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 657,
+          "member": "InsertWeldmentCutList2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "Object",
+        "Object"
+      ]
+    },
+    {
+      "member": "InsertWeldmentFeature",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 148,
+          "member": "InsertWeldmentFeature",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "Is3D",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 409,
+          "member": "Is3D",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 455,
+          "member": "Is3D",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "IsCircle",
+      "sites": [
+        {
+          "file": "scripts\\sw_hole_features.py",
+          "line": 104,
+          "member": "IsCircle",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "IsCylinder",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 304,
+          "member": "IsCylinder",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 811,
+          "member": "IsCylinder",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "IsSheetMetal",
+      "sites": [
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 238,
+          "member": "IsSheetMetal",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "IsSuppressed",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 665,
+          "member": "IsSuppressed",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 966,
+          "member": "IsSuppressed",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "MeshAndRun",
+      "sites": [
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 694,
+          "member": "MeshAndRun",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "RemovePerspective",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 413,
+          "member": "RemovePerspective",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "ResumeSelectionList",
+      "sites": [
+        {
+          "file": "scripts\\sw_selection.py",
+          "line": 304,
+          "member": "ResumeSelectionList",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "RevisionNumber",
+      "sites": [
+        {
+          "file": "scripts\\sw_connect.py",
+          "line": 405,
+          "member": "RevisionNumber",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_connect.py",
+          "line": 318,
+          "member": "RevisionNumber",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 650,
+          "member": "RevisionNumber",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_import_mesh_reference.py",
+          "line": 171,
+          "member": "RevisionNumber",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1410,
+          "member": "RevisionNumber",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1451,
+          "member": "RevisionNumber",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "RunAnalysis",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 804,
+          "member": "RunAnalysis",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 699,
+          "member": "RunAnalysis",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "Scale",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 391,
+          "member": "Scale",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 276,
+          "member": "Scale",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "Double",
+        "Double"
+      ]
+    },
+    {
+      "member": "StartDynamics",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 420,
+          "member": "StartDynamics",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "StopDynamics",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 427,
+          "member": "StopDynamics",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "UpdateCutList",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 350,
+          "member": "UpdateCutList",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    },
+    {
+      "member": "ViewZoomtofit2",
+      "sites": [
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 529,
+          "member": "ViewZoomtofit2",
+          "no_args": true
+        }
+      ],
+      "sigs": [
+        "",
+        ""
+      ]
+    }
+  ],
+  "as_property": [],
+  "unknown": [
+    {
+      "member": "ActiveConfiguration",
+      "sites": [
+        {
+          "file": "scripts\\sw_document_data.py",
+          "line": 61,
+          "member": "ActiveConfiguration",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 88,
+          "member": "ActiveConfiguration",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 378,
+          "member": "ActiveConfiguration",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ActiveDoc",
+      "sites": [
+        {
+          "file": "scripts\\sw_connect.py",
+          "line": 307,
+          "member": "ActiveDoc",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 240,
+          "member": "ActiveDoc",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 206,
+          "member": "ActiveDoc",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 833,
+          "member": "ActiveDoc",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ActiveSketch",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch_edit.py",
+          "line": 127,
+          "member": "ActiveSketch",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ActiveStudy",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 838,
+          "member": "ActiveStudy",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 872,
+          "member": "ActiveStudy",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ActiveView",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 179,
+          "member": "ActiveView",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Ambient",
+      "sites": [
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 303,
+          "member": "Ambient",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "AnalysisType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 860,
+          "member": "AnalysisType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 414,
+          "member": "AnalysisType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 726,
+          "member": "AnalysisType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Author",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 210,
+          "member": "Author",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "AxialStiffnessValue",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 290,
+          "member": "AxialStiffnessValue",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "BendRadius",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 389,
+          "member": "BendRadius",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 228,
+          "member": "BendRadius",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "BodyPattern",
+      "sites": [
+        {
+          "file": "scripts\\sw_pattern.py",
+          "line": 411,
+          "member": "BodyPattern",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Camera",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 352,
+          "member": "Camera",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Category",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 317,
+          "member": "Category",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CenterOfMass",
+      "sites": [
+        {
+          "file": "scripts\\sw_geometry_selectors.py",
+          "line": 137,
+          "member": "CenterOfMass",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CircleParams",
+      "sites": [
+        {
+          "file": "scripts\\sw_hole_features.py",
+          "line": 106,
+          "member": "CircleParams",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ClearanceUnit",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 288,
+          "member": "ClearanceUnit",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ClearanceValue",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 287,
+          "member": "ClearanceValue",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CommandInProgress",
+      "sites": [
+        {
+          "file": "scripts\\sw_automation_knowledge.py",
+          "line": 150,
+          "member": "CommandInProgress",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Comments",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 213,
+          "member": "Comments",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Component",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 833,
+          "member": "Component",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ConfigurationManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_document_data.py",
+          "line": 60,
+          "member": "ConfigurationManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 157,
+          "member": "ConfigurationManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 87,
+          "member": "ConfigurationManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 378,
+          "member": "ConfigurationManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ConfigurationName",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 862,
+          "member": "ConfigurationName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 413,
+          "member": "ConfigurationName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ContactName",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 283,
+          "member": "ContactName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ContactSetType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 284,
+          "member": "ContactSetType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CoordSystemType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 226,
+          "member": "CoordSystemType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CosmosWorks",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 188,
+          "member": "CosmosWorks",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CostingDefaults",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 184,
+          "member": "CostingDefaults",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CostingModel",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 191,
+          "member": "CostingModel",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CostingTemplateName",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 343,
+          "member": "CostingTemplateName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Count",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 846,
+          "member": "Count",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 319,
+          "member": "Count",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_loads.py",
+          "line": 521,
+          "member": "Count",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CreationDate",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 217,
+          "member": "CreationDate",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CurrencyCode",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 349,
+          "member": "CurrencyCode",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CurrencyName",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 350,
+          "member": "CurrencyName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CurrencySeparator",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 352,
+          "member": "CurrencySeparator",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CurveDegree",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 342,
+          "member": "CurveDegree",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CurveType",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 343,
+          "member": "CurveType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CustomPropertyManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 320,
+          "member": "CustomPropertyManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 351,
+          "member": "CustomPropertyManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 385,
+          "member": "CustomPropertyManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "CylinderParams",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 306,
+          "member": "CylinderParams",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 813,
+          "member": "CylinderParams",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "D1EndConditionDistance",
+      "sites": [
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 229,
+          "member": "D1EndConditionDistance",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Description",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 318,
+          "member": "Description",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Diameter",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 329,
+          "member": "Diameter",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Diffuse",
+      "sites": [
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 304,
+          "member": "Diffuse",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "DirectionType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 227,
+          "member": "DirectionType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "DisplayMode",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 263,
+          "member": "DisplayMode",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "DisplayZebraStripes",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 461,
+          "member": "DisplayZebraStripes",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "DynamicAnalysisSubType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 416,
+          "member": "DynamicAnalysisSubType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ElementCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 273,
+          "member": "ElementCount",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ElementSize",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 280,
+          "member": "ElementSize",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Emission",
+      "sites": [
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 308,
+          "member": "Emission",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "EnableContourSelection",
+      "sites": [
+        {
+          "file": "scripts\\sw_selection.py",
+          "line": 397,
+          "member": "EnableContourSelection",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "EnableGraphicsUpdate",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 460,
+          "member": "EnableGraphicsUpdate",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "EnableSelection",
+      "sites": [
+        {
+          "file": "scripts\\sw_selection.py",
+          "line": 395,
+          "member": "EnableSelection",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "EntityCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 855,
+          "member": "EntityCount",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Equation",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 341,
+          "member": "Equation",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ErrorStatus",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 814,
+          "member": "ErrorStatus",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ExcludeFromBOM",
+      "sites": [
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 71,
+          "member": "ExcludeFromBOM",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Extension",
+      "sites": [
+        {
+          "file": "scripts\\sw_costing.py",
+          "line": 156,
+          "member": "Extension",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_export.py",
+          "line": 435,
+          "member": "Extension",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_geometry_selectors.py",
+          "line": 133,
+          "member": "Extension",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_helix.py",
+          "line": 135,
+          "member": "Extension",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 155,
+          "member": "Extension",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 688,
+          "member": "Extension",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FeatureManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 81,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 111,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 139,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 158,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 180,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 195,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 217,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 170,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 320,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 141,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 223,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 462,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 654,
+          "member": "FeatureManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 683,
+          "member": "FeatureManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FeatureScope",
+      "sites": [
+        {
+          "file": "scripts\\sw_pattern.py",
+          "line": 415,
+          "member": "FeatureScope",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ForceType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 336,
+          "member": "ForceType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FrameHeight",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 245,
+          "member": "FrameHeight",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FrameLeft",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 242,
+          "member": "FrameLeft",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FrameState",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 246,
+          "member": "FrameState",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FrameTop",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 243,
+          "member": "FrameTop",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FrameWidth",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 244,
+          "member": "FrameWidth",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FrictionValue",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 286,
+          "member": "FrictionValue",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FromComponentReference",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 362,
+          "member": "FromComponentReference",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FromPinReference",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 364,
+          "member": "FromPinReference",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "FullName",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 214,
+          "member": "FullName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "GapType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 291,
+          "member": "GapType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "GeometryPattern",
+      "sites": [
+        {
+          "file": "scripts\\sw_pattern.py",
+          "line": 410,
+          "member": "GeometryPattern",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "GrowthRatio",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 283,
+          "member": "GrowthRatio",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "HFValue",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 250,
+          "member": "HFValue",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "HasCovering",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 388,
+          "member": "HasCovering",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "HasLegacyCustomProperties",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 219,
+          "member": "HasLegacyCustomProperties",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "HlrQuality",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 456,
+          "member": "HlrQuality",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "IncludeCreep2",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 322,
+          "member": "IncludeCreep2",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "IncludeFriction2",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 285,
+          "member": "IncludeFriction2",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "IsMeshFailed",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 279,
+          "member": "IsMeshFailed",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "IsRationalCurve",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 346,
+          "member": "IsRationalCurve",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "IsStyleSpline",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 347,
+          "member": "IsStyleSpline",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "JacobianPoints",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 285,
+          "member": "JacobianPoints",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "KFactor",
+      "sites": [
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 230,
+          "member": "KFactor",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Keywords",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 212,
+          "member": "Keywords",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "LastSavedBy",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 215,
+          "member": "LastSavedBy",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "LastSavedDate",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 216,
+          "member": "LastSavedDate",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "LoadsAndRestraintsManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 342,
+          "member": "LoadsAndRestraintsManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 840,
+          "member": "LoadsAndRestraintsManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 357,
+          "member": "LoadsAndRestraintsManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MaterialIdName",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 656,
+          "member": "MaterialIdName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MaterialName",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 316,
+          "member": "MaterialName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MaterialUnits",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 321,
+          "member": "MaterialUnits",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MaxAspectRatio",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 284,
+          "member": "MaxAspectRatio",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MaxElementSize",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 282,
+          "member": "MaxElementSize",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Mesh",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 596,
+          "member": "Mesh",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 420,
+          "member": "Mesh",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MeshControlCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 286,
+          "member": "MeshControlCount",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MeshState",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 278,
+          "member": "MeshState",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MeshType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 861,
+          "member": "MeshType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 275,
+          "member": "MeshType",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 415,
+          "member": "MeshType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MesherType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 276,
+          "member": "MesherType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MinElementSize",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 281,
+          "member": "MinElementSize",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "MinimumBendRadius",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 391,
+          "member": "MinimumBendRadius",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ModelToSketchTransform",
+      "sites": [
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 416,
+          "member": "ModelToSketchTransform",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 461,
+          "member": "ModelToSketchTransform",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ModelType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 320,
+          "member": "ModelType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Name",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 589,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 730,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_document_data.py",
+          "line": 62,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 406,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_helix.py",
+          "line": 144,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 87,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 128,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 145,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_mold.py",
+          "line": 165,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 249,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 647,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 330,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 220,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 242,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 325,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 859,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 852,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 412,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 725,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 89,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 316,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 345,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 394,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 371,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_weldment.py",
+          "line": 213,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1525,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1708,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1747,
+          "member": "Name",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1787,
+          "member": "Name",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Name2",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 253,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 230,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 266,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 318,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 685,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 663,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 76,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 964,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1709,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1710,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1749,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1750,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1789,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 1790,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 2383,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 2384,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 982,
+          "member": "Name2",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 994,
+          "member": "Name2",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "NodeCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 274,
+          "member": "NodeCount",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "NonlinearAnalysisSubType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 417,
+          "member": "NonlinearAnalysisSubType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "NormalForceOrTorqueValue",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 338,
+          "member": "NormalForceOrTorqueValue",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "NumberOfLoops",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 287,
+          "member": "NumberOfLoops",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "OffLoad",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 418,
+          "member": "OffLoad",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Orientation3",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 364,
+          "member": "Orientation3",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "PatternElement",
+      "sites": [
+        {
+          "file": "scripts\\sw_pattern.py",
+          "line": 409,
+          "member": "PatternElement",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "PerUnitLength2",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 252,
+          "member": "PerUnitLength2",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "PhaseAngle",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 228,
+          "member": "PhaseAngle",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 339,
+          "member": "PhaseAngle",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "PhaseAngleUnit",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 340,
+          "member": "PhaseAngleUnit",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "PressureType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 225,
+          "member": "PressureType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "PropagateVisualProperty",
+      "sites": [
+        {
+          "file": "scripts\\sw_pattern.py",
+          "line": 414,
+          "member": "PropagateVisualProperty",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Quality",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_results.py",
+          "line": 277,
+          "member": "Quality",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Reference",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 780,
+          "member": "Reference",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ReferenceComponent",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 782,
+          "member": "ReferenceComponent",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ReferenceType",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 777,
+          "member": "ReferenceType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ReferenceType2",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 778,
+          "member": "ReferenceType2",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ReferencedConfiguration",
+      "sites": [
+        {
+          "file": "scripts\\sw_delivery.py",
+          "line": 75,
+          "member": "ReferencedConfiguration",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "RelationManager",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 144,
+          "member": "RelationManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 158,
+          "member": "RelationManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 166,
+          "member": "RelationManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 267,
+          "member": "RelationManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 402,
+          "member": "RelationManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sketch.py",
+          "line": 459,
+          "member": "RelationManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ResistanceType",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 292,
+          "member": "ResistanceType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ResistanceUnit",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 293,
+          "member": "ResistanceUnit",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Results",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 369,
+          "member": "Results",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_study.py",
+          "line": 419,
+          "member": "Results",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 824,
+          "member": "Results",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ReverseDirection2",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 230,
+          "member": "ReverseDirection2",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 253,
+          "member": "ReverseDirection2",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Rotation",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 493,
+          "member": "Rotation",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Roughness",
+      "sites": [
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 306,
+          "member": "Roughness",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "RouteType",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 387,
+          "member": "RouteType",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ScaleDecimal",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 461,
+          "member": "ScaleDecimal",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "SelectionManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_review.py",
+          "line": 536,
+          "member": "SelectionManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_selection.py",
+          "line": 157,
+          "member": "SelectionManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_selection_spec.py",
+          "line": 92,
+          "member": "SelectionManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_selection_spec.py",
+          "line": 115,
+          "member": "SelectionManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 377,
+          "member": "SelectionManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 691,
+          "member": "SelectionManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ShowSplineHandles",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 348,
+          "member": "ShowSplineHandles",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "SketchManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 1038,
+          "member": "SketchManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 1089,
+          "member": "SketchManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 529,
+          "member": "SketchManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sketch_edit.py",
+          "line": 99,
+          "member": "SketchManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sketch_edit.py",
+          "line": 124,
+          "member": "SketchManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_sketch_edit.py",
+          "line": 167,
+          "member": "SketchManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Specular",
+      "sites": [
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 305,
+          "member": "Specular",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "State",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 854,
+          "member": "State",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "StudyCount",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 309,
+          "member": "StudyCount",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 718,
+          "member": "StudyCount",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "StudyManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 222,
+          "member": "StudyManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 834,
+          "member": "StudyManager",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 714,
+          "member": "StudyManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Subject",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 211,
+          "member": "Subject",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Suppressed",
+      "sites": [
+        {
+          "file": "scripts\\sketch_relations.py",
+          "line": 276,
+          "member": "Suppressed",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "SystemValue",
+      "sites": [
+        {
+          "file": "scripts\\sw_document_data.py",
+          "line": 204,
+          "member": "SystemValue",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Thickness",
+      "sites": [
+        {
+          "file": "scripts\\sw_sheet_metal.py",
+          "line": 227,
+          "member": "Thickness",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Title",
+      "sites": [
+        {
+          "file": "scripts\\sw_pdm.py",
+          "line": 209,
+          "member": "Title",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ToComponentReference",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 363,
+          "member": "ToComponentReference",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "ToPinReference",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 365,
+          "member": "ToPinReference",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "TopologyStudyManager",
+      "sites": [
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 278,
+          "member": "TopologyStudyManager",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "TopologyStudyOptions",
+      "sites": [
+        {
+          "file": "scripts\\sw_topology.py",
+          "line": 289,
+          "member": "TopologyStudyOptions",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Translation3",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 377,
+          "member": "Translation3",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Transparency",
+      "sites": [
+        {
+          "file": "scripts\\sw_render_material.py",
+          "line": 307,
+          "member": "Transparency",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Type",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 853,
+          "member": "Type",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "TypeName",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 815,
+          "member": "TypeName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Unit",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 251,
+          "member": "Unit",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 337,
+          "member": "Unit",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "UseTemperatureCurve2",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 256,
+          "member": "UseTemperatureCurve2",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "UseTimeCurve2",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation_loadprops.py",
+          "line": 254,
+          "member": "UseTimeCurve2",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "UserName",
+      "sites": [
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 326,
+          "member": "UserName",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_routing.py",
+          "line": 361,
+          "member": "UserName",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "VarySketch",
+      "sites": [
+        {
+          "file": "scripts\\sw_pattern.py",
+          "line": 412,
+          "member": "VarySketch",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "VersionNumber",
+      "sites": [
+        {
+          "file": "scripts\\sw_simulation.py",
+          "line": 868,
+          "member": "VersionNumber",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Visible",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 666,
+          "member": "Visible",
+          "no_args": true
+        },
+        {
+          "file": "mcp-server\\server.py",
+          "line": 967,
+          "member": "Visible",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Volume",
+      "sites": [
+        {
+          "file": "scripts\\sw_assembly.py",
+          "line": 731,
+          "member": "Volume",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "X",
+      "sites": [
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 572,
+          "member": "X",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 572,
+          "member": "X",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Xform",
+      "sites": [
+        {
+          "file": "scripts\\sw_drawing_view.py",
+          "line": 494,
+          "member": "Xform",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "XorHighlight",
+      "sites": [
+        {
+          "file": "scripts\\sw_view.py",
+          "line": 462,
+          "member": "XorHighlight",
+          "no_args": true
+        }
+      ]
+    },
+    {
+      "member": "Y",
+      "sites": [
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 573,
+          "member": "Y",
+          "no_args": true
+        },
+        {
+          "file": "scripts\\sw_part.py",
+          "line": 573,
+          "member": "Y",
+          "no_args": true
+        }
+      ]
+    }
+  ]
+}
