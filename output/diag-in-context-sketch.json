@@ -1,0 +1,27 @@
+{
+  "steps": [],
+  "edit_code": -1,
+  "active_before_is_asm": false,
+  "active_after_is_asm": false,
+  "active_sketch": true,
+  "sketch_name": "草图1",
+  "before_convert": {
+    "repo_helper": 0,
+    "direct": 0,
+    "direct2": "EXC:<unknown>.GetSketchSegments2"
+  },
+  "edge_count": 12,
+  "selected_count": 1,
+  "after_convert": {
+    "repo_helper": 0,
+    "direct": 0,
+    "direct2": "EXC:<unknown>.GetSketchSegments2"
+  },
+  "same_sketch": false,
+  "after_convert_resketch": {
+    "repo_helper": 0,
+    "direct": 0,
+    "direct2": "EXC:<unknown>.GetSketchSegments2"
+  },
+  "modal_dialogs": []
+}

@@ -1,13 +1,13 @@
 {
-  "started": "2026-10-01 19:07:59",
+  "started": "2026-10-01 19:13:25",
   "checks": {
     "造出 2 个零件并保存（端板 / 型材）": {
       "ok": true,
       "detail": "ok"
     },
-    "装配里 2 个组件": {
+    "装配里 2 个组件（**用 add_component 的返回值**）": {
       "ok": true,
-      "detail": "组件数 2"
+      "detail": "组件对象 2 个"
     },
     "★ 基线：外部参考计数（**取证用，不一定 0**）": {
       "ok": true,
@@ -22,8 +22,8 @@
       "detail": "GetEditTarget = 非空"
     },
     "★★ 先**选中一条外部边**（`SketchUseEdge3` 的前置条件）": {
-      "ok": false,
-      "detail": "实体数 0"
+      "ok": true,
+      "detail": "实体数 1"
     },
     "★ `convert_entities`（**已有实现**，本轮当部件复用）": {
       "ok": true,
@@ -53,11 +53,12 @@
   "refs_before": 0,
   "edit_part_code": -1,
   "edit_target": "非空",
+  "active_doc_is_asm": false,
   "relations_before": 0,
   "relations_after": 0,
   "refs_after": 0,
-  "passed": 8,
+  "passed": 9,
   "total": 12,
   "verdict": "fail",
-  "finished": "2026-10-01 19:08:06"
+  "finished": "2026-10-01 19:13:33"
 }
