@@ -1,0 +1,57 @@
+{
+  "captured_at": "2026-10-02T07:32:48",
+  "capability": "chamfer_fillet_on_selection",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_chamfer": {
+          "resolved": true,
+          "aliases": {
+            "selection": null,
+            "distance_mm": "distance"
+          },
+          "has_pre_call": true
+        },
+        "solidworks_fillet": {
+          "resolved": true,
+          "aliases": {
+            "selection": null,
+            "radius_mm": "radius"
+          },
+          "has_pre_call": true
+        }
+      }
+    },
+    "chamfer": {
+      "ok": true,
+      "feature": "倒角1",
+      "n_before": 19,
+      "n_after": 20,
+      "new_names": [
+        "凸台-拉伸1"
+      ]
+    },
+    "fillet": {
+      "ok": true,
+      "feature": "圆角1",
+      "n_after": 21,
+      "new_names": [
+        "倒角1",
+        "凸台-拉伸1"
+      ]
+    },
+    "control_no_selection": {
+      "outcome": "建出来了：",
+      "n_before": 21,
+      "n_after": 21,
+      "★": "记录"
+    },
+    "negative_out_of_range": {
+      "ok": true,
+      "raised": "EntitySelectionError",
+      "msg": "EDGE 序号 9999 越界（体 0 上共 18 个）"
+    }
+  },
+  "verdict": "pass"
+}
