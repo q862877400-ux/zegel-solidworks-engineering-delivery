@@ -1,0 +1,41 @@
+feat(A4): `autocad_headless_preview` 升 `verified` —— 并补上 limitations **点名却没测**的 DWG 承诺
+
+## 回到产品（轮 76）：第二条升 verified
+上轮把 `dxf_preview_scene` 升了；本轮做 `autocad_headless_preview`。
+
+**先判断是否与上轮同型** ⇒ **不是**：上轮那条是 **DXF 输入 → PreviewScene JSON**，
+本条是 **中性 CAD 文档 → PNG**（+ DXF/SVG/PDF 回退），实现落在 `scripts/headless_cad_writer.py`
+的 `write_png`（**手写 PNG chunk，零第三方依赖**）。⇒ **该独立核，不共用。**
+
+## ★ 关键发现：既有测试**已经很完整**，但漏了 limitations **点名**的一条
+`tests/test_headless_cad_writer.py` 原有 5 条已覆盖：PNG 魔数 `\x89PNG` / `%PDF` / `<svg` /
+STL `solid` / OBJ `\nf ` / DXF 实体 / `previewManifest` ⇒ **5 passed**。
+
+⚠ 但逐条核 `limitations` 时发现：
+```
+「…**不能读取或写入 DWG**，不能替代 AutoCAD 原生 DWG/PDF 复核」
+```
+⇒ 既有测试只覆盖了**通用未知格式 `sat`**，**没测点名承诺的 `dwg`**。
+
+**⇒ 补两条**（不重造那个测试文件，只**追加**它缺的判据）：
+1. `test_headless_writer_refuses_dwg_and_does_not_fake_a_file` —— `dwg` 必须 `blocked`、
+   **磁盘上不许出现任何 dwg 文件**（比"返回 blocked"更强：**杜绝「假装写了 DWG」** ——
+   那不只是格式问题，是**诚信**问题）；
+2. `test_headless_writer_does_not_modify_the_input_document` —— **只读**承诺
+   （输入文档的 sha256 与 mtime 都不变）。
+⇒ **7 passed**。
+
+## 清单升级
+```
+autocad_headless_preview: level stitched → **verified**
+  evidence          : （空） → 1 条（`pytest tests/test_headless_cad_writer.py` + 逐条覆盖说明）
+  verified_versions : （空） → ['ezdxf 1.4.4']（本条不依赖 SolidWorks ⇒ 填依赖版本）
+  limitations       : **一条不删**
+⇒ level 分布：verified **24 → 25** · stitched **6 → 5** · not_implemented 1
+```
+
+## ⚠ 过程中门禁拦我一次（尽职）
+追加测试后 `check_provenance` 报 **34 行无出处** ⇒ 按仓内约定给新增用例补**来源块**
+（`覆盖: 后续同级定义`）⇒ 复跑 exit 0。
+
+⇒ 十二道门禁全 exit 0 · `release_check` exit 0 · 回归 **970 passed / 17 skipped / 0 failed**
