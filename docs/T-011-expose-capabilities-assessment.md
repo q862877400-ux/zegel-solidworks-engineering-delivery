@@ -338,3 +338,59 @@ solidworks_sheet_metal_create_one_bend       derived_args 装回 OneBendSpec（4
 第一批 8 条 · 第二批 6 条 · 第三批 2 条            **合计 16 条**
 守卫测试        tests/test_tool_*.py                **53 条**
 ```
+---
+
+## 十二、选择解析层落地（2026-10-01）：**实测推翻了「按名字选」**
+
+### 12.1 关键实验与结论（`D:\AI\SW\probe_entity_select_by_name.py`）
+在自建的 100×60×20 mm 板（12 边 / 6 面）上逐个试：
+
+| 选法 | 结果 |
+|---|---|
+| `SelectByID2("Edge1", "EDGE")` | **计数 0** ⇒ **边没有可用的名字** |
+| `SelectByID2("Face1", "FACE")` | **计数 0** ⇒ **面也没有** |
+| `SelectByID2("", "EDGE", 0, 0, 0, …)` | **计数 0** ⇒ 原点不在边上 |
+| `SelectByID2("", "FACE", x, y, z, …)` | **计数 1** ✓ ⇒ 按**面上的点**选面可行 |
+| **`edge.Select4(False, callout)`** | **计数 1** ✓ ⇒ ★ **按**对象**选实体可行** |
+
+**⇒ 两条设计结论：**
+1. **实体没有名字** ⇒ 「按名字选」**对实体不成立**（对**特征**成立 ——
+   `sw_part._ensure_sketch_selected` 走的就是那一路）
+2. **正解是 `IEntity.Select4(Append, Callout)`** ⇒ 解析层要产出**对象**，不是名字、也不是坐标
+
+### 12.2 落地模块 `scripts/sw_selection_spec.py`（三种解析器）
+| 选择器 | 语义 | 为什么需要 |
+|---|---|---|
+| `__current_selection__` | 用**当前已选中**的东西 | ★ 对 AI 驱动最自然；与 `sw_part` 已有约定一致 |
+| `index:<n>` | 体上第 n 个实体 | 确定性、可脚本化；⚠ 序号顺序官方未承诺稳定，**不作持久引用** |
+| 一个 **COM 对象** | 已是对象，直接 `Select4` | 组合上层工具（如 `path_ref`）|
+
+**⚠ 刻意**不**开坐标后门**：公开函数参数里**没有** `x`/`y`/`z`（规则 3）。
+需要按坐标定位时用上层已有的 `sw_simulation.select_face_by_selector`。
+
+### 12.3 端到端实测：**12 项通过 / 0 失败**（`probe_selection_spec_e2e.py`）
+- `entities_on_body` → **12 边 / 6 面**（与几何相符）
+- `index:0` / `index:11` / `index:0`(FACE) → 计数均 **1**
+- `__current_selection__`：空选区**正确报错**、有选中时**正确取到**
+- 直接传 COM 对象 → 计数 **1**
+- 4 个「该报错就报错」全部正确报错（非法类型 / 越界 / 非法选择器 / 空选区）
+- **复现了「`SelectByID2` 对边/面的名字选不中」**（两者计数均为 0）
+
+**⇒ 按铁律 2，模块里四处「未在本机实测」已改成实测结论 + 证据出处。**
+
+### 12.4 ⚠ 本会话踩得最值的一次：`Callout` 传 `None`
+第一版探针**全部**报 `'类型不匹配'`（`0x80028CA0`）—— 连**已知可行**的「按点选面」也失败。
+**⇒ 差点据此得出「选择不可能」的错误结论。**
+真因：`SelectByID2` / `Select4` 的 `Callout` **必须**传 `VARIANT(VT_DISPATCH, None)`
+（`sw_part._empty_callout()`），**而 AGENTS.md 已知事实 12 早就记了** —— **我忘了自己文档里的东西**。
+
+**⇒ 已升格为已知事实 33**（含「该错误看不出是 Callout 的问题」这条）。
+
+### 12.5 对 B/C 两类的影响（**这是本档一直在找的那个收敛点**）
+| 类 | 之前缺什么 | 现在 |
+|---|---|---|
+| **C2**（`create_edge_flange` / `create_gusset`，无 ref、吃当前选区） | 「选择」入参 | ✅ **本模块的 `select_entity_by_index` / `resolve_selection` 直接够用** |
+| **C3**（`create_draft(face_ref)` / `create_swept_flange(path_ref, profile_ref)`，ref 是对象） | 「选择 → 对象」桥 | ✅ **`resolve_entity` 就产出对象** |
+| **B**（`point` / `normal` / `axis`，坐标向量） | 「选择器 → 坐标/向量」 | 🟡 **一半** —— 面已有（`select_face_by_selector`），**点与方向仍缺** |
+
+**⇒ 下一步明确：C2/C3 已解锁，可以补第三批剩下那 4 条；B 类还差「点 / 方向」。**

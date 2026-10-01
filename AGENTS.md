@@ -191,6 +191,8 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 | 29 | `Object` 型的**点/向量**参数**五种包装全可用**：裸 `list` / 裸 `tuple` / `VARIANT(VT_ARRAY\|VT_R8)` / `VT_ARRAY\|VT_VARIANT` / 逐元素 `VARIANT`。⇒ pywin32 迟到绑定会自动把 `list`/`tuple` 转 SAFEARRAY，**不必强制调用方包 `VARIANT`**（`CreateCylindricalSurface` / `CreateSphericalSurface` 各五种全返回非 None） | 同上探针的输出 |
 | 30 | **「可取」≠「调用成功」**：`getattr` 拿到绑定方法只说明**成员可达**；同一函数用不同参数仍可能返回 `None`（实测 `CreateCylindricalSurface` 在可取名单里，用 `origin=[0,0,0]` 调返回 `None`）。⇒ **判据永远是「返回非 None」，不是「在可取名单里」** | 同上探针 + `scripts/sw_surface.py` 的 `require_runtime_available` 文档串 |
 | 31 | `sw_surface.py` 的 14 个曲面创建入口中，**运行期只有 5 个可达**；其余失败方式**含混**（`NoneType not callable`）。⇒ 该类模块必须区分「签名层存在」与「运行层可达」，并对不可达者给**带原因**的错误 | 同第 28 条 |
+| 32 | **实体（边 / 面）没有可用的名字**：`SelectByID2("Edge1","EDGE")` 与 `SelectByID2("Face1","FACE")` 在真机上**计数均为 0**（100×60×20 mm 板，12 边 / 6 面）；`SelectByID2("","EDGE",0,0,0,…)` 也是 0（原点不在边上）。**选实体（边/面）的可行路径是 `IEntity.Select4(Append, Callout)`（按**对象**选，计数 1），或按**面上的点**定位（`SelectByID2("","FACE",x,y,z,…)`，计数 1）。**⇒ 「按名字选」**只对特征成立**（`sw_part._ensure_sketch_selected` 走的就是那一路），对实体**不成立** | 证据脚本 `D:\AI\SW\probe_entity_select_by_name.py`；落地模块 `scripts/sw_selection_spec.py`（端到端 `probe_selection_spec_e2e.py` **12/12 通过**）|
+| 33 | `SelectByID2` / `Select4` 的 `Callout` 参数**必须**传 `VARIANT(VT_DISPATCH, None)`（`sw_part._empty_callout()`）；**传 `None` 得到 `'类型不匹配'`（`0x80028CA0`）**，而该错误**看不出是 Callout 的问题**。⇒ 这是已知事实 12 的一个**具体后果**，2026-10-01 又踩一次（差点据此得出「选择不可能」的错误结论）| 本机实测（同一探针的失败版 vs 修好版）|
 
 ```
               会话  参考  草图  尺寸  零件  曲面  钣金  焊件  模具  装配  工程图  检查  仿真  外观  宏  高级

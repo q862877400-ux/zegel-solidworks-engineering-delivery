@@ -1,0 +1,53 @@
+feat(selection): 声明式实体选择解析层 —— 实测推翻「按名字选」，正解是 Select4 按**对象**选
+
+## ⚠⚠ 真机实测推翻了原来那条路（证据：`probe_entity_select_by_name.py`）
+在自建的 100×60×20 mm 板上逐个试（SW 2026 SP4.1）：
+
+| 选法 | 结果 |
+|---|---|
+| `SelectByID2("Edge1", "EDGE")` | **计数 0** ⇒ **边没有可用的名字** |
+| `SelectByID2("Face1", "FACE")` | **计数 0** ⇒ **面也没有** |
+| `SelectByID2("", "EDGE", 0, 0, 0, …)` | **计数 0** ⇒ 原点不在边上 |
+| `SelectByID2("", "FACE", x, y, z, …)` | **计数 1** ✓ ⇒ 按**面上的点**选面可行 |
+| **`edge.Select4(False, callout)`** | **计数 1** ✓ ⇒ ★ **按**对象**选实体可行** |
+
+**⇒ 设计据此定：**
+1. **实体没有名字** ⇒ 「按名字选」**对实体不成立**（对**特征**成立，`sw_part._ensure_sketch_selected` 就是那一路）
+2. **正解是 `IEntity.Select4(Append, Callout)`** ⇒ 解析层要产出**对象**
+
+## 新增 `scripts/sw_selection_spec.py`（三种解析器）
+| 选择器 | 语义 | 为什么需要 |
+|---|---|---|
+| `__current_selection__` | 用**当前已选中**的东西 | ★ 对 AI 驱动最自然（先用别的工具选好，再让本工具操作）；与 `sw_part` 已有约定一致 |
+| `index:<n>` | 体上第 n 个实体 | 确定性、可脚本化（适合测试）；⚠ 序号顺序官方未承诺稳定，**不作持久引用** |
+| 一个 **COM 对象** | 已是对象，直接 `Select4` | 组合上层工具（如 `path_ref`）|
+
+**⚠ 刻意**不**开坐标后门**：参数里**没有** `x`/`y`/`z`（规则 3）；
+需要按坐标定位时用上层已有的 `sw_simulation.select_face_by_selector`。
+
+## 端到端实测：**12 项通过 / 0 失败**（`probe_selection_spec_e2e.py`）
+`entities_on_body` → 12 边 / 6 面（与几何相符）· `index:0`/`index:11`/FACE → 计数均 1 ·
+`__current_selection__` 空选区**正确报错**、有选中时**正确取到** · 直接传对象 → 计数 1 ·
+4 个「该报错就报错」全部正确报错 · **复现了「SelectByID2 按名字选不中」**（两者计数 0）
+
+**⇒ 按铁律 2，把模块里四处「未在本机实测」改成实测结论 + 证据出处。**
+
+## 静态契约测试（`tests/test_sw_selection_spec_contract.py`，11 条）
+- **公开函数形参里不得出现裸坐标**（用 AST 查，规则 3）
+- **该报错就报错**（`resolve_entity` 里必须有 `raise`；`resolve_selection` 必须回读计数）
+- **回读计数用 `GetSelectedObjectCount2`**（不用不可信的返回值 —— 已知事实 8）
+- **`GetSelectedObject6` 下标从 1 开始**；**`Callout` 不能传 `None`**（已知事实 12）
+- **空 Callout 从 `sw_part` 复用**（不重造）
+
+## ⚠ 本轮自己踩的两个错（都记了）
+1. **`SelectByID2` 的 `Callout` 传了 `None`** ⇒ 全部报 `'类型不匹配'`，
+   而 **AGENTS.md 已知事实 12 早就记了**（要包 `VARIANT(VT_DISPATCH, None)`）。
+   **⇒ 我忘了自己文档里的东西。** 差点因此得出「选择不可能」的错误结论。
+2. **探针把「期望的报错」记成失败**（4 项）⇒ 加了 `expect_error()`。
+   **⇒ 判定写错会让正确的行为看起来像 bug。**
+
+## 验证
+- 四项门禁全 exit 0（含地图重生成 —— 门禁又一次「报红但它是对的」：加了 3 个函数 ⇒ 能力面计数变）
+- `compileall -W error::SyntaxWarning` exit 0
+  （**且它逮到我一处非法转义**：非 raw 文档串里的 `D:\AI\SW\...` ⇒ `\A` 非法）
+- 全量回归 **6 failed / 822 passed / 15 skipped**（基线失败列表逐条相同）
