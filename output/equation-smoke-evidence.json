@@ -1,13 +1,13 @@
 {
-  "started": "2026-10-01 15:35:30",
+  "started": "2026-10-01 20:11:14",
   "checks": {
     "新建临时零件（不碰用户文档）": {
       "ok": true,
-      "detail": "零件15"
+      "detail": "零件188"
     },
     "add_equation('\"SMOKE_B\" = 2')": {
       "ok": true,
-      "detail": "下标=0 · 0.16s"
+      "detail": "下标=0 · 0.03s"
     },
     "list_equations（应含刚加的那条）": {
       "ok": true,
@@ -19,7 +19,7 @@
     },
     "★ 收尾无残留模态框（已知事实 64 的收尾检查）": {
       "ok": true,
-      "detail": "无"
+      "detail": "扫了 162 个窗口 · 无模态框"
     }
   },
   "add_index": 0,
@@ -27,5 +27,5 @@
   "passed": 5,
   "total": 5,
   "verdict": "pass",
-  "finished": "2026-10-01 15:35:31"
+  "finished": "2026-10-01 20:11:16"
 }

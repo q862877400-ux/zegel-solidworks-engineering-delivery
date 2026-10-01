@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 17:19:14",
+  "started": "2026-10-01 20:11:05",
   "checks": {
     "新建临时零件（不碰用户文档）": {
       "ok": true,
@@ -11,7 +11,7 @@
     },
     "★ sketch_centerline（(-30,0)→(30,0)）": {
       "ok": true,
-      "detail": "返回 CDispatch · 0.07s"
+      "detail": "返回 CDispatch · 0.06s"
     },
     "★★ 往返 A：`get_sketch_segments` 读回 ≥1 段": {
       "ok": true,
@@ -31,7 +31,7 @@
     },
     "★ 收尾无残留模态框（已知事实 64）": {
       "ok": true,
-      "detail": "无"
+      "detail": "扫了 162 个窗口 · 无模态框"
     }
   },
   "segments_read_back": 1,
@@ -44,5 +44,5 @@
   "passed": 8,
   "total": 8,
   "verdict": "pass",
-  "finished": "2026-10-01 17:19:16"
+  "finished": "2026-10-01 20:11:08"
 }

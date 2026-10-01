@@ -1,0 +1,128 @@
+{
+  "rows": [
+    {
+      "script": "verify_batch10_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 7,
+      "total": 7,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的检查）                      扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_bbox_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 8,
+      "total": 8,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的检查）                      扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_bmp_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 8,
+      "total": 8,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（事实 64）                                    扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_centerline_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 8,
+      "total": 8,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64）                            扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_dome_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 9,
+      "total": 9,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（事实 64）                                扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_ellipse_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 11,
+      "total": 11,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的检查）                      扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_equation_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 5,
+      "total": 5,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的收尾检查）                扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_gtol_smoke.py",
+      "exit": 1,
+      "verdict": "fail",
+      "passed": 3,
+      "total": 5,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的检查）                        扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_helix_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 13,
+      "total": 13,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的检查）                      扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_hole_standards_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 11,
+      "total": 11,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的检查）                        扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_in_context_reference_smoke.py",
+      "exit": 1,
+      "verdict": "fail",
+      "passed": 9,
+      "total": 12,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（事实 64）                                  扫了 162 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_interference_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 6,
+      "total": 6,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（事实 64）                                    扫了 188 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_png_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 9,
+      "total": 9,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（事实 64）                                  扫了 192 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_sketch_edit_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 10,
+      "total": 10,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的检查）                        扫了 188 个窗口 · 无模态框"
+    },
+    {
+      "script": "verify_sketch_getters_smoke.py",
+      "exit": 0,
+      "verdict": "pass",
+      "passed": 18,
+      "total": 18,
+      "cleanup_line": "✓ ★ 收尾无残留模态框（已知事实 64 的检查）                    扫了 188 个窗口 · 无模态框"
+    }
+  ],
+  "leftover": {
+    "found": 0,
+    "dismissed": 0
+  }
+}

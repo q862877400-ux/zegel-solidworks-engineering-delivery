@@ -1,13 +1,13 @@
 {
-  "started": "2026-10-01 19:36:28",
+  "started": "2026-10-01 20:11:16",
   "checks": {
     "新建临时零件（不碰用户文档）": {
       "ok": true,
-      "detail": "零件167"
+      "detail": "零件189"
     },
     "insert_gtol（0 参，官方 InsertGtol()）": {
       "ok": true,
-      "detail": "拿到 CDispatch · 0.02s"
+      "detail": "拿到 CDispatch · 0.00s"
     },
     "★ add_gtol_indicator(parallelism, 基准 A) —— **2022 格式路径**": {
       "ok": false,
@@ -28,5 +28,5 @@
   "passed": 3,
   "total": 5,
   "verdict": "fail",
-  "finished": "2026-10-01 19:36:29"
+  "finished": "2026-10-01 20:11:18"
 }
