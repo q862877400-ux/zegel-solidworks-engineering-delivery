@@ -1,0 +1,38 @@
+fix(release): 把**早已存在却没人跑**的工作区遮蔽门禁接进 release_check + 消除它抓到的真遮蔽
+
+## 🔴 本轮抓到的真问题（轮 70）
+盘点「哪些门禁在检查量为 0 时不喊」时，**先撞到一个更紧急的**：
+```
+python scripts/check_workspace_shadowing.py
+  [FAIL] 工作区根有 **1 个**会遮蔽依赖包的文件/目录：
+    mcp            ← D:\AI\SW\mcp.py
+    后果：以该工作区为 CWD 的 Python 进程里，`import mcp` 拿到的是**那个本地文件**，
+          不是真的包 ⇒ 报 `No module named 'mcp.server'; 'mcp' is not a package`
+```
+**⚠ 而这道门禁**根本没被 `release_check.py` 调用**** ⇒ **它红着也没人知道**（可能红了很久）。
+
+★ **一个存在但没人跑的门禁，与没有门禁等价** —— 这是本项目已多次记录的教训的**另一个面**：
+之前是「守卫存在但没人用」，这次是「**门禁存在但没接线**」。
+
+## 本提交修的两件
+1. **消除遮蔽**：`D:\AI\SW\mcp.py` 是**我的一次性探查脚本**（864 字节 / 09-29，用 `gh api`
+   拉 andrewbartels1 仓库的文件树），用途早已完成。
+   ⇒ 按**门禁自己给的建议**改名加前缀（**`git mv mcp.py _mcp.py`**，**不删**，符合红线）。
+2. **接线**：`release_check.py` 新增 `_run_workspace_shadowing_gate`，接在**成员名门禁之后**，
+   **硬失败**。⚠ **便携性已核**：工作区不在（别的机器）⇒ 该脚本自己 `[SKIP]` 并 exit 0
+   ⇒ **可以无条件接线**。
+
+## ★ 负例已证有牙齿
+```
+把 _mcp.py 改回 mcp.py  ⇒  release_check 报：
+  AssertionError: 工作区遮蔽门禁未通过（工作区根有会遮蔽依赖包的文件/目录）：
+  [FAIL] 工作区根有 **1 个**会遮蔽依赖包的文件/目录：
+恢复成 _mcp.py          ⇒  release_check exit 0
+```
+
+## ⚠ 顺带确认（盘点的一半结论）
+其余带 SKIP 的门禁**都会把 SKIP 喊出来**（`check_member_names` 还说「这是静默通过，不算通过」），
+且 `check_interface_member_ownership` **已经有**「检查量为 0 ⇒ 返回非 0」的守卫。
+⇒ **「不喊」的问题在本仓不普遍**；真正的问题是**这道门禁压根没被调用**。
+
+⇒ 十一道门禁全 exit 0 · `release_check` exit 0 · 回归 **948 passed / 17 skipped / 0 failed**
