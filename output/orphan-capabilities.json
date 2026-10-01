@@ -2,8 +2,8 @@
   "note": "本文件是**生成物**（tools/probe_unexposed_functions.py 写）；别手改。它只列事实，不判『该不该暴露』。",
   "counts": {
     "public": 821,
-    "exposed_lower_bound": 97,
-    "orphans": 298
+    "exposed_lower_bound": 100,
+    "orphans": 295
   },
   "orphans": [
     {
@@ -968,17 +968,6 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_topology.py",
-      "function": "create_demold_control",
-      "params": [
-        "study",
-        "*",
-        "direction"
-      ],
-      "first_param_is_injectable": true,
-      "has_bare_coord_param": false
-    },
-    {
       "module": "sw_surface.py",
       "function": "create_extrusion_surface",
       "params": [
@@ -1036,18 +1025,6 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_topology.py",
-      "function": "create_stress_constraint",
-      "params": [
-        "study",
-        "*",
-        "value",
-        "comparator"
-      ],
-      "first_param_is_injectable": true,
-      "has_bare_coord_param": false
-    },
-    {
       "module": "sw_simulation_study.py",
       "function": "create_study",
       "params": [
@@ -1089,17 +1066,6 @@
         "sw_app",
         "profile",
         "path"
-      ],
-      "first_param_is_injectable": true,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_topology.py",
-      "function": "create_symmetry_control",
-      "params": [
-        "study",
-        "*",
-        "symmetry_type"
       ],
       "first_param_is_injectable": true,
       "has_bare_coord_param": false
