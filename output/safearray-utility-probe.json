@@ -1,0 +1,56 @@
+{
+  "steps": [
+    {
+      "step": "① ISldWorks.GetSafeArrayUtility()",
+      "ok": true,
+      "detail": "CDispatch"
+    },
+    {
+      "step": "② GetDouble(<普通 list>, 1)",
+      "ok": false,
+      "detail": "AttributeError: <unknown>.GetDouble"
+    },
+    {
+      "step": "③a byref VARIANT(None) ⇒ PutDouble",
+      "ok": false,
+      "detail": "AttributeError: <unknown>.PutDouble"
+    },
+    {
+      "step": "③b 裸 None ⇒ PutDouble",
+      "ok": false,
+      "detail": "AttributeError: <unknown>.PutDouble"
+    },
+    {
+      "step": "④ GetInfo 的 Int32& ×2 回写",
+      "ok": false,
+      "detail": "AttributeError: <unknown>.GetInfo"
+    },
+    {
+      "step": "⑤ PackVariant(out,1,0,ref) ⇒ 形态试探",
+      "ok": false,
+      "detail": "AttributeError: <unknown>.PackVariant"
+    },
+    {
+      "step": "⑥ 官方 21 个成员里**迟到绑定可达**的",
+      "ok": false,
+      "detail": "0/21 ⇒ **一个都没有**"
+    },
+    {
+      "step": "⑦ 类型信息内省",
+      "ok": false,
+      "detail": "com_error: (-2147352565, '无效索引。', None, None) ⇒ **没有可用的 dispinterface**"
+    }
+  ],
+  "util_type": "CDispatch",
+  "packvariant_tb": [
+    "    raise AttributeError(f\"{self._username_}.{attr}\")",
+    "AttributeError: <unknown>.PackVariant"
+  ],
+  "members_total": 21,
+  "members_reachable": [],
+  "typeinfo_error": "com_error: (-2147352565, '无效索引。', None, None)",
+  "cleanup": {
+    "found": 0,
+    "scanned": 213
+  }
+}
