@@ -1,0 +1,26 @@
+{
+  "started": "2026-10-01 14:31:01",
+  "checks": {
+    "连接 + 活动文档": {
+      "ok": true,
+      "detail": "mcp_avi_asm.SLDASM"
+    },
+    "list_setter_summary（无参）": {
+      "ok": true,
+      "detail": "9 键"
+    },
+    "★ collect_model_summary（特征树）": {
+      "ok": true,
+      "detail": "18 个特征 · 键=['feature_count', 'features', 'path', 'title', 'type']"
+    },
+    "get_costing_manager": {
+      "ok": true,
+      "detail": "ok · NoneType"
+    }
+  },
+  "feature_count": 18,
+  "passed": 4,
+  "total": 4,
+  "verdict": "pass",
+  "finished": "2026-10-01 14:31:02"
+}
