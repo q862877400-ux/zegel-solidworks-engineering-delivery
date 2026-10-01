@@ -1,0 +1,81 @@
+{
+  "started": "2026-10-01 12:52:33",
+  "checks": {
+    "原生探测返回结构化结果（不抛异常）": {
+      "ok": true,
+      "detail": "keys=['addins', 'backend', 'blockers', 'error', 'error_code', 'generatedAt']"
+    },
+    "totalLength = 50（3-4-5 直角三角形）": {
+      "ok": true,
+      "detail": "实际 50.0"
+    },
+    "endpointTable 有两个端点": {
+      "ok": true,
+      "detail": "['J1', 'J2']"
+    },
+    "segmentEvidence 回读 bendRadius = 25": {
+      "ok": true,
+      "detail": "实际 25.0"
+    },
+    "routingBom 长度与 totalLength 一致": {
+      "ok": true,
+      "detail": "bom=50.0"
+    },
+    "readyForNativeWrite 为 **False**（不假装能写原生）": {
+      "ok": true,
+      "detail": "readyForNativeWrite=False · status='blocked'"
+    },
+    "**碰撞障碍 FRAME 被点名**": {
+      "ok": true,
+      "detail": "obstacles=['FRAME'] status='fail'"
+    },
+    "**支撑不足被发现**（required > 0）": {
+      "ok": true,
+      "detail": "required=2 已给=None"
+    },
+    "出现 `routing_supports_insufficient`": {
+      "ok": true,
+      "detail": "codes=['routing_bend_radius_too_small', 'routing_collision_or_clearance', 'routing_supports_insufficient', 'routing_support_spacing_exceeded']"
+    },
+    "bend_radius_too_small_detected": {
+      "ok": true,
+      "detail": "codes=['routing_bend_radius_too_small', 'routing_collision_or_clearance', 'routing_supports_insufficient', 'routing_support_spacing_exceeded']"
+    },
+    "正常输入产出报告（review_required）": {
+      "ok": true,
+      "detail": "status='review_required'"
+    },
+    "**输入文件只读**（sha256 不变）": {
+      "ok": true,
+      "detail": "sha256 相同"
+    },
+    "损坏 JSON 被挡（routing_input_invalid_json）": {
+      "ok": true,
+      "detail": "error_code='routing_input_invalid_json'"
+    },
+    "根节点非 object 被挡（routing_input_root_invalid）": {
+      "ok": true,
+      "detail": "error_code='routing_input_root_invalid'"
+    },
+    "**输入缺失返回结构化 blocked**（不抛异常）": {
+      "ok": true,
+      "detail": "error_code='routing_input_missing'"
+    },
+    "CLI `--input/--output` ⇒ rc=0 且产出报告": {
+      "ok": true,
+      "detail": "rc=0 报告在=True"
+    },
+    "CLI 产出的报告含 nativePreflight": {
+      "ok": true,
+      "detail": "keys=['checks', 'collisionEvidence', 'endpointTable', 'error_code', 'generatedAt', 'limitations']"
+    },
+    "CLI `--preflight` ⇒ 输出结构化 JSON（含 backend）": {
+      "ok": true,
+      "detail": "rc=1 backend='solidworks-routing'"
+    }
+  },
+  "passed": 18,
+  "total": 18,
+  "verdict": "pass",
+  "finished": "2026-10-01 12:52:33"
+}

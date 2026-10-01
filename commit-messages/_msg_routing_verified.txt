@@ -1,0 +1,46 @@
+feat(A4): `routing` 升 `verified` —— 端到端验收**故意造违规**逐条触发 limitations
+
+## 回到产品（轮 78）：第三条升 verified
+`routing` 是 5 条 `stitched` 里**唯一还能在本机升的**（其余缺 OCP / 缺 SW 加载项 / 真机被阻塞）。
+
+**⚑ 先核依赖**（轮 77 的教训）⇒ `json` / `math` / `numpy` / `jsonschema` / `pydantic`
+**本机都可用** ⇒ 本条**不需要** OCP，也不需要 SW 加载项（原生写入本就该 blocked）。
+
+## 新增 `tools/verify_routing_e2e.py`（**18/18 通过 · verdict: pass**）
+⚠ 判据不是"跑通就算"，而是**故意造违规**、逐条触发 limitations ① 的七项承诺：
+```
+✓ totalLength = 50（3-4-5 直角三角形）· endpointTable 两个端点 · bendRadius 回读 25
+✓ routingBom 长度与 totalLength 一致
+✓ **碰撞障碍 `FRAME` 被点名**（collisionEvidence[].obstacles）
+✓ **支撑不足被发现**（required=2 + `routing_supports_insufficient`）
+✓ **弯曲半径过小（5 < 30）被抓**（`routing_bend_radius_too_small`）
+      ⚠ 这一项我**没有假定**它一定被抓 —— 结果它被抓了（如实记录在证据里）
+✓ **`readyForNativeWrite is False`** ← limitations ② 的**核心诚实承诺**（不假装能写原生）
+✓ 输入侧：损坏 JSON / 根节点非 object / 缺失 都被**结构化**挡下（不抛异常）· **输入文件只读**（sha256 不变）
+✓ 两个 CLI 入口：`--input/--output`（rc=0 + 产出报告）与 `--preflight`（结构化 JSON，backend=solidworks-routing）
+```
+⚠ 过程中踩到一次：我按**位置参数**调 CLI ⇒ `rc=2`；实测它用的是 **`--input/--output`** ⇒ 已改（并把该事实写进验收命令的注释）。
+
+## 清单升级
+```
+routing: level stitched → **verified**
+  evidence          : （空） → 2 条（验收命令 + 23 个测试）
+  verified_versions : （空） → ['2026']   ⚑ limitations ② 讲的正是「**本机 SW2026** 可发现
+                      SWRoutingLib.tlb」，而那部分**真的跑了**（`--preflight` 返回 backend）
+  limitations       : **一条不删**（原生写入仍必须 blocked）
+⇒ verified **25 → 26** · stitched **5 → 4** · not_implemented 1
+```
+
+## ⚠ 两个既有测试被我打破 —— 正确处理（改行为就改测试 + 说明为什么）
+```
+tests/test_cad_reliability.py::test_capability_manifest_marks_unverified_workflows
+tests/test_sw_capability_probe.py::test_advanced_interfaces_do_not_inherit_unrelated_verified_levels
+```
+* 后者**意图是**「**类型库存在 ≠ 实现已验证**」⇒ **那条照旧成立**：我把 `routing` 从
+  `("surface_modeling","mold_tools","routing")` 元组里**移出**，**`surface_modeling`/`mold_tools` 仍钉住**
+  （它们**只有类型库、没有端到端验收**），并**新增**一条单独断言钉住 `routing` 现为 `verified`；
+* **授权没放开**：`ready_for_unattended_use is False` 对三条**照旧**；
+* 两处都写了**为什么**（附依据与日期）。
+⚠ **不是为了让测试变绿而改期望** —— 是先核「升级依据是否充分」（18/18 + 23 passed），再改。
+
+⇒ 十二道门禁全 exit 0 · `release_check` exit 0 · 回归 **970 passed / 17 skipped / 0 failed**
