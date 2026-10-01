@@ -5571,6 +5571,31 @@
             690 ▶ **队列续作**（`docs/backlog-8h.md`）：下一项 = **A2**（`sw_simulation_study` 族：`generate_report` /
                `create_mesh_for_control` / `default_element_size_and_tolerance` —— ★ 注意最后一个实际在
                `scripts/sw_simulation.py` 而非 `_study`，**归属按实测改正**）。
+           691 🎯 **Spec Kit `125`：挂柜台第三批（仿真研究族 3 个）—— 把「两源冲突」原样留在描述里，不合并**（轮 206）——
+               ★ 本批两处"不干净"都按纪律摆到明面上：
+               ```
+               ① **查不到**：`generate_report` 的 `template` **合法取值**本地源里没查到
+                  （docstring 只有「生成研究报告。」，函数体只是透传给 `GenerateReport(template, path, append)`）
+                  ⇒ ★ 按普通 `str` 暴露 + 描述明写"未找到"，**不发明候选值**（铁律 5）
+                  核查命令：`Path('C:/swapi/enums').glob('*eport*')` ⇒ **空**
+               ② **两源冲突**：既有工具的 `units` 描述写「**-1 is rejected by the API**」，
+                  而该函数自己的 docstring 写「**本机实测：units=-1 时返回毫米级数值**」
+                  ⇒ ★ 按"真实运行证据优先"取 **-1** 作默认，**但两句话都留在描述里**，不合并
+                  ⇒ 与**事实 139**（缺口数两个口径不合并）**同型**
+               ```
+            692 ★ **一处归属按实测改正**：队列把 `default_element_size_and_tolerance` 写在 `_study` 名下，
+               实测它在 **`scripts/sw_simulation.py`** ⇒ 以实测为准（工具声明 `module=` 用实测值）。
+            693 ★ **五处口径一致地动 3**（**第三次**同一模式，互相印证）：
+               ```
+               被工具引用的公开函数 100→**103** · 孤立能力 295→**292** · 首参可注入 44→**41**
+               并集 431→**434** · 本仓库独家 82→**85** · 缺口 338 **不变**
+               ```
+               ★ 两处"钉死数量"的测试同步更新（**48→51** · **93→96**）· 注册表现有 **51** 条声明。
+            694 ⚑ **限度**：本批**只做暴露**（真机排队列 B 组）· `template` 合法取值**至今未知** ·
+               `units` 的冲突**没被裁决**（要裁决得真机试 `-1` 会不会被拒）。
+               门禁 + `release_check` exit 0 · 全量回归绿。
+            695 ▶ **队列续作**（`docs/backlog-8h.md`）：下一项 = **A3 视图/选择族**
+               （`get_active_view` / `activate_view` / `add_perspective` / `entities_on_body`）⇒ 继续自动推进。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:

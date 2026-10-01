@@ -2,8 +2,8 @@
   "note": "本文件是**生成物**（tools/probe_unexposed_functions.py 写）；别手改。它只列事实，不判『该不该暴露』。",
   "counts": {
     "public": 821,
-    "exposed_lower_bound": 100,
-    "orphans": 295
+    "exposed_lower_bound": 103,
+    "orphans": 292
   },
   "orphans": [
     {
@@ -979,16 +979,6 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_simulation_study.py",
-      "function": "create_mesh_for_control",
-      "params": [
-        "study",
-        "control_name"
-      ],
-      "first_param_is_injectable": true,
-      "has_bare_coord_param": false
-    },
-    {
       "module": "sw_surface.py",
       "function": "create_offset_surface",
       "params": [
@@ -1082,16 +1072,6 @@
         "h"
       ],
       "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_simulation.py",
-      "function": "default_element_size_and_tolerance",
-      "params": [
-        "study",
-        "units"
-      ],
-      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {
@@ -1447,18 +1427,6 @@
         "max_retries"
       ],
       "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_simulation_study.py",
-      "function": "generate_report",
-      "params": [
-        "study",
-        "template",
-        "path",
-        "append"
-      ],
-      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {

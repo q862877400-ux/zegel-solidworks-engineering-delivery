@@ -453,3 +453,39 @@
 ⚠ 只跑了**最简工况**（100×60×20 单实体板）⇒ 复杂几何未验。
 
 **依据**：`output/simulation-evidence.json` · `tools/capture_simulation_evidence.py` · `specs/134-static-simulation-reverified/` · 事实 141 / 142 / 143
+
+| 146 | **挂柜台第三批（仿真研究族 3 个）：把"两源冲突"原样留在描述里，不合并** —— 2026-10-01（轮 206 / Spec Kit `125`）。
+
+★★ **本批的两处"不干净"，都按纪律摆到明面上**：
+```
+① **查不到**：`generate_report` 的 `template` **合法取值**在本地源里没查到
+   （`sw_simulation_study.generate_report` docstring 只有「生成研究报告。」，
+     函数体只是透传给 `GenerateReport(template, path, append)`）
+   ⇒ ★ 按普通 `str` 暴露 + 描述里明写"合法取值未在本地源中找到"，**不发明候选值**（铁律 5）
+   核查命令：`python -c "from pathlib import Path;print([p.name for p in Path(r'C:/swapi/enums').glob('*eport*')])"`（**空**）
+
+② **两源冲突**（★ 更值得记）：
+   既有工具 `solidworks_topology_run` 的 `units` 描述写「0=SI, 1=English, 2=Metric；
+     **-1 is rejected by the API**」
+   而 `default_element_size_and_tolerance` 自己的 docstring 写「**本机实测：units=-1 时返回毫米级数值**」
+   ⇒ ★ 两处**矛盾**。处置：**按"真实运行证据优先"取 -1 作默认**，
+     但**把两句话都留在参数描述里**，**不合并成一个说法**
+   ⇒ ★ 与**事实 139**（缺口数的两个口径不合并）**同型**：
+     **两处都没说谎，只是口径/证据层级不同 —— 那就两处都写。**
+```
+★ **一处归属按实测改正**：队列把 `default_element_size_and_tolerance` 写在 `_study` 名下，
+  实测它在 **`scripts/sw_simulation.py`** ⇒ 以实测为准（工具声明的 `module=` 用实测值）。
+
+★ **五处口径一致地动 3**（第三次同一模式，互相印证）：
+```
+被工具引用的公开函数 100→**103** · 孤立能力 295→**292** · 首参可注入 44→**41**
+并集 431→**434** · 本仓库独家 82→**85** · 缺口 338 **不变**
+```
+★ 两处"钉死数量"的测试同步更新（**48→51** · **93→96**）；注册表现有 **51** 条声明。
+
+⚠ **限度**：本批**只做暴露**（真机验证排队列 B 组）·
+`template` 合法取值**至今未知** ⇒ 用户得自己知道模板名 ·
+`units` 的冲突**没被裁决**（只把两句都写出来；要裁决得真机试 `-1` 会不会被拒）。
+
+**依据**：`mcp-server/tool_specs_batch13.py` · `mcp-server/register_capabilities.py` ·
+`specs/125-simulation-study-batch/` · 事实 139 / 144
