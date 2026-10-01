@@ -1,0 +1,5 @@
+已连接到运行中的 SolidWorks 实例（ProgID: SldWorks.Application）
+当前文档: block0.SLDPRT (类型: 零件)
+已创建新零件文档
+TRIGGER: 空零件已就绪 ⇒ 调 b_coord_input=False（会阻塞）
+TRIGGER: 调用已返回（阻塞解除）

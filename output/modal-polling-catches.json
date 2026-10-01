@@ -1,0 +1,17 @@
+{
+  "one_shot_count": 0,
+  "one_shot_windows": 136,
+  "single_look_now": 0,
+  "polled": 1,
+  "polled_windows": 162,
+  "dismissed": 1,
+  "trigger_exit": 0,
+  "trigger_log_tail": [
+    "当前文档: block0.SLDPRT (类型: 零件)",
+    "已创建新零件文档",
+    "TRIGGER: 空零件已就绪 ⇒ 调 b_coord_input=False（会阻塞）",
+    "TRIGGER: 调用已返回（阻塞解除）"
+  ],
+  "blind_missed": true,
+  "polling_caught": true
+}
