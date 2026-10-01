@@ -1,0 +1,42 @@
+{
+  "captured_at": "2026-10-02T03:14:05",
+  "steps": [
+    {
+      "tag": "新建空工程图",
+      "title": "工程图1 - 图纸1",
+      "A_model_GetType": 3,
+      "B_GetCurrentSheet_on_model": "拿到对象",
+      "C_Sheet_GetName": "图纸1",
+      "D_Sheet_GetProperties2": {
+        "len": 8,
+        "values": [
+          6.0,
+          12.0,
+          1.0,
+          1.0,
+          1.0,
+          0.297,
+          0.21,
+          1.0
+        ]
+      },
+      "E_Sheet_GetSheetFormatName": "图纸格式1",
+      "F_GetSheetCount": 1,
+      "G_GetSheetNames": [
+        "图纸1"
+      ],
+      "H_view_chain": [
+        {
+          "name": "图纸1",
+          "type": 1
+        }
+      ],
+      "H_note": "★ 真取到了视图链"
+    },
+    {
+      "tag": "新建零件（对照）",
+      "GetType": 1,
+      "查文档类型": "swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3"
+    }
+  ]
+}

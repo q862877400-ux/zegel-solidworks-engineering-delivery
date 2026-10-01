@@ -1,0 +1,68 @@
+| 160 | **W2 交付：3 个「当前活动工程图」的轻量读数 —— 而最大的价值在于它"没硬凑"** —— 2026-10-01（轮 224）。
+
+★★★ **W2 原计划是"工程图族，缺口最大（49），先只读"，听起来是一大批活。**
+★ 按纪律**先去核缺口本身**（不照数字排活），49 个名字逐个核完分三类：
+```
+① **名字差异（已覆盖）**：`drawing_views` `drawing_dimensions` `drawing_annotations`
+   `drawing_tables` `sheets` `analyze_drawing_*` `drawing_sheet_info` …
+   ⇒ ★ **`solidworks_inspect_drawing` 已经覆盖**，且不是"沾边" —— 它实现的内核正是
+     `drawing_workflow.inspect_drawing_structure`，说明也逐字列了「页、视图、尺寸、注释和表格」。
+② **写操作**（加视图 / 标注 / 表格 / BOM）：本阶段不做。
+③ ★ **真缺的只是**：「**不等路径、不开件、不出预览、不落文件**」的轻量读数。
+   `inspect_drawing` 要 `drawing_path`、自己开件、出三视图预览、往 output_dir 落 JSON
+   ⇒ 对"**当前已经打开的那张图纸**"没有轻量读数；而 AI 常问的正是
+     「这图几张纸？当前图幅多大？有几个视图？」
+⇒ ★★ **所以本批只有 3 个工具**（不是几十个）。
+```
+★ 原因：缺口名是按 `_normalize` 做的**名字级**匹配 ⇒ 「名字不同」会被算成「缺口」
+  ⇒ 照着数字排活会把**已经做过的事再做一遍**。这正是不用"工具数"当进度的原因。
+
+★★★ **真机探针又推翻了我一个按直觉做的设计**（与 W1 同型，说明这个套路是有效的）：
+```
+★ 我以为要"取一个 IDrawingDoc 对象"。官方示例 `Get_Drawing_View_Names_and_Types_Example_CSharp`
+  写的是 `swDraw = (DrawingDoc)swModel;` —— ★ **那是转换，不是取子对象**。
+⇒ 真机实测：`model.GetType()` = **3**（swDocDRAWING），`model.GetCurrentSheet()` **能直接调** ✓
+⇒ ★ **包装层因此更简单**（不需要 W1 那种"按名取"的兜底链）。
+⚠ 但代价是：**必须先判类型** —— 在零件上直接调会静默出错（已加 `require_drawing` + 负例）。
+```
+
+★★ **同轮查出的另外两个真机坑（官方都没写）**：
+```
+① `ISheet.GetProperties2()` 返回 **8 个 double**（官方 `GetProperties` 文档写 7 个）：
+     [6.0, 12.0, 1.0, 1.0, 1.0, **0.297**, **0.21**, 1.0]
+   ⇒ 图幅 = 6 = `swDwgPaperA4size`（swapi 与反射**两源一致**）；★ **宽高单位是米** ⇒ 换 mm。
+   ★ 两条独立证据同指 A4（枚举 6 + 尺寸 0.297×0.21）⇒ 互相印证。
+   ⚠ 第 8 个元素的含义官方没写 ⇒ **不猜**（宪法 §III）。
+② ★★ **空图纸上 `GetFirstView()` 返回的是"图纸本身"（`Type == 1`、名字 = 图纸名），不是 None**
+   ⇒ 不滤掉就会列出一个名叫「图纸1」的**假视图**。
+   ★ 证据里的关键正例就是"空图纸上视图清单必须为空表"。
+```
+
+★ **验收（两条都绿）**：① `all_specs()` = **65**（62+3）✓
+  ② 真机 `output/drawing-query-evidence.json` 的 `verdict == "pass"`，含 **1 正例（假视图过滤）
+  + 2 负例**（在零件上报错 / 返回结构不足时报错）✓
+  · 门禁链 8 条 exit 0 · 全量 **1274 passed / 0 failed** · 能力清单 39 → **40** 条（新增
+    `drawing_current_sheet_query`，level=verified + 3 条 evidence）。
+
+★★ **本轮又踩了两次同一族的坑，都当场修了**：
+```
+· ★ 模块 docstring **漏了闭合 `"""`** ⇒ SyntaxError（整段被吞到下一个 `"""`）——
+  事实 48 那一族；★ 定则：**长文本进源码后立刻 `ast.parse`**（本轮已做成例行动作）。
+· ★ **我写的"批量修引号"脚本把 JSON 键语法也改了**（`"backends「: [」...`）——
+  这正是事实 61 那一族（批量脚本必须先证明它只做加法）⇒ **丢弃重写**，不做就地补丁。
+  ★ 同族第 3 次：`"有视图"` / `"假视图"` 这类**内层直引号**在 Python 字面量里一律换「」。
+```
+
+⚑ **限度**：① 本批**只在空白新图纸上验过** —— `list_views` 的"有视图"路径与
+  `sheets_summary` 的多图纸路径**未真机验证**（已写进 capability 的 `limitations`，不假称验过）
+  ② 工程图的**写**操作没做 ③ `GetProperties2` 第 8 个元素含义未查（官方没写）。
+
+▶ **队列续作**：W3 会话/文档/文件族（`specs/133`，不含保存等写操作）→ W4 零件特征（取回读）→
+  W5 检查/测量 → W6 装配 → W7 仿真载荷包装层（★护城河）。
+  ★ 可复用套路已补到 7 条（`specs/132-drawing-current-sheet-query/converge.md` 第五节）：
+  新增「**先去核缺口本身**（缺口名是名字级匹配）」与「**不要改生成物文件**」。
+
+**依据**：`specs/132-drawing-current-sheet-query/` 五件套 · `scripts/sw_drawing_query.py` ·
+`mcp-server/tool_specs_batch19.py` · `tools/probe_drawing_object_routes.py` +
+`output/drawing-object-routes.json` · `tools/capture_drawing_query_evidence.py` +
+`output/drawing-query-evidence.json`（`verdict: pass`）· `docs/plan-10h.md` 的 W2 段 · 事实 159

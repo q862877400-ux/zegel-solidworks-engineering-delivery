@@ -1,0 +1,68 @@
+{
+  "captured_at": "2026-10-02T03:15:21",
+  "capability": "drawing_query",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_drawing_list_sheets": {
+          "module": "sw_drawing_query",
+          "function": "sheets_summary",
+          "resolved": true
+        },
+        "solidworks_drawing_get_current_sheet": {
+          "module": "sw_drawing_query",
+          "function": "current_sheet_info",
+          "resolved": true
+        },
+        "solidworks_drawing_list_views": {
+          "module": "sw_drawing_query",
+          "function": "list_views",
+          "resolved": true
+        }
+      }
+    },
+    "sheets_summary": {
+      "ok": true,
+      "got": {
+        "count": 1,
+        "names": [
+          "图纸1"
+        ],
+        "current": "图纸1"
+      }
+    },
+    "current_sheet_info": {
+      "ok": true,
+      "got": {
+        "sheet_name": "图纸1",
+        "paper_size_code": 6,
+        "paper_size": "A4",
+        "width_mm": 297.0,
+        "height_mm": 210.0,
+        "scale_num": 1.0,
+        "scale_den": 1.0,
+        "first_angle": true,
+        "sheet_format_name": "图纸格式1"
+      }
+    },
+    "list_views_on_empty_sheet": {
+      "ok": true,
+      "got": [],
+      "★": "官方 GetFirstView() 在空图纸上返回的是**图纸本身**（Type==1）⇒ 这一条为真才说明过滤生效；否则会列出名叫「图纸1」的假视图"
+    },
+    "negative_on_part": {
+      "ok": true,
+      "detail": {
+        "sheets_summary": "RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）",
+        "current_sheet_info": "RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）",
+        "list_views": "RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）"
+      }
+    },
+    "negative_bad_shape": {
+      "ok": true,
+      "msg": "ISheet.GetProperties2 返回了 3 个元素（预期 ≥7：paperSize/…/width/height）—— 官方返回结构可能变了，不要猜"
+    }
+  },
+  "verdict": "pass"
+}
