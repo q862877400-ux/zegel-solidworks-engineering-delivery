@@ -262,3 +262,43 @@
 | 139 | **目标 ② 里那个「339」是**轮 86 的数**，经**四轮人工核**早已变 —— 而两处文档**各说一半、互不指认**** —— 2026-10-01（轮 199）。  ★★★ **起因**：objective ② 明写「B 级并入 **339** 个缺口操作」。本轮去量它现在到底是几： ``` · `docs/union-gap-triage.md`（轮 86 起）把 339 拆成四档，**四轮人工核**过：   轮 101 核样「能力在、未暴露 144」档 ⇒ 命中率 ≈ 25%（原以为"极可能同一操作"）   轮 102 **全核**两档别名 ⇒ 强 7/26≈27% · 弱 6/37≈16%（**连强档也不例外**）   轮 103 **反向核**「真缺 132」档 ⇒ 反向错误率 ≈ 18%（如 `tooling_split`/`save_as`/`measure` 其实我们有）   ⇒ 四轮合并：真匹配 ≈ 73 ⇒ **真实缺口 ≈ 265（区间约 245~265）**   ★ 根因写明：那些档来自**后缀词匹配**，而 `sketch`/`view`/`template`/`macro` 是高频通用词     ⇒ ★★ **这一档不该由字符串匹配给结论，只能人工核** · 而 `docs/harvest-report.md` §10.3 的**判据更正**说：那个数是   「**四家以 MCP 工具暴露、而本仓库没有以 MCP 工具暴露**的操作数」   （根因：`build_union_map.py` 的 `_our_tools()` **只数 `server.py` 的 `@mcp.tool` 名字**，    而能力实现在 `scripts/` 里、没暴露成 MCP 工具）⇒ **「能力缺口」≈ 0**（唯一真缺口是模具 1 个，已并入） ```  ★★★ **所以两处都没错，但口径不同，且此前**互不指认** ⇒ 只看一处必读错**： ``` · 「**能力**缺口」（本仓库有没有这个能力）≈ **0** —— 逐域核过：焊件 缺5/实际14(verified) ·   草图 42/57 · 装配 19/54 · 工程图 49/44 · 真实能力面 72 模块/814 公开函数 · 「**操作名**缺口」（有没有以**那个名字**暴露）≈ 那张表四轮核出的数 ⇒ ★ 而 objective 引用的正是被判为**口径错误**的那个 339 ```  ★★★ **修法（不新造第三个数 —— 数字会腐坏，事实 187/195）**： ``` ① `docs/union-gap-triage.md` 顶部加「**口径声明**」：明写它量的是**操作名缺口**，    并**逐域列出**能力口径的实证，**指向** `harvest-report.md` §10.3 ② `docs/harvest-report.md` §10.3 追记：**指向** `union-gap-triage.md` 的口径声明，    并把两个口径**都说出来**（本节成立于"能力"口径；不要用它否定那张表，反之亦然） ③ ★★ **加结构性检查**（`tests/test_report_freshness_gate.py` 的    `test_gap_number_has_exactly_two_named_readings`）：两份文档**必须互相指认** + 各自明说口径    ⇒ ★ **能靠结构保证的，不要靠约定**（轮 191/192/193 同一条主线）    ⇒ 与 `AGENTS.md §一 A2` 那条「① 与 ② 不是同一件事 …… 两条线不该混」**同型** ```  ★★ **实测**：`git diff --stat` = **31 insertions(+)、0 deletions**（**事实 61**：纯加法）； 回读两份文档确认落盘（harvest-report 603→620 行，正好 +17）； 新测试 **8 passed**；**负例**——临时删掉 triage 里的指向 ⇒ **failed** ✓（从自己的备份还原）。 ⇒ 全量回归 **1261 passed**（+1）。  ⚠ **又一次事实 48**：新测试的断言消息里嵌了同类引号（`"能力缺口"`）⇒ `SyntaxError` ⇒ 改用「」。 ★ 而这已是本会话**第 N 次**"长文本 + 同类引号"——定则（先写独立文件再搬运 / 用不同引号）**仍在被验证**。  **依据**：`docs/union-gap-triage.md` 的口径声明段；`docs/harvest-report.md` §10.3 的追记块； `tests/test_report_freshness_gate.py` 的新测试；事实 48 / 61 / 187 / 195 |
 
 | 140 | **分诊表的「算于」行是**手写快照**、无人看守 —— 而生成物那边**早就有门禁**（复用，不重造）** —— 2026-10-01（轮 200）。  ★ **起因**：闭合轮 199 的限度「**没把 339/265 变成生成物 ⇒ 它仍会腐坏**」。  ★★★ **先量（不假设）—— 三个数全不一样**： ``` · `docs/union-gap-triage.md` 的「算于」行（**手写**）：并集 **349** · 我们 **65** · 缺口 **339** · `docs/union-coverage-matrix.md` 的「合计」行（**生成物**，重跑确认）：   **并集 424 · MCP 暴露面缺 338 · 本仓库独家 75** ⇒ ★★ 根因可从生成器注释推出：轮 129 修掉「暴露面被低估 20 个」的缺陷   （`_our_tools()` 原来**只看 `server.py` 的 `@mcp.tool` 装饰器形式**）⇒   修完后「我们」变多 ⇒ 并集与缺口都变，**而那行手写快照没跟着更新**。 ★ 而那行**没有说谎**（它自己写着"算于…轮 86"＝快照语义）—— 它只是**过期**，   ⚠ **而读者无从知道它过期了**（没有任何门禁比对它）。 ```  ★★★ **关键发现：门禁**早就有了**（所以本轮**不重造**）**： ``` `scripts/check_union_conventions.py` 的 `check_map_fresh()`（「地图与来源同步」段）：   **重跑 `tools/build_union_map.py` 并逐字比对** ⇒ ★ **生成物那一侧的数不可能腐坏** ✓ ⇒ ★ 缺的只是**手写快照那一侧**：它没有任何机制。 ``` ★ 这正是 objective 的约束「**不重造已存在的基础设施**」的用处 —— 我先查了门禁**在不在**，再决定加什么。  ★★★ **修法（一处 + 一条判据）**： ``` ① `docs/union-gap-triage.md` 的「算于」行后加一块：**明说它是轮 86 的快照、已经不是当前值**，    **列出重跑实测的三个新数**，并**指向** `union-coverage-matrix.md` 的「合计」行    ⇒ ★ 纪律写成一句：**本表的数字只作历史锚点；要报当前值，去读生成物的合计行。** ② `tests/test_report_freshness_gate.py` 加 `test_triage_snapshot_points_at_the_generated_number`：    判据是**结构性**的 —— 快照块里**必须指向**生成物、且**明说**它是历史值。    ⚠ **不要求两个数相等**（一个历史、一个当前，**本就不该相等**）；      要求的是**读者能从快照行走到当前值**。 ```  ⚠⚠⚠ **而我的判据**第一次写错了，是**负例当场抓出来的**： ``` 第一版：`assert "union-coverage-matrix.md" in triage`（**整篇**）—— ★ 而那个文件名在本文件**别处也出现**（轮 199 加的口径声明段就提到它） ⇒ 我把算于块里的指向删掉，**断言照样通过** ⇒ ★ **那个负例什么都没证明**。 ⇒ 修：把判据**限定在「算于」那一块之内**（`split("**算于**")` 后取到下一个表格/标题） ⇒ 重做负例：删掉块内指向 ⇒ **failed** ✓ ★ 与**事实 51** 同型：**分析范围要贴合代码/文档的组织单元** ——   这已是本会话第 N 次"范围选错导致判据失效"。 ```  ★★ **实测**：该文件 **9 passed**（原 8 + 新 1）· 负例两次（第一次暴露判据太弱）· 全量回归 **1262 passed**（+1）· 门禁 + `release_check` exit 0。  **依据**：`docs/union-gap-triage.md` 的「算于」块；`docs/union-coverage-matrix.md` 的「合计」行； `scripts/check_union_conventions.py` 的 `check_map_fresh()`；`tests/test_report_freshness_gate.py`； 事实 51 / 62 / 187 / 195 / 199 |
+
+| 141 | **仿真/拓扑「验收红」的归因是**错的** —— 真因是「加载项没启用」，**不是许可**；一行 `LoadAddIn(完整路径)` 即修** —— 2026-10-01（轮 202）。
+
+★★ **起因**：业主说「Simulate 的软件你做了没有，我已经安装好许可了」⇒ 我去量环境。
+★★★ **实测（本机 SW 2026 SP4.1 / PID 41060）**：
+```
+① 现成探针 `tools/probe_simulation_addin_status.py` 的结论是「② 类：更可能是许可/安装问题」
+   —— ★ **而那个结论是错的**。
+② 真因两处，都在**参数形态**上：
+   · `LoadAddIn("SldWorks.Simulation")` ⇒ **3** —— 官方文档（`C:\swapi\types\ISldWorks\LoadAddIn.md`）
+     写明参数是「**Fully qualified file name of the add-in**」⇒ **要完整路径**（唯一例外是 `LoadAddIn('MBD')`）
+   · `swLoadAddinError_e` 里 **3 = swFileNotFound**、**7 = swLicenseError**
+     ⇒ ★ **返回 3 根本不是许可问题**；旧代码把 3 读成"可能是许可"，**读错了枚举的含义**
+③ 只读注册表（**不改**）查到真路径：
+   `HKLM\SOFTWARE\Classes\SldWorks.Simulation` → CLSID `{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}`
+   → `InprocServer32` = `D:\...\SOLIDWORKS\Simulation\cosworks.dll`（存在）
+④ `LoadAddIn(<完整路径>)` ⇒ **0 = swSuccess** ✓ ⇒ 之后 `GetAddInObject`（ProgID 与 {GUID} 两种形态）
+   **都返回非 None**（CDispatch）
+⇒ ★★ 真因：**`SOLIDWORKS\Addins` 下没注册这个加载项** ⇒ SW 启动时不加载它 ⇒ 对象取不到。
+  **许可一直是好的**（业主没装错）。
+```
+★★★ **持久修复**：`scripts/sw_simulation.py` 新增 `ensure_simulation_addin(sw_app)` ——
+`GetAddInObject` 取不到就**先用完整路径 `LoadAddIn`**，再取；`get_cosmosworks()` 复用它；
+并把那句错归因（"需 Simulation 许可证"）改掉。**实测 `get_cosmosworks(sw)` ⇒ `CDispatch`** ✓
+★ 并给 `capabilities.yaml` 的 `topology_optimization` / `simulation_and_fea` 各插一条**更正归因**。
+
+⚠ **仍未跑求解** —— 求解器不收敛（`cwbcbfmesh.exe` 吃 20–25 GB、1000–3000 s CPU）**是另一件事**，
+本更正**没有**解决它。⇒ 拓扑/仿真**能不能整链跑通，还要真跑一次才知道**（代价高，需业主点头）。
+
+⚠ **`LoadAddIn` 的影响范围**：只影响**当前会话**（不改注册表、不改启动项）⇒
+「这次跑得通，下次启动仍要再装一次」。要让 SW 每次自动加载，要在 Tools > Add-Ins 里勾 —— **代码不动那里**。
+
+⚠⚠ **同轮的一个诚实发现**：回归从「15 skipped」变成「**17 skipped**」（总数 1277 不变）。
+查清了：多出的 2 条是 `tests/test_tool_specs_batch4.py` 里**事实 57** 的守卫
+（`_derived_args_or_skip`：那些测试要**界面上已选中一条边**才跑得动；现在没开文档 ⇒ **带原因 skip**）
+⇒ ★ **不是回归，是那条纪律在按设计工作** —— 它以前"通过"只是**环境恰好满足**。
+
+**依据**：`C:\swapi\types\ISldWorks\LoadAddIn.md` · `C:\swapi\enums\swLoadAddinError_e.md` ·
+`scripts/sw_simulation.py` 的 `ensure_simulation_addin` / `SIMULATION_ADDIN_DLL` / `LOAD_ADDIN_CODES` ·
+`tools/probe_simulation_loadaddin_by_path.py` · `D:\AI\SW\output\simulation-loadaddin-by-path.json` · 事实 47 / 57 / 179

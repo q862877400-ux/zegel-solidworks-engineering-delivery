@@ -1,0 +1,52 @@
+{
+  "paths_ok": [
+    "examples/generate_fea_convergence_example.py",
+    "scripts/delivery_compare.py",
+    "scripts/dfm_review.py",
+    "scripts/fea_analysis.py",
+    "scripts/fea_convergence.py",
+    "scripts/jlcfa_index.json",
+    "scripts/sketch_relations.py",
+    "scripts/sw_gtol.py",
+    "scripts/sw_preflight.py",
+    "subskills/solidworks-engineering-drawing",
+    "subskills/solidworks-engineering-drawing/",
+    "subskills/solidworks-fillet-chamfer-cnc",
+    "subskills/solidworks-fillet-chamfer-cnc/",
+    "subskills/solidworks-threaded-holes/",
+    "tools/probe_export_magic_matrix.py",
+    "tools/verify_gtol_smoke.py",
+    "tools/verify_motion_avi_e2e.py"
+  ],
+  "paths_missing": [
+    "scripts/sw_assembly_doc.edit_part_in_context",
+    "scripts/sw_sketch_edit.convert_entities",
+    "subskills/solidworks-threaded-holes/create_threaded_hole_template.py"
+  ],
+  "calls_ok": [
+    "sw_assembly.add_component",
+    "sw_assembly_doc.edit_part_in_context",
+    "sw_capture.capture",
+    "sw_costing.create_cost_analysis",
+    "sw_delivery.collect_assembly_bom",
+    "sw_document_data.inspect_configurations",
+    "sw_document_data.update_dimension_mm",
+    "sw_equation.add_equation",
+    "sw_export.export_to_bmp",
+    "sw_export.export_to_step",
+    "sw_gtol.insert_gtol",
+    "sw_hole_features.create_counterbore_hole",
+    "sw_jlcfa_index.search",
+    "sw_motion.create_motion_study",
+    "sw_part.get_bounding_box",
+    "sw_part.start_sketch",
+    "sw_review.run_review",
+    "sw_sheet_metal.create_base_flange",
+    "sw_simulation.set_material",
+    "sw_simulation_results.get_displacement_at_points",
+    "sw_sketch_edit.convert_entities",
+    "sw_topology.create_topology_study",
+    "sw_weldment.create_weldment_profile"
+  ],
+  "calls_missing": []
+}

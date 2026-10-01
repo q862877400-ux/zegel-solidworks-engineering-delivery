@@ -1,0 +1,10 @@
+{
+  "clsid": "{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}",
+  "① CLSID 的 {GUID}": null,
+  "② 对照：ProgID `SldWorks.Simulation`": null,
+  "cleanup": {
+    "found": 0,
+    "dismissed": 0,
+    "scanned": 48
+  }
+}

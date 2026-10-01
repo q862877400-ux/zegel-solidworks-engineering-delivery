@@ -1,0 +1,14 @@
+{
+  "dll": "D:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\Simulation\\cosworks.dll",
+  "dll_exists": true,
+  "clsid": "{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}",
+  "load_addin_rc": 0,
+  "by_clsid": "CDispatch",
+  "by_progid": "CDispatch",
+  "cleanup": {
+    "found": 0,
+    "dismissed": 0,
+    "scanned": 48
+  },
+  "conclusion": "**能加载** ⇒ 取不到的真因是「加载项没启用」，**不是许可**"
+}
