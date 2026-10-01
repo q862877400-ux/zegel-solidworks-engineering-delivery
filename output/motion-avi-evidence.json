@@ -1,0 +1,24 @@
+{
+  "started": "2026-10-01 11:42:31",
+  "verdict": "fail: 导出未产生非零文件（exists=False size=0 returned=False）",
+  "steps": {
+    "part": {
+      "title": "零件3"
+    },
+    "assembly": {
+      "title": "装配体6"
+    },
+    "motor": {
+      "ok": true
+    },
+    "target_study": "运动算例 2",
+    "export": {
+      "ok": false,
+      "returned": false,
+      "exists": false,
+      "size_bytes": 0,
+      "path": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\mcp_avi_e2e.avi"
+    }
+  },
+  "finished": "2026-10-01 11:42:33"
+}
