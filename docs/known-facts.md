@@ -86,3 +86,7 @@
 | # | 事实 | 依据 |
 |---|---|---|
 | 66 | **新版 SolidWorks 里 GTol 的「2022 格式帧路径」在本机取不到帧** —— 2026-10-01（轮 120）真机实测：InsertGtol() 建出的 GTol，GetFrameCount() = **1**、AddFrame() 返回 **False**、GetFrame(0/1/2) **全 None**；走 CanConvertFormat()→ConvertFormat()（**返回 0 成功**）后 GetFrameCount() **掉到 0**，GetFrame(1/2) **仍全 None**。⚠ 而官方 SetFrameSymbols2 那条旧路**明写只对 2022 之前的 Gtol 有效** ⇒ **两条路都不通**。★ 按**事实 53** 停手（同一处试了 3 次）。⇒ scripts/sw_gtol.py 的 dd_gtol_indicator **当前不可用**（保留作可复算证据），insert_gtol **可用**。⚠ 未查证：换后端（comtypes / 进程内 C++）或 SetSymbolXml（XML 路径）能否走通 | 	ools/verify_gtol_smoke.py（3/5）· 两次定向探针 · docs/obsolete-member-candidates.md 的同类结论 |
+
+| # | 事实 | 依据 |
+|---|---|---|
+| 67 | **`ISketchManager.CreateChamfer` 在 pywin32 后台上到不了（架构性限制，与事实 47 同族）** —— 2026-10-01（轮 122）真机：新零件 → 进草图 → 画两条相接直线 → 用 `sw_selection_spec.select_object`（第二条带 `append`）**确认选区计数 = 2** → 调 `CreateChamfer(2, 0.005, 0.0)` ⇒ **`pywintypes.com_error: (-2147417851, '服务器出现意外情况')`**。★ `0x80010105` **正是事实 47（`ISketchedBendFeatureData.AccessSelections`）与事实 28（`CreateBsplineSurface`）那个错误码** ⇒ 归入「pywin32 迟到绑定到不了需要真实指针的接口」。⚠ 按**事实 53** 停手，不再试别的类型/参数组合。⇒ `scripts/sw_sketch_edit.create_sketch_chamfer` **当前不可用**（保留作可复算证据）。⚠ 同模块的 `convert_entities` / `sketch_mirror` **未实测** | `tools/verify_sketch_edit_smoke.py`（8/10）· 定向探针 `_probe_chamfer_types.py`；事实 47 / 28 |

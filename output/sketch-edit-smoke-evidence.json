@@ -1,0 +1,53 @@
+{
+  "started": "2026-10-01 15:59:53",
+  "checks": {
+    "新建临时零件（不碰用户文档）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "start_sketch（进草图编辑态）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "画直线 1（-20,0 → 0,0）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "画直线 2（0,0 → 0,20）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "取到草图线段": {
+      "ok": true,
+      "detail": "2 个线段（应为 2）"
+    },
+    "★ 同时选中**两条**草图实体（官方前置）": {
+      "ok": true,
+      "detail": "选区计数 = 2"
+    },
+    "★ create_sketch_chamfer(distance=5mm)": {
+      "ok": false,
+      "detail": "RuntimeError: ISketchManager.CreateChamfer 返回 None —— 最常见原因：**没有选中两条草图实体**（官方：「between two selected sketch entities」）"
+    },
+    "★★ 倒角后**线段数变了**（能被空操作证伪）": {
+      "ok": false,
+      "detail": "倒角前 2 → 倒角后 2"
+    },
+    "end_sketch（退出草图）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★ 收尾无残留模态框（已知事实 64 的检查）": {
+      "ok": true,
+      "detail": "无"
+    }
+  },
+  "segments_before": 2,
+  "selection": 2,
+  "chamfer_ok": false,
+  "segments_after": 2,
+  "passed": 8,
+  "total": 10,
+  "verdict": "fail",
+  "finished": "2026-10-01 15:59:55"
+}
