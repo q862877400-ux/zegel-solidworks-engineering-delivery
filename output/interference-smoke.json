@@ -1,0 +1,48 @@
+{
+  "started": "2026-10-01 18:49:15",
+  "checks": {
+    "造出 2 个 40x40x20 的块并保存": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "装配里放两个块（第二个偏 +20mm ⇒ **重叠**）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★★ **定量**：`GetInterferenceCount() > 0`（真造出了干涉）": {
+      "ok": true,
+      "detail": "干涉数 = 1 · 报告键 = ['interference_count', 'items', 'manual_review_required', 'status']"
+    },
+    "★★★ **定量**：干涉体积 ≈ **16000 mm³**（20×40×20，算得出来）": {
+      "ok": true,
+      "detail": "读回体积 = [15999.999999999998]（期望 16000 ± 2）"
+    },
+    "★ 逐项能拿到 `GetComponentCount`（官方成员）": {
+      "ok": true,
+      "detail": "component_count = [2]"
+    },
+    "★ 收尾无残留模态框（事实 64）": {
+      "ok": true,
+      "detail": "扫了 162 个窗口 · 无模态框"
+    }
+  },
+  "report": {
+    "status": "warn",
+    "interference_count": 1,
+    "manual_review_required": true
+  },
+  "items": [
+    {
+      "index": 0,
+      "volume": 15999.999999999998,
+      "component_count": 2
+    }
+  ],
+  "volumes": [
+    15999.999999999998
+  ],
+  "passed": 6,
+  "total": 6,
+  "verdict": "pass",
+  "finished": "2026-10-01 18:49:19"
+}
