@@ -1,0 +1,46 @@
+{
+  "started": "2026-10-02 02:52:23",
+  "steps": [
+    {
+      "tag": "草图打开中（画了线+圆）",
+      "sketch_name": "草图1",
+      "A_GetActiveSketch2": "草图1",
+      "B_ActiveSketch": "草图1",
+      "C_FeatureByName": "草图1",
+      "C_got_object": true
+    },
+    {
+      "tag": "草图已关闭（★ 关键读点）",
+      "sketch_name": "草图1",
+      "A_GetActiveSketch2": null,
+      "B_ActiveSketch": null,
+      "C_FeatureByName": "草图1",
+      "C_got_object": true
+    },
+    {
+      "tag": "第二个草图打开中",
+      "sketch_name": "草图2",
+      "A_GetActiveSketch2": "草图2",
+      "B_ActiveSketch": "草图2",
+      "C_FeatureByName": "草图2",
+      "C_got_object": true
+    },
+    {
+      "tag": "第二个草图已关闭",
+      "sketch_name": "草图2",
+      "A_GetActiveSketch2": null,
+      "B_ActiveSketch": null,
+      "C_FeatureByName": "草图2",
+      "C_got_object": true
+    }
+  ],
+  "sketch_names": [
+    "草图1",
+    "草图2"
+  ],
+  "usable_after_close": {
+    "A": false,
+    "B": false,
+    "C": true
+  }
+}
