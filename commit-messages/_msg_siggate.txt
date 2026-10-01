@@ -1,0 +1,32 @@
+feat(gate): **签名审计表新鲜度门禁** ⇒ 抓出 A5 的 3/6 模块数字失真并修掉
+
+## 实测的失真（与 harvest-report **完全同型**的缺口）
+`docs/signature-audit.md` 的逐模块表按文档**自己的复跑方式**实跑后：
+```
+drawing_workflow.py   文档 140/137  →  实际 198/194（+1 查不到：GetModelViewManager）
+sw_simulation.py      文档  34/34   →  实际  44/44
+sw_topology.py        文档  45/45   →  实际  49/49  ← 轮 51 新增 collect_topology_numbers 的 4 个调用
+```
+⇒ **3/6 失真**，而 `release_check.py` 的 `REQUIRED_ABILITY_FILES` **只查这份文档存在**。
+★ **这就是 A5 的真实缺口**：表在、数字失真 ⇒ 让人**以为覆盖是 45 个调用点**（实际 49）。
+
+## 新增 `scripts/check_signature_audit_freshness.py`（硬门禁）
+· 按**文档表里的模块清单**逐个实跑 `scripts/audit_call_arity.py`（传全 `iface_*.txt`）并逐项比对
+· 不符 ⇒ 报「哪个模块、文档写多少、实际多少」+ 给出**可直接用的修法行**
+· ★ **便携性守卫**：拿不到 `D:\AI\SW\_raw` 或模块文件 ⇒ **SKIP 并 exit 0**
+· ★★ **两个踩到并修的判据问题**：
+  ① 表里是**裸文件名**而它们在 `scripts/` 与 `subskills/**/` ⇒ 加 `resolve_module()` 解析器
+     （首跑 6/6 全报「跑不了」⇒ 误 SKIP）
+  ② **同名文件有两份**：`drawing_workflow.py` 的**源**与**桌面内嵌快照**
+     （`apps/*/resources/skill/**`，gitignore 构建产物）⇒ 解析器**排除 `resources`**
+     否则判「不唯一」而白丢 1 个模块
+· ★ 口径写进门禁输出：**调用点数会随代码增长 ⇒ 这是应该的**；
+  门禁要的是「**文档跟得上代码**」，不是「数字永远不变」
+· 契约测试 **8 条**（含负例 + 两个假命中守卫）；已接进 `release_check.py`
+
+## 文档侧
+· 4 处失真行按实跑刷新（含批次 5 的 6 列表与批次 7 的 5 列表）
+· 头部加刷新说明（原写「生成日期 2026-09-29 · 轮次 2」）
+
+## 验证
+八项门禁全 exit 0 · release_check exit 0 · 回归 **897 passed / 17 skipped / 0 failed**
