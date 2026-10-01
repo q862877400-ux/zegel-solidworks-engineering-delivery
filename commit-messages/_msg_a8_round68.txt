@@ -1,0 +1,42 @@
+feat(A8): 补上「轮 13 之后产出」的**生成物 + 新鲜度硬门禁**（不手写状态表）
+
+## 起因：A8 的正文停在「截至第 12 轮」（轮 68 实测）
+`AGENTS.md §一 A8` 要求报告「写明**并入了什么、仍空缺什么、为什么空缺**」。
+实测：`docs/harvest-report.md` 的 §二 正文写的是「**截至第 12 轮**」，
+全仓只有 13/54/63/67 四个零散引用 ⇒ **轮 13–68 的产出没有系统写进去**。
+
+⚠ 但**再手写一份「轮 13–68 干了什么」会立刻腐坏** —— 本项目已多次记录「手写状态表跟不上代码」。
+⇒ **改成本项目一贯的做法：从真源生成 + 新鲜度门禁。**
+
+## 本提交做的三件
+| 件 | 文件 | 作用 |
+|---|---|---|
+| **生成器** | `tools/gen_harvest_digest.py` | 从 4 个真源生成 `docs/harvest-digest.md` |
+| **生成物** | `docs/harvest-digest.md`（128 行）| 报告缺失的那部分状态 |
+| **硬门禁** | `scripts/check_digest_freshness.py` + 接进 `release_check.py` | 重跑必须**逐字节相同** |
+
+**真源（都是硬依据，不是叙述）**：`capabilities.yaml` · `git log` ·
+`scripts/check_*.py` · `docs/union-not-doing.json`。
+
+**digest 的五节**：① 提交构成（feat 97 · **fix 43** · docs 30 · …）·
+② 能力状态（31 条 / **verified 23** / stitched 7 / not_implemented 1；source 分布）·
+③ **`verified` 的逐条运行证据**（A4 的硬证据）· ④ **仍空缺什么 + 为什么**（含「不做」清单）·
+⑤ 门禁栈（12 道 + 各自是否接进 `release_check`）。
+
+`harvest-report.md` 新增 **§八之补** 一节，用一张「想知道 X ⇒ 看 digest 的哪一节」表链接它 ——
+**报告本体保持叙述性，状态部分交给生成物**。
+
+## ⚠ 过程中被逼出来的两个修正（都记在代码注释里）
+1. **生成器的打印假设了 `OUT` 在 `ROOT` 下** ⇒ 新鲜度门禁把 `OUT` 指到临时目录时
+   `OUT.relative_to(ROOT)` 抛 `ValueError` ⇒ **整条门禁崩掉** ⇒ 加 `_display()` 容错。
+   ★ **是门禁帮我发现了生成器的 bug**，不是我先想到的。
+2. **第一版数 `HEAD` 的提交数 ⇒ 生成物永远不新鲜**（每提交一次就差 1）。
+   ⇒ **正解不是「提交后再补一次生成」**（那要两步提交），而是**借用报告数字的同一口径**：
+   `scripts/check_report_freshness.py::actual_drift()` 的「`git status` 非空就 `+1`」
+   ⇒ digest 与报告门禁的「将提交态」一致 ⇒ **一次提交即自洽**。
+   ⚑ **不重造**：直接加载那个模块取同一份逻辑。
+
+## 验证
+* 门禁**负例已证有牙齿**：改一个字 ⇒ **精确报出第 33 行 + 给出修法**（`python tools/gen_harvest_digest.py`）；
+* `release_check` **exit 0** · 回归 **941 passed / 17 skipped / 0 failed**；
+* 十项门禁逐项 exit 0（含新的 `check_digest_freshness`）。
