@@ -44,14 +44,16 @@ git -C 'C:\swprojects\sw-skill-fork' diff origin/main --shortstat
 ⚠ 精确值在 `docs/harvest-report.md` 开篇那行，且**它有门禁守着**（`scripts/check_report_freshness.py`）
 —— **别在这里抄一份**（那就又造了一个会腐坏的数字）。
 
-## 三、下一步（按优先级，来自轮 60 的收工报告）
+## 三、下一步（按优先级，**轮 61 收工后更新**）
 
 | 优先 | 做什么 | 为什么是它 |
 |---|---|---|
-| **1** | **`costing` 升 `verified`** | `AGENTS.md §〇` 的护城河三域里，它是**唯一有实现却停在 `stitched`** 的一条（`scripts/sw_costing.py` 388 行，**零测试** ⇒ 无运行证据）。补一条真机端到端 + 契约测试即可 |
-| 2 | `animation_export` 的两源查证 | 用 `C:\swapi\` + CHM 查「**AVI 由哪个成员真正写出**」；查不到就按 `§九.2` 标「无法缝合」并写进报告空缺段。⚠ **不要**拿 `SaveEntireAnimation` 蒙混（那是「是否保存整个动画」的属性） |
-| 3 | `harvest-report.md` 正文**轮 13–60 的产出**仍未逐段补 | 现状已指向 `ROADMAP §一` 游标；这份报告落后 48 轮 |
+| ~~1~~ | ~~`costing` 升 `verified`~~ | **✅ 轮 61 已完成**（真机完整闭环 `verdict: pass`，`total_to_manufacture = 3.271449904`；验收命令 `python tools/verify_costing_e2e.py`） |
+| **1** | ★ **`animation_export` 的两源查证** | 护城河三域里**唯一剩下的空缺**（现 `not_implemented`）。用 `C:\swapi\` + CHM 查「**AVI 由哪个成员真正写出**」；查不到就按 `§九.2` 标「无法缝合」并写进报告空缺段。⚠ **不要**拿 `SaveEntireAnimation` 蒙混（那是「是否保存整个动画」的属性） |
+| **2** | ★ **`x or <默认值>` 吞掉 0 的 38 处存量** | 门禁（`check_env_pitfalls.py` 检查③）已记账在 `docs/falsy-zero-baseline.txt`，**只拦新增**。修一处就从基线删一行。⚠ **每处都要判断「那个成员的 0 是否有意义」**，不要无脑批改（事实 61） |
+| 3 | `harvest-report.md` 正文**轮 13–61 的产出**仍未逐段补 | 现状已指向 `ROADMAP §一` 游标；这份报告落后 48 轮 |
 | 4 | `signature-audit.md` 的**批次 1–4 手工统计**未纳入门禁 | 它们记录的是**当时的查证动作**，不是当前状态 ⇒ 若要核需先给可跑定义 |
+| 5 | `D:\AI\SW\` 根上有一批我的临时脚本（`_debug_*.py` / `_scan_*.py` / `probe_costing_*.py` / `promote_costing.py` / `gen_falsy_zero_baseline.py` / `_allf.py` / `_bak_c3.py`） | 都是**我自己的产物**，未清理。要么收进 `tools/`（若还有用），要么归档 —— **下次顺手做** |
 
 ## 四、验收命令（**gate 绿基线** —— 重启后照这个跑一遍确认没坏）
 
