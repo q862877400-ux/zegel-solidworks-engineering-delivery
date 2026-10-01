@@ -1,0 +1,52 @@
+feat(audit): 给 `capabilities[].source` 生成**有证据的提案** —— 顺带**纠正我自己的一个误认**
+
+## 新增 `tools/propose_capability_sources.py`（**只打印，不写文件**）
+已知事实 41 说 A2 的缺口是「29 条里 28 条**未被分类**」。本工具为分类**收集证据**：
+
+```
+① capabilities[].id / label  →  关键词（丢掉泛词、加**单复数归一**）
+② scripts/*.py 的**文件名主干**  →  命中 ⇒ 候选实现模块
+③ `git ls-tree -r origin/main`  →  该模块是**上游有**还是**我们新增**（**硬证据**）
+⇒ 判定：upstream / original / mixed / **undetermined（不猜）**
+```
+
+### 最终分布（29 条）
+```
+upstream=11 · mixed=7 · original=3 · **undetermined=8**   ⇒ **21/29 有证据支撑**
+```
+
+### ★ 已被抽查验证（逐条与硬证据相符）
+```
+topology_optimization → original   （sw_topology.py 我们新增）✓
+simulation_and_fea    → original   （sw_simulation*.py 我们新增）✓
+sheet_metal           → upstream   （sw_sheet_metal.py **上游有**）✓
+weldments             → upstream   （sw_weldment.py **上游有**）✓
+routing               → mixed      （routing_review.py 上游 + sw_routing.py 新增）✓
+```
+
+## 🔴 **纠正我自己的一个误认**
+我此前在文档与叙述里把 **`sw_weldment.py` / `sw_sheet_metal.py` 当成「我们新增的」**。
+**⇒ 硬证据（`git cat-file -e origin/main:scripts/sw_weldment.py` 通过）显示它们**上游就有**。**
+**⇒ 工具的输出是对的，错的是我的假设。**这也解释了 AGENTS.md 事实 34 里
+「**该模块**原本自述未在本机实测」—— 那是**上游的**自述。
+
+## ⚠ 两轮收紧（**同一件事的两次自我纠错**）
+```
+第一版：关键词用 `solidworks` + 扫文件体 ⇒ 某条命中 **87 个模块**（无区分力）
+第二版：丢泛词 + **只按主干** ⇒ 分布合理，但 `part`/`mold` 被长度闸（≥5）挡掉
+第三版：闸门降到 **4** + **单复数归一** ⇒ `weldments→sw_weldment` / `drawings→sw_drawing` 对上
+```
+
+## ⚠ 本工具**不写任何文件**（文档串里写明理由）
+关键词匹配**不是归属证明**。`THIRD-PARTY-NOTICES.md` 写着
+「把未并入的东西写成已并入，是**归属造假**，比遗漏更严重」
+⇒ **本工具只把「该看哪些文件」缩小到可人工复核的范围，采纳与否由人定。**
+
+## ⚠ 自己踩的坑（第 7 次，事实 48 那条）
+用 heredoc 往里塞含 `\n` 的长字符串 ⇒ `\n` 变成真换行 ⇒ `SyntaxError`。
+**⇒ 改用 `edit` 工具 + 独立的 `NOTES` 常量（每行独立终止）。**
+
+## 验证
+- 工具可跑、**只打印不写文件** · 抽查 5 条**逐条对上硬证据**
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下
