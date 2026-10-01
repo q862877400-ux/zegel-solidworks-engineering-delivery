@@ -1,0 +1,91 @@
+{
+  "captured_at": "2026-10-02T07:18:59",
+  "capability": "sketch_build",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_sketch_start": {
+          "resolved": true,
+          "aliases": {}
+        },
+        "solidworks_sketch_end": {
+          "resolved": true,
+          "aliases": {}
+        },
+        "solidworks_sketch_add_line": {
+          "resolved": true,
+          "aliases": {
+            "start_x_mm": "x1",
+            "start_y_mm": "y1",
+            "end_x_mm": "x2",
+            "end_y_mm": "y2"
+          }
+        },
+        "solidworks_sketch_add_circle": {
+          "resolved": true,
+          "aliases": {
+            "center_x_mm": "cx",
+            "center_y_mm": "cy",
+            "radius_mm": "radius"
+          }
+        },
+        "solidworks_sketch_add_rectangle": {
+          "resolved": true,
+          "aliases": {
+            "x1_mm": "x1",
+            "y1_mm": "y1",
+            "x2_mm": "x2",
+            "y2_mm": "y2"
+          }
+        }
+      }
+    },
+    "record_draw_without_start": {
+      "outcome": "**没有抛错**（静默）",
+      "★": "如实记录，不假称它该抛错；★ 这条会影响是否需要一道前置守卫"
+    },
+    "readback": {
+      "ok": true,
+      "sketch_name": "草图1",
+      "after_line": {
+        "count_lines": 1,
+        "count_arcs": 0
+      },
+      "after_circle": {
+        "count_lines": 1,
+        "count_arcs": 1
+      },
+      "after_rectangle": {
+        "count_lines": 5,
+        "count_arcs": 1,
+        "count_segments": 6
+      },
+      "after_end_sketch": {
+        "count_lines": 5,
+        "count_segments": 6
+      },
+      "expected": {
+        "after_line": {
+          "count_lines": 1
+        },
+        "after_circle": {
+          "count_lines": 1,
+          "count_arcs": 1
+        },
+        "after_rectangle": {
+          "count_lines": 5
+        },
+        "after_end_sketch": {
+          "count_lines": 5
+        }
+      },
+      "★": "★ 关键：矩形的 4 条边进了 count_lines ⇒ 5；且草图关闭后仍读得到"
+    },
+    "record_bad_plane": {
+      "outcome": "抛了 ValueError",
+      "msg": "无法选择基准面: NoSuchPlane_XYZ"
+    }
+  },
+  "verdict": "pass"
+}
