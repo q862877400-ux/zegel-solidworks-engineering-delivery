@@ -1,0 +1,32 @@
+fix(005): 查证并**推翻**上一轮我记的「时序 bug」怀疑 —— `bounds` 根本不是报告的字段
+
+## 起因：查清上一轮 converge 里记的**未查证项**
+轮 80 的 `005/converge.md §2.1` 记着：「给了合法的 B-Rep 证据后 `bounds` 仍是 `None`
+⇒ 怀疑 `_bounds` 与 `_load_brep_evidence` 的**时序**」。本轮去读代码查证。
+
+## 🔴 查证结论：**不是 bug，是我看错了字段**
+```
+① Select-String '\["bounds"\]|"bounds":'  ⇒ **零命中**：报告里**没有** `bounds` 字段
+② 报告 24 个顶层字段逐个数过：artifacts / brepEvidence / checks / documentId / … / units
+   —— **没有 `bounds`**
+③ 它的产物在 **`checks.bounds_available`** 里，**且带着值**：
+   {"id":"bounds_available","status":"pass","severity":"medium",
+    "message":"已提取基础包络尺寸。",
+    "bounds":{"available":true,"min":[-60.0,-35.0,-4.0],"max":[60.0,35.0,4.0],"size":[...]}}
+④ `_bounds()` 是模块内函数，被 `_common_checks` 调用 ⇒ **设计如此**
+```
+**⇒ `r.get("bounds")` 返回 `None` 是因为**这个键不存在**，不是"值算错了"。**
+
+★ **教训：怀疑某个字段「值不对」之前，先确认**这个字段存不存在** ——
+`dict.get(k)` 对不存在的键**静默返回 `None`**，看起来就像"值是空的"。
+⚠ 那正是本项目反复记录的同一族错误（「判据/断言针对的东西，在源码里长什么样要先看清」）。
+
+## 本提交做的两件
+1. **更正 `005/converge.md §2.1`**：标题加删除线、写清查证结论与四条证据，
+   **原文保留**（误判的记录也有价值：它说明"不查证就写怀疑"会留下什么）；
+2. **加两道判据防同类误判再发生**（`tools/verify_dfm_e2e.py` 的 **SC-106a/b**）：
+   * **SC-106a** 断言包络在 `checks.bounds_available`、**不在报告顶层**；
+   * **SC-106b** 断言 `bounds_available` 里带**非空 `bounds`**（`available is True`）。
+   ⇒ 验收命令 **13 → 15 项 · 全通过**。
+
+⇒ 十二道门禁全 exit 0 · `release_check` exit 0 · 回归 **970 passed / 17 skipped / 0 failed**

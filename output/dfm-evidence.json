@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 13:06:41",
+  "started": "2026-10-01 13:12:20",
   "checks": {
     "SC-001 四种工艺都被识别": {
       "ok": true,
@@ -49,13 +49,21 @@
       "ok": true,
       "detail": "brepEvidence={'available': False, 'verifiedSource': False, 'reason': '未提供 B-Rep 证据。'}"
     },
+    "SC-106a 包络在 `checks.bounds_available`（不在报告顶层）": {
+      "ok": true,
+      "detail": "顶层有 bounds=False · checks 有 bounds_available=True"
+    },
+    "SC-106b `bounds_available` 里带**非空 bounds**": {
+      "ok": true,
+      "detail": "bounds={\"available\": true, \"min\": [-60.0, -35.0, -4.0], \"max\": [60.0, 35.0, 4.0], \"size"
+    },
     "附 validate_profile 两份 profile 都能校验": {
       "ok": true,
       "detail": "见上"
     }
   },
-  "passed": 13,
-  "total": 13,
+  "passed": 15,
+  "total": 15,
   "verdict": "pass",
-  "finished": "2026-10-01 13:06:41"
+  "finished": "2026-10-01 13:12:20"
 }

@@ -25,11 +25,30 @@
 
 ## 二、**不符合项**（本节才是 converge 的价值所在）
 
-### 2.1 ⚠ `bounds` 在「合法 B-Rep 证据」那条里仍然是 `None`
+### 2.1 ~~⚠ `bounds` 在「合法 B-Rep 证据」那条里仍然是 `None`~~ ⇒ ✅ **已查证：不是 bug，是我看错了字段**
 
-实测：给了**被接受**的 B-Rep 证据（`verifiedSource=True`）后，报告的 `bounds` 仍是 **`None`**。
-⇒ **有理由怀疑** `_bounds(document, brep_evidence)` 的调用点**没把已解析的证据传进去**
-（`build_dfm_report` 里 `_bounds` 与 `_load_brep_evidence` 的时序）。
+> **✅ 2026-10-01 轮 81 查证结论**：
+> ```
+> ① 报告顶层**根本没有** `bounds` 字段
+>    （24 个顶层字段逐个数过：artifacts / brepEvidence / checks / … / units）
+> ② 它的产物在 **`checks.bounds_available`** 里，**且带着值**：
+>    {"id":"bounds_available","status":"pass","severity":"medium",
+>     "message":"已提取基础包络尺寸。",
+>     "bounds":{"available":true,"min":[-60.0,-35.0,-4.0],"max":[...]}}
+> ③ `_bounds()` 是模块内函数，被 `_common_checks` 调用 ⇒ **设计如此**
+> ```
+> ⇒ **`r.get("bounds")` 返回 `None` 是因为**这个键不存在**，不是"值算错了"。
+> **我上一轮的「怀疑时序 bug」是误判。**
+> ⇒ 本轮在验收命令里**加了一条判据**（SC-106）防止同类误判再发生：
+> **断言 `bounds_available` 在 `checks` 里、且带非空 `bounds`**。
+> ★ **教训：怀疑某个字段"值不对"之前，先确认**这个字段存不存在**** ——
+>   `dict.get(k)` 对不存在的键**静默返回 `None`**，看起来就像"值是空的"。
+>
+> **原文保留在下面**（误判的记录也有价值：它说明"不查证就写怀疑"会留下什么）。
+
+⚠ 上一轮记的原文：实测给了**被接受**的 B-Rep 证据（`verifiedSource=True`）后，
+报告的 `bounds` 仍是 **`None`** ⇒ **当时怀疑** `_bounds(document, brep_evidence)` 的调用点
+没把已解析的证据传进去（`build_dfm_report` 里的时序）。**—— 该怀疑已被上面推翻。**
 
 ⚠ 但 —— **本轮不做结论**：
 * 本特性的判据是「**篡改必被拒**」（SC-101..103），那三条**已成立**；
