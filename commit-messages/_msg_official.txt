@@ -1,0 +1,48 @@
+feat(check): **官方点名**成第一条来源（34 唯一 / 0 歧义 / **1** 未映射）+ 修一处**测试靠巧合通过**
+
+## 🎯 一、发现**比文本匹配硬得多**的官方来源
+轮 44 读到 `ISimpleFilletFeatureData2` 的 `_overview.md` 时发现，官方**逐字写死了**映射：
+```
+"To create a simple fillet feature: 1. Call [[IFeatureManager::CreateDefinition]],
+  passing Type = [[swFeatureNameID_e]].**swFmFillet**, to create an instance of
+  **ISimpleFilletFeatureData2**."
+```
+**⇒ 这是官方的**断言**，不是对 prose 的**推断**。**
+**⇒ 全库扫一遍 ⇒ 5 条常量被这样点名**，接成**优先级最高**的来源
+（官方点名 > 文本匹配 > 人工确证），并加 `# 覆盖` 保证官方条不被覆盖。
+
+### 效果：**24/0/11（轮 39）→ 34/0/1**
+```
+唯一命中 **34**（**官方点名 5** + **文本匹配 22** + **人工确证 7**）/ 歧义 0 / **未映射 1**
+★ 新解 3 条：swFmFillet ⇒ ISimpleFilletFeatureData2
+                swFmSolidToSheetMetal ⇒ IConvertSolidFeatureData
+                swFmDimPattern ⇒ IDimPatternFeatureData（人工确证：描述含 "variable pattern…table to store the dimensions"）
+★ **swFmFormToolInstance 从人工表"升级"到官方点名** —— 依据从「我的确证」变成「官方断言」
+★ 可信度**交叉验证**：另外 3 条（swFmRefCurve / swFmFormToolInstance / swFmNormalCut）
+  与**别的来源独立得出同一答案** ⇒ **3/3 一致**
+仍未映射只剩 1 条：`swFmRefSurface`（库里**没有** SurfaceSweep 接口 ⇒ 按**铁律 5** 写「查不到」）
+```
+
+## 🔴 二、修一处**靠巧合通过**的测试
+`tests/test_tool_specs_batch4.py` 的文档串承诺「**不连 SolidWorks**」，但它有 spec 的
+`derived_args` **碰了活 COM**（`_swept_refs_and_spec` 调
+`resolve_entity(model, '__current_selection__', "EDGE")` ⇒ 要求界面上**已选中一条边**）。
+```
+⇒ 后果：干净机器上这两个测试**必然失败**（`RuntimeError: 没有活动文档`）
+⇒ 「以前能过」纯属**巧合** —— 只是因为探测时恰好选中过边
+```
+**⇒ 加 `_derived_args_or_skip()`：只把「碰 COM」那一类转成**带原因 skip**（契约违约**可见**），
+别的异常照旧抛出。**明说**「这条 spec 静态跑不了，要覆盖得在真机上跑」。**
+```
+batch4: **8 passed / 2 skipped**（带原因）
+```
+
+## ⚠ 三、我**忘了自己刚定的纪律**（事实 55）
+改完 `scripts/` 没重跑 `sync_bundled_skill.py` ⇒ 快照过期 ⇒ 回归一度 **8 failed**。
+**按事实 55 重跑同步后立刻回到 5 failed。**（这条纪律本轮自己验证了一次。）
+
+## 验证
+- 检查器 `[OK]`，**检查过 5 个站点**；负例复验仍精确报出
+- `release_check` 退出码 0 · 四项门禁全 exit 0
+- **回归 5 failed / 856 passed / 17 skipped** —— 失败清单 = **那 5 个真实基线失败**（无新增）
+- ⚠ 顺带查明：**基线本身依赖 SolidWorks 的文档/选择状态**（这点已写进测试注释）
