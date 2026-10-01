@@ -71,6 +71,13 @@
                   —— 「先证明门禁有牙齿，再相信它的沉默」
              ⑤ **P8 已按用户决定推迟**（开发完再上传）—— 不再是阻塞项
              ⑥ 拓扑**导出类**结果 —— **五源**均未查到公开方法，记为查不到
+            ⑦ **⚠ A2 有实测缺口**（`scripts/audit_acceptance_criteria.py` 枚举）：
+               `capabilities.yaml` 29 条里**只有 1 条**带 `provenance`；
+               但 schema **没有 `source`/`origin` 字段** ⇒ 准确说法是
+               「**28 条未被分类**」，不是「28 条缺 provenance」；
+               **🚫 不会为「让 A2 变绿」而编造 provenance**（那是归属造假）；
+               ⇒ 正解 = 加 `source` 标记（`original`/`merged`）再由人确证
+            ⑧ **A4 已达标**（29/29 level 合法；22/22 verified 有 evidence）
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接:

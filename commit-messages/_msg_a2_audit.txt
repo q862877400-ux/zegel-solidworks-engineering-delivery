@@ -1,0 +1,36 @@
+feat(audit): 把验收判据 A2/A4 做成**可重跑的枚举命令** —— 查出 A2 的真实缺口
+
+## 新增 `scripts/audit_acceptance_criteria.py`
+`capabilities.yaml`（44.8 KB，**内容是 JSON、扩展名是 yaml**）逐条核对 A2 / A4。
+**⚠ 它是「报告计数要给枚举命令」这条纪律的落地** —— 不靠印象说「大致齐了」。
+
+### 确切数字（29 条 capability）
+| 判据 | 覆盖 | 结论 |
+|---|---|---|
+| **A4** · `level` 在五级枚举内 | **29/29** | ✓ 达标 |
+| **A4** · `level=verified` 有 `evidence` | **22/22** | ✓ 达标 |
+| **A2** · 带 4 字段 `provenance` | **1/29** | **✗ 未达标** |
+
+## ⚠⚠ 但「不达标」的**准确说法**是「未被分类」，不是「28 条缺 provenance」
+A2 原文是「每个**并入条目**带 `provenance`」。而本 schema **没有 `source` / `origin` 字段**
+⇒ **无法区分「并入来的」与「本项目自研的」**
+（例：`requirements_planning` 的 backend 是 `local-agent`，显然是自研，但文件里没地方这么说）。
+
+**⇒ 二者差别很大**：前者是**缺一个标记**，后者听起来像**28 条都该有第三方出处**。
+
+## 🚫 **本工具**不**为「让 A2 变绿」而编造 provenance**
+`THIRD-PARTY-NOTICES.md` 自己写着：
+> 「把未并入的东西写成已并入，是**归属造假**，比遗漏更严重。」
+
+**⇒ 正解是给每条加一个 `source` 标记（`original` / `merged`），再由人逐条确证 `merged` 的来源。**
+**⇒ 本工具**只报告、不写入**（文档串里写明）。**
+
+## 顺带修一个真 bug
+`100%` 写在 `%`-格式串里会让后面的 `%d`+中文解码错（`ValueError: unsupported format character`）
+⇒ 改成 `100%%`。
+
+## 验证
+- 审计命令可跑、结论如上
+- 已登记进 `release_check.py` 的 `REQUIRED_ABILITY_FILES`
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下

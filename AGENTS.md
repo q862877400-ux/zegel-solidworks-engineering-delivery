@@ -104,7 +104,7 @@
 
 - **单源运行**：运行时只能有一个 SolidWorks MCP —— 多个进程抢同一 COM 连接会死锁（已知事实 24），所以 MCP 选型就是运行时依赖选型：只在 MIT 那份上跑，AGPL 的 SolidPilot 只读思想。
 
-Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端时都要带 `THIRD-PARTY-NOTICES.md` —— 该文件尚未创建；MIT 来源（上游与 `Eduardof0nt` / `andrewbartels1` / `vespo92`）保留各自的版权声明。完整许可判定表与来源清单见 [docs/sources.md](docs/sources.md)。
+Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端时都要带 `THIRD-PARTY-NOTICES.md` —— 该文件**已存在**；MIT 来源（上游与 `Eduardof0nt` / `andrewbartels1` / `vespo92`）保留各自的版权声明。完整许可判定表与来源清单见 [docs/sources.md](docs/sources.md)。
 
 ## 三、上游仓库结构（对照参考）
 
@@ -128,7 +128,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 
 - 工具最多的那家（187）测试文件数为 0：README 写着「Verified on SolidWorks 2024」，仓库里没有任何测试文件 —— README 说验过不等于验过。
 - 四家里只有 `Slacker-LLC` 声明全工具真机跑过，而它的工具数最少（92）；它的 92 个里没有仿真 / 动画 / 拓扑 / 钣金 / 焊件 / 公差。
-- `Slacker-LLC` 是 Apache-2.0：可抄，但要保留 `NOTICE`（`Copyright 2026 JIALE LIU`）并声明改动了哪些文件；推送任何远端时产生硬性义务，`THIRD-PARTY-NOTICES.md` 尚未创建。
+- `Slacker-LLC` 是 Apache-2.0：可抄，但要保留 `NOTICE`（`Copyright 2026 JIALE LIU`）并声明改动了哪些文件；推送任何远端时产生硬性义务，`THIRD-PARTY-NOTICES.md` **已存在**（153 行 / 6.5 KB，已入库）。
 
 其余 21 个外部项目克隆的清单、逐项能补什么、许可判定表与 MIT 唯一例外，见 [docs/sources.md](docs/sources.md)。
 
@@ -200,6 +200,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 | 38 | **工作区根 `D:\AI\SW\` 里有一个 `mcp.py`，会遮蔽真的 `mcp` 包**：Python 把**脚本所在目录**放在 `sys.path[0]` ⇒ 任何从该目录启动的 Python 进程里 `import mcp` 拿到的是**那个脚本** ⇒ `ModuleNotFoundError: No module named 'mcp.server'; 'mcp' is not a package` ⇒ **`mcp-server/server.py` 在该 CWD 下根本 import 不了**。**⚠ 该错误信息指向不了真因**（看不出是「被本地同名文件遮蔽」）。⇒ 跑该 server 或其 import 测试时，**必须先把脚本目录从 `sys.path` 里剔除**（或换 CWD 且确认 `sys.path[0]` 不是它）。已做成可查项 `scripts/check_workspace_shadowing.py`（**不自动删**工作区脚本）| 实测撞上；证据 `D:\AI\SW\probe_wired_tools_e2e.py` 的 `sys.path` 清理段 |
 | 39 | **本仓库所有 MCP 工具的入参形状是 `{"params": {...}}`**（不是扁平参数）：工具函数签名一律 `def tool(params: XxxInput) -> str` ⇒ FastMCP 生成的 schema 是 `{"properties": {"params": {...}}, "required": ["params"]}`。**上游 45 个与接线进来的 20 个在这一层**完全同形**（`cadstudio_resolve_backend` 对照过）。**⇒ 用 `Tool.run()` 直接调工具时必须传 `{"params": {...}}`**，传扁平 `{...}` 会得 `params Field required` | `tests/test_server_wiring.py` + 实测（`probe_wired_tools_e2e.py`）|
 | 40 | **`IModeler.Create*Surface` 的返回值**不可靠** —— 不是「有些能有些不能」，而是**同一个调用跨次也会变****（2026-10-01，**四轮探针**）：第 13 轮 `CreateCylindricalSurface` **成功**；第 26 轮 `spherical`/`toroidal` 成、`cylindrical`/`conical` 返回 `None`；第 27 轮受控实验只 `axis=(1,0,0)` 成（**排除了顺序与单例状态**）且 `*2` 全 `None`。**官方**：该族 18 个里 **4 个标 `Obsolete`**（`CreateConicalSurface` / `CreateCylindricalSurface` / `CreatePlanarSurface` / `CreateSphericalSurface`），**各有 `*2` 后继、且 `*2` 运行期可达**（它多一个 `RefDirection`）——**但按正确 arity 调 `*2` 仍然返回 `None` ⇒ 换一代解决不了**。**⇒ 修的只能是「让失败可见」**：`sw_surface._invoke` 现在对 `None` **抛带原因的 `RuntimeError`**。⚠ 一个**存在但没人用**的守卫（`require_runtime_available` 曾如此）与没有守卫等价，**且更糟**（让人以为防住了）—— 2026-10-01 才接进 13 个公开包装器 | 证据 `D:\AI\SW\probe_surface2_correct_arity.py` / `probe_cyl_order_vs_axis.py` / `probe_cyl_none_matrix.py` / `probe_surface_generations.py`；`scripts/sw_surface.py` 的 `_invoke` / `IMODELER_RUNTIME_*` |
+| 41 | **验收判据 A2 的真实缺口是「29 条里 28 条**未被分类**」，而不是「28 条缺 provenance」** —— 两者差别很大。`capabilities.yaml`（44.8 KB，**内容是 JSON、扩展名是 yaml**）29 条里只有 `mold_tools` 带 `provenance`；而 schema **没有 `source` / `origin` 字段** ⇒ **无法区分「并入来的」与「本项目自研的」**（例：`requirements_planning` 的 backend 是 `local-agent`，显然是自研，却没有地方这么说）。**🚫 正解不是给 28 条编造 provenance** —— `THIRD-PARTY-NOTICES.md` 自己写着「把未并入的东西写成已并入，是**归属造假**，比遗漏更严重」。⇒ 正解是**给每条加一个 `source` 标记**（`original` / `merged`），再由人逐条确证。**A4 已达标**（29/29 level 合法；22/22 verified 有 evidence）。⚠ 另一条：`100%` 写在 `%`-格式串里会让后面的 `%d`+中文解码错 ⇒ 必须写 `100%%` | `scripts/audit_acceptance_criteria.py`（可重跑的枚举命令）；`git ls-files --error-unmatch THIRD-PARTY-NOTICES.md`（确认它**已入库**）|
 
 ```
               会话  参考  草图  尺寸  零件  曲面  钣金  焊件  模具  装配  工程图  检查  仿真  外观  宏  高级
@@ -223,7 +224,7 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 `origin` 指向上游，语义是「来源与对照」：用 `git diff origin/main --stat` 看我们相对上游的增量（当前 100 新增 / 13 改过）。自建仓库的目标远端由用户给定后再 `git remote add <name> <url>`；只有 origin 时 `git push` 会误推上游仓库。
 
 - 三条红线（任何模式都不豁免）：删数据 / 删仓库 / 强推；对外发布；只有用户能提供的东西（凭据、业务口径）。
-- 推送前置义务：并入了 Apache-2.0 来源（`Slacker-LLC/solidworks-mcp`）⇒ 推送任何远端都要带 `THIRD-PARTY-NOTICES.md`（含 `Copyright 2026 JIALE LIU` 与改动文件清单），该文件尚未创建；MIT 来源保留版权声明。这条对上游与四家一体适用。
+- 推送前置义务：并入了 Apache-2.0 来源（`Slacker-LLC/solidworks-mcp`）⇒ 推送任何远端都要带 `THIRD-PARTY-NOTICES.md`（含 `Copyright 2026 JIALE LIU` 与改动文件清单），该文件**已存在**；MIT 来源保留版权声明。这条对上游与四家一体适用。
 - 分支策略：`main` 与上游保持一致便于 rebase；每个功能域一个分支（`feat/simulation`、`feat/drawing-views` …）；每个 PR 一句话写清「补了哪个官方接口族，来源是哪个项目 / 哪套文档」。
 
 | 动作 | 是否需要用户批准 |
