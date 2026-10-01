@@ -1,0 +1,40 @@
+{
+  "trials": [
+    {
+      "form": "① 扁平 list",
+      "raised": null,
+      "ret": "None",
+      "before": 0,
+      "after": 0,
+      "changed": false
+    },
+    {
+      "form": "② 扁平 tuple",
+      "raised": null,
+      "ret": "None",
+      "before": 0,
+      "after": 0,
+      "changed": false
+    },
+    {
+      "form": "③ VARIANT(VT_ARRAY|VT_R8)",
+      "raised": null,
+      "ret": "CDispatch",
+      "before": 0,
+      "after": 1,
+      "changed": true
+    },
+    {
+      "form": "④ list of tuples（现状对照）",
+      "raised": null,
+      "ret": "None",
+      "before": 0,
+      "after": 0,
+      "changed": false
+    }
+  ],
+  "cleanup": {
+    "found": 0,
+    "scanned": 188
+  }
+}
