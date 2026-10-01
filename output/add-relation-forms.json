@@ -1,0 +1,15 @@
+{
+  "trials": [
+    {
+      "form": "list[0:2]",
+      "relations_before": 3,
+      "raised": null,
+      "relations_after": 4,
+      "added": true
+    }
+  ],
+  "manager": true,
+  "add_relation_repr": "method",
+  "segment_count": 2,
+  "modal_dialogs": []
+}

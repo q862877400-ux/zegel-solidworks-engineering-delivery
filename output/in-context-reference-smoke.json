@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 19:04:08",
+  "started": "2026-10-01 19:07:59",
   "checks": {
     "造出 2 个零件并保存（端板 / 型材）": {
       "ok": true,
@@ -21,13 +21,17 @@
       "ok": true,
       "detail": "GetEditTarget = 非空"
     },
+    "★★ 先**选中一条外部边**（`SketchUseEdge3` 的前置条件）": {
+      "ok": false,
+      "detail": "实体数 0"
+    },
     "★ `convert_entities`（**已有实现**，本轮当部件复用）": {
       "ok": true,
       "detail": "ok"
     },
-    "add_relation": {
+    "★ `add_relation` 前提（投影出实体）": {
       "ok": false,
-      "detail": "TypeError: 'NoneType' object is not callable"
+      "detail": "投影后草图实体数 = 0 ⇒ **前提没满足**"
     },
     "★★ 判据①：`GetRelationsCount` **N → N+1**（空操作不变）": {
       "ok": false,
@@ -53,7 +57,7 @@
   "relations_after": 0,
   "refs_after": 0,
   "passed": 8,
-  "total": 11,
+  "total": 12,
   "verdict": "fail",
-  "finished": "2026-10-01 19:04:15"
+  "finished": "2026-10-01 19:08:06"
 }

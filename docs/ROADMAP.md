@@ -3695,6 +3695,49 @@
                已知事实 **100** 入库 · 回归 **1246 passed** · `release_check` exit 0。
                下轮候选：① 把「属性派生传播」的**别名/容器/for** 三类漏检补上（先写正例测试）；
                ② 回到「真缺」继续补；③ 给剩下 3 条 `stitched` 冒烟。
+           469 🎯 **轮 161 · 核实一份外部提案 + 补两个封装 + 解掉 `AddRelation` 的调用形态** ——
+               ★ 外部提案（`D:\AI\SW-transfer\in-context-reference-proposal.md`）说
+                 「在上下文编辑 / 草图关系 五项全没实现」⇒ **核实结果：3/5 早已实现**。
+                 ③`AddRelation` ④`GetRelationsCount`/`GetRelations`/`GetRelationType`
+                 **早已在 `scripts/sketch_relations.py`**；①② 的名字在
+                 `sw_assembly_doc.py` 的 `ASSEMBLY_DOC_ARITY` **登记表**里（能调，只是没封装）；
+                 **⑤`ListExternalFileReferences2` 才是真缺**。
+            470 ★★★ **提案错在哪：它自己写了「我扫了 `scripts/sw_*.py`」** ——
+               而 **`sketch_relations.py` 没有 `sw_` 前缀** ⇒ **整个模块被漏掉**
+               ⇒ 这是事实 51（「分析范围要贴合代码的组织单元」）的又一次实例，
+                 **这次的"组织单元"是文件名前缀**。
+               ★ 提案 §一 它自己那条教训**是对的、已记进事实 101**：
+                 **「别把单条成员的说明当成整族的性质」** —— 它先查 `swMateType_e` 无 `COLLINEAR`、
+                 又把 `swConstraintType_SKETCHOFFSET` 的说明推广成「草图关系不能跨零件」，
+                 **漏查了 `swSketchRelationFilterType_e`**（`swExternal = 3`）⇒ 被用户当场纠正。
+                 ★ 与事实 36（同名接口分属不同族）**互为镜像**。
+            471 ★★ **补的两个封装**（`sw_assembly_doc.py`）：`edit_part_in_context` ·
+               `exit_edit_part_in_context` · `list_external_file_references_count`。
+               真机：**`EditPart2` 返回 `-1` 且 `GetEditTarget` 非空** ⇒ **在上下文编辑态确实生效 ✓**；
+               `list_external_file_references_count` 基线读回 **0** ✓。
+               ⚠ **判据①②（关系数 N→N+1 · 外部参考 0→≥1）仍没绿** ⇒ **外部参考还没真的建立**。
+            472 ★★★ **解掉 `AddRelation` 的调用形态**（`tools/probe_add_relation_forms.py`）：
+               ```
+               ① 三种实参形态逐个试，**每次回读 GetRelationsCount**（事实 94）
+                    list / tuple                  ⇒ com_error 0x80010105 · 计数 3 → 3（**没加上**）
+                    VARIANT(VT_ARRAY|VT_DISPATCH) ⇒ **无错** · 计数 **3 → 4** ⇒ **加上了**
+               ⇒ ★ `AddRelation(Object, Int32)` 的 `Object` 是 **SAFEARRAY** ⇒ 必须包 VARIANT
+               ⇒ 修 `sketch_relations._dispatch_array()`
+               ⇒ ⚠ 那个错误码与事实 28/47 **同码不同因**（本轮是「数组没包 VARIANT」）——
+                 **报错本身看不出是哪一种**。
+               ```
+            473 ★★★ **本会话第三次「假对象测试看不见真契约」**：
+               `test_add_relation_passes_two_arguments` 用假对象把 `'ENTS'` 当实体传、
+               断言**原样透传** ⇒ **也看不见"实参要包 SAFEARRAY"** ⇒ 已改成断言「包过」并写明理由。
+               ★ 三次（事实 99 / 101 / 本轮）收敛成一句：
+                 **假对象测试能测「逻辑」，测不出「实参形态与成员名」** —— 只有真机能证。
+               ⚑ **未查证**：⚠ **在上下文链仍未打通**（卡在「拿到 `IComponent2` 并选中它的边」——
+                 `asm.GetComponents(True)` 给回的对象上**没有 `GetBody2`**，接口族可能不是 `IComponent2`；
+                 按**事实 53 已停**，不再换写法）；⚠ `AddRelation` 只在**零件草图**上验过；
+                 ⚠ 提案末尾说 `sw_toolbox_index.py`（1,844 零件）**有实现无条目** —— **属实，未动**。
+               已知事实 **101** 入库 · 回归 **1246 passed** · `release_check` exit 0。
+               下轮候选：① 解「拿到 `IComponent2`」这一步，打通在上下文链（判据①② 才有望绿）；
+               ② 给 `sw_toolbox_index` 立条目；③ 回到「真缺」继续补。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
