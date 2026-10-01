@@ -1,0 +1,48 @@
+{
+  "started": "2026-10-01 17:19:14",
+  "checks": {
+    "新建临时零件（不碰用户文档）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "start_sketch": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★ sketch_centerline（(-30,0)→(30,0)）": {
+      "ok": true,
+      "detail": "返回 CDispatch · 0.07s"
+    },
+    "★★ 往返 A：`get_sketch_segments` 读回 ≥1 段": {
+      "ok": true,
+      "detail": "读回 1 段"
+    },
+    "★ 往返 B：`get_lines` 是否把中心线算作直线（量出来）": {
+      "ok": true,
+      "detail": "读回 12 条（算）"
+    },
+    "end_sketch": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★★ **再测单位**：半径 25 的圆 ⇒ 边界框 **50** ⇒ **毫米**（官方文档的「meters」是错的）": {
+      "ok": true,
+      "detail": "实测 size=[10.0, 50.0, 50.0]"
+    },
+    "★ 收尾无残留模态框（已知事实 64）": {
+      "ok": true,
+      "detail": "无"
+    }
+  },
+  "segments_read_back": 1,
+  "lines_read_back": 12,
+  "circle_bbox": [
+    10.0,
+    50.0,
+    50.0
+  ],
+  "passed": 8,
+  "total": 8,
+  "verdict": "pass",
+  "finished": "2026-10-01 17:19:16"
+}
