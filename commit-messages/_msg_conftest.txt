@@ -1,0 +1,44 @@
+fix(tests): 🔴 **止血 —— 禁止测试真的注入键鼠**（事故根因：全量回归在用户桌面上按 Ctrl+A）
+
+## 事故（用户 2026-10-01 实报，**发生在我跑全量回归的时刻**）
+用户报告：「鼠标键盘忽然被影响：**全选全屏文字（蓝底）** / 忽然回车 / 忽然 Ctrl」。
+
+### 根因链（逐环有硬证据）
+```
+tests/test_sw_gui_input.py  L212/L233   assert gi.type_text(ctl, "195") ...
+  ⇒ sw_gui_input.py L236  def type_text(...)
+  ⇒ L241  if CONFIG["input_api"] == "set_text"  （否则走逐键）
+  ⇒ L56   "input_api": "type_keys"        ← **默认就是逐键真输入**
+  ⇒ L62   "clear_with": "ctrl_a"          ← **默认清空策略就是 Ctrl+A**
+  ⇒ L211  _tap_ctrl(ord("A"), 0.05)       ← **真的发 Ctrl+A = 全选**
+  ⇒ L130  _tap_ctrl → win32api.keybd_event
+该测试文件里 **monkeypatch 出现 0 次** ⇒ **完全没有任何 mock**
+仓库里 **没有任何 conftest.py** ⇒ **没有任何全局保护**
+```
+**⇒ 跑一次全量回归，就等于在用户的真实桌面上按一次 Ctrl+A。这不是测试，是副作用。**
+
+⚠ **与前一提交的关系**：上一提交给 `keybd_event` 加了 `finally` 保证抬起 ⇒
+**所以现象是「一阵一阵」而不是持续卡死** —— 两个 bug 叠在一起才长成用户看到的样子。
+
+## 止血（本提交）
+新增 **`tests/conftest.py`**：
+* **`autouse`** 的 `_forbid_real_input` fixture —— 把 `win32api.keybd_event` / `mouse_event` /
+  `SetCursorPos` 换成**记录器**（记进 `input_injection_log`）。
+* ⚠ **必须是 `autouse`**：本次事故正是「漏一个文件就等于没保护」（那个文件 mock 数为 0）。
+* ⚠ 用模块属性打桩**能拦住** `sw_gui_input` 那种**函数内 `import win32api`** 的写法
+  （拿到的是同一个模块对象）。
+* 另给一个 `input_log` fixture，供「需要断言发了哪些键」的测试使用。
+
+### 验证（三层）
+1. `tests/test_sw_gui_input.py` **17 passed** —— 拦截下**仍通过** ⇒ 没破坏被测逻辑；
+2. **临时探针**：在测试里调 `win32api.keybd_event(0x11,...)` ⇒
+   断言 `len(input_log)==2` **通过** ⇒ **证明调用只进账本、不真的按**（探针已删）；
+3. 全量回归后再读 14 个修饰键 ⇒ **全部抬起**。
+
+## 立场（写进 conftest 的 docstring）
+**测试绝不允许触碰真实输入设备。** 需要验证「按键被正确发出」的测试，
+应当断言**注入层的调用记录**，而不是真的去按。
+⚠ 与铁律 2 的关系：铁律 2 的「先置 `CommandInProgress` / 超时 / 收尾」是**真机实测**的规矩；
+**单元测试根本不是实测**，把它当实测就会得到本次事故。
+
+⇒ 回归 **936 passed / 17 skipped / 0 failed**（含新 conftest 生效）

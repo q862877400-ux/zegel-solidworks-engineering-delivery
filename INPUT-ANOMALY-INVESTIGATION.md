@@ -1,111 +1,74 @@
-# 输入异常调查 —— 重启前证据快照 + 重启后清单
+# 输入异常调查 —— **根因已定位并止血**
 
-> 快照时间：2026-10-01 · 用户报告「经常忽然全选全屏文字（蓝底）/ 忽然回车 / 忽然 Ctrl」
-> ⚠ **重启会杀掉所有进程 ⇒ 本文件里的 PID 与进程表重启后失效，但"当时谁在跑"这一事实必须留存。**
+> 2026-10-01 · 用户报告「经常忽然全选全屏文字（蓝底）/ 忽然回车 / 忽然 Ctrl」
 
-## 〇、★ 结论（2026-10-01 轮 62 收口）
+## 〇、★ 根因（**铁证，逐环可核**）—— **是我自己的测试**
 
-**用户明确要求「只查你自己的工具代码，看有没有隔几分钟注入键鼠」⇒ 结论：没有。**
+**用户第二次报告「刚刚鼠标键盘被影响了」，而那次正发生在我跑**全量回归**的时刻。**
 
-| 检查 | 结果 |
+```
+tests/test_sw_gui_input.py  L212/L233   assert gi.type_text(ctl, "195") ...
+  ⇒ scripts/sw_gui_input.py L236   def type_text(ctrl, text, log=None)
+  ⇒ L241  if CONFIG["input_api"] == "set_text" …  （否则走逐键）
+  ⇒ L56   "input_api": "type_keys"     ← **默认就是逐键真输入**
+  ⇒ L62   "clear_with": "ctrl_a"       ← **默认清空策略就是 Ctrl+A**
+  ⇒ L211  _tap_ctrl(ord("A"), 0.05)    ← **真的发 Ctrl+A = 全选**
+  ⇒ L130  _tap_ctrl → win32api.keybd_event
+该测试文件里 **monkeypatch 出现 0 次** ⇒ **完全没有任何 mock**
+仓库里 **没有任何 conftest.py** ⇒ **没有任何全局保护**
+```
+**⇒ 跑一次全量回归 = 在真实桌面上按一次 Ctrl+A。**
+
+**⚠ 两个 bug 叠加才长成用户看到的样子**：
+* 上一提交给 `keybd_event` 加了 `finally` 保证抬起 ⇒ 所以是「**一阵一阵**」而不是**持续卡死**；
+* 若无那个修复，`Ctrl+A` 的 Ctrl 可能**卡住** ⇒ 之后任何按键都带 Ctrl（用户描述的正是这个）。
+
+## 〇之二、止血措施（提交 `a09d4f0`）
+
+新增 **`tests/conftest.py`**：
+* **`autouse`** 的 `_forbid_real_input` —— 把 `win32api.keybd_event` / `mouse_event` / `SetCursorPos`
+  换成**记录器**（`input_injection_log`）。
+* ⚠ **必须 autouse**：本次事故正是「漏一个文件就等于没保护」。
+* 另给 `input_log` fixture 供断言。
+
+**三层验证**：① `test_sw_gui_input.py` **17 passed**（拦截下仍通过）；
+② 临时探针证明调用**只进账本、不真按**（断言 `len(log)==2` 通过，探针已删）；
+③ 全量回归后 14 个修饰键**全部抬起**。
+
+## 〇之三、我此前**误判**过的地方（如实记）
+
+| 我先前的说法 | 实际 |
 |---|---|
-| 注入代码存在吗 | ✅ 有，**55 处 / 12 个文件**，全在 `sw_jlcfa_*` / `sw_gui_*` 一族 |
-| **有自动入口吗** | ❌ **没有**：`sw_jlcfa_batch`/`audit`/`click` **0 引用 + 无 `__main__`**；`sw_gui_focus`/`sw_jlcfa_gui` **0 引用** |
-| MCP server 暴露了吗 | ❌ 没暴露任何 jlcfa/gui 工具 ⇒ AI 也调不到 |
-| 计划任务 / 开机自启 | ❌ 不注册（唯一那处 `winreg` 是**读** SolidWorks AddInsStartup） |
-| **真跑过吗** | `.pyc` 时间戳**最晚 2026-10-01 01:01** ⇒ 凌晨 1 点后从未 import；重启后更不可能 |
-| **此刻**修饰键 | ✅ 14 个键**全部抬起**（`GetAsyncKeyState` 逐一读） |
+| 「我走 COM 调用，**不注入键鼠**」 | ❌ **错**。有 55 处注入 / 12 个文件 |
+| 「我的代码**没有**周期性注入」 | ✅ 对（无自动入口 / MCP 未暴露 / 不注册计划任务） |
+| 「`.pyc` 时间戳证明凌晨 1 点后没跑」 | ⚠ 对，但**我漏了**「**pytest 会 import 它们**」这一路 |
+| 「此刻修饰键全抬起 ⇒ 不是卡住」 | ✅ 对，但**不能**推出「不是我的代码」（是**瞬时**注入，不是持续卡住） |
 
-**🔴 但找到同一族的 7 处真缺陷（已全部修掉，提交 `8ad2dfb`）**：
-`keybd_event(按下)` → `sleep` → `抬起`，而 **`sleep` 可被中断** ⇒ **抬起到不了** ⇒ 修饰键卡住。
-后果**与报告逐一吻合**：Ctrl 卡住 ⇒ 按 `A` 就是**全选**；Alt 卡住 ⇒ 菜单被激活；**Enter 卡住 ⇒ 忽然回车**。
-⚠ **它不需要周期性** —— 一次事故就够，持续到用户单独按一下那个键。
-⇒ 已修 `sw_gui_input`（新增异常安全原语 `_press`/`_hold`）· `sw_gui_modal`（**每轮发 Enter+Esc、
-最多 5 轮** = 最强来源）· `sw_gui_focus` · `sw_jlcfa_locate` · `sw_jlcfa_fill` · `sw_jlcfa_select` ·
-`sw_jlcfa_search` ⇒ 并新增**门禁检查④**（AST 判据 + 负例证明有牙齿）。
-
-**⚠ 仍未验证的外部候选（用户要求暂不查）**：网易「UU远程」（`gvinput` 虚拟键鼠驱动 + 6 个自启进程）
-· `ufo_bridge_mcp.py`（= `microsoft/UFO` GUI agent，**父进程是 DSH 自己**）。
-
-**⇒ 若症状再现，判定顺序**：① 症状正在发生的那一刻跑 `_check_modifier_stuck.py`（看是不是修饰键卡住）
-② 若确认卡住 ⇒ 就是这类「按下没抬起」的机制（我的已修，但外部程序也可能有）
-③ 若没卡住 ⇒ 才回头查那两个外部候选。
+**★ 教训：把「某条路径走不通」写成「不是我干的」，与把「没搜到的词」写成「官方没有这个成员」是同一类错误。**
 
 ## 一、已经**排除**的（有证据）
 
 | 候选 | 证据 | 结论 |
 |---|---|---|
 | 辅助功能（粘滞键/筛选键/切换键） | `FilterKeys Flags=126` · `StickyKeys Flags=510` · `ToggleKeys Flags=62`，**三者 bit0 均为 0** | ❌ 排除 |
-| 罗技 Options+ 的宏 | `%LOCALAPPDATA%\LogiOptionsPlus\macros.db` 只有 1 行 `{"macros_settings_transferred": true}`，`snapshots` **0 行** | ❌ 宏没有内容（但进程常驻，见 §三） |
-| 向日葵远程 | `SunloginService` **Stopped** | ❌ 排除（`OrayUSBVHCI` 驱动仍在，见 §三） |
-| 键盘/鼠标硬件（多个设备冲突） | 3 键盘 / 4 鼠标，其中 3 个是 **VID_00FF 虚拟设备**（见下） | ⚠ **物理设备只有 2 个罗技**（VID_046D ×2）⇒ 硬件嫌疑低 |
+| 罗技 Options+ 的宏 | `macros.db` 只有 1 行 `{"macros_settings_transferred": true}`，`snapshots` **0 行** | ❌ 排除 |
+| 向日葵远程 | `SunloginService` **Stopped** | ❌ 排除 |
+| 键盘/鼠标硬件 | 物理设备只有 2 个罗技（VID_046D）；其余是 VID_00FF 虚拟 | ⚠ 嫌疑低 |
 
-## 二、⚠ **重启前的关键发现（未验证完）**
+## 二、⚠ **仍未验证的外部候选**（用户要求暂不查）
 
-### 2.1 虚拟键鼠设备 = 网易「UU远程」的 `gvinput` 驱动
-```
-设备      : HID\GVINPUT&COL01..COL05（5 个接口：2 鼠标 + 1 **键盘** + 2 厂商私有）
-HardwareId: HID\VID_**00FF**&UP:0001_U:0006     ← VID_00FF 不是真实厂商
-Parent    : ROOT\HIDCLASS\0000                  ← ROOT\ = **纯软件创建**
-驱动      : oem8.inf · 服务 gvinput / gvinputmf · **Provider = netease**
-驱动文件  : C:\Windows\system32\drivers\gvinput.sys (26.7 KB) / gvinputmf.sys (23.2 KB)
-服务状态  : **两者均 State=Running**（StartMode=Manual）
-程序      : D:\Program Files\Netease\GameViewer\  （卸载项名 **「UU远程」**，发布者 Netease，v4.39.2.1561）
-            安装于 **2026-09-08 09:59**，2026-09-14 更新过一次
-自启      : HKCU\...\Run\GameViewer = "...\GameViewer.exe" --auto-run
-Trace     : %LOCALAPPDATA%\GameViewer\security.ini 里有 **connection_seen=1**（**被连接过**）
-            setting.ini 里有 remoteassist_guide=true · trusted_web_app_domain 含 *.webapp.163.com
-```
-⚠ **用户反馈「软件都没启动，现象还在」** —— 这条**不能**用来排除它：
-**`gvinput.sys` 是**内核驱动**，`GameViewerService` 是**Windows 服务**，
-两者都在跑；不开 `GameViewer.exe` 界面**不代表**驱动没在注入。**
-⇒ **但仍未证明它就是元凶** —— 只证明了「它有能力注入且当时在跑」。
+1. **网易「UU远程」**：`gvinput` + `gvinputmf` **内核驱动 Running**（`Provider=netease`，
+   `oem8.inf`）；开机自启 **6 个进程**（`GameViewerService` / `GameViewerServer` /
+   `GameViewerHealthd` / crashpad×3）+ **`msedgewebview2 × 7`（它的界面自己就起来了）**；
+   虚拟 HID `VID_00FF` 提供 **2 鼠标 + 1 键盘 + 2 厂商私有**接口；
+   `%LOCALAPPDATA%\GameViewer\security.ini` 里有 **`connection_seen=1`（被连接过）**。
+   ⚠ 「软件没启动」**不能**排除它 —— 驱动与 UI 都是自启的。
+2. **`ufo_bridge_mcp.py`**（= `microsoft/UFO` GUI agent）——**父进程是 DSH 自己**
+   （`apps/cli/src/bin.ts web`）。
 
-### 2.2 ★★ **`ufo_bridge_mcp.py` —— 父进程是 DSH 自己**
-```
-PID 7872   D:/AI/oss-research-and-deployments/UFO/.venv/Scripts/python.exe ufo_bridge_mcp.py
-   └─ 父进程 2576 = node.exe --import tsx/esm **D:\AI\DSH\deepseek-harness\apps\cli\src\bin.ts web**
-                    ↑ **DSH 的 Web CLI（就是用户正在用的这个 GUI 的后端）**
-PID 33352  7872 的子进程（另一套 python）
-```
-**🔴 `UFO` = `microsoft/UFO`（微软的 **GUI 自动化 agent**）—— 它的**工作方式就是注入键鼠**。**
-**⇒ 它是**被 DSH 拉起**的 MCP 桥 ⇒ 只要有任何一次工具调用打到它，它就会操作真实键鼠。**
+## 三、症状再现场怎么办
 
-### 2.3 ⚠ **我自己的代码也有键鼠注入（我上轮错误地否认过）**
-```
-scripts/sw_gui_input.py     keybd_event(VK_CONTROL)         ← Ctrl
-scripts/sw_gui_focus.py     keybd_event(VK_MENU)            ← Alt
-scripts/sw_gui_modal.py     keybd_event(VK_MENU / vk)
-scripts/sw_jlcfa_fill.py    keybd_event(VK_CONTROL)
-scripts/sw_jlcfa_cards.py   mouse_event(LEFTDOWN/LEFTUP)    ← 鼠标左键
-scripts/sw_jlcfa_click.py   mouse_event(LEFTDOWN/LEFTUP)
-```
-**🔴 发现一个真实缺陷模式**：`sw_gui_input.py::_tap_ctrl()` 是
-```python
-keybd_event(VK_CONTROL, 0, 0, 0)      # 按下
-_tap(vk, 0.03)                         # ⚠ 这一步若抛异常…
-keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)   # ⇒ 抬起到了不了 ⇒ **Ctrl 卡在按下态**
-```
-**⇒ 没有 `try/finally`。Ctrl 卡住会让之后**任何**按键都变成 `Ctrl+xxx` ⇒ 完全吻合「忽然 Ctrl / 忽然全选」。**
-（`sw_jlcfa_fill.py` 的 Ctrl 段落有同样问题。）
-⇒ **待办**：给这两处加 `try/finally` 保证 KEYUP（**这是与用户现象高度吻合的真缺陷**）。
-
-## 三、重启后要查的清单（**按优先级**）
-
-1. **DSH 的 MCP 配置里有没有 `ufo_bridge_mcp`** —— 查 `~/.dsh/` 下 MCP 配置与该 server 的定义，
-   以及**谁在调它**（本轮 `ufo_bridge_mcp.py` 由 DSH 拉起，这条最可疑）。
-   ⚠ 若确认它在被调用，**先把它停掉**再看现象是否消失（**判定性实验**）。
-2. **重启后立刻再抓一次进程表**（`ufo_bridge_mcp` / `GameViewer*` / `gvinput*` 是否自动起来），
-   与 §二 的快照对比 ⇒ 分清「谁常驻」与「谁是被拉起的」。
-3. **`gvinput` 的判定性实验**（用户自己决定，我不动系统）：
-   停 `GameViewerService` + 禁用 `gvinput`/`gvinputmf` 驱动 ⇒ 观察现象是否消失。
-   ⚠ 但**先做第 1 项**（成本更低，且 DSH 侧我能查）。
-4. **给 `_tap_ctrl` / `sw_jlcfa_fill` 的 Ctrl 加 `try/finally`**（我自己的真缺陷）。
-5. ⚠ 需要时再查：`ctxusbm`（Citrix USB Monitor，`StartMode=Auto`）、`OrayUSBVHCI`（向日葵 USB 虚拟，
-   服务已停但驱动在）—— 两者也在 §二 的驱动清单里，但**优先级低于 1–3**。
-
-## 四、另一件**独立**的事（别和上面的混）
-
-**「莫名其妙自己又继续了」= **goal 自动续轮**，不是键盘触发。**
-证据：`roundsStarted=62` 而用户上一轮说过「暂停」⇒ 我**只收了工作、没把 goal 置 paused** ⇒ 机制自动开了轮 62。
-**⇒ 这不是输入设备问题。** 现在 `phase=paused`；重启后会是 `disarmed`，用户说「继续」时再 `update_goal resume`。
+1. **正在发生的那一刻**跑 `_check_modifier_stuck.py` —— 若显示 Ctrl/Alt「按下」而你没按 ⇒ 就是「卡住」；
+2. **记录当时我在跑什么**（尤其：我是不是刚跑了 `pytest`）——
+   ⚠ 现在 conftest 已拦住测试注入，但**其它路径**仍须警惕；
+3. 若都排除 ⇒ 才回头查 §二 那两个外部候选。
