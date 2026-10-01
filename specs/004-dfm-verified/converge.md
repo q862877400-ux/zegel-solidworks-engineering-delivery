@@ -31,6 +31,12 @@
 
 ### 2.1 ⚠ SC-004 只做到「不崩」，**没有做到「篡改证据必须被拒」**
 
+> **✅ 2026-10-01 轮 80 已还清** —— 由 [`specs/005-brep-evidence-binding/`](../005-brep-evidence-binding/converge.md) 闭环：
+> 读了 `dfm_review._load_brep_evidence`（L284-365）与 `_brep_size`（L260-281）的**真实契约**后，
+> SC-004 换成三条强判据（**合法被接受 / 篡改 `sourceSha256` 被拒 / 篡改产物被拒**）
+> ⇒ `tools/verify_dfm_e2e.py` 现为 **13/13 · verdict: pass**。
+> ⚠ **原文保留在下面**（不删）—— 欠账的记录本身就是价值。
+
 `spec.md` 对 SC-004 的措辞是「证据的 sha256 与文档一致时才 `pass`；**篡改一个字节 ⇒ `blocked`**」。
 **实测只做到**：给一份 `brep-evidence` JSON ⇒ 报告**不崩**、且
 `brepEvidence = {"available": false, "verifiedSource": false, "reason": "未提供 B-Rep 证据。"}`

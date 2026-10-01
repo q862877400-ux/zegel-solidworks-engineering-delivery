@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 12:59:50",
+  "started": "2026-10-01 13:06:41",
   "checks": {
     "SC-001 四种工艺都被识别": {
       "ok": true,
@@ -17,9 +17,17 @@
       "ok": true,
       "detail": "violations=['profile_internal_corner_tooling', 'profile_material_capability']"
     },
-    "SC-004 给 B-Rep 证据时报告仍成立（不崩）": {
+    "SC-004a 合法 B-Rep 证据被接受（verifiedSource=True）": {
       "ok": true,
-      "detail": "status='blocked'"
+      "detail": "available=True verifiedSource=True backend='headless_occt'"
+    },
+    "SC-004b **篡改 sourceSha256 ⇒ 被拒**（哈希绑定失效）": {
+      "ok": true,
+      "detail": "error_code='dfm_invalid_brep_evidence' msg=B-Rep sourceArtifact SHA-256 不匹配，证据已失去绑定。"
+    },
+    "SC-004c **篡改产物内容 ⇒ 被拒**（改了文件，哈希就对不上）": {
+      "ok": true,
+      "detail": "error_code='dfm_invalid_brep_evidence'"
     },
     "SC-005/007 缺 bendRadius/kFactor ⇒ blocked + missingInputs 点名": {
       "ok": true,
@@ -46,8 +54,8 @@
       "detail": "见上"
     }
   },
-  "passed": 11,
-  "total": 11,
+  "passed": 13,
+  "total": 13,
   "verdict": "pass",
-  "finished": "2026-10-01 12:59:50"
+  "finished": "2026-10-01 13:06:41"
 }
