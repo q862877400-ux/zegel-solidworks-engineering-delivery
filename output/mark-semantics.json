@@ -1,0 +1,43 @@
+{
+  "started": "2026-10-01 18:30:52",
+  "trials": [
+    {
+      "mark_arg": 0,
+      "returned": true,
+      "counts": {
+        "-1": 1,
+        "0": 1,
+        "1": 0,
+        "2": 0
+      }
+    },
+    {
+      "mark_arg": 1,
+      "returned": true,
+      "counts": {
+        "-1": 1,
+        "0": 0,
+        "1": 1,
+        "2": 0
+      }
+    },
+    {
+      "mark_arg": 2,
+      "returned": true,
+      "counts": {
+        "-1": 1,
+        "0": 0,
+        "1": 0,
+        "2": 1
+      }
+    }
+  ],
+  "select4_counts": {
+    "-1": 0,
+    "0": 0,
+    "1": 0,
+    "2": 0
+  },
+  "mark_lands": true,
+  "modal_dialogs": []
+}
