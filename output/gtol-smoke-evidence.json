@@ -1,0 +1,32 @@
+{
+  "started": "2026-10-01 15:51:01",
+  "checks": {
+    "新建临时零件（不碰用户文档）": {
+      "ok": true,
+      "detail": "零件18"
+    },
+    "insert_gtol（0 参，官方 InsertGtol()）": {
+      "ok": true,
+      "detail": "拿到 CDispatch · 0.01s"
+    },
+    "★ add_gtol_indicator(position, 基准 A) —— **2022 格式路径**": {
+      "ok": false,
+      "detail": "RuntimeError: IGtol.GetFrame(1) 返回 None ⇒ 取不到这一帧（官方 `FrameIndex` 是 **1 基**；**已尝试补帧仍取不到** ⇒ 该 Gtol 可能不是 2022 格式）"
+    },
+    "  再加一个（flatness，无基准）": {
+      "ok": false,
+      "detail": "RuntimeError: IGtol.GetFrame(1) 返回 None ⇒ 取不到这一帧（官方 `FrameIndex` 是 **1 基**；**已尝试补帧仍取不到** ⇒ 该 Gtol 可能不是 2022 格式）"
+    },
+    "★ 收尾无残留模态框（已知事实 64 的检查）": {
+      "ok": true,
+      "detail": "无"
+    }
+  },
+  "got_gtol": true,
+  "add_indicator": false,
+  "add_indicator2": false,
+  "passed": 3,
+  "total": 5,
+  "verdict": "fail",
+  "finished": "2026-10-01 15:51:01"
+}

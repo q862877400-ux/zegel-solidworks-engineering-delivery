@@ -82,3 +82,7 @@
 |---|---|---|
 | 64 | **`ISldWorks.CommandInProgress = True` 不能抑制某些模态框** —— 2026-10-01 实测：在**空零件**上调 `sw_mold.insert_parting_surface` / `insert_core_cavity_solids` ⇒ 弹出**模态框**「**此拔模方向尚未定义。**」并**卡住会话**（用户截图报错两次）。⚠ 该框**不是** `CommandInProgress` 能压住的那类。⇒ **调「需要前置几何」的建模工具前必须先确认前置条件已满足**；光设 `CommandInProgress` 不够。★ 处置：`tools/verify_batch9_smoke.py` 改为**前置条件感知**（那两个**一个都不调**）。 | `tools/verify_batch9_smoke.py` 的来源块与其 `preconditions` 输出 |
 | 65 | **改「视图/选择状态」的工具会把文档标脏** —— 2026-10-01 实测：批次 7 的 `activate_model_for_preview` / `clear_selection_for_preview` / `refresh_scene_graph` 在装配体上跑过后，主窗口标题变成 `mcp_avi_asm.SLDASM *`（**未保存标记**）。⚠ 它们**不碰几何**，但仍让文档 `IsDirty`。⇒ **这类工具的 doc 必须警告**，且**冒烟脚本不许在用户文档上跑**（本轮踩到）。 | SW 主窗口标题；轮 96 记为「未查证」，轮 99 得到答案 |
+
+| # | 事实 | 依据 |
+|---|---|---|
+| 66 | **新版 SolidWorks 里 GTol 的「2022 格式帧路径」在本机取不到帧** —— 2026-10-01（轮 120）真机实测：InsertGtol() 建出的 GTol，GetFrameCount() = **1**、AddFrame() 返回 **False**、GetFrame(0/1/2) **全 None**；走 CanConvertFormat()→ConvertFormat()（**返回 0 成功**）后 GetFrameCount() **掉到 0**，GetFrame(1/2) **仍全 None**。⚠ 而官方 SetFrameSymbols2 那条旧路**明写只对 2022 之前的 Gtol 有效** ⇒ **两条路都不通**。★ 按**事实 53** 停手（同一处试了 3 次）。⇒ scripts/sw_gtol.py 的 dd_gtol_indicator **当前不可用**（保留作可复算证据），insert_gtol **可用**。⚠ 未查证：换后端（comtypes / 进程内 C++）或 SetSymbolXml（XML 路径）能否走通 | 	ools/verify_gtol_smoke.py（3/5）· 两次定向探针 · docs/obsolete-member-candidates.md 的同类结论 |
