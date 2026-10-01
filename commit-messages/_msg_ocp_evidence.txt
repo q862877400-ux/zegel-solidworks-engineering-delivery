@@ -1,0 +1,48 @@
+fix(A4): 修正一条 `verified` 的**依据** —— 它的证据指向本机**根本不存在的 OCP**
+
+## 🔴 本轮发现（比"再升一条"更重要）
+计划是升 `surface_modeling`，**前提检查**却撞到：
+```
+importlib.util.find_spec('OCP')      → **None**（磁盘上也没有 OCP 目录）
+importlib.util.find_spec('cadquery') → None
+importlib.util.find_spec('trimesh')  → None
+ezdxf ✓ · numpy ✓
+```
+而 `headless_open_format_writing`（**level: verified**）写着
+`verified_versions: ["OCP 7.9.3.1.1"]` ⇒ **本机没有任何当机依据**。
+
+**⇒ 顺藤核它的两条 evidence，都是"在 OCP 缺席或被 mock 的情况下通过的"：**
+```python
+# tests/test_mcp_headless_open_format.py（8 passed）
+monkeypatch.setattr("scripts.advanced_geometry_ocp.execute_ocp_loft", lambda *_args: expected)
+monkeypatch.setattr("scripts.advanced_surface_ocp.execute_advanced_surface", lambda *_args: expected)
+#   ⇒ 验的是「**MCP 层把参数传对了**」，不是「OCP 真的能跑」
+# tests/test_headless_cad_writer.py
+lambda name: None if name == "OCP" else original_find_spec(name)
+#   ⇒ **显式把 OCP 伪装成不可用**来测降级路径
+```
+★ 与早先 `motion_study` 那次**完全同型**：**evidence 指向的东西，本机根本不存在。**
+
+## 精确结论（**不一刀切降级**）
+| 该能力的哪一部分 | 本机有真证据吗 |
+|---|---|
+| `.cadstudio.json` / STL / OBJ / DXF / SVG / PDF / PNG | ✅ **有**（7 passed，含上轮我补的 dwg 拒绝 + 输入只读） |
+| STEP / IGES / BREP / GLB（`OCCT_FORMATS`） | ❌ 缺 OCP ⇒ 走**显式降级**（`headless_cad_writer.py` L587 有记录 —— **那是诚实的**） |
+| `limitations ②`「OCCT 覆盖盒体/圆柱/布尔/Loft」 | ❌ **本机无法复现** |
+
+## 本提交做的四件（**把依据写对**，不是降级惩罚）
+1. `verified_versions`：`['OCP 7.9.3.1.1']` → **`['ezdxf 1.4.4']`**（留**真的**那个）；
+2. `evidence` 里那句**误导性**的「（OCP 无头写出）」**写准确**（标明 OCP 后端被 monkeypatch）；
+3. `headless_open_format_writing` **加 limitation** 记录上述边界；
+4. `surface_modeling` / `mold_tools`（都写「可选 OCP」）**各加一条 limitation** 记录
+   「本机缺 OCP ⇒ 那些 headless-occt 声明在当前机器上无法复现」。
+
+**⇒ `level` 分布**不变**（verified 25 · stitched 5 · not_implemented 1）** ——
+本条 `verified` **仍成立**（非 OCP 部分确有我们自己的运行证据），
+缺的只是「哪一部分有证据」的说明，而那正是 `limitations` 该承担的事。
+
+## ⚠ 附带的结论
+**`surface_modeling` 本轮**不能**升 `verified`** —— 它的两条 limitations 讲的全是 headless-occt
+（本机缺 OCP）⇒ 已用 limitation 如实标注，**等装了 `cadquery-ocp` 的机器上重跑**才能升。
+
+⇒ 十二道门禁全 exit 0 · `release_check` exit 0 · 回归 **970 passed / 17 skipped / 0 failed**
