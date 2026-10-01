@@ -1,0 +1,39 @@
+| 149 | **挂柜台第六批（草图关系 + 镜像）：队列原定的人**碰规则 3**，而"干净"的那个**本来就坏** —— 按规则逐条分诊 14 个** —— 2026-10-01（轮 209 / Spec Kit `128`）。
+
+★★ **队列 A5 原写「`add_sketch_relation` / `add_dimension`」，实测两处都要改**：
+```
+① `add_dimension` 的形参是 **`(model, x, y)`** —— **裸坐标** ⇒ ★ **碰规则 3** ⇒ **留批**（题队列 A8）
+② `sw_part` 的 14 个可注入孤立能力，按规则 2/3 **精确分诊**（★ 不用关键词猜 —— 我先用关键词粗筛，
+   结果**既有假阳性也有漏**：`d1_x/d1_y/d1_z`、`cx/cy` 是坐标却漏了；`radius` 被当成角度）：
+   ```
+   ★ 干净（无坐标/长度/角度）：3 个 —— add_sketch_relation · **insert_composite_curve** · mirror_feature
+   ⚠ 碰规则 3（裸坐标）：6 个 —— add_dimension · hole_wizard · linear_pattern ·
+                               sketch_arc · sketch_centerline · sketch_polygon
+   ⚠ 碰规则 2（长度未 _mm）：5 个 —— circular_pattern · insert_dome · rib · shell · sketch_polygon
+   ⚠ 碰规则 2（角度 angle_rad）：2 个 —— circular_pattern · revolve_boss
+   ```
+③ ★★★ **而"干净"里的 `insert_composite_curve` 必须排除** —— 不是规则问题，是**它本来就坏**：
+   已知事实 121 / 124：`InsertCompositeCurve` **一直返回 False**（前置条件已可达，成因未知）
+   ⇒ ★ **挂它 = 把一个已知坏的入口摊给用户** ⇒ **不挂**，且**不假装它会好**。
+```
+⇒ 本批实际只挂 **2 个**：`add_sketch_relation` · `mirror_feature`。
+`relation_type` 的 **12 个合法值引自该函数自己的 docstring**（不是猜）：
+`sgFIXED` · `sgHORIZONTAL` · `sgVERTICAL` · `sgCOLINEAR` · `sgPARALLEL` · `sgPERPENDICULAR` ·
+`sgTANGENT` · `sgCONCENTRIC` · `sgEQUAL` · `sgSYMMETRIC` · `sgMIDPOINT` · `sgCOINCIDENT`。
+
+★★★ **可复用的定则**：
+> **"按规则分诊"必须**逐条套用规则**，不能用关键词粗筛** ——
+> 粗筛会**同时**产生假阳性（`radius` 被当角度）与漏（`d1_x` 是坐标却没抓），
+> 而它**看起来很像已经分诊过了**（这正是本会话反复出现的那种"看着像证据"）。
+★ 并且：**"规则上干净" ≠ "可以挂"** —— `insert_composite_curve` 规则全过，
+  但它是**已知失败**的入口 ⇒ ★ **分诊要多一道"它现在工作吗"**，而那要看 `known-facts`，不是看签名。
+
+★★ **五处口径一致地动 2**（第六次同一模式）：被引用函数 106→**108** · 孤立能力 289→**287** ·
+首参可注入 38→**36** · 并集 437→**438** · 独家 88→**89** ·
+★ **缺口 338→337（本轮第一次动）** ⇒ 计数 54→**56** · 99→**101**。
+
+⚠ **限度**：本批**只做暴露**（真机排 B 组）· `relation_type` 的**逐值语义未核**（docstring 只列名字）·
+`mirror_plane_name` 在**中文 UI 下的确切写法未核** · `insert_composite_curve` 的**成因仍未查**。
+
+**依据**：`mcp-server/tool_specs_batch16.py` · `specs/128-sketch-relation-mirror-batch/` ·
+`D:/AI/SW/output/orphan-capabilities.json` · 事实 121 / 124 / 147
