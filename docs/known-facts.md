@@ -106,3 +106,7 @@
 | # | 事实 | 依据 |
 |---|---|---|
 | 71 | **`IBody2.GetBodyBox` 的返回值单位是「毫米」，不是官方其它几何接口惯用的「米」** —— 2026-10-01（轮 127）真机：建 **80 × 60 × 50 mm** 的盒子（矩形拉伸 50），`GetBodyBox` 原始返回 `[0.0, 0.0, -50.0, 80.0, 60.0, 0.0]` ⇒ **原始值就是 80 / 60 / 50**。⚠ **官方文档没写单位** ⇒ 这条是量出来的。⚠ 第一版实现误用 `sw_connect.mm()`（那是**输入方向**：毫米→米），把 0.08 又除了 1000 ⇒ 被**数值冒烟**当场抓住。⚠⚠ 另：官方同一份文档有 IMPORTANT 段说该值「**approximate**、**should not be used for comparison or calculation purposes**、**may vary after rebuilding**」⇒ ★ **实测偏差为 0（`0.00e+00`）并不推翻这句**：实测只证「这一个盒子、这一次」，官方说的是「不要依赖它」——**两者说的是不同的事** | `tools/verify_bbox_smoke.py`（8/8，偏差 0.00e+00）；`_measure_bbox_units.py`（直读 COM 拿原始值）；`C:\swapi\types\IBody2\GetBodyBox.md` |
+
+| # | 事实 | 依据 |
+|---|---|---|
+| 72 | **MCP 协议层里，工具的入参 schema 是「**嵌在 `params` 对象里**」的，不是展平的；且框架会统一补一个 `response_format`** —— 2026-10-01（轮 129）起 server 发 `tools/list` 实测：`inputSchema.properties` **只有 `params`**（一个 `$ref`），真正的参数在 `inputSchema.$defs.<ModelName>.properties` 里，模型名由工具名驼峰化得到（`solidworks_hole_standards` ⇒ `SolidworksHoleStandardsInput`）。★ 而且**框架自动补**了一个 `response_format`（枚举 `json`/`markdown`，**也是 `$ref`** ⇒ 枚举在 `$defs.ResponseFormat`）—— 声明里**没有**它。⚠⚠ **我第一版判据爬错了两层**：先在**顶层**找展平参数名（报「协议里只有一个 `params`」），再在 `inner["response_format"]` 找 `enum`（它是个 `$ref`）⇒ ★ **不是缺陷，是查错了地方**。★ 同轮实测：协议层 **86 个工具**（这补上了 `047` 说的「总暴露数没有重新统计」） | `tools/verify_mcp_protocol_layer.py`（7/7）；`tests/test_mcp_protocol_layer.py`（4 条，**起 server 但一次工具都不调** ⇒ 不碰 COM，符合已知事实 24）；`_dump_tool_schema.py`（原样打印 schema）|

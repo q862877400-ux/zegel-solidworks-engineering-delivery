@@ -1,0 +1,47 @@
+{
+  "started": "2026-10-01 16:40:33",
+  "checks": {
+    "★ 起 server（stdio，**一次工具都不调** ⇒ 不碰 COM）": {
+      "ok": true,
+      "detail": "pid=28576"
+    },
+    "★ `tools/list` 拿到响应": {
+      "ok": true,
+      "detail": "86 个工具"
+    },
+    "★★ batch10 的 4 条**都在协议层可见**": {
+      "ok": true,
+      "detail": "找到 4/4：['solidworks_part_bounding_box', 'solidworks_hole_standards', 'solidworks_fastener_types', 'solidworks_fastener_table_types']"
+    },
+    "★ schema 参数逐条对上（顺 `$ref` 走进去） · solidworks_part_bounding_box": {
+      "ok": true,
+      "detail": "声明=['body_index', 'include_hidden'] 协议(内层)=['body_index', 'include_hidden', 'response_format'] 缺=[] 多=['response_format']"
+    },
+    "★ schema 参数逐条对上（顺 `$ref` 走进去） · solidworks_hole_standards": {
+      "ok": true,
+      "detail": "声明=['hole_type_id'] 协议(内层)=['hole_type_id', 'response_format'] 缺=[] 多=['response_format']"
+    },
+    "★ schema 参数逐条对上（顺 `$ref` 走进去） · solidworks_fastener_types": {
+      "ok": true,
+      "detail": "声明=['hole_type_id', 'standard_name'] 协议(内层)=['hole_type_id', 'response_format', 'standard_name'] 缺=[] 多=['response_format']"
+    },
+    "★ schema 参数逐条对上（顺 `$ref` 走进去） · solidworks_fastener_table_types": {
+      "ok": true,
+      "detail": "声明=['fastener_id', 'hole_type_id', 'standard_name'] 协议(内层)=['fastener_id', 'hole_type_id', 'response_format', 'standard_name'] 缺=[] 多=['response_format']"
+    }
+  },
+  "tool_count": 86,
+  "batch10_found": [
+    "solidworks_part_bounding_box",
+    "solidworks_hole_standards",
+    "solidworks_fastener_types",
+    "solidworks_fastener_table_types"
+  ],
+  "framework_added": [
+    "response_format"
+  ],
+  "passed": 7,
+  "total": 7,
+  "verdict": "pass",
+  "finished": "2026-10-01 16:40:33"
+}
