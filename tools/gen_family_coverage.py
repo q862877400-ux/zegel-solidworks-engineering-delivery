@@ -26,6 +26,7 @@ import io
 import json
 import re
 import sys
+import time
 from collections import defaultdict
 from pathlib import Path
 
@@ -445,9 +446,22 @@ def main() -> int:
                 "note": "" if mems else "C:\\swapi 无该类型目录",
             })
 
+    #: ⚑⚑ **汇总数字与日期都算出来，不写死** —— 2026-10-01（轮 185 后）修：
+    #:   此前 `"> 生成日期：2026-09-29"` 与正文段的
+    #:   「16,615 个成员里，编入目录 12,870（77%）、真调用 2,636（16%）」**都是硬编码的旧一代数字**，
+    #:   于是 md 的**正文段与它自己的表格、与 json 三方互相矛盾**（表格/json 说
+    #:   15,466 成员、编目录 15,466，而正文段说 16,615 / 12,870）。
+    #:   ★ 一份外部评审据此把它判为「过时散文」，并写明「12,870 是哪个口径**没查出来**」
+    #:     —— 实际原因就是**这两处写死在生成器里**，重算也不会变。
+    #:   ⇒ 现在日期与三个汇总数都从 `rows` 算出，**三处不可能再分叉**。
+    _tot_members = sum(r["members"] for r in rows)
+    _tot_hit = sum(r["hit"] for r in rows)
+    _tot_used = sum(r["used"] for r in rows)
+    _today = time.strftime("%Y-%m-%d")
+
     # ---- markdown ----
     L = ["# 接口族覆盖度（family-coverage）", "",
-         "> 生成日期：2026-09-29",
+         "> 生成日期：%s" % _today,
          "> 作用：把 A1 的定性判定（覆盖/部分/不覆盖）升级为**定量**。",
          "> 方法：取 `C:\\swapi\\types\\<接口>\\` 的成员目录，再用与 `api-map.md`",
          "> 相同的两路形态（直接调用 / 反射式）在本仓库找这些成员。",
@@ -468,8 +482,10 @@ def main() -> int:
          "> **合并这两个数字就是误导。** 早先版本只报一个触及率，",
          "> 于是「族触及率 100%」是靠**把名字列进登记表**达成的 ——",
          "> 那证明的是「这份 API 清单做完了」，**不是「这些 API 都能用了」**。",
-         "> 当前实测：16,615 个成员里，**编入目录 12,870（77%）**、",
-         "> **真调用 2,636（16%）**。",
+         "> 当前实测：{:,} 个成员里，**编入目录 {:,}（{:.0f}%）**、".format(
+             _tot_members, _tot_hit, 100.0 * _tot_hit / _tot_members if _tot_members else 0.0),
+         "> **真调用 {:,}（{:.0f}%）**。".format(
+             _tot_used, 100.0 * _tot_used / _tot_members if _tot_members else 0.0),
          ">",
          "> FeatureData 的属性赋值不计入真调用。", "",
          "> ⚠ 全部由静态解析生成，未执行任何仓库代码、未连接 SolidWorks。", "",
