@@ -427,3 +427,29 @@
 
 **依据**：`mcp-server/tool_specs_batch12.py` · `mcp-server/register_capabilities.py` ·
 `D:/AI/SW/_raw/reflect/enum_cosworks.txt` · `specs/124-topology-batch2/` · 事实 143
+
+| 145 | **静力学仿真整链真机复验也 `pass`** —— 与拓扑**同一根因治好**，而两条链**各自独立取证** —— 2026-10-01（轮 205 / Spec Kit `134`）。
+
+★★ **实测（`python tools/capture_simulation_evidence.py`，SW 2026 SP4.1 / 34.4.1）**：
+```
+[1] 零件 '零件2' 100×60×20 ✓   [2] 材料 'solidworks materials|AISI 1020|2' ✓   [3] 静力学研究 = True ✓
+[4] 夹具选区=1 载荷选区=1 Count=2 ✓
+[5] CreateMesh=0 · 单元 **7,310** · 1.6 s ✓
+[6] RunAnalysis=0（★ JSON 自标 `run_analysis_return_is_trustworthy: false`）·
+    Results 非空 · **图数 4** = ['品质1','应力1','位移1','应变1'] ✓
+⇒ **verdict: pass** · 求解 **0.8 秒** · 证据 output/simulation-evidence.json
+```
+★★★ **为什么两条链要**各自**取证**：拓扑（`122`）与静力学（本特性）**不是同一条链** ——
+前者走 `ICWTopology*` + 目标/约束，后者走 `ICWStudy` + 夹具/载荷 + 4 张图。
+★ 虽然根因（加载项没启用，事实 141）相同，**但"同一根因"不等于"结果必然相同"** ——
+这正是事实 143 那条教训的另一面：**别用邻接关系代替证据**（这次是反过来用它去要求取证）。
+
+★ 判据仍是**回读**而不是返回码：脚本自己在 JSON 里标了 `run_analysis_return_is_trustworthy: false`，
+而成功判据是 `Results` 非空 + 图数 > 0 ⇒ ★ **判据声明自己不可信**（正面样板，同事实 142）。
+
+⚠ **限度**：⚠ **"求解器不收敛"那四次（20–25 GB / 1000–3000 s）的成因仍未定** ——
+本轮 pass **不推翻**它们、也**没解释**它们（网格/参数不同）·
+⚠ 本特性**没改任何代码**（价值是"取到当前可复跑的绿证据"）·
+⚠ 只跑了**最简工况**（100×60×20 单实体板）⇒ 复杂几何未验。
+
+**依据**：`output/simulation-evidence.json` · `tools/capture_simulation_evidence.py` · `specs/134-static-simulation-reverified/` · 事实 141 / 142 / 143

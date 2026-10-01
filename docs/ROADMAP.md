@@ -5549,6 +5549,28 @@
                门禁 + `release_check` exit 0 · 全量回归 **1260 passed / 17 skipped**。
             685 ▶ **队列续作**（`docs/backlog-8h.md`）：下一项 = **B1 静力学真机验收**（`tools/capture_simulation_evidence.py`），
                再 A2（`sw_simulation_study` 族）→ A3（视图/选择族）→ … ⇒ 本轮起**连续推进不等指示**。
+           686 🎯 **Spec Kit `134`：静力学仿真整链真机复验也 `pass`**（轮 205）—— 与拓扑**同一根因治好**，而两条链**各自独立取证**。
+               ```
+               [1] 零件 100×60×20 ✓  [2] 材料 AISI 1020 ✓  [3] 静力学研究 ✓  [4] 夹具/载荷 Count=2 ✓
+               [5] CreateMesh=0 · 单元 **7,310** · 1.6 s ✓
+               [6] RunAnalysis=0（★ JSON 自标 `run_analysis_return_is_trustworthy: false`）·
+                   Results 非空 · **图数 4** = ['品质1','应力1','位移1','应变1'] ✓
+               ⇒ **verdict: pass** · 求解 **0.8 秒** · 证据 output/simulation-evidence.json
+               ```
+            687 ★★★ **为什么两条链要**各自**取证**：拓扑（`122`）与静力学（本特性）**不是同一条链** ——
+               前者走 `ICWTopology*` + 目标/约束，后者走 `ICWStudy` + 夹具/载荷 + 4 张图。
+               ★ 虽然根因（加载项没启用，事实 141）相同，**但"同一根因"不等于"结果必然相同"** ——
+               这是事实 143 那条教训的**另一面**：**别用邻接关系代替证据**（这次是反过来用它去要求取证）。
+            688 ★ 判据仍是**回读**不是返回码：脚本自己标了 `run_analysis_return_is_trustworthy: false`，
+               而成功判据是 `Results` 非空 + 图数 > 0 ⇒ ★ **判据声明自己不可信**（正面样板）。
+            689 ⚑ **限度**：⚠ **"求解器不收敛"那四次（20–25 GB / 1000–3000 s）的成因仍未定** ——
+               本轮 pass **不推翻**它们、也**没解释**它们（网格/参数不同）·
+               ⚠ 本特性**没改任何代码**（价值是"取到当前可复跑的绿证据"）·
+               ⚠ 只跑了**最简工况**（100×60×20 单实体板）⇒ 复杂几何未验。
+               门禁 + `release_check` exit 0 · 全量回归绿。
+            690 ▶ **队列续作**（`docs/backlog-8h.md`）：下一项 = **A2**（`sw_simulation_study` 族：`generate_report` /
+               `create_mesh_for_control` / `default_element_size_and_tolerance` —— ★ 注意最后一个实际在
+               `scripts/sw_simulation.py` 而非 `_study`，**归属按实测改正**）。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
