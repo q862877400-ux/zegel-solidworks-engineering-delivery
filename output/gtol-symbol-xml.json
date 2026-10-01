@@ -1,0 +1,16 @@
+{
+  "insert_gtol": true,
+  "can_convert": true,
+  "add_frame": true,
+  "frame_count": 2,
+  "frame_index": 1,
+  "frame": true,
+  "xml_len": 0,
+  "schema_GetGtolFrameXMLSchema": "有",
+  "schema_GetGtolFrameXmlSchema": "有",
+  "cleanup": {
+    "found": 0,
+    "dismissed": 0,
+    "scanned": 188
+  }
+}

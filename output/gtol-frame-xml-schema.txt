@@ -1,0 +1,342 @@
+锘?!--?xml version="1.0" encoding="utf-8"?-->
+
+<xs:schema	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+            xmlns:swGtolFrame="urn:swGtolFrame"
+			elementFormDefault="qualified">
+	<!-- Copyright (C) 2021, Solidworks Corporation  All rights reserved. -->
+
+		<xs:complexType name="PatternChoiceType">
+			<xs:simpleContent>
+				<xs:extension base="xs:string" />
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="PrimaryRangeSymbol">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="phi|sPhi|sqr" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="ConjunctionSymbol1">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="|-|/" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="ConjunctionSymbol2">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="-|X" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="ComplexRangeSymbol">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="phi|sPhi|sqr|deg"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+	<xs:complexType name="MaxToleranceSymbol">
+		<xs:simpleContent>
+			<xs:restriction base="PatternChoiceType">
+				<xs:pattern value="|phi"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name ="ToleranceRangeInfoType">
+			<xs:sequence>
+				<xs:element name="PrimaryToleranceValue" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+				<xs:element name="PrimaryRangeSymbol" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="ConjunctionSymbol1" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="ToleranceZone" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+				<xs:element name="ToleranceZoneSymbol" type="ComplexRangeSymbol" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="ConjunctionSymbol2" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="RestrictedToleranceZoneLimit" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+				<xs:element name="RestrictedToleranceZoneLimitSymbol" type="ComplexRangeSymbol" minOccurs="0" maxOccurs="1" />
+				<xs:element name="ApplyMAXTolerance" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="MaxToleranceSymbol" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="MaxToleranceValue" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:group name ="ToleranceRangeInfo">
+			<xs:sequence>
+				<xs:element name="ToleranceRangeInfo" type="ToleranceRangeInfoType" minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name="CombinationSymbol">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="CZ|SZ"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="ConstraintSymbol">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="OffsetToleranceZone|UnspecifiedAngularToleranceZoneOffset|OrientationOnly" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="FilterSymbol">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="G|S|SW|CW|RG|RS|OB|OH|OD|CB|CH|CD|AB|AH|AD|F|H" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="FilterIndicationSeparatorType">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="|Space|X"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name ="FilterDetailInfo">
+			<xs:sequence>
+				<xs:element name="FilterSymbol"/>
+				<xs:element name="ShortWavePassFilter" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="CutOff" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="LongWavePassFilter" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="FilterIndicationSeparator" type ="FilterIndicationSeparatorType" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="ShortWavePassFilter2" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="CutOff2" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="LongWavePassFilter2" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:complexType name ="FilterDetailType">
+			<xs:sequence>
+				<xs:element name ="FilterDetail" type ="FilterDetailInfo" minOccurs = "0" maxOccurs = "unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:complexType name="AssociatedCharacteristicType">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="|C|CE|CI|G|GE|GI|X|N"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:group name ="AssociatedCharacteristic">
+			<xs:sequence>
+				<xs:element name ="AssociatedCharacteristic" type ="AssociatedCharacteristicType" />
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name="ParametricCharacteristicType">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="|P|V|T|Q" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:group name ="ParametricCharacteristic">
+			<xs:sequence>
+				<xs:element name ="ParametricCharacteristic" type ="ParametricCharacteristicType" />
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name="MaterialConditionType">
+			<xs:sequence>
+				<xs:element name="MaximumMaterialCondition" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="LeastMaterialCondition" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="ReciprocityRequirement" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="RegardlessToFeatureSize" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:group name ="MaterialCondition">
+			<xs:sequence>
+				<xs:element name ="MaterialCondition" type ="MaterialConditionType" />
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name="DatumMaterialCondition">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="MaximumMaterialCondition|LeastMaterialCondition|RegardlessToFeatureSize" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="AssociatedFeatureType">
+			<xs:simpleContent>
+				<xs:restriction base="PatternChoiceType">
+					<xs:pattern value="|Minimax|LeastSquares|MinimumCircumscribed|Tangent|MaximumInscribed"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+
+		<xs:complexType name="UnequallyDisposedProfile">
+			<xs:sequence>
+				<xs:element name ="OutsideDisposition" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:complexType name="ToleranceZoneOffset">
+			<xs:sequence>
+				<xs:choice>
+					<xs:element name ="OutsideFirstZoneOffset" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+					<xs:element name ="InsideFirstZoneOffset" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				</xs:choice>
+				<xs:element name ="FirstOffset" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+				<xs:choice>
+					<xs:element name ="OutsideSecondZoneOffset" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+					<xs:element name ="InsideSecondZoneOffset" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				</xs:choice>
+				<xs:element name ="SecondOffset" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:complexType name ="OffsetZoneInfoType">
+			<xs:sequence>
+				<xs:choice>
+					<xs:element name = "UnequallyDisposedProfile" />
+					<xs:element name = "ToleranceZoneOffset" />
+				</xs:choice>
+				<xs:element name ="DynamicProfile" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name ="Combination" type="CombinationSymbol" minOccurs="0" maxOccurs="1"/>
+				<xs:element name ="Constraint" type="ConstraintSymbol" minOccurs="0" maxOccurs="3"/>
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:group name ="OffsetZoneInfo">
+			<xs:sequence>
+				<xs:element name ="OffsetZoneInfo" type="OffsetZoneInfoType" />
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name ="FeatureInfoType">
+			<xs:sequence>
+				<xs:element name="Filters" type ="FilterDetailType" minOccurs="0" />
+				<xs:element name="AssociatedFeatureInfo" type="AssociatedFeatureType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="ProjectedToleranceZone" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="Projection" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="ProjectionRange" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="DerivedFeatureForFeatureOfSize" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:group name ="FeatureInfo">
+			<xs:sequence>
+				<xs:element name ="FeatureInfo" type="FeatureInfoType" />
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name="SimpleDatum">
+			<xs:sequence>
+				<xs:element name="DatumLetter" type="xs:string" />
+				<xs:element name="PlaneSituationFeature" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="StraightLineSituationFeature" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="PointSituationFeature" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="AnyCrossSection" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="AnyLongitudinalSection" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="FeatureProjection" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="Projection" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="DatumMaterialCondition" type="DatumMaterialCondition" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="FreeState" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:complexType name="SimpleDatumGroup">
+			<xs:sequence>
+				<xs:element name="DatumDetail" type="SimpleDatum" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:group name="DatumGroupType">
+			<xs:sequence>
+				<xs:element name="SubDatums" type="SimpleDatumGroup" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:group>
+
+		<xs:group name="SimpleOrDatumGroupType">
+			<xs:sequence>
+				<xs:choice>
+					<xs:element name="DatumDetail" type="SimpleDatum" />
+					<xs:group ref="DatumGroupType" minOccurs="0" maxOccurs="unbounded" />
+				</xs:choice>
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name="GroupOfSimpleOrDatumGroupType">
+			<xs:sequence>
+				<xs:group ref="SimpleOrDatumGroupType" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:group name="SimpleOrComplexDatumType">
+			<xs:sequence>
+				<xs:choice>
+					<xs:element name="DatumDetail" type="SimpleDatum" />
+					<xs:element name="Datums" type="GroupOfSimpleOrDatumGroupType" />
+				</xs:choice>
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name="DatumCompartmentType">
+			<xs:sequence>
+				<xs:element name="TranslationConstraintAlongXAxis" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="TranslationConstraintAlongYAxis" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="TranslationConstraintAlongZAxis" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="RotationalConstraintAlongXAxis" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="RotationalConstraintAlongYAxis" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="RotationalConstraintAlongZAxis" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="ContactFeature" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="OrientationDegreesOfFreedomOnly" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="VariableLinearDistanceWithinACollectionOfFeatures" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="Translation" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="TranslationValueI" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+				<xs:element name="TranslationValueJ" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+				<xs:element name="TranslationValueK" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+				<xs:group ref="SimpleOrComplexDatumType" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:group name ="DatumCompartment">
+			<xs:sequence>
+				<!--Up to three, primary, secondary and tertiery, datum compartments exist in a frame. 
+					In GetSymbolXML(), information for a compartment is output if it's non-empty or there 
+					is another non-empty compartment after it that is non-empty. Similarly for SetSymbolXML(), 
+					information about empty compartment is necessary if it's followed by an non-empty one.-->
+				<xs:element name ="DatumCompartment" type ="DatumCompartmentType" />
+			</xs:sequence>
+		</xs:group>
+
+		<xs:complexType name="GtolFrameType" mixed ="true">
+			<xs:sequence>
+				<xs:element name="ToleranceSymbol" type="xs:string" minOccurs="1" maxOccurs="1" />
+				<!--Tolerance symbol value string should not include the angle brackets to avoid confusion as XML node.
+					For frame 2 and on, leave it empty to make the frame composited with the previous frame. -->
+				<xs:group ref="ToleranceRangeInfo" minOccurs="1" maxOccurs="1" />
+				<xs:group ref="OffsetZoneInfo" minOccurs="0" maxOccurs="1" />
+				<xs:group ref="FeatureInfo" minOccurs="0" maxOccurs="1" />
+				<xs:group ref="AssociatedCharacteristic" minOccurs="0" maxOccurs="1" />
+				<xs:group ref="ParametricCharacteristic" minOccurs="0" maxOccurs="1" />
+				<xs:group ref="MaterialCondition" minOccurs="0" maxOccurs="1" />
+				<xs:element name="StateSymbol" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:element name="StatisticalSymbol" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+				<xs:group ref="DatumCompartment" minOccurs="0" maxOccurs="3" />
+			</xs:sequence>
+		</xs:complexType>
+
+		<xs:element name ="GtolFrame" type ="GtolFrameType" />
+	</xs:schema>
+
+	<!-- END OF SCHEMA -->
