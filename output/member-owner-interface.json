@@ -1,6 +1,57 @@
 {
-  "checked": 33,
+  "checked": 45,
   "hits": [
+    {
+      "file": "sw_mold.py",
+      "line": 197,
+      "owner_iface": "IFeatureManager",
+      "member": "MoldDraftAnalysis",
+      "actually_on": [
+        "IModelDoc2"
+      ]
+    },
+    {
+      "file": "sw_mold.py",
+      "line": 293,
+      "owner_iface": "IFeatureManager",
+      "member": "GetCavitySurfacesCount",
+      "via": "_count('GetCavitySurfacesCount')",
+      "actually_on": [
+        "IToolingSplitFeatureData"
+      ]
+    },
+    {
+      "file": "sw_mold.py",
+      "line": 293,
+      "owner_iface": "IFeatureManager",
+      "member": "GetCoreSurfacesCount",
+      "via": "_count('GetCoreSurfacesCount')",
+      "actually_on": [
+        "IToolingSplitFeatureData"
+      ]
+    },
+    {
+      "file": "sw_mold.py",
+      "line": 293,
+      "owner_iface": "IFeatureManager",
+      "member": "GetPartingLinesCount",
+      "via": "_count('GetPartingLinesCount')",
+      "actually_on": [
+        "IDraftFeatureData2",
+        "IPartingLineFeatureData",
+        "IPartingSurfaceFeatureData"
+      ]
+    },
+    {
+      "file": "sw_mold.py",
+      "line": 293,
+      "owner_iface": "IFeatureManager",
+      "member": "GetPartingSurfacesCount",
+      "via": "_count('GetPartingSurfacesCount')",
+      "actually_on": [
+        "IToolingSplitFeatureData"
+      ]
+    },
     {
       "file": "sw_mold.py",
       "line": 299,
@@ -41,6 +92,26 @@
       "via": "_count('GetPartingSurfacesCount')",
       "actually_on": [
         "IToolingSplitFeatureData"
+      ]
+    },
+    {
+      "file": "sw_mold.py",
+      "line": 293,
+      "owner_iface": "IFeatureManager",
+      "member": "CoreCavitySplit",
+      "via": "_prop('CoreCavitySplit')",
+      "actually_on": [
+        "IPartingLineFeatureData"
+      ]
+    },
+    {
+      "file": "sw_mold.py",
+      "line": 293,
+      "owner_iface": "IFeatureManager",
+      "member": "PartingType",
+      "via": "_prop('PartingType')",
+      "actually_on": [
+        "IPartingSurfaceFeatureData"
       ]
     },
     {
