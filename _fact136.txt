@@ -1,0 +1,43 @@
+**把 NOTICE 对**第三方**的方法名论断钉住 —— 4 条**逐条属实**，而我的判据**两次太窄**（跨行切分 · 全大写假阳性）** —— 2026-10-01（轮 196）。
+
+★ **起因**：闭合轮 195 的限度「NOTICE 里**其余散文**仍未被机器检查」。★ 而 §一.3 里那段是**可核的**：
+```
+「该来源对模具域的**两个方法名都是错的**（`InsertPartingLines` / `InsertShutOffSurfaces`
+  在官方反射里查不到；官方真名是 `InsertMoldPartingLine(Boolean)` / `InsertMoldShutOffSurface()`）」
+⇒ ★★ 这是我们**对第三方下的判断** ⇒ 若说反了就不是遗漏而是**错误论断**
+  （而文件开头自己写着「**归属造假比遗漏更严重**」）。
+```
+
+★★★ **实测（对官方反射逐条核）**：**4 条全属实**
+```
+InsertPartingLines       ⇒ 反射里**不存在** ✓（NOTICE 说"查不到"）
+InsertShutOffSurfaces    ⇒ 反射里**不存在** ✓
+InsertMoldPartingLine    ⇒ 反射里**存在** ✓（NOTICE 说"是真名"）`Feature InsertMoldPartingLine(Boolean)`
+InsertMoldShutOffSurface ⇒ 反射里**存在** ✓   `Feature InsertMoldShutOffSurface()`
+```
+
+★★★ **修法：把论断**钉住**，而且**从 NOTICE 解析**名字（不在测试里硬编码）**：
+```
+★ 为什么解析：NOTICE 是**会长的** —— 以后再加一条"某来源的某方法名是错的"论断时，
+  本测试**应当自动覆盖它**；硬编码就得靠人记得回来补（那正是"靠约定"）。
+★ 判据锚在**句子形态**上（写出来）：含「官方真名」的句子里的成员名 ⇒ **必须在反射里**；
+  含「查不到」的句子里的成员名 ⇒ **必须不在反射里**。不猜。
+⇒ 加了 `test_notice_external_method_name_claims_are_verifiable`
+  + `test_notice_name_claim_criterion_has_teeth`（**临时文档**做负例，不动真文件）
+⇒ 该文件 **9 passed**（原 7 + 新 2）· 全量 **1259 passed**（+2）
+```
+
+⚠⚠⚠ **而我的判据**两次太窄**，如实记**：
+```
+① **把 `\n` 当句界** ⇒ 那段散文**跨行**写（名字在上一行、"查不到"/"官方真名是"在下一行）
+   ⇒ 两半**都匹配不上** ⇒ 只解析到 **1** 个名字（应为 4）
+   ★ 修：换行**按空格处理**（散文会换行，换行不是句界）
+② **名字正则允许全大写** `[A-Z]\w+` ⇒ 抓到一个假阳性 **`NOTICE`**
+   （它来自相邻表格行里的一句含"查不到"的话，**跨句界被并进来**）
+   ★ 修：收紧为 `(?:I)?[A-Z][a-z]\w*`（**真成员名都是 CamelCase**：首字母大写 + 第二字符小写）
+⇒ 修完解析**恰好 2 真名 + 2 查不到**，且**全部与官方反射一致**。
+★ 这两次与事实 51 / 185 / 190 / 192 / 193 **同一族**：**判据比我以为的更容易太窄或太宽**。
+```
+
+**依据**：`THIRD-PARTY-NOTICES.md` §一.3；`tests/test_notice_consistency.py` 的
+`_notice_name_claims` / `_reflection_has` / 两条新测试；官方反射 `D:/AI/SW/_raw/reflect_sldworks/iface_sldworks.txt`；事实 51 / 62 / 135
