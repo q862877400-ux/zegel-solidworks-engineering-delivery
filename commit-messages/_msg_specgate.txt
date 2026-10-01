@@ -1,0 +1,34 @@
+feat(gate): 新增**验收命令可跑性门禁** ⇒ 抓出并**修掉** 2 例仓库外验收脚本（含 3 个连带缺陷）
+
+## 新门禁：`scripts/check_spec_acceptance_paths.py`
+把 ROADMAP §〇 纪律三「**验收必须是可跑的命令**」从「人记得」升级为「门禁守着」。
+判据**三路**（按特异性）：① 绝对路径（在仓库根下 ⇒ 通过；不在 ⇒ **报**）
+② 带仓库目录前缀（查文件在不在）③ 裸文件名（在仓库里按名搜）。
+★ **便携性守卫**：specs 目录不在本机 ⇒ **SKIP 并 exit 0**（否则别的机器上无条件红）。
+★ 已接进 `release_check.py` 作**硬门禁**；契约测试 **8 条**（5 条负例/防假阳性）。
+
+## 首跑就抓到 **3 行**（全是 `capability_gap.py` 的引用）
+```
+specs/002-merge-template/tasks.md:27   `python D:\AI\SW\capability_gap.py`   [outside-repo]
+specs/002-merge-template/tasks.md:46   `capability_gap.py`                  [bare-not-found]
+specs/002-merge-template/converge.md:129  同上
+```
+⚠ **同时立刻抓到我自己一处假阳性**：我把**任何绝对路径**都报成仓库外，
+而 `Select-String C:\swprojects\sw-skill-fork\tools\capture_simulation_evidence.py`
+**就在仓库根下面** ⇒ 修正为「判**是否在 repo 之下**」。**门禁先自证了一遍。**
+
+## 修法：把脚本按规范收进 `tools/`（不是把门禁降级）
+`tools/capability_gap.py`（从工作区根搬入）：
+· `REPO` 由写死的 `C:\swprojects\sw-skill-fork` 改成 `Path(__file__).resolve().parents[1]`（**可移植**）
+· **搬移时查出它自己两个既有 bug**（与我无关，是「不得不跑它」才暴露的）：
+  | # | bug | 表现 | 修法 |
+  |---|---|---|---|
+  | 1 | `map_gap_counts()` 的正是**八列**，而地图 §五 是**两列**、§二 是**九列** ⇒ **两张表都不匹配** | 「地图缺口」列**全是 `?`** | 改成两列正则 |
+  | 2 | 域名的**空格形态**不同（§五 带空格 / 模块常量不带）⇒ 查询扑空 | 同上 | 加 `_norm_domain()` 两侧规范化 |
+  ⇒ **修完合计 = `339`**（正是那个数）⇒ 这才叫「可复核的数字」
+  ★ **搬到仓库里 = 逼它进入被跑的状态** —— 两个 bug 就是这么现形的
+· 三条 spec 引用改成仓库内路径；并记下「我们函数 1 → 8」是**时点判据**的自然变化
+
+## 验证
+六项门禁全 exit 0 · release_check exit 0 · 回归 **882 passed / 17 skipped / 0 failed**
+按事实 55 重跑了 sync_bundled_skill.py（278 文件）

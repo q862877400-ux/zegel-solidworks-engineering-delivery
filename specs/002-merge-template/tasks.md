@@ -23,12 +23,24 @@
   `→ 验收:` `Select-String tools\build_union_map.py -Pattern 'def _our_tools' -Context 0,3`
 
 - [x] **T-003** 建立**能力口径**的对照（两个口径并存、各自标注）
-  **✅** 新增 `D:\AI\SW\capability_gap.py`
-  `→ 验收:` `python D:\AI\SW\capability_gap.py` 输出逐域表，
-  且焊件行显示「我们函数 14」而地图缺口 5
+  **✅** 新增 `tools/capability_gap.py`
+  ⚠ **2026-10-01（轮 53）从工作区根搬进 `tools/`** —— 原先只在 `D:\AI\SW\`，
+  **换机器/CI 跑不了**（本轮新加的**验收命令可跑性门禁**
+  `scripts/check_spec_acceptance_paths.py` 查出来的第 1 例）。
+  搬移时把 `REPO` 改成 `Path(__file__).resolve().parents[1]`（**可移植**）；
+  **并顺带修掉它自己两个 bug**（见下）。
+  `→ 验收:` `python tools\capability_gap.py` 输出逐域表，
+  且焊件行显示「我们函数 **14**」而地图缺口 **5**
   ```powershell
-  python D:\AI\SW\capability_gap.py    # 72 模块 / 814 函数；焊件 14 / 模具 1
+  python tools\capability_gap.py      # 75 模块 / 842 函数；地图缺口合计 **339**；焊件 14 / 模具 8
   ```
+  ⚠⚠ **搬移时查出它自己有两个 bug（都是既有的、与我无关）**：
+  | # | bug | 表现 | 修法 |
+  |---|---|---|---|
+  | 1 | `map_gap_counts()` 的正则写的是**八列**，而地图 §五 是**两列**、§二 是**九列** ⇒ **两张表都不匹配** | 「地图缺口」列**全是 `?`** | 改成两列 `\|\s*([①-⑰][^|]*?)\s*\|\s*(\d+)\s*\|` |
+  | 2 | 域名的**空格形态**不同（§五 有空格、模块常量无空格）⇒ 查询扑空 | 同上（叠加） | 加 `_norm_domain()` 去空白，查询两侧都规范化 |
+  ⇒ **修完合计 = `339`**（正是那个数）⇒ **这才叫「可复核的数字」**。
+  ★ 这两个 bug 是**因为要搬它、不得不跑它**才暴露的 —— **搬到仓库里 = 逼它进入被跑的状态**。
 
 - [x] **T-004** 更新记忆与文档（判据更正要留痕）
   **✅** 长期记忆已提交 Correction；`ROADMAP.md` §一 新增「重大调整」段、§五 新增 3 条反模式
@@ -43,7 +55,10 @@
 - [x] **T-005** [US1] 按能力口径排序各域，选出模板域
   **✅** 模具：地图缺口 3、本仓库仅 1 个函数（且那 1 个是 `core_only` 误分类）
   ⇒ 满足 US2 的三条件：① 本仓库≈0 ② 有来源 ③ 最小
-  `→ 验收:` `capability_gap.py` 的模具行「我们函数 1」
+  `→ 验收:` `python tools\capability_gap.py` 的模具行「我们函数 8」
+  ⚠ 原文写的是「我们函数 **1**」—— 那是**选择当时**的值；并入 `sw_mold.py` 后已是 **8**
+  （**同轮 49 抓到的 `002` SC-004「时点判据」问题**：任何「本仓库 = N」型判据**在并入后都会变**）。
+  ⚠ 命令本身也从裸文件名 `capability_gap.py` 改成**仓库内** `python tools\capability_gap.py`（轮 53）。
 
 - [x] **T-006** [US1] 核实来源在该域的实现，并**逐成员核反射**
   **✅ 来源 2/2 个方法名都是错的**：`InsertPartingLines` → 官方 `InsertMoldPartingLine(Boolean)`；
