@@ -17,3 +17,8 @@
 * ⚠ `C:\swapi` 里 `ActiveView` 的 markdown **本批没查**（不引入新成员 ⇒ 非必需）——
   ★ 若将来要包装 `view`，**那时必须查**（A10）；
 * ⚠ `activate_view` / `add_perspective` 在**无活动文档**时的行为**未定** ⇒ 那是 A10 做包装层前必须先落的事。
+* ⚠ ★ **本特性的判据曾被自己的产物污染**：T-12602 第一版用 `tool_specs_batch*.py` 搜
+  `ActiveView|sw_view`，而那**包含本批刚写的 `batch14.py`** ⇒ 搜到自己的注释 3 处 ⇒
+  排除本批产物后才是**空**（论断成立）。★ 定则见 known-facts 147。
+* ⚠ ★ **本特性的记录曾被「假提交」漏掉**：记录脚本 SyntaxError 而 `git commit` 照跑 ⇒
+  提交信息说了三件事、实际未做，**事后核对落盘才发现**（known-facts 147 记了全过程）。
