@@ -1,0 +1,34 @@
+{
+  "started": "2026-10-01 14:37:24",
+  "checks": {
+    "batch9 声明 3 条": {
+      "ok": true,
+      "detail": "['insert_core_cavity_solids', 'insert_parting_surface', 'mold_undercut_detect']"
+    },
+    "3 条的 module/function/参数与真实签名一致": {
+      "ok": true,
+      "detail": "逐条核过"
+    },
+    "★ 3 条的**前置条件已记录**（防下一个人再踩弹窗）": {
+      "ok": true,
+      "detail": "['insert_core_cavity_solids', 'insert_parting_surface', 'mold_undercut_detect']"
+    },
+    "mold_undercut_detect（不弹框的那个）可调用": {
+      "ok": true,
+      "detail": "ok · NoneType"
+    },
+    "★ 另 2 个**故意不调用**（未准备的分型件上会弹框）": {
+      "ok": true,
+      "detail": "insert_core_cavity_solids / insert_parting_surface ⇒ 见 preconditions"
+    }
+  },
+  "preconditions": {
+    "insert_core_cavity_solids": "需要**已定义拔模方向**且已有分型面/分型线 ⇒ 否则弹「此拔模方向尚未定义。」",
+    "insert_parting_surface": "需要**已插入分型线** ⇒ 否则弹框",
+    "mold_undercut_detect": "需要**有实体**（空零件上无意义，但**不弹框**）⇒ 可安全调用"
+  },
+  "passed": 5,
+  "total": 5,
+  "verdict": "pass",
+  "finished": "2026-10-01 14:42:23"
+}
