@@ -1,0 +1,53 @@
+{
+  "started": "2026-10-01 12:59:50",
+  "checks": {
+    "SC-001 四种工艺都被识别": {
+      "ok": true,
+      "detail": "machining / sheet_metal / laser_cutting / 3d_printing"
+    },
+    "SC-002 单位归一在边界做一次（mm/inch 结论一致）": {
+      "ok": true,
+      "detail": "mm='review_required' inch='review_required'"
+    },
+    "SC-003 宽 profile 适用；宽×窄交集后**变窄**": {
+      "ok": true,
+      "detail": "wide.applicable=True 交集条目=2"
+    },
+    "SC-003b 窄 profile ⇒ **材料越界被抓**": {
+      "ok": true,
+      "detail": "violations=['profile_internal_corner_tooling', 'profile_material_capability']"
+    },
+    "SC-004 给 B-Rep 证据时报告仍成立（不崩）": {
+      "ok": true,
+      "detail": "status='blocked'"
+    },
+    "SC-005/007 缺 bendRadius/kFactor ⇒ blocked + missingInputs 点名": {
+      "ok": true,
+      "detail": "status='blocked' error_code='dfm_missing_inputs' missing=['metadata.manufacturing.wallThickness', 'metadata.manufacturing.bendRadius', 'metadata.manufacturing.kFactor']"
+    },
+    "SC-007b 缺材料 ⇒ blocked": {
+      "ok": true,
+      "detail": "status='blocked' missing=['metadata.manufacturing.material']"
+    },
+    "SC-006 报告保留人工复核状态（manualReviewRequired）": {
+      "ok": true,
+      "detail": "manualReviewRequired=True"
+    },
+    "SC-008 报告声明**不等于制造认证**（在 `limitations` 里）": {
+      "ok": true,
+      "detail": "limitations[0]=DFM 规则检查不等于制造认证，必须由工程师结合供应商能力、材料批次、公差和载荷复核。"
+    },
+    "SC-008b 报告显式给出 B-Rep 证据的可得性": {
+      "ok": true,
+      "detail": "brepEvidence={'available': False, 'verifiedSource': False, 'reason': '未提供 B-Rep 证据。'}"
+    },
+    "附 validate_profile 两份 profile 都能校验": {
+      "ok": true,
+      "detail": "见上"
+    }
+  },
+  "passed": 11,
+  "total": 11,
+  "verdict": "pass",
+  "finished": "2026-10-01 12:59:50"
+}

@@ -1,0 +1,50 @@
+feat(A4 + Spec Kit 004): `dfm_checks` 升 `verified` —— 走完 Spec Kit 全路径
+
+## 本轮按**目标 ①**（Spec Kit 全路径）推进，且选了一个**一石二鸟**的特性
+`specs/004-dfm-verified/`（spec → plan → tasks → implement → converge 四制品齐全），
+同时把 `capabilities.yaml` 的 `dfm_checks` 从 `stitched` 升到 **`verified`**。
+
+## ★ 前提核查推翻了一个**误判**（这才是本特性成立的原因）
+`dfm_checks` 长期被归入「需 B-Rep 证据（⇒ 需 OCP）」而搁置。轮 79 实测：
+```
+dependencies: ["python"]     ← **只有 python**；本机虽缺 OCP/trimesh，但本条不需要
+「SolidWorks/OCCT B-Rep 证据绑定」= **输入由外部给**，不是它自己去跑 OCP
+```
+★ 这正是**轮 77 教训的正面应用**（那条 `verified` 的证据指向了本机不存在的 OCP；
+本条核查后**发现它不依赖那些**）。
+
+## 新增 `tools/verify_dfm_e2e.py`（**11/11 通过 · verdict: pass**）
+⚠ 判据**不是"跑通就算"**：每条**故意造违规**，逐条触发 `limitations` 的三句承诺：
+```
+✓ SC-001 四种工艺（machining / sheet_metal / laser_cutting / 3d_printing）各 6 条 checks
+✓ SC-002 **单位归一**（mm 与 inch 两条报告的 status 与 checks 集合逐项相同）
+✓ SC-003 **Profile 能力交集**（窄 profile 把 Al7075 判为 `profile_material_capability`）
+⚠ SC-004 B-Rep 证据绑定 **只做到"不崩"**（未达成"篡改必被拒"）—— 如实记在 converge §2.1
+✓ SC-005/007 缺 bendRadius/kFactor/材料 ⇒ **blocked** + `missingInputs` 精确点名
+✓ SC-006 `manualReviewRequired is True`
+✓ SC-008 报告在 `limitations` 里声明「**DFM 规则检查不等于制造认证**」
+```
+
+## ⚑ 先写小探针，**当场纠正两处臆造**（`D:\AI\SW\probe_dfm_api.py`）
+1. **profile 的 `limits` 是平铺语义键**（`allowedMaterials`/`workEnvelope`/`minimumDrillDiameter`/…），
+   我先按嵌套 `{"machining":{"minWall":5}}` 写 ⇒ `profiles: []`（没被接受）；
+2. **免责声明的措辞是「不等于制造认证」**，我先猜「风险复核」⇒ **假阴性**。
+★ 两次都是**判据/输入臆造**，不是实现问题 —— 探针把它们在写 200 行之前就暴露了。
+★ 教训：**判据的关键词与输入字段要取自实际产物/既有测试，不要凭印象写。**
+
+## 清单升级
+```
+dfm_checks: level stitched → **verified**
+  evidence          : （空） → 2 条
+  verified_versions : （空） → ['python 3.14.7']
+      （⚠ 本条**不依赖 SolidWorks / OCP** ⇒ **不填 CAD 版本**，按 `dxf_preview_scene` 先例填运行环境）
+  limitations       : **一条不删**
+⇒ verified **26 → 27** · stitched **4 → 3** · not_implemented 1
+```
+
+## 既有测试的红：按轮 78 的做法处理
+`tests/test_cad_reliability.py` 里 `dfm_checks` 从 **stitched 组移到 verified 组**，
+附**依据与日期**；`surface_modeling` **仍钉住 stitched**。
+⚠ **先核「升级依据是否充分」（11/11 + 19 passed），再改期望** —— 不是为了让测试变绿。
+
+⇒ 十二道门禁全 exit 0 · `release_check` exit 0 · 回归 **970 passed / 17 skipped / 0 failed**
