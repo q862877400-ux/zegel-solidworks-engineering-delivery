@@ -1,0 +1,53 @@
+fix(sheet-metal): **追到最后一层根因 —— `create_gusset` 的接口用错了**（焊件 vs 钣金）
+
+## 决定性发现：官方类型表里有**两个** Gusset 接口，模块用了错的那个
+```
+ISMGussetFeatureData    category: Feature Interfaces/**Sheet Metal**  28 属性  ← ★ 才对
+IGussetFeatureData      category: Feature Interfaces/**Weldments**    19 成员  ← 模块用的
+枚举: `swFmSMGusset` = "**Sheet metal** gusset"（名字里的 SM 就是 Sheet Metal）
+```
+**两者共有成员只有 3 个**（`AccessSelections` / `ProfileType` / `ReleaseSelectionAccess`）。
+原代码设的 4 个属性 —— `Thickness` / `ProfileDistance1` / `ProfileDistance2` / `ProfileAngle`
+—— **全部是焊件接口的名字** ⇒ `CreateDefinition(118)` 返回的对象**不是那个接口**
+⇒ **对任何成员都没反应**（真机实测：连**读**都读不到）。
+
+## 修法（真机验证：读回全部成功）
+```
+spec.thickness          → GussetThickness      ✓ 回读 0.002
+spec.profile_distance_1 → ProfileHeightDim     ✓ 回读 0.01
+spec.profile_distance_2 → ProfileLengthDim     ✓ 回读 0.01
+spec.profile_angle      → ProfileAngleDim      ✓ 回读 45.0
+（对照组）Thickness / ProfileDistance1 → ✗ 仍失败 ⇒ 证明改对了
+```
+
+## 另一个被**否证**的假设（本轮早些时候）
+「属性设不上 = 缺 `AccessSelections`」—— 我按文件的文档串试了，真机三种 `Component`
+形式**全失败**（`None` / `VARIANT(VT_DISPATCH,None)` / `False`）。
+官方文档说它是「取得描述**该特征**的选区」= **编辑**用，**不是创建用**。
+⇒ **那个修改已全部撤回**（不让错的东西留在代码里）。
+
+同样否证的还有「mark」假设：`SetSelectedObjectMark(1,1/2/4/0,0)` 与
+`SelectByID2(mark=1/2/4/0)` **都返回成功**，但属性仍设不上 ⇒ **mark 不是属性层的真因**。
+
+## 现在的状态：**属性层已修，剩最后一层**
+`create_gusset` / `create_edge_flange` 的报错**都已从** `Property ... can not be set`
+**变为** `CreateFeature(118/37) 创建失败` ⇒ **属性层确实通了**。
+**⇒ 剩最后一层：`CreateFeature` 需要**选择状态****（官方在同类特征上明写
+「select ... **with a Mark of 1**」——**mark 可能在**创建**这一层才起作用**）。
+**未查明，不猜。**
+
+`create_one_bend` / `create_draft`：`CreateDefinition(3/33)` 返回 None ⇒ **这两个类型
+不走 `CreateDefinition`**（反射里有专用入口，但 gusset 那条线索已证明「有专用入口」
+**不等于**「就是这条路」——`InsertGussetFeature3` 是**焊件**用的）。
+
+## ⚠ 本轮暴露的**门禁盲区**（值得单独记）
+`scripts/check_member_names.py` **全程 PASS**，却**没抓到「属性名不属于该接口」** ——
+因为它的判据是「这个名字在**某个**接口里存在吗」，**不是**「在**这个**接口里存在吗」。
+**⇒ 而 `ReverseDirection`（属拔模）用在边法兰上、`Thickness`（属焊件）用在钣金上，
+都是这一类。** 该门禁自己的文档串早就写了「5 个成员全是凭印象从别的族搬来的」——
+**它知道这个失败模式，但判定粒度不够。**
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 真机复测：**3 通过 / 4 失败**（但两条的**报错层次已推进一层**）
+- 全量回归 **6 failed / 841 passed / 15 skipped**（基线失败列表逐条相同）

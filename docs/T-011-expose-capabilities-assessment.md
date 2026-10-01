@@ -618,3 +618,66 @@ X 的**语义**（编辑 vs 创建）决定它适不适用。**
 第三层：**根因层次**        ← 本轮加：是「入口选错」？「属性不属于该接口」？还是「状态没准备」？
 ⇒ 第三层才是能指导修复的那一层。前两层只能告诉你「不许用」。
 ```
+---
+
+## 十七、追到**最后一层**根因（2026-10-01）：`create_gusset` 的**接口用错了**
+
+### 17.1 决定性发现：官方类型表里有**两个** Gusset 接口
+| 接口 | category | 成员数 | 谁在用 |
+|---|---|---|---|
+| **`ISMGussetFeatureData`** | `Feature Interfaces/**Sheet Metal**` | 28 属性 | ★ **才是对的** |
+| `IGussetFeatureData` | `Feature Interfaces/**Weldments**` | 19 成员 | **模块用了这个** |
+
+枚举 `swFmSMGusset` 的描述明写 "**Sheet metal** gusset"（名字里的 **SM** 就是 Sheet Metal）。
+**两者共有成员只有 3 个**（`AccessSelections` / `ProfileType` / `ReleaseSelectionAccess`）。
+
+**⇒ 原代码设的 4 个属性 `Thickness` / `ProfileDistance1` / `ProfileDistance2` /
+`ProfileAngle` **全部是焊件接口的名字** ⇒ `CreateDefinition(118)` 返回的对象**不是那个接口**
+⇒ **对任何成员都没反应**（真机实测：连**读**都读不到，`read Thickness → ✗ <unknown>.Thickness`）。**
+
+### 17.2 修法与验证（真机读回全部成功）
+```
+spec.thickness          → GussetThickness      ✓ 回读 0.002
+spec.profile_distance_1 → ProfileHeightDim     ✓ 回读 0.01
+spec.profile_distance_2 → ProfileLengthDim     ✓ 回读 0.01
+spec.profile_angle      → ProfileAngleDim      ✓ 回读 45.0
+（对照组）Thickness / ProfileDistance1 → ✗ 仍失败 ⇒ 证明改对了
+```
+
+### 17.3 ⚠ 本轮**否证了三个假设**（都是我自己提的）
+| 假设 | 怎么否证的 | 结论 |
+|---|---|---|
+| **专用 `Insert*` 入口就是正解** | `InsertGussetFeature3` 的官方说明明写「for pre-selected faces of a **weldment**」 | **假线索** —— 有专用入口 ≠ 就是那条路 |
+| **属性设不上 = 缺 `AccessSelections`** | 真机三种 `Component`（`None` / `VARIANT(VT_DISPATCH,None)` / `False`）**全失败** | 官方说它是「取得描述**该特征**的选区」= **编辑**用，**不是创建用**；**修改已撤回** |
+| **属性设不上 = mark 不对** | `SetSelectedObjectMark(1,1/2/4/0,0)` 与 `SelectByID2(mark=1/2/4/0)` **都返回成功**，属性仍设不上 | **mark 不是属性层的真因**（**但可能在**创建**那层起作用** —— 见下） |
+
+### 17.4 现在的状态：**属性层已修，剩最后一层**
+`create_gusset` / `create_edge_flange` 的报错**都已从** `Property ... can not be set`
+**变为** `CreateFeature(118/37) 创建失败` ⇒ **属性层确实通了。**
+**⇒ 剩最后一层：`CreateFeature` 需要**选择状态**。**
+官方在同类特征（焊件 gusset）上明写「select two faces ... **with a Mark of 1**」
+—— **mark 可能在**创建**这一层才起作用**。**未查明，不猜。**
+
+`create_one_bend` / `create_draft`：`CreateDefinition(3/33)` 返回 None
+⇒ **这两个类型不走 `CreateDefinition`**（专用入口存在，但「存在」已被证明不等于「就是这条路」）。
+
+### 17.5 ⚠⚠ 本轮暴露的**门禁盲区**（值得单独记）
+`scripts/check_member_names.py` **全程 PASS**，却**没抓到「属性名不属于该接口」** ——
+因为它的判据是「这个名字在**某个**接口里存在吗」，**不是**「在**这个**接口里存在吗」。
+
+**⇒ 而 `ReverseDirection`（属拔模）用在边法兰上、`Thickness`（属焊件）用在钣金上，
+都是这一类。** 该门禁**自己的文档串**早就写了这个失败模式（「5 个成员全是凭印象从别的族搬来的」）
+—— **它知道，但判定粒度不够。**
+
+**⇒ 下一步该做的门禁升级**：把「属性 → 接口」的归属也纳入检查
+（数据源已具备：`C:\swapi\types\<Iface>\<Member>.md` 的目录结构本身就是归属表）。
+
+### 17.6 判据 A5 的第四层
+```
+第一层：签名对齐         ← 原有
+第二层：运行期可达/可用   ← §15 加
+第三层：根因层次          ← §16 加
+**第四层：成员与接口的归属** ← 本轮加：「这个名字属于**这个**接口吗」
+⇒ 本轮的 bug 前三层**全部通过**（签名对、成员可达、根因是「接口用错」），
+  只有第四层能抓到它。
+```
