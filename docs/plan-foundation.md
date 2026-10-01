@@ -54,13 +54,30 @@
 成本：约 60 分钟（文档）+ 60 分钟（门禁 + 负例）
 ```
 
-### 地基 ④ 产物与生成器同仓（还剩 5 个）
+### 地基 ④ 产物与生成器同仓
 ```
-要做的：把仍在工作区的 5 个生成器搬进代码仓库 `tools/`（照 `gen_family_coverage` 那次的流程：
-       搬 → 改动引用 → 删旧副本 → 补来源块 → 门禁全绿）
-       emit_iview_module · emit_study_options_module · gen_api_map · gen_iview_registry · gen_usage_guide
-验收：`git ls-files tools/ | wc -l` 与工作区侧脚本清单**无差**；`release_check` exit 0
-成本：约 60–90 分钟（每个约 15 分钟，流程已跑通一次）
+★ **判据（决定性、可复跑）**：**代码仓库里有没有文件指名这个生成器** ——
+   有 ⇒ 它的产物在仓库里、而它自己不在 ⇒ 必须搬（否则 clone 的人重跑不了）
+   没有 ⇒ 它在仓库里**没有留下"需要重跑"的产物** ⇒ **不搬**（产物在工作区，已是同仓）
+
+★ 实测（2026-10-01 轮 219）：**要搬的是 2 个，不是原先估的 5 个**
+   · `gen_api_map.py`        —— `docs/api-map.md` 里指名（★ 改它要改**生成器的模板**，见下）
+   · `gen_iview_registry.py` —— `scripts/sw_drawing_view.py` 里指名
+   ⇒ 两个都已搬入 `tools/`、补了来源块、删了工作区副本。
+★ 另外 6 个（`analyze_family_features` / `emit_iview_module` / `emit_study_options_module` /
+   `gen_usage_guide` / `measure_function_fate` / `measure_realmachine_members`）
+   代码仓库里**一处都没提到** ⇒ 按判据**不搬**（原计划把它们算进来，是估的，实测后修正）。
+
+★★ 搬迁时撞出来的两条（都值得记）：
+   ① **改"生成物里的引用"要先判它是不是模板产生的** ——
+      `sw_drawing_view.py` 的那行改了就活下来（生成器不覆盖文件头）；
+      而 `api-map.md` 的那行**被重生成覆盖**⇒ ★ **必须改生成器里的模板字符串**。
+      验证方法：改完**重跑生成器**，看改动还在不在。
+   ② 重跑 `gen_api_map.py` 顺带**刷新了过时的数字**（旧表说覆盖 74 个 .py / 207 个成员，
+      实测现在 152 个 .py / 351 个成员）⇒ ★ 生成物**长期不重跑就会留旧数据**。
+
+验收：`git ls-files tools/` 与「代码仓库指名的生成器」清单无差；`release_check` exit 0
+成本：实际约 40 分钟
 ```
 
 ---
