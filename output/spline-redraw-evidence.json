@@ -1,0 +1,19 @@
+{
+  "started": "2026-10-01 17:24:59",
+  "cases": {
+    "create_spline2": {
+      "return": "NoneType",
+      "segments": 0
+    },
+    "after_redraw": {
+      "method": "GraphicsRedraw",
+      "segments": 0
+    },
+    "create_spline": {
+      "return": "**迟到绑定里没有这个成员**",
+      "segments": 0
+    },
+    "control_line": 1
+  },
+  "modal_dialogs": []
+}
