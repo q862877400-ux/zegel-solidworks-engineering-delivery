@@ -1,5 +1,5 @@
 {
-  "checked": 210,
+  "checked": 214,
   "hits": [
     {
       "file": "sw_assembly.py",
@@ -56,16 +56,6 @@
     {
       "file": "sw_hole_features.py",
       "line": 99,
-      "owner_iface": "IModelDoc2",
-      "member": "GetBodies2",
-      "actually_on": [
-        "IComponent2",
-        "IPartDoc"
-      ]
-    },
-    {
-      "file": "sw_part.py",
-      "line": 995,
       "owner_iface": "IModelDoc2",
       "member": "GetBodies2",
       "actually_on": [
@@ -194,6 +184,290 @@
         "IModelDoc",
         "IModelDoc2"
       ]
+    }
+  ],
+  "unchecked_indirect": [
+    {
+      "file": "sw_api_cosworks.py",
+      "line": 3049,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_dsgnchk.py",
+      "line": 134,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_fworks.py",
+      "line": 122,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_gtswutilities.py",
+      "line": 303,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_sldcostingapi.py",
+      "line": 466,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_sldtoolboxconfigureaddin.py",
+      "line": 127,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_sldworks.py",
+      "line": 17500,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_swdimxpert.py",
+      "line": 602,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_swdocumentmgr.py",
+      "line": 4557,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_swmotionstudy.py",
+      "line": 314,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_swpublished.py",
+      "line": 626,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_api_SWRoutingLib.py",
+      "line": 310,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_assembly_doc.py",
+      "line": 275,
+      "owner": "doc",
+      "arg": "member"
+    },
+    {
+      "file": "sw_connect.py",
+      "line": 197,
+      "owner": "obj",
+      "arg": "attr_name"
+    },
+    {
+      "file": "sw_connect.py",
+      "line": 461,
+      "owner": "obj",
+      "arg": "attr_name"
+    },
+    {
+      "file": "sw_costing.py",
+      "line": 119,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_costing.py",
+      "line": 330,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_delivery.py",
+      "line": 217,
+      "owner": "obj",
+      "arg": "name"
+    },
+    {
+      "file": "sw_drawing_view.py",
+      "line": 375,
+      "owner": "view",
+      "arg": "member"
+    },
+    {
+      "file": "sw_featureworks.py",
+      "line": 96,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_mold.py",
+      "line": 293,
+      "owner": "fm",
+      "arg": "name"
+    },
+    {
+      "file": "sw_mold.py",
+      "line": 299,
+      "owner": "model",
+      "arg": "name"
+    },
+    {
+      "file": "sw_part.py",
+      "line": 157,
+      "owner": "obj",
+      "arg": "attr_name"
+    },
+    {
+      "file": "sw_pattern.py",
+      "line": 145,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_pdm.py",
+      "line": 128,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_render_material.py",
+      "line": 176,
+      "owner": "material",
+      "arg": "str(key)"
+    },
+    {
+      "file": "sw_routing.py",
+      "line": 134,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_selection.py",
+      "line": 156,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_selection_spec.py",
+      "line": 159,
+      "owner": "bodies[body_index]",
+      "arg": "member"
+    },
+    {
+      "file": "sw_simulation_loadprops.py",
+      "line": 114,
+      "owner": "target",
+      "arg": "begin"
+    },
+    {
+      "file": "sw_simulation_loadprops.py",
+      "line": 118,
+      "owner": "target",
+      "arg": "end"
+    },
+    {
+      "file": "sw_simulation_loads.py",
+      "line": 216,
+      "owner": "manager",
+      "arg": "member"
+    },
+    {
+      "file": "sw_simulation_results.py",
+      "line": 147,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_simulation_study.py",
+      "line": 197,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
+      "file": "sw_simulation_study_options.py",
+      "line": 669,
+      "owner": "study",
+      "arg": "accessor"
+    },
+    {
+      "file": "sw_simulation_study_options.py",
+      "line": 617,
+      "owner": "options",
+      "arg": "name"
+    },
+    {
+      "file": "sw_sketch.py",
+      "line": 453,
+      "owner": "sketch",
+      "arg": "members[0]"
+    },
+    {
+      "file": "sw_surface.py",
+      "line": 262,
+      "owner": "modeler",
+      "arg": "method"
+    },
+    {
+      "file": "sw_topology.py",
+      "line": 396,
+      "owner": "manager",
+      "arg": "getter"
+    },
+    {
+      "file": "sw_topology.py",
+      "line": 652,
+      "owner": "manager",
+      "arg": "getter"
+    },
+    {
+      "file": "sw_weldment.py",
+      "line": 277,
+      "owner": "feature",
+      "arg": "next_member"
+    },
+    {
+      "file": "audit_runtime_reachability.py",
+      "line": 78,
+      "owner": "obj",
+      "arg": "name"
+    },
+    {
+      "file": "probe_gtol_frame_order.py",
+      "line": 85,
+      "owner": "gtol",
+      "arg": "name"
+    },
+    {
+      "file": "probe_gtol_symbol_xml.py",
+      "line": 142,
+      "owner": "sw",
+      "arg": "cand"
+    },
+    {
+      "file": "probe_gtol_xml_schema.py",
+      "line": 63,
+      "owner": "sw",
+      "arg": "cand"
+    },
+    {
+      "file": "probe_results_api_surface.py",
+      "line": 131,
+      "owner": "obj",
+      "arg": "cand"
+    },
+    {
+      "file": "probe_results_api_surface.py",
+      "line": 110,
+      "owner": "obj",
+      "arg": "w"
     }
   ]
 }
