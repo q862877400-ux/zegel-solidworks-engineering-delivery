@@ -1,0 +1,51 @@
+feat(costing): 护城河 `costing` **升 verified**（真机完整闭环）+ 修一个吞掉 0 的真缺陷 + 防增长门禁
+
+## 起因：交接的「优先 1」——`costing` 是护城河三域里唯一有实现却停在 `stitched` 的
+按 `AGENTS.md §一 A4`（`verified` 必须有我们自己的运行证据）补那条证据。
+
+## ★★ 真机完整闭环（SW 2026 SP4.1，验收命令 `python tools/verify_costing_e2e.py`）
+```
+Extension.GetCostingManager() ⇒ **非 None**      ← 入口打通
+GetTemplateCount(0/1) ⇒ 2 / 2；4 条 .sldctc/.sldcts 模板路径
+GetMaterialName(0) ⇒ '普通碳钢' · GetMaterialClass(0) ⇒ '钢'
+CostingModel（= CostPart）· GetBodyCount() ⇒ 1
+**total_to_manufacture = 3.2714499345031918（USD）** · costing_type = 0
+⇒ verdict: **pass**（证据 output/costing-evidence.json）
+```
+
+## 🔴 修掉一个真缺陷（**由真机抓到**）
+`read_cost_analysis` 等 **7 处**写的是 `int(x or -1)` ——
+`CostingType` 真值为 **`0`** 时被吞成 **`-1`**（把「机加工」误报成「未知」）。
+⇒ 改用 `_num()`（**只有 `None` 才回落**）。**修复由真机证明**：修前 `costing_type=-1`，修后 **`0`**。
+⚠ 这与本项目**早已记录过**的「`bool(0)` 为 `False` ⇒ 不要用真假值判成功码」是**同一族**。
+
+## 🔴 并发现那段来源块写着**一个错误结论**（正是缺口的成因）
+旧文：「CostManager 由 **Composer 加载项**给出…**本机没装 Composer**，ProgID 查不到
+⇒ 本模块接收调用方传入的对象」。**两条硬证据推翻**：
+① 官方反射里**有** `IModelDocExtension::GetCostingManager()`；
+② 注册表里**有** `swcCostingAddin.SwcAddin`（`.34`）等 8 个 ProgID ⇒ **本机装了**。
+ⓘ「4 个 ProgID 全返 None」这个**观察**是对的，但**结论「所以拿不到」是错的** ——
+`GetAddInObject` 本来就不是正解。
+★ **教训：把「某条路走不通」写成「对象拿不到」，会让模块放弃唯一的正解。**
+⇒ 新增 `get_costing_manager(model)`（此前 24 个公开入口里**没有入口**）。
+
+## 新增防增长门禁：`x or <默认值>` 吞掉合法的 0
+`scripts/check_env_pitfalls.py` 的**检查③** + 基线 `docs/falsy-zero-baseline.txt`：
+· 判据：**只有「默认值 ≠ 该类型的 falsy 值」才有害**（`or 0`/`or 0.0`/`or ""` 幂等 ⇒ 无害）
+  ⚠ 我第一版把 `or 0.0` 也标成有害 ⇒ **假阳性**（门禁首跑必须用真实数据核对 —— 这次是我自己撞上的）
+· **基线记账存量 42 条 / 45 处（13 个模块）**，**新增即红**；基线里已修的必须删（防基线自己腐坏）
+· ⚠ 检查③ **不扫 `tests/`**：它的负例测试里**必须**出现那串字面量才能证明抓得到
+  ⇒ 扫的话门禁会**抓到自己的夹具**（实测撞上两次）
+· ⚠ 匹配前**去注释**（用文件里已有的 `tokenize`）—— 否则门禁会**抓到解释这个坑的注释本身**
+  ★ **不去注释然后改注释让它变绿 = 把判据改坏去迁就实现**（红线）
+⇒ 剩余 **38 处存量**（`sw_simulation_loadprops` 14 · `sw_simulation` 6 · `sw_assembly` 4 · …）
+  **如实记录、未改**（事实 61：批量改文件风险高于收益，且每处都要判断「那个成员的 0 是否有意义」）
+
+## 其它
+· `capabilities.yaml`：`costing` → `verified` / `verified_versions: ["2026"]` / 新增 `evidence`
+  ⚠ `allowed_modes` **未放宽到 unattended** —— 无人值守授权有黄金基线
+  （`tests/unattended_baseline.json`），**不该把「授权放宽」当作无关改动的副作用**
+· 契约测试 +11（`tests/test_sw_costing_contract.py` 8 条 + `test_env_pitfalls_gate.py` 3 条）
+· ⚠ `tools/verify_costing_e2e.py` 的来源块要写在 **`def main()` 前面**（真注释）——
+  `check_provenance` 会把**模块 docstring 里的行整段跳过**，写在里面的来源块**不算覆盖**
+· ⇒ 回归 **921 passed / 17 skipped / 0 failed**（910 + 11）· 八项门禁全 exit 0
