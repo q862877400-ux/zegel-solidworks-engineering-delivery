@@ -1019,3 +1019,43 @@ create_draft       → CreateDefinition(3) 未返回特征数据  ← **它的�
 `create_one_bend` 上方的来源块仍写 `IOneBendFeatureData` / `swFmOneBend(33)`，
 而上一轮已改用 `swFmSketchBend(35)` ⇒ **注释没跟上，已更正**。
 **⇒ 文档与代码不符比没有文档更糟。**
+
+
+---
+
+## 二十七、造折弯的最后一步：卡在 `SetFixedFace`（2026-10-01）
+
+### 27.1 链条走到哪一步了
+```
+1. 基体法兰（平板）                  ✓ 能跑
+2. 在**顶面**画折弯线                ✓ 能跑（先选面 → InsertSketch → CreateLine → InsertSketch）
+3. 选草图 + CreateDefinition(35)     ✓ CreateDefinition(35) 非 None
+4. `CreateFeature(35)`               ✗ **仍 None**（四种属性组合全失败）
+```
+
+### 27.2 ⚠ 关键线索：`SetFixedFace` 的 `EdgeArray` **不能传 `None`**
+```
+SetFixedFace(X, Y, Z, EdgeArray) → 传 None 得 **`类型不匹配`（0x80028CA0）**
+⇒ **与已知事实 33（`SelectByID2` 的 `Callout` 传 None）同一个错误类**
+```
+**官方 `GetFixedFace` 的说明**：「the location is a point on the fixed face, but
+**in the space of the sketch** used to define the sketched-bend feature.
+Thus, **the z location is always 0**」⇒ **固定面的点要用**草图坐标系**给。**
+
+### 27.3 ⚠ 另一种可能：`UseGaugeTable`
+官方明写「**must be set to false in order to set `BendRadius`**」——
+而模块**无条件设 `BendRadius`，却从不设 `UseGaugeTable`**。
+**⇒ 已单独试过（②③），仍失败 ⇒ 不是它单独造成的。**
+
+### 27.4 ⚠ 途中一个**容易误判**的坑：草图名是**本地化**的
+```
+在面上画线后，特征树里的草图叫 **`草图6`**（中文界面），不是 `Sketch2`
+⇒ 我的探针猜 `Sketch2` ⇒ 报「无法选择草图」
+⇒ **看起来像「草图没建成」，实际是名字猜错**
+⇒ `SelectByID2("草图6", "SKETCH", …)` **返回 True** —— 草图一直都在
+```
+**⇒ 与已知事实 9（基准面名随 UI 语言变）同类，但主体是**草图**。**
+
+### 27.5 ⚠ 又一个自造工具的坑：递归遍历特征树会**环回**
+手写递归时 `GetFirstSubFeature` 会重现同名特征（`钣金6 → 基体-法兰1 → 钣金6 → …`）
+⇒ `RecursionError`。**⇒ visited 键必须**与深度无关**，并加深度上限。**
