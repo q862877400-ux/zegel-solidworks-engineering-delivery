@@ -1,0 +1,16 @@
+{
+  "before": null,
+  "load_addin": {
+    "SldWorks.Simulation": "3",
+    "SolidWorks Simulation": "3",
+    "Simulation": "3",
+    "COSMOSWorks": "3",
+    "SldWorks.SimulationAddin": "3"
+  },
+  "after": null,
+  "conclusion": "② 类：仍取不到 ⇒ 更可能是**许可/安装**问题（环境性）",
+  "cleanup": {
+    "found": 0,
+    "scanned": 188
+  }
+}
