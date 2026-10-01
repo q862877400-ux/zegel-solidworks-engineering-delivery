@@ -41,12 +41,27 @@
 | 验收① | `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` |
 | 验收② | `python tools/capture_sketch_evidence.py` ⇒ `verdict: pass` |
 
-### W2 · 工程图族（`specs/132`）· 约 95 分钟
+### W2 · 工程图族（`specs/132`）· 约 60 分钟 · ★★ **2026-10-01 轮 223 实测后缩批（见下）**
 ```
-缺口最大的域。取什么：读图纸结构（页/视图/尺寸/表格）的只读查询，先从**只读**开始
-★ 为什么先只读：工程图的"写"（加视图/加标注）风险与验证成本都高得多
-来源 / license：本项目自身（MIT）+ `sw_drawing_view.py`（**机械生成**，生成器已在本仓库 `tools/gen_iview_registry.py`）
-验收①：工具数 + 门禁；②：`python tools/capture_drawing_evidence.py` ⇒ `verdict: pass`
+★★★ **缩批的理由（实测，不是估的）**：⑪工程图 的 49 个缺口名，逐个核过之后分三类：
+   ① **名字差异（已覆盖）**：只读结构那一整类 ——
+      `drawing_views` / `drawing_dimensions` / `drawing_annotations` / `drawing_tables` / `sheets` /
+      `analyze_drawing_views|dimensions|annotations` … **`solidworks_inspect_drawing` 已经覆盖**
+      （内核就是 `drawing_workflow.inspect_drawing_structure`；上游 45 个工具里的 3 个工程图工具之一）
+   ② **写操作**（加视图 / 标注 / 表格 / BOM / 中心线 …）：`projected_view` `section_view`
+      `detail_view` `auxiliary_view` `broken_view` `balloon` `center_mark` `hole_table`
+      `revision_table` `bom` … ⇒ ★ **本阶段不做**（风险与验证成本高，计划已写明）
+   ③ ★ **真缺的一小批**：`solidworks_inspect_drawing` 要**自己开件 + 出预览 + 落文件**
+      ⇒ **对"当前已打开的图纸"没有轻量读数**。而 AI 的常见需求恰恰是
+      「这图几张纸？当前图幅多大？有几个视图？」—— **不需要出预览、不需要落文件**。
+⇒ ★★ **所以 W2 缩成一小批（3 个工具），且把上面三类写成文档**（A1 的「不做 + 原因」那一半）。
+
+取什么：**当前活动工程图**的轻量只读读数 —— 图纸张数 / 当前图纸名与图幅 / 视图清单
+★ 前置（照 W1 的教训，先写真机探针）：**怎么从 model 拿到 `IDrawingDoc` 与它的 sheet/view**
+   —— ⚠ 已知 `drawing_workflow.py` 的只读函数首参叫 **`drawing_model`**（不是 `model`）⇒
+     同一件事两个名字，包装层要做映射
+来源 / license：本项目自身（MIT）；官方依据 `IDrawingDoc.GetCurrentSheet` / `ISheet` / `IView.GetNextView`
+验收①：工具数 + 门禁；②：`python tools/capture_drawing_query_evidence.py` ⇒ `verdict: pass`
 ```
 
 ### W3 · 会话 / 文档 / 文件族（`specs/133`）· 约 85 分钟
