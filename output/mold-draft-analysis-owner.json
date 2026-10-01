@@ -4,7 +4,8 @@
   ],
   "on_feature_manager": "AttributeError",
   "on_model_doc2": "取到:method",
-  "passed": 3,
-  "total": 3,
+  "after_fix": "ok:bool",
+  "passed": 4,
+  "total": 4,
   "verdict": "pass"
 }

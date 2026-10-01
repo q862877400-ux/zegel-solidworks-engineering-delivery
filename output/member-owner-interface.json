@@ -1,18 +1,9 @@
 {
-  "checked": 45,
+  "checked": 44,
   "hits": [
     {
       "file": "sw_mold.py",
-      "line": 197,
-      "owner_iface": "IFeatureManager",
-      "member": "MoldDraftAnalysis",
-      "actually_on": [
-        "IModelDoc2"
-      ]
-    },
-    {
-      "file": "sw_mold.py",
-      "line": 293,
+      "line": 311,
       "owner_iface": "IFeatureManager",
       "member": "GetCavitySurfacesCount",
       "via": "_count('GetCavitySurfacesCount')",
@@ -22,7 +13,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 293,
+      "line": 311,
       "owner_iface": "IFeatureManager",
       "member": "GetCoreSurfacesCount",
       "via": "_count('GetCoreSurfacesCount')",
@@ -32,7 +23,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 293,
+      "line": 311,
       "owner_iface": "IFeatureManager",
       "member": "GetPartingLinesCount",
       "via": "_count('GetPartingLinesCount')",
@@ -44,7 +35,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 293,
+      "line": 311,
       "owner_iface": "IFeatureManager",
       "member": "GetPartingSurfacesCount",
       "via": "_count('GetPartingSurfacesCount')",
@@ -54,7 +45,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 299,
+      "line": 317,
       "owner_iface": "IModelDoc2",
       "member": "GetCavitySurfacesCount",
       "via": "_count('GetCavitySurfacesCount')",
@@ -64,7 +55,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 299,
+      "line": 317,
       "owner_iface": "IModelDoc2",
       "member": "GetCoreSurfacesCount",
       "via": "_count('GetCoreSurfacesCount')",
@@ -74,7 +65,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 299,
+      "line": 317,
       "owner_iface": "IModelDoc2",
       "member": "GetPartingLinesCount",
       "via": "_count('GetPartingLinesCount')",
@@ -86,7 +77,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 299,
+      "line": 317,
       "owner_iface": "IModelDoc2",
       "member": "GetPartingSurfacesCount",
       "via": "_count('GetPartingSurfacesCount')",
@@ -96,7 +87,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 293,
+      "line": 311,
       "owner_iface": "IFeatureManager",
       "member": "CoreCavitySplit",
       "via": "_prop('CoreCavitySplit')",
@@ -106,7 +97,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 293,
+      "line": 311,
       "owner_iface": "IFeatureManager",
       "member": "PartingType",
       "via": "_prop('PartingType')",
@@ -116,7 +107,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 299,
+      "line": 317,
       "owner_iface": "IModelDoc2",
       "member": "CoreCavitySplit",
       "via": "_prop('CoreCavitySplit')",
@@ -126,7 +117,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 299,
+      "line": 317,
       "owner_iface": "IModelDoc2",
       "member": "PartingType",
       "via": "_prop('PartingType')",
@@ -258,13 +249,13 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 293,
+      "line": 311,
       "owner": "fm",
       "arg": "name"
     },
     {
       "file": "sw_mold.py",
-      "line": 299,
+      "line": 317,
       "owner": "model",
       "arg": "name"
     },
