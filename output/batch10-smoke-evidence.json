@@ -1,0 +1,43 @@
+{
+  "started": "2026-10-01 16:34:31",
+  "checks": {
+    "batch10 的 4 条都在 all_specs() 里": {
+      "ok": true,
+      "detail": "all_specs() 共 41 条"
+    },
+    "新建临时零件（给 bbox 造实体）": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★ solidworks_part_bounding_box（inject=model）": {
+      "ok": true,
+      "detail": "size=[20.0, 10.0, 5.0] · 0.00s"
+    },
+    "★ solidworks_hole_standards（inject=sw_app）": {
+      "ok": true,
+      "detail": "15 条 · 首项=[{'id': 0, 'name': 'ANSI Inch'}] · 0.06s"
+    },
+    "★ solidworks_fastener_types（inject=sw_app）": {
+      "ok": true,
+      "detail": "14 条 · 首项=[{'id': 4, 'name': '六角精致螺栓'}] · 0.03s"
+    },
+    "★ solidworks_fastener_table_types（inject=sw_app）": {
+      "ok": true,
+      "detail": "3 条 · 首项=[0] · 0.03s"
+    },
+    "★ 收尾无残留模态框（已知事实 64 的检查）": {
+      "ok": true,
+      "detail": "无"
+    }
+  },
+  "results": {
+    "solidworks_part_bounding_box": "size=[20.0, 10.0, 5.0] · 0.00s",
+    "solidworks_hole_standards": "15 条 · 首项=[{'id': 0, 'name': 'ANSI Inch'}] · 0.06s",
+    "solidworks_fastener_types": "14 条 · 首项=[{'id': 4, 'name': '六角精致螺栓'}] · 0.03s",
+    "solidworks_fastener_table_types": "3 条 · 首项=[0] · 0.03s"
+  },
+  "passed": 7,
+  "total": 7,
+  "verdict": "pass",
+  "finished": "2026-10-01 16:34:33"
+}
