@@ -1,0 +1,33 @@
+feat(check): 攻掉最后 1 条未映射常量 ⇒ **`CONST→接口` 映射表 35/0/0 全清**
+
+## 结果
+```
+唯一命中 **35**（官方点名 5 + 文本匹配 22 + **人工确证 8**）/ 歧义 0 / **未映射 0**
+⇒ 官方 `CreateDefinition` 列出的 **35 个常量**，**一个不剩**都有归属
+（起点：轮 30 的 20/4/11 → 轮 41 的 31/0/4 → 轮 44 的 34/0/1 → **本轮 35/0/0**）
+```
+
+## 依据（**不是文本推断，是官方 Returns 段逐字列出**）
+`ISweepFeatureData/SweepType.md` 的 `## Returns` 写着：
+```
+Sweep type as defined in [[swFeatureNameID_e]]:
+- swFmSweep (swept boss)
+- swFmSweepCut (swept cut)
+- **swRefSurface (swept surface)**
+```
+⇒ **同一接口，前端靠 `SweepType` 分 boss/cut/surface** ⇒ `swFmRefSurface` ⇒ `ISweepFeatureData`。
+
+**★ 三条独立佐证**：
+① 该接口 `_overview.md` 的**官方示例**就叫 **"Insert **Swept-surface** Feature (VBA)"**（文件真存在，3318 B）；
+② 官方括注是 **`(surface sweep)`**；
+③ 全 `C:\swapi` 里**没有**任何 `ISurfaceSweep*` 接口（`Surface*`/`Sweep*` 候选里只有 `ISweepFeatureData`）。
+
+**★ 顺带的收获**：同一条证据**官方确认了本表已有的 `swFmSweep` / `swFmSweepCut`** ——
+它们从「人工确证」升到**有官方 Returns 段背书**（依据变硬，结论不变）。
+
+## 验证
+- 检查器 `[OK]`，检查过 5 个站点；负例复验仍精确（诊断不冒充门禁）
+- `compileall -W error::SyntaxWarning` exit 0 · 五项门禁全 exit 0 · `release_check` exit 0
+- **全量回归 868 passed / 17 skipped / 0 failed**
+- `git diff --stat` = **`13 insertions(+)`，无删除**（按事实 61 自查）
+- 按事实 55 重跑了 `sync_bundled_skill.py`

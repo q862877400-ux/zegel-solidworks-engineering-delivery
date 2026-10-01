@@ -122,8 +122,8 @@
                  ⇒ **31 唯一（自动 24 + 人工确证 7）/ 0 歧义 / 4 未映射**
                  ⚠ **不是启发式**（轮 40 的「名字回退」连续改 6 版都不对，已回退 —— 事实 53）
                  ⇒ 三条约束：只补空不覆盖 / 输出分开报 / 没依据的不许进
-               ⇒ **下一步**：剩下 4 条未映射（`swFmDimPattern`/`swFmSolidToSheetMetal`/
-                 `swFmRefSurface`/`swFmFillet`）**需要人**逐条核（已列进 T-040 证据文档）
+               ⚠ ~~下一步：剩下 4 条未映射（`swFmDimPattern`/`swFmSolidToSheetMetal`/
+                 `swFmRefSurface`/`swFmFillet`）需要人逐条核~~ **← 这句已过期，见 ⑭ 与 ⑱**
             ⑫ ★ **接口归属诊断已接进 `release_check.py`**（**非硬失败**，且**假绿可见**）：
                `_run_interface_ownership_probe()` ⇒ 排在所有硬门禁之后、bundled 检查之前
                ⇒ 三条差别：不 raise / `checked_nothing` 写进返回体 / 数据源缺失不算违规
@@ -161,6 +161,21 @@
                  ⇒ `git checkout --` 恢复 + 改用 `edit` 逐处改（事实 61：批量脚本先看 `git diff --stat`）
                ⇒ 全量回归 **868 passed / 17 skipped / 0 failed**（861 + 7 新增）
                ⇒ 那份提案仍有用：作**人工复核的起点**（21/29 有证据）
+            ⑱ ★★★ **`CONST→接口` 映射表全清：35 唯一 / 0 歧义 / 0 未映射**（轮 48）
+               ⇒ 官方 `CreateDefinition` 列出的 **35 个常量一个不剩**都有归属
+               （起点 20/4/11 → 轮41 31/0/4 → 轮44 34/0/1 → **本轮 35/0/0**）
+               ★ 最后 1 条 `swFmRefSurface` 的依据**不是文本推断**：
+                 `ISweepFeatureData/SweepType.md` 的 `## Returns` **逐字列出**
+                 「swFmSweep (swept boss) / swFmSweepCut (swept cut) / **swRefSurface (swept surface)**」
+                 ⇒ 同一接口，前端靠 `SweepType` 分 boss/cut/surface
+               ★ 三条独立佐证：① 该接口 `_overview.md` 的官方示例就叫
+                 **"Insert Swept-surface Feature (VBA)"**（文件真存在）；② 括注 `(surface sweep)`；
+                 ③ 全 swapi **没有**任何 `ISurfaceSweep*` 接口
+               ★ **顺带**：同一条证据**官方确认了**已有的 `swFmSweep`/`swFmSweepCut`（依据变硬）
+               ⚠ **同时修掉一处陈旧记载**：⑪ 原先写「剩 4 条未映射需人核」——**已过期**（实际 0）
+            ⑲ ★ **Spec Kit 的 `converge` 步已对 003 跑通**（轮 48）：
+               `specs/003-topology-closed-loop/converge.md` —— 逐条把 spec 的验收判据
+               与**交付物实测**对齐（不是复述 spec），并记下 3 处**不符合项**与处置
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接:
