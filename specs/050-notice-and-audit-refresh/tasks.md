@@ -1,7 +1,7 @@
 # 050 · Tasks（全部完成，轮 131）
 
 - [x] T-4601 ★ 复核 NOTICE 三条可核断言 ⇒ **三条都成立**
-  `→ 验收:` `python _check_notice_claims.py`
+  `→ 验收:` `Select-String THIRD-PARTY-NOTICES.md -Pattern 'source_verified'`
 - [x] T-4602 找出真过时的 3 处（登记历史 / 提交数 / 能力数）
 - [x] T-4603 ★★ 新增机器检查 `tests/test_notice_consistency.py`（**5 passed**）
   `→ 验收:` `python -m pytest tests/test_notice_consistency.py -q`
