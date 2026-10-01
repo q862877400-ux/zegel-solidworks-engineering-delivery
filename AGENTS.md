@@ -187,6 +187,10 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 | 25 | 上游 MCP 只引用 25 个 `scripts` 模块（含 `importlib.import_module` 的动态引用），我们后补的 58 个一个都没进，交集 = 0 ⇒「我们补的能力没被 MCP 暴露」是当前最大的结构性缺口 | `mcp-server/server.py` 静态抽取全部 `scripts.*` 记号 + 与 `git diff origin/main` 的新增模块求交 |
 | 26 | 仓库构成：上游原有 389 文件 / 10.0 MB；我们新增 100 文件 / 18.2 MB；改过 13 个。`mcp-server/server.py`（104 KB，45 个工具的实现）是上游的，我们一行没改 | `git diff origin/main --stat`（113 files changed）+ `git ls-tree -r -l origin/main` |
 | 27 | 上游 `origin/main` 顶层目录 13 个；实际工作树多出 4 个：`.api-signatures` / `tools` / `output` / `.pytest_cache`（只有 `tools` 入库，另三个是未入库的工作树目录）⇒ 拿上游结构当准绳永远对不上，顶层目录以铁律 3 的白名单为准 | `git ls-tree -d --name-only origin/main` 对比工作树目录 + `git check-ignore -v` |
+| 28 | **「反射里有」≠「运行期调用得到」**：`IModeler` 运行期逐个 `getattr` 实测（SW 2026 SP4.1）—— 可取 5 个（`CreateCylindricalSurface` / `CreateSphericalSurface` / `CreateConicalSurface` / `CreateToroidalSurface` / `CreateArc`）；`CreatePlanarSurface` / `CreateLine` **得 `None`**（调用报含混的 `'NoneType' object is not callable`）；`CreatePoint` / `CreateBodyFromSurf` **成员不存在**；`CreateBsplineSurface` **服务器异常 `0x80010105`**。⇒ 与本表第 11 条（makepy 代理的 `[out] long`）同类：**类型层与运行层会不一致**；`sw_surface.py` 的 14 个创建入口运行期只有 5 个可达 | 活着对象上逐个 `getattr` + 调一次看是否非 None；证据 `D:\AI\SW\probe_surface_array_shape.py` |
+| 29 | `Object` 型的**点/向量**参数**五种包装全可用**：裸 `list` / 裸 `tuple` / `VARIANT(VT_ARRAY\|VT_R8)` / `VT_ARRAY\|VT_VARIANT` / 逐元素 `VARIANT`。⇒ pywin32 迟到绑定会自动把 `list`/`tuple` 转 SAFEARRAY，**不必强制调用方包 `VARIANT`**（`CreateCylindricalSurface` / `CreateSphericalSurface` 各五种全返回非 None） | 同上探针的输出 |
+| 30 | **「可取」≠「调用成功」**：`getattr` 拿到绑定方法只说明**成员可达**；同一函数用不同参数仍可能返回 `None`（实测 `CreateCylindricalSurface` 在可取名单里，用 `origin=[0,0,0]` 调返回 `None`）。⇒ **判据永远是「返回非 None」，不是「在可取名单里」** | 同上探针 + `scripts/sw_surface.py` 的 `require_runtime_available` 文档串 |
+| 31 | `sw_surface.py` 的 14 个曲面创建入口中，**运行期只有 5 个可达**；其余失败方式**含混**（`NoneType not callable`）。⇒ 该类模块必须区分「签名层存在」与「运行层可达」，并对不可达者给**带原因**的错误 | 同第 28 条 |
 
 ```
               会话  参考  草图  尺寸  零件  曲面  钣金  焊件  模具  装配  工程图  检查  仿真  外观  宏  高级

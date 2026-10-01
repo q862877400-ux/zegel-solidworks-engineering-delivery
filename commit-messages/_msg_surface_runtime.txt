@@ -1,0 +1,44 @@
+fix(surface): 真机实测 9/14 曲面创建入口**运行期不可达** —— 加显式守卫 + 修来源块覆盖
+
+## 真机实测发现（本轮的实质产出）
+在活着的 `IModeler` 上逐个 `getattr`（2026-10-01，SW 2026 SP4.1）：
+
+    ✓ 可取（5）: CreateCylindricalSurface / CreateSphericalSurface / CreateConicalSurface
+                / CreateToroidalSurface / CreateArc
+    ✗ 取到 None（2）: CreatePlanarSurface / CreateLine
+      ⇒ 调用报 `'NoneType' object is not callable`（**含混，指向不了真因**）
+    ✗ 根本不存在（2）: CreatePoint / CreateBodyFromSurf
+    ✗ 服务器异常 0x80010105（1）: CreateBsplineSurface
+
+**⇒ 本模块导出 14 个曲面创建入口，运行期只有 5 个可达（约 36%）。**
+**⇒ 记下这条通用结论：「反射里有」≠「运行期调用得到」**
+   —— 与本项目已知事实 11（`OpenDoc6` 的 `[out] long` 在 makepy 代理下要绕）同类：
+   **类型层与运行层会不一致。**
+
+## 同批确定的另一件事（原来一直没定）
+`Object` 型的**点/向量**参数该传什么形状 —— **五种包装全可用**：
+裸 list / 裸 tuple / `VT_ARRAY|VT_R8` / `VT_ARRAY|VT_VARIANT` / 逐元素 VARIANT。
+⇒ pywin32 会自动把 list/tuple 转 SAFEARRAY，**不必强制调用方包 VARIANT**。
+
+## 改了什么
+- `scripts/sw_surface.py`：
+  - 新增两张**实测名单**常量 `IMODELER_RUNTIME_AVAILABLE` / `_UNAVAILABLE`
+  - 新增显式守卫 `runtime_available(method)` / `require_runtime_available(method)`
+    ⇒ 不可达时给**带原因**的 `RuntimeError`，不再是含混的 `NoneType not callable`
+  - ⚠ **职责分离**（第一版的设计被契约测试证伪）：可用性检查**没有**塞进 `_invoke`，
+    因为那会**挡住** `tests/test_sw_surface_signature_contract.py`
+    （它验的是「2 个参数传给 `CreatePlanarSurface`」这个**签名形状**，调用被拦就验不了）。
+    **⇒ `_invoke` 只管 arity；可用性由调用方显式问。**
+
+## ⚠ 本轮踩到的两个「来源块覆盖范围」坑（同族、不同面孔）
+1. **常量夹在来源块与 `def` 之间** ⇒ `_extend_to_code` 延伸止于常量（**本会话第四次**）；
+2. **一个块后面有两个 `def`** ⇒ 默认只覆盖第一个，需 `# 覆盖: 后续同级定义`。
+   **而第一次写这个标记时给它加了 markdown 粗体（`**后续同级定义**`），
+   正则 `r"覆盖\s*[:：]\s*后续同级定义"` 里的 `\s*` 匹配不到 `**` ⇒ 标记没被识别**，
+   表现为「一个 def 被覆盖、下一个没有」这种看似矛盾的现象。
+
+## 验证
+- `tests/test_sw_surface_signature_contract.py` **14 passed**（职责分离后恢复）
+- 四项门禁全 exit 0（含地图重生成）；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 803 passed / 15 skipped**（与基线逐条相同）
+- 真机验证：① 不可达成员给明确 RuntimeError ✓；② `CreateSphericalSurface` 返回非 None ✓
