@@ -31,6 +31,12 @@
 > ★ 顺序不是按缺口大小排的，而是按「**包装层难度**」排的：
 >   包装层越简单、真机越好验的排前面 ⇒ 早暴露风险、早积累套路。
 
+> ★★ **编号顺移（2026-10-01 轮 228 发现并更正）**：原计划把 W4–W7 编成 134–137，
+> 但 **`specs/134-static-simulation-reverified` 是已提交的真实特性**（5 件套、`79cdac1`）
+> ⇒ 按 Spec Kit **flow-forward（完成的目录不可变、需求变了开新号）**，W4 起**顺移一号**：
+> **W4=135 · W5=136 · W6=137 · W7=138**。
+> ⚠ 这正是「编号必须现场核、不能照计划抄」的一个实例。
+
 ### W1 · 草图只读族（`specs/131`）· **约 90 分钟**
 | 项 | 内容 |
 |---|---|
@@ -72,15 +78,38 @@
 验收①：工具数 + 门禁；②：证据脚本 `verdict: pass`
 ```
 
-### W4 · 零件特征族（`specs/134`）· 约 85 分钟
+### W4 · 零件特征族（`specs/135`）· 约 90 分钟 · ★★ **2026-10-01 轮 228 实测后改范围（见下）**
+
 ```
-取什么：建特征的**只读回读**（特征名/类型/参数回读），不取"建"
-★ 理由：这批的"建"多数已有工具（`batch1`/`batch3`/`batch16`），缺的是**回读** —— 而回读正好是验证别的工具时要用的
-来源 / license：本项目自身（MIT）
-验收①：工具数 + 门禁；②：证据脚本 `verdict: pass`
+★★★ **改范围的理由（实测，不是估的）**：⑯ 那 28 个缺口名**逐个核过之后**——
+   ① **已有对应 15 个**：`chamfer` `fillet` `extrude` `extrude_cut` `revolve` `shell` `loft`
+      `sweep` `draft` `dome` `helix` `hole` `mirror` `linear_pattern` `pattern_circular` …
+   ② **名字对不上 13 个**：`combine_bodies` `delete_body` `split_body` `scale_body` `move_body`
+      `intersect` `wrap` `fill_pattern` `pattern_features` `save_body_as_part` `sweep` …
+   ⇒ ★★ **这 28 个**全是"建 / 改"操作**，而原计划写的是 W4 取「**回读**」
+     ⇒ ★ **两者不对口**：回读**已经有**（`solidworks_collect_model_summary` 就是特征树回读）
+     ⇒ 照原计划做 W4 = **做重复功**（与 W2/W3 同一个教训）。
+   ★★ 而实测查出一件更该做的事：**首参可注入、且没挂的"建特征"函数有 10 个** ——
+     `sw_part.extrude_boss` / `extrude_cut` / `extrude_midplane` / `chamfer` / `fillet` /
+     `shell` / `insert_dome` / `linear_pattern` · `sw_helix.insert_helix` ·
+     `sw_sketch_edit.create_sketch_chamfer`
+     ⇒ ★ 而 MCP 里**已经有** `solidworks_revolve_boss`（batch17）与
+       `solidworks_create_hole_feature` ⇒ ★★ **不对称：会旋转、会打孔，却不会拉伸！**
+     ▸ **base flange** 也是这一族（batch4 已挂）⇒ 短板在**最基础的拉伸/切除/倒角**。
+
+★ **所以 W4 改为**：挂**建特征**的一小批（拉伸 / 切除 / 倒角），
+  ★ 且**验证方式与只读批不同** —— 必须**读写配对**：
+    建草图 → 拉伸/切除 → ★ **用只读工具回读断言形状真的变了**
+    （`collect_model_summary` 看特征树 · `part_bounding_box` 看包围盒 · W1 的草图读数看草图）
+  ⇒ 这是本阶段核心判据（A/B 配对）在"写"类批次上的自然延伸。
+★ ⚠ 不做高风险写操作（保存 / 另存 / 删除）—— 本批**只改新文档**，收尾关件不保存。
+
+来源 / license：本项目自身（MIT）；官方依据 `IFeatureManager.FeatureExtrusion3`（23 参数）·
+  `FeatureCut4`（★ 事实 1：切除的正确入口是它，不是 `FeatureExtrusion3(Flip=true)`）
+验收①：工具数 + 门禁；②：`python tools/capture_feature_evidence.py` ⇒ `verdict: pass`
 ```
 
-### W5 · 检查 / 测量 / 反馈族（`specs/135`）· 约 70 分钟
+### W5 · 检查 / 测量 / 反馈族（`specs/136`）· 约 70 分钟
 ```
 取什么：质量属性 / 包围盒 / 干涉检查的只读查询
 ★ 本项目**已有** `solidworks_part_bounding_box` 等 ⇒ 本批取的是**缺口里剩下的那几个**
@@ -88,14 +117,14 @@
 验收①：工具数 + 门禁；②：证据脚本 `verdict: pass`
 ```
 
-### W6 · 装配族（`specs/136`）· 约 85 分钟
+### W6 · 装配族（`specs/137`）· 约 85 分钟
 ```
 取什么：装配结构的只读查询（零部件树 / 配合回读）
 来源 / license：本项目自身（MIT）
 验收①：工具数 + 门禁；②：证据脚本 `verdict: pass`
 ```
 
-### W7 · 仿真载荷包装层（`specs/137`）· 约 95 分钟 · ★ **护城河**
+### W7 · 仿真载荷包装层（`specs/138`）· 约 95 分钟 · ★ **护城河**
 ```
 ★★ 为什么它排最后但最重要：**四家外部项目里 0 个做这块**（实测：只有 Eduardof0nt 有 3 个
    仿真工具，且无一个是"加力/加约束"）⇒ 这块**同时满足护城河的两个条件**（别人没做 + 用户用得上）
