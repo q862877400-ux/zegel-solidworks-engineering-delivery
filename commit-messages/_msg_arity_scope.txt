@@ -1,0 +1,45 @@
+fix(gate): arity 审计扩到 tools/ —— 补上一个真实盲区（COM 调用分散在两处，门禁只覆盖一处）
+
+## 发现链（从一个我自己犯的错开始）
+1. 我写 `tools/audit_runtime_reachability.py` 时把 `CWStudy GetStudy(Int32)`（**一个参数**）
+   传成 `GetStudy(0, out_i4())`（两个）⇒ COM 报 `'无效的参数数目'`（**指向不了真因**）。
+2. 查 arity 审计为什么没抓到 ⇒ **它只审 `scripts/`，不审 `tools/`**。
+3. 而 `tools/` 里有 **3 个文件 / 42 处 COM 调用**（三个证据脚本 + 本审计工具）
+   **全在门禁覆盖之外**。
+
+**⇒ 这是真实盲区。而且「项目自己的代码全对、错的是新写的那处」正是门禁该防的模式：**
+   项目自己的调用是对的（`sw_simulation.py:311` / `sw_topology.py:719` 都传 1 个参数），
+   **只有我这个新工具错了** —— 若门禁早就覆盖 `tools/`，它会在提交前就红。
+
+## 改了什么
+- `tools/audit_runtime_reachability.py`：`GetStudy` 改为 1 个参数（并在注释里写明
+  「反射与 CHM 一致是 1 个；我第一版写 2 个 ⇒ COM 报无效的参数数目」）
+- `scripts/audit_call_arity.py`：新增 **`--all`**（一次审 `scripts/` + `tools/`）
+  ⚠ 不改默认行为（保持「传什么审什么」），加显式全量开关 —— 既能单文件调试，也能一键查全
+- 顺手修了 `--all` 自己的两个 bug（`ROOT` 未定义；`ok` 是**列表**不是计数）
+
+## 结果（`--all` 第一次全量）
+```
+全量（scripts/ + tools/）: 有问题 13 处
+⇒ 全部是**已知的**：
+    Next / Get（OCCT 假阳性）× 8   ·  GetHoleStandards 等（已文档化的有意为之）× 4
+    sw_delivery 的 IGetDocumentNames / OpenDoc6 × 2（已知 makepy 代理）
+⇒ **tools/ 产出 0 处新问题** —— 我的 GetStudy 修好了，三个证据脚本是干净的
+```
+逐文件复核 `tools/`：`audit_runtime_reachability.py` 10/10 · `capture_simulation_evidence.py` 18/18 ·
+`capture_topology_evidence.py` 14/14 —— **42/42 全通过**。
+
+## ⚠ 本轮的中间产物（如实记，尚未可用的那一半）
+`tools/audit_runtime_reachability.py`（**运行期可达性审计**）已写出，但**目前不可用**：
+它报「424 个成员里 360 个在所有试过的对象上取不到」（**85%，明显是假阳性**）。
+**两个结构性上限已查明并写进工具注释**：
+1. **对象集完整性** —— 缺一族对象，那一族成员全报不可达（第一版只有 10 个通用对象 ⇒ 86%）；
+2. **对象集依赖文档状态** —— 裸零件没有研究 ⇒ `ICWStudy` 族整族取不到。
+**⇒ 结论：这个「全局扫一遍」的形态不可靠。** 可靠的是**在**已知对象**上逐个穷举**
+（如 `IModeler` 那次：5/14 可达，结论扎实）。**⇒ 泛化方法，不泛化工具。**
+本轮**没有**把它接进门禁（接进去会因假阳性而红）。这条如实登记。
+
+## 验证
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归 **6 failed / 803 passed / 15 skipped**（与基线逐条相同）
+- `--all` 全量 arity：13 处问题**全部已知**，无新增
