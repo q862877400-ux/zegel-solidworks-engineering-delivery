@@ -1,0 +1,25 @@
+{
+  "started": "2026-10-01 14:28:01",
+  "checks": {
+    "连接 + 活动文档": {
+      "ok": true,
+      "detail": "mcp_avi_asm.SLDASM"
+    },
+    "activate_model_for_preview": {
+      "ok": true,
+      "detail": "ok · bool · 0.01s"
+    },
+    "clear_selection_for_preview": {
+      "ok": true,
+      "detail": "ok · NoneType · 0.01s"
+    },
+    "refresh_scene_graph": {
+      "ok": true,
+      "detail": "ok · NoneType · 0.01s"
+    }
+  },
+  "passed": 4,
+  "total": 4,
+  "verdict": "pass",
+  "finished": "2026-10-01 14:28:02"
+}
