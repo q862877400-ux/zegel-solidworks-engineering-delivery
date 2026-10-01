@@ -72,6 +72,10 @@
                   `类型不匹配`；`AccessSelections` 传空 Dispatch 报 **`0x80010105`**（与事实 28 同码）
                   ⇒ 与 `capabilities.yaml` 早已记录的「不能调用仅进程内非托管 C++ 的指针接口」吻合
                   ⚠ **不要再用「换个参数试试」继续试** —— 已穷尽
+                · ★ **该结论已**写进清单****：`capabilities.yaml` 的 `backend_catalog[solidworks-com-pywin32]`
+                  限制**具体化**（点名接口/成员 + `0x80010105` + 证据脚本）；
+                  `capabilities[sheet_metal]` 补**真机实测状态**（6 个入口里 **2 个可跑**）
+                  ⇒ **状态由清单承载**（AGENTS.md §一 的要求）
                   `swFmSketchBend(35)`，报错**前推**到 `CreateFeature(35)`；
                   **⇒ 三条现卡在同一层 `CreateFeature`**（`create_draft` 的常量也错）
                 · ★ **gusset 补上官方步骤 3**（`ProfileDimensionScheme` 等）——

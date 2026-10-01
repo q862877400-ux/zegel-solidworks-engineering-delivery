@@ -1,0 +1,41 @@
+docs(capabilities): 把「pywin32 到不了」这条结论**写进清单**（状态由清单承载，不只文档）
+
+## 为什么做这一步
+AGENTS.md §一 明写「进度与下一步看 `capabilities.yaml`」——
+而事实 47 那条结论此前只在**文档与已知事实**里，**清单没承载**。
+**⇒ 本补丁把它落到清单上。**
+
+## ① `backend_catalog["solidworks-com-pywin32"]` 的限制**具体化**
+原本只有一句抽象的「不能调用官方标记为仅进程内非托管 C++ 的指针接口」。
+**⇒ 现在点名到接口/成员 + 错误码 + 证据**：
+
+```
+ISketchedBendFeatureData.AccessSelections / SetFixedFace 在 pywin32 下不可调用
+  · SetFixedFace 的**七种数组包装 × 两个重载** 全报 `类型不匹配`（位置 1 或 4）
+  · AccessSelections(model, None) 报 `类型不匹配`（位置 2）
+  · 改传 VARIANT(VT_DISPATCH, None) 报 **`服务器出现意外情况`（0x80010105）**
+    （与 IModeler.CreateBsplineSurface 同码）
+  · 反射里那对 IAccessSelections / IAccessSelections2 正是本限制说的**指针变体**
+⇒ 受此影响：create_one_bend / create_edge_flange / create_gusset 到不了「建成」
+⚠ 「换个参数试试」已穷尽（20+ 种），不要再试
+```
+
+## ② `capabilities[sheet_metal]` 补**真机实测状态**
+```
+6 个创建入口里 **2 个可跑**：
+  ✓ create_base_flange（**只对闭轮廓成立**）· ✓ sheet_metal_evidence
+  ✗ create_one_bend / create_edge_flange / create_gusset（受指针接口限制）
+  ✗ create_draft（swFmDraft(3) 不在官方 35 个常量里）
+已修掉的缺陷：常量错 / gusset 整步缺官方步骤 3 / ReverseDirection 跨接口泄漏
+★ 「属性设对了」与「特征建成了」是两件事，必须分开取证
+```
+
+## ⚠ 编辑纪律（本轮做对的）
+编辑前先验证了 `capabilities.yaml` 的格式：
+`json.dumps(d, ensure_ascii=False, indent=2) + "\n"` **与原文件逐字节相同**
+⇒ **JSON 往返编辑安全** ⇒ 实际 diff = **`4 insertions(+), 2 deletions(-)`**（**只追加，没重排 1183 行**）。
+**改完立即回读核对**（事实 48 第 ② 条定则）：limitations 计数、关键字符串、合法性、行数**逐项打印**。
+
+## 验证
+- 回读核对全通过（pywin32 limitations 2→3；sheet_metal 1→2；仍是合法 JSON；1185 行）
+- 并入规范门禁 exit 0；全量回归 **857 passed**（未引入退化）
