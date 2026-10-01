@@ -1,7 +1,61 @@
 {
-  "interfaces": 507,
+  "per_tlb": {
+    "sldworks.tlb": {
+      "interfaces": 507,
+      "inout_array": 62,
+      "no_flags": 763
+    },
+    "cosworks.tlb": {
+      "interfaces": 85,
+      "inout_array": 0,
+      "no_flags": 140
+    },
+    "swpublished.tlb": {
+      "interfaces": 32,
+      "inout_array": 0,
+      "no_flags": 57
+    },
+    "swdimxpert.tlb": {
+      "interfaces": 52,
+      "inout_array": 0,
+      "no_flags": 2
+    },
+    "sldcostingapi.tlb": {
+      "interfaces": 15,
+      "inout_array": 0,
+      "no_flags": 14
+    },
+    "SWRoutingLib.tlb": {
+      "interfaces": 15,
+      "inout_array": 0,
+      "no_flags": 7
+    },
+    "swmotionstudy.tlb": {
+      "interfaces": 10,
+      "inout_array": 0,
+      "no_flags": 2
+    },
+    "FWorks.tlb": {
+      "interfaces": 1,
+      "inout_array": 0,
+      "no_flags": 1
+    },
+    "Dsgnchk.tlb": {
+      "interfaces": 2,
+      "inout_array": 0,
+      "no_flags": 6
+    },
+    "gtswUtilities.tlb": {
+      "interfaces": 12,
+      "inout_array": 0,
+      "no_flags": 16
+    }
+  },
+  "interfaces": 731,
+  "no_flags": 1008,
   "inout_array_params": [
     {
+      "tlb": "sldworks.tlb",
       "iface": "IBody2",
       "member": "GetMiddleSurface",
       "param": "Face1List",
@@ -9,6 +63,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IBody2",
       "member": "GetMiddleSurface",
       "param": "Face2List",
@@ -16,6 +71,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IBody2",
       "member": "GetMiddleSurface",
       "param": "Thickness",
@@ -23,6 +79,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IBody2",
       "member": "IGetMiddleSurface",
       "param": "Face1List",
@@ -30,6 +87,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IBody2",
       "member": "IGetMiddleSurface",
       "param": "Face2List",
@@ -37,6 +95,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IBody2",
       "member": "IGetMiddleSurface",
       "param": "Thickness",
@@ -44,6 +103,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IBomFeature",
       "member": "GetConfigurations",
       "param": "Visible",
@@ -51,6 +111,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IConfiguration",
       "member": "GetCustomProperties",
       "param": "PropNames",
@@ -58,6 +119,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IConfiguration",
       "member": "GetCustomProperties",
       "param": "PropValues",
@@ -65,6 +127,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IConfiguration",
       "member": "GetCustomProperties",
       "param": "PropTypes",
@@ -72,6 +135,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICurve",
       "member": "FindMinimumRadius",
       "param": "Radius",
@@ -79,6 +143,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICurve",
       "member": "FindMinimumRadius",
       "param": "Location",
@@ -86,6 +151,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICurve",
       "member": "FindMinimumRadius",
       "param": "Parameter",
@@ -93,6 +159,7 @@
       "index": 4
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICurve",
       "member": "IFindMinimumRadius",
       "param": "Radius",
@@ -100,6 +167,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICurve",
       "member": "IFindMinimumRadius",
       "param": "Location",
@@ -107,6 +175,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICurve",
       "member": "IFindMinimumRadius",
       "param": "Parameter",
@@ -114,6 +183,7 @@
       "index": 4
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll",
       "param": "PropNames",
@@ -121,6 +191,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll",
       "param": "PropTypes",
@@ -128,6 +199,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll",
       "param": "PropValues",
@@ -135,6 +207,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll2",
       "param": "PropNames",
@@ -142,6 +215,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll2",
       "param": "PropTypes",
@@ -149,6 +223,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll2",
       "param": "PropValues",
@@ -156,6 +231,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll2",
       "param": "Resolved",
@@ -163,6 +239,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll3",
       "param": "PropNames",
@@ -170,6 +247,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll3",
       "param": "PropTypes",
@@ -177,6 +255,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll3",
       "param": "PropValues",
@@ -184,6 +263,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll3",
       "param": "Resolved",
@@ -191,6 +271,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ICustomPropertyManager",
       "member": "GetAll3",
       "param": "PropLink",
@@ -198,6 +279,7 @@
       "index": 4
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IFeature",
       "member": "GetBox",
       "param": "BBox",
@@ -205,6 +287,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IModelDocExtension",
       "member": "GetSearchData",
       "param": "AppNames",
@@ -212,6 +295,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IModelDocExtension",
       "member": "GetSearchData",
       "param": "NodeNames",
@@ -219,6 +303,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IModelDocExtension",
       "member": "GetSearchData",
       "param": "NodeValues",
@@ -226,6 +311,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IModeler",
       "member": "CheckInterference3",
       "param": "Body1InterferedFaceArray",
@@ -233,6 +319,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IModeler",
       "member": "CheckInterference3",
       "param": "Body2InterferedFaceArray",
@@ -240,6 +327,7 @@
       "index": 4
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "IModeler",
       "member": "CheckInterference3",
       "param": "IntersectedBodyArray",
@@ -247,6 +335,7 @@
       "index": 5
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "INote",
       "member": "GetBendLineValues2",
       "param": "Points",
@@ -254,6 +343,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PackVariant",
       "param": "VariantArray",
@@ -261,6 +351,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutLongLong",
       "param": "VariantArray",
@@ -268,6 +359,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutDispatch",
       "param": "VariantArray",
@@ -275,6 +367,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutBstr",
       "param": "VariantArray",
@@ -282,6 +375,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutBoolean",
       "param": "VariantArray",
@@ -289,6 +383,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutByte",
       "param": "VariantArray",
@@ -296,6 +391,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutLong",
       "param": "VariantArray",
@@ -303,6 +399,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutDouble",
       "param": "VariantArray",
@@ -310,6 +407,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutShort",
       "param": "VariantArray",
@@ -317,6 +415,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutUNKNOWN",
       "param": "VariantArray",
@@ -324,6 +423,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISketchBlockInstance",
       "member": "GetAttachedEntities",
       "param": "Entities",
@@ -331,6 +431,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISketchBlockInstance",
       "member": "GetAttachedEntities",
       "param": "EntityTypes",
@@ -338,6 +439,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IntersectSurface",
       "param": "CurveArray",
@@ -345,6 +447,7 @@
       "index": 1
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IntersectSurface",
       "param": "BoundsArray",
@@ -352,6 +455,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IntersectCurve",
       "param": "PointArray",
@@ -359,6 +463,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IntersectCurve",
       "param": "TArray",
@@ -366,6 +471,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IntersectCurve",
       "param": "UvArray",
@@ -373,6 +479,7 @@
       "index": 4
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IntersectCurve2",
       "param": "PointArray",
@@ -380,6 +487,7 @@
       "index": 2
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IntersectCurve2",
       "param": "TArray",
@@ -387,6 +495,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IntersectCurve2",
       "param": "UvArray",
@@ -394,6 +503,7 @@
       "index": 4
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "FindMinimumRadius",
       "param": "Radius",
@@ -401,6 +511,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "FindMinimumRadius",
       "param": "Location",
@@ -408,6 +519,7 @@
       "index": 4
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "FindMinimumRadius",
       "param": "UVParameter",
@@ -415,6 +527,7 @@
       "index": 5
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IFindMinimumRadius",
       "param": "Radius",
@@ -422,6 +535,7 @@
       "index": 3
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IFindMinimumRadius",
       "param": "Location",
@@ -429,6 +543,7 @@
       "index": 4
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISurface",
       "member": "IFindMinimumRadius",
       "param": "UVParameter",
@@ -438,6 +553,7 @@
   ],
   "called_hits": [
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PackVariant",
       "param": "VariantArray",
@@ -445,6 +561,7 @@
       "index": 0
     },
     {
+      "tlb": "sldworks.tlb",
       "iface": "ISafeArrayUtility",
       "member": "PutDouble",
       "param": "VariantArray",
