@@ -1,5 +1,5 @@
 {
-  "started": "2026-10-01 14:08:05",
+  "started": "2026-10-01 14:10:54",
   "checks": {
     "连接 SolidWorks": {
       "ok": true,
@@ -7,11 +7,11 @@
     },
     "复用已有文档": {
       "ok": true,
-      "detail": "mcp_avi_shaft.SLDPRT"
+      "detail": "mcp_avi_asm.SLDASM"
     },
     "list_render_materials": {
       "ok": true,
-      "detail": "ok · 0 个材质 · 0.02s"
+      "detail": "ok · 0 个材质 · 0.00s"
     },
     "collect_appearance_evidence": {
       "ok": true,
@@ -19,7 +19,7 @@
     },
     "current_selection": {
       "ok": true,
-      "detail": "1 项 · 0.00s"
+      "detail": "0 项 · 0.00s"
     },
     "clear_selection": {
       "ok": true,
@@ -27,11 +27,40 @@
     },
     "set_standard_view": {
       "ok": true,
-      "detail": "ok · 0.53s"
+      "detail": "ok · 0.52s"
+    },
+    "set_document_appearance 生效": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "★ list_render_materials **有材质时**返回 > 0": {
+      "ok": true,
+      "detail": "材质数 = 1（原文档是 0）"
+    },
+    "★ `appearance_count` 与实际材质数一致": {
+      "ok": true,
+      "detail": "appearance_count=1 · 实际=1"
+    },
+    "★ `appearances[0].diffuse` **不是恒定 0**（证明真读到了材质参数）": {
+      "ok": true,
+      "detail": "diffuse=0.75"
+    },
+    "★ `has_appearance` 与材质数一致": {
+      "ok": true,
+      "detail": "has_appearance=True"
     }
   },
-  "passed": 7,
-  "total": 7,
+  "strong_evidence": {
+    "materials": 1,
+    "diffuse": 0.75,
+    "evidence_keys": [
+      "appearance_count",
+      "appearances",
+      "has_appearance"
+    ]
+  },
+  "passed": 12,
+  "total": 12,
   "verdict": "pass",
-  "finished": "2026-10-01 14:08:06"
+  "finished": "2026-10-01 14:10:56"
 }

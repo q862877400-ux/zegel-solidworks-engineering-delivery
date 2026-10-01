@@ -45,3 +45,21 @@
 
 ### 安全（铁律 2）
 `CommandInProgress` 抑制 → 每调用独立计时 → 收尾关掉**本轮自己开的**文档（本轮复用了已有文档，未新建）。
+
+## ✅✅ 强证据（轮 92 补）—— 上节「证据强度不均」已解决
+造一个**带外观的新件**再验，把两条弱证据变成硬证据：
+```
+✓ set_document_appearance 生效
+✓ ★ list_render_materials **有材质时**返回 > 0        材质数 = 1（原文档是 0）
+✓ ★ appearance_count 与实际材质数一致                 appearance_count=1 · 实际=1
+✓ ★ appearances[0].diffuse **不是恒定 0**           diffuse=0.75   ← 证明真读到了材质参数
+✓ ★ has_appearance 与材质数一致                      has_appearance=True
+⇒ 12/12 · verdict: pass
+```
+**⚠ 本节自己的两处错（都是当场抽验发现的）**：
+1. 我按 `rows` 取行 ⇒ 断言拿到 `None`；**实际键名是 `appearances`**（读实现后确认）；
+2. `created.Close(False)` 在迟到绑定下报「**无效的参数数目**」⇒ 改用 `ISldWorks.CloseDoc(标题)`。
+
+**★ 收尾（铁律 2）**：发现**我造的空件残留**（零件6/7/8）⇒ 只关「标题形如 `零件N` **且路径为空**」的，
+**绝不碰有路径的文档**；清理后只剩用户原有的两个（`mcp_avi_shaft.SLDPRT` / `mcp_avi_asm.SLDASM`）。
+冒烟脚本的收尾也已改成 `CloseDoc`，并在失败时**打印告警而不静默**。
