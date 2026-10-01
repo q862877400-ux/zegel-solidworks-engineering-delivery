@@ -1,0 +1,55 @@
+fix(verify): 接线**端到端验证通过**（3/3）+ 更正一处事实错误 + 治住一个真实陷阱
+
+## ① ★ 关掉了那个记了两次的缺口：「接线本身未在本机实测」
+`docs/T-011-...md` 里两次写着「⚠ 接线本身未在本机跑 MCP 客户端」。
+**⇒ 本轮补上。** 新增 `probe_wired_tools_e2e.py`：
+```
+import server（**不 mcp.run()**）→ 取 FastMCP 工具表 → 用 `Tool.run({"params": {...}})`
+⇒ 工具表 65 个；调 3 条**只读**工具：
+   ✓ solidworks_topology_evidence    → {"study_count": 0, "studies": []}
+   ✓ solidworks_mold_evidence        → {"counts": {...}}
+   ✓ solidworks_sheet_metal_evidence → {"features": [...], ...}
+   ⇒ **成功 3 / 失败 0**
+```
+**⚠ 安全**：**绝不启动第二个 server**（已知事实 24 的死锁风险）—— 只在**进程内**调，
+且只调**只读**工具（不建特征、不改模型）。
+
+## ② ⚠⚠ 更正一处**事实错误**（第 22 轮）
+第 22 轮我写：「核实：那个工具**不存在**，所以这条一直悬着」。
+**⇒ 错了。** `fix_bare_outparams.py` **存在**，在**工作区根目录**：
+```
+D:\AI\SW\fix_bare_outparams.py          5.0 KB  改于 2026-10-01 03:17
+D:\AI\SW\find_bare_outparam_sites.py    4.2 KB  改于 2026-10-01 03:16
+```
+**我只在代码副本里找，没在工作区里找**，就断言「不存在」。
+**⇒ 这正是「查不到就说查不到」要防的错：把「我这一处没找到」说成「不存在」。**
+（第 22 轮那个「0 处」的**结论**仍成立 —— 我用独立写的审计器复核过；
+但「工具不存在」这个**前提**是错的。）
+
+## ③ ⚠ 治住一个**真实陷阱**：工作区根遮蔽依赖包
+```
+D:\AI\SW\mcp.py  ← Python 把**脚本所在目录**放在 sys.path[0]
+⇒ `import mcp` 拿到的是**那个脚本** ⇒
+   ModuleNotFoundError: No module named 'mcp.server'; 'mcp' is not a package
+⇒ **server.py 在该 CWD 下根本 import 不了**
+⇒ **错误信息指向不了真因**（看不出是「被本地同名文件遮蔽」）
+```
+**⇒ 新增 `scripts/check_workspace_shadowing.py`**：对 `server.py` 用到的顶层第三方包，
+检查工作区根有没有同名 `.py`/目录 ⇒ 报出 + **给修法**。
+**⚠ **不自动删任何东西**（工作区那 ~600 个脚本是历史产物，删不删由人定）。**
+**⇒ 配 4 条测试**（含**负例**：种一个 `mcp.py`，断言检查器报出来；正例：干净目录 PASS）。
+
+## ④ 核实了「我的工具与上游既有工具**同形**」
+```
+上游既有: cadstudio_resolve_backend      properties=['params'] required=['params']
+我的工具: solidworks_topology_evidence   properties=['params'] required=['params']
+⇒ **同形** ⇒ 注册器正确；**是我的探针传参方式错了**（应传 {'params': {...}}）
+```
+**⇒ 这一条**否证了**「注册器有结构 bug」的怀疑 —— 又一次「先核实再下结论」。
+
+## 验证
+- 接线端到端：**3/3 通过**（65 个工具在表里）
+- 遮蔽检查器：**如实报出 `mcp.py`**（它是 FAIL，因为**真有这个问题**，不是回归失败）
+- 遮蔽测试 4 条全过
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下
