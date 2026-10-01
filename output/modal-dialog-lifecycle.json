@@ -1,0 +1,18 @@
+{
+  "found_after_seconds": 0.86,
+  "found_count": 1,
+  "scanned_windows": 162,
+  "dismissed": 1,
+  "remaining_dialogs": 0,
+  "trigger_exit": 0,
+  "unblocked": true,
+  "trigger_log_tail": [
+    "TRIGGER: 已连接",
+    "已创建新零件文档",
+    "TRIGGER: 空零件已建好（**故意的**）",
+    "TRIGGER: 现在**故意**用 b_coord_input=False（退回『用模型已定义方向』）",
+    "TRIGGER: 竟然没弹框就返回了",
+    "TRIGGER: 调用返回 ⇒ 阻塞已解除"
+  ],
+  "pid": 20456
+}

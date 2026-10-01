@@ -1,0 +1,13 @@
+   ✓ batch9 声明 3 条                                    ['insert_core_cavity_solids', 'insert_parting_surface', 'mold_undercut
+   ✓ 3 条的 module/function/参数与真实签名一致                   逐条核过
+   ✓ ★ 3 条的**前置条件已记录**（防下一个人再踩弹窗）                     ['insert_core_cavity_solids', 'insert_parting_surface', 'mold_undercut
+已连接到运行中的 SolidWorks 实例（ProgID: SldWorks.Application）
+当前文档: block0.SLDPRT (类型: 零件)
+已创建新零件文档
+   ✓ mold_undercut_detect（不弹框的那个）可调用                  ok · NoneType
+   （已关闭临时零件 零件169，不保存）
+   ✓ ★ 另 2 个**故意不调用**（未准备的分型件上会弹框）                    insert_core_cavity_solids / insert_parting_surface ⇒ 见 preconditions
+
+  ── 5/5 · verdict: pass ──
+  ⚠ **未验证**：`insert_core_cavity_solids` / `insert_parting_surface` 的真机行为 ——
+     需要**已准备的分型件**才能安全调；本轮没有那样的件。

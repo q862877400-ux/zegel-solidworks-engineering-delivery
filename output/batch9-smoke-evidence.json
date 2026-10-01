@@ -1,19 +1,19 @@
 {
-  "started": "2026-10-01 14:37:24",
+  "started": "2026-10-01 19:53:06",
   "checks": {
     "batch9 声明 3 条": {
       "ok": true,
       "detail": "['insert_core_cavity_solids', 'insert_parting_surface', 'mold_undercut_detect']"
     },
     "3 条的 module/function/参数与真实签名一致": {
-      "ok": true,
+      "ok": false,
       "detail": "逐条核过"
     },
     "★ 3 条的**前置条件已记录**（防下一个人再踩弹窗）": {
       "ok": true,
       "detail": "['insert_core_cavity_solids', 'insert_parting_surface', 'mold_undercut_detect']"
     },
-    "mold_undercut_detect（不弹框的那个）可调用": {
+    "mold_undercut_detect（**坐标输入**模式下不弹框）可调用": {
       "ok": true,
       "detail": "ok · NoneType"
     },
@@ -25,10 +25,10 @@
   "preconditions": {
     "insert_core_cavity_solids": "需要**已定义拔模方向**且已有分型面/分型线 ⇒ 否则弹「此拔模方向尚未定义。」",
     "insert_parting_surface": "需要**已插入分型线** ⇒ 否则弹框",
-    "mold_undercut_detect": "需要**有实体**（空零件上无意义，但**不弹框**）⇒ 可安全调用"
+    "mold_undercut_detect": "⚠⚠ **轮 167 更正**：旧注释写「**不弹框**」是**错的** —— 实测**弹了**「此拔模方向尚未定义。」并卡住会话。根因：第 3 参是官方的 `BCoordInput`，传 `False` = **不启用坐标输入** ⇒ 退回「用模型已定义方向」⇒ 空零件上没定义 ⇒ 弹框。★ 现在**默认 `b_coord_input=True` + 非零方向 (0,0,1)** ⇒ **不依赖模型已定义方向 ⇒ 从根上不弹框**"
   },
-  "passed": 5,
+  "passed": 4,
   "total": 5,
-  "verdict": "pass",
-  "finished": "2026-10-01 14:42:23"
+  "verdict": "fail",
+  "finished": "2026-10-01 19:53:06"
 }

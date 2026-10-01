@@ -1,0 +1,8 @@
+已连接到运行中的 SolidWorks 实例（ProgID: SldWorks.Application）
+当前文档: block0.SLDPRT (类型: 零件)
+TRIGGER: 已连接
+已创建新零件文档
+TRIGGER: 空零件已建好（**故意的**）
+TRIGGER: 现在**故意**用 b_coord_input=False（退回『用模型已定义方向』）
+TRIGGER: 竟然没弹框就返回了
+TRIGGER: 调用返回 ⇒ 阻塞已解除
