@@ -559,3 +559,62 @@ A5 现在有**两层**：签名对齐（原有）+ **运行期可达/可用**（
 - **⇒ `check_provenance` 现在直接打印两条最常见原因 + 修法**（含
   「`覆盖: 后续同级定义` 那行**不要**加 markdown 粗体」）
 - 已实测验证：临时制造未覆盖 ⇒ 诊断确实打印；还原 ⇒ PASS
+---
+
+## 十六、追根因（2026-10-01）：**修好一层、否证一个假设、留两层未明**
+
+### 16.1 为什么值得花一轮追根因
+上一轮测出「4/6 不可用」就停了 —— 那只回答了**「不行」**，没回答**「为什么」**。
+**⇒ 而「为什么」才是判据 A5 要的功课。** 本轮逐层追（证据 `probe_featuredata_access.py`）。
+
+### 16.2 ① `CreateDefinition(fm)` 实测 —— 决定性的分界
+```
+✓ CreateDefinition(34) BaseFlange → 非 None
+✓ CreateDefinition(37) EdgeFlange → 非 None
+✓ CreateDefinition(118) Gusset    → 非 None
+✗ CreateDefinition(3)  Draft      → **None**
+✗ CreateDefinition(33) OneBend    → **None**
+```
+**⇒ Draft 与 OneBend 不走 `CreateDefinition`。** 反射里确有专用入口
+（`InsertSheetMetal3dBend` / `IInsertSheetMetalEdgeFlange2` / `InsertGussetFeature3` /
+`InsertSheetMetalBaseFlange2`，**均存在**）—— **但正确用法未查明**。
+
+### 16.3 ② 一个**被否证的**假设（我自己的）
+我原以为「属性设不上 = 缺 `AccessSelections`」（**该文件自己的文档串就这么写**）。
+真机逐个试三种 `Component`：
+| Component | 结果 |
+|---|---|
+| Python `None` | `'类型不匹配'`（`TYPE_E_TYPEMISMATCH`） |
+| `VARIANT(VT_DISPATCH, None)` | `'服务器出现意外情况'`（`RPC_E_SERVERFAULT`） |
+| `False` | `'类型不匹配'` |
+
+**⇒ 全失败。** 官方文档：「Gains access to the selections that **describe this feature**」
+—— 那是**编辑已有特征**用的，**不是创建用的**。
+**⇒ 我据此加的修改**已全部撤回**（`patch_revert_access.py` 留痕），不让错的东西留在代码里。**
+
+**⚠ 这条值得记进方法论：文档串写的「必须做 X」**不等于**「X 就能让功能跑通」；
+X 的**语义**（编辑 vs 创建）决定它适不适用。**
+
+### 16.4 ③ 一个**真的修好了**的缺陷：跨接口属性泄漏
+`create_edge_flange` 设的 `data.ReverseDirection` **不属于** `IEdgeFlangeFeatureData`
+（43 个成员里**没有**）—— 它是 **`IDraftFeatureData2`**（25 个成员）的成员。
+**⇒ 作者把「拔模」接口的属性抄到了「边法兰」代码里**（正是铁律 1 禁止的「凭印象写」）。
+
+删掉后真机报错**从** `Property ... can not be set` **变为** `CreateFeature(37) 创建失败`
+⇒ **属性那一层确实通了。**
+
+**⚠ 不臆造替代**：最接近的 `ReverseOffset` / `ReversePositionOffset` 是**偏置**方向，
+与「法兰方向」语义不同 —— **边法兰没有「反向」这个开关**。
+
+### 16.5 仍未查明的（如实留白）
+- `create_gusset`：`Thickness` **是** `IGussetFeatureData` 的成员（19 个里有）**却设不上**
+- 这 4 个的**正确创建路径**（是否该改用专用 `Insert*` 入口）
+**⇒ 状态表已写入三层根因结论；工具描述仍是 `*** NOT USABLE ***`。**
+
+### 16.6 对判据 A5 的意义（又深一层）
+```
+第一层：签名对齐           ← 原有
+第二层：运行期可达/可用     ← 上轮加
+第三层：**根因层次**        ← 本轮加：是「入口选错」？「属性不属于该接口」？还是「状态没准备」？
+⇒ 第三层才是能指导修复的那一层。前两层只能告诉你「不许用」。
+```

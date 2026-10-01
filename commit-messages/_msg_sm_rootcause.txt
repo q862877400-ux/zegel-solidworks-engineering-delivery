@@ -1,0 +1,50 @@
+fix(sheet-metal): 查清 4 条真机失败函数的**三层根因** —— 修好一层、否证一个假设、留两层未明
+
+## 本轮做了什么：把「不可用」追到根因，而不是停在报错
+上轮实测出 6 条钣金里 4 条失败。本轮逐层追因（证据 `probe_featuredata_access.py`）。
+
+## ① `CreateDefinition(fm)` 实测 —— 决定性的分界
+```
+✓ CreateDefinition(34) BaseFlange → 非 None
+✓ CreateDefinition(37) EdgeFlange → 非 None
+✓ CreateDefinition(118) Gusset    → 非 None
+✗ CreateDefinition(3)  Draft      → **None**
+✗ CreateDefinition(33) OneBend    → **None**
+```
+**⇒ Draft 与 OneBend 不走 `CreateDefinition`。** 反射里确实有专用入口
+（`InsertSheetMetal3dBend` / `IInsertSheetMetalEdgeFlange2` / `InsertGussetFeature3` /
+`InsertSheetMetalBaseFlange2`，**均存在**）—— **但正确用法本轮未查明**。
+
+## ② 一个**被否证的**假设（我自己的）
+我原以为「属性设不上 = 缺 `AccessSelections`」（该文件自己的文档串就这么写）。
+真机逐个试三种 `Component` 形式：
+```
+Python None      → '类型不匹配' (TYPE_E_TYPEMISMATCH)
+_empty_callout() → '服务器出现意外情况' (RPC_E_SERVERFAULT)
+False            → '类型不匹配'
+```
+**⇒ 全失败。** 官方文档：「Gains access to the selections that **describe this feature**」——
+那是**编辑已有特征**用的，**不是创建用的**。
+**⇒ 我据此加的修改**已全部撤回**（补丁 `patch_revert_access.py` 留痕），不让错的东西留在代码里。**
+
+## ③ 一个**真的修好了**的缺陷：跨接口属性泄漏
+`create_edge_flange` 设的 `data.ReverseDirection` **不属于** `IEdgeFlangeFeatureData`
+（43 个成员里没有它）—— 它是 **`IDraftFeatureData2`**（25 个成员）的成员。
+**⇒ 作者把「拔模」接口的属性抄到了「边法兰」代码里。**
+删掉后真机报错**从** `Property ... can not be set` **变为** `CreateFeature(37) 创建失败`
+⇒ **属性那一层确实通了**（根因确认修好）。
+
+⚠ **不臆造替代**：最接近的 `ReverseOffset` / `ReversePositionOffset` 是**偏置**方向，
+语义不同 —— 边法兰没有「反向」这个开关。
+
+## 仍**未查明**的（如实留白，不猜不硬改）
+- `create_gusset`：`Thickness` **是** `IGussetFeatureData` 的成员（19 个里有）却设不上
+- 这 4 个的**正确创建路径**（是否该改用专用 `Insert*` 入口）
+**⇒ 状态表 `SHEET_METAL_RUNTIME_STATUS` 已写入三层根因结论**，
+工具描述仍是 `*** NOT USABLE ON THE TEST MACHINE ***`。
+
+## 验证
+- 四项门禁全 exit 0（**且本轮地图没过期** —— 只改函数体、没增删函数）
+- `compileall -W error::SyntaxWarning` exit 0
+- 真机复测：**3 通过 / 4 失败**（与上轮一致，但 `create_edge_flange` 的报错已改变）
+- 全量回归 **6 failed / 841 passed / 15 skipped**（基线失败列表逐条相同）
