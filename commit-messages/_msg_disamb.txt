@@ -1,0 +1,33 @@
+feat(check): `CONST→接口` 映射表**歧义清零**（20→24 唯一命中 / 0 歧义）—— 三条**官方文本**消歧规则
+
+## 结果
+```
+唯一命中 20 → **24**  ·  歧义 4 → **0**  ·  未映射 11（不变）
+检查器复跑：[OK] 没有命中 · 检查过 5 个站点
+```
+
+## 四条歧义逐条消解，**每条都有官方文本依据**
+| 常量 | 原歧义 | 消解为 | 依据 |
+|---|---|---|---|
+| `swFmNormalCut` | `ISMNormalCutFeatureData2` vs `ISMNormalCutGroupData` | **`ISMNormalCutFeatureData2`** | 规则①：后者的官方描述是 "…a normal cut **feature's cut-extrude face group**"，**是另一个接口的子对象** |
+| `swFmTabAndSlot` | `ITabAndSlotFeatureData` vs `ITabAndSlotGroupData` | **`ITabAndSlotFeatureData`** | 规则①：后者 "…a tab and slot **feature group**" |
+| `swFmCornerRelief` | `ICornerReliefFeatureData` vs `ISMCornerReliefData` | **`ICornerReliefFeatureData`** | 规则②：前者 "…corner relief **feature data**"、后者 "…corner relief **data**"（**少了 feature**） |
+| `swFmLibraryFeature` | `ILibraryFeatureData` vs `ILibraryFormToolFeatureData` | **`ILibraryFeatureData`** | 规则③（**弱**）：描述**比常量括注多出的词最少**者优先（+2 词 vs +4 词）|
+
+## 三条规则（**都从官方描述读出，不是挑一个看起来对的**）
+```
+① **含 `group` 者是子项** ⇒ 排除（官方证据：两处 GroupData 的描述都写着 "feature group"）
+② 剩下的里**含 `feature` 者优先**（官方证据：CornerRelief 一对的差别正在这里）
+③ ⚠ **兜底（弱证据，排在最后）**：多出词最少者优先
+   —— `CreateDefinition` 的括注是那个类型的**短官方标签**，描述离它最近者更可能是它
+   ⚠ **本规则是启发式**，不如 ①② 硬 ⇒ **只在 ①② 之后仍多命中时才用**，代码里就这么写的
+```
+
+## ⚠ 诚实标注
+`swFmLibraryFeature → ILibraryFeatureData` 是**第 ③ 条（弱规则）**解出来的，
+**不如另外三条硬**。若日后有更硬的官方依据推翻它，改这一条即可（代码里注释已写明它是启发式）。
+
+## 验证
+- 四条消解**逐条列出官方描述原文作依据**（不是「试到看起来对」）
+- 检查器复跑 `[OK]`；四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下
