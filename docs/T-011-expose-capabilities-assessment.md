@@ -978,3 +978,44 @@ create_draft       → CreateDefinition(3) 未返回特征数据  ← **它的�
 | `C:\swapi\enums\swFeatureNameID_e.md` | 成员名 + **描述** | **数值** —— 它的「Value」列**装的是描述** |
 | `D:\AI\SW\_raw\**\enum_values_sldworks.txt`（反射） | **数值**（130 个成员） | 描述 |
 **⇒ 查常量数值必须去反射；查描述去 swapi 枚举页。**
+
+
+---
+
+## 二十六、`create_gusset` 补上**整步缺失的官方步骤 3** + 两层分开取证（2026-10-01）
+
+### 26.1 官方 Remarks 把 gusset 创建写成 **4 步**
+```
+1. CreateDefinition
+2. **Pre-select** faces/lines/edges/vertices/points（legs）
+3. **Specify `ProfileDimensionScheme` and modify other properties**   ← ★ 模块整步跳过
+4. CreateFeature
+```
+**模块的 `_apply` 只设了 4 个**尺寸**属性，而步骤 3 的**头一句**从未设过。**
+官方属性页还明写：
+* `UseAngleDimForProfile`：「**valid only if `ProfileDimensionScheme` is set to 1**」
+* `UseOffset`：「设为 true 后**必须设 offset distance**；**若未设参照点**，offset 作用于**假定参照点**」
+  + Remarks 第 2 步：「**若未预选，则必须把 `UseOffset` 设为 true**」
+
+### 26.2 ⚠ 修掉一处**自己引入的**不一致
+第一版**无条件**把 `UseAngleDimForProfile` 置 True，而 spec 的角度默认 `0.0`
+⇒ **「用角度维」却给 0 角度**。
+**⇒ 改为条件式**（官方在 scheme=1 下给了两种**互斥**方案）：
+```
+有角度 ⇒ ProfileLengthDim + ProfileAngleDim + UseAngleDimForProfile=**true**
+无角度 ⇒ ProfileLengthDim + ProfileHeightDim + UseAngleDimForProfile=**false**
+```
+
+### 26.3 ★ 两层**分开取证**（不把「改对属性」说成「修好工具」）
+```
+① 属性层（probe_gusset_props_readback.py）：按 _apply 原样设一遍再读回 ⇒ **8/8 成功**
+② 创建层：同一个 data 直接 CreateFeature(118) ⇒ **None**
+⇒ **失败原因不在属性层**；剩余阻塞在**步骤 2 的预选**
+   （官方要求「一个折弯的两个平面」，夹具是**平板**）
+```
+**⇒ 本次修复**除掉了一个确证的缺陷**，但**不宣称 `create_gusset` 可用**。**
+
+### 26.4 顺带修一处**文档与代码不符**
+`create_one_bend` 上方的来源块仍写 `IOneBendFeatureData` / `swFmOneBend(33)`，
+而上一轮已改用 `swFmSketchBend(35)` ⇒ **注释没跟上，已更正**。
+**⇒ 文档与代码不符比没有文档更糟。**

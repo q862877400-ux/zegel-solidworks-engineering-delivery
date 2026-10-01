@@ -69,6 +69,10 @@
                   官方列出的 **35 个** `CreateDefinition` 合法常量里 ⇒ 已改用
                   `swFmSketchBend(35)`，报错**前推**到 `CreateFeature(35)`；
                   **⇒ 三条现卡在同一层 `CreateFeature`**（`create_draft` 的常量也错）
+                · ★ **gusset 补上官方步骤 3**（`ProfileDimensionScheme` 等）——
+                  真机**属性层 8/8 读回**，但 `CreateFeature(118)` **仍 None**
+                  ⇒ **「属性设对了」≠「特征建成了」**，剩余阻塞在**步骤 2 的预选**
+                  （官方要「一个折弯的两个平面」，夹具是平板）
                 · ★ **可核验的 `CONST→接口` 映射**已生成（官方文本匹配：20 唯一 / 4 歧义 / 11 未映射）
              ④ **运行时可靠性审计**已建：
                 · 裸 by-ref 出参审计（`scripts/audit_byref_args.py`，实测 **0 处 / 674 调用点**）

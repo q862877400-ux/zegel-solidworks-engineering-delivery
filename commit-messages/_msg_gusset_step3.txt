@@ -1,0 +1,53 @@
+fix(sheet-metal): 补上 `create_gusset` **整步缺失的官方步骤 3** + 把「属性层/创建层」分开取证
+
+## ① 官方把 gusset 的创建写成 **4 步**，而模块**整步跳过了第 3 步**
+`C:\swapi\types\ISMGussetFeatureData\_overview.md` 的 **Remarks**：
+```
+1. Call IFeatureManager::CreateDefinition
+2. **Pre-select** faces/lines/edges/vertices/points（legs）
+3. **Specify ISMGussetFeatureData::ProfileDimensionScheme and modify other properties**  ← ★
+4. Call IFeatureManager::CreateFeature
+```
+**模块的 `_apply` 只设了 4 个**尺寸**属性，而第 3 步的**头一句** `ProfileDimensionScheme`
+**从未设过**。**官方属性页还明写**：
+* `UseAngleDimForProfile`：「**valid only if `ProfileDimensionScheme` is set to 1**」
+  ⇒ **不设 scheme 就设角度维，那个属性可能根本不生效**
+* `UseOffset`：「**After setting this property to true, set the offset distance.**
+  **If a reference point is not set, the offset is applied to an assumed reference point.**」
+  + Remarks 第 2 步：「**If you do not pre-select any of these entities, then you must
+  set `UseOffset` to true**」⇒ 模块**不预选参照点** ⇒ **必须**置 true
+
+**⇒ 已补上 `ProfileDimensionScheme = 1`（`swSheetMetalGussetProfileDimType_ProfileDimensions`，
+数值取自官方枚举页）、`UseOffset = True`、`OffsetDistance = 0.0`。**
+
+## ② ⚠ 又修掉一处**我自己引入的**不一致
+第一版把 `UseAngleDimForProfile` **无条件置 True**，而 spec 的 `profile_angle` 默认是 `0.0`
+⇒ **「用角度维」却给 0 角度** —— 自相矛盾的标注方案。
+**⇒ 改为条件式**（官方 Remarks 在 scheme=1 下给了**两种互斥方案**）：
+```
+有角度 ⇒ ProfileLengthDim + ProfileAngleDim + UseAngleDimForProfile=**true**
+无角度 ⇒ ProfileLengthDim + ProfileHeightDim + UseAngleDimForProfile=**false**
+```
+
+## ③ ★ 把「属性层已修」与「创建层仍失败」**分开取证**（不混淆结论）
+`probe_gusset_props_readback.py`：
+```
+① 属性层：按 _apply 原样设一遍再**读回** ⇒ **8/8 成功**
+   （ProfileDimensionScheme=1 ✓ UseAngleDimForProfile ✓ UseOffset ✓ OffsetDistance=0.0 ✓ …）
+   ⇒ **官方要求的属性确实被接受**
+② 创建层：同一个 data 直接 `CreateFeature(118)` ⇒ **None**
+   ⇒ **失败原因不在属性层**
+③ 与第 24 轮一致：官方步骤 2 要求**预选「一个折弯的两个平面」**，
+   而夹具是**平板（无折弯）** ⇒ 造不出那个前置
+```
+**⇒ 本次修复的价值是**除掉一个确证的缺陷**，**不宣称 `create_gusset` 可用**。**
+
+## ④ 顺带修一处**文档与代码不符**（本轮第二次）
+`create_one_bend` 上方的来源块仍写着 `IOneBendFeatureData` / `swFmOneBend(33)` ——
+**上一轮已改用 `swFmSketchBend(35)`，注释没跟上**。
+**⇒ 文档与代码不符比没有文档更糟 —— 一并修掉。**
+
+## 验证
+- 真机：属性层 **8/8 读回**；创建层仍 None（原因已定位到夹具）
+- 四项门禁全 exit 0；`compileall -W error::SyntaxWarning` exit 0
+- 全量回归见下
