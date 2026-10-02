@@ -7633,6 +7633,48 @@
            ★ 剩下 6 条「verified 却 0 工具」逐条定性 ·
            ★ `semicircular_slot` 的 `<unknown>.SketchManager`（★ **有副作用 ⇒ 先查清再动**）·
            ★ 把收敛报告再刷一遍（★ 事实 216：报告会陈旧）。
+     ★ 2026-10-01（轮 285 / **24h 计划 段 5/6「复核 animation_export 的 stitched 理由」**）· ★★★★★ **一个探测的**结果**与从它推出的**结论**要分开记 —— 结论会随新探测失效，结果不会**
+         ▶ **起因**：★ 复核 `animation_export` 的 `stitched` 理由（★ 事实 211 的待复核）。
+           ★ 那条理由写「**缺 Motion 加载项/许可**」⇒ ★ 按**事实 212 的定则**（"缺 X 要有问 X 的探测"）
+           ⇒ ★ **去问它** —— ★ 一次探测把 **AVI 三环全跑了**（★ 证据 `output/motion-avi-probe.json`）：
+           ```
+           | ensure_motion_type_library | pass => 回真实路径 …\swmotionstudy.tlb |
+           | create_motion_study（装配体） | pass |
+           | get_motion_study_manager | pass |
+           | create_avi_parameter(mgr) | pass（回 COM 对象） |
+           | configure_avi_parameter(ap) | pass（回 {}） |
+           | export_motion_study_avi(study, path, ap) | pass => {ok: False, returned: True, exists: True, size_bytes: 0} |
+           ```
+           ⇒ ★★★ **所以「缺加载项」那条被推翻** —— ★ **AVI 三环全通**。
+         ★★★★★ **而真障碍是另一件事（★ 而它由**该能力自己的判据**报出来）**：
+           ★ 文件 `exists: True` 而 **`size_bytes: 0`** ⇒ ★ **调用跑得通，但导出的是空文件**
+           ★ 根因（明确）：★ 我建的是**空装配体 + 空运动算例**（无组件、无马达、未 `Calculate`）
+             ⇒ ★ **没有帧可导**
+           ★★ **而能力层自己就报 `ok: False`** —— ★ 因为 `export_motion_study_avi` 的**判据本来**就是
+             「**文件出现且大小 > 0**」（★ 它的 docstring 写着：「⚠⚠ 判据不看返回值：官方签名说它返
+             `Boolean`，但本项目累计多处『**返回码撒谎**』⇒ 本函数以『文件真的出现且大小 > 0』为准」）
+             ⇒ ★★★ **那是「让失败可见」的又一次正确落地**（★ 而且它**很早**就这么设计）✓
+           ★ **下一步**（明确线索）：★ 要真验它，需要**有组件、有马达、能计算**的装配体
+             （★ `add_constant_speed_rotary_motor_by_cylinders` 要 `shaft_component` + `rotor_component`）
+         ★★★★★ **定则（★ 本轮最值钱的一条）**：
+           ★ **探测的**结果**与从它推出的**结论**要分开记** —— ★ 那条旧理由里其实**混着两样东西**：
+             · ★ **结果**：★「过去探过 `CMotionswapi.CMOTIONSWAddin` 等 **4 个 ProgID**，**全返 `None`**」
+               ⇒ ★★ **那条事实仍成立**（★ `GetAddInObject(ProgID)` 确实取不到）
+             · ★ **结论**：★「⇒ 所以 AVI 导不了 / 本机没有那个加载项」⇒ ★★★ **那条被推翻了**
+               （★ AVI **不依赖**那条 ProgID 路径 —— ★ 它走 `IMotionStudyManager`/`IMotionStudy` 那一族）
+           ⇒ ★★★★ **所以更正的方式不是"删掉那三条"，而是"保住结果、换掉结论"** ——
+             ★ **把两者一起删掉，那是丢证据**（★ 而本轮第一次改就差点那么做）
+           ⇒ ★★ **可操作形态**：★ 每条限制旁边**分开写**「**观测到**（可重复的探测与它的输出）」
+             与「**因此认为**（推论）」⇒ ★ 这样**下一次探测只需要替换后者**。
+         ▶ **验收**：① 能力仍 **75** 条 · `all_specs()` **175** · 归属 **175/175** ✓
+           · 门禁链 **8 段全 PASS** ✓ · `release_check` exit 0 ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 真机证据 `output/motion-avi-probe.json` = **PARTIAL（6/7）** —— ★ 而那个"失败"是
+             **该能力正确报出的失败**（★ `size_bytes: 0`）
+         ▶ **状态**：`all_specs()` **175** · 能力 **75** 条（verified **53**）· known-facts **217** 条。
+         ▶ **队列续作**：★ **造一个"有组件+马达+能计算"的装配体** ⇒ 把 AVI 那条**真验一次**
+           （★ 那是把 `animation_export` 从 `stitched` 往上抬的唯一路径）·
+           ★ 剩下 6 条「verified 却 0 工具」定性 ·
+           ★ `semicircular_slot` 的 `<unknown>.SketchManager`（★ **有副作用 ⇒ 先查清再动**）。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
