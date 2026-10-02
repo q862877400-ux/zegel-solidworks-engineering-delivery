@@ -1,6 +1,7 @@
 {
-  "captured_at": "2026-10-02T09:42:36",
+  "captured_at": "2026-10-02T09:54:34",
   "capability": "mesh_solve_readback",
+  "★": "★ 会弹框的三步（网格/求解）**经 run_isolated 在子进程执行**",
   "steps": {
     "bindings": {
       "ok": true,
@@ -23,50 +24,72 @@
         }
       }
     },
+    "doc": "零件6",
     "preconditions": {
       "material_id_name": "solidworks materials|AISI 1020|2",
-      "material_ok": true,
       "loads_count": 2,
-      "loads_ok": true,
-      "★": "★★★ 三道门（本批实测只查 Count **不够**）：材料必须回读非空 + 载荷 Count >= 2"
+      "load_states": [
+        0,
+        0
+      ],
+      "ok": true
     },
     "mesh_size": {
+      "__isolated__": true,
+      "result": {
+        "element_size": 4930.501659457233,
+        "tolerance": 246.52508297286164,
+        "units": -1
+      },
       "ok": true,
-      "element_size": 4930.501659457233,
-      "tolerance": 246.52508297286164,
-      "units": -1,
-      "★": "★ 期望回毫米级的正数（units=-1）"
+      "timed_out": false,
+      "seconds": 0.2,
+      "child_returncode": 0,
+      "wall_seconds": 0.2
     },
     "create_mesh": {
+      "__isolated__": true,
+      "result": {
+        "ok": true,
+        "return_code": 0,
+        "return_is_trustworthy": false,
+        "element_count": 7250,
+        "★": "ok 由 element_count 决定，**不看返回码**（本项目铁律：回读优先）"
+      },
       "ok": true,
-      "return_code": 0,
-      "return_is_trustworthy": false,
-      "element_count": 7250,
-      "★": "★★ ok 必须与 element_count>0 **一致**，且 return_is_trustworthy 必须为 False"
+      "timed_out": false,
+      "seconds": 0.6,
+      "child_returncode": 0,
+      "wall_seconds": 0.6
     },
     "run_analysis": {
       "ok": false,
-      "return_code": 0,
-      "return_is_trustworthy": false,
-      "results_present": false,
+      "result": null,
+      "__isolated__": true,
+      "timed_out": true,
+      "seconds": 300.0,
+      "error": "隔离执行超时（300s）—— ★ 子进程已被杀，会话完好；若这是已知会弹模态框的调用，说明前置条件不成立",
+      "wall_seconds": 300.0
+    },
+    "no_hang": {
+      "ok": false,
+      "★": "★★ 三步都没超时 ⇒ **隔离层没挂起**；若某步 timed_out=True ⇒ 前置条件仍不成立（★ 而**那一版会如实记下，而不是挂死会话**）"
+    },
+    "verdict_judgement": {
+      "mesh_ok": true,
+      "element_count": 7250,
+      "run_ok": false,
+      "results_present": null,
       "plot_count": null,
       "plot_names": null,
-      "★": "★★ ok 必须与 results_present + plot_count **一致**（★ 不看返回码）",
-      "seconds": 13.6
-    },
-    "trust_flags": {
-      "ok": true,
-      "create_mesh.return_is_trustworthy": false,
-      "run_analysis.return_is_trustworthy": false,
-      "★": "★★ 两个报告都必须显式声明返回码不可信 —— 让调用方**无法**误用"
+      "★": "★ 判据：网格 element_count 为正整数 · 求解 results 非空 + plot_count > 0（**不看返回码**）"
     },
     "collect_evidence": {
       "ok": true,
       "study_count": 1,
       "names": [
         "DSH-142"
-      ],
-      "★": "★ 期望 study_count >= 1 且含刚建的研究名"
+      ]
     }
   },
   "verdict": "fail"

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "mesh_create_readback",
+    "label": "网格尺寸 + 建网格（★ 回读报告；真机证据：7,250 单元）",
+    "level": "verified",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": ["2026"],
+    "dependencies": ["solidworks", "simulation-addin"],
+    "limitations": [
+      "★★ `ok` 判的是 `element_count > 0`，**不看返回码** —— 判据抄自本项目既有证据脚本（「`CreateMesh` 返回 0 且 `ElementCount` 为一个（小的）正整数」）；★ 报告里另带 `return_is_trustworthy: False`（★ 本项目铁律：回读优先）",
+      "★★ **经进程隔离执行**（`scripts/sw_isolate.py`）—— 因为 `CreateMesh` 属「会弹模态框」的一类；★ 隔离保证**挂起不外溢**（超时 ⇒ 杀子进程 ⇒ 会话完好）",
+      "⚠ `element_size` / `tolerance` 的**单位是毫米**（能力层 docstring 明写）；★ 而 `mesh_size_by_name(units=-1)` 回**毫米级**数值（实测 4930.5 / 246.5）⇒ ★ **两者要配着用**，别把毫米值喂给别的单位口径",
+      "⚠ 只在 **100×60×20 mm 单实体板 + AISI 1020** 上验过"
+    ],
+    "allowed_modes": ["interactive", "reviewed", "unattended"],
+    "evidence": [
+      "python tools/capture_mesh_solve_evidence.py（真机，2026-10-01 轮 242：★ **经 `run_isolated` 在子进程执行** ⇒ `mesh_size` 回 `{element_size: 4930.5, tolerance: 246.5}`（0.2s）；`create_mesh` 回 **`{ok: True, element_count: 7250}`**（0.6s）⇒ ★ **网格真的建出来了**；★ 证据落 output/mesh-solve-evidence.json）",
+      "tests/test_isolate.py（4 条：正常回值 · ★ **超时即杀子进程** · 异常不吞 · 模块不存在说清楚）",
+      "tools/experiment_subprocess_com.py（★ 隔离方案的**三前提**真机验过：子进程能连同一实例 / 卡住不阻塞主进程 / 可被杀）"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_simulation.py 的 mesh_size_report / create_mesh_report + scripts/sw_simulation_worker.py（照官方 ICWStudy.CreateMesh / ICWMesh.ElementCount / GetDefaultElementSizeAndTolerance）"
+  },
+  {
+    "id": "analysis_run_readback",
+    "label": "跑求解并回读结果（★ 未真机验证 —— RunAnalysis 仍会挂，被隔离兜住）",
+    "level": "stitched",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": [],
+    "dependencies": ["solidworks", "simulation-addin"],
+    "limitations": [
+      "⚠⚠⚠ **未真机验证**（按硬约束③明确标注；等级 = `stitched`）",
+      "★★ **`RunAnalysis` 仍会挂**：真机实测 `timed_out=True`（**300 秒超时**后被隔离层杀掉）⇒ ★ **根因未查清**（见 known-facts 174 / 177）",
+      "★★ **但挂起已被结构性兜住**：经 `sw_isolate.run_isolated` 执行 ⇒ 超时即杀子进程 ⇒ ★ **主流程继续、会话完好**（对比修复前：**永久挂死，job_kill 都救不回来**）",
+      "★ **已排除的假设**（对照实验，见 known-facts 176）：载荷 `State` **不是**原因（切与不切**都不弹**）；★ 材料为空**不是**原因（已回读 `MaterialIdName` 非空）；★ `LoadsAndRestraintsManager.Count` **不是**原因（= 2）",
+      "★★ 已知：**同一条链上的 `mesh_size` / `create_mesh` 两步在同一工况下成功**（7,250 单元）⇒ ★ 差异**只在「跑求解」这一步**",
+      "★ 查清的正路 = **对照实验逐个分离变量**，且 ★ **必须解释「为什么既有的 `tools/capture_simulation_evidence.py` 能跑通、而本链不能」**"
+    ],
+    "allowed_modes": ["interactive", "reviewed"],
+    "evidence": [
+      "⚠ **无** —— 真机实测 `timed_out=True`（300s 后杀子进程）；★ 该结果已如实记入 `output/mesh-solve-evidence.json` 的 `run_analysis.timed_out`",
+      "★ **反证（有价值）**：同一份证据里 `mesh_size` 与 `create_mesh` **成功** ⇒ ★ 说明失败点**精确定位在「跑求解」**，而不是整条链"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_simulation.py 的 run_analysis_report + scripts/sw_simulation_worker.py（照官方 ICWStudy.RunAnalysis / ICWResults.GetPlotCount）；隔离见 scripts/sw_isolate.py"
+  }
+]
