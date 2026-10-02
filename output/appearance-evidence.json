@@ -1,0 +1,42 @@
+{
+  "captured_at": "2026-10-02T12:03:39",
+  "capability": "render_materials_and_appearance",
+  "steps": {
+    "collect_appearance_evidence": {
+      "ok": true,
+      "keys": [
+        "appearance_count",
+        "appearances",
+        "has_appearance"
+      ]
+    },
+    "list_render_materials": {
+      "ok": true,
+      "count": 0
+    },
+    "set_and_verify_document_appearance": {
+      "ok": true,
+      "set_color": [
+        0.2,
+        0.6,
+        0.9
+      ],
+      "verified": true
+    },
+    "refresh_scene_graph": {
+      "ok": true
+    },
+    "judgement": {
+      "checks": {
+        "collect_appearance_evidence": true,
+        "list_render_materials": true,
+        "set_and_verify_document_appearance": true,
+        "refresh_scene_graph": true
+      },
+      "passed": 4,
+      "of": 4,
+      "★": "★ 四项：读数两项 + **读写配对**一项（核心）+ 场景图一项"
+    }
+  },
+  "verdict": "pass"
+}
