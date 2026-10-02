@@ -1,0 +1,53 @@
+| 260 | **文档单位两条路是**不同层次**（文档级 vs 系统默认），而查它时踩了两个坑：宿主对象 + arity**（2026-10-01，轮 339）。
+
+## 一、★★★★★ 真机 PASS 4/4（`output/units-evidence.json`）
+```
+★ 主源 `IModelDoc2.GetUnits()`（**0 参**）⇒ **`(0, 1, 8, 2, 0)`**
+   ⇒ ★ **与官方 Remarks 的 5 元组名逐位对上**：
+     `[LengthUnit=0, FractionBase=1, FractionValue=8, SignificantDigits=2, RoundToFraction=0]`
+   ⇒ `LengthUnit = 0` = **`swMM`** · `is_mm = true` ✓
+★ 对照源 `ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` ⇒ **0** ✓
+★ `doc_matches_system_default = true` ✓
+⇒ ★★★★ **即：★ 本机文档单位是毫米** —— ★ 而**那正是本仓库"建模一律按 mm"约定的前提** ✓
+```
+
+## 二、★★★ 两条路**不是"同一件事的两个源"，而是**不同层次****
+```
+· `IModelDoc2.GetUnits()` ⇒ **这一个文档**的单位（★ 可被文档属性覆盖）
+· `ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` ⇒ **系统默认**（★ 新建文档的默认）
+⇒ ★★ **它们**允许不同**** ⇒ ★ 工具**两个都报**，★ **不断言必须相等**（★ 只报 `doc_matches_system_default`）。
+★ 教训：★ **把两个"看起来都读同一件事"的入口叫"双源互证"之前，先确认它们在**同一个层次**上** ——
+   ★ 本处若硬写"两源必须一致"，★ 一旦用户把系统默认改成英寸、而文档仍是毫米，★ 就会**误报失败**。
+```
+
+## 三、★★★★ 两个坑（★ 都在真机上踩到）
+```
+① ★ **宿主对象错 ⇒ 报"类型不匹配"而不是"方法不存在"**：
+   ★ 我先在 `IModelDocExtension` 上调 `GetUserPreferenceInteger(47, "")` ⇒ `0x80020005`
+   （`(-2147352571, '类型不匹配')`）。
+   ⇒ ★★ **与事实 36 同形**（★ 同名分属不同族时，COM 报的是「类型不匹配」）——
+     ★ **而 `GetUserPreferenceIntegerValue` 根本不在 `IModelDocExtension` 上，在 `ISldWorks` 上**。
+   ★ 定位方式：★ **读官方示例** `Get_and_Set_User_Preferences_Example_VB.md` —— 里面**全是**
+     `swApp.GetUserPreferenceIntegerValue(...)` ✓ （★ 又是"判据先找后搓"）
+② ★ **arity 差 1 ⇒ `DISP_E_BADPARAMCOUNT`**：
+   ★ 我传 `(47, "")` 两个 ⇒ `(-2147352562, '无效的参数数目')`（`0x8002000E`）。
+   ★★ **三源一致地给出 1**：
+     · 官方签名 `System.int GetUserPreferenceIntegerValue( System.int UserPreferenceValue )`
+     · 反射 `'GetUserPreferenceIntegerValue': 1`（★ 三处都是 1）
+     · 官方示例只传 1 个
+   ⚠ **而 `IModelDocExtension.GetUserPreferenceInteger(UserPref, UserPrefOption)` 才是 2 参** ——
+     ★★ **两个同名前缀、不同 arity、不同宿主的方法**。
+   ⇒ ★★★ **可操作**：★ 见到 `DISP_E_BADPARAMCOUNT`，**第一件事是去反射查 arity**（★ 不是"少传一个试试"）——
+     ★ 本处若靠试，★ 试 1 或试 3 都能"看起来像"，★ **而三源一致才是坐实**。
+```
+
+## 四、★ 进度
+```
+★★ **「12 条 naked 里核实的四条真缺」全部补齐**：`wrap`（187）· `vertices` · `sensor`（188）· `units`（**189**）。
+★ 工具总数 **186 → 189**（★ 本轮 +3：`wrap` / `read_sensors` / `read_document_units`）。
+```
+
+**依据**：`output/units-evidence.json`（★ **PASS 4/4**）· `output/units-probe.json`（★ `GetUnits` 原始
+`type=tuple repr=(0, 1, 8, 2, 0)`）· `scripts/sw_units.py` · `mcp-server/tool_specs_batch52.py`（★ 工具数 189）·
+`C:\swapi\types\IModelDoc2\GetUnits.md`（★ Remarks 的 5 元组）· `ISldWorks/GetUserPreferenceIntegerValue.md`（1 参）·
+`enum_values_sldworks.txt`（`swUnitsLinear = 47`）· 事实 36 / 40 / 43 / 55 / 242 / 259

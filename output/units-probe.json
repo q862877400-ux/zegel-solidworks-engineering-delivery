@@ -1,0 +1,36 @@
+{
+  "steps": {
+    "raw": {
+      "ok": true,
+      "type": "tuple",
+      "repr": "(0, 1, 8, 2, 0)"
+    },
+    "report": {
+      "ok": true,
+      "length_unit": 0,
+      "length_unit_name": "swMM",
+      "is_mm": true,
+      "tuple": [
+        0,
+        1,
+        8,
+        2,
+        0
+      ],
+      "pref_linear": null,
+      "pref_linear_code": null,
+      "sources_agree": null
+    },
+    "expect": {
+      "LengthUnit": 0,
+      "name": "swMM",
+      "note": "★ 本仓库建模一律按毫米"
+    },
+    "pref_codes": {
+      "47": "ERR (-2147352571, '类",
+      "48": "ERR (-2147352571, '类",
+      "49": "ERR (-2147352571, '类",
+      "50": "ERR (-2147352571, '类"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "steps": {
+    "report": {
+      "ok": true,
+      "length_unit": 0,
+      "length_unit_name": "swMM",
+      "is_mm": true,
+      "tuple": [
+        0,
+        1,
+        8,
+        2,
+        0
+      ],
+      "pref_linear": 0,
+      "pref_linear_via": "ISldWorks",
+      "app_via": "Dispatch",
+      "pref_linear_system_default": 0,
+      "doc_matches_system_default": true,
+      "pref_error": null,
+      "app_error": null
+    },
+    "expect_swMM": {
+      "ok": true,
+      "got": 0,
+      "want": 0
+    },
+    "sys_default_mm": {
+      "ok": true,
+      "got": 0,
+      "want": 0
+    },
+    "doc_eq_sys": {
+      "ok": true,
+      "note": "★ 文档级与系统默认一致"
+    }
+  },
+  "captured_at": "2026-10-02T20:38:03",
+  "passed": 4,
+  "of": 4,
+  "verdict": "pass"
+}
