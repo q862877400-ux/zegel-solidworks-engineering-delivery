@@ -1,0 +1,27 @@
+{
+ "steps": {
+  "two_bodies": {
+   "ok": true,
+   "body_count": 2
+  },
+  "entry_check": {
+   "ok": true,
+   "faces_per_body": [
+    6,
+    6
+   ]
+  },
+  "rigid_twobody": {
+   "ok": true,
+   "count": [
+    0,
+    1
+   ],
+   "error": ""
+  }
+ },
+ "at": "2026-10-03T05:11:12",
+ "study": "DSH-R2B_051112",
+ "verdict": "pass",
+ "note": "★ 双体零件（★ 不用保存、不用装配）上试刚性连接件 —— ★ 验事实 338 的假设「它要**两个体**才能连」。★ 判据：① 体数 2 ★ 两个体上各取到一个面 ★ ② 施加后计数恰好 +1。"
+}
