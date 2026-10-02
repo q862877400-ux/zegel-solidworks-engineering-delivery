@@ -29,14 +29,6 @@
    "error": ""
   },
   "temperature": {
-   "ok": false,
-   "count": [
-    3,
-    3
-   ],
-   "error": "com_error: (-2147352561, '非选择性的参数。', None, None)"
-  },
-  "radiation": {
    "ok": true,
    "count": [
     3,
@@ -44,16 +36,24 @@
    ],
    "error": ""
   },
+  "radiation": {
+   "ok": true,
+   "count": [
+    4,
+    5
+   ],
+   "error": ""
+  },
   "elastic_connector": {
    "ok": false,
    "count": [
-    4,
-    4
+    5,
+    5
    ],
    "error": ""
   }
  },
- "at": "2026-10-03T03:18:38",
+ "at": "2026-10-03T03:56:06",
  "verdict": "pass",
  "note": "★ 官方六条 VB 声明**逐字抄自 CHM** ⇒ 六条同形且与 `AddElasticConnector` 一致 ⇒ ★ 形态没错。★ 本探针把**算例类型**变成变量：**thermal（3）**。",
  "successes": [
@@ -61,6 +61,7 @@
   "convection",
   "heat_flux",
   "heat_power",
+  "temperature",
   "radiation"
  ]
 }

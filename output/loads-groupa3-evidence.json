@@ -20,20 +20,21 @@
    "error": ""
   },
   "remote_load": {
-   "ok": false,
+   "ok": true,
    "count": [
     2,
-    2
+    3
    ],
-   "error": "com_error: (-2147352561, '非选择性的参数。', None, None)"
+   "error": ""
   }
  },
- "at": "2026-10-03T03:42:43",
+ "at": "2026-10-03T03:56:10",
  "study_type": 0,
  "successes": [
   "static_study",
   "distributed_mass",
-  "force"
+  "force",
+  "remote_load"
  ],
  "sequential_counts": [
   [
@@ -46,7 +47,7 @@
   ],
   [
    2,
-   2
+   3
   ]
  ],
  "verdict": "pass",
