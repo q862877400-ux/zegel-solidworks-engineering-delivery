@@ -1,0 +1,44 @@
+{
+ "at": "2026-10-03T06:44:55",
+ "trials": [
+  {
+   "trial": "pattern_named_feature",
+   "raw_none": true,
+   "raw_type": "NoneType",
+   "tree_new": [],
+   "tree_before_after": [
+    7,
+    7
+   ],
+   "geom_changed": false,
+   "geom": {
+    "bodies": 1,
+    "box": [
+     -8.0,
+     -8.0,
+     -10.0,
+     8.0,
+     8.0,
+     0.0
+    ]
+   }
+  }
+ ],
+ "before": {
+  "tree": 7,
+  "geom": {
+   "bodies": 1,
+   "box": [
+    -8.0,
+    -8.0,
+    -10.0,
+    8.0,
+    8.0,
+    0.0
+   ]
+  }
+ },
+ "feature_name": "凸台-拉伸1",
+ "verdict": "fail",
+ "note": "★ 三条判据并列：① 特征树名字增量 · ② 特征数 · ③ 几何（体数 + 包围盒）。★ 「建成」 = 几何真的变了。"
+}

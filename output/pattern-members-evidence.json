@@ -1,0 +1,32 @@
+{
+ "at": "2026-10-03T06:43:48",
+ "probed": 9,
+ "states": {
+  "FeatureLinearPattern": "callable",
+  "FeatureLinearPattern2": "callable",
+  "FeatureLinearPattern3": "callable",
+  "FeatureLinearPattern4": "callable",
+  "FeatureLinearPattern5": "callable",
+  "FeatureCircularPattern4": "callable",
+  "FeatureCircularPattern5": "callable",
+  "InsertProtrusionBlend2": "callable",
+  "FeatureExtrusion3": "callable"
+ },
+ "control_ok": true,
+ "linear_pattern_states": {
+  "FeatureLinearPattern": "callable",
+  "FeatureLinearPattern2": "callable",
+  "FeatureLinearPattern3": "callable",
+  "FeatureLinearPattern4": "callable",
+  "FeatureLinearPattern5": "callable"
+ },
+ "any_linear_available": [
+  "FeatureLinearPattern",
+  "FeatureLinearPattern2",
+  "FeatureLinearPattern3",
+  "FeatureLinearPattern4",
+  "FeatureLinearPattern5"
+ ],
+ "verdict": "pass",
+ "note": "★ 问真机：那几个阵列成员取得取不到。★ **对照**是 `FeatureCircularPattern4` —— ★ 它**已挂且能用**，★ 故它必须回 callable（★ 否则说明本探针的判据本身不对）。"
+}
