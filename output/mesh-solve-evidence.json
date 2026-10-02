@@ -1,0 +1,73 @@
+{
+  "captured_at": "2026-10-02T09:42:36",
+  "capability": "mesh_solve_readback",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_simulation_mesh_size": {
+          "resolved": true,
+          "inject": "study"
+        },
+        "solidworks_simulation_create_mesh": {
+          "resolved": true,
+          "inject": "study"
+        },
+        "solidworks_simulation_run_analysis": {
+          "resolved": true,
+          "inject": "study"
+        },
+        "solidworks_simulation_collect_evidence": {
+          "resolved": true,
+          "inject": "sw_app"
+        }
+      }
+    },
+    "preconditions": {
+      "material_id_name": "solidworks materials|AISI 1020|2",
+      "material_ok": true,
+      "loads_count": 2,
+      "loads_ok": true,
+      "★": "★★★ 三道门（本批实测只查 Count **不够**）：材料必须回读非空 + 载荷 Count >= 2"
+    },
+    "mesh_size": {
+      "ok": true,
+      "element_size": 4930.501659457233,
+      "tolerance": 246.52508297286164,
+      "units": -1,
+      "★": "★ 期望回毫米级的正数（units=-1）"
+    },
+    "create_mesh": {
+      "ok": true,
+      "return_code": 0,
+      "return_is_trustworthy": false,
+      "element_count": 7250,
+      "★": "★★ ok 必须与 element_count>0 **一致**，且 return_is_trustworthy 必须为 False"
+    },
+    "run_analysis": {
+      "ok": false,
+      "return_code": 0,
+      "return_is_trustworthy": false,
+      "results_present": false,
+      "plot_count": null,
+      "plot_names": null,
+      "★": "★★ ok 必须与 results_present + plot_count **一致**（★ 不看返回码）",
+      "seconds": 13.6
+    },
+    "trust_flags": {
+      "ok": true,
+      "create_mesh.return_is_trustworthy": false,
+      "run_analysis.return_is_trustworthy": false,
+      "★": "★★ 两个报告都必须显式声明返回码不可信 —— 让调用方**无法**误用"
+    },
+    "collect_evidence": {
+      "ok": true,
+      "study_count": 1,
+      "names": [
+        "DSH-142"
+      ],
+      "★": "★ 期望 study_count >= 1 且含刚建的研究名"
+    }
+  },
+  "verdict": "fail"
+}

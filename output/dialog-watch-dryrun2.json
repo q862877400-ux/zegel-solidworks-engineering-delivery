@@ -1,0 +1,295 @@
+[
+  {
+    "at": "09:40:52",
+    "surveyed": [
+      {
+        "hwnd": 1640880,
+        "cls": "ThumbnailDeviceHelperWnd",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 68124,
+        "cls": "ThumbnailDeviceHelperWnd",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 65992,
+        "cls": "Shell_TrayWnd",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66998,
+        "cls": "XamlExplorerHostIslandWindow_WASDK",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 133486,
+        "cls": "Chrome_WidgetWin_1",
+        "title": "SolidWorks Automation Skil — DSH 本地构建 和另外 1 个页面 - 个人 - Microsoft​ Edge",
+        "pid": 1832,
+        "process": "MsEdge.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      },
+      {
+        "hwnd": 7606766,
+        "cls": "TaskManagerWindow",
+        "title": "任务管理器",
+        "pid": 38360,
+        "process": "Taskmgr.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 132972,
+        "cls": "CabinetWClass",
+        "title": "deepseek-harness - 文件资源管理器",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": [
+          "命名空间树状控制项"
+        ]
+      },
+      {
+        "hwnd": 395052,
+        "cls": "OrayUI",
+        "title": "",
+        "pid": 13956,
+        "process": "PgyVisitorEnt.exe",
+        "is_owned": true,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 1114134,
+        "cls": "OrayUI_Shadow",
+        "title": "",
+        "pid": 13956,
+        "process": "PgyVisitorEnt.exe",
+        "is_owned": true,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 132342,
+        "cls": "Windows.UI.Core.CoreWindow",
+        "title": "Windows 输入体验",
+        "pid": 25716,
+        "process": "TextInputHost.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66330,
+        "cls": "CEF-OSC-WIDGET",
+        "title": "NVIDIA GeForce Overlay",
+        "pid": 10296,
+        "process": "NVIDIA Overlay.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66174,
+        "cls": "Tao Thread Event Target",
+        "title": "",
+        "pid": 1296,
+        "process": "clash-verge.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66186,
+        "cls": "DummyDWMListenerWindow",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66168,
+        "cls": "EdgeUiInputTopWndClass",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66130,
+        "cls": "DummyDWMListenerWindow",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66128,
+        "cls": "DummyDWMListenerWindow",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66126,
+        "cls": "DummyDWMListenerWindow",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66124,
+        "cls": "DummyDWMListenerWindow",
+        "title": "",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 131426,
+        "cls": "PseudoConsoleWindow",
+        "title": "",
+        "pid": 12792,
+        "process": "powershell.exe",
+        "is_owned": true,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 660418,
+        "cls": "CASCADIA_HOSTING_WINDOW_CLASS",
+        "title": "管理员: Windows PowerShell",
+        "pid": 30556,
+        "process": "WindowsTerminal.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      },
+      {
+        "hwnd": 66066,
+        "cls": "Progman",
+        "title": "Program Manager",
+        "pid": 14488,
+        "process": "explorer.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [],
+        "text": []
+      }
+    ],
+    "acted": []
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "at": "09:36:32",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  }
+]

@@ -1,0 +1,42 @@
+{
+  "captured_at": "2026-10-02T09:45:59",
+  "steps": {
+    "main_before": {
+      "ok": true,
+      "revision": "34.4.1"
+    },
+    "child_connect": {
+      "ok": true,
+      "stdout": "CHILD_OK rev=34.4.1",
+      "stderr": "",
+      "seconds": 0.1
+    },
+    "main_after_child": {
+      "ok": true,
+      "revision": "34.4.1",
+      "still_usable": true
+    },
+    "hang_child_first_line": "CHILD_OK rev=34.4.1",
+    "main_while_child_hung": {
+      "ok": true,
+      "revision": "34.4.1",
+      "seconds": 0.01,
+      "blocked": false,
+      "★": "★★ 若 ok 且 dt 很小 ⇒ **子进程卡住**不影响主进程** ⇒ 进程隔离方案成立"
+    },
+    "kill_child": {
+      "ok": true,
+      "★": "★ 子进程可被 kill ⇒ 挂起可弃"
+    },
+    "main_after_kill": {
+      "ok": true,
+      "revision": "34.4.1"
+    },
+    "verdict": {
+      "child_can_connect": true,
+      "main_unaffected_by_hung_child": true,
+      "child_killable": true,
+      "★": "★ 三条都为真 ⇒ **进程隔离方案成立**（子进程能连、卡住不阻塞主进程、可被杀）"
+    }
+  }
+}

@@ -1,0 +1,3819 @@
+[
+  {
+    "at": "09:42:36",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:42:42",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [草图1 ← 零件1]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 2170318,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 525856,
+            "text": "属性"
+          },
+          {
+            "hwnd": 5249082,
+            "text": "信息"
+          },
+          {
+            "hwnd": 526478,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1120622,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1907034,
+            "text": "属性"
+          },
+          {
+            "hwnd": 657660,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1315020,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:42:47",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件1 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 2170318,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 525856,
+            "text": "属性"
+          },
+          {
+            "hwnd": 5249082,
+            "text": "信息"
+          },
+          {
+            "hwnd": 526478,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1120622,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1907034,
+            "text": "属性"
+          },
+          {
+            "hwnd": 657660,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1315020,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:42:52",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件1 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 2170318,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 525856,
+            "text": "属性"
+          },
+          {
+            "hwnd": 5249082,
+            "text": "信息"
+          },
+          {
+            "hwnd": 526478,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1120622,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1907034,
+            "text": "属性"
+          },
+          {
+            "hwnd": 657660,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1315020,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:42:56",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件1 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 2170318,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 525856,
+            "text": "属性"
+          },
+          {
+            "hwnd": 5249082,
+            "text": "信息"
+          },
+          {
+            "hwnd": 526478,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1120622,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1907034,
+            "text": "属性"
+          },
+          {
+            "hwnd": 657660,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1315020,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:01",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件1 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 2170318,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 525856,
+            "text": "属性"
+          },
+          {
+            "hwnd": 5249082,
+            "text": "信息"
+          },
+          {
+            "hwnd": 526478,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1120622,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1907034,
+            "text": "属性"
+          },
+          {
+            "hwnd": 657660,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1315020,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:06",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件1 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 2170318,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 525856,
+            "text": "属性"
+          },
+          {
+            "hwnd": 5249082,
+            "text": "信息"
+          },
+          {
+            "hwnd": 526478,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1120622,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1907034,
+            "text": "属性"
+          },
+          {
+            "hwnd": 657660,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1315020,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 10884884,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 3282950,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:12",
+    "surveyed": [
+      {
+        "hwnd": 6296038,
+        "cls": "#32770",
+        "title": "Simulation",
+        "pid": 38304,
+        "process": "star.exe",
+        "is_owned": false,
+        "kind": "dismissable",
+        "buttons": [
+          {
+            "hwnd": 989658,
+            "text": "是"
+          },
+          {
+            "hwnd": 2625876,
+            "text": "否"
+          },
+          {
+            "hwnd": 1513896,
+            "text": "确定"
+          },
+          {
+            "hwnd": 1251756,
+            "text": "Button1"
+          }
+        ],
+        "text": [
+          "请参阅知识库文章 QA00000299039"
+        ]
+      },
+      {
+        "hwnd": 1382862,
+        "cls": "#32770",
+        "title": "DSH-142",
+        "pid": 38304,
+        "process": "star.exe",
+        "is_owned": false,
+        "kind": "unknown",
+        "buttons": [
+          {
+            "hwnd": 4070646,
+            "text": "暂停"
+          },
+          {
+            "hwnd": 2758806,
+            "text": "取消"
+          },
+          {
+            "hwnd": 3151862,
+            "text": "更多>>"
+          },
+          {
+            "hwnd": 1251818,
+            "text": "算例"
+          },
+          {
+            "hwnd": 6887252,
+            "text": "解算器"
+          },
+          {
+            "hwnd": 3478524,
+            "text": "收敛图表"
+          },
+          {
+            "hwnd": 1448408,
+            "text": "求解器参数"
+          },
+          {
+            "hwnd": 1382858,
+            "text": "暂停"
+          },
+          {
+            "hwnd": 3152144,
+            "text": "取消"
+          },
+          {
+            "hwnd": 1382884,
+            "text": "少于<<"
+          }
+        ],
+        "text": [
+          "当前任务: 建立刚度矩阵",
+          "已用时间:5s",
+          "自由度:30,456",
+          "节数:11,301"
+        ]
+      },
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件1 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 2170318,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 525856,
+            "text": "属性"
+          },
+          {
+            "hwnd": 5249082,
+            "text": "信息"
+          },
+          {
+            "hwnd": 526478,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1120622,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1907034,
+            "text": "属性"
+          },
+          {
+            "hwnd": 657660,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1315020,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 10884884,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 3282950,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": [
+      {
+        "hwnd": 6296038,
+        "cls": "#32770",
+        "title": "Simulation",
+        "pid": 38304,
+        "process": "star.exe",
+        "is_owned": false,
+        "kind": "dismissable",
+        "buttons": [
+          {
+            "hwnd": 989658,
+            "text": "是"
+          },
+          {
+            "hwnd": 2625876,
+            "text": "否"
+          },
+          {
+            "hwnd": 1513896,
+            "text": "确定"
+          },
+          {
+            "hwnd": 1251756,
+            "text": "Button1"
+          }
+        ],
+        "text": [
+          "请参阅知识库文章 QA00000299039"
+        ],
+        "clicked": "是",
+        "host_alive_after": false,
+        "action": "★★ 点了 '是' 之后**宿主消失** ⇒ 停止并报 host_died",
+        "host_died": true
+      }
+    ]
+  },
+  {
+    "at": "09:43:18",
+    "surveyed": [
+      {
+        "hwnd": 3087214,
+        "cls": "#32770",
+        "title": "Simulation",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": true,
+        "kind": "dismissable",
+        "buttons": [
+          {
+            "hwnd": 7149440,
+            "text": "确定"
+          }
+        ],
+        "text": [
+          "零件1-DSH-142 : 失败"
+        ]
+      },
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件1 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 2170318,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 525856,
+            "text": "属性"
+          },
+          {
+            "hwnd": 5249082,
+            "text": "信息"
+          },
+          {
+            "hwnd": 526478,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1120622,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1907034,
+            "text": "属性"
+          },
+          {
+            "hwnd": 657660,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1315020,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 10884884,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 3282950,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": [
+      {
+        "hwnd": 3087214,
+        "cls": "#32770",
+        "title": "Simulation",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": true,
+        "kind": "dismissable",
+        "buttons": [
+          {
+            "hwnd": 7149440,
+            "text": "确定"
+          }
+        ],
+        "text": [
+          "零件1-DSH-142 : 失败"
+        ],
+        "clicked": "确定",
+        "host_alive_after": true,
+        "action": "点了 '确定'（★ 宿主仍在）",
+        "host_died": false
+      }
+    ]
+  },
+  {
+    "at": "09:43:23",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:28",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:33",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:38",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:42",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:48",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:53",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:43:57",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:02",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:08",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件3 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 856212,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1773336,
+            "text": "属性"
+          },
+          {
+            "hwnd": 1513904,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1969962,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 2494190,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 2953308,
+            "text": "属性"
+          },
+          {
+            "hwnd": 7080326,
+            "text": "信息"
+          },
+          {
+            "hwnd": 2496968,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:13",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:18",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:23",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:27",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:32",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:38",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [草图1 ← 零件4]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 8459820,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 723018,
+            "text": "属性"
+          },
+          {
+            "hwnd": 14686282,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1050826,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 3018844,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 987342,
+            "text": "属性"
+          },
+          {
+            "hwnd": 2625262,
+            "text": "信息"
+          },
+          {
+            "hwnd": 919504,
+            "text": "矩形"
+          },
+          {
+            "hwnd": 3348752,
+            "text": "添加尺寸(D)"
+          },
+          {
+            "hwnd": 3675132,
+            "text": "添加构造性直线"
+          },
+          {
+            "hwnd": 1251726,
+            "text": "从边角"
+          },
+          {
+            "hwnd": 3610752,
+            "text": "从中点"
+          },
+          {
+            "hwnd": 9180888,
+            "text": "作为构造线(&C)"
+          },
+          {
+            "hwnd": 5312184,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1055136,
+            "text": "现有几何关系"
+          },
+          {
+            "hwnd": 1448300,
+            "text": "选项(&O)"
+          },
+          {
+            "hwnd": 2758892,
+            "text": "添加几何关系"
+          },
+          {
+            "hwnd": 10556300,
+            "text": "水平(&H)"
+          },
+          {
+            "hwnd": 5967578,
+            "text": "竖直(&V)"
+          },
+          {
+            "hwnd": 1448358,
+            "text": "固定(&F)"
+          },
+          {
+            "hwnd": 8263330,
+            "text": "参数"
+          },
+          {
+            "hwnd": 1513952,
+            "text": "矩形类型"
+          },
+          {
+            "hwnd": 1511628,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。",
+          "Static"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:43",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:48",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:53",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件5 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 1904408,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 853530,
+            "text": "属性"
+          },
+          {
+            "hwnd": 11669524,
+            "text": "信息"
+          },
+          {
+            "hwnd": 8001358,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1052878,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1644938,
+            "text": "属性"
+          },
+          {
+            "hwnd": 3149916,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1317236,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 8460022,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 919460,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:44:59",
+    "surveyed": [
+      {
+        "hwnd": 3611502,
+        "cls": "#32770",
+        "title": "Simulation",
+        "pid": 39992,
+        "process": "star.exe",
+        "is_owned": false,
+        "kind": "dismissable",
+        "buttons": [
+          {
+            "hwnd": 5443256,
+            "text": "是"
+          },
+          {
+            "hwnd": 1579372,
+            "text": "否"
+          },
+          {
+            "hwnd": 2889964,
+            "text": "确定"
+          },
+          {
+            "hwnd": 6098650,
+            "text": "Button1"
+          }
+        ],
+        "text": [
+          "请参阅知识库文章 QA00000299039"
+        ]
+      },
+      {
+        "hwnd": 10226236,
+        "cls": "#32770",
+        "title": "DSH-Active",
+        "pid": 39992,
+        "process": "star.exe",
+        "is_owned": false,
+        "kind": "unknown",
+        "buttons": [
+          {
+            "hwnd": 1776100,
+            "text": "暂停"
+          },
+          {
+            "hwnd": 1251744,
+            "text": "取消"
+          },
+          {
+            "hwnd": 1972638,
+            "text": "更多>>"
+          },
+          {
+            "hwnd": 7082154,
+            "text": "算例"
+          },
+          {
+            "hwnd": 4198564,
+            "text": "解算器"
+          },
+          {
+            "hwnd": 3806204,
+            "text": "收敛图表"
+          },
+          {
+            "hwnd": 1382798,
+            "text": "求解器参数"
+          },
+          {
+            "hwnd": 1907112,
+            "text": "暂停"
+          },
+          {
+            "hwnd": 6623718,
+            "text": "取消"
+          },
+          {
+            "hwnd": 5250314,
+            "text": "少于<<"
+          }
+        ],
+        "text": [
+          "当前任务: 建立刚度矩阵",
+          "已用时间:6s",
+          "自由度:30,456",
+          "节数:11,301"
+        ]
+      },
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件5 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 1904408,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 853530,
+            "text": "属性"
+          },
+          {
+            "hwnd": 11669524,
+            "text": "信息"
+          },
+          {
+            "hwnd": 8001358,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1052878,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1644938,
+            "text": "属性"
+          },
+          {
+            "hwnd": 3149916,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1317236,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 8460022,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 919460,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": [
+      {
+        "hwnd": 3611502,
+        "cls": "#32770",
+        "title": "Simulation",
+        "pid": 39992,
+        "process": "star.exe",
+        "is_owned": false,
+        "kind": "dismissable",
+        "buttons": [
+          {
+            "hwnd": 5443256,
+            "text": "是"
+          },
+          {
+            "hwnd": 1579372,
+            "text": "否"
+          },
+          {
+            "hwnd": 2889964,
+            "text": "确定"
+          },
+          {
+            "hwnd": 6098650,
+            "text": "Button1"
+          }
+        ],
+        "text": [
+          "请参阅知识库文章 QA00000299039"
+        ],
+        "clicked": "是",
+        "host_alive_after": false,
+        "action": "★★ 点了 '是' 之后**宿主消失** ⇒ 停止并报 host_died",
+        "host_died": true
+      }
+    ]
+  },
+  {
+    "at": "09:45:04",
+    "surveyed": [
+      {
+        "hwnd": 1972652,
+        "cls": "#32770",
+        "title": "Simulation",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": true,
+        "kind": "dismissable",
+        "buttons": [
+          {
+            "hwnd": 7082808,
+            "text": "确定"
+          }
+        ],
+        "text": [
+          "零件5-DSH-Active : 失败"
+        ]
+      },
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1 - [零件5 *]",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 1904408,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 853530,
+            "text": "属性"
+          },
+          {
+            "hwnd": 11669524,
+            "text": "信息"
+          },
+          {
+            "hwnd": 8001358,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1052878,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 1644938,
+            "text": "属性"
+          },
+          {
+            "hwnd": 3149916,
+            "text": "信息"
+          },
+          {
+            "hwnd": 1317236,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 8460022,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 919460,
+            "text": "PNGBUTTON"
+          },
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:",
+          "选择一实体来查看或修改其属性。",
+          "选择一实体来查看或修改其属性。"
+        ]
+      }
+    ],
+    "acted": [
+      {
+        "hwnd": 1972652,
+        "cls": "#32770",
+        "title": "Simulation",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": true,
+        "kind": "dismissable",
+        "buttons": [
+          {
+            "hwnd": 7082808,
+            "text": "确定"
+          }
+        ],
+        "text": [
+          "零件5-DSH-Active : 失败"
+        ],
+        "clicked": "确定",
+        "host_alive_after": true,
+        "action": "点了 '确定'（★ 宿主仍在）",
+        "host_died": false
+      }
+    ]
+  },
+  {
+    "at": "09:45:09",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:14",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:19",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:24",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:29",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:34",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:39",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:43",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:48",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:53",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:45:58",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:46:03",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:46:07",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:46:12",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:46:17",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:46:21",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:46:26",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:46:31",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  },
+  {
+    "at": "09:46:35",
+    "surveyed": [
+      {
+        "hwnd": 8920082,
+        "cls": "Afx:0000000140000000:8:0000000000010003:0000000000000000:000000000B8F1D79",
+        "title": "SOLIDWORKS Design Premium 2026 SP4.1",
+        "pid": 42984,
+        "process": "SLDWORKS.exe",
+        "is_owned": false,
+        "kind": "main_frame",
+        "buttons": [
+          {
+            "hwnd": 200190,
+            "text": "..."
+          },
+          {
+            "hwnd": 200150,
+            "text": "输入注解"
+          },
+          {
+            "hwnd": 200138,
+            "text": "设计注解"
+          },
+          {
+            "hwnd": 200134,
+            "text": "DimXpert 注解"
+          },
+          {
+            "hwnd": 200136,
+            "text": "为工程图标注"
+          },
+          {
+            "hwnd": 200140,
+            "text": "包括隐藏特征的项目"
+          },
+          {
+            "hwnd": 200144,
+            "text": "自动开始投影视图"
+          },
+          {
+            "hwnd": 200148,
+            "text": "选项"
+          },
+          {
+            "hwnd": 200146,
+            "text": "3D View Annotations"
+          },
+          {
+            "hwnd": 200106,
+            "text": "装饰螺纹线"
+          }
+        ],
+        "text": [
+          "Tags:"
+        ]
+      }
+    ],
+    "acted": []
+  }
+]
