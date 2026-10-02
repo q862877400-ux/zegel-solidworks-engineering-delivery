@@ -1,0 +1,33 @@
+{
+  "steps": {
+    "ensure_type_library": {
+      "ok": true,
+      "type": "str",
+      "preview": "D:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\swmotionstudy.tlb"
+    },
+    "collect_summary": {
+      "ok": true,
+      "type": "dict",
+      "preview": "{'motion_type_library': 'D:\\\\Program Files\\\\SOLIDWORKS Corp\\\\SOLIDWORKS\\\\swmotionstudy.tlb', 'st"
+    },
+    "study_manager": {
+      "ok": true,
+      "type": "CDispatch",
+      "preview": "<COMObject <unknown>>"
+    },
+    "create_study": {
+      "ok": true,
+      "type": "CDispatch",
+      "preview": "<COMObject <unknown>>"
+    },
+    "validate_studies": {
+      "ok": true,
+      "type": "dict",
+      "preview": "{'ok': True, 'asked': ['minimum_motor_count'], 'returned': {'summary': {'motion_type_library': '"
+    }
+  },
+  "captured_at": "2026-10-02T13:53:47",
+  "passed": 5,
+  "of": 5,
+  "verdict": "pass"
+}

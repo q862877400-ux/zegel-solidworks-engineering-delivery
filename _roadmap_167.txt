@@ -1,0 +1,40 @@
+     ★ 2026-10-01（轮 278 / **24h 计划 段 5 续「运动算例 6 个」/ Spec Kit `157`**）· ★★★★★ **真机 PASS 5/5 —— 而 Motion 类型库**能加载**，★ 那与"缺加载项"的旧理由不一致**
+         ▶ **本批做了什么**：★ 填 `motion_study`（★ 它原本是 `verified` 却 **0 工具** —— 事实 210 的
+           "自相矛盾的账"）：`sw_motion` 有 **13 个公开函数 · 0 个工具** ⇒ ★ 其中 **6 个入参可表达**。
+           ★★ **关键是 `asm_model` 这个 resolver **早就存在****（拓扑那批加的）⇒ ★ 直接用，**不新增键** ✓
+           ⇒ ★ `all_specs()` **158 → 164** · 归属 **164/164** ✓
+           ★ 又踩了 `**kwargs` 那次教训（`validate_motion_studies(asm_model, **requirements)`）
+             ⇒ ★ 同样的修法：★ 写**显式形参**的包装 ⇒ ★★ **而那更好：形参即文档**。
+         ★★★★★ **真机 PASS（5/5）**：
+           ```
+           | ensure_motion_type_library（零参） | pass => **D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\swmotionstudy.tlb** |
+           | collect_motion_study_summary（装配体） | pass => 回 dict（含 motion_type_library 路径） |
+           | get_motion_study_manager | pass |
+           | create_motion_study(name="DSH_MOTION", duration=4.0) | pass（回 study 对象） |
+           | validate_motion_studies_report(minimum_motor_count=0) | pass => {'ok':True,'asked':[...],'returned':{...}} |
+           ```
+           ⇒ ★ 证据 output/motion-evidence.json
+         ★★★ **而这条最值得记**：★ `ensure_motion_type_library` **回了一个真实路径** ⇒
+           ★ **Motion 类型库在本机能加载** —— ★★ **而 `animation_export` 的 `stitched` 理由写的是
+           「缺 Motion 加载项」** ⇒ ★ **那条理由与本次实测**不一致**！
+           ⇒ ★ **处置**：★ 不立刻改（★ "类型库能加载" ≠ "AVI 导出能跑" —— ★ 两件事不同）
+             ★★ 而**记为待复核**（★ 下一步真机试 `export_motion_study_avi` ⇒ 才知道那条该不该升级）
+             ⇒ ★★★ **这正是硬约束③的形态**：★ 旧结论的理由与新实测对不上时，**标记并复核**，
+               而不是二选一地采信。
+         ★★★ **定则**：
+           ★ **"类型库能加载" ≠ "依赖它的功能能跑"** —— ★ AVI 导出还需三环：
+             `create_avi_parameter(manager)` → `configure_avi_parameter(avi_parameter, …)` →
+             `export_motion_study_avi(study, path, …)` ⇒ ★★ **各有宿主对象** ⇒
+             ★ **能加载只是第一环** ⇒ ★ **所以"缺加载项"这种理由要**具体到哪一环缺****
+             （★ 否则它会把"没试过"说成"做不到"）。
+           ★★ **同一教训用了两次**（轮 272 的 `configure_*_solver` · 轮 278 的 `validate_motion_studies`）
+             ⇒ ★ **`**kwargs` 在"工具层要声明参数名"的场景下是错的** ⇒ ★ 正解一律**显式形参**。
+         ▶ **验收**：① `all_specs()` = **164** · 能力 **69** · 归属 **164/164** ✓ · 绑定门禁 **PASS** ✓
+           · 计数守卫（wiring 164 · 协议层 209）✓ · 门禁链 18 道 exit 0 ✓ · `release_check` exit 0 ✓
+           · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 真机 `output/motion-evidence.json` = **PASS（5/5）** ✓
+         ▶ **状态**：`all_specs()` **164** · 能力 **69** 条（verified **53** · stitched **15**）·
+           known-facts **210** 条。
+         ▶ **队列续作**：★ **复核 `animation_export` 的 `stitched` 理由**（★ 真机试 AVI 导出）·
+           ★ **`sw_routing`(22 个 · 0 工具) 是剩下最大的 vein**（★ 需先解决入口 —— 读 `tools/verify_routing_e2e.py`）·
+           ★ 剩下"verified 却 0 工具"还要清。
