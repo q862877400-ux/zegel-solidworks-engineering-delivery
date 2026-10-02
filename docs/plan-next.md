@@ -34,12 +34,12 @@
 **为什么第一优先**：W7 只做到"**能加载荷**"；而 `sw_simulation` + `sw_simulation_study` 还躺着 **21 个**
 ⇒ ★ **把它们挂上，W7 才从"能加载荷"变成"能跑完并读数"** —— 那是**完整的仿真闭环**，也是护城河的实体。
 
-| 批 | 候选函数（能力层已有） | 为什么这一批 |
+| 批次 | 候选函数（能力层已有） | 为什么这一批 |
 |---|---|---|
-| **A1** | `create_static_study` · `get_study_by_name` · `iter_studies` · `get_study_manager` | ★★ **W7 的 L1 遗留**（"没有建研究工具"⇒ `study_name` 只能引用已存在的）⇒ **它是最硬的前置** |
-| **A2** | `create_mesh` · `default_element_size_and_tolerance` · `run_analysis` · `collect_study_evidence` | ★★ **闭环的后半段**（网格 → 跑 → 读数）|
-| **A3** | `sw_simulation_study.export_study` · `get_results_of` · `mesh_and_run` | 研究级封装（★ 有 `mesh_and_run` 就可能一步到位）|
-| **A4** | `sw_simulation_loads` 剩的 **26 个**（压力/扭矩/重力/离心/轴承/远程载荷/12 种连接器）| ★ 载荷族的广度（★ 护城河越宽越好）|
+| **第 1 批** | `create_static_study` · `get_study_by_name` · `iter_studies` · `get_study_manager` | ★★ **W7 的 L1 遗留**（"没有建研究工具"⇒ `study_name` 只能引用已存在的）⇒ **它是最硬的前置** |
+| **第 2 批** | `create_mesh` · `default_element_size_and_tolerance` · `run_analysis` · `collect_study_evidence` | ★★ **闭环的后半段**（网格 → 跑 → 读数）|
+| **第 3 批** | `sw_simulation_study.export_study` · `get_results_of` · `mesh_and_run` | 研究级封装（★ 有 `mesh_and_run` 就可能一步到位）|
+| **第 4 批** | `sw_simulation_loads` 剩的 **26 个**（压力/扭矩/重力/离心/轴承/远程载荷/12 种连接器）| ★ 载荷族的广度（★ 护城河越宽越好）|
 
 **验收（现成，不用新造）**：`tools/capture_simulation_evidence.py` 的判据三条 ——
 ```
@@ -57,7 +57,7 @@
 
 **为什么**：hindsight 记忆里 **A9 已达标**（拓扑优化核心闭环有可跑实现）⇒ ★ **这批就是"把它挂到 MCP"**。
 
-| 批 | 候选函数 | 备注 |
+| 批次 | 候选函数 | 备注 |
 |---|---|---|
 | **B1** | `collect_topology_numbers` · `get_topology_study_manager` · `list_topology_constraints_and_controls` | ★ **只读**，风险最低 ⇒ **先挂这批** |
 | **B2** | `set_topology_goal` · `set_topology_iteration_options` · `get_topology_study_options` | 写操作（★ 改研究参数）|
@@ -74,7 +74,7 @@
 **为什么**：本会话已接通「建草图 → 画几何 → 拉伸 → 倒角」⇒ ★ **这批是它的自然延伸**，
 而**验证方式现成**（★ W4 续 那套**包围盒数字断言**：40×20×10）。
 
-| 批 | 候选 | 判据（可直接复用）|
+| 批次 | 候选 | 判据（可直接复用）|
 |---|---|---|
 | **C1** | `sketch_rectangle` · `sketch_polygon` · `sketch_slot` · `sketch_ellipse` · `sketch_arc` · `sketch_centerline` · `sketch_spline` | ★ 与 batch21 同型（画几何 + `count_lines`/`count_arcs` 回读断言）|
 | **C2** | `add_dimension` · `auto_dimension_sketch` | 尺寸（★ 回读尺寸值断言）|
