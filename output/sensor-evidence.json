@@ -1,0 +1,23 @@
+{
+  "steps": {
+    "empty_part": {
+      "ok": true,
+      "count": 0,
+      "errors": []
+    },
+    "with_geometry": {
+      "ok": true,
+      "count": 0,
+      "errors": []
+    },
+    "sample_drawing": {
+      "ok": true,
+      "count": 0,
+      "errors": []
+    }
+  },
+  "captured_at": "2026-10-02T20:31:35",
+  "passed": 3,
+  "of": 3,
+  "verdict": "pass"
+}
