@@ -1,0 +1,13 @@
+{
+  "steps": {
+    "ensure_addin": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "create_study": {
+      "ok": false,
+      "err": "AttributeError: <unknown>.GetAddInObject"
+    }
+  },
+  "captured_at": "2026-10-02T21:15:47"
+}

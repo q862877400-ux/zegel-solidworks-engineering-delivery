@@ -1,0 +1,31 @@
+{
+  "steps": {
+    "solid_body": {
+      "ok": true
+    },
+    "create_study_report": {
+      "ok": true,
+      "keys": [
+        "entry_name",
+        "error_code",
+        "ok",
+        "requested_name",
+        "study_name",
+        "★"
+      ]
+    },
+    "configure_static_solver_report": {
+      "ok": false,
+      "err": "取 options 失败（family=ICWStaticStudyOptions）：SldWorks.Application.StaticStudyOptions"
+    },
+    "configure_frequency_solver_report": {
+      "ok": false,
+      "err": "取 options 失败（family=ICWFrequencyStudyOptions）：SldWorks.Application.FrequencyStudyOptions"
+    },
+    "configure_buckling_solver_report": {
+      "ok": false,
+      "err": "取 options 失败（family=ICWBucklingStudyOptions）：SldWorks.Application.BucklingStudyOptions"
+    }
+  },
+  "captured_at": "2026-10-02T21:16:23"
+}

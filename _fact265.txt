@@ -1,0 +1,54 @@
+| 265 | **建研究的真实前置 = ① 第一参传 `ISldWorks` ② 文档里**有实体**（否则 `swsStudyError_e = 1`）—— 而我上一轮的归因**是错的****（2026-10-01，轮 345）。
+
+## 一、★★★★★ 先**纠正上一轮**（事实 264 的第四段）
+```
+★ 事实 264 我写过：「`GetAddInObject` 那个函数拿到的对象不是 `ISldWorks`」——
+★★ **那是**我的归因错****：★ `ensure_simulation_addin(sw_app)` 的 docstring **开头就写着**
+   `:param sw_app: ISldWorks`，★ 而**我传的是 `doc`（零件文档）** ⇒
+   ★★ **错在我，不在它** ✓（★ 与"被追问同一处 2 次 = 第一遍答错了"同一族纪律）。
+★★★ **而工具层**已经是对的****：`register_capabilities.py` 的 `inject` 分布里
+   `sw_app` **6 个**（`create_study` / `list_studies` / `find_study` / topology 的 2 个 …）——
+   ★ **它没传错**。★ 我是**手调内部函数**时传错的。
+   ⇒ ★★★★ **施工纪律**：★ **验"工具"就调**工具层的那个函数**（`create_study_report(sw, …)`），
+     ★ **不要直接调内部实现**（★ 内部函数的参数契约与工具层不同）✓
+```
+
+## 二、★★★★ 建研究的两个真实前置（★ 逐个真机确认）
+```
+★ 前置① ★ **第一参必须是 `ISldWorks`** —— 传 `doc` ⇒ `AttributeError: <unknown>.GetAddInObject`
+   （★ `<unknown>.X` = 事实 36 形态：★ **对象不对时报"成员不存在"，看不出是参数问题**）。
+   ★ 用对之后 ⇒ **`ensure_simulation_addin(sw)` ⇒ `ok=true` · `type=CDispatch`** ✓
+★ 前置② ★ **文档里必须有实体** —— 第一次在有实体之前试 ⇒
+   `RuntimeError: 创建研究失败：CreateNewStudy3 / 2 / 1 均未返回对象。`
+   ★ 而**那个错误信息自己列了原因**：★ `swsStudyError_e`：
+     **1=无实体 · 2=同名研究已存在或名称非法 · 3=类型未定义 · 4=网格类型非法** ✓
+   ⇒ ★ 建一个 20×40×10 的板之后再试 ⇒ **`ok=true`**（★ keys：`entry_name` / `error_code` /
+     `requested_name` / `study_name`）✓✓✓
+   ⇒ ★★★ **即：★ 建研究**通了**** —— ★ 而这一条以前被记为"未通过"（★ 原因从没查到底）
+```
+
+## 三、★ 剩余的真问题（★ 留给下一轮，**不升等级**）
+```
+★★ 建好研究后，3 个配置入口**仍失败**，★ 而**失败原因换了一层**：
+   `取 options 失败（family=ICWStaticStudyOptions）：SldWorks.Application.StaticStudyOptions`
+★ 关键线索：★ 那条消息里的对象名是 **`SldWorks.Application`** ——
+   ★★ **即：★ `study_options_of(study, family)` 收到的 `study` **不是** study，而是**根对象**** ⚠
+★ 而 `resolve_study` 本身看着没问题：★ 它缺 `study_name` 时取**第一个研究**
+   （`next(iter(iter_studies(sw)), None)`）；★ 而那 5 个配置工具**确实没声明 `study_name`**
+   ⇒ ★ 所以问题在 **`get_study_by_name` / `iter_studies` 返回了什么**（★ 下轮查）。
+⇒ ★★ **所以本轮不升 `simulation_solver_options`**：★ 硬约束③ —— 没有 `verdict: pass` 就不升。
+```
+
+## 四、★ 定则
+```
+★★★ **"某个能力坏"之前，先确认"我调的是不是它公开的那个入口"** ——
+   ★ 本处两次"失败"都是**我手调内部函数**造成的（★ 传 `doc`、★ 缺 `study_name`），
+   ★★ **而工具层两条都对** ⇒ ★ **若只看我的探针，就会把一条好能力记成坏的**。
+   ⇒ ★★ **可操作**：★ 从 `ToolSpec` 里读**它声明的 `inject` 与 `params`**，
+     ★ **按那个契约调**；★ 探针里手写的调用**不算数**。
+```
+
+**依据**：`output/sim-addin-and-study.json`（★ `ensure_addin` ok / `create_study` 失败）·
+`output/sim-create-study-report.json`（★ 无实体时的报错全文）· `output/solver-options-evidence.json`
+（★ **建研究 ok=true，3 个配置入口失败**）· `scripts/sw_simulation.py` 的 `ensure_simulation_addin` /
+`create_static_study` · `mcp-server/register_capabilities.py` 的 `RESOLVERS` / `resolve_study` · 事实 36 / 264
