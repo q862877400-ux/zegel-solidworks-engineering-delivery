@@ -1,0 +1,158 @@
+{
+ "steps": {
+  "base_flange": {
+   "ok": true,
+   "returned": "<COMObject <unknown>>"
+  },
+  "sheet_metal_evidence": {
+   "ok": true,
+   "value": {
+    "features": [
+     {
+      "name": "收藏",
+      "type": "FavoriteFolder"
+     },
+     {
+      "name": "历史记录",
+      "type": "HistoryFolder"
+     },
+     {
+      "name": "选择集",
+      "type": "SelectionSetFolder"
+     },
+     {
+      "name": "传感器",
+      "type": "SensorFolder"
+     },
+     {
+      "name": "设计活页夹",
+      "type": "DocsFolder"
+     },
+     {
+      "name": "注解",
+      "type": "DetailCabinet"
+     },
+     {
+      "name": "标注",
+      "type": "InkMarkupFolder"
+     },
+     {
+      "name": "光源与相机",
+      "type": "EnvFolder"
+     },
+     {
+      "name": "实体",
+      "type": "SolidBodyFolder"
+     },
+     {
+      "name": "曲面实体",
+      "type": "SurfaceBodyFolder"
+     },
+     {
+      "name": "备注",
+      "type": "CommentsFolder"
+     },
+     {
+      "name": "方程式",
+      "type": "EqnFolder"
+     },
+     {
+      "name": "材质 <未指定>",
+      "type": "MaterialFolder"
+     },
+     {
+      "name": "前视基准面",
+      "type": "RefPlane"
+     },
+     {
+      "name": "上视基准面",
+      "type": "RefPlane"
+     },
+     {
+      "name": "右视基准面",
+      "type": "RefPlane"
+     },
+     {
+      "name": "原点",
+      "type": "OriginProfileFeature"
+     },
+     {
+      "name": "Tables",
+      "type": "ConfigTableFolder"
+     },
+     {
+      "name": "草图1",
+      "type": "ProfileFeature"
+     },
+     {
+      "name": "钣金6",
+      "type": "SheetMetal"
+     },
+     {
+      "name": "基体-法兰1",
+      "type": "SMBaseFlange"
+     },
+     {
+      "name": "平展型式6",
+      "type": "FlatPattern"
+     }
+    ],
+    "feature_types": [
+     "FavoriteFolder",
+     "HistoryFolder",
+     "SelectionSetFolder",
+     "SensorFolder",
+     "DocsFolder",
+     "DetailCabinet",
+     "InkMarkupFolder",
+     "EnvFolder",
+     "SolidBodyFolder",
+     "SurfaceBodyFolder",
+     "CommentsFolder",
+     "EqnFolder",
+     "MaterialFolder",
+     "RefPlane",
+     "RefPlane",
+     "RefPlane",
+     "OriginProfileFeature",
+     "ConfigTableFolder",
+     "ProfileFeature",
+     "SheetMetal",
+     "SMBaseFlange",
+     "FlatPattern"
+    ],
+    "base_flange_parameters": [
+     {
+      "name": "基体-法兰1",
+      "thickness_m": 0.002,
+      "bend_radius_m": 0.002,
+      "depth_m": 0.04,
+      "k_factor": 0.42
+     }
+    ],
+    "bodies": [
+     {
+      "name": "基体-法兰1",
+      "is_sheet_metal": true
+     }
+    ],
+    "has_sheet_metal_feature": true,
+    "has_base_flange": true,
+    "all_solid_bodies_are_sheet_metal": true
+   }
+  },
+  "export_flat_pattern_dxf": {
+   "ok": false,
+   "values": {
+    "format": "dxf_flat_pattern",
+    "exists": false,
+    "size_bytes": 0,
+    "grew_or_created": false,
+    "error": "ValueError: 导出展开 DXF 前必须先保存钣金零件"
+   }
+  }
+ },
+ "at": "2026-10-03T03:15:39",
+ "verdict": "partial",
+ "note": "★ 补上轮 403 缺的**正例**：先按工具契约建一个钣金件，再导展开 DXF —— ★ 判据是**文件存在且非空**（★ 并记 `size_before` / `grew_or_created`）。"
+}
