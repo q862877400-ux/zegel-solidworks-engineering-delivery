@@ -1,0 +1,21 @@
+{
+  "steps": {
+    "tree_before_pattern": 9,
+    "circular_pattern": {
+      "ok": false,
+      "ret": "None"
+    },
+    "tree_after": [
+      "草图1",
+      "凸台-拉伸1",
+      "草图2",
+      "切除-拉伸1"
+    ],
+    "tree_after_types": {
+      "凸台-拉伸1": "Extrusion",
+      "草图2": "ProfileFeature",
+      "切除-拉伸1": "ICE"
+    }
+  },
+  "captured_at": "2026-10-02T18:00:52"
+}

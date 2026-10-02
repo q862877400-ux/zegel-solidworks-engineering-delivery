@@ -1,0 +1,34 @@
+{
+  "feature_select_forms": {
+    "BODYFEATURE": {
+      "ret": "True",
+      "mark4_count": "1"
+    },
+    "FEATURE": {
+      "ret": "False",
+      "mark4_count": "0"
+    },
+    "BODY": {
+      "ret": "False",
+      "mark4_count": "1"
+    },
+    "特征": {
+      "ret": "False",
+      "mark4_count": "1"
+    }
+  },
+  "mirror_BODYFEATURE": {
+    "mark4": 1,
+    "mark1": 0,
+    "ret": "None",
+    "tree": 9,
+    "last": "切除-拉伸1"
+  },
+  "mirror_FEATURE": {
+    "mark4": 1,
+    "mark1": 0,
+    "ret": "None",
+    "tree": 9,
+    "last": "切除-拉伸1"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "steps": {
+    "mirror_右视": {
+      "ok": false,
+      "ret": "None",
+      "tree": "9->9",
+      "new": [
+        "草图2",
+        "切除-拉伸1"
+      ],
+      "types": {
+        "草图2": "ProfileFeature",
+        "切除-拉伸1": "ICE"
+      }
+    },
+    "mirror_上视": {
+      "ok": false,
+      "ret": "None",
+      "tree": "9->9",
+      "new": [
+        "草图2",
+        "切除-拉伸1"
+      ],
+      "types": {
+        "草图2": "ProfileFeature",
+        "切除-拉伸1": "ICE"
+      }
+    }
+  },
+  "captured_at": "2026-10-02T18:01:05"
+}
