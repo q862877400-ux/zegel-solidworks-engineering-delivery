@@ -1,0 +1,37 @@
+{
+ "trials": [
+  {
+   "trial": "auto_top_ring",
+   "ok": true,
+   "feature_name": "曲面填充1",
+   "new_features": [
+    "曲面填充1"
+   ],
+   "tree_before_after": [
+    7,
+    8
+   ],
+   "points_selected": 4,
+   "error": ""
+  },
+  {
+   "trial": "declarative_selection",
+   "preselected": 4,
+   "ok": false,
+   "feature_name": null,
+   "new_features": [],
+   "tree_before_after": [
+    7,
+    7
+   ],
+   "points_selected": 4,
+   "error": ""
+  }
+ ],
+ "at": "2026-10-03T05:46:39",
+ "verdict": "pass",
+ "successes": [
+  "auto_top_ring"
+ ],
+ "note": "★ 验 `boundary_z` → `selection` 的改动：★ 两条路各用一个**新零件**（★ 事实 324：每格独立）。★ 判据：★ `ok` **且** 特征树**有增量**。"
+}

@@ -1,0 +1,63 @@
+| 348 | **修掉那条真欠账**：`boundary_z` → 声明式 `selection` ⇒ **4 个测试文件的收集期 ERROR 消失（18 passed）**；★ 而**声明式路未验成**，★ 卡点已定位到 **mark**（★ `Select4` 没有 mark 参数 —— 事实 32）（2026-10-03，轮 434）。
+
+## 一、★★★★★ 改动与它的**可量化收益**
+```
+★ `solidworks_surface_fill` 的入参：★ `boundary_z: float`（**裸坐标**）→ **`selection: str`**（声明式）✓
+   ★ 而**保留原自动行为**：★ 留空 `selection` ⇒ **自动取最高那一圈**（★ 行为不变）
+   ★ 实现改动（`scripts/sw_surface_features.py`）：★ 加一条**标志式分支** `_declarative`，
+     ★ 而**后半段两条路共用**（★ 不是复制一份）✓
+   ★ spec 改动（`mcp-server/tool_specs_batch45.py`）：★ 那个 Param 换成 `Param("selection", str, default="")`
+★★★ **收益（★ 数字从产物来）**：
+   ```
+   改前：`pytest` 收集期 **4 个文件 ERROR**（声明门禁整批不过）
+         test_mcp_backend_router · test_mcp_configuration_tools ·
+         test_mcp_drawing_tools · test_mcp_headless_open_format
+   改后：★ 四个文件一起跑 ⇒ **18 passed** ✓✓✓
+   ```
+   ⇒ ★★ **即：★ 那一条欠账**一直在吃掉的测试覆盖，现在回来了**** ✓
+   ★ 而那条违反**本身也消失**（★ `tool_registry` 的声明门禁**零违反**）✓
+```
+
+## 二、★★★★★ 真机：**自动路 PASS**（★ 行为不变），**声明式路未验成**
+```
+tools/prove_fill_surface_selection.py（★ 两条路**各用一个新零件** —— 事实 324）：
+   ```
+   auto_top_ring          ok=True   **曲面填充1** · 树 **[7, 8]** · 选中 **4** 条边   ✓
+   declarative_selection  ok=False  树 [7, 7] · 选中 **4** 条边（★ 顶圈选对了）
+   ```
+⇒ ★ **自动路证明"行为不变"**（★ 那正是本改动的**首要约束**）✓
+⇒ ★★ 而**声明式路选对了 4 条边而仍不成** ⇒ ★ **那是一条真实的差异**，★ 不是样本问题 ✓
+```
+
+## 三、★★★★★ 卡点已定位到 **mark**（★ 而它有本仓的既有事实做依据）
+```
+★ **两条路选边的机制不同**：
+   ```
+   自动路：  `ext.SelectByID2("", "EDGE", mid_x, mid_y, mid_z, True, **MARK_BOUNDARY**, callout, 0)`
+              ⇒ ★ **按点选 + mark = 1**（★ 官方的边界 mark）
+   声明式路：`resolve_selection(model, selector, "EDGE")`
+              ⇒ ★ **它用自己的 mark**（★ 而本仓的 `resolve_selection` 走 `IEntity.Select4`，
+                证据：事实 32「`Select4` **没有 mark 参数**」）⇒ ★★ **来的 mark 是 0** ⚠
+   ```
+⇒ ★★★ **即：★ 声明式路选中的边 mark 是 0，★ 而填充要 mark 1** ⇒
+   ★★ **差别在这里** —— 而那**与本仓已记的两条事实完全吻合**：
+     · 事实 32：★ `IEntity.Select4(Append, Callout)`（**按对象**选）**没有 mark 参数**；
+     · 事实 8：★ 「返回 true 而计数 0」那种静默失败。
+```
+
+## 四、★ 处置与下一步（★ 具体到动作）
+```
+★ ① ★ **声明式路如实标"未验成"**（★ 硬约束③）—— ★ 而**它的卡点写清了**（★ mark）。
+★ ② ★ **工具文档已写明**：★ 用**留空** `selection`（★ 自动路，**已真机 PASS**）；
+   ★ 声明式路**待下一轮修**。
+★ ③ ★★ **下一轮的单动作**（★ 事实 53：一轮一件事）：
+   ★ **在声明式分支里，把 resolved 出来的边"按点重选一遍、mark = 1"** ——
+   ★ 而**取点**照自动路那套（`GetStartVertex`/`GetEndVertex` ⇒ 中点）✓
+   ★ 判据：★ 声明式路也建成（★ 树有增量）。
+★ ④ ★ **而"改了实现必须真机验"那条也兑现了** —— ★ 我**没有**因为"自动路过了"就声称两条都过 ✓
+```
+
+**依据**：`output/fill-surface-selection-evidence.json`（★ 自动路 PASS · 声明式路 `[7,7]`）·
+`pytest` 四个文件 **18 passed**（★ 改前收集期 ERROR）·
+`scripts/sw_surface_features.py` 的 `_declarative` 分支 · `mcp-server/tool_specs_batch45.py` ·
+事实 8 / 32 / 324 / 347 · 硬约束③ · 事实 53
