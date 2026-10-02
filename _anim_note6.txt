@@ -1,0 +1,13 @@
+★★★★★ 2026-10-01（轮 289）**理由第六次也是最后一次收窄 —— 而这次到了"通用错误码"这一层，按事实 53 停止深挖**：
+  ★ **本轮查清了那个错误码的含义**：`save_document` 的内部是 `model.Extension.SaveAs(path, 0, 1, …, errors, warnings)`，★ 而两个输入参数都**对**（`swSaveAsVersion_e` 的 `swSaveAsCurrentVersion = 0` · `swSaveAsOptions_e` 的 `swSaveAsOptions_Silent = 1`）；★ **它回来的错误码 `1` = `swFileSaveError_e` 的 `swGenericSaveError`**（★ 反射核实：`swGenericSaveError = 1 · swReadOnlySaveError = 2 · swFileNameEmpty = 4 · swFileLockError = 16 · swFileSaveFormatNotAvailable = 32 · swFileSaveWithRebuildError = 64 …`）。
+  ★★ 而官方 Remarks 明写：★ **「Not all of these return codes are fatal errors. The return code is a bitmask of different conditions」** ⇒ ★★★ **所以 `1` 就是"有一个未具体化的错误"**，★ **它不指向任何具体原因**。
+  ★★★ **⇒ 这条线到此为止（★ 按事实 53：同一处连续收窄 ≥3 次就该停下）** —— ★ 我已收窄 **6 次**，
+     ★ **每次更具体**（缺加载项 ❌ → 空装配体 ⚠ → 马达 ok:false → 类型/找面 ❌ → 组件未解析 → 通用错误码），
+     ★ **而现在卡在一个**通用**错误码上** ⇒ ★★ **再往下只能靠排除法（★ 每次都要真机）**，★ **收益递减**。
+  ★ **当前的准确说法（★ 这是本条的最终措辞）**：★ **AVI 导出整条链已逐环走过** ——
+     类型库 ✅ · 建算例 ✅ · 找圆柱面 ✅（★ 独立探针）· 建马达 ✅（★ 3 种算例）· 导出 ✅（★ 三环）；
+     ★★ **而 `tools/verify_motion_avi_e2e.py` 那条路里**卡在"组件未解析"**：
+     它的装配体 **`save_document` 回 `False`（错误码 `1` = `swGenericSaveError`）**
+     ⇒ 组件未解析 ⇒ `未找到圆柱面` ⇒ 马达建不出 ⇒ 无动画 ⇒ 导出 0 字节。
+  ★ **要真验它需要**（★ 明确、且不在本会话能力内）：★ **一个"组件已解析"的装配体** ——
+     ★ 而**为什么那条路里保存失败**，★ **答案在一个通用错误码后面**。
