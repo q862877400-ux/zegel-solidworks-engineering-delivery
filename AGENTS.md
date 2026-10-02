@@ -17,6 +17,19 @@
 
 任务报告放 `D:\AI\SW\` 下，代码放 `C:\swprojects\sw-skill-fork\`。`D:\AI\SW\AI Solidworks\` 是模型 / 截图 / 手册，不是代码落点。
 
+## 动手核一条路之前：先扫「已走死的路」
+
+```
+C:\swprojects\sw-skill-fork\docs\dead-ends.md      # ★ 由 tools/gen_dead_ends.py 生成（41 条 / 24 能力）
+```
+
+**为什么**：2026-10-02 轮 359–362，我在 `revolve_boss` 的轴上**重走了一遍**前人早已走死的路 ——
+而结论**就在 `capabilities.yaml` 的 `limitations` 里**（轮 153/155 记的「**6 种选法全部失败**；
+`IEntity.Select4` 没有 mark 参数、`SelectByID2` 需要名字而边与草图段都没有名字」）。
+★ 我当时只查了 `known-facts.md` 与 `git log`，**没读那条能力的 `limitations`** —— 那是第一现场。
+⇒ ★★ **顺序：① `docs/dead-ends.md`（全局扫一眼）→ ② 该能力的 `limitations`（第一现场）→ ③ `known-facts.md` → ④ 动手。**
+★ 该文件由 `tools/gen_dead_ends.py` 从 `capabilities.yaml` 生成，**不要手改**；已接进每轮收尾链。
+
 ## 〇、一句话任务
 
 > 自建仓库，把 SolidWorks 自动化做到「官方 SolidWorks API 全覆盖 + 集四家 MIT/Apache MCP 项目之广度 + 业界空白域护城河」；交付形态是我们自己的仓库，上游 `wzyn20051216/solidworks-automation-skill`（1010 星, MIT）与四家外部项目同为来源，一件一件搬、搬一件过一遍并入六条规则。
