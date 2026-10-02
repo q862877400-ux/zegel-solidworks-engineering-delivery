@@ -248,12 +248,15 @@ inspect_model — 一次返回紧凑拓扑 + 质量属性 + 可选多视图拼�
 
 ## 六、来源
 
-| 来源 | 用途 |
-|---|---|
-| [raw.githubusercontent.com/Bennyco86/q3ds-solidworks-mcp/main/README.md](https://raw.githubusercontent.com/Bennyco86/q3ds-solidworks-mcp/main/README.md) | SolidPilot / q3ds 的身份、许可、工具数、`compare_parts` 判据、`execute_batch`、引用解析器自述 |
-| [raw.githubusercontent.com/just1step/solidworks-mcp/main/README.md](https://raw.githubusercontent.com/just1step/solidworks-mcp/main/README.md) | MIT 许可、单 exe 入口、Hub/Proxy 架构、版本能力表 |
-| [raw.githubusercontent.com/Cai-aa/CAD-Agent-Hub/main/README.md](https://raw.githubusercontent.com/Cai-aa/CAD-Agent-Hub/main/README.md) | 含 `MCP/Solidworks` 有状态建模；仓库根那句「COM 成功 ≠ 结果正确」|
-| 本机 `D:\AI\SW\docs\sources.md` | 现有台账（21 个外部项目 + 许可判定表）|
-| 本机 `C:\swprojects\`（23 个目录）| 核「哪些已在克隆」|
+★ **v2 已克隆并读码的三份（本地只读，未运行）**：
 
-★ **未访问**：`pyswx` 的 README/LICENSE、`solidworks-mcp-server`（NPM）的任何页面。
+| 项目 | 本地目录 | 我读了什么 |
+|---|---|---|
+| `just1step/solidworks-mcp` | `C:\swprojects\just1step__solidworks-mcp` | `LICENSE` · 7 个 `Tools.cs`（重点 `WorkflowTools.cs`）|
+| `Cai-aa/CAD-Agent-Hub` | `C:\swprojects\Cai-aa__CAD-Agent-Hub` | `LICENSE` · `MCP/Solidworks/README.md` · `docs/compatibility-and-lessons.md` · `native_features.py` 的容差段 · `tests/test_save_routing.py` 全文 |
+| `deloarts/pyswx` | `C:\swprojects\deloarts__pyswx` | `LICENSE` · 文件构成 |
+
+★ **只读 README（未克隆）**：`Bennyco86/q3ds-solidworks-mcp`（= SolidPilot 的 AGPL 分支，已在台账）· NPM 上的 `solidworks-mcp-server`。
+
+★ **本机台账**：`D:\AI\SW\docs\sources.md`（21 个外部项目 + 许可判定表，本次更新）
+★ **本机克隆盘**：`C:\swprojects\`（23 → 26 个目录）

@@ -52,7 +52,7 @@
 | `solidworks-skills` | delancy827/solidworks-skills | 115 | MIT | 交叉验证来源（「23 参数不是 17」独立佐证） |
 | `sw-automation-skill` | wzyn20051216/solidworks-automation-skill | 1010 | MIT | 本项目目标本体 |
 | `pySW` | kalyanpi4/pySW | 52 | GPL-2.0 | 只读思想，不抄代码 |
-| ★ — | `deloarts/pyswx`（**2026-10-02 补登 · 本机未克隆**） | — | ⚠ **未核** | SolidWorks API 的 Python 封装（据项目自述）；★ **疑似与上面 `pySW` 不是同一个** ⇒ 待核许可后再定能否抄 |
+| ★ — | `deloarts/pyswx`（**2026-10-02 克隆** · 目录 `deloarts__pyswx`） | — | ★ **MIT**（★ 已读真实 LICENSE，1094 B；★ **与上面 GPL-2.0 的 `pySW` 不是同一个**） | SolidWorks API 的 Python 封装（107 个 .py）⇒ ★ 与我们 pywin32 迟到绑定的痛点（事实 47/48 那一族）**同类**，值得对照它的类型化封装思路 |
 | `solidworks-automation-skill` | djlex83/solidworks-automation-skill | 24 | MIT | `VARIANT(VT_DISPATCH,None)` 简洁写法 |
 | `offline-solidworks-api-docs` | pedropaulovc/offline-solidworks-api-docs | 13 | 无许可 | `C:\swapi` 的来源，产物同样不可再分发；只读流水线思路 |
 | `solidworks-build-mechanical-models` | pengxiaoan/solidworks-build-mechanical-models | 13 | 无许可 | 只读思想（绕过 `SelectByID2`），不抄文本 |
@@ -62,8 +62,8 @@
 | `ddeng-skills` | walterkken/doc-driven-engineering-software-skills | 5 | 全版权保留 | 只借鉴「文档驱动目录结构」这一条方法论 |
 | `q3ds-solidworks-mcp` | Bennyco86/q3ds-solidworks-mcp（★ **SolidPilot 的 fork**，Benny Cohen 自 2026-07-11 维护，58 工具 vs 上游 43） | 5 | AGPL-3.0 | 只读产品设计（响应体裁剪省 token、视觉捕获）；★ `execute_batch`（一次 100 步 + `$last.features.0` 引用前步结果）与 `inspect_model`（一次回读拓扑+质量+拼图）★ 直接对着我们"每次调用一次、输出进上下文"的成本 |
 | `solidworks-com-automation-skill` | ZiChen-Ni/solidworks-com-automation-skill | 2 | MIT | 最小 COM 封装；Windows 安装脚本 |
-| ★ — | `just1step/solidworks-mcp`（**2026-10-02 补登 · 本机未克隆**） | — | ★ **MIT**（README 明示） | ★ 单 exe 托盘 Hub/Proxy：`client → proxy → hub → tools → SW`，★ 是我们事实 24（多客户端抢 COM 死锁）的**另一种解法**（对照：命名互斥锁 / 主任务的 `sw_isolate`）；★ **按版本标能力等级**（2024 Certified · 2025 Targeted · **2026 Experimental 且高风险改动 Blocked**）⇒ 值得学这种公开能力表 |
-| ★ — | `Cai-aa/CAD-Agent-Hub`（**2026-10-02 补登 · 本机未克隆**） | — | ⚠ **README 未写许可 → 按未明处理，不抄** | 含 `MCP/Solidworks`（有状态建模）、CATIA、NX、Fusion；★ 仓库根写着「**COM 调用成功本身不证明模型/网格/图纸/仿真结果正确，要去看原生状态与产物**」⇒ ★ 与我们反复吃的教训同源 |
+| ★ — | `just1step/solidworks-mcp`（**2026-10-02 克隆** · 目录 `just1step__solidworks-mcp`） | — | ★ **MIT**（★ 已读真实 LICENSE，1087 B）| ★ 单 exe 托盘 Hub/Proxy：`client → proxy → hub → tools → SW`，★ 是我们事实 24（多客户端抢 COM 死锁）的**另一种解法**（对照：命名互斥锁 / 主任务的 `sw_isolate`）；★ **按版本标能力等级**（2024 Certified · 2025 Targeted · **2026 Experimental 且高风险改动 Blocked**）；★★ **只有 7 个 Tools.cs，少而深** —— 工具全是「多步带验收」的工作流（`CutFaceByProjectedEdges` / `ReplaceNestedComponentAndVerifyPersistence` / `ReviewTargetedStaticInterference`），★ 与我们「一个 API 一次调用」的广度路线**互补** |
+| ★ — | `Cai-aa/CAD-Agent-Hub`（**2026-10-02 克隆** · 目录 `Cai-aa__CAD-Agent-Hub`） | — | ★ **MIT**（★ 已读真实 LICENSE，1084 B）| 含 `MCP/Solidworks`（有状态建模）、CATIA、NX、Fusion；★★ **自带 Feature Graph IR**（`schemas/feature-graph.schema.json` + `executor.py` 42 KB）⇒ 与 SolidPilot 同类但独立实现；★★★ ★★ **`docs/compatibility-and-lessons.md` 是可直接抄的判据集**：旋转轴两套 mark（构造线 4 / 参考轴 16）、保存路由（原生走 `SaveAs3`、导出走 `Extension.SaveAs` 且**验证产物非空**）、建模当**事务**（拒绝关脏文档）；★ 容差判据是「**绝对 mm + 逐轴判 + 随尺度缩放**」（默认 0.05/0.1 mm，齿轮 `max(0.08, 模数×0.08)`）|
 | — | `SolidWorks-CAD` / `Solidworks-Crack` | 812/287 | — | 排除：投递页 / 破解指南。不下载、不读取、不运行 |
 
 许可判定表：
