@@ -1,0 +1,22 @@
+{
+  "base": null,
+  "select_forms": [
+    {
+      "form": "en-name+callout",
+      "ret": "False",
+      "sel_count": "1"
+    },
+    {
+      "form": "en-name+None",
+      "error": "com_error: (-2147352571, '类型不匹配。', None, 8)"
+    }
+  ],
+  "refplane_Distance-8": {
+    "ok": false,
+    "name": null
+  },
+  "refplane_Coincident-4": {
+    "ok": false,
+    "name": null
+  }
+}

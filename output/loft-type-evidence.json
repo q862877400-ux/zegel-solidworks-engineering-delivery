@@ -1,0 +1,14 @@
+{
+  "steps": {
+    "loft": {
+      "ok": true,
+      "feature": "放样1",
+      "type_name": "Blend",
+      "selected": 2
+    },
+    "contrast_extrude": {
+      "type_name": "Extrusion"
+    }
+  },
+  "captured_at": "2026-10-02T17:52:30"
+}
