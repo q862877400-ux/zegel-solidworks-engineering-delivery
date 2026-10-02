@@ -1,0 +1,2451 @@
+{
+  "domain_count": 16,
+  "gap_names": 239,
+  "tiers": {
+    "①已有等价物": 176,
+    "②需人工核": 15,
+    "③强候选": 48
+  },
+  "strong_candidates": [
+    "part",
+    "rebuild_document",
+    "rebuild_model",
+    "referenced_documents",
+    "ref_axis",
+    "ref_plane",
+    "reference_planes",
+    "3point_arc",
+    "construction_geometry",
+    "ellipse",
+    "polygon",
+    "global_var",
+    "intersect",
+    "loft",
+    "sweep",
+    "hem",
+    "jog",
+    "unfold",
+    "structural_member",
+    "annotation",
+    "balloon",
+    "centerline",
+    "capture_screenshot",
+    "display_mode",
+    "reference_geometry",
+    "sensors",
+    "status",
+    "zoom_to_fit",
+    "background",
+    "display_states",
+    "take_photoview_screenshot",
+    "batch_execute_macros",
+    "batch_file_operations",
+    "batch_operations",
+    "batch_process_files",
+    "batch_vba",
+    "execute_macro",
+    "api_automation",
+    "arc",
+    "edges",
+    "error_handling",
+    "execute_workflow",
+    "faces",
+    "fold",
+    "gdt",
+    "operations",
+    "optimize_performance",
+    "pdm_operations"
+  ],
+  "regression": {
+    "bbox": {
+      "expected_gap": false,
+      "got_gap": false,
+      "tier": "①已有等价物",
+      "cov": 1.0,
+      "ok": true
+    },
+    "shell": {
+      "expected_gap": false,
+      "got_gap": false,
+      "tier": "①已有等价物",
+      "cov": 1.0,
+      "ok": true
+    },
+    "export_to_step": {
+      "found": false
+    },
+    "pack_and_go": {
+      "found": false
+    },
+    "run_review": {
+      "found": false
+    },
+    "measure": {
+      "expected_gap": true,
+      "got_gap": false,
+      "tier": "①已有等价物",
+      "cov": 1.0,
+      "ok": false
+    },
+    "measure_distance": {
+      "expected_gap": true,
+      "got_gap": false,
+      "tier": "①已有等价物",
+      "cov": 1.0,
+      "ok": false
+    }
+  },
+  "regression_pass": "2/7",
+  "rows": [
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "activate_document",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_config_activate",
+        "solidworks_config_set_custom_properties"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "active_document_info",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_get_active_view",
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "apply_template",
+      "best_cov": 0.9,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_build_review_report",
+        "solidworks_config_create"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "close_all",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_end"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "close_document",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_end"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "close_model",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_end"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "compare_templates",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_costing_list_templates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "convert_file_format",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_sketch_convert_entities"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "export_document",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "export_dwg",
+      "best_cov": 0.857,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "export_file",
+      "best_cov": 0.857,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "export_image",
+      "best_cov": 0.857,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "export_pdf",
+      "best_cov": 0.857,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "export_with_options",
+      "best_cov": 0.857,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "extract_template",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_costing_default_template"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "manage_file_properties",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_config_read_custom_property",
+        "solidworks_config_set_custom_properties",
+        "solidworks_custom_property_count"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "open_documents",
+      "best_cov": 0.8,
+      "top": [
+        "solidworks_config_read_custom_property",
+        "solidworks_costing_read_analysis",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "open_model",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_config_read_custom_property",
+        "solidworks_costing_read_analysis",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "part",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "rebuild_document",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "rebuild_model",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "referenced_documents",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "save_active_document",
+      "best_cov": 0.857,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "① 会话 / 文档 / 文件",
+      "operation": "save_all",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "② 参考几何",
+      "operation": "ref_axis",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "② 参考几何",
+      "operation": "ref_plane",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "② 参考几何",
+      "operation": "reference_planes",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "② 参考几何",
+      "operation": "reference_point",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_available_point_selectors",
+        "solidworks_selector_resolve_point"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "3d_sketch",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_is_3d",
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "3point_arc",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "check_sketch_fully_defined",
+      "best_cov": 0.692,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "circle",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_add_circle"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "close_sketch",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_end",
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "construction_geometry",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "convert_entities",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_convert_entities",
+        "solidworks_entities_on_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "edit_sketch",
+      "best_cov": 0.778,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_config_activate",
+        "solidworks_config_set_custom_properties"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "ellipse",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "exit_sketch",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_end",
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "hide_all_sketches",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "polygon",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "rectangle",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_add_rectangle"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "show_all_sketches",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_arc",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_chamfer",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_create_chamfer",
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_circle",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sketch_add_circle",
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_circular_pattern",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_circular_pattern",
+        "solidworks_sketch_add_circle"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_constraint",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_topology_create_factor_of_safety_constraint",
+        "solidworks_topology_create_mass_constraint"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_construction",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_dimension",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_measure_selection",
+        "solidworks_sketch_count_arcs"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_ellipse",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "③ 草图",
+      "operation": "sketch_extend",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_add_circle",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "delete_equation",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_equation_delete",
+        "solidworks_clear_selection",
+        "solidworks_clear_selection_for_preview"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "design_table",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_fastener_table_types"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "design_table_create",
+      "best_cov": 0.818,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_build_review_report",
+        "solidworks_config_create"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "design_table_refresh",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_fastener_table_types",
+        "solidworks_refresh_scene_graph"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "diameter_dimension",
+      "best_cov": 0.857,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_measure_selection",
+        "solidworks_costing_body_count"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "dimension",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_measure_selection",
+        "solidworks_costing_body_count"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "equation",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_equation_add",
+        "solidworks_equation_delete",
+        "solidworks_equation_evaluate"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "global_var",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "link_dimension_to_equation",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_measure_selection",
+        "solidworks_costing_body_count"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "manage_design_table",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_fastener_table_types"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "④ 尺寸 / 约束 / 参数",
+      "operation": "relation",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_add_sketch_relation"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "combine_bodies",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "curve_driven_pattern",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_circular_pattern",
+        "solidworks_part_insert_composite_curve"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "delete_body",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_clear_selection",
+        "solidworks_clear_selection_for_preview",
+        "solidworks_equation_delete"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "dome",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_part_insert_dome"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "draft",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_mold_draft_analysis",
+        "solidworks_sheet_metal_create_draft"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "extrude",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_extrude_boss",
+        "solidworks_extrude_cut",
+        "solidworks_extrude_midplane"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "fill_pattern",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_circular_pattern"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "helix",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_helix_insert"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "hole",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_hole_blind_by_selection",
+        "solidworks_hole_counterbore_by_selection",
+        "solidworks_hole_countersink_by_selection"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "intersect",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "linear_pattern",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_circular_pattern"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "loft",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "mirror",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_mirror_feature",
+        "solidworks_sketch_mirror"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "move_body",
+      "best_cov": 0.4,
+      "top": [
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "pattern_circular",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_circular_pattern"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "pattern_features",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_mirror_feature",
+        "solidworks_circular_pattern"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "revolve",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_revolve_boss"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "save_body_as_part",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "scale_body",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "shell",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_part_shell"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "simple_extrude",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_extrude_boss",
+        "solidworks_extrude_cut",
+        "solidworks_extrude_midplane"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "split_body",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "sweep",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑤ 零件特征",
+      "operation": "tutorial_simple_hole",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_hole_blind_by_selection",
+        "solidworks_hole_counterbore_by_selection",
+        "solidworks_hole_countersink_by_selection"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "boundary_boss",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_extrude_boss",
+        "solidworks_revolve_boss"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "delete_face",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_clear_selection",
+        "solidworks_clear_selection_for_preview",
+        "solidworks_equation_delete"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "extend_surface",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_create_extruded"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "extruded_surface",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_surface_create_extruded",
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "filled_surface",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_create_extruded"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "knit_surfaces",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_surface_knit"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "offset_surface",
+      "best_cov": 0.571,
+      "top": [
+        "solidworks_part_shell",
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "planar_surface",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_create_extruded"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "revolved_surface",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_create_extruded"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "surface_modeling",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_create_extruded"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "thicken_surface",
+      "best_cov": 0.571,
+      "top": [
+        "solidworks_part_shell",
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑥ 曲面",
+      "operation": "trim_surface",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_mold_parting_surface",
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_create_extruded"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "base_flange",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sheet_metal_create_base_flange",
+        "solidworks_sheet_metal_create_edge_flange",
+        "solidworks_sheet_metal_create_swept_flange"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "edge_flange",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sheet_metal_create_edge_flange",
+        "solidworks_sheet_metal_create_base_flange",
+        "solidworks_sheet_metal_create_swept_flange"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "export_flat_pattern",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "flat_pattern_info",
+      "best_cov": 0.833,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "flatten_sheet_metal",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_sheet_metal_create_base_flange",
+        "solidworks_sheet_metal_create_draft",
+        "solidworks_sheet_metal_create_edge_flange"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "hem",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "jog",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "miter_flange",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_sheet_metal_create_base_flange",
+        "solidworks_sheet_metal_create_edge_flange",
+        "solidworks_sheet_metal_create_swept_flange"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "sheet_metal",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sheet_metal_create_base_flange",
+        "solidworks_sheet_metal_create_draft",
+        "solidworks_sheet_metal_create_edge_flange"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "sketched_bend",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_sheet_metal_create_one_bend"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑦ 钣金",
+      "operation": "unfold",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑧ 焊件",
+      "operation": "end_cap",
+      "best_cov": 0.8,
+      "top": [
+        "solidworks_sketch_end"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑧ 焊件",
+      "operation": "gusset",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_sheet_metal_create_gusset"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑧ 焊件",
+      "operation": "structural_member",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑧ 焊件",
+      "operation": "trim_weldment",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_weldment_create_cut_list",
+        "solidworks_weldment_create_profile_center_mate",
+        "solidworks_weldment_create_sub_weld_folder"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑧ 焊件",
+      "operation": "weld_symbol",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_weldment_create_sub_weld_folder"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑨ 模具",
+      "operation": "parting_line",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_mold_parting_line",
+        "solidworks_mold_parting_surface",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑨ 模具",
+      "operation": "shut_off_surface",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_mold_parting_surface",
+        "solidworks_surface_create_extruded"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑨ 模具",
+      "operation": "tooling_split",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_mold_core_cavity_split"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "assembly",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "assembly_analysis",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "assembly_components",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "assembly_mates",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_topology_create_factor_of_safety_constraint",
+        "solidworks_topology_create_mass_constraint"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "assembly_tree",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "components",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_list_components"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "explode_assembly",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "fix_component",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_components"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "hide_component",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "interference",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_check_interference"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "load_assembly",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_config_read_custom_property",
+        "solidworks_costing_read_analysis",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "mirror_component",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_mirror_feature",
+        "solidworks_sketch_mirror"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "move_component",
+      "best_cov": 0.4,
+      "top": [
+        "solidworks_assembly_list_components"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "pack_and_go_assembly",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "pattern_component_circular",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_circular_pattern"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "pattern_component_linear",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_circular_pattern"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "replace_component",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_components"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "save_assembly",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑩ 装配",
+      "operation": "suppress_component",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_clear_selection",
+        "solidworks_clear_selection_for_preview",
+        "solidworks_equation_delete"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "activate_drawing_view",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_drawing_view_set_scale",
+        "solidworks_drawing_set_sheet_scale",
+        "solidworks_set_standard_view"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "activate_sheet",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_drawing_set_sheet_scale",
+        "solidworks_activate_model_for_preview",
+        "solidworks_config_activate"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "analyze_drawing_annotations",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "analyze_drawing_comprehensive",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "analyze_drawing_dimensions",
+      "best_cov": 0.692,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "analyze_drawing_views",
+      "best_cov": 0.692,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "annotation",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "apply_drawing_template",
+      "best_cov": 0.917,
+      "top": [
+        "solidworks_drawing_set_sheet_scale",
+        "solidworks_drawing_view_set_scale",
+        "solidworks_add_sketch_relation"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "auto_center_marks",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_weldment_create_profile_center_mate"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "auto_dimension_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_measure_selection",
+        "solidworks_drawing_collect_view_evidence"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "auxiliary_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_list_views",
+        "solidworks_drawing_view_scale"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "balloon",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "bom",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_collect_assembly_bom",
+        "solidworks_delivery_bom_traceability",
+        "solidworks_delivery_export_bom_csv"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "broken_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_list_views",
+        "solidworks_drawing_view_scale"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "center_mark",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_weldment_create_profile_center_mate"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "centerline",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "check_drawing_compliance",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "check_drawing_standards",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "compare_drawing_templates",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_current_sheet_info",
+        "solidworks_drawing_current_sheet_name"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "compare_drawing_versions",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_current_sheet_info",
+        "solidworks_drawing_current_sheet_name"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "detail_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_list_views",
+        "solidworks_drawing_view_scale"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "drawing",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_current_sheet_info",
+        "solidworks_drawing_current_sheet_name"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "drawing_annotations",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_current_sheet_info",
+        "solidworks_drawing_current_sheet_name"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑪ 工程图",
+      "operation": "drawing_dimension",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_measure_selection",
+        "solidworks_drawing_sheet_count"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "analyze_draft",
+      "best_cov": 0.9,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "analyze_geometry",
+      "best_cov": 0.9,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "bbox",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_part_bounding_box"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "calculate_mass_properties",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_part_mass_properties",
+        "solidworks_config_read_custom_property",
+        "solidworks_config_set_custom_properties"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "capture_screenshot",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "check_errors",
+      "best_cov": 0.9,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "check_geometry",
+      "best_cov": 0.9,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "display_mode",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "mass_props",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_part_mass_properties",
+        "solidworks_topology_create_mass_constraint"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "measure",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_measure_selection",
+        "solidworks_costing_body_count"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "measure_distance",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_measure_selection",
+        "solidworks_costing_body_count"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "reference_geometry",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "sensors",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "status",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "view_orientation",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_list_views",
+        "solidworks_drawing_view_scale"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑫ 检查 / 测量 / 反馈",
+      "operation": "zoom_to_fit",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑬ 仿真 / Motion",
+      "operation": "motion_study",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_motion_collect_summary",
+        "solidworks_motion_create_study",
+        "solidworks_motion_study_manager"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑬ 仿真 / Motion",
+      "operation": "run_simulation",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_simulation_run_analysis",
+        "solidworks_list_simulation_study_options",
+        "solidworks_simulation_apply_centrifugal_force"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑬ 仿真 / Motion",
+      "operation": "simulation_setup",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_list_simulation_study_options",
+        "solidworks_simulation_apply_centrifugal_force",
+        "solidworks_simulation_apply_fixed_restraint"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑬ 仿真 / Motion",
+      "operation": "simulation_study",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_list_simulation_study_options",
+        "solidworks_simulation_collect_evidence",
+        "solidworks_simulation_create_study"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "activate_display_state",
+      "best_cov": 0.778,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_config_activate",
+        "solidworks_config_set_custom_properties"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "appearance_color",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_collect_appearance_evidence"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "assembly_configurations",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_config_activate",
+        "solidworks_config_create",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "background",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "configurations",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_config_activate",
+        "solidworks_config_create",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "display_states",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "material",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_list_render_materials",
+        "solidworks_simulation_set_material"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "materials",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_list_render_materials",
+        "solidworks_simulation_set_material"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "pdm_configure",
+      "best_cov": 0.875,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_config_activate",
+        "solidworks_config_set_custom_properties"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑭ 外观 / 材质 / 配置",
+      "operation": "take_photoview_screenshot",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "analyze_macro",
+      "best_cov": 0.643,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "batch_apply_template",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_build_review_report",
+        "solidworks_config_create"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "batch_execute_macros",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "batch_export",
+      "best_cov": 0.545,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "batch_file_operations",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "batch_operations",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "batch_process_files",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "batch_run_macros",
+      "best_cov": 0.143,
+      "top": [
+        "solidworks_simulation_run_analysis",
+        "solidworks_topology_run"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "batch_vba",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "configurations_batch",
+      "best_cov": 0.375,
+      "top": [
+        "solidworks_config_activate",
+        "solidworks_config_create",
+        "solidworks_config_inspect"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "convert_text_to_native_macro",
+      "best_cov": 0.125,
+      "top": [
+        "solidworks_sketch_convert_entities"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "diagnose_macro_execution",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_build_review_report",
+        "solidworks_config_inspect"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "drawing_vba",
+      "best_cov": 0.286,
+      "top": [
+        "solidworks_drawing_collect_view_evidence",
+        "solidworks_drawing_current_sheet_info",
+        "solidworks_drawing_current_sheet_name"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "edit_macro",
+      "best_cov": 0.583,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_config_activate",
+        "solidworks_config_set_custom_properties"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "execute_macro",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "export_vba",
+      "best_cov": 0.545,
+      "top": [
+        "solidworks_delivery_export_bom_csv",
+        "solidworks_export_bmp",
+        "solidworks_export_dxf"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "feature_vba",
+      "best_cov": 0.286,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_mirror_feature"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "generate_vba_assembly_insert",
+      "best_cov": 0.562,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_build_review_report",
+        "solidworks_config_create"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "generate_vba_assembly_mates",
+      "best_cov": 0.65,
+      "top": [
+        "solidworks_topology_create_factor_of_safety_constraint",
+        "solidworks_topology_create_mass_constraint",
+        "solidworks_topology_create_stress_constraint"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "generate_vba_batch_export",
+      "best_cov": 0.45,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_build_review_report",
+        "solidworks_config_create"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "generate_vba_code",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_build_review_report",
+        "solidworks_config_create"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "generate_vba_drawing_dimensions",
+      "best_cov": 0.611,
+      "top": [
+        "solidworks_drawing_set_sheet_scale",
+        "solidworks_drawing_view_set_scale",
+        "solidworks_add_sketch_relation"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "generate_vba_drawing_views",
+      "best_cov": 0.722,
+      "top": [
+        "solidworks_drawing_view_set_scale",
+        "solidworks_drawing_set_sheet_scale",
+        "solidworks_set_standard_view"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑮ 宏 / 自动化",
+      "operation": "generate_vba_extrusion",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_build_review_report",
+        "solidworks_config_create"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "advanced_features",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_mirror_feature"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "api_automation",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "arc",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "bodies",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "classify_feature_tree",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_mirror_feature"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "composite_curve",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_part_insert_composite_curve"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "delete_feature",
+      "best_cov": 0.75,
+      "top": [
+        "solidworks_clear_selection",
+        "solidworks_clear_selection_for_preview",
+        "solidworks_equation_delete"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "edges",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "error_handling",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "execute_workflow",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "faces",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "features",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_mirror_feature"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "file_properties",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_config_read_custom_property",
+        "solidworks_config_set_custom_properties",
+        "solidworks_custom_property_count"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "fold",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "gdt",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "hide_all_planes",
+      "best_cov": 0.2,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "②需人工核"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "line",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_mold_parting_line",
+        "solidworks_sketch_add_line"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "load_part",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_config_read_custom_property",
+        "solidworks_costing_read_analysis",
+        "solidworks_costing_read_body"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "mate",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_topology_create_factor_of_safety_constraint",
+        "solidworks_topology_create_mass_constraint"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "mates",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_list_mates",
+        "solidworks_topology_create_factor_of_safety_constraint",
+        "solidworks_topology_create_mass_constraint"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "model_info",
+      "best_cov": 1.0,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ],
+      "tier": "①已有等价物"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "operations",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "optimize_performance",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    },
+    {
+      "domain": "⑰ 未归类",
+      "operation": "pdm_operations",
+      "best_cov": 0.0,
+      "top": [],
+      "tier": "③强候选"
+    }
+  ],
+  "★": "v2：域来自 union-coverage-matrix §五（每个缺口名自带域）· 判据三层 · 用已知 6 条做回归"
+}
