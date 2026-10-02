@@ -1,0 +1,18 @@
+{
+ "at": "2026-10-03T06:56:27",
+ "trials": [],
+ "study_none": false,
+ "lm_none": false,
+ "bodies": 1,
+ "verts": 1,
+ "points": [
+  [
+   -30.0,
+   20.0,
+   -20.0
+  ]
+ ],
+ "any_built": false,
+ "verdict": "fail",
+ "note": "★ 试三个有依据的形态（★ 都对应「VertexPoint 可能是什么」）：① 一个 IVertex 对象 · ② 单元素数组 · ③ 点的三元组。★ 判据：★ 载荷与约束计数 **+1**（★ 不拿返回值当判据）。"
+}

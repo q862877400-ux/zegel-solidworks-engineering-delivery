@@ -1,0 +1,62 @@
+{
+ "at": "2026-10-03T06:55:34",
+ "phase": "pre",
+ "kind": "dialog",
+ "hwnd": 198200,
+ "pid": 10356,
+ "title": "",
+ "class": "swBalloonTip",
+ "exe": "SLDWORKS.exe",
+ "controls": [
+  {
+   "class": "Button",
+   "text": "Check1"
+  },
+  {
+   "class": "Static",
+   "text": "为此零件选择一材料"
+  },
+  {
+   "class": "Button",
+   "text": ""
+  },
+  {
+   "class": "Button",
+   "text": ""
+  },
+  {
+   "class": "Button",
+   "text": ""
+  },
+  {
+   "class": "Button",
+   "text": ""
+  },
+  {
+   "class": "Button",
+   "text": ""
+  },
+  {
+   "class": "Button",
+   "text": ""
+  }
+ ],
+ "hung": false,
+ "verdict": {
+  "mode": "needs_llm",
+  "reason": "按钮 ['Check1', '', '', '', '', '', ''] 里有多义/高危项 ['多于一个同权按钮'] ⇒ 点哪个取决于弹窗在问什么",
+  "buttons": [
+   "Check1",
+   "",
+   "",
+   "",
+   "",
+   "",
+   ""
+  ],
+  "hit": []
+ },
+ "needs_llm": true,
+ "dismissed": false,
+ "still_present": true
+}
