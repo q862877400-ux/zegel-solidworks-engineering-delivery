@@ -422,7 +422,7 @@
    "module": "sw_export",
    "name": "batch_export",
    "kind": "已有",
-   "why": "功能已由 `solidworks_batch_export_files（★ `batch_export` 是 `batch_export_formats` 的**薄包装**，而后者就是那个工具的 function；⚠ 它在 `server.py` 侧声明，★ 故 `all_specs()` **看不到它**）` 覆盖"
+   "why": "功能已由 `batch_export_formats` 包装暴露（★ **前缀别名**：裸函数名是包装名的前缀）"
   },
   {
    "module": "sw_export",
