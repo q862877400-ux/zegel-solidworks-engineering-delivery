@@ -1,0 +1,207 @@
+{
+  "captured_at": "2026-10-02T11:23:35",
+  "capability": "modeling_readback",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "count": 4,
+      "detail": {
+        "solidworks_part_shell": {
+          "resolved": true,
+          "inject": "model",
+          "params": [
+            "thickness_mm",
+            "feature_name"
+          ]
+        },
+        "solidworks_part_rib": {
+          "resolved": true,
+          "inject": "model",
+          "params": [
+            "sketch_name",
+            "thickness_mm",
+            "feature_name",
+            "direction"
+          ]
+        },
+        "solidworks_part_insert_dome": {
+          "resolved": true,
+          "inject": "model",
+          "params": [
+            "height_mm",
+            "feature_name",
+            "reverse",
+            "elliptic"
+          ]
+        },
+        "solidworks_part_insert_composite_curve": {
+          "resolved": true,
+          "inject": "model",
+          "params": [
+            "feature_name"
+          ]
+        }
+      }
+    },
+    "base": {
+      "sketch": "草图1",
+      "features": [
+        "前视基准面",
+        "上视基准面",
+        "右视基准面",
+        "原点",
+        "Tables",
+        "草图1",
+        "凸台-拉伸1"
+      ]
+    },
+    "criterion_selfcheck": {
+      "ok": true,
+      "existing_feature": {
+        "ok": true,
+        "present": true,
+        "wrong": 0
+      },
+      "missing_feature": {
+        "ok": false,
+        "present": false
+      },
+      "★": "★ 判据有判别力才可用（★ 两边都要对）"
+    },
+    "tools": {
+      "shell": {
+        "ok": false,
+        "report": {
+          "ok": false,
+          "feature": "shell",
+          "feature_name_expected": "抽壳1",
+          "present_before": false,
+          "readback": {
+            "feature_name": "抽壳1",
+            "present": false,
+            "rebuild_ok": true,
+            "whats_wrong_count": 0,
+            "whats_wrong_entries": [],
+            "reason": "特征名 '抽壳1' 不在特征树里（★ 可能没建出来，或名字与 UI 语言不符）",
+            "★": "规则 6：特征在树里 + EditRebuild3 真 + GetWhatsWrong2 数 0",
+            "names_sample": [
+              "前视基准面",
+              "上视基准面",
+              "右视基准面",
+              "原点",
+              "Tables",
+              "草图1",
+              "凸台-拉伸1"
+            ],
+            "ok": false
+          },
+          "created_object": null,
+          "error": "AttributeError: <unknown>.InsertFeatureShell",
+          "★": "ok = 无异常 **且** 回读三条全真（特征在树里 + EditRebuild3 真 + 查错数 0）"
+        }
+      },
+      "insert_dome": {
+        "ok": false,
+        "report": {
+          "ok": false,
+          "feature": "dome",
+          "feature_name_expected": "圆顶1",
+          "present_before": false,
+          "readback": {
+            "feature_name": "圆顶1",
+            "present": false,
+            "rebuild_ok": true,
+            "whats_wrong_count": 0,
+            "whats_wrong_entries": [],
+            "reason": "特征名 '圆顶1' 不在特征树里（★ 可能没建出来，或名字与 UI 语言不符）",
+            "★": "规则 6：特征在树里 + EditRebuild3 真 + GetWhatsWrong2 数 0",
+            "names_sample": [
+              "前视基准面",
+              "上视基准面",
+              "右视基准面",
+              "原点",
+              "Tables",
+              "草图1",
+              "凸台-拉伸1"
+            ],
+            "ok": false
+          },
+          "created_object": null,
+          "error": null,
+          "★": "ok = 无异常 **且** 回读三条全真（特征在树里 + EditRebuild3 真 + 查错数 0）"
+        }
+      },
+      "rib": {
+        "ok": false,
+        "report": {
+          "ok": false,
+          "feature": "rib",
+          "feature_name_expected": "筋1",
+          "present_before": false,
+          "readback": {
+            "feature_name": "筋1",
+            "present": false,
+            "rebuild_ok": true,
+            "whats_wrong_count": 0,
+            "whats_wrong_entries": [],
+            "reason": "特征名 '筋1' 不在特征树里（★ 可能没建出来，或名字与 UI 语言不符）",
+            "★": "规则 6：特征在树里 + EditRebuild3 真 + GetWhatsWrong2 数 0",
+            "names_sample": [
+              "前视基准面",
+              "上视基准面",
+              "右视基准面",
+              "原点",
+              "Tables",
+              "草图1",
+              "凸台-拉伸1",
+              "草图2"
+            ],
+            "ok": false
+          },
+          "created_object": null,
+          "error": null,
+          "★": "ok = 无异常 **且** 回读三条全真（特征在树里 + EditRebuild3 真 + 查错数 0）"
+        }
+      },
+      "insert_composite_curve": {
+        "ok": false,
+        "report": {
+          "ok": false,
+          "feature": "composite_curve",
+          "feature_name_expected": "复合曲线1",
+          "present_before": false,
+          "readback": {
+            "feature_name": "复合曲线1",
+            "present": false,
+            "rebuild_ok": true,
+            "whats_wrong_count": 0,
+            "whats_wrong_entries": [],
+            "reason": "特征名 '复合曲线1' 不在特征树里（★ 可能没建出来，或名字与 UI 语言不符）",
+            "★": "规则 6：特征在树里 + EditRebuild3 真 + GetWhatsWrong2 数 0",
+            "names_sample": [
+              "前视基准面",
+              "上视基准面",
+              "右视基准面",
+              "原点",
+              "Tables",
+              "草图1",
+              "凸台-拉伸1",
+              "草图2"
+            ],
+            "ok": false
+          },
+          "created_object": null,
+          "error": "RuntimeError: IModelDoc2.InsertCompositeCurve 返回 False ⇒ 合成曲线没建出来。⚠ 官方 Remarks：**必须先用 `SelectByID2(..., mark=1)` 选好实体**；且实体类型要合法（见 SOLIDWORKS Help）。",
+          "★": "ok = 无异常 **且** 回读三条全真（特征在树里 + EditRebuild3 真 + 查错数 0）"
+        }
+      }
+    },
+    "judgement": {
+      "selfcheck": true,
+      "tools_ok": 0,
+      "tools_total": 4,
+      "★": "★ 判据自验通过 + 至少一个建特征工具回读三真 ⇒ 本批算过"
+    }
+  },
+  "verdict": "fail"
+}

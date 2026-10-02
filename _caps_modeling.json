@@ -1,0 +1,50 @@
+[
+  {
+    "id": "feature_readback_criterion",
+    "label": "特征建成回读判据（★ 规则 6 的通用助手 —— 真机打磨三遍）",
+    "level": "verified",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": ["2026"],
+    "dependencies": ["solidworks"],
+    "limitations": [
+      "★ 真机**自验通过**（有判别力）：`'草图1'` ⇒ `ok=True · present=True · rebuild_ok=True · whats_wrong_count=0`；不存在的名字 / 容器名（`收藏` / `实体` / `方程式`）⇒ **全 False**",
+      "★★★ **它当场抓到了两个静默失败**（`rib` / `insert_dome` 不抛异常也没建出特征）⇒ ★ **这正是规则 6 存在的意义**（没有回读，那两个会「看起来成功」）",
+      "★★ **一处规则文本的失真（已查清）**：`docs/union-conventions.md` **规则 6** 写的是 `GetWhatsWrong2`，★ 而它在**本机两套官方源里都不存在** —— 真正的成员是 **`IModelDocExtension.GetWhatsWrongCount()`**（零参、回个数）与 `GetWhatsWrong(out, out, out)`（三参 by-ref）⇒ ★ **规则里写的成员名也要核**",
+      "★★ 而且它**挂在 `IModelDocExtension` 上**（不是 `IModelDoc2`）⇒ **必须从 `model.Extension` 取**（初版直接对 model 调 ⇒ 取不到 ⇒ ★ 判据按设计报「不算通过」，**没有静默成 0**）",
+      "★★ `feature_names` 的过滤用的是**结构性判据**（只收 `GetTypeName2` 非空的节点），**不是**枚举中文容器名 —— ★★ 因为枚举名字**在英文界面下会全部失效**",
+      "⚠ 取不到 `GetWhatsWrongCount` 时回 `count=None` 并**判为不通过**（★ 不静默成 0 —— 否则就是「假通过」，与 known-facts 47 记的那条同一个坑）"
+    ],
+    "allowed_modes": ["interactive", "reviewed", "unattended"],
+    "evidence": [
+      "python tools/capture_modeling_readback_evidence.py（真机，2026-10-01 轮 249：`criterion_selfcheck.ok = true`，★ 两侧都对；证据落 output/modeling-readback-evidence.json）",
+      "★ **三轮真机打磨**：① 直接调 `GetWhatsWrong2` ⇒ 取不到；② 改用 `Extension.GetWhatsWrongCount` ⇒ 取到（0 条错）；③ 过滤从「枚举容器名」改成「`GetTypeName2` 非空」（★ 与 UI 语言无关）",
+      "★ 静态：`scripts/check_union_conventions.py` PASS · `check_param_binding.py` PASS"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_feature_readback.py（照 IModelDoc2.FirstFeature / GetNextFeature / EditRebuild3 + IModelDocExtension.GetWhatsWrongCount）"
+  },
+  {
+    "id": "modeling_feature_readback_tools",
+    "label": "建模闭环补全 4 个工具（抽壳 / 筋 / 圆顶 / 复合曲线）—— ★ 未真机验证",
+    "level": "stitched",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": [],
+    "dependencies": ["solidworks"],
+    "limitations": [
+      "⚠⚠⚠ **未真机验证**（真机 0/4 建出特征）—— 等级 = `stitched`",
+      "★★★ **而失败原因**已被回读判据定位**（★ 这不是「不知道」，而是「知道且如实记」）**：",
+      "　· **`shell`** ⇒ `AttributeError: <unknown>.InsertFeatureShell` —— ★★ **事实 36 的形态**（「同名接口分属不同族 ⇒ 用错接口 = 对象对任何成员都没反应」）⇒ ★ 或 `InsertFeatureShell` 的正确入口**不是** `FeatureManager`（官方另有 `IModelDoc2.InsertFeatureShell` / `FeatureManager.InsertFeatureShell2`）",
+      "　· **`rib` / `insert_dome`** ⇒ ★★ **静默失败**：**不抛异常、也不建出特征** ⇒ ★★★ **被回读判据识别为 `present=False`**（★ 若没有回读，这两个会「看起来成功」）",
+      "　· **`insert_composite_curve`** ⇒ 官方返回 `False` ⇒ ★ 能力层**正确 raise**（★ 不是假通过）；推断是**选择不合法**（官方 Remarks 要求 `mark=1` 且实体类型合法）",
+      "★ **四个工具的形参都不含裸坐标**（规则 3）⇒ 挂上不违规；★ 而 `linear_pattern`（`d1_x/d1_y/d1_z`）与 `hole_wizard`（`x/y/z`）**有裸坐标** ⇒ ★ **本批不挂它们**（★ 不为了凑数量违反规则 3）",
+      "★★ **本批同时交付了**它们要用的回读判据（`feature_readback_criterion` = `verified`）⇒ 下一轮修这三个的入口即可直接复用它"
+    ],
+    "allowed_modes": ["interactive", "reviewed"],
+    "evidence": [
+      "⚠ **无**（真机 0/4）—— ★ 结果已如实落 `output/modeling-readback-evidence.json`（`verdict: fail`），四条失败原因逐条在案",
+      "★ **静态那一半是绿的**：`all_specs()` 出现 4 个工具（**101 → 105**）· `check_param_binding.py` PASS · `check_union_conventions.py` PASS"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_part.py 的 shell_report / rib_report / insert_dome_report / insert_composite_curve_report（包装既有 shell / rib / insert_dome / insert_composite_curve，并统一接 sw_feature_readback）"
+  }
+]
