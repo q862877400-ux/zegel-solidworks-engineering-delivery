@@ -1,0 +1,118 @@
+
+
+# ── 24h 计划 段 6 续（Spec Kit `169`）：**扫描（sweep）** ────────────────────────────
+# ★★★★★ 2026-10-01（轮 315）**这是"四家有我们没有"里核实的第二个真缺**：
+#   ★ 全仓 grep `sweep` ⇒ **工具 0 · 函数 0**（★ 与 `loft` 一样）——
+#   ★★ 而**扫描与放样是 SolidWorks 最基本的两种特征**。四家并集里有 **`sweep`**（Slacker-LLC）。
+#
+# ★★★ **而入口不是 `InsertProtrusionSwept*`** —— ★ 官方 Remarks 第一句就写明：
+#   > 「SOLIDWORKS 2018 introduces a **new sweep architecture**, making this method **obsolete**.
+#   >  See **Sweep Features and SweepFeatureData Objects**」
+#   ⇒ ★★ 现代入口是 **`IFeatureManager.CreateDefinition(swFmSweep)` → `ISweepFeatureData` → `CreateFeature`**
+#     （★ 常量值 **17** —— ★ 反射 `swFmSweep = 17` × 官方 `CreateDefinition.md` 的「swFmSweep (boss sweep)」两源一致）
+#
+# ★★ **官方调用序与 mark**（★ §5.0：判据先找后搓 —— ★ 读的是官方专文，不是自己猜）：
+#   源：`C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeatureData Objects.md`
+#   ```
+#   ① 轮廓：★ 草图轮廓 ⇒ **Mark = 1**（闭合草图）· ★ 圆形轮廓 ⇒ **Mark = 4** · ★ 实体轮廓 ⇒ 1 + 2048
+#   ② 路径：★ **Mark = 4**  ← ★ 而「**路径的起点必须落在轮廓所在平面上**」（1 方向扫描）
+#   ③ 引导线 ⇒ Mark = 2（只与草图轮廓配）· ④ 方向向量 ⇒ Mark = 128
+#   ⑤ CreateDefinition(swFmSweep) ⇒ ISweepFeatureData ⇒ 设属性 ⇒ CreateFeature
+#   ```
+#
+# ★★★ **判据用**特征类型名**（★ 事实 242 的教训：挑只依赖被测对象的那个）——
+#   ★ 真机：放样 = `Blend` · 拉伸 = `Extrusion` · ★ **而扫描应为 `Sweep`**（★ 本次真机核）。
+#
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_sweep.py —— 本文件（新）
+# 定位:   24h 段 6 续：扫描（★ 补「四家有我们没有」的真缺）。
+# 官方签名依据: `C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeatureData Objects.md` ·
+#   `C:\swapi\types\IFeatureManager\CreateDefinition.md`（swFmSweep = 17）·
+#   `C:\swapi\types\ISweepFeatureData\`（54 个成员：`AccessSelections` / `CircularProfile` / `Direction` / …）·
+#   ★ 反射 arity 表 `scripts/sw_api_sldworks.py`（`swFmSweep = 17` · `swFmSweepCut = 18`）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────────────
+
+from sw_connect import get_com_member, set_com_member
+from sw_feature_readback import feature_names
+
+#: ★ `swFeatureNameID_e` 的取值（★ 反射来的，★ 事实 43：数值必须去反射）
+SW_FM_SWEEP = 17
+SW_FM_SWEEP_CUT = 18
+
+
+def _feature_type_name(model, name):
+    """★ 读特征类型名（★ 事实 242：那是**只依赖 API 对不对**的硬判据）。"""
+    try:
+        f = get_com_member(model, "FeatureByName", name)
+        for meth in ("GetTypeName2", "GetTypeName"):
+            try:
+                return str(get_com_member(f, meth))
+            except Exception:                                  # noqa: BLE001
+                continue
+    except Exception:                                          # noqa: BLE001
+        pass
+    return None
+
+
+def create_sweep_report(model, cut: bool = False) -> dict:
+    """★ **用选中的「轮廓（mark=1）+ 路径（mark=4）」建扫描特征**。
+
+    ★ 走官方**现代入口**：★ `CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`
+      （★ `InsertProtrusionSwept*` 已被 SOLIDWORKS 2018 标为 obsolete）。
+    ★ 官方约束（★ 原文）：★ **路径的起点必须落在轮廓所在平面上**（1 方向扫描）。
+    ★ 判据（★ 事实 242）：★ **特征树多了新特征** **且** **类型名 = `Sweep`**
+      （★ 而不是拿"体积期望"当判据 —— ★ 那会依赖我造几何的能力）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    sel = {}
+    for mark, label in ((1, "profile"), (4, "path"), (2, "guide")):
+        try:
+            sel[label] = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                            "GetSelectedObjectCount2", mark))
+        except Exception:                                      # noqa: BLE001
+            sel[label] = -1
+    if sel.get("profile", 0) < 1 or sel.get("path", 0) < 1:
+        return {"ok": False, "stage": "selection", "selected_by_mark": sel,
+                "error": "扫描要选 **轮廓（mark=1）** 与 **路径（mark=4）**（★ 官方专文给的 mark）；"
+                         "★ 当前 mark1=%r · mark4=%r" % (sel.get("profile"), sel.get("path"))}
+    before = feature_names(model)
+    #: ★ 官方调用序：CreateDefinition ⇒ ISweepFeatureData ⇒ CreateFeature
+    try:
+        fm = get_com_member(model, "FeatureManager")
+        data = get_com_member(fm, "CreateDefinition", SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    if data is None:
+        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
+                "error": "CreateDefinition(swFmSweep=%d) 回了 None（★ 与事实 43 的 35 常量表有关？）"
+                         % (SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP)}
+    #: ★ 认领选择（★ `AccessSelections` 是官方要求的第二步）
+    #: ★★★ 2026-10-01（轮 315）**第二个参数要传空 Dispatch物件**（★ **事实 33**）——
+    #:   传 `None` ⇒ `com_error: (-2147352571, '类型不匹配。', None, **2**)`（★ 位置 2）。
+    #:   ★ 而真机实测：**即使这一步报错，特征仍然建成了**（`扫描1` · type=`Sweep`）
+    #:   ⇒ ★ 所以它**不是必需的**；★ 而本包装仍然试它（★ 因为官方步骤里有）、**而不把它当判据**。
+    access = None
+    try:
+        from sw_part import _empty_callout as _ec
+        access = bool(get_com_member(data, "AccessSelections", model, _ec()))
+    except Exception as exc:                                   # noqa: BLE001
+        access = "ERR %s: %s" % (type(exc).__name__, str(exc)[:110])
+    try:
+        feat = get_com_member(fm, "CreateFeature", data)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "CreateFeature", "selected_by_mark": sel, "access": access,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    tname = _feature_type_name(model, new[-1]) if new else None
+    return {"ok": bool(new) and (tname == "Sweep"), "feature_name": (new[-1] if new else None),
+            "new_features": new, "type_name": tname, "tree_before": len(before),
+            "tree_after": len(after), "selected_by_mark": sel, "access_selections": access,
+            "cut": bool(cut), "sw_fm_const": (SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP),
+            "★": "官方现代入口 CreateDefinition(swFmSweep=17) → ISweepFeatureData → CreateFeature；"
+                 "★ 判据 = 特征树多了 **且** 类型名 = `Sweep`（事实 242）"}

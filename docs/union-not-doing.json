@@ -1,0 +1,51 @@
+{
+  "_comment": [
+    "「不做 + 原因」的**显式清单** —— 满足 AGENTS.md §一 A1：",
+    "「域覆盖矩阵里本仓库每一格**都有来源，或写明「不做 + 原因」**」。",
+    "⚠ 「有来源」那一半由 capabilities.yaml 的 source/source_evidence 承担（R12/R13 门禁守着）；",
+    "  **本文件承担「不做 + 原因」那一半** —— 此前**没有任何机制**表达它（2026-10-01 轮 67 实测：",
+    "  矩阵里只有「缺 N」，没有「我们不做这个，因为 X」）。",
+    "⚠ 每条必须给：subject（不做什么）+ reason（为什么不）+ evidence（凭什么这么判定）。",
+    "  门禁 `scripts/check_not_doing.py` 要求三者**都非空** —— 一个没有依据的「不做」等于没写。",
+    "⚠ **不臆断**：只登记**有硬依据**的条目。没有依据的域**留空**，不要为了填满而编。"
+  ],
+  "not_doing": [
+    {
+      "subject": "动画导出 AVI（Motion 分析算例）",
+      "reason": "**环境受限** —— 本机没有 SolidWorks Motion 加载项，而 AVI 导出需要 CosmosMotion 系列算例。",
+      "evidence": [
+        "真机实测（2026-10-01 轮 66，`D:\\AI\\SW\\probe_motion_addin.py`）：set StudyType=4/8/16（CosmosMotion 家族）⇒ **回读仍是 2，静默失败**；1（Assembly）与 2（PhysicalSimulation）能生效但导出仍失败。",
+        "Motion 加载项 4 个 ProgID 全返 None：`CMotionswapi.CMOTIONSWAddin` · `SldWorks.Motion` · `SolidWorks.Motion` · `SWMotionStudy.SWMotionStudyAddin`。",
+        "验收命令 `python tools/verify_motion_avi_e2e.py` ⇒ `verdict: fail`（已排除 6 种条件）。",
+        "⚠ **`AGENTS.md §九.4`：需要用户提供的东西 ⇒ 停下报告，不自行拍板。** 需要用户提供 **SolidWorks Motion 加载项**。",
+        "ⓘ **装上即可闭合**：`capabilities.yaml` 的 `animation_export` 现为 `stitched`，装上后跑验收脚本得 `verdict: pass` 即可升 `verified`。"
+      ]
+    },
+    {
+      "subject": "AGPL / GPL / 无许可 / 全版权保留 来源的**代码移植**",
+      "reason": "**许可红线**（`AGENTS.md §二 铁律 6`）：那几类**只读思想**，不抄代码、不抄文本。",
+      "evidence": [
+        "`AGENTS.md §二 铁律 6` 的许可表：MIT「读抄改商用」· Apache-2.0「+ NOTICE」· AGPL/GPL「**只读思想**」· 无许可/全版权保留「**只读思想**」。",
+        "`scripts/check_license_redlines.py`（A6 门禁）在核「来源块声明的许可是否在白名单内」。",
+        "ⓘ 已评估但**未并入**的 AGPL 类来源见 `THIRD-PARTY-NOTICES.md §二`。"
+      ]
+    },
+    {
+      "subject": "破解相关（SolidWorks-CAD / Solidworks-Crack 类投递页、破解指南、序列号）",
+      "reason": "**零接触红线**（`AGENTS.md §二 铁律 2`）：不碰破解相关任何内容。",
+      "evidence": [
+        "`AGENTS.md §二 铁律 2` 的红线段明写「破解相关…**零接触**」。",
+        "另两条红线：不动注册表 / 全局环境变量 / 系统层；未经确认不 push / 不建远端 / 不发 release。"
+      ]
+    },
+    {
+      "subject": "对外发布（推远端 / 建自建远端 / 提 PR / release）",
+      "reason": "**未获授权**（用户已明示「GitHub 上的东西不着急，等我们完全开发完毕了再上传」）。",
+      "evidence": [
+        "用户原话：「GitHub上的东西不着急，等我们完全开发完毕了再上传」。",
+        "`AGENTS.md §七` 的动作批准表：`git push`（任何远端）/ 提 PR / 发布 release **都要先批准**。",
+        "⇒ 本项目至今**只做本地 commit**（两仓库各自提交，已 179 个 commit）。"
+      ]
+    }
+  ]
+}

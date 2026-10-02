@@ -1,0 +1,307 @@
+"""sw_drawing_view 的官方签名契约测试（不连接 SolidWorks）。
+
+`IView` 是全库最大的接口族（反射实测 496 个成员）。本模块把其中
+207 个「不同能力」做成登记表 + 通用访问器，因此本文件的核心是
+**把登记表逐条对回反射清单** —— 少一条是漏，多一条是我编的。
+
+签名来源：AGENTS.md §四.1③ —— 对官方 interop 程序集的纯元数据反射
+    D:\\AI\\SW\\_raw\\reflect_sldworks\\iface_sldworks.txt → IView 段
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（本任务新增的测试）
+# 文件:   tests/test_sw_drawing_view_contract.py —— 本文件自身
+# 定位:   域 9 工程图视图族的登记表完整性契约与「编号变体折叠」取舍声明。
+# 被测对象: scripts/sw_drawing_view.py
+# 覆盖:   全文件 —— 本文件是自包含测试单元，各测试函数已就地标明核对对象。
+# ⚠ 本文件为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
+# ────────────────────────────────────────────────────────────────────
+"""
+from __future__ import annotations
+
+import importlib.util
+import io
+import re
+import sys
+import types
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+MODULE_PATH = REPO_ROOT / "scripts" / "sw_drawing_view.py"
+REFLECTION = Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）
+# 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IView 段
+# 定位:   独立复算的期望规模（由本测试**自己逐行解析**，不读生成器的中间产物）。
+#         构成：原始成员 / I 前缀内部分发口 / 属性 / 方法 / 编号变体。
+# 覆盖:   后续同级定义
+# ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
+# ────────────────────────────────────────────────────────────────────
+EXPECTED_COMPOSITION = {
+    "raw_members": 496,
+    "internal_dispatch": 134,
+    "methods": 301,
+    "distinct_capabilities": 207,
+}
+
+
+def _faithful(obj, name, *args, **kwargs):
+    if obj is None:
+        return None
+    attr = getattr(obj, name, None)
+    if attr is None:
+        return None
+    if callable(attr):
+        try:
+            return attr(*args, **kwargs)
+        except TypeError:
+            return attr()
+    return attr
+
+
+def _load():
+    connect = types.ModuleType("sw_connect")
+    connect.get_com_member = _faithful
+    connect.call_com_member = _faithful
+    sys.modules.setdefault("sw_connect", connect)
+    spec = importlib.util.spec_from_file_location("sw_drawing_view", MODULE_PATH)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["sw_drawing_view"] = module
+    spec.loader.exec_module(module)
+    module.get_com_member = _faithful
+    module.call_com_member = _faithful
+    return module
+
+
+def _parse_iface():
+    """逐行解析 IView 段。
+
+    ⚑ 刻意**不用正则切段** —— 前瞻 ``(?=\\r?\\n## |\\Z)`` 会提前截断
+    （实测把 116 行的 IModelView 段截成 3761 字符，导致误判成员归属）。
+    """
+    if not REFLECTION.is_file():
+        return None
+    current, out = None, []
+    for raw in REFLECTION.read_text(encoding="utf-8",
+                                   errors="replace").splitlines():
+        if raw.startswith("## "):
+            if current == "IView":
+                break
+            current = raw[3:].strip()
+            if current == "IView":
+                out = []
+        elif current == "IView" and raw.strip():
+            out.append(raw.strip())
+    return out
+
+
+# ── 登记表完整性（本文件核心）────────────────────────────────────────
+
+def test_registry_has_expected_size():
+    m = _load()
+    assert len(m.VIEW_MEMBER_ARITY) == EXPECTED_COMPOSITION["distinct_capabilities"], (
+        f"能力登记表应为 {EXPECTED_COMPOSITION['distinct_capabilities']} 项，"
+        f"实际 {len(m.VIEW_MEMBER_ARITY)}")
+
+
+def test_every_registered_name_really_exists_in_iview():
+    if _parse_iface() is None:
+        print("  (跳过：反射清单不在本机)")
+        return
+    block = _parse_iface()
+    m = _load()
+    for name in m.VIEW_MEMBER_ARITY:
+        assert any(f"{name}(" in line for line in block), (
+            f"{name} 不在 IView 段里 —— 可能编造")
+
+
+def test_registry_arities_match_reflection():
+    """登记表的实参个数必须与反射逐条一致。"""
+    if _parse_iface() is None:
+        print("  (跳过：反射清单不在本机)")
+        return
+    block = _parse_iface()
+    m = _load()
+    sig = re.compile(r"^(\S+)\s+(\w+)\s*\((.*)\)$")
+    real: dict[str, list[int]] = {}
+    for line in block:
+        hit = sig.match(line)
+        if not hit:
+            continue
+        _, name, args = hit.groups()
+        real.setdefault(name, []).append(
+            len([a for a in args.split(",") if a.strip() and not a.strip().endswith("&")]))
+    wrong = []
+    for name, arity in m.VIEW_MEMBER_ARITY.items():
+        if name not in real:
+            continue                      # 折叠后的基础名，见下一条测试
+        if arity not in real[name]:
+            wrong.append((name, arity, real[name]))
+    assert not wrong, f"这些能力的实参个数与反射不符: {wrong[:5]}"
+
+
+# ── 组成统计（防止后续误读 IView 的规模）──────────────────────────
+
+def test_composition_of_iview_is_as_documented():
+    """模块头声称的组成必须与反射实测一致 —— 数字错了文档就在误导人。"""
+    if _parse_iface() is None:
+        print("  (跳过：反射清单不在本机)")
+        return
+    block = _parse_iface()
+    sig = re.compile(r"^(\S+)\s+(\w+)\s*\((.*)\)$")
+    internal = properties = methods = 0
+    for line in block:
+        hit = sig.match(line)
+        if not hit:
+            continue
+        _, name, _args = hit.groups()
+        if re.match(r"^I[A-Z]", name):
+            internal += 1
+        elif name.startswith(("get_", "set_")):
+            properties += 1
+        else:
+            methods += 1
+    assert len(block) == EXPECTED_COMPOSITION["raw_members"], (
+        f"原始成员应为 {EXPECTED_COMPOSITION['raw_members']}，实际 {len(block)}")
+    assert internal == EXPECTED_COMPOSITION["internal_dispatch"], (
+        f"I 前缀内部分发口应为 {EXPECTED_COMPOSITION['internal_dispatch']}，"
+        f"实际 {internal}")
+    assert methods == EXPECTED_COMPOSITION["methods"], (
+        f"方法应为 {EXPECTED_COMPOSITION['methods']}，实际 {methods}")
+
+
+def test_no_internal_dispatch_members_registered():
+    m = _load()
+    for name in m.VIEW_MEMBER_ARITY:
+        assert not re.match(r"^I[A-Z][a-z]", name), f"{name} 是 COM 内部分发口"
+
+
+def test_property_names_are_not_in_the_method_registry():
+    """属性（get_/set_）不该出现在「方法 arity」表里。"""
+    m = _load()
+    overlap = set(m.VIEW_PROPERTY_NAMES) & set(m.VIEW_MEMBER_ARITY)
+    assert not overlap, f"这些既是属性又登记成方法: {sorted(overlap)[:8]}"
+
+
+def test_numbered_variants_are_folded_and_declared():
+    """编号变体（X2/X3）被折叠到基础名 —— 这是**取舍声明**，不是「它们等价」。"""
+    m = _load()
+    numbered = [n for n in m.VIEW_MEMBER_ARITY if re.search(r"\d+$", n)]
+    # 允许残留的编号名必须是「基础名不在表里」的情况（即基础名本身带数字语义）
+    source = MODULE_PATH.read_text(encoding="utf-8")
+    assert "编号变体已折叠" in source
+    assert "明确声明的取舍" in source
+    assert numbered, "反射里确有 94 个编号变体，折叠后应仍有少量残留"
+
+
+# ── 通用访问器 ───────────────────────────────────────────────────────
+
+def test_call_view_rejects_unknown_member_loudly():
+    m = _load()
+    try:
+        m.call_view(object(), "NotARealMember")
+    except KeyError as exc:
+        assert "NotARealMember" in str(exc)
+        return
+    raise AssertionError("未登记的成员名被放行了 —— 会静默传错成员给 COM")
+
+
+def test_call_view_rejects_wrong_arity_before_calling_com():
+    m = _load()
+    zero = next(n for n, a in m.VIEW_MEMBER_ARITY.items() if a == 0)
+    try:
+        m.call_view(object(), zero, 1, 2)
+    except ValueError as exc:
+        assert zero in str(exc)
+        return
+    raise AssertionError("错 arity 未被拦")
+
+
+def test_call_view_rejects_none_target():
+    m = _load()
+    zero = next(n for n, a in m.VIEW_MEMBER_ARITY.items() if a == 0)
+    try:
+        m.call_view(None, zero)
+    except ValueError as exc:
+        assert "None" in str(exc)
+        return
+    raise AssertionError("None 目标未被拦")
+
+
+def test_call_view_passes_through_on_correct_arity():
+    m = _load()
+    seen = []
+    m.get_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or "OK")
+    m.call_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or "OK")
+    zero = next(n for n, a in m.VIEW_MEMBER_ARITY.items() if a == 0)
+    assert m.call_view(object(), zero) == "OK"
+    assert seen == [(zero, ())]
+
+
+# ── 属性型成员（属性 vs 方法）─────────────────────────────────────────
+
+def test_scale_and_name_are_properties_not_methods():
+    m = _load()
+    seen = []
+    m.get_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or 1.0)
+    m.call_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or 1.0)
+    m.set_view_scale(object(), 2.0)
+    #: ★★★ 2026-10-01（轮 293）**契约随证据更新**：
+    #:   旧断言写的是 `("Scale", (2.0,))` —— ★ **而 `IView` 上没有 `Scale` 这个成员**：
+    #:   真机报 `AttributeError: <unknown>.Scale`（事实 36 的形态）。
+    #:   ★★ 官方真名是 **`ScaleRatio`**（`C:\swapi\types\IView\ScaleRatio.md`：
+    #:   "Gets or sets the scale of the drawing view, returning the results in ratio format (n:n)"，
+    #:   Returns: **Array of 2 doubles**）⇒ ★ 按 `n:1` 写两个数。
+    assert seen == [("ScaleRatio", ((2.0, 1.0),))]
+    seen2 = []
+    m.get_com_member = lambda o, n, *a, **k: (seen2.append((n, a)) or "V1")
+    m.call_com_member = lambda o, n, *a, **k: (seen2.append((n, a)) or "V1")
+    assert m.get_view_name(object()) == "V1"
+    assert seen2 == [("Name", ())]
+
+
+
+
+def test_orient_toward_is_removed_because_it_cannot_be_found():
+    """⚑⚑ **删掉了一个查不到的成员**。
+
+    `get_orient_toward` 初稿调 ``IView.OrientToward(Object, Double, Double)``。
+    按铁律 4 查**两套官方源**：
+      ① 对 sldworks.dll 的纯元数据反射 —— 全程序集无此成员名
+      ② CHM 全文检索 ``OrientToward`` —— 无结果
+    ⇒ 按铁律 5「查不到就写查不到并停」，**删除该封装**，
+      不拿相似名字蒙混。本测试锁住这个决定，防止有人再加回来。
+    """
+    m = _load()
+    assert not hasattr(m, "get_orient_toward"), (
+        "OrientToward 两套官方源都查不到，不得提供该封装")
+    source = MODULE_PATH.read_text(encoding="utf-8")
+    assert '"OrientToward"' not in source, "源码里不应再出现 OrientToward"
+    assert "查不到" in source, "应写明「为什么不做」"
+    # IView 上真实存在的定向相关成员
+    for real in ("ScaleDecimal", "ScaleRatio", "GetOrientationName"):
+        assert re.search(rf"\b{real}\b", source), f"{real} 是真实成员，应有交代"
+
+
+
+
+# ── 直接运行 ─────────────────────────────────────────────────────────
+
+def _main():
+    failures = []
+    tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
+    for test in tests:
+        try:
+            test()
+            print(f"  PASS  {test.__name__}")
+        except Exception as exc:  # noqa: BLE001
+            failures.append((test.__name__, exc))
+            print(f"  FAIL  {test.__name__}: {exc}")
+    print(f"\n{len(tests) - len(failures)}/{len(tests)} passed")
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    if hasattr(sys.stdout, "buffer"):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    raise SystemExit(_main())

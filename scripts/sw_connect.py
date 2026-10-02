@@ -1,0 +1,990 @@
+"""
+SolidWorks 连接工具
+提供连接到 SolidWorks 实例的各种方法
+"""
+import glob
+import os
+import tempfile
+import time
+from pathlib import Path
+
+try:
+    from .sw_preflight import ensure_solidworks_installed, import_com_dependencies
+except ImportError:
+    from sw_preflight import ensure_solidworks_installed, import_com_dependencies
+
+pythoncom, win32com_client, VARIANT = import_com_dependencies()
+
+
+DOC_TYPE_MAP = {
+    "part": 1,
+    "prt": 1,
+    "sldprt": 1,
+    "assembly": 2,
+    "asm": 2,
+    "sldasm": 2,
+    "drawing": 3,
+    "drw": 3,
+    "slddrw": 3,
+}
+
+DOC_TYPE_LABELS = {
+    "part": "零件",
+    "assembly": "装配体",
+    "drawing": "工程图",
+}
+
+DEFAULT_TEMPLATE_PREFS = {
+    "part": 8,       # swUserPreferenceStringValue_e.swDefaultTemplatePart
+    "assembly": 9,   # swUserPreferenceStringValue_e.swDefaultTemplateAssembly
+    "drawing": 10,   # swUserPreferenceStringValue_e.swDefaultTemplateDrawing
+}
+
+SW_ALWAYS_USE_DEFAULT_TEMPLATES = 111
+
+
+class SolidWorksConnectionError(RuntimeError):
+    """带阶段和错误码的 SolidWorks 连接错误。"""
+
+    def __init__(self, code, stage, message):
+        self.code = code
+        self.stage = stage
+        super().__init__(f"[{code}] {stage}: {message}")
+
+
+class _LaunchGuard:
+    """跨进程启动互斥；Windows 使用命名 Mutex，其它平台使用独占锁文件。"""
+
+    def __init__(self, name="CADStudio.SolidWorks.Launch"):
+        self.name = name
+        self.handle = None
+        self.path = Path(tempfile.gettempdir()) / "cad-studio-solidworks-launch.lock"
+        self._owns_file = False
+
+    def __enter__(self):
+        if os.name == "nt":
+            import ctypes
+
+            kernel32 = ctypes.windll.kernel32
+            self.handle = kernel32.CreateMutexW(None, False, self.name)
+            if not self.handle:
+                raise SolidWorksConnectionError("SW_MUTEX", "locking", "无法创建 SolidWorks 启动互斥锁")
+            wait_result = kernel32.WaitForSingleObject(self.handle, 15000)
+            if wait_result not in (0, 0x80):
+                kernel32.CloseHandle(self.handle)
+                self.handle = None
+                raise SolidWorksConnectionError("SW_MUTEX_TIMEOUT", "locking", "等待其它启动任务超时")
+            return self
+
+        try:
+            fd = os.open(str(self.path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(fd, str(os.getpid()).encode("ascii"))
+            os.close(fd)
+            self._owns_file = True
+        except FileExistsError as exc:
+            try:
+                stale_pid = int(self.path.read_text(encoding="ascii").strip())
+                os.kill(stale_pid, 0)
+            except (ProcessLookupError, ValueError):
+                self.path.unlink(missing_ok=True)
+                return self.__enter__()
+            raise SolidWorksConnectionError("SW_MUTEX_BUSY", "locking", "已有 SolidWorks 启动任务") from exc
+        return self
+
+    def __exit__(self, *_):
+        if os.name == "nt" and self.handle:
+            import ctypes
+
+            ctypes.windll.kernel32.ReleaseMutex(self.handle)
+            ctypes.windll.kernel32.CloseHandle(self.handle)
+            self.handle = None
+        elif self._owns_file:
+            try:
+                self.path.unlink()
+            except FileNotFoundError:
+                pass
+            self._owns_file = False
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（**沿上游 `wzyn20051216/solidworks-automation-skill` 的写法**发展而来）。
+# 文件:   scripts/sw_connect.py —— 「成员读取」这一段（`get_com_member` / `safe_get_com_member`）。
+# 定位:   2026-10-01（轮 143）**改了一处**：把 `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）
+#         纳入「**返回成员、不调用**」的白名单。
+#         ★★ 起因：`get_com_member` 在**没有实参**时会「先试调一次」来分辨属性与方法
+#         ⇒ **对 COM 成员，「取」就等于「调」** ⇒ 有副作用的成员会被静默执行
+#         （详见已知事实 84；实测 `tools/diag_insert_dome.py`）。
+#         ⚠ 本轮**没有**改成「永不调用」—— 那会动到全仓库依赖的既有语义。
+# 官方签名依据: 本段本身不调具体接口；它服务于 `IModelDocExtension::SelectByID2` /
+#         `IModelDoc2::InsertDome` 之类的调用点，那些调用的签名依据在各自模块的来源块里。
+# 许可:   上游 MIT（见 `THIRD-PARTY-NOTICES.md` §一.1）。无第三方代码引入。
+# 覆盖:   后续同级定义 —— 本块涵盖这一段（`get_com_member` / `safe_get_com_member`）。
+# ─────────────────────────────────────────────────────────────────────
+
+def get_com_member(obj, attr_name, *args):
+    """★ 「**取或调**」—— 这是本函数的**真实语义**，2026-10-01（轮 144）写明白。
+
+    :param obj: COM 对象
+    :param attr_name: 成员名称
+    :param args: 有实参 ⇒ 一定**调用**；无实参 ⇒ **见下**
+    :returns: 成员值，或**调用的结果**
+
+    ⚠⚠ **无实参时的行为（重要）**：本函数会**先无参调一次**，
+    成功了就返回**调用的结果**；失败了（不是"找不到成员"）才把**成员本身**返回。
+    ⇒ ★★ **对 COM 成员，「取」可能等于「调」。**
+
+    ★ **审计结论（轮 144，`tools/audit_get_com_member_semantics.py`）**：
+    这个"双用"**不是缺陷，是被依赖的特性** —— 全仓库**471** 个无实参调用点里，
+    很多**正是靠它去执行**的（例：`get_com_member(study, "RunAnalysis")` 拿返回码、
+    `get_com_member(view, "Activate")` 就是要激活视图、
+    `get_com_member(fm, "InsertMoldShutOffSurface")` 就是要建面）。
+    ⇒ ⚠ 所以**没有**把它改成"永不调用"。
+
+    ⚠ **但仍然危险**，危险在于**名字读不出来它在调**：
+    ```
+    471 个无实参调用点
+      ├─ 193 处的成员在反射里**有零参重载** ⇒ 探测调用**会成功执行**
+      │    ├─ 其中绝大多数是**只读 getter**（GetTitle / GetPoints / IsCylinder…）
+      │    │   ⇒ 「取即调」正是想要的 ✓
+      │    └─ 24 处名字**像「改东西」**（Insert* / Run* / Mesh* / Scale / Update*…）
+      │        ⇒ ⚠ 这些是**要人工确认"作者是不是故意的"**的
+      └─ 其余：成员的必填参数 ⇒ 探测调用失败 ⇒ **返回成员本身**（轮 143 的修复覆盖这里）
+    ```
+    ⇒ ★ **要"只取不调"时，用 `get_com_member_raw`**（本模块下一个函数）。
+    """
+    member = getattr(obj, attr_name)
+    if args:
+        return member(*args)
+    # ⚠⚠⚠ **2026-10-01（轮 143）发现本函数的一个危险设计**：
+    #   下面那句"没有实参就先调一次" —— 对**有副作用**的 COM 成员，
+    #   **"取"就等于"调"**！
+    #   实证：`get_com_member(doc, "InsertDome")` **自己抛了**
+    #   `0x8002000F`（`DISP_E_PARAMNOTOPTIONAL`，因为 `InsertDome` 有 3 个必填参数）
+    #   ⇒ 说明它**真的把 `InsertDome` 调了一次**。
+    #   ⇒ ★ 危险在于：**无必填参数**且有副作用的方法（如 `InsertDeleteHole()`、
+    #     任何 `File*` 写盘方法）会**被"取"这个动作静默执行**。
+    #   ⚠ 本函数的白名单原本只认 `找不到成员`（`0x80020005`/`-2147352573`），
+    #     所以 `DISP_E_PARAMNOTOPTIONAL` **会抛出去** —— 那让"取不到"与"取到了但参数不够"
+    #     看起来一样。
+    #   ★ 本轮的最小修法：把 `DISP_E_PARAMNOTOPTIONAL` 也纳入"**返回成员、不调用**"。
+    #     （不改成"永不调用"—— 那会动到全仓库依赖的既有语义。）
+    try:
+        return member() if callable(member) else member
+    except Exception as exc:
+        message = str(exc)
+        if ("-2147352573" in message or "找不到成员" in message or "Member not found" in message
+                #: `DISP_E_PARAMNOTOPTIONAL` —— 说明"它是个**需要实参的方法**"，
+                #: 而不是"读不到这个成员"。
+                or "-2147352561" in message or "非选择性的参数" in message
+                or "Parameter not optional" in message):
+            return member
+        raise
+
+
+def call_com_member(obj, attr_name, *args):
+    """★ 「**就是去调它**」—— 与 `get_com_member` **行为完全相同**，差别在**名字**。
+
+    :returns: **调用的结果**（会把成员调一次）。
+
+    ⚠ **为什么要单独一个名字**（2026-10-01 轮 145）：审计 24 处「会改东西的零参调用」
+    时发现，**作者全部是故意的**（拿返回值当成败 / 要的就是那个动作）——
+    但**代码里读不出来**：`get_com_member(study, "RunAnalysis")` 看不出它会**跑求解**。
+    ⇒ ★ 在**故意要调**的地方用本函数，**名字即意图**，读代码的人不必再去查语义。
+
+    ⚠ 只在**确实要调用**时用它；**要"只取不调"用 `get_com_member_raw`**；
+    两者都拿不准时用 `get_com_member`（语义是"取或调"，**名字不表态**）。
+    """
+    return get_com_member(obj, attr_name, *args)
+
+
+#: 官方 `swProcessType_e` 之类与「模态框」相关的常量**没有官方枚举** ⇒ 本模块只用两个
+#: **Win32 公开常量**（不是魔法数）：
+_WM_COMMAND = 0x0111        #: Win32 `WM_COMMAND`
+_IDOK = 1                   #: Win32 标准「确定 / OK」按钮的命令 ID
+_DIALOG_CLASS = "#32770"    #: Win32 **预定义对话框类**（官方常量 `WC_DIALOG`）
+
+
+def solidworks_process_id(sw):
+    """★ **从 COM 拿 SolidWorks 的进程 ID**（官方 `ISldWorks.GetProcessID()`）。
+
+    ⚠⚠⚠ **为什么要有这个函数**（2026-10-01 轮 167）：此前**37 处**工具里**写死**
+    `SW_PID = 20456` —— 那是**硬编码**：换机器、换会话、SolidWorks 重启后**全部失效**，
+    而失效的表现是「**查不到残留模态框**」⇒ **一个静默失效的安全检查**。
+    ★ 官方的 `ISldWorks.GetProcessID()` 直接给出真值 ⇒ **零硬编码**。
+    （另有 `GetHWnd64()` / `get_HWnd()` 可取窗口句柄，本模块用不到。）
+    """
+    return int(call_com_member(sw, "GetProcessID"))
+
+
+def _resolve_pid(target=None):
+    """把 `target` 解析成 PID —— **三种来源，全部零硬编码**。
+
+    * `ISldWorks` 对象 ⇒ `solidworks_process_id(sw)`（官方 `GetProcessID()`）
+    * `int` ⇒ 直接用（**调用方明确给了就用它**，不覆盖）
+    * `None`（**默认**）⇒ ★ **本函数自己连上正在运行的 SolidWorks 再派生**
+      ⇒ 这样调用方**不必**知道 PID，也**不必**先拿到 `sw`：
+      `residual_dialogs()` / `dismiss_residual_dialogs()` 无参调用即可。
+
+    ⚠⚠⚠ **为什么要有 `None` 这条**（2026-10-01 轮 167）：此前 **36 处**工具里写死
+    `SW_PID = 20456` 再传给 `residual_dialogs()` —— **硬编码**，
+    换机器 / 换会话 / SolidWorks 重启后**全部失效**，而失效的表现是
+    「**查不到残留模态框**」⇒ **一个静默失效的安全检查**（比没有更糟）。
+    """
+    if target is None:
+        import win32com.client
+        #: ⚠ 用 `call_com_member` 而**不是**直接 `.GetProcessID()` —— pywin32 迟到绑定下
+        #: 成员**有时解析成属性、有时解析成方法**（轮 167 实测：直接
+        #: `(...).GetProcessID()` 报 `TypeError: 'int' object is not callable`，
+        #: 因为它已被求值成 int）。★ 这正是 `call_com_member` 存在的理由。
+        return int(call_com_member(
+            win32com.client.GetActiveObject("SldWorks.Application"), "GetProcessID"))
+    if isinstance(target, int):
+        return target
+    return solidworks_process_id(target)
+
+
+def _dialog_handles(pid, *, only_visible=False):
+    """枚举某 PID 的顶层窗口里 class 为 `#32770` 的那些（**Win32 `WC_DIALOG`**）。"""
+    import ctypes
+    import ctypes.wintypes as _w
+    u = ctypes.windll.user32
+    out: list = []
+    total = [0]
+
+    @ctypes.WINFUNCTYPE(ctypes.c_bool, _w.HWND, _w.LPARAM)
+    def cb(h, _l):      # noqa: ANN001
+        p = _w.DWORD()
+        u.GetWindowThreadProcessId(h, ctypes.byref(p))
+        if p.value != pid:
+            return True
+        if only_visible and not u.IsWindowVisible(h):
+            return True
+        total[0] += 1
+        cls = ctypes.create_unicode_buffer(128)
+        u.GetClassNameW(h, cls, 128)
+        if cls.value == _DIALOG_CLASS:
+            out.append(h)
+        return True
+
+    u.EnumWindows(cb, 0)
+    return out, total[0]
+
+
+def count_residual_dialogs(target=None, *, settle_seconds=0.0, poll_ms=200):
+    """★ **只读**检测残留模态框（**不点掉任何东西**）。
+
+    ⚠ 与 `dismiss_residual_dialogs` 分开，是为了让调用方能**分别报告**
+    「**发现**了几个」与「**点掉**了几个」—— 2026-10-01（轮 167）实测时把两者混在一个
+    计数里，读日志时误判成「没点掉」。**发现与处置是两件事，计数也要分开。**
+    """
+    import time
+    pid = _resolve_pid(target)
+    best_n = 0
+    #: ⚠ `scanned` **每一轮都更新**（不是只在发现对话框时）—— 否则"没发现"会报成
+    #: "**扫了 0 个窗口**"，读日志时无法区分「没弹框」与「根本没扫到」（事实 62/79/81 同族）。
+    scanned = 0
+    deadline = time.time() + max(0.0, float(settle_seconds))
+    while True:
+        handles, total = _dialog_handles(pid)
+        scanned = max(scanned, total)
+        best_n = max(best_n, len(handles))
+        if time.time() >= deadline:
+            break
+        time.sleep(max(0.02, poll_ms / 1000.0))
+    return best_n, scanned
+
+
+def dismiss_residual_dialogs(target=None, *, settle_seconds=0.0, poll_ms=200):
+    """★ 把残留的**模态对话框**点掉 —— **不认按钮文本、不依赖可见性、零硬编码**。
+
+    :param target: `ISldWorks`（**自动派生 PID**）或 `int` PID。
+    :param settle_seconds: 在返回前**轮询**多久（⚠ **弹窗是异步弹出的**，见下）。
+    :param poll_ms: 轮询间隔毫秒。
+    :returns: `(dismissed, scanned)` —— 点掉了几个 / 扫到多少个顶层窗口。
+
+    ⚠⚠⚠ **为什么要轮询**（2026-10-01 轮 167 的根因之一）：模态框**不是**在发调用的那一刻
+    弹出来的 —— COM 调用返回后它**才**出现。原先各工具在收尾处**只查一次**
+    ⇒ **查得太早** ⇒ 报「无残留」而屏幕上明明有一个（★ 那次会话就是这样**卡住的**）。
+
+    ★ **怎么点掉**：给对话框发 `WM_COMMAND` + `IDOK`（Win32 标准命令）——
+    **不看按钮叫什么、不按坐标** ⇒ 中英文界面、任何按钮布局都适用（用户明确要求**禁止硬编码**）。
+    """
+    import ctypes
+    import time
+    pid = _resolve_pid(target)
+    dismissed = 0
+    scanned = 0
+    deadline = time.time() + max(0.0, float(settle_seconds))
+    while True:
+        handles, total = _dialog_handles(pid)
+        scanned = total
+        for h in handles:
+            ctypes.windll.user32.PostMessageW(h, _WM_COMMAND, _IDOK, 0)
+            dismissed += 1
+        if time.time() >= deadline:
+            break
+        time.sleep(max(0.02, poll_ms / 1000.0))
+    return dismissed, scanned
+
+
+def settle_residual_dialogs(target=None, *, settle_seconds=1.0, poll_ms=200):
+    """★★★ **收尾专用**：轮询查残留模态框，**发现就点掉**，并把三件事分开报。
+
+    :returns: `(found, dismissed, scanned)` —— **发现几个 / 点掉几个 / 扫过多少窗口**。
+
+    ⚠⚠⚠ **为什么需要它**（2026-10-01 轮 169 的审计发现）：
+    仓库里 **35 个脚本**都会"查残留模态框"，而其中 **34 个只查、不点掉** ——
+    它们**打印一行**就继续 ⇒ ★ **若真的发现了弹窗，弹窗还在**，
+    于是**下一轮（或同一轮的后续调用）就挂在那儿**（这正是轮 167 用户看到的情形）。
+    ⇒ ★★ **"发现"和"处置"是两件事**：
+    * `residual_dialogs()`  —— **只读**（可证伪性、测试用），**默认不点掉**；
+    * `count_residual_dialogs()` —— **只读**且只报计数；
+    * `settle_residual_dialogs()` —— ★ **收尾用：查 + 点掉**（本函数）；
+    * `dismiss_residual_dialogs()` —— 只点掉，不报发现数。
+
+    ★ 点掉的方式与其它函数一致：**`WM_COMMAND` + `IDOK`**（Win32 标准命令）——
+    **不看按钮文本、不按坐标**。
+    """
+    found = 0
+    dismissed = 0
+    scanned = 0
+    import time
+    pid = _resolve_pid(target)
+    deadline = time.time() + max(0.0, float(settle_seconds))
+    while True:
+        handles, total = _dialog_handles(pid)
+        scanned = max(scanned, total)
+        found = max(found, len(handles))
+        for h in handles:
+            import ctypes
+            ctypes.windll.user32.PostMessageW(h, _WM_COMMAND, _IDOK, 0)
+            dismissed += 1
+        if time.time() >= deadline:
+            break
+        time.sleep(max(0.02, poll_ms / 1000.0))
+    return found, dismissed, scanned
+
+
+def residual_dialogs(pid=None, *, only_visible=False, settle_seconds=1.0, poll_ms=200):
+    """★★ 数某个进程的**残留模态框**（Win32 类名 `#32770`）—— **可证伪**版。
+
+    :param pid: 目标进程 ID；**默认 `None` ⇒ 自己从 COM 派生**（`ISldWorks.GetProcessID()`，
+        **不必硬编码 `20456`**）。
+    :param only_visible: ⚠⚠ **默认 `False`** —— 见下。
+    :param settle_seconds: ★★ **默认 `1.0` 秒 —— 会**轮询**，不是查一次**
+        （2026-10-01 轮 167 实测：模态框**第 0.86 秒**才出现 ⇒ 一次性检查**会漏**，
+        而那次漏检让一次会话谎报「无残留」并**永久挂起**）。
+        ⚠ 需要"只看此刻一眼"时显式传 `settle_seconds=0.0`。
+    :param poll_ms: 轮询间隔毫秒。
+    :returns: `(dialogs, all_windows)`：前者是 `#32770` 的标题列表，
+        后者是**扫到的全部顶层窗口数**（用于判断这次扫描**有没有真的扫到东西**）。
+
+    ⚠⚠⚠ **为什么要返回 `all_windows`**（2026-10-01 轮 148 查出的一个真问题）：
+    此前本仓库在 **21 个工具**里各复制了一份"查残留模态框"的代码，
+    **每份都带 `IsWindowVisible(h)` 过滤**。而本轮实测：
+    ```
+    PID 20456 的顶层窗口 **49 个，全部 IsWindowVisible == 0**（SolidWorks 主框架不可见）
+    ⇒ 那个过滤让**枚举结果恒为空** ⇒ 检查**永远报「无残留」** ⇒ **一个不可能失败的门禁**
+    ```
+    ⇒ ★ 所以本函数**默认不过滤可见性**，并**把 `all_windows` 一并返回** ——
+    调用方应当**先看 `all_windows > 0`** 再相信 `dialogs` 为空（否则是"没扫到"，不是"没有"）。
+
+    ⚠ 这与已知事实 62/79/81 同族（**"绿"不等于"对"**），但更严重：
+    它守的是**每轮收尾的安全底线**（模态框会把会话永久挂起）。
+    """
+    import ctypes
+    import ctypes.wintypes as _w
+    import time
+    pid = _resolve_pid(pid)          #: ★ `None` ⇒ 自己从 COM 派生（零硬编码）
+    u = ctypes.windll.user32
+
+    def one_pass():
+        dialogs: list = []
+        total = [0]
+
+        @ctypes.WINFUNCTYPE(ctypes.c_bool, _w.HWND, _w.LPARAM)
+        def cb(h, _l):      # noqa: ANN001
+            p = _w.DWORD()
+            u.GetWindowThreadProcessId(h, ctypes.byref(p))
+            if p.value != pid:
+                return True
+            if only_visible and not u.IsWindowVisible(h):
+                return True
+            total[0] += 1
+            cls = ctypes.create_unicode_buffer(128)
+            u.GetClassNameW(h, cls, 128)
+            if cls.value == "#32770":
+                txt = ctypes.create_unicode_buffer(256)
+                u.GetWindowTextW(h, txt, 256)
+                dialogs.append(txt.value)
+            return True
+
+        u.EnumWindows(cb, 0)
+        return dialogs, total[0]
+
+    #: ★★ **轮询**：模态框是**异步**弹出的（实测第 0.86 秒才出现）⇒
+    #: 查一次**会漏**，而漏检的后果是「谎报无残留」+ 会话挂起。
+    #: 取**整个窗口期内见过的最大值**（弹窗可能已被别人点掉，但"**弹过**"这个事实更重要）。
+    best: list = []
+    scanned = 0
+    deadline = time.time() + max(0.0, float(settle_seconds))
+    while True:
+        got, total = one_pass()
+        scanned = max(scanned, total)
+        if len(got) > len(best):
+            best = got
+        if time.time() >= deadline:
+            break
+        time.sleep(max(0.02, poll_ms / 1000.0))
+    return best, scanned
+
+
+def get_com_member_raw(obj, attr_name):
+    """★ 「**只取不调**」—— `get_com_member` 的安全替代（2026-10-01 轮 144 加）。
+
+    :returns: **成员本身**（方法对象或属性值），**绝不调用它**。
+
+    ⚠ **什么时候必须用它**：当你要的是**方法对象**（例如要传给别处、或要自己控制
+    参数与时机），而**不是**它的返回值时 —— 用 `get_com_member` 会**先无参调一次**，
+    那对**有副作用**的成员（`Insert*` / `Run*` / `Save*` / `Scale`…）是**真做了那件事**。
+    ⚠ 反过来：**要执行**的时候，继续用 `get_com_member`（那是它的语义）。
+    """
+    return getattr(obj, attr_name)
+
+
+def safe_get_com_member(obj, attr_name, *args):
+    """
+    读取 COM 成员，兼容 pywin32 中伪可调用属性。
+
+    保留该别名便于其它模块表达“安全读取”的意图；核心逻辑统一在 get_com_member。
+    """
+    return get_com_member(obj, attr_name, *args)
+
+
+def create_empty_dispatch_variant():
+    """创建可传给 COM 接口的空 Dispatch 参数。"""
+    return VARIANT(pythoncom.VT_DISPATCH, None)
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（本机实测结论的固化，非第三方移植）
+# 文件:   scripts/sw_connect.py —— 本文件自身的 out_i4 / create_empty_dispatch_variant
+# 定位:   AGENTS.md 铁律 2「本机实测」与铁律 4「冲突以出厂类型库为准」的交汇点：
+#         静态反射只说得清「有几个参数、哪些是 `&` 出参」，**说不清出参在 pywin32
+#         迟到绑定下该怎么传**。本块记录的是 2026-10-01 在 SolidWorks 2026 SP4.1
+#         （34.4.1）上逐一试出来的唯一可用形态，实测脚本见
+#         D:\AI\SW\probe_outparam_convention.py 与 D:\AI\SW\probe_dispatch_variant.py。
+# 官方签名依据: ICWStudyManager.CreateNewStudy3(String, Int32, Int32, Int32&)；
+#         ICWLoadsAndRestraintsManager.AddRestraint(Int32, Object, Object, Int32&)；
+#         IModelDocExtension.SelectByID2(String, String, Double, Double, Double, Boolean,
+#         Int32, Callout, Int32) 与 AddRenderMaterial(RenderMaterial, Int32&)。
+#         反射清单：D:\AI\SW\_raw\topo-reflect\iface_cosworks.txt。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   从本行到本文件内 out_i4 / create_empty_dispatch_variant 两个函数结束。
+# ────────────────────────────────────────────────────────────────────
+def out_i4(value: int = 0):
+    """创建 `Int32&` 出参的 VARIANT 包装 —— **唯一被真机验证通过的形态**。
+
+    官方接口里大量方法以 `Int32&` 作 [out] 错误码，例如
+    ``ICWStudyManager.CreateNewStudy3(String, Int32, Int32, Int32&)``。
+
+    ⚑ 2026-10-01 在 SolidWorks 2026 SP4.1 上逐一实测，**五种形态只有一种通过**：
+
+        VARIANT(VT_BYREF | VT_I4, 0)   ✓ 通过
+        VARIANT(VT_I4, 0)              ✗ 类型不匹配（DISP_E_TYPEMISMATCH, 第 4 参）
+        VARIANT(VT_BYREF | VT_VARIANT) ✗ 类型不匹配
+        VARIANT(VT_EMPTY, None)        ✗ 类型不匹配
+        裸 int / 裸 0                   ✗ 类型不匹配
+        省略该参数                      ✗ DISP_E_PARAMNOTOPTIONAL（「非选择性的参数」）
+
+    ⇒ **该参数必需（不能省），且必须按引用传 `VT_I4`。**
+
+    ⚠ 这条推翻了本仓库既有做法：`scripts/sw_simulation.py` 的 `create_static_study` /
+    `apply_fixed_restraint` / `apply_normal_force` 都传裸 `0`，
+    **按本实测它们必然全部失败** —— 即那些函数从未真正跑通过。
+    （`scripts/audit_call_arity.py` 的「`&` 出参不计入 arity」口径也不对：
+    它算 arity 时排除出参是对的，但**调用方仍须传一个 byref VARIANT**。）
+    """
+    return VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, int(value))
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（本机实测结论的固化）
+# 文件:   scripts/sw_connect.py 的 set_com_member
+# 定位:   `get_com_member`（已知事实 4）的**对偶面**。事实 4 说「迟到绑定下同一成员
+#         可能是属性也可能是方法，读要用 get_com_member」；2026-10-01 真机补上另一半：
+#         **写必须用属性赋值（`setattr`）**。
+# 官方签名依据: ICWForce 的 `set_ForceType(Int32)` / `set_Unit(Int32)` /
+#         `set_NormalForceOrTorqueValue(Double)`（反射里是 `set_` 前缀）
+#         ⇒ 但在 pywin32 迟到绑定下**这三个名字都取不到**，只有属性赋值可用。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数整体（自本行至函数结束）
+# ─────────────────────────────────────────────────────────────────────────
+def set_com_member(obj, attr_name, value):
+    """设置 COM 成员的**唯一被真机验证通过的形态**：属性赋值。
+
+    反射里 `ICWForce` 的 ForceType / Unit / NormalForceOrTorqueValue 是 `set_` 前缀的
+    方法，但 2026-10-01 真机（工作区 `probe_setter_forms.py`）逐形态实测三种写法：
+
+    ============================================  ==========================
+    写法                                            结果
+    ============================================  ==========================
+    以 `get_com_member(obj, "set_<名>", 值)` 调用    ✗ 该名字在迟到绑定下取不到
+    以 `get_com_member(obj, "put_<名>", 值)` 调用    ✗ 同上
+    ``obj.<名> = 值``（**本函数**）                   **✓ 唯一可行**
+    ============================================  ==========================
+
+    ⇒ 与已知事实 4（读用 `get_com_member`）成对：**读走 get_com_member，写走本函数。**
+
+    .. note::
+       上文刻意不写具体的 `get_com_member(...)` 调用字面量 ——
+       `scripts/check_member_names.py` 会把文档里的调用字面量当成真调用去核反射，
+       而那些名字**故意**是不存在的（它们就是要被否定的写法）。
+
+    :raises AttributeError: 该成员在对象上不可写（迟到绑定下常见于只读属性）。
+    """
+    setattr(obj, attr_name, value)
+    return value
+
+
+def normalize_doc_type(doc_type):
+    """
+    规范化文档类型名称。
+
+    参数:
+        doc_type: "part"、"assembly"、"drawing" 或常见缩写/扩展名
+
+    返回:
+        (name, enum_value) 元组
+    """
+    key = str(doc_type).strip().lower().lstrip(".")
+    enum_value = DOC_TYPE_MAP.get(key)
+    if enum_value is None:
+        raise ValueError(f"未知文档类型: {doc_type}")
+
+    name_map = {1: "part", 2: "assembly", 3: "drawing"}
+    return name_map[enum_value], enum_value
+
+
+def _expand_path(file_path):
+    """展开用户目录和环境变量，并返回绝对路径。"""
+    return os.path.abspath(os.path.expandvars(os.path.expanduser(file_path)))
+
+
+def _ensure_parent_dir(file_path):
+    """确保输出文件的父目录存在。"""
+    parent = os.path.dirname(_expand_path(file_path))
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+
+def _prog_id_for_version(version):
+    """返回 SolidWorks 年份对应的 ProgID。"""
+    if version is None:
+        return "SldWorks.Application"
+    try:
+        year = int(version)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"SolidWorks 版本必须是年份，例如 2024: {version}") from exc
+    if year < 2010 or year > 2035:
+        raise ValueError(f"不支持的 SolidWorks 版本年份: {year}")
+    return f"SldWorks.Application.{(year - 2000) + 8}"
+
+
+def _read_active_document(sw):
+    """读取活动文档，兼容 COM 属性/方法差异。"""
+    try:
+        return get_com_member(sw, "ActiveDoc")
+    except Exception:
+        return None
+
+
+def _wait_until_ready(sw, timeout_seconds):
+    """等待 COM 服务器可读，避免固定 sleep 导致 UI 假死。"""
+    deadline = time.monotonic() + max(0.1, float(timeout_seconds))
+    last_error = None
+    while time.monotonic() < deadline:
+        try:
+            get_com_member(sw, "RevisionNumber")
+            return
+        except Exception as exc:
+            last_error = exc
+            time.sleep(0.1)
+    raise SolidWorksConnectionError(
+        "SW_START_TIMEOUT", "ready", f"SolidWorks 启动超时（{timeout_seconds:.1f}s）: {last_error or 'COM 未就绪'}"
+    )
+
+
+def close_owned_solidworks(sw, started_by_cad_studio):
+    """只退出由当前 CAD Studio 会话启动的 SolidWorks 实例。"""
+    if not started_by_cad_studio:
+        return False
+    for member_name in ("ExitApp", "Quit"):
+        try:
+            member = getattr(sw, member_name)
+            member() if callable(member) else None
+            return True
+        except Exception:
+            continue
+    return False
+
+
+def connect_solidworks(version=None, wait_seconds=5, visible=True, return_metadata=False):
+    """
+    连接到 SolidWorks 实例。
+
+    参数:
+        version: SolidWorks 版本年份（如 2024），None 则自动检测
+        wait_seconds: 启动新实例后等待秒数
+        visible: 启动新实例后是否显示窗口
+
+    返回:
+        (sw, model) 元组，model 可能为 None（无打开的文档时）
+    """
+    ensure_solidworks_installed()
+    prog_id = _prog_id_for_version(version)
+    sw = None
+    launched_here = False
+
+    # 启动和附着共享同一把互斥锁，避免多个 worker 同时拉起实例。
+    with _LaunchGuard():
+        try:
+            sw = win32com_client.GetActiveObject(prog_id)
+            print(f"已连接到运行中的 SolidWorks 实例（ProgID: {prog_id}）")
+        except Exception as attach_error:
+            try:
+                sw = win32com_client.Dispatch(prog_id)
+                launched_here = True
+                try:
+                    sw.Visible = visible
+                except Exception:
+                    pass
+                print(f"启动了新的 SolidWorks 实例（ProgID: {prog_id}）")
+                _wait_until_ready(sw, wait_seconds)
+            except SolidWorksConnectionError:
+                close_owned_solidworks(sw, launched_here)
+                raise
+            except Exception as launch_error:
+                close_owned_solidworks(sw, launched_here)
+                raise SolidWorksConnectionError(
+                    "SW_LAUNCH_FAILED", "launch", f"无法启动 {prog_id}: {launch_error}; attach={attach_error}"
+                ) from launch_error
+
+    if sw is None:
+        raise SolidWorksConnectionError("SW_NO_INSTANCE", "connect", "未获得 SolidWorks COM 实例")
+
+    model = _read_active_document(sw)
+    if model:
+        doc_types = {1: "零件", 2: "装配体", 3: "工程图"}
+        doc_type = get_com_member(model, "GetType")
+        title = get_com_member(model, "GetTitle")
+        print(f"当前文档: {title} (类型: {doc_types.get(doc_type, '未知')})")
+    else:
+        print("当前没有打开的文档")
+
+    metadata = {
+        "prog_id": prog_id,
+        "requested_version": int(version) if version is not None else None,
+        "started_by_cad_studio": launched_here,
+    }
+    return (sw, model, metadata) if return_metadata else (sw, model)
+
+
+def get_sw_version(sw):
+    """获取 SolidWorks 版本信息。"""
+    rev = get_com_member(sw, "RevisionNumber")
+    major = int(rev.split(".")[0])
+    year = major - 8 + 2000
+    return {"revision": rev, "year": year, "major": major}
+
+
+def find_template(sw, doc_type="part"):
+    """
+    自动查找 SolidWorks 文档模板。
+
+    参数:
+        sw: SolidWorks 应用对象
+        doc_type: "part" | "assembly" | "drawing"
+
+    返回:
+        模板文件路径字符串
+    """
+    doc_type, _ = normalize_doc_type(doc_type)
+
+    type_map = {
+        "part": (sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["part"]), "*.prtdot"),
+        "assembly": (sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["assembly"]), "*.asmdot"),
+        "drawing": (sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["drawing"]), "*.drwdot"),
+    }
+
+    default_path, pattern = type_map.get(doc_type, type_map["part"])
+    if default_path:
+        for candidate_root in str(default_path).split(";"):
+            candidate_root = _expand_path(candidate_root.strip().strip('"'))
+            if not candidate_root:
+                continue
+
+            if os.path.isfile(candidate_root):
+                return candidate_root
+
+            if os.path.isdir(candidate_root):
+                matches = glob.glob(os.path.join(candidate_root, pattern))
+                if matches:
+                    return matches[0]
+
+    search_dirs = [
+        r"C:\ProgramData\SolidWorks\SOLIDWORKS *\templates",
+        r"C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang\chinese-simplified",
+        r"C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang\english",
+    ]
+    for search_dir in search_dirs:
+        matches = glob.glob(os.path.join(os.path.expandvars(search_dir), pattern))
+        if matches:
+            return matches[0]
+
+    raise FileNotFoundError(f"无法找到 {doc_type} 模板文件，请手动指定路径")
+
+
+def ensure_default_templates(sw):
+    """
+    @brief 配置默认模板并关闭新建文件模板选择提示。
+    @param sw SolidWorks 应用对象。
+    @return 字典，包含已确认的默认模板路径。
+    """
+    templates = {}
+    for doc_type, preference in DEFAULT_TEMPLATE_PREFS.items():
+        template_path = find_template(sw, doc_type)
+        templates[doc_type] = template_path
+        current_path = str(sw.GetUserPreferenceStringValue(preference) or "")
+        if _expand_path(current_path) != _expand_path(template_path):
+            sw.SetUserPreferenceStringValue(preference, template_path)
+    try:
+        sw.SetUserPreferenceToggle(SW_ALWAYS_USE_DEFAULT_TEMPLATES, True)
+    except Exception as exc:
+        print(f"提示: 无法设置始终使用默认模板: {exc}")
+    return templates
+
+
+def new_document(sw, doc_type="part", template_path=None):
+    """
+    创建新文档。
+
+    参数:
+        sw: SolidWorks 应用对象
+        doc_type: "part" | "assembly" | "drawing"
+        template_path: 模板路径，None 则自动查找
+
+    返回:
+        新建的 IModelDoc2 对象
+    """
+    doc_type, _ = normalize_doc_type(doc_type)
+    if not template_path:
+        template_path = find_template(sw, doc_type)
+    else:
+        template_path = _expand_path(template_path)
+
+    model = sw.NewDocument(template_path, 0, 0, 0)
+    if model is None:
+        for _ in range(20):
+            model = sw.ActiveDoc
+            if model is not None:
+                break
+            time.sleep(0.25)
+
+    if model is None:
+        raise RuntimeError(f"创建{DOC_TYPE_LABELS.get(doc_type, doc_type)}文档失败，SolidWorks 未返回活动文档")
+
+    print(f"已创建新{DOC_TYPE_LABELS.get(doc_type, doc_type)}文档")
+    return model
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_connect.py —— `open_document`（本函数整体）。
+# 定位:   打开文档；★ 含 **2026-10-01（轮 335/337）** 两处：
+#         ① **根因修复**：`options |= 512`（`swOpenDocOptions_LoadExternalReferencesInMemory`）
+#            —— ★ 官方原话「Open external references in memory only」，且官方明说
+#            **通过 API 打开时系统选项被忽略、只有这个选项有效** ⇒ 「打开外部参考的零件」不再弹；
+#         ② **兜底收尾**：`settle_residual_dialogs` 轮询 1.5 s，发现未知弹窗就按 Win32
+#            `WM_COMMAND`+`IDOK` 点掉（★ 零硬编码）—— ★ 按纪律（自我纠错 §9）它只是**兜底**，
+#            用完必须补根因修复。
+# 官方签名依据: `C:\swapi\enums\swOpenDocOptions_e.md`（512 = LoadExternalReferencesInMemory、
+#   1 = Silent、2 = ReadOnly）· `ISldWorks/OpenDoc6.md` · `IFeatureManager` 不涉及。
+# 未在本机实测: 不适用 —— ★ 本函数**已真机实测**（`output/open-doc-rootfix-evidence.json`：
+#   ★ `external_ref_left = []` ⇒ 那个对话框**根本没有出现**）。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数整体（自本行至函数结束）
+# ─────────────────────────────────────────────────────────────────────────────
+def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=False):
+    """
+    打开已有文档。
+
+    参数:
+        sw: SolidWorks 应用对象
+        file_path: 文件完整路径
+        read_only: 是否以只读模式打开
+        silent: 是否静默打开
+        raise_on_error: 打开失败时是否抛出异常
+
+    返回:
+        IModelDoc2 对象
+    """
+    file_path = _expand_path(file_path)
+    if not os.path.exists(file_path):
+        message = f"文件不存在: {file_path}"
+        if raise_on_error:
+            raise FileNotFoundError(message)
+        print(message)
+        return None
+
+    # 装配体会把组件文档加载到当前会话；再次 OpenDoc6 可能返回
+    # swFileWithSameTitleAlreadyOpen。复用同一路径对象也能保留文档所有权。
+    try:
+        existing_model = sw.GetOpenDocumentByName(file_path)
+    except Exception:
+        existing_model = None
+    if existing_model is not None:
+        print(f"已复用打开文档: {file_path}")
+        return existing_model
+
+    ext = os.path.splitext(file_path)[1].lower()
+    foreign_exts = {".step", ".stp", ".igs", ".iges"}
+    type_map = {".sldprt": 1, ".sldasm": 2, ".slddrw": 3}
+
+    errors = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
+    warnings = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
+    options = 2 if read_only else 0  # swOpenDocOptions_ReadOnly = 2
+    if silent:
+        options |= 1  # swOpenDocOptions_Silent = 1
+    #: ★★★★★ 2026-10-01（轮 335）**根因修复（★ 用户指出：光点弹窗没解决根因，点了还会再弹）**：
+    #:   ★ 现象：★ 打开**带外部参考**的工程图/装配体时，SolidWorks 每次都弹
+    #:   「**打开外部参考的零件**」对话框 ⇒ ★ 机械点掉**只是把这一次糊过去**，
+    #:   ★ **下一次再打开同一个文件还会弹**（★ 而某一次没人点 ⇒ 会话卡死）。
+    #:   ★ 根因：★ `OpenDoc6` 用的是**默认选项** ⇒ ★ SolidWorks 只能**问用户**要不要加载参考件。
+    #:   ★★ 官方开关（★ `swOpenDocOptions_e` 枚举）：
+    #:     **`swOpenDocOptions_LoadExternalReferencesInMemory = 512 (0x200)`**
+    #:     —— 官方原话「**Open external references in memory only**」。
+    #:   ★★★ **而官方还明说**：「`swExtRefLoadRefDocsInMemory`（System Options → External References →
+    #:     Load documents in memory only）**is ignored when opening documents through the API**
+    #:     because `IDocumentSpecification::LoadExternalReferencesInMemory` and
+    #:     `ISldWorks::OpenDoc6`(`swOpenDocOptions_LoadExternalReferencesInMemory`)
+    #:     **have sole control of reference loading**」
+    #:     ⇒ ★★ **即：★ 通过 API 打开时**必须**用这个选项（★ 系统选项不管用）** ✓
+    #:   ⚠ 官方前提：★「valid only if `swLoadExternalReferences` is not set to `None`」
+    #:     ⇒ ★ 若用户偏好设成"从不加载"，本选项不生效（★ 那时也不会弹框，★ 两种情形都不卡）。
+    options |= 512  # swOpenDocOptions_LoadExternalReferencesInMemory
+
+    if ext in foreign_exts:
+        if read_only:
+            print("提示: LoadFile4 导入外来 CAD 文件时不支持 read_only，已忽略该参数")
+        if silent:
+            print("提示: LoadFile4 导入外来 CAD 文件时不支持 OpenDoc6 silent 选项，已忽略该参数")
+        ensure_default_templates(sw)
+        import_data = sw.GetImportFileData(file_path)
+        if import_data is None:
+            message = f"获取导入数据失败: {file_path}"
+            if raise_on_error:
+                raise RuntimeError(message)
+            print(message)
+            return None
+        # 非 DXF/DWG、非 Pro/E 外来文件应传 "r"，表示导入为新的 SolidWorks 文档；
+        # 空字符串会在部分 SW2024 环境中弹出模板选择对话框并阻塞自动化。
+        try:
+            model = sw.LoadFile4(file_path, "r", import_data, errors)
+        except TypeError:
+            # SW2026 的 makepy 强类型代理会对 LoadFile4 的 [out] long
+            # 再执行 int(VARIANT)，与 OpenDoc6 的已知问题相同。动态代理
+            # 可以正确保留 by-ref 错误码，同时继续复用已取得的导入选项。
+            ole_object = getattr(sw, "_oleobj_", None)
+            if ole_object is None:
+                raise
+            dynamic_sw = win32com_client.dynamic.DumbDispatch(ole_object, "SldWorks.Application")
+            model = dynamic_sw.LoadFile4(file_path, "r", import_data, errors)
+        warnings.value = 0
+    else:
+        doc_type = type_map.get(ext, 1)
+        try:
+            model = sw.OpenDoc6(file_path, doc_type, options, "", errors, warnings)
+        except TypeError:
+            # SW2024 的 makepy 强类型代理可能对 [out] long 再做 int(VARIANT)，
+            # 动态代理会把显式 by-ref VARIANT 正确传给原生 OpenDoc6。
+            ole_object = getattr(sw, "_oleobj_", None)
+            if ole_object is None:
+                raise
+            dynamic_sw = win32com_client.dynamic.DumbDispatch(ole_object, "SldWorks.Application")
+            model = dynamic_sw.OpenDoc6(file_path, doc_type, options, "", errors, warnings)
+        if isinstance(model, (tuple, list)):
+            values = list(model)
+            model = values[0] if values else None
+            if len(values) > 1 and values[1] is not None:
+                errors.value = int(values[1])
+            if len(values) > 2 and values[2] is not None:
+                warnings.value = int(values[2])
+    if model:
+        print(f"已打开: {file_path}")
+    else:
+        message = f"打开失败, 错误码: {errors.value}, 警告码: {warnings.value}"
+        if raise_on_error:
+            raise RuntimeError(message)
+        print(message)
+    #: ★★★★★ 2026-10-01（轮 334）**补上"打开文档后"的模态框收尾** ——
+    #:   真因（★ 用户当场撞上）：★ `open_document` 这 96 行里
+    #:   **`CommandInProgress` / `settle` / `dismiss` / `residual` 一个都没有** ⇒
+    #:   ★★ **打开带外部参考的零件时，SolidWorks 会弹「打开外部参考的零件」对话框**，
+    #:   而**这条路径上没有任何人去处置它** ⇒ ★★★ **会话就挂在那儿**（★ 我上一轮的命令就是这么被中断的）。
+    #:   ★ 而**处置的通用解法本仓库早就有**（`settle_residual_dialogs`：按 Win32 类名 `#32770` 找，
+    #:   发 `WM_COMMAND` + `IDOK` 点掉 —— **不认按钮文本、不按坐标、零硬编码**）——
+    #:   ★★ **只是没接在这里**（`settle_residual_dialogs` 的 docstring 自己写过：
+    #:   「35 个脚本只查不点」「**"发现"和"处置"是两件事**」）。
+    #:   ★ 为什么 `CommandInProgress` 救不了它：★ 那个对话框是**文档加载时由 SolidWorks 自己弹的**，
+    #:   ★ **不是 COM 调用在等用户输入** ⇒ ★ 抑制标志管不到它。
+    #:   ⚠ `settle_seconds` 取 **1.5 s**：★ 弹窗**不是**在 `OpenDoc6` 返回的那一刻出现
+    #:   （见 `dismiss_residual_dialogs` 的 docstring：★ 「查得太早 ⇒ 报无残留而屏幕上明明有一个」）。
+    try:
+        found, dismissed, _scanned = settle_residual_dialogs(sw, settle_seconds=1.5, poll_ms=250)
+        if found:
+            print(f"  模态框收尾: 发现 {found} 个 · 点掉 {dismissed} 个")
+    except Exception as exc:                                   # noqa: BLE001
+        print(f"  模态框收尾失败（不阻断打开）: {type(exc).__name__}: {str(exc)[:120]}")
+    return model
+
+
+def save_document(model, file_path=None):
+    """
+    保存文档。
+
+    参数:
+        model: IModelDoc2 对象
+        file_path: 另存为路径，None 则保存到当前位置
+
+    返回:
+        bool 成功/失败
+    """
+    errors = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
+    warnings = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
+
+    if file_path:
+        file_path = _expand_path(file_path)
+        _ensure_parent_dir(file_path)
+        success = model.Extension.SaveAs(
+            file_path, 0, 1, create_empty_dispatch_variant(), errors, warnings
+        )
+    else:
+        success = model.Save3(1, errors, warnings)
+
+    if success:
+        print(f"保存成功: {file_path or get_com_member(model, 'GetPathName')}")
+    else:
+        print(f"保存失败, 错误码: {errors.value}, 警告码: {warnings.value}")
+    return bool(success)
+
+
+def mm(value):
+    """毫米转米（SolidWorks API 单位）。"""
+    return value / 1000.0
+
+
+def deg(value):
+    """角度转弧度。"""
+    import math
+    return value * math.pi / 180.0

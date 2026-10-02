@@ -1,0 +1,13 @@
+{
+  "_comment": "★ 未接进 `release_check.py` 的门禁及其理由（`check_gate_wiring.py` 读这张表）。",
+  "exemptions": [
+    {
+      "gate": "check_member_owner_interface.py",
+      "reason": "★ **诊断工具，不接硬门禁** —— 本轮**没验过**它的判据够不够准（无法机验那 20 处），且它**抓不到形参 owner**（含它的动机 `mold_evidence`）。接进去会变成「看起来在查、实际乱报/漏报」的那种门禁（事实 53 / 62 同族）。",
+      "evidence": [
+        "D:/AI/SW/output/member-owner-interface.json",
+        "D:/AI/SW/specs/093-member-owner-interface-checker/spec.md"
+      ]
+    }
+  ]
+}

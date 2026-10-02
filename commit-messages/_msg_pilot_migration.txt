@@ -1,0 +1,50 @@
+feat(capabilities): pilot→五级迁移（裁断选项 A）—— 把「证据强度」与「授权」拆开
+
+依据 docs/capabilities-schema-proposal.md §1.2 与 §五 R11；裁断见
+docs/AGENTS-pilot-verdict.md（走选项 A，附三条硬要求）。
+
+## 为什么不是「pilot 一律迁 stitched」
+执行方在改动前实测发现：pilot 不是口径不清，上游
+apps/desktop/cad_workbench/engineering_orchestrator.py 的能力表写明了它的语义 ——
+  "工程图处于 Pilot，…证据必须人工复核，禁止无人值守宣称完成。"
+⇒ pilot = 「有实现、跑了，但证据不足以无人值守」；stitched = 「代码已并入、从未运行」。
+19 条 pilot 里 13 条 verified_versions 非空（跑过）⇒ 一律迁 stitched 会把
+「跑过 2024/2026」与「从未运行」写进同一份数据，那不是保守，是错报。
+
+## 数据迁移（capabilities.yaml，schema_version 1.0 → 2.0）
+  13 条 pilot 且有 verified_versions  → verified + 补 evidence（真实测试文件，逐个实跑确认）
+  6  条 pilot 且无 verified_versions  → stitched
+  原 8 条 verified                     → 补 evidence；**补 unattended 授权**
+  原 19 条 pilot（含迁 verified 的 13）→ **不补 unattended**
+  结果: verified 21 / stitched 6 / not_implemented 1；21 条带 evidence；8 条带 unattended
+
+## 授权判据搬迁 —— 同批改了 **四条**路径，不是一条
+裁断要求三说「同批改 unattended_allowed() 的全部调用点」。实际扫出四条：
+  1 scripts/capabilities.py         unattended_allowed()：level=="verified" → allowed_modes 含 unattended
+                                    （并新增 VALID_MODES 与 R11 校验）
+  2 apps/.../queue_worker.py:96     任务门禁直接按 level 放行 —— **迁移后会静默解除 13 条的复核要求**
+  3 scripts/sw_capability_probe.py  内联 ready_for_unattended_use = (level == "verified")，同病
+  4 apps/.../engineering_orchestrator.py:331  _normalise_level 不认识 stitched，
+                                    原先靠 fallback「碰巧」得到正确结果 —— 改为显式映射五值
+②③④ 是执行过程中被测试逼出来的：只改 ① 时 test_job_is_blocked_for_reference_only_capability
+与 test_sw_capability_probe 立刻红，正是它们在挡这次泄漏。
+
+## 等价性验收（裁断要求二，不可选）
+  tools/freeze_unattended_baseline.py   改动前冻结基线 → tests/unattended_baseline.json
+  tests/test_unattended_equivalence.py  7 条测试：路径 1 与路径 2 的集合都须与基线逐条相同、
+                                        两条路径必须互相一致、R11、基线能力仍带 unattended
+  实测: 迁移前 8 条 = 迁移后 8 条，逐条相同
+
+## 门禁
+  check_provenance.py  新增 285 行原报无出处 → 加 10 个「覆盖: 全文件」来源块后 PASS
+
+## 验证（实际跑过）
+  python -m compileall -q scripts tools apps tests                 exit 0
+  python scripts\check_member_names.py                             [PASS]
+  python scripts\check_provenance.py                               [PASS] 271 个合规来源块
+  python scripts\check_diff_markers.py                             [PASS] 241 个 .py
+  python scripts\check_union_conventions.py                        exit 0（4 组全 PASS）
+  python -m pytest tests -q                                        6 failed / 741 passed / 15 skipped
+  ⚠ 基线是 6 failed / 734 passed（不是 2）—— 那 4 个 CLI 测试不稳定（spawn 子进程）；
+    本次失败列表与基线逐条相同，零新增失败。+7 passed = 本批新增的等价性测试。
+  A7 核查: stitched 带 evidence = 0；verified 缺 evidence = 0

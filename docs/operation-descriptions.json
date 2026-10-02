@@ -1,0 +1,1429 @@
+{
+ "counts": {
+  "andrewbartels1": 117,
+  "Eduardof0nt": 187,
+  "merged": 464,
+  "gap_hit": 174
+ },
+ "descriptions": {
+  "calculate_mass_properties": {
+   "andrewbartels1": "Get mass properties of the current SolidWorks model."
+  },
+  "get_mass_properties": {
+   "andrewbartels1": "Backward-compatible alias for calculate_mass_properties.",
+   "Eduardof0nt": "Calculate mass properties of the active part or assembly. Returns: mass (kg), volume (mm³), surface area (mm²), density (kg/m³), center of mass (mm), and principal moments of inertia. Requires the material to be set for accurate mass. Volume is always correct."
+  },
+  "check_interference": {
+   "andrewbartels1": "Check for interference between components in an assembly.",
+   "Eduardof0nt": "Check for interference (collision) between components in the active assembly. Returns the number of interferences found and their approximate volumes. Active document must be an assembly."
+  },
+  "analyze_geometry": {
+   "andrewbartels1": "Perform geometry analysis on the current model."
+  },
+  "get_material_properties": {
+   "andrewbartels1": "Get material properties of the current model."
+  },
+  "generate_vba_code": {
+   "andrewbartels1": "Generate VBA code for SolidWorks automation."
+  },
+  "automation_start_macro_recording": {
+   "andrewbartels1": "Start recording a macro in SolidWorks."
+  },
+  "automation_stop_macro_recording": {
+   "andrewbartels1": "Stop recording the current macro."
+  },
+  "batch_process_files": {
+   "andrewbartels1": "Perform batch operations on multiple SolidWorks files."
+  },
+  "manage_design_table": {
+   "andrewbartels1": "Create or manage design tables for parametric modeling."
+  },
+  "execute_workflow": {
+   "andrewbartels1": "Execute a predefined automation workflow."
+  },
+  "create_template": {
+   "andrewbartels1": "Create a SolidWorks template file."
+  },
+  "optimize_performance": {
+   "andrewbartels1": "Optimize SolidWorks performance settings."
+  },
+  "discover_solidworks_docs": {
+   "andrewbartels1": "Discover and index SolidWorks COM and VBA documentation."
+  },
+  "search_solidworks_api_help": {
+   "andrewbartels1": "Search the SolidWorks API help index and return coherent guidance. Maps user intent to discovered COM members and practical MCP workflow guidance. Useful when a tool call fails or you need to find the correct API member name."
+  },
+  "lookup_api_interface": {
+   "andrewbartels1": "List every indexed member (methods and properties) of a COM interface. Purpose-built for \"give me the full surface of `IFeatureManager`\" — more reliable than parsing full-text search results when you already know the interface name."
+  },
+  "lookup_api_method": {
+   "andrewbartels1": "Confirm a method or property is indexed on an interface and return its sibling members for context. The local index stores member *names* only — full signatures (parameters, return type) are not available here; use `search_solidworks_api_help` or help.solidworks.com for those."
+  },
+  "find_related_api_members": {
+   "andrewbartels1": "Given an indexed interface or member name, return related members: for an interface, its own members; for a member, the other members of every interface that also exposes it, plus name-substring matches elsewhere in the index."
+  },
+  "analyze_drawing_comprehensive": {
+   "andrewbartels1": "Perform comprehensive analysis of SolidWorks drawing."
+  },
+  "analyze_drawing_dimensions": {
+   "andrewbartels1": "Analyze dimensions in a SolidWorks drawing for consistency and completeness."
+  },
+  "analyze_drawing_annotations": {
+   "andrewbartels1": "Analyze drawing annotations and notes quality."
+  },
+  "check_drawing_compliance": {
+   "andrewbartels1": "Check drawing compliance with company standards."
+  },
+  "analyze_drawing_views": {
+   "andrewbartels1": "Analyze drawing views arrangement and quality."
+  },
+  "generate_drawing_report": {
+   "andrewbartels1": "Generate comprehensive drawing analysis report."
+  },
+  "compare_drawing_versions": {
+   "andrewbartels1": "Compare different versions of drawing files."
+  },
+  "validate_drawing_completeness": {
+   "andrewbartels1": "Validate drawing completeness for production readiness."
+  },
+  "create_drawing_view": {
+   "andrewbartels1": "Create a drawing view of a SolidWorks model."
+  },
+  "add_dimension": {
+   "andrewbartels1": "Add a dimension to the current drawing."
+  },
+  "add_note": {
+   "andrewbartels1": "Add a note or annotation to the current drawing."
+  },
+  "create_section_view": {
+   "andrewbartels1": "Create a section view of the current drawing.",
+   "Eduardof0nt": "Create a live model section view through a plane (visualization only)."
+  },
+  "create_detail_view": {
+   "andrewbartels1": "Create a detail view of a specific area."
+  },
+  "update_sheet_format": {
+   "andrewbartels1": "Update the sheet format and title block information."
+  },
+  "auto_dimension_view": {
+   "andrewbartels1": "Automatically dimension a drawing view."
+  },
+  "check_drawing_standards": {
+   "andrewbartels1": "Check the current drawing against drafting standards."
+  },
+  "create_technical_drawing": {
+   "andrewbartels1": "Create a technical drawing from a SolidWorks part or assembly."
+  },
+  "add_drawing_view": {
+   "andrewbartels1": "Add, update, or remove a drawing view in an existing drawing.",
+   "Eduardof0nt": "Add a model view to the active drawing document. view_type: 'front', 'back', 'left', 'right', 'top', 'bottom', 'isometric', 'trimetric' x, y: position on sheet in meters (note: meters not mm for sheet coordinates) scale: 1.0 = 1:1, 0.5 = 1:2, 2.0 = 2:1 Active document must be a drawing. Use sw_create_drawing first."
+  },
+  "add_annotation": {
+   "andrewbartels1": "Add an annotation such as a note, balloon, or surface symbol.",
+   "Eduardof0nt": "Add a text note/annotation to the active drawing or model. text supports \\n for multi-line notes. x, y are position in mm."
+  },
+  "update_title_block": {
+   "andrewbartels1": "Update title block fields for the active drawing."
+  },
+  "auto_center_marks": {
+   "andrewbartels1": "Auto-insert centre marks on circular features in a drawing view. Runs SolidWorks' automatic centre-mark insertion for the named view. The API does not report how many marks it added, so the response gives the view's centre-mark count before and after and the delta — a run that added nothing is still a success."
+  },
+  "export_step": {
+   "andrewbartels1": "Export the current model to STEP format.",
+   "Eduardof0nt": "Export the active model to STEP with explicit AP version."
+  },
+  "export_iges": {
+   "andrewbartels1": "Export the current model to IGES format."
+  },
+  "export_stl": {
+   "andrewbartels1": "Export the current model to STL format.",
+   "Eduardof0nt": "Export the active part to STL with binary/ASCII and quality control."
+  },
+  "export_pdf": {
+   "andrewbartels1": "Export the current model or drawing to PDF format."
+  },
+  "export_dwg": {
+   "andrewbartels1": "Export the current drawing to DWG format."
+  },
+  "export_image": {
+   "andrewbartels1": "Export images of the current model."
+  },
+  "batch_export": {
+   "andrewbartels1": "Batch export multiple SolidWorks files to a target format."
+  },
+  "save_file": {
+   "andrewbartels1": "Save the current SolidWorks model."
+  },
+  "save_as": {
+   "andrewbartels1": "Save the current model to a new location or format."
+  },
+  "get_file_properties": {
+   "andrewbartels1": "Get properties of the current SolidWorks file."
+  },
+  "get_model_info": {
+   "andrewbartels1": "Get compact metadata for the active SolidWorks document.",
+   "Eduardof0nt": "Get comprehensive info about the active document: title, path, type, configurations, and feature tree. Returns document metadata plus a full list of features with names and types."
+  },
+  "list_features": {
+   "andrewbartels1": "List feature-tree entries for the active SolidWorks document.",
+   "Eduardof0nt": "List all features in the active model's FeatureManager tree. Returns each feature's name, type string (e.g. 'Boss-Extrude', 'Cut-Extrude', 'Fillet'), and suppression state."
+  },
+  "classify_feature_tree": {
+   "andrewbartels1": "Classify the active model into a likely feature family using `get_model_info` and `list_features`."
+  },
+  "list_configurations": {
+   "andrewbartels1": "List configuration names for the active SolidWorks document.",
+   "Eduardof0nt": "List all configurations in the active document and show which is active. Configurations are alternate states of a part/assembly (different dimensions, features, etc.)."
+  },
+  "manage_file_properties": {
+   "andrewbartels1": "Read, update, copy, move, rename, or delete file-related properties."
+  },
+  "convert_file_format": {
+   "andrewbartels1": "Convert a SolidWorks file from one format to another."
+  },
+  "batch_file_operations": {
+   "andrewbartels1": "Run a file operation across multiple files as a batch workflow."
+  },
+  "load_part": {
+   "andrewbartels1": "Load (open) a SolidWorks part file."
+  },
+  "load_assembly": {
+   "andrewbartels1": "Load (open) a SolidWorks assembly file."
+  },
+  "save_part": {
+   "andrewbartels1": "Save the active SolidWorks part document."
+  },
+  "save_assembly": {
+   "andrewbartels1": "Save the active SolidWorks assembly document."
+  },
+  "pack_and_go_assembly": {
+   "andrewbartels1": "Copy a SolidWorks assembly and all its referenced parts to a self-contained folder — equivalent to the SolidWorks GUI **Pack and Go** operation."
+  },
+  "list_open_documents": {
+   "andrewbartels1": "List every SolidWorks document currently open. Read-only — does not change which document is active. Use it to discover what is open (an assembly plus its parts, a drawing plus its model) before switching with `activate_document`.",
+   "Eduardof0nt": "List all documents currently open in SolidWorks. Returns a list with title, path, type, and modified status for each document."
+  },
+  "activate_document": {
+   "andrewbartels1": "Switch which open document is the active one. Matches the argument against open documents by title, full path, or file name (case-insensitive), calls `ActivateDoc3`, and reads the active document back to confirm the switch took."
+  },
+  "save_body_as_part": {
+   "andrewbartels1": "Extract one solid body from the active multibody part into its own standalone `.sldprt`. Runs SolidWorks' Save Bodies on a single named body; the body is matched by name against the active part's solid bodies (the response lists every solid body found, so an unknown name reports the real options). Success is confirmed by the file existing on disk afterwards."
+  },
+  "start_macro_recording": {
+   "andrewbartels1": "Start recording a SolidWorks macro.",
+   "Eduardof0nt": "Start recording a SolidWorks macro to capture manual operations. output_path: where to save the .swb file (e.g. 'C:/macros/my_macro.swb') Stop recording with sw_stop_macro_recording."
+  },
+  "stop_macro_recording": {
+   "andrewbartels1": "Stop macro recording and save the recorded macro.",
+   "Eduardof0nt": "Stop recording a SolidWorks macro and save the file. The recorded macro can be reviewed with a text editor and run later with sw_run_macro."
+  },
+  "execute_macro": {
+   "andrewbartels1": "Execute a saved SolidWorks macro."
+  },
+  "analyze_macro": {
+   "andrewbartels1": "Analyze a macro for complexity, dependencies, and optimization opportunities."
+  },
+  "batch_execute_macros": {
+   "andrewbartels1": "Execute multiple macros in batch mode."
+  },
+  "optimize_macro": {
+   "andrewbartels1": "Optimize an existing macro for better performance and reliability."
+  },
+  "create_macro_library": {
+   "andrewbartels1": "Create a library of organized macros for team sharing and reuse."
+  },
+  "open_model": {
+   "andrewbartels1": "Open a SolidWorks model (part, assembly, or drawing)."
+  },
+  "create_part": {
+   "andrewbartels1": "Create a new SolidWorks part document.",
+   "Eduardof0nt": "Create a new SolidWorks part document. Optionally specify a template .prtdot file, otherwise uses the SolidWorks default template. Returns the new document title."
+  },
+  "create_assembly": {
+   "andrewbartels1": "Create a new SolidWorks assembly document.",
+   "Eduardof0nt": "Create a new SolidWorks assembly document. Returns the new document title."
+  },
+  "create_drawing": {
+   "andrewbartels1": "Create a new SolidWorks drawing document.",
+   "Eduardof0nt": "Create a new SolidWorks drawing document. Returns the new document title."
+  },
+  "close_model": {
+   "andrewbartels1": "Close the current SolidWorks model."
+  },
+  "create_extrusion": {
+   "andrewbartels1": "Create an extrusion feature from the active sketch."
+  },
+  "create_revolve": {
+   "andrewbartels1": "Create a revolve feature from the active sketch."
+  },
+  "get_dimension": {
+   "andrewbartels1": "Get the value of a dimension from the current model.",
+   "Eduardof0nt": "Get the current value of a named dimension. dimension_name format: 'DimName@FeatureName' (e.g. 'D1@Sketch1', 'Width@Boss-Extrude1') Values are returned in mm. To find dimension names: use the Properties dialog in SolidWorks or sw_get_equations."
+  },
+  "set_dimension": {
+   "andrewbartels1": "Set the value of a dimension in the current model.",
+   "Eduardof0nt": "Set a named dimension to a new value and rebuild the model. dimension_name format: 'DimName@FeatureName' (e.g. 'D1@Sketch1', 'Width@Boss-Extrude1') value is in mm. This is the primary way to parametrically drive model geometry."
+  },
+  "set_units": {
+   "andrewbartels1": "Set the active document's linear unit system (`mm`, `cm`, `m`, `in`, `ft`; aliases such as `inch` / `millimeters` accepted). The setting is applied and read back — a mismatch is reported as an error rather than a false success."
+  },
+  "rename_feature": {
+   "andrewbartels1": "Rename a feature on the feature tree. SolidWorks silently refuses a rename onto a name another feature already uses, so the new name is read back and a mismatch is reported as an error. Renaming a feature to its current name is a no-op success."
+  },
+  "create_reference_point": {
+   "andrewbartels1": "Create a reference point on the active part. Two modes: `along_curve` places a point on the edge under `(x, y, z)` mm — either `distance` mm from the edge start or at `percent` (0–100) of its length; `face_center` places a point at the centroid of the face under `(x, y, z)` mm. The coordinate must lie on the target edge/face. `InsertReferencePoint` always returns a feature, so success is confirmed",
+   "Eduardof0nt": "Create a reference point at the specified XYZ coordinates (in mm). Returns the new point feature name."
+  },
+  "create_sketch": {
+   "andrewbartels1": "Create a new sketch on the specified plane.",
+   "Eduardof0nt": "Create a new sketch on the specified plane or face. After calling this, use sw_sketch_* tools to add geometry, then sw_exit_sketch to finish. Standard planes: 'Front Plane', 'Top Plane', 'Right Plane'"
+  },
+  "add_line": {
+   "andrewbartels1": "Add a line to the current sketch."
+  },
+  "add_circle": {
+   "andrewbartels1": "Add a circle to the current sketch."
+  },
+  "add_rectangle": {
+   "andrewbartels1": "Add a rectangle to the current sketch."
+  },
+  "exit_sketch": {
+   "andrewbartels1": "Exit sketch editing mode.",
+   "Eduardof0nt": "Exit the active sketch and return to the 3D model view. Must be called after finishing sketch geometry before creating features."
+  },
+  "add_arc": {
+   "andrewbartels1": "Add an arc to the current sketch."
+  },
+  "add_spline": {
+   "andrewbartels1": "Add a spline curve to the current sketch."
+  },
+  "add_centerline": {
+   "andrewbartels1": "Add a centerline to the current sketch.",
+   "Eduardof0nt": "Add automatic centerlines to a drawing view."
+  },
+  "add_polygon": {
+   "andrewbartels1": "Add a regular polygon to the current sketch."
+  },
+  "add_ellipse": {
+   "andrewbartels1": "Add an ellipse to the current sketch."
+  },
+  "add_sketch_constraint": {
+   "andrewbartels1": "Add a geometric constraint/relation between sketch entities.",
+   "Eduardof0nt": "Add a geometric constraint (relation) to selected sketch entities. Select entities first with sw_select_entity (use append=True for multiple). Available constraints: HORIZONTAL, VERTICAL, COINCIDENT, PARALLEL, PERPENDICULAR, TANGENT, COLLINEAR, CONCENTRIC, EQUAL, SYMMETRIC, MIDPOINT, INTERSECTION, FIX, PIERCE Example: make a line horizontal 1. sw_select_entity('Line1', 'SKETCHSEGMENT') 2. sw_add_s"
+  },
+  "add_sketch_dimension": {
+   "andrewbartels1": "Add a dimension to sketch entities.",
+   "Eduardof0nt": "Add a Smart Dimension to the selected sketch entity and set its value. Select the line, circle, or arc to dimension with sw_select_entity first. x,y sets where the dimension label appears. Example workflow: 1. sw_create_sketch('Front Plane') 2. sw_sketch_line(x1=0, y1=0, x2=50, y2=0) 3. sw_select_entity('Line1', 'SKETCHSEGMENT') 4. sw_add_sketch_dimension(value=50, x=25, y=-10)"
+  },
+  "sketch_linear_pattern": {
+   "andrewbartels1": "Create a linear pattern of sketch entities.",
+   "Eduardof0nt": "Create a linear step-and-repeat pattern of selected sketch entities. Select the sketch entities first with sw_select_entity (append=True for multiple)."
+  },
+  "sketch_circular_pattern": {
+   "andrewbartels1": "Create a circular pattern of sketch entities.",
+   "Eduardof0nt": "Create a circular pattern of selected sketch entities. Select the sketch entities first with sw_select_entity."
+  },
+  "sketch_mirror": {
+   "andrewbartels1": "Mirror sketch entities about a centerline."
+  },
+  "sketch_offset": {
+   "andrewbartels1": "Create an offset of sketch entities.",
+   "Eduardof0nt": "Offset selected sketch entities by a given distance. Select the entities to offset first with sw_select_entity, then call this."
+  },
+  "sketch_tutorial_simple_hole": {
+   "andrewbartels1": "Tutorial: Create a simple circular hole sketch."
+  },
+  "tutorial_simple_hole": {
+   "andrewbartels1": "Create a simple hole as a guided tutorial workflow."
+  },
+  "extract_template": {
+   "andrewbartels1": "Extract template from existing SolidWorks model."
+  },
+  "apply_template": {
+   "andrewbartels1": "Apply a template to an existing SolidWorks model."
+  },
+  "batch_apply_template": {
+   "andrewbartels1": "Apply template to multiple models in batch."
+  },
+  "compare_templates": {
+   "andrewbartels1": "Compare two templates and generate difference report."
+  },
+  "save_to_template_library": {
+   "andrewbartels1": "Save template to the organization's template library."
+  },
+  "list_template_library": {
+   "andrewbartels1": "List available templates from the template library."
+  },
+  "generate_vba_extrusion": {
+   "andrewbartels1": "Generate VBA code for complex extrusion operations."
+  },
+  "generate_vba_revolve": {
+   "andrewbartels1": "Generate VBA code for complex revolve operations."
+  },
+  "generate_vba_assembly_insert": {
+   "andrewbartels1": "Generate VBA code for assembly component insertion."
+  },
+  "generate_vba_drawing_views": {
+   "andrewbartels1": "Generate VBA code for drawing view creation."
+  },
+  "generate_vba_batch_export": {
+   "andrewbartels1": "Generate VBA code for batch file export operations."
+  },
+  "generate_vba_part_modeling": {
+   "andrewbartels1": "Generate VBA code for complex part modeling operations."
+  },
+  "generate_vba_assembly_mates": {
+   "andrewbartels1": "Generate VBA code for assembly mate creation."
+  },
+  "generate_vba_drawing_dimensions": {
+   "andrewbartels1": "Generate VBA code for creating drawing dimensions."
+  },
+  "generate_vba_file_operations": {
+   "andrewbartels1": "Generate VBA code for file management operations."
+  },
+  "generate_vba_macro_recorder": {
+   "andrewbartels1": "Generate VBA code using macro recording patterns."
+  },
+  "sw_connect": {
+   "Eduardof0nt": "Connect to a running SolidWorks instance or launch one. Must be called before other sw_* tools if SolidWorks is not yet connected. Most tools will auto-connect if needed, but this lets you verify the connection. Returns version info and connection status."
+  },
+  "sw_get_status": {
+   "Eduardof0nt": "Get SolidWorks connection status, active document info, and list of open documents. Returns: JSON with connected (bool), version, active_document info, and open_documents list."
+  },
+  "sw_open_document": {
+   "Eduardof0nt": "Open a SolidWorks file (part, assembly, drawing, or imported format like STEP/IGES/STL). Supports: .sldprt, .sldasm, .slddrw, .step, .stp, .iges, .igs, .stl, .x_t, .sat, .3mf, .obj Returns document title, path, and type."
+  },
+  "sw_close_document": {
+   "Eduardof0nt": "Close a document. Closes the active document if no title is given. WARNING: Does not prompt to save — save first if needed with sw_save_document."
+  },
+  "sw_save_document": {
+   "Eduardof0nt": "Save the active document. Provide file_path to Save As, leave empty to save in-place. Returns the saved path and any warning codes."
+  },
+  "sw_create_part": {
+   "Eduardof0nt": "Create a new SolidWorks part document. Optionally specify a template .prtdot file, otherwise uses the SolidWorks default template. Returns the new document title."
+  },
+  "sw_create_assembly": {
+   "Eduardof0nt": "Create a new SolidWorks assembly document. Returns the new document title."
+  },
+  "sw_create_drawing": {
+   "Eduardof0nt": "Create a new SolidWorks drawing document. Returns the new document title."
+  },
+  "sw_list_open_documents": {
+   "Eduardof0nt": "List all documents currently open in SolidWorks. Returns a list with title, path, type, and modified status for each document."
+  },
+  "sw_export_file": {
+   "Eduardof0nt": "Export the active document to another format. Supported output extensions: .step / .stp, .stl, .dxf, .pdf, .iges / .igs, .x_t (Parasolid), .3mf, .obj, .png, .bmp, .jpg, .edrw, .u3d, .vrml Example: output_path = \"C:/output/part.step\""
+  },
+  "sw_get_model_info": {
+   "Eduardof0nt": "Get comprehensive info about the active document: title, path, type, configurations, and feature tree. Returns document metadata plus a full list of features with names and types."
+  },
+  "sw_select_entity": {
+   "Eduardof0nt": "Select an entity in the active document by name and type. Entity types: PLANE, FACE, EDGE, VERTEX, BODYFEATURE, SKETCH, REFAXIS, COMPONENT, BODY Common examples: - Select Front Plane: name='Front Plane', type='PLANE' - Select an extrude feature: name='Boss-Extrude1', type='BODYFEATURE' - Select a sketch: name='Sketch1', type='SKETCH' Use append=True to add to the current selection (e.g. for mates,"
+  },
+  "sw_clear_selection": {
+   "Eduardof0nt": "Clear all current selections in the active document."
+  },
+  "sw_list_features": {
+   "Eduardof0nt": "List all features in the active model's FeatureManager tree. Returns each feature's name, type string (e.g. 'Boss-Extrude', 'Cut-Extrude', 'Fillet'), and suppression state."
+  },
+  "sw_create_sketch": {
+   "Eduardof0nt": "Create a new sketch on the specified plane or face. After calling this, use sw_sketch_* tools to add geometry, then sw_exit_sketch to finish. Standard planes: 'Front Plane', 'Top Plane', 'Right Plane'"
+  },
+  "sw_edit_sketch": {
+   "Eduardof0nt": "Open an existing sketch for editing. After editing, call sw_exit_sketch. Use sw_list_features to find sketch names."
+  },
+  "sw_exit_sketch": {
+   "Eduardof0nt": "Exit the active sketch and return to the 3D model view. Must be called after finishing sketch geometry before creating features."
+  },
+  "sw_sketch_line": {
+   "Eduardof0nt": "Draw a line in the active sketch. Coordinates are in mm on the sketch plane. A sketch must be active (use sw_create_sketch first)."
+  },
+  "sw_sketch_circle": {
+   "Eduardof0nt": "Draw a circle in the active sketch. Coordinates and radius are in mm. A sketch must be active (use sw_create_sketch first)."
+  },
+  "sw_sketch_rectangle": {
+   "Eduardof0nt": "Draw a rectangle in the active sketch. type='corner': x1,y1 and x2,y2 are diagonally opposite corners. type='center': x1,y1 is the center, x2,y2 is a corner. Coordinates in mm. A sketch must be active."
+  },
+  "sw_sketch_arc": {
+   "Eduardof0nt": "Draw an arc in the active sketch defined by center, radius, and start/end angles. Angles are in degrees (0° = +X axis, counter-clockwise positive). Coordinates and radius are in mm. A sketch must be active."
+  },
+  "sw_sketch_ellipse": {
+   "Eduardof0nt": "Draw an ellipse in the active sketch. Coordinates in mm. rotation rotates the major axis from the X-axis. A sketch must be active."
+  },
+  "sw_sketch_polygon": {
+   "Eduardof0nt": "Draw a regular polygon in the active sketch. Coordinates and radius in mm. circumscribed_radius is the distance from center to vertex. rotation rotates the polygon. A sketch must be active."
+  },
+  "sw_sketch_spline": {
+   "Eduardof0nt": "Draw a spline through the given control points. Points are [x, y] in mm. Requires at least 2 points. A sketch must be active. Example: points=[[0,0],[10,20],[30,15],[50,0]]"
+  },
+  "sw_sketch_offset": {
+   "Eduardof0nt": "Offset selected sketch entities by a given distance. Select the entities to offset first with sw_select_entity, then call this."
+  },
+  "sw_sketch_centerline": {
+   "Eduardof0nt": "Draw a centerline in the active sketch. Used as axis for revolve features or symmetry. Coordinates in mm. A sketch must be active."
+  },
+  "sw_sketch_linear_pattern": {
+   "Eduardof0nt": "Create a linear step-and-repeat pattern of selected sketch entities. Select the sketch entities first with sw_select_entity (append=True for multiple)."
+  },
+  "sw_sketch_circular_pattern": {
+   "Eduardof0nt": "Create a circular pattern of selected sketch entities. Select the sketch entities first with sw_select_entity."
+  },
+  "sw_add_sketch_dimension": {
+   "Eduardof0nt": "Add a Smart Dimension to the selected sketch entity and set its value. Select the line, circle, or arc to dimension with sw_select_entity first. x,y sets where the dimension label appears. Example workflow: 1. sw_create_sketch('Front Plane') 2. sw_sketch_line(x1=0, y1=0, x2=50, y2=0) 3. sw_select_entity('Line1', 'SKETCHSEGMENT') 4. sw_add_sketch_dimension(value=50, x=25, y=-10)"
+  },
+  "sw_add_sketch_constraint": {
+   "Eduardof0nt": "Add a geometric constraint (relation) to selected sketch entities. Select entities first with sw_select_entity (use append=True for multiple). Available constraints: HORIZONTAL, VERTICAL, COINCIDENT, PARALLEL, PERPENDICULAR, TANGENT, COLLINEAR, CONCENTRIC, EQUAL, SYMMETRIC, MIDPOINT, INTERSECTION, FIX, PIERCE Example: make a line horizontal 1. sw_select_entity('Line1', 'SKETCHSEGMENT') 2. sw_add_s"
+  },
+  "sw_extrude": {
+   "Eduardof0nt": "Extrude the active sketch profile into a 3D boss (adds material) or cut (removes material). The sketch must be closed and the document must be a part. Use sw_exit_sketch first, then the last closed sketch is used. Returns the new feature name."
+  },
+  "sw_revolve": {
+   "Eduardof0nt": "Revolve the active sketch profile around a centerline/axis. The sketch must contain a profile and a centerline (use sw_sketch_centerline). Use sw_exit_sketch first. Returns the new feature name."
+  },
+  "sw_fillet": {
+   "Eduardof0nt": "Add a constant-radius fillet to selected edges. Select edges first with sw_select_entity (type='EDGE', use append=True for multiple). Returns the new fillet feature name."
+  },
+  "sw_chamfer": {
+   "Eduardof0nt": "Add a chamfer to selected edges. Select edges first with sw_select_entity (type='EDGE'). Returns the new chamfer feature name."
+  },
+  "sw_shell": {
+   "Eduardof0nt": "Shell a solid body (hollow it out with a uniform wall thickness). Select the face(s) to open (remove) with sw_select_entity (type='FACE') before calling. Leave unselected to shell all faces inward. Returns the new shell feature name."
+  },
+  "sw_draft": {
+   "Eduardof0nt": "Add draft (taper angle) to selected faces. Select the neutral plane (PLANE) and the faces to draft (FACE) before calling. Select neutral plane first, then hold Ctrl and select the draft faces. Returns the new draft feature name."
+  },
+  "sw_linear_pattern": {
+   "Eduardof0nt": "Create a linear pattern of a selected feature. Select the feature to pattern and direction edges/axes with sw_select_entity first. Select direction1 edge, then Ctrl+select direction2 edge (optional), then Ctrl+select features. Returns the new pattern feature name."
+  },
+  "sw_circular_pattern": {
+   "Eduardof0nt": "Create a circular pattern of a selected feature around an axis. Select the rotation axis (REFAXIS or edge) and the features to pattern first. Returns the new pattern feature name."
+  },
+  "sw_mirror": {
+   "Eduardof0nt": "Mirror selected features across a plane. Select features to mirror with sw_select_entity first. mirror_plane is the plane to mirror about (e.g. 'Front Plane', 'Right Plane'). Returns the new mirror feature name."
+  },
+  "sw_hole_wizard": {
+   "Eduardof0nt": "Create a hole using the Hole Wizard (supports standard threaded/clearance holes). Select the face to place the hole on first with sw_select_entity (type='FACE'). hole_type: 'simple', 'counterbore', 'countersink', 'straight_tap', 'tapered_tap' standard: 'ANSI Metric', 'ANSI Inch', 'ISO' size: e.g. 'M6', 'M8x1.25', '1/4-20', '#10-32' Returns the new hole feature name."
+  },
+  "sw_loft": {
+   "Eduardof0nt": "Create a loft between selected sketch profiles. Select 2 or more sketch profiles in order with sw_select_entity (append=True). Optionally select guide curves before running. Returns the new loft feature name."
+  },
+  "sw_sweep": {
+   "Eduardof0nt": "Create a sweep of a profile sketch along a path sketch. Select the profile sketch first, then Ctrl+select the path sketch. Returns the new sweep feature name."
+  },
+  "sw_delete_feature": {
+   "Eduardof0nt": "Delete a feature from the FeatureManager tree by name. WARNING: This is irreversible (unless you undo). Use sw_list_features to find feature names. absorb_children=True will keep child features (e.g. keep a sketch when deleting an extrude)."
+  },
+  "sw_suppress_feature": {
+   "Eduardof0nt": "Suppress a feature (temporarily disable it without deleting). Use sw_unsuppress_feature to re-enable. Use sw_list_features to find feature names."
+  },
+  "sw_unsuppress_feature": {
+   "Eduardof0nt": "Unsuppress (re-enable) a previously suppressed feature. Use sw_list_features to find feature names and their suppression state."
+  },
+  "sw_insert_component": {
+   "Eduardof0nt": "Insert a part or subassembly into the active assembly. x, y, z set the initial placement position in mm. fixed=True locks the component in place. Returns the component name as it appears in the assembly tree."
+  },
+  "sw_add_mate": {
+   "Eduardof0nt": "Add a mate constraint between two entities in an assembly. entity1/entity2: entity names in 'EntityName@ComponentName-Instance' format. For example: 'Face<1>@Bolt-1' or 'Plane1@Housing-2' mate_type options: COINCIDENT, CONCENTRIC, PARALLEL, PERPENDICULAR, TANGENT, DISTANCE, ANGLE, SYMMETRIC, LOCK, HINGE, GEAR, SLOT, PROFILE_CENTER For DISTANCE mates: distance_or_angle = gap in mm For ANGLE mates: "
+  },
+  "sw_fix_component": {
+   "Eduardof0nt": "Fix a component in place (remove all DOF) or float it (restore DOF). fix=True makes it rigid. fix=False allows mates to position it."
+  },
+  "sw_check_interference": {
+   "Eduardof0nt": "Check for interference (collision) between components in the active assembly. Returns the number of interferences found and their approximate volumes. Active document must be an assembly."
+  },
+  "sw_explode_assembly": {
+   "Eduardof0nt": "Create or activate an exploded view of the active assembly. Use with sw_capture_screenshot to generate exploded view images."
+  },
+  "sw_add_drawing_view": {
+   "Eduardof0nt": "Add a model view to the active drawing document. view_type: 'front', 'back', 'left', 'right', 'top', 'bottom', 'isometric', 'trimetric' x, y: position on sheet in meters (note: meters not mm for sheet coordinates) scale: 1.0 = 1:1, 0.5 = 1:2, 2.0 = 2:1 Active document must be a drawing. Use sw_create_drawing first."
+  },
+  "sw_add_section_view": {
+   "Eduardof0nt": "Add a section view to the drawing. Select a cutting line on an existing view first. label is the section identifier (A, B, C...)."
+  },
+  "sw_add_drawing_dimension": {
+   "Eduardof0nt": "Add a dimension to the active drawing view. Select the entities to dimension first, then specify where to place the label. x, y are in mm on the drawing sheet."
+  },
+  "sw_add_annotation": {
+   "Eduardof0nt": "Add a text note/annotation to the active drawing or model. text supports \\n for multi-line notes. x, y are position in mm."
+  },
+  "sw_add_bom_table": {
+   "Eduardof0nt": "Add a Bill of Materials (BOM) table to the active drawing. The drawing must contain an assembly view. Places the BOM at a default position."
+  },
+  "sw_get_dimension": {
+   "Eduardof0nt": "Get the current value of a named dimension. dimension_name format: 'DimName@FeatureName' (e.g. 'D1@Sketch1', 'Width@Boss-Extrude1') Values are returned in mm. To find dimension names: use the Properties dialog in SolidWorks or sw_get_equations."
+  },
+  "sw_set_dimension": {
+   "Eduardof0nt": "Set a named dimension to a new value and rebuild the model. dimension_name format: 'DimName@FeatureName' (e.g. 'D1@Sketch1', 'Width@Boss-Extrude1') value is in mm. This is the primary way to parametrically drive model geometry."
+  },
+  "sw_get_mass_properties": {
+   "Eduardof0nt": "Calculate mass properties of the active part or assembly. Returns: mass (kg), volume (mm³), surface area (mm²), density (kg/m³), center of mass (mm), and principal moments of inertia. Requires the material to be set for accurate mass. Volume is always correct."
+  },
+  "sw_get_bounding_box": {
+   "Eduardof0nt": "Get the axis-aligned bounding box of the active model. Returns min/max corners and overall dimensions (width × height × depth) in mm. Useful for envelope sizing and clearance checks."
+  },
+  "sw_measure_distance": {
+   "Eduardof0nt": "Measure the minimum distance between two entities (faces, edges, vertices). Returns distance in mm and delta X/Y/Z components. Entity names must match exactly as shown in the FeatureManager tree."
+  },
+  "sw_check_geometry": {
+   "Eduardof0nt": "Check the active part for geometry errors (invalid faces, edges, etc.). Returns error count and status. Run after complex operations to validate the model. Only works on part documents."
+  },
+  "sw_analyze_draft": {
+   "Eduardof0nt": "Perform draft analysis on the active part model. Highlights faces with sufficient draft (green), faces requiring draft (red), and straddle faces (yellow). Use for injection mold design review. draft_angle: minimum acceptable draft angle in degrees."
+  },
+  "sw_get_custom_properties": {
+   "Eduardof0nt": "Get custom properties from the active document. Leave property_name empty to retrieve all properties. configuration: config name for config-specific properties, or empty for document-level. Returns name/value pairs including linked (resolved) values."
+  },
+  "sw_set_custom_property": {
+   "Eduardof0nt": "Set or create a custom property on the active document. Supports text values and linked equations (e.g. value='\"D1@Boss-Extrude1\"'). configuration: leave empty for document-level, or specify a config name."
+  },
+  "sw_list_configurations": {
+   "Eduardof0nt": "List all configurations in the active document and show which is active. Configurations are alternate states of a part/assembly (different dimensions, features, etc.)."
+  },
+  "sw_activate_configuration": {
+   "Eduardof0nt": "Activate (switch to) a configuration by name. Use sw_list_configurations to see available configuration names. Rebuilds the model after switching."
+  },
+  "sw_add_configuration": {
+   "Eduardof0nt": "Add a new configuration to the active document. The new configuration is a copy of the current (or derived_from) configuration. Use sw_set_dimension or suppress/unsuppress features to differentiate it."
+  },
+  "sw_get_equations": {
+   "Eduardof0nt": "List all equations and global variables in the active document. Returns index, equation string, and current evaluated value for each. Use indices with sw_delete_equation."
+  },
+  "sw_add_equation": {
+   "Eduardof0nt": "Add an equation or global variable to the active document. Equation format examples: - Global variable: '\"Width\" = 100mm' - Dimension link: '\"D1@Sketch1\" = \"Width\" * 2' - Math: '\"Radius\" = sqrt(\"Width\" ^ 2 + \"Height\" ^ 2)' Rebuilds the model after adding."
+  },
+  "sw_delete_equation": {
+   "Eduardof0nt": "Delete an equation by its index (from sw_get_equations). Rebuilds the model after deletion. Affected dimensions revert to manual."
+  },
+  "sw_create_design_table": {
+   "Eduardof0nt": "Create a design table for driving multiple configurations from a spreadsheet. Provide an Excel (.xlsx) file path for a linked table, or leave empty to create an embedded one. SolidWorks will open Excel for editing if the table is created successfully."
+  },
+  "sw_capture_screenshot": {
+   "Eduardof0nt": "Capture a screenshot of the active SolidWorks model view. output_path: where to save the image (.bmp, .png, .jpg). Defaults to a temp file. Set the view with sw_set_view_orientation before capturing. Returns the path to the saved image file."
+  },
+  "sw_set_view_orientation": {
+   "Eduardof0nt": "Set the 3D view orientation and zoom-to-fit. view_name options: 'front', 'back', 'left', 'right', 'top', 'bottom', 'isometric', 'trimetric', 'dimetric'"
+  },
+  "sw_zoom_to_fit": {
+   "Eduardof0nt": "Zoom the view to fit the entire model on screen (Ctrl+Shift+F equivalent)."
+  },
+  "sw_set_display_mode": {
+   "Eduardof0nt": "Set the 3D display mode for the active document. modes: 'wireframe', 'hidden_lines_visible', 'hidden_lines_removed', 'shaded', 'shaded_with_edges'"
+  },
+  "sw_rebuild_model": {
+   "Eduardof0nt": "Force-rebuild the active model (Ctrl+B equivalent). Use after making multiple dimension or property changes to update the geometry. top_only=True is faster for assemblies (skips sub-component rebuilds)."
+  },
+  "sw_run_macro": {
+   "Eduardof0nt": "Run a saved SolidWorks macro file (.swp or .swb). macro_path: full path to the macro file module_name: VBA module name (leave empty for default) sub_name: subroutine to run (default: 'main') Returns success/failure status."
+  },
+  "sw_run_vba_code": {
+   "Eduardof0nt": "Execute arbitrary VBA code against SolidWorks. Writes the code to a temporary macro file and runs it. If no Sub declaration is present, code is auto-wrapped in Sub main(). Full SolidWorks API access via swApp and Part/Assembly/Drawing objects. Example: vba_code = ''' Dim swApp As Object Dim swDoc As Object Set swApp = Application.SldWorks Set swDoc = swApp.ActiveDoc MsgBox \"Document: \" & swDoc.Get"
+  },
+  "sw_start_macro_recording": {
+   "Eduardof0nt": "Start recording a SolidWorks macro to capture manual operations. output_path: where to save the .swb file (e.g. 'C:/macros/my_macro.swb') Stop recording with sw_stop_macro_recording."
+  },
+  "sw_stop_macro_recording": {
+   "Eduardof0nt": "Stop recording a SolidWorks macro and save the file. The recorded macro can be reviewed with a text editor and run later with sw_run_macro."
+  },
+  "sw_create_reference_plane": {
+   "Eduardof0nt": "Create a reference plane offset from an existing plane. reference_plane: base plane to offset from (e.g. 'Front Plane', 'Top Plane') offset_distance: offset in mm (positive = normal direction) Returns the new plane feature name."
+  },
+  "sw_create_reference_axis": {
+   "Eduardof0nt": "Create a reference axis from selected geometry. Select the required entities first with sw_select_entity. axis_type options: - 'two_planes': intersection of two selected planes - 'cylinder': axis of a selected cylindrical/conical face - 'two_points': axis through two selected points/vertices - 'point_on_face': normal to face at a selected point Returns the new axis feature name."
+  },
+  "sw_create_reference_point": {
+   "Eduardof0nt": "Create a reference point at the specified XYZ coordinates (in mm). Returns the new point feature name."
+  },
+  "sw_thicken_surface": {
+   "Eduardof0nt": "Thicken a selected surface body into a solid. Select a surface body with sw_select_entity (type='BODY') first. thickness: amount to thicken in mm. both_sides=True thickens symmetrically. Returns the new solid feature name."
+  },
+  "sw_knit_surfaces": {
+   "Eduardof0nt": "Knit selected surface bodies into a single surface or closed solid. Select all surface bodies to knit with sw_select_entity (append=True for multiple). If the result is a closed volume, a solid body is automatically created."
+  },
+  "sw_flatten_sheet_metal": {
+   "Eduardof0nt": "Toggle the flat pattern view of the active sheet metal part. Shows the unbent, flat state of the sheet metal part. Use sw_get_flat_pattern_info to get flat dimensions."
+  },
+  "sw_get_flat_pattern_info": {
+   "Eduardof0nt": "Get dimensions of the flat pattern for the active sheet metal part. Returns flat width, height, and material thickness in mm. Activate the flat pattern view first with sw_flatten_sheet_metal."
+  },
+  "sw_export_flat_pattern": {
+   "Eduardof0nt": "Export the flat pattern of the active sheet metal part. output_path: target file path (.dxf, .dwg, or .pdf) The flat pattern must be active (use sw_flatten_sheet_metal first)."
+  },
+  "sw_set_material": {
+   "Eduardof0nt": "Apply a material to the active part. Common names: 'AISI 1020', 'Aluminum 6061-T6', 'ABS', 'PLA', 'Brass', 'Copper'."
+  },
+  "sw_get_material": {
+   "Eduardof0nt": "Read the current material assigned to the active part."
+  },
+  "sw_set_appearance_color": {
+   "Eduardof0nt": "Set RGB color and transparency on the active part's solid bodies."
+  },
+  "sw_list_materials": {
+   "Eduardof0nt": "List available material databases."
+  },
+  "sw_list_bodies": {
+   "Eduardof0nt": "List solid or surface bodies in the active part."
+  },
+  "sw_combine_bodies": {
+   "Eduardof0nt": "Combine selected bodies via boolean operation (union/subtract/intersect)."
+  },
+  "sw_split_body": {
+   "Eduardof0nt": "Split the selected body using the selected trim tool (sketch/surface/plane)."
+  },
+  "sw_move_body": {
+   "Eduardof0nt": "Move or copy the selected body by translation (mm) and rotation (deg)."
+  },
+  "sw_delete_body": {
+   "Eduardof0nt": "Delete the selected body."
+  },
+  "sw_scale_body": {
+   "Eduardof0nt": "Uniformly scale the selected body by a factor."
+  },
+  "sw_create_helix": {
+   "Eduardof0nt": "Create a helix from a selected sketch circle (used as a sweep path for threads, springs)."
+  },
+  "sw_start_3d_sketch": {
+   "Eduardof0nt": "Start a 3D sketch (for routing pipes, wires, complex paths)."
+  },
+  "sw_split_line": {
+   "Eduardof0nt": "Split a face into sub-faces using a sketch (for selective face operations)."
+  },
+  "sw_projected_curve": {
+   "Eduardof0nt": "Project a sketch onto a face to create a 3D curve."
+  },
+  "sw_composite_curve": {
+   "Eduardof0nt": "Combine selected edges and sketch entities into a single composite curve."
+  },
+  "sw_sketch_convert_entities": {
+   "Eduardof0nt": "Convert selected face edges into sketch entities (in the active sketch)."
+  },
+  "sw_sketch_trim": {
+   "Eduardof0nt": "Trim selected sketch entity (power trim mode)."
+  },
+  "sw_sketch_extend": {
+   "Eduardof0nt": "Extend selected sketch entity until next boundary."
+  },
+  "sw_sketch_construction": {
+   "Eduardof0nt": "Toggle selected sketch entities to construction (dashed) geometry."
+  },
+  "sw_sketch_fillet": {
+   "Eduardof0nt": "Fillet (round) the corner between two selected sketch lines."
+  },
+  "sw_sketch_chamfer": {
+   "Eduardof0nt": "Chamfer (bevel) the corner between two selected sketch lines."
+  },
+  "sw_sketch_text": {
+   "Eduardof0nt": "Insert text in the active sketch (use as profile for extrudes/cuts to engrave/emboss)."
+  },
+  "sw_planar_surface": {
+   "Eduardof0nt": "Create a planar surface from selected closed sketch profile or edges."
+  },
+  "sw_extruded_surface": {
+   "Eduardof0nt": "Create an extruded surface from the active sketch."
+  },
+  "sw_revolved_surface": {
+   "Eduardof0nt": "Create a revolved surface from the active sketch profile + axis."
+  },
+  "sw_offset_surface": {
+   "Eduardof0nt": "Offset a selected face/surface by a distance."
+  },
+  "sw_trim_surface": {
+   "Eduardof0nt": "Trim a surface using selected trim tool."
+  },
+  "sw_extend_surface": {
+   "Eduardof0nt": "Extend a surface by a distance, up to a point, or up to another surface."
+  },
+  "sw_delete_face": {
+   "Eduardof0nt": "Delete selected face(s). Optionally patch the resulting hole."
+  },
+  "sw_filled_surface": {
+   "Eduardof0nt": "Fill a closed boundary of edges with a new surface."
+  },
+  "sw_base_flange": {
+   "Eduardof0nt": "Convert the active sketch into a sheet-metal base flange (starts a sheet metal part)."
+  },
+  "sw_edge_flange": {
+   "Eduardof0nt": "Add an edge flange to a selected sheet-metal edge."
+  },
+  "sw_miter_flange": {
+   "Eduardof0nt": "Add a miter flange following the active sketch profile around multiple edges."
+  },
+  "sw_sketched_bend": {
+   "Eduardof0nt": "Add a sketched bend along an active sketch line on a flat sheet metal face."
+  },
+  "sw_jog": {
+   "Eduardof0nt": "Add a jog bend at the active sketch line on a sheet metal face."
+  },
+  "sw_hem": {
+   "Eduardof0nt": "Add a hem to a selected sheet-metal edge."
+  },
+  "sw_unfold": {
+   "Eduardof0nt": "Unfold sheet-metal bends to flatten (use with subsequent features then sw_fold)."
+  },
+  "sw_fold": {
+   "Eduardof0nt": "Fold previously-unfolded bends back to formed state."
+  },
+  "sw_insert_weldment": {
+   "Eduardof0nt": "Insert the weldment feature into the active part (enables weldment tools)."
+  },
+  "sw_add_structural_member": {
+   "Eduardof0nt": "Add a structural member along selected sketch path(s) using a weldment profile."
+  },
+  "sw_add_gusset": {
+   "Eduardof0nt": "Add a triangular gusset between two selected structural member faces."
+  },
+  "sw_add_end_cap": {
+   "Eduardof0nt": "Add an end cap to a selected structural member end face."
+  },
+  "sw_trim_weldment": {
+   "Eduardof0nt": "Trim selected weldment members to a planar or solid trim tool."
+  },
+  "sw_parting_line": {
+   "Eduardof0nt": "Create a parting line for mold design (used to separate core from cavity)."
+  },
+  "sw_shut_off_surface": {
+   "Eduardof0nt": "Automatically create shut-off surfaces over holes for mold separation."
+  },
+  "sw_tooling_split": {
+   "Eduardof0nt": "Split a mold block into core and cavity using the parting line/surfaces."
+  },
+  "sw_add_projected_view": {
+   "Eduardof0nt": "Add a projected view derived from an existing drawing view."
+  },
+  "sw_add_auxiliary_view": {
+   "Eduardof0nt": "Add an auxiliary view normal to a selected edge."
+  },
+  "sw_add_detail_view": {
+   "Eduardof0nt": "Add a detail view of a region at the given (x,y) with the given radius."
+  },
+  "sw_add_broken_view": {
+   "Eduardof0nt": "Compress the current drawing view with a break."
+  },
+  "sw_add_centerline": {
+   "Eduardof0nt": "Add automatic centerlines to a drawing view."
+  },
+  "sw_add_center_mark": {
+   "Eduardof0nt": "Add automatic center marks to circular features in a drawing view."
+  },
+  "sw_add_balloon": {
+   "Eduardof0nt": "Add a BOM balloon at the specified position in the drawing."
+  },
+  "sw_add_surface_finish": {
+   "Eduardof0nt": "Add a surface finish symbol to the drawing."
+  },
+  "sw_add_geometric_tolerance": {
+   "Eduardof0nt": "Add a geometric tolerance (GD&T) frame to the drawing."
+  },
+  "sw_add_weld_symbol": {
+   "Eduardof0nt": "Add a welding symbol annotation to the drawing."
+  },
+  "sw_add_datum_feature": {
+   "Eduardof0nt": "Add a datum feature symbol (A, B, C...) to the drawing."
+  },
+  "sw_add_hole_table": {
+   "Eduardof0nt": "Add a hole table to the drawing."
+  },
+  "sw_add_revision_table": {
+   "Eduardof0nt": "Add a revision table to the drawing sheet."
+  },
+  "sw_export_drawing_pdf": {
+   "Eduardof0nt": "Export the active drawing to PDF (output_path must end in .pdf)."
+  },
+  "sw_export_drawing_dwg": {
+   "Eduardof0nt": "Export the active drawing to DWG or DXF (output_path determines format)."
+  },
+  "sw_replace_component": {
+   "Eduardof0nt": "Replace a component in the active assembly with a different file."
+  },
+  "sw_pattern_component_linear": {
+   "Eduardof0nt": "Linearly pattern a selected component (select seed component + direction reference first)."
+  },
+  "sw_pattern_component_circular": {
+   "Eduardof0nt": "Circularly pattern a selected component about an axis."
+  },
+  "sw_mirror_component": {
+   "Eduardof0nt": "Mirror a selected component about a plane (select component first)."
+  },
+  "sw_suppress_component": {
+   "Eduardof0nt": "Suppress or unsuppress a component in the assembly."
+  },
+  "sw_hide_component": {
+   "Eduardof0nt": "Hide or show a component in the assembly viewport."
+  },
+  "sw_move_component": {
+   "Eduardof0nt": "Move a component (free-drag style translation, subject to mate constraints)."
+  },
+  "sw_get_assembly_tree": {
+   "Eduardof0nt": "List all components in the active assembly with their state info."
+  },
+  "sw_create_section_view": {
+   "Eduardof0nt": "Create a live model section view through a plane (visualization only)."
+  },
+  "sw_set_background": {
+   "Eduardof0nt": "Set the viewport background style and color."
+  },
+  "sw_take_photoview_screenshot": {
+   "Eduardof0nt": "Render via PhotoView 360 add-in if available, else regular screenshot."
+  },
+  "sw_hide_all_planes": {
+   "Eduardof0nt": "Hide all reference planes in the viewport."
+  },
+  "sw_show_all_planes": {
+   "Eduardof0nt": "Show all reference planes in the viewport."
+  },
+  "sw_hide_all_sketches": {
+   "Eduardof0nt": "Hide all sketches in the viewport."
+  },
+  "sw_show_all_sketches": {
+   "Eduardof0nt": "Show all sketches in the viewport."
+  },
+  "sw_view_rotate": {
+   "Eduardof0nt": "Rotate the current view by Euler angles (degrees)."
+  },
+  "sw_create_motion_study": {
+   "Eduardof0nt": "Create a new motion study (requires SOLIDWORKS Motion add-in)."
+  },
+  "sw_create_simulation_study": {
+   "Eduardof0nt": "Create a new SOLIDWORKS Simulation study (requires Simulation add-in)."
+  },
+  "sw_run_simulation": {
+   "Eduardof0nt": "Run the active SOLIDWORKS Simulation study."
+  },
+  "sw_list_global_variables": {
+   "Eduardof0nt": "List all global variables in the active model."
+  },
+  "sw_set_global_variable": {
+   "Eduardof0nt": "Set or create a global variable (used in equations like 'Diameter=2*\"Radius\"')."
+  },
+  "sw_link_dimension_to_equation": {
+   "Eduardof0nt": "Link a dimension to an expression via an equation (drives the dimension parametrically)."
+  },
+  "sw_list_display_states": {
+   "Eduardof0nt": "List all display states in the active configuration."
+  },
+  "sw_activate_display_state": {
+   "Eduardof0nt": "Activate a named display state."
+  },
+  "sw_list_sensors": {
+   "Eduardof0nt": "List sensors on the active document with current values."
+  },
+  "sw_save_all": {
+   "Eduardof0nt": "Save all open SolidWorks documents that have unsaved changes."
+  },
+  "sw_close_all": {
+   "Eduardof0nt": "Close all open SolidWorks documents."
+  },
+  "sw_save_as_copy": {
+   "Eduardof0nt": "Save the active document as a copy without changing the current open file."
+  },
+  "sw_get_referenced_documents": {
+   "Eduardof0nt": "List all documents (parts, subassemblies) referenced by the active assembly/drawing."
+  },
+  "sw_rib": {
+   "Eduardof0nt": "Add a rib feature from the active sketch (used to stiffen thin walls)."
+  },
+  "sw_dome": {
+   "Eduardof0nt": "Add a dome on a selected planar face."
+  },
+  "sw_wrap": {
+   "Eduardof0nt": "Wrap a sketch around a selected curved face (emboss/deboss/scribe)."
+  },
+  "sw_intersect": {
+   "Eduardof0nt": "Create intersection regions from selected bodies/surfaces."
+  },
+  "sw_boundary_boss": {
+   "Eduardof0nt": "Create a boundary boss/cut from two or more profile curves."
+  },
+  "sw_fill_pattern": {
+   "Eduardof0nt": "Pattern a seed feature to fill a target face."
+  },
+  "sw_curve_driven_pattern": {
+   "Eduardof0nt": "Pattern a seed feature along a curve."
+  },
+  "sw_export_step": {
+   "Eduardof0nt": "Export the active model to STEP with explicit AP version."
+  },
+  "sw_export_stl": {
+   "Eduardof0nt": "Export the active part to STL with binary/ASCII and quality control."
+  },
+  "connect": {
+   "Eduardof0nt": "Connect to a running SolidWorks instance or launch one. Must be called before other sw_* tools if SolidWorks is not yet connected. Most tools will auto-connect if needed, but this lets you verify the connection. Returns version info and connection status."
+  },
+  "get_status": {
+   "Eduardof0nt": "Get SolidWorks connection status, active document info, and list of open documents. Returns: JSON with connected (bool), version, active_document info, and open_documents list."
+  },
+  "open_document": {
+   "Eduardof0nt": "Open a SolidWorks file (part, assembly, drawing, or imported format like STEP/IGES/STL). Supports: .sldprt, .sldasm, .slddrw, .step, .stp, .iges, .igs, .stl, .x_t, .sat, .3mf, .obj Returns document title, path, and type."
+  },
+  "close_document": {
+   "Eduardof0nt": "Close a document. Closes the active document if no title is given. WARNING: Does not prompt to save — save first if needed with sw_save_document."
+  },
+  "save_document": {
+   "Eduardof0nt": "Save the active document. Provide file_path to Save As, leave empty to save in-place. Returns the saved path and any warning codes."
+  },
+  "export_file": {
+   "Eduardof0nt": "Export the active document to another format. Supported output extensions: .step / .stp, .stl, .dxf, .pdf, .iges / .igs, .x_t (Parasolid), .3mf, .obj, .png, .bmp, .jpg, .edrw, .u3d, .vrml Example: output_path = \"C:/output/part.step\""
+  },
+  "select_entity": {
+   "Eduardof0nt": "Select an entity in the active document by name and type. Entity types: PLANE, FACE, EDGE, VERTEX, BODYFEATURE, SKETCH, REFAXIS, COMPONENT, BODY Common examples: - Select Front Plane: name='Front Plane', type='PLANE' - Select an extrude feature: name='Boss-Extrude1', type='BODYFEATURE' - Select a sketch: name='Sketch1', type='SKETCH' Use append=True to add to the current selection (e.g. for mates,"
+  },
+  "clear_selection": {
+   "Eduardof0nt": "Clear all current selections in the active document."
+  },
+  "edit_sketch": {
+   "Eduardof0nt": "Open an existing sketch for editing. After editing, call sw_exit_sketch. Use sw_list_features to find sketch names."
+  },
+  "sketch_line": {
+   "Eduardof0nt": "Draw a line in the active sketch. Coordinates are in mm on the sketch plane. A sketch must be active (use sw_create_sketch first)."
+  },
+  "sketch_circle": {
+   "Eduardof0nt": "Draw a circle in the active sketch. Coordinates and radius are in mm. A sketch must be active (use sw_create_sketch first)."
+  },
+  "sketch_rectangle": {
+   "Eduardof0nt": "Draw a rectangle in the active sketch. type='corner': x1,y1 and x2,y2 are diagonally opposite corners. type='center': x1,y1 is the center, x2,y2 is a corner. Coordinates in mm. A sketch must be active."
+  },
+  "sketch_arc": {
+   "Eduardof0nt": "Draw an arc in the active sketch defined by center, radius, and start/end angles. Angles are in degrees (0° = +X axis, counter-clockwise positive). Coordinates and radius are in mm. A sketch must be active."
+  },
+  "sketch_ellipse": {
+   "Eduardof0nt": "Draw an ellipse in the active sketch. Coordinates in mm. rotation rotates the major axis from the X-axis. A sketch must be active."
+  },
+  "sketch_polygon": {
+   "Eduardof0nt": "Draw a regular polygon in the active sketch. Coordinates and radius in mm. circumscribed_radius is the distance from center to vertex. rotation rotates the polygon. A sketch must be active."
+  },
+  "sketch_spline": {
+   "Eduardof0nt": "Draw a spline through the given control points. Points are [x, y] in mm. Requires at least 2 points. A sketch must be active. Example: points=[[0,0],[10,20],[30,15],[50,0]]"
+  },
+  "sketch_centerline": {
+   "Eduardof0nt": "Draw a centerline in the active sketch. Used as axis for revolve features or symmetry. Coordinates in mm. A sketch must be active."
+  },
+  "extrude": {
+   "Eduardof0nt": "Extrude the active sketch profile into a 3D boss (adds material) or cut (removes material). The sketch must be closed and the document must be a part. Use sw_exit_sketch first, then the last closed sketch is used. Returns the new feature name."
+  },
+  "revolve": {
+   "Eduardof0nt": "Revolve the active sketch profile around a centerline/axis. The sketch must contain a profile and a centerline (use sw_sketch_centerline). Use sw_exit_sketch first. Returns the new feature name."
+  },
+  "fillet": {
+   "Eduardof0nt": "Add a constant-radius fillet to selected edges. Select edges first with sw_select_entity (type='EDGE', use append=True for multiple). Returns the new fillet feature name."
+  },
+  "chamfer": {
+   "Eduardof0nt": "Add a chamfer to selected edges. Select edges first with sw_select_entity (type='EDGE'). Returns the new chamfer feature name."
+  },
+  "shell": {
+   "Eduardof0nt": "Shell a solid body (hollow it out with a uniform wall thickness). Select the face(s) to open (remove) with sw_select_entity (type='FACE') before calling. Leave unselected to shell all faces inward. Returns the new shell feature name."
+  },
+  "draft": {
+   "Eduardof0nt": "Add draft (taper angle) to selected faces. Select the neutral plane (PLANE) and the faces to draft (FACE) before calling. Select neutral plane first, then hold Ctrl and select the draft faces. Returns the new draft feature name."
+  },
+  "linear_pattern": {
+   "Eduardof0nt": "Create a linear pattern of a selected feature. Select the feature to pattern and direction edges/axes with sw_select_entity first. Select direction1 edge, then Ctrl+select direction2 edge (optional), then Ctrl+select features. Returns the new pattern feature name."
+  },
+  "circular_pattern": {
+   "Eduardof0nt": "Create a circular pattern of a selected feature around an axis. Select the rotation axis (REFAXIS or edge) and the features to pattern first. Returns the new pattern feature name."
+  },
+  "mirror": {
+   "Eduardof0nt": "Mirror selected features across a plane. Select features to mirror with sw_select_entity first. mirror_plane is the plane to mirror about (e.g. 'Front Plane', 'Right Plane'). Returns the new mirror feature name."
+  },
+  "hole_wizard": {
+   "Eduardof0nt": "Create a hole using the Hole Wizard (supports standard threaded/clearance holes). Select the face to place the hole on first with sw_select_entity (type='FACE'). hole_type: 'simple', 'counterbore', 'countersink', 'straight_tap', 'tapered_tap' standard: 'ANSI Metric', 'ANSI Inch', 'ISO' size: e.g. 'M6', 'M8x1.25', '1/4-20', '#10-32' Returns the new hole feature name."
+  },
+  "loft": {
+   "Eduardof0nt": "Create a loft between selected sketch profiles. Select 2 or more sketch profiles in order with sw_select_entity (append=True). Optionally select guide curves before running. Returns the new loft feature name."
+  },
+  "sweep": {
+   "Eduardof0nt": "Create a sweep of a profile sketch along a path sketch. Select the profile sketch first, then Ctrl+select the path sketch. Returns the new sweep feature name."
+  },
+  "delete_feature": {
+   "Eduardof0nt": "Delete a feature from the FeatureManager tree by name. WARNING: This is irreversible (unless you undo). Use sw_list_features to find feature names. absorb_children=True will keep child features (e.g. keep a sketch when deleting an extrude)."
+  },
+  "suppress_feature": {
+   "Eduardof0nt": "Suppress a feature (temporarily disable it without deleting). Use sw_unsuppress_feature to re-enable. Use sw_list_features to find feature names."
+  },
+  "unsuppress_feature": {
+   "Eduardof0nt": "Unsuppress (re-enable) a previously suppressed feature. Use sw_list_features to find feature names and their suppression state."
+  },
+  "insert_component": {
+   "Eduardof0nt": "Insert a part or subassembly into the active assembly. x, y, z set the initial placement position in mm. fixed=True locks the component in place. Returns the component name as it appears in the assembly tree."
+  },
+  "add_mate": {
+   "Eduardof0nt": "Add a mate constraint between two entities in an assembly. entity1/entity2: entity names in 'EntityName@ComponentName-Instance' format. For example: 'Face<1>@Bolt-1' or 'Plane1@Housing-2' mate_type options: COINCIDENT, CONCENTRIC, PARALLEL, PERPENDICULAR, TANGENT, DISTANCE, ANGLE, SYMMETRIC, LOCK, HINGE, GEAR, SLOT, PROFILE_CENTER For DISTANCE mates: distance_or_angle = gap in mm For ANGLE mates: "
+  },
+  "fix_component": {
+   "Eduardof0nt": "Fix a component in place (remove all DOF) or float it (restore DOF). fix=True makes it rigid. fix=False allows mates to position it."
+  },
+  "explode_assembly": {
+   "Eduardof0nt": "Create or activate an exploded view of the active assembly. Use with sw_capture_screenshot to generate exploded view images."
+  },
+  "add_section_view": {
+   "Eduardof0nt": "Add a section view to the drawing. Select a cutting line on an existing view first. label is the section identifier (A, B, C...)."
+  },
+  "add_drawing_dimension": {
+   "Eduardof0nt": "Add a dimension to the active drawing view. Select the entities to dimension first, then specify where to place the label. x, y are in mm on the drawing sheet."
+  },
+  "add_bom_table": {
+   "Eduardof0nt": "Add a Bill of Materials (BOM) table to the active drawing. The drawing must contain an assembly view. Places the BOM at a default position."
+  },
+  "get_bounding_box": {
+   "Eduardof0nt": "Get the axis-aligned bounding box of the active model. Returns min/max corners and overall dimensions (width × height × depth) in mm. Useful for envelope sizing and clearance checks."
+  },
+  "measure_distance": {
+   "Eduardof0nt": "Measure the minimum distance between two entities (faces, edges, vertices). Returns distance in mm and delta X/Y/Z components. Entity names must match exactly as shown in the FeatureManager tree."
+  },
+  "check_geometry": {
+   "Eduardof0nt": "Check the active part for geometry errors (invalid faces, edges, etc.). Returns error count and status. Run after complex operations to validate the model. Only works on part documents."
+  },
+  "analyze_draft": {
+   "Eduardof0nt": "Perform draft analysis on the active part model. Highlights faces with sufficient draft (green), faces requiring draft (red), and straddle faces (yellow). Use for injection mold design review. draft_angle: minimum acceptable draft angle in degrees."
+  },
+  "get_custom_properties": {
+   "Eduardof0nt": "Get custom properties from the active document. Leave property_name empty to retrieve all properties. configuration: config name for config-specific properties, or empty for document-level. Returns name/value pairs including linked (resolved) values."
+  },
+  "set_custom_property": {
+   "Eduardof0nt": "Set or create a custom property on the active document. Supports text values and linked equations (e.g. value='\"D1@Boss-Extrude1\"'). configuration: leave empty for document-level, or specify a config name."
+  },
+  "activate_configuration": {
+   "Eduardof0nt": "Activate (switch to) a configuration by name. Use sw_list_configurations to see available configuration names. Rebuilds the model after switching."
+  },
+  "add_configuration": {
+   "Eduardof0nt": "Add a new configuration to the active document. The new configuration is a copy of the current (or derived_from) configuration. Use sw_set_dimension or suppress/unsuppress features to differentiate it."
+  },
+  "get_equations": {
+   "Eduardof0nt": "List all equations and global variables in the active document. Returns index, equation string, and current evaluated value for each. Use indices with sw_delete_equation."
+  },
+  "add_equation": {
+   "Eduardof0nt": "Add an equation or global variable to the active document. Equation format examples: - Global variable: '\"Width\" = 100mm' - Dimension link: '\"D1@Sketch1\" = \"Width\" * 2' - Math: '\"Radius\" = sqrt(\"Width\" ^ 2 + \"Height\" ^ 2)' Rebuilds the model after adding."
+  },
+  "delete_equation": {
+   "Eduardof0nt": "Delete an equation by its index (from sw_get_equations). Rebuilds the model after deletion. Affected dimensions revert to manual."
+  },
+  "create_design_table": {
+   "Eduardof0nt": "Create a design table for driving multiple configurations from a spreadsheet. Provide an Excel (.xlsx) file path for a linked table, or leave empty to create an embedded one. SolidWorks will open Excel for editing if the table is created successfully."
+  },
+  "capture_screenshot": {
+   "Eduardof0nt": "Capture a screenshot of the active SolidWorks model view. output_path: where to save the image (.bmp, .png, .jpg). Defaults to a temp file. Set the view with sw_set_view_orientation before capturing. Returns the path to the saved image file."
+  },
+  "set_view_orientation": {
+   "Eduardof0nt": "Set the 3D view orientation and zoom-to-fit. view_name options: 'front', 'back', 'left', 'right', 'top', 'bottom', 'isometric', 'trimetric', 'dimetric'"
+  },
+  "zoom_to_fit": {
+   "Eduardof0nt": "Zoom the view to fit the entire model on screen (Ctrl+Shift+F equivalent)."
+  },
+  "set_display_mode": {
+   "Eduardof0nt": "Set the 3D display mode for the active document. modes: 'wireframe', 'hidden_lines_visible', 'hidden_lines_removed', 'shaded', 'shaded_with_edges'"
+  },
+  "rebuild_model": {
+   "Eduardof0nt": "Force-rebuild the active model (Ctrl+B equivalent). Use after making multiple dimension or property changes to update the geometry. top_only=True is faster for assemblies (skips sub-component rebuilds)."
+  },
+  "run_macro": {
+   "Eduardof0nt": "Run a saved SolidWorks macro file (.swp or .swb). macro_path: full path to the macro file module_name: VBA module name (leave empty for default) sub_name: subroutine to run (default: 'main') Returns success/failure status."
+  },
+  "run_vba_code": {
+   "Eduardof0nt": "Execute arbitrary VBA code against SolidWorks. Writes the code to a temporary macro file and runs it. If no Sub declaration is present, code is auto-wrapped in Sub main(). Full SolidWorks API access via swApp and Part/Assembly/Drawing objects. Example: vba_code = ''' Dim swApp As Object Dim swDoc As Object Set swApp = Application.SldWorks Set swDoc = swApp.ActiveDoc MsgBox \"Document: \" & swDoc.Get"
+  },
+  "create_reference_plane": {
+   "Eduardof0nt": "Create a reference plane offset from an existing plane. reference_plane: base plane to offset from (e.g. 'Front Plane', 'Top Plane') offset_distance: offset in mm (positive = normal direction) Returns the new plane feature name."
+  },
+  "create_reference_axis": {
+   "Eduardof0nt": "Create a reference axis from selected geometry. Select the required entities first with sw_select_entity. axis_type options: - 'two_planes': intersection of two selected planes - 'cylinder': axis of a selected cylindrical/conical face - 'two_points': axis through two selected points/vertices - 'point_on_face': normal to face at a selected point Returns the new axis feature name."
+  },
+  "thicken_surface": {
+   "Eduardof0nt": "Thicken a selected surface body into a solid. Select a surface body with sw_select_entity (type='BODY') first. thickness: amount to thicken in mm. both_sides=True thickens symmetrically. Returns the new solid feature name."
+  },
+  "knit_surfaces": {
+   "Eduardof0nt": "Knit selected surface bodies into a single surface or closed solid. Select all surface bodies to knit with sw_select_entity (append=True for multiple). If the result is a closed volume, a solid body is automatically created."
+  },
+  "flatten_sheet_metal": {
+   "Eduardof0nt": "Toggle the flat pattern view of the active sheet metal part. Shows the unbent, flat state of the sheet metal part. Use sw_get_flat_pattern_info to get flat dimensions."
+  },
+  "get_flat_pattern_info": {
+   "Eduardof0nt": "Get dimensions of the flat pattern for the active sheet metal part. Returns flat width, height, and material thickness in mm. Activate the flat pattern view first with sw_flatten_sheet_metal."
+  },
+  "export_flat_pattern": {
+   "Eduardof0nt": "Export the flat pattern of the active sheet metal part. output_path: target file path (.dxf, .dwg, or .pdf) The flat pattern must be active (use sw_flatten_sheet_metal first)."
+  },
+  "set_material": {
+   "Eduardof0nt": "Apply a material to the active part. Common names: 'AISI 1020', 'Aluminum 6061-T6', 'ABS', 'PLA', 'Brass', 'Copper'."
+  },
+  "get_material": {
+   "Eduardof0nt": "Read the current material assigned to the active part."
+  },
+  "set_appearance_color": {
+   "Eduardof0nt": "Set RGB color and transparency on the active part's solid bodies."
+  },
+  "list_materials": {
+   "Eduardof0nt": "List available material databases."
+  },
+  "list_bodies": {
+   "Eduardof0nt": "List solid or surface bodies in the active part."
+  },
+  "combine_bodies": {
+   "Eduardof0nt": "Combine selected bodies via boolean operation (union/subtract/intersect)."
+  },
+  "split_body": {
+   "Eduardof0nt": "Split the selected body using the selected trim tool (sketch/surface/plane)."
+  },
+  "move_body": {
+   "Eduardof0nt": "Move or copy the selected body by translation (mm) and rotation (deg)."
+  },
+  "delete_body": {
+   "Eduardof0nt": "Delete the selected body."
+  },
+  "scale_body": {
+   "Eduardof0nt": "Uniformly scale the selected body by a factor."
+  },
+  "create_helix": {
+   "Eduardof0nt": "Create a helix from a selected sketch circle (used as a sweep path for threads, springs)."
+  },
+  "start_3d_sketch": {
+   "Eduardof0nt": "Start a 3D sketch (for routing pipes, wires, complex paths)."
+  },
+  "split_line": {
+   "Eduardof0nt": "Split a face into sub-faces using a sketch (for selective face operations)."
+  },
+  "projected_curve": {
+   "Eduardof0nt": "Project a sketch onto a face to create a 3D curve."
+  },
+  "composite_curve": {
+   "Eduardof0nt": "Combine selected edges and sketch entities into a single composite curve."
+  },
+  "sketch_convert_entities": {
+   "Eduardof0nt": "Convert selected face edges into sketch entities (in the active sketch)."
+  },
+  "sketch_trim": {
+   "Eduardof0nt": "Trim selected sketch entity (power trim mode)."
+  },
+  "sketch_extend": {
+   "Eduardof0nt": "Extend selected sketch entity until next boundary."
+  },
+  "sketch_construction": {
+   "Eduardof0nt": "Toggle selected sketch entities to construction (dashed) geometry."
+  },
+  "sketch_fillet": {
+   "Eduardof0nt": "Fillet (round) the corner between two selected sketch lines."
+  },
+  "sketch_chamfer": {
+   "Eduardof0nt": "Chamfer (bevel) the corner between two selected sketch lines."
+  },
+  "sketch_text": {
+   "Eduardof0nt": "Insert text in the active sketch (use as profile for extrudes/cuts to engrave/emboss)."
+  },
+  "planar_surface": {
+   "Eduardof0nt": "Create a planar surface from selected closed sketch profile or edges."
+  },
+  "extruded_surface": {
+   "Eduardof0nt": "Create an extruded surface from the active sketch."
+  },
+  "revolved_surface": {
+   "Eduardof0nt": "Create a revolved surface from the active sketch profile + axis."
+  },
+  "offset_surface": {
+   "Eduardof0nt": "Offset a selected face/surface by a distance."
+  },
+  "trim_surface": {
+   "Eduardof0nt": "Trim a surface using selected trim tool."
+  },
+  "extend_surface": {
+   "Eduardof0nt": "Extend a surface by a distance, up to a point, or up to another surface."
+  },
+  "delete_face": {
+   "Eduardof0nt": "Delete selected face(s). Optionally patch the resulting hole."
+  },
+  "filled_surface": {
+   "Eduardof0nt": "Fill a closed boundary of edges with a new surface."
+  },
+  "base_flange": {
+   "Eduardof0nt": "Convert the active sketch into a sheet-metal base flange (starts a sheet metal part)."
+  },
+  "edge_flange": {
+   "Eduardof0nt": "Add an edge flange to a selected sheet-metal edge."
+  },
+  "miter_flange": {
+   "Eduardof0nt": "Add a miter flange following the active sketch profile around multiple edges."
+  },
+  "sketched_bend": {
+   "Eduardof0nt": "Add a sketched bend along an active sketch line on a flat sheet metal face."
+  },
+  "jog": {
+   "Eduardof0nt": "Add a jog bend at the active sketch line on a sheet metal face."
+  },
+  "hem": {
+   "Eduardof0nt": "Add a hem to a selected sheet-metal edge."
+  },
+  "unfold": {
+   "Eduardof0nt": "Unfold sheet-metal bends to flatten (use with subsequent features then sw_fold)."
+  },
+  "fold": {
+   "Eduardof0nt": "Fold previously-unfolded bends back to formed state."
+  },
+  "insert_weldment": {
+   "Eduardof0nt": "Insert the weldment feature into the active part (enables weldment tools)."
+  },
+  "add_structural_member": {
+   "Eduardof0nt": "Add a structural member along selected sketch path(s) using a weldment profile."
+  },
+  "add_gusset": {
+   "Eduardof0nt": "Add a triangular gusset between two selected structural member faces."
+  },
+  "add_end_cap": {
+   "Eduardof0nt": "Add an end cap to a selected structural member end face."
+  },
+  "trim_weldment": {
+   "Eduardof0nt": "Trim selected weldment members to a planar or solid trim tool."
+  },
+  "parting_line": {
+   "Eduardof0nt": "Create a parting line for mold design (used to separate core from cavity)."
+  },
+  "shut_off_surface": {
+   "Eduardof0nt": "Automatically create shut-off surfaces over holes for mold separation."
+  },
+  "tooling_split": {
+   "Eduardof0nt": "Split a mold block into core and cavity using the parting line/surfaces."
+  },
+  "add_projected_view": {
+   "Eduardof0nt": "Add a projected view derived from an existing drawing view."
+  },
+  "add_auxiliary_view": {
+   "Eduardof0nt": "Add an auxiliary view normal to a selected edge."
+  },
+  "add_detail_view": {
+   "Eduardof0nt": "Add a detail view of a region at the given (x,y) with the given radius."
+  },
+  "add_broken_view": {
+   "Eduardof0nt": "Compress the current drawing view with a break."
+  },
+  "add_center_mark": {
+   "Eduardof0nt": "Add automatic center marks to circular features in a drawing view."
+  },
+  "add_balloon": {
+   "Eduardof0nt": "Add a BOM balloon at the specified position in the drawing."
+  },
+  "add_surface_finish": {
+   "Eduardof0nt": "Add a surface finish symbol to the drawing."
+  },
+  "add_geometric_tolerance": {
+   "Eduardof0nt": "Add a geometric tolerance (GD&T) frame to the drawing."
+  },
+  "add_weld_symbol": {
+   "Eduardof0nt": "Add a welding symbol annotation to the drawing."
+  },
+  "add_datum_feature": {
+   "Eduardof0nt": "Add a datum feature symbol (A, B, C...) to the drawing."
+  },
+  "add_hole_table": {
+   "Eduardof0nt": "Add a hole table to the drawing."
+  },
+  "add_revision_table": {
+   "Eduardof0nt": "Add a revision table to the drawing sheet."
+  },
+  "export_drawing_pdf": {
+   "Eduardof0nt": "Export the active drawing to PDF (output_path must end in .pdf)."
+  },
+  "export_drawing_dwg": {
+   "Eduardof0nt": "Export the active drawing to DWG or DXF (output_path determines format)."
+  },
+  "replace_component": {
+   "Eduardof0nt": "Replace a component in the active assembly with a different file."
+  },
+  "pattern_component_linear": {
+   "Eduardof0nt": "Linearly pattern a selected component (select seed component + direction reference first)."
+  },
+  "pattern_component_circular": {
+   "Eduardof0nt": "Circularly pattern a selected component about an axis."
+  },
+  "mirror_component": {
+   "Eduardof0nt": "Mirror a selected component about a plane (select component first)."
+  },
+  "suppress_component": {
+   "Eduardof0nt": "Suppress or unsuppress a component in the assembly."
+  },
+  "hide_component": {
+   "Eduardof0nt": "Hide or show a component in the assembly viewport."
+  },
+  "move_component": {
+   "Eduardof0nt": "Move a component (free-drag style translation, subject to mate constraints)."
+  },
+  "get_assembly_tree": {
+   "Eduardof0nt": "List all components in the active assembly with their state info."
+  },
+  "set_background": {
+   "Eduardof0nt": "Set the viewport background style and color."
+  },
+  "take_photoview_screenshot": {
+   "Eduardof0nt": "Render via PhotoView 360 add-in if available, else regular screenshot."
+  },
+  "hide_all_planes": {
+   "Eduardof0nt": "Hide all reference planes in the viewport."
+  },
+  "show_all_planes": {
+   "Eduardof0nt": "Show all reference planes in the viewport."
+  },
+  "hide_all_sketches": {
+   "Eduardof0nt": "Hide all sketches in the viewport."
+  },
+  "show_all_sketches": {
+   "Eduardof0nt": "Show all sketches in the viewport."
+  },
+  "view_rotate": {
+   "Eduardof0nt": "Rotate the current view by Euler angles (degrees)."
+  },
+  "create_motion_study": {
+   "Eduardof0nt": "Create a new motion study (requires SOLIDWORKS Motion add-in)."
+  },
+  "create_simulation_study": {
+   "Eduardof0nt": "Create a new SOLIDWORKS Simulation study (requires Simulation add-in)."
+  },
+  "run_simulation": {
+   "Eduardof0nt": "Run the active SOLIDWORKS Simulation study."
+  },
+  "list_global_variables": {
+   "Eduardof0nt": "List all global variables in the active model."
+  },
+  "set_global_variable": {
+   "Eduardof0nt": "Set or create a global variable (used in equations like 'Diameter=2*\"Radius\"')."
+  },
+  "link_dimension_to_equation": {
+   "Eduardof0nt": "Link a dimension to an expression via an equation (drives the dimension parametrically)."
+  },
+  "list_display_states": {
+   "Eduardof0nt": "List all display states in the active configuration."
+  },
+  "activate_display_state": {
+   "Eduardof0nt": "Activate a named display state."
+  },
+  "list_sensors": {
+   "Eduardof0nt": "List sensors on the active document with current values."
+  },
+  "save_all": {
+   "Eduardof0nt": "Save all open SolidWorks documents that have unsaved changes."
+  },
+  "close_all": {
+   "Eduardof0nt": "Close all open SolidWorks documents."
+  },
+  "save_as_copy": {
+   "Eduardof0nt": "Save the active document as a copy without changing the current open file."
+  },
+  "get_referenced_documents": {
+   "Eduardof0nt": "List all documents (parts, subassemblies) referenced by the active assembly/drawing."
+  },
+  "rib": {
+   "Eduardof0nt": "Add a rib feature from the active sketch (used to stiffen thin walls)."
+  },
+  "dome": {
+   "Eduardof0nt": "Add a dome on a selected planar face."
+  },
+  "wrap": {
+   "Eduardof0nt": "Wrap a sketch around a selected curved face (emboss/deboss/scribe)."
+  },
+  "intersect": {
+   "Eduardof0nt": "Create intersection regions from selected bodies/surfaces."
+  },
+  "boundary_boss": {
+   "Eduardof0nt": "Create a boundary boss/cut from two or more profile curves."
+  },
+  "fill_pattern": {
+   "Eduardof0nt": "Pattern a seed feature to fill a target face."
+  },
+  "curve_driven_pattern": {
+   "Eduardof0nt": "Pattern a seed feature along a curve."
+  }
+ }
+}

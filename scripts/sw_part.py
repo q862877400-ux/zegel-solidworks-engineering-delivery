@@ -1,0 +1,1627 @@
+"""
+SolidWorks 零件建模工具
+提供草图绘制和特征创建的常用函数
+
+⚠⚠ **长度单位：毫米**（2026-10-01 轮 132 实测校正）
+本模块此前多处 docstring 写「单位: 米」——**与实际不符**。
+实测（`tools/verify_ellipse_smoke.py`）：半径 **25** 的圆 ⇒ 边界框跨度 **50**（毫米）；
+拉伸 **10** ⇒ 该方向跨度 **10**（毫米）。⇒ **传进去的就是毫米**，不要再换算。
+★ 这与 `IBody2.GetBodyBox` 的返回单位一致（已知事实 71）。
+"""
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（**沿上游与既有模式的写法**发展而来）。
+# 文件:   scripts/sw_part.py —— 本文件（**轮 145 的命名迁移**）。
+# 定位:   2026-10-01（轮 145）**只做了一件事**：把那些「**故意要调**」的零参调用
+#         从 `get_com_member(...)` 改成 **`call_com_member(...)`**。
+#         ★★ 起因：审计（`tools/audit_get_com_member_semantics.py`）发现
+#         `get_com_member` 的语义是「**取或调**」—— **对 COM 成员，「取」可能等于「调」**；
+#         而 471 个无实参调用点里有 193 处的成员在反射里**有零参重载**（会真的执行）。
+#         ★ 逐条读过之后确认：**作者大多是故意的**（拿返回值当成败 / 要的就是那个动作），
+#         但**代码里读不出来** ⇒ 本轮用 `call_com_member` **让名字表态**。
+# 官方签名依据: 本次迁移**不改任何 COM 调用**（只是换个名字），
+#         各调用的官方依据在原函数的来源块里。
+# 许可:   本仓库 MIT（上游部分见 `THIRD-PARTY-NOTICES.md`）。无第三方代码引入。
+# 覆盖:   全文件 —— ⚠ 本块是**轮 145 迁移这件事**的说明，
+#         它**不替代**本文件里原有的、更精确的逐函数来源块。
+# ─────────────────────────────────────────────────────────────────────
+
+from sw_feature_readback import feature_names
+from dataclasses import dataclass
+from contextlib import contextmanager
+
+try:
+    from .sw_connect import get_com_member
+    from .sw_preflight import import_com_dependencies
+except ImportError:
+    from sw_connect import get_com_member
+    from sw_preflight import import_com_dependencies
+
+#: ★★★ **`call_com_member` 是"有则更好、没有也能 import"的**（2026-10-01 轮 261 修）。
+#:   ★ 起因：`tests/test_sw_sketch_contract.py` 会把 `sw_connect` **stub 掉**
+#:     （只给 `get_com_member`）⇒ 原来顶部那句 `from sw_connect import get_com_member,
+#:     call_com_member` **整句失败** ⇒ ★ **模块在无 COM 环境里 import 不了** ⇒
+#:     ★ 那个契约测试**单跑必红**（而全量跑时因为别的测试先导入过真 `sw_connect` 才绿 ——
+#:     ★ 已知事实 57 的**镜像**：一个测试的绿是**顺序给的**，不是它自己成立）。
+#:   ⇒ ★ 修法：★ **把"能 import"与"能跑"分开** —— ★ 能力层模块应当在没有 COM 的环境里
+#:     **也能被 import**（契约测试靠它）；★ 真要用到 `call_com_member` 时它一定有。
+try:
+    from .sw_connect import call_com_member
+except ImportError:
+    try:
+        from sw_connect import call_com_member
+    except ImportError:                                        # pragma: no cover
+        call_com_member = None                                 #: ★ stub 环境（契约测试）
+
+pythoncom, _win32com, VARIANT = import_com_dependencies()
+
+PLANE_NAME_ALIASES = {
+    "Front Plane": ["Front Plane", "前视基准面"],
+    "Top Plane": ["Top Plane", "上视基准面"],
+    "Right Plane": ["Right Plane", "右视基准面"],
+    "前视基准面": ["前视基准面", "Front Plane"],
+    "上视基准面": ["上视基准面", "Top Plane"],
+    "右视基准面": ["右视基准面", "Right Plane"],
+}
+
+SKETCH_NAME_PREFIX_ALIASES = {
+    "Sketch": "草图",
+    "草图": "Sketch",
+}
+
+
+@dataclass
+class SketchSelectionRef:
+    """
+    记录草图对象引用，避免后续只能靠 SelectByID2("SKETCH") 按名称反查。
+
+    SolidWorks 2024 中文版中，按名称选择 SKETCH 可能持续返回 False。创建草图时
+    保存对象引用，后续特征创建可直接 Select2 草图、草图特征或轮廓。
+    """
+
+    name: str
+    sketch: object = None
+    feature: object = None
+    contours: tuple = ()
+    regions: tuple = ()
+    segments: tuple = ()
+    source: str = ""
+
+    def __str__(self):
+        """保持与旧代码中普通草图名称字符串相近的表现。"""
+        return self.name
+
+
+_SKETCH_SELECTION_CACHE = {}
+
+
+# ============================================================
+# 草图操作
+# ============================================================
+
+def _empty_callout():
+    """创建兼容 SelectByID2 的空 Callout 参数。"""
+    return VARIANT(pythoncom.VT_DISPATCH, None)
+
+
+def _select_by_id(extension, entity_name, entity_type, append=False, mark=0):
+    """
+    统一封装 SelectByID2，避免 None 在部分 SolidWorks 版本中触发类型不匹配。
+
+    参数:
+        extension: ModelDocExtension 对象
+        entity_name: 实体名称
+        entity_type: 实体类型字符串
+        append: 是否追加选择
+        mark: 选择标记
+
+    返回:
+        bool
+    """
+    return extension.SelectByID2(
+        entity_name, entity_type, 0, 0, 0, append, mark, _empty_callout(), 0
+    )
+
+
+def _get_plane_name_candidates(plane_name):
+    """
+    获取基准面的候选名称列表
+
+    参数:
+        plane_name: 用户提供的基准面名称
+
+    返回:
+        list[str]
+    """
+    return PLANE_NAME_ALIASES.get(plane_name, [plane_name])
+
+
+def _get_sketch_name_candidates(sketch_name):
+    """
+    获取草图名称候选列表，自动兼容中英文前缀。
+
+    参数:
+        sketch_name: 草图名称
+
+    返回:
+        list[str]
+    """
+    sketch_name = str(sketch_name)
+    candidates = [sketch_name]
+    for prefix, alias in SKETCH_NAME_PREFIX_ALIASES.items():
+        if sketch_name.startswith(prefix):
+            alias_name = alias + sketch_name[len(prefix):]
+            if alias_name not in candidates:
+                candidates.append(alias_name)
+    return candidates
+
+
+def _as_tuple(value):
+    """把 COM 返回的单对象、SAFEARRAY 或 None 统一成 tuple。"""
+    if value is None:
+        return ()
+    if isinstance(value, tuple):
+        return tuple(item for item in value if item is not None)
+    if isinstance(value, list):
+        return tuple(item for item in value if item is not None)
+    return (value,)
+
+
+def _safe_com_member(obj, attr_name, *args, default=None):
+    """读取 COM 成员，失败时返回默认值，避免排障路径再次抛 COM 异常。"""
+    if obj is None:
+        return default
+    try:
+        value = get_com_member(obj, attr_name, *args)
+        return default if value is None else value
+    except Exception:
+        return default
+
+
+def _model_cache_key(model):
+    """生成仅用于当前 Python 进程的模型缓存键。"""
+    ole_object = getattr(model, "_oleobj_", None)
+    if ole_object is not None:
+        return id(ole_object)
+    return id(model)
+
+
+def _cache_name_variants(sketch_name):
+    """生成草图缓存名称，兼容中英文默认草图名前缀。"""
+    variants = []
+    for candidate in _get_sketch_name_candidates(sketch_name):
+        if candidate not in variants:
+            variants.append(candidate)
+    return variants
+
+
+def _cache_sketch_ref(model, sketch_ref):
+    """缓存草图对象引用，后续可跳过 SelectByID2("SKETCH")。"""
+    if not sketch_ref or not sketch_ref.name:
+        return sketch_ref
+    model_cache = _SKETCH_SELECTION_CACHE.setdefault(_model_cache_key(model), {})
+    for candidate in _cache_name_variants(sketch_ref.name):
+        model_cache[candidate] = sketch_ref
+    return sketch_ref
+
+
+def _find_cached_sketch_ref(model, sketch_name):
+    """从当前进程缓存中查找草图对象引用。"""
+    if isinstance(sketch_name, SketchSelectionRef):
+        return sketch_name
+
+    model_cache = _SKETCH_SELECTION_CACHE.get(_model_cache_key(model), {})
+    for candidate in _cache_name_variants(sketch_name):
+        cached = model_cache.get(candidate)
+        if cached:
+            return cached
+    return None
+
+
+def _capture_sketch_ref(model, sketch_obj=None, fallback="Sketch1", source=""):
+    """从活动草图或给定草图对象中提取可复用的选择引用。"""
+    if sketch_obj is None:
+        sketch_obj = _safe_com_member(model.SketchManager, "ActiveSketch")
+    if sketch_obj is None:
+        return None
+
+    sketch_name = _safe_com_member(sketch_obj, "Name", default=fallback) or fallback
+    sketch_ref = SketchSelectionRef(
+        name=sketch_name,
+        sketch=sketch_obj,
+        feature=_safe_com_member(sketch_obj, "GetFeature"),
+        contours=_as_tuple(_safe_com_member(sketch_obj, "GetSketchContours")),
+        regions=_as_tuple(_safe_com_member(sketch_obj, "GetSketchRegions")),
+        segments=_as_tuple(_safe_com_member(sketch_obj, "GetSketchSegments")),
+        source=source,
+    )
+    return _cache_sketch_ref(model, sketch_ref)
+
+
+def _refresh_sketch_ref(sketch_ref):
+    """退出草图后再次刷新 Feature/Contour 引用。"""
+    if not sketch_ref or sketch_ref.sketch is None:
+        return sketch_ref
+    feature = _safe_com_member(sketch_ref.sketch, "GetFeature")
+    contours = _as_tuple(_safe_com_member(sketch_ref.sketch, "GetSketchContours"))
+    regions = _as_tuple(_safe_com_member(sketch_ref.sketch, "GetSketchRegions"))
+    segments = _as_tuple(_safe_com_member(sketch_ref.sketch, "GetSketchSegments"))
+    if feature is not None:
+        sketch_ref.feature = feature
+    if contours:
+        sketch_ref.contours = contours
+    if regions:
+        sketch_ref.regions = regions
+    if segments:
+        sketch_ref.segments = segments
+    return sketch_ref
+
+
+def _select_first_candidate(extension, candidate_names, entity_type, append=False, mark=0):
+    """
+    按候选名称列表依次尝试选择实体。
+
+    参数:
+        extension: ModelDocExtension 对象
+        candidate_names: 候选名称列表
+        entity_type: 实体类型字符串
+        append: 是否追加选择
+        mark: 选择标记
+
+    返回:
+        str | None
+    """
+    for candidate_name in candidate_names:
+        if _select_by_id(extension, candidate_name, entity_type, append=append, mark=mark):
+            return candidate_name
+    return None
+
+
+def _get_selection_count(model):
+    """
+    获取当前选择集中的对象数量。
+
+    参数:
+        model: IModelDoc2 对象
+
+    返回:
+        int
+    """
+    selection_manager = model.SelectionManager
+    count_member = getattr(selection_manager, "GetSelectedObjectCount2")
+    return count_member(-1) if callable(count_member) else int(count_member)
+
+
+def _select_com_object(obj, append=False, mark=0):
+    """使用对象自身 Select2/Select4 选择，优先避开 SelectByID2 名称解析。"""
+    if obj is None:
+        return False
+    for method_name in ("Select2", "Select4"):
+        method = getattr(obj, method_name, None)
+        if not method:
+            continue
+        try:
+            if method_name == "Select2":
+                if bool(method(append, mark)):
+                    return True
+            elif bool(method(append, _empty_callout())):
+                return True
+        except Exception:
+            continue
+    return False
+
+
+def _select_any_object(objects, append=False, mark=0):
+    """从一组 COM 对象里尽量选择全部对象，至少选中一个即视为成功。"""
+    selected_count = 0
+    for obj in _as_tuple(objects):
+        if _select_com_object(obj, append=(append or selected_count > 0), mark=mark):
+            selected_count += 1
+    return selected_count > 0
+
+
+def _select_sketch_ref(model, sketch_ref, mark=0):
+    """
+    按稳定优先级选择草图引用。
+
+    轮廓/区域更接近 FeatureExtrusion3 需要的预选对象；不可用时再回退草图
+    Feature 或 Sketch 对象。
+    """
+    if not sketch_ref:
+        return False
+    model.ClearSelection2(True)
+    _refresh_sketch_ref(sketch_ref)
+    for objects in (
+        sketch_ref.feature,
+        sketch_ref.sketch,
+        sketch_ref.contours,
+        sketch_ref.regions,
+        sketch_ref.segments,
+    ):
+        if _select_any_object(objects, append=False, mark=mark):
+            return True
+        model.ClearSelection2(True)
+    return False
+
+
+def _select_sketch_feature_by_name(model, sketch_name, mark=0):
+    """通过 FeatureByName 找到草图特征后对象级选择。"""
+    for candidate in _get_sketch_name_candidates(sketch_name):
+        feature = _safe_com_member(model, "FeatureByName", candidate)
+        if feature and _select_com_object(feature, append=False, mark=mark):
+            return candidate
+    return None
+
+
+def _ensure_sketch_selected(model, sketch_name):
+    """
+    确保拉伸/切除前已有可用的草图选择。
+
+    参数:
+        model: IModelDoc2 对象
+        sketch_name: 草图名称
+
+    返回:
+        str
+    """
+    if str(sketch_name) == "__current_selection__" and _get_selection_count(model) > 0:
+        return "__current_selection__"
+
+    active_ref = _capture_sketch_ref(model, fallback=str(sketch_name), source="active")
+    if active_ref and _select_sketch_ref(model, active_ref):
+        return active_ref.name
+
+    cached_ref = _find_cached_sketch_ref(model, sketch_name)
+    if cached_ref and _select_sketch_ref(model, cached_ref):
+        return cached_ref.name
+
+    selected_feature = _select_sketch_feature_by_name(model, sketch_name)
+    if selected_feature:
+        return selected_feature
+
+    selected_sketch = _select_first_candidate(
+        model.Extension, _get_sketch_name_candidates(sketch_name), "SKETCH"
+    )
+    if not selected_sketch:
+        model.ClearSelection2(True)
+        raise ValueError(
+            f"无法选择草图: {sketch_name}。已尝试活动草图对象、缓存草图对象、"
+            "FeatureByName 和 SelectByID2('SKETCH')。"
+        )
+    return selected_sketch
+
+
+def start_sketch(model, plane_name="Front Plane"):
+    """
+    在指定基准面上开始草图
+
+    参数:
+        model: IModelDoc2
+        plane_name: 基准面名称
+            英文: "Front Plane", "Top Plane", "Right Plane"
+            中文: "前视基准面", "上视基准面", "右视基准面"
+    """
+    model.ClearSelection2(True)
+
+    selected_plane = _select_first_candidate(
+        model.Extension, _get_plane_name_candidates(plane_name), "PLANE"
+    )
+    if selected_plane:
+        model.SketchManager.InsertSketch(True)
+        return selected_plane
+
+    raise ValueError(f"无法选择基准面: {plane_name}")
+
+
+def end_sketch(model):
+    """
+    退出当前草图，并返回可复用的草图选择引用。
+
+    返回值兼容旧调用：调用者可以忽略它；需要稳定选择时可传给
+    `extrude_boss()` / `extrude_cut()` 等特征函数。
+    """
+    sketch_ref = _capture_sketch_ref(model, source="end_sketch")
+    model.SketchManager.InsertSketch(True)
+    return _cache_sketch_ref(model, _refresh_sketch_ref(sketch_ref))
+
+
+@contextmanager
+def sketch(model, plane_name="Front Plane"):
+    """
+    草图上下文管理器。
+
+    示例:
+        with sketch(model, "Front Plane") as sketch_name:
+            sketch_circle(model, 0, 0, 25)
+        extrude_boss(model, sketch_name, 50)
+
+    ⚠ 上面是**裸数字**，因为**本模块的长度单位就是毫米**（本机实测，见已知事实 73）。
+      ★ 这里**不要**写 `mm(25)` —— `mm()` 是「毫米→米」的换算，用在本模块会得到 0.025，
+        也就是画出 **0.025 毫米**的圆（少了 1000 倍，且**不报错**）。
+      ⚠ 本模块 L988/L1011 记着**第一版实现就误用过 `mm()`**；本示例是同一类错的残留。
+    """
+    start_sketch(model, plane_name)
+    sketch_ref = None
+    try:
+        sketch_ref = _capture_sketch_ref(model, source="context")
+        yield sketch_ref.name if sketch_ref else current_sketch_name(model)
+    finally:
+        finished_ref = end_sketch(model)
+        if sketch_ref and finished_ref:
+            sketch_ref.feature = finished_ref.feature
+            sketch_ref.contours = finished_ref.contours
+            sketch_ref.regions = finished_ref.regions
+            sketch_ref.segments = finished_ref.segments
+            _cache_sketch_ref(model, sketch_ref)
+
+
+def current_sketch_name(model, fallback="Sketch1"):
+    """
+    获取当前草图名称。
+
+    参数:
+        model: IModelDoc2
+        fallback: 无法读取当前草图时返回的默认名称
+    """
+    active_sketch = model.SketchManager.ActiveSketch
+    if active_sketch:
+        return active_sketch.Name
+    return fallback
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   `wzyn20051216/solidworks-automation-skill`（**上游**，MIT）—— 本段是**上游继承**的
+#         草图/特征助手（`sketch_*` / `extrude_*` / `fillet` / `chamfer` / `rib` / …），
+#         **不是**从四家外部 MCP 项目移植的。
+# 文件:   scripts/sw_part.py —— 「草图与特征助手」这一段（L427 起，到下一个来源块之前）。
+# 定位:   2026-10-01（轮 132）**只做了一件事**：把这些函数的**长度单位声明**从
+#         「米」校正为「**毫米**」—— 因为实测发现原声明**与实际不符**。
+#         实测依据：`tools/verify_ellipse_smoke.py` —— 半径 **25** 的圆（**未换算**）
+#         经拉伸后 `get_bounding_box` 得跨度 **50**（毫米）；拉伸 **10** ⇒ 跨度 **10**（毫米）。
+#         ★ 与 `IBody2.GetBodyBox` 的返回单位一致（已知事实 71）。
+# 官方签名依据: 这些函数的 COM 入口（`CreateCircleByRadius` / `CreateCornerRectangle` /
+#         `FeatureExtrusion3` / `FeatureCut4` …）的官方依据见**原上游代码**与
+#         `docs/signature-audit.md`；本块**不改任何调用**，只校正单位声明。
+# 许可:   上游 MIT（保留版权声明，见 `THIRD-PARTY-NOTICES.md` §一.1）。无第三方代码引入。
+# 覆盖:   后续同级定义 —— 本块涵盖这一段全部助手函数，**止于下一个来源块**（「边界框」那块）。
+# ─────────────────────────────────────────────────────────────────────
+
+def sketch_line(model, x1, y1, x2, y2):
+    """画直线（单位: **毫米**）"""
+    return model.SketchManager.CreateLine(x1, y1, 0, x2, y2, 0)
+
+
+def sketch_rectangle(model, cx, cy, w, h):
+    """以中心点画矩形（单位: **毫米**）"""
+    return model.SketchManager.CreateCenterRectangle(
+        cx, cy, 0, cx + w / 2, cy + h / 2, 0
+    )
+
+
+def sketch_corner_rectangle(model, x1, y1, x2, y2):
+    """以对角线画矩形（单位: **毫米**）"""
+    return model.SketchManager.CreateCornerRectangle(x1, y1, 0, x2, y2, 0)
+
+
+def sketch_circle(model, cx, cy, radius):
+    """画圆（单位: **毫米**）"""
+    return model.SketchManager.CreateCircleByRadius(cx, cy, 0, radius)
+
+
+def sketch_arc(model, cx, cy, x1, y1, x2, y2, direction=1):
+    """
+    画圆弧
+
+    参数:
+        cx, cy: 圆心坐标（**毫米**）
+        x1, y1: 起点坐标
+        x2, y2: 终点坐标
+        direction: 1=逆时针, -1=顺时针
+    """
+    return model.SketchManager.CreateArc(cx, cy, 0, x1, y1, 0, x2, y2, 0, direction)
+
+
+def sketch_polygon(model, cx, cy, radius, sides=6):
+    """画正多边形（内切圆方式）"""
+    return model.SketchManager.CreatePolygon(cx, cy, 0, cx + radius, cy, 0, sides, True)
+
+
+def sketch_slot(model, x1, y1, x2, y2, radius):
+    """画槽口"""
+    return model.SketchManager.CreateSketchSlot(
+        0,  # swSketchSlotCreationType_e: 0=Straight
+        radius, radius,  # 宽度
+        x1, y1, 0,
+        x2, y2, 0,
+        0, 0, 0,
+        1, False
+    )
+
+
+def sketch_spline(model, points):
+    """画样条曲线（⚠ **本机实测：建不出来，见下**）。
+
+    参数:
+        points: [(x1,y1), (x2,y2), ...] 控制点列表（单位: **毫米**）
+
+    ⚠⚠ **2026-10-01（轮 141）真机实测：本函数建不出样条，而且此前是**静默**的。**
+    证据 `tools/probe_spline_creation.py` / `probe_spline_redraw.py`（SW 2026 SP4.1）::
+
+        ① `CreateSpline2(arr, False)` ⇒ 返回 **None** ⇒ `get_sketch_segments` = **0**
+        ② **重绘后**（`IModelView::GraphicsRedraw`）仍是 **0**
+           ⇒ ★ **排除了官方 Remarks 那句"必须重绘才看得见"的解释**
+        ③ `CreateSpline`（1 参旧版）⇒ **迟到绑定里没有这个成员**
+        ④ 对照·同样流程画**直线** ⇒ 段数 **1** ⇒ **流程本身没问题**
+
+    ★ **为什么**：`CreateSpline2` 官方已标 **Obsolete**，后继是
+    `CreateSpline3(Object, Object, Object, Boolean, **Object&**)` ——
+    ⚠ 末参是 **BYREF `Object&`** ⇒ 已知事实 47/68 的**架构限制**（pywin32 迟到绑定到不了）
+    ⇒ **这条后端上「建成样条」不达**。
+
+    :raises RuntimeError: 官方**返回 `None`** ⇒ **抛**（不再静默）。
+        ★ 照 `sw_surface._invoke` 的先例（已知事实 40）：
+        **一个失败如果看起来像正常值，比没有守卫更糟。**
+    """
+    import array
+    point_array = array.array('d')
+    for x, y in points:
+        point_array.extend([x, y, 0.0])
+    seg = get_com_member(model, "SketchManager").CreateSpline2(point_array, False)
+    if seg is None:
+        raise RuntimeError(
+            "ISketchManager.CreateSpline2 返回 None ⇒ **样条没建出来**（本机实测，轮 141）。"
+            "原因：该成员官方已废弃，后继 `CreateSpline3` 末参是 BYREF `Object&`，"
+            "**pywin32 迟到绑定到不了**（已知事实 47 / 68）⇒ 这条后端上不达。"
+            "`sw_surface` 的先例是**让失败可见**，本函数照办（已知事实 40）。"
+        )
+    return seg
+
+
+def auto_dimension_sketch(model, sketch=None, sketch_segments=None):
+    """@brief 按官方 AutoDimension2 流程为当前草图创建真实模型尺寸。
+
+    SolidWorks 的工程图 ``InsertModelAnnotations`` 只能导入模型中已有的
+    显示尺寸，不能凭空为拉伸深度或矩形轮廓生成尺寸。该函数在草图编辑态
+    选择水平/垂直基准线，再调用 ``ISketch.AutoDimension2``，因此生成的尺寸
+    会成为模型的真实 DisplayDimension，可被工程图导入并复核。
+
+    返回值包含 ``status_code``（官方约定 0 表示成功）、选择数量和是否创建
+    尺寸的可审计信息。函数不会把失败伪装成成功。
+    """
+    active = sketch or _safe_com_member(model.SketchManager, "ActiveSketch")
+    if active is None:
+        return {"status": "blocked", "status_code": None, "error_code": "SKETCH_NOT_ACTIVE", "selected": 0}
+
+    def segments():
+        supplied = _as_tuple(sketch_segments)
+        if supplied:
+            return supplied
+        for name in ("GetSketchSegments", "IGetSketchSegments"):
+            value = _safe_com_member(active, name)
+            result = _as_tuple(value)
+            if result:
+                return result
+        return ()
+
+    horizontal = None
+    vertical = None
+    for segment in segments():
+        try:
+            start = get_com_member(segment, "GetStartPoint2")
+            end = get_com_member(segment, "GetEndPoint2")
+            dx = abs(float(get_com_member(start, "X")) - float(get_com_member(end, "X")))
+            dy = abs(float(get_com_member(start, "Y")) - float(get_com_member(end, "Y")))
+        except Exception:
+            continue
+        if dx > dy and horizontal is None:
+            horizontal = segment
+        elif dy > dx and vertical is None:
+            vertical = segment
+
+    model.ClearSelection2(True)
+    selected = 0
+    # SW2024 swAutodimMark_e：2=水平基准，4=垂直基准。
+    # 官方示例要求垂直线作为水平基准、水平线作为垂直基准。
+    for segment, mark in ((vertical, 2), (horizontal, 4)):
+        if segment is None:
+            continue
+        try:
+            if bool(segment.Select3(selected > 0, mark, _empty_callout())):
+                selected += 1
+        except Exception:
+            try:
+                if bool(segment.Select4(selected > 0, _empty_callout())):
+                    selected += 1
+            except Exception:
+                pass
+
+    status_code = None
+    try:
+        # swAutodimEntitiesAll=1, Baseline=1, Below=-1, Left=-1。
+        status_code = int(get_com_member(active, "AutoDimension2", 1, 1, -1, 1, -1))
+    except Exception as exc:
+        model.ClearSelection2(True)
+        return {
+            "status": "failed",
+            "status_code": None,
+            "error_code": "SKETCH_AUTODIMENSION_CALL_FAILED",
+            "error": str(exc),
+            "selected": selected,
+        }
+    try:
+        model.GraphicsRedraw2()
+    except Exception:
+        pass
+    model.ClearSelection2(True)
+    return {
+        "status": "pass" if status_code == 0 else "blocked",
+        "status_code": status_code,
+        "error_code": None if status_code == 0 else "SKETCH_AUTODIMENSION_REJECTED",
+        "selected": selected,
+    }
+
+
+def add_dimension(model, x, y):
+    """在指定位置添加尺寸标注"""
+    return model.AddDimension2(x, y, 0)
+
+
+def add_sketch_relation(model, relation_type):
+    """
+    添加草图几何关系
+
+    常用 relation_type:
+        "sgFIXED", "sgHORIZONTAL", "sgVERTICAL", "sgCOLINEAR",
+        "sgPARALLEL", "sgPERPENDICULAR", "sgTANGENT", "sgCONCENTRIC",
+        "sgEQUAL", "sgSYMMETRIC", "sgMIDPOINT", "sgCOINCIDENT"
+    """
+    return model.SketchAddConstraints(relation_type)
+
+
+# ============================================================
+# 特征操作
+# ============================================================
+
+def extrude_boss(model, sketch_name, depth, direction=True, merge=True):
+    """
+    凸台拉伸
+
+    参数:
+        model: IModelDoc2
+        sketch_name: 草图名称（如 "Sketch1"）
+        depth: 拉伸深度（**毫米**）
+        direction: True=正方向
+        merge: True=合并结果
+    """
+    _ensure_sketch_selected(model, sketch_name)
+    return model.FeatureManager.FeatureExtrusion3(
+        True,         # Sd: 单向拉伸
+        False,        # Flip
+        direction,    # Dir: 拉伸方向
+        0,            # T1: Blind
+        0,            # T2: Blind
+        depth,        # D1
+        0.0,          # D2
+        False,        # Dchk1
+        False,        # Dchk2
+        False,        # Ddir1
+        False,        # Ddir2
+        0.0,          # Dang1
+        0.0,          # Dang2
+        False,        # OffsetReverse1
+        False,        # OffsetReverse2
+        False,        # TranslateSurface1
+        False,        # TranslateSurface2
+        merge,        # Merge
+        False,        # UseFeatScope
+        True,         # UseAutoSelect
+        0,            # T0: 从草图平面开始
+        0.0,          # StartOffset
+        False         # FlipStartOffset
+    )
+
+
+def extrude_cut(model, sketch_name, depth, direction=True, flip=False):
+    """
+    切除拉伸
+
+    参数:
+        model: IModelDoc2
+        sketch_name: 草图名称
+        depth: 切除深度（**毫米**），0 表示完全贯穿
+        direction: True=正方向
+        flip: True=翻转切除方向
+    """
+    _ensure_sketch_selected(model, sketch_name)
+    if depth == 0:
+        # 完全贯穿
+        end_condition = 1  # swEndCondThroughAll
+        depth = 0.01  # 占位值
+    else:
+        end_condition = 0  # swEndCondBlind
+
+    return model.FeatureManager.FeatureCut4(
+        direction, flip, False,
+        end_condition, 0,
+        depth, 0,
+        False, False, False, False,
+        0.0, 0.0,
+        False, False, False, False, False,
+        True, True, True, True,
+        False, 0, 0, False, False
+    )
+
+
+def extrude_midplane(model, sketch_name, total_depth):
+    """
+    中面拉伸（两侧对称拉伸）
+
+    参数:
+        total_depth: 总深度（**毫米**），每侧为 total_depth/2
+    """
+    _ensure_sketch_selected(model, sketch_name)
+    return model.FeatureManager.FeatureExtrusion3(
+        True,         # Sd: 单向定义，终止条件控制为中面
+        False,        # Flip
+        True,         # Dir
+        6,            # T1: swEndCondMidPlane
+        0,            # T2
+        total_depth,  # D1
+        0.0,          # D2
+        False,        # Dchk1
+        False,        # Dchk2
+        False,        # Ddir1
+        False,        # Ddir2
+        0.0,          # Dang1
+        0.0,          # Dang2
+        False,        # OffsetReverse1
+        False,        # OffsetReverse2
+        False,        # TranslateSurface1
+        False,        # TranslateSurface2
+        True,         # Merge
+        False,        # UseFeatScope
+        True,         # UseAutoSelect
+        0,            # T0
+        0.0,          # StartOffset
+        False         # FlipStartOffset
+    )
+
+
+def _select_revolve_axis(model, axis_sketch_name):
+    """★ **把某个草图里的线段选为旋转轴**（mark=4）。
+
+    ★★★ 2026-10-01（轮 323）真机定的判据（`output/revolve-axis-evidence.json`，**4/4 建成**）：
+      · 轴的类型名是 **`EXTSKETCHSEGMENT`**（★ **不是** `SKETCHSEGMENT`）；
+      · mark **4 或 16** 都能建（★ 本处用 4）；
+      · 取线段用 `IEntity.Select4(Append, Callout)`（按**对象**选，事实 32）。
+    ★ 参数：`axis_sketch_name` 是**草图名**（★ 不是线段名 —— 线段没有名字）。
+    """
+    try:
+        feature = get_com_member(model, "FeatureByName", axis_sketch_name)
+    except Exception:                                          # noqa: BLE001
+        feature = None
+    if feature is None:
+        return 0
+    sketch = None
+    for meth in ("GetSpecificFeature2", "GetSketch"):
+        try:
+            sketch = get_com_member(feature, meth)
+            if sketch is not None:
+                break
+        except Exception:                                      # noqa: BLE001
+            continue
+    segments = []
+    if sketch is not None:
+        try:
+            segments = list(get_com_member(sketch, "GetSketchSegments") or [])
+        except Exception:                                      # noqa: BLE001
+            segments = []
+    selected = 0
+    for seg in segments:
+        try:
+            if _select_com_object(seg, append=True, mark=4):
+                selected += 1
+        except Exception:                                      # noqa: BLE001
+            continue
+    return selected
+
+
+def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None):
+    """
+    旋转凸台
+
+    参数:
+        sketch_name: 轮廓草图名称
+        angle_rad: 旋转角度（弧度），2*pi 表示 360 度
+        axis_sketch_name: 旋转轴草图名称（None 则需预先选择轴线）
+
+    ★★ 2026-10-01（轮 323）：**`axis_sketch_name` 原来声明了却从未被使用**（静默忽略）——
+    现按真机判据接上（见 `_select_revolve_axis`）。
+    ★★★★ 2026-10-02（轮 360）：**选择顺序原来与官方相反** ⇒ 真机上 `feature_created = False`。
+    官方 `Create_360-degree_Revolve_Feature_Example_VBNET.htm` 的顺序是：
+      ```
+      SelectByID2("Axis1",   "AXIS",   …)     ← ★ **先选轴**
+      SelectByID2("Sketch1", "SKETCH", …)     ← ★ **再选轮廓**
+      FeatureRevolve2(…)
+      ```
+    ⇒ ★★ **轴必须在轮廓之前进选择集**（`FeatureRevolve2` 靠"选择集里谁是轴"来解析）。
+      证据：`output/revolve-axis-geometric-evidence.json`（改序前两次都 `feature_created=false`）。
+    """
+    #: ★ **先轴、后轮廓**（★ 顺序照官方示例 —— 反了会建不成）
+    if axis_sketch_name:
+        _select_revolve_axis(model, str(axis_sketch_name))
+    _ensure_sketch_selected(model, sketch_name)
+    return model.FeatureManager.FeatureRevolve2(
+        True, True, False,
+        False, False, False,
+        0, 0,
+        angle_rad, 0,
+        False, False,
+        0.0, 0.0,
+        0, 0, 0, True, True, True
+    )
+
+
+def fillet(model, radius, edges=None):
+    """
+    倒圆角
+
+    参数:
+        model: IModelDoc2
+        radius: 圆角半径（**毫米**）
+        edges: 预先选择的边线列表，None 则使用当前选择
+    """
+    return model.FeatureManager.FeatureFillet(
+        195, radius, 0, 0, None, None, None
+    )
+
+
+def chamfer(model, distance, angle_deg=45):
+    """
+    倒角
+
+    参数:
+        distance: 倒角距离（**毫米**）
+        angle_deg: 倒角角度（度）
+    """
+    import math
+    angle_rad = angle_deg * math.pi / 180.0
+    return model.FeatureManager.InsertFeatureChamfer(
+        4, 1, distance, angle_rad, 0, 0, 0, 0
+    )
+
+
+def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
+                    d2_x=0, d2_y=0, d2_z=0, d2_spacing=0, d2_count=1):
+    """
+    线性阵列
+
+    参数:
+        feature_name: 要阵列的特征名称
+        d1_*: 方向1 的方向向量、间距（**毫米**，⚠ 间距已测；**方向向量是否归一化未测**）和数量
+        d2_*: 方向2（可选）
+    """
+    _select_by_id(model.Extension, feature_name, "BODYFEATURE", mark=4)
+    # ── 来源 ────────────────────────────────────────────────────────────
+    # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.sldworks.dll 纯元数据反射）
+    # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IFeatureManager 段
+    # 定位:   官方线性阵列入口的签名，共 **10** 个参数：
+    #           Feature FeatureLinearPattern3(
+    #               Int32    Count1,        Double Spacing1,
+    #               Int32    Count2,        Double Spacing2,
+    #               Boolean  SkipPattern,   Boolean ReverseDirection,
+    #               String   Direction1,    String Direction2,
+    #               Boolean  <9>,           Boolean <10> )
+    # 本次改动: 原实现传 **14** 个实参，且前四项顺序颠倒
+    #           （原为 spacing1, spacing2, count1, count2），并用
+    #           6 个 str 分量代替 2 个方向向量、4 个布尔代替 2 个。
+    #           官方只有 2 个 String 方向向量参数、2 个尾部布尔。
+    #           该调用在官方参数个数下必然失败。
+    # 查证:   python scripts/audit_call_arity.py（随本仓库提供）
+    # ⚠ 方向向量按官方 String 参数传入；分量以空格分隔的 "x y z" 形式给出，
+    #   这是官方对方向参数惯用的写法，CHM 侧未逐字确认其分隔符要求，
+    #   故在此显式标注，调用方若遇到方向不被识别可改为单位向量字符串。
+    # ⚠ 本行为静态签名比对后修正，未在本机实测（见 AGENTS.md 铁律 2）
+    # ────────────────────────────────────────────────────────────────────
+    return model.FeatureManager.FeatureLinearPattern3(
+        int(d1_count), float(d1_spacing),
+        int(d2_count), float(d2_spacing),
+        False, False,
+        f"{d1_x} {d1_y} {d1_z}",
+        f"{d2_x} {d2_y} {d2_z}",
+        False, False
+    )
+
+
+def circular_pattern(model, feature_name, axis_name, angle_rad, count, equal_spacing=True):
+    """
+    圆形阵列
+
+    参数:
+        feature_name: 要阵列的特征名称
+        axis_name: 旋转轴名称
+        angle_rad: 总角度（弧度）
+        count: 实例数量
+        equal_spacing: True=等间距
+    """
+    _select_by_id(model.Extension, feature_name, "BODYFEATURE", mark=4)
+    _select_by_id(model.Extension, axis_name, "AXIS", append=True, mark=1)
+    return model.FeatureManager.FeatureCircularPattern4(
+        count, angle_rad, False, "None", False, equal_spacing, False
+    )
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   `wzyn20051216/solidworks-automation-skill`（**上游**，MIT）—— 上游继承的函数。
+# 文件:   scripts/sw_part.py —— 这一段（L836 起，到下一个来源块之前）。
+# 定位:   2026-10-01（轮 132）**只做了一件事**：把长度单位声明从「米」校正为「**毫米**」。
+#         实测依据见 `tools/verify_ellipse_smoke.py`（圆半径 25 ⇒ 边界框跨度 50 毫米）；
+#         ★ 与已知事实 71（`GetBodyBox` 返回毫米）一致。
+# 官方签名依据: 见**原上游代码**与 `docs/signature-audit.md`；本块**不改任何调用**。
+# 许可:   上游 MIT（见 `THIRD-PARTY-NOTICES.md` §一.1）。无第三方代码引入。
+# 覆盖:   后续同级定义 —— 本块涵盖这两个助手，**止于下一个来源块**。
+# ─────────────────────────────────────────────────────────────────────
+
+def shell(model, thickness, faces_to_remove=None):
+    """
+    抽壳
+
+    参数:
+        thickness: 壁厚（**毫米**）
+        faces_to_remove: 需预先选择要移除的面
+    """
+    #: ★★★ **宿主是 `IModelDoc2`，不是 `FeatureManager`**（2026-10-01 轮 250 查清）：
+    #:   官方类型表 `C:\swapi\types\IModelDoc2\InsertFeatureShell.md`，
+    #:   签名 `void InsertFeatureShell(double Thickness, bool Outward)`。
+    #:   ⚠ 原写法 `model.FeatureManager.InsertFeatureShell(...)` 真机报
+    #:     **`AttributeError: <unknown>.InsertFeatureShell`** —— ★ 那正是**事实 36 的形态**
+    #:     （「同名接口分属不同族 ⇒ 用错接口 = 对象对任何成员都没反应」）。
+    #: ★★★★★ **`Thickness` 的单位 = 毫米（已实测判决）** —— ⚠ 而**官方文档写的是 meters**。
+    #:   ★ 判据（2026-10-01 轮 250，`tools/probe_shell_thickness_units.py`）：100×60×20 的板，
+    #:     `t=2.0` ⇒ 实体体积 **23232**、被挖空腔 **96768** = **96×56×18** ⇒ **四壁各减 2 mm**；
+    #:     `t=4.0` ⇒ 实体 **43456**、空腔 **76544** = **92×52×16** ⇒ **四壁各减 4 mm**。
+    #:   ⇒ ★★ **几何自证口径是毫米** ⇒ **不要按官方那句 meters 换算**（★ 与本模块头一致）。
+    #:   ★ 若按 meters 解，2.0 的壁就是 **2 米** ⇒ 会把 20 mm 厚的板吃光或直接失败（★ 实测都没有）。
+    return model.InsertFeatureShell(thickness, False)
+
+
+def mirror_feature(model, feature_name, mirror_plane_name):
+    """
+    镜像特征
+
+    参数:
+        feature_name: 要镜像的特征名称
+        mirror_plane_name: 镜像基准面名称
+    """
+    #: ★★★ 2026-10-01（轮 317）**mark 分配原本是反的** ——
+    #:   官方 `InsertMirrorFeature2.md` 的 Remarks 给了**完整的 mark 表**：
+    #:     ★ **Features ⇒ 1** · ★ Faces ⇒ 128 · ★ Bodies ⇒ 256 ·
+    #:     ★ **Planes or planar faces ⇒ 2** · ★ Structure systems ⇒ 134217728
+    #:   ★ 而旧写法是：特征 mark=**4**（★ **表里没有 4**）· 平面 mark=1（★ 而 1 是**特征**）
+    #:   ⇒ ★★ **两个都错** ⇒ `InsertMirrorFeature2` 静默回 `None`。
+    #:   ★ 另：选特征的 TypeName **只有 `BODYFEATURE` 对**（真机：回 True 且 mark 计数 1；
+    #:     `FEATURE` 回 False 计数 0；`BODY` / `特征` 回 False 而计数 1）—— ★ 以计数为准（事实 8）。
+    _select_by_id(model.Extension, feature_name, "BODYFEATURE", mark=1)
+    _select_by_id(model.Extension, mirror_plane_name, "PLANE", append=True, mark=2)
+    return model.FeatureManager.InsertMirrorFeature2(False, False, False, False, 0)
+
+
+def hole_wizard(model, hole_type, standard, fastener_type, size, depth, x, y, z):
+    """
+    异型孔向导（简化版）
+    注意：完整的异型孔向导参数复杂，建议参考 API 文档调整
+    """
+    # 异型孔向导需要通过 FeatureManager.HoleWizard5 调用
+    # 具体参数取决于孔类型，此处提供框架
+    pass
+
+
+def rib(model, sketch_name, thickness, direction=True):
+    """
+    筋特征
+
+    参数:
+        sketch_name: 筋轮廓草图名称
+        thickness: 筋厚度（**毫米**）
+        direction: 拉伸方向
+    """
+    _ensure_sketch_selected(model, sketch_name)
+    # ── 来源 ────────────────────────────────────────────────────────────
+    # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.sldworks.dll 纯元数据反射）
+    # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IFeatureManager 段
+    # 定位:   官方筋特征入口，**两个接口上同名但参数个数不同**：
+    #           IFeatureManager.InsertRib(Boolean, Boolean, Double, Int32,
+    #                                      Boolean, Boolean, Boolean, Double,
+    #                                      Boolean, Boolean)   ← **10** 参
+    #           IModelDoc.InsertRib(Boolean, Boolean, Double, Int32,
+    #                                Boolean, Boolean, Boolean, Double)
+    #                                      ← **8** 参
+    #           本函数调用在 model.FeatureManager 上，故按 10 参版本对齐。
+    # 本次改动: 原实现传 **9** 个实参，与上述两个版本**都不匹配**
+    #           （既不是 10 也不是 8），必然失败。
+    # 查证:   python scripts/audit_call_arity.py（随本仓库提供）
+    # ⚠ 末位布尔=**`IsNormToSketch`**（2026-10-01 轮 251 **已查证** —— 旧注记说"CHM 页没找到"，
+    #   而 `C:\swapi\types\IFeatureManager\InsertRib.md` **有完整的 10 个参数说明**）：
+    #     `Is2Sided, ReverseThicknessDir, Thickness, ReferenceEdgeIndex, ReverseMaterialDir,`
+    #     `IsDrafted, DraftOutward, DraftAngle, IsNormToSketch, IsDraftedFromWall`
+    #   ⇒ ★ 本函数传的 10 个实参**位置对齐**（`direction, False, thickness, 0, False, False, False, 0, False, False`）
+    # ⚠⚠ **而真机仍失败（静默：不抛异常也不建出特征）** ⇒ ★ **嫌疑在 `ReferenceEdgeIndex`（本函数传 `0`）**：
+    #   官方说明它是「**Edge in the sketch** to use to determine the **material direction** and for
+    #   draft reference」⇒ ★ **"sketch 里的一条边"**，而 `0` 很可能不是合法边索引（★ 索引可能从 1 起）。
+    #   ★ **下一步的正路**：真机逐个试 `ReferenceEdgeIndex`（0 / 1）与 `_ensure_sketch_selected` 的
+    #     选区形态（★ 官方要的可能**不是草图特征**，而是**草图里的一条线**）。
+    #   ⚠ 在那之前**不盲改**（事实 53：同一处连续修补 ≥3 次就该停）。
+    # ⚠ 本行为静态签名比对后修正，未在本机实测（见 AGENTS.md 铁律 2）
+    # ────────────────────────────────────────────────────────────────────
+    return model.FeatureManager.InsertRib(
+        direction, False, thickness, 0, False, False, False, 0, False, False
+    )
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
+# 文件:   scripts/sw_part.py —— 「边界框」这一段（2026-10-01 轮 127）。
+# 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `bbox`。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：`Object GetBodyBox()`（在 `IBody2` 上）·
+#             `Object GetBodies2(Int32, Boolean)`（在 `IPartDoc` 上）
+#           ② `C:\swapi\types\IBody2\GetBodyBox.md`：
+#             **返回 6 个 double** —— `[X1, Y1, Z1, X2, Y2, Z2]`（包围盒的**对角线两端**，
+#             盒面**平行于 XYZ 轴**）。
+#           ③ ⚠⚠ **同一份文档的 IMPORTANT 段**（**必须照抄给调用方看**）：
+#             > The values returned are **approximate** and **should not be used for
+#             > comparison or calculation purposes**. Furthermore, the bounding box
+#             > **may vary after rebuilding the model**.
+#           ④ 单位：与官方其它几何接口一致，是**米** ⇒ 本模块在边界处换成毫米。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件 —— ⚠ 追加在文件尾，前面已有来源块 ⇒ 用「全文件」最稳。
+# ─────────────────────────────────────────────────────────────────────
+def get_bounding_box(model, *, body_index: int = 0, include_hidden: bool = False):
+    """取**第一个实体**的边界框（官方 `IBody2.GetBodyBox`）。
+
+    ⚠⚠ **先把官方那句重话说在前面**（原文照抄在来源块里）：
+    **返回值是「近似值」，官方明确说「不应用于比较或计算」**，
+    而且**重建模型之后它可能变化**。
+    ⇒ 所以本函数的返回值**只适合「给人看个大概」**，
+      **不要**拿它当尺寸依据去驱动别的特征。
+
+    :param model: 零件文档（`IPartDoc`）。
+    :param body_index: 取第几个实体（0 基）。
+    :param include_hidden: 是否含隐藏实体。
+    ★★ **单位：毫米 —— 这是实测出来的，官方没写。**
+    2026-10-01（轮 127）真机：建一个 **80 × 60 × 50 mm** 的盒子，`GetBodyBox` 原始返回
+    `[0.0, 0.0, -50.0, 80.0, 60.0, 0.0]` ⇒ **原始值就是 80 / 60 / 50**。
+    ⚠ 这与官方**其它**几何接口惯用的"米"**不同** ⇒ **不要再乘/除 1000**。
+    ⚠ 第一版实现误用了 `sw_connect.mm()`（那是**输入方向**：毫米→米），
+    结果把 0.08 又除了 1000 ⇒ 被本轮的**数值冒烟**当场抓住。
+
+    :returns: `{"min": [x, y, z], "max": [...], "size": [dx, dy, dz]}` ——
+        **全部是毫米**（见上），`size` 是各轴方向的跨度。
+    :raises RuntimeError: 拿不到实体，或 `GetBodyBox` 返回的元素不是 6 个。
+    """
+    bodies = get_com_member(model, "GetBodies2", int(body_index), bool(include_hidden))
+    if not bodies:
+        raise RuntimeError(
+            "IPartDoc.GetBodies2(%r, %r) 没拿到实体 ⇒ 零件里可能没有实体"
+            "（先建一个特征，或把 body_index 调小）" % (body_index, include_hidden)
+        )
+    body = bodies[0] if isinstance(bodies, (list, tuple)) else bodies
+    box = get_com_member(body, "GetBodyBox")
+    if box is None or len(box) != 6:
+        raise RuntimeError(
+            "IBody2.GetBodyBox 返回的元素不是 6 个（官方：`[X1, Y1, Z1, X2, Y2, Z2]`）"
+            " ⇒ 实际 %r" % (None if box is None else len(box),)
+        )
+    b = [float(v) for v in box]
+    mn, mx = b[:3], b[3:]
+    #: ⚠ **不做单位换算** —— 实测 `GetBodyBox` 的原始值就是**毫米**
+    #: （80 mm 的盒子返回 80.0，不是 0.08）。第一版误用 `mm()` ⇒ 被数值冒烟抓住。
+    return {
+        "min": list(mn),
+        "max": list(mx),
+        "size": [mx[i] - mn[i] for i in range(3)],
+    }
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
+# 文件:   scripts/sw_part.py —— 「椭圆」这一段（2026-10-01 轮 132）。
+# 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `ellipse`。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
+#             `SketchSegment CreateEllipse(Double ×9)`（在 `ISketchManager` 上）
+#           ② `C:\swapi\types\ISketchManager\CreateEllipse.md`：
+#             `SketchSegment CreateEllipse(XC, YC, Zc, XMajor, YMajor, ZMajor,
+#              XMinor, YMinor, ZMinor)` —— **9 个 double**，返回草图线段。
+#           ③ ⚠ **两级废弃链**（本模块**不走前两级**）：
+#             `IModelDoc2.CreateEllipse(Object,Object,Object)`
+#               ⇒ `Obsolete. Superseded by IModelDoc2::CreateEllipse2.`
+#             `IModelDoc2.CreateEllipse2(Double ×9)`
+#               ⇒ `Obsolete. Superseded by ISketchManager::CreateEllipse.`
+#             ⇒ **现行入口是 `ISketchManager.CreateEllipse`**（本模块采用的那个）。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义 —— 本块文档化 `sketch_ellipse` 一个单元。
+# ─────────────────────────────────────────────────────────────────────
+def sketch_ellipse(model, cx, cy, major_x, major_y, minor_x, minor_y, z=0.0):
+    """在**当前草图**里画一个**整椭圆**（官方 `ISketchManager.CreateEllipse`）。
+
+    ★ **走的正是现行入口**：`IModelDoc2.CreateEllipse` 与 `CreateEllipse2`
+    **两级都已废弃**，现行是 `ISketchManager.CreateEllipse`（见来源块）。
+
+    ⚠ **单位：毫米** —— 与同模块的 `sketch_circle` / `sketch_corner_rectangle` 一致，
+    而**不是**它们 docstring 里写的"米"（那几处 docstring 与实际不符，
+    见已知事实 73 的实测）。本函数按**实测**来，并在 docstring 里写明。
+
+    :param cx, cy: 椭圆**中心**的坐标（毫米）。
+    :param major_x, major_y: **长轴**上一点的坐标（毫米）—— 它到中心的距离就是长半轴。
+    :param minor_x, minor_y: **短轴**上一点的坐标（毫米）—— 它到中心的距离就是短半轴。
+    :param z: 草图平面内的 Z（2D 草图通常 0）。
+    :returns: 椭圆对应的**草图线段**（官方返回值）。
+    :raises RuntimeError: 官方**返回 `None`**（没建出来）。
+    """
+    seg = get_com_member(
+        get_com_member(model, "SketchManager"), "CreateEllipse",
+        float(cx), float(cy), float(z),
+        float(major_x), float(major_y), float(z),
+        float(minor_x), float(minor_y), float(z))
+    if seg is None:
+        raise RuntimeError(
+            "ISketchManager.CreateEllipse 返回 None ⇒ 椭圆没建出来"
+            "（常见原因：当前不在草图编辑态；官方说「若无活动草图则新建一个」）"
+        )
+    return seg
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
+# 文件:   scripts/sw_part.py —— 「中心线」这一段（2026-10-01 轮 140）。
+# 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `centerline`。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
+#             `SketchSegment CreateCenterLine(Double ×6)`（在 `ISketchManager` 上）
+#           ② `C:\swapi\types\ISketchManager\CreateCenterLine.md`：
+#             `SketchSegment CreateCenterLine(X1, Y1, Z1, X2, Y2, Z2)` —— **6 个 double**。
+#             ⚠⚠ **官方文档写「in meters」，而实测是毫米**（见已知事实 73 与
+#             `tools/verify_centerline_smoke.py` 的**再测**）—— 按实测来。
+#             ★ 官方 Remarks 还给了**另一条路**：「`ISketchManager::CreateLine` +
+#             `ISketchSegment::ConstructionGeometry`」—— 本函数**不走那条**，
+#             因为 `CreateCenterLine` 是**现行入口**且直接就是中心线。
+#           ③ ⚠ **两级废弃链**（本模块**不走前两级**）：
+#             `IModelDoc2.CreateCenterLine(Object,Object)`
+#               ⇒ `Obsolete. Superseded by ISketchManager::CreateCenterLine.`
+#             `IModelDoc2.CreateCenterLineVB(Double ×6)` —— **Void** 返回，
+#               是同一件事的 VB 变体（不取返回值）。
+#             ⇒ **现行入口是 `ISketchManager.CreateCenterLine`**（本函数采用的那个）。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义 —— 本块文档化 `sketch_centerline` 一个单元。
+# ─────────────────────────────────────────────────────────────────────
+def sketch_centerline(model, x1, y1, x2, y2, z=0.0):
+    """在**当前草图**里画一条**中心线**（官方 `ISketchManager.CreateCenterLine`）。
+
+    ★ **走的正是现行入口**：`IModelDoc2.CreateCenterLine` **已废弃**、
+    `CreateCenterLineVB` 是它的 **VB 变体**（`Void` 返回）—— 现行是
+    `ISketchManager.CreateCenterLine`（见来源块）。
+
+    ⚠ **单位：毫米**（**实测**，不是照官方文档的「meters」）——
+    依据 `tools/verify_centerline_smoke.py`。同模块其余助手同此（已知事实 73）。
+
+    :param x1, y1: 端点 1 的坐标（毫米）。
+    :param x2, y2: 端点 2 的坐标（毫米）。
+    :param z: 草图平面内的 Z（2D 草图通常 0）。
+    :returns: 中心线对应的**草图线段**（官方返回值）。
+    :raises RuntimeError: 官方**返回 `None`**（没建出来）。
+    """
+    seg = get_com_member(
+        get_com_member(model, "SketchManager"), "CreateCenterLine",
+        float(x1), float(y1), float(z), float(x2), float(y2), float(z))
+    if seg is None:
+        raise RuntimeError(
+            "ISketchManager.CreateCenterLine 返回 None ⇒ 中心线没建出来"
+            "（常见原因：当前不在草图编辑态）"
+        )
+    return seg
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
+# 文件:   scripts/sw_part.py —— 「圆顶」这一段（2026-10-01 轮 143）。
+# 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `dome`。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
+#             `Void InsertDome(Double, Boolean, Boolean)`（在 **`IModelDoc2`** 上）·
+#             接口 `IDomeFeatureData` / `IDomeFeatureData2` / `DomeFeatureData` / `DomeFeatureData2`
+#           ② `C:\swapi\types\IModelDoc2\InsertDome.md`：
+#             `void InsertDome(double Height, bool ReverseDir, bool DoEllipticSurface)`
+#             ⚠ 文档写 `Height` 是「in **meters**」—— 与草图侧的实测（事实 73）矛盾，
+#             本函数按**毫米**并**在冒烟里量**（`tools/verify_dome_smoke.py`）。
+#           ③ ★★ **`swFmDome` 不存在** —— 枚举转储 `enum_values_sldworks.txt` **0 命中**，
+#             `CreateDefinition.md` 的 **35 个**合法常量里也**没有**它
+#             ⇒ **圆顶走不了 `CreateDefinition` 那条路**（与事实 43 的 `swFmOneBend`/`swFmDraft` 同族）
+#             ⇒ 只能走 `IModelDoc2.InsertDome`（**未标 Obsolete**）。
+#             ★ `IDomeFeatureData2` 只能在**建完之后**从特征上取（`IFeature::GetDefinition`）。
+#           ④ ⚠ **`InsertDome` 返回 `Void`** ⇒ **没有返回值可查** ⇒ 照事实 40：
+#             失败必须用**别的**证据暴露（本函数的冒烟用**特征树** + **边界框增长**）。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义 —— 本块文档化 `insert_dome` 一个单元。
+# ─────────────────────────────────────────────────────────────────────
+def insert_dome(model, height, reverse=False, elliptic=False):
+    """给**已选中的面**加一个圆顶（官方 `IModelDoc2.InsertDome`）。
+
+    ⚠ **调用前必须先选好一个面**（与同模块的 `fillet` / `chamfer` / `shell` 同一约定）。
+
+    :param height: 圆顶高度（**毫米**）。⚠ 官方文档写「in meters」，
+        本仓库按**实测**取毫米（`tools/verify_dome_smoke.py`，见已知事实 73 / 84）。
+    :param reverse: 反向。
+    :param elliptic: 是否做成**椭圆面**（官方 `DoEllipticSurface`）。
+    :returns: **没有返回值** —— 官方签名是 `void`。
+        ⇒ ★ 照已知事实 40：**要确认成功，必须看别的东西**
+        （特征树里出现圆顶特征 / 边界框增长），不能靠"没抛异常"。
+
+    ★ **为什么不用 `CreateDefinition`**：`swFmDome` **不在枚举里、也不在
+    `CreateDefinition` 的 35 个合法常量里**（实测，轮 143）⇒ 那条路**不存在**。
+    """
+    #: ★★★ **实参要喂给 `call_com_member` 自己，不是喂给它回的东西**（2026-10-01 轮 251 查清）：
+    #:   原写法 `call_com_member(model, "InsertDome")(h, r, e)` 有**两处**错：
+    #:     ① `call_com_member(model, "InsertDome")` 本身就会**零参调一次**
+    #:        ⇒ `InsertDome()` 少 3 个必需实参；
+    #:     ② 再对它回的**结果**调 `(...)` —— 而 `InsertDome` 是 **`void`** ⇒ 回 `None`。
+    #:   ⇒ ★★ 真机表现是 **"不抛异常、也不建出特征"的静默失败**（★ 被回读判据抓到）。
+    #:   ★ 正确形态 = **`call_com_member(obj, name, *args)`**（实参直接跟着名字）。
+    #: ⚠ 官方 Remarks 还要求：★ **"select the face for the dome using a selection mark of 1"**
+    #:   ⇒ 调用方**必须用 `mark=1`** 选面（★ `select_face_at` 的默认 `mark=0` **不满足**）。
+    call_com_member(model, "InsertDome", float(height), bool(reverse), bool(elliptic))
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
+# 文件:   scripts/sw_part.py —— 「合成曲线」这一段（2026-10-01 轮 151）。
+# 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `composite_curve`。
+# 官方依据: ① 出厂类型库反射 `iface_sldworks.txt`：`Boolean InsertCompositeCurve()`
+#             （在 **`IModelDoc2`** 上）· 接口 `ICompositeCurveFeatureData` / `CompositeCurveFeatureData`
+#           ② `C:\swapi\types\IModelDoc2\InsertCompositeCurve.md`：
+#             `bool InsertCompositeCurve()` —— **零参**；Returns ⇒ **True 才是成功**
+#             · Remarks：**要先用 `SelectByID2` 以 mark number of 1 选实体**
+#           ③ ★ 官方示例 `examples\Insert_a_Composite_Curve_Example_CSharp.md`：
+#             `SelectByID2("Sketch2","SKETCH",…,false,**1**,null,0)`
+#             `SelectByID2("Sketch1","SKETCH",…,true, **1**,null,0)`
+#             `swModel.InsertCompositeCurve()`
+#             ⇒ 建完后 `SelectByID2("CompCurve1","REFERENCECURVES",…)` +
+#               `((CompositeCurveFeatureData)feat.GetDefinition()).GetEntitiesToJoinCount()`
+#               ⇒ ★★ **能读回"并了几个实体"** ⇒ 这是**定量往返**的抓手。
+#           ④ ⚠⚠ 本函数**必须用 `call_com_member`**（不是 `get_com_member`）：
+#             官方签名**零参** ⇒ 而 `get_com_member` 在无实参时会「**先试调一次**」
+#             （已知事实 84：对 COM 成员，"取"就等于"调"）⇒ 那样会**替调用方悄悄调一次**。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义 —— 本块文档化 `insert_composite_curve` 一个单元。
+# ─────────────────────────────────────────────────────────────────────
+def insert_composite_curve(model):
+    """把**当前选中的实体**合成一条曲线（官方 `IModelDoc2.InsertCompositeCurve`）。
+
+    ⚠ **调用前必须先用 mark = 1 选好实体**（官方 Remarks；与 `insert_dome` 同一个坑）。
+
+    :returns: 官方返回的 `bool`（**True 才是成功**）。
+    :raises RuntimeError: 官方返回 `False`。
+
+    ★ **用 `call_com_member` 而不是 `get_com_member`**：官方签名**零参**，
+    而 `get_com_member` 对零参成员会**先试调一次**（已知事实 84）⇒
+    用它会**在"取"的时候把这个动作做掉**，调用方失去控制。
+    """
+    ok = call_com_member(model, "InsertCompositeCurve")
+    if not ok:
+        raise RuntimeError(
+            "IModelDoc2.InsertCompositeCurve 返回 False ⇒ 合成曲线没建出来。"
+            "⚠ 官方 Remarks：**必须先用 `SelectByID2(..., mark=1)` 选好实体**；"
+            "且实体类型要合法（见 SOLIDWORKS Help）。"
+        )
+    return True
+
+
+# ── 24h 计划 段 3（Spec Kit `146`）：**建特征工具的"回读确认"包装** ────────────────
+# ★★★ 规则 6：「**建特征之后查 `EditRebuild3` + `GetWhatsWrong2`，不静默成功**」。
+#   ⚠ 而 `GetWhatsWrong2` 在本机两套源里**不存在**（★ 规则文本的一处失真）——
+#     真正的成员是 `IModelDocExtension.GetWhatsWrongCount`（★ 已记进
+#     `scripts/sw_feature_readback.py` 的 docstring）。
+# ⇒ ★ 本段三个包装**统一走 `sw_feature_readback.feature_readback`**（那个判据已真机打磨三遍）：
+#     · `shell`        ⇒ 抽壳（`InsertFeatureShell`）
+#     · `rib`          ⇒ 筋（`InsertRib`）
+#     · `insert_dome`  ⇒ 圆顶
+#   ★ 它们的共同点：**都回 COM 对象**（⇒ MCP 回不了）**且都该按规则 6 回读确认**。
+# ⇒ ★★ 判据 = ★ **特征在树里 + `EditRebuild3` 真 + `GetWhatsWrongCount == 0`**（三条都真才 ok）。
+
+
+def _feature_report(model, feature_name: str, call, label: str) -> dict[str, Any]:
+    """★ 通用：**先看特征名在不在（建之前）→ 调用 → 回读确认**。
+
+    ★ 这样报告里能区分「**本来就有**」与「**这次建出来的**」（★ 比只看"在不在"硬）。
+    """
+    from sw_feature_readback import feature_readback, feature_present
+
+    before = feature_present(model, feature_name)
+    err = None
+    obj = None
+    try:
+        obj = call()
+    except Exception as exc:                                   # noqa: BLE001
+        err = "%s: %s" % (type(exc).__name__, str(exc)[:300])
+    rb = feature_readback(model, feature_name)
+    return {
+        "ok": err is None and bool(rb.get("ok")),
+        "feature": label,
+        "feature_name_expected": feature_name,
+        "present_before": before,
+        "readback": rb,
+        "created_object": type(obj).__name__ if obj is not None else None,
+        "error": err,
+        "★": "ok = 无异常 **且** 回读三条全真（特征在树里 + EditRebuild3 真 + 查错数 0）",
+    }
+
+
+def shell_report(model, thickness_mm: float, feature_name: str = ""):
+    """★ **抽壳**并回**回读报告**（★ 规则 6：不静默成功）。
+
+    ⚠ `thickness` 在能力层的单位**随文档单位**（本项目零件按毫米 ⇒ 传毫米值）；
+      ★ 本函数收的形参名带 `_mm`（规则 2），**由调用方保证口径一致**。
+    ⚠ `feature_name` 默认取中文 UI 的「抽壳1」（★ 也可由调用方给）。
+    """
+    return _feature_report(model, feature_name or "抽壳1",
+                           lambda: shell(model, float(thickness_mm)), "shell")
+
+
+def rib_report(model, sketch_name: str, thickness_mm: float, feature_name: str = "",
+               direction: bool = True):
+    """★ **筋**并回**回读报告**（★ 规则 6）。"""
+    return _feature_report(model, feature_name or "筋1",
+                           lambda: rib(model, sketch_name, float(thickness_mm), direction), "rib")
+
+
+def insert_dome_report(model, height_mm: float, feature_name: str = "",
+                       reverse: bool = False, elliptic: bool = False):
+    """★ **圆顶**并回**回读报告**（★ 规则 6）。"""
+    return _feature_report(model, feature_name or "圆顶1",
+                           lambda: insert_dome(model, float(height_mm), reverse, elliptic), "dome")
+
+
+def insert_composite_curve_report(model, feature_name: str = ""):
+    """★ **复合曲线**并回**回读报告**。
+
+    ★ 能力层的 `insert_composite_curve` **本身已经 raise on False**（★ 不是"假通过"），
+      所以这里主要补"**建完之后特征在不在 + 重建 + 查错**"那三条（★ 规则 6）。
+    ⚠ 调用前**必须先用 mark = 1 选好实体**（官方 Remarks；与 `insert_dome` 同一个坑）。
+    """
+    return _feature_report(model, feature_name or "复合曲线1",
+                           lambda: insert_composite_curve(model), "composite_curve")
+
+
+# ── 24h 计划 段 5「修地基」**D2**（Spec Kit `149`）：**画几何前必须有活动草图** ──────────
+# ★★★ 依据（★ 本项目自己的记载，**不是发明**）：
+#   · `specs/135-*` 的 `converge.md` L76：「L2 | ★ **「不 start 就画几何」没有机器守卫** |
+#     实测是**静默的**；**要加守卫应在能力层/工具层** ⇒ ★ **另开特性（不顺手改）**」
+#     ⇒ ★ 本段就是**那个「另开的特性」**。
+#   · 同一份的 `checklist.md` L15 记着一条纪律：「★ 用实测记录（**静默**），
+#     ★ **不假称它该抛错**」—— ★ 因为**官方文档没说**"不先 start 会怎样"。
+#   ⇒ ★★★ **所以本守卫的定性是**：★ **本项目的工程选择**（防静默失败），
+#     ★ **不是**"官方要求抛错"**。★ 报错信息里要把这一点说清。
+#
+# ⚠ 覆盖范围：**画几何**的那些函数（不是 `start_sketch` / `end_sketch` 自己）。
+#   而**为什么不逐个改函数体**：★ 8 个函数各加一行 = 8 处改动、
+#   ★ 而**统一包装一处搞定** —— ★ 且**新增画几何函数时容易被漏掉**，
+#   所以下面**显式列名**（★ 列名本身就是「哪些函数算画几何」的记录）。
+#
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_part.py —— 本段
+# 定位:   修地基 D2：给"画几何"的函数统一加"必须先有活动草图"的守卫。
+# 官方依据: `IModelDoc2.GetActiveSketch2`（★ 读活动草图；★ 只用于**判在不在**）·
+#          `ISketchManager.CreateLine` 等（★ 那些是被守卫的函数）
+#          ⚠ **官方文档没说**"不先 start 会怎样" ⇒ ★ 守卫的定性见上。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   下面这个包装器与它的应用循环
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _require_active_sketch(fn):
+    """★ 包装一个**画几何**的函数：先确认有活动草图，没有就**报错**（而不是静默）。
+
+    ★★ 定性：★ **本项目的工程选择**（防静默失败）—— ★ **不是**官方语义
+    （★ 官方文档没说"不先 `sketch_start` 会怎样"；★ `specs/135` 实测为**静默**）。
+    """
+    import functools
+
+    @functools.wraps(fn)
+    def _wrapped(model, *args, **kwargs):
+        try:
+            sk = get_com_member(model, "GetActiveSketch2")
+        except Exception:                                      # noqa: BLE001
+            sk = None                                          #: ★ 取不到 ⇒ 走下面的报错（不静默放过）
+        if sk is None:
+            raise RuntimeError(
+                "%s() 被调用时**没有活动草图** ⇒ 画几何会**静默无效**（几何画到不存在的地方）。"
+                "★ 先调 `sketch_start(model, plane_name=...)` 再画。"
+                "⚠ 本守卫是**本项目的工程选择**（防静默失败）—— "
+                "官方文档未规定「不先 start 会怎样」，本项目实测为**静默**（见 specs/135）。"
+                % getattr(fn, "__name__", "?")
+            )
+        return fn(model, *args, **kwargs)
+
+    return _wrapped
+
+
+#: ★ **哪些函数算"画几何"**（★ 显式列名 —— 它同时是这份名单的记录；
+#:   ⚠ 新增画几何函数时**要往这里加**，否则守卫覆盖不到它）。
+_SKETCH_DRAWING_FUNCS = (
+    "sketch_line", "sketch_rectangle", "sketch_circle", "sketch_arc",
+    "sketch_polygon", "sketch_slot", "sketch_spline", "sketch_ellipse",
+    "sketch_centerline",
+)
+
+for _fn in _SKETCH_DRAWING_FUNCS:
+    if _fn in globals():
+        globals()[_fn] = _require_active_sketch(globals()[_fn])
+
+# ── `create_axis_report`（★ 参考轴 —— 环形阵列的前置）──────────────────────────────
+# ★★★ 2026-10-01（轮 317）三个真机坑（★ 见 `tool_specs_batch49.py` 的头注）：
+#   ① **入口在 `IModelDoc2` 上，不在 `IFeatureManager` 上**（★ CHM 定的；★ 调后者报
+#      `AttributeError: <unknown>.InsertAxis2`）；
+#   ② **它回 `bool` 而不是 `Feature`** ⇒ ★ **判据要数特征树**（★ 读 `.Name` 会崩）；
+#   ③ ★ 环形阵列的官方 mark 表要求 `1 = 方向轴` ⇒ ★ 没有轴就阵列不了。
+# 依据: ★ CHM `IModelDoc2~InsertAxis2.html` · ★ 反射 `sw_api_sldworks.py:6267`（arity = 1）·
+#   真机 `output/pattern-axis-evidence.json`（★ `InsertAxis2` 回 True · 出现 `基准轴1` ·
+#   `阵列(圆周)1` type=`CirPattern`）· `output/mirror-fixed-evidence.json`（★ `镜向1` type=`MirrorPattern`）
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def create_axis_report(model, reverse: bool = True) -> dict:
+    """★ **从当前选中的几何建参考轴**（`IModelDoc2.InsertAxis2`）。
+
+    ★ 真机事实（2026-10-01 · 轮 317）：
+      · ★ **入口在 `IModelDoc2`** —— ★ 调 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`；
+      · ★ **返回 `bool`** —— ★ 所以**判据是"特征树多了新特征"**，★ 不是"返回值有 Name"；
+      · ★ 阵列要用它：★ 官方 mark 表 `1 = 方向轴`。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    from sw_connect import get_com_member as _get
+    try:
+        sel_n = int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", -1))
+    except Exception:                                          # noqa: BLE001
+        sel_n = -1
+    if sel_n == 0:
+        return {"ok": False, "stage": "selection", "selected_count": sel_n,
+                "error": "建轴要先选中几何（★ 圆柱面 / 圆锥面 / 两点等；★ 面没有名字，"
+                         "按面上的对象选 —— 事实 32）"}
+    before = feature_names(model)
+    #: ★ 入口在 IModelDoc2 上（★ 不是 FeatureManager）—— ★ 真机定的
+    try:
+        ret = _get(model, "InsertAxis2", bool(reverse))
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "call", "selected_count": sel_n,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                "★": "⚠ 若报 `<unknown>.InsertAxis2` ⇒ 入口用错了（★ 该在 IModelDoc2 上，不是 FeatureManager）"}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    return {"ok": bool(ret) and bool(new), "returned": repr(ret)[:20], "new_features": new,
+            "axis_name": (new[-1] if new else None), "tree_before": len(before),
+            "tree_after": len(after), "selected_count": sel_n, "reverse": bool(reverse),
+            "★": "入口 = `IModelDoc2.InsertAxis2`（★ 不是 FeatureManager）· 回 `bool` ⇒ "
+                 "★ 判据 = **特征树多了新特征**（★ 不要读返回值的 `.Name`）"}
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_part.py —— 追加两个 report 包装（段 3 余下两条）
+# 定位:   ★ 2026-10-03（轮 400）24h 计划 v2 段 3：`add_dimension` / `linear_pattern`。
+#   ★★ **两个裸函数都不做单位换算，而官方 API 吃「米」** —— 这是从官方文档读出来的，不是猜的：
+#     · `IModelDoc2.AddDimension2(X, Y, Z)`：“**Dimension text location in meters**”
+#       ＋ Remarks：“**Before calling this method, you must select the entities**”
+#     · `IFeatureManager.FeatureLinearPattern3`：`Spacing1` / `Spacing2`
+#       “Spacing … **in meters**”；`Num1` = 实例数**含原件**
+#   ⇒ ★ **`linear_pattern` 原来的文档串写着「间距（毫米，⚠ 间距已测）」是错的** ——
+#     ★ 传「毫米数」进去等于**间距被放大 1000 倍**（★ 本轮把它从"未核实"升级为"已核实并写明"）。
+#   ★★ 两个包装都按**规则 2**（对外 `*_mm`，换算只在这一处）× **规则 3**（声明式选择）
+#      × **规则 6**（建完回读）来写；★ `add_dimension` 的"必须先选中实体"直接复用
+#      **段 1 的选择底座**（`resolve_selection`）—— ★ 那正是"把选择底座排在前面"的红利。
+# 官方依据: `C:\swapi\types\IModelDoc2\AddDimension2.md` · `C:\swapi\types\IFeatureManager\FeatureLinearPattern3.md`
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def add_dimension_report(model, x_mm: float, y_mm: float, *,
+                         selector: str = "__current_selection__", kind: str = "EDGE") -> dict:
+    """★ **给已选中的实体加一个显示尺寸**（★ 官方 `IModelDoc2.AddDimension2`，**3 参**）。
+
+    ★★ **单位**：★ 官方原话是 “Dimension text location in **meters**” ⇒
+      ★ 本包装对外收 **`x_mm` / `y_mm`（毫米）**，在**这里**换算成米（★ 规则 2：只换算一次）。
+    ★★ **前置**：★ 官方 Remarks —— “Before calling this method, you must **select the entities**”
+      ⇒ ★ 本包装用**声明式选择器**先选中（★ 规则 3），★ 选不中就**不开工**。
+
+    :param selector: `__current_selection__`（用现有选区）或 `index:<n>`。
+    :param kind: `EDGE` / `FACE` / `VERTEX`。
+    :returns: `{ok, selector, kind, selected, dimension_created, error}` ——
+        ★ `selected` 是**回读的选区计数**；★ `dimension_created` = `AddDimension2` **回了非 None**。
+    """
+    from sw_selection_spec import resolve_selection
+    out: dict = {"ok": False, "selector": str(selector)[:60], "kind": str(kind).upper(),
+                 "selected": None, "dimension_created": False, "error": None}
+    try:
+        out["selected"] = int(resolve_selection(model, selector, kind))
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = ("加尺寸前必须先选中实体（★ 官方 Remarks 明写）—— "
+                        "选择失败：%s: %s" % (type(exc).__name__, str(exc)[:130]))
+        return out
+    try:
+        x = float(x_mm) * 0.001                                    #: ★ 毫米 ⇒ 米（★ 官方吃米）
+        y = float(y_mm) * 0.001
+    except (TypeError, ValueError) as exc:
+        out["error"] = "x_mm / y_mm 必须是数字：%s" % str(exc)[:80]
+        return out
+    try:
+        dim = get_com_member(model, "AddDimension2", x, y, 0.0)
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = "AddDimension2 失败：%s: %s" % (type(exc).__name__, str(exc)[:170])
+        return out
+    out["dimension_created"] = dim is not None
+    out["ok"] = bool(out["selected"]) and out["dimension_created"]
+    if out["selected"] and not out["dimension_created"]:
+        out["error"] = ("选中了 %d 个实体而 `AddDimension2` **回 None** ⇒ 没建成尺寸"
+                        "（★ 常见原因：选中的实体**不足以唯一定义一个尺寸** —— "
+                        "官方 Remarks：make selections **based on location and not name**）"
+                        % out["selected"])
+    return out
+
+
+def linear_pattern_report(model, feature_name: str, spacing_mm: float, count: int, *,
+                          d1_x: float = 1.0, d1_y: float = 0.0, d1_z: float = 0.0,
+                          spacing2_mm: float = 0.0, count2: int = 1,
+                          d2_x: float = 0.0, d2_y: float = 0.0, d2_z: float = 0.0) -> dict:
+    """★ **线性阵列**（★ 官方 `IFeatureManager.FeatureLinearPattern3`），★ 带**特征树回读**。
+
+    ★★ **单位**：★ 官方原话 —— `Spacing1` “Spacing between each instance … **in meters**”
+      ⇒ ★ 本包装对外收 **`spacing_mm`（毫米）**，在**这里**换算成米（★ 规则 2）。
+      ⚠ ★ 这**修正**了 `linear_pattern` 原文档串里「间距（**毫米**）」那句错话。
+    ★★ **`count` 含原件**（★ 官方原话 “including the original”）⇒ `count=3` = 原件 + 2 个实例。
+
+    :param feature_name: 要阵列的特征名。
+    :returns: `{ok, feature_name, tree_before, tree_after, new_features, spacing_mm, count}`
+        ★★ **判据是特征树真的多了**（★ 规则 6 —— **不能只看返回值**：
+        本会话已见过「回对象而什么都没发生」的空存根）。
+    """
+    out: dict = {"ok": False, "feature_name": str(feature_name)[:60], "spacing_mm": None,
+                 "count": None, "tree_before": None, "tree_after": None,
+                 "new_features": [], "error": None}
+    try:
+        n1 = int(count)
+        n2 = int(count2)
+    except (TypeError, ValueError):
+        out["error"] = "count / count2 必须是整数"
+        return out
+    if n1 < 2:
+        out["error"] = "count 必须 ≥ 2（★ 它**含原件** —— 1 就是「没有阵列」）：%r" % count
+        return out
+    if not str(feature_name).strip():
+        out["error"] = "feature_name 不能为空"
+        return out
+    try:
+        s1 = float(spacing_mm) * 0.001                             #: ★ 毫米 ⇒ 米
+        s2 = float(spacing2_mm) * 0.001
+    except (TypeError, ValueError) as exc:
+        out["error"] = "spacing_mm 必须是数字：%s" % str(exc)[:80]
+        return out
+    from sw_feature_readback import feature_names
+    before = feature_names(model)
+    try:
+        #: ★★ 官方签名是 **10 参**（`FeatureLinearPattern3.md` 的 Signature 行）：
+        #:   `Num1, Spacing1, Num2, Spacing2, FlipDir1, FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`
+        #: ★ 而我第一版**传了 15 个** —— ★★ 真机报
+        #:   `com_error: (-2147352562, '无效的参数数目。')`。
+        #:   ★ 记一条：**“读了文档” ≠ “按文档写”** —— 我读了参数表，却凭印象补了尾部。
+        get_com_member(get_com_member(model, "FeatureManager"), "FeatureLinearPattern3",
+                       n1, s1, n2, s2, False, False, "", "", False, False)
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = "FeatureLinearPattern3 失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
+        return out
+    after = feature_names(model)
+    out["tree_before"] = len(before)
+    out["tree_after"] = len(after)
+    out["new_features"] = [x for x in after if x not in before]
+    out["spacing_mm"] = float(spacing_mm)
+    out["count"] = n1
+    out["ok"] = len(after) > len(before)
+    if not out["ok"]:
+        out["error"] = ("`FeatureLinearPattern3` **没抛错而特征树没变** ⇒ 阵列**没建成**"
+                        "（★ 规则 6：不许只看返回值 —— 本会话已见过「回对象而什么都没发生」）")
+    return out

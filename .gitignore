@@ -1,3 +1,10 @@
+# ─────────────────────────────────────────────────────────────────────
+# ★ 2026-10-03 合并：本文件是**两份** .gitignore 的并集
+#   上半 = 原 D:\AI\SW（工作区）的规则 —— 排除 AI Solidworks/(314MB) · _raw/ 等大东西
+#   下半 = 原 sw-skill-fork（代码仓）的规则 —— Python / 构建 / CAD 产物
+#   ⚠ 上半**不可删**：删了那 314 MB 官方文档会变成入库。
+# ─────────────────────────────────────────────────────────────────────
+
 # ── 本仓库是什么 ─────────────────────────────────────────────────────
 # D:\AI\SW 是 SolidWorks 自动化 skill 任务的**工作区与工作日志**。
 # 目的：把「做过什么、怎么做的、结果如何」版本化，避免上下文压缩后丢失。
@@ -42,3 +49,80 @@ cadir/
 # 网络守护的**运行时状态**（守护每 30 秒覆写；不是交付物，不入库）
 net-guard/state.json
 net-guard/*.flag
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+subskills/autocad-automation/dotnet/**/bin/
+subskills/autocad-automation/dotnet/**/obj/
+dotnet/**/bin/
+dotnet/**/obj/
+*.egg-info/
+
+# Node / frontend
+node_modules/
+npm-debug.log*
+vite-dev*.log
+*.tsbuildinfo
+apps/workbench-ui/src-tauri/resources/
+release-output/
+ai_team/*
+!ai_team/provider-ui-e2e.cjs
+!ai_team/release-portable-e2e.cjs
+!ai_team/nsis-install-e2e.ps1
+!ai_team/ui-layout-check.cjs
+!ai_team/workbench-e2e-final.cjs
+!ai_team/delivery-gate-e2e.cjs
+apps/workbench-ui/ai_team/
+apps/workbench-ui/.playwright-cli/
+.spec-workflow/
+
+# SolidWorks files
+*.SLDPRT
+*.SLDASM
+*.SLDDRW
+*.sldprt
+*.sldasm
+*.slddrw
+~$*.SLDPRT
+~$*.SLDASM
+~$*.SLDDRW
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Output files
+*.step
+*.stp
+*.stl
+*.igs
+*.iges
+*.pdf
+*.dxf
+*.dwg
+output/
+exports/
+
+# 由 scripts/refresh_api_signatures.py 生成的 API 签名清单。
+# **工具进仓库、产物留本地**：清单是从 SolidWorks interop 程序集派生的内容，
+# 虽属事实性签名而非创作性表达，但把大体积派生件塞进 MIT 仓库是
+# 不必要的分发风险。任何人装了 SolidWorks 即可一条命令复现。
+.api-signatures/
+.pytest_cache/

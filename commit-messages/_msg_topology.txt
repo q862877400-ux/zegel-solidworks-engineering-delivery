@@ -1,0 +1,79 @@
+feat(topology): 护城河域「拓扑优化」的工程实现（A9）
+
+经核实的三个全网空白域之一：四家外部 MCP 项目在此全空（andrewbartels1 明确列在
+"Not Yet / Simulated"），我们在该域也是 0。本次从零建实现。
+
+## 依据（AGENTS.md 铁律 1/4/5）
+- **官方做法**（流程与语义）：本机官方 CHM `otsimtopology.chm` 解包 `C:\topo_en`
+  的 11 个教程页。CHM 是可靠源 —— 官网是同 Next.js SPA（HTML 里只有 JS payload，
+  抢救区那份前序笔记也记过同一坑）。教程的 6 步流程、目标/约束取值、
+  「夹具从选择集取面」全部照录。
+- **官方签名**（接口与参数顺序）：对 `SolidWorks.Interop.cosworks.dll` 纯元数据反射
+  → `D:\AI\SW\_raw\topo-reflect\{iface,enum}_cosworks.txt`
+  （168 接口 / 363 枚举 / 3224 成员），用本仓库 `tools/reflect-interop.ps1`。
+
+## 打通并写进代码的 API 路径
+    ICWModelDoc.get_StudyManager()            → CWStudyManager
+      CreateNewStudy3(name, 13, meshType, &err)   ← 13 = swsAnalysisStudyTypeTopology_Static
+    ICWStudy.get_TopologyStudyManager()       → CWTopologyStudyManager
+      BeginEdit() / CreateGoal / Create*Constraint / Create*Control / EndEdit()
+    ICWStudy.get_TopologyStudyOptions()       → 迭代与收敛选项
+    ICWStudy.get_LoadsAndRestraintsManager()  → 夹具与外载（复用 sw_simulation 的入口）
+
+## ⚑ 两处推翻前序笔记的发现
+1. **事务括号才是关键，不是选择集。** `ICWTopologyStudyManager` 与**每一条**
+   `CWTopology*Constraint` 都成对提供 `BeginEdit`/`EndEdit` —— 官方 UI 的每一步在
+   API 上都是「一对事务之间的若干 Set*」。**不包事务的 `Set*` 会静默不落地**，
+   这正是前序笔记里「约束没落到研究上」的症状。`_edit()` 把它变成强制：
+   BeginEdit → 动作 → EndEdit，且 **EndEdit 返回非 0 即抛异常**（异常路径也必调
+   EndEdit，否则研究会留在编辑态）。
+   前序笔记把 `CreateMassConstraint + SetValue` 判为「走错 API 层级」——
+   反射显示这**正是**官方接口。
+2. **SolidWorks API 没有「创建选择集」的方法。** 对 sldworks interop 反射
+   （1032 接口 / 20627 成员）后，`ISelectionSet` 族只有 GetSelectionSetFolder /
+   GetSelectionSetItems / GetSelectionSetItemTypes / RemoveSelectionSet /
+   GetSelectionSetByName / GetSelectionSets / RemoveFromSelectionSet
+   —— **只读、只删、不能建**。故官方 UI 教程依赖的「预建 Selection Set」路径
+   在 API 上不通，夹具与外载必须走「先选好实体再调 Add*」（同 sw_simulation）。
+   按铁律 5 未提供建选择集的入口，不编。
+
+## 交付物
+- `scripts/sw_topology.py`（新，26 个导出）：枚举常量 6 组、`create_topology_study`、
+  目标与三类约束（质量百分比 / 安全系数 / 应力）、四类制造控制（保留区 / 对称 /
+  脱模 / 厚度）、迭代选项、`run_topology_study`、`collect_topology_evidence`
+- `tests/test_sw_topology_contract.py`（新，8 条）：枚举值与反射逐条对账（官方值
+  在测试里**独立再抄一份**做交叉校验）、成员名全部存在于反射（认 getter 前缀）、
+  Create* 的出参占位一致、事务纪律的三条行为测试
+- `capabilities.yaml`：登记 `topology_optimization`
+
+## ⚠ 如实标 level=stitched，不标 verified
+代码与契约测试都在，但**从未在 SolidWorks 上跑过**。按五级枚举 stitched =
+「代码已并入，从未运行」；升 verified 需真机跑出 Material Mass 结果。
+**低报是对的，高报违反 A7。** limitations 里列明了五条边界
+（未实测 / 只能单实体 / 选择集不可用 / 结果读取未实现 / 事务纪律未真机验证）。
+
+⚠ 结果读取（Material Mass 图、收敛数据、Export Smoothed Mesh）**未实现** ——
+反射里未核到对应成员，按铁律 5 不编。
+
+## 一处未裁定的冲突（已在模块来源块里显式标注，未默默选边）
+`scripts/audit_call_arity.py` 的口径是「`&` 出参不计入 arity」，而
+`scripts/sw_simulation.py` 的既有做法是**传占位 `0`**。两者未对齐 ——
+本模块沿用既有模式（铁律 1），故 arity 审计把这 11 处报成「存疑」
+（sw_simulation 的 6 处同形）。**该冲突应由发布门禁裁定，不由本模块自定。**
+
+## 验证（实际跑过）
+  python -m compileall -q scripts tools apps tests         exit 0
+  python -m pytest tests/test_sw_topology_contract.py       8 passed
+  python scripts\check_member_names.py                      [PASS]
+  python scripts\check_provenance.py                        [PASS]
+  python scripts\check_diff_markers.py                      [PASS] 243 个 .py
+  python scripts\check_union_conventions.py                 6 组全 PASS（含新登记的条目）
+  python tools\prove_authorization_check.py                 5 命中 / 6 放过
+  python -m pytest tests -q                                 6 failed / 749 passed / 15 skipped
+  ⚠ 与基线逐条相同（那 6 个是既有基线失败）；749 = 741 + 本批 8 条新测试，零新增失败
+
+## 顺带修掉自己的一处过严
+`tests/test_unattended_equivalence.py` 的 `test_denied_count_unchanged` 断言
+「被拒条数不变」—— 新增一条能力会**合法地**改变它（20→21），本批登记
+`topology_optimization` 时被误伤。改为逐条不变量：基线里 allowed 的仍 allowed，
+且基线之外新出现的授权条目必须真的 level == verified（与 R11 同源）。

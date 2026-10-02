@@ -1,0 +1,76 @@
+{
+  "_comment": "★ 判据登记表 —— 每条记一个**回读判据**、它的**已知成功场景**、以及那份**证据**。tools/check_judge_preflight.py 读这张表。★ 依据：plan-200r-v3 §〇（能力好好的而它看起来坏了 · 五次实例）与 specs/150-judge-first-rollout/spec.md 的 R1/R2。",
+  "judges": [
+    {
+      "id": "loads_count_plus_one",
+      "what": "回读 `ICWLoadsAndRestraintsManager.Count`，看它是否**恰好 +1**",
+      "where": "scripts/sw_simulation_loads.py::_report 的 `ok = err is None and after == before + 1`",
+      "known_good_scenario": "tools/prove_loads_groupa3.py",
+      "known_good_note": "同一批里 `distributed_mass` 0→1 · `force` 1→2 · `remote_load` 2→3 —— ★ **单调序列**，★ 假不了",
+      "evidence": "output/loads-groupa3-evidence.json",
+      "usable_on": [
+        "静力算例上的结构载荷（distributed_mass / force / remote_load / elastic_connector）",
+        "热算例上的热载荷（convection / heat_flux / heat_power / temperature / radiation）"
+      ],
+      "unusable_on": [
+        "★ 涉及**顶点选择**的双实体连接件（link_connector / rigid_connector）—— ★ 实测：有时返 `-1`（取不到），有时报 `0x80010105`（服务器出现意外情况）或 `0x800706BA`（远程过程调用失败）。★ 同一段代码、同一台机、同一天出现过「成 / 不成 / 成」⇒ **间歇性**"
+      ],
+      "preconditions": [
+        "★ 算例名必须**每次唯一**（重名会让 Count 取不到 —— 事实 329 有效修法之一）",
+        "★ 算例类型必须对：热载荷要 thermal，结构载荷要 static（事实 323/330）",
+        "★ 选实体前先 `ClearSelection2(True)`（事实 320）"
+      ],
+      "unusable_evidence": "output/connectors-two-evidence.json",
+      "kind": "judge"
+    },
+    {
+      "id": "count_property_on_a_fresh_study",
+      "what": "在一个**刚建好的**算例上直接读 `Count` 属性",
+      "where": "tools/probe_loads_count_studytype.py（诊断用）",
+      "known_good_scenario": "tools/probe_loads_count_studytype.py",
+      "known_good_note": "★ 真机：static(0) 与 thermal(3) **两种算例上都回 0** ⇒ ★ 它**本身是可用的**",
+      "evidence": "output/loads-count-studytype-evidence.json",
+      "usable_on": [
+        "刚建好的算例（未施加任何载荷）"
+      ],
+      "unusable_on": [
+        "★ **施加过一次载荷之后** —— ★ 实测会转成 `0x80010105`（事实 332）"
+      ],
+      "preconditions": [],
+      "unusable_evidence": "output/judge-alternatives-evidence.json",
+      "kind": "judge"
+    },
+    {
+      "id": "loads_count_plus_one_first_load",
+      "what": "★ 「**第一个载荷**那次的回读会崩」—— ★ 这是一条**曾被提出、后被真机否掉**的假设",
+      "where": "（假设已否，仅登记以免重走）",
+      "known_good_scenario": "",
+      "known_good_note": "（★ 不适用 —— 本条记的是**被否掉的假设**）★ 换两个不同载荷当「第一个」⇒ **两次都成了**（`distributed_mass` 0→1 · `force` 0→1）⇒ ★ **假设被否**",
+      "evidence": "output/first-load-rule-evidence.json",
+      "usable_on": [],
+      "unusable_on": [
+        "★ **不是判据** —— ★ 登记它是为了**钉住一条被否的假设**（事实 334）"
+      ],
+      "preconditions": [],
+      "unusable_evidence": "output/first-load-rule-evidence.json",
+      "kind": "refuted"
+    },
+    {
+      "id": "load_objects_by_index",
+      "kind": "refuted",
+      "what": "按序号取载荷对象（`GetLoadsAndRestraints(i, out_i4())`）再数它们——★ **想用它当“不依赖 `Count` 的新判据**”",
+      "where": "tools/probe_judge_object_type.py",
+      "known_good_scenario": "",
+      "known_good_note": "（★ 不适用 —— 本条记的是**被否掉的判据候选**）",
+      "evidence": "output/judge-object-type-evidence.json",
+      "usable_on": [],
+      "unusable_on": [
+        "★★ **它的 `i` 不是载荷的序号** —— 真机（在已知成功的 `apply_force` 上）：只加了**一个**力，而它回 **0 → 16** 个条目，**16 个全是同一个载荷**（`Name='力-1'` · `Type=3` · `EntityCount=1`）⇒ 按**元素**回",
+        "★★★ **危害**：若拿它当判据，会把 **16 个元素当成 16 个载荷** —— ★ **那是个假绿**，而且**比崩溃更危险**（崩溃会报错，语义错会给出看起来对的结果）"
+      ],
+      "unusable_evidence": "output/judge-object-type-evidence.json"
+    }
+  ],
+  "not_judges_comment": "★ 下面这些**不是**回读判据（★ 免得被误当成判据去'验'）：证据文件里的 `judgement` / `verdict_judgement` 字段是**判据的结果**；`docs/dead-ends.md` 是结论不是判据。",
+  "_kinds_comment": "★ `kind` 两值：**`judge`** = 回读判据（★ 它的 `evidence` 必须 `verdict: pass`——那才叫“已知成功”）；**`refuted`** = **被否掉的假设**（★ 它的 `evidence` **不能**是 pass——★ 因为它证的就是“没成”）。"
+}
