@@ -1,0 +1,47 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件49"
+  },
+  "counts_before": {
+   "ok": true,
+   "counts": {
+    "parting_lines": null,
+    "parting_surfaces": null,
+    "cavity_surfaces": null,
+    "core_surfaces": null
+   }
+  },
+  "negative_unprepared": {
+   "ok": true,
+   "err": "RuntimeError: InsertMoldPartingLine 返回 None —— 常见原因：未选拔模方向参考"
+  },
+  "select_plane": {
+   "ok": true,
+   "plane": "前视基准面"
+  },
+  "insert_parting_line": {
+   "ok": false,
+   "err": "RuntimeError: InsertMoldPartingLine 返回 None —— 常见原因：未选拔模方向参考"
+  },
+  "counts_after": {
+   "ok": true,
+   "counts": {
+    "parting_lines": null,
+    "parting_surfaces": null,
+    "cavity_surfaces": null,
+    "core_surfaces": null
+   }
+  },
+  "count_increased": {
+   "ok": false,
+   "before": 0,
+   "after": 0,
+   "note": "★ 判据：parting_lines 计数必须**真的增加**（★ 定量）"
+  }
+ },
+ "at": "2026-10-03T01:29:25",
+ "verdict": "partial",
+ "note": "★ 本探针补 `mold_parting_geometry` 的**写入那半**（★ 既有冒烟只覆盖只读）；★ 关键在**先按契约选拔模方向参考** —— 未选时官方返回 None（★ 已用反证验到）。"
+}
