@@ -1,0 +1,89 @@
+{
+ "at": "2026-10-03T06:47:23",
+ "trials": [
+  {
+   "trial": "FeatureLinearPattern3",
+   "selected": true,
+   "raw_type": "NoneType",
+   "raw_is_none": true,
+   "tree_before_after": [
+    7,
+    7
+   ],
+   "tree_new": [],
+   "geom_changed": false,
+   "geom": {
+    "bodies": 1,
+    "box": [
+     -8.0,
+     -8.0,
+     -10.0,
+     8.0,
+     8.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "trial": "FeatureLinearPattern4",
+   "selected": true,
+   "raw_type": "NoneType",
+   "raw_is_none": true,
+   "tree_before_after": [
+    7,
+    7
+   ],
+   "tree_new": [],
+   "geom_changed": false,
+   "geom": {
+    "bodies": 1,
+    "box": [
+     -8.0,
+     -8.0,
+     -10.0,
+     8.0,
+     8.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "trial": "FeatureLinearPattern5",
+   "selected": true,
+   "err": "com_error: (-2147352561, '非选择性的参数。', None, None)",
+   "tree_before_after": [
+    7,
+    7
+   ],
+   "tree_new": [],
+   "geom_changed": false,
+   "geom": {
+    "bodies": 1,
+    "box": [
+     -8.0,
+     -8.0,
+     -10.0,
+     8.0,
+     8.0,
+     0.0
+    ]
+   }
+  }
+ ],
+ "feature_name": "凸台-拉伸1",
+ "before_tree": 7,
+ "before_geom": {
+  "bodies": 1,
+  "box": [
+   -8.0,
+   -8.0,
+   -10.0,
+   8.0,
+   8.0,
+   0.0
+  ]
+ },
+ "any_geom_changed": false,
+ "verdict": "fail",
+ "note": "★ 三代逐个试，★ 选区逐字照搬 circular_pattern（★ 而它**能用**）。★ 判据：★ **原始返回值** + 特征树 + ★★ **几何**（★ 阵列必须改变包围盒）。"
+}
