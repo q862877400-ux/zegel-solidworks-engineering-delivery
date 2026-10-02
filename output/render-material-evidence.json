@@ -1,21 +1,24 @@
 {
-  "steps": {
-    "create": {
-      "ok": true
-    },
-    "add": {
-      "ok": false,
-      "ret": "True",
-      "count": 0,
-      "before": 0
-    },
-    "negative_index": {
-      "ok": false,
-      "ret": "True"
-    }
+ "steps": {
+  "empty_file_name_rejected": {
+   "ok": true,
+   "msg": "file_name 不能为空 —— 外观必须绑定一个 `.p2m` 材质文件，否则 `AddDisplayStateSpecific"
   },
-  "captured_at": "2026-10-02T18:15:15",
-  "passed": 1,
-  "of": 3,
-  "verdict": "partial"
+  "create": {
+   "ok": true
+  },
+  "add_entity": {
+   "ok": true
+  },
+  "add": {
+   "ok": true
+  },
+  "list": {
+   "ok": true,
+   "n_via_ours": 1,
+   "n_via_count2": 1
+  }
+ },
+ "verdict": "pass",
+ "captured_at": "2026-10-02T22:52:35"
 }
