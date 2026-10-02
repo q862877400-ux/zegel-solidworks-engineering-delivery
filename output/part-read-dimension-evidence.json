@@ -1,0 +1,38 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件76"
+  },
+  "neg_auto_dim_no_sketch": {
+   "ok": true,
+   "value": {
+    "status": "blocked",
+    "status_code": null,
+    "error_code": "SKETCH_NOT_ACTIVE"
+   }
+  },
+  "current_sketch_name_open": {
+   "ok": true,
+   "value": "草图1",
+   "note": "★ 中文 UI 下应是「草图N」；★ 若回了 English fallback 则说明取不到"
+  },
+  "auto_dimension_active": {
+   "ok": true,
+   "value": {
+    "status": "pass",
+    "status_code": 0,
+    "error_code": null,
+    "selected": 2
+   }
+  },
+  "neg_name_after_close": {
+   "ok": true,
+   "value": "MY_FALLBACK_XYZ",
+   "note": "★ 验证的是**已文档化的局限**：★ 关闭后回退值 ≠ 真名"
+  }
+ },
+ "at": "2026-10-03T02:30:27",
+ "verdict": "pass",
+ "note": "★ 段 3 的两条（无单位歧义）；★ `add_dimension` / `linear_pattern` 因**单位存疑**（包装不换算而官方吃米、文档写毫米）**留到下一轮先测**。"
+}

@@ -1,10 +1,11 @@
 {
  "summary": {
   "total": 99,
-  "该挂": 66,
-  "不做": 14,
+  "该挂": 59,
+  "不做": 15,
+  "已有": 6,
   "内部件": 19,
-  "★": "三类之和必须 == total（★ 本脚本自检）",
+  "★": "四类之和必须 == total（★ 本脚本自检）",
   "★口径差异": "本脚本报 108 而 audit_real_gaps 报 101 —— ★ 两者对「被上游调」的判定略有不同（本脚本用字面量匹配）；★ 本文件的 108 是本轮作业的口径，★ 而两者的模块级分布一致。",
   "self_check": true
  },
@@ -42,32 +43,32 @@
   {
    "module": "sw_part",
    "name": "shell",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `shell_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_part",
    "name": "hole_wizard",
-   "kind": "该挂",
-   "why": ""
+   "kind": "不做",
+   "why": "函数体只有 `pass`（**空实现** —— 调了什么都不会发生）"
   },
   {
    "module": "sw_part",
    "name": "rib",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `rib_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_part",
    "name": "insert_dome",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `insert_dome_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_part",
    "name": "insert_composite_curve",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `insert_composite_curve_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_simulation",
@@ -114,8 +115,8 @@
   {
    "module": "sw_simulation",
    "name": "create_mesh",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `create_mesh_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_simulation",
@@ -504,8 +505,8 @@
   {
    "module": "sw_selection_spec",
    "name": "resolve_entity",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `resolve_entity_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_surface",

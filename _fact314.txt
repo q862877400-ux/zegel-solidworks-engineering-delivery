@@ -1,0 +1,70 @@
+| 314 | **分诊的第四、五层证据（★ 两层都是自动化抓到的假缺口）**：`*_report` 包装已暴露 ⇒ 不是缺口（6 条）；**函数体只有 `pass` 的空存根 ⇒ 不做**（★ 抓到 `sw_part.hole_wizard`）· 段 3 两条真机 PASS（2026-10-03，轮 399）。
+
+## 一、★★★★★ 第四层：**功能已由另一个包装暴露** ⇒ 不是缺口（★ 6 条）
+```
+★ 起因：★ 系统工具面里明明有 `solidworks_part_shell` / `rib` / `insert_dome` /
+   `insert_composite_curve`，★ 而分诊仍把 `sw_part.shell` 等判成「该挂」。
+★ 核（★ 核功能不核名字 —— 铁律 4）：
+   ```
+   solidworks_part_shell                   → sw_part.shell_report
+   solidworks_part_rib                     → sw_part.rib_report
+   solidworks_part_insert_dome             → sw_part.insert_dome_report
+   solidworks_part_insert_composite_curve  → sw_part.insert_composite_curve_report
+   solidworks_part…（另有 2 条同理）
+   ```
+⇒ ★★ **即：能力**已经挂着**，只是**名字不同** —— ★ 原函数是"裸的"、工具指向 `*_report` 包装**（那才是 MCP 该有的形态）。
+⇒ ★ 规则：★ `classify()` 里加一条 —— **`name + "_report"`（或 `create_<name>_report`）已是工具目标 ⇒ 判「已有」**
+   ★★ 并且**理由里写出是哪个包装**（★ 可核对）。
+★ 效果：★ 该挂 66 → **60** · 新增「已有」6；★ 而 `sw_selection_spec` 的 2 条也一并归零（★ 已无缺口）。
+```
+
+## 二、★★★★★ 第五层：**空存根**（★ `pass`-only）⇒ 不做（★ 自动化抓到）
+```
+★ 真例（★ 我本来准备挂它）：
+   ```
+   def hole_wizard(model, hole_type, standard, fastener_type, size, depth, x, y, z):
+       """
+       异型孔向导（简化版）
+       注意：完整的异型孔向导参数复杂，建议参考 API 文档调整
+       """
+       pass
+   ```
+⇒ ★★★ **它有名字、有参数、有文档串**（★ 文档串甚至像"已经想过"）—— ★★ **而实现是空的**。
+⇒ ★★★★ **挂出去必然什么都不发生**，★ 而且**比 `sketch_spline` 那种"会报错"的更糟**：
+   ★ **它会静默成功**（★ 与事实 40 同一条定则：*一个失败如果看起来像正常值，比没有守卫更糟*）。
+★ 规则：★ `is_empty_stub(module, name)` —— 用 AST 剥掉 docstring 后，看函数体是不是
+   **空**（连 `pass` 都没有）或**只有 `pass`** ⇒ 判「不做」并写明原因。
+★ 效果：★ 该挂 60 → **59** · 不做 14 → **15**（★ 而这是**自动**抓到的，不靠人眼逐个看）。
+```
+
+## 三、★★★★★ 段 3 本批：2 条真机 PASS（★ 另 2 条因**单位存疑**故意押后）
+```
+真机（走 `sw_guard` · `output/part-read-dimension-evidence.json` · `verdict: pass` 4/4）：
+   ```
+   current_sketch_name（草图打开时） ⇒ **「草图1」**（★ 真名，不是 English fallback）✓
+   auto_dimension_sketch（有活动草图）⇒ **status=pass · status_code=0 · selected=2** ✓
+   neg：**没有活动草图**时 ⇒ **status=blocked · error_code=SKETCH_NOT_ACTIVE** ✓
+   neg：草图**关闭后** + 自定义回退值 ⇒ 回**那个回退值**（★ 验证的是**已文档化的局限**）✓
+   ```
+★★ **押后 2 条的理由（★ 写清，不含糊）**：`add_dimension`（`AddDimension2(x, y, z)`）与
+   `linear_pattern`（`FeatureLinearPattern3(count, spacing, …)`）的**包装都不做单位换算**，
+   ★ 而官方 API 吃**米**、★ 而 `linear_pattern` 的文档串却写着**毫米**（★ 并注明"间距已测"）。
+   ⇒ ★★ **在把单位测清楚之前挂出去，会把"单位"这个错固化进工具面**（★ 规则 2 的反面教材）
+   ⇒ ★ **下一轮先做一个测单位的实验**（★ 用包围盒/尺寸读回判定），再挂。
+```
+
+## 四、★ 分诊现在的五层证据（★ 逐层都是一次真机/契约事故换来的）
+```
+① 函数名（★ 第一层）
+② 它调的 COM 成员（★ 第二层 —— 事实 302）
+③ 枚举常量 / 文档串（★ 第三层 —— 事实 311，★ 且必须**全词匹配**：`THEME` 含 `HEM`）
+④ `*_report` 包装已是工具目标（★ 第四层 —— 本轮）
+⑤ 空存根（`pass`-only）（★ 第五层 —— 本轮）
+⇒ ★ 五层都无 ⇒ 才判「该挂」✓ · ★ 而每一层都配**反向保护**测试（★ 不许把真能力吞掉）。
+```
+
+**依据**：`output/real-gap-triage.json`（★ 该挂 59 / 已有 6 / 内部件 19 / 不做 15）·
+`output/part-read-dimension-evidence.json`（★ `verdict: pass`）·
+`tools/triage_real_gaps.py` 的 `exposed_by_wrapper` / `is_empty_stub` ·
+`tests/test_real_gap_triage_contract.py`（27 passed）· `tests/test_sw_part_read_dimension_contract.py`（9 passed）·
+`scripts/sw_part.py` 的 `hole_wizard`（★ `pass`）· 事实 40 / 302 / 311 / 313
