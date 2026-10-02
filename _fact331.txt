@@ -1,0 +1,60 @@
+| 331 | **新增第 21 道门禁：出厂类型库对照** —— ★ 把轮 415 的发现**机械化**；★ 它第一次跑抓到 **3 处**（1 真发现 + 2 处是检查器自己太粗）；★ 新增一条**零依赖**读厂源的路（2026-10-03，轮 416）。
+
+## 一、★★★★★ 那条**零依赖**的路（★ 本轮的技术内核）
+```
+★★ 出厂类型库**就在盘上、而且是托管程序集** ⇒ ★ 用 **PowerShell 的 .NET 元数据反射**离线读：
+   ```powershell
+   [Reflection.Assembly]::LoadFrom('…\api\redist\SolidWorks.Interop.cosworks.dll')
+   $t.GetMethods() | ? { $_.Name -like 'Add*' } | % { $_.Name; $_.GetParameters() }
+   ```
+   ★ 零 Python 依赖 · ★ **不需要 SolidWorks 在跑** · ★ 给出的就是**本机那一版**（`34.4.1.1011`）。
+⇒ ★ 而它比 CHM 硬：★ CHM 是 **2021 版**，★ 反射是**当前这一版**（铁律 4 的裁决者）。
+```
+
+## 二、★★★★★ 检查器第一次跑：**3 处不符**（★ 而它教会我"检查器也会太粗"）
+```
+① ★★ **真发现**：`_REFGEOM_MEMBERS` 缺 `AddPrescribedDisplacement`
+   —— ★ 而反射说它的 `RefGeom` 在**第 4** 个实参：
+   ```
+   AddPrescribedDisplacement(Displacements, NLengthUnit, DispArray, **RefGeom**)   → 位置 3（0 基）
+   ```
+   ★★★ **而 `_check` 把"位置"写死成了 `tail[2]`** ⚠ ⇒ ★ 照旧写法把它加进名单，
+     ★ 会**把 `DispArray` 当 `RefGeom` 去换** ⇒ ★★ **比不换更坏**。
+   ⇒ ★ 修法（★ 本轮已做）：★ **`_REFGEOM_MEMBERS` 改成「成员 → 位置」的表**
+     （`_REFGEOM_POSITIONS`），★ 并**按表里的位置换**。★ 表里逐条写明依据（反射给的形参表）。
+② ★ **2 处是检查器自己太粗**：★ 我把 `GetEdgeWeldConnector` / `GetLoadsAndRestraints` 也拿去比
+   —— ★★ 而 `_ERRORCODE_MEMBERS` **只服务 `Add*`**（`_check` 只被它们用）
+   ⇒ ★ 拿 `Get*` 去比就是**假阳性**。★ 已按**表的用途**过滤。
+   ⇒ ★★ 教训：★ **"拿哪张表比哪一批成员"要按表的用途定**，★ 不是"名字像就比"。
+```
+
+## 三、★ 顺带核了第三张表：`OFFICIAL_LOAD_SIGNATURES`（arity 表）**21 条全对** ✓
+```
+★ 逐条比"**非 `ByRef` 形参的个数**"：
+   AddForce 3 · AddRemoteLoad 6 · AddTemperature 1 · AddDistributedMass 3 · AddRadiation 2 ·
+   AddForce2 4 · AddForce3 20 · AddPrescribedDisplacement 4 · AddSpringConnector 3 …
+   ⇒ ★★ **与仓里的表逐条一致** ⇒ ★ **只有 `_ERRORCODE_MEMBERS` 那张不全**（轮 415 已修）。
+```
+
+## 四、★ 处置
+```
+① ★ **新增 `tools/check_typelib_tables.py`** —— ★ 读仓里三张表 + 读类型库 + 逐条比；
+   ★ 判据：**0 处不符**；★ 而**便携性**照既有约定：★ 拿不到那个 DLL ⇒ `[SKIP]` + exit 0。
+② ★ **接为第 21 道门禁**（`_run_typelib_tables_gate` + 汇总进 `_gate_results` +
+   `docs/gate-classification.json` 登记 `hard`）——
+   ★★ 而**元门禁当场要求"登记分类"**（★ 那是它第三次尽到职责）。
+③ ★ 现三张表与出厂类型库 **0 处不符** ⇒ ★ 门禁绿。
+```
+
+## 五、★ 与轮 415 合起来是一条**通例**
+```
+★★ **能力层里凡"手抄的成员表"都该对着出厂源核** —— ★ 因为"手抄就会漏"，★ 而**漏的后果
+   不是报错、而是"看起来坏了"**（★ 轮 415 的 `AddTemperature` 正是如此）。
+★★ 而现在这件事**有了一条零依赖的路**（PowerShell 反射）⇒ ★ **它可以从"人记得核"变成"门禁每次核"**。
+   ★ 这正是本项目「**把验证责任转移到静态比对**」那条纪律的一个干净落点。
+```
+
+**依据**：`tools/check_typelib_tables.py`（★ 新，`[OK] 0 处不符`）·
+`scripts/release_check.py` 的 `_run_typelib_tables_gate` 与 `"typelib_tables"` ·
+`docs/gate-classification.json`（21 条）· `scripts/sw_simulation_loads.py` 的 `_REFGEOM_POSITIONS` ·
+`SolidWorks.Interop.cosworks.dll` **34.4.1.1011** 的元数据反射 · 事实 330 · 铁律 4
