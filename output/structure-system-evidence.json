@@ -1,0 +1,22 @@
+{
+ "trials": [],
+ "at": "2026-10-03T06:18:58",
+ "sketch": "草图1",
+ "tree_before": 19,
+ "select_stats": [
+  true,
+  true
+ ],
+ "selected_count": 2,
+ "member_data_none": false,
+ "profile_none": false,
+ "size_used": "ROUND BAR 23",
+ "size_errors": [],
+ "segments_got": 2,
+ "set_path_segments": "TypeError: 'bool' object is not callable",
+ "create_err": "TypeError: 'NoneType' object is not callable",
+ "tree_after": 19,
+ "new_features": [],
+ "verdict": "partial",
+ "note": "★ 走事实 358 的官方序列：选线段（EXTSKETCHSEGMENT）⇒ CreateStructureSystemMemberData(0) ⇒ MemberProfile(GB/round-rods/…）⇒ GetSelectedObject6 装 segments ⇒ SetPathSegments ⇒ CreateStructureSystem。★ 判据：★ 特征树**有增量**（★ 不拿 COM 返回值当判据）。"
+}
