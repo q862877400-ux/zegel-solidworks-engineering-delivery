@@ -1,0 +1,28 @@
+{
+ "steps": {
+  "setup": {
+   "ok": true,
+   "boss": "凸台-拉伸2",
+   "tree": 9,
+   "title": "零件10"
+  },
+  "add_dimension": {
+   "ok": false,
+   "selected": 2,
+   "dimension_created": false,
+   "error": "选中了 2 个实体而 `AddDimension2` **回 None** ⇒ 没建成尺寸（★ 常见原因：选中的实体**不足以唯一定义一个尺寸** —— 官方 Remarks：make selections **based on location and not name**）"
+  },
+  "linear_pattern": {
+   "ok": false,
+   "tree": [
+    9,
+    9
+   ],
+   "new_features": [],
+   "error": "`FeatureLinearPattern3` **没抛错而特征树没变** ⇒ 阵列**没建成**（★ 规则 6：不许只看返回值 —— 本会话已见过「回对象而什么都没发生」）"
+  }
+ },
+ "at": "2026-10-03T03:09:55",
+ "verdict": "partial",
+ "note": "★ 上一轮（400）把这两条判成「未建成」并回退注册；★ 轮 405 的**边对穷举表**显示 `AddDimension2` 其实能建 ⇒ ★★ **真因是上一轮探针选区不干净**（★ 本探针每次选前一律 `ClearSelection2`）。"
+}

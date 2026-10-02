@@ -8,11 +8,11 @@
 
 | # | 量 | 值 | 怎么取的 |
 |---|---|---|---|
-| 1 | 我们登记的 MCP 工具 | **208** | `register_capabilities.all_specs()` |
-| 2 | ★ **本计划新增的工具** | **+16** | ★ 与基线差：`git show a9c7a54:docs/metrics.md` 记 **192** ⇒ 208 − 192 |
+| 1 | 我们登记的 MCP 工具 | **209** | `register_capabilities.all_specs()` |
+| 2 | ★ **本计划新增的工具** | **+17** | ★ 与基线差：`git show a9c7a54:docs/metrics.md` 记 **192** ⇒ 208 − 192 |
 | 3 | 真缺口（分诊口径） | **94** | `tools/triage_real_gaps.py`（**该挂 46 · 已有 14 · 内部件 19 · 不做 15**） |
 | 4 | 能力条目 | **79** | `capabilities.yaml`（`verified` **66** · `stitched` **12** · `not_implemented` **1**） |
-| 5 | 门禁 | **19** | `scripts/release_check.py`（内部 18 道 + 语法门禁） |
+| 5 | 门禁 | **20** | `scripts/release_check.py`（内部 18 道 + 语法门禁） |
 | 6 | 证据文件 | **105** 份，其中 `verdict: pass` **75** 份 | `output/*evidence*.json` |
 | 7 | 计划基线 commit | `a9c7a54` | ★ 段 0 之前那个 |
 
@@ -39,7 +39,7 @@
           · select_by_selector · resolve_entity
 段 2（5）sketch_add_arc · sketch_add_ellipse · sketch_add_polygon · sketch_add_slot
           · sketch_add_centerline
-段 3（2）current_sketch_name · auto_dimension_sketch
+段 3（3）current_sketch_name · auto_dimension_sketch · add_dimension
 段 4（1）hole_pattern                     段 5（1）simulation_apply_elastic_connector
 段 6（1）export_image
 ```
@@ -106,7 +106,7 @@
 ① ★ **仿真载荷族**：从 CHM 抄 `Add{Convection,HeatFlux,HeatPower,Temperature,Radiation}` 的
    **官方 VB 声明**（★ 照既有来源块的体例），★ 再对着写 —— ★ 不继续试参数（事实 317）
 ② ★ **`export_flat_pattern_dxf`**：先造一个**钣金件**（`create_base_flange` 那条链）再接上（事实 318）
-③ ★ **`add_dimension` / `linear_pattern`**：★ 试**两条平行边**（★ 当前用的是相邻边 —— ★ 线性尺寸要平行实体）
+③ ★ **`add_dimension`**：★★ **已落地（轮 405）** —— 用**边对穷举表**（事实 53 的处方）证实它**能建**（8/8），★ 而轮 400 判「未建成」的真因是**探针选区不干净** ⇒ 已**恢复注册**。★ 而 **`linear_pattern` 仍不注册**，卡点收敛为「`DName1`/`DName2` 是**方向维度的名字**，空字符串 = 没有方向」
 ④ ★ **objective② 的画图域**（`balloon` / `datum` / `jog` / `hem`）：★ 要**建工程图** —— ★ 那是一条新链
 ⑤ ★ **§三 那条教训的推广**：★ 全仓扫一遍"**有契约测试但从不真调**"的函数
    —— ★★ 它们正是这一类"导入缺失 / 空存根"的藏身处

@@ -1,0 +1,165 @@
+{
+ "pairs": [
+  {
+   "pair": [
+    0,
+    1
+   ],
+   "selected": 2,
+   "created": true,
+   "err": ""
+  },
+  {
+   "pair": [
+    0,
+    2
+   ],
+   "selected": 2,
+   "created": true,
+   "err": ""
+  },
+  {
+   "pair": [
+    0,
+    3
+   ],
+   "selected": 2,
+   "created": true,
+   "err": ""
+  },
+  {
+   "pair": [
+    0,
+    4
+   ],
+   "selected": 2,
+   "created": true,
+   "err": ""
+  },
+  {
+   "pair": [
+    0,
+    5
+   ],
+   "selected": 2,
+   "created": false,
+   "err": "选中了 2 个实体而 `AddDimension2` **回 None** ⇒ 没建成尺寸（★ 常见原因：选中的实体**不足以唯一定义一个尺"
+  },
+  {
+   "pair": [
+    0,
+    6
+   ],
+   "selected": 1,
+   "created": false,
+   "err": "选中了 1 个实体而 `AddDimension2` **回 None** ⇒ 没建成尺寸（★ 常见原因：选中的实体**不足以唯一定义一个尺"
+  },
+  {
+   "pair": [
+    0,
+    7
+   ],
+   "selected": 2,
+   "created": true,
+   "err": ""
+  },
+  {
+   "pair": [
+    0,
+    8
+   ],
+   "selected": 2,
+   "created": true,
+   "err": ""
+  },
+  {
+   "pair": [
+    0,
+    9
+   ],
+   "selected": 2,
+   "created": false,
+   "err": "选中了 2 个实体而 `AddDimension2` **回 None** ⇒ 没建成尺寸（★ 常见原因：选中的实体**不足以唯一定义一个尺"
+  },
+  {
+   "pair": [
+    0,
+    10
+   ],
+   "selected": 1,
+   "created": false,
+   "err": "选中了 1 个实体而 `AddDimension2` **回 None** ⇒ 没建成尺寸（★ 常见原因：选中的实体**不足以唯一定义一个尺"
+  },
+  {
+   "pair": [
+    0,
+    11
+   ],
+   "selected": 2,
+   "created": true,
+   "err": ""
+  },
+  {
+   "pair": [
+    1,
+    2
+   ],
+   "selected": 2,
+   "created": true,
+   "err": ""
+  }
+ ],
+ "at": "2026-10-03T03:09:26",
+ "edge_count": 12,
+ "edges_repr": [
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>",
+  "<COMObject GetEdges>"
+ ],
+ "successes": [
+  [
+   0,
+   1
+  ],
+  [
+   0,
+   2
+  ],
+  [
+   0,
+   3
+  ],
+  [
+   0,
+   4
+  ],
+  [
+   0,
+   7
+  ],
+  [
+   0,
+   8
+  ],
+  [
+   0,
+   11
+  ],
+  [
+   1,
+   2
+  ]
+ ],
+ "tried": 12,
+ "verdict": "pass",
+ "note": "★ 穷举 12 条边的两两组合（★ 事实 53 的正解：把猜测变成一张表），★ 记录**哪一类边对**能让 `AddDimension2` 真的建出尺寸。★ 盒体的 12 条边按 SolidWorks 惯例分组：0-3 / 4-7 是上下两个面环、8-11 是竖边。"
+}
