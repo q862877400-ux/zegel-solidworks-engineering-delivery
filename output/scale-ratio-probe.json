@@ -1,0 +1,17 @@
+{
+  "raw_scale_ratio": {
+    "type": "tuple",
+    "repr": "(1.0, 500.0)"
+  },
+  "scale_decimal": 0.002,
+  "set_try": {
+    "ok": false,
+    "error": "TypeError: 'tuple' object is not callable"
+  },
+  "after": {
+    "repr": "(1.0, 500.0)"
+  },
+  "UseSheetScale": true,
+  "UseParentScale": false,
+  "captured_at": "2026-10-02T15:26:44"
+}

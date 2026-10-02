@@ -1,0 +1,23 @@
+{
+  "raw_before": [
+    1.0,
+    500.0
+  ],
+  "set_verified": {
+    "ok": false,
+    "asked": 2.0,
+    "before": [
+      1.0,
+      500.0
+    ],
+    "after": [
+      1.0,
+      500.0
+    ],
+    "use_sheet_scale_before": true,
+    "use_sheet_scale_cleared": true,
+    "use_sheet_scale_read_error": null,
+    "use_sheet_scale_set_error": null
+  },
+  "captured_at": "2026-10-02T15:27:13"
+}
