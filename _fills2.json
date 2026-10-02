@@ -1,0 +1,18 @@
+[
+  {"id": "headless_open_format_writing", "tools": ["cadstudio_write_open_format"],
+   "note": "★ 轮 280 填实（★ 本条是 **verified 却 0 工具**）：它的实现在**无 CAD 后端**（cadstudio_write_open_format），而不是 SolidWorks COM ⇒ ★ 而 check_tool_capability_coverage 只扫 all_specs()（solidworks_*）⇒ **看不见它** ⇒ 所以一直空着。★ 证据本就齐（tests/test_headless_cad_writer.py **7 passed**）"},
+  {"id": "autocad_headless_preview", "tools": ["cadstudio_build_dxf_preview_scene"],
+   "note": "★ 轮 280 填实（同因）：DXF 安全 PreviewScene 转换。★ 证据齐（tests/test_headless_cad_writer.py **7 passed**，含 PNG 魔数等逐句核对）"},
+  {"id": "dxf_preview_scene", "tools": ["cadstudio_build_dxf_preview_scene"],
+   "note": "★ 轮 280 填实（同因）：★ 与 autocad_headless_preview 共用同一个工具（★ 那是**同一能力的两面**：一面是「能转换」、一面是「转出来的东西对」）。★ 证据 python tools/verify_dxf_preview_e2e.py **15/15 pass**"},
+  {"id": "dfm_checks", "tools": ["cadstudio_check_dfm"],
+   "note": "★ 轮 280 填实（同因）：机加工/钣金/激光切割/3D 打印 DFM 复核走**无 CAD 后端**。★ 证据 python tools/verify_dfm_e2e.py **11/11 pass · verdict: pass**"},
+  {"id": "routing", "tools": ["cadstudio_check_routing", "cadstudio_routing_preflight"],
+   "note": "★ 轮 280 填实（同因）：★ 而这两个工具**正好回答「为什么 sw_routing 的 22 个函数不挂」** —— cadstudio_routing_preflight 真机回 blocked / addins 空 ⇒ ★ 结论有据。★ 本条目 level=stitched（轮 279 由 verified 降），★ 与这两个工具的 blocked 结论一致"},
+  {"id": "solidworks_addin_host", "tools": ["solidworks_addin_host_status"],
+   "note": "★ 轮 280 填实：★ 工具**本来就在**（solidworks_addin_host_status），★ 只是条目没认领。★ 证据 pytest tests/test_cad_reliability.py"},
+  {"id": "pack_and_go", "tools": ["solidworks_pack_and_go", "solidworks_delivery_pack_and_go_audit_matrix"],
+   "note": "★ 轮 280 填实：★ 原生的 pack_and_go 与它的审计矩阵。★ 证据 pytest tests/test_sw_delivery.py"},
+  {"id": "assembly_and_mates", "tools": ["solidworks_assembly_list_components", "solidworks_assembly_list_mates", "solidworks_assembly_check_interference"],
+   "note": "★ 轮 280 填实：★ 三个装配工具**本来就在**（list_components / list_mates / check_interference），★ 只是条目没认领。★ 证据 pytest tests/test_sw_assembly_doc_contract.py"}
+]
