@@ -7369,6 +7369,52 @@
          ▶ **队列续作**：★ **复核 `animation_export` 的 `stitched` 理由**（★ 真机试 AVI 导出）·
            ★ **`sw_routing`(22 个 · 0 工具) 是剩下最大的 vein**（★ 需先解决入口 —— 读 `tools/verify_routing_e2e.py`）·
            ★ 剩下"verified 却 0 工具"还要清。
+     ★ 2026-10-01（轮 279 / **24h 计划 段 5 续「Routing 用已有探测定性」**）· ★★★★★ **"缺加载项"这类理由，区别在于"有没有一个**可执行的探测**去问它"**
+         ▶ **起因**：★ `sw_routing` 是剩下最大的 vein（**22 个公开函数 · 0 工具**）。
+           ★ §5.0 先读既有 e2e 与模块 docstring ⇒ ★★ 而 docstring 已写明「本机**没有注册** Routing
+             加载项」⇒ ★ 22 个函数全部"接收调用方传进来的"（★ **模块故意不取得入口**）。
+           ⇒ ★ 那时这只是**一句声明** ⇒ ★★ **需要**可执行的探测**来验它**。
+         ★★★★★ **用已有的探测去问（§5.0 的形态）**：★ `cadstudio_routing_preflight`（★ 仓库里早就有）
+           ```
+           readyForNativeWrite: false
+           error_code:           routing_addin_or_license_unavailable
+           blocker:              未检测到 SOLIDWORKS Routing 加载项注册或许可证可用证据。
+           typeLibrary:          …\SWRoutingLib.tlb                              ← ★ 在
+           interfacesFound:      [IAutoRoute, IRouteManager, IRouteProperty]     ← ★ 都在
+           interfaceCoverage:    1.0
+           routingFiles:         3 个（.tlb / Interop DLL / sldroutingdveu.dll） ← ★ 都在
+           addins:               []                                              ← ★★ 空
+           retryable:            true
+           ⇒ ★★★★ 所以 blocker 是**加载项/许可**，不是接口定义（★ 类型库与三个接口都在）。
+           ```
+         ★★★★★ **而与 Motion 那条旧理由的关键区别**：
+           ```
+           | 能力 | 探测 | 结论 | 那条理由可靠吗 |
+           | Routing | cadstudio_routing_preflight（★ 专门探**加载项**） | addins: [] | ★★ **有据** ✓ |
+           | Motion | ensure_motion_type_library（★ 探的是**类型库**） | 回真实路径 | ★★ **不可靠**（待复核） |
+           ⇒ ★★★ 区别不在"哪家有加载项"，而在"**有没有一个可执行的探测去问它**"——
+             ★★★★ **一个探「类型库」的探测，不能回答「加载项在不在」**（★ 那是两个问题）。
+           ```
+         ★ **处置（把账做实）**：★ `routing` 原本是 **`verified` 却 0 工具**（★ 事实 210 的
+           "自相矛盾的账"）⇒ ★★★ **按证据降为 `stitched`**（★ `allowed_modes` 早已是
+           `[interactive, reviewed]` ⇒ 已合 R11，**无需改**）
+           ⇒ ★ `verified` **53 → 52** · `stitched` **15 → 16** · 「verified 且 0 工具」**17 → 16 条**
+           ★ **`sw_routing` 的 22 个函数不挂工具**（★ 挂了也到不了）⇒ 并写进条目：
+             「那 22 个**不该按缺口处理**，而是**等加载项**」。
+         ★★★ **定则**：
+           ★ **一个"缺 X"的理由，必须能指向一个问 X 的探测** —— ★ 若手上只有问 Y 的探测，
+             ★ **那"缺 X"就还只是**传闻****（★ 本轮的 Motion 正是如此）。
+           ★★ **降级也是把账做实**（★ 与事实 208/209/210 同一条线）：★ 本会话至今的"降级"有
+             `routing`（本轮 · 有 preflight 证据）· 事实 208 拆出的 5 条 stitched（★ 从过宽的
+             verified 里分出）⇒ ★★ **它们让 `verified` 变小，而让清单可信**。
+         ▶ **验收**：① `all_specs()` = **164** · 能力 **69** · 归属 **164/164** ✓
+           · 门禁链 **8 段全 PASS** ✓ · `release_check` exit 0 ✓ · 全量 pytest **1284 passed** ✓
+           ② ★ 真机证据 = **`cadstudio_routing_preflight` 的 blocked 输出**（★ 那是判据本身）
+         ▶ **状态**：`all_specs()` **164** · 能力 **69** 条（verified **52** · stitched **16**）·
+           known-facts **211** 条。
+         ▶ **队列续作**：★ **给 Motion 补一个"加载项级"的探测**（★ 因为"类型库能加载"回答不了
+           "AVI 能不能导"）· ★ 剩下 16 条「verified 却 0 工具」逐条定性（★ 每条都要一句
+           "它的下游在哪 / 为什么没挂"）· ★ 能力 69 → 75 还差 6。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
