@@ -1,0 +1,41 @@
+| 220 | **连续两轮的假设都被**自己的探针**推翻 —— 而那正是"收窄"该有的样子**（2026-10-01，轮 287）。
+
+## 一、★ 两个假设与它们的死因（★ 都在同一轮里）
+```
+| 假设 | 怎么被推翻 |
+|---|---|
+| **A**：「算例类型不对 —— `study_type=2` 上建不了马达」 | ★ **`motor type0 ✓ · motor type2 ✓`**（★ 两个都成） |
+| **B**：「找不到圆柱面 ⇒ 建不了马达」 | ★ **`find_largest_cylinder_face` 对两个组件都回对象**（★ 4/4 PASS） |
+⇒ ★★ **而两次推翻之后，探针给出了一条**精确、可复现**的事实** —— 见 §二。
+```
+
+## 二、★★★★★ 那条精确事实
+```
+★ **在「运动算例 1」（即**第一个、无 `name`** 建的那个）上**：
+   `CreateDefinition(SW_FM_AEM_ROTATIONAL_MOTOR)` ⇒ **回 `None`**
+   ⇒ ★★ 而能力层**如实抛** `RuntimeError: 创建旋转马达 FeatureData 失败`（★ **让失败可见** ✓）
+★ **而在**命名 + `study_type=2`** 的算例上**：★ **同一条链全通**（`motor ok: true`）
+★ `collect_motion_study_summary` ⇒ **3 个算例**：`运动算例 1`(motor 0) · `运动算例 2`(motor 0) ·
+   **`MCP_AVI_PhysSim`(motor 1)** ✓
+⇒ ★★★ **所以"马达建不出来"的说法**不准确**** —— ★ **它在 3 种算例上都建成过**
+   （★ `type0` · `type2` · 命名算例）；★ **而在第一个（无 name）算例上 `CreateDefinition` 回 `None`**。
+★ **而 `tools/verify_motion_avi_e2e.py` 那条路里马达**仍然失败**** ⇒ ★ **原因与我的复刻**不同**
+   （★ 复刻里 `s2` 成功）⇒ ★ **如实写明"差异未定位"，不猜**。
+★ 证据三份：`output/motor-chain-probe.json`（9/9）· `motor-studytype-probe.json`（type0/2 都成）·
+   `motor-e2e-replica.json`（s1 失败 / s2 成功 / summary）
+```
+
+## 三、★★★ 而定则
+```
+★★★ **"我的假设被自己的探针推翻"是**正常且必要**的** —— ★ 两轮里我提了两个假设、**两个都错了**，
+   ★ **而两次都缩小了范围**（★ 排除"类型"、排除"找面"）⇒ ★★ **那正是事实 219 说的"连续收窄"**。
+   ⇒ ★★ **要防的不是"假设错"，而是**假设错了却不做探针**** ——
+     ★ **而本轮的探针便宜**（★ 各一次几十秒）⇒ ★★★ **所以"提假设 → 立刻探"比"想清楚再做"快**。
+★★ **推翻假设时要**把被推翻的那条也写进结论****（★ 而不是只写新的）——
+   ★ 因为**下一个人会重复同一个假设**（★ 我自己就重复了：第 3 版的"马达建不出来"）
+   ⇒ ★★ **可操作形态**：★ 限制里写「**已排除**：X（依据 Y）」—— ★ 那比"当前认为 Z"信息量大。
+```
+
+**依据**：`output/motor-chain-probe.json` · `output/motor-studytype-probe.json` · `output/motor-e2e-replica.json` ·
+`scripts/sw_motion.py` 的 `add_constant_speed_rotary_motor`（★ 3 处 raise）· `capabilities.yaml` 的 `animation_export`
+（★ 36 条限制 · 第 4 版理由）· 事实 218 / 219

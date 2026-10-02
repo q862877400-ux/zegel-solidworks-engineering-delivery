@@ -1,0 +1,25 @@
+{
+  "steps": {
+    "part_saved": {
+      "ok": true,
+      "path": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\dsh_motor_probe.SLDPRT"
+    },
+    "components": {
+      "ok": true,
+      "c1": "CDispatch",
+      "c2": "CDispatch"
+    },
+    "cylface_c1": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "cylface_c2": {
+      "ok": true,
+      "type": "CDispatch"
+    }
+  },
+  "captured_at": "2026-10-02T14:46:18",
+  "passed": 4,
+  "of": 4,
+  "verdict": "pass"
+}

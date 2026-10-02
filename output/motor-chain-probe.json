@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "study": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "faces": {
+      "ok": true
+    },
+    "CreateDefinition": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "DirectionReference": {
+      "ok": true,
+      "returned": "None"
+    },
+    "ConstantSpeedMotor": {
+      "ok": true,
+      "returned": "None"
+    },
+    "RelativeComponent": {
+      "ok": true,
+      "returned": "None"
+    },
+    "Location": {
+      "ok": true,
+      "returned": "None"
+    },
+    "set_load_references": {
+      "ok": true,
+      "returned": "True"
+    },
+    "CreateFeature": {
+      "ok": true,
+      "type": "CDispatch"
+    }
+  },
+  "captured_at": "2026-10-02T14:46:42"
+}

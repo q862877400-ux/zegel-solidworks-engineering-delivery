@@ -1,0 +1,31 @@
+{
+  "steps": {
+    "motor_on_s1": {
+      "ok": false,
+      "error": "RuntimeError: 创建旋转马达 FeatureData 失败"
+    },
+    "motor_on_s2": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "summary": {
+      "ok": true,
+      "count": 3,
+      "motors": [
+        [
+          "运动算例 1",
+          0
+        ],
+        [
+          "运动算例 2",
+          0
+        ],
+        [
+          "MCP_AVI_PhysSim",
+          1
+        ]
+      ]
+    }
+  },
+  "captured_at": "2026-10-02T14:47:29"
+}

@@ -1,0 +1,20 @@
+{
+  "steps": {
+    "create_type0": {
+      "ok": true
+    },
+    "motor_type0": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "create_type2": {
+      "ok": true
+    },
+    "motor_type2": {
+      "ok": true,
+      "type": "CDispatch"
+    }
+  },
+  "captured_at": "2026-10-02T14:47:07",
+  "verdict": "pass"
+}
