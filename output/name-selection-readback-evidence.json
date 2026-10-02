@@ -1,0 +1,32 @@
+{
+ "trials": [
+  {
+   "trial": "by_name",
+   "stat_L1": true,
+   "stat_L2": true,
+   "count2_minus1": 2,
+   "count2_0": 2,
+   "obj1_is_none": false,
+   "obj1_type": "",
+   "obj2_is_none": false,
+   "obj2_type": ""
+  },
+  {
+   "trial": "by_point",
+   "stat_pt": [
+    false,
+    false
+   ],
+   "count2_minus1": 0,
+   "count2_0": 0,
+   "obj1_is_none": true,
+   "obj2_is_none": true
+  }
+ ],
+ "at": "2026-10-03T06:15:53",
+ "sketch": "草图1",
+ "by_name_reads_second": true,
+ "by_name_counts_two": true,
+ "verdict": "pass",
+ "note": "★ 验事实 358 提的那个假设：★ **按名字选草图线段**（EXTSKETCHSEGMENT）后，`GetSelectedObject6(2, 0)` 读不读得到**第二个**对象。★ 判据：① 计数 == 2；★ ② 第 2 个对象非 None。"
+}
