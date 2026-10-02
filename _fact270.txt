@@ -1,0 +1,59 @@
+| 270 | **`RunAnalysis` 的错误码链终于读出来了：`19` = **材料未定义**（已解）· `23` = **网格未找到** —— 而 `mesh_size` 给的默认尺寸是 **1999.4**（可疑量级）**（2026-10-01，轮 350）。
+
+## 一、★★★★★ 关键突破：**`return_code` 是**可查的枚举**，不是"根因未查清"**
+```
+★ 前任的记录是「★ **`RunAnalysis` 仍会挂**：真机实测 `timed_out=True`（300 秒超时）⇒ **根因未查清**」。
+★★ 而本轮**换了做法**：★ **一边跑一边后台取证弹窗**（每 2 s 一次）⇒
+   · ★ **弹窗采样 0 次** ⇒ ★★ **根本没有弹窗** ⇒ ★ **排除「弹窗把它挂住」这个假设** ✓
+   · ★ **耗时 0.0 s** ⇒ ★★ **它这次根本没挂**，而是**立刻返回了一个错误码** ✓
+   ⇒ ★★★ **即：★ "挂 300 s" 与"立刻回 19/23"是**两种不同环境下的两种表现**** ——
+     ★ 而**错误码那条路是可查的**（★ 比"挂"好查得多）。
+```
+
+## 二、★★★★★ 错误码查出来的**精确含义**（★ 反射转储 `_raw/reflect/enum_cosworks.txt` L2119+）
+```
+## swsRunAnalysisError_e
+  swsRunAnalysisErrorSuccessful = 0
+  …
+  swsRunAnalysisErrorMaterialNotDefinedForShells = 18
+  **swsRunAnalysisErrorMaterialNotDefined = 19**          ← ★ 第一次拿到的 19
+  swsRunAnalysisErrorMaterialNotDefinedForComponents = 20
+  swsRunAnalysisErrorNoSolidBody = 21
+  swsRunAnalysisErrorAuthorizationFailed = 22
+  **swsRunAnalysisErrorMeshNotFound = 23**                ← ★ 设了材料之后拿到的 23
+  swsRunAnalysisErrorAnalysisFailed = 24
+⇒ ★★★ **`return_code` 是**一张可逐条查的表****，★ 而 `analysis_run_readback` 的 limitations 里
+  写着「根因未查清」—— ★★ **那条结论是**信息不足**，不是"查不到"** ✓
+```
+
+## 三、★★★★ 一环扣一环的**进展链**（★ 每一环都有真机数）
+```
+★ 第 1 环：`19`（材料未定义）
+   ⇒ ★ **真机确认**：★ 设材料**前** `MaterialIdName = ''`（空）⇒ `19` **对上了** ✓
+   ⇒ ★ 设材料后：`set_material` 回 `'solidworks materials|AISI 1020|2'` ⇒ **回读一致** ⇒ **`19` 消失** ✓
+★ 第 2 环：`23`（网格未找到）
+   ⇒ ★ 而★**前人记过**「`mesh_size` 与 `create_mesh` **成功**」⇒ ★ 于是先建网格再跑。
+   ⇒ ★★★ **而本轮真机发现**：`mesh_size_report` 给的 **`element_size = 1999.4`** · `tolerance = 99.97` ·
+     `units = -1` —— ★★ **对 20×40×10 mm 的板来说那个尺寸**荒谬地大****（接近板长）⇒
+     `create_mesh` ⇒ **`return_code = 5` · `element_count = 0`**（★ **网格没建成**）⇒ `23` 照旧。
+   ⇒ ★★★★ **而前人记的**正确量级**是 `CreateMesh(0, **4.9339**, **0.2467**)` ⇒ 返回 0 · **7,219 个单元**
+     （100×60×20 mm 板）—— ★★ **两个量级差 ~400 倍** ⇒ **`mesh_size_report` 的换算或单位可疑** ✓
+★ 第 3 环：★ 用**已知正确的量级**（4.9339 / 0.2467）重跑 ⇒ ★ **会话在 `create_mesh` 那一步长时间阻塞**
+   （★ 超过 600 s ⇒ 移到后台并 kill）⇒ ★ **收尾，不再等**（★ 本轮证据已足够）。
+```
+
+## 四、★★★ 两条定则
+```
+★★★ **"根因未查清"往往等价于"没去查那张表"** ——
+   ★ 本处 `RunAnalysis` 的返回码**有官方枚举**（`swsRunAnalysisError_e`，★ 在**反射转储**里，
+     而**不在** `C:\swapi\enums` —— ★ 那套源**没覆盖 cosworks**）⇒
+   ★★ **查不到先换源**（★ 本仓库有三套：CHM 解包 / `C:\swapi` / **反射转储**）✓
+★★ **"挂住"要用**取证**而不是"再等一次"** ——
+   ★ 本处**后台每 2 s 采样弹窗**，★ 结论是"**零弹窗**、而且它其实**立刻返回了**" ⇒
+   ★★ **一次采样就把"弹窗假设"排除了**（★ 比反复加长超时有用）✓
+```
+
+**依据**：`output/run-analysis-forensics.json`（★ 零弹窗 · `19` → `23` · `mesh_size=1999.4` ·
+`create_mesh: return_code=5, element_count=0`）· `D:\AI\SW\_raw\reflect\enum_cosworks.txt` L2119+
+（★ `swsRunAnalysisError_e` 逐条）· `scripts/sw_simulation.py` L606–649（★ `CreateMesh` 的官方参数名与
+"7,219 个单元"那组实测）· 事实 174 / 176 / 177（★ 前人排除的三个假设）· 事实 269

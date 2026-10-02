@@ -1,0 +1,23 @@
+{
+  "steps": {
+    "setup": {
+      "ok": true
+    },
+    "mesh_size": {
+      "ok": true,
+      "ret": "{\"element_size\": 1999.4009432804464, \"tolerance\": 99.97004716402233, \"units\": -1}"
+    },
+    "create_mesh": {
+      "ok": false,
+      "ret": "{\"ok\": false, \"return_code\": 5, \"return_is_trustworthy\": false, \"element_count\": 0, \"★\": \"ok 由 element_count 决定，**不看返回码**（本项目铁律：回读"
+    },
+    "run_analysis": {
+      "ok": false,
+      "return_code": 23,
+      "results_present": false,
+      "plot_count": null,
+      "seconds": 0.0
+    }
+  },
+  "captured_at": "2026-10-02T21:36:35"
+}
