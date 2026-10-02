@@ -1,0 +1,31 @@
+★★★★★ 2026-10-01（轮 293）**真机抓到三处同类错 → 已修 → 拿到视图级证据**：
+  · ★ **真因**：`get_view_scale` / `set_view_scale` 都调 **`Scale`** —— ★ **而 `IView` 上**没有那个成员****。
+    ★ 真机表现：★ `AttributeError: <unknown>.Scale`（★ **事实 36 的形态**）。
+  · ★★ **而真名早就被记下**：★ 同文件的 `get_scale_decimal` 的 docstring 写着「⚑⚑ **更正**：初稿调的是
+    `GetScaleDecimal`，该成员在 `IView` 上**不存在** —— 反射实测的真实成员是 `ScaleDecimal`（零参属性），
+    ★ **与同族的 `ScaleRatio` / `UseSheetScale` / `UseParentScale` 同形**」
+    ⇒ ★★★ **即：真名 `ScaleRatio` 早就写在注释里，而那两个函数没跟着改**。
+  · ★★★ **官方确证**（`C:\swapi\types\IView\ScaleRatio.md`）：★「Gets or sets the scale of the drawing view,
+    **returning the results in ratio format (n:n)**」· **Returns: Array of 2 doubles** ·
+    ★「This property and `IView::ScaleDecimal` contain **the same information**, but use the value in
+    a different way」⇒ ★★ **所以**：① 真名 `ScaleRatio`；② 它回**两个 double**（★ 不是单个 float）。
+  · ★ **已修**：★ 新增 `get_view_scale_ratio(view)`（★ 回 `(numerator, denominator)`）·
+    ★ `get_view_scale` 改为**由它算**（第 1 个 / 第 2 个）· `set_view_scale` 改走 `ScaleRatio`（按 `n:1` 写）。
+  · ★★★★ **真机复验（有视图的图 · 3 个视图 `工程图视图1/2/3`）**：
+    · `list_drawing_views_report` ⇒ **`{ok: true, count: 3}`** ✓
+    · `collect_view_evidence_report` ⇒ **`{ok: true, count: 3}`** ✓
+    · `get_view_scale_report("工程图视图1")` ⇒ ★★ **`{ok: true, scale: 0.002, scale_decimal: 0}`** ✓
+      （★ **即 `ScaleRatio` **确实取到了**** —— 而 `0.002` 的**语义待查**：★ 它不像"1:1"该有的 1.0，
+        ★ 可能是"两个数"里的第 1 个被当成了比例 ⇒ ★ **待核**）
+    · ⚠ `set_view_scale_report` ⇒ **仍 `ok: false`**（★ `before/after/asked` 全 `null`）⇒ ★ **待查**
+  · ★★★ **造"有视图的图"的做法（★ 本轮 §5.0 的收获）**：★ 建零件 → 保存 → 新建工程图 →
+    ★ **`sw_drawing.create_standard_views(drw, part_path)`**（★ 回 `True` ⇒ 图里出现 **3 个视图**）。
+    ★★ **而 `create_standard_views_with_projection(drw, part_path, "first_angle")` 回 `blocked`**
+      （★ `error_code: DRAWING_PROJECTION_API_UNAVAILABLE` · ★ `method: CreateFirstAngleViews2`）
+      ⇒ ★ **所以那条路走不通**（★ 而它**如实报了 blocked + 错误码** —— ★ 好形态）。
+  · ★★ **一条探测方法的错（★ 需更正上一轮的说法）**：★ 我上一轮说「`scripts/sw_drawing.py` 有 **0 个公开函数**
+    ⇒ 所以没有插视图入口」⇒ ★★★ **那是**假报****：★ `sw_drawing` 实际有 **57 个 callable**，
+    含 `add_view` / `add_detail_view` / `add_section_view` / `create_standard_views*` /
+    `generate_drawing_from_spec`。★ **错因**：★ 我的探测用 `getattr(f, "__module__", "").endswith(m)`
+    过滤 —— ★ **而"从别处 import 进来的函数"不满足它** ⇒ ★★ **所以"某模块有 0 个公开函数"这类结论，
+      必须先核探测方法**（★ 用 `__module__` 过滤会漏掉被 import 进来的）。

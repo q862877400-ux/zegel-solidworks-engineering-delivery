@@ -1,0 +1,57 @@
+| 226 | **三源互证的活：一个"臆造的成员名"在真机上静默成 `null`，而**官方真名早就写在同文件的注释里****（2026-10-01，轮 293）。
+
+## 一、★ 怎么抓到的
+```
+★ 造"有视图的图"之后（`create_standard_views` ⇒ **3 个视图**），逐条验本批工具：
+   · `list_drawing_views_report` ⇒ **{ok: true, count: 3}**（名 `工程图视图1/2/3`）✓
+   · `collect_view_evidence_report` ⇒ **{ok: true, count: 3}** ✓
+   · **`get_view_scale_report("工程图视图1")` ⇒ `{ok: false, error: "AttributeError: <unknown>.Scale"}`** ❌
+⇒ ★★★ **`<unknown>.Scale`** —— ★ **事实 36 的形态**（★ 见 `<unknown>.X` ⇒ **去查 X 挂在谁身上**）
+```
+
+## 二、★★★★★ 真因与正解
+```
+★★ 查官方（`C:\swapi\types\IView\`）：★ **`IView` 上**没有 `Scale`**** ——
+   它的比例相关成员是 **`ScaleRatio`** · `IScaleRatio`（★ I 前缀 = 指针变体）· `ScaleDecimal` ·
+   `ScaleHatchPattern`（★ 填充图案的）· `UseParentScale` / `UseSheetScale`
+★ 官方语义（`ScaleRatio.md`）：★「Gets or sets the scale of the drawing view,
+   **returning the results in ratio format (n:n)**」· **Returns: Array of 2 doubles** ·
+   ★「This property and `IView::ScaleDecimal` contain **the same information**, but use the value in
+   a different way」⇒ ★★ **所以**：① 真名 `ScaleRatio`；② 它回**两个 double**（★ 不是单个 float）。
+★★★ **而真名早就写在同文件的注释里** —— `get_scale_decimal` 的 docstring 记着一次**更正经**：
+   > 「⚑⚑ **更正**：初稿调的是 `GetScaleDecimal`，该成员在 `IView` 上**不存在** —— 反射实测的真实成员是
+   > `ScaleDecimal`（零参属性），★ **与同族的 `ScaleRatio` / `UseSheetScale` / `UseParentScale` 同形**」
+   ⇒ ★★★★ **即：`ScaleRatio` 早就被记下，★ 而 `get_view_scale` / `set_view_scale` 没跟着改**
+     （★ 它们的 docstring 还写着「⚑ 官方是**属性**（`get_Scale`）」—— ★★ **那是**臆造的签名****）。
+```
+
+## 三、★ 修与复验
+```
+★ 修：★ 新增 `get_view_scale_ratio(view)`（★ 回 `(numerator, denominator)`）·
+   `get_view_scale` 改为**由它算**（第 1 个 / 第 2 个）· `set_view_scale` 改走 `ScaleRatio`（★ 按 `n:1` 写两个数）。
+★★ **真机复验**：★ `get_view_scale_report("工程图视图1")` ⇒ **`{ok: true, scale: 0.002, scale_decimal: 0}`** ✓
+   ⚠ 而 `0.002` 的**语义待查**（★ 它不像"1:1"该有的 1.0 ⇒ ★ 可能"两个数"里的第 1 个被当成了比例）；
+   ⚠ `set_view_scale_report` **仍 `ok: false`**（★ `before/after/asked` 全 `null`）⇒ ★ **待查**。
+★ 契约测试随之更新（★ `tests/test_sw_drawing_view_contract.py` 的断言从 `("Scale", (2.0,))` 改成
+   `("ScaleRatio", ((2.0, 1.0),))` —— ★ **而那个双层括号是实测形态**：★ 元组是作为**一个**位置参数传的）。
+⇒ ★ 能力 `drawing_view_operations` **由 `stitched` 升 `verified`**（★ 有我们自己的运行证据）·
+   `verified` **52 → 53**。
+```
+
+## 四、★ 定则
+```
+★★★ **一个"臆造的成员名"在真机上的表现，取决于它被读还是被写** ——
+   ★ 本处 `view.Scale` 是**读** ⇒ ★ 回 `None` 或抛 `<unknown>.Scale`（★ **不崩，只是拿不到**）
+   ⇒ ★★ **所以它很容易被"0.0 兜底 / `or 0.0`"盖住**（★ 而 `get_view_scale` 里**正是** `float(... or 0.0)`）
+     ⇒ ★★★ **一旦兜底，"成员名错"就变成一个**看起来正常的数值**（★ 可能是 0.0）** ——
+       ★ 那是**最坏的一种静默**（★ 与事实 40/185 同族）。★ **本处它之所以暴露，是因为我把它接进了
+       返回值里、而 `null` 太显眼**。
+★★ **"同一个文件里早就写下的更正，要真的用上"** —— ★ 本处的 `ScaleRatio` **写在 `get_scale_decimal`
+   的 docstring 里**，★ 而在**同一个文件**的两个函数里被忽略 ⇒ ★★ **可操作判据**：★
+   改一个模块时，**先把它自己 docstring 里的"更正 / 实测 / 注意"读一遍**（★ 那些是**上一轮的自己**留下的）。
+```
+
+**依据**：`output/drawing-view-evidence.json`（★ 3 视图 · `get_scale ok scale=0.002`）·
+`C:\swapi\types\IView\ScaleRatio.md` + `ScaleDecimal.md`（★ 真名与"Array of 2 doubles"）·
+`scripts/sw_drawing_view.py` 的 `get_scale_decimal` docstring（★ 那条已存在的更正经）·
+`tests/test_sw_drawing_view_contract.py`（★ 断言随证据更新）· `capabilities.yaml`（★ verified 53）· 事实 36 / 40 / 185 / 224 / 225

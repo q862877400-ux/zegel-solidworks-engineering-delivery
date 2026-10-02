@@ -1,0 +1,44 @@
+     ★ 2026-10-01（轮 293 / **24h 计划 段 6 续「视图比例：抓到三处臆造成员名」**）· ★★★★★ **一个"臆造的成员名"在真机上静默成 `null` —— 而**官方真名早就写在同文件的注释里****
+         ▶ **怎么抓到的**：★ 造"有视图的图"（`create_standard_views` ⇒ **3 个视图**）之后逐条验本批工具：
+           · `list_drawing_views_report` ⇒ **{ok: true, count: 3}**（名 `工程图视图1/2/3`）✓
+           · `collect_view_evidence_report` ⇒ **{ok: true, count: 3}** ✓
+           · **`get_view_scale_report(...)` ⇒ `{ok: false, error: "AttributeError: <unknown>.Scale"}`** ❌
+           ⇒ ★★★ **`<unknown>.Scale`** —— ★ **事实 36 的形态**（★ 见 `<unknown>.X` ⇒ 去查 X 挂在谁身上）
+         ★★★★★ **真因与正解**：★ 查官方（`C:\swapi\types\IView\`）⇒ ★★ **`IView` 上**没有 `Scale`**** ——
+           它的比例相关成员是 **`ScaleRatio`** · `IScaleRatio`（I 前缀=指针变体）· `ScaleDecimal` ·
+           `ScaleHatchPattern` · `UseParentScale` / `UseSheetScale`
+           ★ 官方语义：★「Gets or sets the scale of the drawing view, **returning the results in ratio
+             format (n:n)**」· **Returns: Array of 2 doubles** ⇒ ★★ 真名 `ScaleRatio`、**回两个 double**
+           ★★★ **而真名早就写在同文件的注释里** —— `get_scale_decimal` 的 docstring 记着一次更正经：
+             > 「⚑⚑ 更正：初稿调的是 `GetScaleDecimal`，该成员在 `IView` 上**不存在** —— 反射实测的
+             > 真实成员是 `ScaleDecimal`（零参属性），★ **与同族的 `ScaleRatio` / `UseSheetScale` /
+             > `UseParentScale` 同形**」
+             ⇒ ★★★★ **即：`ScaleRatio` 早就被记下，而 `get_view_scale`/`set_view_scale` 没跟着改**
+               （★ 它们的 docstring 还写着「⚑ 官方是**属性**（`get_Scale`）」—— ★★ 那是**臆造的签名**）
+         ★ **修与复验**：★ 新增 `get_view_scale_ratio`（回两个数）· `get_view_scale` 由它算 ·
+           `set_view_scale` 改走 `ScaleRatio`
+           ★★ **真机复验**：★ `get_view_scale_report` ⇒ **`{ok: true, scale: 0.002, scale_decimal: 0}`** ✓
+             ⚠ `0.002` 的**语义待查**（★ 不像"1:1"该有的 1.0）· ⚠ `set_view_scale_report` **仍 false**（待查）
+           ★ 契约测试随之更新（★ 断言从 `("Scale", (2.0,))` 改成 `("ScaleRatio", ((2.0, 1.0),))` ——
+             ★ **双层括号是实测形态**：元组作为**一个**位置参数传）
+           ⇒ ★ 能力 `drawing_view_operations` **由 stitched 升 verified** · `verified` **52 → 53**
+         ★★★ **定则**：
+           ★ **一个"臆造的成员名"在真机上的表现，取决于它被读还是被写** —— ★ 本处是**读** ⇒
+             ★ 回 `None` 或抛 `<unknown>.Scale`（★ **不崩，只是拿不到**）
+             ⇒ ★★ **所以它很容易被"`or 0.0` 兜底"盖住**（★ `get_view_scale` 里**正是** `float(... or 0.0)`）
+               ⇒ ★★★ **一旦兜底，"成员名错"就变成一个**看起来正常的数值**** ——
+                 ★ 那是**最坏的一种静默**（★ 与事实 40/185 同族）
+                 ★ **本处它之所以暴露，是因为我把它接进返回值里、而 `null` 太显眼**
+           ★★ **"同一个文件里早就写下的更正，要真的用上"** —— ★ 本处 `ScaleRatio` **写在同一个文件**里
+             却被忽略 ⇒ ★★ **可操作判据**：★ 改一个模块时，**先把它自己 docstring 里的
+             "更正 / 实测 / 注意"读一遍**（★ 那是**上一轮的自己**留下的）
+         ▶ **验收**：① `all_specs()` **178** · 能力 **75** · 归属 **178/178** ✓ · 门禁 **8 段全 PASS** ✓
+           · `release_check` exit 0 ✓ · 无人值守基线 **30 → 31** ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 真机 `output/drawing-view-evidence.json` = **有视图的图（3 视图）· 3/4 项通过**
+             （★ `get_scale` 修好之后 ✓ · ⚠ `set_scale` 仍 false，★ 如实）
+         ▶ **状态**：`all_specs()` **178** · 能力 **75** 条（verified **53** · stitched **21**）·
+           known-facts **225** 条。
+         ▶ **队列续作**：★ **查 `set_view_scale` 为什么仍 false**（★ 而 `0.002` 的语义也待核）·
+           ★ `create_standard_views_with_projection` 的 `blocked`（★ `DRAWING_PROJECTION_API_UNAVAILABLE`）·
+           ★ `semicircular_slot` 的 `<unknown>.SketchManager`（★ **有副作用 ⇒ 先查清再动**）·
+           ★ 收敛报告再刷（★ 事实 216）。

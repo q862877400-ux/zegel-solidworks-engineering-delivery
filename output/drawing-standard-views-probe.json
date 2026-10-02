@@ -1,0 +1,13 @@
+{
+  "with_projection": {
+    "status": "blocked",
+    "projection": "first_angle",
+    "method": "CreateFirstAngleViews2",
+    "error_code": "DRAWING_PROJECTION_API_UNAVAILABLE",
+    "manual_review_required": true
+  },
+  "standard_views": {
+    "repr": "True"
+  },
+  "captured_at": "2026-10-02T15:16:35"
+}

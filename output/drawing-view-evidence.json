@@ -1,0 +1,30 @@
+{
+  "steps": {
+    "list_views": {
+      "ok": true,
+      "count": 3,
+      "names": [
+        "工程图视图1",
+        "工程图视图2",
+        "工程图视图3"
+      ]
+    },
+    "get_scale": {
+      "ok": true,
+      "view": "工程图视图1",
+      "scale": 0.002,
+      "scale_decimal": 0,
+      "error": null
+    },
+    "set_scale": {
+      "ok": false,
+      "before": null,
+      "after": null,
+      "asked": null
+    }
+  },
+  "captured_at": "2026-10-02T15:17:38",
+  "passed": 2,
+  "of": 3,
+  "verdict": "partial"
+}

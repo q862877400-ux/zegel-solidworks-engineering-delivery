@@ -1,0 +1,15 @@
+{
+  "first_view_row": {
+    "name": "工程图视图1",
+    "scale": null,
+    "scale_decimal": 0,
+    "annotation_count": 0,
+    "visible_component_count": 1
+  },
+  "get_scale_full": {
+    "ok": false,
+    "view_name": "工程图视图1",
+    "error": "AttributeError: <unknown>.Scale"
+  },
+  "captured_at": "2026-10-02T15:16:57"
+}
