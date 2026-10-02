@@ -1,0 +1,159 @@
+{
+  "analysis_run_readback": [],
+  "animation_export": [],
+  "assembly_and_mates": [],
+  "assembly_read": [
+    "solidworks_assembly_list_components",
+    "solidworks_assembly_list_mates",
+    "solidworks_assembly_check_interference"
+  ],
+  "autocad_basic_drafting": [],
+  "autocad_dotnet_backend": [],
+  "autocad_headless_preview": [],
+  "autocad_script_backend": [],
+  "chamfer_fillet_on_selection": [
+    "solidworks_chamfer",
+    "solidworks_fillet"
+  ],
+  "config_and_export": [
+    "solidworks_config_activate",
+    "solidworks_config_create",
+    "solidworks_config_inspect",
+    "solidworks_config_read_custom_property",
+    "solidworks_config_set_custom_properties",
+    "solidworks_config_update_dimension",
+    "solidworks_export_bmp",
+    "solidworks_export_dxf",
+    "solidworks_export_iges",
+    "solidworks_export_parasolid",
+    "solidworks_export_step",
+    "solidworks_export_stl"
+  ],
+  "configurations_and_design_tables": [],
+  "costing": [
+    "solidworks_get_costing_manager"
+  ],
+  "custom_properties_and_bom": [
+    "solidworks_collect_assembly_bom"
+  ],
+  "dfm_checks": [],
+  "drawing_current_sheet_query": [
+    "solidworks_drawing_get_current_sheet",
+    "solidworks_drawing_list_sheets",
+    "solidworks_drawing_list_views"
+  ],
+  "drawing_dimension_insertion": [],
+  "drawings_and_bom": [],
+  "dxf_preview_scene": [],
+  "equations": [],
+  "export_delivery": [],
+  "external_spur_gear_geometry": [],
+  "feature_build_extrude": [
+    "solidworks_extrude_boss",
+    "solidworks_extrude_cut",
+    "solidworks_extrude_midplane"
+  ],
+  "feature_readback_criterion": [],
+  "file_custom_property_read": [
+    "solidworks_custom_property_get",
+    "solidworks_custom_property_list"
+  ],
+  "geometric_tolerance": [],
+  "geometry_and_delivery_review": [
+    "solidworks_activate_model_for_preview",
+    "solidworks_build_review_report",
+    "solidworks_clear_selection_for_preview",
+    "solidworks_collect_model_summary",
+    "solidworks_surface_evidence"
+  ],
+  "gtol_insert": [],
+  "headless_open_format_writing": [],
+  "helix_and_spiral": [],
+  "holes_and_finishing": [
+    "solidworks_hole_standards",
+    "solidworks_fastener_types",
+    "solidworks_fastener_table_types",
+    "solidworks_add_sketch_relation"
+  ],
+  "mass_property_read": [
+    "solidworks_part_mass_properties"
+  ],
+  "mesh_create_readback": [
+    "solidworks_simulation_create_mesh_for_control"
+  ],
+  "mesh_size_sanity_gate": [
+    "solidworks_simulation_check_mesh_size"
+  ],
+  "modeling_feature_readback_tools": [],
+  "mold_tools": [
+    "solidworks_mold_core_cavity_split",
+    "solidworks_mold_draft_analysis",
+    "solidworks_mold_evidence",
+    "solidworks_mold_parting_line",
+    "solidworks_mold_parting_surface",
+    "solidworks_mold_shut_off_surface",
+    "solidworks_mold_undercut_detect"
+  ],
+  "motion_study": [],
+  "pack_and_go": [],
+  "parameter_updates": [
+    "solidworks_config_update_dimension"
+  ],
+  "part_and_features": [
+    "solidworks_circular_pattern",
+    "solidworks_mirror_feature"
+  ],
+  "render_materials_and_appearance": [
+    "solidworks_collect_appearance_evidence",
+    "solidworks_list_render_materials",
+    "solidworks_refresh_scene_graph",
+    "solidworks_get_active_view"
+  ],
+  "requirements_planning": [],
+  "routing": [],
+  "sheet_metal": [
+    "solidworks_sheet_metal_create_base_flange",
+    "solidworks_sheet_metal_create_draft",
+    "solidworks_sheet_metal_create_edge_flange",
+    "solidworks_sheet_metal_create_gusset",
+    "solidworks_sheet_metal_create_one_bend",
+    "solidworks_sheet_metal_create_swept_flange",
+    "solidworks_sheet_metal_evidence"
+  ],
+  "simulation_and_fea": [
+    "solidworks_simulation_generate_report",
+    "solidworks_list_simulation_study_options"
+  ],
+  "simulation_load_family_breadth": [
+    "solidworks_simulation_apply_centrifugal_force",
+    "solidworks_simulation_apply_gravity",
+    "solidworks_simulation_apply_pressure",
+    "solidworks_simulation_apply_torque"
+  ],
+  "simulation_loads_wiring": [
+    "solidworks_simulation_apply_fixed_restraint",
+    "solidworks_simulation_apply_normal_force"
+  ],
+  "simulation_study_create": [],
+  "sketch_build": [],
+  "sketch_chamfer": [],
+  "sketch_edit_ops": [],
+  "sketch_query": [
+    "solidworks_sketch_count_arcs",
+    "solidworks_sketch_count_lines",
+    "solidworks_sketch_count_segments",
+    "solidworks_sketch_is_3d"
+  ],
+  "solidworks_addin_host": [],
+  "standard_parts_toolbox": [],
+  "surface_modeling": [],
+  "topology_iteration_options_backend_limited": [],
+  "topology_optimization": [],
+  "topology_readback_and_parameters": [],
+  "weldments": [
+    "solidworks_weldment_create_sub_weld_folder",
+    "solidworks_weldment_ensure_cut_list",
+    "solidworks_weldment_evidence",
+    "solidworks_weldment_update_cut_list"
+  ]
+}
