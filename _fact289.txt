@@ -1,0 +1,59 @@
+| 289 | **再精确一步：`Add…` 的**链接**确实生效（`GetLinkedDisplayStates` 证到），而那个外观**没有拿到 ID**（`MaterialID = 0`）**（2026-10-02，轮 372）。
+
+## 一、★★★★★ 新一轮证据（★ `IRenderMaterial` 的 185 个成员里挑对了那把钥匙）
+```
+★ 前两轮的定性一路在收窄：
+   · 事实 287：★ "读回空是边界" —— ✗ （被 288 更正）
+   · 事实 288：★ "读入口好使，真边界是 `Add…` 回 true 而清单不增" —— ★ 方向对，**但还没说清为什么**
+★ 本轮从反射表里找到 **`IRenderMaterial.GetLinkedDisplayStates()`**（★ 185 个成员之一，
+   ★ 前几轮没查它）⇒ 它回答"**这个外观链接到了哪些显示状态**" ⇒ 一发判清。
+```
+
+## 二、★★★★★ 实测（★ 建件 → 建显示状态 → 选面 → `AddEntity` → `Add…` → 逐项回读）
+```
+linked_before  = ["<默认>_显示状态 1", "MCP_DS3"]     ← ★ **`Add…` 之前**就已经链接上了
+linked_after   = ["<默认>_显示状态 1", "MCP_DS3"]     ← ★ `Add…` 之后**一样**
+add            = { ret: true, id1: "6", id2: "0" }
+material_id    = **0**                                ← ★★ **而外观自己的 ID 是 0**
+file_name      = **''**                               ← ★★ **也没有文件名**
+get_material_ids ⇒ None                               ← ★ 那个取 ID 的入口回 None
+count_after    = **0**                                ← ★ 清单仍空
+```
+⇒ ★★★ **即：★ `Add…` **确实把外观链接到了显示状态**（★ `GetLinkedDisplayStates` 是直接证据）✓
+   ★★ **而那个外观**没有 `MaterialID`**（★ = 0，★ 也没有 `FileName`）** ⇒ ★★ **而 `GetRenderMaterials2`
+   那条清单是**按 ID 索引**的** ⇒ **清单为空与"没生效"不是一回事** ✓✓✓
+```
+
+## 三、★ 于是真问题变得很具体
+```
+★ **不再是**"`Add…` 有没有生效"（★ 生效了 —— 链接在）。
+★★ **而是**："★ 为什么那个外观**拿不到 ID**" ⇒ ★ 候选：
+   ① ★ **`Add…` 的 `PWMaterialId1/2` 是出参**，★ 真机回了 `id1 = 6` ⇒ ★ **而 `MaterialID` 读回 0**
+      ⇒ ★★ **两者不一致** ⇒ ★ **可能 `id1` 不是"外观 ID"而是别的编号**（★ 该查官方对它的说明）；
+   ② ★ **`FileName` 为空** ⇒ ★ **外观没有绑定到任何 `.p2m` 材质文件** ⇒
+      ★ ★★ 而 `CreateRenderMaterial(name)` 只给了**名字** ⇒ ★ **可能必须先设 `FileName`**（★ 指向真实材质文件）
+        ★ 才会被"外观库"收录 ⇒ ★★ **那正是下一轮该试的**（★ **一次**实验）。
+```
+
+## 四、★ 下一轮的第一步（★ 明确、单一）
+```
+★ **查 `IRenderMaterial.FileName` 的官方说明**（★ 它要不要设、该设成什么）
+   ⇒ ★ 再**给它一个真实的 `.p2m` 路径**（★ 本机 SW 的材质库目录里应该有）⇒ 重跑同一序列 ⇒
+   ★ 判据：`MaterialID != 0` **且** `GetRenderMaterialsCount2 > 0`。
+★ ⚠ **而且这仍是"一类实验"**（★ 设 `FileName`），★ **不是"换着参数瞎试"** ——
+   ★ 依据是"它的 `FileName` 确实是空"，★ 而 `FileName` 在反射表里**是个可写属性**。
+```
+
+## 五、★ 一条方法收获
+```
+★★ **当"某个 API 有没有生效"说不清时，去找**那个对象自己身上的状态属性**** ——
+   ★ 本轮 `GetLinkedDisplayStates()` 就是这样一个属性：★ 它不经过"清单"那条路，
+     ★★ **直接回答"这个对象被挂到哪里去了"** ⇒ ★ 于是"生效没生效"不再靠推测 ✓
+   ★ 与事实 288 那条（★ 在**已知有目标对象的文档**上试）**同一族**：★ **找一个不依赖可疑中介的观察点**。
+```
+
+**依据**：本机实测（★ `linked_before` / `linked_after` 均 `["<默认>_显示状态 1", "MCP_DS3"]` ·
+`add` 回 true 且 `id1 = 6` · **`MaterialID = 0`** · `FileName = ''` · `GetMaterialIds` ⇒ None ·
+`GetRenderMaterialsCount2` ⇒ 0）· `D:\AI\SW\_raw\…\iface_sldworks.txt` 的 `## IRenderMaterial`
+（★ **185 个成员**：`AddEntity` · `GetLinkedDisplayStates` · `GetMaterialIds` · `get_MaterialID` · `get_FileName` …）·
+事实 36 / 287 / 288
