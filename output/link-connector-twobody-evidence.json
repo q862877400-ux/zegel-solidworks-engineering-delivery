@@ -1,0 +1,31 @@
+{
+ "at": "2026-10-03T06:58:43",
+ "trials": [
+  {
+   "trial": "two_bodies_each_one",
+   "count_before": 0,
+   "tree_before": 9,
+   "called": true,
+   "count_after": 1,
+   "tree_after": 9
+  },
+  {
+   "trial": "same_body_two_verts_control",
+   "count_before": 1,
+   "tree_before": 9,
+   "called": true,
+   "count_after": 2,
+   "tree_after": 9
+  }
+ ],
+ "tree": 9,
+ "bodies": 2,
+ "study_none": false,
+ "verts_per_body": [
+  8,
+  8
+ ],
+ "any_built": true,
+ "verdict": "pass",
+ "note": "★ 两个体各取一个顶点（★ 而★ 带一个对照：同一体上的两个顶点）。★ 形态照事实 372：★ `IVertex` 对象 + `VARIANT(VT_BYREF|VT_I4)` 的 out。★ 判据：★ `Count` **+1** · ★ 特征树增量。"
+}
