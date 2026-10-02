@@ -1,0 +1,21 @@
+{
+  "steps": {
+    "create_cut_list": {
+      "ok": false,
+      "error": "RuntimeError: IFeatureManager.InsertWeldmentCutList2 在当前后端（pywin32 迟到绑定）上**取不到**（权威类型库里有该成员，但 COM 分发解析为 None）⇒ 切割清单在当前后端**不可用**；这不是调用参"
+    },
+    "set_cut_list_properties": {
+      "ok": false,
+      "error": "RuntimeError: 没有可写入切割清单的结构构件实体"
+    },
+    "export_cut_list_csv": {
+      "ok": true,
+      "path": "D:\\AI\\SW\\output\\_weldment_smoke.csv",
+      "size": 26
+    }
+  },
+  "passed": 1,
+  "of": 3,
+  "captured_at": "2026-10-02T13:10:48",
+  "verdict": "partial"
+}
