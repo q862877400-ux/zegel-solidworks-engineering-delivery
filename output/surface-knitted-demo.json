@@ -1,0 +1,35 @@
+{
+  "steps": {
+    "before": {
+      "features": [
+        "草图1",
+        "曲面-拉伸1",
+        "草图2",
+        "曲面-拉伸2"
+      ],
+      "bodies": 2
+    },
+    "knit": {
+      "ok": true,
+      "new": [
+        "曲面-缝合1"
+      ],
+      "faces": 8,
+      "bodies": "2->1"
+    },
+    "after": {
+      "features": [
+        "曲面-拉伸1",
+        "草图2",
+        "曲面-拉伸2",
+        "曲面-缝合1"
+      ]
+    },
+    "save_knitted": {
+      "ok": true,
+      "path": "D:\\AI\\SW\\surface-knit-teaching-KNITTED.SLDPRT",
+      "bytes": 70873
+    }
+  },
+  "captured_at": "2026-10-02T17:20:57"
+}
