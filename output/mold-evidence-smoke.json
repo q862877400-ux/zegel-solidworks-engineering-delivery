@@ -11,19 +11,19 @@
       "detail": "dict"
     },
     {
-      "name": "★★ 含官方只读入口的键（2/6）",
-      "ok": false,
-      "detail": "['parting_type', 'core_cavity_split']"
+      "name": "★★ 含官方只读入口的键（6/6）",
+      "ok": true,
+      "detail": "['parting_lines', 'parting_surfaces', 'cavity_surfaces', 'core_surfaces', 'parting_type', 'core_cavity_split']"
     },
     {
       "name": "★★ 新零件上这些读数**都是空/0**（非 0 就是读错了对象）",
-      "ok": false,
-      "detail": "2 个为 0/空"
+      "ok": true,
+      "detail": "6 个为 0/空"
     },
     {
       "name": "★ 收尾（轮询 + 查到就点掉）",
       "ok": true,
-      "detail": "发现 0 · 点掉 0 · 扫了 75 个窗口"
+      "detail": "发现 0 · 点掉 0 · 扫了 48 个窗口"
     }
   ],
   "evidence_keys": [
@@ -32,10 +32,16 @@
     "parting_type"
   ],
   "values": {
+    "counts": {
+      "parting_lines": null,
+      "parting_surfaces": null,
+      "cavity_surfaces": null,
+      "core_surfaces": null
+    },
     "parting_type": null,
     "core_cavity_split": null
   },
-  "passed": 3,
+  "passed": 5,
   "total": 5,
-  "verdict": "fail"
+  "verdict": "pass"
 }
