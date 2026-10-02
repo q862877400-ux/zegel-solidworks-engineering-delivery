@@ -7288,6 +7288,47 @@
          ▶ **队列续作**：★ **能力 69 → 75 还差 6** —— ★ 剩下的候选中，
            ★ **"`mcp_tools` 为空的条目"已经清完了**（★ 3 条全填），★ **所以之后只能靠"拆"或"新增"** ·
            ★ 而**每条仍要有"为什么独立"**（★ 不许凑）。
+     ★ 2026-10-01（轮 277 / **24h 计划 段 5 续「把已验过的能力接上工具」/ Spec Kit `156`**）· ★★★★★ **"`verified` 却 0 工具"是一条**自相矛盾**的账 —— 而它们的下游一直都在**
+         ▶ **怎么发现的**：★ 轮 276 清点了「`mcp_tools` 为空的条目」共 **28 条**；★ 轮 277 再看它们的 `level`
+           ⇒ ★★ 发现**多条是 `verified` 却**一个工具都没有****：`equations` · `helix_and_spiral` ·
+             `gtol_insert` · `geometric_tolerance` · `motion_study` · `routing` · `assembly_and_mates` ·
+             `pack_and_go` · `dfm_checks` · `standard_parts_toolbox` …
+           ⇒ ★★★ **那不合逻辑**：★ verified 意味着"有我们自己的运行证据" ⇒ **而"运行证据"通常来自
+             真机跑工具** ⇒ ★ **那没有工具是怎么验的？**
+         ★★★★★ **查下去 ⇒ 那些能力的下游函数一直都在，只是没挂**：
+           ```
+           | module | 公开函数 | 已挂工具 | 而它下游的真机证据 |
+           | sw_equation | **4** | **0** | ★★ tools/verify_equation_smoke.py 真机 **5/5 pass** 过 |
+           | sw_gtol | **4** | **0** | ★ verify_gtol_smoke.py 真机 **3/5**（insert_gtol 那半通过） |
+           | sw_helix | **1** | **0** | ⚠ 未单验 |
+           | sw_motion | **13** | **0** | motion_study 条目 verified |
+           | sw_routing | **22** | **0** | routing 条目 verified |
+           ⇒ ★★★★ 所以那是「**能力验过了、工具没接上**」—— ★ 与"能力没做"**完全不同**。
+           ```
+         ★ **处置（先做最省的 6 个）**：★ 方程 **4**（`add_equation` 吃**纯字符串** · `list_equations` ·
+           `evaluate_equations` · `delete_equation`）· 螺旋 **1** · GTol **1**（`insert_gtol`，**零参**）
+           ⇒ ★ `all_specs()` **152 → 158** · 归属 **158/158** ✓
+           ★★ 并把**三条空条目填实**（`equations` / `helix_and_spiral` / `gtol_insert`）
+           ★ **真机（沿用既有冒烟的判据）**：★ `add` ✓ · `list_contains` ✓（count=1）· `evaluate` ✓
+             ⇒ **3/3 PASS** ✓（★ 证据 output/equation-tools-evidence.json）
+         ★★★ **定则**：
+           ★ **"`verified` 却 0 工具"是一条**自相矛盾**的账** —— ★ 它意味着"我们说这个能力验过、
+             ★ 而**没有任何工具能调用它**" ⇒ ★★ **两种可能**：
+               ① ★ **工具没挂**（★ 本轮这一种 —— 下游一直都在）；
+               ② ★ **`verified` 评早了**（★ 那是**更严重**的问题：★ 事实 208 的「verified 过宽」）。
+             ⇒ ★★★ **可操作的判据**：★ **`level == 'verified'` 且 `mcp_tools == []` 必须为**空集****
+               —— ★ 而它**可以做成门禁**（★ 等本项清完就转硬门禁）。
+           ★★ **清点要**分两步****（★ 本轮学到的）：★ **先看"有没有工具"**（事实 209），
+             ★★ **再看"level 与工具数是否自洽"**（本轮）—— ★ 第二步比第一步**信息量大得多**。
+         ▶ **验收**：① `all_specs()` = **158** · 能力 **69** · 归属 **158/158** ✓ · 绑定门禁 **PASS** ✓
+           · 计数守卫（wiring 158 · 协议层 203）✓ · 门禁链 18 道 exit 0 ✓ · `release_check` exit 0 ✓
+           · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 真机 `output/equation-tools-evidence.json` = **PASS（3/3）** ✓
+         ▶ **状态**：`all_specs()` **158** · 能力 **69** 条（verified **53** · stitched **15**）·
+           known-facts **209** 条。
+         ▶ **队列续作**：★ **`sw_routing`(22) 与 `sw_motion`(13) 是最大的两条 veins**（★ 全 0 工具）·
+           ★ **`assembly_and_mates` / `pack_and_go` / `dfm_checks` / `standard_parts_toolbox`** 也要查
+           （★ 它们同样 verified 而 0 工具）· ★ 清完后把「verified 且 0 工具」做成**硬门禁**。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:

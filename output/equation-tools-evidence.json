@@ -1,0 +1,20 @@
+{
+  "steps": {
+    "add": {
+      "ok": true,
+      "preview": "0"
+    },
+    "list_contains": {
+      "ok": true,
+      "count": 1
+    },
+    "evaluate": {
+      "ok": true,
+      "preview": "-1"
+    }
+  },
+  "captured_at": "2026-10-02T13:49:14",
+  "passed": 3,
+  "of": 3,
+  "verdict": "pass"
+}
