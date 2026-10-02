@@ -1,0 +1,33 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件55"
+  },
+  "prereq_extruded_surface": {
+   "ok": true,
+   "feature": "曲面-拉伸1",
+   "tree": [
+    6,
+    7
+   ]
+  },
+  "negative_zero_distance": {
+   "ok": true,
+   "returned_ok": false,
+   "error": "distance_mm 必须 > 0（★ 收到 0.0）"
+  },
+  "extend_surface": {
+   "ok": true,
+   "feature_name": "曲面-延伸1",
+   "faces_selected": 4,
+   "tree_before": 7,
+   "tree_after": 8,
+   "distance_mm": 10.0,
+   "error": null
+  }
+ },
+ "at": "2026-10-03T01:34:55",
+ "verdict": "pass",
+ "note": "★ `extend_surface` 是 objective② 重核后确认的**真缺**；★ 官方 `IModelDoc2.InsertExtendSurface` 3 参、回 void ⇒ 判据只能是特征树。★ 负例（不选面）必须失败 —— 那证明判据不是恒真。"
+}

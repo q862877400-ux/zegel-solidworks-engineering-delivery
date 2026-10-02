@@ -1,0 +1,61 @@
+| 303 | **objective② 补第一个真缺：`extend_surface` 真机 PASS**（`IModelDoc2.InsertExtendSurface` 3 参 ⇒ 特征 `曲面-延伸1` · tree 7→8）；★ 而"不选面"**不是**负例（它自己会找面）**（2026-10-02，轮 386）。
+
+## 一、★★★★★ 补的是什么（★ 承接事实 302 的重核）
+```
+★ 事实 302 把 objective② 的 5 条"真缺"重核成 **4 条**（★ `revolved_surface` 是误判），
+   ★★ 而其中 **`delete_feature` / `rename_feature` 是高风险写**（★ 硬约束⑦：★ 不碰删除）
+   ⇒ ★ **可补的只有 `extend_surface` 与 `filled_surface`** ✓
+★ 两条的官方签名（★ 事实 302 已查）：
+   · **`IModelDoc2.InsertExtendSurface(bool ExtendLinear, int EndCondition, double Distance)`** — **3 参**
+     ★ `EndCondition`：**0 = 按距离** · **1 = 到选定点**
+   · `IFeatureManager.InsertFillSurface` ⇒ ★ **`Obsolete`**，后继 `InsertFillSurface2` **5+ 参（含两个 Object）**
+   ⇒ ★★ **先补 `extend_surface`**（★ 3 参、低复杂度）✓
+```
+
+## 二、★★★★★ 实现（★ 加在 `scripts/sw_surface_features.py` —— **特征路线**那个模块）
+```
+★ `insert_extend_surface_report(model, distance_mm, *, extend_linear=True, end_condition=0)`：
+   · ★ **规则 3**：★ 面**按对象选中**（★ 复用同模块的 `_select_all_surface_faces(model, mark=0)`）
+   · ★ **规则 2**：★ 对外只暴露 `distance_mm`（毫米）⇒ ★ 换算 `* 0.001` **只在本函数做一次**
+   · ★ **规则 6**：★ `InsertExtendSurface` 回 **`void`** ⇒ ★★ 判据**只能是**特征树 diff**
+     （★ 照同模块 `create_extruded_surface_report` / `knit_surfaces_report` 的既有形态）
+   · ★ 参数校验：★ `distance_mm` 必须有限且 **> 0** · `end_condition` 只支持 **0/1**
+★ **关键区分**（★ 模块头本来就写着）：★ `IModeler.Create*Surface` 造**曲面体**（★ 事实 40 返回值不可靠）
+   vs `IModelDoc2.Insert*Surface` 造**曲面特征** —— ★ 本条走的是**后者**（★ 与 UI 点"曲面-延伸"一致）。
+```
+
+## 三、★★★★★ 真机结果（★ `verdict: pass`）
+```
+★ `python tools/sw_guard.py --timeout 300 -- python tools/prove_extend_surface.py`（★ 5.16 s · 无弹窗）
+   ```
+   prereq_extruded_surface  ok · feature=**曲面-拉伸1** · tree **6 → 7**
+   negative_zero_distance   ok（★ 距离 0 ⇒ 被入口拒：`distance_mm 必须 > 0（★ 收到 0.0）`）
+   **extend_surface**       **ok · feature=曲面-延伸1 · faces_selected=4 · tree 7 → 8** ✓
+   ```
+   ⇒ **verdict = PASS** ✓
+★ 证据：★ `output/extend-surface-evidence.json` ✓
+```
+
+## 四、★★ 一条**判据假设被真机推翻**（★ 值得记）
+```
+★ 我第一版把「**不选面**」当负例（★ 依据是官方描述 "along the **selected** faces or edges"）。
+   ⇒ ★★ **而真机上不选面它**也能成****（★ 它**自己会找面**）⇒ ★ 那条**不是负例** ✗
+   ⇒ ★★★ **若保留它，我会得出"判据失效"的**错误结论****（★ 而判据其实好着）。
+⇒ ★ 修法：★ **换一个真正可证伪的负例** —— ★ **参数校验**那条（★ 距离 ≤ 0）✓
+   ⇒ ★★ **教训**：★ **负例也要选"必然该失败"的那种**；★ 从**官方描述**推出来的"应该失败"
+     ★ **不等于**真机上会失败（★ 与事实 57 同族：★ **测试一直绿可能只是环境恰好满足**）。
+```
+
+## 五、★ 处置与下一步
+```
+① `docs/union-gap-evidence-based.md`：★ `extend_surface` 的判定 **真缺 ⇒ 已补（真机 PASS）** ✓
+② `capabilities.yaml`：★ 该入口**接到 evidence** ✓
+③ ★ **重跑 `sync_bundled_skill.py`**（★ 改了 `scripts/sw_surface_features.py` —— 硬约束⑩）✓
+④ ★ **下一个**：★ `filled_surface`（★ 官方后继 `InsertFillSurface2` 5+ 参 ⇒ 要查参数语义再补）。
+```
+
+**依据**：`output/extend-surface-evidence.json`（★ `verdict: pass` · `曲面-延伸1` · tree 7→8 ·
+`negative_zero_distance` 被拒）· `scripts/sw_surface_features.py` 的 `insert_extend_surface_report`
+（★ 新增）+ 同模块 `create_extruded_surface_report` / `knit_surfaces_report` / `_select_all_surface_faces` ·
+`C:\swapi\types\IModelDoc2\InsertExtendSurface.md`（★ 3 参 · EndCondition 0/1）·
+`tools/sw_guard.py`（★ 5.16 s · 无弹窗）· 事实 40 / 57 / 302
