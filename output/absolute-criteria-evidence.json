@@ -1,0 +1,119 @@
+{
+ "steps": {
+  "geometry": {
+   "ok": true,
+   "volume_mm3": 120000.0,
+   "area_mm2": 18400.0,
+   "faces": 6
+  },
+  "volume_matches_expected": {
+   "ok": true,
+   "expected": 120000.0,
+   "got": 120000.0
+  },
+  "vertices_from_real_geometry": {
+   "ok": true,
+   "count": 24,
+   "sample": [
+    [
+     0.0,
+     60.0,
+     0.0
+    ],
+    [
+     0.0,
+     60.0,
+     -20.0
+    ],
+    [
+     0.0,
+     0.0,
+     -20.0
+    ]
+   ]
+  },
+  "delta_from_real_vertices": {
+   "ok": true,
+   "delta_mm": [
+    0.0,
+    0.0,
+    -20.0
+   ]
+  },
+  "axis_alignment": {
+   "ok": true,
+   "positive": {
+    "ok": true,
+    "reasons": [],
+    "orientation": "axial",
+    "tol_mm": 0.05,
+    "deltas": {
+     "dx": 0.01,
+     "dy": 0.02,
+     "dz": 50.0
+    },
+    "★": "★ 绝对 mm · 逐轴 · 带方位语义（判据来源 native_features.py:655/657，MIT）"
+   },
+   "negative": {
+    "ok": false,
+    "reasons": [
+     "方位不符（axial）：期望 |dx|<=tol 且 |dy|<=tol 且 **|dz|>tol**，实得 dx=0.200000 dy=0.000000 dz=50.000000，tol=0.050000"
+    ],
+    "orientation": "axial",
+    "tol_mm": 0.05,
+    "deltas": {
+     "dx": 0.2,
+     "dy": 0.0,
+     "dz": 50.0
+    },
+    "★": "★ 绝对 mm · 逐轴 · 带方位语义（判据来源 native_features.py:655/657，MIT）"
+   },
+   "note": "★ 正例横向 0.01/0.02 ≤ 0.05 且轴向 50 > 0.05 ⇒ pass；★ 负例横向 0.20 > 0.05 ⇒ 必须 fail"
+  },
+  "radii": {
+   "ok": true,
+   "positive": {
+    "ok": true,
+    "reasons": [],
+    "max_dev": 0.05,
+    "tol_mm": 0.1,
+    "count": 2,
+    "★": "★ 绝对 mm · 逐值（判据来源 native_features.py:662，MIT）"
+   },
+   "negative": {
+    "ok": false,
+    "reasons": [
+     "有 1/1 个半径超出容差：最大偏离 0.500000 mm > 0.100000 mm"
+    ],
+    "max_dev": 0.5,
+    "tol_mm": 0.1,
+    "count": 1,
+    "★": "★ 绝对 mm · 逐值（判据来源 native_features.py:662，MIT）"
+   },
+   "note": "★ 容差 0.1：10.05 过、10.5 必须不过"
+  },
+  "same_level": {
+   "ok": true,
+   "positive": {
+    "ok": true,
+    "reasons": [],
+    "max_dev": 0.03,
+    "tol_mm": 0.05,
+    "★": "★ 绝对 mm · 逐端点（判据来源 native_features.py:665，MIT）"
+   },
+   "negative": {
+    "ok": false,
+    "reasons": [
+     "有端点不在 level=0.000000 上：最大偏离 5.000000 mm > 0.050000 mm"
+    ],
+    "max_dev": 5.0,
+    "tol_mm": 0.05,
+    "★": "★ 绝对 mm · 逐端点（判据来源 native_features.py:665，MIT）"
+   },
+   "note": "★ 基准 z 取**真机顶面**（0.000）；两端 z 都对上即过，一端差 5.0 必须不过"
+  }
+ },
+ "at": "2026-10-03T01:24:06",
+ "verdict": "pass",
+ "note": "★ 这是**绝对 mm 判据第一次真机使用**（★ objective④ 的缺口）；★ 判据的输入取自真机几何（顶点坐标 / 顶面 z），★ 期望值由尺寸推出。"
+}
