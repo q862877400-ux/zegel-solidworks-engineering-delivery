@@ -3,7 +3,8 @@
   "gap": "balloon",
   "funcs": [],
   "com_members": [],
-  "verdict": "**真缺**（两层都无）"
+  "enum_or_doc": [],
+  "verdict": "**真缺**（三层都无）"
  },
  {
   "gap": "gdt",
@@ -16,13 +17,15 @@
   "com_members": [
    "InsertGtol"
   ],
+  "enum_or_doc": [],
   "verdict": "已有（★ 有实现入口）"
  },
  {
   "gap": "datum",
   "funcs": [],
   "com_members": [],
-  "verdict": "**真缺**（两层都无）"
+  "enum_or_doc": [],
+  "verdict": "**真缺**（三层都无）"
  },
  {
   "gap": "hem",
@@ -30,13 +33,15 @@
    "check_capabilities_schema"
   ],
   "com_members": [],
+  "enum_or_doc": [],
   "verdict": "★ 需人工核（有入口而同名 COM 成员为空）"
  },
  {
   "gap": "jog",
   "funcs": [],
   "com_members": [],
-  "verdict": "**真缺**（两层都无）"
+  "enum_or_doc": [],
+  "verdict": "**真缺**（三层都无）"
  },
  {
   "gap": "unfold",
@@ -46,6 +51,7 @@
    "export_flat_pattern_dxf"
   ],
   "com_members": [],
+  "enum_or_doc": [],
   "verdict": "★ 需人工核（有入口而同名 COM 成员为空）"
  },
  {
@@ -65,13 +71,15 @@
    "PhaseAngleUnit",
    "ResistanceUnit"
   ],
+  "enum_or_doc": [],
   "verdict": "已有（★ 有实现入口）"
  },
  {
   "gap": "undo",
   "funcs": [],
   "com_members": [],
-  "verdict": "**真缺**（两层都无）"
+  "enum_or_doc": [],
+  "verdict": "**真缺**（三层都无）"
  },
  {
   "gap": "wrap",
@@ -82,6 +90,7 @@
   "com_members": [
    "InsertWrapFeature2"
   ],
+  "enum_or_doc": [],
   "verdict": "已有（★ 有实现入口）"
  },
  {
@@ -94,6 +103,7 @@
    "GetSensorValue",
    "SensorType"
   ],
+  "enum_or_doc": [],
   "verdict": "已有（★ 有实现入口）"
  },
  {
@@ -105,7 +115,12 @@
    "GetPoints",
    "GetStartVertex"
   ],
-  "verdict": "**真缺**（两层都无）"
+  "enum_or_doc": [
+   "sw_assembly.py:VERTEX",
+   "sw_hole_features.py:VERTEX",
+   "sw_selection_spec.py:VERTEX"
+  ],
+  "verdict": "已有（★ 由**枚举取值/文档串**佐证 —— 第三层）"
  },
  {
   "gap": "referenced_documents",
@@ -126,6 +141,11 @@
    "GetUserPreferenceInteger",
    "GetUserPreferenceIntegerValue",
    "GetUserPreferenceToggle"
+  ],
+  "enum_or_doc": [
+   "sw_delivery.py:SW_PACK_AUDIT_EXTERNAL_REFERENCE_MISSING",
+   "sw_delivery.py:SW_PACK_AUDIT_EXTERNAL_REFERENCE_REVIEW_REQUIRED",
+   "sw_delivery.py:SW_PACK_AUDIT_SOURCE_REFERENCE_MISSING"
   ],
   "verdict": "已有（★ 有实现入口）"
  }
