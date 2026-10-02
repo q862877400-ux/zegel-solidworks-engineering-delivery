@@ -16,8 +16,8 @@ d = json.loads(c.read_text(encoding="utf-8"))
 x = next(y for y in d["capabilities"] if y["id"] == "mold_parting_geometry")
 EV = ("python 真机（轮 392）★ **`insert_shut_off_surface` 的穷尽式结论**：三次尝试"
       "（① 无孔 · ② 先打 8 mm 通孔 · ③ 孔 + `分型线1` + `分型面1` **前置全齐**）"
-      "**都是 `returned=true` 而特征树不变**（末次树 10→10）⇒ ★★ **不是"缺前置"，"
-      "而是这个件上"没有可关的断面"**（★ 记为假设：孔需**穿过分型面**才算断面，本轮两者不相交）。
+      "**都是 `returned=true` 而特征树不变**（末次树 10→10）⇒ ★★ **不是「缺前置」，"
+      "而是这个件上「没有可关的断面」**（★ 记为假设：孔需**穿过分型面**才算断面，本轮两者不相交）。"
       "★ 依据事实 53：同一启发式试 ≥3 次即停，★ 不再换条件试。"
       "证据 output/shut-off-surface-evidence.json。"
       "★★ 模具族准确进度（4 个工具）：**2 个真机通过**（`insert_parting_line` ⇒ `分型线1` · "
@@ -29,7 +29,7 @@ if not any("穷尽式结论" in s and "shut_off" in s for s in ev):
 x["evidence"] = ev
 LIM = ("★★ 2026-10-03（轮 392）**`insert_shut_off_surface` 已试三次**（无孔 / 有孔 / "
        "孔+分型线+分型面）⇒ **都回 `true` 而特征树不变** ⇒ ★ **穷尽式结论：不是缺前置，"
-       "而是"没有可关的断面"**（★ 假设：孔需**穿过分型面**）。★ **不再换条件试**（事实 53）。"
+       "而是「没有可关的断面」**（★ 假设：孔需**穿过分型面**）。★ **不再换条件试**（事实 53）。"
        "★ 下一步只剩 `insert_core_cavity_solids` —— ★ 它要一整条链（分离成型芯/型腔片体 + 建模坯草图），"
        "★ 留作单独一轮。")
 lim = list(x.get("limitations") or [])
