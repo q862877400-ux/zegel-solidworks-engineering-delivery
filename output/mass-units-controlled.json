@@ -1,0 +1,53 @@
+{
+  "captured_at": "2026-10-02T12:31:02",
+  "question": "IMassProperty2.Mass / Density 的物理单位（用已知密度材料对照）",
+  "geometry": "40×20×10 mm 板（体积应 8000 mm³）",
+  "steps": {
+    "before_material": {
+      "entry_used": "CreateMassProperty2",
+      "entry_errors": [],
+      "volume": 7999.999999999999,
+      "density": 1000.0,
+      "mass": 7999999.999999999,
+      "center_of_mass": [
+        0.0,
+        0.0,
+        -5.0
+      ],
+      "recalculate_error": "TypeError: 'bool' object is not callable",
+      "density_from_readings": 1000.0
+    },
+    "material_assignment": {
+      "tried": [
+        "AISI 1020",
+        "Plain Carbon Steel",
+        "Alloy Steel",
+        "AISI 304"
+      ],
+      "used": "AISI 1020",
+      "readback": "solidworks materials|AISI 1020|2"
+    },
+    "after_material": {
+      "entry_used": "CreateMassProperty2",
+      "entry_errors": [],
+      "volume": 7999.999999999999,
+      "density": 7900.0,
+      "mass": 63199999.99999999,
+      "center_of_mass": [
+        0.0,
+        0.0,
+        -5.0
+      ],
+      "recalculate_error": "TypeError: 'bool' object is not callable",
+      "density_from_readings": 7900.0
+    },
+    "judgement": {
+      "volume_is_mm3": true,
+      "density_relation_holds_now": true,
+      "density_relation_holds_before": true,
+      "density_value_before": 1000.0,
+      "density_value_after": 7900.0,
+      "★": "★ 判读：① `Volume≈8000` ⇒ 体积单位 **mm³** 确证；② `Density == Mass/Volume`（官方 Remarks 那条）⇒ 三个读数自洽；③ ★ **`Density` 的读数是多少，就说明它用的是哪个单位制的数值** —— ★ 把它与材料库给的 kg/m³ 值比，即可定 `Mass` 的单位。⚠ **本脚本不替你下结论**：把两次数都留着。"
+    }
+  }
+}
