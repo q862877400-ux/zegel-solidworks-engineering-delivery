@@ -1,0 +1,27 @@
+{
+  "steps": {
+    "counts": {
+      "FACE": 6,
+      "EDGE": 12,
+      "VERTEX": 8
+    },
+    "expect": {
+      "VERTEX": 8,
+      "EDGE": 12,
+      "FACE": 6,
+      "euler_V-E+F": 2
+    },
+    "euler": 2,
+    "ok": {
+      "ok": true
+    },
+    "negative": {
+      "ok": true,
+      "raised": "未知的实体类型 'NOPE'；合法值：['EDGE', 'FACE', 'VERTEX']"
+    }
+  },
+  "captured_at": "2026-10-02T19:28:53",
+  "passed": 2,
+  "of": 2,
+  "verdict": "pass"
+}
