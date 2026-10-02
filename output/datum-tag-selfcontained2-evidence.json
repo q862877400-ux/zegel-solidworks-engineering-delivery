@@ -1,0 +1,22 @@
+{
+ "steps": {
+  "new_drawing": {
+   "ok": true,
+   "title": "工程图2 - 图纸1"
+  },
+  "setup_a3_sheet": {
+   "ok": true,
+   "returned": "{\"status\": \"pass\", \"paper_size\": \"A3\", \"selected\": \"C:\\\\ProgramData\\\\SOLIDWORKS\\\\SOLIDWORKS 2026\\\\lang\\\\Chinese-Simplified\\\\sheetf"
+  },
+  "add_view": {
+   "ok": false,
+   "returned": "None"
+  }
+ },
+ "at": "2026-10-03T03:37:54",
+ "part": "C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2026\\samples\\tutorial\\api\\squarepad_blue.sldprt",
+ "a3_format": "C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2026\\lang\\Chinese-Simplified\\sheetformat\\a3 - gb.slddrt",
+ "a3_exists": true,
+ "verdict": "partial",
+ "note": "★ 事实 327 的具体下一步：★ **先上 A3 图框**（`setup_current_sheet_as_a3` 走官方 `SetupSheet6`）★ **再** `add_view`。★ 判据是 `GetDatumTagCount()` 真的 +1。★ 零件用**已在盘上**的自带件 ⇒ ★ 不保存任何东西（硬约束⑦）。"
+}

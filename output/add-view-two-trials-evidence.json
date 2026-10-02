@@ -1,0 +1,23 @@
+{
+ "trials": [
+  {
+   "trial": "A_path_only",
+   "pre_open": false,
+   "a3": true,
+   "view": false,
+   "ok": false
+  },
+  {
+   "trial": "B_model_preopened",
+   "pre_open": true,
+   "model_opened": true,
+   "a3": true,
+   "view": false,
+   "ok": false
+  }
+ ],
+ "at": "2026-10-03T03:38:14",
+ "verdict": "partial",
+ "successes": [],
+ "note": "★ 两个**独立**试验（★ 事实 324）：★ 格 A 只给路径、★ 格 B 先打开模型。★ 判据是 `add_view` **回一个非空视图对象**。"
+}
