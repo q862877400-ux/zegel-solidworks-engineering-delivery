@@ -1,0 +1,35 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件61"
+  },
+  "prereq_extruded_surface": {
+   "ok": true,
+   "feature": "曲面-拉伸1",
+   "tree": [
+    6,
+    7
+   ]
+  },
+  "negative_bad_resolution": {
+   "ok": true,
+   "returned_ok": false,
+   "error": "resolutions 只支持 1 / 2 / 3（官方 Remarks）：9"
+  },
+  "fill_surface": {
+   "ok": true,
+   "feature_name": "曲面填充1",
+   "points_selected": 4,
+   "boundary_z": 0.03,
+   "tree_before": 7,
+   "tree_after": 8,
+   "resolutions": 2,
+   "options": 1,
+   "error": null
+  }
+ },
+ "at": "2026-10-03T01:42:06",
+ "verdict": "pass",
+ "note": "★ `filled_surface` 是 objective② 重核后确认的真缺；★ 真机打通的组合：边界边按**中点 + mark=1** 选（`SelectByID2`）⇒ `InsertFillSurface2(2, 1, None, None, None, None)`。★ mark 传 4 会**静默失败**（回 true 而计数 0 —— 事实 8）。"
+}
