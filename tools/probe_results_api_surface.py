@@ -25,7 +25,7 @@ r"""@brief P1 终局判定：运行期枚举活对象的成员，查三个「看
 # ⚠ 连真机；**不保存任何文档**（收尾 `CloseDoc`）。需要 Simulation 加载项。
 # ⚠ **2026-10-01（轮 56）从工作区根搬进 `tools/`**：原先只在 `D:\AI\SW\`，
 #   而 SC-001 把它当验收判据 ⇒ **换机器 / CI 跑不了**（与 `capability_gap.py` 同类，这是第 2 例）。
-#   搬移时把 `sys.path.insert(0, r"C:\swprojects\sw-skill-fork")` 改成
+#   搬移时把 `sys.path.insert(0, r"")` 改成
 #   `Path(__file__).resolve().parents[1]`（**可移植**）；**行为一字未改**。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
@@ -36,7 +36,7 @@ import sys
 import time
 from pathlib import Path
 
-# ⚠ **可移植**：不要硬编码机器路径（原先写死 `C:\swprojects\sw-skill-fork`）。
+# ⚠ **可移植**：不要硬编码机器路径（原先写死 ``）。
 _REPO = Path(__file__).resolve().parents[1]
 for _p in (str(_REPO), str(_REPO / "scripts")):
     if _p not in sys.path:

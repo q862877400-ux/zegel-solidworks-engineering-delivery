@@ -2,7 +2,7 @@ import inspect
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 import sw_part as p
 
 for n in ("extrude_boss", "extrude_cut", "extrude_midplane", "chamfer", "fillet"):

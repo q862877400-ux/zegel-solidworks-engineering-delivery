@@ -3,8 +3,8 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path[:0] = [r"C:\swprojects\sw-skill-fork\scripts", r"C:\swprojects\sw-skill-fork\mcp-server",
-                r"C:\swprojects\sw-skill-fork"]
+sys.path[:0] = [r"" + _ROOT_S + r"\scripts", r"" + _ROOT_S + r"\mcp-server",
+                r"" + _ROOT_S + r""]
 import register_capabilities as rc
 
 exposed = {x.function for x in rc.all_specs()}
@@ -16,7 +16,7 @@ CAND = ["chamfer", "fillet", "extrude", "extrude_cut", "revolve_boss", "shell", 
 
 print("  ══ 能力层里的「建/改特征」函数：哪些没挂、且首参可注入 ══")
 rows = []
-for mod in sorted(p.stem for p in Path(r"C:\swprojects\sw-skill-fork\scripts").glob("sw_*.py")):
+for mod in sorted(p.stem for p in Path(r"" + _ROOT_S + r"\scripts").glob("sw_*.py")):
     try:
         m = __import__(mod)
     except Exception:                                          # noqa: BLE001

@@ -3,13 +3,13 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path[:0] = [r"C:\swprojects\sw-skill-fork\tools", r"C:\swprojects\sw-skill-fork",
-                r"C:\swprojects\sw-skill-fork\mcp-server", r"C:\swprojects\sw-skill-fork\scripts"]
+sys.path[:0] = [r"" + _ROOT_S + r"\tools", r"" + _ROOT_S + r"",
+                r"" + _ROOT_S + r"\mcp-server", r"" + _ROOT_S + r"\scripts"]
 import build_union_map as b
 from build_union_sources import _domain, _normalize
 import register_capabilities as rc
 
-u = json.loads(Path(r"C:\swprojects\sw-skill-fork\tools\union-sources.json").read_text(encoding="utf-8"))
+u = json.loads(Path(r"" + _ROOT_S + r"\tools\union-sources.json").read_text(encoding="utf-8"))
 allops = {_normalize(t) for s in u["sources"] for t in (s.get("tools") or [])}
 ours = {_normalize(x.name.replace("solidworks_", "").replace("cadstudio_", "")) for x in rc.all_specs()}
 

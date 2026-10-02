@@ -55,7 +55,7 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 SWAPI = Path(r"C:\swapi\types")
 #: C:\swapi 未收录的 4 个程序集的反射清单（域 13 / 14 用）
 #: 来源：AGENTS.md §四.1③ —— 对官方 interop 程序集的纯元数据反射

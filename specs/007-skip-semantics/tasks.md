@@ -73,4 +73,4 @@
   `→ 验收:` `python -m pytest tests -q`（970 passed / 17 skipped / 0 failed）
 
 - [x] **T-311** 两仓库各自 commit
-  `→ 验收:` `git -C C:\swprojects\sw-skill-fork log --oneline -1` + `git -C D:\AI\SW log --oneline -1`
+  `→ 验收:` `git -C . log --oneline -1` + `git -C D:\AI\SW log --oneline -1`

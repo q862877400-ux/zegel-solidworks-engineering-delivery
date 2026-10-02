@@ -16,7 +16,7 @@
 - [x] 而 `inject` 只能是 `RESOLVERS` 的键（`{"model","sw_app","study"}`）
 - [x] ★ 加 `"asm_model": resolve_model`（★ 不动 `tool_registry`）
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(sorted(rc.RESOLVERS))"`
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(sorted(rc.RESOLVERS))"`
   ⇒ 含 `'asm_model'`
 
 ## T2 · 写 `mcp-server/tool_specs_batch25.py`（3 个只读工具）
@@ -26,7 +26,7 @@
 - [x] `solidworks_assembly_check_interference`（`inject="asm_model"`）
 - [x] ★ 说明里**明写三态语义**（`pass`/`warn`/**`blocked` = 检查失败**，不可读成"无干涉"）
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **81**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **81**
 
 ## T3 · 注册进 `register_capabilities.BATCH_MODULES`
 

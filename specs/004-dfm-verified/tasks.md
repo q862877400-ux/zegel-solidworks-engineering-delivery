@@ -76,7 +76,7 @@
 
 - [x] **T-010** 两仓库各自 commit
   **✅** 代码副本（验收命令 + 清单）与工作区（`specs/004-dfm-verified/`）分开提交。
-  `→ 验收:` `git -C C:\swprojects\sw-skill-fork log --oneline -1` +
+  `→ 验收:` `git -C . log --oneline -1` +
   `git -C D:\AI\SW log --oneline -1`
 
 ---

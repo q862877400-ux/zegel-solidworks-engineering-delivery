@@ -3,10 +3,10 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path[:0] = [r"C:\swprojects\sw-skill-fork\mcp-server", r"C:\swprojects\sw-skill-fork"]
+sys.path[:0] = [r"" + _ROOT_S + r"\mcp-server", r"" + _ROOT_S + r""]
 import register_capabilities as rc
 
-SRV = Path(r"C:\swprojects\sw-skill-fork\mcp-server\server.py").read_text(encoding="utf-8")
+SRV = Path(r"" + _ROOT_S + r"\mcp-server\server.py").read_text(encoding="utf-8")
 
 print("  ── ① 我们 MCP 里已有的「文档 / 会话 / 导出」工具 ──")
 KEY = re.compile(r"document|doc|file|export|session|open|close|new|save|template|rebuild", re.I)

@@ -34,7 +34,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-_REPO = Path(r"C:\swprojects\sw-skill-fork")
+_REPO = Path(r"" + _ROOT_S + r"")
 for _p in (str(_REPO), str(_REPO / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)

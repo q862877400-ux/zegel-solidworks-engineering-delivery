@@ -8,7 +8,7 @@
   `→ 验收:` `Set-Location D:\AI\SW; python -c "from pathlib import Path;t=Path('tools/gen_family_coverage.py').read_text(encoding='utf-8');i=t.find('def _dedupe_domains');print(t[i:i+400])"`（★ 生成器在**工作区仓库**，跨仓库）
   ⇒ 期望看到「**一个族只算一次**」与「1,090 > 实际 774」
 - [x] T-12904 ★★ 把**九个** `全量索引/*` 桶加总（审计只数了最大那个）
-  `→ 验收:` `python -c "import json,sys;from collections import Counter;from pathlib import Path;rows=json.loads(Path(r'C:\swprojects\sw-skill-fork\docs\family-coverage.json').read_text(encoding='utf-8'));c=Counter(r['domain'] for r in rows);u={k:v for k,v in c.items() if str(k).startswith('全量索引/')};print(len(rows), sum(u.values()), sorted(u.items(), key=lambda x:-x[1]))"`
+  `→ 验收:` `python -c "import json,sys;from collections import Counter;from pathlib import Path;rows=json.loads(Path(r'docs\family-coverage.json').read_text(encoding='utf-8'));c=Counter(r['domain'] for r in rows);u={k:v for k,v in c.items() if str(k).startswith('全量索引/')};print(len(rows), sum(u.values()), sorted(u.items(), key=lambda x:-x[1]))"`
   ⇒ 期望 `881 507 [...]`（**不是 385**）
 - [x] T-12905 加 `official_categories()` + 行字段 + `## 四`（**纯插入**，事实 61）
   `→ 验收:` `Set-Location D:\AI\SW; git diff --numstat -- "tools/gen_family_coverage.py"` ⇒ **deletions 应为 0 或仅那一行表头改写**（★ 跨仓库：在工作区仓库里查）

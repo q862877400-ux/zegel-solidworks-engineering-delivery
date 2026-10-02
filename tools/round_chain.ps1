@@ -53,7 +53,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$R = 'C:\swprojects\sw-skill-fork'
+#: ★ 2026-10-03 合并后**自定位**：本脚本住在 <仓库根>/tools/ 下，
+#:   所以仓库根 = 本脚本所在目录的上一级。原先写死 。
+$R = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Set-Location $R
 $env:PYTHONPATH = "$R;$R\scripts;$R\mcp-server;$R\tools"
 $env:PYTHONIOENCODING = 'utf-8'
@@ -85,7 +87,11 @@ git add -A
 #:   改一行再跑第 2 轮 ⇒ **白花 31.5 s**（★ 91.5 s 里有 63 s 是这个）。
 #:   ★ 而那行数字**我自己就能算**（`git diff --shortstat` + `git rev-list --count`）⇒
 #:   ★★ **先预置，再跑一次** ⇒ 省掉一整轮。
-$stat = (git diff --shortstat origin/main) -replace '\s+', ' '
+#: ★ 2026-10-03 合并后：上游在合并后的仓库里**改叫 `upstream`**（`origin` 留给自建远端 ——
+#:   否则裸 `git push` 会误推上游仓库，那是 AGENTS.md §七 点名的风险）。
+#:   ★★ 而**远端不存在时不报错、优雅跳过**：没有上游照样能跑收尾链（那段只是刷新一行说明）。
+$UP = 'upstream/main'
+$stat = if (git rev-parse --verify -q $UP) { (git diff --shortstat $UP) -replace '\s+', ' ' } else { '' }
 if ($stat -match '(\d+) files? changed(?:, (\d+) insertions?\(\+\))?(?:, (\d+) deletions?\(-\))?') {
     $nf = $Matches[1]
     #: ★ 正则捕到的是**字符串** ⇒ 要千分位就得先转 int。
@@ -93,13 +99,13 @@ if ($stat -match '(\d+) files? changed(?:, (\d+) insertions?\(\+\))?(?:, (\d+) d
     #:   正确写法是 `$x = if (…) { [int]… } else { 0 }`。
     $ni = if ($Matches[2]) { [int]$Matches[2] } else { 0 }
     $nd = if ($Matches[3]) { [int]$Matches[3] } else { 0 }
-    $nc = (git rev-list --count origin/main..HEAD).Trim()
+    $nc = (git rev-list --count "$UP..HEAD").Trim()
     $dirty = if ((git status --porcelain | Measure-Object).Count -eq 0) { 'clean' } else { 'dirty' }
     $target = "> 偏离上游：$nf 个文件 / +$($ni.ToString('N0')) 行 / -$($nd.ToString('N0')) 行 · $nc 个 commit · 工作区 $dirty"
     python -c @"
 import re, sys
 from pathlib import Path
-p = Path(r'C:\swprojects\sw-skill-fork\docs\harvest-report.md')
+p = Path(r'''$R\docs\harvest-report.md''')
 t = p.read_text(encoding='utf-8')
 m = re.search(r'> 偏离上游：.*', t)
 if m and m.group(0) != '''$target''':
@@ -127,7 +133,7 @@ for ($i = 1; $i -le 3; $i++) {
     python -c @"
 import re, sys
 from pathlib import Path
-p = Path(r'C:\swprojects\sw-skill-fork\docs\harvest-report.md')
+p = Path(r'''$R\docs\harvest-report.md''')
 t = p.read_text(encoding='utf-8')
 m = re.search(r'> 偏离上游：.*', t)
 if m and m.group(0) != '''$line''':

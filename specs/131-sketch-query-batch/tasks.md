@@ -11,7 +11,7 @@
 - [x] `count_segments(sketch) -> int`
 - [x] `sketch_by_name(model, name)`：按名取，取不到 ⇒ **RuntimeError**
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import sw_sketch as m;print(m.ELEMS_PER_LINE, m.ELEMS_PER_ARC, callable(m.count_lines))"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import sw_sketch as m;print(m.ELEMS_PER_LINE, m.ELEMS_PER_ARC, callable(m.count_lines))"`
 
 ## T2 · 加 `resolve_sketch(model, name="")`（★ 真机抓出的 bug 的修法）
 
@@ -28,7 +28,7 @@
 - [x] `param_alias = _consumed("sketch_name")`；`derived_args = _sketch_args`；**不设 `inject`**
 - [x] ★ 工具说明写明「**整圆算一段弧**」（真机实测：1 线 + 1 圆 ⇒ lines=1 / arcs=1 / segments=2）
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **62**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **62**
 
 ## T4 · 注册进 `register_capabilities.BATCH_MODULES`
 

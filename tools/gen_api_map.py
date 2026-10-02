@@ -43,7 +43,7 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 SIG_FILES = [
     Path(r"D:\\AI\\SW\\_raw\reflect_sldworks\iface_sldworks.txt"),
     Path(r"D:\\AI\\SW\\_raw\reflect\iface_cosworks.txt"),

@@ -4,11 +4,11 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path[:0] = [r"C:\swprojects\sw-skill-fork\mcp-server", r"C:\swprojects\sw-skill-fork",
-                r"C:\swprojects\sw-skill-fork\scripts"]
+sys.path[:0] = [r"" + _ROOT_S + r"\mcp-server", r"" + _ROOT_S + r"",
+                r"" + _ROOT_S + r"\scripts"]
 import register_capabilities as rc
 
-srv = Path(r"C:\swprojects\sw-skill-fork\mcp-server\server.py").read_text(encoding="utf-8")
+srv = Path(r"" + _ROOT_S + r"\mcp-server\server.py").read_text(encoding="utf-8")
 allnames = [x.name for x in rc.all_specs()] + re.findall(
     r'name="((?:solidworks|cadstudio)_[a-z0-9_]+)"', srv)
 

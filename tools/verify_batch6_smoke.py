@@ -14,8 +14,8 @@
 """
 import json, sys, time
 from pathlib import Path
-sys.path.insert(0, r"C:\swprojects\sw-skill-fork")
-sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+sys.path.insert(0, r"" + _ROOT_S + r"")
+sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 sys.stdout.reconfigure(encoding="utf-8")
 import sw_connect
 

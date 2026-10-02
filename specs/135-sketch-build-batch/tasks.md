@@ -17,7 +17,7 @@
 - [x] `sketch_line` / `sketch_circle` / `sketch_corner_rectangle` —— ★ docstring **明写单位毫米**
 - [x] 确认 `sw_part` 的模块单位是**毫米**（事实 73）⇒ **不做换算**
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import inspect,sw_part as p;print(inspect.signature(p.sketch_line))"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import inspect,sw_part as p;print(inspect.signature(p.sketch_line))"`
   ⇒ 输出含 `(model, x1, y1, x2, y2)`
 
 ## T2 · 写 `mcp-server/tool_specs_batch21.py`（5 个工具）
@@ -28,7 +28,7 @@
 - [x] ★ **只挂对角矩形**（中心那个语义重叠 ⇒ 不挂，免得 AI 选错）
 - [x] 每个工具的说明里注明**规则 3 的豁免依据**（画几何必须给平面内坐标）
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **72**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **72**
 
 ## T3 · 注册进 `register_capabilities.BATCH_MODULES`
 

@@ -41,4 +41,4 @@
 - [x] T14 Spec Kit 五件套 + ROADMAP §一 游标 + known-facts 一条
       → 验收: `specs/143-simulation-load-family/` 下五件齐；`docs/ROADMAP.md` 含「24h 计划 段 2.1」；`docs/known-facts.md` 含新条目号
 - [x] T15 两仓库各自 commit（**不 push**）
-      → 验收: `git -C C:\swprojects\sw-skill-fork status --porcelain` 与 `git -C D:\AI\SW status --porcelain` **均为空**
+      → 验收: `git -C . status --porcelain` 与 `git -C D:\AI\SW status --porcelain` **均为空**

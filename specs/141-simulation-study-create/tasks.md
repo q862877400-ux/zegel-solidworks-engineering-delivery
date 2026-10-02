@@ -30,7 +30,7 @@
 - [x] `find_study(sw_app, name)` ⇒ `{found, requested_name, study_name}`
 - [x] 更新 `__all__`
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import sw_simulation as s;print(all(n in s.__all__ for n in ('create_study_report','list_studies','find_study')))"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import sw_simulation as s;print(all(n in s.__all__ for n in ('create_study_report','list_studies','find_study')))"`
   ⇒ `True`
 
 ## T3 · 写 `mcp-server/tool_specs_batch27.py`（3 个工具）
@@ -39,7 +39,7 @@
 - [x] ★ **`param_alias={"study_name": "name"}`**（★ 见 D1 —— 第一版**漏了**）
 - [x] ★ 说明里写明：`entry_name` 的语义（空 ⇒ 没建成）· **只支持静力学** · `found` 的语义
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **86**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **86**
 
 ## T4 · ★★ 加**参数绑定门禁** `scripts/check_param_binding.py`（**本批的额外产出**）
 

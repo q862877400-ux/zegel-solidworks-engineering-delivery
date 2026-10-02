@@ -21,7 +21,7 @@ operation_routes, capabilities}`，**内容是 JSON（YAML 扩展名）** ⇒ �
 
 # ── 来源 ──
 # 仓库:   本项目自身（静态核对工具）
-# 文件:   C:\swprojects\sw-skill-fork\capabilities.yaml（44.8 KB，`schema_version` 2.0）
+# 文件:   capabilities.yaml（44.8 KB，`schema_version` 2.0）
 #         docs/ROADMAP.md 的验收判据 A2 / A4
 # 定位:   把 A2 / A4 的「逐条核对」做成**可重跑、给确切数字**的命令。
 # 官方签名依据: 不适用（纯静态核对）
@@ -38,7 +38,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-CAPS = Path(r"C:\swprojects\sw-skill-fork\capabilities.yaml")
+CAPS = Path(r"" + _ROOT_S + r"\capabilities.yaml")
 
 LEVELS = {"verified", "source_verified", "stitched", "indexed", "not_implemented"}
 PROV_FIELDS = ("repo", "license", "files", "upstream_verified")

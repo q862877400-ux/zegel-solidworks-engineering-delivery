@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path[:0] = [r"C:\swprojects\sw-skill-fork\scripts"]
+sys.path[:0] = [r"" + _ROOT_S + r"\scripts"]
 
 print("  ══ ① 引用文档：sw_pdm.get_all_external_references 怎么用 ══")
 import sw_pdm

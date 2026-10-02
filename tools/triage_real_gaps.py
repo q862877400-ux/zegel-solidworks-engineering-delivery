@@ -32,7 +32,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-ROOT = Path(r"C:\swprojects\sw-skill-fork")
+ROOT = Path(r"" + _ROOT_S + r"")
 UPSTREAM_SERVER = ROOT / "mcp-server" / "server.py"
 OUT = Path(r"D:\AI\SW\output\real-gap-triage.json")
 

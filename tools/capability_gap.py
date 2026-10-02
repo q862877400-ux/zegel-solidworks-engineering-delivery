@@ -36,7 +36,7 @@ r"""@brief 按**能力**对照各域缺口（补上广度地图只数 MCP 工具
 #      这是**有意的**（宁可重复也不漏），故本表用于**排序**而非精确计数。
 # ⚠ **2026-10-01（轮 53）从工作区根搬进 `tools/`**，理由：`specs/002-merge-template/tasks.md`
 #   的 T-005 把它当**验收命令**，而它原先只在 `D:\AI\SW\`（**换机器/CI 跑不了**）。
-#   搬移时把 `REPO = Path(r"C:\swprojects\sw-skill-fork")` 改成 `parents[1]`
+#   搬移时把 `REPO = Path(r"")` 改成 `parents[1]`
 #   （**可移植**）—— 这是本轮新加的**可跑性门禁** `scripts/check_spec_acceptance_paths.py`
 #   查出来的第 1 例。
 # 覆盖:   全文件
@@ -48,7 +48,7 @@ import re
 import sys
 from pathlib import Path
 
-# ⚠ **可移植**：不要硬编码机器路径（原先写死 `C:\swprojects\sw-skill-fork`）。
+# ⚠ **可移植**：不要硬编码机器路径（原先写死 ``）。
 REPO = Path(__file__).resolve().parents[1]
 MAP = REPO / "docs" / "union-coverage-matrix.md"
 SCRIPTS = REPO / "scripts"

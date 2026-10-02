@@ -4,8 +4,8 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path[:0] = [r"C:\swprojects\sw-skill-fork\scripts", r"C:\swprojects\sw-skill-fork\mcp-server",
-                r"C:\swprojects\sw-skill-fork"]
+sys.path[:0] = [r"" + _ROOT_S + r"\scripts", r"" + _ROOT_S + r"\mcp-server",
+                r"" + _ROOT_S + r""]
 
 import register_capabilities as rc
 
@@ -13,7 +13,7 @@ print("  ══ ① MCP 里跟「自定义属性」有关的工具 ══")
 for x in rc.all_specs():
     if re.search(r"propert|custom", x.name + " " + (x.doc or "") + " " + x.module, re.I):
         print("    [batch] %-46s module=%-18s fn=%s" % (x.name, x.module, x.function))
-SRV = Path(r"C:\swprojects\sw-skill-fork\mcp-server\server.py").read_text(encoding="utf-8")
+SRV = Path(r"" + _ROOT_S + r"\mcp-server\server.py").read_text(encoding="utf-8")
 for m in re.finditer(r'@mcp\.tool\(\s*(?:[^)]*?)name="([^"]+)"', SRV, re.S):
     if re.search(r"propert|custom", m.group(1), re.I):
         print("    [server] %s" % m.group(1))

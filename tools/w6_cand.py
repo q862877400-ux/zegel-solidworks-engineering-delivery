@@ -2,8 +2,8 @@ import inspect
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path[:0] = [r"C:\swprojects\sw-skill-fork\scripts", r"C:\swprojects\sw-skill-fork\mcp-server",
-                r"C:\swprojects\sw-skill-fork"]
+sys.path[:0] = [r"" + _ROOT_S + r"\scripts", r"" + _ROOT_S + r"\mcp-server",
+                r"" + _ROOT_S + r""]
 
 print("  ══ ① selection 机制（W4 那批没用它；本批第一次用）══")
 import sw_selection_spec as ss

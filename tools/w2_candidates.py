@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 for p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if p not in sys.path:
         sys.path.insert(0, p)

@@ -30,7 +30,7 @@ for _s in (sys.stdout, sys.stderr):
         pass
 
 INDEX = Path(r"D:\AI\SW\_raw\example_domain_index.json")
-OUT = Path(r"C:\swprojects\sw-skill-fork\docs\usage-guide.md")
+OUT = Path(r"" + _ROOT_S + r"\docs\usage-guide.md")
 
 #: 域 → 本仓库对应实现。逐条人工核对过，不是自动匹配。
 DOMAIN_MODULES: dict[str, str] = {

@@ -57,7 +57,7 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 SCAN_DIRS = ("scripts", "subskills", "tests", "examples", "docs")
 
 #: 注释行的行首（缩进后是 #）

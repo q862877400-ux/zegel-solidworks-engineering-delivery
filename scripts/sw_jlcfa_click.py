@@ -33,7 +33,7 @@ import time
 import warnings
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import win32api
 import win32con

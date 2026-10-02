@@ -17,7 +17,7 @@
 - [x] `apply_normal_force(study, magnitude, *, model=None, …)` ⇒ ★ 同上 ✓
 - [x] ★ 结论：**已是包装层 ⇒ 本特性就是"直接挂"**（不写能力层）
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import inspect,sw_simulation as s;print(inspect.signature(s.apply_fixed_restraint))"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import inspect,sw_simulation as s;print(inspect.signature(s.apply_fixed_restraint))"`
   ⇒ 首参为 `study`
 
 ## T2 · ★★★ 核清加载项可达性（★ 差点误判的那一步）
@@ -36,7 +36,7 @@
 - [x] ★★ **`magnitude_n` → `magnitude` 的改名映射**（★ 见 D1 —— 第一版漏了）
 - [x] ★ 能力层**一行未改**
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **83**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **83**
 
 ## T4 · 写**走工具路径**的真机证据
 

@@ -20,7 +20,7 @@
 - [x] `list_views`：`Type == 1` **过滤**；遍历设 500 上限
 - [x] ★ **没有**改 `scripts/sw_drawing_view.py`（那是生成物，改了会被覆盖）
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import sw_drawing_query as m;print(m.SWDOC_DRAWING, m.PAPER_SIZE_NAMES[6])"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import sw_drawing_query as m;print(m.SWDOC_DRAWING, m.PAPER_SIZE_NAMES[6])"`
   ⇒ 输出 `3 A4`
 
 ## T2 · 写 `mcp-server/tool_specs_batch19.py`（3 个工具）
@@ -29,7 +29,7 @@
 - [x] 三者都 **无参数**（只作用于当前活动文档）· `inject` 用默认 `"model"`（不需 `derived_args`）
 - [x] 工具说明写明与 `inspect_drawing` 的**分工**、以及**宽高已换算成毫米**
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **65**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **65**
 
 ## T3 · 注册进 `register_capabilities.BATCH_MODULES`
 

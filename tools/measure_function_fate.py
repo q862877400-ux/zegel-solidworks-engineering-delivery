@@ -29,7 +29,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-CODE = Path(r"C:\swprojects\sw-skill-fork")
+CODE = Path(r"" + _ROOT_S + r"")
 SCRIPTS = CODE / "scripts"
 MCP = CODE / "mcp-server"
 OUT = Path(r"D:\AI\SW\output\function-fate.json")

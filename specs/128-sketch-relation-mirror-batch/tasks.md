@@ -6,10 +6,10 @@
 - [x] T-12802 ★ 核 `insert_composite_curve` **本来就坏**（事实 121/124）
   `→ 验收:` `python -c "import sys;from pathlib import Path;t=Path(r'D:\AI\SW\docs\known-facts.md').read_text(encoding='utf-8');print([l[:70] for l in t.splitlines() if 'InsertCompositeCurve' in l][:2])"`
 - [x] T-12803 ★ 核 `relation_type` 的 12 个合法值来自 docstring
-  `→ 验收:` `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\scripts'];import sw_part as m;d=m.add_sketch_relation.__doc__ or '';print(sum(1 for s in ('sgFIXED','sgHORIZONTAL','sgVERTICAL','sgCOLINEAR','sgPARALLEL','sgPERPENDICULAR','sgTANGENT','sgCONCENTRIC','sgEQUAL','sgSYMMETRIC','sgMIDPOINT','sgCOINCIDENT') if s in d))"`
+  `→ 验收:` `python -c "import sys;sys.path[:0]=['scripts'];import sw_part as m;d=m.add_sketch_relation.__doc__ or '';print(sum(1 for s in ('sgFIXED','sgHORIZONTAL','sgVERTICAL','sgCOLINEAR','sgPARALLEL','sgPERPENDICULAR','sgTANGENT','sgCONCENTRIC','sgEQUAL','sgSYMMETRIC','sgMIDPOINT','sgCOINCIDENT') if s in d))"`
   （期望 **12**）
 - [x] T-12804 写 `tool_specs_batch16.py` + 注册 + 查重名
-  `→ 验收:` `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;from collections import Counter;s=rc.all_specs();print(len(s), [k for k,v in Counter(x.name for x in s).items() if v>1] or 'no-dup')"`
+  `→ 验收:` `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;from collections import Counter;s=rc.all_specs();print(len(s), [k for k,v in Counter(x.name for x in s).items() if v>1] or 'no-dup')"`
   （期望 `56 no-dup`）
 - [x] T-12805 两处计数同步（54→56 · 99→101）
   `→ 验收:` `python -m pytest tests/test_server_wiring.py tests/test_mcp_protocol_layer.py -q`（0 failed）

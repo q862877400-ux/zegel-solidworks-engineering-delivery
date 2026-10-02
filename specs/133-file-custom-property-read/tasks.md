@@ -21,7 +21,7 @@
 - [x] `custom_properties(model, config_name)`：全部（名 + 值 + 类型 + 条数）
 - [x] ★ **不使用** `Get2..Get6`
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import sw_custom_property as m;print(m.SW_CUSTOM_INFO_TYPES[30], callable(m.custom_property))"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import sw_custom_property as m;print(m.SW_CUSTOM_INFO_TYPES[30], callable(m.custom_property))"`
   ⇒ 输出 `text True`
 
 ## T2 · 写 `mcp-server/tool_specs_batch20.py`（**2 个**工具）
@@ -30,7 +30,7 @@
 - [x] `solidworks_custom_property_list`（全部，带 `config_name`）
 - [x] ★ **不挂** `count` / `names` 为独立工具（结果已被"读全部"包含）—— 理由写在批头
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **67**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **67**
 
 ## T3 · 注册进 `register_capabilities.BATCH_MODULES`
 

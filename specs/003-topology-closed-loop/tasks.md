@@ -29,7 +29,7 @@
 - [x] **T-004** 查清「屏幕上为什么看不到变化」（用户质疑）
   **✅** 探针设 `CommandInProgress = True`（铁律 2，抑制弹窗）⇒ UI 不刷新；
   且整链真的只要 2–3 秒。
-  `→ 验收:` `Select-String C:\swprojects\sw-skill-fork\tools\capture_simulation_evidence.py -Pattern 'CommandInProgress'`
+  `→ 验收:` `Select-String tools\capture_simulation_evidence.py -Pattern 'CommandInProgress'`
 
 **Checkpoint**：判据与签名都拿到 ✅
 

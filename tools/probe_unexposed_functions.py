@@ -32,7 +32,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(r"C:\swprojects\sw-skill-fork")
+ROOT = Path(r"" + _ROOT_S + r"")
 
 #: ⚑ **全量孤立能力清单**的输出路径（轮 204 加；`.gitignore` 的产物目录，不入库）
 OUT_JSON = Path(r"D:\AI\SW\output\orphan-capabilities.json")

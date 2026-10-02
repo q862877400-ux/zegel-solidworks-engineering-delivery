@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 sys.path[:0] = [str(REPO / "mcp-server"), str(REPO), str(REPO / "scripts")]
 import register_capabilities as rc
 

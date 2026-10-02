@@ -14,7 +14,7 @@
 # ─────────────────────────────────────────────────────────────────────────
 
 import json, sys
-sys.path.insert(0, r"C:\swprojects\sw-skill-fork")
+sys.path.insert(0, r"" + _ROOT_S + r"")
 sys.stdout.reconfigure(encoding="utf-8")
 from scripts.capabilities import load_capabilities, unattended_allowed
 
@@ -39,7 +39,7 @@ out = {
     "allowed": sorted(allowed),
     "denied_count": len(denied),
 }
-p = r"C:\swprojects\sw-skill-fork\tests\unattended_baseline.json"
+p = r"" + _ROOT_S + r"\tests\unattended_baseline.json"
 with open(p, "w", encoding="utf-8") as fh:
     json.dump(out, fh, ensure_ascii=False, indent=2)
     fh.write("\n")

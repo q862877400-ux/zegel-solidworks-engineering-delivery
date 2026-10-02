@@ -30,7 +30,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 SWAPI = Path(r"C:\swapi\types")
 PROBES = Path(r"D:\AI\SW")
-CAPTURES = Path(r"C:\swprojects\sw-skill-fork\tools")
+CAPTURES = Path(r"" + _ROOT_S + r"\tools")
 OUT = Path(r"D:\AI\SW\output\realmachine-members.json")
 
 

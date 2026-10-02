@@ -30,7 +30,7 @@ from pathlib import Path
 
 import pytest
 
-R = Path(r"C:\swprojects\sw-skill-fork")
+R = Path(r"" + _ROOT_S + r"")
 SCRIPT = Path(r"D:\AI\SW\compute_union_gap_v3.py")
 
 #: ★ 已知答案：★ **6 条全部应判「已有」**（★ 名字取自并集，★ 不是记忆里的常见名）

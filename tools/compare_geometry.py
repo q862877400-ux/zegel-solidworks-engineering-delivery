@@ -59,7 +59,7 @@ from pathlib import Path
 # ─────────────────────────────────────────────────────────────────────────────
 
 sys.path[:0] = [str(Path(__file__).resolve().parent),
-                r"C:\swprojects\sw-skill-fork\scripts"]
+                r"" + _ROOT_S + r"\scripts"]
 
 from sw_connect import get_com_member                              # noqa: E402
 

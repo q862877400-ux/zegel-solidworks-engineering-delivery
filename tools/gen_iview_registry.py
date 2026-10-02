@@ -49,7 +49,7 @@ for _s in (sys.stdout, sys.stderr):
 
 SRC = Path(r"D:\\AI\\SW\\_raw\reflect_sldworks\iface_sldworks.txt")
 DATA = Path(r"D:\\AI\\SW\\_raw\iview_members.json")
-OUT = Path(r"C:\swprojects\sw-skill-fork\scripts\sw_drawing_view.py")
+OUT = Path(r"" + _ROOT_S + r"\scripts\sw_drawing_view.py")
 
 IFACE = "IView"
 SIG = re.compile(r"^(\S+)\s+(\w+)\s*\((.*)\)$")

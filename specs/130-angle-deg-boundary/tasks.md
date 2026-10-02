@@ -3,13 +3,13 @@
 - [x] T-13001 ★ 核规则 2 的原文与"边界"指哪一层
   `→ 验收:` `Select-String D:\AI\SW\AGENTS.md -Pattern '换算只在边界'` ⇒ 期望命中「换算只在边界做一次（`sw_connect.mm()`）」
 - [x] T-13002 ★★ 核"换算助手已经存在、不需要新建"
-  `→ 验收:` `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\scripts'];from sw_connect import deg;print(deg(90))"` ⇒ 期望 **1.5707963267948966**（π/2）
+  `→ 验收:` `python -c "import sys;sys.path[:0]=['scripts'];from sw_connect import deg;print(deg(90))"` ⇒ 期望 **1.5707963267948966**（π/2）
 - [x] T-13003 ★★ 核"改名 ≠ 换算"（**本批存在的理由**）
-  `→ 验收:` `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\scripts'];from sw_connect import deg;print(deg(90), 90)"` ⇒ 期望两个数**不同**（相差 180/π ≈ 57.3 倍）
+  `→ 验收:` `python -c "import sys;sys.path[:0]=['scripts'];from sw_connect import deg;print(deg(90), 90)"` ⇒ 期望两个数**不同**（相差 180/π ≈ 57.3 倍）
 - [x] T-13004 ★ 核"换算该用哪个机制"（找先例）
-  `→ 验收:` `Select-String C:\swprojects\sw-skill-fork\mcp-server\tool_specs_batch3.py -Pattern '_consumed|derived_args'` ⇒ 期望命中 `_consumed(...)` + `derived_args=lambda p: ...`
+  `→ 验收:` `Select-String mcp-server\tool_specs_batch3.py -Pattern '_consumed|derived_args'` ⇒ 期望命中 `_consumed(...)` + `derived_args=lambda p: ...`
 - [x] T-13005 写 `tool_specs_batch17.py` + 注册
-  `→ 验收:` `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ 期望 **58**
+  `→ 验收:` `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ 期望 **58**
 - [x] T-13006 ★★★ 写守卫测试（**含负例**）并跑绿
   `→ 验收:` `python -m pytest tests/test_tool_specs_batch17.py -q` ⇒ 期望 **5 passed**
 - [x] T-13007 ★★★ **证明那条负例测试真的能抓 bug**（事实 62：负例是唯一的证明）

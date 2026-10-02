@@ -27,7 +27,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(r"C:\swprojects\sw-skill-fork")
+ROOT = Path(r"" + _ROOT_S + r"")
 sys.stdout.reconfigure(encoding="utf-8")
 
 DECO = re.compile(r"@mcp\.tool\(\s*\n?\s*name\s*=\s*\"([^\"]+)\"")

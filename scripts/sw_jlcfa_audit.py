@@ -33,7 +33,7 @@ from pathlib import Path
 from typing import Any
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_cards as C
 import sw_jlcfa_locate as L

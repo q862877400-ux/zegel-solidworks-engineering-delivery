@@ -20,7 +20,9 @@ $key  = (($cred -split "`n" | Where-Object { $_ -match '^\s*AI_GATEWAY_API_KEY:'
 $url  = 'https://ai-gateway.vercel.sh/v1/chat/completions'
 $hdr  = @{ Authorization = "Bearer $key"; 'Content-Type' = 'application/json' }
 
-$TARGET = 'C:\swprojects\sw-skill-fork\tests\test_sw_sheet_metal_contract.py'
+#: ★ 2026-10-03 合并后自定位：仓库根 = 本脚本所在目录的上一级。
+$R = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$TARGET = Join-Path $R 'tests\test_sw_sheet_metal_contract.py'
 # 评测记录（不要改这两行的理由）：
 #   首轮 max_tokens=8192  → 第 5 轮 finish=length，预算耗尽、没给出最终回复，零产出
 #   次轮 max_tokens=32768 → 仍不够（medium 档的推理本身就要吃掉大量预算）
@@ -57,9 +59,9 @@ $USER = @"
 目标文件：$TARGET （目前不存在，需要你新建）
 
 先做这几步：
-1. read_file 读 C:\swprojects\sw-skill-fork\tests\test_sw_surface_signature_contract.py
+1. read_file 读 tests/test_sw_surface_signature_contract.py（相对仓库根）
    —— 这是你必须照抄写法的范本。
-2. read_file 读 C:\swprojects\sw-skill-fork\scripts\sw_sheet_metal.py —— 了解被测对象。
+2. read_file 读 scripts/sw_sheet_metal.py（相对仓库根） —— 了解被测对象。
 3. write_file 写出 $TARGET。
 4. run_python 跑 `python tests\test_sw_sheet_metal_contract.py` 确认通过。
 5. 最后用一段话报告：通过数、关键取舍、遇到的不确定之处。不要粉饰。
@@ -122,8 +124,8 @@ for ($turn = 1; $turn -le $MAX_TURNS; $turn++) {
       }
       'run_python' {
         $cmd = [string]$arg.cmd
-        Push-Location 'C:\swprojects\sw-skill-fork'
-        $env:PYTHONPATH = 'C:\swprojects\sw-skill-fork'
+        Push-Location $R
+        $env:PYTHONPATH = $R
         $o = & pwsh -NoProfile -Command $cmd 2>&1 | Out-String
         Pop-Location
         $out = if ($o.Length -gt 12000) { $o.Substring(0,12000) + "`n...[截断]" } else { $o }

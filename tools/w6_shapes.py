@@ -2,7 +2,7 @@ import inspect
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 import sw_assembly as a
 
 for n in ("get_components", "collect_mate_feature_summary", "get_interference_detection"):

@@ -32,7 +32,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 SWAPI = Path(r"C:\swapi\types")
 EXAMPLES = Path(r"C:\swapi\examples")
-LEDGER = Path(r"C:\swprojects\sw-skill-fork\docs\family-coverage.json")
+LEDGER = Path(r"" + _ROOT_S + r"\docs\family-coverage.json")
 OUT = Path(r"D:\AI\SW\output\family-features.json")
 
 #: 接口名里的「动作词」—— 我们做过的族里这类接口多是"干活的动作"

@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 u = json.loads((REPO / "tools" / "union-sources.json").read_text(encoding="utf-8"))
 
 #: 取 ⑪ 的缺口名（矩阵里那个数来自同一份数据）

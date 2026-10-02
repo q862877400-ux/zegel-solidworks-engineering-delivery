@@ -17,7 +17,7 @@
 - [x] ★ 核"能断言什么"：**没有**体积/质量属性工具 ⇒ 用**特征树计数 + 特征名**
 - [x] ★ 并查清**包围盒不能用**（倒角不改变最大坐标）
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import inspect,sw_selection_spec as s;print(inspect.signature(s.resolve_selection), s.ENTITY_KINDS)"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import inspect,sw_selection_spec as s;print(inspect.signature(s.resolve_selection), s.ENTITY_KINDS)"`
 
 ## T2 · 写 `mcp-server/tool_specs_batch23.py`（2 个工具）
 
@@ -26,7 +26,7 @@
 - [x] `param_alias`：`selection` → `None`（由 `pre_call` 消费）+ `distance_mm`→`distance` / `radius_mm`→`radius`
 - [x] ★ **能力层一行未改**（形态已验证是对的）
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **77**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **77**
 
 ## T3 · 注册进 `register_capabilities.BATCH_MODULES`
 

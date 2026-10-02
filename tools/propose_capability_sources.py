@@ -45,7 +45,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 CAPS = REPO / "capabilities.yaml"
 
 

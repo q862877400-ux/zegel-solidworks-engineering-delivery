@@ -19,7 +19,7 @@ for _s in (sys.stdout, sys.stderr):
         pass
 
 DATA = Path(r"D:\AI\SW\_raw\study_options_setters.json")
-OUT = Path(r"C:\swprojects\sw-skill-fork\scripts\sw_simulation_study_options.py")
+OUT = Path(r"" + _ROOT_S + r"\scripts\sw_simulation_study_options.py")
 
 HEADER = r'''"""SolidWorks Simulation 求解器设置：各 *StudyOptions 族的 setter 登记表。
 

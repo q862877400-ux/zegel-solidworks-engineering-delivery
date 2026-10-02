@@ -24,7 +24,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 GATE = REPO / "scripts" / "check_spec_acceptance_paths.py"
 sys.stdout.reconfigure(encoding="utf-8")
 

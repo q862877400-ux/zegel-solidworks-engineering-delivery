@@ -14,7 +14,7 @@ SCAN = {
     "vespo92": (r"C:\swprojects\SolidworksMCP-TS", ["src"]),
     "Slacker-LLC": (r"C:\swprojects\Slacker-LLC", ["solidworks_mcp"]),
 }
-OURS = Path(r"C:\swprojects\sw-skill-fork")
+OURS = Path(r"" + _ROOT_S + r"")
 
 raw_all, uniq_all = 0, set()
 print("  各家产品代码的函数（Python 的 def + TypeScript 的 function/箭头函数）:")

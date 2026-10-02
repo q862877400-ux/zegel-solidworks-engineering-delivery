@@ -45,7 +45,7 @@ import warnings
 from typing import Any
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 warnings.filterwarnings("ignore")
 

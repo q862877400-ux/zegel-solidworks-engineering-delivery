@@ -10,7 +10,7 @@
 - [x] `extrude_midplane(model, sketch_name, total_depth)` —— **总深**（每侧一半）
 - [x] 确认三个都**只要草图名、不需要"选择"** ⇒ 证据脚本能干净地写
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import inspect,sw_part as p;print(inspect.signature(p.extrude_boss))"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import inspect,sw_part as p;print(inspect.signature(p.extrude_boss))"`
   ⇒ 输出 `(model, sketch_name, depth, direction=True, merge=True)`
 
 ## T1b · ★ 核 `chamfer` 能不能进本批（结论：形态对，但**本批不做**）
@@ -28,7 +28,7 @@
 - [x] `param_alias` 把 `depth_mm`→`depth`、`total_depth_mm`→`total_depth`（★ 能力层**一行未改**）
 - [x] 工具说明写明：**0 = 完全贯穿** / 中面是**总深** / 需要**已存在的草图** / 切除的正确入口
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **75**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **75**
 
 ## T3 · 注册进 `register_capabilities.BATCH_MODULES`
 

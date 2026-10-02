@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"C:\swprojects\sw-skill-fork")
+REPO = Path(r"" + _ROOT_S + r"")
 sys.path[:0] = [str(REPO / "scripts"), str(REPO / "mcp-server"), str(REPO)]
 
 print("  ══ ① 四家的 live/general 测试里有没有**仿真载荷**的判据（用户纪律：先找）══")

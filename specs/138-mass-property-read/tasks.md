@@ -20,7 +20,7 @@
 - [x] ★★ **`require_mass_property_document`**：`GetType()==3`（工程图）⇒ **报错**
       —— ★ **这一条是真机负例逼出来的**（见 tasks 的 D1）
 
-→ 验收: `python -c "import sys;sys.path.insert(0,r'C:\swprojects\sw-skill-fork\scripts');import sw_mass_property as m;print(m.SWDOC_DRAWING, callable(m.require_mass_property_document))"`
+→ 验收: `python -c "import sys;sys.path.insert(0,'scripts');import sw_mass_property as m;print(m.SWDOC_DRAWING, callable(m.require_mass_property_document))"`
   ⇒ 输出 `3 True`
 
 ## T2 · 写 `mcp-server/tool_specs_batch24.py`（**1 个**工具）
@@ -30,7 +30,7 @@
       `AccuracyLevel` 不暴露
 - [x] ★ **不拆成 5 个工具**（五样总是一起被问）
 
-→ 验收: `python -c "import sys;sys.path[:0]=[r'C:\swprojects\sw-skill-fork\mcp-server',r'C:\swprojects\sw-skill-fork'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **78**
+→ 验收: `python -c "import sys;sys.path[:0]=['mcp-server','.'];import register_capabilities as rc;print(len(rc.all_specs()))"` ⇒ **78**
 
 ## T3 · 注册进 `register_capabilities.BATCH_MODULES`
 
