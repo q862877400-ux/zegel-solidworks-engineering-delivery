@@ -1,0 +1,72 @@
+| 361 | ★★★★ **那条链的两条路都堵，而根因是**架构性**的**；★ 而真正的判据查明了：★ **能不能用一个成员，看的是它在不在那个对象的 `dispinterface` 里** —— ★ 而 `getattr(obj, 名字, None)` 就能问（2026-10-03，轮 446）。
+
+## 一、★★★★★ 本轮做成的：`tools/typelib_iids.py`（★ **1023 个接口的 IID**，★ 零依赖）
+```
+★ 做法：★ **PowerShell 的 .NET 元数据反射**读出厂 interop 程序集里每个接口的 `[Guid(...)]` ——
+   ★★ **那就是 IID** ✓（★ 不需要 COM、★ 不需要 SW 跑着）
+★ 真机：★ `SolidWorks.Interop.sldworks.dll` 的 **1032** 个公开接口里 **1023** 个带 Guid（★ 覆盖 **99.1%**）✓
+   ```
+   IPrimaryMemberPathSegmentFeatureData   94748A32-BA1A-4CFC-9C26-CECBB530ACA9
+   IStructureSystemMemberFeatureData      40CFC1F6-F741-4076-A950-1CEC90526456
+   IStructureSystemMemberProfile          450C4230-5025-4601-99C3-757557005EB9
+   IFeatureManager                        6B39655E-381B-4BD0-89F5-640D48593F15
+   IModelDocExtension                     99F4D4AF-F268-4EE1-8C55-041F7BECF879
+   ```
+★ ⚠ **不走的错路**（★ 都核过）：★ `pythoncom.LoadTypeLib` 要**COM 类型库**，★ 而那是 **.NET 程序集**；
+   ★ 注册表 `TypeLib` 的 **591** 个条目里含 SOLIDWORKS/SldWorks/cosworks 的 **0** 个 ✓
+   ★ 本机 **没有 pythonnet**（★ `import System` ⇒ `No module named 'System'`）⇒ ★ 故走 PowerShell ✓
+```
+
+## 二、★★★★★ 而它**证明了一条更重要的负面结论**：★ **pywin32 里换不了接口**
+```
+★ 真机（`output/structure-system-evidence.json`）：
+   ```
+   qi_err  = **TypeError: There is no interface object registered that supports this IID**
+   ```
+   ⇒ ★★★ **即：★ `pywintypes.IID(...)` + `_oleobj_.QueryInterface(...)` 拿到了接口指针，
+     ★★ 而 **pywin32 里没有那个接口对应的 Python 包装类** ⇒ ★ **调用不了它的方法** ⚠
+   ★★ 而★ 那与"注册表里 0 个 SOLIDWORKS 类型库"**完全吻合** ⇒ ★ **根因是同一个** ✓
+```
+
+## 三、★★★★★ 而**另一个**路也堵 —— ★ 而它**顺带给出了真正的判据**
+```
+★ 我加了一个诊断：★ `getattr(ext, "CreateStructureSystem", None)` ⇒ ★★ 真机回 **`NoneType`** ⚠
+   ⇒ ★ **即：★ 迟到绑定下**取不到那个方法****（★ 而★ 它在程序集里、★ CHM 里也有）⚠
+★★★ **所以真正的判据是**：
+   ```
+   ★★ 判"一个成员能不能用" ⇒ ★ **看它在不在**那个对象的 `dispinterface`** 里** ——
+      ★ **而**不是**看"它在不在程序集/文档里"** ⚠⚠
+   ★★★ 而**验法极便宜**：★ `getattr(obj, "成员名", None) is not None` ✓
+   ```
+   ★ 而★ 那**又一次**是本阶段主线的形态：★ **"接口在文档里" ≠ "这个对象能用它"** ✓
+   ★★ 而★ 我此前几轮的"查到了就以为能做"**正是**把这两件事混了 ⚠
+```
+
+## 四、★★★★★ 结论：★ 结构系统那条链在 **pywin32 这条后端**上到不了「建成」
+```
+★ 走到哪：★ **前 4 步都成**（★ 事实 360：选线段 · `CreateStructureSystemMemberData` ·
+   `MemberProfile` · 型材三属性含 `size_used = "ROUND BAR 23"`）✓
+★ 卡在哪：★ 第 ⑤ 步 `SetPathSegments`（★ 要 `IPrimaryMemberPathSegmentFeatureData`，★ **换不过去**）·
+   ★ 第 ⑦ 步 `CreateStructureSystem`（★ **取不到**）
+⇒ ★★★ **故它与事实 47 同族**：★ 「**不能调用官方标记为仅进程内非托管 C++ 的指针接口**」
+   ★★ 而★ 本仓 `capabilities.yaml` 的 `backend_catalog` **早就有那条限制** ——
+     ★ **而我这一轮才把它具体到"结构系统这条链"上** ✓
+★ **故`configure_member_profile` / `configure_split_member` 两条**回到「不做」**，
+   ★★ 而**理由换了、且更硬**：★ 不是"查不到"（★ 那条**已被事实 356 更正**），
+     ★ 而是"**在这条后端上到不了**"（★ 有真机证据）✓
+```
+
+## 五、★ 处置与下一步
+```
+★ ① ★ **`tools/typelib_iids.py` 留着** —— ★ 它**本身**是一件地基（★ 1023 个 IID，★ 而 IID 是
+   ★ 任何"按接口做事"的方案都要的），★ 且★ 它**零依赖、可重复** ✓
+★ ② ★ **把那条"`getattr` 判据"写进纪律** —— ★ 它**比查文档便宜得多**，★ 且**不会骗人** ✓
+   ★★ 而★ 它可以**自动化**：★ 对一组候选成员名，★ 批量 `getattr(obj, 名, None)`
+     ⇒ ★ **一次真机跑就能给出"这个对象能用哪些成员"的名单** ✓ → **下一轮做这个**
+★ ③ ★ `pythoncom` 那条路**到此为止**（★ 两条都堵、★ 且理由已到架构层）⇒ **不再试**（★ 事实 53）✓
+```
+
+**依据**：`tools/typelib_iids.py`（★ 新 · **1023** 个 IID）· `output/structure-system-evidence.json`
+（★ `qi_err = no interface object registered` · `css_attr = NoneType` · 树 `19→19`）·
+`tools/prove_structure_system.py` · 事实 47（架构性限制）· 事实 356（★ 更正"查不到"）· 事实 358 / 360 ·
+`capabilities.yaml` 的 `backend_catalog` 限制段 · 铁律 4 / 5

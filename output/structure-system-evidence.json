@@ -1,6 +1,6 @@
 {
  "trials": [],
- "at": "2026-10-03T06:18:58",
+ "at": "2026-10-03T06:22:12",
  "sketch": "草图1",
  "tree_before": 19,
  "select_stats": [
@@ -13,7 +13,9 @@
  "size_used": "ROUND BAR 23",
  "size_errors": [],
  "segments_got": 2,
- "set_path_segments": "TypeError: 'bool' object is not callable",
+ "qi_err": "TypeError: There is no interface object registered that supports this IID",
+ "set_path_segments": "no-qi: There is no interface object registered that supports this IID",
+ "css_attr": "NoneType",
  "create_err": "TypeError: 'NoneType' object is not callable",
  "tree_after": 19,
  "new_features": [],
