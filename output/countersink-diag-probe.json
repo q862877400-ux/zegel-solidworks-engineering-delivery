@@ -1,0 +1,13 @@
+{
+  "steps": {
+    "countersink": {
+      "ok": false,
+      "error": "RuntimeError: 创建圆草图失败: 沉头孔_通孔"
+    },
+    "tree": {
+      "before": 7,
+      "after": 7
+    }
+  },
+  "captured_at": "2026-10-02T15:42:32"
+}
