@@ -1,0 +1,174 @@
+{
+ "grid": {
+  "convection": {
+   "FACE": {
+    "study": "K_convection_FACE",
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": ""
+   },
+   "EDGE": {
+    "study": "K_convection_EDGE",
+    "ok": false,
+    "count": [
+     0,
+     -1
+    ],
+    "err": ""
+   },
+   "VERTEX": {
+    "study": "K_convection_VERTEX",
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": ""
+   }
+  },
+  "heat_flux": {
+   "FACE": {
+    "study": "K_heat_flux_FACE",
+    "ok": true,
+    "count": [
+     0,
+     1
+    ],
+    "err": ""
+   },
+   "EDGE": {
+    "study": "K_heat_flux_EDGE",
+    "ok": false,
+    "count": [
+     0,
+     0
+    ],
+    "err": ""
+   },
+   "VERTEX": {
+    "study": "K_heat_flux_VERTEX",
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": ""
+   }
+  },
+  "heat_power": {
+   "FACE": {
+    "study": "K_heat_power_FACE",
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": ""
+   },
+   "EDGE": {
+    "study": "K_heat_power_EDGE",
+    "ok": true,
+    "count": [
+     0,
+     1
+    ],
+    "err": ""
+   },
+   "VERTEX": {
+    "study": "K_heat_power_VERTEX",
+    "ok": true,
+    "count": [
+     0,
+     1
+    ],
+    "err": ""
+   }
+  },
+  "temperature": {
+   "FACE": {
+    "study": "K_temperature_FACE",
+    "ok": false,
+    "count": [
+     0,
+     0
+    ],
+    "err": "com_error: (-2147352561, '非选择性的参数。', None, None)"
+   },
+   "EDGE": {
+    "study": "K_temperature_EDGE",
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": "com_error: (-2147352561, '非选择性的参数。', None, None)"
+   },
+   "VERTEX": {
+    "study": "K_temperature_VERTEX",
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": "com_error: (-2147352561, '非选择性的参数。', None, None)"
+   }
+  },
+  "radiation": {
+   "FACE": {
+    "study": "K_radiation_FACE",
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": ""
+   },
+   "EDGE": {
+    "study": "K_radiation_EDGE",
+    "ok": false,
+    "count": [
+     0,
+     0
+    ],
+    "err": ""
+   },
+   "VERTEX": {
+    "study": "K_radiation_VERTEX",
+    "ok": false,
+    "count": [
+     0,
+     0
+    ],
+    "err": ""
+   }
+  }
+ },
+ "order": [
+  "K_convection_FACE",
+  "K_convection_EDGE",
+  "K_convection_VERTEX",
+  "K_heat_flux_FACE",
+  "K_heat_flux_EDGE",
+  "K_heat_flux_VERTEX",
+  "K_heat_power_FACE",
+  "K_heat_power_EDGE",
+  "K_heat_power_VERTEX",
+  "K_temperature_FACE",
+  "K_temperature_EDGE",
+  "K_temperature_VERTEX",
+  "K_radiation_FACE",
+  "K_radiation_EDGE",
+  "K_radiation_VERTEX"
+ ],
+ "at": "2026-10-03T03:25:21",
+ "successes": [
+  "heat_flux/FACE",
+  "heat_power/EDGE",
+  "heat_power/VERTEX"
+ ],
+ "verdict": "pass",
+ "note": "★ **每格一个新算例**（事实 324 的做法①）—— ★ 治的是「失败的调用污染下一格」。★ 顺序也记在 `order` 里。"
+}
