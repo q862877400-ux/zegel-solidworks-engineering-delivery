@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "ensure_type_library": {
+      "ok": true,
+      "type": "str",
+      "preview": "D:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\swmotionstudy.tlb"
+    },
+    "create_study": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "study_manager": {
+      "ok": true
+    },
+    "create_avi_parameter": {
+      "ok": true,
+      "type": "CDispatch",
+      "preview": "<COMObject <unknown>>"
+    },
+    "configure_avi_parameter": {
+      "ok": true,
+      "type": "dict",
+      "preview": "{}"
+    },
+    "export_motion_study_avi": {
+      "ok": true,
+      "type": "dict",
+      "preview": "{'ok': False, 'returned': True, 'exists': True, 'size_bytes': 0, 'path': 'D:\\\\AI\\\\SW\\\\output\\\\_motion_smoke.av"
+    },
+    "avi_file": {
+      "ok": false,
+      "exists": true,
+      "size": 0
+    }
+  },
+  "captured_at": "2026-10-02T14:29:14",
+  "passed": 6,
+  "of": 7,
+  "verdict": "partial"
+}
