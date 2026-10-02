@@ -1,0 +1,26 @@
+{
+  "steps": {
+    "sketch": {
+      "ok": true,
+      "name": "草图1"
+    },
+    "tree_before": 6,
+    "call": {
+      "ok": true,
+      "returned": "None",
+      "★": "它回 void ⇒ 成败看特征树与曲面体"
+    },
+    "tree_after": 7,
+    "tree_grew": true,
+    "names_after": [
+      "原点",
+      "Tables",
+      "草图1",
+      "曲面-拉伸1"
+    ],
+    "surf_bodies": 0,
+    "body_types": []
+  },
+  "verdict": "pass",
+  "captured_at": "2026-10-02T17:01:26"
+}
