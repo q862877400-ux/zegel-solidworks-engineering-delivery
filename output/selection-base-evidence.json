@@ -1,0 +1,86 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件72"
+  },
+  "count_after_clear": {
+   "ok": true,
+   "value": 0
+  },
+  "select_edge_index0": {
+   "ok": true,
+   "value": 1
+  },
+  "select_face_index0": {
+   "ok": true,
+   "value": 1
+  },
+  "selection_point": {
+   "ok": true,
+   "value": {
+    "ok": true,
+    "point_mm": [
+     -20.0,
+     0.0,
+     -5.0
+    ],
+    "selection_count": 1,
+    "error": null,
+    "entry_used": "GetSelectionPoint2"
+   }
+  },
+  "resolve_selection_index1": {
+   "ok": true,
+   "value": 1
+  },
+  "select_by_selector_index2": {
+   "ok": true,
+   "value": {
+    "ok": true,
+    "selector": "index:2",
+    "kind": "EDGE",
+    "count": 1,
+    "error": null
+   }
+  },
+  "resolve_entity_index0": {
+   "ok": true,
+   "value": {
+    "ok": true,
+    "selector": "index:0",
+    "kind": "EDGE",
+    "count": 1,
+    "resolved": true,
+    "error": null
+   }
+  },
+  "neg_index_out_of_range": {
+   "ok": true,
+   "err": "EntitySelectionError: EDGE 序号 999 越界（体 0 上共 12 个）"
+  },
+  "neg_empty_selection_point": {
+   "ok": true,
+   "value": {
+    "ok": false,
+    "point_mm": null,
+    "selection_count": 0,
+    "error": "当前**没有选中任何东西** ⇒ 读不到点。★ 先用声明式选择选中一个点 / 草图点 / 面，再调本函数。"
+   }
+  },
+  "neg_bad_selector": {
+   "ok": true,
+   "value": {
+    "ok": false,
+    "selector": "index:not_an_int",
+    "kind": "EDGE",
+    "count": null,
+    "resolved": false,
+    "error": "解析选择器失败：EntitySelectionError: 非法的 index 选择器 'index:not_an_int'（应为 index:<整数>）"
+   }
+  }
+ },
+ "at": "2026-10-03T02:18:43",
+ "verdict": "pass",
+ "note": "★ 段 1 选择底座 6 个工具；★ 判据统一是**回读计数**（★ 事实 8：Select4 的 bool 返回值不可信）；★ 含三条负例（越界 / 空选区读点 / 非法选择器）。"
+}
