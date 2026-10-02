@@ -1,0 +1,29 @@
+{
+  "steps": {
+    "base": {
+      "ok": true,
+      "tree": 7
+    },
+    "doc.SketchManager": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "in_sketch.SketchManager": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "CreateSketchSlot": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "H.sketch_slot": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "tree_after": {
+      "ok": true,
+      "tree": 8
+    }
+  },
+  "captured_at": "2026-10-02T15:35:08"
+}

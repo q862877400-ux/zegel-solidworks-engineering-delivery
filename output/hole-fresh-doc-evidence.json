@@ -1,0 +1,43 @@
+{
+  "rounds": {
+    "through": {
+      "ok": true,
+      "tree": "7->9",
+      "in_fresh_doc": true,
+      "error": null,
+      "preview": "{'feature_kind': 'through', 'center_m': (-0.02, 0.0), 'diameter_m': 6.0, 'depth_"
+    },
+    "blind": {
+      "ok": true,
+      "tree": "7->9",
+      "in_fresh_doc": true,
+      "error": null,
+      "preview": "{'feature_kind': 'blind', 'center_m': (-0.02, 0.0), 'diameter_m': 6.0, 'depth_m'"
+    },
+    "counterbore": {
+      "ok": true,
+      "tree": "7->11",
+      "in_fresh_doc": true,
+      "error": null,
+      "preview": "{'feature_kind': 'counterbore', 'center_m': (-0.02, 0.0), 'diameter_m': 5.0, 'de"
+    },
+    "countersink": {
+      "ok": false,
+      "tree": "7->9",
+      "in_fresh_doc": true,
+      "error": "RuntimeError: 无法按圆心和半径找到沉头孔入口圆边",
+      "preview": null
+    },
+    "semicircular_slot": {
+      "ok": false,
+      "tree": "7->0",
+      "in_fresh_doc": true,
+      "error": "AttributeError: <unknown>.SketchManager",
+      "preview": null
+    }
+  },
+  "captured_at": "2026-10-02T15:36:07",
+  "passed": 3,
+  "of": 5,
+  "verdict": "partial"
+}

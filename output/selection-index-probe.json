@@ -1,0 +1,49 @@
+{
+  "steps": {
+    "resolve_index_0": {
+      "ok": false,
+      "error": "TypeError: resolve_selection() missing 1 required positional argument: 'kind'"
+    },
+    "resolve_index_1": {
+      "ok": false,
+      "error": "TypeError: resolve_selection() missing 1 required positional argument: 'kind'"
+    },
+    "resolve_index_2": {
+      "ok": false,
+      "error": "TypeError: resolve_selection() missing 1 required positional argument: 'kind'"
+    },
+    "resolve_index_3": {
+      "ok": false,
+      "error": "TypeError: resolve_selection() missing 1 required positional argument: 'kind'"
+    },
+    "resolve_index_4": {
+      "ok": false,
+      "error": "TypeError: resolve_selection() missing 1 required positional argument: 'kind'"
+    },
+    "pt_index_0": {
+      "ok": true,
+      "pt": [
+        -0.02,
+        0.0
+      ],
+      "err": null
+    },
+    "pt_index_1": {
+      "ok": true,
+      "pt": [
+        0.0,
+        0.01
+      ],
+      "err": null
+    },
+    "pt_index_2": {
+      "ok": true,
+      "pt": [
+        0.02,
+        0.0
+      ],
+      "err": null
+    }
+  },
+  "captured_at": "2026-10-02T15:36:57"
+}

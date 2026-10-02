@@ -1,0 +1,27 @@
+{
+  "steps": {
+    "base": {
+      "tree": 7
+    },
+    "1_start_sketch": {
+      "ok": true,
+      "cur": "草图2"
+    },
+    "2_capture_ref": {
+      "ok": false,
+      "error": "AttributeError: module 'scripts.sw_hole_features' has no attribute '_capture_sketch_ref'"
+    },
+    "3_sketch_slot": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "4_end_sketch": {
+      "ok": true,
+      "type": "SketchSelectionRef"
+    },
+    "tree_after": {
+      "tree": 8
+    }
+  },
+  "captured_at": "2026-10-02T15:36:38"
+}
