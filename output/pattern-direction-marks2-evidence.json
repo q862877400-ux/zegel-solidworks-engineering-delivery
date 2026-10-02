@@ -1,0 +1,30 @@
+{
+ "edge_trials": [
+  {
+   "edge": 0,
+   "mid": [
+    -20.0,
+    15.0,
+    -10.0
+   ],
+   "selected": true
+  }
+ ],
+ "at": "2026-10-03T03:13:17",
+ "setup": {
+  "boss": "凸台-拉伸2",
+  "tree": 9
+ },
+ "chosen_edge": 0,
+ "linear_pattern": {
+  "ok": false,
+  "tree": [
+   9,
+   9
+  ],
+  "new_features": [],
+  "error": "`FeatureLinearPattern3` **没抛错而特征树没变** ⇒ 阵列**没建成**（★ 规则 6：不许只看返回值 —— 本会话已见过「回对象而什么都没发生」）"
+ },
+ "verdict": "partial",
+ "note": "★ 穷举每条边的中点去试 `SelectByID2(…, mark=1)`（事实 32：实体没有名字 ⇒ 按点选）。★ 判据是**特征树真的长了**。"
+}

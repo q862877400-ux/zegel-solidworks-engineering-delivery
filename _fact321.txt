@@ -1,0 +1,54 @@
+| 321 | **`linear_pattern` 的第 3 次尝试：前置假设被**证伪**** —— ★ 方向边（mark=1）与特征（mark=4）**都选上了**，★ 而特征树仍不变 ⇒ ★ 卡点**不在前置**（2026-10-03，轮 406）。
+
+## 一、★★★★★ 假设是从**官方 Remarks**读出来的（★ 不是猜）
+```
+★ `IFeatureManager.FeatureLinearPattern3` 的 Remarks 给了 **mark 表**：
+   ```
+   - **1 and 2 to mark the directions**
+   - 4 to mark the features to pattern
+   ```
+⇒ ★★ 即：**阵列方向是靠"选区里的 mark"给的** —— ★ 而轮 400/405 我**只传了 `DName1=""`、
+   根本没选方向实体** ⇒ ★ 那是个**有据的**假设（★ 与 `AddDimension2` 的"必须先选中"同族）。
+```
+
+## 二、★★★★★ 而真机**证伪了它**
+```
+★ 第 1 版（`probe_pattern_direction_marks.py`）：★ 我手写的坐标 `(0, -0.015, 0)` 去选边
+   ⇒ `SelectByID2` **回 False**（★ 坐标没落在边上 —— ★ 正是**事实 32** 警告的：实体没有名字）。
+   ★★ 而同一版里 **`SelectByID2(名, "BODYFEATURE", …, mark=4)` 回 True** ⇒
+     ★★ **mark 机制本身是通的** ✓
+★ 第 2 版（`probe_pattern_direction_marks2.py`）：★ 照**事实 53 的处方**（**把猜测变成一张穷举表**）
+   —— ★ 取每条边，用 `IEdge.GetStartVertex/GetEndVertex` → `IVertex.GetPoint` 算**中点**，逐条试。
+   ⇒ 边 0 的中点 `[-20.0, 15.0, -10.0]`（mm）**选上了**（`selected: true`）✓
+   ⇒ 而**阵列仍然不建**：★ `tree: [9, 9]` · `new_features: []`
+     （★ 包装的**规则-6 回读**如实报了"没抛错而特征树没变"）。
+⇒ ★★★ **结论：卡点不在"前置没做"** —— ★ 方向与特征**都按官方 mark 表选好了**，★ 而它**还是不建**。
+```
+
+## 三、★ 处置：★ 按**事实 53** 停下（★ 这是第 3 次不同假设）
+```
+★ 三次尝试（★ 每次换一个**具名且可证伪**的假设）：
+   ① 轮 400：★ 参数个数（15 → **10**）+ 单位（**米**）⇒ 修对了 ⇒ 而**不建**
+   ② 轮 405：★ 选区卫生（`ClearSelection2`）⇒ 修对了 ⇒ 而**不建**
+   ③ 轮 406：★ **官方 mark 表**（方向 mark=1 + 特征 mark=4）⇒ 都选上了 ⇒ 而**仍不建**
+⇒ ★ **`linear_pattern` 继续不注册**，★ 而卡点从"缺前置"**收敛为**：
+   ★★ **"前置齐了也不建"** ⇒ ★ 下一步的候选方向（★ 留给下一轮，且**不再是试参数**）：
+     ⓐ `DName1`/`DName2` **必须是真实存在的维度名**（★ 官方原话 "Name of the **dimension**
+        defining Direction 1"）—— ★ 而我的模型里**没有任何具名尺寸**
+        ⇒ ★ 用 `auto_dimension_sketch` 先造出尺寸，★ 再拿**真名字**去传；
+     ⓑ 换**更新一代**的入口（★ `FeatureLinearPattern4/5` —— ★ 而**要先查官方签名**，★ 不猜）。
+```
+
+## 四、★ 本轮**顺带得到一个可复用的技法**（★ 而它有独立价值）
+```
+★★ **按点选实体 + 带 mark** —— 官方 `SelectByID2(Name, Type, X, Y, Z, Append, **Mark**, Callout, Option)`（**9 参**）
+   ★ 而**实体没有名字**（事实 32）⇒ ★ 正解是 **Name 传空串 + 给一个"落在实体上"的点**。
+   ★★ 而"落在实体上的点"怎么来：★ **`IEdge.GetStartVertex/GetEndVertex` → `IVertex.GetPoint` → 取中点** ✓
+   ★ 真机证据：边 0 的中点 `[-20.0, 15.0, -10.0]` ⇒ `SelectByID2("", "EDGE", …)` **回 True** ✓
+   ⚠ 单位是**米**（★ 与 `AddDimension2` 同）。
+```
+
+**依据**：`output/pattern-direction-marks-evidence.json`（★ mark=4 通、方向边选择失败）·
+`output/pattern-direction-marks2-evidence.json`（★ 方向边选上了 · 而树 9→9）·
+`C:\swapi\types\IFeatureManager\FeatureLinearPattern3.md`（★ mark 表 + `DName1` 的官方措辞）·
+`output/dimension-pattern-retry-evidence.json` · 事实 32 / 53 / 315 / 320

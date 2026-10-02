@@ -1,0 +1,28 @@
+{
+ "steps": {
+  "setup": {
+   "ok": true,
+   "boss": "凸台-拉伸2",
+   "tree": 9
+  },
+  "select_direction_edge": {
+   "ok": false,
+   "returned": false
+  },
+  "select_feature_mark4": {
+   "ok": true
+  },
+  "linear_pattern_with_marks": {
+   "ok": false,
+   "tree": [
+    9,
+    9
+   ],
+   "new_features": [],
+   "error": "`FeatureLinearPattern3` **没抛错而特征树没变** ⇒ 阵列**没建成**（★ 规则 6：不许只看返回值 —— 本会话已见过「回对象而什么都没发生」）"
+  }
+ },
+ "at": "2026-10-03T03:12:55",
+ "verdict": "partial",
+ "note": "★ 验证官方 Remarks 的 mark 表（**1/2 标方向 · 4 标要阵列的特征**）—— ★ 与轮 400/405 的差别是**这次先按 mark 选了方向实体**。"
+}
