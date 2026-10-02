@@ -1,0 +1,33 @@
+{
+  "steps": {
+    "load_index": {
+      "ok": true,
+      "type": "dict",
+      "preview": "{'source_root': 'D:\\\\SOLIDWORKS Data\\\\browser', 'note': '由目录树机械生成；**未解析** browser/ToolboxFiles.index（.NE"
+    },
+    "list_standards": {
+      "ok": true,
+      "type": "dict",
+      "preview": "{'GB': 330, 'Ansi Inch': 269, 'DIN': 234, 'JIS': 178, 'ISO': 140, 'KS': 121, 'Unistrut': 102, 'AS': 91, "
+    },
+    "search(Bolt)": {
+      "ok": true,
+      "type": "list",
+      "preview": "[{'standard': 'Ansi Inch', 'category': 'bolts and screws', 'subcategory': 'countersunk head', 'part': 'c"
+    },
+    "gear_calculate": {
+      "ok": true,
+      "type": "dict",
+      "preview": "{'ok': True, 'readback': {'pitch_diameter_mm': 40.0, 'base_diameter_mm': 37.58770483143634, 'outer_diame"
+    },
+    "解析式核对": {
+      "ok": true,
+      "pitch_diameter_mm": 40.0,
+      "期望": "module*teeth = 2.0*20 = 40.0"
+    }
+  },
+  "captured_at": "2026-10-02T14:08:13",
+  "passed": 5,
+  "of": 5,
+  "verdict": "pass"
+}
