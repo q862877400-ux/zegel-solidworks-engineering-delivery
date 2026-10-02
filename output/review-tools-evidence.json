@@ -1,0 +1,27 @@
+{
+  "steps": {
+    "set_standard_view": {
+      "ok": true,
+      "readback_ok": false,
+      "note": "AttributeError: <unknown>.Name"
+    },
+    "collect_model_summary": {
+      "ok": true,
+      "n_features": 20
+    },
+    "build_review_report": {
+      "ok": true,
+      "status": "warn",
+      "score": 92
+    },
+    "artifacts_nonempty": {
+      "ok": true,
+      "count": 4
+    }
+  },
+  "captured_at": "2026-10-02T20:44:08",
+  "passed": 4,
+  "of": 4,
+  "verdict": "pass",
+  "★": "★ 判据按各自真判据；`set_standard_view` 的 `readback_ok=False` 是**已知限制**（★ ActiveView 成员全报 <unknown>），**不算失败**"
+}
