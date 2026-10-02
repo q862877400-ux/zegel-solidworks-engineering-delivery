@@ -1,0 +1,45 @@
+{
+  "captured_at": "2026-10-02T08:03:51",
+  "capability": "simulation_loads_wiring",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_simulation_apply_fixed_restraint": {
+          "resolved": true,
+          "inject": "study",
+          "has_pre_call": true,
+          "has_derived_args": true
+        },
+        "solidworks_simulation_apply_normal_force": {
+          "resolved": true,
+          "inject": "study",
+          "has_pre_call": true,
+          "has_derived_args": true
+        }
+      }
+    },
+    "part": {
+      "ok": true,
+      "title": "零件23"
+    },
+    "via_tool_path": {
+      "ok": true,
+      "restraint": "固定-1",
+      "force": "力-1",
+      "injected_keys": {
+        "study": "CDispatch",
+        "model": "CDispatch"
+      },
+      "★": "★ 走的是 inject(resolve_study) + pre_call(选面) + derived_args(补 model) 这条链"
+    },
+    "judgement": {
+      "ok": true,
+      "selected_for_fixture": 1,
+      "selected_for_force": 1,
+      "loads_count": 2,
+      "★": "★ 判据沿用既有脚本那条：选区计数 = 1 且 Count = 2"
+    }
+  },
+  "verdict": "pass"
+}
