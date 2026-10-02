@@ -1,0 +1,84 @@
+{
+ "at": "2026-10-03T03:29:11",
+ "phase": "during",
+ "kind": "dialog",
+ "hwnd": 70065368,
+ "pid": 5312,
+ "title": "",
+ "class": "#32770",
+ "exe": "SLDWORKS.exe",
+ "controls": [
+  {
+   "class": "Button",
+   "text": "关闭"
+  },
+  {
+   "class": "Static",
+   "text": "打开\n零部件"
+  },
+  {
+   "class": "Static",
+   "text": "更新\n工程图"
+  },
+  {
+   "class": "Static",
+   "text": "更新\n图形"
+  },
+  {
+   "class": "Static",
+   "text": "正在加载零部件："
+  },
+  {
+   "class": "Static",
+   "text": "2（共 2） （ 组 1（共 2））"
+  },
+  {
+   "class": "Static",
+   "text": "打开文件 C:\\Users\\Public...026\\samples\\introsw\\lid.sldprt"
+  },
+  {
+   "class": "Static",
+   "text": "跳过剩余项"
+  },
+  {
+   "class": "Static",
+   "text": "已用时间：0 秒"
+  },
+  {
+   "class": "Static",
+   "text": "上次打开此文件花费了 4 秒。"
+  },
+  {
+   "class": "Static",
+   "text": "有关更多信息，请查看： "
+  },
+  {
+   "class": "Static",
+   "text": "性能评估"
+  },
+  {
+   "class": "Button",
+   "text": "不再显示此信息"
+  },
+  {
+   "class": "Button",
+   "text": "隐藏细节"
+  }
+ ],
+ "hung": false,
+ "verdict": {
+  "mode": "needs_llm",
+  "reason": "按钮 ['关闭', '不再显示此信息', '隐藏细节'] 里有多义/高危项 ['跳过'] ⇒ 点哪个取决于弹窗在问什么",
+  "buttons": [
+   "关闭",
+   "不再显示此信息",
+   "隐藏细节"
+  ],
+  "hit": [
+   "跳过"
+  ]
+ },
+ "needs_llm": true,
+ "dismissed": false,
+ "still_present": true
+}

@@ -1,0 +1,36 @@
+{
+ "steps": {
+  "open": {
+   "ok": true,
+   "title": "box - Sheet1"
+  },
+  "first_view": {
+   "ok": false,
+   "err": "AttributeError: <unknown>.GetName"
+  },
+  "datum_count_before": {
+   "ok": true,
+   "value": 0
+  },
+  "insert_datum_tag2": {
+   "ok": false,
+   "returned": "None"
+  },
+  "datum_count_after": {
+   "ok": true,
+   "value": 0
+  },
+  "judged_by_readback": {
+   "ok": false,
+   "count": [
+    0,
+    0
+   ]
+  }
+ },
+ "at": "2026-10-03T03:28:41",
+ "fixture": "C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2026\\samples\\introsw\\box.slddrw",
+ "fixture_exists": true,
+ "verdict": "partial",
+ "note": "★ 判据是 **`IView.GetDatumTagCount()` 真的 +1**（★ 定量回读，不看返回值）。★ 夹具用 SolidWorks 自带示例图（★ 照 capabilities 里记的成法），★ 只打开并加注、**不保存**（★ 硬约束⑦）。"
+}
