@@ -1,0 +1,28 @@
+{
+  "steps": {
+    "runs": [
+      {
+        "case": "circle_path",
+        "ok": true,
+        "feature": "扫描1",
+        "type": "Sweep",
+        "access": "ERR com_error: (-2147417851, '服务器出现意外情况。', None, None)"
+      },
+      {
+        "case": "circle_path2",
+        "ok": false,
+        "feature": null,
+        "type": null,
+        "access": "ERR com_error: (-2147417851, '服务器出现意外情况。', None, None)"
+      }
+    ],
+    "negative": {
+      "ok": true,
+      "error": "扫描要选 **轮廓（mark=1）** 与 **路径（mark=4）**（★ 官方专文给的 mark）；★ 当前 mark1=0 · mark4=0"
+    }
+  },
+  "captured_at": "2026-10-02T17:57:04",
+  "passed": 2,
+  "of": 3,
+  "verdict": "partial"
+}
