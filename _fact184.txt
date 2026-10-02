@@ -1,0 +1,57 @@
+| 184 | **`IModelDoc2.InsertFeatureShell` 的 `Thickness` 单位是**毫米**（实测判决），而**官方文档写的是 meters**** —— 以及它的**宿主**必须对（2026-10-01，轮 250）。
+
+## 一、★★★ 第一个真 bug：**宿主错**（事实 36 的又一个实例）
+```
+★ 能力层原写法：`model.**FeatureManager**.InsertFeatureShell(thickness, False)`
+  真机报：**`AttributeError: <unknown>.InsertFeatureShell`**
+★★ 而官方类型表里它是 **`C:\\swapi\\types\\IModelDoc2\\InsertFeatureShell.md`**
+   ⇒ ★★★ **宿主是 `IModelDoc2`，不是 `FeatureManager`**
+⇒ ★ 修法一处：`model.InsertFeatureShell(thickness, False)` ⇒ ★★ **真机立刻通过**
+   （`readback` 三条全真：特征「抽壳1」在树里 · `EditRebuild3` True · `GetWhatsWrongCount` 0）
+⇒ ★★★★ **这正是 known-facts 36 的形态**：「同名接口分属不同族 ⇒ **用错接口 = 对象对任何成员都没反应**」，
+   而**报错形态是 `<unknown>.X`** ⇒ ★ **见到 `<unknown>.` 就该去查类型表里那个成员挂在谁身上**。
+```
+
+## 二、★★★★★ 第二个：**单位冲突，以实测为准**
+```
+★ **官方文档**（`IModelDoc2/InsertFeatureShell.md`）：「**Thickness**: Shell thickness in **meters**」
+★ **本模块头**（`scripts/sw_part.py`，轮 132 实测校正）：「长度单位：**毫米** … **传进去的就是毫米**」
+⇒ ★★ **两者冲突，不能猜** ⇒ ★ 用**两个厚度**实测（`tools/probe_shell_thickness_units.py`）：
+     100×60×20 的板（体积 **120000 mm³** ⇒ ★ 体积口径也是毫米³）：
+       · `t=2.0` ⇒ 实体 **23232** ⇒ 被挖空腔 **96768** = **96×56×18** ⇒ **四壁各减 2 mm** ✓
+       · `t=4.0` ⇒ 实体 **43456** ⇒ 被挖空腔 **76544** = **92×52×16** ⇒ **四壁各减 4 mm** ✓
+⇒ ★★★★★ **几何自证：口径是毫米** ⇒ ★ 官方那句「meters」**对本机不成立**
+   （★ 若按 meters 解，2.0 的壁就是 **2 米** ⇒ 会把 20 mm 厚的板吃光或直接失败 —— ★ 实测都没有）。
+```
+
+## 三、★ 判据怎么设计的（★ 事先规定 —— 事实 165 第 12 条）
+```
+★ 我先规定：「若两次**都成功**且**下降之比 ≈ 厚度之比** ⇒ 口径与传入值一致；
+   再结合"下降是否落在毫米量级" ⇒ 判它是不是毫米」。
+⚠ 而实测的 `drop_ratio = 0.791`（**不是**预期的 2.0）⇒ ★★ 按事先规定，那**不足以判**。
+★★ 而真正的判决来自**几何**：★ 我把两次的空腔**算成边长**（96×56×18 / 92×52×16）
+   ⇒ ★★★ **"四壁各减 t" 完全吻合** ⇒ ★ 那才是**自证**（比比值判据强得多）。
+⇒ ★ **定则**：★ **比值判据会被"几何本身非线性"打乱** —— 能**算成可核对的几何量**时，就别用比值。
+```
+
+## 四、★ 顺带：`Outward` 与前置条件
+```
+★ 官方签名 `void InsertFeatureShell(double Thickness, bool Outward)`：★ `Outward` True=外侧 False=内侧
+  ⇒ ★ 能力层传 `False`（内侧）✓。
+★ 官方 Remarks：「Before calling this method, **select faces to remove**」⇒ ★ **必须先选面** ✓
+  （★ 本项目的证据脚本正是这么做的）。
+★ 同族还有 `IModelDoc2.InsertFeatureShellAddThickness`（★ 多厚度壳）—— ★ 未挂。
+```
+
+## 五、★ 本轮把 `stitched` 从 9 降到 8（★ 目标方向对上了）
+```
+★ `modeling_feature_readback_tools` ⇒ **`verified`**（★ `shell` 真机通过）
+  ⚠ 而**其余三个仍在同一条能力条目里如实标注未通过**（`rib`/`dome` 静默失败 · `composite_curve` 选择不合法）
+⇒ ★★ **定则**：★ **一个能力条目里"部分工具通过"时，判据写"通过的那个"，
+   并把没通过的逐条写进 `limitations`** —— ★ 不是把整条压低，也不是把没通过的算进去。
+```
+
+**依据**：`C:\swapi\types\IModelDoc2\InsertFeatureShell.md`（★ 宿主 + 签名 + Remarks + 单位写 meters）·
+`tools/capture_modeling_readback_evidence.py` + `output/modeling-readback-evidence.json`（★ `verdict: pass`）·
+`tools/probe_shell_thickness_units.py` + `output/shell-thickness-units.json`（★ 单位判决）·
+`scripts/sw_part.py` 的模块头（轮 132 的实测校正）· 事实 36 · 165 第 12 条

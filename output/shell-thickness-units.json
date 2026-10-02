@@ -1,0 +1,52 @@
+{
+  "captured_at": "2026-10-02T11:31:40",
+  "unit_conflict": {
+    "official": "meters",
+    "module_header": "millimetres"
+  },
+  "steps": {
+    "plate": {
+      "volume_mm3": 120000.0,
+      "features": [
+        "前视基准面",
+        "上视基准面",
+        "右视基准面",
+        "原点",
+        "Tables",
+        "草图1",
+        "凸台-拉伸1"
+      ]
+    },
+    "runs": {
+      "2.0": {
+        "ok": true,
+        "present": true,
+        "volume_before": 120000.0,
+        "volume_after": 23232.0,
+        "drop": 96768.0,
+        "error": null
+      },
+      "4.0": {
+        "ok": true,
+        "present": true,
+        "volume_before": 120000.0,
+        "volume_after": 43456.00000000001,
+        "drop": 76544.0,
+        "error": null
+      }
+    },
+    "verdict": {
+      "thicknesses": [
+        2.0,
+        4.0
+      ],
+      "drops": [
+        96768.0,
+        76544.0
+      ],
+      "drop_ratio": 0.791,
+      "expected_ratio": 2.0,
+      "★": "★ 事先规定：若两次**都成功**且**下降之比 ≈ 厚度之比** ⇒ **口径与传入值一致**；★ 再结合「下降是否落在毫米量级」 ⇒ 判它是不是毫米。★ 若官方口径（米）成立，2.0 的壳会**把实体吃光或失败**。"
+    }
+  }
+}
