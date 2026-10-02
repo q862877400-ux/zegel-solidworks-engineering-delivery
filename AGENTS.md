@@ -1,26 +1,26 @@
 # AGENTS.md
 
-本文件是 SolidWorks Automation Skill「集大成 + 建护城河」任务的常驻指令；工作区 `D:\AI\SW\`（已是 git 仓库），代码工作副本 `C:\swprojects\sw-skill-fork\`。跨项目的通用纪律在 `~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）—— 缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
+本文件是 SolidWorks Automation Skill「集大成 + 建护城河」任务的常驻指令；**仓库 `D:\AI\SW\`** —— **2026-10-03 起代码与产物在同一个仓库里**（原先的代码工作副本 `C:\swprojects\sw-skill-fork\` 已成只读归档，见 §七）。跨项目的通用纪律在 `~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）—— 缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
 
-## 工作区（第一件事，先确认你在哪）
+## 仓库（第一件事，先确认你在哪）
 
 | 路径 | 是什么 | 能改吗 |
 |---|---|---|
-| `D:\AI\SW\` | 本文件所在 · DSH 工作区根 · 任务产物（草稿 / 日志 / 报告 / 证据） | 放产物 |
-| `C:\swprojects\sw-skill-fork\` | 代码工作副本（独立 git 仓库） | 唯一改代码的地方 |
+| `D:\AI\SW\` | **仓库根** —— 代码（`scripts/` `mcp-server/` `tests/` `tools/` `apps/` …）**与**产物（草稿 / 日志 / 报告 / 证据）同在一处 | 改代码与放产物 |
+| `C:\swprojects\sw-skill-fork\` | 合并前的代码副本，**只读归档**（历史与上游对照在其中） | 只读 |
 | `C:\swprojects\<owner>\` | 四家外部 MCP 项目的克隆 | 只读对照 |
 | `C:\swprojects\sw-automation-skill\` | 上游的另一份克隆 | 只读对照 |
 | `D:\AI\SW\AI Solidworks\` | SolidWorks 工作区（官方文档 / 手册 / 模型 / 截图） | 只读 |
-| `D:\AI\SW\docs\` | 本文件里 `docs/...` 相对 AGENTS.md 解析到这里（上游结构 / 素材 / 来源标注 / 团队分工 / 资源速查 / 开工模板 **6 份** + **`known-facts.md`（已知事实完整表）**）；任务产出（`union-conventions.md` 等）在代码副本的 `C:\swprojects\sw-skill-fork\docs\` | 可改 |
+| `D:\AI\SW\docs\` | 本文件里 `docs/...` 相对 AGENTS.md 解析到这里 —— **知识文档与任务产出同在一处**（合并后不再分家） | 可改 |
 
-`D:\AI\SW\` 现已是 git 仓库（提交 `1f86c5d` 起），收草稿脚本、运行日志、报告与证据；`.gitignore` 排除了 398 MB（官方文档 / 反射转储 / 探索截图 / CAD 保真数据）。
+`D:\AI\SW\` 是 git 仓库（提交 `1f86c5d` 起；2026-10-03 并入代码后共 **4820** 个入库文件）；`.gitignore` 排除了 398 MB（官方文档 / 反射转储 / 探索截图 / CAD 保真数据）。
 
-任务报告放 `D:\AI\SW\` 下，代码放 `C:\swprojects\sw-skill-fork\`。`D:\AI\SW\AI Solidworks\` 是模型 / 截图 / 手册，不是代码落点。
+任务报告与代码都放 `D:\AI\SW\` 下。`D:\AI\SW\AI Solidworks\` 是模型 / 截图 / 手册，不是代码落点。
 
 ## 动手核一条路之前：先扫「已走死的路」
 
 ```
-C:\swprojects\sw-skill-fork\docs\dead-ends.md      # ★ 由 tools/gen_dead_ends.py 生成（41 条 / 24 能力）
+docs/dead-ends.md      # ★ 由 tools/gen_dead_ends.py 生成（45 条 / 28 能力）
 ```
 
 **为什么**：2026-10-02 轮 359–362，我在 `revolve_boss` 的轴上**重走了一遍**前人早已走死的路 ——
@@ -76,7 +76,7 @@ python tools/sw_guard.py --report                                  # 打印历�
 ## 每轮收尾链（★ 一条命令）
 
 ```
-pwsh -File C:\swprojects\sw-skill-fork\tools\round_chain.ps1 -Tests tests/<改过的>.py
+pwsh -File D:\AI\SW\tools\round_chain.ps1 -Tests tests/<改过的>.py
 ```
 
 **实测 34.8 s**（生成器 2.1 s + `release_check` 31 s + 聚焦测试）。**不要再手打 6 步链、不要每轮跑全量 pytest**。
@@ -267,7 +267,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 
 ## 六、已知事实（完整表在 [`docs/known-facts.md`](docs/known-facts.md)）
 
-**共 63 条**，全文在 [`docs/known-facts.md`](docs/known-facts.md)。
+**共 374 条**，全文在 [`docs/known-facts.md`](docs/known-facts.md)。
 ⚠ **为什么会分开**：该表已占 AGENTS.md 的 ~71%，而本文件受 **65536 字节指令预算**限制
 ⇒ **超预算会被截断，且截掉的是**末尾最新**的条目**（静默退化）。
 ⇒ **查事实请读那个文件**；本节只留**最常查的 21 条**做速查。
@@ -314,13 +314,16 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 ## 七、Git 规则
 
 ```
-代码工作副本：C:\swprojects\sw-skill-fork\     唯一改代码的地方，已是 shallow clone
-  origin : https://github.com/wzyn20051216/solidworks-automation-skill   ← 来源与对照
+仓库：        D:\AI\SW\          ← **唯一的仓库**（2026-10-03 合并；代码 + 产物同仓）
+  upstream : https://github.com/wzyn20051216/solidworks-automation-skill   ← 来源与对照（**只读**）
+  origin   : **故意留空** —— 自建远端的目标 URL 由用户给定后再 `git remote add origin <url>`
   MIT · 上游是来源之一，不是本仓库的历史基底
-工作区仓库：  D:\AI\SW\                        git 仓库（提交 1f86c5d 起），只放产物
+归档：        C:\swprojects\sw-skill-fork\   合并前的代码副本，**只读保留**（B 是 shallow clone，历史在其中）
 ```
 
-`origin` 指向上游，语义是「来源与对照」：用 `git diff origin/main --stat` 看我们相对上游的增量（当前 100 新增 / 13 改过）。自建仓库的目标远端由用户给定后再 `git remote add <name> <url>`；只有 origin 时 `git push` 会误推上游仓库。
+⚠ **上游改叫 `upstream`（不再叫 `origin`）是刻意的**：只有 `origin` 指向上游时，一次裸 `git push` 就会**误推上游仓库**（AGENTS.md 一贯点名的风险）。现在 `origin` 空着 ⇒ **裸 `git push` 无处可去**，从结构上消掉这个风险。
+
+用 `git diff upstream/main --stat` 看我们相对上游的增量。**⚠ `upstream` 目前只登记了 URL、还没 fetch**（本机未联网取）⇒ `upstream/main` 这个 ref 不存在，`round_chain.ps1` 会**优雅跳过**那行统计、`report_freshness` 门禁会 **SKIP**（那是便携性守卫，不是失败）。要用对照能力就先 `git fetch upstream`。
 
 - 三条红线（任何模式都不豁免）：删数据 / 删仓库 / 强推；对外发布；只有用户能提供的东西（凭据、业务口径）。
 - 推送前置义务：并入了 Apache-2.0 来源（`Slacker-LLC/solidworks-mcp`）⇒ 推送任何远端都要带 `THIRD-PARTY-NOTICES.md`（含 `Copyright 2026 JIALE LIU` 与改动文件清单），该文件**已存在**；MIT 来源保留版权声明。这条对上游与四家一体适用。
