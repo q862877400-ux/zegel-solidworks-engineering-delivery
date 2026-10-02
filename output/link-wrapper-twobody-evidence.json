@@ -1,0 +1,12 @@
+{
+ "at": "2026-10-03T07:01:05",
+ "bodies": 2,
+ "verts": 2,
+ "study_none": false,
+ "count_before": 0,
+ "raw_type": "CDispatch",
+ "raw_is_none": false,
+ "count_after": 1,
+ "verdict": "pass",
+ "note": "★ **调本仓的包装**（★ 而不手调 COM）★ 走**已验场景**（★ 两个体各一个顶点）。★ `_check` 已统一补 `out_i4()` ⇒ ★ 若它成 ⇒ ★ 包装本来就是对的 ⇒ 可直接挂。★ 判据：★ `Count` **+1**。"
+}
