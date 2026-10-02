@@ -1,0 +1,28 @@
+{
+ "steps": {
+  "path_sketch": {
+   "ok": true,
+   "sketch": "草图1"
+  },
+  "entry_check": {
+   "ok": true,
+   "segment_count": 1,
+   "first_type": "CDispatch"
+  },
+  "structural_member": {
+   "ok": true,
+   "feature": "square-rods (1)",
+   "segments": 1,
+   "new_type_names": [
+    "WeldMemberFeat",
+    "WeldmentFeature"
+   ],
+   "note": "★ 判据：★ 特征树里**多了**新类型名（如 `WeldmentFeature`）"
+  }
+ },
+ "at": "2026-10-03T05:20:40",
+ "profile": "C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2026\\weldment profiles\\GB\\square-rods.sldlfp",
+ "profile_exists": true,
+ "verdict": "pass",
+ "note": "★ 结构构件（焊件族）—— ★ 判据是**特征树**（★ 不是 `Count`）。★ 前置：★ 本机的**焊件轮廓库**在（★ 111 个 `.sldlfp`，★ 用 GB 的方管）—— ★ 而那**推翻了** `capabilities.yaml` 里轮 364 那条「本机没装轮廓库」。"
+}

@@ -1,0 +1,63 @@
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_weldment.py —— 追加 `create_structural_member_from_sketch`
+# 定位:   ★ 2026-10-03（轮 428）`plan-200r-v3` **段 2（焊件族）**的第一条。
+#   ★★ **为什么它以前没挂**：★ 而 `capabilities.yaml` 的 `weldment_cut_list` 条目**早就写着**
+#     「**2026-10-02（轮 364）真因查明：本机没装「焊件轮廓库」（Weldment Profiles）** ⇒
+#       所以报「没有可写入切割清单的结构构件实体」**不是代码问题**，而是**建不出结构构件**」。
+#   ★★★ **而本轮的侦察**推翻**了它**（★ 按 AGENTS.md 的顺序查第一现场时发现的）：
+#     ```
+#     ✓ 在：C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles
+#     ⇒ **111 个** `.sldlfp`（ansi / **GB** / iso / DIN / JIS …）
+#     ```
+#   ⇒ ★★ **即：★ 前置**现在是齐的****（★ 而轮 364 那条结论**要更新**）✓
+#   ★★ **而本函数把那条链封成一步**：★ 给定**草图名**与**轮廓路径**，
+#     ★ 它自己取线段、建构件、**并用特征树回读**（★ 判据是**特征树**，★ 不是计数）✓
+#   ★ **取线段用的是现成物**（★ "先找后搓"）：`sw_sketch.get_sketch_segments` +
+#     `FeatureByName` → `GetSpecificFeature2`（★ `sw_part._select_revolve_axis` 里那条现成路）。
+# 官方依据: `IFeatureManager.InsertStructuralWeldment5`（★ `create_structural_member` 已在用）·
+#   `ISketch.GetSketchSegments()`（★ 出厂类型库：**0 参** → Object）· `IFeature.GetSpecificFeature2`
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def create_structural_member_from_sketch(model, sketch_name: str, profile_path, **kwargs):
+    """★ **用一段草图路径 + 一个焊件轮廓**建结构构件，并**用特征树回读**。
+
+    ★ 这是**段 2 的第一步封装**：★ 它把"**取线段 → 建构件 → 回读**"封在一起，
+    ★★ 而**回读看的是特征树的类型名**（★ 与 `Count` 那条判据**完全不同**的一个家族）✓
+
+    :param sketch_name: **路径草图**的名字（★ 如 `草图1`）。
+    :param profile_path: `.sldlfp` 焊件轮廓的**绝对路径**
+        （★ 本机在 `C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2026\\weldment profiles\\` 下，
+        ★ 中文 UI 用 `GB\\` 那一支）。
+    :returns: 回读报告（`ok` / `feature` / `new_type_names` / `segments`）。
+    """
+    from .sw_connect import get_com_member, safe_get_com_member
+    from .sw_sketch import get_sketch_segments
+
+    def _type_names() -> set:
+        names, feature, guard = set(), safe_get_com_member(model, "FirstFeature"), 0
+        while feature is not None and guard < 500:
+            names.add(str(safe_get_com_member(feature, "GetTypeName2") or ""))
+            feature = safe_get_com_member(feature, "GetNextFeature")
+            guard += 1
+        return names
+
+    feature = get_com_member(model, "FeatureByName", str(sketch_name))
+    sketch = get_com_member(feature, "GetSpecificFeature2")
+    segments = list(get_sketch_segments(sketch))
+    before = _type_names()
+    made = create_structural_member(model, profile_path, [segments], **kwargs)
+    after = _type_names()
+    return {
+        "ok": made is not None,
+        "feature": str(safe_get_com_member(made, "Name") or ""),
+        "segments": len(segments),
+        "new_type_names": sorted(after - before),
+        "note": ("★ 判据是**特征树**（★ 不是计数）：★ `new_type_names` 应含 "
+                 "`WeldmentFeature` 与 `WeldMemberFeat`"),
+    }
