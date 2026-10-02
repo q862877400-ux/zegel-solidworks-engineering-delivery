@@ -1,0 +1,42 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件7"
+  },
+  "export_image": {
+   "ok": true,
+   "values": {
+    "format": "image",
+    "exists": true,
+    "size_bytes": 67997,
+    "grew_or_created": true,
+    "returned": "D:\\AI\\SW\\output\\export-image-025252.png",
+    "error": null
+   }
+  },
+  "neg_export_bad_path": {
+   "ok": true,
+   "why": "写不出去就必须红（判据是文件）",
+   "value": {
+    "ok": false,
+    "exists": false,
+    "size_bytes": 0,
+    "error": "RuntimeError: IModelDocExtension.SaveAs3 返回 False ⇒ 图片没导出来。⚠ 常见原因：扩展名不在该文档类型的图片过滤器里 / 路径不可写。"
+   }
+  },
+  "probe_flat_pattern_on_solid_part": {
+   "ok": true,
+   "note": "★ 只**记录**（前置是钣金件）",
+   "value": {
+    "ok": false,
+    "exists": false,
+    "size_bytes": 0,
+    "error": "ValueError: 导出展开 DXF 前必须先保存钣金零件"
+   }
+  }
+ },
+ "at": "2026-10-03T02:52:52",
+ "verdict": "pass",
+ "note": "★ 段 6 导出：判据**复用 `_export_report`**（回读文件：存在且 size > 0，★ 并记 size_before / grew_or_created）。★ 展开 DXF 的正例需要钣金件（前置链另一条）⇒ 本批只在非钣金件上**表征**。"
+}
