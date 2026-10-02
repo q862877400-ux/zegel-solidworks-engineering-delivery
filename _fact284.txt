@@ -1,0 +1,54 @@
+| 284 | **挖 `render_material_library`：修掉第 12 处「设属性写成取或调」；而**三条回读入口**一致证明"材质真的没进"**（2026-10-02，轮 367）。
+
+## 一、★★★★ 真 bug（第 12 处同类漏网）
+```
+★ `create_render_material` 的 `spec.extra` 循环里写的是
+   `get_com_member(material, str(key), float(value))` —— ★★ **那是"取或调"**（事实 227）⇒
+   ★ `float` 不是可调用对象 ⇒ `TypeError: 'float' object is not callable`。
+★ 前人（轮 319）为同一形态修了 **11 处**，**而这一处漏了**
+   ⇒ ★★ 与 `add_force` / `add_torque` 那次（轮 349：修 `add_torque` 时漏了 `add_force`）**同一形态**：
+     ★★★ **"修了一处、漏了同类"** —— 本会话第三次。
+⇒ ★ 已改成 `set_com_member`。（★ `set_com_member` 在本模块顶部已 import，验证过。）
+```
+
+## 二、★★★★★ 而"计数仍 0"这件事，本轮**用三条独立入口证到了**
+```
+★ 真机（新建零件 + 拉伸 + 建外观 + 应用）：
+   ```
+   count_before          = 0
+   create_ok             = true          ← CreateRenderMaterial 回了对象
+   add_ret               = **true**      ← ★ AddRenderMaterial 回了 true
+   count_after_list      = 0             ← 我们的 list_render_materials
+   count_after_direct    = 0             ← 直接 GetRenderMaterialsCount
+   array_len             = **NoneType**  ← GetRenderMaterials 回了 None（不是空数组，是 None）
+   ```
+⇒ ★★★ **三条独立入口一致** ⇒ ★ **材质真的没进文档**（★ 不是"我们的回读入口不对"）✓
+   ⇒ ★★ **而那正是事实 8 的又一个实录**：★ **`AddRenderMaterial` 的 bool 返回值**不可信**** ——
+     ★ 它回 true 而实际没生效。
+```
+
+## 三、★ 结论（★ 等级不动）
+```
+★ `render_material_library` 仍 **不能升 verified**（★ 硬约束③：没有 pass 不升）。
+★ **下一轮的候选**（★ 不猜，★ 按顺序试）：
+   ① ★ **`CreateRenderMaterial` 建的对象是否**绑定到文档**—— 官方文档里外观对象通常还要设
+      `FileName`（指向 `.p2m`）/ 其它标识才能被 `AddRenderMaterial` 接受；
+   ② ★ `AddRenderMaterial` 是否要求**文档里已有实体**（★ 本轮的件有实体，★ 故排除）；
+   ③ ★ `UpdateRenderMaterialsInSceneGraph` 的调用时机（★ 而它不影响**计数**，★ 故不是主因）。
+★ **判法**（下一轮）：★ **读官方 `AddRenderMaterial` 的 Remarks**（★ 而不是继续试参数）——
+   ★ 铁律 4：语义去官方文档查。
+```
+
+## 四、★ 一条可复用的手法（★ 本轮用得好）
+```
+★★ **"判据不成立"时，用**多条独立入口**回读同一个量** ——
+   ★ 本轮用了：★ 我们自己的 `list_render_materials` · 直接 `GetRenderMaterialsCount` ·
+     `GetRenderMaterials` 的数组长度 ⇒ ★★ **三条都说 0/None** ⇒ 于是能确定
+     ★ "是**写入**没生效"，★ 而不是"我们的**读**写错了"。
+   ⇒ ★ 若只信一条入口，★ 就分不清是读的问题还是写的问题（★ 而修错边会白干一轮）。
+```
+
+**依据**：本机实测（`add_ret = true` 而 `count_after_list` / `count_after_direct` 均 0 ·
+`GetRenderMaterials` 回 `NoneType`）· `scripts/sw_render_material.py` 的 `create_render_material`
+（`spec.extra` 那处已改 `set_com_member`）/ `add_render_material` / `list_render_materials` ·
+`capabilities.yaml` 的 `render_material_library`（★ 轮 319 的 11 处）· 事实 8 / 227 / 283
