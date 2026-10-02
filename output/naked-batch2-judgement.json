@@ -1,0 +1,132 @@
+[
+ {
+  "gap": "balloon",
+  "funcs": [],
+  "com_members": [],
+  "verdict": "**真缺**（两层都无）"
+ },
+ {
+  "gap": "gdt",
+  "funcs": [
+   "add_gtol_frame",
+   "add_gtol_indicator",
+   "ensure_gtol_frame",
+   "insert_gtol"
+  ],
+  "com_members": [
+   "InsertGtol"
+  ],
+  "verdict": "已有（★ 有实现入口）"
+ },
+ {
+  "gap": "datum",
+  "funcs": [],
+  "com_members": [],
+  "verdict": "**真缺**（两层都无）"
+ },
+ {
+  "gap": "hem",
+  "funcs": [
+   "check_capabilities_schema"
+  ],
+  "com_members": [],
+  "verdict": "★ 需人工核（有入口而同名 COM 成员为空）"
+ },
+ {
+  "gap": "jog",
+  "funcs": [],
+  "com_members": [],
+  "verdict": "**真缺**（两层都无）"
+ },
+ {
+  "gap": "unfold",
+  "funcs": [
+   "_flatten_units",
+   "create_flatten_route",
+   "export_flat_pattern_dxf"
+  ],
+  "com_members": [],
+  "verdict": "★ 需人工核（有入口而同名 COM 成员为空）"
+ },
+ {
+  "gap": "units",
+  "funcs": [
+   "_flatten_units",
+   "_unit_vector",
+   "read_units_report"
+  ],
+  "com_members": [
+   "ClearanceUnit",
+   "EquationAngularUnit",
+   "EquationLinearUnit",
+   "GetUnits",
+   "MaterialUnits",
+   "PerUnitLength2",
+   "PhaseAngleUnit",
+   "ResistanceUnit"
+  ],
+  "verdict": "已有（★ 有实现入口）"
+ },
+ {
+  "gap": "undo",
+  "funcs": [],
+  "com_members": [],
+  "verdict": "**真缺**（两层都无）"
+ },
+ {
+  "gap": "wrap",
+  "funcs": [
+   "_wrapped",
+   "create_wrap_report"
+  ],
+  "com_members": [
+   "InsertWrapFeature2"
+  ],
+  "verdict": "已有（★ 有实现入口）"
+ },
+ {
+  "gap": "sensor",
+  "funcs": [
+   "_sensor_of",
+   "read_sensors_report"
+  ],
+  "com_members": [
+   "GetSensorValue",
+   "SensorType"
+  ],
+  "verdict": "已有（★ 有实现入口）"
+ },
+ {
+  "gap": "vertices",
+  "funcs": [],
+  "com_members": [
+   "GetEndVertex",
+   "GetPointCount",
+   "GetPoints",
+   "GetStartVertex"
+  ],
+  "verdict": "**真缺**（两层都无）"
+ },
+ {
+  "gap": "referenced_documents",
+  "funcs": [
+   "_document_dependency_paths",
+   "_is_external_reference",
+   "_missing_dependency_paths",
+   "_required_pack_dependency_paths",
+   "_set_load_references",
+   "_stage_pack_and_go_dependencies"
+  ],
+  "com_members": [
+   "D1EndSeedReference",
+   "D1EndUseSeedReference",
+   "FromComponentReference",
+   "FromPinReference",
+   "GetDependencies2",
+   "GetUserPreferenceInteger",
+   "GetUserPreferenceIntegerValue",
+   "GetUserPreferenceToggle"
+  ],
+  "verdict": "已有（★ 有实现入口）"
+ }
+]
