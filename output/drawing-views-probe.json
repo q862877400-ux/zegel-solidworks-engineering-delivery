@@ -1,0 +1,32 @@
+{
+  "steps": {
+    "part": {
+      "ok": true,
+      "path": "D:\\AI\\SW\\output\\_drw_probe_part.SLDPRT"
+    },
+    "drawing": {
+      "ok": true
+    },
+    "dv_funcs": [],
+    "list_views": {
+      "ok": false,
+      "keys": "[]"
+    },
+    "sheets_summary": {
+      "ok": false,
+      "error": "TypeError: 'int' object is not callable"
+    },
+    "current_sheet": {
+      "ok": true,
+      "keys": [
+        "first_angle",
+        "height_mm",
+        "paper_size",
+        "paper_size_code",
+        "scale_den",
+        "scale_num"
+      ]
+    }
+  },
+  "captured_at": "2026-10-02T18:09:53"
+}

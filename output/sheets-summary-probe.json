@@ -1,0 +1,18 @@
+{
+  "sheet_count": {
+    "ok": true,
+    "ret": "1"
+  },
+  "sheet_names": {
+    "ok": true,
+    "ret": "['图纸1']"
+  },
+  "current_sheet_name": {
+    "ok": true,
+    "ret": "图纸1"
+  },
+  "sheets_summary": {
+    "ok": true,
+    "ret": "{'count': 1, 'names': ['图纸1'], 'current': '图纸1'}"
+  }
+}

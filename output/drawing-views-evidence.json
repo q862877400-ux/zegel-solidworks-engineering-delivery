@@ -1,0 +1,62 @@
+{
+  "steps": {
+    "runs": [
+      {
+        "file": "bolt-assembly.slddrw",
+        "list_views": {
+          "n": 5,
+          "sample": [
+            "Drawing View1",
+            "Drawing View2",
+            "Drawing View3"
+          ]
+        },
+        "sheets_summary": {
+          "count": 1,
+          "names": [
+            "Sheet1"
+          ]
+        },
+        "current_sheet_info": {
+          "keys": [
+            "first_angle",
+            "height_mm",
+            "paper_size",
+            "paper_size_code"
+          ]
+        },
+        "ok": true
+      },
+      {
+        "file": "box.slddrw",
+        "list_views": {
+          "n": 4,
+          "sample": [
+            "Drawing View1",
+            "Drawing View2",
+            "Drawing View3"
+          ]
+        },
+        "sheets_summary": {
+          "count": 1,
+          "names": [
+            "Sheet1"
+          ]
+        },
+        "current_sheet_info": {
+          "keys": [
+            "first_angle",
+            "height_mm",
+            "paper_size",
+            "paper_size_code"
+          ]
+        },
+        "ok": true
+      }
+    ]
+  },
+  "captured_at": "2026-10-02T18:10:23",
+  "passed": 2,
+  "of": 2,
+  "verdict": "pass"
+}
