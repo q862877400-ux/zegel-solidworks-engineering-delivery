@@ -1,14 +1,14 @@
 {
-  "captured_at": "2026-10-02T09:44:47",
+  "captured_at": "2026-10-02T10:24:37",
   "steps": {
     "state_initial": [
-      -1,
-      -1
+      0,
+      0
     ],
-    "toggle_enabled": false,
+    "toggle_enabled": true,
     "state_after_toggle": [
-      -1,
-      -1
+      1,
+      1
     ],
     "mesh": {
       "CreateMesh": 0,
@@ -17,12 +17,12 @@
     },
     "run_analysis": {
       "ok": false,
-      "return_code": 0,
+      "return_code": 30,
       "return_is_trustworthy": false,
       "results_present": false,
       "plot_count": null,
       "plot_names": null,
-      "seconds": 14.0,
+      "seconds": 0.0,
       "★": "★★ 若这里**没弹框且 results 非空** ⇒ `State=1` 就是「活动」侧 ⇒ **代码正解成立**"
     }
   }

@@ -1,0 +1,39 @@
+{
+  "captured_at": "2026-10-02T10:25:00",
+  "steps": {
+    "after_new_part": {
+      "tag": "after_new_part",
+      "userpref_linear": 0,
+      "userpref_linear_name": "m",
+      "doc_units_via_ext": "取不到: (-2147352561, '非选择性的参数。', None, None)"
+    },
+    "size_before": [
+      4930.501659457233,
+      246.52508297286164
+    ],
+    "set_units_to_mm": "设不上: (-2147352561, '非选择性的参数。', None, None)",
+    "after_set_mm": {
+      "tag": "after_set_mm",
+      "userpref_linear": 0,
+      "userpref_linear_name": "m",
+      "doc_units_via_ext": "取不到: (-2147352561, '非选择性的参数。', None, None)"
+    },
+    "size_after_set_mm": [
+      4930.501659457233,
+      246.52508297286164
+    ],
+    "verdict": {
+      "size_before": [
+        4930.501659457233,
+        246.52508297286164
+      ],
+      "size_after_set_mm": [
+        4930.501659457233,
+        246.52508297286164
+      ],
+      "changed": false,
+      "ratio": 1.0,
+      "★": "★★ 若设 mm 后值变为 ~4.93（比值 ≈1000）⇒ **文档单位就是那个源头**（因果确认）"
+    }
+  }
+}
