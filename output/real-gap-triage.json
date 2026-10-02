@@ -1,8 +1,8 @@
 {
  "summary": {
-  "total": 99,
-  "该挂": 59,
+  "total": 97,
   "不做": 15,
+  "该挂": 57,
   "已有": 6,
   "内部件": 19,
   "★": "四类之和必须 == total（★ 本脚本自检）",
@@ -12,21 +12,9 @@
  "rows": [
   {
    "module": "sw_part",
-   "name": "current_sketch_name",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_part",
    "name": "sketch_spline",
    "kind": "不做",
    "why": "第 141 轮真机：`CreateSpline2` 返回 None、重绘后仍 0 段、旧版 `CreateSpline` 在迟到绑定里不存在；后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ 事实 47/68 架构限制（pywin32 到不了）"
-  },
-  {
-   "module": "sw_part",
-   "name": "auto_dimension_sketch",
-   "kind": "该挂",
-   "why": ""
   },
   {
    "module": "sw_part",
