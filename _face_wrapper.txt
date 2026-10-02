@@ -1,0 +1,30 @@
+def select_face_by_selector_report(model, selection: str, *, mark: int = 0,
+                                   append: bool = False) -> dict:
+    """★ 按**声明式选择器**选一个面，回**可 JSON 化**的报告。
+
+    ★★ 为什么它**能**当工具而旁边两条不能（**规则 3** 的判断）：
+      ★ `select_object(model, obj)`          ⇒ 吃 **COM 对象** ⇒ **没法入参数表达**
+      ★ `resolve_face_selector(model, sel)`  ⇒ 回 **`(x, y, z)` 米** ⇒ **暴露它就是暴露裸坐标**
+      ★★ 而本函数：**对外的参数是选择器**，坐标**只在内部用** ✓
+
+    :param selection: 见 :data:`FACE_SELECTORS`（`+x` / `-x` / `+y` / `-y` / `+z` / `-z`）。
+    :param mark: 选择标记（默认 0）。
+    :param append: 传给底层的 `Append`。
+        ⚠★ **真机（轮 452）**：`append=False` 时**它并没清掉上一次的选区**
+        （★ 回读从 1 变成 **2**）⇒ ★★ **调用方要自己先 `ClearSelection2`**。
+    :returns: `{ok, selection, count, ...}`，判据是**回读计数**（★ 不是返回值）。
+    """
+    try:
+        n = int(select_face_by_selector(model, str(selection), mark=int(mark), append=bool(append)))
+    except ValueError as exc:
+        return {"ok": False, "selection": str(selection), "stage": "resolve",
+                "error": str(exc)[:200], "legal": list(FACE_SELECTORS)}
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "selection": str(selection), "stage": "select",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:160])}
+    return {"ok": n == 1, "selection": str(selection), "count": n,
+            "mark": int(mark), "append": bool(append),
+            "★": "★ 判据是**回读计数 == 1**（★ 而不是返回值）；"
+                 "★★ 而 `append=False` **不会清掉上一次** ⇒ 需要时自己先 `ClearSelection2`。"}
+
+

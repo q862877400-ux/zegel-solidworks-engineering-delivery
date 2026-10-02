@@ -1,0 +1,30 @@
+{
+ "at": "2026-10-03T06:40:07",
+ "selectors": [
+  "+x",
+  "-x",
+  "+y",
+  "-y",
+  "+z",
+  "-z"
+ ],
+ "plus_z": 1,
+ "plus_z_again_no_append": 2,
+ "per_selector": {
+  "+x": 1,
+  "-x": 1,
+  "+y": 1,
+  "-y": 1,
+  "+z": 1,
+  "-z": 1
+ },
+ "illegal": "ValueError: 非法或无法解析的面选择器 'not-a-selector'；合法值：['+x', '-x', '+y', '-y', '+z', '-z']",
+ "verdict": "pass",
+ "criteria": {
+  "single_call_is_one": true,
+  "all_six_are_one": true,
+  "illegal_raises": true
+ },
+ "found_behaviour": "★ **`append=False` 时真机仍回 2**（★ 即**它并没清掉上一次的选区**）⇒ 调用方要自己先 `ClearSelection2`**",
+ "note": "★ 判据三条：① 合法选择器回读计数 == 1 · ② 六个选择器**都**是 1（且 append=False 不累积）· ③ 非法选择器**抛** ValueError（而不是静默回 0）。"
+}

@@ -9,13 +9,13 @@
 
 | # | 量 | 值 | 怎么取的 |
 |---|---|---|---|
-| 1 | 我们登记的 MCP 工具 | ★★ **251**（= **219** ToolSpec + **32** 装饰器）| `all_specs()` 与 `server.py` 的 `@mcp.tool` 各数一遍（★ 事实 364）|
+| 1 | 我们登记的 MCP 工具 | ★★ **252**（= **220** ToolSpec + **32** 装饰器）| `all_specs()` 与 `server.py` 的 `@mcp.tool` 各数一遍（★ 事实 364）|
 | 2 | ★ **本阶段新增的工具** | **+2** | ★ `rigid_connector`（轮 425）· `structural_member`（轮 428） |
 | 3 | 真缺口（分诊口径） | **93** | `tools/triage_real_gaps.py`（该挂 **27** · 已有 **29** · 内部件 **21** · 不做 **16**） |
 | 4 | 能力条目 | **79** | `capabilities.yaml`（`verified` **67** · `stitched` **11** · `not_implemented` **1**） |
 | 5 | 门禁 | **23** | `docs/gate-classification.json`（★ 其中 **3 道是本阶段加的**） |
 | 6 | **判据登记** | **4** | `docs/judge-registry.json`（★ `judge` **2** · `refuted` **2**） |
-| 7 | 证据文件 | **143** 份，其中 `verdict: pass` **92** 份 | `output/*evidence*.json` |
+| 7 | 证据文件 | **144** 份，其中 `verdict: pass` **93** 份 | `output/*evidence*.json` |
 | 8 | 计划基线 commit | `a9c7a54` | ★ 段 0 之前那个 |
 
 ★ **门禁**：`python scripts/release_check.py` ⇒ **exit 0** ✓
