@@ -1,20 +1,110 @@
 # 调研报告 · 社区 SolidWorks MCP / Python 库（2026-10-02）
 
 > 这份是**对照报告**，不是进度。★ 结论先行，附**许可判定**（铁律 6：能否抄）。
-> 调研方式：★ 先核本机台账（`docs/sources.md`）与 `C:\swprojects\` 克隆，
-> ★ 再去项目主页核 README / LICENSE；★ **没有下载、没有运行任何外部项目**。
+> ★ **v2：已按铁律"逐份读真实 LICENSE"补做克隆与读码**（三个仓库已在 `C:\swprojects\`）。
+
+## 〇、v2 的更正与新增（★ 先看这里，因为**推翻了 v1 的两条许可判断**）
+
+### ★★★ 更正一：三个项目**全部是 MIT**（v1 写"许可未明/待核"是错的）
+```
+★ 已克隆到 `C:\swprojects\`，**逐份读了 LICENSE 文件**（不采信 README 徽章）：
+
+| 项目 | 目录 | LICENSE 实读 | 规模 |
+|---|---|---|---|
+| `just1step/solidworks-mcp` | `just1step__solidworks-mcp` | ★ **MIT**（1087 B）| 69 个 .cs · 3.5 MB |
+| `Cai-aa/CAD-Agent-Hub` | `Cai-aa__CAD-Agent-Hub` | ★ **MIT**（1084 B）| 120 个源文件（117 py + 3 cs）· 1.4 MB |
+| `deloarts/pyswx` | `deloarts__pyswx` | ★ **MIT**（1094 B）| 107 个 .py · 2.8 MB |
+⇒ ★★ **三个都可抄代码**（保留版权声明）⇒ ★ 与 SolidPilot/q3ds 的 AGPL **完全不同**
+```
+
+### ★★★ 更正二：CAD-Agent-Hub 的 SolidWorks 部分**有 Feature Graph IR**（v1 漏了）
+```
+MCP/Solidworks/ 下（★ 最大的三个文件）：
+  src/solidworks_mcp/executor.py         42,197 字节
+  src/solidworks_mcp/native_features.py  34,675
+  src/solidworks_mcp/interactive.py      23,309
+  src/solidworks_mcp/server.py           22,746
+  src/solidworks_mcp/feature_graph.py    13,473
+  schemas/feature-graph.schema.json       5,001
+  docs/compatibility-and-lessons.md       2,593   ★★ 见下
+  tests/（14 个测试文件，含 test_save_routing.py / test_single_document_mode.py）
+⇒ ★ 与 SolidPilot 的 IR 路线是**同类**，但**独立实现** ⇒ ★ 可对照两家的 schema
+```
+
+---
+
+## 〇之二、★★★ **读码后的五条新发现**（★ 比 v1 的四条更具体、更能直接用）
+
+### ① ★★★ CAD-Agent-Hub 的容差判据是「**按尺度算 + 逐轴判**」（可直接抄）
+```
+native_features.py:238  tolerance_mm = 1e-5                       ← 回读校验
+native_features.py:642  tolerance       = selector["tolerance_mm"]  默认 **0.05 mm**
+native_features.py:647  radius_tolerance =                          默认 **0.1 mm**
+native_features.py:655  断言 |dx| ≤ tol 且 |dy| ≤ tol 且 |dz| > tol   ★★ **三根轴分别判**
+involute_gear.py:327    radius_tolerance = max(0.08, 模数 × **0.08**)  ★★ **容差随模数缩放**
+⇒ ★★ 比我们现在用的「相对容差 1e-6」更工程化：**绝对 mm 容差 + 逐轴判 + 随特征尺度缩放**
+⇒ ★ 我今天做质量属性（`specs/138`）用的就是相对容差 ⇒ ★ **可换成它这套**
+```
+
+### ② ★★★ 它的 `test_save_routing.py` 是「**负例证明门禁**」的教科书写法（★ 对应我们事实 62）
+```
+用两个假对象**互相禁止对方那条路**：
+  class _NativeModel :  SaveAs3() 写盘 ; SaveAs()  → raise AssertionError("native saves must not use export SaveAs")
+  class _ExportModel :  SaveAs3()  → raise AssertionError("foreign exports must not use native SaveAs3")
+★ ⇒ 原生保存走 SaveAs3、导出走 Extension.SaveAs，**两条路被测试双向锁死**
+⇒ ★ 抄这个形状：★ 我们的门禁如果只是"查有没有调"，不如这样"**让错误的那条直接抛**"
+```
+
+### ③ ★★ 它的保存路由（★ 与我们的红线直接相关）
+```
+原生 .sldprt/.sldasm/.slddrw  ⇒ `IModelDoc2.SaveAs3`（三参数兼容路径）
+STEP/IGES/STL/PDF/DXF/DWG   ⇒ `IModelDocExtension.SaveAs`，**绝不走 SaveAs3**
+★ 两条路都**验证目标存在且非空**才报成功
+⇒ ★★ 「导出后验证产物非空」= **我们缺的收尾检查**（我们只验了"调用没抛"）
+```
+
+### ④ ★★ 旋转轴的两套 mark —— ★ 我们**没核过**
+```
+草图构造线做轴 ⇒ 选 `EXTSKETCHSEGMENT` + **mark 4**
+参考轴          ⇒ **mark 16** + `FeatureRevolve2`；老兼容调用 `FeatureRevolve` 用 **mark 4**
+★「Axis strategy never changes during a retry」——重试时轴策略不变，只允许 API 版本回退
+⇒ ★ 我们的 `solidworks_revolve_boss` **没验过轴的选择** ⇒ ★ 可抄这条判据
+```
+
+### ⑤ ★★★ just1step 的工具是「**工作流动词**」，不是「API 方法名」（★ 路线对照）
+```
+它只有 **7 个 Tools.cs**（Assembly / Connection / Document / Feature / Selection / Sketch / Workflow）
+最大那个 WorkflowTools（11.7 KB）里 5 个工具全是**多步带验收**的高层动作：
+  DiagnoseActiveDocumentHealth              诊断当前文档健康度
+  ReviewModelStructureHygiene               模型结构卫生检查
+  CutFaceByProjectedEdges                   按投影边切面（faceIndex + 深度 + innerLoops）
+  ReplaceNestedComponentAndVerifyPersistence ★★ 替换嵌套件**并验证持久化**
+  ReviewTargetedStaticInterference          定向静态干涉复核（两条 hierarchy path + 相邻面算不算）
+⇒ ★★ 这与我们**路线相反**：我们 150 个工具大多是「一个 API 调用 = 一个工具」，它是「少而深」
+⇒ ★★ **不冲突，是互补**：★ 我们的"广"可以再叠一层它的"深"（包装成工作流工具）
+```
+
+### ⑥ ★★ 文档生命周期当**事务**（★ 我们"关件不保存"的更严版本）
+```
+建模运行是事务：先枚举 → **拒绝关闭用户未管理或脏的文档** → 只关自己认得的干净 MCP 文档
+→ 建一个测试文档 → 失败时自动关掉它
+★ 它还设了「ownership marker」，让重载后不会把自己生成的模型当成野文档
+⇒ ★★ 我们只做到"关件不保存"⇒ ★ 它这条**多一层"不许碰脏文档"** ⇒ 值得抄
+```
+
+---
 
 ## 一、结论先行：**五个项目里三个已在台账，其中两个是同一条链**
 
-| 项目 | 真实身份 | 许可 | 台账状态 |
+| 项目 | 真实身份 | 许可（★ 实读 LICENSE） | 台账状态 |
 |---|---|---|---|
-| **SolidPilot** | ★ **`eyfel/mcp-server-solidworks`**（355 星）的**公开名** | **AGPL-3.0** | ✅ 已登记（目录 `mcp-server-solidworks`）|
+| **SolidPilot** | ★ **`eyfel/mcp-server-solidworks`**（355 星）的**公开名** | **AGPL-3.0** | ✅ 已登记 |
 | **q3ds-solidworks-mcp** | ★ **SolidPilot 的 fork**（Benny Cohen 自 2026-07-11 维护）| **AGPL-3.0** | ✅ 已登记 |
-| **just1step/solidworks-mcp** | 单 exe + 托盘 Hub/Proxy 架构 | ★ **MIT** | ❌ 未登记 → **本次补登** |
-| **CAD-Agent-Hub**（Cai-aa）| 含 `MCP/Solidworks`（有状态建模）、CATIA、NX、Fusion | ⚠ **README 未写许可** | ❌ 未登记 → **补登但按未明许可处理** |
-| **pyswx**（deloarts）| SolidWorks API 的 Python 封装 | ⚠ **未核** | ❌ 未登记 → **补登，待核** |
+| **just1step/solidworks-mcp** | 单 exe + 托盘 Hub/Proxy | ★ **MIT**（已克隆）| ★ 本次补登 |
+| **CAD-Agent-Hub**（Cai-aa）| 含 `MCP/Solidworks`（**自带 Feature Graph IR**）| ★ **MIT**（已克隆）| ★ 本次补登 |
+| **pyswx**（deloarts）| SolidWorks API 的 Python 封装 | ★ **MIT**（已克隆）| ★ 本次补登 |
 
-⇒ ★★ **AGPL 两个（SolidPilot / q3ds）⇒ 铁律 6：只读思想，不抄代码、不抄文本。**
+⇒ ★★ **AGPL 两个 ⇒ 铁律 6：只读思想，不抄代码。三个 MIT ⇒ 可抄（保留版权声明）。**
 
 ★ **一处身份澄清**（台账里原来只写目录名 `mcp-server-solidworks`）：
 ```
@@ -137,9 +227,7 @@ inspect_model — 一次返回紧凑拓扑 + 质量属性 + 可选多视图拼�
 ② ★ **工具数对比**（只按数，不按深度）：
      SolidPilot 上游 **43** · q3ds fork **58** · ★ **我们的 MCP 暴露面 150**
    ⇒ ★ 我们是它们的 **2.6–3.5 倍**；但**工具数不等于功能深度**，不宜据此宣称更强
-③ ⚠ **未核项**：`CAD-Agent-Hub` 与 `pyswx` 的**许可**未核
-   ⇒ ★ 按最保守处理（未明许可 ⇒ 不抄）；★ `pyswx`（deloarts）**疑似**与台账里
-     GPL-2.0 的 `pySW`（kalyanpi4）**不是同一个**，待核
+③ ⚠ **v1 的未核项（v2 已补核）**：`CAD-Agent-Hub` 与 `pyswx` 的许可 ★ **v2 已读真实 LICENSE ⇒ 两者都是 MIT** ⇒ ★ 可抄（保留版权声明）
 ```
 
 ★ 另：★ SolidPilot 与 q3ds 都**自述**「working prototype / early alpha」，

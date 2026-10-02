@@ -1,0 +1,39 @@
+{
+  "steps": {
+    "A": {
+      "faces": 6,
+      "edges": 24,
+      "vertices": 24,
+      "volume_mm3": 8000.0,
+      "area_mm2": 2800.0
+    },
+    "expect": {
+      "volume_mm3": 8000.0,
+      "area_mm2": 2800.0
+    },
+    "unit_check": {
+      "ok": true,
+      "vol": 8000.0,
+      "area": 2800.0,
+      "note": "★ 期望 8000 mm3 / 2800 mm2（★ 40×20×10 的板）"
+    },
+    "same": {
+      "ok": true,
+      "deltas": {
+        "volume_mm3": 0.0,
+        "area_mm2": 0.0
+      }
+    },
+    "diff": {
+      "ok": false,
+      "deltas": {
+        "volume_mm3": 0.02,
+        "area_mm2": 0.008571
+      },
+      "reason": "volume_mm3 偏离 2.0000% > 容差 1.00%"
+    },
+    "verdict_ok": true
+  },
+  "captured_at": "2026-10-02T18:31:46",
+  "verdict": "pass"
+}
