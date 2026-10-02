@@ -1,0 +1,99 @@
+{
+  "captured_at": "2026-10-02T11:44:57",
+  "question": "InsertRib 的真机前置形态（草图特征 vs 草图里的边 / 索引 0 vs 1）",
+  "variants": {
+    "A_sketch_feature_index0": {
+      "name_arg": "草图2",
+      "ref_index": 0,
+      "call_error": null,
+      "features_before": [
+        "前视基准面",
+        "上视基准面",
+        "右视基准面",
+        "原点",
+        "Tables",
+        "草图1",
+        "凸台-拉伸1",
+        "草图2"
+      ],
+      "features_after": [
+        "前视基准面",
+        "上视基准面",
+        "右视基准面",
+        "原点",
+        "Tables",
+        "草图1",
+        "凸台-拉伸1",
+        "草图2"
+      ],
+      "count_delta": 0,
+      "rib_present": false,
+      "ok": false
+    },
+    "B_sketch_feature_index1": {
+      "name_arg": "草图2",
+      "ref_index": 1,
+      "call_error": null,
+      "features_before": [
+        "前视基准面",
+        "上视基准面",
+        "右视基准面",
+        "原点",
+        "Tables",
+        "草图1",
+        "凸台-拉伸1",
+        "草图2"
+      ],
+      "features_after": [
+        "前视基准面",
+        "上视基准面",
+        "右视基准面",
+        "原点",
+        "Tables",
+        "草图1",
+        "凸台-拉伸1",
+        "草图2"
+      ],
+      "count_delta": 0,
+      "rib_present": false,
+      "ok": false
+    },
+    "C_current_selection_index0": {
+      "name_arg": "__current_selection__",
+      "ref_index": 0,
+      "call_error": null,
+      "features_before": [
+        "前视基准面",
+        "上视基准面",
+        "右视基准面",
+        "原点",
+        "Tables",
+        "草图1",
+        "凸台-拉伸1",
+        "草图2"
+      ],
+      "features_after": [
+        "前视基准面",
+        "上视基准面",
+        "右视基准面",
+        "原点",
+        "Tables",
+        "草图1",
+        "凸台-拉伸1",
+        "草图2"
+      ],
+      "count_delta": 0,
+      "rib_present": false,
+      "ok": false
+    }
+  },
+  "verdict": {
+    "variants_tried": [
+      "A_sketch_feature_index0",
+      "B_sketch_feature_index1",
+      "C_current_selection_index0"
+    ],
+    "variants_that_built_a_feature": [],
+    "★": "★ 若有任一变体建出了特征 ⇒ **那就是正确的前置形态**；★ 若全失败 ⇒ 三个候选都排除，★ **如实记下并停手**（事实 53）"
+  }
+}
