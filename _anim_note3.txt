@@ -1,0 +1,8 @@
+★★★★ 2026-10-01（轮 286）**理由第三次修正**（★ 依据 `tools/verify_motion_avi_e2e.py` 的**真机运行**，证据 output/motion-avi-evidence.json）：★ 前两版都被更进一步的探测收窄了 ——
+  · 第 1 版「缺 Motion 加载项」⇒ ★ **被推翻**（类型库能加载、AVI 三环能跑，轮 285）；
+  · 第 2 版「没有可动的装配体」⇒ ★ **部分对**（那确实是前置），★ 而**深层原因是马达建不出来**；
+  · ★★★ **第 3 版（本版，且有逐步骤证据）**：`add_constant_speed_rotary_motor_by_cylinders` **真机 `ok: false`** ⇒ 于是"没有任何算例含马达" ⇒ **没有动画** ⇒ 导出**无帧可写**。
+★★ 真机每一步（★ 同一份证据里）：part ✅（零件4）· assembly ✅（装配体3）· study_type 2 ✅（读回 2 ✅）· **motor ❌** · export ❌（`exists: false · size_bytes: 0 · returned: false`）。
+★ ⇒ ★★★ **所以卡点是「**匀速旋转马达建不出来**」** —— ★ **不是**加载项、**不是**导出本身。
+★★ 而那条**已经是可执行的**：★ `python tools/verify_motion_avi_e2e.py` ⇒ **exit 1 + 逐步骤 JSON**（★ 而且它 L5 早就写着「空装配体导不出 ⇒ 判据如实留空」）。
+★ **下一步（明确线索）**：★ 查 `add_constant_speed_rotary_motor_by_cylinders` 为什么回 `ok: false`（★ 它要 `shaft_component` + `rotor_component` 两个组件的**圆柱面** —— ★ 而本轮装配体插的是**同一个圆柱零件两次**，★ 所以问题可能在"怎么把组件与它的圆柱面绑上"）。
