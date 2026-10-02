@@ -1,0 +1,30 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件62"
+  },
+  "boundary_z": {
+   "ok": true,
+   "z": 0.0,
+   "candidates": 12
+  },
+  "select_marks": {
+   "ok": true,
+   "pull_ok": true,
+   "edges_picked": 4,
+   "readback": 5,
+   "note": "★ 回读计数才对（★ 回 true 不算 —— 事实 8）"
+  },
+  "insert_parting_line": {
+   "ok": true,
+   "feature_name": "分型线1",
+   "new_features": [
+    "分型线1"
+   ]
+  }
+ },
+ "at": "2026-10-03T01:44:04",
+ "verdict": "pass",
+ "note": "★ 轮 51 判「边线带不了 mark」；★ 本轮用 `SelectByID2` + **边的中点** + mark=4 重试 —— ★ 该手法在 `filled_surface`（轮 388）上被证明有效（mark 对 ⇒ 计数对得上）。"
+}
