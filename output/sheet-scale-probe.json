@@ -1,0 +1,44 @@
+{
+  "steps": {
+    "sheet": {
+      "ok": true,
+      "type": "CDispatch"
+    },
+    "read_before": {
+      "ok": true,
+      "props": [
+        "6.0",
+        "12.0",
+        "1.0",
+        "1.0",
+        "1.0",
+        "0.297",
+        "0.21"
+      ]
+    },
+    "set_scale": {
+      "ok": true,
+      "returned": "True"
+    },
+    "read_after": {
+      "ok": true,
+      "props": [
+        "6.0",
+        "12.0",
+        "1.0",
+        "2.0",
+        "1.0",
+        "0.297",
+        "0.21"
+      ],
+      "changed": true
+    },
+    "view_scale_after_sheet_change": {
+      "ok": true,
+      "view": "工程图视图1",
+      "scale": 0.002,
+      "raw": null
+    }
+  },
+  "captured_at": "2026-10-02T16:08:40"
+}

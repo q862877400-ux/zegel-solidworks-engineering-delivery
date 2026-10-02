@@ -1,0 +1,31 @@
+{
+  "steps": {
+    "1:5": {
+      "ok": true,
+      "after_ratio": "1:5",
+      "matches": true
+    },
+    "1:2": {
+      "ok": true,
+      "after_ratio": "1:2",
+      "matches": true
+    },
+    "1:1": {
+      "ok": true,
+      "after_ratio": "1:1",
+      "matches": true
+    },
+    "numerator=3": {
+      "ok": true,
+      "error": "本机 `ISheet.SetScale` 的 Numerator **只接受 1**（★ 真机三组：(1,5)→`1:5` · (3,7)→`1:7` · (2,1)→`1:1`）⇒ 图纸比例只能是 "
+    },
+    "negative": {
+      "ok": true,
+      "error": "比例的两个数都必须 > 0（★ 收到 -1.0:5.0）"
+    }
+  },
+  "captured_at": "2026-10-02T16:09:29",
+  "passed": 5,
+  "of": 5,
+  "verdict": "pass"
+}
