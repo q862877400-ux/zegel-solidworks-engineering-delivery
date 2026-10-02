@@ -1,0 +1,23 @@
+{
+  "steps": {
+    "depth_10mm": {
+      "ok": true,
+      "feature": "曲面-拉伸1",
+      "tree": "6->7",
+      "args": 22
+    },
+    "through": {
+      "ok": false,
+      "feature": null,
+      "tree": "7->7"
+    },
+    "negative": {
+      "ok": true,
+      "error": "depth_mm 必须 > 0（★ 收到 -5.0）"
+    }
+  },
+  "captured_at": "2026-10-02T17:02:10",
+  "passed": 2,
+  "of": 3,
+  "verdict": "partial"
+}

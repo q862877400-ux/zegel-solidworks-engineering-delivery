@@ -1,0 +1,19 @@
+{
+  "steps": {
+    "extru": {
+      "ok": true,
+      "tree": 7
+    },
+    "sew": {
+      "ok": true,
+      "returned": "None",
+      "tree": 7,
+      "names": [
+        "Tables",
+        "草图1",
+        "曲面-拉伸1"
+      ]
+    }
+  },
+  "captured_at": "2026-10-02T17:01:50"
+}
