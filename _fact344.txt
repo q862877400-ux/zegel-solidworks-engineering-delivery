@@ -1,0 +1,52 @@
+| 344 | **段 2 收口**：★ 焊件族**做成 2 件**（结构构件 + 切割清单链 ⇒ 一条能力升 `verified`）；★ 剩下两条**按铁律 5 判"不做"**，★ 而理由**核过三层源**（2026-10-03，轮 430）。
+
+## 一、★★★★★ 段 2 的净成果（★ 数字都从生成物来）
+```
+★ **新增工具 1 个**：★ `solidworks_weldment_create_structural_member`
+  （★ `all_specs` 218 → **219**；★ 真机 `output/structural-member-evidence.json` **PASS**）
+★ **能力等级真提升 1 条**：★ `weldment_cut_list` **`stitched` → `verified`**
+  （★ 依据：★ 它 6 条里 **5 条真机过**，★ 含整条链 `output/cut-list-chain-evidence.json` **PASS**）
+★ **推翻一条既有结论**：★ 轮 364 记的「**本机没装焊件轮廓库**」 —— ★ 而本机**有 111 个** `.sldlfp` ✓
+★ **三条事实**：★ 342（推翻那条 + 结构构件）· 343（切割清单链 + 本地化属性名）· 本条
+```
+
+## 二、★★★★★ 剩下两条的"不做"，★ 理由**核过三层源**（★ 而不是"看起来难"）
+```
+★ 两条是 `configure_member_profile` / `configure_split_member`，★ 而它们**自己要的东西**在文档里写着：
+   ```
+   configure_member_profile  ⇒ 须先取得 **IStructureSystemMemberProfile**
+   configure_split_member    ⇒ 须先用 **IStructureSystemMemberFeatureData.GetSplitMember()** 取得
+   ```
+   ⇒ ★★ 即：★ 它们属于 **Structure System（结构系统）**那条 **FeatureData 链**，
+     ★ 而本仓的焊件链是**经典** `InsertStructuralWeldment5` ⇒ ★ **那条链不产生那些对象** ⚠
+★ **而"不做"的理由不是"API 里没有"** —— ★ 那族接口**大部分在**（★ 所以要核准）：
+   ```
+   ✓ IStructureSystemMemberFeatureData（13 方法）· IStructureSystemMemberProfile（32）
+   ✓ IStructureSystemSplitMember（13）· IStructureSystemFolder（4）
+   ✓ IFeatureManager.**GetStructureSystemFolders**（★ 但是**读**，★ 不是建）
+   ```
+★★★ **而"**建**"那边的入口，三层源都查不到**：
+   ```
+   ✗ 反射 dump（`D:\AI\SW\_raw\**`）里没有 `swFmStructureSystem*` / `swFmStructuralSystem*`
+   ✗ `C:\swapi\enums\swFeatureNameID_e.md` 里没有
+   ✗ `CreateDefinition` 那张 **35 个常量**的官方名单里没有（★ 而那是 `CreateDefinition` 唯一的合法入参表）
+   ```
+   ⇒ ★★★★ **结论（★ 按铁律 5 "查不到就说查不到"）**：
+     ★ **这套官方源里能**读**结构系统、★ 但**查不到**建它的入口** ⇒
+     ★★ **不做**，★ 而**理由写清是"**查不到建的入口**"**（★ 而不是"没有这个功能"）✓
+```
+
+## 三、★ 为什么这条"不做"值得写这么细（★ 它防的是**未来的重复劳动**）
+```
+★★ 本会话已经出现过**两次**"重走前人走死的路"（★ 事实与 AGENTS.md 都记着）——
+   ★ 而**根因都是"结论只写了'不做'，没写'为什么不做、查到哪一层'"**。
+⇒ ★★ 所以本条的**判据是**：★ **下一个来的人看完能直接说"哦，是 `CreateDefinition` 进不去"**，
+   ★ **而不必自己再查三层源** ✓
+   ★★ 而★ 那**也是**"不做的东西写清原因"（★ 计划 V5 判据）的**本段实例** ✓
+```
+
+**依据**：`output/structural-member-evidence.json`（★ PASS）· `output/cut-list-chain-evidence.json`（★ PASS）·
+`output/cut-list-property-names-evidence.json`（★ PASS）·
+`SolidWorks.Interop.sldworks.dll` 反射（★ `GetStructureSystemFolders`；★ 四个 FeatureData 接口**在**）·
+`C:\swapi\enums\swFeatureNameID_e.md` 与 `C:\swapi\types\IFeatureManager\CreateDefinition.md`（★ **都没有**结构系统常量）·
+`D:\AI\SW\_raw\**` 的枚举 dump · `scripts/sw_weldment.configure_*` 的 docstring · 事实 43 / 342 / 343 · 铁律 5
