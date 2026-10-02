@@ -3,22 +3,19 @@
     "create_study": {
       "ok": true
     },
-    "get_study": {
+    "get_options": {
       "ok": true,
-      "type": "CDispatch"
-    },
-    "configure_static_solver_report": {
-      "ok": false,
+      "type": "CDispatch",
       "err": null
     },
-    "configure_frequency_solver_report": {
-      "ok": false,
-      "err": "study 上取不到 family=ICWFrequencyStudyOptions 的设置对象 ⇒ ★ 该研究类型可能不是这一族（★ 见 list_setter_summary 的族清单）"
-    },
-    "configure_buckling_solver_report": {
-      "ok": false,
-      "err": "study 上取不到 family=ICWBucklingStudyOptions 的设置对象 ⇒ ★ 该研究类型可能不是这一族（★ 见 list_setter_summary 的族清单）"
+    "configure": {
+      "ok": true,
+      "changed": [
+        "reference_pressure"
+      ],
+      "err": null,
+      "returned": "{'DefinedReferencePressure': 1.0}"
     }
   },
-  "captured_at": "2026-10-02T21:18:12"
+  "captured_at": "2026-10-02T21:23:35"
 }
