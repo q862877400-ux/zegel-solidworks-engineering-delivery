@@ -1,0 +1,59 @@
+| 317 | **段 5 第一批：6 条简单载荷只有 `elastic_connector` 建成** ⇒ 另 5 条按硬约束⑥ 回退；★ 真因是**这一族里"官方参数个数/实体形态"各不相同，而仓里只抄了 4 条的声明**（2026-10-03，轮 402）。
+
+## 一、★★★★★ 先记两条**分诊规则的修正**（★ 它们把 30 条收敛到 21 条）
+```
+① ★ **动词对**：★ 低层原语叫 `add_X`，★ 而**对外封装**可能叫 `apply_X` ——
+   ★ 真例：`sw_simulation_loads.add_fixed_restraint(manager, entities)`（★ 吃 **COM manager**）
+   vs `sw_simulation.apply_fixed_restraint`（★ 取 manager + 构造 DispArray + 调原语的那一层，
+   ★★ 而**它已经是工具**）⇒ ★ 只看 `_report` 后缀会把这一族**整片误判成缺口**。
+   ★ 而 `sw_simulation_loads` 自己也有 `apply_{pressure,torque,gravity,centrifugal_force}_report`。
+② ★★ **读注册表对象**（★ 第二次修正同一族）：★ 先前我 `import BATCH_MODULES` 后**仍用正则扫源码**，
+   ★ 只认 `function="..."` 的写法；★★ 而 `tool_specs_batch29.py` 用的是**函数名列表**
+   （`"apply_pressure_report",`）⇒ **漏掉它的 4 条** ⇒ `add_pressure` 等被误判成缺口。
+   ⇒ ★ 改成读 `register_capabilities.all_specs()` 的 `.function`（★ 那才是**它们真正对外暴露的名字**）。
+★ 效果：★ 该挂 **58 → 42** · 已有 **7 → 13** · 总数 99 → **89**（★ 五层证据至此**六条规则**）。
+```
+
+## 二、★★★★★ 真机：6 条里**只有 1 条建成**
+```
+★ 探针 `tools/prove_loads_simple6.py`（★ 走**工具层同序**：`inject` → `pre_call` → `derived_args`，
+   ★ 照既有 `capture_simulation_loads_evidence.py` 的 `call_via_tool`）；
+   ★★ 并照那条脚本留下的**先例警告**：★ 每次**先 `ClearSelection2(True)`** ——
+   `select_face_at` 的 `append=False` **只表示"不追加"、不清空**，漏了它选区会留着上一个面 ⇒ 判据假红。
+结果（`output/loads-simple6-evidence.json`）：
+   elastic_connector  ★ **计数 0 → 1** ✓（**建成**）
+   convection         ✗ 计数 0 → 0（★ 不报错而不涨）
+   heat_flux / heat_power / temperature / radiation  ✗ 计数 1 → 1（★ 同上）
+```
+
+## 三、★★★★★ 真因定位（★ 而它指向**一个具体动作**）
+```
+★ 那些裸函数长这样：`add_temperature(manager, entities)` ⇒ `_check(manager, "AddTemperature", 1, entities)`
+   ★ 而 `_check(manager, "AddX", **N**, …)` 里的 `N` 是**官方参数个数**。
+★★ 而仓里的**来源块**（就写在同一文件里！）逐字抄了官方 VB 声明，★ 其中明确写着：
+   · `AddGravity(DispEntity As Object, …)` ⇒ ★「**DispEntity 是单实体不是数组**（名字可数）」
+   · `AddDistributedMass(DispArray As Object, ByVal NUnits, ByVal DMass, …)`
+   · `AddRemoteLoad(NLoadType, DispArray, NLocationUnits, DX, DY, DZ, …)`
+⇒ ★★★ **即：★ 这一族里"吃单实体 / 吃数组 / 参数更多"三种混在一起** ——
+   ★ 而我把它们**一视同仁**地喂了"选区实体数组" ⇒ 吃单实体或要更多参数的那些就**不涨**。
+★★★ **而关键**：★ 来源块**只抄了 4 条**（Gravity / CentrifugalForce / DistributedMass / RemoteLoad）
+   —— ★★ **本批这 5 条（Convection / ElasticConnector / HeatFlux / HeatPower / Temperature /
+     Radiation）的官方声明**仓里没有**，而我也**没去抄**就照"看起来一样"写了包装**
+   ⚠ ★ 这与事实 315 的教训**同族**：★ **"读过文档" ≠ "按文档写"** —— ★ 这次更早一步：
+     ★ **根本没读**（★ 而**声明表就在同一个文件里**，★ 我甚至没翻完它）。
+```
+
+## 四、★ 处置（★ 硬约束⑥）
+```
+① ★ **只保留 `solidworks_simulation_apply_elastic_connector`**（★ 唯一真机 PASS 的）⇒ `all_specs` **207**
+② ★ 另 5 条的包装（`apply_{convection,heat_flux,heat_power,temperature,radiation}_report`）
+   与探针**保留** —— ★ 它们是"卡在哪"的完整记录
+③ ★ `tool_specs_batch58.py` 顶部写明"**本批只注册一条**"并给出卡点与下一步
+④ ★ ★ **下一步（具体到动作）**：★ **把那 5 条的官方 VB 声明从 CHM 逐条抄下来**（★ 像既有来源块那样），
+   ★ 再对着写参数 —— ★ **不继续试参数**（★ 事实 53）。
+```
+
+**依据**：`output/loads-simple6-evidence.json`（★ `elastic_connector` 计数 0→1 · 另 5 条不涨）·
+`scripts/sw_simulation_loads.py` 的来源块（★ 只抄了 4 条声明 · 其中明写"DispEntity 是单实体"）·
+`tools/capture_simulation_loads_evidence.py` 的 `call_via_tool` 与先例警告 ·
+`mcp-server/tool_specs_batch58.py`（★ 已标"只注册一条"）· 事实 53 / 315

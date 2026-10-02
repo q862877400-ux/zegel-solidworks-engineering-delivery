@@ -1,0 +1,120 @@
+{
+ "steps": {
+  "setup": {
+   "ok": true,
+   "title": "零件4",
+   "study": "DSH-LOADS6"
+  },
+  "convection": {
+   "ok": false,
+   "selected": 1,
+   "count": [
+    0,
+    0
+   ],
+   "report_keys": [
+    "count_after",
+    "count_before",
+    "created_object",
+    "error",
+    "load",
+    "ok",
+    "selection_cleared",
+    "★"
+   ]
+  },
+  "elastic_connector": {
+   "ok": true,
+   "selected": 1,
+   "count": [
+    0,
+    1
+   ],
+   "report_keys": [
+    "count_after",
+    "count_before",
+    "created_object",
+    "error",
+    "load",
+    "ok",
+    "selection_cleared",
+    "★"
+   ]
+  },
+  "heat_flux": {
+   "ok": false,
+   "selected": 1,
+   "count": [
+    1,
+    1
+   ],
+   "report_keys": [
+    "count_after",
+    "count_before",
+    "created_object",
+    "error",
+    "load",
+    "ok",
+    "selection_cleared",
+    "★"
+   ]
+  },
+  "heat_power": {
+   "ok": false,
+   "selected": 1,
+   "count": [
+    1,
+    1
+   ],
+   "report_keys": [
+    "count_after",
+    "count_before",
+    "created_object",
+    "error",
+    "load",
+    "ok",
+    "selection_cleared",
+    "★"
+   ]
+  },
+  "temperature": {
+   "ok": false,
+   "selected": 1,
+   "count": [
+    1,
+    1
+   ],
+   "report_keys": [
+    "count_after",
+    "count_before",
+    "created_object",
+    "error",
+    "load",
+    "ok",
+    "selection_cleared",
+    "★"
+   ]
+  },
+  "radiation": {
+   "ok": false,
+   "selected": 1,
+   "count": [
+    1,
+    1
+   ],
+   "report_keys": [
+    "count_after",
+    "count_before",
+    "created_object",
+    "error",
+    "load",
+    "ok",
+    "selection_cleared",
+    "★"
+   ]
+  }
+ },
+ "at": "2026-10-03T02:47:16",
+ "verdict": "partial",
+ "note": "★ 段 5 第一批 6 条简单载荷；★ 判据是**回读计数恰好 +1**。★ 调用走**工具层同序**（inject → pre_call → derived_args），★ 且每次**先 ClearSelection2**（★ 先例：select_face_at 不清空选区）。"
+}
