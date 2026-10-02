@@ -1,0 +1,661 @@
+{
+ "summary": {
+  "total": 108,
+  "该挂": 76,
+  "内部件": 19,
+  "不做": 13,
+  "★": "三类之和必须 == total（★ 本脚本自检）",
+  "★口径差异": "本脚本报 108 而 audit_real_gaps 报 101 —— ★ 两者对「被上游调」的判定略有不同（本脚本用字面量匹配）；★ 本文件的 108 是本轮作业的口径，★ 而两者的模块级分布一致。",
+  "self_check": true
+ },
+ "rows": [
+  {
+   "module": "sw_part",
+   "name": "current_sketch_name",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "sketch_arc",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "sketch_polygon",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "sketch_slot",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "sketch_spline",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "auto_dimension_sketch",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "add_dimension",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "linear_pattern",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "shell",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "hole_wizard",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "rib",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "sketch_ellipse",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "sketch_centerline",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "insert_dome",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "insert_composite_curve",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation",
+   "name": "ensure_simulation_addin",
+   "kind": "内部件",
+   "why": "★ 已有工具覆盖（加载项开关）"
+  },
+  {
+   "module": "sw_simulation",
+   "name": "get_cosmosworks",
+   "kind": "内部件",
+   "why": "返回 CW 顶层 COM 对象，不是能力"
+  },
+  {
+   "module": "sw_simulation",
+   "name": "get_cw_document",
+   "kind": "内部件",
+   "why": "返回 CW 文档 COM 对象，不是能力"
+  },
+  {
+   "module": "sw_simulation",
+   "name": "get_study_manager",
+   "kind": "内部件",
+   "why": "返回算例管理器 COM 对象，不是能力"
+  },
+  {
+   "module": "sw_simulation",
+   "name": "create_static_study",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation",
+   "name": "iter_studies",
+   "kind": "内部件",
+   "why": "算例遍历的内部实现"
+  },
+  {
+   "module": "sw_simulation",
+   "name": "get_study_by_name",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation",
+   "name": "create_mesh",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation",
+   "name": "select_face_at",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation",
+   "name": "resolve_face_selector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation",
+   "name": "select_face_by_selector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_fixed_restraint",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_reference_geometry_restraint",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_force",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_torque",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_pressure",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_radiation",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_convection",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_heat_flux",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_heat_power",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_temperature",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_gravity",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_centrifugal_force",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_distributed_mass",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_remote_load",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_cyclic_symmetry_restraint",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_prescribed_displacement",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_bearing_load",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_spring_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_pin_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_rigid_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_link_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_elastic_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_bolt_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_spot_weld_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "add_edge_weld_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "get_loads_and_restraints",
+   "kind": "内部件",
+   "why": "同上（读回内部状态）"
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "get_edge_weld_connector",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "collect_loads_evidence",
+   "kind": "内部件",
+   "why": "内部证据收集器（★ 那些 add_* 才是能力）"
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "apply_pressure_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "apply_torque_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "apply_gravity_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "apply_centrifugal_force_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_topology",
+   "name": "get_topology_study_manager",
+   "kind": "内部件",
+   "why": "返回管理器 COM 对象，不是能力"
+  },
+  {
+   "module": "sw_topology",
+   "name": "get_topology_study_options",
+   "kind": "内部件",
+   "why": "返回选项对象，不是能力"
+  },
+  {
+   "module": "sw_topology",
+   "name": "set_topology_goal",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_topology",
+   "name": "set_topology_iteration_options",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_topology",
+   "name": "list_topology_constraints_and_controls",
+   "kind": "内部件",
+   "why": "★ 已有 solidworks_topology_list_constraints 工具覆盖"
+  },
+  {
+   "module": "sw_topology",
+   "name": "collect_topology_numbers",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_topology",
+   "name": "topology_manager_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_topology",
+   "name": "topology_options_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_topology",
+   "name": "set_topology_goal_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_topology",
+   "name": "set_topology_iteration_options_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_topology",
+   "name": "topology_constraints_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_hole_features",
+   "name": "create_hole_pattern",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_hole_features",
+   "name": "get_fastener_table",
+   "kind": "内部件",
+   "why": "返回紧固件数据表的内部查询"
+  },
+  {
+   "module": "sw_hole_features",
+   "name": "configure_straight_tap",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_hole_features",
+   "name": "configure_tapered_tap",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_hole_features",
+   "name": "get_hole_standards",
+   "kind": "内部件",
+   "why": "返回标准清单的内部查询（★ 已有 hole_standards 工具覆盖）"
+  },
+  {
+   "module": "sw_hole_features",
+   "name": "get_fastener_types",
+   "kind": "内部件",
+   "why": "同上"
+  },
+  {
+   "module": "sw_hole_features",
+   "name": "get_fastener_table_types",
+   "kind": "内部件",
+   "why": "同上"
+  },
+  {
+   "module": "sw_weldment",
+   "name": "create_structural_member",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_weldment",
+   "name": "iter_features_recursive",
+   "kind": "内部件",
+   "why": "特征树遍历的内部实现"
+  },
+  {
+   "module": "sw_weldment",
+   "name": "configure_member_profile",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_weldment",
+   "name": "configure_split_member",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_export",
+   "name": "export_flat_pattern_dxf",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_export",
+   "name": "batch_export",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_export",
+   "name": "get_mass_property_override_options",
+   "kind": "内部件",
+   "why": "返回选项对象的内部查询"
+  },
+  {
+   "module": "sw_export",
+   "name": "set_mass_property_override",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_export",
+   "name": "export_to_bmp",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_export",
+   "name": "export_to_image",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_selection_spec",
+   "name": "get_selection_count",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_selection_spec",
+   "name": "select_object",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_selection_spec",
+   "name": "select_entity_by_index",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_selection_spec",
+   "name": "resolve_entity",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_selection_spec",
+   "name": "resolve_selection",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_selection_spec",
+   "name": "selection_point",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_surface",
+   "name": "get_modeler",
+   "kind": "内部件",
+   "why": "返回 IModeler 单例（COM 会话对象），不是能力"
+  },
+  {
+   "module": "sw_surface",
+   "name": "runtime_available",
+   "kind": "内部件",
+   "why": "运行期可用性布尔，不是能力"
+  },
+  {
+   "module": "sw_surface",
+   "name": "require_runtime_available",
+   "kind": "内部件",
+   "why": "运行期可用性守卫，不是能力"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_planar_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_cylindrical_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_spherical_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_conical_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_toroidal_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_offset_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_extrusion_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_revolution_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_ruled_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_swept_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_bspline_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_coons_b_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  },
+  {
+   "module": "sw_surface",
+   "name": "create_sheet_from_surface",
+   "kind": "不做",
+   "why": "事实 40：IModeler.Create*Surface 的返回值**跨次都变**（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ 挂出来只会给人「能调」的错觉"
+  }
+ ]
+}

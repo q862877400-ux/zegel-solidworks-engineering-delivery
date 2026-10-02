@@ -1,0 +1,32 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件67"
+  },
+  "prereq_extrude": {
+   "ok": true,
+   "tree": 7,
+   "returned": "<COMObject <unknown>>"
+  },
+  "negative_zero_steps": {
+   "ok": true,
+   "returned_ok": false,
+   "error": "steps 必须 ≥ 1（★ 收到 0）"
+  },
+  "undo": {
+   "ok": true,
+   "steps": 1,
+   "tree_before": 7,
+   "tree_after": 6,
+   "undone": true,
+   "removed_features": [
+    "凸台-拉伸1"
+   ],
+   "error": null
+  }
+ },
+ "at": "2026-10-03T02:01:33",
+ "verdict": "pass",
+ "note": "★ `undo` 是 objective② 三层证据判定的**真缺**；★ 官方 `EditUndo2(int Steps)` 回 void ⇒ 判据是**特征树退回**。★ ⚠ 它撤的是**会话里的动作**、不区分来源 ⇒ **只在我们自己的改动之后调用**。"
+}
