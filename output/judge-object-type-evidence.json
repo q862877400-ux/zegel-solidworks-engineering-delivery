@@ -1,0 +1,147 @@
+{
+ "steps": {
+  "before": {
+   "count": 0,
+   "items": [],
+   "err": null
+  },
+  "apply_force": {
+   "old_judge_ok": true,
+   "count": [
+    0,
+    1
+   ],
+   "error": ""
+  },
+  "after": {
+   "count": 16,
+   "items": [
+    {
+     "index": 0,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 1,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 2,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 3,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 4,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 5,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 6,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 7,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 8,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 9,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 10,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 11,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 12,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 13,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 14,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    },
+    {
+     "index": 15,
+     "Name": "'力-1'",
+     "Type": "3",
+     "State": "0",
+     "EntityCount": "1"
+    }
+   ],
+   "err": null
+  }
+ },
+ "at": "2026-10-03T04:58:56",
+ "study": "DSH-JOBJ_045856",
+ "new_judge_usable": false,
+ "new_judge_signal": {
+  "count": [
+   0,
+   16
+  ],
+  "has_type": true
+ },
+ "verdict": "partial",
+ "note": "★ T1.1 判据前置：★ 在**已知成功**的场景（`apply_force`）上，★ 验**新判据**（按序号取载荷对象 ⇒ 读它自己的 `Type`）能不能复现正向信号。★ 新判据**不读 `Count`**。"
+}

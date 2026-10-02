@@ -12,19 +12,15 @@
     -1,
     -1
    ],
-   "error": ""
+   "error": "com_error: (-2147023170, '远程过程调用失败。', None, None)"
   },
   "rigid_connector": {
    "ok": false,
-   "count": [
-    -1,
-    -1
-   ],
-   "error": "com_error: (-2147023170, '远程过程调用失败。', None, None)"
+   "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
   }
  },
- "at": "2026-10-03T04:09:25",
- "study": "DSH-CONN_040925",
+ "at": "2026-10-03T04:59:27",
+ "study": "DSH-CONN_045927",
  "successes": [
   "static_study"
  ],
@@ -33,10 +29,7 @@
    -1,
    -1
   ],
-  [
-   -1,
-   -1
-  ]
+  null
  ],
  "verdict": "partial",
  "note": "★ B 组开头两条：★ 链接连接件（两个**顶点**）· 刚性连接件（两组**面**）。★ 判据是回读计数 +1，★ 且看是否串成单调序列。⚠ 若中间有一条失败，★ 后面的只当参考（事实 324/325）。"
