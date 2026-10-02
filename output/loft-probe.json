@@ -1,0 +1,27 @@
+{
+  "steps": {
+    "ref_plane": {
+      "ok": false,
+      "name": "?"
+    },
+    "sketch2": {
+      "ok": false,
+      "error": "无法选择基准面: ?"
+    },
+    "selected_mark1": 2,
+    "loft": {
+      "ok": false,
+      "feature": null,
+      "tree": "None->None"
+    },
+    "volume_mm3": {
+      "ok": true,
+      "value": 0.0
+    },
+    "expect": {
+      "volume_mm3": 7000.0,
+      "formula": "V = h/3*(A1+A2+sqrt(A1*A2)) = 30/3*(400+100+200)"
+    }
+  },
+  "captured_at": "2026-10-02T17:48:13"
+}

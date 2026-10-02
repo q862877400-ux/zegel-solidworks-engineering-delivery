@@ -1,0 +1,907 @@
+{
+  "total": 57,
+  "with_any_hit": 34,
+  "naked": 23,
+  "rows": [
+    {
+      "op": "annotation",
+      "domain": "工程图",
+      "tokens": [
+        "annotation"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "get_annotation_count",
+        "get_annotations"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "api_automation",
+      "domain": "未归类",
+      "tokens": [
+        "api",
+        "automation"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "background",
+      "domain": "外观 / 材质 / 配置",
+      "tokens": [
+        "background"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "balloon",
+      "domain": "工程图",
+      "tokens": [
+        "balloon"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "batch_execute_macros",
+      "domain": "宏 / 自动化",
+      "tokens": [
+        "batch",
+        "execute",
+        "macros"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "batch_export",
+        "batch_export_formats"
+      ],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "batch_file_operations",
+      "domain": "宏 / 自动化",
+      "tokens": [
+        "batch",
+        "file",
+        "operations"
+      ],
+      "tool_hits": [
+        "weldment_create_profile_center_mate",
+        "weldment_create_weldment_profile"
+      ],
+      "func_hits": [
+        "batch_export",
+        "batch_export_formats",
+        "configure_member_profile",
+        "create_profile_center_mate",
+        "create_weldment_profile"
+      ],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "batch_operations",
+      "domain": "宏 / 自动化",
+      "tokens": [
+        "batch",
+        "operations"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "batch_export",
+        "batch_export_formats"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "batch_process_files",
+      "domain": "宏 / 自动化",
+      "tokens": [
+        "batch",
+        "process",
+        "files"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "batch_export",
+        "batch_export_formats",
+        "solidworks_process_id"
+      ],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "batch_vba",
+      "domain": "宏 / 自动化",
+      "tokens": [
+        "batch",
+        "vba"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "batch_export",
+        "batch_export_formats",
+        "extract_vba_code",
+        "validate_vba_macro"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "capture_screenshot",
+      "domain": "检查 / 测量 / 反馈",
+      "tokens": [
+        "capture",
+        "screenshot"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "capture",
+        "capture_front",
+        "capture_window"
+      ],
+      "sources": [
+        "Slacker-LLC",
+        "vespo92"
+      ]
+    },
+    {
+      "op": "centerline",
+      "domain": "工程图",
+      "tokens": [
+        "centerline"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "sketch_centerline"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "connect",
+      "domain": "未分类",
+      "tokens": [
+        "connect"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "add_bolt_connector",
+        "add_edge_weld_connector",
+        "add_elastic_connector",
+        "add_link_connector",
+        "add_pin_connector"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "construction_geometry",
+      "domain": "草图",
+      "tokens": [
+        "construction",
+        "geometry"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "add_reference_geometry_restraint",
+        "collect_geometry_measurements",
+        "geometry_signature"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "display_mode",
+      "domain": "检查 / 测量 / 反馈",
+      "tokens": [
+        "display",
+        "mode"
+      ],
+      "tool_hits": [
+        "activate_model_for_preview",
+        "collect_model_summary"
+      ],
+      "func_hits": [
+        "activate_model_for_preview",
+        "collect_model_summary",
+        "get_component_model",
+        "get_costing_model",
+        "get_display_mode"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "display_states",
+      "domain": "外观 / 材质 / 配置",
+      "tokens": [
+        "display",
+        "states"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "get_display_mode",
+        "set_display_mode"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "edges",
+      "domain": "未归类",
+      "tokens": [
+        "edges"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "get_contour_edges"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "error_handling",
+      "domain": "未归类",
+      "tokens": [
+        "error",
+        "handling"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "execute_macro",
+      "domain": "宏 / 自动化",
+      "tokens": [
+        "execute",
+        "macro"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "fallback_macro_for_request",
+        "generate_macro_with_guard",
+        "is_swp_macro",
+        "validate_vba_macro",
+        "write_macro_file"
+      ],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "execute_workflow",
+      "domain": "未归类",
+      "tokens": [
+        "execute",
+        "workflow"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "faces",
+      "domain": "未归类",
+      "tokens": [
+        "faces"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "knit_surfaces_report",
+        "resolve_face_selector"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "fold",
+      "domain": "未归类",
+      "tokens": [
+        "fold"
+      ],
+      "tool_hits": [
+        "weldment_create_sub_weld_folder"
+      ],
+      "func_hits": [
+        "create_sub_weld_folder"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "gdt",
+      "domain": "未归类",
+      "tokens": [
+        "gdt"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "global_var",
+      "domain": "尺寸 / 约束 / 参数",
+      "tokens": [
+        "global",
+        "var"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "create_empty_dispatch_variant",
+        "material_variant"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "hem",
+      "domain": "钣金",
+      "tokens": [
+        "hem"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "initialized_macro",
+      "domain": "未分类",
+      "tokens": [
+        "initialized",
+        "macro"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "fallback_macro_for_request",
+        "generate_macro_with_guard",
+        "is_swp_macro",
+        "validate_vba_macro",
+        "write_macro_file"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "intersect",
+      "domain": "零件特征",
+      "tokens": [
+        "intersect"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "jog",
+      "domain": "钣金",
+      "tokens": [
+        "jog"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "loft",
+      "domain": "零件特征",
+      "tokens": [
+        "loft"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "Slacker-LLC"
+      ]
+    },
+    {
+      "op": "macro_recording",
+      "domain": "未分类",
+      "tokens": [
+        "macro",
+        "recording"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "fallback_macro_for_request",
+        "generate_macro_with_guard",
+        "is_swp_macro",
+        "validate_vba_macro",
+        "write_macro_file"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "model_annotations",
+      "domain": "未分类",
+      "tokens": [
+        "model",
+        "annotations"
+      ],
+      "tool_hits": [
+        "activate_model_for_preview",
+        "collect_model_summary"
+      ],
+      "func_hits": [
+        "activate_model_for_preview",
+        "collect_model_summary",
+        "get_annotations",
+        "get_component_model",
+        "get_costing_model"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "native_macro_recording",
+      "domain": "未分类",
+      "tokens": [
+        "native",
+        "macro",
+        "recording"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "fallback_macro_for_request",
+        "generate_macro_with_guard",
+        "is_swp_macro",
+        "validate_vba_macro",
+        "write_macro_file"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "operations",
+      "domain": "未归类",
+      "tokens": [
+        "operations"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "optimize_macro",
+      "domain": "未分类",
+      "tokens": [
+        "optimize",
+        "macro"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "fallback_macro_for_request",
+        "generate_macro_with_guard",
+        "is_swp_macro",
+        "validate_vba_macro",
+        "write_macro_file"
+      ],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "optimize_performance",
+      "domain": "未归类",
+      "tokens": [
+        "optimize",
+        "performance"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "set_performance_options"
+      ],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "part",
+      "domain": "会话 / 文档 / 文件",
+      "tokens": [
+        "part"
+      ],
+      "tool_hits": [
+        "mold_parting_line",
+        "mold_parting_surface",
+        "part_bounding_box",
+        "part_insert_composite_curve",
+        "part_insert_dome"
+      ],
+      "func_hits": [
+        "edit_part_in_context",
+        "exit_edit_part_in_context",
+        "insert_parting_line",
+        "insert_parting_surface",
+        "part_path"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "pause_resume_macro_recording",
+      "domain": "未分类",
+      "tokens": [
+        "pause",
+        "resume",
+        "macro",
+        "recording"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "fallback_macro_for_request",
+        "generate_macro_with_guard",
+        "is_swp_macro",
+        "resume",
+        "resume_selection_list"
+      ],
+      "sources": [
+        "vespo92"
+      ]
+    },
+    {
+      "op": "pdm_operations",
+      "domain": "未归类",
+      "tokens": [
+        "pdm",
+        "operations"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "collect_pdm_evidence"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "rebuild_document",
+      "domain": "会话 / 文档 / 文件",
+      "tokens": [
+        "rebuild",
+        "document"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "close_document",
+        "get_cw_document",
+        "new_document",
+        "open_document",
+        "require_mass_property_document"
+      ],
+      "sources": [
+        "Slacker-LLC"
+      ]
+    },
+    {
+      "op": "rebuild_model",
+      "domain": "会话 / 文档 / 文件",
+      "tokens": [
+        "rebuild",
+        "model"
+      ],
+      "tool_hits": [
+        "activate_model_for_preview",
+        "collect_model_summary"
+      ],
+      "func_hits": [
+        "activate_model_for_preview",
+        "collect_model_summary",
+        "get_component_model",
+        "get_costing_model",
+        "get_model_to_sketch_transform"
+      ],
+      "sources": [
+        "vespo92"
+      ]
+    },
+    {
+      "op": "recording",
+      "domain": "未分类",
+      "tokens": [
+        "recording"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "reference_geometry",
+      "domain": "检查 / 测量 / 反馈",
+      "tokens": [
+        "reference",
+        "geometry"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "add_reference_geometry_restraint",
+        "collect_geometry_measurements",
+        "configure_mesh_import_preferences",
+        "geometry_signature",
+        "get_all_external_references"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "referenced_documents",
+      "domain": "会话 / 文档 / 文件",
+      "tokens": [
+        "referenced",
+        "documents"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "security",
+      "domain": "未分类",
+      "tokens": [
+        "security"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "sensors",
+      "domain": "检查 / 测量 / 反馈",
+      "tokens": [
+        "sensors"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "status",
+      "domain": "检查 / 测量 / 反馈",
+      "tokens": [
+        "status"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "stop_macro_recording",
+      "domain": "未分类",
+      "tokens": [
+        "stop",
+        "macro",
+        "recording"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "fallback_macro_for_request",
+        "generate_macro_with_guard",
+        "is_swp_macro",
+        "stop_dynamics",
+        "validate_vba_macro"
+      ],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "stop_native_macro_recording",
+      "domain": "未分类",
+      "tokens": [
+        "stop",
+        "native",
+        "macro",
+        "recording"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "fallback_macro_for_request",
+        "generate_macro_with_guard",
+        "is_swp_macro",
+        "stop_dynamics",
+        "validate_vba_macro"
+      ],
+      "sources": [
+        "vespo92"
+      ]
+    },
+    {
+      "op": "stop_recording",
+      "domain": "未分类",
+      "tokens": [
+        "stop",
+        "recording"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "stop_dynamics"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "structural_member",
+      "domain": "焊件",
+      "tokens": [
+        "structural",
+        "member"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "call_com_member",
+        "configure_member_profile",
+        "configure_split_member",
+        "create_structural_member",
+        "get_com_member"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "sweep",
+      "domain": "零件特征",
+      "tokens": [
+        "sweep"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "Slacker-LLC"
+      ]
+    },
+    {
+      "op": "take_photoview_screenshot",
+      "domain": "外观 / 材质 / 配置",
+      "tokens": [
+        "take",
+        "photoview",
+        "screenshot"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "undo",
+      "domain": "未分类",
+      "tokens": [
+        "undo"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "andrewbartels1"
+      ]
+    },
+    {
+      "op": "unfold",
+      "domain": "钣金",
+      "tokens": [
+        "unfold"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "units",
+      "domain": "未分类",
+      "tokens": [
+        "units"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "vertices",
+      "domain": "未分类",
+      "tokens": [
+        "vertices"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "wrap",
+      "domain": "未分类",
+      "tokens": [
+        "wrap"
+      ],
+      "tool_hits": [],
+      "func_hits": [],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    },
+    {
+      "op": "zoom_to_fit",
+      "domain": "检查 / 测量 / 反馈",
+      "tokens": [
+        "zoom",
+        "fit"
+      ],
+      "tool_hits": [],
+      "func_hits": [
+        "zoom_to_fit",
+        "zoom_view"
+      ],
+      "sources": [
+        "（不在各家 tools 里）"
+      ]
+    }
+  ],
+  "★": "★ 「naked」= 我们两侧都搜不到相关名字 ⇒ ★★ 那才是要人工判「真缺 vs 语义等价」的"
+}

@@ -1,0 +1,38 @@
+{
+  "steps": {
+    "same_plane": {
+      "ok": true,
+      "feature": "放样1",
+      "tree": "7->8",
+      "args": 18,
+      "planes": [
+        "Front Plane",
+        "Front Plane"
+      ],
+      "selected": 2,
+      "error": null,
+      "volume_mm3": 0.0
+    },
+    "two_planes": {
+      "ok": true,
+      "feature": "放样1",
+      "tree": "7->8",
+      "args": 18,
+      "planes": [
+        "Front Plane",
+        "Top Plane"
+      ],
+      "selected": 2,
+      "error": null,
+      "volume_mm3": 0.0
+    },
+    "negative_no_selection": {
+      "ok": true,
+      "error": "放样至少要选 **2 个轮廓**（★ mark=1 —— 官方 Remarks）；★ 当前 mark=1 的选中数是 0"
+    }
+  },
+  "captured_at": "2026-10-02T17:48:28",
+  "passed": 3,
+  "of": 3,
+  "verdict": "pass"
+}
