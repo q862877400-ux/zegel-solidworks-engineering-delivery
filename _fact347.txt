@@ -1,0 +1,77 @@
+| 347 | **规则 2 与规则 3 在一块**自相矛盾**** —— 黑名单里有 `x_mm`/`y_mm`/`z_mm`，★ 而规则 2 **恰恰要求**长度参数以 `_mm` 结尾；★ 修法是把"裸"的定义收紧为「**没有单位信息**」⇒ **4 条违反去掉 3 条**，★ 而**真欠账那条照旧被拦**（2026-10-03，轮 433）。
+
+## 一、★★★★★ 那 4 条违反，查明后**只有 1 条是真欠账**
+```
+★ `pytest` 收集期抓到 4 条 `规则 3 违反：… 是裸坐标 —— 必须改用具名实体 + 声明式 selection`：
+   ```
+   · solidworks_surface_fill.boundary_z        ← ⚠★ **这一条是真的**
+   · solidworks_sketch_add_ellipse.z_mm        ← ★ 草图几何的面内坐标
+   · solidworks_sketch_add_centerline.z_mm     ← ★ 同上
+   · solidworks_add_dimension.x_mm             ← ★ 同上
+   ```
+★★ **而前三条例外**有明文依据**：`AGENTS.md` 写着规则 3 **有一条文档化的例外** ——
+   「*Sketch geometry MUST be given as in-plane coordinates — **this is the documented
+    exception in rule 3***」✓
+```
+
+## 二、★★★★★ 而真正的矛盾在**黑名单**里（★ 两条规则打架）
+```
+★★ 判据有两段：
+   ```
+   ① 精确黑名单 `_BARE_COORD_NAMES = {"x","y","z","x_mm","y_mm","z_mm","point","coordinate"}`
+   ② 形式匹配 `_looks_like_coord_component`：`^[xyz]\d*$` · `^c[xyz]$` · `(^|_)[xyz]\d*$`
+   ```
+★★★ **矛盾在 ① 里的 `x_mm` / `y_mm` / `z_mm`**：
+   ★ **规则 2 要求长度参数以 `_mm` 结尾**，★ 而**规则 3 把 `x_mm` 当裸坐标拦掉** ⚠
+   ⇒ ★★ **同一个名字被两条规则同时要求与禁止** ✓
+★ **而证据就在门禁自己的行为里**：★ `sketch_add_line` 的 `start_x_mm` / `end_x_mm`
+   ★ **从没被拦过**（★ 因为不以 `_x$` 结尾）⇒ ★★ **即：★ 门禁本来就在放过"有单位的坐标"** ——
+     ★ 只有那三个**精确条目**漏掉了 ✓✓✓
+```
+
+## 三、★★★★★ 修法（★ 而它**不是新例外**，★ 是把定义说准）
+```
+★★ **"裸"的本义**：★ **没有单位信息、也没有具名实体**（★ 那才是"裸"）。
+   ★ 而 `_mm` 后缀**恰恰携带着单位**（★ 规则 2 要它）⇒ ★★ **它不裸** ✓
+★ 改动两处（★ 都在 `mcp-server/tool_registry.py`）：
+   ```
+   ① `_BARE_COORD_NAMES` 去掉 `x_mm` / `y_mm` / `z_mm`（★ 并写明"两条规则自相矛盾"的来龙去脉）
+   ② `_looks_like_coord_component` 开头加 `if low.endswith("_mm"): return False`
+   ```
+★ **真机**：★ `pytest tests/test_mcp_backend_router.py` ⇒
+   ★ **4 条违反 → 1 条**（★ 而**剩下的正是 `boundary_z`**）✓
+★ **负例自证**（★ 14 条，★ 零不一致）：
+   ```
+   拦：x · y2 · cx · d1_x · major_y · **boundary_z** · point · coordinate       （8 条）
+   放：x_mm · z_mm · start_x_mm · end_y_mm · radius_mm · depth                  （6 条）
+   ```
+```
+
+## 四、★★★★★ 而**放宽一条门禁必须有看守** ⇒ 新增契约测试
+```
+★★ `tests/test_rule3_bare_coord_boundary.py`（★ **5 passed**）—— ★ 它钉**两侧**：
+   · ★ `test_unit_carrying_coordinates_are_not_bare` ⇒ **放宽的那一侧**（带 `_mm` 的放过）
+   · ★ `test_bare_coordinates_are_still_flagged` ⇒ **没放宽的那一侧**（★ 含 `boundary_z`）
+   · ★ `test_non_coordinate_lengths_are_not_flagged` ⇒ 不误伤（`radius_mm` / `depth` …）
+   · ★ `test_the_three_exact_entries_are_gone` ⇒ ★ **谁把那三个加回来就红**（★ 防复发）
+   · ★ `test_real_debt_still_flagged_by_the_gate` ⇒ ★★ **真欠账不许被掩盖** ✓
+⇒ ★★★ 依据：**事实 62**（一个门禁"写了"不等于"有效"，负例是唯一的证明）✓
+```
+
+## 五、★ 剩下的**真欠账**（★ 而它**有具体代价**）
+```
+★ `solidworks_surface_fill` 的 **`boundary_z`** —— ★ 它是"**用坐标去选那一圈边**"，
+   ★★ 那**正是**规则 3 要禁的形态（★ 官方原话：必须改用具名实体 + 声明式 selection）。
+★★ **而它的代价是可量化的**：★ 那条违反让 `tool_registry` 的声明门禁**整批不过** ⇒
+   ★★ **4 个测试文件在收集期就 ERROR**（`test_mcp_backend_router` / `test_mcp_configuration_tools` /
+     `test_mcp_drawing_tools` / `test_mcp_headless_open_format`）⚠
+   ⇒ ★★★ **即：那一条欠账**一直**在吃测试覆盖**（★ 而那 4 个文件**跑不起来**）✓
+★ **下一步（★ 具体到动作）**：★ 把 `insert_fill_surface_report` 的 `boundary_z` 换成
+   **声明式 `selection`**（★ 用户选那一圈边）—— ★ 那要动 `sw_surface_features` 的实现 + 真机验，
+   ★★ 故**另开一轮**（★ 事实 53：一轮一件事）✓
+```
+
+**依据**：`mcp-server/tool_registry.py` 的 `_BARE_COORD_NAMES` / `_looks_like_coord_component` ·
+`tests/test_rule3_bare_coord_boundary.py`（★ 新，**5 passed**）·
+`pytest tests/test_mcp_backend_router.py`（★ 4 条 → 1 条）· `AGENTS.md` 的规则 2 / 规则 3 与那条文档化例外 ·
+事实 62 / 153 · `plan-200r-v3.md` §三 硬约束
