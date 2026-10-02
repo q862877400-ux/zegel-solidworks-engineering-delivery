@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-10-02T08:18:59",
+  "capability": "simulation_study_create",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "detail": {
+        "solidworks_simulation_create_study": {
+          "resolved": true,
+          "inject": "sw_app"
+        },
+        "solidworks_simulation_list_studies": {
+          "resolved": true,
+          "inject": "sw_app"
+        },
+        "solidworks_simulation_find_study": {
+          "resolved": true,
+          "inject": "sw_app"
+        }
+      }
+    },
+    "create": {
+      "ok": true,
+      "requested_name": "DSH-141",
+      "study_name": "DSH-141",
+      "entry_name": "CreateNewStudy3",
+      "error_code": 0,
+      "★": "★★ entry_name 是「是否走了降级入口」的唯一证据；空 ⇒ 没建成"
+    },
+    "read_back": {
+      "ok": true,
+      "found": true,
+      "requested_name": "DSH-141",
+      "study_name": "DSH-141",
+      "★": "★★ 建完必须能按名字取回，且名字逐字相等"
+    },
+    "list": {
+      "ok": true,
+      "count": 1,
+      "names": [
+        "DSH-141"
+      ],
+      "★": "★ 至少一个，且包含刚建的那个"
+    },
+    "negative_missing": {
+      "ok": true,
+      "found": false,
+      "requested_name": "NoSuchStudy_XYZ",
+      "study_name": "",
+      "★": "★ 已实测能力层**回 None 不抛错** ⇒ 负例断言的是 found 为假，不是抛错"
+    }
+  },
+  "verdict": "pass"
+}

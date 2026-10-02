@@ -1,0 +1,39 @@
+{
+  "captured_at": "2026-10-02T08:17:46",
+  "steps": {
+    "create_return": {
+      "type": "tuple",
+      "len": 3,
+      "items": [
+        "CDispatch",
+        "str",
+        "int"
+      ],
+      "★": "★ 期望 (study, entry_name, error_code)",
+      "entry_name": "CreateNewStudy3",
+      "error_code": 0,
+      "study_is_none": false,
+      "study_type": "CDispatch"
+    },
+    "iter_studies": {
+      "n": 1,
+      "items": [
+        {
+          "index": 0,
+          "type": "tuple",
+          "name_via_*": "★ **取不到名字** ⇒ 若是 COM 对象则不可直接挂",
+          "json_able": false
+        }
+      ],
+      "★": "★ 看 json_able 与 name_via_*：对象 ⇒ 得包一层"
+    },
+    "get_study_existing": {
+      "returns_none": false,
+      "type": "CDispatch"
+    },
+    "get_study_missing": {
+      "returns_none": true,
+      "type": null
+    }
+  }
+}
