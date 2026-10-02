@@ -16,12 +16,12 @@
 | 能力清单条数 | 47 | **75** | ≥75 | ★★★ **已达标** | `capabilities.yaml` |
 | `stitched` 条数 | 5 | **21** | ≤2 | ✗ 反向 —— ★ **原口径物理上不可达**（§四）⇒ 已换口径且达成 | `capabilities.yaml` |
 | 覆盖口径③「真机碰过」 | 1.53% | **上涨**（★ 537 个族有成员被调用过） | 上涨 | ✓ | `metrics.md` 第 10 项 |
-| known-facts | 172 | **226** | — | ✓ | 数 `known-facts.md` 的行 |
+| known-facts | 172 | **230** | — | ✓ | 数 `known-facts.md` 的行 |
 | Spec Kit 特性目录 | 128 | **145** | — | ★ 本会话新增一批 | 数 `specs/` 目录 |
 | 门禁链 | 18 道 | **18 道 · 全 exit 0** | — | ✓ | 逐条跑 |
 | 全量 pytest | — | **1284 passed / 0 failed** | 0 failed | ✓ | `pytest tests -q` |
-| 真机证据 JSON（`output/*.json`） | — | **132 个** | — | ★ 其中多份带 `verdict` | 数 `output/` |
-| 仓库提交 | — | 代码 **401** · 工作区 **439** | — | ★ **零远端写入** | `git rev-list --count` |
+| 真机证据 JSON（`output/*.json`） | — | **139 个** | — | ★ 其中多份带 `verdict` | 数 `output/` |
+| 仓库提交 | — | 代码 **406** · 工作区 **444** | — | ★ **零远端写入** | `git rev-list --count` |
 
 **★★ 四条"账"的额外体检（★ 自查维度，**不是目标**）：**
 ```
