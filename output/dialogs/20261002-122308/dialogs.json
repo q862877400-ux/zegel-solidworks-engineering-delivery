@@ -1,0 +1,20 @@
+{
+  "count": 1,
+  "pid": 17976,
+  "dir": "D:\\AI\\SW\\output\\dialogs\\20261002-122308",
+  "dialogs": [
+    {
+      "index": 0,
+      "hwnd": 32248944,
+      "title": "MCP 假模态框（测试夹具）",
+      "class": "#32770",
+      "controls": [],
+      "bmp": "D:\\AI\\SW\\output\\dialogs\\20261002-122308\\dialog-0.bmp",
+      "screenshot_ok": true,
+      "screenshot_blank": false,
+      "★shot": "★ `screenshot_blank=True` ⇒ 图是全黑、**不可当证据**（★ 不可见窗口 `PrintWindow` 截出来就是黑）⇒ ★ 改用标题与控件文本"
+    }
+  ],
+  "captured_at": "2026-10-02T20:23:08",
+  "★": "★ 本模块**不点**弹窗 —— ★ 按纪律（自我纠错 §9）先把内容交 LLM 判根因，判完再点，点完必须改到不再弹"
+}

@@ -1,0 +1,22 @@
+{
+  "before": {
+    "n": 1,
+    "titles": [
+      "SOLIDWORKS Design"
+    ]
+  },
+  "open": {
+    "ok": true,
+    "seconds": 2.0
+  },
+  "after": {
+    "n": 1,
+    "titles": [
+      "SOLIDWORKS Design"
+    ]
+  },
+  "external_ref_left": [],
+  "verdict_ok": true,
+  "captured_at": "2026-10-02T20:16:05",
+  "verdict": "pass"
+}
