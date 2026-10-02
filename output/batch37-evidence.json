@@ -1,0 +1,16 @@
+{
+  "steps": {
+    "create_study": {
+      "ok": false,
+      "error": "AttributeError: <unknown>.GetAddInObject"
+    },
+    "list_setter_summary": {
+      "ok": true,
+      "preview": "{'ICWStaticStudyOptions': {'total': 55, 'boolean': 14, 'names': ['AdaptiveMethodType', 'CheckFlowPressure', 'C"
+    }
+  },
+  "captured_at": "2026-10-02T13:20:03",
+  "passed": 1,
+  "of": 2,
+  "verdict": "partial"
+}

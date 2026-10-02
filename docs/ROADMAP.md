@@ -7074,6 +7074,47 @@
          ▶ **队列续作**：★ `all_specs()` 离 145 差 **6** —— ★ 下一步可加 `options` **注入键**
            ⇒ 挂 `configure_static/frequency/buckling_solver` 3 个 + `set_option` / `set_options` 2 个
            （★ 共 5 个）· ★ 补验焊件另 3 个 · ★ 补验本批的 3 个工程图读数。
+     ★ 2026-10-01（轮 272 / **24h 计划 段 1 续「求解器设置 5 个」/ Spec Kit `154`**）· ★★★★ **不动 RESOLVERS 的做法：注入 `study` + 包装内部取 options**
+         ▶ **交付**：★ **求解器设置 5 个** —— `configure_static/frequency/buckling_solver` +
+           `set_study_option` / `set_study_options`
+           ⇒ ★★ **`all_specs()` 139 → 144** · 归属 **144/144** ✓
+         ★★★★ **而关键做法是"不加新注入键"**：
+           ```
+           ★ 底层 configure_*_solver(options, …) 要一个 options 宿主对象；
+             而那个对象从 study 取：study_options_of(study, family)
+           ⇒ ★★★ 而 inject="study" 早就存在（resolve_study）
+           ⇒ ★★★★ 所以正解 = 注入 study + 包装内部先取 options ⇒ 再调底层
+             ⇒ ★ **不需要动 RESOLVERS**（★ 加了要同步解析器，★ 而这里没必要）。
+           ★ 与孔族（*_at_selection，轮 268）**同一手法**：用已有 resolver + 包装表达新工具。
+           ```
+         ★★ **门禁帮了一手**：★ 我最初用 `**kwargs` ⇒ ★ `check_param_binding` 报 3 处
+           「参数既不在形参表里、也没在 param_alias 里」⇒ ★★ **于是改成**显式形参****
+           （★ 与底层一致）⇒ ★ **形参即文档** ✓（★ 那比 `**kwargs` 好）。
+         ★★★★ **而真机验卡在"前置不可达"（★ 一个真发现）**：
+           ```
+           ★ 那 5 个都要一个 study ⇒ ★ 而 study 建不出来。
+           ★ inspect.signature(create_static_study) ⇒ **(sw_app, name, *, study_type=0, mesh_type=0)**
+             ⇒ ★★ **第一个参数是 sw_app（应用对象），不是 model（文档）**！
+           ★ 我传了 doc ⇒ 报 **AttributeError: <unknown>.GetAddInObject**
+             ⇒ ★★ 那个错**看不出是"传错了对象"**（★ 它长得像"加载项没装"）
+             ⇒ ★★★ 而这是**事实 36 那一族**的又一形态：`<unknown>.X` ⇒ 查 X 挂在谁身上
+               （GetAddInObject 是 ISldWorks 的成员 ⇒ 应用级 ⇒ 所以它要 sw_app）。
+           ⇒ ★ **如实记**：★ 这 5 个**未真机验证 —— 前置（建 study）未打通**
+             （★ 硬约束③）· ★ `list_setter_summary`（零参）真机 **ok=True** ✓
+           ⇒ ★ **下一步线索明确**：★ **用 sw_app 调 create_static_study** ⇒ 再验那 5 个。
+           ```
+         ★★★ **定则**：★ **同一个模块里，第一个参数未必是同一个东西** ——
+           ★ 本轮里 `configure_*_solver` 吃**宿主对象** · `study_options_of` 吃 **study** ·
+           ★ `create_static_study` 吃 **应用对象** ⇒ ★★ **"这个模块的东西都吃 model"是错的假设**。
+         ▶ **验收**：① `all_specs()` = **144** ✓ · 归属 **144/144** ✓ · 绑定门禁 **PASS** ✓
+           · 计数守卫（wiring 144 · 协议层 189）✓ · 门禁链 18 道 exit 0 ✓
+           · `release_check` exit 0 ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ⚠ ★ 真机 `output/batch37-evidence.json` = **PARTIAL（1/2）** ——
+             ★ **如实标"前置不可达"**（★ 不是 pass）
+         ▶ **状态**：`all_specs()` **144**（★ 离 145 **差 1**）· 能力 **59** 条
+           （verified **50** · stitched **8**）· known-facts **204** 条。
+         ▶ **队列续作**：★ **用 `sw_app` 打通建 study** ⇒ 再验那 5 个（★ 那是把 144 变成"真机可用"的关键）·
+           ★ 补挂 1 个即达 145 · ★ 补验焊件另 3 个与本批 3 个工程图读数。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
