@@ -786,3 +786,34 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 ★★★ **同轮的一条「我自己违反了既有做法」（★ 应记）**：  ★ 前人已经为 `RunAnalysis` 建了**隔离层**（`sw_isolate.run_isolated`，超时即杀子进程），   而 ★ **我直接在主进程调 `create_mesh`**（★ 还用了一个**过大的** `element_size`）⇒   那个子进程**卡住 620 s 以上**，★★ 而杀掉它之后 **SolidWorks 也连不上了**（连接阻塞 >600 s）。  ⇒ ★★ **定则：凡是会长时间阻塞的求解调用（`RunAnalysis` / `CreateMesh`），   必须走 `sw_isolate.run_isolated`**（它**就是**为这个建的）——   ★ 而**参数也要先合理**：`mesh_size_report` 给的 `element_size = 1999.4`   （对 20×40×10 mm 的板）是**荒谬的**（正确量级据前人实测是 **4.9339**），   用它去 `CreateMesh` 会得 `element_count = 0`。  ★ 同时记下：**「挂 300 s」与「立刻回 19/23」是两种环境表现**，而后一种**可查**（错误码有枚举）。
 
 | 271 | **官方「Superseded by」的**正确解析式**，以及它给出的 42 处**不能盲改****（2026-10-01，轮 351）。  ## 一、★★★★★ 解析式（★ 从**已知样本**反推，★ 而这一步我跳过了一次） ``` ★ 官方类型表里的文本形态（`IModelDocExtension/SaveAs.md` 第一行正文）：    `Obsolete. Superseded by [[IModelDocExtension::SaveAs2]].`    ⇒ ★★ **注意 `[[…::…]]`（wiki 链接语法）** —— ★ 少了 `\[\[` 就一个都匹配不到。 ★ **我第一版正则**用的是 `Obsolete[^.]*?Superseded by …`    ⇒ ★★★ **`[^.]` 遇到 `Obsolete.` 那个句点就停了** ⇒ **永远不匹配** ⇒ 扫出 **0** ✓ ★★ **教训（★ 又一次同一族）**：★ **手里已经有**已知样本**时，先用它**单测正则**再全量扫** ——    ★ 我跳过了这一步，于是"0 命中"看起来像"仓库很干净"，★ 而真因是**正则错**。 ★ 修正后：`Obsolete\.?\s*Superseded by \[\[(\w+)::(\w+)\]\]` ⇒ ★ **官方标 Obsolete 且给了后继的：1541 个** ✓ ```  ## 二、★★★★ 「出现过」≠「在用」（★ 又一个假阳性源） ``` ★ 我先按"字符串是否出现在仓库里"扫 ⇒ 得 **1020** 处。 ★★ 而其中绝大多数来自 **`scripts/sw_api_sldworks.py`** —— ★ **那是**反射转储表**（列出**所有**成员名），    ★ **不是调用**。 ⇒ ★ 改为**只认真的调用**（★ `ast` 取 `get_com_member` / `call_com_member` 的**第 2 实参字面量**，   ★ 并**排除 `sw_api_*.py`**）⇒ **42 处**。    ⇒ ★★ **与调研 v2 那条"名字出现过 100%（无判别力）"是同一个坑**：      ★ **判据要落在"真的被调用"，不是"名字出现过"** ✓ ```  ## 三、★★★★★ 而那 42 处**不能当成"要改的清单"** —— 抽样就看出三类假阳性 ``` ① ★ **后继名 == 自己**（★ 解析错）：`CreateCenterLine ⇒ ['CreateCenterLine']` ·    `GetMassProperties ⇒ ['GetMassProperties', 'GetMassProperties2']`； ② ★ **不同 arity 的**不同方法**：`GetUserPreferenceIntegerValue ⇒ GetUserPreferenceInteger`    —— ★ 而事实 260 刚查过：★ **1 参 vs 2 参，是两个不同方法、不同宿主** ⇒    ★★ **官方说 "Superseded by" 指的是**那一族**，★ **不是"同名替换"**； ③ ★ **我们一直在用且能跑的**：`GetBodies2`（⇒ 官方后继 `GetBodies3`）· `GetEdges` ·    `GetLines2` · `GetEllipses3` —— ★ `GetBodies2` 在多个模块里稳定工作    ⇒ ★★ **后继**未必参数兼容**（★ 跳代常常伴随签名变化）。 ⇒ ★★★ **所以本轮**不改任何一处****（★ 硬约束⑧：只做已核实的缺口；★ 铁律 1：不凭印象改）——    ★ **先把它记成事实**，★ 供以后逐条查（★ 每条要**读两边的签名**再决定，★ 那是一件独立的事）。 ```  ## 四、★ 与 objective⑤（互锁推广）的关系 ``` ★ objective⑤ 要的是把"双假对象互锁"**从一处推广**。★ 现有试点锁的是    **`SaveAs` 那一族**（★ `sw_com_traps.py` 的陷阱表已核过：`SaveAs` / `SaveAs2` Obsolete，    **`SaveAs3` 是当前该用的**）—— ★ 那是**已验证的**一条。 ★ 而本轮这份 42 处的清单**不能**直接拿来当互锁的靶子（★ 三类假阳性）    ⇒ ★★ **互锁的推广下一步应是**：★ 找**已验证**的同类（★ 即"官方陷阱表里已核过的废弃入口"），      ★ **而不是**这份未经逐条核实的扫描结果**。 ```  **依据**：静态扫 `C:\swapi\types\**\*.md` 的 `Obsolete. Superseded by [[…::…]]`（★ 1541）· `ast` 扫 `scripts/sw_*.py` 的真调用（★ 排除 `sw_api_*.py`）⇒ 42 处 · 抽样核对三类假阳性 · `C:\swapi\types\IModelDocExtension\SaveAs.md` / `SaveAs2.md`（★ 真实文本形态）· `scripts/sw_com_traps.py` L231–246（★ 已核过的保存族）· 事实 51 / 62 / 260 / 269
+
+| 272 | **objective⑤ 交付：把「双假对象互锁」从**一处试点**推广到**全仓 + 多族****（2026-10-01，轮 352）。
+
+## 一、★ 新增的两件
+```
+★ `scripts/sw_com_traps.py` 加 **`DEPRECATED_ENTRIES`**（★ 靶子表：`(接口, 废弃成员) -> 后继`）+ `deprecated_successor()`。
+   ★ 只放**已核过**的两族：保存族（`SaveAs`/`SaveAs2` ⇒ `SaveAs3`）·
+     包覆族（`InsertWrapFeature` ⇒ `InsertWrapFeature2`，★ 轮 329–331 **真机验过**）。
+★ `tests/test_deprecated_entry_interlock.py`（**4 个 test**）：
+   ① **不许新增**（★ 扫**全部** `scripts/sw_*.py`，★ 排除 `sw_api_*.py` 反射转存）·
+   ② **正面**（★ 每个后继入口**要在仓库里真的被调用** —— ★ 否则互锁退化成「全都不许用」）·
+   ③ **双假对象互锁**（★ 废弃入口**必炸**、后继**必通**，★ 而且**逐条**验）·
+   ④ 靶子表**形状**自检（★ 后继名不能 == 自己 —— 事实 271 的一类假阳性）。
+```
+
+## 二、★★★ 负例自证（★ 事实 62：门禁有效的**唯一**证明）
+```
+★ 在 `sw_units.py` 里**临时插**一个 `get_com_member(model, "SaveAs", …)` ⇒
+   ★★ `test_no_new_calls_to_deprecated_entries` **精确报出** `('sw_units.py', **59**, 'SaveAs')` ✓
+★ 恢复后 ⇒ **4 passed**。
+```
+
+## 三、★ 两条实践细节
+```
+★ **判据只认**真的调用**：`ast` 取 `get_com_member`/`call_com_member` 的**第 2 实参字面量**，并排除 `sw_api_*.py`。
+   ★★ 按字符串扫会得 **1020** 处（★ 大多数来自反射转存表），而 AST 扫出 **42** 处。
+★ ★ **又一次文件头 docstring 未闭合**：★ 新文件的源源块**写在 `"""` 里面了** ⇒
+   `SyntaxError: invalid character '★'`（★ 本会话**第二次**）⇒ ★ 正解：在 `# ── 来源 ──` **之前**补 `"""`。
+```
+
+★ **本轮无 SW 依赖**（★ SW 仍卡在轮 24 遗留的 `create_mesh`，已通知用户重启）。
