@@ -1,8 +1,8 @@
 {
  "summary": {
-  "total": 97,
+  "total": 99,
   "不做": 15,
-  "该挂": 57,
+  "该挂": 59,
   "已有": 6,
   "内部件": 19,
   "★": "四类之和必须 == total（★ 本脚本自检）",
@@ -57,6 +57,18 @@
    "name": "insert_composite_curve",
    "kind": "已有",
    "why": "功能已由 `insert_composite_curve_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
+  },
+  {
+   "module": "sw_part",
+   "name": "add_dimension_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_part",
+   "name": "linear_pattern_report",
+   "kind": "该挂",
+   "why": ""
   },
   {
    "module": "sw_simulation",

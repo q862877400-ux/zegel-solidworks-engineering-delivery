@@ -1,0 +1,62 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "boss": "凸台-拉伸2",
+   "title": "零件2"
+  },
+  "neg_dimension_no_entity": {
+   "ok": true,
+   "value": {
+    "ok": false,
+    "selector": "__current_selection__",
+    "kind": "EDGE",
+    "selected": null,
+    "dimension_created": false,
+    "error": "加尺寸前必须先选中实体（★ 官方 Remarks 明写）—— 选择失败：EntitySelectionError: 选择器是 '__current_selection__'，但当前**没有任何选中项** —— 先在界面上选中一个实体"
+   },
+   "why": "空选区加尺寸必须被拒"
+  },
+  "neg_pattern_count1": {
+   "ok": true,
+   "value": {
+    "ok": false,
+    "feature_name": "凸台-拉伸2",
+    "spacing_mm": null,
+    "count": null,
+    "tree_before": null,
+    "tree_after": null,
+    "new_features": [],
+    "error": "count 必须 ≥ 2（★ 它**含原件** —— 1 就是「没有阵列」）：1"
+   },
+   "why": "count=1 含原件 ⇒ 没有阵列"
+  },
+  "add_dimension": {
+   "ok": false,
+   "value": {
+    "ok": false,
+    "selector": "__current_selection__",
+    "kind": "EDGE",
+    "selected": 2,
+    "dimension_created": false,
+    "error": "选中了 2 个实体而 `AddDimension2` **回 None** ⇒ 没建成尺寸（★ 常见原因：选中的实体**不足以唯一定义一个尺寸** —— 官方 Remarks：make selections **based on location and not name**）"
+   }
+  },
+  "linear_pattern": {
+   "ok": false,
+   "value": {
+    "ok": false,
+    "feature_name": "凸台-拉伸2",
+    "spacing_mm": 10.0,
+    "count": 3,
+    "tree_before": 9,
+    "tree_after": 9,
+    "new_features": [],
+    "error": "`FeatureLinearPattern3` **没抛错而特征树没变** ⇒ 阵列**没建成**（★ 规则 6：不许只看返回值 —— 本会话已见过「回对象而什么都没发生」）"
+   }
+  }
+ },
+ "at": "2026-10-03T02:37:06",
+ "verdict": "partial",
+ "note": "★ 单位由**官方文档**给出（AddDimension2 与 FeatureLinearPattern3 的 Spacing 都是**米**）⇒ ★ 包装对外收毫米并在此换算（★ 规则 2）。★ 两条负例：空选区加尺寸 / count=1 的阵列。"
+}
