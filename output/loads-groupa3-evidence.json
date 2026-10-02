@@ -1,0 +1,54 @@
+{
+ "steps": {
+  "static_study": {
+   "ok": true
+  },
+  "distributed_mass": {
+   "ok": true,
+   "count": [
+    0,
+    1
+   ],
+   "error": ""
+  },
+  "force": {
+   "ok": true,
+   "count": [
+    1,
+    2
+   ],
+   "error": ""
+  },
+  "remote_load": {
+   "ok": false,
+   "count": [
+    2,
+    2
+   ],
+   "error": "com_error: (-2147352561, '非选择性的参数。', None, None)"
+  }
+ },
+ "at": "2026-10-03T03:42:43",
+ "study_type": 0,
+ "successes": [
+  "static_study",
+  "distributed_mass",
+  "force"
+ ],
+ "sequential_counts": [
+  [
+   0,
+   1
+  ],
+  [
+   1,
+   2
+  ],
+  [
+   2,
+   2
+  ]
+ ],
+ "verdict": "pass",
+ "note": "★ A 组收尾三条（分布质量 / 力 / 远程载荷）在 **static** 算例上验。★ 判据是回读计数 +1，★ 且看它是否**串成单调序列**。⚠ 若中间有一条失败，★ 后面的只当参考（事实 324/325）。"
+}

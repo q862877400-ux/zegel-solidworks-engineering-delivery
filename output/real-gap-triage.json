@@ -1,9 +1,9 @@
 {
  "summary": {
-  "total": 94,
+  "total": 91,
   "不做": 15,
-  "该挂": 46,
-  "已有": 14,
+  "已有": 21,
+  "该挂": 36,
   "内部件": 19,
   "★": "四类之和必须 == total（★ 本脚本自检）",
   "★口径差异": "本脚本报 108 而 audit_real_gaps 报 101 —— ★ 两者对「被上游调」的判定略有不同（本脚本用字面量匹配）；★ 本文件的 108 是本轮作业的口径，★ 而两者的模块级分布一致。",
@@ -19,8 +19,8 @@
   {
    "module": "sw_part",
    "name": "add_dimension",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `add_dimension_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_part",
@@ -57,12 +57,6 @@
    "name": "insert_composite_curve",
    "kind": "已有",
    "why": "功能已由 `insert_composite_curve_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
-  },
-  {
-   "module": "sw_part",
-   "name": "add_dimension_report",
-   "kind": "该挂",
-   "why": ""
   },
   {
    "module": "sw_part",
@@ -151,8 +145,8 @@
   {
    "module": "sw_simulation_loads",
    "name": "add_force",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `apply_force_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_simulation_loads",
@@ -169,26 +163,26 @@
   {
    "module": "sw_simulation_loads",
    "name": "add_radiation",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `apply_radiation_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_simulation_loads",
    "name": "add_convection",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `apply_convection_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_simulation_loads",
    "name": "add_heat_flux",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `apply_heat_flux_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_simulation_loads",
    "name": "add_heat_power",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `apply_heat_power_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_simulation_loads",
@@ -211,8 +205,8 @@
   {
    "module": "sw_simulation_loads",
    "name": "add_distributed_mass",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `apply_distributed_mass_report` 包装暴露（★ 名字不同 ≠ 能力没有）"
   },
   {
    "module": "sw_simulation_loads",
@@ -306,31 +300,13 @@
   },
   {
    "module": "sw_simulation_loads",
-   "name": "apply_convection_report",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_simulation_loads",
-   "name": "apply_heat_flux_report",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_simulation_loads",
-   "name": "apply_heat_power_report",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_simulation_loads",
    "name": "apply_temperature_report",
    "kind": "该挂",
    "why": ""
   },
   {
    "module": "sw_simulation_loads",
-   "name": "apply_radiation_report",
+   "name": "apply_remote_load_report",
    "kind": "该挂",
    "why": ""
   },
@@ -463,6 +439,12 @@
   {
    "module": "sw_export",
    "name": "export_to_image",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_export",
+   "name": "export_flat_pattern_dxf_report",
    "kind": "该挂",
    "why": ""
   },

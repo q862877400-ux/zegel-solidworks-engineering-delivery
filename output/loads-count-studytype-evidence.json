@@ -1,0 +1,23 @@
+{
+ "cases": {
+  "static": {
+   "study_type": 0,
+   "manager": "CDispatch",
+   "count_via_get": "0",
+   "count_via_attr": "0",
+   "GetLoadsAndRestraints": "<bound method GetLoadsAndRestraints of <COMObject <unknown>>>",
+   "GetLoadCount_err": "AttributeError: <unknown>.GetLoadCount"
+  },
+  "thermal": {
+   "study_type": 3,
+   "manager": "CDispatch",
+   "count_via_get": "0",
+   "count_via_attr": "0",
+   "GetLoadsAndRestraints": "<bound method GetLoadsAndRestraints of <COMObject <unknown>>>",
+   "GetLoadCount_err": "AttributeError: <unknown>.GetLoadCount"
+  }
+ },
+ "at": "2026-10-03T03:42:29",
+ "verdict": "pass",
+ "note": "★ 只问一件事：★ `ICWLoadsAndRestraintsManager.Count` 在**静力**与**热**算例上分别是什么（★ 原始取值/报错）。"
+}
