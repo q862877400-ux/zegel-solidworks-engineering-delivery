@@ -1,0 +1,17 @@
+{
+ "steps": {
+  "new_drawing": {
+   "ok": true,
+   "title": "工程图1 - 图纸1"
+  },
+  "add_view": {
+   "ok": false,
+   "returned": "None"
+  }
+ },
+ "at": "2026-10-03T03:35:38",
+ "part_fixture": "C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2026\\samples\\tutorial\\api\\squarepad_blue.sldprt",
+ "part_exists": true,
+ "verdict": "partial",
+ "note": "★ 自足路径（★ 事实 326 的处方）：★ **新建内存工程图** + 从**已在盘上**的零件加视图 —— ★ 我**不保存任何东西**（★ 那条正是 `add_view` 要 `part_path` 带来的边界，★ 硬约束⑦）。★ 判据是 `GetDatumTagCount()` 真的 +1。"
+}

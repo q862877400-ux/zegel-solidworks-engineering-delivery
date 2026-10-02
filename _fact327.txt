@@ -1,0 +1,51 @@
+| 327 | **画图域第二轮：`add_view` 回 `None`** —— ★ 而官方签名**核对过是对的**（5 参）⇒ 卡点在别处；★ 并发现一条**硬约束⑦ 带来的结构性边界**（2026-10-03，轮 412）。
+
+## 一、★★★★★ 一条**结构性边界**：画图域**依赖"已在盘上的模型"**
+```
+★★ 读签名时发现：`add_view(drawing_model, **part_path**, view_name, x, y, scale=None)`
+   ★ 要的是**零件文件路径**（★ 它内部调 `IDrawingDoc.CreateDrawViewFromModelView3(ModelName, …)`）。
+   ⇒ ★★ 即：★ **自建的零件必须先保存到盘上**，★ 视图才建得出来 ⇒ ★ **那撞硬约束⑦（不碰保存/另存）** ⚠
+⇒ ★ 正解（本轮采用）：★ **用已经在盘上的零件** —— ★ SolidWorks 自带示例零件（★ 共 **841 个**，
+   ★ 我挑了最小的 `tutorial\api\squarepad_blue.sldprt`）⇒ ★ **我只读不写**，★ 不保存任何东西 ✓
+   ★ 而**这也顺带绕开了事实 326 那条"外部夹具引弹窗"** —— ★ 因为**零件没有外部引用**
+     （★ 上次弹窗的是引用了一堆零件的**装配工程图**）。
+```
+
+## 二、★★★★★ 而真机：`add_view` **回了 `None`**
+```
+★ 真机（`output/datum-tag-selfcontained-evidence.json` · ★ **无弹窗** · 1.85 s）：
+   ```
+   new_drawing   ✓  "工程图1 - 图纸1"
+   add_view      ✗  返回 None
+   ```
+★ 而**核过官方签名**（★ 这一步没省）：★ `IDrawingDoc.CreateDrawViewFromModelView3` 是
+   `(ModelName, ViewName, LocX, LocY, Z)` —— ★★ **与仓里传的 5 个实参一致** ⇒ ★ **卡点不在 arity**。
+⇒ ★ 剩下的候选（★ 都不再是"试参数"）：
+   ① ★ **图纸还没有图框**（★ 我建的是空白新工程图）⇒ ★ 而行内**已有**现成函数：
+      `set_sheet_format` / `setup_current_sheet_as_a3` / `add_a3_sheet`（★ 都在子技能里，★ 已验证过）；
+   ② ★ **模型需要先被打开**（★ 而我只给了路径，没开它）。
+```
+
+## 三、★ 按**事实 53** 停下（★ 这是画图域的第 2 次尝试）
+```
+★ ① 外部夹具（★ 轮 411）⇒ 引出不可控的加载弹窗；
+★ ② 自足路径（★ 轮 412）⇒ `add_view` 回 None（★ 而签名是对的）。
+⇒ ★ **两次各卡在一个不同的地方** ⇒ ★ 不做第 3 次猜测（★ 事实 53）。
+★ 而**下一步是具体到动作的**（★ 而它是**另一个维度**，★ 不是重复调同一处）：
+   ★★ **先** `setup_current_sheet_as_a3(drawing)`（★ 给图纸上 A3 图框）
+     **再** `add_view(…)` ⇒ ★ 若仍不成，★ 再试**先打开模型**那条。
+   ★ 两个都是**仓内现成函数**（★ 子技能里，且各自有验证记录）。
+```
+
+## 四、★ 本轮**确认下来**的两件好事
+```
+① ★★ **自足路径不引弹窗** —— ★ 上一次那个 `needs_llm` 是**装配工程图的外部引用**造成的，
+   ★ 而**新建内存工程图 + 已在盘上的零件**这条路**全程无弹窗**（★ `dialogs: []`）
+   ⇒ ★ 事实 326 那条"验证路径必须自足"**被验证了**（★ 而且做法②的工作量比预想小）。
+② ★★ **入口与回读仍然齐**：★ `InsertDatumTag2()` 零参 · `IView.GetDatumTagCount()` 回读
+   ⇒ ★ 只差"**把视图建出来**"这一步 —— ★ 而它是**仓内已有函数**能解决的。
+```
+
+**依据**：`output/datum-tag-selfcontained-evidence.json`（★ 无弹窗 · `add_view` 回 None）·
+`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py` 的 `add_view`（★ 内部调 `CreateDrawViewFromModelView3`）·
+`C:\swapi\types\IDrawingDoc\CreateDrawViewFromModelView3.md`（★ 5 参，与仓里一致）· 事实 53 / 326
