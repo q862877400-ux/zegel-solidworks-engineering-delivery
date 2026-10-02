@@ -1,0 +1,52 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件63"
+  },
+  "prereq_parting_line": {
+   "ok": true,
+   "feature": "分型线1"
+  },
+  "parting_surface": {
+   "ok": true,
+   "returned": true,
+   "new_features": [
+    "分型面1"
+   ],
+   "tree": [
+    8,
+    9
+   ]
+  },
+  "shut_off_surface": {
+   "ok": false,
+   "returned": true,
+   "new_features": [],
+   "tree": [
+    9,
+    9
+   ]
+  },
+  "core_cavity_solids": {
+   "ok": false,
+   "err": "RuntimeError: InsertMoldCoreCavitySolids 返回 None —— 常见原因：未先建分型面"
+  },
+  "evidence_readback": {
+   "ok": true,
+   "evidence": {
+    "counts": {
+     "parting_lines": null,
+     "parting_surfaces": null,
+     "cavity_surfaces": null,
+     "core_surfaces": null
+    },
+    "parting_type": null,
+    "core_cavity_split": null
+   }
+  }
+ },
+ "at": "2026-10-03T01:46:23",
+ "verdict": "partial",
+ "note": "★ 承接事实 306（分型线已通）⇒ 一次验另三个；★ 判据是每步**特征树 diff**（规则 6）。"
+}

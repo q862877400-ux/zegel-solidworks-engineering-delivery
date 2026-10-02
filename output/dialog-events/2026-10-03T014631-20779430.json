@@ -1,0 +1,69 @@
+{
+ "at": "2026-10-03T01:46:31",
+ "phase": "during",
+ "kind": "dialog",
+ "hwnd": 20779430,
+ "pid": 15648,
+ "title": "什么错",
+ "class": "#32770",
+ "exe": "SLDWORKS.exe",
+ "controls": [
+  {
+   "class": "Button",
+   "text": "显示错误(&E)"
+  },
+  {
+   "class": "Button",
+   "text": "显示警告(&W)"
+  },
+  {
+   "class": "Button",
+   "text": "在重建模型过程中显示什么错(&D)"
+  },
+  {
+   "class": "Button",
+   "text": "&FeatureXpert"
+  },
+  {
+   "class": "Button",
+   "text": "询问 LEO"
+  },
+  {
+   "class": "Button",
+   "text": "关闭(&C)"
+  },
+  {
+   "class": "Button",
+   "text": "帮助(&H)"
+  },
+  {
+   "class": "Static",
+   "text": "* 选择 FeatureXpert 尝试修复高亮显示的错误。    "
+  },
+  {
+   "class": "Button",
+   "text": "仍保存吗(&S)?"
+  }
+ ],
+ "hung": false,
+ "verdict": {
+  "mode": "forbidden",
+  "reason": "弹窗在**提问**（['吗']）⇒ 至少两条分支、答哪条要看语义 ⇒ 绝不自动点",
+  "buttons": [
+   "显示错误(&E)",
+   "显示警告(&W)",
+   "在重建模型过程中显示什么错(&D)",
+   "&FeatureXpert",
+   "询问 LEO",
+   "关闭(&C)",
+   "帮助(&H)",
+   "仍保存吗(&S)?"
+  ],
+  "hit": [
+   "吗"
+  ]
+ },
+ "needs_llm": true,
+ "dismissed": false,
+ "still_present": true
+}
