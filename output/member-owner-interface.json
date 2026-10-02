@@ -1,5 +1,5 @@
 {
-  "checked": 46,
+  "checked": 56,
   "hits": [
     {
       "file": "sw_mold.py",
@@ -123,6 +123,18 @@
       "via": "_prop('PartingType')",
       "actually_on": [
         "IPartingSurfaceFeatureData"
+      ]
+    },
+    {
+      "file": "sw_sketch.py",
+      "line": 518,
+      "owner_iface": "IModelDoc2",
+      "member": "FeatureByName",
+      "actually_on": [
+        "IAssemblyDoc",
+        "IComponent2",
+        "IDrawingDoc",
+        "IPartDoc"
       ]
     }
   ],
@@ -248,6 +260,18 @@
       "arg": "member"
     },
     {
+      "file": "sw_mass_property.py",
+      "line": 137,
+      "owner": "ext",
+      "arg": "_nm"
+    },
+    {
+      "file": "sw_mass_property.py",
+      "line": 172,
+      "owner": "mp",
+      "arg": "name"
+    },
+    {
       "file": "sw_mold.py",
       "line": 311,
       "owner": "fm",
@@ -261,7 +285,7 @@
     },
     {
       "file": "sw_part.py",
-      "line": 157,
+      "line": 173,
       "owner": "obj",
       "arg": "attr_name"
     },
@@ -302,6 +326,12 @@
       "arg": "member"
     },
     {
+      "file": "sw_selection_spec.py",
+      "line": 317,
+      "owner": "mgr",
+      "arg": "_nm"
+    },
+    {
       "file": "sw_simulation_loadprops.py",
       "line": 114,
       "owner": "target",
@@ -315,7 +345,7 @@
     },
     {
       "file": "sw_simulation_loads.py",
-      "line": 216,
+      "line": 244,
       "owner": "manager",
       "arg": "member"
     },
@@ -345,7 +375,7 @@
     },
     {
       "file": "sw_sketch.py",
-      "line": 453,
+      "line": 459,
       "owner": "sketch",
       "arg": "members[0]"
     },
@@ -398,6 +428,36 @@
       "arg": "cand"
     },
     {
+      "file": "probe_load_state.py",
+      "line": 99,
+      "owner": "item",
+      "arg": "attr"
+    },
+    {
+      "file": "probe_mass_property_reads.py",
+      "line": 113,
+      "owner": "mp",
+      "arg": "n"
+    },
+    {
+      "file": "probe_mass_property_reads.py",
+      "line": 157,
+      "owner": "ext",
+      "arg": "name"
+    },
+    {
+      "file": "probe_mass_property_reads.py",
+      "line": 86,
+      "owner": "ext",
+      "arg": "n"
+    },
+    {
+      "file": "probe_mass_units_controlled.py",
+      "line": 104,
+      "owner": "ext",
+      "arg": "nm"
+    },
+    {
       "file": "probe_results_api_surface.py",
       "line": 131,
       "owner": "obj",
@@ -408,6 +468,12 @@
       "line": 110,
       "owner": "obj",
       "arg": "w"
+    },
+    {
+      "file": "probe_simulation_study_shapes.py",
+      "line": 94,
+      "owner": "s",
+      "arg": "attr"
     }
   ]
 }
