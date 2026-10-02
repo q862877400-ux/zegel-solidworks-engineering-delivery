@@ -1,0 +1,51 @@
+| 209 | **3 条能力条目的 `mcp_tools` 是**空的**** —— 把拆出的组填到**已存在**的条目上，比新建条目更正当（2026-10-01，轮 276）。
+
+## 一、★ 怎么发现的（★ 上一条定则的下一步）
+```
+★ 轮 275 用「工具数 vs 条目数」找到了"一模块多能力"的缺口。
+★ 轮 276 顺着查「**哪些条目的 `mcp_tools` 是空的**」⇒ ★★ 找到 **3 条**：
+     `drawings_and_bom`(0) · `export_delivery`(0) · `configurations_and_design_tables`(0)
+⇒ ★★★★ **那意味着：它们**占了条目却不认领任何工具**** —— ★ 而**它们本来就在清单里**
+   （★ 是历史留下的**空壳条目**）。
+```
+
+## 二、★★★★★ 而正解是**填它们**，不是**新建**
+```
+★ 我手上正好有从 `config_and_export`（12 个工具）拆出来的两组：
+   · **6 个导出**（step/stl/iges/parasolid/dxf/bmp）⇒ ★ 填进 **`export_delivery`**（★ 它 level 已是 verified）
+   · **6 个配置**（activate/create/inspect/read_custom_property/set_custom_properties/update_dimension）
+     ⇒ ★ 填进 **`configurations_and_design_tables`**
+★ 而 BOM 那 3 个（`collect_assembly_bom` / `delivery_export_bom_csv` / `delivery_bom_traceability`）
+   ⇒ ★ 填进 **`drawings_and_bom`**（★ 从 `custom_properties_and_bom` 拆出）
+⇒ ★★★ **三条空壳就此**名副其实**** —— ★ 而**能力条数不变**（★ 它们**本来就算在 59 里**）
+   ⇒ ★★★★ **所以这一步提升的是**质量**，不是数字** —— 而那正是"把账做实"。
+★ 另加 2 条**真新增**：`mold_analysis`（拔模/底切 —— 官方无判据 ⇒ stitched）·
+   `preview_and_review_report`（出报告/摆视图 ⇒ stitched）
+⇒ ★ 能力 **67 → 69**（★ 差 6）· 归属 **152/152** ✓
+```
+
+## 三、★★ 门禁的两处介入（★ 都帮了）
+```
+★ ① ★ 上一轮学到的 **R11**（`stitched` 不许 `unattended`）★ **这次我一开始就写对了**
+     ⇒ ★★ **所以那条教训生效了**（★ 没有再被拦）。
+★ ② ★ 本轮被拦的是 **R8**：★「`docs/union-level-audit.md` 与最新数据**不一致** ——
+     跑 `python scripts/gen_level_audit.py` 重生成」
+     ⇒ ★ **那是"生成物没跟着改"**（★ 我改了 `capabilities.yaml` 而没重生成审计）
+     ⇒ ★★ **修法是一行命令**（★ 而门禁把命令写在报错里 —— ★ 那是好报错的形态，事实 204）。
+```
+
+## 四、★ 定则
+```
+★★★ **"空壳条目"是比"缺条目"更该先修的一类** ——
+   ★ 缺条目 ⇒ 少一条；★ **空壳条目 ⇒ 清单**看起来**有这条，而它底下什么都没有**
+   （★ 与事实 198 的「`mcp_tools` 空置」**同族**，★ 只是范围更小：★ 那一次是**全表**空，★ 这次是**3 条**）。
+   ⇒ ★★ **可操作形态**：★ **清点"`mcp_tools` 为空的条目"** ⇒ ★ **优先把它们填实**
+     （★ 因为**它们是清单里已有的承诺**）。
+★★ **"填"与"拆"要分清**：★ **填**（把已有工具挂到已有条目）★ **不改条目数**；
+   ★ **拆**（从一个大条目分出新的）★ **改条目数**。
+   ⇒ ★★★ **两者都对，但动机不同**：★ **填是"还债"**，★ **拆是"细分"** ——
+     ★ 而**混在一起时会看不出进展**（★ 所以本轮把两者分别记）。
+```
+
+**依据**：`capabilities.yaml`（★ 3 条填实 + 2 条新增 = **69 条**）· `scripts/check_union_conventions.py` 的 R8/R11 ·
+`docs/union-level-audit.md`（★ 重生成后一致）· 事实 198 / 204 / 208
