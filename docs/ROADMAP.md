@@ -6251,6 +6251,34 @@
                 它原本把 `RefGeom` 钉成**裸 `None`**（★ 而那正是真机会报错的形态）。
          ▶ **队列续作**：★ 段 2 的其余候选（**拓扑挂柜台**：读数类 4 个 + 参数类 2 个）
            **不依赖本条的未查清项** ⇒ ★ **下一轮直接推进它们**。
+     ★ 2026-10-01（轮 247 / **24h 计划 段 2.2 / Spec Kit `144`**）· ★★★★ **拓扑读数与参数：6 个工具，真机 8 项过 7 —— 而唯一失败的那个给出了**一条可复用的定则****
+         ▶ **做了什么**：`scripts/sw_topology.py` 加 **5 个回读报告**（`topology_constraints_report` /
+           `topology_manager_report` / `topology_options_report` / `set_topology_goal_report` /
+           `set_topology_iteration_options_report`）+ `mcp-server/tool_specs_batch30.py`（**6 个工具**）。
+           ★★ **`all_specs()` 94 → 100**（★ 破百）· MCP 工具 **139 → 145** · 能力清单 **51 → 53 条**。
+         ★★★ **真机 8 项过 7**（`output/topology-readback-evidence.json`）：bindings · create_study ·
+           collect_numbers · constraints · manager_report · options_report · **set_goal** ✓
+           ★★ 而 **`set_goal` 的 `before_taken 0 → after_taken 1`** 是「**设置真生效**」的硬证据 ——
+           ★ 也证明**回读判据真的在判**（若恒真就不会有 0 与 1 的差）。
+         ★★★★★ **唯一失败的 `set_iteration_options` 给出了一条定则**：
+           ```
+           真机报 `com_error(-2147417851, '服务器出现意外情况。')`
+           ⇒ ★★ 补码 = **0x80010105** ⇒ 与 known-facts **28 / 47 / 67** 记的**同一个错误码**
+           ⇒ ★★★ 那是「**pywin32 迟到绑定到不了官方仅进程内非托管 C++ 的指针接口**」那一族
+              —— 与 `create_one_bend` / `create_edge_flange` / `create_gusset` / `CreateChamfer` 同类
+           ⇒ ★★★★★ **定则：见到 0x80010105 就不要再穷举参数形态了**（事实 47 是「两轮 20+ 种形态」
+             换来的；有了这条，后来者几秒就能定性）。
+           ```
+           ★★ 而**同工况对照**是关键：同一份证据里 `set_goal` **成功** ⇒ 证明**不是「拓扑域整体不行」**，
+             而是**这一个调用**撞后端（★ 没有那个对照，很容易错写成「拓扑域不可用」）。
+         ★ **顺带查清**：能力层形参名是 **`iteration_limit`**（我最初写成 `iteration_count` ⇒
+           真机报 `unexpected keyword argument`）⇒ ★★ **`check_param_binding.py` 抓不到这一类**
+           （它判「工具声明的参数名」，而这里错在**包装函数内部**的调用）⇒ ★ **一个新的门禁候选**。
+         ▶ **验收**：① `all_specs()` = **100** ✓ · 门禁链 **18 道** exit 0 ✓ · 全量 pytest
+           **1278 passed / 0 failed** ✓  ② ★ **真机 7/8** ⇒ ★ 按证据**分级**：
+           `topology_readback_and_parameters` = **verified**（★ 不跑求解 ⇒ 无挂起风险）·
+           `topology_iteration_options_backend_limited` = **stitched**（★ 后端限制，如实标注）。
+         ▶ **队列续作**：★ 段 2 的载荷族未查清项（`AddPressure` 的重载表）· ★ 段 3 建模闭环补全（17 个）。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:

@@ -1,0 +1,123 @@
+{
+  "captured_at": "2026-10-02T10:52:02",
+  "capability": "topology_readback_and_parameters",
+  "★": "★ 只读数 / 设参数，**不跑求解** ⇒ 无模态框风险",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "count": 6,
+      "detail": {
+        "solidworks_topology_collect_numbers": {
+          "resolved": true,
+          "inject": "study",
+          "params": [
+            "study_name"
+          ]
+        },
+        "solidworks_topology_list_constraints": {
+          "resolved": true,
+          "inject": "study",
+          "params": [
+            "study_name"
+          ]
+        },
+        "solidworks_topology_manager_report": {
+          "resolved": true,
+          "inject": "study",
+          "params": [
+            "study_name"
+          ]
+        },
+        "solidworks_topology_options_report": {
+          "resolved": true,
+          "inject": "study",
+          "params": [
+            "study_name"
+          ]
+        },
+        "solidworks_topology_set_goal": {
+          "resolved": true,
+          "inject": "study",
+          "params": [
+            "study_name",
+            "goal_type",
+            "mass_reduce_percent"
+          ]
+        },
+        "solidworks_topology_set_iteration_options": {
+          "resolved": true,
+          "inject": "study",
+          "params": [
+            "study_name"
+          ]
+        }
+      }
+    },
+    "material": "solidworks materials|AISI 1020|2",
+    "create_study": {
+      "ok": true,
+      "type": "tuple"
+    },
+    "collect_numbers": {
+      "ok": true,
+      "status": "no_results",
+      "material_mass_plot": null,
+      "plot_count": null,
+      "plot_names": null,
+      "max_available_steps": null,
+      "★": "★ material_mass_plot 需**跑过求解**才非空 —— 本批不跑求解，故不拿它当判据"
+    },
+    "constraints": {
+      "ok": true,
+      "taken_count": 0,
+      "total": 9,
+      "kinds": {
+        "mass": false,
+        "stress": false,
+        "factor_of_safety": false,
+        "displacement": false,
+        "frequency": false,
+        "preserved_region": false,
+        "symmetry": false,
+        "demold": false,
+        "thickness": false
+      }
+    },
+    "manager_report": {
+      "ok": true,
+      "object_type": "CDispatch"
+    },
+    "options_report": {
+      "ok": true,
+      "object_type": "CDispatch"
+    },
+    "set_goal": {
+      "ok": true,
+      "error": null,
+      "before_taken": 0,
+      "after_taken": 1
+    },
+    "set_iteration_options": {
+      "ok": false,
+      "error": "com_error: (-2147417851, '服务器出现意外情况。', None, None)",
+      "before_taken": 1,
+      "after_taken": 1
+    },
+    "judgement": {
+      "checks": {
+        "bindings": true,
+        "create_study": true,
+        "collect_numbers": true,
+        "constraints": true,
+        "manager_report": true,
+        "options_report": true,
+        "set_goal": true,
+        "set_iteration_options": false
+      },
+      "passed": 7,
+      "of": 8,
+      "★": "★ 八项全真才 pass；★ material_mass_plot 是核心判据"
+    }
+  },
+  "verdict": "fail"
+}

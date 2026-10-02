@@ -1,0 +1,50 @@
+[
+  {
+    "id": "topology_readback_and_parameters",
+    "label": "拓扑研究读数 + 目标设置（★ 真机 8 项过 7）",
+    "level": "verified",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": ["2026"],
+    "dependencies": ["solidworks", "simulation-addin"],
+    "limitations": [
+      "★ 真机 8 项判据**过 7**（`output/topology-readback-evidence.json`）：bindings · create_study · collect_numbers · constraints · manager_report · options_report · **set_goal** ✓",
+      "★★ **`set_goal` 的回读判据真的在判**：`before_taken 0 → after_taken 1` ⇒ ★ 设置**确实生效**（★ 若判据恒真就不会有 0→1 的差）",
+      "★ **`collect_topology_numbers` 的 `material_mass_plot` 只在**跑过求解**后才非空** ⇒ 本能力批的是「读数入口可用」（`status` 字段存在），★ **不拿那张图当判据**（跑求解是另一个能力的事，且会弹模态框）",
+      "★ 判据来源（§5.0 先找）：`material_mass_plot` 来自**既有证据脚本** `tools/capture_topology_evidence.py` 的判据表；「设置生效」用本模块**自己的读取入口** `list_topology_constraints_and_controls`（★ 它注释里记着「曾因裸传 0 当出参而永远返回全 None（假通过）」的教训）",
+      "★ **`set_topology_iteration_options` 不在本条的覆盖面里** —— 它是**后端限制**，见 `topology_iteration_options_backend_limited`"
+    ],
+    "allowed_modes": ["interactive", "reviewed", "unattended"],
+    "evidence": [
+      "python tools/capture_topology_readback_evidence.py（真机，2026-10-01 轮 247：★ **8 项过 7**；`set_goal` 的 `before_taken 0 → after_taken 1` 是「设置真生效」的硬证据；★ 证据落 output/topology-readback-evidence.json）",
+      "★ **不跑求解** ⇒ 本能力批**无模态框风险**（会弹框的是 `run_topology_study` / `RunAnalysis` 那类）"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_topology.py 的 collect_topology_numbers / topology_constraints_report / topology_manager_report / topology_options_report / set_topology_goal_report（照官方 ICWTopologyStudyManager / ICWTopologyStudyOptions）"
+  },
+  {
+    "id": "topology_iteration_options_backend_limited",
+    "label": "拓扑迭代选项设置（★ pywin32 后端限制 —— 与事实 47/67 同族）",
+    "level": "stitched",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": [],
+    "dependencies": ["solidworks", "simulation-addin"],
+    "limitations": [
+      "⚠⚠⚠ **未真机验证**（真机报后端级错误）—— 等级 = `stitched`",
+      "★★★ **真机错误码与既有事实逐位吻合**：`com_error(-2147417851, '服务器出现意外情况。')` —— 而 `-2147417851` 的补码就是 **`0x80010105`**，正是 known-facts **28 / 47 / 67** 记着的那一族",
+      "　★ 47：「`ISketchedBendFeatureData` 的 `AccessSelections` / `SetFixedFace` 在 pywin32 迟到绑定下**不可调用** —— 这是**架构性限制**，不是参数没找对」（改传 `VARIANT(VT_DISPATCH, None)` 后报的**正是**这一个错误码）",
+      "　★ 67：「`ISketchManager.CreateChamfer` 在 pywin32 后台上到不了（架构性限制，与事实 47 同族）」",
+      "⇒ ★★ **所以本函数是这一族的**新成员** —— 与 `create_one_bend` / `create_edge_flange` / `create_gusset` / `CreateChamfer` 同类",
+      "★★ **据 `capabilities.yaml` 的后端限制段**：「**不能调用官方标记为仅进程内非托管 C++ 的指针接口**」",
+      "★ **可复用的判据（本条最大的价值）**：★ **同一个错误码 = 同一类后端限制** —— 以后见到 `0x80010105` 不必重新穷举形态（★ 事实 47 是「两轮 20+ 种形态」换来的）",
+      "⚠ 换 `comtypes` 早绑定或进程内 C++ 后端**未在本机实测**（known-facts 的 `ISafeArrayUtility` 那条更正说明：早绑定**看得到**某些成员 ⇒ ★ 不能断言「永远不行」）"
+    ],
+    "allowed_modes": ["interactive", "reviewed"],
+    "evidence": [
+      "⚠ **无**（真机报 `0x80010105`）—— ★ 该结果已如实落 `output/topology-readback-evidence.json` 的 `set_iteration_options`",
+      "★ **反证（有价值）**：同一份证据里 `set_goal` **成功**（0→1）⇒ ★ 说明**不是「拓扑域整体不行」**，而是**这一个调用**撞后端限制",
+      "★ 静态那一半是绿的：`scripts/check_param_binding.py` PASS · 门禁链 18 道 exit 0"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_topology.py 的 set_topology_iteration_options + set_topology_iteration_options_report（照官方 ICWTopologyStudyOptions 的迭代选项成员）"
+  }
+]
