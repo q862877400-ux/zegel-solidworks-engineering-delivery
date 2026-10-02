@@ -1,11 +1,12 @@
 {
-  "captured_at": "2026-10-02T10:25:00",
+  "captured_at": "2026-10-02T10:29:29",
   "steps": {
     "after_new_part": {
       "tag": "after_new_part",
       "userpref_linear": 0,
-      "userpref_linear_name": "m",
-      "doc_units_via_ext": "取不到: (-2147352561, '非选择性的参数。', None, None)"
+      "userpref_linear_name": "swMM",
+      "doc_units_via_ext": -1,
+      "doc_units_via_ext_name": "（未设/取不到）"
     },
     "size_before": [
       4930.501659457233,
@@ -15,8 +16,9 @@
     "after_set_mm": {
       "tag": "after_set_mm",
       "userpref_linear": 0,
-      "userpref_linear_name": "m",
-      "doc_units_via_ext": "取不到: (-2147352561, '非选择性的参数。', None, None)"
+      "userpref_linear_name": "swMM",
+      "doc_units_via_ext": -1,
+      "doc_units_via_ext_name": "（未设/取不到）"
     },
     "size_after_set_mm": [
       4930.501659457233,
