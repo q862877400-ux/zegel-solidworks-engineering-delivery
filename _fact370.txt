@@ -1,0 +1,71 @@
+| 370 | ★★★★★ **那四条"后端限制"此前**不在第一现场**** ⇒ 已写进源头、生成器带进了 `dead-ends.md`（★ **138 → 146 行** · 死路 45 条 / 涉及能力 28）；★★ **而查出一个判据陷阱**：★ **`yaml.safe_load` 容忍尾随逗号，而生成器用的 `json.loads` 不容忍**（2026-10-03，轮 455）。
+
+## 一、★★★★★ 发现的缺口：★ 本阶段新查出的后端限制**都没进第一现场**
+```
+★ 按 `AGENTS.md`：★ **动手核一条路之前，先读该能力的 `limitations`**（★ 而 `docs/dead-ends.md`
+   是它的**机器生成视图** —— ★ 由 `tools/gen_dead_ends.py` 从 `capabilities.yaml` 生成，★ **不许手改**）。
+★ 而本轮核对：★ 那四条**在不在**那份视图里：
+   ```
+   AccessSelections        ⇒ **在** ✓（★ 老的，★ 事实 47）
+   create_one_bend         ⇒ **在** ✓
+   ★ CreateStructureSystem        ⇒ **不在** ✗ ⚠
+   ★ FeatureLinearPattern         ⇒ **不在** ✗ ⚠
+   ★ configure_member_profile     ⇒ **不在** ✗ ⚠
+   ★ configure_split_member       ⇒ **不在** ✗ ⚠
+   ```
+⇒ ★★★ **即：★ 我这一阶段新查出的四条，★ 下一个来的人**读不到它们**** ⚠
+   ★★ 而★ 那**正是** `AGENTS.md` 那段话**警告的形态**（★ 轮 359–362 的"重走死路"）✓✓✓
+```
+
+## 二、★★★★★ 处置：★ 改**源头**（★ 而不是手改生成物）
+```
+★ 往 `capabilities.yaml` 三条能力的 `limitations` **追加**（★ 每条**写清依据**：事实号 + evidence）：
+   ```
+   ★ `pattern_and_mirror`          ⇐ ★ `FeatureLinearPattern*` 那条（★ 三层论证 · 事实 369）
+   ★ `weldment_profile_and_curve`  ⇐ ★ 结构系统那条链（★ 入口查得到而走后端不通 · 事实 356/360/361）
+   ★ `selection_helpers`           ⇐ ★ `select_object` / `resolve_face_selector` 判「不做」**而理由是规则 3**（事实 367）
+   ```
+★ 而★ **只做加法**（★ `git diff --stat` 核过：★ **additions only** —— 事实 61）✓
+★ 而★ **前后对照**（★ 那就是**负例自证**）：
+   ```
+   ★ 跑生成器前：★ `dead-ends.md` **138 行** · 四个名字**全 False**
+   ★★ 跑生成器后：★ **146 行** · 死路 **45** 条 · 涉及能力 **28**
+      ★ `CreateStructureSystem` **False → True** ✓ · `FeatureLinearPattern` **False → True** ✓
+      ★ `configure_member_profile` **False → True** ✓
+      ★★ 而 `resolve_face_selector` **仍 False** ✓ —— ★ **应然**：
+        ★ 那条不是"走死"，★ 而是"**规则 3 不做**"（★ 它**不该**混进死路清单）✓
+   ```
+```
+
+## 三、★★★★★ ⚠ 而本轮**查出一个判据陷阱**（★ 而它比上面那件事更值钱）
+```
+★★ 现象：★ 我把三条写进 `capabilities.yaml` 之后，★ **生成器跑了而 `dead-ends.md` **没变**** ⚠
+★ 而我**差点**以为是"正则不匹配"（★ 因为我的文本里明明有"到不了""走不通"）——
+   ★★ **而那不是**。★ 逐层查下来：
+   ```
+   ★ ① ★ 生成器 L52：`data = json.loads(CAPS.read_text())` ⇒ ★★ **它按**纯 JSON** 读那个文件** ⚠
+   ★ ② ★ 而★ **我用 `yaml.safe_load` 验证** —— ★★ **它**容忍尾随逗号**，而 `json.loads` **不容忍**** ⚠⚠
+   ★ ③ ★ 真错：★ 我把新项插在**列表尾部**而**带了尾随逗号** ⇒
+      ★★ `json.loads` 报 `Illegal trailing comma before end of array`（★ 而 `yaml` 读得好好的）✓
+   ```
+⇒ ★★★ **故教训是一条**可复用的**定则**：
+   ```
+   ★★ **验证要用**同一个**解析器** —— ★ **不要用"另一个能读的"当验证** ⚠
+      ★ 因为**两种解析器的容忍度不同**（★ 这里：★ 尾随逗号 · ★ 注释 · ★ 引号）
+      ⇒ ★★ 而"我这边读得了"**不等于**"那个消费者读得了" ✓✓✓
+   ```
+★ 而★ 那**又一次**是本阶段的命题：★ **错的是判据（我这里用的验证器），★ 而不是数据** ✓
+```
+
+## 四、★ 处置
+```
+★ ① ★ **四条后端限制进了第一现场**（★ 而 `selection_helpers` 那条**如实标注**它**不是"走死"**）✓
+★ ② ★ **`capabilities.yaml` 与 `dead-ends.md` 都只增不改**（★ `git diff --stat` 核过）✓
+★ ③ ★ **那条"验证要用同一个解析器"的定则**值得后面再看要不要写进 AGENTS.md（★ 而★ 那**超出本计划**）✓
+```
+
+**依据**：`docs/dead-ends.md`（★ **138 → 146 行** · 死路 **45** / 能力 **28**）·
+`capabilities.yaml` 的三条 `limitations`（★ 新增 · 各带事实号与 evidence）·
+`tools/gen_dead_ends.py` L52（★ `json.loads`）与 `DEAD` 正则（★ L44–47）·
+`json.loads` 的报错 `Illegal trailing comma before end of array` · 事实 47 / 61 / 356 / 360 / 361 / 367 / 369 ·
+`AGENTS.md` §动手核一条路之前
