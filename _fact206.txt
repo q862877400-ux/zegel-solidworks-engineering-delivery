@@ -1,0 +1,54 @@
+| 206 | **建 study 通了（首参是 `sw` 不是 `doc`）；而"求解器设置"在真机上有**两类不同的**障碍**（2026-10-01，轮 273）。
+
+## 一、★★★★ 前置打通（★ 修法一行）
+```
+★ 轮 272 我卡在"study 建不出来"，★ 报 `AttributeError: <unknown>.GetAddInObject`。
+★★ §5.0 一找 ⇒ **仓库里 4 个既有证据脚本都在用它，且都传 `sw`**：
+     `capture_loadfamily_evidence.py:96` · `capture_mesh_sane_evidence.py:80` ·
+     `capture_mesh_solve_evidence.py:95` · `capture_simulation_loads_evidence.py:109`
+   ⇒ ★★★ **正解：`create_static_study(sw, name)`**（★ 首参是**应用对象**）
+★ 真机：★ 回 **`(<COMObject>, 'CreateNewStudy3', 0)`** ⇒ **命中未降级入口 · error_code = 0** ✓
+⇒ ★★★★ **所以"前置不可达"通了** —— ★ **而线索一直在我自己的证据脚本里**（★ §5.0 又一次生效）。
+```
+
+## 二、★★★★★ 而设置那一步有**两类不同的**障碍（★ 各查清了）
+```
+★★ 障碍一：`TypeError: 'bool' object is not callable`
+   · ★ 出现在 `configure_static_solver(free_body_force=…)` 与
+     `set_study_option(…, "ComputeFreeBodyForce", …)` **两处**
+   ⇒ ★★ 说明**真机上那个成员**已经是 `bool` 值**（★ 不是 setter 方法）**
+     ⇒ ★ 而能力层的路径**把它当方法调**（`get_com_member(...)(value)`）
+   ★★ 定性：★ **能读、不能写**（★ 与该族的另一半——读数——是**可用的**；见事实 167 的 `Mass` 同族形态）。
+
+★★ 障碍二：`(-2147417851)` = **`0x80010105`**（「服务器出现意外情况」）
+   · ★ 出现在**第二次**调 `study_options_of(study, family)` 时
+   ⇒ ★★★ **那是**pywin32 后端限制**（★ 与**事实 47**——`ISketchedBendFeatureData.AccessSelections`
+     的 `0x80010105`——**同一个码、同一族**）
+   ★★★ **而事实 47 的教训是**：「**见到这个码就不要再穷举参数形态**」（★ 那里是"20+ 种已穷尽"）。
+   ⇒ ★ 定性：★ **该族选项对象在本后端上只能取一次**（★ 第二次取就崩）。
+```
+
+## 三、★★ 处置（★ 如实记，不假装）
+```
+★ `create_study` ⇒ **真机 ok=True**（`CreateNewStudy3` / code 0）✓
+★ `list_setter_summary`（零参）⇒ **真机 ok=True** ✓
+★★ 那 5 个配置工具 ⇒ ★ **工具体已就位**（`all_specs()` = **144** · 归属 144/144），
+   ★★ 而**真机结果 = 未通过**，★ **且两条原因都查清了**（★ 不是"没做"，★ **是"到不了"**）
+   ⇒ ★ 能力条目里**如实标**：★「工具层就位；真机受阻于 ① 成员是属性非 setter ② `0x80010105` 后端限制」
+   ⇒ ★★ **而那正是硬约束③要求的形态**（★ 二选一：有证据 **或** 明确标未验证）。
+```
+
+## 四、★★★ 定则
+```
+★★★ **一个模块里"能读的族"未必"能写"** —— ★ 本轮 `list_setter_summary` 给出 9 个族 / 202 个
+   setter 名（★ **那说明"名字是存在的"**），★ 而**真机上写不进去**（★ 成员是属性）⇒
+   ★★ **"名字存在"与"能写"是两件事**（★ 与事实 36 的"名字存在但与这个接口无关"**同一族**）。
+★★ **同一族的失败可以有**多个**互不相干的原因** ⇒ ★ 本轮 3 个失败 = ①属性非 setter ②后端限制
+   ⇒ ★ **要逐条查清**（★ 与事实 202 的三分法一脉相承）。
+★★★ **§5.0 再次生效** —— ★ "首参该传什么"**就在我自己的 11 个 `capture_*.py` 里**。
+   ⇒ ★ **所以"先找自己仓库"这一步，正是最省的那一步**。
+```
+
+**依据**：`tools/capture_simulation_loads_evidence.py:109` 等 **4 处**既有用法（★ 都传 `sw`）·
+`output/batch37-evidence.json`（★ 1/4 与逐条错误）· `sw_simulation.create_static_study`（★ 回三元组）·
+`sw_simulation_study_options.list_setter_summary()`（★ 9 族 / 202 setter 名）· 事实 36 / 47 / 167 / 202 / 205
