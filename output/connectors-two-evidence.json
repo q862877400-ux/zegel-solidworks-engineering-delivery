@@ -1,0 +1,43 @@
+{
+ "steps": {
+  "static_study": {
+   "ok": true,
+   "manager": "CDispatch",
+   "raw_Count": "None",
+   "raw_err": "com_error: (-2147417851, '服务器出现意外情况。', None, None)"
+  },
+  "link_connector": {
+   "ok": false,
+   "count": [
+    -1,
+    -1
+   ],
+   "error": ""
+  },
+  "rigid_connector": {
+   "ok": false,
+   "count": [
+    -1,
+    -1
+   ],
+   "error": ""
+  }
+ },
+ "at": "2026-10-03T04:03:41",
+ "study": "DSH-CONN_040341",
+ "successes": [
+  "static_study"
+ ],
+ "sequential_counts": [
+  [
+   -1,
+   -1
+  ],
+  [
+   -1,
+   -1
+  ]
+ ],
+ "verdict": "partial",
+ "note": "★ B 组开头两条：★ 链接连接件（两个**顶点**）· 刚性连接件（两组**面**）。★ 判据是回读计数 +1，★ 且看是否串成单调序列。⚠ 若中间有一条失败，★ 后面的只当参考（事实 324/325）。"
+}
