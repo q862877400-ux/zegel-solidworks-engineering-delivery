@@ -67,6 +67,43 @@ pwsh -File C:\swprojects\sw-skill-fork\tools\round_chain.ps1 -Tests tests/<改�
 ★ 与本条配套：**若工具层真有 bug**（如 `resolve_study` 少解包一层），要在**工具层**修，
 并在记录里写清"探针按契约调之后仍失败 ⇒ 是工具层的问题"。
 
+## 新建 `.py` 的模板：**docstring 只写一行**，来源块紧随其后
+
+```python
+"""★ 一句话说清这个文件干什么。"""          # ← ★ 只一行，**不要多行**
+                                            #    空行
+# ── 来源 ─────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖     # ← ★ 六字段
+# ─────────────────────────────────────────
+from __future__ import annotations
+```
+
+**为什么**：2026-10-01 本会话在**同一处栽了七次** —— 新建 `.py` 时把**来源块写进了头部
+三引号里面**（忘了闭合多行 docstring）⇒ Python 把后面几十行当字符串吞掉，报的是
+`SyntaxError: invalid character '★'`（**指向那个星号，不是真因**）。
+实录：`modal_dialog_forensics` · `test_deprecated_entry_interlock` ·
+`extract_operation_descriptions` · `judge_gap_candidates` · `check_python_syntax` ·
+`test_compare_geometry_absolute` · `reclaim_solidworks`。
+⇒ 根因不是"不够小心"，而是**模板里 docstring 是多行的** —— 多行 docstring 与来源块挨着，
+就总会有人（我）把来源块写进去。**一行 docstring 把这个坑从形态上消掉**。
+★ 配套门禁：`scripts/check_python_syntax.py`（第 19 道，`ast.parse` 每个 `.py`）——
+它每次都抓到了，而且**提示里就是修法**（"在 `# ── 来源 ──` 之前补三引号"）。
+★ 修的时候**用脚本**（找 `# ── 来源 ──` 那行、在它之前插入），别手改 —— 手改我失手过一次。
+
+## SolidWorks 卡死：**探不通就处置，不要"再探一次"**
+
+```
+python tools/reclaim_solidworks.py --probe      # 只探（不动任何东西）
+python tools/reclaim_solidworks.py --restart    # 探不通且打开的文档都是自己的 ⇒ 重启并复验
+```
+
+**为什么**：2026-10-01 轮 24 我在**主进程**调 `create_mesh`（还用了过大的 `element_size`），
+把会话卡住；此后**连续 7 轮**每轮开头只"再探一次"，**一次也没处置** ⇒ 白等 7 轮。
+轮 31 动手（清残留 python → `Stop-Process` → 重连）⇒ 立刻 `connect: True · revision 34.4.1`。
+⇒ ★ **同一个状态反复观察 ≠ 处置**（与事实 53 同族：连续修补 ≥3 次就该停下换做法）。
+★ 脚本自带**安全判定**：先把 SW 主窗口标题里的打开文档逐个分类，**只要有一个不是自己的就拒绝重启**
+（依据：全局纪律「回收自己开的资源」与「不删用户数据」）。
+
 ## 汇报频率
 
 默认不汇报；只在三种情况发一条消息：一批做完、同一处卡住 ≥2 次、计划要变。
