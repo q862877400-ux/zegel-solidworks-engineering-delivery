@@ -1,0 +1,21 @@
+{
+  "steps": {
+    "create": {
+      "ok": true
+    },
+    "add": {
+      "ok": false,
+      "ret": "True",
+      "count": 0,
+      "before": 0
+    },
+    "negative_index": {
+      "ok": false,
+      "ret": "True"
+    }
+  },
+  "captured_at": "2026-10-02T18:15:15",
+  "passed": 1,
+  "of": 3,
+  "verdict": "partial"
+}

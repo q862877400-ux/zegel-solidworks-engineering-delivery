@@ -1,0 +1,22 @@
+{
+  "steps": {
+    "list_before": {
+      "ok": true,
+      "count": 0
+    },
+    "create": {
+      "ok": true,
+      "type": "method"
+    },
+    "add": {
+      "ok": false,
+      "error": "TypeError: Objects of type 'method' can not be converted to a COM VARIANT"
+    },
+    "delete": {
+      "ok": true,
+      "ret": "True",
+      "count": 0
+    }
+  },
+  "captured_at": "2026-10-02T18:14:08"
+}
