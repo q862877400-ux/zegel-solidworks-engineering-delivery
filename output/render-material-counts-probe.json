@@ -1,0 +1,26 @@
+{
+  "steps": {
+    "before": {
+      "GetRenderMaterialsCount": "0",
+      "GetRenderMaterialsCount2": "0",
+      "GetRenderMaterials": "NoneType",
+      "GetRenderMaterials2": "method"
+    },
+    "created": true,
+    "add_forms": {
+      "AddRenderMaterial(mat, out_i4())": {
+        "ret": "True",
+        "counts": {
+          "GetRenderMaterialsCount": "0",
+          "GetRenderMaterialsCount2": "0",
+          "GetRenderMaterials": "NoneType",
+          "GetRenderMaterials2": "method"
+        }
+      },
+      "AddRenderMaterial(mat)": {
+        "error": "com_error: (-2147352561, '非选择性的参数。', None, None)"
+      }
+    }
+  },
+  "captured_at": "2026-10-02T18:24:42"
+}
