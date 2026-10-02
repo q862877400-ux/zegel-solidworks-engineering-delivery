@@ -1,0 +1,27 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件65"
+  },
+  "through_hole": {
+   "ok": true,
+   "faces": [
+    6,
+    7
+   ]
+  },
+  "shut_off_surface": {
+   "ok": false,
+   "returned": true,
+   "new_features": [],
+   "tree": [
+    9,
+    9
+   ]
+  }
+ },
+ "at": "2026-10-03T01:48:35",
+ "verdict": "partial",
+ "note": "★ 官方该页 **Remarks 为空** ⇒ 只能真机试；★ 推测是「关断面要盖住**通孔**」（轮 390 的件是实心方块、没有孔）⇒ 本轮先打 8 mm 通孔再试。"
+}
