@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-10-02T07:32:48",
+  "captured_at": "2026-10-02T12:36:23",
   "capability": "chamfer_fillet_on_selection",
   "steps": {
     "bindings": {
@@ -30,7 +30,13 @@
       "n_after": 20,
       "new_names": [
         "凸台-拉伸1"
-      ]
+      ],
+      "volume_before_mm3": 7999.999999999999,
+      "volume_after_mm3": 7980.0,
+      "removed_mm3": 19.99999999999909,
+      "implied_edge_length_mm": 9.999999999999545,
+      "implied_matches_a_real_edge": true,
+      "★_d4": "★ 反解 `L = 2·ΔV / w²` ⇒ 必须等于盒的某条棱（40/20/10）—— ★ 这一条同时排除「零体积空操作」与「做在错的几何上」"
     },
     "fillet": {
       "ok": true,
