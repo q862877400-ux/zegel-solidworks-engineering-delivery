@@ -1,0 +1,29 @@
+[
+  {
+    "id": "modeling_feature_readback_tools",
+    "label": "建模闭环补全（抽壳 ✅ / 圆顶 ✅ 真机通过 · 筋 未验 · 复合曲线 真机失败）",
+    "level": "verified",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": ["2026"],
+    "dependencies": ["solidworks"],
+    "limitations": [
+      "★★★ `shell` 宿主修好（真机通过）：官方 `IModelDoc2/InsertFeatureShell.md` ⇒ 挂在 `IModelDoc2`；原写法 `model.FeatureManager.InsertFeatureShell(...)` 报 `<unknown>.InsertFeatureShell` ⇒ known-facts 36 的形态",
+      "★★★ `insert_dome` 修了两处（真机通过，且被既有冒烟独立确认 9/9）：① 括号位置 —— `call_com_member(obj, name, *args)` 自己就会调一次，原写法先零参调一次、又对 `void` 的返回值调一次 ⇒ 静默失败；② 官方 Remarks 要求 `mark=1` 选面（★ 既有冒烟记着：传 mark=0 时 InsertDome 报 0x8002000F 非选择性的参数，而那个错误看不出是 mark 的问题）",
+      "⚠⚠ `insert_dome` 的 `Height` 语义仍未查明：既有冒烟实测「传 8 ⇒ 边界框增长 14.2222」（★ 它如实记为待查，不当通过也不当失败）",
+      "★★★★ 单位 = 毫米（实测判决），⚠ 而官方文档对 `Thickness` 与 `Height` 都写 meters",
+      "⚠ `rib`（筋）无对应冒烟 ⇒ 确实未验。原因已缩小：官方 `IFeatureManager.InsertRib` 是 10 个参数（含 `ReferenceEdgeIndex`），能力层位置已对齐；★ 嫌疑在 `ReferenceEdgeIndex`（传 0）—— 官方说它是「Edge in the sketch」⇒ 0 很可能不是合法边索引",
+      "⚠ `insert_composite_curve` 真机失败（既有冒烟 7/8，判为真失败）⇒ 能力层正确 raise（不是假通过）",
+      "★ 四个工具的形参都不含裸坐标（规则 3）；而 `linear_pattern` / `hole_wizard` 有裸坐标 ⇒ 不挂它们",
+      "★ 本条目暴露一件流程事：轮 249-251 重复造了证据脚本，而仓库里早有更强的既有冒烟 ⇒ §5.0 的「先找」要覆盖「判据 + 证据脚本 + 批量入口」三样（见 known-facts 186）"
+    ],
+    "allowed_modes": ["interactive", "reviewed"],
+    "evidence": [
+      "★ 既有冒烟（权威 · 本仓库自己的判据）：`python tools/verify_dome_smoke.py` ⇒ 9/9 · verdict: pass（★ 两个独立证据：边界框逐分量变了 [20,60,100]→[34.2222,60,100]；特征树条数 19→20 · ★ 且逐条标注了能证明什么、不能证明什么）",
+      "★ `python tools/capture_modeling_readback_evidence.py` ⇒ verdict: pass（2/4：`shell` 与 `insert_dome` 的 readback 三条全真）",
+      "⚠ `python tools/verify_composite_curve_smoke.py` ⇒ 7/8 · verdict: fail，而它写明「前置成立 ⇒ 这是真失败」（★ 不是前置不可达那种免责失败）",
+      "★ `python tools/probe_shell_thickness_units.py` ⇒ 单位判决 = 毫米（t=2 ⇒ 空腔 96×56×18；t=4 ⇒ 92×52×16）· ⚠ 官方文档写 meters 对本机不成立"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_part.py 的 shell_report / rib_report / insert_dome_report / insert_composite_curve_report（包装既有 shell / rib / insert_dome / insert_composite_curve，并统一接 sw_feature_readback）"
+  }
+]

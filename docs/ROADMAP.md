@@ -6360,6 +6360,33 @@
            `all_specs()` **105** · known-facts **183** 条。
          ▶ **队列续作**：★ 修 `rib` / `insert_dome` 的静默失败（回读已能定位）·
            ★ `insert_composite_curve` 的选择（官方要求 `mark=1` 且实体类型合法）· ★ 段 4（25 个）。
+     ★ 2026-10-01（轮 252 / **24h 计划 段 3 续 3**）· ★★★★★ **§5.0 的"先找"也要覆盖**证据脚本** —— 我重复造了轮子，而仓库里的既有冒烟更强**
+         ▶ **怎么发现的**：轮 251 之后，我去 `tools/` 找 `rib`/`dome`/`composite` 相关的既有脚本
+           ⇒ ★★ **发现两个**更精细的既有冒烟（★ 而我轮 249-251 **自己新写了一个**）：
+             · `tools/verify_dome_smoke.py`（14.5 KB）· `tools/verify_composite_curve_smoke.py`（13.4 KB）
+             · 还有 `tools/run_migrated_verify_smokes.py`（★ **把被迁的 15 个 `verify_*` 逐个真机跑**）
+         ★★★ **既有冒烟强在哪（逐条对比我的）**：
+           ① ★ **用两个独立证据**：`verify_dome_smoke` 同时看「**边界框逐分量变化**」
+              （`[20,60,100] → [34.2222,60,100]`）与「**特征树条数**」（`19 → 20`）
+              —— ★★ 两条**不共享失败模式**；而我那三条**都从"按名找到特征"出发**（★ 一处倒全倒）；
+           ② ★ **逐条标注"能证明什么 / 不能证明什么"**：★「insert_dome(8) 未抛异常 —— ⚠ 这**什么也证明不了**」
+              「增长 14.2222 **≠ 传的 8** ⇒ **如实记为未查明**」—— ★★★ **这是本项目方法论的活样本**；
+           ③ ★ **收尾扫模态框**（事实 64）。
+         ★★★★★ **于是拿到**权威结论****（★ 既有冒烟给的，不是我推的）：
+           · `python tools/verify_dome_smoke.py` ⇒ **9/9 · verdict: pass**
+             ⇒ ★★ **独立确认了**轮 251 修好 `insert_dome` 的结论**；
+           · `python tools/verify_composite_curve_smoke.py` ⇒ **7/8 · verdict: fail**，
+             而它写明「**前置成立 ⇒ 这是真失败**」（★ 比"选择不合法"的推测硬）；
+           · ⚠ **`rib` 无对应冒烟 ⇒ 确实未验** ✓。
+         ▶ **验收**：① 门禁链 **18 道** exit 0 ✓ · 全量 pytest **1278 passed / 0 failed** ✓
+           ② ★ 真机：既有冒烟 `verify_dome_smoke` **9/9 pass** ✓ · 我的 `capture_modeling_readback_evidence` **pass**（2/4）
+         ▶ **能力条目已按权威证据改写**（`modeling_feature_readback_tools` = **verified**）：
+           ★ 逐条写明「抽壳 ✅ / 圆顶 ✅ · 筋 未验 · 复合曲线 **真机失败**」，
+           并把 `rib` 的嫌疑（`ReferenceEdgeIndex`）与 `Height` 的未查明项**如实列出**。
+         ▶ **状态**：`all_specs()` **105** · 能力 **56** 条（verified **47** · stitched **8**）·
+           known-facts **185** 条。
+         ▶ **队列续作**：★ `rib` 的 `ReferenceEdgeIndex`（试 0/1 + 查选区形态）·
+           ★ `insert_composite_curve`（既有冒烟已判"真失败"）· ★ 段 4（孔族 / 焊件 / 配置 / 导出 25 个）。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
