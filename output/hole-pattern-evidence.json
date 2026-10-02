@@ -1,0 +1,73 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件3"
+  },
+  "neg_kind_counterbore": {
+   "ok": true,
+   "why": "本工具只暴露 through/blind",
+   "value": {
+    "ok": false,
+    "kind": "counterbore",
+    "requested": null,
+    "holes": [],
+    "tree_before": null,
+    "tree_after": null,
+    "new_features": [],
+    "error": "kind 只支持 ['blind', 'through']（★ counterbore / countersink 另有必填参数，★ 未在本工具暴露）"
+   }
+  },
+  "neg_blind_without_depth": {
+   "ok": true,
+   "why": "盲孔没深度建不出来",
+   "value": {
+    "ok": false,
+    "kind": "blind",
+    "requested": 1,
+    "holes": [],
+    "tree_before": null,
+    "tree_after": null,
+    "new_features": [],
+    "error": "kind=blind 时 depth_mm 必填"
+   }
+  },
+  "neg_empty_positions": {
+   "ok": true,
+   "why": "空孔位表",
+   "value": {
+    "ok": false,
+    "kind": "through",
+    "requested": null,
+    "holes": [],
+    "tree_before": null,
+    "tree_after": null,
+    "new_features": [],
+    "error": "positions 至少包含一个孔位"
+   }
+  },
+  "hole_pattern_4_through": {
+   "ok": true,
+   "requested": 4,
+   "holes": 4,
+   "tree": [
+    7,
+    15
+   ],
+   "new_features": [
+    "草图2",
+    "孔_1",
+    "草图3",
+    "孔_2",
+    "草图4",
+    "孔_3",
+    "草图5",
+    "孔_4"
+   ],
+   "error": null
+  }
+ },
+ "at": "2026-10-03T02:42:36",
+ "verdict": "pass",
+ "note": "★ 段 4 孔族：包装把 `create_hole_pattern` 的 **creator 可调用对象**换成**具名的 kind**（★ MCP 层给不出函数）。★ 判据两条都要：证据条数 + **特征树增量**。"
+}
