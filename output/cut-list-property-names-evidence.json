@@ -1,0 +1,48 @@
+{
+ "trials": [
+  {
+   "trial": "english",
+   "props": {
+    "Description": "DSH",
+    "Material": "Q235"
+   },
+   "ok": false,
+   "err": "RuntimeError: 切割清单属性回读失败: 切割清单项目1 / Material"
+  },
+  {
+   "trial": "chinese",
+   "props": {
+    "说明": "DSH",
+    "材料": "Q235"
+   },
+   "ok": true,
+   "returned": "[{\"name\": \"切割清单项目1\", \"properties\": {\"说明\": {\"add_status\": 0, \"name\": \"说明\", \"status\": 2, \"raw\": \"DSH\", \"resolved\": \"DSH\", \"was_resolved\": true, \"linked\": false}, \"材料\": {\"add_status\":"
+  },
+  {
+   "trial": "chinese_only_material",
+   "props": {
+    "材料": "Q235"
+   },
+   "ok": true,
+   "returned": "[{\"name\": \"切割清单项目1\", \"properties\": {\"材料\": {\"add_status\": 0, \"name\": \"材料\", \"status\": 2, \"raw\": \"Q235\", \"resolved\": \"Q235\", \"was_resolved\": true, \"linked\": false}}}]"
+  }
+ ],
+ "at": "2026-10-03T05:28:53",
+ "observed_property_names": [
+  "长度",
+  "角度1",
+  "角度2",
+  "角度方向",
+  "角度旋转",
+  "UNIT_OF_MEASURE",
+  "MATERIAL",
+  "QUANTITY",
+  "TOTAL LENGTH"
+ ],
+ "verdict": "pass",
+ "successes": [
+  "chinese",
+  "chinese_only_material"
+ ],
+ "note": "★ 试切割清单属性名：★ 英文 vs **中文（本地化）** —— ★ 而中文名不是猜的：★ `update_cut_list` 真机报出来的属性名是中文（「长度」）。"
+}

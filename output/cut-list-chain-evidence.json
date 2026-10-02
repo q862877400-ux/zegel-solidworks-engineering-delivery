@@ -1,0 +1,50 @@
+{
+ "steps": {
+  "structural_member": {
+   "ok": true,
+   "feature": "square-rods (1)",
+   "new_type_names": [
+    "WeldMemberFeat",
+    "WeldmentFeature"
+   ]
+  },
+  "evidence_before": {
+   "ok": true,
+   "cut_list_folders": "[]",
+   "keys": [
+    "configuration",
+    "cut_list_folders",
+    "cut_list_items",
+    "feature_types",
+    "features",
+    "has_structural_member",
+    "has_weldment_feature",
+    "solid_body_count"
+   ]
+  },
+  "ensure_cut_list": {
+   "ok": true,
+   "returned": "[\"<PyIDispatch at 0x000001D487F11800 with obj at 0x000001D487F0E358>\"]"
+  },
+  "set_cut_list_properties": {
+   "ok": false,
+   "err": "RuntimeError: 切割清单属性回读失败: 切割清单项目1 / Material"
+  },
+  "update_cut_list": {
+   "ok": true,
+   "returned": "[{\"name\": \"切割清单项目1\", \"type\": \"CutListFolder\", \"body_count\": 1, \"update_ok\": true, \"properties\": {\"长度\": {\"name\": \"长度\", \"status\": 2, \"raw\": \"\\\"LENGTH@@@切割清单项目1@零件16.SLDPRT\\\"\", \"resolved\": \"100000\", \"was"
+  },
+  "evidence_after": {
+   "ok": true,
+   "cut_list_folders": "[{'name': '切割清单项目1', 'type': 'CutListFolder', 'body_count': 1, 'update_ok': True, 'properties': {'长度': {'name': '长度', 'status': 2, 'raw': '\"LENGTH@@@切割清单项目1@零件16.SLDPRT\"', 'resolved': '100000', 'was_resolved': True, 'linked': True}, '角度1': {'name': '角度1', 'status': 2, 'raw': '\"ANGLE1@@@切割清单项目1@零件16."
+  },
+  "export_csv": {
+   "ok": true,
+   "path": "D:\\AI\\SW\\output\\cut-list-chain.csv",
+   "bytes": 224
+  }
+ },
+ "at": "2026-10-03T05:28:25",
+ "verdict": "pass",
+ "note": "★ 在**真有结构构件**的文档上走完切割清单那条链 —— ★ 而它的**旧卡点前提**（「**建不出结构构件**」）**已在轮 428 失效**。★ 判据：① 切割清单文件夹非空 ② 导出 CSV 文件存在且非空。"
+}
