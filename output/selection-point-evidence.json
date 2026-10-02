@@ -1,0 +1,24 @@
+{
+  "captured_at": "2026-10-02T12:50:22",
+  "capability": "selection_helpers",
+  "steps": {
+    "no_selection": {
+      "ok": false,
+      "point_mm": null,
+      "selection_count": 0,
+      "error": "当前**没有选中任何东西** ⇒ 读不到点。★ 先用声明式选择选中一个点 / 草图点 / 面，再调本函数。"
+    },
+    "face_selected": {
+      "ok": true,
+      "point_mm": [
+        -0.02020053825691548,
+        0.022538724840160285,
+        -5.684341886080802e-14
+      ],
+      "selection_count": 1,
+      "error": null,
+      "entry_used": "GetSelectionPoint2"
+    },
+    "_selfcheck_two_sided": true
+  }
+}
