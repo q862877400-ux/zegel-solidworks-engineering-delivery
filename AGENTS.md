@@ -51,6 +51,22 @@ pwsh -File C:\swprojects\sw-skill-fork\tools\round_chain.ps1 -Tests tests/<改�
   **必须先跑**：门禁查的是它们的产物。
 - 「偏离上游」那行已由脚本**先算好预置**，所以 `release_check` **一轮即绿**（原先白花 31.5 s 跑第二轮）。
 
+## 写探针验能力时：按 `ToolSpec` 的契约调，别手调内部实现
+
+```
+① 从 mcp-server 的 ToolSpec 读它声明的 inject 与 params（`rc.all_specs()`）。
+② 按那个契约准备实参（inject='study' 就给 study、inject='sw_app' 就给 ISldWorks、inject='model' 就给文档）。
+③ 只有工具层本身有 bug 时才去调内部实现，并在记录里写明"这是内部函数，参数契约与工具层不同"。
+```
+
+**为什么**：2026-10-01 轮 345–346，同一个错我犯了**三次** —— 把 `doc` 传给要 `ISldWorks` 的
+`ensure_simulation_addin`、把 `sw` 传给要 study 的 `configure_*_solver_report`、
+还有缺 `study_name` 时的路径。**每次"失败"都像是能力坏了，实际是我调错了**。
+只看探针，就会把**一条好能力记成坏的**（而反过来也一样：探针"看起来对"不能证明工具层对）。
+
+★ 与本条配套：**若工具层真有 bug**（如 `resolve_study` 少解包一层），要在**工具层**修，
+并在记录里写清"探针按契约调之后仍失败 ⇒ 是工具层的问题"。
+
 ## 汇报频率
 
 默认不汇报；只在三种情况发一条消息：一批做完、同一处卡住 ≥2 次、计划要变。

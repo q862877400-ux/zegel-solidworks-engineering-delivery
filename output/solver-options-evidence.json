@@ -1,31 +1,24 @@
 {
   "steps": {
-    "solid_body": {
+    "create_study": {
       "ok": true
     },
-    "create_study_report": {
+    "get_study": {
       "ok": true,
-      "keys": [
-        "entry_name",
-        "error_code",
-        "ok",
-        "requested_name",
-        "study_name",
-        "★"
-      ]
+      "type": "CDispatch"
     },
     "configure_static_solver_report": {
       "ok": false,
-      "err": "取 options 失败（family=ICWStaticStudyOptions）：SldWorks.Application.StaticStudyOptions"
+      "err": null
     },
     "configure_frequency_solver_report": {
       "ok": false,
-      "err": "取 options 失败（family=ICWFrequencyStudyOptions）：SldWorks.Application.FrequencyStudyOptions"
+      "err": "study 上取不到 family=ICWFrequencyStudyOptions 的设置对象 ⇒ ★ 该研究类型可能不是这一族（★ 见 list_setter_summary 的族清单）"
     },
     "configure_buckling_solver_report": {
       "ok": false,
-      "err": "取 options 失败（family=ICWBucklingStudyOptions）：SldWorks.Application.BucklingStudyOptions"
+      "err": "study 上取不到 family=ICWBucklingStudyOptions 的设置对象 ⇒ ★ 该研究类型可能不是这一族（★ 见 list_setter_summary 的族清单）"
     }
   },
-  "captured_at": "2026-10-02T21:16:23"
+  "captured_at": "2026-10-02T21:18:12"
 }
