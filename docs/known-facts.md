@@ -866,3 +866,34 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 | 274 | **批量判「缺口操作」：174 条可判 ⇒ **真缺候选 104 · 有候选 70**；而**"名字不撞"会漏**（`analyze_draft` 就是实例）**（2026-10-01，轮 355）。  ## 一、★ 判据（★ 三条，★ 每条都能被反驳） ``` ① **描述在手**：★ 该操作名在 `docs/operation-descriptions.json` 里有四家原文（★ 否则**跳过，不猜**）； ② **实现不在**：★ 用 `sw_com_traps.find_real_implementations`（★ **已排除 `sw_api_*.py` 反射转储**）； ③ **名字不撞**：★ 从 `rc.all_specs()` 取我们所有**工具名 / 函数名 / 模块名**，    ★ 判"该操作名切出的词集"是否被某个名字包含。 ⇒ ★ 三条合起来才给"真缺候选"：★ **有描述 + 我们无实现 + 名字也不撞**。 ```  ## 二、★ 结果（`tools/judge_gap_candidates.py` ⇒ `docs/union-gap-batch-judgement.md`） ``` ★ 有描述可判: **174** 条 ★ **真缺候选**: **104** · 有候选: **70** ★★ **稳定性验证**：★ 前 12 条与本会话**人工判的结论完全一致**    （`delete_feature` / `extend_surface` / `filled_surface` / `revolved_surface` / `rename_feature` = 真缺候选；     `offset_surface` / `planar_surface` / `loft` / `parting_line` / `shut_off_surface` / `extruded_surface` = 有候选）    ⇒ ★★ **判据两轮一致** ⇒ ★ 不是随机噪声 ✓ ★ 新判出的真缺候选（★ 抽样）：`split_line`（分割线）· `thicken_surface`（加厚曲面）·    `unsuppress_feature`（解压缩特征）· `activate_document`（切换活动文档）· `analyze_draft`（拔模分析） ```  ## 三、★★★★★ 而**限度是真的**（★ 本轮抓到一个实例） ``` ★★ `analyze_draft` 被判"真缺候选" —— ★ **而我们有 `MoldDraftAnalysis`**（★ 事实 270 里刚查过那族）    ⇒ ★★ **即：★ 那是**"名字不撞而能力其实在"**的情形** ⇒ ★ **假缺** ✓ ★ 同族还有：★ `activate_document`（★ 我们有没有"切换活动文档"？★ 未核 —— ★ 可能也只是名字不同）。 ⇒ ★★★ **所以**：★ 那 **104** 是**候选**，★ **不是**"104 个真缺"** ——    ★ 本表的用途**只是挑候选**（★ 脚本与产物的头部都写明了这条限度）。    ⇒ ★★★★ **绝不允许**把 104 当"我们缺 104 个能力"来报（★ 那正是 `harvest-report` §10.3 更正掉的读法，      ★ 也是 `union-gap-triage.md` 开头那段口径声明要防的事）。 ```  ## 四、★ 可做的下一步（★ 按"置信度"分层） ``` ★ **高置信真缺（★ 名字与语义都撞不上）**：★ `extend_surface` · `filled_surface` · `revolved_surface`    （★ 曲面族，★ 而我们**已**有同族的 `offset` / `planar` / `extruded` ⇒ **可成批补**）·    `thicken_surface`（★ 同属曲面族）· `delete_feature` / `rename_feature` / `unsuppress_feature`（★ 特征管理）。 ★ **需人工核"是不是只是名字不同"**：★ `analyze_draft`（★ 已知假缺）· `activate_document` · `split_line` …    ⇒ ★ 核法：★ **按描述里的动作**去我们的**函数体**里找（★ 而不是找名字）—— ★ 那是另一件工作。 ```  ## 五、★ 又踩了那次「文件头 docstring 未闭合」（★ **第四次**） ``` ★ 新建 `tools/judge_gap_candidates.py` 时，★ 来源块**又写进了 `"""` 里面**    ⇒ `SyntaxError: invalid character '★'` —— ★ **本会话第四次**（★ 前三次：`modal_dialog_forensics` /      `test_deprecated_entry_interlock` / `extract_operation_descriptions`）。 ★★ **连踩四次 = 该机械化的强信号**（★ 与事实 62 同理）⇒ ★ **正解：★ 加一道门禁**：    ★ **`scripts/` 与 `tools/` 下每个 `.py` 必须能 `ast.parse`** ⇒ ★ 那能一次抓住**所有**语法错      （★ 含本类"docstring 未闭合把后文吞掉"），★ 并接进 `release_check.py`。    ⚠ **本轮未做**（★ 记在这里，★ 下一轮做 —— ★ 而**不做的话**同一处还会再踩）。 ```  **依据**：`tools/judge_gap_candidates.py`（★ 可重跑）· `docs/union-gap-batch-judgement.md` （★ **174** 可判 / **104** 真缺候选 / **70** 有候选）· `docs/operation-descriptions.json` （★ 四家 **464** 个操作名 · 分诊表命中 **174**）· `sw_com_traps.find_real_implementations` （★ 公共函数，★ **已排除反射转储**）· 事实 271 / 273（★ 同一个坑的前两次）
 
 | 275 | **把「同一处踩了五次」机械化：`.py` 语法门禁（第 19 道）接进 `release_check`**（2026-10-01，轮 355–356）。  ## 一、★★★★★ 五次实录（★ 全在**新建文件**时） ``` ★ 形态**完全一样**：★ 新建 `.py` 时把**来源块写进了头部三引号里面**（忘了闭合）⇒    Python 把后面几十行**当字符串吞掉** ⇒ 报的是    `SyntaxError: invalid character '★' (U+2605)`    ★★ **错误信息指向那个星号，不是真因** ⇒ 每次都要现场再推理一遍。 ★ 五次：`tools/modal_dialog_forensics.py` · `tests/test_deprecated_entry_interlock.py` ·    `tools/extract_operation_descriptions.py` · `tools/judge_gap_candidates.py` ·    ★★ **`scripts/check_python_syntax.py`（第五次正是在写这道门禁的脚本本身）**。 ★★ 而**每一次**修法都一样：★ 在 `# ── 来源 ──` **之前**补一行三引号。    ★ 第六次我**手改又失败** ⇒ 最后**用脚本**（找 `# ── 来源 ──` 那行、在它之前插入）才稳。    ⇒ ★ **定则：同一处修 ≥3 次仍要手改，就说明该让脚本做**（与事实 53 同族）。 ```  ## 二、★ 门禁的判据与效果 ``` ★ `scripts/check_python_syntax.py`：扫 `scripts` `tools` `tests` `mcp-server` `subskills`    下**全部** `.py`，逐个 `ast.parse`（★ **不 import、不执行** ⇒ 不需要 SolidWorks、不需要依赖装好）。 ★★ **它报的是真因的名字** —— 负例实测：    `✗ tools\_syntax_negcase.py:1: **unterminated triple-quoted string literal**`    （★ 而不是那个令人困惑的 `invalid character '★'`）✓ ★ 实测：**532** 个文件 · 失败 **0** 处 · exit 0；造一个负例 ⇒ 失败 1 处 · exit 1；删掉 ⇒ 恢复 exit 0。 ★ 已接进 `release_check.py`（第 **19** 道）：`py_syntax = _run_python_syntax_gate()` + 后续 `raise`。 ```  ## 三、★★★★★ 元门禁**当场抓了我两次**（★ 这就是它存在的意义） ``` ★ 接完第一版跑 `release_check`，元门禁（`check_gate_wiring.py`）报两条：    ① 「`py_syntax` 的结果**没有进返回体** ⇒ 『它跳过了/它没跑』在外面**看不见**       （★ 静默跳过与没跑等价）⇒ 加进 `_gate_results`」    ② 「`_run_python_syntax_gate` 在 `release_check.py` 里被调用，却**没登记分类**       （登记表必须覆盖每一个调用点）」 ⇒ ★★ **两条都是可执行的修法**：① 加进 `_gate_results` 的 dict；    ② 加进 `docs/gate-classification.json`（`kind: hard`）✓ ★★ **这才是好门禁的形态** —— ★ 它不只说"不合格"，★ 它说"**改成什么**"。 ```  ## 四、★★ 顺带抓到我自己上一轮的两处遗漏（★ 也由门禁报出） ``` ★ `check_union_conventions.py` 报：「能力 `simulation_load_family_breadth` 是 CAD 能力且标 `verified`，    但 **`verified_versions` 为空** —— 『跑过』必须有版本证据」    ⇒ ★★ **我上一轮把它升 `verified` 时漏了 `verified_versions`** ⇒ 补 `["2026"]`（★ 与别的条目同口径）      + 在 `limitations` 里写明真机版本（SW 2026 SP4.1 / Python 3.14.7 / 证据文件）✓    ★★★ **定则：升 `verified` 必须同时给 `verified_versions`** —— ★ 门禁会拦，★ 而**它拦得住**就是好事。 ★ 另一条「`docs/union-level-audit.md` 与最新数据不一致」⇒ ★ **生成物过期**，★ 跑生成器即绿（★ 链里有）。 ```  **依据**：`scripts/check_python_syntax.py`（★ 扫 **532** 个文件 · 负例 exit 1）· `scripts/release_check.py` 的 `_run_python_syntax_gate` + `_gate_results["py_syntax"]` · `docs/gate-classification.json`（★ 新增 `check_python_syntax.py` 条目）· `tests/test_deprecated_entry_interlock.py`（4 passed）· `docs/union-gap-batch-judgement.md` （★ 174 可判 / **104** 真缺候选 / **70** 有候选）· 事实 48 / 53 / 62 / 271 / 273 / 274
+
+| 276 | **“某个词在不在仓库里”这个判据——**无论怎么加停用词都不能判“我们有没有某能力”****（2026-10-01，轮 357）。
+
+## 一、★ 两次实测（★ 都是“全命中”——而全命中 = 零判别力）
+```
+★ 判据：★ 从四家描述里取 ≥4 字母的词，拿每个词去 `find_real_implementations`。
+① **不加停用词** ⇒ ★★ **12/12 全“命中”**（`perform` / `create` / `get` / `selected` / `open` /
+  `document` / `file` / `feature` 这类**通用词**到处都是）；
+② **加停用词表**（★ 通用动词 + 虚词 + 色彩词，约 60 个）后重跑 ⇒ ★★ **仍然 11/12**；
+  因为 `body` / `face` / `draft` / `assembly` / `render` 这类**领域名词**在代码里**同样泛滥**。
+⇒ ★★★ **它与调研 v2 那条「名字出现过 100%（无判别力）」是同一类错**（★ 只是从“工具名”
+  换成了“描述里的词”）。
+```
+
+## 二、★ 那该用什么粒度
+```
+★ **唯一有判别力的粒度是 `capabilities.yaml` 的能力条目**：
+  ★ 那是**人工核过的语义单元**（★ 每条带 `id` + `mcp_tools` + `evidence` + `limitations`）——
+  ★ 而**不是**函数名、也**不是**描述里的词。
+⇒ ★★ 所以 `docs/union-gap-batch-judgement.md`（**104** 条）的读法应收紧为：
+  ★ **「名字层面没对上」**，★ **不是**「能力不在」**。
+```
+
+## 三、★ 两层约束合起来看
+```
+★ 轮 271/273/275：已知“扫仓库**必须排除 `sw_api_*.py`**”（★ 反射转存表）；
+★ 本轮：再加一层——**即使排除了转存表，“词命中”也不能当“能力在”。**
+⇒ ★★ **两层合起来**: ★ **扫代码只能证明“有人写过这个词”，不能证明“有这个能力”**。
+  ★ 要证明能力在，只能靠★ **(①) `capabilities.yaml` 里有对应条目
+    + (②) 该条目带 `verified` 或至少带 `mcp_tools`** —— ★ 两者都是**人工维护**的。
+```
