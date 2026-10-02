@@ -1,0 +1,17 @@
+
+
+def test_the_blind_spot_can_really_come_back(monkeypatch) -> None:
+    """★★★ **负例自证**：★ 证明那个"盲区无声回来"的失效模式**真的可达**（★ 事实 62）。
+
+    ★ 事实 62：★「一个门禁『写了』不等于它『有效』—— **负例测试是唯一的证明**」。
+    ★★ 而上面那条 `test_server_export_functions_is_not_silently_empty` 断言"返回非空" ——
+      ★ 那**只有在本测试证明"它确实能返回空"之后**才有意义 ✓
+
+    ★ 做法：★ 把 `ROOT` 指到一个**没有 `server.py`** 的地方 ⇒
+      ★★ 读者会**静默返回空集**（★ 那正是它现在的行为）⇒ ★ 于是上面那条断言会红 ✓
+    """
+    from pathlib import Path as _P
+    monkeypatch.setattr(T, "ROOT", _P(r"D:\AI\SW\__no_such_repo__"))
+    assert T._server_export_functions() == set(), (
+        "★ 指向不存在的仓库时它本该**静默返回空集**（★ 而那正是危险的失效模式）—— "
+        "若它现在**不**返回空，说明读者变了，上面那条守卫的判据要重审")

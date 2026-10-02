@@ -1,0 +1,54 @@
+
+
+# ── 2026-10-03（轮 439）★ 补三条守卫：★ 针对**具体的静默退化** ──────────────────────
+# ★★ 起因：★ `plan-200r-v3-convergence.md` §五 ④ —— ★ **分诊本身是判据**，
+#    ★ 而它这一阶段**错了四次**（★ 事实 346/350/351/352）⇒ ★ 该照第 22 道门禁的做法管起来。
+# ★ 而本文件**已有 8 条**覆盖旧规则（★ 含 `test_wrapper_rule_does_not_swallow_real_gaps` 那条负例）——
+#    ★★ 故本轮只补**本阶段新加的两样**没被看住的地方。
+
+
+def test_server_export_functions_is_not_silently_empty() -> None:
+    """★★★ **`_server_export_functions()` 不许静默返回空集** —— ★ 那是本阶段最危险的退化。
+
+    ★ 背景（事实 350/351）：★ 分诊原来看不见 `server.py` 侧那 **60 个** function ⇒
+      ★ 把**已覆盖**的名字报成「该挂」。★ 而那个盲区是**靠读 `server.py` 的 `exports` 字典**修的。
+    ★★ 而**若那个字典改名/挪走**，★ `_server_export_functions()` 会**静默返回空集** ⇒
+      ★★ **盲区无声回来**（★ 而分诊仍会报一个**看着正常**的数字）⚠ ——
+      ★ 那正是本仓那条「**一个存在但没人用的守卫与没有守卫等价**」的同族。
+    ★ 判据：★ 非空 **且** 含一个**已知**名字（★ 那个字典里确实有的）。
+    """
+    funcs = T._server_export_functions()
+    assert funcs, (
+        "`_server_export_functions()` 返回空集 ⇒ 分诊会**无声地**退回"看不见 server.py"那个盲区"
+        "（事实 351）。★ 检查 `mcp-server/server.py` 里那个 `exports = {…}` 字典是否还在原处/原名。")
+    assert "batch_export_formats" in funcs, (
+        "`batch_export_formats` 不在名单里 ⇒ 那个字典的读法可能变了"
+        "（★ 而它是 `batch_export` 能判「已有」的结构性依据）")
+
+
+def test_alias_table_entries_carry_a_real_reason() -> None:
+    """★★ **别名表的每条都要够长** —— ★ 否则它会**变成永久补丁堆**。
+
+    ★ 先例：★ `KNOWN_DEAD_ENDS` 那条测试（`len(why) > 60`）—— ★ 而理由**太短等于静默豁免**。
+    ★★ 而本表（轮 436 加）与那张表**同一性质**：★ 记的是「**功能已由另一个名字覆盖**」，
+      ★ 而那**是判据推不出来的东西** ⇒ ★★ **故必须每条都写出依据** ✓
+    """
+    for key, why in T.ALIASED_BY_TOOL.items():
+        assert len(str(why)) > 40, (
+            "%r 的理由太短（%d 字）⇒ 等于静默豁免。★ 本表每条都要写清"
+            "「那个工具的 function 到底调没调它」" % (key, len(str(why))))
+
+
+def test_cannot_be_tool_entries_carry_a_real_reason() -> None:
+    """★★ **「不能当工具」那张表的每条也要够长** —— ★ 而它更严格。
+
+    ★ 那张表记的是**有原则的"不做"**（★ 轮 438 加：`select_face_at` 的签名是裸坐标 ⇒ 规则 3 禁止）。
+    ★★ 而它比"别名"更危险：★ 别名写错只是**多算一条已有**；
+      ★ 它写错会把**真该挂的**判成"不做" ⇒ ★★ **故理由必须写出"是哪条规则"** ✓
+    """
+    for key, why in T.CANNOT_BE_A_TOOL_WHY.items():
+        assert len(str(why)) > 40, (
+            "%r 的理由太短（%d 字）⇒ 判「不做」而没说出是哪条规则" % (key, len(str(why))))
+        assert "\u89c4\u5219" in str(why), (
+            "%r 的理由里没提「规则」 ⇒ 「不能当工具」必须**引用一条本仓的规则**"
+            "（★ 如规则 3「禁裸坐标」），★ 不是"我觉得难"（★ 那正是事实 53 的反面）" % (key,))
