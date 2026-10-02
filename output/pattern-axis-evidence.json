@@ -1,0 +1,21 @@
+{
+  "steps": {
+    "insert_axis2_ret": "True",
+    "axis_features": [
+      "基准轴1"
+    ],
+    "pattern": {
+      "ok": true,
+      "ret": "<COMObject <unknown>>",
+      "new": [
+        "基准轴1",
+        "阵列(圆周)1"
+      ],
+      "type": "CirPattern"
+    }
+  },
+  "captured_at": "2026-10-02T18:06:01",
+  "passed": 1,
+  "of": 1,
+  "verdict": "pass"
+}

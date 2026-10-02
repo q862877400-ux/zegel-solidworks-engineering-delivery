@@ -1,0 +1,32 @@
+{
+  "steps": {
+    "runs": [
+      {
+        "case": "cn_R",
+        "plane": "右视基准面",
+        "ok": true,
+        "ret": "<COMObject <unknown>>",
+        "new": [
+          "切除-拉伸1",
+          "镜向1"
+        ],
+        "type": "MirrorPattern"
+      },
+      {
+        "case": "en_R",
+        "plane": "Right Plane",
+        "ok": false,
+        "ret": "None",
+        "new": [
+          "草图2",
+          "切除-拉伸1"
+        ],
+        "type": "ICE"
+      }
+    ]
+  },
+  "captured_at": "2026-10-02T18:05:22",
+  "passed": 1,
+  "of": 2,
+  "verdict": "pass"
+}

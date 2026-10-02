@@ -1,0 +1,18 @@
+{
+  "steps": {
+    "axis": {
+      "ok": false,
+      "error": "AttributeError: <unknown>.InsertAxis2"
+    },
+    "pattern": {
+      "ok": false,
+      "ret": "None",
+      "new": [
+        "草图2",
+        "切除-拉伸1"
+      ],
+      "type": "ICE"
+    }
+  },
+  "captured_at": "2026-10-02T18:05:39"
+}
