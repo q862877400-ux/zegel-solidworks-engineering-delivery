@@ -1,0 +1,54 @@
+{
+  "steps": {
+    "runs": [
+      {
+        "case": "EXTSKETCHSEGMENT_m4",
+        "sel_sketch": 1,
+        "sel_axis": 1,
+        "ret": "<COMObject <unknown>>",
+        "new": [
+          "旋转1"
+        ],
+        "type": "Revolution",
+        "ok": true
+      },
+      {
+        "case": "EXTSKETCHSEGMENT_m16",
+        "sel_sketch": 1,
+        "sel_axis": 1,
+        "ret": "<COMObject <unknown>>",
+        "new": [
+          "旋转1"
+        ],
+        "type": "Revolution",
+        "ok": true
+      },
+      {
+        "case": "SKETCHSEGMENT_m4",
+        "sel_sketch": 1,
+        "sel_axis": 0,
+        "ret": "<COMObject <unknown>>",
+        "new": [
+          "旋转1"
+        ],
+        "type": "Revolution",
+        "ok": true
+      },
+      {
+        "case": "EXTSKETCHSEGMENT_noSk",
+        "sel_sketch": 0,
+        "sel_axis": 1,
+        "ret": "<COMObject <unknown>>",
+        "new": [
+          "旋转1"
+        ],
+        "type": "Revolution",
+        "ok": true
+      }
+    ]
+  },
+  "captured_at": "2026-10-02T19:02:41",
+  "passed": 4,
+  "of": 4,
+  "verdict": "pass"
+}

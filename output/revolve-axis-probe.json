@@ -1,0 +1,47 @@
+{
+  "steps": {
+    "sketches": {
+      "outline": "草图1",
+      "axis_line_sketch": "草图2"
+    },
+    "sk0_ax4": {
+      "ok": false,
+      "sel": [
+        1,
+        1
+      ],
+      "new": "草图2",
+      "type": "ProfileFeature"
+    },
+    "sk1_ax4": {
+      "ok": false,
+      "sel": [
+        1,
+        1
+      ],
+      "new": "草图2",
+      "type": "ProfileFeature"
+    },
+    "sk0_ax16": {
+      "ok": false,
+      "sel": [
+        1,
+        1
+      ],
+      "new": "草图2",
+      "type": "ProfileFeature"
+    },
+    "sk1_ax16": {
+      "ok": false,
+      "sel": [
+        1,
+        1
+      ],
+      "new": "草图2",
+      "type": "ProfileFeature"
+    }
+  },
+  "captured_at": "2026-10-02T19:02:17",
+  "passed": 0,
+  "of": 4
+}

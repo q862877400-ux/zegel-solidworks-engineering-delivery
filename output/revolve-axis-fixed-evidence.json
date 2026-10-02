@@ -1,0 +1,22 @@
+{
+  "steps": {
+    "runs": [
+      {
+        "case": "same_sketch",
+        "ok": true,
+        "new": "旋转1",
+        "type": "Revolution"
+      },
+      {
+        "case": "no_axis",
+        "ok": false,
+        "new": "旋转1",
+        "note": "★ 不传轴时应建不成（★ 除非别处有轴）"
+      }
+    ]
+  },
+  "captured_at": "2026-10-02T19:03:17",
+  "passed": 1,
+  "of": 2,
+  "verdict": "partial"
+}
