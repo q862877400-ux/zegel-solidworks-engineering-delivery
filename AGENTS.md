@@ -32,6 +32,25 @@
 
 这仍是缝合项目，不是从零写：能力来自官方文档、外部开源项目与本仓库既有模式。
 
+## 每轮收尾链（★ 一条命令）
+
+```
+pwsh -File C:\swprojects\sw-skill-fork\tools\round_chain.ps1 -Tests tests/<改过的>.py
+```
+
+**实测 34.8 s**（生成器 2.1 s + `release_check` 31 s + 聚焦测试）。**不要再手打 6 步链、不要每轮跑全量 pytest**。
+
+- **为什么**：全量 pytest **160.6 s**，其中三条测试（`test_release_check_passes_current_tree` 31.2 s ·
+  `test_gate_details_exposed_for_every_gate` 31.1 s · `test_no_uncalled_helpers_in_gates_and_tools` 25.6 s）
+  **各自在内部又跑一遍 `release_check`** ⇒ 占总时间 54%。★ 而 DSH 的 `AGENTS.md` 明写
+  「**Never default to the full suite** or repeat a passing check for commit or push」⇒ 每轮跑全量是**违反纪律**。
+- **不要再单独跑** `check_union_conventions.py` / `check_param_binding.py` / `check_digest_freshness.py` /
+  `check_report_freshness.py` —— `release_check.py` 内部**已有 18 道门禁**，含这四个（AST 扫出来的，非推测）。
+- **全量 pytest 只在两种情况跑**：① 发布前；② 改了 `sw_connect.py` 或门禁本体（被大量测试共用）。
+- 生成器（`sync_bundled_skill` / `gen_metrics` / `gen_harvest_digest` / `build_union_map` / `gen_level_audit`）
+  **必须先跑**：门禁查的是它们的产物。
+- 「偏离上游」那行已由脚本**先算好预置**，所以 `release_check` **一轮即绿**（原先白花 31.5 s 跑第二轮）。
+
 ## 汇报频率
 
 默认不汇报；只在三种情况发一条消息：一批做完、同一处卡住 ≥2 次、计划要变。

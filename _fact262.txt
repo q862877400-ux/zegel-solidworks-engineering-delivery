@@ -1,0 +1,47 @@
+| 262 | **挖出一条系统性问题：同一个仓库里**两种返回契约**混着 —— "回 `ok`" 与 "不抛即成功"**（2026-10-01，轮 341）。
+
+## 一、★★★ 静态扫出来的分布（186→189 个工具）
+```
+★ **回 dict 且有 `ok`**：**43** 个
+★ **回 dict 但**无 `ok`**：**31** 个
+★ **其他**（无 `return` / 返回非 dict）：**115** 个
+```
+★★ **而 31 个里绝大多数是**读数类**** —— `*_evidence`（topology / mold / weldment / sheet_metal /
+   surface / appearance）· `part_bounding_box` · `drawing_list_sheets` · `custom_property_get` ·
+   `part_mass_properties` · `assembly_check_interference` · `simulation_find_study` …
+   ⇒ ★★ **那类**无 `ok` 是合理的****：★ **读到什么报什么**，★ 空 / 取不到**本身就是信息**
+     （★ 硬塞一个 `ok` 反而会让人以为"空了就是失败"）。
+
+## 二、★★★★★ 定则：**读数类与动作类要分开**
+```
+★ **读数类**（`*_evidence` / 量测 / 列清单）⇒ ★ **读到什么报什么**，★ 无 `ok` 合理。
+★ **动作类**（建 / 改 / 保存 / 导出 / 配合）⇒ ★★ **必须有 `ok`** ——
+   ★ 否则调用方**分不清「做成了」与「没做」**。
+⇒ ★★★ **本处抓到的实例**：`create_weldment_profile` 是**动作类却没有 `ok`** ——
+   ★ 它的契约是"**不抛即成功**"（★ `save_document` 回 falsy ⇒ 抛；产物不存在或 0 字节 ⇒ 抛）。
+   ★★ **那本身是合法契约**，★ 但与仓库里"回 `ok`"那套混着 ⇒ ★ **实测后果**：
+   ★ **文件真的建成了 49287 字节，而按 `ok` 读会得到 `False`** ✗（★ 我第一遍就是这么误判的）。
+```
+
+## 三、★ 修法与真机（`output/weldment-profile-evidence.json`）**PASS 3/3**
+```
+★ 改：`create_weldment_profile` **补 `ok=True`**，★ **失败仍抛**（★ 不改变既有行为，★ 两者并存）。
+★ 真机：`ok=true` · `size_bytes=49204` · 产物 **`vp2.SLDLFP` 49204 字节** ✓
+```
+
+## 四、★★★ 顺带抓到的一个**真陷阱**：SolidWorks 的 `~$` 临时锁文件
+```
+★★ 保存后目录里会多一个 **`~$<名字>.SLDLFP`（**6 字节**）** —— ★ 那是 **SolidWorks 的临时锁**，
+   ★ **不是产物**。
+⇒ ★★ **判"产物存在且非空"时**必须排除 `~$` 前缀**** —— ★ 否则：
+   · ★ 一个 6 字节的锁就能让"产物非空"为**真**（★ 假阳性）；
+   · ★ 或反过来，★ 在只该有一个产物的地方数出两个。
+★ 真机证据：★ 本处两次运行都实测到这个锁文件（★ `locks_excluded=["~$vp2.SLDLFP"]`）✓
+   ⇒ ★★ **而本仓库的 `_export_generic` 早就在用 `_file_signature` 判非空** ——
+     ★ **值得回头核对它有没有排除 `~$`**（★ 本轮未做，★ 记为下一步）。
+```
+
+**依据**：`output/weldment-profile-evidence.json`（★ **PASS 3/3**）· `output/weldment-profile-verify/`
+（★ `verify_profile.SLDLFP` 49287 B + `~$verify_profile.SLDLFP` 6 B）· `scripts/sw_weldment.py`
+（★ `create_weldment_profile` 补 `ok`）· 静态扫 `register_capabilities.all_specs()` × `ast`（43 / 31 / 115）·
+事实 8 / 36 / 250 / 261

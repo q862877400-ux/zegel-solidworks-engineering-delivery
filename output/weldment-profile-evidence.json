@@ -1,0 +1,30 @@
+{
+  "steps": {
+    "select_sketch": {
+      "ok": true,
+      "sketch": "草图1"
+    },
+    "call_ok": {
+      "ok": true,
+      "size_bytes": 49204,
+      "path": "tput\\weldment-profile-verify2\\vp2.sldlfp"
+    },
+    "artifact_nonempty": {
+      "ok": true,
+      "count": 1,
+      "sample": [
+        {
+          "n": "vp2.SLDLFP",
+          "s": 49204
+        }
+      ],
+      "locks_excluded": [
+        "~$vp2.SLDLFP"
+      ]
+    }
+  },
+  "captured_at": "2026-10-02T20:52:25",
+  "passed": 3,
+  "of": 3,
+  "verdict": "pass"
+}
