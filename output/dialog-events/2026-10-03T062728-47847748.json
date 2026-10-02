@@ -1,0 +1,27 @@
+{
+ "at": "2026-10-03T06:27:28",
+ "phase": "during",
+ "kind": "dialog",
+ "hwnd": 47847748,
+ "pid": 10356,
+ "title": "SOLIDWORKS Design",
+ "class": "#32770",
+ "exe": "SLDWORKS.exe",
+ "controls": [
+  {
+   "class": "Button",
+   "text": "确定"
+  }
+ ],
+ "hung": false,
+ "verdict": {
+  "mode": "auto",
+  "reason": "只有一个语义明确的确认按钮 ['确定'] ⇒ 可自动点",
+  "buttons": [
+   "确定"
+  ]
+ },
+ "needs_llm": false,
+ "dismissed": true,
+ "still_present": false
+}

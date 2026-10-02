@@ -1,0 +1,110 @@
+{
+ "at": "2026-10-03T06:27:22",
+ "interfaces": [
+  {
+   "iface": "IModelDoc2",
+   "probed": 828,
+   "usable": 715,
+   "missing_total": 113,
+   "missing_plain": 60,
+   "missing_plain_names": [
+    "AddLoftSection",
+    "CreatePlaneThru3Points2",
+    "CreateSpline",
+    "CreateSplineByEqnParams",
+    "CreateSplinesByEqnParams",
+    "EnumModelViews",
+    "GetActiveSketch",
+    "GetActiveSketch2",
+    "GetFirstAnnotation",
+    "GetFirstAnnotation2",
+    "GetLayerManager",
+    "GetLineCount",
+    "GetLines",
+    "GetMassProperties",
+    "GetNext",
+    "GetRayIntersectionsPoints",
+    "GetRayIntersectionsTopology",
+    "IActiveView",
+    "ICreateArc",
+    "ICreateCenterLine",
+    "ICreateCircleByRadius",
+    "ICreateEllipse",
+    "ICreateEllipticalArcByCenter",
+    "ICreateLine"
+   ]
+  },
+  {
+   "iface": "IModelDocExtension",
+   "probed": 396,
+   "usable": 335,
+   "missing_total": 61,
+   "missing_plain": 15,
+   "missing_plain_names": [
+    "Capture3DView",
+    "CreateMassProperty2",
+    "CreateStructureSystem",
+    "Get3DViewNames",
+    "Get3DViews",
+    "GetDecals",
+    "GetObjectByPersistReference",
+    "GetPrint3DDialog",
+    "GetRenderCustomReferences",
+    "GetRenderMaterials",
+    "GetSceneBkgDIBx64",
+    "GetTemplateSheetMetal",
+    "IGetAnnotations",
+    "InsertChainDimensions",
+    "IsVirtualComponent2"
+   ]
+  },
+  {
+   "iface": "IFeatureManager",
+   "probed": 330,
+   "usable": 265,
+   "missing_total": 65,
+   "missing_plain": 25,
+   "missing_plain_names": [
+    "ConvertLoftOrSweepToNetBlend",
+    "CreateFormTool",
+    "DraftXpertRemove",
+    "EndVariablePitchHelix",
+    "FeatureAdvancedTableDrivenPattern",
+    "FilletXpertRemove",
+    "FinishCornerRelief",
+    "FinishSMNormalCut",
+    "GetCornerManagementFolders",
+    "GetFlatPatternFolder",
+    "GetFreezeLocation",
+    "GetSheetMetalFolder",
+    "GetStructureSystemFolders",
+    "InsertDeleteBody",
+    "InsertDeleteHoleForSurface",
+    "InsertDerivedPattern",
+    "InsertDerivedPattern2",
+    "InsertGridFeature",
+    "InsertSubFolder",
+    "InsertSubWeldFolder",
+    "InsertSubWeldFolder2",
+    "InsertWeldmentCutList",
+    "InsertWeldmentCutList2",
+    "PreSplitBody"
+   ]
+  },
+  {
+   "iface": "ISelectionMgr",
+   "probed": 68,
+   "usable": 61,
+   "missing_total": 7,
+   "missing_plain": 1,
+   "missing_plain_names": [
+    "GetPreSelectedObject"
+   ]
+  }
+ ],
+ "registered_functions": 216,
+ "registered_but_unavailable": [],
+ "probed_total": 1622,
+ "verdict": "pass",
+ "note": "★ 对几个关键接口普查成员可用性，★ 再与已注册 function 名取交集。★ 判据：★ 先报查了多少；★ 而交集**必须为空或逐个列出**。★ `get_*`/`set_*` 访问器已滤掉（★ 迟到绑定下它们叫 `X`）。"
+}
