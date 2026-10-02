@@ -7508,6 +7508,51 @@
            `drawing_dimension_insertion` · `autocad_script_backend` · `autocad_dotnet_backend` ·
            `topology_optimization`（★ 工具被分走 ⇒ 应给它 `create_study`+`run`）·
            ★ 能力 69 → 75 还差 6。
+     ★ 2026-10-01（轮 282 / **24h 计划 段 6「修拓扑三条条目 + 重复认领体检」**）· ★★★★★ **"一个工具被多条条目认领"是常态（59 个）—— 而它让我前两轮的"填实"叙述**偏了****
+         ▶ **怎么发现的**：★ 轮 281 拆出 `topology_constraints_and_controls`(8) 与 `topology_readback`(6)，
+           ★ 而**没从原条目 `topology_readback_and_parameters` 的 16 个里减**
+           ⇒ ★★ 三条相加 = 8+6+16 = **30**，★ 而 `sw_topology` 实际只有 **16** 个
+           ⇒ ★★★ **所以那 16 个被重复认领两遍** —— ★ 而 `check_tool_capability_coverage.py`
+             **只判"工具有没有归属"，不判"有没有被多条认领"**（★ 与事实 213 同族）
+         ★★★★ **量出来：71 个**（改后 **59**）⇒ ★ 而它们**性质不同**：
+           · `config_*`(6) ⇒ `config_and_export` 与 `configurations_and_design_tables`
+             ⇒ ★★ **那是拆条目时没从原条目减**（与 topology 同一错法）
+           · `assembly_*`(3) ⇒ `assembly_and_mates` 与 `assembly_read` ⇒ ★ 轮 280 填的 + 已有的
+           · `collect_assembly_bom` ⇒ `custom_properties_and_bom` 与 `drawings_and_bom`
+           · `cadstudio_build_dxf_preview_scene` ⇒ `autocad_headless_preview` 与 `dxf_preview_scene`
+             ⇒ ★★ **而这个是**有意**的**（★ 同一能力的两面）
+         ★★★★★ **而它**推翻了我前两轮的一个说法****：
+           ★ 事实 213 我写「填实 8 条 ⇒ verified 却 0 工具 16 → 9」
+           ⇒ ★★ **真相是**：★ 那些工具**本来就被别的条目认领**（★ 只是不是我填的那条）
+             ⇒ ★★★ **所以"填实"的真实效果**：① ★ 让那一条能力**能指认到**它的工具
+               （★ 真实收益 —— 否则读者会以为它没工具）；② ★ **而"发现了没人要的工具"那层意思不成立**
+           ⇒ ★★ **修正的说法**：★ 该叫「**补认领**」而不是「**填补空**」
+         ★ **处置（只修该修的那一类）**：
+           ★ `topology_readback_and_parameters` 的 16 个 ⇒ **清空** + 写明去向（★ **没删条目**）
+           ★ `topology_optimization`（0 工具）⇒ 给 **`create_study` + `run`**（★ 语义对：那是「找形」那一步）
+             ★ 并把 `topology_readback` 的分界写清
+           ★ 清空后掉出的 2 个孤儿 ⇒ `list_constraints` 归读数条 · `set_iteration_options` 归
+             `topology_iteration_options_backend_limited`（★ 那一条正是它）
+           ★ **不修**余下 59 个重复 —— ★ **因为重复本身不一定是错** ⇒ ★ 正解是「承认并写清」，不是硬禁
+           ⇒ ★ 归属 **173/173** ✓ · `all_specs()` **173** · 能力 **69** · 门禁全绿 · pytest **1284 passed**
+         ★★★ **定则**：
+           ★ **拆条目时必须同时决定原条目要不要减** —— ★ 我连续两轮（事实 208 的 5 条 · 事实 215 的 2 条）
+             都**只加不减** ⇒ ★★ 后果是「同一批工具被算在多个能力名下」，
+             ★ 而**那会让"每条能力有多少工具"这个数字失去意义**
+             ⇒ ★ **可操作判据**：★ 拆完**跑一次重复量**（一条 python 就能算）—— ★ 而**它现在不是门禁**。
+           ★★ **"重复认领"与"没有归属"是两个不同的问题** —— ★ 没有归属 ⇒ 真缺口（该补）；
+             ★ 重复认领 ⇒ 可能是有意的（该写清）⇒ ★★ **所以门禁该问的是前一个**
+               （★ 它已经在问），★ **而报告该提示后一个**（★ 现在没有）。
+         ▶ **验收**：① `all_specs()` = **173** · 能力 **69** · 归属 **173/173** ✓
+           · 门禁链 **8 段全 PASS** ✓ · `release_check` exit 0 ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 本批**没挂新工具** ⇒ 真机证据**沿用**（★ 如实：★ topology 那条的证据是
+             `tools/capture_topology_evidence.py` 的真机闭环）
+         ▶ **状态**：`all_specs()` **173** · 能力 **69** 条（verified **52** · stitched **16**）·
+           known-facts **214** 条。
+         ▶ **队列续作**：★ 剩下 **6 条**「verified 却 0 工具」：`requirements_planning`（★ 纯 Python）·
+           `drawing_dimension_insertion` · `autocad_script_backend` · `autocad_dotnet_backend` ·
+           `sketch_chamfer`（★ 已填 ⇒ 复核）· `topology_optimization`（★ 本轮已填）·
+           ★ **考虑把"重复认领量"加进报告**（★ 不改门禁）· ★ 能力 69 → 75 还差 6。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
