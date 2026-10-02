@@ -1,0 +1,13 @@
+# ── 来源（★ 模块级 · 本文件全部内容）────────────────────────────────────────────
+# 仓库:   本项目自身（不是第三方移植）
+# 文件:   scripts/sw_hole_features.py
+# 定位:   SolidWorks 复杂孔 / 复合孔 / 半圆端槽的稳定草图切除封装 ——
+#         ★ `HoleFeatureEvidence`（回读证据）· `_positive` / `_center`（入参校验）·
+#         ★ 5 个 `create_*_hole` / `create_semicircular_slot` ·
+#         ★ 5 个 `*_at_selection_report`（★ 声明式版 —— 规则 3）· 若干 `*_at_selection` 包装。
+# 官方依据: `ISketchManager.CreateSketchSlot` / `ICurve.CircleParams` / `IView` 族 ·
+#          ★ 见本文件内各段自己的来源块（★ 各自带更细的依据）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# ⚠ **未在本机实测**：见各条 `limitations`（★ 每个包装的真机结果都如实记在那里）。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────────────
