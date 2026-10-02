@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-10-02T10:52:02",
+  "captured_at": "2026-10-03T01:26:04",
   "capability": "topology_readback_and_parameters",
   "★": "★ 只读数 / 设参数，**不跑求解** ⇒ 无模态框风险",
   "steps": {
