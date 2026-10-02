@@ -1,0 +1,67 @@
+{
+ "at": "2026-10-03T06:24:56",
+ "probed": 396,
+ "counts": {
+  "probed": 396,
+  "usable": 334,
+  "missing": 62
+ },
+ "by_bucket_missing": {
+  "plain": 15,
+  "i_prefixed": 1,
+  "property_accessor": 46
+ },
+ "by_bucket_usable": {
+  "plain": 302,
+  "i_prefixed": 32
+ },
+ "spot_CreateStructureSystem": "missing",
+ "spot_CreateStructureSystemMemberData": "callable",
+ "spot_SelectByID2": "callable",
+ "usable_sample": [
+  "ActivateFeatureMgrViewx64",
+  "ActiveCommandTab",
+  "ActiveCommandTabIndex",
+  "AddAngularRunningDim",
+  "AddComment",
+  "AddDecal",
+  "AddDefaultRenderMaterial",
+  "AddDimension",
+  "AddDisplayStateSpecificRenderMaterial",
+  "AddFeatureMgrView3x64",
+  "AddOrUpdateSearchData",
+  "AddOrdinateDimension",
+  "AddPathLengthDim",
+  "AddRenderMaterial",
+  "AddSpecificDimension",
+  "AddSymmetricDimension",
+  "AlignDimensions",
+  "AlignRunningDimension",
+  "AnnotationViewCount",
+  "AnnotationViews"
+ ],
+ "missing_sample": [
+  "Capture3DView",
+  "CreateMassProperty2",
+  "CreateStructureSystem",
+  "Get3DViewNames",
+  "Get3DViews",
+  "GetAnnotations",
+  "GetDecals",
+  "GetObjectByPersistReference",
+  "GetPrint3DDialog",
+  "GetRenderCustomReferences",
+  "GetRenderMaterials",
+  "GetSceneBkgDIBx64",
+  "GetTemplateSheetMetal",
+  "IGetAnnotations",
+  "InsertChainDimensions",
+  "IsVirtualComponent2",
+  "get_ActiveCommandTab",
+  "get_ActiveCommandTabIndex",
+  "get_AnnotationViewCount",
+  "get_AnnotationViews"
+ ],
+ "verdict": "pass",
+ "note": "★ 普查 `IModelDocExtension` 的成员在**这个真机对象**上能不能取到。★ 判据三态：可调 / 属性 / 取不到。★ 而 `get_*` / `set_*` 是属性访问器 —— ★ 迟到绑定下它们叫 `X`，故正常会落进 `missing`。"
+}
