@@ -1,0 +1,34 @@
+{
+ "steps": {
+  "count_before": {
+   "value": 0,
+   "err": null
+  },
+  "list_before": {
+   "value": 0,
+   "err": null
+  },
+  "apply_force": {
+   "ok": false,
+   "count": [
+    -1,
+    -1
+   ],
+   "error": ""
+  },
+  "count_after": {
+   "value": null,
+   "err": "com_error: (-2147417851, '服务器出现意外情况。', None, None)"
+  },
+  "list_after": {
+   "value": 0,
+   "err": "com_error: (-2147023170, '远程过程调用失败。', None, None)"
+  }
+ },
+ "at": "2026-10-03T04:05:48",
+ "study": "DSH-JUDGE_040548",
+ "old_judge_works": false,
+ "new_judge_works": false,
+ "verdict": "partial",
+ "note": "★ 在**已知成功**的场景（`apply_force`）上同时读两个判据：★ 旧= `Count` 属性 · 新= `GetLoadsAndRestraints(i, out_i4())` 数个数。★ **新判据能复现 0→1 ⇒ 它可用**；★ 否则它也不可用（★ 那就不该换）。"
+}

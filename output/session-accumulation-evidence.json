@@ -1,0 +1,7 @@
+{
+ "at": "2026-10-03T04:06:42",
+ "document_count": 0,
+ "studies_err": "RuntimeError: CosmosWorks.ActiveDoc 为 None：Simulation 中没有活动文档",
+ "verdict": "pass",
+ "note": "★ 只量「本会话积累了多少」（★ 文档数 + 算例清单）—— ★ 不动任何东西。★ 若累积很多 ⇒ 支持「轮 418 的失败与会话状态有关」那个假设。"
+}
