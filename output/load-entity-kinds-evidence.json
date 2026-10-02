@@ -1,0 +1,105 @@
+{
+ "grid": {
+  "convection": {
+   "FACE": {
+    "ok": true,
+    "count": [
+     0,
+     1
+    ],
+    "err": ""
+   },
+   "EDGE": {
+    "ok": false,
+    "count": [
+     1,
+     1
+    ],
+    "err": ""
+   },
+   "VERTEX": {
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": ""
+   }
+  },
+  "heat_flux": {
+   "FACE": {
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": ""
+   },
+   "EDGE": {
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": ""
+   },
+   "VERTEX": {
+    "ok": false,
+    "count": [
+     -1,
+     -1
+    ],
+    "err": "com_error: (-2147023170, '远程过程调用失败。', None, None)"
+   }
+  },
+  "heat_power": {
+   "FACE": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   },
+   "EDGE": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   },
+   "VERTEX": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   }
+  },
+  "temperature": {
+   "FACE": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   },
+   "EDGE": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   },
+   "VERTEX": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   }
+  },
+  "radiation": {
+   "FACE": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   },
+   "EDGE": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   },
+   "VERTEX": {
+    "ok": false,
+    "err": "com_error: (-2147023174, 'RPC 服务器不可用。', None, None)"
+   }
+  }
+ },
+ "at": "2026-10-03T03:22:50",
+ "study_type": 3,
+ "successes": [
+  "convection/FACE"
+ ],
+ "verdict": "pass",
+ "note": "★ **实体种类 × 载荷** 的穷举表（★ 官方文本说这族各自要求的实体种类不同）—— ★ 落成一张表而不是「改一处试一次」。"
+}
