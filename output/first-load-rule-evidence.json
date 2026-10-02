@@ -1,0 +1,62 @@
+{
+ "trials": [
+  {
+   "trial": "distributed_mass_first",
+   "study": "distributed_mass_first_040911",
+   "order": [
+    {
+     "first": true,
+     "ok": true,
+     "count": [
+      0,
+      1
+     ],
+     "err": ""
+    },
+    {
+     "first": false,
+     "ok": true,
+     "count": [
+      1,
+      2
+     ],
+     "err": ""
+    }
+   ],
+   "first_readback_broke": false,
+   "second_readback_ok": true,
+   "ok": true
+  },
+  {
+   "trial": "force_first",
+   "study": "force_first_040912",
+   "order": [
+    {
+     "first": true,
+     "ok": true,
+     "count": [
+      0,
+      1
+     ],
+     "err": ""
+    },
+    {
+     "first": false,
+     "ok": true,
+     "count": [
+      1,
+      2
+     ],
+     "err": ""
+    }
+   ],
+   "first_readback_broke": false,
+   "second_readback_ok": true,
+   "ok": true
+  }
+ ],
+ "at": "2026-10-03T04:09:08",
+ "rule_confirmed": false,
+ "verdict": "partial",
+ "note": "★ 独立确认「**第一个载荷**那次的**回读**会崩」—— ★ **换两个不同的载荷当「第一个」**（★ `distributed_mass` 与 `force`）⇒ ★ 若**都**是「第一个崩、第二个成」 ⇒ 规律成立。★ 每格用**新算例 + 唯一名**（事实 324/325/414）。"
+}

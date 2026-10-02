@@ -1,9 +1,9 @@
 {
  "summary": {
-  "total": 89,
+  "total": 91,
   "不做": 15,
   "已有": 23,
-  "该挂": 32,
+  "该挂": 34,
   "内部件": 19,
   "★": "四类之和必须 == total（★ 本脚本自检）",
   "★口径差异": "本脚本报 108 而 audit_real_gaps 报 101 —— ★ 两者对「被上游调」的判定略有不同（本脚本用字面量匹配）；★ 本文件的 108 是本轮作业的口径，★ 而两者的模块级分布一致。",
@@ -297,6 +297,18 @@
    "name": "collect_loads_evidence",
    "kind": "内部件",
    "why": "内部证据收集器（★ 那些 add_* 才是能力）"
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "apply_link_connector_report",
+   "kind": "该挂",
+   "why": ""
+  },
+  {
+   "module": "sw_simulation_loads",
+   "name": "apply_rigid_connector_report",
+   "kind": "该挂",
+   "why": ""
   },
   {
    "module": "sw_topology",

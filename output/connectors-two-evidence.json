@@ -3,8 +3,8 @@
   "static_study": {
    "ok": true,
    "manager": "CDispatch",
-   "raw_Count": "None",
-   "raw_err": "com_error: (-2147417851, '服务器出现意外情况。', None, None)"
+   "raw_Count": "0",
+   "raw_err": null
   },
   "link_connector": {
    "ok": false,
@@ -20,11 +20,11 @@
     -1,
     -1
    ],
-   "error": ""
+   "error": "com_error: (-2147023170, '远程过程调用失败。', None, None)"
   }
  },
- "at": "2026-10-03T04:03:41",
- "study": "DSH-CONN_040341",
+ "at": "2026-10-03T04:09:25",
+ "study": "DSH-CONN_040925",
  "successes": [
   "static_study"
  ],
