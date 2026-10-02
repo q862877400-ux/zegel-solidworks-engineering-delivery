@@ -1,0 +1,13 @@
+{
+ "at": "2026-10-03T02:22:27",
+ "phase": "during",
+ "kind": "family-window",
+ "hwnd": 525870,
+ "pid": 15648,
+ "class": "swBalloonTip",
+ "exe": "SLDWORKS.exe",
+ "title": "",
+ "hung": false,
+ "dismissed": false,
+ "note": "★ 属于 SolidWorks 家族，**但不像弹窗**（无 `#32770`、无 Button、无可读文本）⇒ 报出来是为了**不让残余盲区静默失效**。"
+}

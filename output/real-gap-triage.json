@@ -1,9 +1,9 @@
 {
  "summary": {
-  "total": 108,
-  "该挂": 76,
+  "total": 99,
+  "该挂": 66,
+  "不做": 14,
   "内部件": 19,
-  "不做": 13,
   "★": "三类之和必须 == total（★ 本脚本自检）",
   "★口径差异": "本脚本报 108 而 audit_real_gaps 报 101 —— ★ 两者对「被上游调」的判定略有不同（本脚本用字面量匹配）；★ 本文件的 108 是本轮作业的口径，★ 而两者的模块级分布一致。",
   "self_check": true
@@ -17,27 +17,9 @@
   },
   {
    "module": "sw_part",
-   "name": "sketch_arc",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_part",
-   "name": "sketch_polygon",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_part",
-   "name": "sketch_slot",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_part",
    "name": "sketch_spline",
-   "kind": "该挂",
-   "why": ""
+   "kind": "不做",
+   "why": "第 141 轮真机：`CreateSpline2` 返回 None、重绘后仍 0 段、旧版 `CreateSpline` 在迟到绑定里不存在；后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ 事实 47/68 架构限制（pywin32 到不了）"
   },
   {
    "module": "sw_part",
@@ -72,18 +54,6 @@
   {
    "module": "sw_part",
    "name": "rib",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_part",
-   "name": "sketch_ellipse",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_part",
-   "name": "sketch_centerline",
    "kind": "该挂",
    "why": ""
   },
@@ -527,37 +497,13 @@
   },
   {
    "module": "sw_selection_spec",
-   "name": "get_selection_count",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_selection_spec",
    "name": "select_object",
    "kind": "该挂",
    "why": ""
   },
   {
    "module": "sw_selection_spec",
-   "name": "select_entity_by_index",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_selection_spec",
    "name": "resolve_entity",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_selection_spec",
-   "name": "resolve_selection",
-   "kind": "该挂",
-   "why": ""
-  },
-  {
-   "module": "sw_selection_spec",
-   "name": "selection_point",
    "kind": "该挂",
    "why": ""
   },

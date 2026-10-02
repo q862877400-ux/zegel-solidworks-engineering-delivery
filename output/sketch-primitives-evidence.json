@@ -1,0 +1,58 @@
+{
+ "steps": {
+  "doc": {
+   "ok": true,
+   "title": "零件75"
+  },
+  "draw_arc": {
+   "ok": true,
+   "segments": [
+    0,
+    1
+   ]
+  },
+  "draw_ellipse": {
+   "ok": true,
+   "segments": [
+    0,
+    1
+   ]
+  },
+  "draw_polygon": {
+   "ok": true,
+   "segments": [
+    0,
+    7
+   ]
+  },
+  "draw_slot": {
+   "ok": true,
+   "segments": [
+    0,
+    5
+   ]
+  },
+  "draw_centerline": {
+   "ok": true,
+   "segments": [
+    0,
+    1
+   ]
+  },
+  "neg_bogus_sketch_name": {
+   "ok": true,
+   "err": "RuntimeError: 按名找不到草图 '这个草图不存在_xyz'（试过：['这个草图不存在_xyz']）—— ★ 非空名字不许回退到「特征树里最后一个草图」"
+  },
+  "probe_polygon_sides2": {
+   "ok": true,
+   "segments": [
+    0,
+    4
+   ],
+   "note": "★ 只是**记录**它成不成，不是成败判据"
+  }
+ },
+ "at": "2026-10-03T02:24:11",
+ "verdict": "pass",
+ "note": "★ 段 2 草图图元 5 个工具；★ 判据是**段数增加**（★ 独立于返回值 —— 回 COM 对象不等于图形在）；★ 负例：没有活动草图时解析必须失败。"
+}
