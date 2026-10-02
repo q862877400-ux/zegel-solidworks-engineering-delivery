@@ -1,0 +1,29 @@
+     ★ 2026-10-01（轮 249 / **24h 计划 段 3 / Spec Kit `146`**）· ★★★★★ **判据要先自证 —— 而它当场抓到两个**静默失败****
+         ▶ **做了什么**：新建 `scripts/sw_feature_readback.py`（★ **规则 6 的通用回读判据**）+
+           `sw_part` 的 4 个回读包装 + `mcp-server/tool_specs_batch32.py`（**4 个工具**：
+           抽壳 / 筋 / 圆顶 / 复合曲线）。★ **`all_specs()` 101 → 105** · MCP 工具 **150** ·
+           能力清单 **54 → 56 条**（verified **46** · stitched **9**）。
+         ★★ **一处规则文本的失真（有据）**：`docs/union-conventions.md` **规则 6** 写的是
+           **`GetWhatsWrong2`** —— ★★ **而它在**本机两套官方源里都不存在****。真名是
+           **`IModelDocExtension.GetWhatsWrongCount()`**（★ 零参、直接回个数），且**挂在
+           `IModelDocExtension` 上**（★ 不是 `IModelDoc2`）⇒ 必须从 `model.Extension` 取。
+           ⚠ 初版直接对 model 调 ⇒ 取不到 ⇒ ★★ **而判据按设计报「不算通过」（没有静默成 0）**。
+         ★★★★★ **本轮最值钱的一条：判据要先自证** —— 我**先单独验那个回读判据**（而不是直接拿它
+           去判别人）：存在的特征 ⇒ **ok=True**（`wrong=0`）· 不存在的名字 / 容器名 ⇒ **全 False**
+           ⇒ ★ 两侧都对才用它 ⇒ ★★★ **而它当场抓到两个**静默失败****：`rib` 与 `insert_dome`
+           **不抛异常、也不建出特征**（判据报 `present=False`）★ **若没有回读，这两个会「看起来成功」**。
+         ★ **三轮真机打磨判据本身**：① 直调 `GetWhatsWrong2` ⇒ 取不到；② 改 `Extension.GetWhatsWrongCount`
+           ⇒ ✓；③ ★★ 过滤从「**枚举中文容器名**」改成「**结构性判据**」（只收 `GetTypeName2` 非空的）
+           —— ★ 因枚举名字**在英文界面下会全部失效**。实测清单收敛到「前视基准面 / 上视基准面 /
+           右视基准面 / 原点 / Tables / 草图1 / 凸台-拉伸1」（★ 只剩余真特征）。
+         ▶ **真机 4 个工具 = 0/4，而失败原因**已被定位****（★ 不是"不知道"，是"知道且如实记"）：
+           · `shell` ⇒ `AttributeError: <unknown>.InsertFeatureShell` ⇒ ★ **事实 36 的形态**
+           · `rib` / `insert_dome` ⇒ **静默失败**（★ 被回读抓到）
+           · `insert_composite_curve` ⇒ 官方返回 False ⇒ 能力层**正确 raise**（选择不合法）
+         ★★ **而"不为了凑数量挂工具"也守住了**：本批 4 个**都不吃裸坐标**（规则 3）；
+           而 `linear_pattern`（`d1_x/d1_y/d1_z`）与 `hole_wizard`（`x/y/z`）**有裸坐标** ⇒ **本批不挂**。
+         ▶ **验收**：① `all_specs()` = **105** ✓ · 门禁链 **18 道** exit 0 ✓ · 全量 pytest
+           **1278 passed / 0 failed** ✓  ② ★ **真机 0/4** ⇒ 按证据分级：判据 = **verified** ·
+           4 个工具 = **stitched**（★ 硬约束③，工具留柜台但如实标注）。
+         ▶ **队列续作**：★ 修 `shell` 的入口（查 `InsertFeatureShell` 的正确接口族）·
+           ★ `rib`/`dome` 的静默失败（回读已能定位）· ★ 段 4（孔族 / 焊件 / 配置 / 导出 25 个）。
