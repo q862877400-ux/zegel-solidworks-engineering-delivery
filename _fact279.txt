@@ -1,0 +1,57 @@
+| 279 | **参考轴那条路走通了选择：`InsertAxis2` 建轴 + 官方顺序 + `Callout` 必须是空 Dispatch（事实 33 实战）**（2026-10-02，轮 361）。
+
+## 一、★★★★★ 本轮拿到的三条（★ 都在真机上）
+```
+① ★ **`InsertAxis2(True)` 能建参考轴** —— ★ 官方 `IModelDoc2.InsertAxis2` 的原话是
+   「Inserts a reference axis based on the **currently selected items**」⇒
+   ★ 先选中一条**草图直线**，再调它 ⇒ ★ **`insert_axis: true`**，★ 轴名 **`基准轴1`**（★ 中文 UI）✓
+② ★★ **事实 33 实战**：`SelectByID2` 的**第 8 参 `Callout`** ★ **传 `None` ⇒
+   `com_error(-2147352571, '类型不匹配', None, 8)`** —— ★ **而那错误看不出是 Callout 的问题**。
+   ★ 换成 `create_empty_dispatch_variant()` ⇒ ★ **`sel_axis: true` · `sel_profile: true`** ✓✓✓
+   ⇒ ★ 这是**已知事实 33 的第二次实录**（第一次是轮 33 那次"差点得出选择不可能的结论"）。
+③ ★ **官方顺序被真机证实**：★ 按 `SelectByID2("轴","AXIS") → SelectByID2("轮廓","SKETCH") → FeatureRevolve2`
+   的顺序 ⇒ ★ **两个选择都成功、特征也建成** ⇒ ★ 与轮 360 从官方示例读出的顺序一致 ✓
+```
+
+## 二、⚠ 而未解决：**体积取不到**（★ 如实记，下一轮的起点）
+```
+★ `volume_mm3 = null`，★ 而用一个**自己写的** `CreateMassProperty` 回读与改用**本仓库既有的**
+   `scripts/sw_mass_property.mass_properties(model)` **两种都回不到**。
+★ **诊断的下一步**（★ 候选，★ 不猜）：
+   ① 该文档里**到底有没有实体**（★ 旋转若建成了曲面/薄壁，★ 质量属性可能算不出来）；
+   ② `mass_property_object` 是否回了 `None`（★ 它有 `require_mass_property_document` 前置检查）；
+   ③ 是否要**先 `EditRebuild3`** 才会算出质量属性。
+```
+
+## 三、★★ 一条过程纪律（★ 我又犯了一次）
+```
+★ 我第一版在探针里**自己写了一套** `CreateMassProperty` 回读；★ 而 `tools/compare_geometry.py`
+   的注释**早就写着**：「三源互证见 `scripts/sw_mass_property.py` 的既有实现
+   （**本模块只读、不重复换算**）」⇒ ★★ **本仓库有专门的模块，★ 而我重复实现了** ✗
+⇒ ★ **定则：写回读/换算之前，先 `find_real_implementations(<关键词>)` 看有没有现成的** ——
+   ★ 上一轮刚建的那个公共函数**就是干这个的**（★ 而我没用它）。
+```
+
+## 四、★ 与 objective⑥ 的关系
+```
+★ 题述的两条路现已**分别**有结论：
+   · **草图线段当轴**（`GetSketchSegments` + `Select4(mark=4)`）⇒ ★ 轮 360 实测**建不成**（改序后仍否）；
+   · **参考轴**（`InsertAxis2` + `SelectByID2("…","AXIS")`）⇒ ★ **本轮选择与建成**都成功 ✓
+     ★★ **但"轴是否真的生效"还没证到**（★ 体积取不到 ⇒ 那条几何判据还没跑出数）。
+⇒ ★★ **所以 objective⑥ 仍**不能标完成**** —— ★ 差**最后一步：拿到体积**（★ 硬约束③：没有 pass 就不算）。
+```
+
+## 五、★ 还有一条（★ 关于"第八次"）
+```
+★ 新建 `tools/prove_revolve_reference_axis.py` 时**又**犯了「头部 docstring 未闭合」（★ **第八次**）⇒
+   ★ 上一轮刚建的语法门禁**当场抓到**，★ 而**它的提示就是修法**（"在 `# ── 来源 ──` 之前补三引号"）。
+★★ **诊断这次才做对**：我先**列出文件里所有含三引号的行** ⇒ 发现**只有 L1 一个**（★ 开头）
+   ⇒ ★ 于是确定是"悬着没闭合"，★ 而不是"配错了" ⇒ 再插入闭合引号，一次成功。
+   ⇒ ★ **定则：修这种错之前先数一遍三引号的位置**（★ 比直接插入稳）。
+```
+
+**依据**：`output/revolve-reference-axis-evidence.json`（★ `insert_axis: true` · `axis_name: 基准轴1` ·
+`sel_axis: true` · `sel_profile: true` · `feature_created: true` · `volume_mm3: null`）·
+`C:\swapi\types\IModelDoc2\InsertAxis2.md` · `D:\AI\SW\AI Solidworks\官方文档\SWhelp\sldworksapi\
+Create_360-degree_Revolve_Feature_Example_VBNET.htm` · `scripts/sw_mass_property.py` ·
+`tools/compare_geometry.py` 的注释（★ "不重复换算"）· 事实 33 / 278
