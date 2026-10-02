@@ -1,85 +1,21 @@
 {
-  "captured_at": "2026-10-02T10:35:56",
-  "capability": "simulation_load_family",
-  "★": "★ 判据沿用本项目既有脚本：Count 恰好 +1（回读，不看返回对象）",
   "steps": {
-    "bindings": {
-      "ok": true,
-      "count": 4,
-      "detail": {
-        "solidworks_simulation_apply_pressure": {
-          "resolved": true,
-          "inject": "manager"
-        },
-        "solidworks_simulation_apply_torque": {
-          "resolved": true,
-          "inject": "manager"
-        },
-        "solidworks_simulation_apply_gravity": {
-          "resolved": true,
-          "inject": "manager"
-        },
-        "solidworks_simulation_apply_centrifugal_force": {
-          "resolved": true,
-          "inject": "manager"
-        }
-      }
+    "setup": {
+      "ok": true
     },
-    "part_size_mm": [
-      100.0,
-      60.0,
-      20.0
-    ],
-    "material": "solidworks materials|AISI 1020|2",
-    "loads": [
-      {
-        "ok": false,
-        "load": "pressure",
-        "count_before": 0,
-        "count_after": 0,
-        "created_object": null,
-        "error": "com_error: (-2147352561, '非选择性的参数。', None, None)",
-        "★": "ok 判的是 count_after == count_before + 1（★ 回读优先，不看返回对象）",
-        "label": "pressure"
-      },
-      {
-        "ok": false,
-        "load": "torque",
-        "count_before": 0,
-        "count_after": 0,
-        "created_object": null,
-        "error": "com_error: (-2147352561, '非选择性的参数。', None, None)",
-        "★": "ok 判的是 count_after == count_before + 1（★ 回读优先，不看返回对象）",
-        "label": "torque"
-      },
-      {
-        "ok": false,
-        "load": "gravity",
-        "count_before": 0,
-        "count_after": 0,
-        "created_object": null,
-        "error": "com_error: (-2147352561, '非选择性的参数。', None, None)",
-        "★": "ok 判的是 count_after == count_before + 1（★ 回读优先，不看返回对象）",
-        "label": "gravity"
-      },
-      {
-        "ok": false,
-        "load": "centrifugal_force",
-        "count_before": 0,
-        "count_after": 0,
-        "created_object": null,
-        "error": "com_error: (-2147352561, '非选择性的参数。', None, None)",
-        "★": "ok 判的是 count_after == count_before + 1（★ 回读优先，不看返回对象）",
-        "label": "centrifugal_force"
-      }
-    ],
-    "final_count": 0,
-    "verdict_judgement": {
-      "applied_ok": 0,
-      "of": 4,
-      "final_count": 0,
-      "★": "★ 四类各 +1 ⇒ final_count 应为 4；每条 ok 由 count_after == count_before + 1 判定"
+    "add_pressure": {
+      "ok": true,
+      "ret": "<COMObject <unknown>>"
+    },
+    "readback_count": {
+      "ok": true,
+      "count": 1
+    },
+    "add_gravity": {
+      "ok": false,
+      "err": "com_error: (-2147352571, '类型不匹配。', None, 1)"
     }
   },
-  "verdict": "fail"
+  "captured_at": "2026-10-02T21:29:47",
+  "verdict": "partial"
 }
