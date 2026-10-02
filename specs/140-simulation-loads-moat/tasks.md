@@ -8,7 +8,8 @@
 - [x] 查四家的**工具名** ⇒ 合计 **4 个**，**全是"建研究/跑"**，**没有一个挂载荷/约束**
 - [x] ★ 结论：**找过了、没有 ⇒ 自己搓**（★ 且这坐实了"护城河"）
 
-→ 验收: `python D:\AI\SW\tools\w7_sim.py` 的 ① 段三个 owner 都是「（无）」
+→ 验收: `python tools/measure_simulation_moat.py`（★ 在**代码仓库**里跑）⇒
+  ① 段的 `Eduardof0nt` / `Slacker-LLC` / `SolidworksMCP-TS` 三个 owner 都是「（无）」
 
 ## T1 · ★★ 核能力层**是不是已是包装层**（目标里那句话）
 
