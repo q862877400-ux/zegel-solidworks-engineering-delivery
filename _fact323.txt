@@ -1,0 +1,70 @@
+| 323 | **段 5 大突破：4 条热载荷恢复注册** —— ★ 真因是**算例类型**（它们要 `thermal`，而我一直在 `static` 上试）；★ 而这是"**调错了而不是坏了**"的**第三次**（2026-10-03，轮 408）。
+
+## 一、★★★★★ 本轮起点是「**抄官方声明**」（★ 收敛报告写的下一步，★ 不是继续试参数）
+```
+★ 从 CHM 抄出 `ICWLoadsAndRestraintsManager` 的六条 VB 声明，**六条一模一样**：
+   ```
+   Function AddXxx(ByVal DispArray As System.Object, ByRef ErrorCode As System.Integer)
+   ```
+⇒ ★★ 而它与**已能用的** `AddElasticConnector` **同形** ⇒ **形态没错 ⇒ 失败在别处**。
+```
+
+## 二、★★★★★ 而线索来自**载荷的性质**，不是签名
+```
+★ 对流 / 热流 / 热功率 / 温度 / 辐射 —— ★ **这五条是「热载荷」**
+   ⇒ ★★ **而轮 402 我一直在 `static`（静力）算例上试它们** ⚠
+★ 而 `create_static_study` 其实**收 `study_type`**（★ 名字是历史的），
+   且 `SWS_ANALYSIS_STUDY_TYPES` 里就有 **`thermal = 3`**。
+⇒ ★ 把**算例类型**变成变量 ⇒ ★★★★ **真机 4 条全部建成** ✓✓✓
+   ```
+   convection   计数 0 → 1   ✓        heat_flux   1 → 2   ✓
+   heat_power   2 → 3        ✓        radiation   3 → 4   ✓
+   ```
+   （`output/thermal-loads-evidence.json` · `verdict: pass`）
+⇒ ★★★ **即：★ 轮 402 的「另 5 条未建成」是**误判** —— ★ 真因是**算例类型不对**。**
+```
+
+## 三、★★★★★ 而这是「调错了而不是坏了」的**第三次**（★ 该升级成硬纪律了）
+```
+① 轮 400：★ `add_dimension` 判「未建成」⇒ 真因是**探针选区不干净**（事实 320）
+② 轮 402：★ 4 条热载荷判「未建成」⇒ 真因是**算例类型不对**（本事实）
+③ 轮 407：★ `export_flat_pattern_dxf` —— ★ 而那次**不是**我调错（★ 是真需要"已保存"，撞红线）
+⇒ ★★ **三次里有两次是我调错** ⇒ ★ 而我两次都**按硬约束⑥ 回退了一个好能力**。
+★★ 定则（★ 与 AGENTS.md「按 ToolSpec 的契约调」那节**同一族**，★ 而这次要**加一条前置检查**）：
+   ★★★ **在判「未建成」之前，先穷举"**调用前提**"这一维** ——
+     ★ 候选维度：★ **选区卫生**（先 `ClearSelection2`）· ★ **算例/文档类型**（static vs thermal）·
+     ★ **实体种类**（面 / 边 / 顶点 / 体）· ★ **参数单位与个数**（★ 读官方签名，★ 别凭印象补）。
+   ★★ 手段仍是**穷举表**（★ 一次试遍该维度的取值），★ 而不是"改一处、试一次、类推结论"。
+```
+
+## 四、★ 两条**要分别记**的事实（★ 不能一概而论）
+```
+① ★ **那 4 条要求 `thermal`（`study_type=3`）** ⇒ ★ 建算例请用
+   `create_static_study(sw, name, study_type=3)`。
+② ★★ **`elastic_connector` 相反**：★ 它在 **`static` 下成**、在 **`thermal` 下不成**
+   （★ 真机对照：同一次探针里它计数 4→4）。
+   ⇒ ★ **各载荷对算例类型的要求不同** —— ★ 那是一条**必须逐条记**的性质。
+```
+
+## 五、★ 未解决的一条（★ 而它**不是**猜出来的，是**拒绝**出来的）
+```
+★ `temperature` ⇒ ★ 报 `com_error(-2147352561, '**非选择性的参数**')`（= `DISP_E_PARAMNOTOPTIONAL`）
+   ⇒ ★★ 即：★ `AddTemperature` 的**运行期参数个数 > 2**
+     ★ 而 CHM 那页写的是 2 条 —— ★ 那页是 **2021 版**，★ 本机是 **SW 2026**。
+★ 而**出厂类型库的反射 dump 与生成的 arity 表里都没有这个名字** ⇒ ★ 按**铁律 5 不猜**。
+⇒ ★ 下一步（**具体到动作**）：★ 查 CHM 里 `AddTemperature` 的**示例代码**（C#/VB.NET/VBA 三份），
+   ★ 或用**活的类型库**（`comtypes`）读它的真实参数表。
+```
+
+## 六、★ 处置
+```
+① ★ **恢复 4 条注册**（`tool_specs_batch58` 现含 5 条：4 条热载荷 + `elastic_connector`）
+   ⇒ `all_specs` 209 → **213**
+② ★ 每条文档里**写明它要哪种算例**（★ 4 条写 thermal、elastic 写 static）—— ★ 免得下一个人再踩
+③ ★ `temperature` **仍不注册**，★ 卡点与下一步都写清
+```
+
+**依据**：`output/thermal-loads-evidence.json`（★ `verdict: pass` · 4 条计数逐条 +1）·
+CHM `ICWLoadsAndRestraintsManager~Add{Convection,HeatFlux,HeatPower,Radiation,Temperature,
+ElasticConnector}.html`（★ VB 声明逐字抄自）· `scripts/sw_simulation.SWS_ANALYSIS_STUDY_TYPES`
+（★ `thermal = 3`）· 事实 320（★ 第一次"调错了"）/ 322
