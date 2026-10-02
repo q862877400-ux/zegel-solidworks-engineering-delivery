@@ -1,0 +1,36 @@
+{
+  "steps": {
+    "sketch_A": {
+      "ok": true,
+      "name": "草图1",
+      "plane": "Front Plane"
+    },
+    "surface_A": {
+      "ok": true,
+      "feature": "曲面-拉伸1"
+    },
+    "sketch_B": {
+      "ok": true,
+      "name": "草图2",
+      "plane": "Top Plane"
+    },
+    "surface_B": {
+      "ok": true,
+      "feature": "曲面-拉伸2"
+    },
+    "features": [
+      "曲面-拉伸1",
+      "曲面-拉伸2"
+    ],
+    "body_count": 0,
+    "edge_count_sum": 0,
+    "save": {
+      "ok": true,
+      "path": "D:\\AI\\SW\\surface-knit-teaching.SLDPRT",
+      "exists": true,
+      "bytes": 65927
+    }
+  },
+  "captured_at": "2026-10-02T17:13:09",
+  "verdict": "pass"
+}

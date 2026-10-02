@@ -1,0 +1,20 @@
+{
+  "steps": {
+    "knit": {
+      "ok": true,
+      "new": [
+        "曲面-缝合1"
+      ],
+      "faces": 8,
+      "bodies": "2->1"
+    },
+    "negative_tol": {
+      "ok": true,
+      "error": "knit_tolerance_mm 必须在 **0.0001 ～ 0.1 mm**（★ 官方给的上下限）；收到 5.0"
+    }
+  },
+  "captured_at": "2026-10-02T17:13:05",
+  "passed": 2,
+  "of": 2,
+  "verdict": "pass"
+}

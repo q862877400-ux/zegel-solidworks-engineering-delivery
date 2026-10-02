@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "open": {
+      "ok": true
+    },
+    "bodies_AllBodies(-1)": {
+      "count": 2,
+      "types": [
+        "1",
+        "1"
+      ]
+    },
+    "bodies_SolidBody(0)": {
+      "count": 0,
+      "types": []
+    },
+    "geometry": [
+      {
+        "faces": 4,
+        "edges_sum": 16
+      },
+      {
+        "faces": 4,
+        "edges_sum": 16
+      }
+    ],
+    "features": [
+      "前视基准面",
+      "上视基准面",
+      "右视基准面",
+      "原点",
+      "Tables",
+      "草图1",
+      "曲面-拉伸1",
+      "草图2",
+      "曲面-拉伸2"
+    ]
+  },
+  "captured_at": "2026-10-02T17:12:29"
+}

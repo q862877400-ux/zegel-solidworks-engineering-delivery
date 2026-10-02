@@ -1,19 +1,25 @@
 {
   "steps": {
-    "extru": {
+    "select": {
       "ok": true,
-      "tree": 7
+      "faces_selected": 8,
+      "count_readback": "8"
     },
     "sew": {
       "ok": true,
-      "returned": "None",
-      "tree": 7,
-      "names": [
-        "Tables",
-        "草图1",
-        "曲面-拉伸1"
+      "returned": "<COMObject <unknown>>",
+      "features": [
+        "草图2",
+        "曲面-拉伸2",
+        "曲面-缝合1"
+      ]
+    },
+    "bodies_after": {
+      "count": 1,
+      "types": [
+        "1"
       ]
     }
   },
-  "captured_at": "2026-10-02T17:01:50"
+  "captured_at": "2026-10-02T17:12:38"
 }
