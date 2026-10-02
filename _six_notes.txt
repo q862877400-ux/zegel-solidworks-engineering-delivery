@@ -1,0 +1,41 @@
+---
+STEPS: 删除 topology_readback_and_parameters（★ 已被两条更细条目完全取代）
+  · ★ 引用核查（2026-10-01 轮 290）：全仓搜 `topology_readback_and_parameters` ⇒ **3 处**，
+    而**真正的代码引用 0 处** ——
+      · `tools/capture_topology_readback_evidence.py:44` ⇒ ★ 只是**证据 json 里的一个字符串字段**
+        （`"capability": "topology_readback_and_parameters"`）★ **不是 import、不是调用**；
+      · `docs/harvest-digest.md:108` / `docs/union-level-audit.md:82` ⇒ ★ **生成物**（会随清单重算）。
+  · ★★ 所以**可以删**（★ 那个字符串无害 —— ★ 它是历史证据的标注，★ 而证据文件本身不该改）。
+  · ★★★ 删它的理由：★ 它**已无独立语义**（16 个工具全在 `topology_constraints_and_controls`(8)
+    与 `topology_readback`(6) 里）⇒ ★ **留着就是"清单里有一条空壳"**（事实 209）。
+SETTERS:
+  requirements_planning: |
+    ★★ 2026-10-01（轮 290）**本条不挂工具 —— 理由写明**：★ 它是**需求分析与工程规划**（★ 一个**流程能力**，
+    不是 COM 操作）⇒ ★ 它的实现在**编排层**（★ 证据 `pytest tests/test_engineering_orchestrator.py`），
+    ★ **不是 `scripts/sw_*.py` 里的 COM 封装** ⇒ ★★ 所以**没有"工具"这种形态可挂**。
+    ★ 而它**确实是 `verified`**（★ 有我们自己的运行证据 —— ★ 那个测试）。
+  feature_readback_criterion: |
+    ★★ 2026-10-01（轮 290）**本条不挂工具 —— 理由写明**：★ 它是**规则 6 的通用助手**
+    （建特征后回读判据），★ 即**内部判据库**而非用户操作 ⇒ ★★ 它被**别的工具内部调用**，
+    ★ 而**不暴露为工具**。★ 证据 `tools/capture_modeling_readback_evidence.py`（真机，
+    `criterion_selfcheck.ok = true`）⇒ ★ 它是**verified**（★ 有真机证据）。
+    ★ **典型用处**：`sw_hole_features` / `sw_gear` 等的包装都用它判"特征树变了吗"。
+  drawing_dimension_insertion: |
+    ★★ 2026-10-01（轮 290）**核了实现在哪 —— 结论是"实现层没有对应函数"**：
+    ★ 全仓搜 `InsertModelDimensions` ⇒ ★ **只在 `scripts/sw_api_sldworks.py` 里**（★ 那是**签名索引**，
+    不是实现）；★ `sw_drawing_view.py` 的 12 个函数**全是读 + `set_view_scale`**，★ **没有"插尺寸"**。
+    ⇒ ★★★ 所以本条**当前没有可挂的工具**（★ 实现层缺那一环）；★ 而它的 evidence 是
+    `pytest tests/test_cad_reliability.py（工程图尺寸插入回读）` ⇒ ★ **下一步：核那个测试到底验了什么**
+    （★ 它可能验的是"尺寸**能读回**"而不是"能把模型尺寸**插进工程图**"）。
+    ★ **处置**：★ 保留 `verified`（★ 有测试）· ★ 而**如实写"工具层缺实现"**。
+  autocad_script_backend: |
+    ★★ 2026-10-01（轮 290）**本条不挂 SolidWorks 工具 —— 理由写明**：★ 它是 **AutoCAD SCR / AutoLISP
+    白名单命令桥**（★ 另一条产品线，★ 代码不在 `scripts/sw_*.py`）；★ 证据 `pytest tests/test_acad_script_backend.py`。
+    ★★ 按并入规范，headless / 非 SolidWorks 路线用 **`cadstudio_*`** 前缀 ⇒ ★ **而当前的工具表里
+    没有对应的 `cadstudio_*`**（★ 13 个里没有）⇒ ★ **所以它的工具真缺**（★ 而那不是本会话该补的 ——
+    ★ 它属 AutoCAD 线）。★ **如实：`verified`（有测试）· 工具缺。**
+  autocad_dotnet_backend: |
+    ★★ 2026-10-01（轮 290）**同上一族 —— 理由写明**：★ 它是 **AutoCAD .NET Managed API 桥接**；
+    ★ 证据 `pytest tests/test_acad_dotnet_preflight.py`（★ **预检**）。★ 而 `cadstudio_resolve_backend`
+    的 docstring 里**提到过 "AutoCAD .NET"** ⇒ ★ 说明**那条线在能力层里是有位置的**，
+    ★ 只是**工具层没有对应工具**。★ **如实：`verified`（有预检测试）· 工具缺。**
