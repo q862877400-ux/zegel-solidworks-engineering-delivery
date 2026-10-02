@@ -1,0 +1,52 @@
+{
+  "runs": [
+    {
+      "case": "V2_5args_front",
+      "sel": [
+        1,
+        1
+      ],
+      "ret": "<COMObject <unknown>>",
+      "new": null,
+      "type": null,
+      "ok": false
+    },
+    {
+      "case": "V1_3args_front",
+      "sel": [
+        1,
+        1
+      ],
+      "ret": "<COMObject <unknown>>",
+      "new": null,
+      "type": null,
+      "ok": false
+    },
+    {
+      "case": "V1_3args_right",
+      "sel": [
+        1,
+        1
+      ],
+      "ret": "<COMObject <unknown>>",
+      "new": null,
+      "type": null,
+      "ok": false
+    },
+    {
+      "case": "V1_3args_top",
+      "sel": [
+        1,
+        1
+      ],
+      "ret": "<COMObject <unknown>>",
+      "new": null,
+      "type": null,
+      "ok": false
+    }
+  ],
+  "captured_at": "2026-10-02T19:52:20",
+  "passed": 0,
+  "of": 4,
+  "verdict": "fail"
+}

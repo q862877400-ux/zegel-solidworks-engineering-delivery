@@ -1,0 +1,19 @@
+{
+  "returned_object": {
+    "Name": "包覆1",
+    "GetTypeName2": "Emboss",
+    "GetTypeName": "Emboss"
+  },
+  "tree": {
+    "before_n": 8,
+    "after_n": 8,
+    "new": [],
+    "after_tail": [
+      "Tables",
+      "草图1",
+      "凸台-拉伸1",
+      "草图2"
+    ]
+  },
+  "next_feature": null
+}

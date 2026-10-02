@@ -1,31 +1,31 @@
 {
   "steps": {
-    "sketch": {
-      "ok": true,
-      "name": "草图2"
-    },
-    "selected": {
-      "sketch_mark4": 1,
-      "face_mark1": 1
-    },
-    "wrap": {
-      "ok": false,
-      "feature": null,
-      "type": null,
-      "stage": null,
-      "err": null
-    },
-    "negative": {
-      "ok": true,
-      "error": "包覆要选 **草图（mark=4，★ 必须是 2D 草图）** 与 **面（mark=1）**（★ 官方 Remarks 与示例给的 mark）；★ 当前 ma"
-    },
-    "negative_type": {
-      "ok": true,
-      "error": "wrap_type 只能是 ['deboss', 'emboss', 'engrave', 'scribe']（swWrapSketchType_e）；收到 '"
-    }
+    "runs": [
+      {
+        "case": "emboss",
+        "ok": true,
+        "name": "包覆1",
+        "type": "Emboss",
+        "tree": "8->8"
+      },
+      {
+        "case": "deboss",
+        "ok": true,
+        "name": "包覆1",
+        "type": "Emboss",
+        "tree": "8->8"
+      },
+      {
+        "case": "scribe",
+        "ok": true,
+        "name": "包覆1",
+        "type": "Emboss",
+        "tree": "8->8"
+      }
+    ]
   },
-  "captured_at": "2026-10-02T19:40:06",
+  "captured_at": "2026-10-02T19:53:09",
   "passed": 3,
-  "of": 4,
-  "verdict": "partial"
+  "of": 3,
+  "verdict": "pass"
 }
