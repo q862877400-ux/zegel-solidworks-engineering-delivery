@@ -29,6 +29,9 @@ for p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, p)
 import register_capabilities as rc
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 exposed = {x.function for x in rc.all_specs()}
 INJECTABLE = ("model", "sw_app", "study")
 

@@ -25,6 +25,9 @@ print("    （共 %d 个）" % len(seen))
 print()
 print("  ── ② scripts/ 里跟「文档信息 / 引用 / 模板」有关的能力层函数 ──")
 import inspect
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 for mod in ("sw_connect", "sw_delivery", "sw_export", "sw_pdm", "sw_document"):
     try:
         m = __import__(mod)

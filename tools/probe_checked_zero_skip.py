@@ -38,6 +38,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 REPO = Path(r"" + _ROOT_S + r"")
 GATE = REPO / "scripts" / "check_signature_audit_freshness.py"
 sys.stdout.reconfigure(encoding="utf-8")

@@ -44,6 +44,8 @@ r"""嘉立创 FA 结果卡定位 —— **不依赖列数、不依赖宽度**。
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import re
 import sys
 import warnings
@@ -54,6 +56,9 @@ sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_locate as L
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 #: 结构名/导航名 —— 不是分类卡，收集时要排除

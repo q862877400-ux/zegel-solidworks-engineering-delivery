@@ -30,6 +30,9 @@ from pathlib import Path
 
 import pytest
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 R = Path(r"" + _ROOT_S + r"")
 SCRIPT = Path(r"D:\AI\SW\compute_union_gap_v3.py")
 

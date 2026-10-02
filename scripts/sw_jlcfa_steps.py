@@ -60,6 +60,9 @@ import sw_jlcfa_locate as L
 import win32api
 import win32con
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 EVID = Path(r"D:\AI\SW\evidence")

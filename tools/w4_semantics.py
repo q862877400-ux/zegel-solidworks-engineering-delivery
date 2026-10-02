@@ -2,8 +2,13 @@ import inspect
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
+from pathlib import Path
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
+
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 import sw_part as p
+
 
 TARGETS = ["start_sketch", "end_sketch", "sketch_line", "sketch_circle",
            "sketch_corner_rectangle", "sketch_rectangle"]

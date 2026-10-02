@@ -8,6 +8,9 @@ REPO = Path(r"" + _ROOT_S + r"")
 sys.path[:0] = [str(REPO / "mcp-server"), str(REPO), str(REPO / "scripts")]
 import register_capabilities as rc
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 GAP = ["assembly", "assembly_analysis", "assembly_components", "assembly_mates", "assembly_tree",
        "component", "component_fixed", "components", "explode_assembly", "fix_component",
        "hide_component", "interference", "load_assembly", "mirror_component", "move_component",

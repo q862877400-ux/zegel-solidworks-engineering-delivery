@@ -24,6 +24,8 @@ r"""参数完整性 —— 以**插件自己的型号行**为准，不看输入�
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import sys
 import time
 import warnings
@@ -35,6 +37,9 @@ import sw_jlcfa_locate as L
 import sw_jlcfa_select as SEL
 import sw_jlcfa_steps as S
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 PLACEHOLDER = "【去填写】"

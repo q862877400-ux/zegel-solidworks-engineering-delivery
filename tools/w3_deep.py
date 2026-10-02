@@ -17,6 +17,9 @@ if fn:
 print()
 print("  ══ ② 有没有「从 model 取 PDM 文档 / 取引用」的 helper ══")
 import re as _re
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 for mod_name in ("sw_pdm", "sw_connect"):
     m = __import__(mod_name)
     for n in sorted(dir(m)):

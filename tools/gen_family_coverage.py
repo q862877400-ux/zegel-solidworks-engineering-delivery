@@ -49,6 +49,9 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 for _s in (sys.stdout, sys.stderr):
     try:
         _s.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]

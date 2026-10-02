@@ -51,6 +51,9 @@ from pathlib import Path
 #   （见 AGENTS.md 铁律 2）。
 # ────────────────────────────────────────────────────────────────────
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 for _s in (sys.stdout, sys.stderr):
     try:
         _s.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]

@@ -64,6 +64,9 @@ sys.path[:0] = [str(Path(__file__).resolve().parent),
 from sw_connect import get_com_member                              # noqa: E402
 
 #: ★ 相对容差（★ 来自来源 README 的 1% —— 那是一个**量级**，不是我们拍的）
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 REL_TOL = 0.01
 
 

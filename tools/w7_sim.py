@@ -40,6 +40,9 @@ for owner in ("andrewbartels1", "Eduardof0nt", "Slacker-LLC", "SolidworksMCP-TS"
 print()
 print("  ══ ② 四家的工具名里有没有仿真（名字级）══")
 import json
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 u = json.loads((REPO / "tools" / "union-sources.json").read_text(encoding="utf-8"))
 for s in u["sources"]:
     owner = s.get("repo") or s.get("owner") or "?"

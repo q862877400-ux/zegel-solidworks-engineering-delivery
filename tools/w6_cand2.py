@@ -7,6 +7,9 @@ REPO = Path(r"" + _ROOT_S + r"")
 sys.path[:0] = [str(REPO / "scripts"), str(REPO / "mcp-server"), str(REPO)]
 
 import register_capabilities as rc
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 exposed = {x.function for x in rc.all_specs()}
 
 CAND = ["get_components", "collect_mate_feature_summary", "get_interference_detection",

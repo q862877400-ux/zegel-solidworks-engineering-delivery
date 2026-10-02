@@ -43,6 +43,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 from scripts.dfm_review import build_dfm_report  # noqa: E402
 
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 def _doc(path: Path) -> Path:
     path.write_text(json.dumps({
         "documentId": "brep-probe", "title": "B-Rep 探针件", "units": "mm",

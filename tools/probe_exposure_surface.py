@@ -27,6 +27,9 @@ import re
 import sys
 from pathlib import Path
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 ROOT = Path(r"" + _ROOT_S + r"")
 sys.stdout.reconfigure(encoding="utf-8")
 

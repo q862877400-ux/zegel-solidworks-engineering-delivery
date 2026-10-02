@@ -9,6 +9,9 @@ sys.path[:0] = [r"" + _ROOT_S + r"\scripts", r"" + _ROOT_S + r"\mcp-server",
 
 import register_capabilities as rc
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 print("  ══ ① MCP 里跟「自定义属性」有关的工具 ══")
 for x in rc.all_specs():
     if re.search(r"propert|custom", x.name + " " + (x.doc or "") + " " + x.module, re.I):

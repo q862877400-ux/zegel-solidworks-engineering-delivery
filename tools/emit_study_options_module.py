@@ -19,6 +19,9 @@ for _s in (sys.stdout, sys.stderr):
         pass
 
 DATA = Path(r"D:\AI\SW\_raw\study_options_setters.json")
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
+
 OUT = Path(r"" + _ROOT_S + r"\scripts\sw_simulation_study_options.py")
 
 HEADER = r'''"""SolidWorks Simulation 求解器设置：各 *StudyOptions 族的 setter 登记表。
@@ -62,6 +65,7 @@ cosworks 的求解器设置分散在 9 个 ``*StudyOptions`` 族里，**合计 2
 from __future__ import annotations
 
 from typing import Any
+
 
 try:
     from .sw_connect import get_com_member

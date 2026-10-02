@@ -29,6 +29,8 @@ r"""按**截图网格**定位卡片 —— UIA 对滚动内容给虚拟坐标，
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import sys
 import warnings
 
@@ -39,6 +41,9 @@ import sw_jlcfa_locate as L
 import sw_jlcfa_steps as S
 import sw_jlcfa_cards as C
 
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 #: 卡片底色判定：浅色（近白）——实测卡片是白色圆角块，背景是浅灰

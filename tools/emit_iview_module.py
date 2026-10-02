@@ -15,6 +15,9 @@ for _s in (sys.stdout, sys.stderr):
         pass
 
 DATA = Path(r"D:\AI\SW\_raw\iview_members.json")
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
+
 OUT = Path(r"" + _ROOT_S + r"\scripts\sw_drawing_view.py")
 
 HEADER = r'''"""SolidWorks 工程图视图：IView 成员登记表 + 通用访问器。
@@ -66,6 +69,7 @@ HEADER = r'''"""SolidWorks 工程图视图：IView 成员登记表 + 通用访�
 from __future__ import annotations
 
 from typing import Any
+
 
 try:
     from .sw_connect import get_com_member

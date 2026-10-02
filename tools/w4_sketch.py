@@ -23,6 +23,9 @@ print("    （共 %d 个）" % n_hit)
 print()
 print("  ── 能力层里「建草图 / 画几何」的函数（首参 model 的）──")
 import sw_part as p
+
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 cnt = 0
 for n in sorted(dir(p)):
     if n.startswith("_"):
