@@ -1,0 +1,41 @@
+{
+ "at": "2026-10-03T05:06:26",
+ "entries": {},
+ "selects": [
+  1,
+  2
+ ],
+ "count2": "2",
+ "per_index": [
+  {
+   "i": 1,
+   "face(-1)": false,
+   "face(0)": false,
+   "mark": true,
+   "obj6(-1)": true
+  },
+  {
+   "i": 2,
+   "face(-1)": false,
+   "face(0)": false,
+   "mark": true,
+   "obj6(-1)": false
+  },
+  {
+   "i": 3,
+   "face(-1)": false,
+   "face(0)": false,
+   "mark": true,
+   "obj6(-1)": false
+  }
+ ],
+ "got_counts": {
+  "face(-1)": 0,
+  "face(0)": 0,
+  "mark": 3,
+  "obj6(-1)": 1
+ },
+ "entries_that_see_both": [],
+ "verdict": "partial",
+ "note": "★ 找一个**一次拿到所有选中面**的入口 —— ★ 候选是那几个**复数**方法（★ 名字里就写着复数，★ 而不是「按序号取」）。★ 判据：能一次拿到 2 个。"
+}

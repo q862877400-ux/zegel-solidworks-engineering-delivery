@@ -1,0 +1,26 @@
+{
+ "at": "2026-10-03T05:05:30",
+ "selects": [
+  1,
+  2
+ ],
+ "count2": {
+  "mark-1": "2",
+  "mark0": "0",
+  "mark1": "1",
+  "mark2": "1"
+ },
+ "per_mark": {
+  "mark1": {
+   "got": true,
+   "id": 2137532990960
+  },
+  "mark2": {
+   "got": false,
+   "id": null
+  }
+ },
+ "judge_by_marks_usable": false,
+ "verdict": "partial",
+ "note": "★ 验「**分桶取数**」这条修法：★ 两次选择用不同 mark（1 与 2），★ 而**逐个桶各取 1 个**（`GetSelectedObject6(1, mark)`）—— ★ 判据：**拿到两个不同的对象**。★ 验过了才准改共享助手。"
+}
