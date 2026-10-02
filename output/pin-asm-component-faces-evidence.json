@@ -1,0 +1,33 @@
+{
+ "steps": {
+  "entry_check": {
+   "ok": true,
+   "components": 2,
+   "detail": [
+    {
+     "i": 0,
+     "has_body": true,
+     "face_count": 6
+    },
+    {
+     "i": 1,
+     "has_body": true,
+     "face_count": 26
+    }
+   ],
+   "note": "★ 先验入口：★ 两个组件各拿到一个面 ⇒ 才继续施加"
+  },
+  "pin_component_faces": {
+   "ok": false,
+   "count": [
+    0,
+    0
+   ],
+   "error": ""
+  }
+ },
+ "at": "2026-10-03T05:17:03",
+ "study": "DSH-PINCF_051703",
+ "verdict": "partial",
+ "note": "★ 销钉连接件的**最后一个候选**：★ 装配体 + **组件上的面** —— ★ 即 `IComponent2.GetBody()` 拿体、再 `GetFaces()` 取面。★ 判据：① 两组件各拿到一个面 ② 施加后计数恰好 +1。★ 零件用**已在盘上的**自带件 ⇒ ★ 不保存任何东西（硬约束⑦）。"
+}
