@@ -1,0 +1,44 @@
+     ★ 2026-10-01（轮 246 / **24h 计划 段 2.1 / Spec Kit `143`**）· ★★★ **载荷族广度：4 个工具挂上了，但真机四类全失败 ⇒ 收敛为 `stitched`** —— 而**失败本身兑现代码里早就写着的一句话**
+         ▶ **做了什么**：`scripts/sw_simulation_loads.py` 加 **4 个回读报告包装**
+           （`apply_pressure_report` / `apply_torque_report` / `apply_gravity_report` /
+           `apply_centrifugal_force_report`）+ `mcp-server/tool_specs_batch29.py`（**4 个工具**：
+           压力 / 力矩 / 重力 / 离心力）。`all_specs()` **90 → 94** · MCP 工具 **135 → 139** ·
+           能力清单 **50 → 51 条**（★ 新增那条等级 = **`stitched`**）。
+         ★★★ **挂的方式 = 第六种包装形状**：这批函数首参叫 **`manager`**（不是 `study`）⇒ **不可注入**
+           ⇒ ★ **给 `RESOLVERS` 加一行 `"manager": resolve_manager`**（W6 给 `asm_model` 加一行的同一手法）
+           ⇒ 三件套并用：`inject="manager"` + `pre_call`（选面）+ `derived_args`（补 `model`）。
+           ★ `check_param_binding.py` **PASS**（★ 那道门禁正是为这类漏绑而建的）。
+         ⚠⚠⚠ **真机四类全部失败** —— 而★★ **那四个函数的来源块自己早就写着**
+           「⚠ 本组为照官方签名新写，**未在本机实测**（见 AGENTS.md 铁律 2）」
+           ⇒ ★★★ **本批真机正好把这句话兑现了**：★ **「照官方签名写」≠「能跑」**。
+           两轮真机（★ 每轮只动一个变量）：
+             · 第 1 轮：`pressure`/`torque` ⇒ `-2147352571 类型不匹配 @ arg3`；
+               `gravity`/`centrifugal` ⇒ `非选择性的参数`
+             · 第 2 轮（只改 `reg_geom` → 用既有空 Dispatch `VARIANT(VT_DISPATCH, None)`）：
+               ★ **「类型不匹配」消失** ✓ ⇒ **那条修复确实生效**（只是不够）——
+               ★★ 这是一个**可复现的两态对照**（有诊断价值）
+         ★★ **已查清**：① `RegGeom`/`RefGeom` **不能裸传 `None`**（报错位置 3 就是它）⇒
+           已在**能力层**修（★ 任何调用方受益）；② 报错**位置**指向「**实参形态/重载解析**」，
+           **不是**选面、**不是**管理器。
+         ⚠ **未查清（★ 不猜）**：**为什么 `AddRestraint`（能跑通）与 `AddPressure`（不能）
+           在同样传裸 `list` 的情况下结果相反？** ★ 候选：`AddPressure` 在类型库里有**多个重载**，
+           而 `(int, list, VARIANT)` 匹配不上任何一个（★ COM 的「非选择性的参数」**也可能表示
+           "重载选不出唯一那个"**）。
+         ★★★ **按事实 53 主动停手**：在这个「实参形状」上已改 **2 次**（arity 修正 + `reg_geom`）
+           ⇒ **不再试第 3、第 4 种包装**；★ 正路 = **先把类型库里 `AddPressure` 的重载表读出来**。
+         ▶ **验收**：① 门禁链 **18 道**全 exit 0 · 全量 pytest **1278 passed / 0 failed** ✓
+           · `all_specs()` = **94** ✓ · `check_param_binding` PASS ✓
+           ② ⚠ **真机 `verdict: fail`** —— `output/loadfamily-evidence.json` **已如实落盘**
+           ⇒ ★ 按硬约束③**明确标注「未真机验证」**（能力等级 = `stitched`）。
+         ★★ **顺带修了两处**（都不在本批计划里，但不修门禁红）：
+           ① `scripts/sw_simulation_loads.py` 的**顶层惰性导入** —— 该模块的设计约束是
+              「**不连 COM 也能 import**」（契约测试靠它），而我最初在**函数体内**
+              `from sw_connect import …` ⇒ ★ **stub 环境一调就炸** ⇒ 改成**三层 try**（取不到置 `None`）；
+           ② `tests/test_sw_simulation_loads_contract.py` 的**两条契约收紧/更新**：
+              · `test_every_wrapper_declares_the_documented_arity` ⇒ ★ **收紧范围**：
+                `add_*`/`get_*` **必须**直接调 `_check`（原契约**一点不放松**），
+                而 `apply_*_report` 这类高层包装 ⇒ **必须**调用上面那批之一（★ 两层都守住）；
+              · `test_torque_uses_official_force_type_two` ⇒ ★ **按真机证据更新期望值**：
+                它原本把 `RefGeom` 钉成**裸 `None`**（★ 而那正是真机会报错的形态）。
+         ▶ **队列续作**：★ 段 2 的其余候选（**拓扑挂柜台**：读数类 4 个 + 参数类 2 个）
+           **不依赖本条的未查清项** ⇒ ★ **下一轮直接推进它们**。
