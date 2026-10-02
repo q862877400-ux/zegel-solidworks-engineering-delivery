@@ -1,0 +1,37 @@
+{
+ "at": "2026-10-03T05:03:29",
+ "A_default_mark": {
+  "selects": [
+   1,
+   2
+  ],
+  "counts": {
+   "mark-1": "2",
+   "mark0": "2",
+   "mark1": "0",
+   "mark2": "0"
+  }
+ },
+ "A_gso6": {
+  "i1_none": false,
+  "i2_none": true
+ },
+ "B_two_marks": {
+  "selects": [
+   1,
+   2
+  ],
+  "counts": {
+   "mark-1": "2",
+   "mark0": "0",
+   "mark1": "1",
+   "mark2": "1"
+  }
+ },
+ "B_gso6": {
+  "i1_none": false,
+  "i2_none": true
+ },
+ "verdict": "pass",
+ "note": "★ 分辨「两个 mark 桶」还是「同一个桶里的两个」：★ 看 **`Count2(mark0)`** —— ★ 2 ⇒ 候选②（取对象那族自己只能回第一个）；★ 1 ⇒ 候选①（两个桶，★ 修法是两次选择用同一个 mark）。★ 选法 B（mark=1,2）看“逐个 mark 桶取”能不能拿到两个。"
+}

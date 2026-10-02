@@ -1,0 +1,76 @@
+{
+ "at": "2026-10-03T05:02:22",
+ "selection": {
+  "count_via_count2": [
+   1,
+   2
+  ]
+ },
+ "count2_readback": "2",
+ "per_index": {
+  "mark=-1": [
+   {
+    "index": 1,
+    "raw": "<COMObject <unknown>>",
+    "is_none": false
+   },
+   {
+    "index": 2,
+    "raw": "None",
+    "is_none": true
+   },
+   {
+    "index": 3,
+    "raw": "None",
+    "is_none": true
+   },
+   {
+    "index": 4,
+    "raw": "None",
+    "is_none": true
+   }
+  ],
+  "mark=0": [
+   {
+    "index": 1,
+    "raw": "<COMObject <unknown>>",
+    "is_none": false
+   },
+   {
+    "index": 2,
+    "raw": "None",
+    "is_none": true
+   },
+   {
+    "index": 3,
+    "raw": "None",
+    "is_none": true
+   },
+   {
+    "index": 4,
+    "raw": "None",
+    "is_none": true
+   }
+  ]
+ },
+ "via_safe_helper": [
+  {
+   "index": 1,
+   "is_none": false
+  },
+  {
+   "index": 2,
+   "is_none": true
+  },
+  {
+   "index": 3,
+   "is_none": true
+  },
+  {
+   "index": 4,
+   "is_none": true
+  }
+ ],
+ "note": "★ 直接按序号读，★ 把**原始值或原始异常**都记下来 —— ★ 才能分清「读不到」与「抛了异常被吞掉」。★ 两种 mark（-1 与 0）都试。",
+ "verdict": "pass"
+}

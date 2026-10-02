@@ -1,0 +1,23 @@
+{
+ "steps": {
+  "static_study": {
+   "ok": true
+  },
+  "select_two_faces": {
+   "ok": true,
+   "counts": [
+    1,
+    2
+   ],
+   "note": "★ 按面上的点；★ 回读 1 与 2 才算选对（事实 8：返回值不可信）"
+  },
+  "rigid_connector": {
+   "ok": false,
+   "err": "RuntimeError: 选区里只有 1 个实体，本连接件需要 2 个（每侧 1 个）"
+  }
+ },
+ "at": "2026-10-03T05:01:45",
+ "study": "DSH-RIGID_050145",
+ "verdict": "partial",
+ "note": "★ 换维度：★ 刚性连接件只用**按面上的点**选两组面（★ 与所有成功探针同一条路），★ 且**每步回读选区计数**。★ 判据：选择计数 1→2，★ 施加后载荷计数恰好 +1。"
+}

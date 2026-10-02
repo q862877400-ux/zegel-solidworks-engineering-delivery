@@ -1,0 +1,75 @@
+{
+ "entries": {
+  "GetSelectedObject5(i)": [
+   {
+    "i": 1,
+    "got": true
+   },
+   {
+    "i": 2,
+    "got": false
+   },
+   {
+    "i": 3,
+    "got": false
+   }
+  ],
+  "GetSelectedObject4(i)": [
+   {
+    "i": 1,
+    "got": true
+   },
+   {
+    "i": 2,
+    "got": false
+   },
+   {
+    "i": 3,
+    "got": false
+   }
+  ],
+  "GetSelectedObject6(i,-1)": [
+   {
+    "i": 1,
+    "got": true
+   },
+   {
+    "i": 2,
+    "got": false
+   },
+   {
+    "i": 3,
+    "got": false
+   }
+  ],
+  "GetSelectedObject6(i,0)": [
+   {
+    "i": 1,
+    "got": true
+   },
+   {
+    "i": 2,
+    "got": false
+   },
+   {
+    "i": 3,
+    "got": false
+   }
+  ]
+ },
+ "at": "2026-10-03T05:02:58",
+ "count2": [
+  1,
+  2
+ ],
+ "count2_readback": "2",
+ "got_counts": {
+  "GetSelectedObject5(i)": 1,
+  "GetSelectedObject4(i)": 1,
+  "GetSelectedObject6(i,-1)": 1,
+  "GetSelectedObject6(i,0)": 1
+ },
+ "entries_that_see_both": [],
+ "verdict": "partial",
+ "note": "★ 找一个**能按位置取到两个对象**的入口（★ 与 `Count2` 的 2 一致）—— ★ 四个候选都是**官方存在的方法**，★ 逐个试，★ 不猜参数。"
+}
