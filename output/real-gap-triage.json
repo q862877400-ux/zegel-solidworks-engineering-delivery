@@ -2,8 +2,8 @@
  "summary": {
   "total": 93,
   "不做": 15,
-  "已有": 25,
-  "该挂": 32,
+  "已有": 28,
+  "该挂": 29,
   "内部件": 21,
   "★": "四类之和必须 == total（★ 本脚本自检）",
   "★口径差异": "本脚本报 108 而 audit_real_gaps 报 101 —— ★ 两者对「被上游调」的判定略有不同（本脚本用字面量匹配）；★ 本文件的 108 是本轮作业的口径，★ 而两者的模块级分布一致。",
@@ -421,8 +421,8 @@
   {
    "module": "sw_export",
    "name": "batch_export",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `solidworks_batch_export_files（★ `batch_export` 是 `batch_export_formats` 的**薄包装**，而后者就是那个工具的 function；⚠ 它在 `server.py` 侧声明，★ 故 `all_specs()` **看不到它**）` 覆盖"
   },
   {
    "module": "sw_export",
@@ -439,14 +439,14 @@
   {
    "module": "sw_export",
    "name": "export_to_bmp",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `solidworks_export_bmp（★ 它的 function `export_bmp_report` **调的正是** `export_to_bmp`）` 覆盖"
   },
   {
    "module": "sw_export",
    "name": "export_to_image",
-   "kind": "该挂",
-   "why": ""
+   "kind": "已有",
+   "why": "功能已由 `solidworks_export_image（★ `export_image_report` **调的正是** `export_to_image`）` 覆盖"
   },
   {
    "module": "sw_export",
