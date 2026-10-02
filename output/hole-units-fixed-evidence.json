@@ -1,0 +1,33 @@
+{
+  "rounds": {
+    "through": {
+      "ok": true,
+      "tree": "7->9",
+      "error": null
+    },
+    "blind": {
+      "ok": true,
+      "tree": "7->9",
+      "error": null
+    },
+    "counterbore": {
+      "ok": true,
+      "tree": "7->11",
+      "error": null
+    },
+    "countersink": {
+      "ok": true,
+      "tree": "7->10",
+      "error": null
+    },
+    "semicircular_slot": {
+      "ok": true,
+      "tree": "7->9",
+      "error": null
+    }
+  },
+  "captured_at": "2026-10-02T15:46:54",
+  "passed": 5,
+  "of": 5,
+  "verdict": "pass"
+}

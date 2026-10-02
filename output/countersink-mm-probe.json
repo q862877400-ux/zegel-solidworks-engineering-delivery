@@ -1,0 +1,18 @@
+{
+  "steps": {
+    "mm-20": {
+      "ok": true,
+      "tree": "7->10",
+      "preview": "{'feature_kind': 'countersink', 'center_m': (-20.0, 0.0), 'diameter_m': 5.0, 'depth_m': None, 'throu"
+    },
+    "mm+20": {
+      "ok": true,
+      "tree": "10->13",
+      "preview": "{'feature_kind': 'countersink', 'center_m': (20.0, 0.0), 'diameter_m': 5.0, 'depth_m': None, 'throug"
+    }
+  },
+  "captured_at": "2026-10-02T15:46:15",
+  "passed": 2,
+  "of": 2,
+  "verdict": "pass"
+}
