@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-10-02T11:32:00",
+  "captured_at": "2026-10-02T11:36:18",
   "capability": "modeling_readback",
   "steps": {
     "bindings": {
@@ -102,19 +102,19 @@
         }
       },
       "insert_dome": {
-        "ok": false,
+        "ok": true,
         "report": {
-          "ok": false,
+          "ok": true,
           "feature": "dome",
           "feature_name_expected": "圆顶1",
           "present_before": false,
           "readback": {
             "feature_name": "圆顶1",
-            "present": false,
+            "present": true,
             "rebuild_ok": true,
             "whats_wrong_count": 0,
             "whats_wrong_entries": [],
-            "reason": "特征名 '圆顶1' 不在特征树里（★ 可能没建出来，或名字与 UI 语言不符）",
+            "reason": "",
             "★": "规则 6：特征在树里 + EditRebuild3 真 + GetWhatsWrong2 数 0",
             "names_sample": [
               "前视基准面",
@@ -124,9 +124,10 @@
               "Tables",
               "草图1",
               "凸台-拉伸1",
-              "抽壳1"
+              "抽壳1",
+              "圆顶1"
             ],
-            "ok": false
+            "ok": true
           },
           "created_object": null,
           "error": null,
@@ -157,6 +158,7 @@
               "草图1",
               "凸台-拉伸1",
               "抽壳1",
+              "圆顶1",
               "草图2"
             ],
             "ok": false
@@ -190,6 +192,7 @@
               "草图1",
               "凸台-拉伸1",
               "抽壳1",
+              "圆顶1",
               "草图2"
             ],
             "ok": false
@@ -202,7 +205,7 @@
     },
     "judgement": {
       "selfcheck": true,
-      "tools_ok": 1,
+      "tools_ok": 2,
       "tools_total": 4,
       "★": "★ 判据自验通过 + 至少一个建特征工具回读三真 ⇒ 本批算过"
     }

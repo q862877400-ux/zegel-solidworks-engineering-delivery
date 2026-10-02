@@ -1,0 +1,60 @@
+| 185 | **`call_com_member(obj, name, *args)` 的实参要喂给它**自己**，不是喂给它回的东西** —— 一处括号位置造成的**静默失败**（2026-10-01，轮 251）。
+
+## 一、那个 bug 的形态（★ 很隐蔽）
+```
+★ 错：`call_com_member(model, "InsertDome")(float(height), bool(reverse), bool(elliptic))`
+★ 对：`call_com_member(model, "InsertDome", float(height), bool(reverse), bool(elliptic))`
+⇒ ★★ **两处错叠加**：
+   ① `call_com_member(obj, name)` **本身就会把成员调一次**（★ 它就是 `get_com_member`，
+      语义是"取或调"—— 见它自己的 docstring）⇒ ★ `InsertDome()` **零参调了一次**（缺 3 个必需实参）；
+   ② 再对它**返回的结果**调 `(...)` —— 而 `InsertDome` 是 **`void`** ⇒ 回 `None`
+⇒ ★★★ 真机表现：★ **不抛异常、也不建出特征**（**静默失败**）—— ★★ 而这正是
+   known-facts 47 里那条「**假通过**」的同族形态：★ **动作没发生，而代码看起来执行了**。
+★★★★ **而它被**回读判据**当场抓到**（`present=False`）—— ★ 那判据是上一轮（轮 249）为规则 6 建的。
+```
+
+## 二、★★★ 修法（一处括号）与验证
+```
+★ 改完之后真机 **`insert_dome` 建出来了**（特征「圆顶1」在树里 · `EditRebuild3` True · 查错 0）
+⇒ ★ 本批工具通过数 **1/4 → 2/4**（`shell` + `insert_dome`）
+```
+
+## 三、★★ 同一批的第二个发现：官方 **Remarks** 是硬前置
+```
+★ `IModelDoc2.InsertDome` 的 Remarks：「Before using this method, you must select the face for the
+  dome using a **selection mark of 1**」
+★ 而本项目 `sw_simulation.select_face_at` 的 `mark` **默认是 0** ⇒ ★ **不满足**
+⇒ ★★ **所以那一步也要改**（证据脚本里显式传 `mark=1`）。
+★★ **定则**：★ **凡官方写进 Remarks 的前置（尤其是"用某个 mark 选"），都要当成硬前置** ——
+   而**项目里通用的选择助手默认值不一定满足它**。
+```
+
+## 四、★ `rib` 的"未查证"被补上了（★ 但仍未通过，且**不盲改**）
+```
+★ 能力层来源块里原本写着「⚠ 末位布尔的确切语义未查证（CHM 的 InsertRib 页未在本地解包源中找到）」
+⇒ ★ 而 `C:\swapi\types\IFeatureManager\InsertRib.md` **有完整的 10 个参数说明**：
+    `Is2Sided, ReverseThicknessDir, Thickness, ReferenceEdgeIndex, ReverseMaterialDir,`
+    `IsDrafted, DraftOutward, DraftAngle, **IsNormToSketch**, IsDraftedFromWall`
+  ⇒ ★★ **"末位布尔" = `IsNormToSketch`**（★ 查到了）
+★ 而能力层传的 **10 个实参位置已对齐** ⇒ ★ **嫌疑移到 `ReferenceEdgeIndex`（传 `0`）**：
+  官方说它是「**Edge in the sketch** to use to determine the **material direction**」
+  ⇒ ★★ **"sketch 里的一条边"** ⇒ ★ **`0` 很可能不是合法边索引**（★ 索引可能从 1 起）。
+⇒ ★★★ **按事实 53 不盲改**（★ 同一处连续修补 ≥3 次就该停）：★ 只把来源块**补准**，
+   把"下一步逐个试 `ReferenceEdgeIndex`（0/1）+ 查选区形态"写进去。
+   ★ 同族还有一条：★ `IModelDoc2.InsertRib` 标 **`Obsolete`**（被 `IModelDoc2::InsertRib2` 取代），
+     而 `IFeatureManager.InsertRib` **活着** ⇒ ★ **本函数走的是活着那个** ✓
+```
+
+## 五、★ 可复用定则
+```
+★★★ **`call_com_member(obj, name, *args)` 与 `call_com_member(obj, name)(args)` 是两回事**：
+   前者把 `args` **传进**成员；后者**先零参调一次**、再对返回值调 —— ★ **对 `void` 成员必然错**。
+   ⇒ ★ **写 COM 调用时，"实参跟着名字"是一道可以机械检查的形态**（★ 门禁候选）。
+★★ **静默失败（不抛异常也不生效）比抛异常危险** —— ★ 而**唯一能抓它的就是回读**（★ 本批又一次验证）。
+```
+
+**依据**：`scripts/sw_part.py` 的 `insert_dome`（★ 括号位置）与 `rib`（★ 来源块补齐）·
+`output/modeling-readback-evidence.json`（★ 1/4 → **2/4** · `verdict: pass`）·
+`C:\swapi\types\IModelDoc2\InsertDome.md`（★ Remarks 的 mark=1）·
+`C:\swapi\types\IFeatureManager\InsertRib.md`（★ 10 参数说明）与 `IModelDoc2\InsertRib.md`（★ Obsolete）·
+`scripts/sw_connect.py` 的 `call_com_member` docstring · 事实 36 / 47 / 53 · 事实 184
