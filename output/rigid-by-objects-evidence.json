@@ -1,0 +1,27 @@
+{
+ "steps": {
+  "static_study": {
+   "ok": true
+  },
+  "entry_check": {
+   "ok": true,
+   "body_face_count": 6,
+   "src_len": 1,
+   "tgt_len": 1,
+   "src_is_tgt": false,
+   "note": "★ 先验入口：★ 长度对、且两组**不是同一个对象** ⇒ 才继续施加"
+  },
+  "rigid_by_objects": {
+   "ok": false,
+   "count": [
+    0,
+    0
+   ],
+   "error": ""
+  }
+ },
+ "at": "2026-10-03T05:08:51",
+ "study": "DSH-ROBJ_050850",
+ "verdict": "partial",
+ "note": "★ 事实 337 的正解第一枪：★ **按已知实体清单装数组**（`entities_as_array`）★ 而**不读选区**。★ 判据：① 数组长度对且两组不同 ② 施加后计数恰好 +1。"
+}
