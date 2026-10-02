@@ -1,0 +1,109 @@
+{
+  "captured_at": "2026-10-02T11:50:55",
+  "capability": "config_and_export",
+  "steps": {
+    "bindings": {
+      "ok": true,
+      "count": 12
+    },
+    "config": {
+      "inspect_configurations": {
+        "ok": true,
+        "keys": [
+          "active_configuration",
+          "configurations",
+          "limitations",
+          "review_required",
+          "status"
+        ]
+      },
+      "create_configuration": {
+        "ok": true,
+        "keys": [
+          "activation",
+          "configuration",
+          "configurations_after",
+          "configurations_before",
+          "created",
+          "listed_after_create"
+        ]
+      },
+      "activate_configuration": {
+        "ok": true,
+        "keys": [
+          "after",
+          "api_called",
+          "api_return",
+          "api_success",
+          "before",
+          "configuration"
+        ]
+      },
+      "set_custom_properties": {
+        "ok": true,
+        "n": 6
+      },
+      "read_custom_property": {
+        "ok": true,
+        "value": null
+      },
+      "update_dimension_mm": {
+        "ok": false,
+        "error": "找不到尺寸: D1@草图1"
+      }
+    },
+    "export": {
+      "export_step": {
+        "ok": true,
+        "exists": true,
+        "size_bytes": 15801,
+        "path": "D:\\AI\\SW\\output\\_export_smoke\\smoke.step",
+        "error": null
+      },
+      "export_stl": {
+        "ok": true,
+        "exists": true,
+        "size_bytes": 684,
+        "path": "D:\\AI\\SW\\output\\_export_smoke\\smoke.stl",
+        "error": null
+      },
+      "export_iges": {
+        "ok": true,
+        "exists": true,
+        "size_bytes": 22796,
+        "path": "D:\\AI\\SW\\output\\_export_smoke\\smoke.igs",
+        "error": null
+      },
+      "export_parasolid": {
+        "ok": true,
+        "exists": true,
+        "size_bytes": 7608,
+        "path": "D:\\AI\\SW\\output\\_export_smoke\\smoke.x_t",
+        "error": null
+      },
+      "export_dxf": {
+        "ok": false,
+        "exists": false,
+        "size_bytes": 0,
+        "path": "D:\\AI\\SW\\output\\_export_smoke\\smoke.dxf",
+        "error": "ValueError: 导出展开 DXF 前必须先保存钣金零件"
+      },
+      "export_bmp": {
+        "ok": true,
+        "exists": true,
+        "size_bytes": 4217994,
+        "path": "D:\\AI\\SW\\output\\_export_smoke\\smoke.bmp",
+        "error": null
+      }
+    },
+    "judgement": {
+      "bindings": true,
+      "config_ok": 5,
+      "config_total": 6,
+      "export_ok": 5,
+      "export_total": 6,
+      "★": "★ 配置族判 dict 非空 · 导出族判**文件存在且非空**（★ 回读优先）"
+    }
+  },
+  "verdict": "pass"
+}

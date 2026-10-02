@@ -1,0 +1,37 @@
+     ★ 2026-10-01（轮 255 / **24h 计划 段 4 第一批 / Spec Kit `147`**）· ★★★★ **配置族 6 + 导出族 6 挂上柜台，真机 10/12**
+         ▶ **做了什么**：`scripts/sw_export.py` 加 **6 个导出回读包装**（判据 = **文件存在且非空**）+
+           `mcp-server/tool_specs_batch33.py`（**12 个工具**：配置 6 + 导出 6）。
+           ★ **`all_specs()` 105 → 117** · MCP 工具 **162** · 能力清单 **56 → 57 条**（★ verified **48**）。
+         ★★★ **为什么选这两族（★ 让**规则**决定范围，不是我挑数量）**：段 4 的候选按"能不能挂"分三类 ——
+           `sw_hole_features` 未挂 13（⚠ 建孔那几个吃 **裸坐标** ⇒ 规则 3 红线）·
+           `sw_weldment` 未挂 10（⚠ 混了复杂入参）· **`sw_document_data` 未挂 6** 与 **`sw_export` 未挂 13**
+           ⇒ ★★ **后两族**全无裸坐标**，取其中最常用的 12 个**。
+         ★★ **§5.0：证据脚本**先找了**（★ 轮 252 教训的第一次实际应用）**：配置族有
+           `capture_custom_property_evidence.py` + `probe_custom_property_reads.py`；导出族有
+           `verify_bmp_smoke.py`（★ 实跑 **8/8 · verdict: pass**）+ `verify_png_smoke.py`。
+         ▶ **真机 10/12**（`output/config-export-evidence.json` · **verdict: pass**）：
+           · **导出 5/6**：`step`(15,801 B) · `stl`(684 B) · `iges`(22,796 B) · `parasolid`(7,608 B) ·
+             `bmp`(**4,217,994 B**) ✓ —— ★ 全部判「**文件存在且非空**」（★ 回读优先，不看返回值）
+           · **配置 5/6**（★ 判 dict 非空）：inspect / create / activate / set+read custom property ✓
+           · ❌ `export_dxf` 被拒，报「**导出展开 DXF 前必须先保存钣金零件**」
+             ⇒ ★★ **它是**钣金展开图**的导出，不是通用 DXF** ⇒ ★★★ **工具标题已按实测改准**
+                （原写 "Export the Active Part to DXF" —— **会误导**）
+             ⇒ ★ 而那次拒绝是**正面样本**：★ 能力层给的是**准确的、可操作的原因**，不是静默失败
+           · ⚠ `update_dimension_mm` 在我的用例里失败（`找不到尺寸: D1@草图1`）—— ★ **用例的尺寸名不对**，
+             而能力层**正确报错**
+         ★★★ **门禁两次发挥作用的记录（本会话第二次/第三次）**：
+           ① `check_param_binding` 抓到 `configuration_name` 不在 `update_dimension_mm` 的形参表里
+              （★ 真形参是 `configuration_mode` + `configuration_names`）；
+           ② 规则 2 抓到 `width`/`height` 像长度 ⇒ ★★ **而它们其实是**像素****
+              ⇒ ★ 改名 `pixel_width` **不管用**（★ 门禁按**子串**匹配）⇒ ★ **进 `_LEN_SUFFIX_EXEMPT` 白名单**
+              ⇒ ★★★ 而 `tests/test_rule2_length_suffix_is_enforced.py` 的断言**要求理由里出现「文档默认」**
+                ⇒ ★★ **正解是**放宽断言**（允许「文档默认」或「不是长度/像素」两类理由），
+                  而不是把"像素"硬写成"文档默认"——**那是为过门禁而说假话****（★ 见 known-facts 188）。
+         ▶ **验收**：① `all_specs()` = **117** ✓ · 门禁链 **18 道** exit 0 ✓ · 全量 pytest
+           **1278 passed / 0 failed** ✓ · 绑定门禁 **PASS**（117 个工具）· 规范门禁 **PASS**
+           ② ★ 真机 `verdict: pass`（10/12）✓ ⇒ 能力条目 = **`verified`**，未过的两条**逐条写在 limitations 里**。
+         ▶ **状态**：`all_specs()` **117** · 能力 **57** 条（verified **48** · stitched **8**）·
+           known-facts **187** 条。
+         ▶ **队列续作**：★ 段 4 余下：`sw_hole_features`（★ **需要声明式包装**才能过规则 3 ·
+           ★ 而几个"建孔"是高频能力，值得做）· `sw_weldment` 的读数/配置类（★ 无裸坐标的部分）·
+           ★ 段 5 修地基（D1–D5）与方程/渲染材质。
