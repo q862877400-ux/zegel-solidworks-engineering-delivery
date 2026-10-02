@@ -817,3 +817,48 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 ```
 
 ★ **本轮无 SW 依赖**（★ SW 仍卡在轮 24 遗留的 `create_mesh`，已通知用户重启）。
+
+| 273 | **objective② 的判据升级：**先取描述、再判缺口** —— 抽取脚本 + 有依据判定（2026-10-01，轮 353）。
+
+## 一、★ 为什么需要它
+```
+★ `tools/union-sources.json` 的 `union_operations` 是 **349 个纯名字**（**无描述**）；
+★ 而分诊表的“后缀候选”档（144 条）是**按词面**匹配的 ⇒ 抽样 24 条：**真 6 · 部分 2 · 假 16**（67% 假）。
+⇒ ★★ **光看名字判不了“真缺 vs 语义等价”** ⇒ 必须**先取描述**。
+```
+
+## 二、★ 新增
+```
+★ `tools/extract_operation_descriptions.py`：从 `andrewbartels1/docs/user-guide/tool-catalog/*.md`（**117**）
+  与 `Eduardof0nt/server.py` 的 **187 个 `@mcp.tool`**（★ AST 取 `name=` + docstring）抽。
+  ★ 合并（含去 `sw_`/`sws_`/`solidworks_` 前缀的短名）⇒ **464** 个操作名。
+  ★★ 分诊表里的 **339** 个缺口操作 ⇒ **174 个**能在四家找到描述（★ 判据依据）。
+★ 产物 `docs/operation-descriptions.json`；判定落 `docs/union-gap-evidence-based.md`。
+```
+
+## 三、★★★ 首批 12 条判定（★ 冒烟：先证方法有效）
+```
+★ **方法**：① 取描述 ② 在我们这边从 `rc.all_specs()` 取**工具名/函数名/模块名**（★ 不手写）
+  ③ 看有没有名字**同时含**该操作的关键词元组。
+★ **方向验证**：★ 5 条“有候选”的（`extruded_surface` / `parting_line` / `shut_off_surface` /
+  `loft` / `sketch_line`）★ **我本会话都能指认它们确实存在** ⇒ ★★ **判据没把“我们有的”误判成缺**。
+```
+
+## 四、★★★★ 真缺 **5 条**（★ 而我第一遍说 7 条 —— 因为判据踩了转存的坑）
+```
+★ **真缺**：`extend_surface` · `filled_surface` · `revolved_surface`（★ 曲面族）·
+  `delete_feature` · `rename_feature`（★ 特征管理）。
+★ **有实现**：`offset_surface`（`sw_surface.py:134`）· `planar_surface`（`sw_surface.py:125`）。
+★★ **纠错过程**：我第一遍在 `scripts/sw_*.py` 里搜实现，**而没排除 `sw_api_*.py`**
+  （★ **反射转存表**，列出**所有**成员名）⇒ 那 6 条全“命中”了转存表 ⇒
+  ★★ **把 2 条“其实有实现”的错判成真缺** 。排除后才是 5 条。
+```
+
+## 五、★ 定则（★ 本会话**第三次**同一个坑）
+```
+★★ **凡“扫仓库看某名字在不在”，一律先排除 `sw_api_*.py`**：
+  · 轮 351（事实 271）：扫“废弃入口”得 **1020** 处，实际只 **42**；
+  · 本轮：判“我们有没有”同一个错 ⇒ 错判 2 条。
+★ 本仓库的互锁测试（`tests/test_deprecated_entry_interlock.py`）**已经这么写了**
+  ⇒ ★★ **该把它提取成公共函数**（★ 三次都是手写漏了）。
+```
