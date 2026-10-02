@@ -1,0 +1,37 @@
+{
+  "steps": {
+    "export_stl": {
+      "ok": true,
+      "ret": "True",
+      "size": 684,
+      "note": "★ 记录事实（★ STL 应成、IGES 本机本就会报错码 256）"
+    },
+    "export_step": {
+      "ok": true,
+      "ret": "True",
+      "size": 15799,
+      "note": "★ 记录事实（★ STL 应成、IGES 本机本就会报错码 256）"
+    },
+    "export_iges": {
+      "ok": true,
+      "ret": "False",
+      "size": null,
+      "note": "★ 记录事实（★ STL 应成、IGES 本机本就会报错码 256）"
+    },
+    "negative": {
+      "ok": true,
+      "raised": "[WinError 183] 当文件已存在时，无法创建该文件。: 'D:\\\\AI\\\\SW\\\\output\\\\artifact-check\\\\"
+    },
+    "zero_byte_rejected": {
+      "ok": true,
+      "signature": [
+        0,
+        1790938230649346400
+      ]
+    }
+  },
+  "captured_at": "2026-10-02T18:50:30",
+  "passed": 5,
+  "of": 5,
+  "verdict": "pass"
+}
