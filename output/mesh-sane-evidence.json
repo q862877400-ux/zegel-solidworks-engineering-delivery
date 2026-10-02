@@ -1,0 +1,46 @@
+{
+  "captured_at": "2026-10-02T11:06:37",
+  "capability": "mesh_size_sanity_gate",
+  "★": "★ 证明这道闸能把'跑求解必挂'掐断在网格之前",
+  "steps": {
+    "rejects_bad": {
+      "element_size": 4930.501659457233,
+      "max_dim": 100.0,
+      "ok": false,
+      "reason": "单元尺寸 4930.5017 大于零件最大边 100.0000 ⇒ **网格必然退化**（CreateMesh 会静默退回默认值，随后 RunAnalysis 无解 ⇒ 弹模态框 ⇒ 挂住会话）",
+      "★": "建网格前的合理性判据（段 5 修地基）"
+    },
+    "accepts_good": {
+      "element_size": 4.933908705960544,
+      "max_dim": 100.0,
+      "ok": true,
+      "reason": "",
+      "★": "建网格前的合理性判据（段 5 修地基）"
+    },
+    "live_reading": {
+      "element_size": 4930.501659457233,
+      "tolerance": 246.52508297286164,
+      "gate_ok": false,
+      "gate_reason": "单元尺寸 4930.5017 大于零件最大边 100.0000 ⇒ **网格必然退化**（CreateMesh 会静默退回默认值，随后 RunAnalysis 无解 ⇒ 弹模态框 ⇒ 挂住会话）",
+      "would_stop_before_mesh": true
+    },
+    "safety": {
+      "executed_create_mesh": false,
+      "executed_run_analysis": false,
+      "gate_blocked": true,
+      "★": "★★ 关键断言：闸不放行时 **executed_create_mesh=False** ⇒ 那条会挂的链被掐断在网格之前"
+    },
+    "judgement": {
+      "checks": {
+        "rejects_bad": true,
+        "accepts_good": true,
+        "no_mesh_when_blocked": true,
+        "never_runs_analysis": true
+      },
+      "passed": 4,
+      "of": 4,
+      "★": "★ 四项全真 ⇒ 这道闸成立"
+    }
+  },
+  "verdict": "pass"
+}
