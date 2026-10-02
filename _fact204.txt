@@ -1,0 +1,47 @@
+| 204 | **"能不能表达"是选工具的**真筛子**；而好的报错**会告诉你该传什么****（2026-10-01，轮 271）。
+
+## 一、★ 选法：在**薄模块**里找"有函数没工具"的，再逐条判
+```
+★ 方法（★ 事实 191 的正路）：★ 对每个模块算「公开函数 − 已有工具」的**差集**，
+  ★ **再逐条判**"入参能不能表达"（★ **不是按名字判**）。
+★★ 本轮在薄模块里筛出 **11 个**（★ 全部无裸坐标）：
+   · `custom_property_count` / `custom_property_names`（★ 读数）
+   · `resolve_direction` / `resolve_point`（★ 声明式 selector）
+   · `sheet_count` / `sheet_names` / `current_sheet_name`（★ 工程图读数）
+   · `build_bom_traceability` / `build_pack_and_go_audit_matrix`（★ **纯数据，无 COM**）
+   · `export_assembly_bom_csv`（★ 文件）
+   · `list_setter_summary()`（★ **零参**）
+⇒ ★ `all_specs()` **128 → 139** · 归属 **139/139** ✓
+★ **没挂的**（★ 各有具体原因）：`configure_*_solver` 族 5 个 ⇒ ★ 要 `options` **宿主对象**
+  ⇒ **需新注入键**（★ 不顺手加）· `custom_property_manager` / `require_drawing` ⇒ **取宿主/守卫**，
+  **非工具候选**。
+```
+
+## 二、★★★★★ 真机 6/6 pass —— 而**两个"失败"教了我一件事**
+```
+★ 第一轮我把选择器传错了：★ `resolve_direction("X")` / `resolve_point(doc, "index:0")`
+⇒ ★★ 而**两者都抛了 `GeometrySelectorError`，且报错里写着合法值**：
+     · 「非法的方向选择器 'X'；★ **合法值：['+x','-x','+y','-y','+z','-z']**」
+     · 「非法的点选择器 'index:0'；★ **合法值：['origin','bbox:min','bbox:max','bbox:center', …]**」
+⇒ ★★★★ **那正是"让失败可见"的最佳形态** —— ★ 它**不只说错了，还说对了该写什么**。
+★★ 换成合法值后：★ **6/6 pass** —— 而其中一条**顺带验了坐标单位**：
+     ★ `resolve_point(doc, "bbox:center")` ⇒ **`(0.0, 0.0, -5.0)`**
+     ⇒ ★★ **正是 40×20×10 板的几何中心**（★ z = −5）⇒ ★ **单位是毫米** ✓（★ 与 fact 200 一致）。
+```
+
+## 三、★★★★★ 定则
+```
+★★★ **一个"会列出合法值"的报错，比一个"只说非法的"报错贵得多** ——
+   ★ 因为前者**把调用方的下一步也给了**（★ 无需再查文档）。
+   ⇒ ★★ **可操作形态**：★ 凡是**枚举型入参**（selector / family / name），
+     ★ **报错时必须附合法值清单**（★ 本项目的 `GeometrySelectorError` 已经这么做 ✓；
+       ★ 值得**推广**到别的枚举型参数上）。
+★★ **"能不能表达"是选工具的**真筛子**** —— ★ 而它**不是"名字像不像"**：
+   ★ 本轮的 11 个**名字各异**（`sheet_count` / `build_*` / `resolve_*`），
+   ★★ **而共同点是"入参是 JSON 能给的"**（或零参）。
+   ⇒ ★★★ **反过来**：★ `configure_*_solver(options, …)` 名字很漂亮，★ **但它要一个宿主对象**
+     ⇒ **挂不了**（除非加注入键）⇒ ★ **所以名字给不出这个判断**。
+```
+
+**依据**：`mcp-server/tool_specs_batch36.py`（★ 11 个 ToolSpec）· `output/batch36-evidence.json`（★ 6/6 pass）·
+`scripts/sw_geometry_selectors.py` 的 `GeometrySelectorError`（★ 报错附合法值）· 事实 191 / 198 / 200 / 203

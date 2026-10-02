@@ -7032,6 +7032,48 @@
          ▶ **状态**：`all_specs()` **128** · 能力 **59** 条（verified **50** · stitched **8**）·
            known-facts **202** 条。
          ▶ **队列续作**：★ 补验焊件另 3 个 · ★ `all_specs()` 离 145 差 **17**。
+     ★ 2026-10-01（轮 271 / **24h 计划 段 4/5 续「读数与纯数据 11 个」/ Spec Kit `153`**）· ★★★★ **"能不能表达"是选工具的**真筛子**；而好的报错**会告诉你该传什么****
+         ▶ **选法**（★ 事实 191 的正路）：★ 对每个**薄模块**算「公开函数 − 已有工具」的**差集**，
+           ★ **再逐条判**"入参能不能表达"（★ **不是按名字判**）。
+           ⇒ 筛出 **11 个**（★ 全部无裸坐标）：`custom_property_count` / `_names` · `resolve_direction` /
+             `resolve_point` · `sheet_count` / `sheet_names` / `current_sheet_name` ·
+             `build_bom_traceability` / `build_pack_and_go_audit_matrix`（★ **纯数据无 COM**）·
+             `export_assembly_bom_csv` · `list_setter_summary()`（★ **零参**）。
+           ⇒ ★ `all_specs()` **128 → 139** · 归属 **139/139** ✓
+         ★ **没挂的**：`configure_*_solver` 族 5 个 ⇒ ★ 要 `options` **宿主对象** ⇒ 需新注入键
+           （★ 不顺手加）· `custom_property_manager` / `require_drawing` ⇒ 取宿主/守卫，非工具候选。
+         ★★★★★ **真机 6/6 pass —— 而两个"失败"教了我一件事**：
+           ```
+           ★ 第一轮我把选择器传错了：resolve_direction("X") / resolve_point(doc, "index:0")
+           ⇒ ★★ 而两者都抛了 GeometrySelectorError，且**报错里写着合法值**：
+              · 「非法的方向选择器 'X'；★ **合法值：['+x','-x','+y','-y','+z','-z']**」
+              · 「非法的点选择器 'index:0'；★ **合法值：['origin','bbox:min','bbox:max','bbox:center',…]**」
+           ⇒ ★★★★ **那正是「让失败可见」的最佳形态** —— ★ **不只说错了，还说对了该写什么**。
+           ★★ 换成合法值后 6/6 pass，而其中一条**顺带验了坐标单位**：
+              ★ resolve_point(doc, "bbox:center") ⇒ **(0.0, 0.0, -5.0)**
+              ⇒ ★★ 正是 40×20×10 板的几何中心（z=−5）⇒ **单位是毫米** ✓（与 fact 200 一致）。
+           ```
+         ★★★★★ **定则**：
+           ★ **一个"会列出合法值"的报错，比一个"只说非法的"报错贵得多** ——
+             因为前者**把调用方的下一步也给了**（无需再查文档）。
+             ⇒ ★★ **可操作形态**：★ 凡是**枚举型入参**（selector / family / name），
+               ★ **报错时必须附合法值清单**（★ 本项目的 `GeometrySelectorError` 已经这么做 ✓；
+                 ★ 值得**推广**到别的枚举型参数上）。
+           ★★ **"能不能表达"不是"名字像不像"** —— ★ 本轮 11 个名字各异（`sheet_count` /
+             `build_*` / `resolve_*`），★ 共同点是"**入参是 JSON 能给的**"（或零参）；
+             ★ 反过来 `configure_*_solver` 名字很漂亮、★ **但要一个宿主对象** ⇒ **挂不了**
+             ⇒ ★ **所以名字给不出这个判断**。
+         ▶ **验收**：① `all_specs()` = **139** ✓ · 归属 **139/139** ✓ · 绑定门禁 **PASS** ✓
+           · 计数守卫（wiring 139 · 协议层 184）✓ · 门禁链 18 道 exit 0 ✓
+           · `release_check` exit 0 ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 真机 `output/batch36-evidence.json` = **PASS（6/6）** ✓
+           ⚠ 本批 11 个里真机验了 **6 个**（★ 其余 5 个：3 个工程图读数需**工程图**文档、
+             2 个纯数据函数**无 COM**（★ 已由 6/6 中的同族覆盖））⇒ ★ **如实记**。
+         ▶ **状态**：`all_specs()` **139** · 能力 **59** 条（verified **50** · stitched **8**）·
+           known-facts **203** 条。
+         ▶ **队列续作**：★ `all_specs()` 离 145 差 **6** —— ★ 下一步可加 `options` **注入键**
+           ⇒ 挂 `configure_static/frequency/buckling_solver` 3 个 + `set_option` / `set_options` 2 个
+           （★ 共 5 个）· ★ 补验焊件另 3 个 · ★ 补验本批的 3 个工程图读数。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
 最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:

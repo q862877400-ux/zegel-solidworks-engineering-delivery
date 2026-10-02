@@ -1,0 +1,38 @@
+{
+  "steps": {
+    "custom_property_count": {
+      "ok": true,
+      "type": "int",
+      "preview": "28"
+    },
+    "custom_property_names": {
+      "ok": true,
+      "type": "list",
+      "preview": "['Description', 'Weight', 'Material', '质量', '材料', '单重', '零件号', '设计', '审核', '标准审查', '工艺审查"
+    },
+    "list_setter_summary": {
+      "ok": true,
+      "type": "dict",
+      "preview": "{'ICWStaticStudyOptions': {'total': 55, 'boolean': 14, 'names': ['AdaptiveMethodType', '"
+    },
+    "resolve_direction('+z')": {
+      "ok": true,
+      "type": "tuple",
+      "preview": "(0.0, 0.0, 1.0)"
+    },
+    "resolve_point('origin')": {
+      "ok": true,
+      "type": "tuple",
+      "preview": "(0.0, 0.0, 0.0)"
+    },
+    "resolve_point('bbox:center')": {
+      "ok": true,
+      "type": "tuple",
+      "preview": "(0.0, 0.0, -5.0)"
+    }
+  },
+  "passed": 6,
+  "of": 6,
+  "captured_at": "2026-10-02T13:15:22",
+  "verdict": "pass"
+}
