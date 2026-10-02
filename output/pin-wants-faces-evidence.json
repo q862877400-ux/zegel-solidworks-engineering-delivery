@@ -1,0 +1,23 @@
+{
+ "steps": {
+  "two_bodies": {
+   "ok": true,
+   "body_count": 2
+  },
+  "entry_check": {
+   "ok": true
+  },
+  "pin_with_faces": {
+   "ok": false,
+   "count": [
+    0,
+    0
+   ],
+   "error": ""
+  }
+ },
+ "at": "2026-10-03T05:15:01",
+ "study": "DSH-PINF_051501",
+ "verdict": "partial",
+ "note": "★ 分辨实验：★ 销钉连接件要**组件**还是要**面** —— ★ 在多体零件上、传**两个体上的面**。★ 成 ⇒ 它要面（装配体不是前提）；★ 不成 ⇒ 装配体才是前提。"
+}
