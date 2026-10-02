@@ -1,0 +1,45 @@
+{
+  "count": 1,
+  "pid": 15648,
+  "dir": "D:\\AI\\SW\\output\\dialogs\\20261002-150143",
+  "dialogs": [
+    {
+      "index": 0,
+      "hwnd": 11733074,
+      "title": "Simulation",
+      "class": "#32770",
+      "controls": [
+        {
+          "class": "Button",
+          "text": "确定",
+          "id": 2
+        },
+        {
+          "class": "Static",
+          "text": "",
+          "id": 20
+        },
+        {
+          "class": "Static",
+          "text": "零件33-DSH-142 : 失败",
+          "id": 65535
+        }
+      ],
+      "bmp": "D:\\AI\\SW\\output\\dialogs\\20261002-150143\\dialog-0.bmp",
+      "screenshot_ok": true,
+      "screenshot_content_present": true,
+      "screenshot_stats": {
+        "distinct_colors": 17,
+        "sampled": 278,
+        "non_mode_pixels": 128,
+        "non_mode_ratio": 0.4604,
+        "luminance_range": 255,
+        "★": "★ **与配色无关**的三个量：唯一色数 / 非众数像素占比 / 亮度极差。★ 深色主题下真弹窗也有内容 ⇒ ★ **不要用「黑不黑」当判据**",
+        "content_present": true
+      },
+      "★shot": "★ `screenshot_content_present=False` ⇒ 图里**没有内容**（纯色空窗）；★ 而它**与配色无关** —— 深色主题的真弹窗也算有内容。★ 判据看 `screenshot_stats` 的三个量：唯一色数 / 非众数占比 / 亮度极差"
+    }
+  ],
+  "captured_at": "2026-10-02T23:01:43",
+  "★": "★ 本模块**不点**弹窗 —— ★ 按纪律（自我纠错 §9）先把内容交 LLM 判根因，判完再点，点完必须改到不再弹"
+}
