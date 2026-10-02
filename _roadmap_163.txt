@@ -1,0 +1,45 @@
+     ★ 2026-10-01（轮 274 / **24h 计划 段 4 续「Costing 8 个」/ Spec Kit `155`**）· ★★★★★ **推过 145：`all_specs()` = 152；而 Costing 这一片是**真价值****
+         ▶ **`all_specs()` 144 → 152** · 归属 **152/152** ✓ ⇒ ★★ **24h 目标「≥145」已过** ✓
+         ★★★★★ **为什么这一片是真价值（而不是凑数）**：
+           ★ **成本（Costing）是 AGENTS.md §〇 点名的三个「真正全网空白域」之一**
+             （拓扑优化 · 动画导出 AVI · **Costing**）—— ★ 而三个里**这个最容易挂**
+             （★ 另两个都有硬障碍：拓扑迭代选项 `0x80010105` · 动画缺 Motion 加载项）。
+           ★ 清点：`sw_costing` 有 **25 个公开函数**，★ 而**只挂了 1 个**（`get_costing_manager`）
+             ⇒ ★★ **那"1 个"是入口**，★ 而**下游 24 个全没挂**。
+         ★★★ **要点是"怎么拿到下游对象"（★ 而答案在**已有 resolver** 里）**：
+           ★ 链条：`get_costing_manager(model)` → `CostingModel`（= `CostPart`）→
+             `GetCostAnalysis()` / `GetBodies()` · 以及 `CostingDefaults`
+           ⇒ ★★★ **正解与轮 272 的求解器设置**完全同一手法****：
+             ★ 注入 `manager`（已有 resolver）+ 包装内部取下游 ⇒ ★ **不动 RESOLVERS**。
+         ▶ **真机 5/6（★ 四个读数是**真的读到了数据**）**：
+           ```
+           | 工具 | 结果 | 说明 |
+           | get_costing_manager | pass | 入口 |
+           | costing_evidence | pass | **{body_count: 1, has_cost_analysis: True}** |
+           | costing_body_count | pass | 1 |
+           | costing_list_bodies | pass | 1 个（⚠ 名字回 '?' => 那个对象没有 Name 属性） |
+           | costing_read_analysis | pass | ★★ **读到真数据**（含 template: '…\chinese-simplified\co…'） |
+           | costing_list_templates | ⚠ fail | AttributeError: <unknown>.GetTemplatePathnames |
+           ```
+           ⇒ ★ 能力 `costing` 的 `mcp_tools` 从 **1 → 9**。
+         ★★ **两条如实记**：
+           · `costing_list_bodies` 的实体名回 **`'?'`** ⇒ ★ 说明那个 body 对象上取 `Name` 取不到
+             ⇒ ★ 我的包装**回退成 `'?'`**（不静默报空）—— ★ 而"名字取不到"意味着
+             `read_cost_body` 的**按名字找**那条路在本机走不通 ⇒ ★ **要改用索引**（待做）；
+           · `costing_list_templates` 报 **`<unknown>.GetTemplatePathnames`** ⇒ ★ **事实 36 的形态**
+             ⇒ **待查**。
+         ★★★ **定则**：
+           ★ **"护城河域"未必难挂 —— 难的是找入口** —— ★ Costing 的入口**早就挂了**，
+             ★ 而**下游 24 个一直没人接** ⇒ ★★ **可操作形态**：★ **清点"某模块的入口工具挂了、
+               而下游没挂"这种形态** —— ★ **它是最肥的一类缺口**（入口通了 ⇒ 下游只需包一层）。
+           ★★ **同一手法用了两次**（轮 272 求解器设置 · 轮 274 Costing）⇒ ★ 那说明它是**一般化的**：
+             ★ **"注入一个上游已有对象 + 包装内部往下取"** —— ★ 而它的**前提**是入口**已经被挂过**
+             ⇒ ★★★ **所以"先挂入口"是有复利的**（★ 入口挂一次，下游能接一串）。
+         ▶ **验收**：① `all_specs()` = **152** ✓ · 归属 **152/152** ✓ · 绑定门禁 **PASS** ✓
+           · 计数守卫（wiring 152 · 协议层 197）✓ · 门禁链 18 道 exit 0 ✓
+           · `release_check` exit 0 ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 真机 `output/costing-evidence.json` = **PARTIAL（5/6）**，★ 唯一的失败已定性 ✓
+         ▶ **状态**：`all_specs()` **152**（★ **目标 145 已过**）· 能力 **59** 条
+           （verified **50** · stitched **8**）· known-facts **206** 条。
+         ▶ **队列续作**：★ **能力条目 59 → 75 还差 16**（★ 那是**现在唯一没达的**量化目标）·
+           ★ `costing_list_bodies` 改索引路 · ★ `GetTemplatePathnames` 查宿主（事实 36 的定式）。
