@@ -1,0 +1,114 @@
+{
+  "steps": {
+    "blind": {
+      "feature_kind": "blind",
+      "center_m": [
+        -0.02,
+        0.0
+      ],
+      "diameter_m": 6.0,
+      "depth_m": 4.0,
+      "through": false,
+      "plane_name": "Front Plane",
+      "feature_names": [
+        "盲孔"
+      ],
+      "counterbore_diameter_m": null,
+      "counterbore_depth_m": null,
+      "countersink_diameter_m": null,
+      "countersink_angle_deg": null,
+      "center_mm": [
+        -20.0,
+        0.0
+      ],
+      "diameter_mm": 6000.0,
+      "depth_mm": 4000.0,
+      "ok": true,
+      "selection": "index:0",
+      "point_from_selection_mm": [
+        -0.02,
+        0.0
+      ],
+      "★": "点来自**声明式选择** —— 规则 3",
+      "_tree": {
+        "before": 7,
+        "after": 9,
+        "new": [
+          "草图2",
+          "盲孔"
+        ]
+      },
+      "_ok_real": true
+    },
+    "counterbore": {
+      "feature_kind": "counterbore",
+      "center_m": [
+        -0.02,
+        0.0
+      ],
+      "diameter_m": 5.0,
+      "depth_m": null,
+      "through": true,
+      "plane_name": "Front Plane",
+      "feature_names": [
+        "沉头孔_通孔",
+        "沉头孔_沉孔"
+      ],
+      "counterbore_diameter_m": 9.0,
+      "counterbore_depth_m": 3.0,
+      "countersink_diameter_m": null,
+      "countersink_angle_deg": null,
+      "center_mm": [
+        -20.0,
+        0.0
+      ],
+      "diameter_mm": 5000.0,
+      "counterbore_diameter_mm": 9000.0,
+      "counterbore_depth_mm": 3000.0,
+      "ok": true,
+      "selection": "index:0",
+      "point_from_selection_mm": [
+        -0.02,
+        0.0
+      ],
+      "★": "点来自**声明式选择** —— 规则 3",
+      "_tree": {
+        "before": 9,
+        "after": 13,
+        "new": [
+          "草图3",
+          "沉头孔_通孔",
+          "草图4",
+          "沉头孔_沉孔"
+        ]
+      },
+      "_ok_real": true
+    },
+    "countersink": {
+      "ok": false,
+      "error": "RuntimeError: SolidWorks 未创建特征: 锥沉孔_通孔",
+      "_tree": {
+        "before": 13,
+        "after": 14,
+        "new": [
+          "草图5"
+        ]
+      },
+      "_ok_real": false
+    },
+    "semicircular_slot": {
+      "ok": false,
+      "error": "AttributeError: <unknown>.SketchManager",
+      "_tree": {
+        "before": 14,
+        "after": 0,
+        "new": []
+      },
+      "_ok_real": false
+    }
+  },
+  "passed": 2,
+  "of": 4,
+  "captured_at": "2026-10-02T13:05:16",
+  "verdict": "partial"
+}
