@@ -1,0 +1,12 @@
+{
+ "at": "2026-10-02T23:44:43",
+ "phase": "during",
+ "kind": "unknown-window",
+ "hwnd": 12457506,
+ "pid": 15648,
+ "class": "#32770",
+ "title": "Simulation",
+ "hung": false,
+ "dismissed": false,
+ "note": "★ 类名不是 `#32770` ⇒ 本机制**无法**用消息/输入点掉它；★ 报出来是为了**不让盲区静默失效**（★ 请 LLM 判它是不是弹窗）。"
+}

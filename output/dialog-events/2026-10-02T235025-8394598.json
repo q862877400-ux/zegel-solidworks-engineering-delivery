@@ -1,0 +1,31 @@
+{
+ "at": "2026-10-02T23:50:25",
+ "phase": "during",
+ "kind": "dialog",
+ "hwnd": 8394598,
+ "pid": 15648,
+ "title": "Simulation",
+ "class": "#32770",
+ "exe": "SLDWORKS.exe",
+ "controls": [
+  {
+   "class": "Button",
+   "text": "确定"
+  },
+  {
+   "class": "Static",
+   "text": "零件42-DSH-142 : 失败"
+  }
+ ],
+ "hung": false,
+ "verdict": {
+  "mode": "auto",
+  "reason": "只有一个语义明确的确认按钮 ['确定'] ⇒ 可自动点",
+  "buttons": [
+   "确定"
+  ]
+ },
+ "needs_llm": false,
+ "dismissed": true,
+ "still_present": false
+}

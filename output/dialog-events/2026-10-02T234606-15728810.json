@@ -1,0 +1,19 @@
+{
+ "at": "2026-10-02T23:46:06",
+ "phase": "during",
+ "kind": "dialog",
+ "hwnd": 15728810,
+ "pid": 15648,
+ "title": "Simulation",
+ "class": "#32770",
+ "exe": "SLDWORKS.exe",
+ "controls": [
+  {
+   "class": "Button",
+   "text": "(按钮 1 个)"
+  }
+ ],
+ "hung": false,
+ "dismissed": true,
+ "still_present": false
+}

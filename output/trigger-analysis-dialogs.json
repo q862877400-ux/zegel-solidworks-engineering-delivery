@@ -1,0 +1,22 @@
+{
+ "steps": {
+  "material": {
+   "ok": true,
+   "name": "solidworks materials|AISI 1020|2"
+  },
+  "study": {
+   "ok": true,
+   "type": "CDispatch"
+  },
+  "mesh": {
+   "ok": false,
+   "detail": "{'ok': False, 'return_code': 5, 'return_is_trustworthy': False, 'element_count': 0, '★': 'ok 由 element_count 决定，**不看返回码*"
+  },
+  "run_analysis": {
+   "ok": false,
+   "detail": "{'ok': False, 'return_code': 23, 'return_is_trustworthy': False, 'results_present': False, 'plot_count': None, 'plot_names': None, '★': 'ok 由 results_present + plot_count 决定，**不看返回码**'}"
+  }
+ },
+ "at": "2026-10-02T23:40:30",
+ "doc": "零件36"
+}

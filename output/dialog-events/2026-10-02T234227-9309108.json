@@ -1,0 +1,18 @@
+{
+ "at": "2026-10-02T23:42:27",
+ "phase": "during",
+ "hwnd": 9309108,
+ "pid": 15648,
+ "title": "Simulation",
+ "controls": [
+  {
+   "class": "Button",
+   "text": "确定"
+  },
+  {
+   "class": "Static",
+   "text": "零件37-DSH-142 : 失败"
+  }
+ ],
+ "dismissed": true
+}
