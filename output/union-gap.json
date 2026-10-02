@@ -1,0 +1,1306 @@
+{
+  "union_size": 349,
+  "ours": 182,
+  "strong_gap_count": 69,
+  "weak_count": 144,
+  "likely_covered": 136,
+  "strong_gap": [
+    "3point_arc",
+    "annotation",
+    "api_automation",
+    "arc",
+    "background",
+    "balloon",
+    "batch_execute_macros",
+    "batch_file_operations",
+    "batch_operations",
+    "batch_process_files",
+    "batch_vba",
+    "bbox",
+    "capture_screenshot",
+    "centerline",
+    "close_all",
+    "close_document",
+    "connect",
+    "construction_geometry",
+    "diagnose_macro_execution",
+    "display_mode",
+    "display_states",
+    "edges",
+    "ellipse",
+    "error_handling",
+    "execute_macro",
+    "execute_workflow",
+    "faces",
+    "fold",
+    "gdt",
+    "global_var",
+    "hem",
+    "initialized_macro",
+    "intersect",
+    "jog",
+    "loft",
+    "macro_recording",
+    "measure",
+    "measure_distance",
+    "native_macro_recording",
+    "operations",
+    "optimize_macro",
+    "optimize_performance",
+    "pause_resume_macro_recording",
+    "pdm_operations",
+    "polygon",
+    "rebuild_document",
+    "recording",
+    "ref_axis",
+    "ref_plane",
+    "reference_geometry",
+    "reference_planes",
+    "referenced_documents",
+    "security",
+    "sensors",
+    "spline",
+    "status",
+    "stop_macro_recording",
+    "stop_native_macro_recording",
+    "stop_recording",
+    "structural_member",
+    "suppress",
+    "sweep",
+    "take_photoview_screenshot",
+    "undo",
+    "unfold",
+    "units",
+    "vertices",
+    "wrap",
+    "zoom_to_fit"
+  ],
+  "weak": [
+    {
+      "op": "activate_display_state",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_config_activate"
+      ]
+    },
+    {
+      "op": "activate_document",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_config_activate"
+      ]
+    },
+    {
+      "op": "activate_sheet",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_sheet_metal_evidence",
+        "solidworks_sheet_metal_create_base_flange",
+        "solidworks_sheet_metal_create_one_bend"
+      ]
+    },
+    {
+      "op": "advanced_features",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mirror_feature",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "analyze_drawing_dimensions",
+      "best_cov": 0.636,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_simulation_check_mesh_size",
+        "solidworks_config_inspect"
+      ]
+    },
+    {
+      "op": "analyze_drawing_views",
+      "best_cov": 0.636,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_simulation_check_mesh_size",
+        "solidworks_config_inspect"
+      ]
+    },
+    {
+      "op": "appearance_color",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_collect_appearance_evidence"
+      ]
+    },
+    {
+      "op": "apply_drawing_template",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "apply_template",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_simulation_apply_fixed_restraint",
+        "solidworks_simulation_apply_normal_force",
+        "solidworks_simulation_apply_pressure"
+      ]
+    },
+    {
+      "op": "assembly_analysis",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_collect_assembly_bom",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "assembly_configurations",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_config_inspect",
+        "solidworks_config_create",
+        "solidworks_config_activate"
+      ]
+    },
+    {
+      "op": "assembly_tree",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_collect_assembly_bom",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "auto_center_marks",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_weldment_create_profile_center_mate"
+      ]
+    },
+    {
+      "op": "auto_dimension_view",
+      "best_cov": 0.4,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "auxiliary_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "batch_apply_template",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_simulation_apply_fixed_restraint",
+        "solidworks_simulation_apply_normal_force",
+        "solidworks_simulation_apply_pressure"
+      ]
+    },
+    {
+      "op": "batch_run_macros",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_topology_run",
+        "solidworks_simulation_run_analysis"
+      ]
+    },
+    {
+      "op": "boundary_boss",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_revolve_boss",
+        "solidworks_extrude_boss"
+      ]
+    },
+    {
+      "op": "broken_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "center_mark",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_weldment_create_profile_center_mate"
+      ]
+    },
+    {
+      "op": "check_sketch_fully_defined",
+      "best_cov": 0.636,
+      "top": [
+        "solidworks_assembly_check_interference",
+        "solidworks_simulation_check_mesh_size",
+        "solidworks_config_inspect"
+      ]
+    },
+    {
+      "op": "classify_feature_tree",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_mirror_feature",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "close_model",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_collect_model_summary"
+      ]
+    },
+    {
+      "op": "close_sketch",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "combine_bodies",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_entities_on_body",
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies"
+      ]
+    },
+    {
+      "op": "compare_drawing_templates",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "compare_drawing_versions",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "compare_templates",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_costing_list_templates"
+      ]
+    },
+    {
+      "op": "component_fixed",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_simulation_apply_fixed_restraint"
+      ]
+    },
+    {
+      "op": "convert_file_format",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_sketch_convert_entities"
+      ]
+    },
+    {
+      "op": "convert_text_to_native_macro",
+      "best_cov": 0.25,
+      "top": [
+        "solidworks_sketch_convert_entities"
+      ]
+    },
+    {
+      "op": "curve_driven_pattern",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_circular_pattern",
+        "solidworks_part_insert_composite_curve"
+      ]
+    },
+    {
+      "op": "custom_prop",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_custom_property_get",
+        "solidworks_custom_property_list",
+        "solidworks_config_read_custom_property"
+      ]
+    },
+    {
+      "op": "design_table",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_fastener_table_types"
+      ]
+    },
+    {
+      "op": "design_table_refresh",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_refresh_scene_graph",
+        "solidworks_fastener_table_types"
+      ]
+    },
+    {
+      "op": "detail_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "diameter_dimension",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_config_update_dimension"
+      ]
+    },
+    {
+      "op": "drawing_annotations",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "drawing_dimension",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "drawing_dimensions",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "drawing_from_model",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "drawing_sketch",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "drawing_tables",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "drawing_vba",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "end_cap",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_sketch_end"
+      ]
+    },
+    {
+      "op": "exit_sketch",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "explode_assembly",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_collect_assembly_bom",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "export_drawing_dwg",
+      "best_cov": 0.571,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "export_drawing_pdf",
+      "best_cov": 0.571,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "export_flat_pattern",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "extend_surface",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_evidence",
+        "solidworks_mold_parting_surface"
+      ]
+    },
+    {
+      "op": "extract_drawing_template",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "extract_template",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_costing_default_template"
+      ]
+    },
+    {
+      "op": "feature_vba",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mirror_feature",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "file_properties",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_custom_property_get",
+        "solidworks_custom_property_list",
+        "solidworks_part_mass_properties"
+      ]
+    },
+    {
+      "op": "fill_pattern",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_circular_pattern"
+      ]
+    },
+    {
+      "op": "filled_surface",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_evidence",
+        "solidworks_mold_parting_surface"
+      ]
+    },
+    {
+      "op": "fix_component",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_components"
+      ]
+    },
+    {
+      "op": "generate_vba_batch_export",
+      "best_cov": 0.538,
+      "top": [
+        "solidworks_topology_create_study",
+        "solidworks_mold_parting_line",
+        "solidworks_mold_shut_off_surface"
+      ]
+    },
+    {
+      "op": "generate_vba_drawing_dimensions",
+      "best_cov": 0.583,
+      "top": [
+        "solidworks_topology_create_study",
+        "solidworks_mold_parting_line",
+        "solidworks_mold_shut_off_surface"
+      ]
+    },
+    {
+      "op": "generate_vba_drawing_views",
+      "best_cov": 0.583,
+      "top": [
+        "solidworks_topology_create_study",
+        "solidworks_mold_parting_line",
+        "solidworks_mold_shut_off_surface"
+      ]
+    },
+    {
+      "op": "hide_all_planes",
+      "best_cov": 0.167,
+      "top": [
+        "solidworks_weldment_ensure_cut_list",
+        "solidworks_weldment_update_cut_list",
+        "solidworks_list_render_materials"
+      ]
+    },
+    {
+      "op": "hide_all_sketches",
+      "best_cov": 0.286,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "hide_component",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_weldment_ensure_cut_list",
+        "solidworks_weldment_update_cut_list"
+      ]
+    },
+    {
+      "op": "hole_table",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_hole_standards",
+        "solidworks_hole_through_by_selection",
+        "solidworks_hole_blind_by_selection"
+      ]
+    },
+    {
+      "op": "linear_pattern",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_circular_pattern"
+      ]
+    },
+    {
+      "op": "link_dimension_to_equation",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_config_update_dimension",
+        "solidworks_equation_add",
+        "solidworks_equation_list"
+      ]
+    },
+    {
+      "op": "load_assembly",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_toolbox_load_index",
+        "solidworks_collect_assembly_bom",
+        "solidworks_assembly_list_components"
+      ]
+    },
+    {
+      "op": "load_part",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_toolbox_load_index",
+        "solidworks_part_bounding_box",
+        "solidworks_part_mass_properties"
+      ]
+    },
+    {
+      "op": "macro_library",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_motion_ensure_type_library"
+      ]
+    },
+    {
+      "op": "manage_design_table",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_fastener_table_types"
+      ]
+    },
+    {
+      "op": "manage_file_properties",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_custom_property_get",
+        "solidworks_custom_property_list",
+        "solidworks_part_mass_properties"
+      ]
+    },
+    {
+      "op": "mass_props",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_topology_create_mass_constraint",
+        "solidworks_part_mass_properties"
+      ]
+    },
+    {
+      "op": "mirror_component",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_mirror_feature",
+        "solidworks_sketch_mirror"
+      ]
+    },
+    {
+      "op": "miter_flange",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_sheet_metal_create_base_flange",
+        "solidworks_sheet_metal_create_edge_flange",
+        "solidworks_sheet_metal_create_swept_flange"
+      ]
+    },
+    {
+      "op": "model_annotations",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_collect_model_summary"
+      ]
+    },
+    {
+      "op": "model_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "move_body",
+      "best_cov": 0.4,
+      "top": [
+        "solidworks_entities_on_body",
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies"
+      ]
+    },
+    {
+      "op": "move_component",
+      "best_cov": 0.4,
+      "top": [
+        "solidworks_assembly_list_components"
+      ]
+    },
+    {
+      "op": "offset_surface",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_evidence",
+        "solidworks_mold_parting_surface"
+      ]
+    },
+    {
+      "op": "pack_and_go_assembly",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_collect_assembly_bom",
+        "solidworks_assembly_list_components",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "pattern_component_circular",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_circular_pattern",
+        "solidworks_assembly_list_components"
+      ]
+    },
+    {
+      "op": "pattern_component_linear",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_assembly_list_components",
+        "solidworks_circular_pattern"
+      ]
+    },
+    {
+      "op": "pattern_features",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mirror_feature",
+        "solidworks_assembly_list_mates",
+        "solidworks_circular_pattern"
+      ]
+    },
+    {
+      "op": "planar_surface",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_evidence",
+        "solidworks_mold_parting_surface"
+      ]
+    },
+    {
+      "op": "projected_curve",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_part_insert_composite_curve"
+      ]
+    },
+    {
+      "op": "projected_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "rebuild_model",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_activate_model_for_preview",
+        "solidworks_collect_model_summary"
+      ]
+    },
+    {
+      "op": "reference_point",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_available_point_selectors",
+        "solidworks_selector_resolve_point"
+      ]
+    },
+    {
+      "op": "rename_feature",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mirror_feature",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "replace_component",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_components"
+      ]
+    },
+    {
+      "op": "revision_table",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_fastener_table_types"
+      ]
+    },
+    {
+      "op": "revolved_surface",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_evidence",
+        "solidworks_mold_parting_surface"
+      ]
+    },
+    {
+      "op": "run_macro",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_topology_run",
+        "solidworks_simulation_run_analysis"
+      ]
+    },
+    {
+      "op": "run_vba_code",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_topology_run",
+        "solidworks_simulation_run_analysis"
+      ]
+    },
+    {
+      "op": "run_vba_macro",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_topology_run",
+        "solidworks_simulation_run_analysis"
+      ]
+    },
+    {
+      "op": "save_active_document",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "save_as_copy",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "save_body_as_part",
+      "best_cov": 0.444,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "save_part",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "save_template_to_library",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "save_to_template_library",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_export_step",
+        "solidworks_export_stl",
+        "solidworks_export_iges"
+      ]
+    },
+    {
+      "op": "scale_body",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_entities_on_body",
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies"
+      ]
+    },
+    {
+      "op": "section_view",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "setup_template_positions",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_costing_default_template"
+      ]
+    },
+    {
+      "op": "show_all_planes",
+      "best_cov": 0.583,
+      "top": [
+        "solidworks_weldment_ensure_cut_list",
+        "solidworks_weldment_update_cut_list",
+        "solidworks_list_render_materials"
+      ]
+    },
+    {
+      "op": "show_all_sketches",
+      "best_cov": 0.538,
+      "top": [
+        "solidworks_weldment_ensure_cut_list",
+        "solidworks_weldment_update_cut_list",
+        "solidworks_list_render_materials"
+      ]
+    },
+    {
+      "op": "simple_extrude",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_extrude_boss",
+        "solidworks_extrude_cut",
+        "solidworks_extrude_midplane"
+      ]
+    },
+    {
+      "op": "simulation_setup",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_simulation_set_material",
+        "solidworks_list_simulation_study_options",
+        "solidworks_simulation_generate_report"
+      ]
+    },
+    {
+      "op": "sketch_arc",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_centerline",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_circular_pattern",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_circular_pattern",
+        "solidworks_sketch_count_lines"
+      ]
+    },
+    {
+      "op": "sketch_constraint",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_construction",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_dimension",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_ellipse",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_extend",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_fillet",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_linear_pattern",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_offset",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_polygon",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_spline",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_status",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_text",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_trim",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines",
+        "solidworks_sketch_count_arcs"
+      ]
+    },
+    {
+      "op": "sketch_tutorial_simple_hole",
+      "best_cov": 0.333,
+      "top": [
+        "solidworks_hole_standards",
+        "solidworks_add_sketch_relation",
+        "solidworks_sketch_count_lines"
+      ]
+    },
+    {
+      "op": "sketched_bend",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_sheet_metal_create_one_bend"
+      ]
+    },
+    {
+      "op": "split_body",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_entities_on_body",
+        "solidworks_costing_body_count",
+        "solidworks_costing_list_bodies"
+      ]
+    },
+    {
+      "op": "split_line",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_mold_parting_line",
+        "solidworks_mold_core_cavity_split",
+        "solidworks_sketch_add_line"
+      ]
+    },
+    {
+      "op": "suppress_component",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_assembly_list_components"
+      ]
+    },
+    {
+      "op": "surface_modeling",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_evidence",
+        "solidworks_mold_parting_surface"
+      ]
+    },
+    {
+      "op": "technical_drawing",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_drawing_list_sheets",
+        "solidworks_drawing_get_current_sheet",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "template_library",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_costing_default_template",
+        "solidworks_motion_ensure_type_library"
+      ]
+    },
+    {
+      "op": "thicken_surface",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_evidence",
+        "solidworks_mold_parting_surface"
+      ]
+    },
+    {
+      "op": "tooling_split",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_mold_core_cavity_split"
+      ]
+    },
+    {
+      "op": "trim_surface",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mold_shut_off_surface",
+        "solidworks_surface_evidence",
+        "solidworks_mold_parting_surface"
+      ]
+    },
+    {
+      "op": "trim_weldment",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_weldment_evidence",
+        "solidworks_weldment_ensure_cut_list",
+        "solidworks_weldment_update_cut_list"
+      ]
+    },
+    {
+      "op": "tutorial_simple_hole",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_hole_standards",
+        "solidworks_hole_through_by_selection",
+        "solidworks_hole_blind_by_selection"
+      ]
+    },
+    {
+      "op": "unsuppress_feature",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_mirror_feature",
+        "solidworks_assembly_list_mates"
+      ]
+    },
+    {
+      "op": "update_title_block",
+      "best_cov": 0.6,
+      "top": [
+        "solidworks_simulation_set_material",
+        "solidworks_weldment_update_cut_list",
+        "solidworks_set_standard_view"
+      ]
+    },
+    {
+      "op": "view_grayscale_enhanced",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "view_orientation",
+      "best_cov": 0.667,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "view_rotate",
+      "best_cov": 0.4,
+      "top": [
+        "solidworks_set_standard_view",
+        "solidworks_get_active_view",
+        "solidworks_drawing_list_views"
+      ]
+    },
+    {
+      "op": "weld_symbol",
+      "best_cov": 0.5,
+      "top": [
+        "solidworks_weldment_create_sub_weld_folder"
+      ]
+    }
+  ],
+  "★": "★ 交叠度 0 = 强候选（要看）· ≥0.67 = 大概率已覆盖 · 中间 = 人工抽查（★ 事实 191：真缺口不能自动算）"
+}

@@ -1,0 +1,37 @@
+{
+  "steps": {
+    "two_faces": {
+      "ok": true,
+      "calc": true,
+      "sel": 2,
+      "applicable": [
+        "distance",
+        "normal_distance",
+        "angle",
+        "total_area",
+        "delta_x",
+        "delta_y",
+        "delta_z"
+      ],
+      "distance_mm": 10.0,
+      "area": -1.0
+    },
+    "one_face": {
+      "ok": true,
+      "applicable": [
+        "area",
+        "perimeter"
+      ],
+      "area_mm2": 400.0,
+      "perimeter": 80.0
+    },
+    "nothing_selected": {
+      "ok": true,
+      "error": "没有选中的实体 —— ★ 量测要先选中（★ 用声明式选择那族工具），★ 规则 3"
+    }
+  },
+  "captured_at": "2026-10-02T17:26:04",
+  "passed": 3,
+  "of": 3,
+  "verdict": "pass"
+}
