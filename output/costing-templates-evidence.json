@@ -1,0 +1,18 @@
+{
+  "steps": {
+    "list_costing_templates_report": {
+      "ok": true,
+      "ret": "{\"ok\": true, \"category\": 0, \"count\": 2, \"templates\": [\"c:\\\\programdata\\\\solidworks\\\\solidworks 2026\\\\lang\\\\chinese-simplified\\\\costing templ"
+    },
+    "get_default_template_report(0)": {
+      "ok": true,
+      "ret": "{\"ok\": true, \"category\": 0, \"template\": \"c:\\\\programdata\\\\solidworks\\\\solidworks 2026\\\\lang\\\\chinese-simplified\\\\costing templates\\\\multibod"
+    },
+    "get_default_template_report(1)": {
+      "ok": true,
+      "ret": "{\"ok\": true, \"category\": 1, \"template\": \"c:\\\\programdata\\\\solidworks\\\\solidworks 2026\\\\lang\\\\chinese-simplified\\\\costing templates\\\\sheetmet"
+    }
+  },
+  "verdict": "pass",
+  "captured_at": "2026-10-02T22:38:13"
+}

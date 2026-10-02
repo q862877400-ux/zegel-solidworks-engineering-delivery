@@ -947,3 +947,45 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 | 281 | **`weldment_cut_list` 停在 1/3 的**真因是环境缺组件**：本机**没装「焊件轮廓库」**（Weldment Profiles）**（2026-10-02，轮 364）。  ## 一、★★★★★ 按新纪律先扫「已走死的路」，再选目标 ``` ★ 先读 `docs/dead-ends.md`（★ 轮 363 刚建的）⇒ ★ 14 条 `stitched` 里**8 条在死路清单里**    （`surface_modeling` / `mold_tools` / `routing` / `animation_export` / `sketch_edit_ops` /     `geometric_tolerance` / `topology_iteration_options_backend_limited` / `sheet_metal_creation`）    ⇒ ★★ **6 条不在**：`analysis_run_readback` · **`weldment_cut_list`** · `topology_readback` ·      `render_material_library` · `costing_templates_and_defaults` · `mold_parting_geometry` ★ 选 **`weldment_cut_list`**（★ 工具最多 6 个 · 判据明确 · 不需额外许可）。    ⇒ ★★★ **这一步省掉了在 8 条死路上的白干** —— ★ 那正是轮 363 建那份清单的目的 ✓ ```  ## 二、★★★ 从它的 limitations 里读到一个**明确的可攻点** ``` ★ `weldment_cut_list` 真机 **1/3**：`export_cut_list_csv` ✅ · `create_cut_list` ⚠ 接口不可达 ·    `set_cut_list_properties` ⚠ 报「**没有可写入切割清单的结构构件实体**」（★ = **前置不满足**）。 ★ ★★ **而 limitations 自己写着**：「⚠ **只在新建零件上验过（未建结构构件）**」    ⇒ ★ 于是假设：★ **只要先建结构构件，那条就该通** ⇒ ★ **去建**。 ```  ## 三、★★★★★ 而真因是**环境**：本机没有焊件轮廓库 ``` ★ 官方 `IFeatureManager.InsertStructuralWeldment5(Path, ConnectedSegmentsOption, AllowProtrusion,    Groups, ConfigurationName)` 的 `Path` 是**一个 `.sldlfp` 焊件轮廓文件**，    ★ 官方 Remarks 指它在 `install_dir\lang\<lang>\weldment profiles`。 ★ 实测本机：    · `D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang\chinese-simplified\` 下**没有**该目录      （★ 只有 `art` / `colorswatches` / `graphics` / `IFC` / `manuals` / `Material` /        `Sheet Metal Gauge Tables` / `sheetformat` / `Sheetmetal Bend Tables` / `sldmaterials`）；    · 全盘搜 `.sldlfp` 只得 **5 个**，★ 全是别的东西（`shaftcutnormal` / `slot` / `sprue-runner-gate` …），      ★ **没有一个是焊件轮廓**；    · 全盘搜名为 `weldment` 的目录 ⇒ 只有 `textures\weldment` / `sldweldmenttaskpane` / `shaders_soft\…`      —— ★ **外壳，不是轮廓库**。 ⇒ ★★★ **即：本机没装「焊件轮廓库」（Weldment Profiles，SolidWorks 的可选组件）** ⇒    ★ **建不了结构构件** ⇒ **没有结构构件 ⇒ 切割清单没有内容** ⇒    ★★★★ **那正是 `set_cut_list_properties` 报「没有可写入切割清单的结构构件实体」的真因** ✓ ```  ## 四、★★ 顺带查明：`InsertStructuralWeldment` 有 **5 代**，只有第 5 代不 Obsolete ``` ★ `InsertStructuralWeldment` → *2 → *3 → *4 → **5**（★ 前四个全标 `Obsolete. Superseded by …`）    ⇒ ★ 与事实 40（`IModeler.Create*Surface`）、事实 47（指针接口）**同族**：      ★★ **这一族的 API 名字带代际，用之前必须查"哪一代还活着"**（★ 铁律 4）。 ★ 流程（★ 官方 Remarks）：★ 先用 `IFeatureManager.CreateStructuralMemberGroup` 造    `IStructuralMemberGroup` 对象数组 ⇒ 再传给 `InsertStructuralWeldment5` 的 `Groups` 参数。    ⇒ ★ 而**第一步就依赖轮廓文件**（`Path`）⇒ ★ **没有轮廓库就整条走不通** ✓ ```  ## 五、★ 结论与等级 ``` ★ ★★ **本机（这台机器）上 `weldment_cut_list` 到不了 pass** —— ★ 而**根因不是我们的代码**，    ★ 是**缺一个 SolidWorks 可选组件**（焊件轮廓库）。 ⇒ ★ **等级不动**（★ `stitched`），★ 但把这条**环境前提**写进 `limitations`：    ★ 以后读到这里的人**不必再从头查一遍**（★ 这正是轮 363「先读 limitations」纪律的收益）。 ★ **可执行的验证**：★ 若哪天装上焊件轮廓库，★ 重跑同一条路径即可（★ 判据：能建成结构构件 ⇒    切割清单有行 ⇒ `set_cut_list_properties` 不再报"没有结构构件实体"）。 ```  **依据**：本机目录实测（`lang\chinese-simplified\` 无 `weldment profiles`）· 全盘 `.sldlfp` 只得 5 个 （★ 均非焊件轮廓）· 全盘 `weldment` 目录只有 textures / taskpane / shaders · `C:\swapi\types\IFeatureManager\InsertStructuralWeldment{,,2,3,4,5}.md`（★ 5 代的 Obsolete 链）· `capabilities.yaml` 的 `weldment_cut_list.limitations` · 事实 40 / 47 / 281 · `docs/dead-ends.md`
 
 | 282 | **挖 `costing_templates_and_defaults`：三条其实**能通**（旧结论已过时）+ 一条定位到**事实 36 的同名不同族****（2026-10-02，轮 365）。  ## 一、★ 按新纪律先读 limitations，再动手 ``` ★ `costing_templates_and_defaults` 的 limitations 写着：    「⚠ 真机：`list_templates` **fail** —— 报 `<unknown>.GetTemplatePathnames`      （**事实 36 的形态**：那个成员挂在别的接口上，**待查**）· `get_default_template` 未单独验」 ⇒ ★★ **而它自己就指明了方向**（事实 36 = 同名接口分属不同族）⇒ ★ 去官方/反射源查宿主。 ```  ## 二、★★★★★ 查明的宿主表（★ 反射转储 `iface_sldcostingapi.txt`） ``` ## ICostManager（**7 个成员**）    Void Close() · Object get_CostingDefaults() · Object get_CostingModel() ·    **Int32 GetTemplateCount(Int32)** · **Object GetTemplatePathnames(Int32)** ·    **String IGetTemplatePathnames(Int32, Int32)** ← ★ **带 `I` 前缀 = 指针变体**（事实 47 那一族）·    Void WaitForUIUpdate()  ## ICostingDefaults ⇒ `String GetTemplateName(Int32)` ## ISheet          ⇒ `String GetTemplateName()`        ← ★★ **同名！不同族！**（事实 36 的教科书形态） ```  ## 三、★★★★ 真机重测（★ 走**我们真实的入口**，★ 不是手调） ``` list_templates(cm, 0)      ⇒ **ok** · 回真实路径                              `c:\programdata\solidworks\solidworks 2026\lang\chinese-simplified\costing templates\…` ✓ get_costing_defaults(cm)   ⇒ **ok**（`<COMObject>`）✓ get_costing_model(cm)      ⇒ **ok**（`<COMObject>`）✓ get_default_template(cm,0) ⇒ ✗ `AttributeError: <unknown>.GetTemplateName`   ← ★ **仍失败，已定位** ⇒ ★★ **即：limitations 里 `list_templates` 那句"fail"**已经过时**（★ 现在能通）——    ★ 与本项目一直强调的同一条纪律一致：**旧的失败结论会把好能力钉在 stitched 上**（事实 266）。 ```  ## 四、⚠ 剩下那一条的**定位**（★ 下一轮的起点） ``` ★ `get_default_template` 传的是 `defaults`（★ `get_costing_defaults(cm)` 的返回）⇒    ★ **报的是"名字不存在"（`<unknown>.GetTemplateName`）**，★ 而**不是**参数错。 ⇒ ★ 候选（★ 不猜，★ 留给下一轮）：    ① **那个对象不是 `ICostingDefaults`** —— ★ 同 `CostingModel` 就是 `CostPart` 那种 duck-typing       （★ 本文件 L150 的实测注释就记着这一条）⇒ ★ **该把那个对象上的成员列出来看**；    ② 或 `GetTemplateName` 在**另一种初始化状态**下才可见。 ★ **判法**（下一轮）：★ 拿到 `defaults` 后，**列出它身上真实可调的成员**（★ 逐个试），    ★ 而不是继续假设它是 `ICostingDefaults`。 ```  ## 五、★★ 一条**我自己的**教训（★ 差点误判成"代码 bug"） ``` ★ 我的第一版探针**手试了反射名** `get_CostingDefaults` / `get_CostingModel` ⇒ 两个都报    `<unknown>.get_CostingDefaults` ⇒ ★★ **我差点写"我们这两个入口也坏了"** ✗ ★ **而我们的代码用的是正确的 COM 名**（`sw_costing.py` L184 `"CostingDefaults"` · L191 `"CostingModel"`）    ⇒ ★ 走真实入口重测 ⇒ **两个都 ok** ✓ ⇒ ★★★ **定则**：★ **反射转储里的 `get_Xxx` 是**属性 getter 的名字**，不是 pywin32 里该用的名字**；    ★★ **探针要按我们自己的入口调**（★ AGENTS 那条纪律的又一次应用）——    ★ **手试反射名会把"好代码"报成"坏代码"**。 ```  **依据**：本机实测（`list_templates` 回真实模板路径 · `costing_defaults` / `costing_model` 均 ok · `get_default_template` 报 `<unknown>.GetTemplateName`）· `D:\AI\SW\_raw\reflect\iface_sldcostingapi.txt`（★ `ICostManager` 7 成员 · `ICostingDefaults` 的 `GetTemplateName(Int32)`）· `D:\AI\SW\_raw\reflect\iface_sldworks.txt`（★ `ISheet` 的同名 `GetTemplateName()`）· `scripts/sw_costing.py` L150 / L184 / L191 / L194–198 · 事实 36 / 47 / 266 / 281
+
+| 283 | **挖 `costing_templates_and_defaults`：**一行真 bug** 让整族停在 stitched，修完 **PASS 3/3 升 verified**（2026-10-02，轮 366）。
+
+## 一、★★★ 真 bug（★ 一行）
+```
+★ `list_costing_templates_report` 原先把 `d`（`CostingDefaults`）传给 `list_templates`，
+  ★★ 而 **`GetTemplatePathnames` 挂在 `ICostManager` 上**（★ 反射转存 `iface_sldcostingapi.txt` 的
+  `## ICostManager` 段：`GetTemplateCount(Int32)` / `GetTemplatePathnames(Int32)` **成对**）
+  ⇒ ★ 改成传 `cost_manager` 即通。
+⚠ **COM 报的是** `<unknown>.GetTemplatePathnames`**（★ 像“成员不存在”，
+  **其实是对象不对** —— 事实 36 的形态）。
+```
+
+## 二、★★★ 定位手法（★ 可复用）
+```
+★ **受控实验把嫌疑缩到一处**：
+  · A（**只取 defaults**）⇒ **通** · B（**先取 model 再取 defaults**）⇒ **通**
+  · C（**工具层入口**）⇒ **不通**
+  ⇒ ★ A/B 与 C 的差别**只剩“工具层内部那一处传参”** ⇒ 一眼看出 ✓
+★ 与 `AGENTS.md` 那条配套：**探针按契约调之后仍失败 ⇒ 是工具层的问题**。
+```
+
+## 三、★ 而“两个成员挂不同接口”是本族的**结构特征**
+```
+★ `get_default_template` 要 **`CostingDefaults`**；★ `list_templates` 要 **`ICostManager`**
+  ⇒ ★★ **同一族里两个成员挂**不同接口**（事实 36）** ——
+  ★ 而它们**名字都很像**，★ **只能靠“去反射里看宿主”分辨**。
+```
+
+## 四、★ **反射名 ≠ COM 名**（★ 本轮又一次）
+```
+★ 真机实测：`get_LotSizeForMultibody` / `get_MachiningStockBodyType` 等 **全部** 报 `<unknown>.get_Xxx`，
+  ★★ 而**去掉 `get_` 就能调**（`MachiningStockBodyType` ⇒ `1`）。
+  ⇒ ★ 探针若手试反射名，**会把好代码报成坏代码**（★ 本轮差点就那么写了）。
+```
+
+## 五、⚠ 一条反复犯的操作错
+```
+★ 写「改 capabilities.yaml 的长文本」时，我**又**把带引号的文字直接内联进 python ⇒ `SyntaxError`（事实 48）。
+  ⇒ ★★ **根本解（本轮才用对）**：**长文本先写成独立的 `.json` 数据文件**，
+    ★ 脚本**只搬运字符串**（★ 引号由 json 处理）—— **比“每次小心”可靠**。
+```
