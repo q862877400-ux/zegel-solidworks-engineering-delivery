@@ -73,12 +73,6 @@ Step 'gen_level_audit'    { python scripts/gen_level_audit.py     *> $null }
 Step 'gen_metrics'        { python tools/gen_metrics.py           *> $null }
 Step 'gen_harvest_digest' { python tools/gen_harvest_digest.py    *> $null }
 Step 'build_union_map'    { python tools/build_union_map.py       *> $null }
-#: ★ 2026-10-03 新增：用户视角功能覆盖对照（★ 口径 = 能操作 SolidWorks 的**功能**数）
-#:   ★ 与 build_union_map 同一族（都吃 union-sources.json）⇒ 放一起重算。
-#:   ⚠ 已有的 `docs/metrics.md` / `union-coverage-matrix.md` / AGENTS.md 域矩阵
-#:     曾因**没接生成器**而漂移（实测：metrics 记 426 事实/20 门禁，实际 428/21）
-#:     ⇒ ★ 这份**从第一天就接进链**，不重蹈。
-Step 'gen_user_feature_cov' { python tools/gen_user_feature_coverage.py *> $null }
 #: ★ 2026-10-02（轮 363）新增：把「已走死的路」清单重算一遍
 #:   （★ 来源：轮 359–362 我重走了前人早已走死的 `revolve_boss` 轴路径）
 Step 'gen_dead_ends'      { python tools/gen_dead_ends.py          *> $null }

@@ -1,7 +1,10 @@
 # 用户视角功能覆盖对照（本仓库 vs 四家）
 
-> **本文件是生成物** —— 由 `tools/gen_user_feature_coverage.py` 现算，**不要手改**。
-> 重算：`python tools/gen_user_feature_coverage.py` · 比对：`python tools/gen_user_feature_coverage.py --check`
+> **本文件是生成物** —— 由**主仓库之外**的 `D:\SW-coverage-tool\gen_user_feature_coverage.py` 现算，**不要手改**。
+> 重算：`python D:\SW-coverage-tool\gen_user_feature_coverage.py`（加 `--check` 只比对）
+>
+> ⚠ **本文件的生成器刻意不在本仓库里**（与本仓其它生成物不同 —— 它们的生成器在 `tools/`）。
+> 理由与用法见 `D:\SW-coverage-tool\README.md`；主仓库**不依赖**它，删掉它本仓库照常跑。
 
 ## 一 · 口径（★ 先说清量的是什么，否则数字没有意义）
 
@@ -322,8 +325,8 @@
 本仓库工具名 : register_capabilities.all_specs()  +  mcp-server/server.py 的 name=
 四家工具名   : tools/union-sources.json 的 sources[].tools
 能力等级     : capabilities.yaml 的 capabilities[].level
-重算         : python tools/gen_user_feature_coverage.py
-新鲜度比对   : python tools/gen_user_feature_coverage.py --check
+重算         : python D:\SW-coverage-tool\gen_user_feature_coverage.py
+新鲜度比对   : python D:\SW-coverage-tool\gen_user_feature_coverage.py --check
 ```
 
 ⚠ **本表是「有入口」的口径**。要引用它下结论，必须同时给出

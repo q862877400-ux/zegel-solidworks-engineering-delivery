@@ -4256,6 +4256,36 @@
         "★ `RayRadius` **<= 2.9 m**；★ 而 `TypeWanted` 取 `swSelectType_e`。",
         "⚠ 本包装未接进 MCP 工具层；⚠ 本轮只验了 **命中面**（faces）一种。"
       ]
+    },
+    {
+      "id": "feature_hole_wizard5",
+      "label": "高级孔 / 异型孔向导（`IFeatureManager.HoleWizard5`，**27 参**）—— ★ **真机建成**·★★ **产出的是真的异型孔向导特征**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\IFeatureManager\\HoleWizard5.md`（**27 参**，★ md **未标 `Obsolete`**）× 反射 arity（`'HoleWizard5': 27`，★ 两源一致）。前置 `SelectByRay` 见能力 `select_by_ray`。代码：`tools/prove_hole_wizard5_build.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 591）**真机建成**（走 `sw_guard`，零弹窗）：",
+        "`SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` 定孔位",
+        "⇒ `HoleWizard5(**swWzdHole=2**, **ANSI_METRIC=1**, **40**螺钉间隙, **\"M8\"**, **swEndCondThroughAll=1**, 0.008, 0.02, 0, 0×12, \"\", False, True, False, False, False, False)",
+        "⇒ **特征 7 → 8**，新增 **`M8 间隙孔1`**（★ **真的异型孔向导特征**）· 返回 `CDispatch` ✓",
+        "证据 `output/hole-wizard5-build-evidence.json`。",
+        "★★★ **而关键是一个参数的形态**（★ #3211的五格对照）：\n       `SSize=''` · `'8'` · `'0.008'` · `'M8x1.25'` ⇒ **全 `None`**；★ **而 `SSize='M8'` ⇒ 成** ✓\n       ⇒ ★ 故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。"
+      ],
+      "limitations": [
+        "★★ **三个前置缺一不可**：① **孔位要用 `SelectByRay`（`Mark=0`）选出来**；② **`SSize` 要规格串**（如 `M8`）；③ `FastenerTypeIndex` **要与 standard 匹配**（ANSI Metric + `swWzdHole` 下合法值：40/41/704/38）。",
+        "★ **27 参**；`RevDir` 在**材料在参考面一侧时为 `False`**（官方）。",
+        "⚠ **本包装未接进 MCP 工具层**；⚠ 本轮只验了 **`swWzdHole`(2) + ANSI Metric + 40 + M8 + ThroughAll** 一组；⚠ 未查：其余孔型（柱形沉孔 0 / 锥形沉孔 1 / 螺纹孔 4 / 槽 6–8）。"
+      ]
     }
   ]
 }

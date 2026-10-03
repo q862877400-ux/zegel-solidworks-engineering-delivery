@@ -1,41 +1,50 @@
-test(boundary): 高级孔 —— ★ 取"真尺寸"那条路被**接口解析**卡住（事实 468）
+feat(特征): **高级孔真机建成** —— ★ 而关键是一个参数**形态**：`SSize` 要"规格串"（事实 469）
 
-★ 执行**事实 467 留的下一步**（★ 从 `get_fastener_table` 拿一个真的 `SSize`）。
+★ 承**事实 467**（"嫌疑只剩 `SSize`"）⇒ ★ **本轮一跑就收口**。
 
-## 一、★ 沿路查出**三件事**
-
-```
-① ★ **表类型取到了真值**：`list_fastener_table_types` 回 **[0, 2]**（★ 真数据）
-② ★ **它的官方成员在 `IHoleStandardsData` 上**（★ 不是 `ISldWorks`）——
-   本仓 `_hole_standards_data(sw, 2)` **确实**回 `CDispatch` ✓
-③ ★★ **而调用仍报** `AttributeError: **SldWorks.Application**.GetFastenerTable` ⚠
-   —— ★ 而 `get_fastener_table` 的函数体**逐字**是
-      `get_com_member(**data**, "GetFastenerTable", …)`（★ **调在标准对象上**）
-```
-
-## 二、★★ 故只能解释为**接口解析问题**
-
-★ 那个 dispatch 是从 `ISldWorks` 拿的 ⇒ **pywin32 把它解析成了 `ISldWorks`**（★ 于是找不到那个成员）⚠
-
-## 三、★★★ 而这与事实 36 / 47 **同一族**
-
-★ **错误信息里的接口名可能是错的** —— ★ 故**不能拿它当定位依据** ⚠
-
-★ 而本轮的收获是把它从「**没查到**」收敛到「**接口解析**」✓
-
-## 四、★ 对 `HoleWizard5` 的影响
-
-★ 故那一条的"拿真尺寸"前置**暂时拿不到** ——
-  ★ 而**另一条路**（★ 从 CHM 或反射里查尺寸名）**尚未试**。
-
-## 五、★ 按事实 53 停手
-
-★ 本条已跨 **5 轮**（★ 119–124）；★ 而**每一轮都留下了一条可继承的事实**。
-
-## 六、交付
+## 一、★★★★★ 五格对照把它钉死了
 
 ```
-docs/known-facts.md   **事实 468**（+20 · ★ 三件事 + 接口解析归因 + 与 36/47 同族）
-★ 本轮**不登记能力**（★ 未建成 —— 不假装做到）
-★ 语法门禁 0 处（782 个文件）
+SSize=''         ⇒ 回 `None` · 特征 7 → 7   ✗
+SSize='8'        ⇒ 回 `None` · 特征 7 → 7   ✗
+★ **SSize='M8'**  ⇒ **特征 7 → 8** · 新增 **`M8 间隙孔1`** · 回 `CDispatch` ✓
+SSize='0.008'    ⇒ 回 `None` · 特征 7 → 7   ✗
+SSize='M8x1.25'  ⇒ 回 `None` · 特征 7 → 7   ✗
 ```
+  ⇒ ★★ **故 `SSize` 要的是"规格串"**（★ 如 `M8`），
+    ★ **而不是空串、也不是纯数字** —— ★ 正是官方那句「**必须是该紧固件类型的合法尺寸**」✓
+
+## 二、★★★ 而**产出的特征是真的异型孔向导**
+
+★ 名字是 **`M8 间隙孔1`**，★ **而不是「切除-拉伸」** ——
+  ★★ **⇒ 那正是事实 464 说的那个差距被补上了** ✓
+
+## 三、★ 三个前置缺一不可
+
+```
+① 孔位用 **`SelectByRay`（`Mark=0`）** 选出来（★ 事实 466）
+② **`SSize` 要规格串**
+③ `FastenerTypeIndex` 要与 standard 匹配（ANSI Metric + `swWzdHole` 下：40/41/704/38）
+```
+
+## 四、★ 可照抄的一组参数
+
+```
+`swWzdHole=2` · `ANSI_METRIC=1` · `40`（螺钉间隙）· `"M8"` · `swEndCondThroughAll=1` ·
+`Diameter=0.008` · `Depth=0.02` · 其余 0 · `RevDir=False` · `FeatureScope=True` · 后四个 `False`
+```
+
+## 五、交付
+
+```
+capabilities.yaml   + **`feature_hole_wizard5`**（verified）⇒ **108 条**
+docs/toolbar-ledger.json  「高级孔」补 capability_id ⇒ **已能 81**（★ 原始"能"只有 47）
+docs/known-facts.md  **事实 469**（+26）
+tools/prove_hole_wizard5_build.py  ★ 五格 `SSize` 对照
+HEAD ? · 语法门禁 0 处（782 个文件）
+```
+
+## 六、★★ 方法论
+
+★ **当一个 27 参的方法回 `None` 时，把**字符串参数的形态**拿出来做对照** ——
+  ★ 而**空串与纯数字都不是答案、"规格串"才是** ⚠

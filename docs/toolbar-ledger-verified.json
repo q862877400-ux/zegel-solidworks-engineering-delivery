@@ -1,13 +1,13 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 80,
+  "已能": 81,
   "待查": 20,
   "待验证": 7,
-  "可攻关": 12
+  "可攻关": 11
  },
  "by_toolbar_gap": {
-  "特征下拉": 7,
+  "特征下拉": 6,
   "草图尺寸": 1,
   "草图编辑": 2,
   "曲面": 2
@@ -394,6 +394,7 @@
    "api": "HoleWizard5(HoleSeries)",
    "entry": "",
    "level": "不能",
+   "capability_id": "feature_hole_wizard5",
    "api_iface_hits": [],
    "api_member_hits": [
     "HoleWizard5"
@@ -405,7 +406,7 @@
     "HoleSeries",
     "HoleWizard5"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "特征下拉",

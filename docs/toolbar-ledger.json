@@ -159,7 +159,8 @@
    "zh": "高级孔",
    "api": "HoleWizard5(HoleSeries)",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "feature_hole_wizard5"
   },
   {
    "tb": "特征下拉",

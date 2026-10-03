@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 80 |
-| 可攻关 | 12 |
+| 已能 | 81 |
+| 可攻关 | 11 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -34,7 +34,6 @@
 | 特征下拉 | 曲线驱动的阵列 | **可攻关** | `FeatureCurvePattern` | — |
 | 特征下拉 | 草图驱动的阵列 | **可攻关** | `FeatureSketchDrivenPattern` | — |
 | 特征下拉 | 表格驱动的阵列 | **可攻关** | `InsertTableDrivenPattern` | — |
-| 特征下拉 | 高级孔 | **可攻关** | `HoleWizard5` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
 | 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
@@ -101,6 +100,7 @@
 | 特征下拉 | 圆周阵列 | **已能** | `FeatureCircularPattern4` | `sw_part.circular_pattern` |
 | 特征下拉 | 曲线-通过XYZ点的曲线 | **已能** | `InsertCurveFile` | — |
 | 特征下拉 | 螺纹线 | **已能** | `InsertCosmeticThread3` | — |
+| 特征下拉 | 高级孔 | **已能** | `HoleWizard5` | — |
 | 草图关系 | 完全定义草图 | **已能** | `FullyDefineSketch` | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 智能尺寸 | **已能** | `AutoDimension2` | `sw_part.auto_dimension_sketch` |
 | 草图尺寸 | 水平尺寸 | **已能** | `AddHorizontalDimension2` | `sw_sketch_dimensions.*` |

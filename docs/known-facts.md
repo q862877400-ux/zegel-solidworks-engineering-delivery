@@ -2473,3 +2473,22 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **按事实 53 停手**（★ 本条已跨 5 轮）；★ **而本轮的收获是把它从“没查到”收敛到“**接口解析**”** ✓
      ★ **而对 `HoleWizard5` 的影响**：★ 故那一条的“拿真尺寸”前置**暂时拿不到** —— ★ 而另一条路（**从 CHM 或反射里查尺寸名**）尚未试。
      ★ 本轮**不登记能力**。|真机：本轮探针输出；本仓：`scripts/sw_hole_features.py` 的 `get_fastener_table`（L316）与 `_hole_standards_data`（L466）；对照事实 36 / 47 / 467 |
+| 469 | **★★★ 高级孔真机建成**（`HoleWizard5` 27 参）—— ★ 而关键是 **`SSize` 要“规格串”**（如 `M8`） —— 2026-10-03（轮 591）。
+     ★ **从事实 467 的“嫌疑只剩 `SSize`”直接收口** —— ★ 五格对照把它钉死了：
+     ```
+     SSize=''         ⇒ 回 `None` · 特征 7 → 7   ✗
+     SSize='8'        ⇒ 回 `None` · 特征 7 → 7   ✗
+     ★ **SSize='M8'**  ⇒ **特征 7 → 8** · 新增 **`M8 间隙孔1`** · 回 `CDispatch` ✓
+     SSize='0.008'    ⇒ 回 `None` · 特征 7 → 7   ✗
+     SSize='M8x1.25'  ⇒ 回 `None` · 特征 7 → 7   ✗
+     ```
+     ⇒ ★★ **故 `SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。
+     ★★★ **而产出的是**真的异型孔向导特征****（★ 名字 `M8 间隙孔1`、★ **而不是「切除-拉伸」**）
+       —— ★ **那正是事实 464 说的那个差距被补上了** ✓
+     ★ **三个前置缺一不可**：
+       ① 孔位用 **`SelectByRay`（`Mark=0`）**选出来（★ 事实 466）；
+       ② **`SSize` 要规格串**；
+       ③ `FastenerTypeIndex` 要与 standard 匹配（ANSI Metric + `swWzdHole` 下：40/41/704/38）。
+     ★ **而它的一组参数**（★ 可照拄）：`swWzdHole=2` · `ANSI_METRIC=1` · `40`（螺钉间隙）· `"M8"` · `swEndCondThroughAll=1` · `Diameter=0.008` · `Depth=0.02` · 其余 0 · `RevDir=False` · `FeatureScope=True` · 后四个 `False`。
+     ★ **落地**：`capabilities.yaml` 新增 **`feature_hole_wizard5`**（level = **verified**，共 **108** 条）；台账「高级孔」补 `capability_id` ⇒ **已能 81**。
+     ★★ **方法论**：★ **当一个 27 参的方法回 `None` 时，把**字符串参数的形态**拿出来做对照** —— ★ 而**空串与纯数字都不是答案、“规格串”才是** ⚠|真机：`tools/prove_hole_wizard5_build.py`；证据 `output/hole-wizard5-build-evidence.json`；官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md` × `IModelDocExtension\SelectByRay.md`；对照事实 464 / 466 / 467 / 468 |

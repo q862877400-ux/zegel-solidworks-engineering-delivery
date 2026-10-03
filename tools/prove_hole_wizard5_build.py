@@ -142,10 +142,11 @@ def main() -> int:
                     "swEndCondBlind": SW_END_BLIND, "swSelFACES": SW_SEL_FACES,
                     "ANSI_METRIC": ANSI_METRIC},
           "cases": []}
-    ev["cases"].append(_one(sw, "\u2605 \u87ba\u9489\u95f4\u9699(40) ThroughAll", SW_END_THROUGH_ALL, True, 40))
-    ev["cases"].append(_one(sw, "\u2605 \u6697\u9500\u5b54(704) ThroughAll", SW_END_THROUGH_ALL, True, 704))
-    ev["cases"].append(_one(sw, "\u2605 \u87ba\u7eb9\u94bb\u5b54(41) ThroughAll", SW_END_THROUGH_ALL, True, 41))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a**\u975e\u6cd5\u503c(0)**", SW_END_THROUGH_ALL, True, 0))
+    ev["cases"].append(_one(sw, "\u2605 SSize='' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, ''))
+    ev["cases"].append(_one(sw, "\u2605 SSize='8' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, '8'))
+    ev["cases"].append(_one(sw, "\u2605 SSize='M8' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, 'M8'))
+    ev["cases"].append(_one(sw, "\u2605 SSize='0.008' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, '0.008'))
+    ev["cases"].append(_one(sw, "\u2605 SSize='M8x1.25' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, 'M8x1.25'))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "hole_wizard5_%d_of_%d" % (ev["passed"], ev["total"])

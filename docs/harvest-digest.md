@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **107** 条能力。
+共 **108** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 94 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 95 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 77 | **本项目自研**（护城河域等） |
+| `original` | 78 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -193,6 +193,9 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 证据 `output/curve-through-xyz-evidence.json`。`<br>· `★★ **而判据是按事实 436 取的**：`InsertCurveFileBegin` 官方回 **`void`** ⇒ ★ **不能看返回值**，改看 **`feature_names()` 的增量**。` |
 | `select_by_ray` | · `★★ 2026-10-03（轮 589）**真机选中**（走 `sw_guard`，零弹窗）：先造一块板，再 `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` ⇒ **选中计数 1 → 2**（增 1）· 返回 `True`。证据 `output/hole-wizard5-evidence.json`。`<br>· `★ 它的**语义**（官方逐字）："Defines a **cylindrical region of infinite length** that starts at the specified point and runs parallel to the ray direction"。`<br>· `★★ **而它是 `HoleWizard5` 定孔位的**前置****（事实 464 的 Remarks）："…call **`SelectByRay` with Mark = 0** for each location."。
        ★★ **故孔位是“射线选出来的”、**而不是裸坐标** —— ★ **命中什么由几何决定**。`<br>· `★ 而坐标/枚举均有**可核的来源**：`swSelFACES = 2` 取自本机反射 dump（★ 铁律 4 的裁决者）。` |
+| `feature_hole_wizard5` | · `★★ 2026-10-03（轮 591）**真机建成**（走 `sw_guard`，零弹窗）：`<br>· ``SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` 定孔位`<br>· `⇒ `HoleWizard5(**swWzdHole=2**, **ANSI_METRIC=1**, **40**螺钉间隙, **"M8"**, **swEndCondThroughAll=1**, 0.008, 0.02, 0, 0×12, "", False, True, False, False, False, False)`<br>· `⇒ **特征 7 → 8**，新增 **`M8 间隙孔1`**（★ **真的异型孔向导特征**）· 返回 `CDispatch` ✓`<br>· `证据 `output/hole-wizard5-build-evidence.json`。`<br>· `★★★ **而关键是一个参数的形态**（★ #3211的五格对照）：
+       `SSize=''` · `'8'` · `'0.008'` · `'M8x1.25'` ⇒ **全 `None`**；★ **而 `SSize='M8'` ⇒ 成** ✓
+       ⇒ ★ 故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 
