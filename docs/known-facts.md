@@ -3163,5 +3163,25 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         ★ 否则一个前置失败会**拖垮整批格子**（本轮 15 格正是如此）。
       ★ **产物**：`tools/prove_drawing_batch.py`（已修）· `output/drawing-batch-evidence.json`。|
         痕迹：证据 JSON 的 `passed`/`preconditions_held_count`；对照事实 **494**（真因）· **492**（out 参数） |
+| 497 | **★★ E 类 2 项「换名重查」的结果：加厚**有未废弃的直入入口**、曲线驱动阵列**的入口在另一条路上** —— 2026-10-03（接手轮，R4）。
+      ★ **加厚**（★ 原分类偏保守）：
+        · ★ **未废弃**：`IFeatureManager.FeatureBossThicken`（**7 参**）· `IFeatureManager.FeatureCutThicken`（**6 参**）
+        · ⛔ **废弃**：`IModelDoc2.FeatureBossThicken{,2}` / `FeatureCutThicken{,2}`
+          （`FeatureBossThicken2` 头顶逐字：`Superseded by [[IFeatureManager::FeatureBossThicken]].`）
+        · ★ 另一族：`IModeler.ThickenSheet` 造的是**片体**不是特征 ⇒ **不当入口**
+        · ★★ **官方前置（逐字）**：`FeatureBossThicken`「by thickening a **selected reference surface**.
+          **The surface must be selected with a mark of 1.**」+「If **FillVolume** is true, **other arguments
+          are ignored**. A **closed surface is required** when FillVolume is true.」；
+          `FeatureCutThicken`「When **UseAutoSelect is false**, the user must **select the bodies**…」
+      ★ **曲线驱动阵列**：★ 两个直调入口**都被官方废弃**，并**逐字指向另一条路** ——
+        `IFeatureManager.FeatureLocalCurveDrivenPattern` 与 `IModelDoc2.FeatureCurvePattern` 的头顶都是
+        `See [[IFeatureManager::CreateFeature]] and the Remarks of [[ICurveDrivenPatternFeatureData]]`
+        ⇒ ★★ **即"换条路"，不是"没有路"** —— ★ 开工前必须先查 `CreateFeature` 的**合法常量名**
+        与 `ICurveDrivenPatternFeatureData` 的 **mark 表**（铁律 5：不许猜）。
+      ★★ **可复用的判据**：★ 遇到 `Obsolete` 时**别只看"有没有后继名字"**，要看**它指向的是不是同一个入口族** ——
+        ★ 加厚指向的是**同族的 `IFeatureManager` 直调**（可照原样做），
+        ★ 而曲线驱动阵列指向的是**另一个建特征机制**（`CreateFeature` + FeatureData）⇒ **工作量不同级**。|
+        痕迹：`specs/202-user-coverage-gaps/recon/r4-e-class-rename-lookup.md`；
+        对照事实 **43**（`CreateFeature`/`CreateDefinition` 的常量白名单）· **484**（带 `AccessSelections` 不等于做不到） |
 
 
