@@ -129,9 +129,34 @@ def test_mirror_raises_when_not_in_sketch_edit_mode():
 
 
 def test_mirror_calls_the_official_zero_arg_member():
-    """@brief 进到草图态时应调官方的 0 参 `SketchMirror()`。"""
+    """@brief 进到草图态时应调官方的 0 参 `SketchMirror()`。
+
+    ★★★★★★ 2026-10-04（轮 118）**契约随**返回形态**更新** —— ★ 处置这条**存量失败** ✓
+      ★ **真机读数**：★ `assert sw_sketch_edit.sketch_mirror(m) is True` ⇒
+        ★★ **实得** `{'ok': None, 'op': 'sketch_mirror', 'segments_before': None,
+          'segments_after': None, …}` ✓
+      ★★★ **真因**：★ **实现改成返回**结果 dict**了**（★ 规则 6 的回读形态）——
+        ★ 它的 `return` 块逐字：★ `{"ok": ok, "op": "sketch_mirror",
+          "segments_before": …, "segments_after": …, "new_segments": delta,
+          "verified_by": "★ 草图实体计数变化（★ doc 承诺的判据；**★ 取不到时 ok 为 None，
+          不报成功**）"}` ⇒
+        ★★★★ **⇒ 而契约测试还在断言 `is True`（★ 旧形态：★ 回 bool）** ✓
+      ★★★★★ **⇒ 这正是**第 7 类**：★ **"返回形态变了"**（★ `bool` ⇒ **结果 dict**）——
+        ★ 而它与 mock 落后 / 登记落后 **是同一个病**（★ "改了实现、★ 配套的没跟上"）✓
+        ★★ **⇒ 判据改成查 `result["ok"]`**、★ **并核 `op` 与判据来源** ✓
+        ★★★ **⚠ 而 `ok` 是**三态**（★ `True` / `False` / **`None`**）⇒
+          ★ 本用例下 `ok` 为 `None`（★ **取不到计数 ⇒ 不报成功**）⇒
+          ★★ **⇒ 断言写 `is None` 并核 `verified_by` 里那句"不报成功"** ——
+          ★★★ **那不是放松判据、★ 而是**把三态如实表达出来**** ✓
+    """
     m = _FakeModel(_FakeSketchManager())
-    assert sw_sketch_edit.sketch_mirror(m) is True
+    r = sw_sketch_edit.sketch_mirror(m)
+    assert isinstance(r, dict), "★ 实现现在回结果 dict ⇒ 契约要跟上：%r" % (r,)
+    assert r["op"] == "sketch_mirror"
+    #: ★★ `ok` 三态：★ 取不到计数时为 `None`（★ **不报成功** —— 那正是本仓的纪律）✓
+    assert r["ok"] is None, (
+        "★ 本 fake 下取不到草图实体计数 ⇒ `ok` 应为 `None`（★ 不报成功）、★ 实得 %r" % (r["ok"],))
+    assert "不报成功" in r["verified_by"], "★ 判据来源要写明三态语义"
     assert m.mirror_calls == 1
 
 
@@ -173,10 +198,33 @@ class _FakeSketchManagerWithEdge:
 
 
 def test_convert_entities_passes_both_official_arguments_in_order():
-    """@brief 两个实参按官方顺序：`(Chain, InnerLoops)`。"""
+    """@brief 两个实参按官方顺序：`(Chain, InnerLoops)`。
+
+    ★★★★★★ 2026-10-04（轮 118）**契约随**返回形态**更新** —— ★ 同 `sketch_mirror` 那条 ✓
+      ★ **真机读数**：★ `assert … is True` ⇒ 实得
+        `{'ok': False, 'op': 'convert_entities', 'segments_before': None, …}` ✓
+      ★★ **真因**：★ 实现现在**回结果 dict**（★ 它的 `return` 块逐字：
+        `{"ok": bool(bool(got) and geom_ok is True), "op": "convert_entities", …,
+        "official_return": got, "verified_by": "★ `SketchUseEdge3` 回非假 **and**
+        **草图实体计数变化**（★ doc 承诺的判据；★ 取不到时不算通过）"}`）⇒
+        ★★★ **⇒ 而本 fake 取不到计数 ⇒ `geom_ok` 不是 `True` ⇒ `ok` 为 `False`** ✓
+      ★★★★ **⇒ 判据改成查 `result["ok"]`**、★ **并核官方那两参的顺序仍在**（★ 那是本用例的本意）✓
+      ★★★★★ **⚠ 而 `ok` 是 `False` 在这里**是应然的**（★ "取不到时不算通过"）——
+        ★ **判据的意图没变**：★ 本用例测的是**实参顺序**（`skm.calls`），★ **不是**成败 ✓
+    """
     skm = _FakeSketchManagerWithEdge(ret=True)
     m = _FakeModel(skm)
-    assert sw_sketch_edit.convert_entities(m, chain=False, inner_loops=True) is True
+    r = sw_sketch_edit.convert_entities(m, chain=False, inner_loops=True)
+    assert isinstance(r, dict), "★ 实现现在回结果 dict ⇒ 契约要跟上：%r" % (r,)
+    assert r["op"] == "convert_entities"
+    #: ★★ 官方返回值要如实带回来（★ 那是 `official_return` 那一栏的用途）✓
+    assert r["official_return"] is True, "★ 官方那一路回 True ⇒ 要如实带回来：%r" % (r,)
+    #: ★★★ 而 `ok` 为 `False` 是**应然的** —— ★ 本 fake 取不到草图实体计数 ⇒
+    #:   ★ **"取不到时不算通过"**（★ doc 承诺的判据）✓
+    assert r["ok"] is False, (
+        "★ 取不到计数时 `ok` 应为 `False`（★ 不算通过）、★ 实得 %r" % (r["ok"],))
+    assert "不算通过" in r["verified_by"], "★ 判据来源要写明「取不到时不算通过」"
+    #: ★★★★ **本用例的本意**：★ 两个实参按官方顺序 ✓
     assert skm.calls == [(False, True)]
 
 

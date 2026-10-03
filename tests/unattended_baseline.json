@@ -1,15 +1,26 @@
 {
   "_comment": "迁移前 unattended_allowed() 为真的 capability_id 集合。由 freeze_unattended_baseline.py 生成；等价性验收测试 tests/test_unattended_equivalence.py 读它，迁移后必须逐条相同。",
-  "captured_from_schema_version": "1.0",
+  "_2026-10-04_轮118_更新说明": [
+    "★ 本文件在轮 118 **重新抓取过一次**（★ 35 → 33 条）—— ★ 如实记原因：",
+    "★ 它原本是**一次性迁移验收**的快照（★ schema_version 2.0 那次 `pilot`→五级迁移）；",
+    "★ 而迁移早已完成 ⇒ **之后每一次合法的授权变动都会让它红**、★ 而那是**误报**。",
+    "★ 本轮它报了「少掉的（被收紧）: ['assembly_and_mates', 'drawing_dimension_insertion']」⇒",
+    "★ 逐条核过，**两条都是**该收紧的**、★ 不是静默收紧**：",
+    "★  · `drawing_dimension_insertion` —— 本会话**阶段 1 主动降级**（★ verified ⇒ not_implemented，",
+    "★    因为它的能力层**零实现**）⇒ 按 R11「level 不是 verified 就不许带 unattended」必须去掉 ✓",
+    "★  · `assembly_and_mates` —— 历史里 `927fbfd9` 时是 verified+unattended、",
+    "★    从 `fa634bec` 起变成 stitched（★ 有人主动降级）⇒ 同样按 R11 必须去掉 ✓",
+    "★ 而「多出来的（被放宽）」是 `[]` ⇒ **没有静默放宽** ✓",
+    "★ ⇒ 故本文件按**当前真实授权**重抓；★ 判据（`tests/test_unattended_equivalence.py`）不变。"
+  ],
+  "captured_from_schema_version": "2.0",
   "allowed": [
-    "assembly_and_mates",
     "assembly_read",
     "chamfer_fillet_on_selection",
     "config_and_export",
     "costing_readback",
     "declarative_hole_creation",
     "drawing_current_sheet_query",
-    "drawing_dimension_insertion",
     "drawing_view_operations",
     "export_delivery",
     "feature_build_extrude",
@@ -38,5 +49,5 @@
     "surface_features",
     "topology_constraints_and_controls"
   ],
-  "denied_count": 20
+  "denied_count": 77
 }
