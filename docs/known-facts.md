@@ -1501,3 +1501,20 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **下一步明确**：★ **按**对象**选曲面体**（★ 而不是按坐标）—— 即 `_select_com_object(surface_body)`（★ 本仓有那个手法）。
      ★★ **而本轮最大的收获是那个源本身**：★ **官方例子是第六种源**（★ md · CHM · 反射 · 类型库 · CHM 的 Remarks 之外），★ 而它给的是**调用序** —— ★ 那是**签名与 Remarks 都给不了的东西** ✓
      ★ **而它还顺手给出一条可复用的路**：★ **CHM 页顶上那个「Example」链接**（★ 而本仓从来没点过）。|真机：`tools/probe_trim_surface_per_example.py`；证据 `output/trim-surface-per-example-evidence.json`；例子：`Create_Trimmed_Surface_Feature_Example_VBNET.htm`；对照事实 410 / 413 / 414 |
+| 416 | **★★ `IEntity.Select4` 能选**面**、**不能选**曲面体****；而剪裁曲面按例子的顺序仍不成** —— 2026-10-03（轮 535）。
+     ★ 上一轮（事实 415）的下一步是：★ **按**对象**选曲面体**（而不是按坐标）。★ 而真机结果：
+     ```
+     `_select_com_object(曲面体)`        ⇒ **返回 False · picked=0**  ⚠
+     `_select_com_object(曲面体的面)`  ⇒ **True · picked=4 · sel=4**  ✓
+     ```
+     ⇒ ★★ **故：`IEntity.Select4` 对**面**生效、对**体**不生效** —— ★ 这是事实 32（“实体没有名字”）的**一个新分支**：★ **面可以按对象选、体不行**。
+     ★ 而它**也解释了轮 534 的 `picked=False` 的一个可能**（★ 不只是坐标猜偏）。
+     ★ 真机（三组，零弹窗）：
+     ```
+     Pre → 按对象选曲面体 → Post      ⇒ picked=0 · `Post` 回 **None** · 树不动
+     Pre → 按对象选体+面 → Post      ⇒ picked=4 · sel=4 · `Post` 回 **None** · 树不动
+     对照：选体**在 Pre 之前**            ⇒ picked=0 · `Post` 回 **None** · 树不动
+     ```
+     ★ 而 `PreTrimSurface` **每次都回 `True`**（★ 事实 400 起就是），★ **而第二段总是 `None`** 。
+     ★ **按事实 53 停手**（剪裁已 3 轮：519 · 534 · 535）。
+     ★ **累计已排除**：① 参数不全（md vs CHM vs 类型库 三源合一）· ② `Pre` 的四个开关组合（轮 519）· ③ **顺序反了**（事实 415，已正）· ④ **按对象选体**（本轮，而它**本来就选不中**）。|真机：`tools/probe_trim_surface_by_object.py`；证据 `output/trim-surface-by-object-evidence.json`；对照事实 32 / 400 / 415 |
