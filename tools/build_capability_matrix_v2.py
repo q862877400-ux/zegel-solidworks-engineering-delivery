@@ -92,7 +92,16 @@ def main() -> int:
                              "判定": band(r1, 10, 20)},
          "判据②空格率": {"值": round(r2, 2), "判定": band(r2, 60, 80), "注": "参考项"},
          "判据③双源一致率": {"值": round(r3, 2), "判定": band(r3, 50, 30, True), "注": "上界"},
-         "无处可放": [x["tool"].replace("solidworks_", "") for x in unplaced][:30],
+         #: ★★★ 2026-10-03（接手轮）**去掉 `[:30]`** ——
+         #:   ★ 病灶：★ 矩阵的**判定**（判据① 18.77% = 52/277）用的是 `len(unplaced)`（★ **全部**），
+         #:     ★★ 而**这份 JSON 只存了前 30 个** ⇒ ★★★ **两个读者拿到两个数** ✓
+         #:   ★ 实证：★ 矩阵打印「无处可放 **52**」、★ 而 `tools/classify_unplaced_tools.py`
+         #:     （★ 读这份 JSON）打印「**30**」⇒ ★★ **我上一轮把它记成了"两个来源不一致"**，
+         #:     ★★★ **其实是同一份数据被截断了** ✓
+         #:   ★★ 可复用判据：★ **凡"打印一个总数、却只存一部分明细"的地方，
+         #:     下游一定会把明细数当成总数**（★ 与**事实 513**那句"读数要带版本"同族）✓
+         "无处可放": [x["tool"].replace("solidworks_", "") for x in unplaced],
+         "无处可放_总数": len(unplaced),
          "工具覆盖的格子": sorted([list(c), n] for c, n in Counter(
              c for cs in tool_cells.values() for c in cs).most_common()),
          "官方成员最多的格子": sorted([list(c), n] for c, n in official_cells.most_common(20)),
