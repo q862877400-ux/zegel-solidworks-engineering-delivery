@@ -17,8 +17,8 @@
 | 档 | 条数 |
 |---|---|
 | 已能 | 47 |
-| 可攻关 | 45 |
-| 待验证 | 5 |
+| 可攻关 | 41 |
+| 待验证 | 9 |
 | 待查 | 22 |
 | **合计** | **119** |
 
@@ -52,11 +52,7 @@
 | 特征下拉 | 螺纹线 | **可攻关** | `InsertCosmeticThread3` | — |
 | 特征下拉 | 表格驱动的阵列 | **可攻关** | `InsertTableDrivenPattern` | — |
 | 特征下拉 | 高级孔 | **可攻关** | `HoleWizard5` | — |
-| 草图关系 | 完全定义草图 | **可攻关** | `FullyDefineSketch` | — |
-| 草图关系 | 显示/删除几何关系 | **可攻关** | `ISketch`, `DeleteRelation` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
-| 草图尺寸 | 水平尺寸 | **可攻关** | `AddHorizontalDimension2` | — |
-| 草图尺寸 | 竖直尺寸 | **可攻关** | `AddVerticalDimension2` | — |
 | 草图绘制 | 三点圆弧槽口 | **可攻关** | `CreateSketchSlot` | — |
 | 草图绘制 | 中心点圆弧槽口 | **可攻关** | `CreateSketchSlot` | — |
 | 草图绘制 | 中心点直槽口 | **可攻关** | `CreateSketchSlot` | — |
@@ -75,6 +71,10 @@
 | 特征 | 筋 | **待验证** | `InsertRib` | `sw_part.rib_report` |
 | 特征 | 线性阵列 | **待验证** | `FeatureLinearPattern4` | `sw_part.linear_pattern` |
 | 特征下拉 | 曲线-组合曲线 | **待验证** | `InsertCompositeCurve` | `sw_part.insert_composite_curve_report` |
+| 草图关系 | 完全定义草图 | **待验证** | `FullyDefineSketch` | `sw_sketch_dimensions.*` |
+| 草图关系 | 显示/删除几何关系 | **待验证** | `ISketch`, `DeleteRelation` | `sw_sketch_dimensions.*` |
+| 草图尺寸 | 水平尺寸 | **待验证** | `AddHorizontalDimension2` | `sw_sketch_dimensions.*` |
+| 草图尺寸 | 竖直尺寸 | **待验证** | `AddVerticalDimension2` | `sw_sketch_dimensions.*` |
 | 草图编辑 | 交叉曲线 | **待验证** | `IntersectCurves` | `sw_sketch_edit_ops.sketch_intersect_curves` |
 | 曲面 | 使用曲面切除 | **待查** | — | — |
 | 曲面 | 剪裁曲面 | **待查** | — | — |
@@ -92,12 +92,12 @@
 | 特征下拉 | 变量阵列 | **待查** | — | — |
 | 特征下拉 | 曲线-通过参考点的曲线 | **待查** | — | — |
 | 特征下拉 | 螺柱向导 | **待查** | — | — |
-| 草图尺寸 | 基准尺寸 | **待查** | — | — |
-| 草图尺寸 | 尺寸链 | **待查** | — | — |
+| 草图尺寸 | 基准尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
+| 草图尺寸 | 尺寸链 | **待查** | — | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 水平尺寸链 | **待查** | — | — |
 | 草图尺寸 | 竖直尺寸链 | **待查** | — | — |
-| 草图尺寸 | 路径长度尺寸 | **待查** | — | — |
-| 草图尺寸 | 链尺寸 | **待查** | — | — |
+| 草图尺寸 | 路径长度尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
+| 草图尺寸 | 链尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
 | 曲面 | 填充曲面 | **已能** | `InsertFillSurface2` | `sw_surface_features.insert_fill_surface_report` |
 | 曲面 | 延伸曲面 | **已能** | `InsertExtendSurface` | `sw_surface_features.insert_extend_surface_report` |
 | 曲面 | 拉伸曲面 | **已能** | `FeatureExtruRefSurface3` | `sw_surface_features.create_extruded_surface_report` |

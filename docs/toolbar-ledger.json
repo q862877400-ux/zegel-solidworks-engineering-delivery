@@ -541,29 +541,37 @@
       "tb": "草图尺寸",
       "zh": "水平尺寸",
       "api": "AddHorizontalDimension2",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_dimensions.*",
+      "level": "没验过",
+      "batch": "B5",
+      "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。"
     },
     {
       "tb": "草图尺寸",
       "zh": "竖直尺寸",
       "api": "AddVerticalDimension2",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_dimensions.*",
+      "level": "没验过",
+      "batch": "B5",
+      "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。"
     },
     {
       "tb": "草图尺寸",
       "zh": "基准尺寸",
       "api": "AddBaselineDimension",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_dimensions.*",
+      "level": "没验过",
+      "batch": "B5",
+      "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。"
     },
     {
       "tb": "草图尺寸",
       "zh": "链尺寸",
       "api": "AddChainDimension",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_dimensions.*",
+      "level": "没验过",
+      "batch": "B5",
+      "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。"
     },
     {
       "tb": "草图尺寸",
@@ -576,8 +584,10 @@
       "tb": "草图尺寸",
       "zh": "尺寸链",
       "api": "AddDimensionChain",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_dimensions.*",
+      "level": "没验过",
+      "batch": "B5",
+      "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。"
     },
     {
       "tb": "草图尺寸",
@@ -597,8 +607,10 @@
       "tb": "草图尺寸",
       "zh": "路径长度尺寸",
       "api": "AddPathLengthDimension",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_dimensions.*",
+      "level": "没验过",
+      "batch": "B5",
+      "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。"
     },
     {
       "tb": "草图编辑",
@@ -713,8 +725,10 @@
       "tb": "草图关系",
       "zh": "显示/删除几何关系",
       "api": "ISketch.GetSketchRelations / DeleteRelation",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_dimensions.*",
+      "level": "没验过",
+      "batch": "B5",
+      "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。"
     },
     {
       "tb": "草图关系",
@@ -727,8 +741,10 @@
       "tb": "草图关系",
       "zh": "完全定义草图",
       "api": "FullyDefineSketch",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_dimensions.*",
+      "level": "没验过",
+      "batch": "B5",
+      "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。"
     },
     {
       "tb": "曲面",

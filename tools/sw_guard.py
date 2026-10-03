@@ -652,8 +652,36 @@ def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = No
                         capture_output=True, timeout=15)
             except Exception:                                   # noqa: BLE001
                 pass
+    #: ★★★★★ 2026-10-03（轮 466）**第 ⑤ 条：跑完必须回连一次 SolidWorks** ——
+    #:   ★★ 起因是**用户亲眼看到三个「SOLIDWORKS Design 意外关闭」窗口**而我的护栏全报 `ok: true`。
+    #:   ⇒ ★★★ **根因：`ok` 只证明「子进程退出码 0」，不证明 SolidWorks 还活着。**
+    #:     SW 会在**之后的**某个 COM 调用上崩 ⇒ ★ 单跑"通过"是**假象**，
+    #:     而那让整批探针的判据**失效**（★ 8 个操作单独跑全 ok，而 SW 崩了三次）。
+    #:   ★ 本段就是补那一格：**用一个新的 COM 连接去问一声"你还活着吗"** ✓
+    #:   ⚠ 只在**子进程原本成功**时才判（失败的情形已有更准的原因，不该被这条盖掉）。
+    #:   ⚠ 回连失败**只降级为 `sw_alive=False`**，不抛 —— ★ 因为有些命令本来就不该连 SW
+    #:     （如纯静态门禁）⇒ ★ 由**调用方**决定要不要因此判失败 ✓
+    sw_alive = None
+    sw_alive_error = ""
+    if rc == 0 and not timed:
+        try:
+            import subprocess as _sp
+            probe = _sp.run(
+                [sys.executable, "-c",
+                 "import sys;sys.path.insert(0, r'%s');import sw_connect;"
+                 "sw,doc=sw_connect.connect_solidworks(wait_seconds=15);"
+                 "print(repr(str(getattr(sw,'RevisionNumber','?'))))" % (str(REPO_ROOT / "scripts"))],
+                capture_output=True, text=True, encoding="utf-8", errors="replace",
+                timeout=60, stdin=_sp.DEVNULL)
+            sw_alive = (probe.returncode == 0)
+            if not sw_alive:
+                sw_alive_error = ((probe.stderr or "") + (probe.stdout or "")).strip()[-400:]
+        except Exception as exc:                                # noqa: BLE001
+            sw_alive = False
+            sw_alive_error = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     return {"ok": (rc == 0 and not timed and not aborted_for_llm), "returncode": rc,
             "timed_out": timed, "aborted_for_llm": aborted_for_llm,
+            "sw_alive": sw_alive, "sw_alive_error": sw_alive_error,
             "seconds": round(time.time() - t0, 2), "dialogs": sentinel.events,
             "stdout_tail": out[-4000:], "stderr_tail": err[-2000:]}
 
