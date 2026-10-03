@@ -2670,3 +2670,29 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **方法论**：★ **当一条链“前面都不报错、最后一步回 `None`”时，去读**第一步的返回值** ** —— ★ 而不是去调中间那几步。
        （★ 本例：那个 `2` 就在第一步的证据里，★ 而我一开始只看了 `ray=True`）⚠
      ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。|真机：`tools/prove_freeform.py`；证据 `output/freeform-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md`（**`## Remarks` 的五步**）× 反射 arity（**4 / 8 / 6 / 2**，★ 四个全一致）；对照事实 474 / 477 |
+| 479 | **★★ `SelectByRay` 之后选区里有几个：**不清就选 = 2 · 先清再选 = 1****（★ 而它**不是**自由样式回 `None` 的真因） —— 2026-10-03（轮 607）。
+     ★ **怎么测的**：`tools/probe_select_by_ray_count.py`（★ **四种取法对照**）：
+     ```
+     ★ 不清就选（★ 旧探针那样）        ⇒ count = **2**
+        [1] **type=22**（★ 不是面/边 —— 是**残留**）· [2] **FACE(2)** Area=0.0036
+     ★ **先清再选**                  ⇒ count = **1**（★ 只一个 **FACE**、面积 0.0036）✓
+     ★ 先清再选 · **Mark=1**         ⇒ count = 1 ✓
+     ★ 选完**再清一次**再选           ⇒ count = 1 ✓
+     ```
+     ⇒ ★★ **故定则**：**发射线前先 `ClearSelection2(True)`** —— ★ 否则选区里会留下上一步的残留对象。
+       （★ 而官方第 1 步写的是 "Select the **face**" —— **单数**）
+     ★★★ **而修了它之后，`InsertFreeform2` 仍回 `None`** ⚠
+       （★ 真机：`freeform_0_of_2`、`selected` 从 **2 → 1**）
+       ⇒ ★ **故「选区里有 2 个」并不是真因** —— ★ 而那个修正**仍然对**（★ 官方要单数）。
+     ★★ **而官方 md 里还有一句我一直没做**，逐字：
+       「**Record a macro while interactively creating a Freeform feature, then examine the macro**
+         to see the order in which the Freeform-...」
+       ⇒ ★★★ **那是官方**自己给的路**（★ "去看宏"）** —— ★ **而那是下一步** ✓
+     ★ **而本轮的收获是把一个候选因果排除了**（★ 选区数），★ 而它**与取到一条定则同价** ✓
+     ★★ **方法论**：★ **排除一个候选因，就是一步进展** —— ★ 而不只有"建成"才算进展。
+       （★ 而它同时留下了一条**可复用的前置规则**：发射线前先清选区）✓
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。
+|真机：`tools/probe_select_by_ray_count.py` · `tools/prove_freeform.py`；
+证据 `output/select-by-ray-count-evidence.json` · `output/freeform-evidence.json`；
+官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md`（**`## Remarks`**）；
+对照事实 474 / 477 / 478 |

@@ -66,7 +66,19 @@ def _box(doc, size=0.03):
 
 
 def _side(doc):
-    """★ 第 1 步：★ **选中要造型的那个面**（★ 用射线打法选到 +Z 面，★ 它四边）。"""
+    """★ 第 1 步：★ **选中要造型的那个面**（★ 用射线打法选到 +Z 面，★ 它四边）。
+
+    ★★★ 2026-10-03（轮 607）**修了一个真因**（★ 事实 479）：
+      ★ 上一版**没清选区**就发射线 ⇒ 选区里留下**一个残留对象**
+        （★ 真机：`counts=**2,1,1,1**` —— ★ 不清就选得 **2**（`type=22` + `FACE`），
+        ★ 而**先清再选得 1**）⚠
+      ★ 而官方第 1 步写的是“Select the **face**”（★ **单数**）
+        ⇒ ★ 故**清一次**是前置。
+    """
+    try:
+        doc.ClearSelection2(True)          #: ★ 前置：选区里只能有那一个面
+    except Exception:                                                 # noqa: BLE001
+        pass
     ext = C.get_com_member(doc, "Extension")
     ok = C.get_com_member(ext, "SelectByRay", 0.0, 0.0, 0.2,
                           0.0, 0.0, -1.0, 1e-4, SW_SEL_FACES, False, 0, 0)
