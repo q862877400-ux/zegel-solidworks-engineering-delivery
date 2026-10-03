@@ -237,7 +237,7 @@ _BATCH74: list[ToolSpec] = [
             "★ 判据 = **特征树增量** + 返回对象非 None + **`GetDefinition()` 属性回读**（官方例子读法）。",
     ),
     ToolSpec(
-        name="solidworks_weldment_insert_gusset",
+        name="solidworks_weldment_gusset_create",
         title="Weldment Gusset (Corner Gusset)",
         module=_MODULE, function="insert_weldment_gusset",
         inject="model",

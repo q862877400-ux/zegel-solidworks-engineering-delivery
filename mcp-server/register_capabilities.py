@@ -367,6 +367,20 @@ BATCH_MODULES = (
     #:   ★★ `inject="drawing_model"` —— 该键已在 `RESOLVERS` 里（事实 491）。
     #:   ⚠ 其中「中心符号线」那条走**批量**入口，★ **尚未单独真机验证**（单点入口已实测为阴性）。
     "tool_specs_batch75",
+    #: ★ 2026-10-03（接手轮）· 规格 `specs/202-user-coverage-gaps` 的 **R3**：**钣金/焊件 4 条** ——
+    #:   斜接法兰 · 闭合角 · 顶端盖 · 角撑板（焊件）。
+    #:   ★★ **本批的三条废弃链查证（队友逐条核官方页）**：
+    #:     ① `IModelDoc2.InsertSheetMetalMiterFlange`（**11 参**·回 `void`）**废弃**
+    #:        → **`IFeatureManager.InsertSheetMetalMiterFlange`（14 参·回 `Feature`）**
+    #:        ⇒ ★ **同名两份、参数个数不同** —— 用错**不只是"没反应"，而是个数对不上**；
+    #:     ② `InsertEndCapFeature` → `…3`，★ 而 **`InsertEndCapFeature2` 不在链上**（其官方页**无 Obsolete 句**）
+    #:        ⇒ ★ **不是 1→2→3 线性**；
+    #:     ③ `InsertGussetFeature` → **`…3`**，★ 而 `…2` 的官方页**无 Obsolete 句** ⇒ ★ **中间代状态官方没写**。
+    #:   ★ 第 5 项「中面」**不在这里**：`insert_mid_surface(model, **body**, **part_doc**, …)` 的
+    #:     第 2/3 个形参是 **`Body2`/`ModelDoc2` 对象** ⇒ `Param` 表达不了 ⇒ ★ 能力层有、**工具层不建**。
+    #:   ⚠⚠ **本批的 4 条工具尚未真机验证**（★ 与 batch72/73 一样，★ 注册 ≠ 能跑）——
+    #:     ★ 待下一轮用工具层 e2e 探针补读数，★ **在那之前不许把它们的 level 写成 verified**。
+    "tool_specs_batch74",
 )
 
 def all_specs() -> list:

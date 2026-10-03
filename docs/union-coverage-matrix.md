@@ -374,8 +374,8 @@
 - `weldment_ensure_cut_list`（⑧ 焊件）
 - `weldment_evidence`（⑧ 焊件）
 - `weldment_export_cut_list_csv`（⑧ 焊件）
+- `weldment_gusset_create`（⑧ 焊件）
 - `weldment_insert_end_cap`（⑧ 焊件）
-- `weldment_insert_gusset`（⑧ 焊件）
 - `weldment_read_property_manager`（⑧ 焊件）
 - `weldment_set_cut_list_properties`（⑧ 焊件）
 - `weldment_update_cut_list`（⑧ 焊件）

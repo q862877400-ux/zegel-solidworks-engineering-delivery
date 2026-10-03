@@ -2,7 +2,7 @@
 
 > 只查不改：本次未修改任何已有文件，未运行 SolidWorks，未运行 pytest。
 > 方法：纯静态解析（Python `ast` 读 `ToolSpec` / `json` 读台账），未做任何推断性替换。
-> 落盘快照（本机时区）：**2026-10-03 21:00:46**；参与扫描的 `mcp-server\tool_specs_*.py` 共 **74** 个。
+> 落盘快照（本机时区）：**2026-10-03 21:07:08**；参与扫描的 `mcp-server\tool_specs_*.py` 共 **75** 个。
 
 ---
 
@@ -24,7 +24,7 @@
 ### 0.2 工具侧口径
 
 对每个 `tool_specs_batch*.py` **按语句顺序**求值顶层赋值，取出所有 `SPECS_*` 列表的元素，再逐元素取工具名。
-三种形态都必须处理，否则会漏（都已处理，见各批文件实测）：
+三种形态都必须处理，否则会漏（都已处理）：
 
 1. `ToolSpec(name="…", …)` —— 字面量 `name=`；
 2. `ToolSpec(` 的 `name=` **不是字面量** —— 共 **2** 处，是 `_spec(...)` 工厂的**模板**（`tool_specs_batch29.py:103`、`tool_specs_batch30.py:70`），
@@ -37,28 +37,30 @@
 该工具名**不出现在任何一条 `capabilities[].mcp_tools`** 中。台账其它字段（`limitations` 散文偶尔提到某工具名）**不算数** ——
 散文不是结构化归属声明，且措辞随人变。
 
-### 0.4 「台账最接近条目」的判据（⚠ 是最近邻，**不是归属判定**）
+### 0.4 「台账最接近条目」的判据与列格式（⚠ 是最近邻，**不是归属判定**）
 
 在**已被台账引用的**工具名里，找与该差集工具名**词元重合最多**的一个（去掉 `solidworks` / `cadstudio` 前缀后按 `_` 切词；
 并列时依次取「并集词元更少」「名字字典序更小」），再报出**拥有该近邻工具的台账条目**。
 
-- 重合 ≥ 2 个词元 ⇒ 标「近邻匹配强」；
-- 只重合 **1** 个词元 ⇒ 标「近邻匹配弱」，并在「判断」列写明**不作归属判定**（这类重合往往只是 `insert` / `surface` 之类泛词的巧合）；
-- 完全没有重合 ⇒ 写「**查不到**」。
+列格式：`近邻工具 <工具名> → <条目id>（<条目label>）…`。
+
+- 重合 ≥ 2 个词元 ⇒ 「近邻匹配强」；
+- 只重合 **1** 个词元 ⇒ 「近邻匹配弱」，并在「判断」列写明**不作归属判定**（这类重合往往只是 `insert` / `create` 之类泛词的巧合）；
+- 完全没有重合 ⇒ 「台账最接近条目」列写「**查不到**」。
 
 ### 0.5 ⚠ 扫描期间工作树在变动（本节是本次扫描最重要的限定）
 
-本仓库是多人共享工作树，`mcp-server\` 正在被**并发新增批次**。本次扫描窗口内实测到的漂移：
+本仓库是多人共享工作树，`mcp-server\` 在扫描期间被**并发新增 / 改写批次**。实测到的漂移：
 
 - `tool_specs_*.py` 文件数：**72 → 73 → 74**；
-- 按 §0.2 同一口径解析出的工具名数：**256 → 264**。
+- 按 §0.2 同一口径解析出的工具名数：**256 → 268**；
+- `tool_specs_batch73.py` 的工具名在扫描过程中被改过（`solidworks_drawing_insert_break` → `solidworks_drawing_create_broken_view`）。
 
-落盘前做了两次间隔探测（20:55:59 与 20:58:19），两次探测均为 **74 个文件 / 264 个名字**；
-⚠ 但 `tool_specs_batch75.py` 的最后写入时间是 **20:58:04**（落在两次探测之间）⇒ ★ **计数稳定不等于内容稳定**，
-本报告只能保证「以 2026-10-03 21:00:46 这一刻读到的磁盘内容为准」。
-任何后续复核得到不同数字，可能是工作树又变了，**不应据此判定本报告错**；复核时请连同本节一起看。
+⚠ 做过两次间隔探测（20:55:59 与 20:58:19），两次计数均为 **74 个文件 / 264 个名字**，
+但 `tool_specs_batch75.py` 的最后写入时间 **20:58:04** 落在两次探测之间 ⇒ ★ **计数稳定不等于内容稳定**。
+**全表以 2026-10-03 21:07:08 这一刻读到的磁盘内容为准**；复核得到不同数字，可能是工作树又变了，**不应据此判定本报告错**。
 
-落盘时最后写入的 3 个批次（证据）：`tool_specs_batch72.py`（10-03 18:56:59）、`tool_specs_batch73.py`（10-03 20:48:16）、`tool_specs_batch75.py`（10-03 20:58:04）。
+落盘时最后写入的 3 个批次（证据）：`tool_specs_batch73.py`（10-03 20:48:16）、`tool_specs_batch75.py`（10-03 20:58:04）、`tool_specs_batch74.py`（10-03 21:07:03）。
 
 ### 0.6 未验证声明
 
@@ -70,7 +72,7 @@
 
 ## 一、① 已挂工具清单（`ToolSpec` 名字，逐字去重）
 
-共 **74** 个文件、**264** 个工具名；**逐字去重后仍是 264** 个（重复名：无）。
+共 **75** 个文件、**268** 个工具名；**逐字去重后仍是 268** 个（重复名：无）。
 「台账引用它的条目数」= 0 即落在 §三 的正向差集里。
 
 | # | 工具名 | batch 文件 | 台账引用它的条目数 |
@@ -331,14 +333,18 @@
 | 254 | `solidworks_drawing_create_broken_view` | `tool_specs_batch73.py` | 0 |
 | 255 | `solidworks_drawing_insert_datum_tag` | `tool_specs_batch73.py` | 0 |
 | 256 | `solidworks_drawing_insert_surface_finish_symbol` | `tool_specs_batch73.py` | 0 |
-| 257 | `solidworks_drawing_add_note` | `tool_specs_batch75.py` | 0 |
-| 258 | `solidworks_drawing_create_detail_view` | `tool_specs_batch75.py` | 0 |
-| 259 | `solidworks_drawing_create_hole_table` | `tool_specs_batch75.py` | 0 |
-| 260 | `solidworks_drawing_create_projected_view` | `tool_specs_batch75.py` | 0 |
-| 261 | `solidworks_drawing_create_revision_table` | `tool_specs_batch75.py` | 0 |
-| 262 | `solidworks_drawing_create_section_view` | `tool_specs_batch75.py` | 0 |
-| 263 | `solidworks_drawing_insert_center_marks` | `tool_specs_batch75.py` | 0 |
-| 264 | `solidworks_drawing_set_sheet_format` | `tool_specs_batch75.py` | 0 |
+| 257 | `solidworks_sheet_metal_insert_closed_corner` | `tool_specs_batch74.py` | 0 |
+| 258 | `solidworks_sheet_metal_insert_miter_flange` | `tool_specs_batch74.py` | 0 |
+| 259 | `solidworks_weldment_gusset_create` | `tool_specs_batch74.py` | 0 |
+| 260 | `solidworks_weldment_insert_end_cap` | `tool_specs_batch74.py` | 0 |
+| 261 | `solidworks_drawing_add_note` | `tool_specs_batch75.py` | 0 |
+| 262 | `solidworks_drawing_create_detail_view` | `tool_specs_batch75.py` | 0 |
+| 263 | `solidworks_drawing_create_hole_table` | `tool_specs_batch75.py` | 0 |
+| 264 | `solidworks_drawing_create_projected_view` | `tool_specs_batch75.py` | 0 |
+| 265 | `solidworks_drawing_create_revision_table` | `tool_specs_batch75.py` | 0 |
+| 266 | `solidworks_drawing_create_section_view` | `tool_specs_batch75.py` | 0 |
+| 267 | `solidworks_drawing_insert_center_marks` | `tool_specs_batch75.py` | 0 |
+| 268 | `solidworks_drawing_set_sheet_format` | `tool_specs_batch75.py` | 0 |
 
 ## 二、② 台账条目 id / name（`capabilities.yaml` → `capabilities` 数组）
 
@@ -459,59 +465,63 @@
 
 ## 三、③ 正向差集 ＝ 已挂工具但台账没有
 
-**49** 条（占已挂工具 264 条的 18.6%）。
+**53** 条（占已挂工具 268 条的 19.8%）。
 
 | 工具名 | batch 文件 | 台账最接近条目 | 判断 |
 |---|---|---|---|
-| `solidworks_select_face_selector` | `tool_specs_batch63.py` | 近邻工具 `['selection_helpers']` → `selection_helpers`（选择器底座（声明式选择 + 当前选区读数 + 可选值枚举）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：select、selector） |
-| `solidworks_simulation_apply_link_connector` | `tool_specs_batch64.py` | 近邻工具 `['simulation_load_family_breadth']` → `simulation_load_family_breadth`（仿真载荷族广度（压力 / 力矩 / 重力 / 离心力 4 类）—— ★ 未真机验证） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：apply、connector、simulation） |
-| `solidworks_sketch_add_3point_rectangle` | `tool_specs_batch65.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、rectangle、sketch） |
-| `solidworks_sketch_add_3point_center_rectangle` | `tool_specs_batch65.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、rectangle、sketch） |
-| `solidworks_sketch_add_parallelogram` | `tool_specs_batch65.py` | 近邻工具 `['holes_and_finishing']` → `holes_and_finishing`（孔槽、螺纹、圆角与倒角） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：add、sketch） |
-| `solidworks_sketch_add_tangent_arc` | `tool_specs_batch65.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、arc、sketch） |
-| `solidworks_sketch_add_3point_arc` | `tool_specs_batch65.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、arc、sketch） |
-| `solidworks_sketch_add_partial_ellipse` | `tool_specs_batch65.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、ellipse、sketch） |
-| `solidworks_sketch_add_parabola` | `tool_specs_batch65.py` | 近邻工具 `['holes_and_finishing']` → `holes_and_finishing`（孔槽、螺纹、圆角与倒角） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：add、sketch） |
-| `solidworks_sketch_add_conic` | `tool_specs_batch65.py` | 近邻工具 `['holes_and_finishing']` → `holes_and_finishing`（孔槽、螺纹、圆角与倒角） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：add、sketch） |
-| `solidworks_sketch_add_perimeter_circle` | `tool_specs_batch65.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、circle、sketch） |
-| `solidworks_sketch_trim` | `tool_specs_batch66.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「sketch」重合，**不作归属判定**） |
-| `solidworks_sketch_extend` | `tool_specs_batch66.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「sketch」重合，**不作归属判定**） |
-| `solidworks_sketch_offset` | `tool_specs_batch66.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「sketch」重合，**不作归属判定**） |
-| `solidworks_sketch_fillet` | `tool_specs_batch66.py` | 近邻工具 `['chamfer_fillet_on_selection']` → `chamfer_fillet_on_selection`（倒角 / 圆角（作用于声明式选择选中的边）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「fillet」重合，**不作归属判定**） |
-| `solidworks_sketch_linear_pattern` | `tool_specs_batch66.py` | 近邻工具 `['part_and_features', 'pattern_and_mirror']` → `part_and_features`（参数化零件与基础特征）、`pattern_and_mirror`（阵列与镜像（特征级的重复几何）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「pattern」重合，**不作归属判定**） |
-| `solidworks_sketch_circular_pattern` | `tool_specs_batch66.py` | 近邻工具 `['part_and_features', 'pattern_and_mirror']` → `part_and_features`（参数化零件与基础特征）、`pattern_and_mirror`（阵列与镜像（特征级的重复几何）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：circular、pattern） |
-| `solidworks_sketch_move_entities` | `tool_specs_batch67.py` | 近邻工具 `['sketch_edit_ops']` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
-| `solidworks_sketch_rotate_entities` | `tool_specs_batch67.py` | 近邻工具 `['sketch_edit_ops']` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
-| `solidworks_sketch_scale_entities` | `tool_specs_batch67.py` | 近邻工具 `['sketch_edit_ops']` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
-| `solidworks_sketch_stretch_entities` | `tool_specs_batch67.py` | 近邻工具 `['sketch_edit_ops']` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
-| `solidworks_sketch_flip_entities` | `tool_specs_batch67.py` | 近邻工具 `['sketch_edit_ops']` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
-| `solidworks_insert_planar_surface` | `tool_specs_batch68.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_offset_surface` | `tool_specs_batch68.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_ruled_surface` | `tool_specs_batch68.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_delete_face` | `tool_specs_batch68.py` | 近邻工具 `['equations']` → `equations`（方程式（增 / 列 / 删 / 求解）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「delete」重合，**不作归属判定**） |
-| `solidworks_insert_replace_face` | `tool_specs_batch68.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_lofted_ref_surface` | `tool_specs_batch69.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_center_of_mass` | `tool_specs_batch70.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_global_bounding_box` | `tool_specs_batch70.py` | 近邻工具 `['modeling_feature_readback_tools']` → `modeling_feature_readback_tools`（建模闭环补全（抽壳 ✅ / 圆顶 ✅ 真机通过 · 筋 未验 · 复合曲线 真机失败）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：bounding、box） |
-| `solidworks_insert_coordinate_system` | `tool_specs_batch70.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_ref_plane` | `tool_specs_batch70.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_reference_point` | `tool_specs_batch70.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_insert_curve_through_points` | `tool_specs_batch71.py` | 近邻工具 `['modeling_feature_readback_tools']` → `modeling_feature_readback_tools`（建模闭环补全（抽壳 ✅ / 圆顶 ✅ 真机通过 · 筋 未验 · 复合曲线 真机失败）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：curve、insert） |
-| `solidworks_create_revolved_surface` | `tool_specs_batch72.py` | 近邻工具 `['surface_features']` → `surface_features`（复杂曲面与连续性检查） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：create、surface） |
-| `solidworks_hole_wizard` | `tool_specs_batch72.py` | 近邻工具 `['holes_and_finishing']` → `holes_and_finishing`（孔槽、螺纹、圆角与倒角） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「hole」重合，**不作归属判定**） |
-| `solidworks_sketch_fully_defined_status` | `tool_specs_batch72.py` | 近邻工具 `['sketch_build']` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「sketch」重合，**不作归属判定**） |
-| `solidworks_drawing_create_broken_view` | `tool_specs_batch73.py` | 近邻工具 `['drawing_view_operations']` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
-| `solidworks_drawing_create_auxiliary_view` | `tool_specs_batch73.py` | 近邻工具 `['drawing_view_operations']` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
-| `solidworks_drawing_insert_surface_finish_symbol` | `tool_specs_batch73.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_drawing_insert_datum_tag` | `tool_specs_batch73.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
-| `solidworks_drawing_create_projected_view` | `tool_specs_batch75.py` | 近邻工具 `['drawing_view_operations']` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
-| `solidworks_drawing_create_section_view` | `tool_specs_batch75.py` | 近邻工具 `['drawing_view_operations']` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
-| `solidworks_drawing_create_detail_view` | `tool_specs_batch75.py` | 近邻工具 `['drawing_view_operations']` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
-| `solidworks_drawing_set_sheet_format` | `tool_specs_batch75.py` | 近邻工具 `['drawing_current_sheet_query']` → `drawing_current_sheet_query`（工程图当前图纸的轻量只读读数（几张纸 / 图幅 / 视图清单）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：drawing、set、sheet） |
-| `solidworks_drawing_add_note` | `tool_specs_batch75.py` | 近邻工具 `['part_and_features']` → `part_and_features`（参数化零件与基础特征） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「add」重合，**不作归属判定**） |
-| `solidworks_drawing_create_hole_table` | `tool_specs_batch75.py` | 近邻工具 `['config_and_export', 'configurations_and_design_tables']` → `config_and_export`（配置与设计表）、`configurations_and_design_tables`（配置族 + 导出族（★ 真机 10/12：配置 5/6 · 导出 5/6）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「create」重合，**不作归属判定**） |
-| `solidworks_drawing_create_revision_table` | `tool_specs_batch75.py` | 近邻工具 `['config_and_export', 'configurations_and_design_tables']` → `config_and_export`（配置与设计表）、`configurations_and_design_tables`（配置族 + 导出族（★ 真机 10/12：配置 5/6 · 导出 5/6）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「create」重合，**不作归属判定**） |
-| `solidworks_drawing_insert_center_marks` | `tool_specs_batch75.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_select_face_selector` | `tool_specs_batch63.py` | 近邻工具 `solidworks_select_by_selector` → `selection_helpers`（选择器底座（声明式选择 + 当前选区读数 + 可选值枚举）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：select、selector） |
+| `solidworks_simulation_apply_link_connector` | `tool_specs_batch64.py` | 近邻工具 `solidworks_simulation_apply_elastic_connector` → `simulation_load_family_breadth`（仿真载荷族广度（压力 / 力矩 / 重力 / 离心力 4 类）—— ★ 未真机验证） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：apply、connector、simulation） |
+| `solidworks_sketch_add_3point_rectangle` | `tool_specs_batch65.py` | 近邻工具 `solidworks_sketch_add_rectangle` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、rectangle、sketch） |
+| `solidworks_sketch_add_3point_center_rectangle` | `tool_specs_batch65.py` | 近邻工具 `solidworks_sketch_add_rectangle` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、rectangle、sketch） |
+| `solidworks_sketch_add_parallelogram` | `tool_specs_batch65.py` | 近邻工具 `solidworks_add_sketch_relation` → `holes_and_finishing`（孔槽、螺纹、圆角与倒角） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：add、sketch） |
+| `solidworks_sketch_add_tangent_arc` | `tool_specs_batch65.py` | 近邻工具 `solidworks_sketch_add_arc` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、arc、sketch） |
+| `solidworks_sketch_add_3point_arc` | `tool_specs_batch65.py` | 近邻工具 `solidworks_sketch_add_arc` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、arc、sketch） |
+| `solidworks_sketch_add_partial_ellipse` | `tool_specs_batch65.py` | 近邻工具 `solidworks_sketch_add_ellipse` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、ellipse、sketch） |
+| `solidworks_sketch_add_parabola` | `tool_specs_batch65.py` | 近邻工具 `solidworks_add_sketch_relation` → `holes_and_finishing`（孔槽、螺纹、圆角与倒角） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：add、sketch） |
+| `solidworks_sketch_add_conic` | `tool_specs_batch65.py` | 近邻工具 `solidworks_add_sketch_relation` → `holes_and_finishing`（孔槽、螺纹、圆角与倒角） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：add、sketch） |
+| `solidworks_sketch_add_perimeter_circle` | `tool_specs_batch65.py` | 近邻工具 `solidworks_sketch_add_circle` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：add、circle、sketch） |
+| `solidworks_sketch_trim` | `tool_specs_batch66.py` | 近邻工具 `solidworks_sketch_end` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「sketch」重合，**不作归属判定**） |
+| `solidworks_sketch_extend` | `tool_specs_batch66.py` | 近邻工具 `solidworks_sketch_end` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「sketch」重合，**不作归属判定**） |
+| `solidworks_sketch_offset` | `tool_specs_batch66.py` | 近邻工具 `solidworks_sketch_end` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「sketch」重合，**不作归属判定**） |
+| `solidworks_sketch_fillet` | `tool_specs_batch66.py` | 近邻工具 `solidworks_fillet` → `chamfer_fillet_on_selection`（倒角 / 圆角（作用于声明式选择选中的边）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「fillet」重合，**不作归属判定**） |
+| `solidworks_sketch_linear_pattern` | `tool_specs_batch66.py` | 近邻工具 `solidworks_circular_pattern` → `part_and_features`（参数化零件与基础特征）、`pattern_and_mirror`（阵列与镜像（特征级的重复几何）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「pattern」重合，**不作归属判定**） |
+| `solidworks_sketch_circular_pattern` | `tool_specs_batch66.py` | 近邻工具 `solidworks_circular_pattern` → `part_and_features`（参数化零件与基础特征）、`pattern_and_mirror`（阵列与镜像（特征级的重复几何）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：circular、pattern） |
+| `solidworks_sketch_move_entities` | `tool_specs_batch67.py` | 近邻工具 `solidworks_sketch_convert_entities` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
+| `solidworks_sketch_rotate_entities` | `tool_specs_batch67.py` | 近邻工具 `solidworks_sketch_convert_entities` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
+| `solidworks_sketch_scale_entities` | `tool_specs_batch67.py` | 近邻工具 `solidworks_sketch_convert_entities` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
+| `solidworks_sketch_stretch_entities` | `tool_specs_batch67.py` | 近邻工具 `solidworks_sketch_convert_entities` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
+| `solidworks_sketch_flip_entities` | `tool_specs_batch67.py` | 近邻工具 `solidworks_sketch_convert_entities` → `sketch_edit_ops`（草图编辑（倒角 / 镜像 / 转换实体引用）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：entities、sketch） |
+| `solidworks_insert_planar_surface` | `tool_specs_batch68.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_offset_surface` | `tool_specs_batch68.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_ruled_surface` | `tool_specs_batch68.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_delete_face` | `tool_specs_batch68.py` | 近邻工具 `solidworks_equation_delete` → `equations`（方程式（增 / 列 / 删 / 求解）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「delete」重合，**不作归属判定**） |
+| `solidworks_insert_replace_face` | `tool_specs_batch68.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_lofted_ref_surface` | `tool_specs_batch69.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_center_of_mass` | `tool_specs_batch70.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_global_bounding_box` | `tool_specs_batch70.py` | 近邻工具 `solidworks_part_bounding_box` → `modeling_feature_readback_tools`（建模闭环补全（抽壳 ✅ / 圆顶 ✅ 真机通过 · 筋 未验 · 复合曲线 真机失败）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：bounding、box） |
+| `solidworks_insert_coordinate_system` | `tool_specs_batch70.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_ref_plane` | `tool_specs_batch70.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_reference_point` | `tool_specs_batch70.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_insert_curve_through_points` | `tool_specs_batch71.py` | 近邻工具 `solidworks_part_insert_composite_curve` → `modeling_feature_readback_tools`（建模闭环补全（抽壳 ✅ / 圆顶 ✅ 真机通过 · 筋 未验 · 复合曲线 真机失败）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：curve、insert） |
+| `solidworks_create_revolved_surface` | `tool_specs_batch72.py` | 近邻工具 `solidworks_surface_create_extruded` → `surface_features`（复杂曲面与连续性检查） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：create、surface） |
+| `solidworks_hole_wizard` | `tool_specs_batch72.py` | 近邻工具 `solidworks_hole_pattern` → `holes_and_finishing`（孔槽、螺纹、圆角与倒角） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「hole」重合，**不作归属判定**） |
+| `solidworks_sketch_fully_defined_status` | `tool_specs_batch72.py` | 近邻工具 `solidworks_sketch_end` → `sketch_build`（建草图与画基本几何（线 / 圆 / 矩形）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「sketch」重合，**不作归属判定**） |
+| `solidworks_drawing_create_broken_view` | `tool_specs_batch73.py` | 近邻工具 `solidworks_drawing_view_scale` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
+| `solidworks_drawing_create_auxiliary_view` | `tool_specs_batch73.py` | 近邻工具 `solidworks_drawing_view_scale` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
+| `solidworks_drawing_insert_surface_finish_symbol` | `tool_specs_batch73.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_drawing_insert_datum_tag` | `tool_specs_batch73.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_sheet_metal_insert_miter_flange` | `tool_specs_batch74.py` | 近邻工具 `solidworks_sheet_metal_create_base_flange` → `sheet_metal`（钣金创建（基体法兰 / 边法兰 / 折弯 / 草绘折弯 / 放样法兰 / 通风口））、`sheet_metal_creation`（钣金建模与展开） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：flange、metal、sheet） |
+| `solidworks_sheet_metal_insert_closed_corner` | `tool_specs_batch74.py` | 近邻工具 `solidworks_sheet_metal_evidence` → `sheet_metal`（钣金建模与展开） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：metal、sheet） |
+| `solidworks_weldment_insert_end_cap` | `tool_specs_batch74.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
+| `solidworks_weldment_gusset_create` | `tool_specs_batch74.py` | 近邻工具 `solidworks_weldment_create_weldment_profile` → `weldment_profile_and_curve`（焊件与切割清单）、`weldments`（焊件轮廓与轮廓中心配合） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：create、weldment） |
+| `solidworks_drawing_create_projected_view` | `tool_specs_batch75.py` | 近邻工具 `solidworks_drawing_view_scale` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
+| `solidworks_drawing_create_section_view` | `tool_specs_batch75.py` | 近邻工具 `solidworks_drawing_view_scale` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
+| `solidworks_drawing_create_detail_view` | `tool_specs_batch75.py` | 近邻工具 `solidworks_drawing_view_scale` → `drawing_view_operations`（工程图视图操作（取视图 / 比例 / 注释数 / 可见件数）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（2 个词元重合：drawing、view） |
+| `solidworks_drawing_set_sheet_format` | `tool_specs_batch75.py` | 近邻工具 `solidworks_drawing_set_sheet_scale` → `drawing_current_sheet_query`（工程图当前图纸的轻量只读读数（几张纸 / 图幅 / 视图清单）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配强（3 个词元重合：drawing、set、sheet） |
+| `solidworks_drawing_add_note` | `tool_specs_batch75.py` | 近邻工具 `solidworks_add_dimension` → `part_and_features`（参数化零件与基础特征） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「add」重合，**不作归属判定**） |
+| `solidworks_drawing_create_hole_table` | `tool_specs_batch75.py` | 近邻工具 `solidworks_config_create` → `config_and_export`（配置与设计表）、`configurations_and_design_tables`（配置族 + 导出族（★ 真机 10/12：配置 5/6 · 导出 5/6）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「create」重合，**不作归属判定**） |
+| `solidworks_drawing_create_revision_table` | `tool_specs_batch75.py` | 近邻工具 `solidworks_config_create` → `config_and_export`（配置与设计表）、`configurations_and_design_tables`（配置族 + 导出族（★ 真机 10/12：配置 5/6 · 导出 5/6）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「create」重合，**不作归属判定**） |
+| `solidworks_drawing_insert_center_marks` | `tool_specs_batch75.py` | 近邻工具 `solidworks_gtol_insert` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
 
 ## 四、附带事实：反向差集（不在 S2-a 判据内，仅记录）
 
@@ -522,10 +532,10 @@
 ## 五、可复核口径（落盘瞬间的数字）
 
 ```
-tool_specs_*.py 文件数  = 74
-工具名（去重）          = 264
+tool_specs_*.py 文件数  = 75
+工具名（去重）          = 268
 台账条目数              = 110
 台账工具引用（去重）    = 226
-正向差集（工具 - 台账） = 49
+正向差集（工具 - 台账） = 53
 反向差集（台账 - 工具） = 11   （仅记录，非本题判据）
 ```

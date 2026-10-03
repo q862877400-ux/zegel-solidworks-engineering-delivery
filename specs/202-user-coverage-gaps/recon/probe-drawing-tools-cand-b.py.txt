@@ -668,7 +668,7 @@ def case_t1_projected_view_third(sw, specs):
 
 
 def case_t2_projected_view_first(sw, specs):
-    """★ T2 投影视图（`projection="first_angle"`）—— ★ **单变量对照格**（只变 projection）。
+    r"""★ T2 投影视图（`projection="first_angle"`）—— ★ **单变量对照格**（只变 projection）。
 
     ★★★ 本格预期是「**真阴性**」，且**成因在实现层、不在工具层**：
       官方成员是 `IDrawingDoc::Create1stAngleViews2`（`C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md`
@@ -888,7 +888,7 @@ def case_t4_detail_view(sw, specs):
 
 
 def case_t5_sheet_format(sw, specs):
-    """★ T5 图纸格式/模板 —— 官方 `SetupSheet6` 的 Remarks 逐字说「换 `TemplateName` 会更新图纸格式」。
+    r"""★ T5 图纸格式/模板 —— 官方 `SetupSheet6` 的 Remarks 逐字说「换 `TemplateName` 会更新图纸格式」。
 
     ★ 注意**能力层走的是 `ISheet.SetTemplateName`**（不是 `SetupSheet6` 本身）⇒
     ★ 回读用 `scripts.sw_drawing_query.current_sheet_info` 里的 `sheet_format_name`
