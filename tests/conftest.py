@@ -35,8 +35,35 @@ tests/test_sw_gui_input.py  L212/L233  assert gi.type_text(ctl, "195") ...
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
 import pytest
+
+# ── ★★★★★★ 2026-10-04（轮 111）**在这里加 `sys.path`** —— 一处修、★ 16 个文件都好 ──────
+# ★ **起因（★ 可核）**：★ 轮 110 我改了 `scripts/sw_drawing_view.py` 之后**单跑**
+#   `tests/test_sw_drawing_view_contract.py` ⇒ ★★ **12 failed** ⇒ 看着像我改坏了 ✓
+#   ★★★ **真因**：★ 那个文件 L83 `import sw_connect` ⇒
+#     ★ **而它自己没把 `scripts/` 加进 `sys.path`** ⇒
+#     ★★★★ **⇒ 那是**预先存在的**测试顺序依赖****（★ 与**事实 57**同族：
+#       ★ "一直是绿的、只是环境恰好满足" —— ★ 同进程里**别的测试文件**加过 path）✓
+#   ★★★★★ **静态扫出来的数**（★ `output/_audit_test_syspath.py`）：
+#     · ★ 测试文件 **225 个** ⇒ ★★ **16 个**「导入了 `scripts/` 模块却**没自己加 `path`**」·
+#     · ★★ **对照 94 个**自己加了 ⇒ ★★★ **⇒ 那 16 个是**少数派**** ✓
+#     · ★★★ 名单里包括 `test_sw_mold_contract.py` · `test_sw_sketch_contract.py` ·
+#       `test_sw_simulation_*_contract.py`（★ 4 个）· `test_sw_routing_contract.py` …
+#   ★★★★★★ **⇒ 正解是**一处修、★ 处处好****：★ `tests/conftest.py` 是 pytest 的
+#     **标准入口**、★ 它在**每个测试文件被导入之前**执行 ⇒
+#     ★★ **在这里把三个目录加进 `sys.path`，★ 那 16 个文件一次性都好** ✓
+#   ★★★★★ **⚠ 而本文件**早就有 `import sys`**（★ 原第 37 行）、★ **却一次都没用它** ——
+#     ★★ **那正是"准备好加、★ 而没加"的痕迹** ✓
+#   ★★★★ **⇒ 可复用判据**：★★★ **"一个 `import` 了却没用过的库，往往是一条**没走完的路**** ✓
+#     （★ 与**事实 62**「写了不等于有效」**同族**）✓
+#   ⚠ **本改动只影响测试进程的 `sys.path`、★ 不影响运行时**（★ 本文件不被任何 `scripts/` 代码导入）✓
+_HERE = Path(__file__).resolve().parent
+for _d in (_HERE.parent, _HERE.parent / "scripts", _HERE.parent / "mcp-server"):
+    if _d.is_dir() and str(_d) not in sys.path:
+        sys.path.insert(0, str(_d))
+# ─────────────────────────────────────────────────────────────────────────────
 
 #: 本次测试会话里发生的**虚拟**注入调用（`(kind, args)`）。
 #: ⚠ 测试可以断言它；**永远不会**有真实的键鼠动作。
