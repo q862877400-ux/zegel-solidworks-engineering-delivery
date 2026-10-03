@@ -1,0 +1,677 @@
+{
+  "file": "api-10-routing-pdm-anim.md",
+  "member_count": 55,
+  "members": [
+    {
+      "member": "GetRoutingSettings",
+      "interface": "ISldWorks",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子：Set swApp = Application.SldWorks 后 Set routingSettings = swApp.GetRoutingSettings，紧接着用同一对象调 SaveRoutingSettingsToFile(\"c:\\temp\\routingSettings.sqy\")；例子的 Preconditions 要求先在 Tools > Add-Ins 里选中 SOLIDWORKS Routing 并引用 Routing 类型库。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SaveRoutingSettingsToFile",
+      "interface": "IRoutingSettings",
+      "param_count": 1,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "先 GetRoutingSettings，再 SaveRoutingSettingsToFile(\"c:\\temp\\routingSettings.sqy\")；参数表写文件名扩展名必须是 .sqy，例子的 Preconditions 还要求 c:\\temp 存在。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "LoadRoutingSettingsFromFile",
+      "interface": "IRoutingSettings",
+      "param_count": 1,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "LoadDefaultRoutingSettings",
+      "interface": "IRoutingSettings",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetRoutingUserPreferenceIntegerValue",
+      "interface": "IRoutingSettings",
+      "param_count": 1,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "传 swUserPreferenceRoutingInteger_e.swComponentRotationIncrementDegrees 或 .swEnableMinimumBendRadiusChecks（枚举成员与数值抄不到）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetRoutingUserPreferenceIntegerValue",
+      "interface": "IRoutingSettings",
+      "param_count": 2,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetRoutingUserPreferenceDoubleValue",
+      "interface": "IRoutingSettings",
+      "param_count": 1,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "传 swUserPreferenceRoutingDouble_e.swSlackPercentage 或 .swTextSizeForConnectionAndRoutePoints（成员与数值抄不到）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetRoutingUserPreferenceDoubleValue",
+      "interface": "IRoutingSettings",
+      "param_count": 2,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetRoutingUserPreferenceStringValue",
+      "interface": "IRoutingSettings",
+      "param_count": 2,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子对 10 个库路径项一律写成 (swUserPreferenceRoutingFileLocations_e.xxx, True)，第二个实参 UseDefaultVal 恒为 True。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetRoutingUserPreferenceStringValue",
+      "interface": "IRoutingSettings",
+      "param_count": 2,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetRoutingUserPreferenceToggle",
+      "interface": "IRoutingSettings",
+      "param_count": 1,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子逐个读 15 个 toggle 项，形如 GetRoutingUserPreferenceToggle(swUserPreferenceRoutingToggle_e.swEnableRouteErrorChecking)（枚举成员与数值抄不到）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetRoutingUserPreferenceToggle",
+      "interface": "IRoutingSettings",
+      "param_count": 2,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetFromToListHeaderDefinitions",
+      "interface": "IRoutingSettings",
+      "param_count": 12,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "先把 12 个 As String 变量全赋空串，再按 wireNameHdr…otherAttribHdr 的顺序传入（VBA 例子把 out 形参按值传）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetFromToListHeaderDefinitions",
+      "interface": "IRoutingSettings",
+      "param_count": 12,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetRouteManager",
+      "interface": "IAssemblyDoc",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "GetRouteManager → rtRouteManager.EditRoute → GetAutoRoute → ShowGuidelines → 先选两个 SKETCHPOINT → CreatePointToPointAutoRoute(swOrthogonalMode) → ExitRoute → swTopLevelAssembly.EditAssembly；类型是 SWRoutingLib.RouteManager。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "IsRouteAssembly",
+      "interface": "IAssemblyDoc",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "InsertRoutePoint",
+      "interface": "IModelDoc2",
+      "param_count": 0,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：若选区不完整就会弹出「Insert Route Point」对话框；路由点是插入配合时与草图点对齐的那个点。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "EditRoute",
+      "interface": "IModelDoc2",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetRoutingComponentManager",
+      "interface": "IModelDocExtension",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "InsertConnectionPoint",
+      "interface": "IFeatureManager",
+      "param_count": 14,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：必须先在 Tools > Add-Ins 里加载 SOLIDWORKS Routing，且当前只支持零件文档；用 IModelDocExtension::SelectByID2 打 mark=1 选路由起点（圆边/圆面/面或基准面+草图点或顶点），mark=2 选对齐线缆宽度的参考轴或边（仅带状电缆）。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "RouteType",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子直接写 cPointData.RouteType = 2（对应 swModelRouteType_FabricatedPipe = 2），前后各 Debug.Print 一次读值。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "RouteSubType",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子直接写 cPointData.RouteSubType = 3。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "RouteDiameter",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子写 cPointData.RouteDiameter = 0.011（原文米制值，未做单位换算）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "StubLength",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子写 cPointData.StubLength = 0.009。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "PortID",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子写 cPointData.PortID = \"newPortID\"。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "ElectricalPinID",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子写 cPointData.ElectricalPinID = \"zxc\"。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "Name2",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "例子写 cPointData.Name2 = \"myCPoint\"；Postconditions 逐字：CPoint1 现在在特征树里叫 MyCPoint。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "Location",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "vLocation = cPointData.Location 后按 vLocation(0)/(1)/(2) 下标拆成 x/y/z 打印（只读属性，无 set）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "Direction",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "vDirection = cPointData.Direction 后按 (0)/(1)/(2) 下标拆 3 个 double（只读属性，无 set）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "AccessSelections",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 2,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：零件文档传 IModelDoc2 且 Component 为 NULL；装配体传装配的 IModelDoc2 加待改特征所在的 IComponent2；调用后模型进入回滚状态。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "IAccessSelections",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 2,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 与 AccessSelections 逐字相同：零件传 IModelDoc2 + Component=NULL，装配传 IModelDoc2 + IComponent2，调用后进入回滚状态。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "ReleaseSelectionAccess",
+      "interface": "IConnectionPointFeatureData",
+      "param_count": 0,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：它是恢复 AccessSelections / IAccessSelections 造成的回滚状态的那一个 —— 没改特征时用它收尾，改过则用 IFeature::ModifyDefinition 或 IModifyDefinition2。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "RoutingComponentGrouping",
+      "interface": "IBomFeature",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "先 SelectByID2(\"Bill of Materials1\",\"BOMFEATURE\",...) 再 GetSelectedObject6(1,-1) 取 BOM 对象，写入 swRoutingComponentGroupingOption_e.swShowOnlyRoutingComponentsInBOM + .swDisplayUnitsInBOM。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetPathSegments",
+      "interface": "IPrimaryMemberPathSegmentFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetPathSegmentsTypes",
+      "interface": "IPrimaryMemberPathSegmentFeatureData",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetPathSegments",
+      "interface": "IPrimaryMemberPathSegmentFeatureData",
+      "param_count": 1,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：.NET 应用必须先把 PathSegments 数组 marshal 成 IDispatch 对象数组再调用本方法。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "MergeTangentMembers",
+      "interface": "IPrimaryMemberPathSegmentFeatureData",
+      "param_count": 0,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：该属性只有在创建结构系统路径段构件（structure system path segment member）时才有效。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "PDMDocManager",
+      "interface": "IApplication",
+      "param_count": 0,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：只有装了 SOLIDWORKS Toolbox 才可用；[D] 给的顺序是先 ISldWorks::GetAddInObject 取 Toolbox Browser 的 TypeLib GUID {ED783340-D5DB-11d4-BD5A-00C04F019809}，再 cast 成 swbrowser.IApplication。",
+      "has_example": true,
+      "example_recipe": "GetAddInObject(\"{ED783340-D5DB-11d4-BD5A-00C04F019809}\", &pDisp) → cast 成 SOLIDWORKS.Interop.swbrowser.IApplication → 读 .PDMDocManager（swbrowser 命名空间）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetManagedDocument",
+      "interface": "IPDMDocManager",
+      "param_count": 1,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：只有装了 SOLIDWORKS Toolbox 才可用；[D] 逐字要求在 PreInsertDocument 事件处理器里调用。",
+      "has_example": true,
+      "example_recipe": "传 PDM 受管版本文档的路径名；若该路径不可写，就改传一份 SolidWorks Toolbox Browser 可写的受管文档副本。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetDocumentStatus",
+      "interface": "IPDMDocManager",
+      "param_count": 1,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：只有装了 SOLIDWORKS Toolbox 才可用；[D] 逐字要求在 BeforeWritingToDocument 事件处理器里调用。",
+      "has_example": true,
+      "example_recipe": "传 swPDMStatus_e.swPDMStatusKnownAndAvailable（=2）；[D] 原话：传别的状态值 Toolbox Browser 会报错并中止文件拖放。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SetCancelOperation",
+      "interface": "IPDMDocManager",
+      "param_count": 1,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：只有装了 SOLIDWORKS Toolbox 才可用；cancelOp 为 True 表示取消当前操作、False 表示继续。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SaveAs3",
+      "interface": "IModelDocExtension",
+      "param_count": 7,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：要传 AdvancedSaveAsOptions 先调 GetAdvancedSaveAsOptions 建对象；转 IGES/STL/STEP 必须先 ActivateDoc3 把待转文档设为活动文档、再取 ActiveDoc；要导出整个模型必须先 ClearSelection2 清选区；形参 6/7 是 out int。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "GetMotionStudyManager",
+      "interface": "IModelDocExtension",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "Set swModelDocExt = swModel.Extension → Set swMotionMgr = swModelDocExt.GetMotionStudyManager() → 判 Is Nothing → GetMotionStudy(\"Motion Study 1\")。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SaveToAVI",
+      "interface": "IMotionStudy",
+      "param_count": 2,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "CreateAVIParameter() 建对象后设 7 项（FramePerSecond=7.5、SaveEntireAnimation=True、OutputType=swAnimationOutput_AVI、RendererType=swRendererType_Solidworks_Screen、MotionBlur=True、BlurLength=10、BlurOffset=-100），先 swMotionStudy1.Stop 再 SaveToAVI \"C:\\test\\Anim1.avi\", swSaveAVIData。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "CreateAVIParameter",
+      "interface": "IMotionStudyManager",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "Set swSaveAVIData = swMotionMgr.CreateAVIParameter()，返回类型写 AVIParameter（声明用 Dim swSaveAVIData As SwMotionStudy.AVIParameter），调用点在 Stop 之后、SaveToAVI 之前。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "CreateByRotateModel",
+      "interface": "IMotionStudy",
+      "param_count": 6,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：已有动画序列时 StartTime 必须累计前面所有序列的总时长；新序列则设 0 立即开始（或填一个值延迟开始）。",
+      "has_example": true,
+      "example_recipe": "CreateByRotateModel(True, swAnimatorAxisOfRotation_e.swRotationAboutYAxis, 1, swAnimatorDirectionOfRotation_e.swRotationClockwise, 10, 0)；Remarks 自带代码还给了 GetMotionStudyManager → CreateMotionStudy → Play 的序。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "Play",
+      "interface": "IMotionStudy",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "先 PlayMode = swAnimationPlayMode_e.swAnimationPlayModeLoop，再 SetTime 0，再 Play；停止用 Stop（起点是时间轴当前所在位置）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "OutputType",
+      "interface": "IAVIParameter",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "swSaveAVIData.OutputType = swAnimationOutputType_e.swAnimationOutput_AVI（=1）；另一个官方例子直接写裸数字 1。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "FramePerSecond",
+      "interface": "IAVIParameter",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "两个官方例子都写 swSaveAVIData.FramePerSecond = 7.5（类型是 double）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "SaveEntireAnimation",
+      "interface": "IAVIParameter",
+      "param_count": 0,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：设成 false 时必须同时指定要保存的时间段的 start time 与 end time。",
+      "has_example": true,
+      "example_recipe": "官方例子写 swSaveAVIData.SaveEntireAnimation = True；设 False 时 StartTime/EndTime 的具体写法本轮未读、抄不到。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "RendererType",
+      "interface": "IAVIParameter",
+      "param_count": 0,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：渲染器设为 Custom 时才能改画面高/宽、保留宽高比并把宽高比设为屏幕比或指定值（但枚举表里没有 Custom 这个成员，数值查不到）。",
+      "has_example": true,
+      "example_recipe": "swSaveAVIData.RendererType = swRendererType_e.swRendererType_Solidworks_Screen（=0）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "MotionBlur",
+      "interface": "IAVIParameter",
+      "param_count": 0,
+      "has_remarks": true,
+      "remarks_precondition": "Remarks 逐字：必须有一个 ray-trace 渲染引擎处于 active，才能在保存动画时启用运动模糊（例子 Preconditions 第 2 条同义）。",
+      "has_example": true,
+      "example_recipe": "swSaveAVIData.MotionBlur = True。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "BlurLength",
+      "interface": "IAVIParameter",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "swSaveAVIData.BlurLength = 10（Returns 段写取值域 0..100、默认 50）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "BlurOffset",
+      "interface": "IAVIParameter",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "swSaveAVIData.BlurOffset = -100（0=居中当前帧、100=向前挪整帧、-100=向后挪整帧）。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "ImageSize",
+      "interface": "IAVIParameter",
+      "param_count": 0,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    }
+  ],
+  "not_found": [
+    {
+      "member": "IRouteManager",
+      "topic": "IRoute* 的接口成员查不到：types 下无 IRoute* 目录，CHM 只有 IAssemblyDoc~GetRouteManager.html 等方法页"
+    },
+    {
+      "member": "IRoutingComponentManager",
+      "topic": "接口成员查不到：types 下无该目录，CHM 只有 IModelDocExtension~GetRoutingComponentManager.html 一页"
+    },
+    {
+      "member": "IEdm*",
+      "topic": "全 C:\\swapi 递归 grep IEdm 零命中；CHM 四个目录（sldworksapi/sldworksapivb6/cosworks/swconst）无任何 IEdm* 页面"
+    },
+    {
+      "member": "swUserPreferenceRoutingInteger_e",
+      "topic": "该枚举文件在 C:\\swapi\\enums\\ 下不存在，成员与数值查不到"
+    },
+    {
+      "member": "swUserPreferenceRoutingDouble_e",
+      "topic": "该枚举文件在 C:\\swapi\\enums\\ 下不存在，成员与数值查不到"
+    },
+    {
+      "member": "swUserPreferenceRoutingFileLocations_e",
+      "topic": "该枚举文件在 C:\\swapi\\enums\\ 下不存在，成员与数值查不到"
+    },
+    {
+      "member": "swUserPreferenceRoutingToggle_e",
+      "topic": "该枚举文件在 C:\\swapi\\enums\\ 下不存在，成员与数值查不到"
+    },
+    {
+      "member": "swSaveAVIImageSize_e",
+      "topic": "Test-Path C:\\swapi\\enums\\swSaveAVIImageSize_e.md = False，全仓 grep 只命中引用"
+    },
+    {
+      "member": "IMotionStudy.SaveToAVI",
+      "topic": "其 ## Remarks 段查不到（.md 只有 Description/Signature/Parameters/Returns/Examples/See Also，CHM 无 swmotionstudyapi 目录）"
+    },
+    {
+      "member": "IModelDocExtension.SaveAs3",
+      "topic": "其 ## Examples 段查不到（为空，[E] 目录里没有 SaveAs3 的例子文件）"
+    },
+    {
+      "member": "swRoutingComponentGroupOption_e",
+      "topic": "[T] 里引用的这个拼法文件不存在，存在的是 swRoutingComponentGroupingOption_e.md"
+    },
+    {
+      "member": "swRendererType_e",
+      "topic": "成员表只有 Photoworks_Buffer 与 Solidworks_Screen 两项，Remarks 提到的 Custom 成员查不到"
+    },
+    {
+      "member": "swSelectType_e",
+      "topic": "swSelSKETCHES / swSelEDGES / swSelREFCURVES 的数值查不到（本轮未读该枚举文件）"
+    },
+    {
+      "member": "IPrimaryMemberPathSegmentFeatureData",
+      "topic": "其例子的调用序查不到：Create_Path_Segment_SSMember 的 VB/C# 例子文件在 examples 目录下按名字搜不到"
+    },
+    {
+      "member": "IFeatureManager.InsertConnectionPoint",
+      "topic": "实参调用序查不到：[E] Insert_Connection_Point_Example_VB.md 的 Code 段只有 Sub main()/End Sub"
+    },
+    {
+      "member": "swOrthogonalMode",
+      "topic": "该常量的归属与数值查不到：只在 CHM 例子代码里出现一次，enums 下无对应文件"
+    }
+  ]
+}
