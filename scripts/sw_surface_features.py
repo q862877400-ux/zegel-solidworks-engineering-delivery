@@ -333,16 +333,21 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
       ⇒ ★★★ **故「废弃入口更顺」这个假设在这一条上**不成立****。
 
     ★★★★★ **本条的完整总账（★ 那才是"写明依据"）**：
-      | 轮 | 入口 | 组数 | 结果 |
-      |---|---|---|---|
-      | 502 | `IFeatureManager.FeatureBossThicken`（7 参） | 1 | 全 `None` |
-      | 503 | 同上 | **7**（官方开关的主要组合） | 全 `None` |
-      | 504 | `IModelDoc2.FeatureBossThicken`（3 参 · Obsolete） | 3 | 全 `None` |
-      ⇒ ★★ **共 11 组 · 两条入口 · 前置每次完美（`solid=0 · surface=1`）** ⇒
-        ★ **「加厚」在本机是「静默不成」** —— ★★ 而**不是**「参数没找对」、
-        ★ 也**不是**「废弃入口反而顺」（★ 那条假设已否证）✓
+      | 轮 | 入口 | 组数 | 前置 | 结果 |
+      |---|---|---|---|---|
+      | 502 | `IFeatureManager.FeatureBossThicken`（7 参） | 1 | ★ 只保证"有曲面体" | 全 `None` |
+      | 503 | 同上 | **7**（官方开关的主要组合） | ★ 同上 | 全 `None` |
+      | 504 | `IModelDoc2.FeatureBossThicken`（3 参 · Obsolete） | 3 | ★ 同上 | 全 `None` |
+      | ★★ **2026-10-04（接手轮）** | ★ `IFeatureManager.FeatureBossThicken` | 1 | ★★ **按官方 `## Remarks` 做了**：★ `mark 1` 选中曲面**（选中数 = 4）** | ★ **仍 `None`** |
+      ⇒ ★★ **共 12 组 · 两条入口 · 而最后一组的前置是**完全按官方 Remarks 做的**** ⇒
+        ★★★ **「加厚」在本机是「静默不成」** —— ★★ 而**不是**「参数没找对」、
+        ★ 也**不是**「废弃入口反而顺」（★ 那条假设已否证）、
+        ★★★ **也**不是**「前置没做」（★ 2026-10-04 已排除）** ✓
+      ★★★★ **⇒ 那一层排除很重要**：★ 它把原因**收窄**到「这条入口在本机的 pywin32 后端上
+        就是不成」—— ★ 与**事实 47** 那一族（★ 进程内指针接口）**同型**，
+        ★★ 但**本轮仍未定案**（★ 未测 `comtypes` / 未测进程内 C++ 后端）⇒ **按铁律 5 不下结论** ✓
       证据：`output/thicken-surface-evidence.json` · `output/thicken-matrix-evidence.json` ·
-      `output/thicken-obsolete-entry-evidence.json`
+      `output/thicken-obsolete-entry-evidence.json` · ★ **`output/surface-scale-probe-evidence.json`**（★ 本轮）✓
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}
@@ -356,6 +361,31 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
     before_names = feature_names(model)
     before_solid = _solid_body_count(model)
     before_surf = _surface_body_count(model)
+    #: ★★★★ 2026-10-04（接手轮）**补上官方 Remarks 明确要求的一步：按 `mark 1` 选中曲面** ——
+    #:   ★ 病灶：★ 本函数原来**取了 `before_*` 就直接调** `FeatureBossThicken` ⇒
+    #:     ★★ **中间没有任何选中步骤**（★ 与 `create_extruded_surface_report` **完全同型**）✓
+    #:   ★★★ **官方 `IFeatureManager.FeatureBossThicken` 的 `## Remarks` 逐字**：
+    #:     > ★ 「This method generates a boss feature by thickening a **selected reference surface**.
+    #:     >   ★★ **The surface must be selected with a mark of 1.**」
+    #:   ★★ 而**本函数旧 docstring 写的前置是**「★ **文件里要有曲面体**（★ 而 `use_auto_select=True`
+    #:     时官方会『自动选所有体』）」⇒ ★★★ **那是**把"体在不在"当成了"选没选中"** ✓
+    #:   ★★★ **为什么以前没发现**：★ 本函数此前 **11 组 · 两条入口全部 `None`、且不报错**
+    #:     （★ docstring 记着「★ 按事实 53 停手」）⇒ **那一停就把"前置是什么"留在猜的阶段** ✓
+    #:     ★ 而本轮**回原文**（★ 官方 `## Remarks`）⇒ **前置写得很清楚** ✓
+    #:   ★★ 修法：★ **复用本仓既有的 `_select_all_surface_faces(model, mark=1)`** ✓
+    sel_note = "★ 未代选"
+    try:
+        n_sel = _select_all_surface_faces(model, mark=1)
+        sel_note = "★ 已按 `mark 1` 选中曲面面（★ 官方 Remarks 要求）；选中数 = %s" % n_sel
+        if not n_sel:
+            return {"ok": False, "stage": "select", "selection_count": int(n_sel or 0),
+                    "solid_before": before_solid, "surface_before": before_surf,
+                    "error": "★ 按 `mark 1` 选曲面选中数为 0 ⇒ 前置未成立",
+                    "★": "官方 Remarks：The surface must be selected with a mark of 1"}
+    except Exception as exc:                                              # noqa: BLE001
+        return {"ok": False, "stage": "select",
+                "error": "★ 选曲面抛 %s: %s" % (type(exc).__name__, str(exc)[:160]),
+                "★": "官方 Remarks：The surface must be selected with a mark of 1"}
     try:
         fm = get_com_member(model, "FeatureManager")
         #: ★ 调用序照官方签名：Thickness(米) ⇒ Direction ⇒ FaceIndex(★「Not used」⇒ 0)
@@ -371,6 +401,7 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
     new = [n for n in after_names if n not in before_names]
     return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
             "returned_none": feat is None,
+            "selection": sel_note,
             "solid_before": before_solid, "solid_after": _solid_body_count(model),
             "surface_before": before_surf, "surface_after": _surface_body_count(model),
             "thickness_mm": th, "direction": int(direction),
