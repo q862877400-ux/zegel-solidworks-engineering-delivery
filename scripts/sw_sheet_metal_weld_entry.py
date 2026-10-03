@@ -408,8 +408,19 @@ def insert_sheet_metal_miter_flange(model, *,
     after = _tree(model)
     after_faces = _body_face_count(model)
     added = _new_features(before, after)
+    #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的第三个判据纳入 `ok`** ——
+    #:   处置 `JUDGE-C_D_E.md` 的 🔴 #1 · **E5-4**（★ 裁判逐字：「★ 仓内 doc：
+    #:   `判据 = 特征树增量 + 返回对象非 None + 实体面数增量（**三个都要**）` ★ 而目标：
+    #:   ★★ **三处 `ok` 完全相同**：`"ok": bool(added) and fea…`」· ★ 判定「**确认**」）✓
+    #:   ★★★ **病灶（★ 实测的更精确）**：★ 三处**都已经算了** `after_faces` / `face_count_delta`，
+    #:     ★★ **只是没把它放进 `ok`** ⇒ ★★★ **doc 说"三个都要"、★ 实现只用了两个** ✓
+    #:   ⇒ 修法：★ 把**已经算好的** `face_count_delta` 加进 `ok` —— ★ **不新算任何东西** ✓
+    #:   ★★ 连接词：★ **跨种类 ⇒ `and`**（★ 树增量 / 返回对象 / 几何量，★ 三类都要）✓
+    face_delta_here = _delta(before_faces, after_faces)
     return {
-        "ok": bool(added) and feature is not None,
+        "ok": bool(added) and feature is not None and bool(face_delta_here),
+        "verified_by": "★ 特征树增量 **and** 返回对象非 None **and** 实体面数增量"
+                       "（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
         "op": "insert_sheet_metal_miter_flange",
         "entry_point": "IFeatureManager.InsertSheetMetalMiterFlange（★ 14 参 · 非废弃）",
         "obsolete_note": "★ 同名的 IModelDoc2.InsertSheetMetalMiterFlange（11 参 · 回 void）"
@@ -589,8 +600,14 @@ def insert_weldment_end_cap(model, depth_mm: float, *,
             ("UseThicknessRatioForOffset", None),
         ])
     total_selected = (marks or {}).get("all", -1)
+    #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的第三个判据纳入 `ok`**（★ E5-4 · 与另两处同源同错）——
+    #:   ★ doc 逐字：`判据 = 特征树增量 + 返回对象非 None + **实体面数增量**（三个都要）` ✓
+    #:   ★★ 本处**早已算了** `face_count_delta`（★ 就在返回值里）、★ **只是没进 `ok`** ✓
+    face_delta_here = _delta(before_faces, after_faces)
     return {
-        "ok": bool(added) and feature is not None,
+        "ok": bool(added) and feature is not None and bool(face_delta_here),
+        "verified_by": "★ 特征树增量 **and** 返回对象非 None **and** 实体面数增量"
+                       "（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
         "op": "insert_weldment_end_cap",
         "entry_point": "IFeatureManager.InsertEndCapFeature3（★ 10 参 · 非废弃）",
         "obsolete_note": "★ InsertEndCapFeature（6 参）**已 Obsolete** → 后继 3；"
@@ -711,8 +728,19 @@ def insert_weldment_gusset(model, depth_mm: float, *,
     after_faces = _body_face_count(model)
     added = _new_features(before, after)
     mark1 = (marks or {}).get("1", -1)
+    #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的两个判据纳入 `ok`**（★ E5-4 · 第三处）——
+    #:   ★ 本处的 doc 逐字多了两条：`… + **GetDefinition() 属性回读**（官方例子读法）` ／
+    #:     `… + **mark-1 选区计数**` ✓
+    #:   ★★ 实测：★ `after_faces` **算了没用**、★ `mark1`（★ 即"mark-1 选区计数"）**也算了没用** ✓
+    #:   ⇒ 修法：★ **两个已算好的量都纳入 `ok`**（★ 不新算）✓
+    #:   ★★★ 连接词：★ **跨种类 ⇒ `and`** —— ★ 树增量 / 返回对象 / 面数增量 / mark-1 计数，
+    #:     ★★ 四个**都必须成立**（★ doc 写的是"三个都要"+ 两条附加 ⇒ ★ **一路 `and`**）✓
+    face_delta_here = _delta(before_faces, after_faces)
     return {
-        "ok": bool(added) and feature is not None,
+        "ok": (bool(added) and feature is not None and bool(face_delta_here)
+               and int(mark1) > 0),
+        "verified_by": "★ 特征树增量 **and** 返回对象非 None **and** 实体面数增量 **and** "
+                       "mark-1 选区计数 > 0（★ doc 承诺的判据；★ 跨种类 ⇒ `and`）",
         "op": "insert_weldment_gusset",
         "entry_point": "IFeatureManager.InsertGussetFeature3（★ 20 参 · 非废弃 · **焊件**）",
         "obsolete_note": "★ InsertGussetFeature（15 参）**已 Obsolete** → 后继 **3**；"

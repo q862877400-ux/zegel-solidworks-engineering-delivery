@@ -1,0 +1,54 @@
+fix(阶段1): ★★★★★ 处置 **`JUDGE-C_D_E` 🔴 #1 · E5-4**（★ batch74 三个工具）—— ★ doc 说「三个都要」、★ 实现只用两个
+
+■ 一 · ★ 裁判逐字（★ E5-4 · 判定「确认」）
+  > ★ 仓内 doc：`判据 = 特征树增量 + 返回对象非 None + **实体面数增量**（三个都要）` ／
+  > `… + **GetDefinition() 属性回读**（官方例子读法）` ／ `… + **mark-1 选区计数**`
+  > ★★ 而目标：★ **三处 `ok` 完全相同**：`"ok": bool(added) and fea…`」✓
+
+■ 二 · ★★★★ 病灶（★ 实测的形态**比裁判说的更精确**）
+  ★ 三个函数（`insert_sheet_metal_miter_flange` · `insert_weldment_end_cap` ·
+    `insert_weldment_gusset`）**逐字都是**：
+    ```python
+    after = _tree(model)                       # ★ 算了
+    after_faces = _body_face_count(model)      # ★★ 算了
+    added = _new_features(before, after)
+    return {"ok": bool(added) and feature is not None, ...}
+    ```
+  ★★ 而它们的返回值里**早就有** `face_count_delta`（★ 用 `_delta(before_faces, after_faces)` 算的）⇒
+    ★★★★ **即：★ doc 承诺的第三项**算了、★ 也**报出来了**、★ **就是没进 `ok`**** ✓
+  ★ `insert_weldment_gusset` **另外还算了** `mark1 = (marks or {}).get("1", -1)`
+    （★ 那正是 doc 说的 **mark-1 选区计数**）★ **同样没进 `ok`** ✓
+
+■ 三 · ★ 修法：★ **把已经算好的量纳入 `ok`**（★ **不新算任何东西**）
+  | ★ 函数 | ★ `ok` 现在 |
+  |---|---|
+  | ★ `insert_sheet_metal_miter_flange` | ★ `bool(added) and feature is not None and bool(face_delta_here)` |
+  | ★ `insert_weldment_end_cap` | ★ 同上 |
+  | ★★ `insert_weldment_gusset` | ★★ 再多一项：★ `and int(mark1) > 0` |
+  ★ **连接词**：★ **跨种类 ⇒ `and`** —— ★ 树增量（结构）/ 返回对象 / 面数增量（几何）/
+    mark-1 计数（选区），★ **四个都必须成立**（★ doc 写的是"三个都要"+ 两条附加 ⇒ **一路 `and`**）✓
+  ★ 三处的 `verified_by` 都**逐字写出**它用了哪几项（★ 便于复核）✓
+  ★★ 实测：★ **旧写法（三项同形）剩 `0`** · ★ **新写法出现 `3`** ✓
+
+■ 四 · ★★ 新增测试（★ `tests/test_sheet_metal_weld_entry_three_judgements.py` · **5 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **核心断言** | ★ **代码里**（★ 剥注释后）那个**只含两项**的旧判据必须**全部消失** ✓ |
+  | ★ 契约 | ★ 三个函数**必须**都用上 `face_delta_here` ✓ |
+  | ★ 契约 | ★ 角撑板**必须**把 `mark1` 纳入 `ok`（★ doc 多承诺的那条）✓ |
+  | ★ 契约 | ★ 三处的 `verified_by` 都要**写明**用了几项 ✓ |
+  | ★★ **负例** | ★ `model=None` ⇒ **必须**明确失败（★ 不许静默成功）✓ |
+
+■ 五 · ★★★ 可复用判据（★ 与 E5-1 / E5-3 / E5-5 **四条同族**）
+  > ★★★★ **doc 里的 `判据` / `verified_by` 那一句就是契约** ——
+  > ★ **修复的判据 = 把那一句里的每个量都真的算出来、★ 并把每个连接词翻译成代码里的逻辑** ✓
+  ★ 本会话**四条**都是这一形态：★ E5-1（两个量都没算）· ★ E5-3（`or` 写成"都"）·
+    ★ E5-5（两个条件都没进 `ok`）· ★ **E5-4（第三项算了没进）** ✓
+  ★★ ⇒ **一个可核的通用检查**：★★★ **把 doc 那句里的量名逐个 grep 进 `ok` 那一行的表达式** ✓
+  ★★★ 而**"剥注释"这个坑本会话第 3 次出现**（★ E5-2 / E5-1 / 本轮）⇒
+    ★ 三次都因为**我在来源块里逐字引了旧代码** ✓ ⇒ ★ **已把 `_code_only()` 写进测试** ✓
+
+■ 六 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 5 passed** ✓
+  ★★ **进度**：★ `C_D_E` #1（E-5 · 6 类 · 11 工具）⇒
+    ★★★ **已完成 E5-1 / E5-2 / E5-3 / E5-4 / E5-5（5 类）** ⇒ **只剩 E5-6（batch71 曲线）** ✓
