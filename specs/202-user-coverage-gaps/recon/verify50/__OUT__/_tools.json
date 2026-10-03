@@ -1,0 +1,779 @@
+{
+"solidworks_topology_create_study": [
+"tool_specs_batch1.py"
+],
+"solidworks_topology_evidence": [
+"tool_specs_batch1.py"
+],
+"solidworks_topology_run": [
+"tool_specs_batch1.py"
+],
+"solidworks_mold_parting_line": [
+"tool_specs_batch1.py"
+],
+"solidworks_mold_shut_off_surface": [
+"tool_specs_batch1.py"
+],
+"solidworks_mold_draft_analysis": [
+"tool_specs_batch1.py"
+],
+"solidworks_mold_evidence": [
+"tool_specs_batch1.py"
+],
+"solidworks_simulation_set_material": [
+"tool_specs_batch1.py"
+],
+"solidworks_part_bounding_box": [
+"tool_specs_batch10.py"
+],
+"solidworks_hole_standards": [
+"tool_specs_batch10.py"
+],
+"solidworks_fastener_types": [
+"tool_specs_batch10.py"
+],
+"solidworks_fastener_table_types": [
+"tool_specs_batch10.py"
+],
+"solidworks_topology_create_mass_constraint": [
+"tool_specs_batch11.py"
+],
+"solidworks_topology_create_factor_of_safety_constraint": [
+"tool_specs_batch11.py"
+],
+"solidworks_topology_create_preserved_region": [
+"tool_specs_batch11.py"
+],
+"solidworks_topology_create_thickness_control": [
+"tool_specs_batch11.py"
+],
+"solidworks_topology_create_demold_control": [
+"tool_specs_batch12.py"
+],
+"solidworks_topology_create_stress_constraint": [
+"tool_specs_batch12.py"
+],
+"solidworks_topology_create_symmetry_control": [
+"tool_specs_batch12.py"
+],
+"solidworks_simulation_generate_report": [
+"tool_specs_batch13.py"
+],
+"solidworks_simulation_create_mesh_for_control": [
+"tool_specs_batch13.py"
+],
+"solidworks_simulation_default_element_size_and_tolerance": [
+"tool_specs_batch13.py"
+],
+"solidworks_get_active_view": [
+"tool_specs_batch14.py"
+],
+"solidworks_entities_on_body": [
+"tool_specs_batch14.py"
+],
+"review": [
+"tool_specs_batch15.py"
+],
+"solidworks_build_review_report": [
+"tool_specs_batch15.py"
+],
+"solidworks_add_sketch_relation": [
+"tool_specs_batch16.py"
+],
+"solidworks_mirror_feature": [
+"tool_specs_batch16.py"
+],
+"solidworks_circular_pattern": [
+"tool_specs_batch17.py"
+],
+"solidworks_revolve_boss": [
+"tool_specs_batch17.py"
+],
+"solidworks_sketch_count_lines": [
+"tool_specs_batch18.py"
+],
+"solidworks_sketch_count_arcs": [
+"tool_specs_batch18.py"
+],
+"solidworks_sketch_count_segments": [
+"tool_specs_batch18.py"
+],
+"solidworks_sketch_is_3d": [
+"tool_specs_batch18.py"
+],
+"solidworks_drawing_list_sheets": [
+"tool_specs_batch19.py"
+],
+"solidworks_drawing_get_current_sheet": [
+"tool_specs_batch19.py"
+],
+"solidworks_drawing_list_views": [
+"tool_specs_batch19.py"
+],
+"solidworks_weldment_evidence": [
+"tool_specs_batch2.py"
+],
+"solidworks_weldment_ensure_cut_list": [
+"tool_specs_batch2.py"
+],
+"solidworks_weldment_update_cut_list": [
+"tool_specs_batch2.py"
+],
+"solidworks_weldment_create_sub_weld_folder": [
+"tool_specs_batch2.py"
+],
+"solidworks_sheet_metal_evidence": [
+"tool_specs_batch2.py"
+],
+"solidworks_surface_evidence": [
+"tool_specs_batch2.py"
+],
+"solidworks_custom_property_get": [
+"tool_specs_batch20.py"
+],
+"solidworks_custom_property_list": [
+"tool_specs_batch20.py"
+],
+"solidworks_sketch_start": [
+"tool_specs_batch21.py"
+],
+"solidworks_sketch_end": [
+"tool_specs_batch21.py"
+],
+"solidworks_sketch_add_line": [
+"tool_specs_batch21.py"
+],
+"solidworks_sketch_add_circle": [
+"tool_specs_batch21.py"
+],
+"solidworks_sketch_add_rectangle": [
+"tool_specs_batch21.py"
+],
+"solidworks_extrude_boss": [
+"tool_specs_batch22.py"
+],
+"solidworks_extrude_cut": [
+"tool_specs_batch22.py"
+],
+"solidworks_extrude_midplane": [
+"tool_specs_batch22.py"
+],
+"solidworks_chamfer": [
+"tool_specs_batch23.py"
+],
+"solidworks_fillet": [
+"tool_specs_batch23.py"
+],
+"solidworks_part_mass_properties": [
+"tool_specs_batch24.py"
+],
+"solidworks_assembly_list_components": [
+"tool_specs_batch25.py"
+],
+"solidworks_assembly_list_mates": [
+"tool_specs_batch25.py"
+],
+"solidworks_assembly_check_interference": [
+"tool_specs_batch25.py"
+],
+"solidworks_simulation_apply_fixed_restraint": [
+"tool_specs_batch26.py"
+],
+"solidworks_simulation_apply_normal_force": [
+"tool_specs_batch26.py"
+],
+"solidworks_simulation_create_study": [
+"tool_specs_batch27.py"
+],
+"solidworks_simulation_list_studies": [
+"tool_specs_batch27.py"
+],
+"solidworks_simulation_find_study": [
+"tool_specs_batch27.py"
+],
+"solidworks_simulation_mesh_size": [
+"tool_specs_batch28.py"
+],
+"solidworks_simulation_create_mesh": [
+"tool_specs_batch28.py"
+],
+"solidworks_simulation_run_analysis": [
+"tool_specs_batch28.py"
+],
+"solidworks_simulation_collect_evidence": [
+"tool_specs_batch28.py"
+],
+"solidworks_sheet_metal_create_base_flange": [
+"tool_specs_batch3.py"
+],
+"solidworks_sheet_metal_create_one_bend": [
+"tool_specs_batch3.py"
+],
+"solidworks_simulation_check_mesh_size": [
+"tool_specs_batch31.py"
+],
+"solidworks_part_shell": [
+"tool_specs_batch32.py"
+],
+"solidworks_part_rib": [
+"tool_specs_batch32.py"
+],
+"solidworks_part_insert_dome": [
+"tool_specs_batch32.py"
+],
+"solidworks_part_insert_composite_curve": [
+"tool_specs_batch32.py"
+],
+"solidworks_config_inspect": [
+"tool_specs_batch33.py"
+],
+"solidworks_config_create": [
+"tool_specs_batch33.py"
+],
+"solidworks_config_activate": [
+"tool_specs_batch33.py"
+],
+"solidworks_config_read_custom_property": [
+"tool_specs_batch33.py"
+],
+"solidworks_config_set_custom_properties": [
+"tool_specs_batch33.py"
+],
+"solidworks_config_update_dimension": [
+"tool_specs_batch33.py"
+],
+"solidworks_export_step": [
+"tool_specs_batch33.py"
+],
+"solidworks_export_stl": [
+"tool_specs_batch33.py"
+],
+"solidworks_export_iges": [
+"tool_specs_batch33.py"
+],
+"solidworks_export_parasolid": [
+"tool_specs_batch33.py"
+],
+"solidworks_export_dxf": [
+"tool_specs_batch33.py"
+],
+"solidworks_export_bmp": [
+"tool_specs_batch33.py"
+],
+"solidworks_hole_through_by_selection": [
+"tool_specs_batch34.py"
+],
+"solidworks_hole_blind_by_selection": [
+"tool_specs_batch34.py"
+],
+"solidworks_hole_counterbore_by_selection": [
+"tool_specs_batch34.py"
+],
+"solidworks_hole_countersink_by_selection": [
+"tool_specs_batch34.py"
+],
+"solidworks_slot_semicircular_by_selection": [
+"tool_specs_batch34.py"
+],
+"solidworks_weldment_create_cut_list": [
+"tool_specs_batch35.py"
+],
+"solidworks_weldment_set_cut_list_properties": [
+"tool_specs_batch35.py"
+],
+"solidworks_weldment_export_cut_list_csv": [
+"tool_specs_batch35.py"
+],
+"solidworks_weldment_read_property_manager": [
+"tool_specs_batch35.py"
+],
+"solidworks_weldment_create_profile_center_mate": [
+"tool_specs_batch35.py"
+],
+"solidworks_weldment_create_weldment_profile": [
+"tool_specs_batch35.py"
+],
+"solidworks_custom_property_count": [
+"tool_specs_batch36.py"
+],
+"solidworks_custom_property_names": [
+"tool_specs_batch36.py"
+],
+"solidworks_selector_resolve_direction": [
+"tool_specs_batch36.py"
+],
+"solidworks_selector_resolve_point": [
+"tool_specs_batch36.py"
+],
+"solidworks_drawing_sheet_count": [
+"tool_specs_batch36.py"
+],
+"solidworks_drawing_sheet_names": [
+"tool_specs_batch36.py"
+],
+"solidworks_drawing_current_sheet_name": [
+"tool_specs_batch36.py"
+],
+"solidworks_delivery_bom_traceability": [
+"tool_specs_batch36.py"
+],
+"solidworks_delivery_pack_and_go_audit_matrix": [
+"tool_specs_batch36.py"
+],
+"solidworks_delivery_export_bom_csv": [
+"tool_specs_batch36.py"
+],
+"solidworks_simulation_list_setter_summary": [
+"tool_specs_batch36.py"
+],
+"solidworks_simulation_configure_static_solver": [
+"tool_specs_batch37.py"
+],
+"solidworks_simulation_configure_frequency_solver": [
+"tool_specs_batch37.py"
+],
+"solidworks_simulation_configure_buckling_solver": [
+"tool_specs_batch37.py"
+],
+"solidworks_simulation_set_study_option": [
+"tool_specs_batch37.py"
+],
+"solidworks_simulation_set_study_options": [
+"tool_specs_batch37.py"
+],
+"solidworks_costing_evidence": [
+"tool_specs_batch38.py"
+],
+"solidworks_costing_read_analysis": [
+"tool_specs_batch38.py"
+],
+"solidworks_costing_body_count": [
+"tool_specs_batch38.py"
+],
+"solidworks_costing_list_bodies": [
+"tool_specs_batch38.py"
+],
+"solidworks_costing_read_body": [
+"tool_specs_batch38.py"
+],
+"solidworks_costing_list_templates": [
+"tool_specs_batch38.py"
+],
+"solidworks_costing_default_template": [
+"tool_specs_batch38.py"
+],
+"solidworks_costing_method_value": [
+"tool_specs_batch38.py"
+],
+"solidworks_equation_add": [
+"tool_specs_batch39.py"
+],
+"solidworks_equation_list": [
+"tool_specs_batch39.py"
+],
+"solidworks_equation_evaluate": [
+"tool_specs_batch39.py"
+],
+"solidworks_equation_delete": [
+"tool_specs_batch39.py"
+],
+"solidworks_helix_insert": [
+"tool_specs_batch39.py"
+],
+"solidworks_gtol_insert": [
+"tool_specs_batch39.py"
+],
+"solidworks_sheet_metal_create_edge_flange": [
+"tool_specs_batch4.py"
+],
+"solidworks_sheet_metal_create_gusset": [
+"tool_specs_batch4.py"
+],
+"solidworks_sheet_metal_create_draft": [
+"tool_specs_batch4.py"
+],
+"solidworks_sheet_metal_create_swept_flange": [
+"tool_specs_batch4.py"
+],
+"solidworks_motion_create_study": [
+"tool_specs_batch40.py"
+],
+"solidworks_motion_collect_summary": [
+"tool_specs_batch40.py"
+],
+"solidworks_motion_validate_studies": [
+"tool_specs_batch40.py"
+],
+"solidworks_motion_study_manager": [
+"tool_specs_batch40.py"
+],
+"solidworks_motion_ensure_type_library": [
+"tool_specs_batch40.py"
+],
+"solidworks_motion_validate_summary": [
+"tool_specs_batch40.py"
+],
+"solidworks_gear_calculate_spur": [
+"tool_specs_batch41.py"
+],
+"solidworks_gear_create_spur": [
+"tool_specs_batch41.py"
+],
+"solidworks_toolbox_list_standards": [
+"tool_specs_batch41.py"
+],
+"solidworks_toolbox_load_index": [
+"tool_specs_batch41.py"
+],
+"solidworks_toolbox_search": [
+"tool_specs_batch41.py"
+],
+"solidworks_toolbox_part_path": [
+"tool_specs_batch41.py"
+],
+"solidworks_sketch_create_chamfer": [
+"tool_specs_batch41.py"
+],
+"solidworks_sketch_mirror": [
+"tool_specs_batch41.py"
+],
+"solidworks_sketch_convert_entities": [
+"tool_specs_batch41.py"
+],
+"solidworks_drawing_sheets_summary": [
+"tool_specs_batch42.py"
+],
+"solidworks_drawing_current_sheet_info": [
+"tool_specs_batch42.py"
+],
+"solidworks_drawing_view_scale": [
+"tool_specs_batch43.py"
+],
+"solidworks_drawing_view_set_scale": [
+"tool_specs_batch43.py"
+],
+"solidworks_drawing_collect_view_evidence": [
+"tool_specs_batch43.py"
+],
+"solidworks_drawing_sheet_scale": [
+"tool_specs_batch44.py"
+],
+"solidworks_drawing_set_sheet_scale": [
+"tool_specs_batch44.py"
+],
+"solidworks_surface_create_extruded": [
+"tool_specs_batch45.py"
+],
+"solidworks_surface_knit": [
+"tool_specs_batch45.py"
+],
+"solidworks_surface_extend": [
+"tool_specs_batch45.py"
+],
+"solidworks_surface_fill": [
+"tool_specs_batch45.py"
+],
+"solidworks_measure_selection": [
+"tool_specs_batch46.py"
+],
+"solidworks_part_loft": [
+"tool_specs_batch47.py"
+],
+"solidworks_part_sweep": [
+"tool_specs_batch48.py"
+],
+"solidworks_part_axis": [
+"tool_specs_batch49.py"
+],
+"solidworks_current_selection": [
+"tool_specs_batch5.py"
+],
+"solidworks_clear_selection": [
+"tool_specs_batch5.py"
+],
+"solidworks_set_standard_view": [
+"tool_specs_batch5.py"
+],
+"solidworks_list_render_materials": [
+"tool_specs_batch5.py"
+],
+"solidworks_collect_appearance_evidence": [
+"tool_specs_batch5.py"
+],
+"solidworks_part_wrap": [
+"tool_specs_batch50.py"
+],
+"solidworks_read_sensors": [
+"tool_specs_batch51.py"
+],
+"solidworks_read_document_units": [
+"tool_specs_batch52.py"
+],
+"solidworks_undo": [
+"tool_specs_batch52.py"
+],
+"solidworks_selection_count": [
+"tool_specs_batch53.py"
+],
+"solidworks_select_entity_by_index": [
+"tool_specs_batch53.py"
+],
+"solidworks_resolve_selection": [
+"tool_specs_batch53.py"
+],
+"solidworks_selection_point": [
+"tool_specs_batch53.py"
+],
+"solidworks_select_by_selector": [
+"tool_specs_batch53.py"
+],
+"solidworks_resolve_entity": [
+"tool_specs_batch53.py"
+],
+"solidworks_sketch_add_arc": [
+"tool_specs_batch54.py"
+],
+"solidworks_sketch_add_ellipse": [
+"tool_specs_batch54.py"
+],
+"solidworks_sketch_add_polygon": [
+"tool_specs_batch54.py"
+],
+"solidworks_sketch_add_slot": [
+"tool_specs_batch54.py"
+],
+"solidworks_sketch_add_centerline": [
+"tool_specs_batch54.py"
+],
+"solidworks_current_sketch_name": [
+"tool_specs_batch55.py"
+],
+"solidworks_auto_dimension_sketch": [
+"tool_specs_batch55.py"
+],
+"solidworks_add_dimension": [
+"tool_specs_batch56.py"
+],
+"solidworks_hole_pattern": [
+"tool_specs_batch57.py"
+],
+"solidworks_export_image": [
+"tool_specs_batch59.py"
+],
+"solidworks_available_point_selectors": [
+"tool_specs_batch6.py"
+],
+"solidworks_available_direction_selectors": [
+"tool_specs_batch6.py"
+],
+"solidworks_collect_assembly_bom": [
+"tool_specs_batch6.py"
+],
+"solidworks_simulation_apply_rigid_connector": [
+"tool_specs_batch61.py"
+],
+"solidworks_weldment_create_structural_member": [
+"tool_specs_batch62.py"
+],
+"solidworks_select_face_selector": [
+"tool_specs_batch63.py"
+],
+"solidworks_simulation_apply_link_connector": [
+"tool_specs_batch64.py"
+],
+"solidworks_sketch_add_3point_rectangle": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_add_3point_center_rectangle": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_add_parallelogram": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_add_tangent_arc": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_add_3point_arc": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_add_partial_ellipse": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_add_parabola": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_add_conic": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_add_perimeter_circle": [
+"tool_specs_batch65.py"
+],
+"solidworks_sketch_trim": [
+"tool_specs_batch66.py"
+],
+"solidworks_sketch_extend": [
+"tool_specs_batch66.py"
+],
+"solidworks_sketch_offset": [
+"tool_specs_batch66.py"
+],
+"solidworks_sketch_fillet": [
+"tool_specs_batch66.py"
+],
+"solidworks_sketch_linear_pattern": [
+"tool_specs_batch66.py"
+],
+"solidworks_sketch_circular_pattern": [
+"tool_specs_batch66.py"
+],
+"solidworks_sketch_move_entities": [
+"tool_specs_batch67.py"
+],
+"solidworks_sketch_rotate_entities": [
+"tool_specs_batch67.py"
+],
+"solidworks_sketch_scale_entities": [
+"tool_specs_batch67.py"
+],
+"solidworks_sketch_stretch_entities": [
+"tool_specs_batch67.py"
+],
+"solidworks_sketch_flip_entities": [
+"tool_specs_batch67.py"
+],
+"solidworks_insert_planar_surface": [
+"tool_specs_batch68.py"
+],
+"solidworks_insert_offset_surface": [
+"tool_specs_batch68.py"
+],
+"solidworks_insert_ruled_surface": [
+"tool_specs_batch68.py"
+],
+"solidworks_insert_delete_face": [
+"tool_specs_batch68.py"
+],
+"solidworks_insert_replace_face": [
+"tool_specs_batch68.py"
+],
+"solidworks_insert_lofted_ref_surface": [
+"tool_specs_batch69.py"
+],
+"solidworks_activate_model_for_preview": [
+"tool_specs_batch7.py"
+],
+"solidworks_clear_selection_for_preview": [
+"tool_specs_batch7.py"
+],
+"solidworks_refresh_scene_graph": [
+"tool_specs_batch7.py"
+],
+"solidworks_insert_center_of_mass": [
+"tool_specs_batch70.py"
+],
+"solidworks_insert_global_bounding_box": [
+"tool_specs_batch70.py"
+],
+"solidworks_insert_coordinate_system": [
+"tool_specs_batch70.py"
+],
+"solidworks_insert_ref_plane": [
+"tool_specs_batch70.py"
+],
+"solidworks_insert_reference_point": [
+"tool_specs_batch70.py"
+],
+"solidworks_insert_curve_through_points": [
+"tool_specs_batch71.py"
+],
+"solidworks_create_revolved_surface": [
+"tool_specs_batch72.py"
+],
+"solidworks_hole_wizard": [
+"tool_specs_batch72.py"
+],
+"solidworks_sketch_fully_defined_status": [
+"tool_specs_batch72.py"
+],
+"solidworks_drawing_create_broken_view": [
+"tool_specs_batch73.py"
+],
+"solidworks_drawing_create_auxiliary_view": [
+"tool_specs_batch73.py"
+],
+"solidworks_drawing_insert_surface_finish_symbol": [
+"tool_specs_batch73.py"
+],
+"solidworks_drawing_insert_datum_tag": [
+"tool_specs_batch73.py"
+],
+"solidworks_sheet_metal_insert_miter_flange": [
+"tool_specs_batch74.py"
+],
+"solidworks_sheet_metal_insert_closed_corner": [
+"tool_specs_batch74.py"
+],
+"solidworks_weldment_insert_end_cap": [
+"tool_specs_batch74.py"
+],
+"solidworks_weldment_gusset_create": [
+"tool_specs_batch74.py"
+],
+"solidworks_surface_midsurface_create": [
+"tool_specs_batch74.py"
+],
+"solidworks_drawing_create_projected_view": [
+"tool_specs_batch75.py"
+],
+"solidworks_drawing_create_section_view": [
+"tool_specs_batch75.py"
+],
+"solidworks_drawing_create_detail_view": [
+"tool_specs_batch75.py"
+],
+"solidworks_drawing_set_sheet_format": [
+"tool_specs_batch75.py"
+],
+"solidworks_drawing_add_note": [
+"tool_specs_batch75.py"
+],
+"solidworks_drawing_create_hole_table": [
+"tool_specs_batch75.py"
+],
+"solidworks_drawing_create_revision_table": [
+"tool_specs_batch75.py"
+],
+"solidworks_drawing_insert_center_marks": [
+"tool_specs_batch75.py"
+],
+"solidworks_feature_cosmetic_thread": [
+"tool_specs_batch76.py"
+],
+"solidworks_sketch_spline": [
+"tool_specs_batch76.py"
+],
+"solidworks_flatten_surface": [
+"tool_specs_batch76.py"
+],
+"solidworks_thicken": [
+"tool_specs_batch76.py"
+],
+"solidworks_collect_model_summary": [
+"tool_specs_batch8.py"
+],
+"solidworks_get_costing_manager": [
+"tool_specs_batch8.py"
+],
+"solidworks_list_simulation_study_options": [
+"tool_specs_batch8.py"
+],
+"solidworks_mold_core_cavity_split": [
+"tool_specs_batch9.py"
+],
+"solidworks_mold_parting_surface": [
+"tool_specs_batch9.py"
+],
+"solidworks_mold_undercut_detect": [
+"tool_specs_batch9.py"
+]
+}
