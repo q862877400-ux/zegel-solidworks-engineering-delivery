@@ -1961,3 +1961,23 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **下一步**：★ 用**平面区域**（`InsertPlanarRefSurface`）从**带内环的草图**生成**一张真正的平面曲面** —— ★ **那才是名副其实的“带孔曲面”**。
      ★★ **方法论**：★ 当一个前置反复不起作用时，先问**“我造的东西到底是什么形态”**（★ 数面、数环、看每个环几条边）—— ★ 而**不是继续换选择方式** ⚠
      ★ 本轮**不登记能力**（★ 仍未建成）。|真机：`tools/prove_delete_hole_inner_loop.py`；证据 `output/delete-hole-inner-loop-evidence.json`；对照事实 441 / 51 |
+| 443 | **★★★ 删除孔（曲面）**真机建成** —— ★ 而它把一个**跨四轮的链**收口了** —— 2026-10-03（轮 564）。
+     ★★ **三层前置，少一层都不成**：
+     ```
+     ① 用**继任者** `IFeatureManager.InsertDeleteHoleForSurface`
+        （★ 第一代 `IModelDoc2.InsertDeleteHole` **已废弃** —— ★ 事实 441）
+     ② 得是**真正的带孔平面** —— ★ 用**平面区域**造（★ 事实 442）
+        ★ **拉伸得到的是 5 面 / 6 环 · 不行**；平面区域得 **1 面 / 2 环** ✓
+     ③ 只选**孔那圈边**（★ 不是整个体的边）
+     ```
+     ★ 真机（`tools/prove_planar_region_then_delete_hole.py`，零弹窗）：
+     ```
+     ① 平面区域：带内环的草图 ⇒ 选它 **mark = 1** ⇒ `InsertPlanarRefSurface()` 回 `True`
+        ⇒ **建 `曲面-基准面1`** · ★ **面 1 / 环 2 / 边 5**（★ 名副其实的**带孔平面**）✓
+     ② 删除孔：选**孔那圈边** ⇒ `InsertDeleteHoleForSurface()`
+        ⇒ **名 `删除孔1`** · **型 `DelHole`** · ★ **环 Δ = −1**（孔被填上）✓
+     ```
+     ★ **而它还顺手验了一条本仓早已登记的能力**：`surface_planar_region`（★ 轮 517 登记的）—— ★ **故本轮两条能力同时有真机证据** ✓
+     ★ **方法论**：★ 一个**跨多轮的链**，每一环都应该**把“缺什么”写成下一步** —— ★ 而**不是重写一遍** ⚠
+     ★ 而这个链是：轮 559（入口）→ 轮 560（前置）→ 轮 562（**发现入口废弃**）→ 轮 563（**发现前置形态不对**）→ 轮 564（**三层对齐 ⇒ 建成**）。
+     ★ **落地**：`capabilities.yaml` 新增 **`surface_delete_hole`**（level = **verified**，共 **99** 条）；台账「删除孔」补 `capability_id` ⇒ **已能 73**。|真机：`tools/prove_planar_region_then_delete_hole.py`；证据 `output/planar-region-and-delete-hole-evidence.json`；对照事实 441 / 442 · `surface_planar_region`（轮 517）|

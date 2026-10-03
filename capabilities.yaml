@@ -4017,6 +4017,30 @@
         "★ **`TessToleranceFactor` 官方默认 1.0**；匹配类型 **0 = none · 1 = 法向相切 · 2 = 相切于选定向量**。",
         "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：`Closed=True`（封闭）· 薄壁（`IsThinBody`）· 引导线。"
       ]
+    },
+    {
+      "id": "surface_delete_hole",
+      "label": "删除孔（曲面）（`InsertDeleteHoleForSurface`）—— ★ **真机建成**·★★ **继任者**（第一代 `InsertDeleteHole` 已废弃）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "`C:\\swapi\\types\\IFeatureManager\\InsertDeleteHoleForSurface.md`（**0 参 · 回 IFeature**）与它的 `## Remarks`（选 **hole edges**）。代码：`tools/prove_planar_region_then_delete_hole.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 564）**真机建成**（零弹窗）：在**一张真正的带孔平面**（面 1 / 环 2）上选**孔那圈边** ⇒ `InsertDeleteHoleForSurface()` ⇒ **名 `删除孔1`**·**型 `DelHole`**·★ **环Δ = −1**（孔被填上）✓"
+      ],
+      "limitations": [
+        "★★ **三层前置**：① 用**继任者**（第一代已废弃）；② 得是**真正的带孔平面**（★ 用平面区域造；★ **拉伸得到的是 5 面 / 6 环、不行**）；③ 只选**孔那圈边**。",
+        "⚠ 本包装未接进 MCP 工具层。"
+      ]
     }
   ]
 }

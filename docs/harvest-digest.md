@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **98** 条能力。
+共 **99** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 85 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 86 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 68 | **本项目自研**（护城河域等） |
+| `original` | 69 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -164,6 +164,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `feature_loft_cut` | · `★★ 2026-10-03（轮 561）**真机建成**（走 `sw_guard`，零弹窗）：一个实体 + 两个平行剖面（**按顺序**选中 · **mark=1**）⇒ `InsertCutBlend(…)` ⇒ **建成 `切除-放样1`**·**类型名 `BlendCut`**·★ **体积 0.9714 倍**（变小 = 真切除）。证据 `output/loft-cut-evidence.json`。`<br>· `★★ **而对照组同时跑**：放样**凸台**（`InsertProtrusionBlend2`·**18 参**）⇒ `放样1`·**类型名 `Blend`**·**体积 1.0286 倍**（变大）。
        ⇒ ★★ **故两者的分界就是**类型名**：`Blend` = 凸台 · **`BlendCut` = 切除**** ✓`<br>· `★★★ **而本轮又是一次“失败在判据”**：我第一版照**凸台**抄成 `type_name == "Blend"` ⇒ ★ **对已建成的 `切除-放样1` 判了 `ok=False`** ⚠ （★ 与事实 420 / 431 同族）。
        ★ 而与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **“切”会换类型名** 。` |
+| `surface_delete_hole` | · `★★ 2026-10-03（轮 564）**真机建成**（零弹窗）：在**一张真正的带孔平面**（面 1 / 环 2）上选**孔那圈边** ⇒ `InsertDeleteHoleForSurface()` ⇒ **名 `删除孔1`**·**型 `DelHole`**·★ **环Δ = −1**（孔被填上）✓` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

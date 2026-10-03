@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 72 |
-| 可攻关 | 20 |
+| 已能 | 73 |
+| 可攻关 | 19 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -26,7 +26,6 @@
 
 | 工具条 | 条目 | 档 | 官方成员（已核） | 本仓入口 |
 |---|---|---|---|---|
-| 曲面 | 删除孔 | **可攻关** | `InsertDeleteHole` | — |
 | 曲面 | 扫描曲面 | **可攻关** | `InsertProtrusionSwept4`, `Surface` | — |
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
 | 特征下拉 | 填充阵列 | **可攻关** | `FeatureFillPattern` | — |
@@ -73,6 +72,7 @@
 | 草图尺寸 | 竖直尺寸链 | **待查** | — | — |
 | 草图尺寸 | 路径长度尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 链尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
+| 曲面 | 删除孔 | **已能** | `InsertDeleteHole` | — |
 | 曲面 | 删除面 | **已能** | `InsertDeleteFace2` | — |
 | 曲面 | 填充曲面 | **已能** | `InsertFillSurface2` | `sw_surface_features.insert_fill_surface_report` |
 | 曲面 | 平面区域 | **已能** | `InsertPlanarRefSurface` | — |

@@ -875,7 +875,8 @@
    "zh": "删除孔",
    "api": "InsertDeleteHole",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "surface_delete_hole"
   },
   {
    "tb": "曲面",
