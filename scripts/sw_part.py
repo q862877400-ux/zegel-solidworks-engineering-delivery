@@ -1077,9 +1077,52 @@ def fillet(model, radius, edges=None):
         model: IModelDoc2
         radius: 圆角半径（**毫米**）
         edges: 预先选择的边线列表，None 则使用当前选择
+
+    ★★★★★ 2026-10-04（接手轮）**换成现行的第三代** —— 处置阶段 2 · T1 ✓
+      ★ **官方页逐字**（★ 三页连读）：
+        · `IFeatureManager/FeatureFillet.md` ⇒ 「**Obsolete. Superseded by
+          `IFeatureManager::FeatureFillet2`**」✓
+        · ★ `FeatureFillet2.md` ⇒ 「**Obsolete. Superseded by
+          `IFeatureManager::FeatureFillet3`**」✓
+        · ★★ **`FeatureFillet3.md` ⇒ **不废弃**** ⇒ ★ **它才是现行的** ✓
+      ★★ **⚠ 而追链时出现过"环形"**（★ `F → 2 → 3 → F`）—— ★ **真因是**跨族同名****：
+        ★ `IModelDoc2` 上**也有**一族 `FeatureFillet`（★ 5/7/9/13/7 参）、
+        ★★ 而 `IModelDoc2.FeatureFillet` 的"后继"写的是 **`IFeatureManager::FeatureFillet`** ⇒
+        ★★★ **跨族跳转就把链接成了环** ✓
+        ⇒ ★★★★ **⇒ 按**铁律 4**查反射定案**（★ 裁决者）：
+          ★ `IFeatureManager` 上 ⇒ `FeatureFillet`(**7** 参) / `2`(**11**) / **`3`(**14**)** ✓
+          ★★ 而 `IModelDoc2` 上那一族是 5/7/9/13/7 ⇒ **两族同名、★ 不可混** ✓
+        ⇒ ★★★★★ **可复用判据**：★★★ **追 "Superseded by" 链时，要**按接口限定**地追** ——
+          ★ **同名成员在不同接口上是不同的族**（★ 与**事实 36**同族）✓
+      ★★★ **真机验证**（★ `tools/probe_featurefillet3.py` · ★ `sw_guard` · ★ `sw_alive: true` ·
+        ★ **零弹窗** · ★ 7.19 s ⇒ `output/featurefillet3-probe-evidence.json`）：
+        | ★ 形态 | ★ 特征数 | ★ 实体 | ★ 选中边 | ★ 返回 |
+        |---|---|---|---|---|
+        | ★ 旧的 7 参 `FeatureFillet` | ★ **20 → 21** | ★ 1 | ★ true | ★ `<COMObject>` |
+        | ★★ 新的 14 参 `FeatureFillet3` | ★ **23 → 24** | ★ 1 | ★ true | ★ `<COMObject>` |
+        ⇒ ★★★★ **两者**都建成了圆角**、★ **特征数各 +1** ⇒ **干净的对照** ✓
+      ★★★★ **修法**：★ 旧的三参位置**逐字不变**（★ `Options=195` · `R1=radius` · `Ftyp` · `OverflowType`
+        · 三个 `None`）、★ **新增的 7 个都补中性值** ⇒ ★ **按官方 14 参顺序对位** ✓
+        ★ 官方逐字：★ `(int Options, double R1, double R2, double Rho, int Ftyp, int OverflowType,
+          int ConicRhoType, object Radii, object Dist2Arr, object RhoArr, object SetBackDistances,
+          object PointRadiusArray, object PointDist2Array, object PointRhoArray)` ✓
+      ★★★★★ **⚠ 我写这份探针时**踩了两次"用法错"**（★ 都如实记）：
+        ★ ① `CreateCornerRectangle` 在 pywin32 上报「非选择性的参数」⇒ ★ 改用 `CreateLine` ✓
+        ★★ ② ★★ **`sw_part.sketch()` 是**上下文管理器**、★ 必须 `with`** ——
+          ★ 我第一版写成 `P.sketch(model, "Front Plane")`（★ 不 `with`）⇒
+          ★★★ **它只造出生成器、★ 一个 COM 调用都不发** ⇒ ★ 症状是 `无法选择草图: Sketch2` ✓
+          ⇒ ★★★★ **⇒ 又是"我调错了"看起来像"能力坏了"**（★ **事实 517** 第 N 次）✓
     """
-    return model.FeatureManager.FeatureFillet(
-        195, radius, 0, 0, None, None, None
+    return model.FeatureManager.FeatureFillet3(
+        #: ★ 旧的三参逐字不变（★ `Options=195` · `R1` · `Ftyp=0` · `OverflowType=0`）
+        195, radius,
+        #: ★★ 新增：`R2`（非对称的第二半径）· `Rho`（圆锥 rho）⇒ ★ 对称圆角用中性值 0.0
+        0.0, 0.0,
+        #: ★★★ 新增：`Ftyp` · `OverflowType` · `ConicRhoType` ⇒ ★ 0 = 默认
+        0, 0, 0,
+        #: ★★★★ 新增的五个数组（★ `Radii` / `Dist2Arr` / `RhoArr` / `SetBackDistances` /
+        #:   `PointRadiusArray` / `PointDist2Array` / `PointRhoArray`）⇒ ★ **均匀半径时都传 `None`** ✓
+        None, None, None, None, None, None, None
     )
 
 
