@@ -461,10 +461,29 @@ def insert_sheet_metal_closed_corner(model) -> dict:
     added = _new_features(before, after)
     face_delta = _delta(before_faces, after_faces)
     vol_delta = _delta(before_vol, after_vol)
-    #: ★★ 官方回 void ⇒ ★ "至少一个可回读的量变了"才是判据（★ 而不是"返回非 None"）
-    changed = any(x is not None for x in (added, face_delta, vol_delta))
+    #: ★★★★ 2026-10-04（接手轮）**修掉一个"把缺一不可写成有一个就行"的判据** ——
+    #:   ★ 处置 `JUDGE-C_D_E.md` 的 🔴 #1（★ 裁判逐字：「★ doc 承诺的判据**没进 `ok`** ⇒
+    #:     **特征没建成也报成功**，★ 直接违反仓库规则 6（不静默成功）。★ 其中 **batch74 闭合角
+    #:     用 `or` 把「缺一不可」写成「有一个就行」是最严重的一处**」）✓
+    #:   ★★ **病灶（原文逐字）**：
+    #:     ```python
+    #:     "ok": bool(changed and (bool(added) or (face_delta or 0) != 0 or (vol_delta or 0) != 0))
+    #:     ```
+    #:     而**本函数的 docstring 第 439 行**写的是「★ 判据**只能**是：**特征树增量** +
+    #:     **实体面数增量** + **体积增量**（★ 后两个互相独立）」⇒ ★★★ **doc 说"都"、代码写"或"** ✓
+    #:   ★★★ **为什么"或"在这里必然出错**：★ 官方回 `void` ⇒ **没有返回值可判** ⇒
+    #:     若只看到"某一项变了"就报 `ok`，★ 那么**调用了一个什么都没干的 entry point 也可能报成功**
+    #:     （★ 例如选区恰好让某个计数抖动）⇒ ★★ **那正是"不静默成功"要防的** ✓
+    #:   ★★★★ **改成 `and` 的理由（可核）**：★ 一个真的建成的闭合角**必然同时**满足两件事 ——
+    #:     ① **特征树多一个特征**（★ 它是特征，不是几何操作）；② **至少一个几何量变**
+    #:     （★ 闭合角会改面 ⇒ 面数或体积至少一个动）⇒ ★ 所以 `bool(added) and (面变 or 体积变)` ✓
+    #:     ⚠ 保留「面变 **或** 体积变」这一层 `or` —— ★ 因为**两者都是几何量**，
+    #:     ★★ **不存在"只看某一个"的理由**，★ 而**要求两个都变**会过严（★ 有些闭合角只改面不改体积）✓
+    #:   ★★ **判据的分层**（★ 这条最值得记）：★★★ **不同**种类**的量之间用 `and`（都必须满足）、
+    #:     同一**种类**的两个量之间用 `or`（任一即可）** ✓
+    ok_judgement = bool(added) and ((face_delta or 0) != 0 or (vol_delta or 0) != 0)
     return {
-        "ok": bool(changed and (bool(added) or (face_delta or 0) != 0 or (vol_delta or 0) != 0)),
+        "ok": ok_judgement,
         "op": "insert_sheet_metal_closed_corner",
         "entry_point": "IModelDoc2.InsertSheetMetalClosedCorner（★ 零参 · **回 void**）",
         "returns_void": True,
@@ -479,8 +498,15 @@ def insert_sheet_metal_closed_corner(model) -> dict:
         "precondition_note": "★★ **官方页无 `## Remarks` 段 ⇒ 前置查不到** ⇒ 不编前置（铁律 5）",
         "pointer_family_note": "★ IClosedCornerFeatureData.IAccessSelections 已 Obsolete → IAccessSelections2；"
                                "★ ★ 而该族是**进程内指针接口**，★ 本仓 pywin32 后端到不了（事实 47）⇒ 本模块不碰",
-        "verified_by": "feature tree delta + solid face-count delta + volume delta"
-                       "（★ 官方回 void ⇒ 三个都是必要的）",
+        #: ★★★ 判据分层（★ 2026-10-04 修正）—— ★ **跨种类用 `and`、同种类用 `or`** ✓
+        "judgement_layers": {
+            "cross_kind": "★ 特征树增量 **and** 几何量变动（★ 两者**都**必须满足）",
+            "same_kind": "★ 面数变动 **or** 体积变动（★ 同一**种类**的两个量，任一即可）",
+            "why": "★ 官方回 void ⇒ 没有返回值可判 ⇒ ★ 若用 `or`，"
+                   "**一个什么都没干的调用也可能报成功**（★ 违反规则 6）",
+        },
+        "verified_by": "★ 特征树增量 **and**（面数增量 **or** 体积增量）"
+                       "（★ 官方回 void ⇒ ★ 没有「返回非 None」这条判据）",
     }
 
 
