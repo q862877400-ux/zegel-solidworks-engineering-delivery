@@ -1796,3 +1796,28 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **落地**：`capabilities.yaml` 新增 **`sketch_slot_types`**（level = **verified**，共 **95** 条）；台账**四条均补** `capability_id` ⇒ 已能 **68**。
      ★★ **方法论**：★ 一组 UI 上看着相似的条目，先查**它们是不是同一个 API 的不同枚举值** —— ★ 而**不是逐条写代码** ⚠
      ★ 而它与事实 430（边界凸台 vs 放样）同族：★ **UI 分不分开，只有 API 能定**（★ 那次是**同一个方法**、本次是**同一个方法的四个值**）。|真机：`tools/prove_sketch_slot_four_types.py`；证据 `output/sketch-slot-four-types-evidence.json`；官方：`C:\swapi\types\ISketchManager\CreateSketchSlot.md` × 反射 `enum_values_sldworks.txt` |
+| 433 | **★★★ 台账里手填的 `api` 名，有**7/24 指向已废弃的第一代****（★ 而 md 头顶那句 `Obsolete` **直接给继任者**） —— 2026-10-03（轮 554）。
+     ★ **起因**：轮 550 发现 `FeatureRevolveCut2` 已废弃后，本轮把它**一次扫完剩下 24 条**。
+     ★ **结果（逐条读 md 头顶）**：
+     ```
+     ★★ 指向废弃入口 7 条：
+       草图驱动的阵列  FeatureSketchDrivenPattern  ⇒ Obsolete. See `CreateFeature` + `ISketchDrivenPatternFeatureData`
+       表格驱动的阵列  InsertTableDrivenPattern    ⇒ **InsertTableDrivenPattern2**
+       填充阵列        FeatureFillPattern          ⇒ Obsolete. See `CreateFeature` + `IFillPatternFeatureData`
+       扫描曲面        InsertProtrusionSwept4      ⇒ Obsolete. See **Remarks**（★ 已查：新架构 / `InsertSweepSurface2`）
+       自由样式        InsertFreeform              ⇒ **InsertFreeform2**
+       曲面展平        InsertFlattenSurface        ⇒ **InsertFlattenSurface2**
+       解除剪裁曲面     InsertUntrimSurface         ⇒ **InsertUntrimSurface2**
+     ★ 未废弃 4 条：放样切除 / 边界切除（`InsertCutBlend`）· 高级孔（`HoleWizard5`）· 螺纹线（`InsertCosmeticThread3`）
+     ★ 其余 13 条在 `IFeatureManager` 下查不到 —— ★ 而**换接口后 23/24 都找得到**
+     ```
+     ★★ **故一条可复用的检查**：★ **凡台账 `api` 带 `2`、或**不带后缀**的，先去 md 头顶看那句 `Obsolete`** —— ★ 而**继任者名字就在那句里** ✓
+     ★ 而它与事实 429（旋转切除）**同一形态**。
+     ★★ **而本轮还纠了一个自己的错**：轮 554 我先报了“13 条 md 里查不到”—— ★ 而**那是我只扫了 `IFeatureManager` 一个接口**（★ 与**事实 51**：“分析范围要贴合组织单元”**同族**）；★ **全接口扫后 23/24 都在** ✓
+     ★ **而解除剪裁（真机）**：
+     ```
+     `InsertUntrimSurface2`（**5 参**） ⇒ 无错 · 树不动（★ **arity = 5 对**）
+     `InsertUntrimSurface` （第一代）传 5 参 ⇒ **无效的参数数目**（★ 它只收 **4**）
+     ★ 而**真正的问题是我的前置**：Remarks 要求“a face or edges you want to untrim”，而我造的是**从未被剪裁过的**拉伸曲面 ⚠
+     ```
+     ★ 故状态：**入口与 arity 已定，前置（得先有一张被剪裁的曲面）尚未搭对**—— ★ **不登记、留在可攻关**。|真机：`tools/prove_untrim_surface2.py`；证据 `output/untrim-surface2-evidence.json`；对照事实 51 / 429 |

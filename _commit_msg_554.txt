@@ -1,0 +1,38 @@
+test(map): 台账的 `api` 名**7/24 指向已废弃的第一代** —— 而 `Obsolete` 那句**直接给继任者**（事实 433）
+
+★ 承轮 550（发现 `FeatureRevolveCut2` 已废弃）⇒ 本轮把它**一次扫完剩下 24 条**。
+
+## 一、★ 逐条读 md 头顶那句 `Obsolete` 的结果
+
+```
+★★ 指向废弃入口 7 条：
+  草图驱动的阵列  FeatureSketchDrivenPattern  ⇒ Obsolete. See `CreateFeature` + `ISketchDrivenPatternFeatureData`
+  表格驱动的阵列  InsertTableDrivenPattern    ⇒ **InsertTableDrivenPattern2**
+  填充阵列        FeatureFillPattern          ⇒ Obsolete. See `CreateFeature` + `IFillPatternFeatureData`
+  扫描曲面        InsertProtrusionSwept4      ⇒ Obsolete. See **Remarks**（已查：新架构 / `InsertSweepSurface2`）
+  自由样式        InsertFreeform              ⇒ **InsertFreeform2**
+  曲面展平        InsertFlattenSurface        ⇒ **InsertFlattenSurface2**
+  解除剪裁曲面     InsertUntrimSurface         ⇒ **InsertUntrimSurface2**
+★ 未废弃 4 条：放样切除 / 边界切除（InsertCutBlend）· 高级孔（HoleWizard5）· 螺纹线（InsertCosmeticThread3）
+★ 其余 13 条在 IFeatureManager 下查不到 —— 而**换接口后 23/24 都找得到**
+```
+  ⇒ ★★ **故一条可复用的检查**：★ **凡台账 `api` 带 `2`、或**不带后缀**的，
+    先去 md 头顶看那句 `Obsolete`** —— ★ 而**继任者名字就在那句里** ✓
+
+## 二、★ 而本轮**纠正了我自己的一个错**
+
+★ 我先报了「13 条 md 里查不到」—— ★ 而**那是我只扫了 `IFeatureManager` 一个接口** ⚠
+  （★ 与**事实 51**「分析范围要贴合组织单元」**同族**）；★ **全接口扫后 23/24 都在** ✓
+
+## 三、解除剪裁的真机结果（★ 入口与 arity 已定，前置未搭对）
+
+```
+`InsertUntrimSurface2`（**5 参**）  ⇒ 无错 · 树不动（★ **arity = 5 对**）
+`InsertUntrimSurface`（第一代）传 5 参 ⇒ **无效的参数数目**（★ 它只收 **4**）
+★ 而**真正的问题是我的前置**：Remarks 要求 "a face or edges you want to untrim"，
+  而我造的是**从未被剪裁过的**拉伸曲面 ⚠
+```
+  ⇒ ★ **状态：入口与 arity 已定，前置（得先有一张被剪裁的曲面）尚未搭对** ——
+    ★ **不登记、留在可攻关**（★ 不假装做到）。
+
+★ 记成 **事实 433**。语法门禁 0 处（753 个文件）。
