@@ -90,16 +90,17 @@
 | 80 | `surface_offset` | `verified` | `original` | ✓ | — |
 | 81 | `surface_planar_region` | `verified` | `original` | ✓ | — |
 | 82 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
-| 83 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
-| 84 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
-| 85 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
-| 86 | `topology_optimization` | `verified` | `original` | ✓ | — |
-| 87 | `topology_readback` | `stitched` | `original` | ✓ | — |
-| 88 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
-| 89 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
-| 90 | `weldments` | `verified` | `upstream` | ✓ | — |
+| 83 | `surface_revolve` | `verified` | `original` | ✓ | — |
+| 84 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
+| 85 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
+| 86 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
+| 87 | `topology_optimization` | `verified` | `original` | ✓ | — |
+| 88 | `topology_readback` | `stitched` | `original` | ✓ | — |
+| 89 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
+| 90 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
+| 91 | `weldments` | `verified` | `upstream` | ✓ | — |
 
-**合计 90 条**。
+**合计 91 条**。
 
 ## 二、`level` 分布
 
@@ -109,7 +110,7 @@
 | `not_implemented` | 1 |
 | `source_verified` | 0 |
 | `stitched` | 12 |
-| `verified` | 77 |
+| `verified` | 78 |
 
 ## 三、`source` 分布
 
@@ -117,7 +118,7 @@
 |---|---|
 | `merged` | 0 |
 | `mixed` | 11 |
-| `original` | 60 |
+| `original` | 61 |
 | `undetermined` | 1 |
 | `upstream` | 18 |
 
@@ -129,7 +130,7 @@
 | `not_implemented` | 0 | 0 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
 | `stitched` | 0 | 3 | 9 | 0 | 0 |
-| `verified` | 0 | 8 | 51 | 1 | 17 |
+| `verified` | 0 | 8 | 52 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

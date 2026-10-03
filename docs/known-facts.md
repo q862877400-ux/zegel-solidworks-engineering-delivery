@@ -1415,3 +1415,20 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而它与事实 398 / 399 放在一起看：「旧式 vs 新架构」**不是分界线**（事实 399 已立），★ 而**前置是不是给全了」才是**。
      ★★ **教训固化**：★ **官方原话里的每个名词都要落实** —— ★ 本例里就是那个 **centerline**；★ 而它就在那句话里。
      ★ **落地**：`capabilities.yaml` 新增 **`surface_revolve`**（level = **`verified`**）—— ★ 而 limitations 里明写“**蓝图里必须有中心线**”与三项未查。|真机：`tools/probe_revolve_oldstyle.py`；证据 `output/revolve-oldstyle-evidence.json`；对照事实 398 / 399 |
+| 411 | **★★★ 「先缝合再加厚」也不成。**缝合本身成了）而加厚仍回 `None`**（★ 而缝合本身成了）** —— 2026-10-03（轮 530）。★ 而这一条**正是我自己写下的未查项**。
+     ★ **线索怎么来的**（★ 上一轮刚固化的钥匙 —— 事实 410）：**官方原话里的每个名词都要落实**。
+     ★ 官方对 `FeatureBossThicken` 的 **`FillVolume`** 参数逐字是：
+       > "True if you want to make a **solid from the knitted surface**, false if not"
+       ⇒ ★★ **“knitted surface”**（已缝合的面）—— ★ 直指“先 knit”。
+     ★ 而它**也是事实 403 里我自己写的未查项**：「① 能否先 `knit` 成一张再加厚」。
+     ★ 真机（`tools/probe_knit_then_thicken.py`，走 `sw_guard`、零弹窗）：
+     ```
+     先缝合 + 加厚（IFeatureManager） ⇒ ★ **缝合成功**（`曲面-缝合1` · surface 2→1）、而加厚 **回 `None`** · 树不动 · `solid` 仍 **0**
+     先缝合 + 加厚（IModelDoc2 旧式） ⇒ 同
+     对照：不缝合直接加厚      ⇒ 同
+     ```
+     ⇒ ★★ **故：「knitted surface」这条线索也被排除** ✓ —— ★ **即：加厚在“已缝合成一张”之后仍不成**。
+     ★ 而**加厚的总账现为 17 组 · 6 种入口形态**（★ 轮 502：1 · 503：7 · 504：3 · 520：3 · 本轮：3）。
+     ★ **而一个副产：缝合在本轮**又一次成了**（`曲面-缝合1` · surface 2→1）—— ★ 与事实 395 完全一致 ✓
+     ★ **按事实 53 停手**（加厚已 4 轮：502 · 503 · 504 · 520 · 530）。
+     ★★ **方法论回扣**：上一轮的钥匙（“原话里的名词都要落实”）**在旋转曲面上开了一把锁、在加厚上没开开** —— ★ 而**两者都是有价值的结果**（★ 一个成、一个排除）。|真机：`tools/probe_knit_then_thicken.py`；证据 `output/knit-then-thicken-evidence.json`；对照事实 395 / 401 / 403 / 410 |
