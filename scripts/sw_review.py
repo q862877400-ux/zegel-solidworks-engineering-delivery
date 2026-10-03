@@ -529,10 +529,28 @@ def inspect_bmp_preview(path, sample_limit=200000):
     return info
 
 
+def _graphics_redraw(model) -> None:
+    """★ 重画图形窗口 —— ★ 走**后继入口**（★ 2026-10-03 接手轮换的）。
+
+    ★ 官方 `types/IModelDoc2/GraphicsRedraw2.md` 逐字：
+      「**Obsolete. Superseded by [[IModelView::GraphicsRedraw]] and [[IModelView::IGraphicsRedraw]].**」
+    ★ 而后继的签名多一个 `Rect`（`void GraphicsRedraw( System.object Rect )`）：
+      ★ `## Parameters` 逐字「Array of four integers or longs indicating the boundary of the
+      region in the SOLIDWORKS graphics window to redraw;」
+    ★★ 官方例子两种用法都合法：`modelview.GraphicsRedraw(null)`（C#）· `(Empty)`（VB）· `(rect)`。
+    ★★★ 真机已验证（`tools/probe_graphicsredraw_successor.py` ·
+      `output/graphicsredraw-successor-evidence.json`）：★ `ActiveView` 拿得到 ·
+      `(None)` 与 `([0,0,800,600])` **都能调** ⇒ **PASS** ✓
+    """
+    view = get_com_member(model, "ActiveView")
+    if view is not None:
+        get_com_member(view, "GraphicsRedraw", None)
+
+
 def zoom_to_fit(model):
     """缩放到适合窗口并刷新图形。"""
     get_com_member(model, "ViewZoomtofit2")
-    get_com_member(model, "GraphicsRedraw2")
+    _graphics_redraw(model)
 
 
 def clear_selection_for_preview(model):
@@ -546,7 +564,7 @@ def clear_selection_for_preview(model):
                 get_com_member(model, "ClearSelection2", True)
         except Exception:
             pass
-    get_com_member(model, "GraphicsRedraw2")
+    _graphics_redraw(model)
 
 
 def activate_model_for_preview(model):

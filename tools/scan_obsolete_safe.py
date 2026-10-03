@@ -84,6 +84,49 @@ def main() -> int:
     files = (sorted((REPO / "scripts").glob("*.py"))
              + sorted((REPO / "mcp-server").glob("*.py"))
              + sorted((REPO / "tools").glob("*.py")))
+
+    #: ★★★★ 2026-10-03（接手轮）**修一个假阴性**：
+    #:   ★ 第一版 E1 用了 `check_env_pitfalls.strip_comments_and_strings` ——
+    #:     ★★ **它把字符串字面量也剥掉** ⇒ ★★★ 于是 `get_com_member(x, "SystemValue")`
+    #:     里的**成员名也没了** ⇒ ★ **全部 ① 形态的命中被漏掉**，★ 只剩点调用被抓到。
+    #:   ★ 实测证据：`IDimension.SystemValue` 是废弃的（★ 且只在 1 个接口上 ⇒ 属安全桶），
+    #:     而 `scripts/sw_document_data.py:221` 的 `get_com_member(dimension, "SystemValue")`
+    #:     **没出现在结果里**。
+    #:   ⇒ ★ 本版改用 **tokenize 只丢 COMMENT**（★ 保留 STRING）——
+    #:     ★ 与事实 61 定则④同精神：**工具函数用错场合就等于没有**。
+    def strip_comments_only(src: str) -> str:
+        import io as _io
+        import tokenize as _tk
+
+        out, last = [], (1, 0)
+        try:
+            for tok in _tk.generate_tokens(_io.StringIO(src).readline):
+                if tok.type == _tk.COMMENT:
+                    continue
+                out.append(tok)
+        except Exception:                                                 # noqa: BLE001
+            return src
+        #: ★ 按 token 类型重建：★ 直接拼 token 的原始文本（★ 保留字符串字面量）
+        try:
+            res = _tk.untokenize(out)
+            return res if isinstance(res, str) else res.decode("utf-8", "replace")
+        except Exception:                                                 # noqa: BLE001
+            lines = []
+            for line in src.splitlines():
+                #: ★ 退化路径：★ 只砍掉"看起来在字符串外面"的 `#`
+                q = None
+                for i, c in enumerate(line):
+                    if q:
+                        if c == q and line[i - 1] != "\\":
+                            q = None
+                    elif c in "\"'":
+                        q = c
+                    elif c == "#":
+                        line = line[:i]
+                        break
+                lines.append(line)
+            return "\n".join(lines)
+
     rows, scanned, calls = [], 0, 0
     for f in files:
         if f.name.startswith("_"):
@@ -93,11 +136,8 @@ def main() -> int:
             raw = f.read_text(encoding="utf-8", errors="replace")
         except Exception:                                                 # noqa: BLE001
             continue
-        #: ★ E1 —— 剥掉注释与字符串（★ 但仍保留代码里的字符串字面量用于 ① 形态）
-        try:
-            code = strip_comments_and_strings(raw)
-        except Exception:                                                 # noqa: BLE001
-            code = raw
+        #: ★ E1 —— 只剥**注释**（★ 保留字符串字面量，★ 否则成员名一起没了）
+        code = strip_comments_only(raw)
         lines = raw.splitlines()
         code_lines = code.splitlines()
         #: ★ E2 依据：本文件里出现过的官方**后继**名字集合
