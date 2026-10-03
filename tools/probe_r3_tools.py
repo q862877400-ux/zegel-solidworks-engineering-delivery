@@ -149,11 +149,15 @@ def _delta(before: dict, after: dict) -> dict:
 
 
 def _l_shape_sketch(doc):
-    """★ L 形**折线**（★ `create_base_flange` 的文档逐字：open polyline ⇒ **profile flange**，即有折弯的件）。"""
+    """★ **闭合矩形**草图 —— ★ `create_base_flange` 的文档逐字：closed contour ⇒ **平板**。
+
+    ★★ 2026-10-03 修：上一版画**两条线**（想当"开放折线"走 profile flange）⇒ ★ 真机上
+      `create_base_flange` **回了 `ok=False` 且不抛错**（★ 静默无输出那个体量）⇒
+      ★ 换成**闭合矩形**（官方文档里最明确的那个形态）先把"有没有钣金件"这件事确定下来。
+    """
     P.start_sketch(doc, plane_name="Front Plane")
-    sm = _g(doc, "SketchManager")
-    _g(sm, "CreateLine", -0.05, -0.03, 0.0, 0.05, -0.03, 0.0)
-    _g(sm, "CreateLine", 0.05, -0.03, 0.0, 0.05, 0.02, 0.0)
+    _g(_g(doc, "SketchManager"), "CreateCornerRectangle",
+       -0.05, -0.03, 0.0, 0.05, 0.03, 0.0)
     P.end_sketch(doc)
     names = [n for n in (P.feature_names(doc) or [])
              if n.startswith("草图") or n.lower().startswith("sketch")]
@@ -170,10 +174,17 @@ def _line_sketch(doc):
 
 
 def _profile() -> str:
+    """★ 找**焊件轮廓**（`.sldlfp`）—— ★ 必须落在 `weldment profiles` 目录下。
+
+    ★★ 2026-10-03 修：上一版直接 `rglob("*.sldlfp")` 取第一个 ⇒ ★ 挑到的是
+      `...\design library\features\inch\fluid power ports\...sldlfp`
+      —— ★ **那是"库特征"、不是焊件轮廓** ⇒ `InsertStructuralWeldment5` 必失败
+      （★ 真机报「创建失败」—— 而错误信息**指不出是轮廓选错了**）。
+    """
     for root in (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks"):
-        hits = sorted(Path(root).rglob("*.sldlfp"))
-        if hits:
-            return str(hits[0])
+        for h in sorted(Path(root).rglob("*.sldlfp")):
+            if "weldment profiles" in str(h).lower():
+                return str(h)
     return ""
 
 
