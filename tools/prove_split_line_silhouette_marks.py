@@ -83,8 +83,9 @@ def _build_cylinder(doc):
     return box, (0.015, 0.0, z_mid)
 
 
-def _case(sw, tag, dir_mark, pick_face):
-    row = {"tag": tag, "dir_mark": dir_mark, "pick_face": pick_face, "ok": False}
+def _case(sw, tag, dir_name, dir_mark, pick_face):
+    row = {"tag": tag, "dir_name": dir_name, "dir_mark": dir_mark,
+           "pick_face": pick_face, "ok": False}
     doc = None
     try:
         doc = C.new_document(sw, "part")
@@ -96,9 +97,9 @@ def _case(sw, tag, dir_mark, pick_face):
         if dir_mark is not None:
             #: ★ 官方：方向项用 `SelectByID2` + **mark 2**（★ 上一会话用的是 mark 0）
             try:
-                if P._select_by_id(ext, "\u524d\u89c6\u57fa\u51c6\u9762", "PLANE",
+                if P._select_by_id(ext, dir_name, "PLANE",
                                    append=False, mark=dir_mark):
-                    picked["direction"] = "\u524d\u89c6\u57fa\u51c6\u9762(mark %d)" % dir_mark
+                    picked["direction"] = "%s(mark %d)" % (dir_name, dir_mark)
             except Exception as exc:                                      # noqa: BLE001
                 row["err_dir"] = str(exc)[:100]
         if pick_face:
@@ -133,10 +134,16 @@ def _case(sw, tag, dir_mark, pick_face):
 
 
 CASES = (
-    ("\u2605 S1 \u65b9\u5411\u9879 mark 2 + \u9762 mark 1\uff08\u7167\u5b98\u65b9\uff09", 2, True),
-    ("\u2605 S2 \u65b9\u5411\u9879 mark 0 + \u9762 mark 1\uff08\u4e0a\u4e00\u4f1a\u8bdd\u7684\u9009\u6cd5\uff09", 0, True),
-    ("\u2605 S3 \u65b9\u5411\u9879 mark 2 + **\u4e0d\u9009\u9762**", 2, False),
-    ("\u2605 S4 **\u4e0d\u9009\u65b9\u5411\u9879** + \u9762 mark 1", None, True),
+    ("\u2605 S1 \u524d\u89c6\u9762 mark 2 + \u9762 mark 1\uff08\u7167\u5b98\u65b9\uff09", "\u524d\u89c6\u57fa\u51c6\u9762", 2, True),
+    ("\u2605 S2 \u524d\u89c6\u9762 mark 0 + \u9762 mark 1\uff08\u4e0a\u4e00\u4f1a\u8bdd\u7684\u9009\u6cd5\uff09", "\u524d\u89c6\u57fa\u51c6\u9762", 0, True),
+    ("\u2605 S3 \u524d\u89c6\u9762 mark 2 + **\u4e0d\u9009\u9762**", "\u524d\u89c6\u57fa\u51c6\u9762", 2, False),
+    ("\u2605 S4 **\u4e0d\u9009\u65b9\u5411\u9879** + \u9762 mark 1", "\u524d\u89c6\u57fa\u51c6\u9762", None, True),
+    #: ★★ S5/S6：★ 圆柱的轴是 +Z，而**前视面的法向也是 +Z** ⇒ 视线**顺着轴**
+    #:   ⇒ 轮廓退化成圆环本身（与已有边重合）⇒ ★ 换**上视面**（法向 +Y）**横着看**。
+    ("\u2605 S5 **\u4e0a\u89c6\u9762** mark 2 + \u9762 mark 1\uff08\u6a2a\u7740\u770b\uff09", "\u4e0a\u89c6\u57fa\u51c6\u9762", 2, True),
+    ("\u2605 S6 \u4e0a\u89c6\u9762 mark 2 + **\u4e0d\u9009\u9762**", "\u4e0a\u89c6\u57fa\u51c6\u9762", 2, False),
+    #: ★★ S7：★ **只把 mark 2 换成 mark 0**（几何正确）—— ★ 隔离"官方那个 2 到底承不承重"
+    ("\u2605 S7 \u4e0a\u89c6\u9762 **mark 0** + \u9762 mark 1\uff08\u53ea\u6539 mark\uff09", "\u4e0a\u89c6\u57fa\u51c6\u9762", 0, True),
 )
 
 
@@ -147,8 +154,8 @@ def main() -> int:
                "\u7167\u5b98\u65b9 mark \u8868\uff08\u65b9\u5411\u9879 2 \u00b7 \u9762 1\uff09",
           "official": "mark 2 = direction item \u00b7 mark 1 = faces to split",
           "cases": []}
-    for tag, dm, pf in CASES:
-        ev["cases"].append(_case(sw, tag, dm, pf))
+    for tag, dn, dm, pf in CASES:
+        ev["cases"].append(_case(sw, tag, dn, dm, pf))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "silhouette_split_line_works" if ev["passed"] else "still_fails"
