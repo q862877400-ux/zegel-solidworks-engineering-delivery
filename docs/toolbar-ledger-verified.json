@@ -1467,9 +1467,9 @@
    "zh": "路径长度尺寸",
    "api": "AddPathLengthDimension",
    "entry": "sw_sketch_dimensions.*",
-   "level": "没验过",
+   "level": "不能",
    "batch": "B5",
-   "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。",
+   "note": "★ 2026-10-03（轮 490）**真机证据**：verdict=不能（dim=[0, 0] rel=[0, 0]）—— 证据 `output/b5-sketch-dimensions-evidence.json`",
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
@@ -1770,7 +1770,8 @@
    "zh": "添加几何关系",
    "api": "SketchAddConstraints",
    "entry": "sw_part.add_sketch_relation",
-   "level": "能",
+   "level": "不能",
+   "note": "★ 2026-10-03（轮 490）**真机证据**：verdict=不能（dim=[0, 0] rel=[0, 0]）—— 证据 `output/b5-sketch-dimensions-evidence.json`",
    "api_iface_hits": [],
    "api_member_hits": [
     "SketchAddConstraints"
@@ -1781,16 +1782,16 @@
    "implemented_hits": [
     "SketchAddConstraints"
    ],
-   "tier": "已能"
+   "tier": "待验证"
   },
   {
    "tb": "草图关系",
    "zh": "完全定义草图",
    "api": "FullyDefineSketch",
    "entry": "sw_sketch_dimensions.*",
-   "level": "没验过",
+   "level": "能",
    "batch": "B5",
-   "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。",
+   "note": "★ 2026-10-03（轮 490）**真机证据**：verdict=能（dim=[0, 1] rel=[0, 0]）—— 证据 `output/b5-sketch-dimensions-evidence.json`",
    "api_iface_hits": [],
    "api_member_hits": [
     "FullyDefineSketch"
@@ -1801,7 +1802,7 @@
    "implemented_hits": [
     "FullyDefineSketch"
    ],
-   "tier": "待验证"
+   "tier": "已能"
   },
   {
    "tb": "曲面",

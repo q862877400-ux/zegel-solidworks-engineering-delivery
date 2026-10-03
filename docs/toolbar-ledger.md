@@ -71,8 +71,8 @@
 | 特征 | 筋 | **待验证** | `InsertRib` | `sw_part.rib_report` |
 | 特征 | 线性阵列 | **待验证** | `FeatureLinearPattern4` | `sw_part.linear_pattern` |
 | 特征下拉 | 曲线-组合曲线 | **待验证** | `InsertCompositeCurve` | `sw_part.insert_composite_curve_report` |
-| 草图关系 | 完全定义草图 | **待验证** | `FullyDefineSketch` | `sw_sketch_dimensions.*` |
 | 草图关系 | 显示/删除几何关系 | **待验证** | `ISketch`, `DeleteRelation` | `sw_sketch_dimensions.*` |
+| 草图关系 | 添加几何关系 | **待验证** | `SketchAddConstraints` | `sw_part.add_sketch_relation` |
 | 草图尺寸 | 水平尺寸 | **待验证** | `AddHorizontalDimension2` | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 竖直尺寸 | **待验证** | `AddVerticalDimension2` | `sw_sketch_dimensions.*` |
 | 草图编辑 | 交叉曲线 | **待验证** | `IntersectCurves` | `sw_sketch_edit_ops.sketch_intersect_curves` |
@@ -115,7 +115,7 @@
 | 特征 | 曲线-螺旋线/涡状线 | **已能** | `InsertHelix` | `sw_helix.insert_helix` |
 | 特征 | 镜向 | **已能** | `InsertMirrorFeature2` | `sw_part.mirror_feature` |
 | 特征下拉 | 圆周阵列 | **已能** | `FeatureCircularPattern4` | `sw_part.circular_pattern` |
-| 草图关系 | 添加几何关系 | **已能** | `SketchAddConstraints` | `sw_part.add_sketch_relation` |
+| 草图关系 | 完全定义草图 | **已能** | `FullyDefineSketch` | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 智能尺寸 | **已能** | `AutoDimension2` | `sw_part.auto_dimension_sketch` |
 | 草图绘制 | 3点中心矩形 | **已能** | `Create3PointCenterRectangle` | `sw_sketch_primitives.sketch_3point_center_rectangle` |
 | 草图绘制 | 3点圆弧 | **已能** | `Create3PointArc` | `sw_sketch_primitives.sketch_3point_arc` |
