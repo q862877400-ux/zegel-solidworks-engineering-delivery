@@ -52,8 +52,9 @@
 
 ## B5 草图尺寸与关系（8 条）
 
-- [ ] **T501** 水平尺寸 `AddHorizontalDimension2` —— ⚠ **会挂**（★ 单跑 4.41s 后 `sw_alive: null`）⇒ 已单列
-- [ ] **T502** 竖直尺寸 `AddVerticalDimension2` —— ⚠ **会挂**（★ 单跑 **120.42s** 后 `sw_alive: null`）⇒ 已单列
+- [ ] **T501** 水平尺寸 `AddHorizontalDimension2` —— ⚠ **弹「修改」框、等人填数**（★ 事实 421 修正了“会挂”：`hung=false`）
+  → 证据：`output/dialog-events/2026-10-03T13:4*.json`（★ 控件树：SLIDER×3 + THUMB WHEEL×3）
+- [ ] **T502** 竖直尺寸 `AddVerticalDimension2` —— ⚠ **同上（弹「修改」框）**（★ 事实 421）
 - [x] **T503** 尺寸链 `InsertChainDimensions` ✅ 轮 492 —— ★★ **真因查清**：`getattr` 回 `(None, None, None)`
   （★ **事实 386/387**）；★ 而用 `dispid` 直调（轮 494：`dispid=319`、三种包装全 `ok=True`）**特征树仍不动**
   ⇒ ★ **按事实 53 停下**；状态 =「**包装层现象已定性，几何前置未通**」（★ 不是后端到不了）
