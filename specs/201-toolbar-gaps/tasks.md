@@ -92,8 +92,12 @@
 - [x] **T703** 通过参考点的曲线 `InsertCurveFile*` ✅ 轮 481 —— 真机 **建成**（★ 树新增 `曲线1`）· 已是工具 `solidworks_insert_curve_through_points`
 - [ ] **T704** 变量阵列 `InsertVaryInstanceIncrement/Override` —— ★ **标 Obsolete** ⇒ 继任者是
   `IInstanceToVaryOptions` + `CreateDefinition`（★ 新架构）⇒ 另列
-- [ ] **T705** 分割线 · **T706** 投影曲线 —— ⚠ 分割线两条真机**树无增量**（★ 前置还不够）；
-  投影曲线 `InsertProjectedSketch2` **标 Obsolete** ⇒ 继任者 `IProjectionCurveFeatureData` ⇒ 另列
+- [ ] **T705** 分割线 —— ⚠ 真机两条**树无增量**（★ 前置还不够）
+- [x] **T706** 投影曲线 ✅ 轮 508 —— ★★ **定性已下（★ 事实 392）**：
+  `InsertProjectedSketch2` 标 **Obsolete** ⇒ 继任者是 **`CreateDefinition(swFmRefCurve = 14)`**
+  → **`IProjectionCurveFeatureData`**（★ 存在，4 属性 / 7 方法）—— ★ 而它的成员里**有
+  `AccessSelections` / `IAccessSelections` / `IAccessSelections2`** ⇒ ★★ **落进「指针族」
+  ⇒ 与线性阵列（事实 385）、扫描曲面同族 ⇒ **到不了**（★ 按 A4 不登记成工具）
   → 验收: 特征树增量
   → 证据: `output/b7a-curve-split-evidence.json`（★ 真机 2/4）
 
