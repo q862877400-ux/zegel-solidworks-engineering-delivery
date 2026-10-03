@@ -1,0 +1,51 @@
+fix(阶段2): ★★★★★ **T1 第 2 条** —— ★ `SetSaveToName`（官方标 Obsolete）⇒ 换 `SetSaveToName2`；★ 并**顺带发现"把成员名当指纹"这一类**
+
+■ 一 · ★ 逐条流程 ①：查官方签名与 Remarks
+  ★ **旧页逐字**（★ `C:\swapi\types\IPackAndGo\SetSaveToName.md`）：
+    > ★ 「**Obsolete. Superseded by `IPackAndGo::SetSaveToName2`**.」✓
+    ★ 签名：★ `SetSaveToName(bool Override, string SaveToName)` ⇒ **2 参** ✓
+  ★★ **后继逐字**（★ `IPackAndGo/SetSaveToName2.md`）：
+    ★ **无 Obsolete** · ★ 签名**同样 2 参、★ 同名同型** ✓
+    ★★ 而它的 `## Remarks` 逐字：★ 「The difference between this method and the now obsolete
+      `IPackAndGo::SetSaveToName` is that this method **supports saving to minimal folders**.
+      It saves to any folder structure as defined by `IPackAndGo::FolderStructureOption`.」✓
+  ★★★ **⇒ 所以本处**只需换名字****（★ 实参不用动、★ 接口也不用换）✓
+  ★★★★ 而新成员**多了**「支持最小文件夹」的能力 ⇒ ★ **对我们只有好处、★ 不改行为** ✓
+
+■ 二 · ★ 修法
+  ★ **两处调用**（★ L825 / L983）⇒ `.SetSaveToName2(...)` ·
+    ★★ **错误消息里的名字也跟着换**（★ 否则日志会指一个废弃名）✓
+  ★★★ **并写明官方依据**（★ 两页逐字 + 为什么只需换名字）✓
+
+■ 三 · ★★★★★ 而复扫时**顺手发现**第二类用法** —— ★ 值得单记
+  ★ `scripts/sw_delivery.py` L732 原来逐字：
+    `if hasattr(value, "_oleobj_") or hasattr(value, "**SetSaveToName**"):` ✓
+  ★★ **它不**调用**那个成员 —— ★ 它**拿成员名当指纹**来判断"这个对象是不是 `IPackAndGo`"** ✓
+  ★★★ **⇒ 而指纹也要换** —— ★ 因为**新对象不一定还有旧名字**、
+    ★★ 而**一定会有新名字**（★ 官方既然后继了，★ 现行那个才是稳的）✓
+  ★★★★ **⇒ 可复用判据**：★★★ **换废弃成员时，要连「把它当**名字**用」的地方一起换** ——
+    ★ 那些地方**不是调用**（★ `hasattr` / `getattr` / 字符串比较 / 注册表键 / 错误消息）⇒
+    ★★ **所以"搜调用点"搜不到它们** ✓
+    （★ 本会话此前在 `ARITY` 表 / `MEMBERS` 表上也见过同一形态）✓
+
+■ 四 · ★ 复扫（★ 逐条流程第 ④ 步）
+  ★ `python tools/scan_obsolete_safe.py` ⇒ ★★ **真命中 38 → **36**** ✓
+  ★★ **⇒ 那条的两处调用**都消掉了**（★ 一改就少 2）✓
+  ★★★ **而"剥注释后还剩 1 处 `SetSaveToName(`"是**我的计数没剥 docstring**** ——
+    ★ 我随后用 AST 逐节点核过：★ **属性访问**全是 `SetSaveToName2`** ·
+    ★★ **字符串**只剩 `'SetSaveToName2'`（★ 指纹）** ·
+    ★★★ **唯一的旧名在 L751 的 docstring 里**（★ 叙述性文本、★ **保留是对的**）✓
+    ⇒ ★★★★ **值记**：★★★ **只剥注释、不剥 docstring 的计数会假阳性**（★ 事实 513 的又一形态）✓
+
+■ 五 · ★★ 新增测试（★ `tests/test_obsolete_setsavetoname.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **读官方两页**确认废弃链 + 后继没被废弃 + Remarks 语义（★ 判据的锚点）✓ |
+  | ★★★ **核心断言** | ★ **属性访问**不许再是 `.SetSaveToName(`、★ 且后继调用 **≥ 2 处** ✓ |
+  | ★★★ **核心断言** | ★ **指纹也要换** —— ★ 字符串常量里要有 `SetSaveToName2`、★ **且不许有裸的旧名** ✓ |
+  | ★★ **负例 · 补正** | ★ **docstring 里引旧名是允许的**（★ 否则看不出这次改了什么）✓ |
+
+■ 六 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **真命中：★ 39 → 38 → **36**** ⇒ ★★★ **剩余生产待办：★ 14 条** ✓
+  ★★★★ **下一轮**：★ 下一个候选 —— ★ `Get` ×4（★ 后继 `ICustomPropertyManager::Get2`）✓

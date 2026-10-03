@@ -729,7 +729,17 @@ def _coerce_dispatch(value):
     """@brief 将原始 IDispatch 包装为 pywin32 对象，普通假对象原样返回。"""
     if value is None:
         return None
-    if hasattr(value, "_oleobj_") or hasattr(value, "SetSaveToName"):
+    #: ★★★★ 2026-10-04（接手轮）**同一个废弃成员名的**第二类用法**：★ 把它当**指纹**探测** ——
+    #:   ★ 本行原来写 `hasattr(value, "SetSaveToName")` ⇒ ★★ 那是**拿一个已废弃的成员名
+    #:   当"这个对象是不是 `IPackAndGo`"的判据** ✓
+    #:   ★★★ **官方逐字**：★ `IPackAndGo/SetSaveToName.md` ⇒
+    #:     「**Obsolete. Superseded by `IPackAndGo::SetSaveToName2`**」✓
+    #:   ⇒ ★★★★ **所以指纹也要换成现行的那个** —— ★ 因为**新对象不一定还有旧名字**、
+    #:     而**一定会有新名字** ✓
+    #:   ★★ **可复用判据**：★★★ **换废弃成员时，要连**「把它当名字用」的地方一起换** ——
+    #:     ★ 那些地方**不是调用**（★ `hasattr` / `getattr` / 字符串比较 / 注册表键），
+    #:     ★★ **所以"搜调用点"搜不到它们** ✓
+    if hasattr(value, "_oleobj_") or hasattr(value, "SetSaveToName2"):
         return value
     try:
         return win32com_client.Dispatch(value)
@@ -822,8 +832,20 @@ def _pywin32_pack_and_go(
     package.IncludeSuppressed = bool(include_suppressed)
     package.FlattenToSingleFolder = bool(flatten)
     document_count = int(get_com_member(package, "GetDocumentNamesCount"))
-    if not package.SetSaveToName(True, str(target) + os.sep):
-        raise RuntimeError("IPackAndGo.SetSaveToName 拒绝目标目录")
+    #: ★★★★ 2026-10-04（接手轮）**换掉一个官方废弃成员** ——
+    #:   处置阶段 2 · T1（★ `tools/scan_obsolete_safe.py` 的真命中）★ 逐条流程第 ① 步 ✓
+    #:   ★ **官方逐字**（★ `C:\swapi\types\IPackAndGo\SetSaveToName.md`）：
+    #:     「**Obsolete. Superseded by `IPackAndGo::SetSaveToName2`**.」✓
+    #:     旧签名：★ `SetSaveToName(bool Override, string SaveToName)` ⇒ **2 参** ✓
+    #:   ★★ **后继逐字**（★ `IPackAndGo/SetSaveToName2.md`）：
+    #:     ★ 签名 `SetSaveToName2(bool Override, string SaveToName)` ⇒ ★★ **同样 2 参、★ 同名同型** ✓
+    #:     ★★★ 而它的 `## Remarks` 逐字：★ 「The difference between this method and the now obsolete
+    #:       `IPackAndGo::SetSaveToName` is that this method **supports saving to minimal folders**.
+    #:       It saves to any folder structure as defined by `IPackAndGo::FolderStructureOption`.」✓
+    #:   ★★★ **⇒ 所以本处**只需换名字****（★ 实参不用动、★ 接口也不用换）——
+    #:     ★★ 而新成员**多了**「支持最小文件夹」的能力 ⇒ ★ **对我们只有好处、★ 不改行为** ✓
+    if not package.SetSaveToName2(True, str(target) + os.sep):
+        raise RuntimeError("IPackAndGo.SetSaveToName2 拒绝目标目录")
 
     status_codes = _status_codes(extension.SavePackAndGo(package))
     outputs = _collect_new_outputs(target, existing_files)
@@ -968,8 +990,9 @@ def _comtypes_pack_and_go(
         ]
         # AddExternalDocuments 用于附加非模型依赖文件，不保证接受装配体的原生零件引用。
         # 即使枚举不完整也执行原生保存，随后以实际落盘文件审计是否缺失依赖。
-        if not package.SetSaveToName(True, str(target) + os.sep):
-            raise RuntimeError("IPackAndGo.SetSaveToName 拒绝目标目录")
+        #: ★★ 同上（★ 第二处）：★ `SetSaveToName` 官方已废弃 ⇒ 换 `SetSaveToName2`（★ 同 2 参）✓
+        if not package.SetSaveToName2(True, str(target) + os.sep):
+            raise RuntimeError("IPackAndGo.SetSaveToName2 拒绝目标目录")
 
         status_codes = _status_codes(extension.SavePackAndGo(package))
         outputs = _collect_new_outputs(target, existing_files)
