@@ -66,7 +66,14 @@ def test_the_three_criteria_are_met() -> None:
     assert float(c2["值"]) <= 60.0, "★ 空格率 %s%% 超过 60%%" % c2["值"]
     assert float(c3["值"]) >= 30.0, "★ 双源一致率 %s%% 低于 30%%" % c3["值"]
     #: ★ 分子分母也要对得上（★ 防"改了分母"）
-    assert c1["分子"] == 35 and c1["分母"] == 280, "★ 判据①的分子/分母变了：%r" % c1
+    assert c1["分子"] == 21 and c1["分母"] == 280, "★ 判据①的分子/分母变了：%r" % c1
+    #: ★★★★ 2026-10-04（轮 99）**判据① 已进「好」档**（★ 12.50% → **7.50%**）——
+    #:   ★ 靠的是**给 `OPS` / `OBJ_RULES` 补词**（★ 依据 `output/unplaced-tools-analysis.json`
+    #:   的逐条分析：★ 35 个里 28 个是"操作轴一条规则都不命中"、★ 19 个是对象轴同理、
+    #:   ★★ **"其余（靠顺序截走）"是 0 个**）⇒ ★ **全是缺词、★ 不是顺序问题** ✓
+    #:   ★★ **而阈值一字未动**（★ 仍是 好≤10% / 可接受≤20%）✓
+    assert float(c1["值"]) <= 10.0, "★ 判据①掉出「好」档了：%s%%" % c1["值"]
+    assert c1["判定"] == "★ 好", "★ 判定不是「好」：%r" % c1["判定"]
 
 
 def test_negative_case_the_thresholds_are_untouched() -> None:
@@ -74,9 +81,27 @@ def test_negative_case_the_thresholds_are_untouched() -> None:
 
     ★★ **为什么**：★ 本轮的修法是**规范化输入**、★ **不是**放宽阈值 ⇒
       ★★★ **若哪天有人把 20 改成 30 来"通过"，本测试会红** ✓
+    ★★★ **而轮 99 又补了一层**：★ 那条修法是**给规则补词**（★ 也是"改输入"）、
+      ★★ **阈值仍然一字未动** ⇒ ★ 本条测试同时守住**两次修法** ✓
     """
     t = TOOL.read_text(encoding="utf-8", errors="replace")
     assert "≤ 20%" in t, "★ 判据①的阈值被改了"
+    assert "≤ 10%" in t, "★ 判据①的「好」档阈值不见了"
     assert "≤ 60%" in t, "★ 判据②的阈值被改了"
     assert "≥ 30%" in t, "★ 判据③的阈值被改了"
     assert "tool_text" in t, "★ 规范化那一步不见了"
+    #: ★★ 轮 99 的修法也守在里：★ **补词**（★ 不是删规则）
+    assert "轮 99" in t, "★ 没记轮 99 的补词修法"
+
+
+def test_negative_case_the_new_rules_come_from_real_tool_names() -> None:
+    """★★★ **负例 · 补的词要来自真工具名**：★ 不是为凑数 ✓
+
+    ★★ **判据（★ 可核）**：★ 新加的那些词**至少有一个真工具名含它** ⇒
+      ★★★ 否则就是**为把分母做小而编的词** ✓
+    """
+    import re as _re
+    tools = mb.our_tools()
+    joined = " ".join(mb.tool_text(t) for t in tools).lower()
+    for word in ("gear", "helix", "fastener", "costing", "delivery", "motion", "flatten"):
+        assert word in joined, "★ 补的词 `%s` **没有任何真工具名含它** ⇒ 那是凑数" % word

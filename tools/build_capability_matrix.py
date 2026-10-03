@@ -41,17 +41,33 @@ OUT = REPO / "output" / "operation-object-matrix.json"
 #:   规则 = 对「族名 + 成员名」做关键词匹配；★ 顺序即优先级（★ 先匹配到的算）。
 OPS: list = [
     ("建", r"Create|Insert|Add|New|Make|Build|Sketch|Feature(?!Data)|Extrud|Revolv|Loft|Sweep|"
-           r"Fillet|Chamfer|Hole|Rib|Shell|Draft|Pattern|Mirror|Thicken|Wrap"),
+           r"Fillet|Chamfer|Hole|Rib|Shell|Draft|Pattern|Mirror|Thicken|Wrap|"
+           #: ★★★★ 2026-10-04（轮 99）**补词**（★ 消解"无处可放" · ★ **阈值不动、★ 只加词**）——
+           #:   依据：`output/unplaced-tools-analysis.json` 的**逐条**分析 ——
+           #:   ★ 35 个无处可放里 **28 个**是"`OPS` 一条规则都不命中"、★ **19 个**是对象轴同理、
+           #:   ★★ **而"其余（★ 靠顺序截走）"是 0 个** ⇒ **全是缺词、★ 不是顺序问题** ✓
+           #:   加的词**都来自真实工具名**（★ 不是为凑数）：★ `Gear` / `Helix` / `Fastener` /
+           #:   `Costing` / `Delivery` / `Motion` / `Flatten` / `Measure` / `Summary` ✓
+           r"Gear|Helix|Fastener|Flatten|Dome|Bend|"
+           r"Activate|Calibrate|Recalculate"),
     ("改", r"Edit|Modify|Set|Update|Rebuild|Change|Assign|Apply|Reorder|Suppress|Unsuppress|"
-           r"Replace|Delete|Remove|Clear|Reset"),
+           r"Replace|Delete|Remove|Clear|Reset|"
+           #: ★ 同上（★ 轮 99 补词）
+           r"Fix|Float|Move|Rotate|Scale|Stretch|Trim|Extend|Offset"),
     ("组合", r"Assembl|Mate|Compon|Explode|Interfer|Collision|Pattern(?:Component)|"
              r"AddComponent|Fix|Float"),
     ("查", r"Get|Read|Query|List|Count|Is[A-Z]|Has[A-Z]|Measure|Mass|Propert|Find|Select|"
-           r"Enumerat|Inspect|Evidence|Report"),
+           r"Enumerat|Inspect|Evidence|Report|"
+           #: ★ 同上（★ 轮 99 补词）
+           r"Collect|Summary|Entities|Traceability|Types|Default|Value|Check|Validat"),
     ("表达", r"Drawing|View|Annotation|Dimension|Note|Balloon|Table|BOM|Sheet|Export|Save|"
-             r"Print|Pdf|Dxf|Stl|Iges|Step|Image"),
+             r"Print|Pdf|Dxf|Stl|Iges|Step|Image|"
+             #: ★ 同上（★ 轮 99 补词）
+             r"Delivery|PackAndGo|Preview|Template"),
     ("校核", r"Stud|Simulat|Mesh|Analys|Topolog|Result|Load|Restraint|Frequency|Buckl|"
-             r"Thermal|Fatigue|Displace"),
+             r"Thermal|Fatigue|Displace|"
+             #: ★ 同上（★ 轮 99 补词）
+             r"Motion|BoundingBox|CenterOfMass|DFM|Dfm"),
     ("参数化", r"Equation|Config|DesignTable|Parameter|Global|Variable|Driven|Family"),
 ]
 
@@ -73,6 +89,13 @@ OBJ_RULES: list = [
     ("视图/外观", r"View|Camera|Scene|Appearance|Render|Display|Color"),
     ("参考几何", r"RefPlane|RefAxis|CoordinateSystem|ReferencePoint|Plane|Axis"),
     ("Costing/交付", r"Cost|PackAndGo|Bom|Delivery"),
+    #: ★★★★ 2026-10-04（轮 99）**补两个对象**（★ 消解"无处可放" · ★ **阈值不动、★ 只加词**）——
+    #:   依据 `output/unplaced-tools-analysis.json`：★ 19 个工具在对象轴上**一条规则都不命中**、
+    #:   ★★ 而**缺的正是"传动件"与"体/测量"这两类**（★ `Gear` / `Helix` / `Fastener` /
+    #:   `CenterOfMass` / `BoundingBox` / `Entities`）✓
+    #:   ★★★ **判据**：★ 新加的两个对象名**能从工具名反推**（★ 不是为凑数）✓
+    ("传动件", r"Gear|Helix|Fastener|Thread|Spring|Belt|Chain|Pulley"),
+    ("体/测量", r"Cent(?:er|re)OfMass|BoundingBox|EntitiesOnBody|MassPropert|Interference"),
 ]
 
 
