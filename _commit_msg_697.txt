@@ -1,0 +1,55 @@
+feat(阶段1): ★★★★★ 处置 A-3 —— ★ **给 `GATE-FINAL` 的 C8 建"可读对象"**（★ 它自称「唯一常驻硬门禁」，★ 而唯一依据的文件**当时不存在**）
+
+■ 一 · ★ A-3 的病灶（★ 裁判逐字）
+  > ★ C8 自称「★★ **唯一常驻硬门禁**」，★ 而**判据的唯一依据 `docs/refuted-patterns.json`
+  > 在仓里不存在**（★ 全仓只有散文提及）⇒ ★ 判「**不成立**」，即「这条闸今天没有可读对象」✓
+
+  ★★ 我核了（★ 实测）：
+    · ★ `docs/refuted-patterns.json` **不存在** · ★ `docs/` 下**没有任何 `*refut*` 文件** ✓
+    · ★★ 全仓提到它的地方**全是散文**（★ 5 个 `.md` + 我的提交信息）✓
+    · ★★★ `GATE-FINAL.md` 的 C8 逐字：「### C8 · 台账分叉 —— 已证伪清单的锚点必须逐字命中
+      `known-facts.md`（★★ **唯一常驻硬门禁**）」· ★「**唯一判据**：`docs/refuted-patterns.json`
+      里每条的 `anchor_quote` **必须逐字出现在 `docs/known-facts.md` 中**。★ 有一个不命中 ⇒ 失败」
+  ⇒ ★★★★ **即：★ 这条闸**永远「通过」**，★ 因为**没东西可判**** ✓
+    ★ 而这正是**事实 40** 那句：「一个**存在但没人用**的守卫与没有守卫等价，**且更糟**」✓
+
+■ 二 · ★★★★ 修法：★ **不删 C8，★ 而是给它对象**
+  ★ C8 的判据**只要求**「本表里每条的 `anchor_quote` 逐字出现在 `known-facts.md` 中」
+    ⇒ ★★ **所以我只要把"已证伪的模式"落成台账、★ 且逐字抄事实表** ⇒ **C8 立刻有对象、且能通过** ✓
+
+  ★★★ 新增 `tools/build_refuted_patterns.py` · `docs/refuted-patterns.json`（★ **10 条**）：
+  | ★ id | ★ 被推翻的"曾经以为" |
+  |---|---|
+  | `name-only-matching` | ★ 按成员名查就能判废弃（★ 事实 511：二维表）|
+  | `coverage-inflation-by-docstrings` | ★ 覆盖率 91.3% / 判据 8.66% 以为是大成功（★ 实为 docstring 污染）|
+  | `strip-comments-means-strip-comments` | ★ 「剥注释」就是剥 `#`（★ 真源是 **docstring**）|
+  | `deprecated-means-broken` | ★ 废弃就该换（★ **旧的真建成了、新的调不通**）|
+  | `newer-generation-same-signature` | ★ 签名一样就能替换（★ 新入口**回数组**、旧的回标量）|
+  | `guard-exists-means-guard-works` | ★ 有检查就等于防住（★ `_coerce_dispatch` **除 None 外全放行**）|
+  | `whitelist-of-forms` | ★ 枚举已知几种写法就够（★ 实测 **6 种**、旧判据漏 **63 处**）|
+  | `totals-match-details` | ★ 打印的总数 == 存下的明细（★ 真因是 `[:30]` **截断**）|
+  | `same-family-same-verdict` | ★ 同族结论应一样（★ `FeatureFillet` 成、`FeatureLinearPattern3` 不成）|
+  | `scan-scope-equals-repo` | ★ 扫 `scripts/`+`mcp-server/` 就够（★ 真现在 `subskills/` 下）|
+
+  ★★★★ 每条**都带四样**：★ `claim`（曾经以为）· ★ `refuted_by`（被什么推翻）·
+    ★ **`anchor_quote`（逐字取自事实表）** · ★ `cost`（代价多大）· ★ `prevention`（怎么防）✓
+
+■ 三 · ★★★ 而建的过程**又踩了两个坑**（★ 都由可核的判据当场抓到）
+  ① ★ **第一版我用 `**事实 511**` 当 `anchor_quote`** ⇒ ★★ 而事实表用的是 **`| 511 |` 的表格行**
+     ⇒ ★ **6 条没逐字命中** ✓
+     ★ 修法（★ **可核、不手抄**）：★ **在事实表里搜一个关键词、然后**从原文整行截取**** ——
+     ★★ 手抄会引入引号/空格差异，★ **那就又不逐字命中了** ✓
+     ⇒ ★ 实测：★ **9/10 一次修好**，★ 剩 1 条换个探针后 **10/10 全部通过** ✓
+  ② ★ **ASCII 双引号又踩一次**（★ 本会话**第 3 次**：`label` · `limitations` · 这次是 `build_refuted_patterns.py`）
+     ⇒ ★ **Python 里写中文串时引号一律用 `「」`** ✓
+
+■ 四 · ★★ 如实记：本轮**只做到"给它对象"**，★ 没有把 C8 接进门禁
+  ★ C8 现在住在 `specs/…/gate-cand/GATE-FINAL.md`（★ **那是草稿**）⇒
+    ★★ **它还没被接进 `release_check`** ⇒ ★★★ **所以"闸有了对象"≠"闸在跑"** ✓
+  ★ 接进门禁是**另一个动作**（★ 要写 `scripts/check_*.py` + 挂进 `release_check.py` + 一条测试）——
+    ★★ 那是**下一轮的候选**，★ **本轮不声称已完成** ✓
+
+■ 五 · ★ 收尾
+  ★ `docs/refuted-patterns.json` 写出（★ 10 条、★ **`anchor_quote` 10/10 逐字命中**）✓
+  ★ 收尾链：**`release_check 第 1 轮 OK`** ✓
+  ★★ **A-1 / A-2 / A-3 三条"立刻改"至此全部处置完毕** ✓

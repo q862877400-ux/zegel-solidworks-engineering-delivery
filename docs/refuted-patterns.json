@@ -1,0 +1,98 @@
+{
+  "schema": "refuted-patterns/1",
+  "note": "★ 本表给 GATE-FINAL 的 C8（唯一常驻硬门禁）提供**可读对象**。★ C8 的判据逐字是：本表里每条的 `anchor_quote` **必须逐字出现在 docs/known-facts.md 中**。",
+  "why": "★ 2026-10-04（接手轮）的 A-3 查出：C8 自称「唯一常驻硬门禁」，而它唯一依据的这个文件**当时在仓里不存在** ⇒ 那条闸**没有可读对象、永远通过**（与**事实 40**「存在但没人用的守卫」同族）✓",
+  "inclusion": "★ 每条都是「**曾经被当成对的、后来被真机或复核推翻**」的东西 —— 不是注意事项，而是**已付出代价的记录** ✓",
+  "patterns": [
+    {
+      "id": "name-only-matching",
+      "claim": "★ 按**成员名**在官方表里查，就能判断一个成员是否废弃（一度以为可以）",
+      "refuted_by": "★ 真机 + 官方页复核：同名成员**散在多个接口上**（事实 511）",
+      "anchor_quote": "| 511 | **★★★★ 官方 API 是「**接口 × 成员**」的二维表 —— ★ 按**成员名**扫（废弃 / 枚举 / 签名）**必有假阳性****（2026-10-03 接手轮，★ 自证伪 + 量化）。",
+      "cost": "★ 一次扫描报出 870 处命中，头几名全是假阳性",
+      "prevention": "★ 判据必须带**接口**维度；本仓用「所有接口都废弃」的安全桶收窄 ✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 整行截取）"
+    },
+    {
+      "id": "coverage-inflation-by-docstrings",
+      "claim": "★ 抽取器从源码抽成员名 ⇒ 覆盖率 76.9% → 91.3%、判据 21.30% → 8.66%，一度以为是大成功",
+      "refuted_by": "★ **抽查 6 个工具**：每一个都含同一批成员（都来自某个被每个模块 import 的通用帮手的 docstring）",
+      "anchor_quote": "| 512 | **★★★★ \"覆盖率从 76.9% 涨到 91.3%、判据从 21% 降到 8.66%\" 是一次**假象** —— ★ 真因是抽取器把全仓文档拖进了每个工具**（2026-10-03 接手轮，★ 四版修正的完整链条）。",
+      "cost": "★ 差一点把假象写进事实表；真值只有 85.9% / 20.94%",
+      "prevention": "★ 覆盖率读数必须**先抽查样本**才可信（事实 512）；从源码抽名字要**剥 docstring** ✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe '覆盖率从' 定位并整行截取）"
+    },
+    {
+      "id": "strip-comments-means-strip-comments",
+      "claim": "★ 「剥注释」就是剥掉 `#` 后面的东西（一度以为一句话就完事）",
+      "refuted_by": "★ **负例自检**回 `(False, True)`：那些「注释」其实是 **docstring 的正文**",
+      "anchor_quote": "| 54 | **来源块必须是 `def` **之前**的顶层 `#` 注释块 —— 写在 docstring 里**不算**** —— 2026-10-01 实测（轮 42）：我给 `release_check.py` 加了一个探针函数，把 `# ── 来源 ──` 块**写进函数的 docstring**（看起来更内聚）⇒ `scripts/check_provenance.py` 报「**25 行新增代码没有可追溯的出处**」，**而它报的行号是**后面** `run_release_check` 里的行**（因为插入把原来的覆盖链断开了）⇒ **错误信息指向不了真因**。**⇒ 三条：",
+      "cost": "★ 这一件事改了五版，前四版全错",
+      "prevention": "★ 「剥注释」要同时想清三样：`#` 注释 · **docstring** · 普通字符串字面量；且**必须用负例验一次** ✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe 'docstring' 定位并整行截取）"
+    },
+    {
+      "id": "deprecated-means-broken",
+      "claim": "★ 官方标了 `Obsolete` 的成员，就该换掉（一度当成规则）",
+      "refuted_by": "★ 真机逐条对照：`FeatureFillet(7 参)` **真的建成了**，而它的后继 `FeatureFillet3(15 参)` **连调都调不通**",
+      "anchor_quote": "| 2 | `IFeatureManager.FeatureExtrusion3` 是 23 个参数；`FeatureExtrusion2` 已废弃被 3 取代 | `C:\\swapi\\types\\IFeatureManager\\FeatureExtrusion3.md` + delancy827 README 独立佐证 |",
+      "cost": "★ 若按「废弃就换」批量改，会把能用的换成不能用的",
+      "prevention": "★ 换之前问**两个可核的问题**：① 旧的现在能不能用？② 新的能不能**做到同一件事**？✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe '废弃' 定位并整行截取）"
+    },
+    {
+      "id": "newer-generation-same-signature",
+      "claim": "★ 后继的签名只要看起来一样，就能直接替换（一度以为是纯改名）",
+      "refuted_by": "★ 真机：`GetSystemValue3` 回的是**数组**（官方例子逐字 `dimValue_1(0)`），而旧的 `GetSystemValue2` 回**标量** ⇒ 直接 `float()` **会 TypeError**",
+      "anchor_quote": "         ★ 实例：★ `GetSystemValue3` 的验证**卡了三轮**（★ 都卡在\"要有一个真实尺寸\"）：",
+      "cost": "★ 一族的命名升级**顺手也改了返回形态**，而签名页看不出来",
+      "prevention": "★ 凡从属性/旧方法换到 `Get*2` / `Get*3` 家族，都要问「**它回标量还是数组？**」✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe 'GetSystemValue3' 定位并整行截取）"
+    },
+    {
+      "id": "guard-exists-means-guard-works",
+      "claim": "★ 代码里有一个检查，就等于防住了（一度这么以为）",
+      "refuted_by": "★ 真机：`_coerce_dispatch` **除 `None` 外什么都放行**（对 bound method，`Dispatch()` 失败后 **`return value` 原样返回**）",
+      "anchor_quote": "| 40 | **`IModeler.Create*Surface` 的返回值**不可靠** —— 不是「有些能有些不能」，而是**同一个调用跨次也会变****（2026-10-01，**四轮探针**）：第 13 轮 `CreateCylindricalSurface` **成功**；第 26 轮 `spherical`/`toroidal` 成、`cylindrical`/`conical` 返回 `None`；第 27 轮受控实验只 `axis=(1,0,0)` 成（**排除了顺序与单例状态**）且 `*2` 全 `None`。**官方**：该族 18 个里 **4 个标 `Obsolet",
+      "cost": "★ 它让 `_get_pack_and_go` 把 **bound method 当对象**返回，而调用方看不出来",
+      "prevention": "★ 「一个**存在但没人用**的守卫与没有守卫等价，**且更糟**」；守卫**必须被负例证伪过**才算守卫（事实 62）✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe '存在但没人用' 定位并整行截取）"
+    },
+    {
+      "id": "whitelist-of-forms",
+      "claim": "★ 枚举已知的几种写法就能覆盖全部（一度只在判据里列三种）",
+      "refuted_by": "★ 实测本仓有 **6 种** `*com_member` 写法（`get_` · `set_` · `call_` · `safe_get_` · `_safe_` · `_optional_`）⇒ 旧判据**漏 63 处**",
+      "anchor_quote": "| 100 | **成员名门禁补上「直接属性访问」盲区；判据三版演进，第三版靠「能响测试」才发现自己漏检** —— 2026-10-01（轮 160）：`check_member_names.py` 原来只认 `get_com_member` / `call_com_member` / `safe_get_com_member` 三种**包装形态** ⇒ ★ **`obj.Member(...)` 直接属性访问是盲区** —— 而 `077`（`GetSldWorksObject`）与 `159`（`InterferenceDetection` / `GetInterference`）**两个",
+      "cost": "★ 整个工程图族被算成抽不到成员，而矩阵据此把它们列成低密度格",
+      "prevention": "★ 凡「认若干种已知写法」的判据，都要问「**有没有一个形态能覆盖全部**」✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe 'safe_get_com_member' 定位并整行截取）"
+    },
+    {
+      "id": "totals-match-details",
+      "claim": "★ 一个脚本**打印的**总数与它**存下的**明细是同一个数（一度以为只是两处读法不同）",
+      "refuted_by": "★ 真因是 `[...][:30]` **截断**：**打印 52、存 30**",
+      "anchor_quote": "> **65536 字节的指令预算**限制 ⇒ **文件被截断，而被截掉的正好是**末尾最新的**那几条**",
+      "cost": "★ 我据此得出了「两个来源不一致」的**错误结论**，而它们读的是同一份数据",
+      "prevention": "★ **总数**与**明细节数**要**同时可见**；若必须截断，要显式写明「前 N 个，共 M 个」✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe '截断' 定位并整行截取）"
+    },
+    {
+      "id": "same-family-same-verdict",
+      "claim": "★ 同一个接口上的同一族废弃成员，处置结论应当一样（一度按族排期）",
+      "refuted_by": "★ 真机：`FeatureFillet` **旧的做到了**，而同族的 `FeatureLinearPattern3` **旧的做不到** ⇒ 两条结论相反",
+      "anchor_quote": "| 314 | **分诊的第四、五层证据（★ 两层都是自动化抓到的假缺口）**：`*_report` 包装已暴露 ⇒ 不是缺口（6 条）；**函数体只有 `pass` 的空存根 ⇒ 不做**（★ 抓到 `sw_part.hole_wizard`）· 段 3 两条真机 PASS（2026-10-03，轮 399）。  ## 一、★★★★★ 第四层：**功能已由另一个包装暴露** ⇒ 不是缺口（★ 6 条） ``` ★ 起因：★ 系统工具面里明明有 `solidworks_part_shell` / `rib` / `insert_dome` /    `insert_composite_curv",
+      "cost": "★ 按族批量下结论会把两条相反的结论压成一条",
+      "prevention": "★ **逐条真机判**；不许按族批量下「能/不能」的结论 ✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe 'FeatureLinearPattern3' 定位并整行截取）"
+    },
+    {
+      "id": "scan-scope-equals-repo",
+      "claim": "★ 扫 `scripts/` 与 `mcp-server/` 就等于扫了全部实现（一度以为如此）",
+      "refuted_by": "★ `scripts/sw_drawing.py` 是一个**动态桥接**（29 行、`^def` 匹配 0 个），真现在 `subskills/solidworks-engineering-drawing/scripts/` 下",
+      "anchor_quote": "| 78 | **死守卫的第三种形态「登记了却没接上」：本轮零发现；而「能不能被故障注入验证」本身是结构判据与语义判据的分界线** —— 2026-10-01（轮 137）扫了四个方向：磁盘 `tool_specs_batch*.py` ↔ `BATCH_MODULES`（10/10 全登记）· 反向幽灵登记（0）· 批次 `SPECS_*` ↔ `all_specs()`（41 条全在）· `inject` ↔ `RESOLVERS` 两个方向（`model` 31 / `sw_app` 6 / `study` 1，**无缺、无多**）⇒ ★ **接线一致，零发现**。★★ 关键区别：名称/",
+      "cost": "★ 整个工程图族（30+ 工具）抽到的成员近 0，矩阵据此把它们列成低密度格",
+      "prevention": "★ 扫描范围**本身是一个判据**：问「**这个仓库还有没有别的地方放着实现**」✓",
+      "anchor_note": "★ 本片段**逐字**取自 docs/known-facts.md（★ 由 probe 'subskills' 定位并整行截取）"
+    }
+  ]
+}
