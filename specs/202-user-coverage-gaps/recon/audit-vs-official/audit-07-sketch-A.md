@@ -1,0 +1,30 @@
+# audit-07-sketch-A · 核对 A（签名一致性）
+
+- **域**：07-sketch
+- **我们这边读的**：`scripts/sw_sketch.py` · `scripts/sw_sketch_edit.py` · `scripts/sw_sketch_modify_ops.py` · `scripts/sw_sketch_edit_ops.py`（四个文件都存在）
+- **只做**：核对 A —— 把调用点逐个实参与官方 Signature 的形参表并排数（个数 / 顺序 / 类型 / 官方形参表写明的量纲）
+- **官方源**：`C:\swapi\types\<接口>\<成员>.md` 的 **Signature + Parameters** 两段；`C:\swapi\examples\*.md` 里的**官方配方实参**；CHM 未覆盖到的一律不顶替
+- ★ 不判 B（前置与 mark）、不判 C（废弃链与枚举）——本文件不报那两类
+
+## 发现表
+
+| # | 我们的原文（文件 + 片段） | 官方的原文（文件 + 片段） | 分歧点 | 置信度 |
+|---|---|---|---|---|
+| 1 | `sw_sketch.py`：`return as_sequence(get_com_member(sketch, "GetContourEdges", contour))`（同文件 docstring 写 `"""取某个轮廓的边。⚠ 官方是 **1 参**（Contour 对象）。"""`，来源块写 `Object GetContourEdges(Object Contour)   ← **1 参**`） | `C:\swapi\types\ISketch\GetContourEdges.md`：`System.object GetContourEdges( System.object Xform )`；形参表 `- **Xform**: Array of size 16 doubles representing the transform` | 唯一的实参**类型不符**：我们把「轮廓对象」当形参传；官方形参名是 `Xform`、官方明写它是**16 个 double 的变换数组**（`Object` 只是容器类型，不是「任意对象」）。⚠ 官方同页还写 `This method supports sketches with one contour only. For sketches with multiple contours, use ISketch::GetSketchContours ... and then ISketchContour::GetEdges` ⇒ 官方给「按轮廓取边」的是 `ISketchContour::GetEdges`，不是本成员 | 高 |
+| 2 | `sw_sketch_edit_ops.py`：`seg = get_com_member(get_com_member(model, "SketchManager"), "CreateFillet",`<br>`float(radius_mm), int(constrained_corners))`（同文件模块头声明 `⚠ **单位**：长度**毫米**、角度**度** —— 换算在工具层边界做一次（规则 2）`） | `C:\swapi\types\ISketchManager\CreateFillet.md` 形参表：`- **Radius**: Radius of the fillet in meters`；<br>`C:\swapi\examples\Edit_Radial_Dimension_Example_CSharp.md`：`swSketchManager.CreateFillet(0.01, (int)swConstrainedCornerAction_e.swConstrainedCornerDeleteGeometry);` | `Radius` **量纲不符**：官方形参表明写 **meters**，官方配方实参传 `0.01`（=10 mm）；我们把 `_mm` 名下的值**原样传**（`radius_mm=10` ⇒ 传 10）⇒ 放大了 1000 倍。同模块另一处 `sw_sketch_edit.py` 调 `CreateChamfer` 时用的是 `mm(float(distance_mm))`，本行没有 | 高 |
+| 3 | `sw_sketch_edit_ops.py`：`return get_com_member(get_com_member(model, "SketchManager"), "SketchOffset2",`<br>`float(offset_mm), bool(both_directions), bool(chain),` | `C:\swapi\types\ISketchManager\SketchOffset2.md`：`System.bool SketchOffset2( System.double Offset, System.bool BothDirections, System.bool Chain, System.int CapEnds, System.int MakeConstruction, System.bool AddDimensions )`（**6 参、顺序与我们逐位一致**）；<br>`C:\swapi\examples\Sketch_Offset_Example_VB.md`：`status = swSketchManager.SketchOffset2(0.00254, True, True, swSkOffsetCapEndType_e.swSkOffsetArcCaps, ...)` | 形参表**本身没写**量纲，但官方配方实参的首参是 `0.00254`（=2.54 mm 的米制值）⇒ `Offset` 取米；我们把 `offset_mm` **原样传**（2.54 ⇒ 传 2.54）⇒ 与官方配方差 1000 倍。⚠ 个数与顺序都对得上，只有量纲对不上 | 高 |
+| 4 | `sw_sketch_edit_ops.py`：`int(num_x), int(num_y), float(spacing_x_mm), float(spacing_y_mm),`（`sketch_linear_pattern` 的实参列表第 3、4 位） | `C:\swapi\types\ISketchManager\CreateLinearSketchStepAndRepeat.md`：`SpacingX`: `Spacing between instances along the x axis`；<br>`C:\swapi\examples\Create_and_Edit_Linear_Sketch_Pattern_Example_CSharp.md`：`swSketchMgr.CreateLinearSketchStepAndRepeat(2, 2, 0.0254, 0.0254, 0.296705972839, 1.134464013796, "", true, true, false, true, true);` | 第 3、4 实参**量纲不符**：官方配方实参 `SpacingX=SpacingY=0.0254`（米制）；我们把 `spacing_x_mm` / `spacing_y_mm` 原样传。<br>★ 同一行里的 `AngleX` / `AngleY` 我们用 `math.radians(...)` 换算，与官方配方 `0.2967` / `1.1345`（弧度）**方向一致，不算分歧** | 高 |
+| 5 | `sw_sketch_edit_ops.py`：`float(arc_radius_mm), math.radians(float(arc_angle_deg)),`（`sketch_circular_pattern` 的实参列表第 1 位） | `C:\swapi\types\ISketchManager\CreateCircularSketchStepAndRepeat.md`：`ArcRadius`: `Radius for the circular sketch pattern`；<br>`C:\swapi\examples\Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md`：`swSketchMgr.CreateCircularSketchStepAndRepeat(0.03184378021964, 4.732863934409, 4, 1.570796326795, true, "", true, true, true);` | 第 1 实参**量纲不符**：官方配方实参 `ArcRadius = 0.03184378021964`（米制）；我们把 `arc_radius_mm` 原样传。<br>★ 第 2、4 位（`math.radians(...)`）与官方配方 `4.7329` / `1.5708`（弧度）**一致，不算分歧** | 高 |
+| 6 | `sw_sketch_modify_ops.py`：`⚠ \`AxisFlag\` 的**取值表官方两个源都没给** ⇒ ★ 按铁律 5 **原样透传 int，不猜语义**，`；同函数返回值里 `"axis_flag_semantics": "官方 swapi 与 CHM 均未给取值表 —— 原样透传"` | `C:\swapi\types\IModelDoc2\SketchModifyFlip.md` 形参表：`- **AxisFlag**: Axis about which to flip the sketch:` 逐条给出 `  - X = 1` 与 `  - Y = 2` | ⚠ **不是实参值错**（我们仍原样透传），而是**我们写下的官方依据与官方原文对不上**：官方 `swapi` 页的 `AxisFlag` 形参下**就带着取值表**（X=1 / Y=2），我们却断言「官方 swapi 与 CHM 均未给取值表」并把该断言写进了对外返回值 | 高 |
+
+## 核对覆盖（逐个实参数过的调用点）
+
+`sw_sketch.py` 22 处 · `sw_sketch_edit.py` 5 处 · `sw_sketch_modify_ops.py` 6 处 · `sw_sketch_edit_ops.py` 9 处 = **42 处调用点**逐个与官方 Signature 形参表并排数过。
+
+其中 **32 处**逐位一致（个数、顺序、类型都对得上），包括：`GetSketchSegments` / `GetArcs2` / `GetEllipses3` / `GetParabolas2` / `GetPolylines` / `GetSplines` / `GetSketchPoints2` / `GetUserPoints2` / `GetSketchContours` / `GetSketchRegions` / `GetSketchHatches` / `GetSketchSlots` / `GetSketchPictures` / `GetSketchPaths` / `GetSketchBlockInstances` / `GetSketchTextSegments`（官方全部 `System.object Xxx()`，**零参**）· `GetLines2( System.short CrossHatchOption )` · `SetAutomaticSolve(bool)` · `MergePoints(double)` · `FeatureByName(string)` · `GetSpecificFeature2()` · `FeatureByPositionReverse(int)` · `CreateChamfer(Type, Distance, AngleORdist)`（3 位全对，且 `Distance` 用了 `mm()` 换算）· `SketchMirror()`（0 参）· `SketchUseEdge3(Chain, InnerLoops)`（2 位）· `SketchModifyTranslate`（4 位）· `SketchModifyRotate`（3 位）· `SketchModifyScale`（1 位）· `IModelDocExtension.Stretch`（5 位、顺序一致、四个长度都做了 `/1000.0`）· `Select4(Append, Data)`（2 位）· `GetSelectedObjectCount2(int Mark)`（1 位）· `SketchTrim(Option, X, Y, Z)`（4 位，与官方配方 `SketchTrim((int)swSketchTrimChoice_e.swSketchTrimCorner, 0, 0, 0)` 位数一致）· `SketchExtend(X, Y, Z)`（3 位）· `CreateLinearSketchStepAndRepeat`（12 位、顺序逐位一致）· `CreateCircularSketchStepAndRepeat`（9 位、顺序逐位一致）· `IntersectCurves()`（0 参）。
+
+★ **查不到就说查不到**：CHM 解包目录下 **没有** `ISketch~GetContourEdges` 页 ⇒ 第 1 条只有 `swapi` 一个官方源支撑，本文件据此标注，不拿 CHM 顶替。`SketchOffset2` / 两个阵列成员的官方形参表**本身没写量纲**，第 3–5 条的量纲依据取自**官方配方实参**（`C:\swapi\examples\`），已在表里两段原文并列给出。
+
+---
+
+都核了 **42** 处调用点 · 报了 **6** 条 · 置信度为高的是 **第 1、2、3、4、5、6 条**（6 条全部为高）。

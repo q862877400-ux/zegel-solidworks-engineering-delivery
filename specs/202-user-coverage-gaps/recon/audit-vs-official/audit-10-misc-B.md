@@ -1,0 +1,29 @@
+# audit-10-misc-B · 核对 B（前置与 mark）
+
+域：`10-misc` · 只读核对 · 未运行 SolidWorks / pytest · 未改仓内任何文件。
+
+范围文件（全部存在，无「该域无对应文件」情况）：
+`scripts/sw_export.py` · `sw_review.py` · `sw_document_data.py` · `sw_ref_geometry.py` · `sw_helix.py` · `sw_loft.py` · `sw_sweep.py` · `sw_wrap.py` · `sw_gtol.py`
+
+| # | 我们的原文（文件 + 片段） | 官方的原文（文件 + 片段） | 分歧点 | 置信度 |
+|---|---|---|---|---|
+| 1 | `scripts/sw_ref_geometry.py`：<br>`obj = get_com_member(fm, "InsertRefPlane",`<br>`int(first_constraint), float(first_angle_or_dist),`<br>…`（★ 调用前**无任何选择动作**）<br>返回值里：<br>`"selection_mark": "★ 官方 Remarks 只说「these marks」、**未给取值表** ⇒ 不假定"` | `C:\swapi\types\IFeatureManager\InsertRefPlane.md`：<br>「Before calling this method, you must have selected the reference entities using these marks with [[IModelDocExtension::SelectByID2]]:」<br>「- 0 = First reference entity」<br>「- 1 = Second reference entity」<br>「- 2 = Third reference entity」 | 官方**给了 mark 取值表 0 / 1 / 2**，并要求调用前按这些 mark 选好参考实体；我们的代码断言「官方未给取值表 ⇒ 不假定」，且调用前不做任何选择 ⇒ 官方明写的前置两步都没做。 | 高 |
+| 2 | `scripts/sw_loft.py`（`_blend_args` 与 `_cut_blend_args` 各一处）：<br>`False,                   # UseAutoSelect` | `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md`：<br>「When UseAutoSelect is false, the user must select the bodies that the feature will affect.」<br>`C:\swapi\types\IFeatureManager\InsertCutBlend.md`：<br>「When UseAutoSelect is false, the user must select the bodies that the feature will affect.」 | 两个入口都把 `UseAutoSelect` **硬编码为 False**，而官方（两页逐字相同）写明该值为 false 时**必须由用户选中受影响的 body**；代码全程没有任何 body 选择动作，也没有把 `UseAutoSelect` 暴露成可配参数。 | 高 |
+| 3 | `scripts/sw_loft.py`（`create_loft_report`）：<br>`if use_selected_profiles and sel_n < 2:`<br>`"error": "放样至少要选 **2 个轮廓**（★ mark=1 —— 官方 Remarks）；"`<br>（`create_loft_cut_report` 同形：）<br>`if sel_n < 2:`<br>`"error": "放样切除至少要选 **2 个轮廓**（★ mark=1 —— 官方 Remarks）；"` | `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md`：<br>「You can use any number of profiles; however, if you select only one profile, then any selected guide curves must be closed curves.」<br>`C:\swapi\types\IFeatureManager\InsertCutBlend.md`：<br>「You can use any number of profiles; however, if you selected only one profile, then any selected guide curves must be closed curves.」 | 官方写「轮廓数量任意」，只在**只有 1 个轮廓**时附加「引导线须闭合」的条件；我们的两处前置门禁把 `< 2` 一律判失败，挡掉了官方明确允许的 1 轮廓情形。 | 高 |
+| 4 | `scripts/sw_review.py`（`set_standard_view`）：<br>`model.ShowNamedView2(str(view_name), -1)`<br>`model.ShowNamedView2("", view_id)`<br>（函数内无任何选择步骤，也不区分文档类型） | `C:\swapi\types\IModelDoc2\ShowNamedView2.md`：<br>「To set a named view to the active view in a drawing, the drawing view that contains the named view must be selected.」 | 官方在工程图场景写明：调用前**必须先选中包含该命名视图的 drawing view**；我们的 `set_standard_view` 不分零件 / 工程图、直接调用，既无选择步骤也无工程图分支。 | 中 |
+| 5 | `scripts/sw_helix.py`：<br>docstring：「官方示例显示要先**选中一个圆**（`SelectByID2` + `CreateCircle`）——螺旋线以那个圆为直径基准。」<br>运行时抛错文案：<br>`"最常见原因：**没有选中定义直径的圆**（官方示例先 SelectByID2 选圆再调）。"` | `C:\swapi\examples\Create_Spiral_Example_VB.md`：<br>`status = swModelDocExt.SelectByID2("Front Plane", "PLANE", -5.17981810568133E-02, 5.05753331558577E-02, 1.2310671470727E-03, False, 0, Nothing, 0)`<br>`swModel.ClearSelection2 True`<br>`Set swSketchSegment = swSketchMgr.CreateCircle(0#, 0#, 0#, 0.021866, 0.001156, 0#)`<br>`swModel.InsertHelix False, True, False, False, swHelixDefinedBy_e.swHelixDefinedBySpiral, 0, 0.04, 2, 0, 4.712388980385` | 官方例子的 `SelectByID2` 选的是 **`"Front Plane"`（类型 `"PLANE"`，mark=0）**，且紧接着 `ClearSelection2 True`；圆是之后用 `SketchManager.CreateCircle` 画的。我们代码与报错文案称「官方示例先 SelectByID2 选圆再调」，与例子的实际调用序对不上。 | 中 |
+| 6 | `scripts/sw_export.py`（`export_flat_pattern_dxf`）：<br>`return bool(model.ExportToDWG2(`<br>`output_path,`<br>`model_path,`<br>`SW_EXPORT_TO_DWG_SHEET_METAL,`<br>`True,`<br>`_sheet_metal_alignment_variant(alignment),`<br>`False,`<br>`False,`<br>`options,`<br>`None,`<br>`))`<br>（函数内无任何选择动作） | `C:\swapi\types\IPartDoc\ExportToDWG2.md`：<br>「You must select multi-body sheet-metal features (i.e., multiple flat-pattern features) before calling this method.」<br>**对照** `C:\swapi\examples\Export_Part_To_DWG_Example_VBNET.md`：<br>`swPart.ExportToDWG2(sPathName, sModelName, swExportToDWG_e.swExportToDWG_ExportSheetMetal, True, varAlignment, False, False,` … `options, Nothing)` —— 同一 Action 下示例**没有任何** SelectByID2 / SelectByRay | ★ **官方两源不一致**：Remarks 写「调用前必须选中多体钣金特征」，而官方 VB.NET 例子对同一个 Action（`swExportToDWG_ExportSheetMetal`）未做任何选择。我们的代码按「不选」实现 ⇒ 判不了谁对，两源原文都在上。 | 中 |
+
+## 核过但未发现分歧（本轮读过的官方页，未写进表）
+
+- `scripts/sw_wrap.py`：`IFeatureManager.InsertWrapFeature2.md` 的 mark 表（面 = 1 / 拔模方向 = 2 / 2D 草图 = 4，且 "3D sketches are not supported"）与 `Create_Wrap_Feature_on_Multiple_Faces_Example_VB.md` 的 `SelectByID2("Sketch30", "SKETCH", 0, 0, 0, False, 4, …)`、`SelectByRay(…, 2, True, 1, 0)` 与我们的 mark 一致。
+- `scripts/sw_sweep.py`：`Sweep Features and SweepFeatureData Objects.md` 的轮廓 = 1 / 路径 = 4 / 引导线 = 2 / 方向向量 = 128 与我们检查的三个 mark 一致；官方「创建」序里没有 `AccessSelections`（只在「编辑」序里），我们把它当可选、非判据，不构成对不上。
+- `scripts/sw_gtol.py`：`IGtol.GetFrame.md` 的「valid only if this Gtol was created in SOLIDWORKS 2022 or later」与 `IGtolFrame.AddIndicator.md` 的 5 个 `TolType` 白名单，与我们「先 `ConvertFormat()` 再 `AddFrame()`」及 5 值校验一致；`IModelDoc2.InsertGtol.md` 明写无选区也可，故无选择不算分歧。
+- `scripts/sw_document_data.py`：`IModelDoc2/Parameter.md` 与 `ICustomPropertyManager/Add3.md` 的 Remarks 均未写「必须先做什么」，无可比对的前置。
+- `scripts/sw_review.py` / `scripts/sw_export.py` 的 `ActivateDoc3`：`ISldWorks/ActivateDoc3.md` 只要求传**已载入**文档名与扩展名，示例未列额外前置。
+
+---
+
+都核了 **20 处**（9 个文件 × 官方成员页 / 官方专文 / 官方例子，含 grep 定位的 `ExportToDWG2`、`SetSheets`、`ISweepFeatureData`）。
+报出 **6 条**两段原文对不上的地方（无一条是凭印象推测，每条都给出可搜索的双方原文）。
+置信度为**高**的是第 **1、2、3** 条（基准面 mark 取值表 + 前置缺失、`UseAutoSelect=False` 违反官方「必须选 body」、`<2` 轮廓门禁与官方「任意数量」冲突）。

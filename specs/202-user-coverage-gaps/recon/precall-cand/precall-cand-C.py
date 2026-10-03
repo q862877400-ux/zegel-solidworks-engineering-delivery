@@ -471,19 +471,20 @@ def _select_marked(model, selector, kind, mark, *, append=False, body_index=0,
       * `"__current_selection__"`     → 直接用选区里的对象（走第 3 级）
     """
     k = str(kind).upper()
-    already = _count_by_mark(model, mark) if append else 0
-    want = max(int(min_count), already + (0 if already else 1))
-    if append:
-        want = max(int(min_count), already + 1) - 1 + 1   # = max(min_count, already+1)
+    #: ★★ **`append` 自动**：选区里**已经有东西**就必须 `Append=True`，否则官方语义表逐字
+    #:   「False / Not already selected / **Current selection is cleared**」⇒ ★ 会把前面
+    #:   那些 mark（如包覆的草图 mark 4）**整个抹掉** ★★ —— ★ 这正是官方 wrap 例子
+    #:   `Insert_Wrap_Feature_Example_VB.md` 第 44/46 行**两条都写 `True`** 的原因。
+    #: ★ 所以默认 `append=None` = 「按当前选区自动定」，★ 而**不是**「按 i>0」。
+    if append is None:
+        append = _count_by_mark(model, -1) > 0
+    #: ★★ 本函数**只往选区里加一个实体** ⇒ 目标 = max(调用方要的, 同 mark 已有 + 1)
+    same_mark = _count_by_mark(model, mark)
+    target = max(int(min_count), same_mark + 1) if append else max(int(min_count), 1)
     tried = []
 
     def _enough():
-        return _count_by_mark(model, mark) >= max(int(min_count), already)
-
-    # ── 0 · 先清一次（避免上一次残留的同 mark 项把 want_at_least 骗过去）──────────
-    if not append:
-        _clear(model)
-        want = max(int(min_count), 1)
+        return _count_by_mark(model, mark) >= int(min_count)
 
     # ── 1 · `__current_selection__` —— 没有点可用，只能走对象那条 ────────────────
     s = str(selector or "").strip()
@@ -512,12 +513,12 @@ def _select_marked(model, selector, kind, mark, *, append=False, body_index=0,
             "对「新生成的圆柱的边」会返回 null；③ 面用近似包围盒取心点，曲面件可能取偏。"
             % (label, s, body_index, k, "IEdge"))
 
-    if _select_by_ray(model, point, k, mark, append, want_at_least=want):
+    if _select_by_ray(model, point, k, mark, append, want_at_least=target):
         tried.append("SelectByRay(mark=%d)=%d" % (mark, _count_by_mark(model, mark)))
         return _count_by_mark(model, mark)
     tried.append("SelectByRay(mark=%d)→%d" % (mark, _count_by_mark(model, mark)))
 
-    if _select_by_point(model, point, k, mark, append, want_at_least=want):
+    if _select_by_point(model, point, k, mark, append, want_at_least=target):
         tried.append("SelectByID2(point,mark=%d)=%d" % (mark, _count_by_mark(model, mark)))
         return _count_by_mark(model, mark)
     tried.append("SelectByID2(point,mark=%d)→%d" % (mark, _count_by_mark(model, mark)))
