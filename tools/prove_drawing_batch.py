@@ -917,14 +917,10 @@ def case_v4_break_view(sw):
     return row
 
 
-def _count_of(obj, member):
-    """★ 读一个零参计数成员；读不到回 `None`（★ 判据降级，不猜 0）。"""
-    try:
-        return int(_get(obj, member) or 0)
-    except Exception:                                                  # noqa: BLE001
-        return None
-
-
+#: 墓碑（2026-10-03 接手轮）：这里原有一个 `_count_of(obj, member)` ——
+#:   它从没被调用过（`tests/test_no_uncalled_helpers.py` 点名），
+#:   而它的活儿已由下面的 `_out_count_of`（带 out 参数的那种）与 `_list_len_of` 分担
+#:   ⇒ 删掉；留墓碑而不是静默消失，免得下一个人以为「本来就没有」。
 def _out_count_of(obj, member):
     """★ 读**带 `out` 参数**的计数成员；读不到回 `None`（★ 判据降级，不猜 0）。
 

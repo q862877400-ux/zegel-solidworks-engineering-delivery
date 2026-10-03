@@ -420,14 +420,32 @@ def test_sketch_spline_fails_loudly_instead_of_returning_none():
         raise AssertionError("sketch_spline 返回 None 时**没有抛** —— 静默空操作")
 
 
-def test_sketch_spline_docstring_states_the_measured_failure():
-    """@brief ★★ docstring 必须写明**实测建不出来**与**为什么**（免得下一个人再试）。"""
+def test_sketch_spline_docstring_states_the_corrected_cause():
+    """@brief ★★★ docstring 必须写明**真因是数组包装形态**与**已建成**（★ 免得下一个人又信那条旧结论）。
+
+    ★★ **2026-10-03（接手轮）本条被改过** —— 它原先叫
+      `test_sketch_spline_docstring_states_the_measured_failure`，意图逐字是
+      「docstring 必须写明**实测建不出来**与**为什么**」。
+      ★★★ **那个意图是错的**：轮 141 见到的 `None` **不是**架构限制，
+      真因是**数组包装形态** —— ✗ `array.array('d')` 回 `None`；
+      ✓ `VARIANT(VT_ARRAY | VT_R8, 扁平 list)` **建成**（草图段数 **0 → 1**）。
+      ★ 而正解**当时就在本仓**：`scripts/sketch_relations.py:272-273` 逐字写着
+      「★★★ 必须包 `VARIANT(VT_ARRAY | VT_R8)` —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」。
+      ★★ **教训**：★ 一条**只断言 docstring 里有哪些字样**的测试，
+        会把**一个错误结论**连同它的措辞一起**固化**下来 ——
+        ★ 它测的是「我们**当时是这么想的**」，不是「**事实是什么**」。
+    """
     src = (REPO_ROOT / "scripts" / "sw_part.py").read_text(encoding="utf-8")
     i = src.index("def sketch_spline(")
-    doc = src[i:i + 2200]
-    assert "轮 141" in doc, "要标注实测轮次"
-    assert "重绘" in doc, "要写明「重绘后仍为 0」（排除掉那条解释）"
-    assert "CreateSpline3" in doc, "要点出后继与它的 BYREF 末参"
+    doc = src[i:i + 3600]
+    assert "轮 141" in doc, "要保留**原始观测**（那次确实见到 None）"
+    assert "VARIANT" in doc, "要写明**真因是数组包装形态**（★ 修法就靠它）"
+    assert "sketch_relations" in doc, "要点出**正解当时就在本仓的另一条路上**"
+    assert "CreateSpline3" in doc, "要点出后继与它的 BYREF 末参（★ 这条仍然成立）"
+    #: ★★ **反面断言**：不许再写回"建不出来"这种已被推翻的结论
+    assert "本函数建不出样条" not in doc, (
+        "★ docstring 又写回了「本函数建不出样条」—— 那条结论**已被真机推翻**"
+        "（`output/spline-fix-evidence.json`：seg 0 → 1）")
 
 def test_object_list_getters_document_their_shape():
     """@brief ★★ `get_sketch_slots` / `get_sketch_points` 返回**对象列表**（实测轮 142）。

@@ -15,11 +15,18 @@
 ★ 还查注入名：`spec.inject` 必须是 `RESOLVERS` 的键（★ 事实 169 的教训）。
 ```
 
-## 判据（三条，都是"静态可判"的）
+## 判据（四条，都是"静态可判"的）
 ```
 ① 每个 `Param.name`：∈ 目标函数形参 **或** ∈ `param_alias`
 ② 每个 `param_alias[src] = dst`（`dst` 非 `None`）：`dst` ∈ 目标函数形参
 ③ `spec.inject`（非空时）：∈ `RESOLVERS` 的键
+④ ★★ `spec.inject`（非空时）：**∈ 目标函数的形参名**（★ 2026-10-03 接手轮新加，事实 502）
+   ★ 为什么 ③ 不够：★ ③ 是"**存在性**"判据（问"这个注入名是不是解析器的键"），
+     而 ④ 问的是"**它等不等于目标函数的形参名**" —— ★ **两个名字之间的关系**。
+     ★★ `register()` 不传 `inject_as` ⇒ **注入键字面上等于 `inject` 的值** ⇒ ④ 不成立时真机必
+     `TypeError: unexpected keyword argument '<inject>'`。
+     ★ 实测（修前）：**11 条**全部 PASS 了 ①②③（★ 只有 ④ 能抓）。
+   ★ 豁免（★ 写明理由，不静默）：目标函数带 `**kwargs` ⇒ 不判；`extra_op` 非空 ⇒ 不判（那条路不调目标函数）。
 ```
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
@@ -91,6 +98,38 @@ def check() -> list[str]:
         if inj and inj not in resolver_keys:
             problems.append("%s: inject=%r 不是 RESOLVERS 的键（有：%s）"
                             % (spec.name, inj, sorted(resolver_keys)))
+
+        #: ④ ★★★ 2026-10-03（接手轮）**注入名还必须等于目标函数的形参名**（★ 事实 **502**）。
+        #:   ★ **为什么这条以前没有、而它必须要有**：`tool_registry.py:507` 是
+        #:     `kwargs[inject_as or inj] = resolver(params)`，★ 而 `register()`（同文件 `:559`）
+        #:     **不往下传 `inject_as`** ⇒ ★ **注入键字面上等于 `inject` 的值**
+        #:     ⇒ ★★ 若 `inject` 与目标函数的首参名不同，调用时必
+        #:     `TypeError: … got an unexpected keyword argument '<inject>'`。
+        #:   ★★★ **而判据 ③ 抓不到它**：③ 只问"这个注入名**是不是解析器的键**"，
+        #:     ★ **从不问"它等不等于目标函数的形参名"** ⇒ ★ 两者是**两个名字之间的关系**，
+        #:     而 ③ 是**存在性**判据 ⇒ ★★ **存在性判据看不见"配对"错**。
+        #:   ★ 实测（修前）：**11 条**（`batch10` 的 3 条 `sw_app` vs `sw` ·
+        #:     `batch38` 的 8 条 `manager` vs `cost_manager`）**全部 PASS 本门禁**
+        #:     ⇒ ★ 直到真机报 `TypeError` 才暴露（证据 `output/inject-key-evidence.json`）。
+        #:   ★ 口径（三条豁免，★ 都写明理由、不静默）：
+        #:     · 目标函数有 `**kwargs` ⇒ **不判**（注进去的名字它都收）；
+        #:     · `spec.extra_op` 非空 ⇒ **不判**（★ 那条路**根本不调目标函数**）；
+        #:     · 注入名为空 ⇒ **不判**。
+        if inj and getattr(spec, "extra_op", None) is None:
+            _has_var_kw = False
+            try:
+                _has_var_kw = any(q.kind == inspect.Parameter.VAR_KEYWORD
+                                  for q in inspect.signature(fn).parameters.values())
+            except (TypeError, ValueError):
+                pass
+            if not _has_var_kw and inj not in formals:
+                problems.append(
+                    "%s: inject=%r **不在 %s 的形参表里**（形参：%s）—— ★ `register()` 不传 "
+                    "`inject_as` ⇒ **注入键字面上等于 inject 的值** ⇒ 调用时必 "
+                    "`TypeError: unexpected keyword argument %r`（★ 事实 502）。"
+                    "★ 修法：把 `inject` 改成与目标函数首参一致，并在 `RESOLVERS` 里加一行"
+                    "（★ 那张表就是为此设计的 —— 事实 169）"
+                    % (spec.name, inj, spec.function, sorted(formals)[:10], inj))
     return problems
 
 
@@ -197,13 +236,15 @@ def main() -> int:
         total = len(rc.all_specs())
     except Exception:                                          # noqa: BLE001
         pass
-    print("参数绑定门禁 · 扫 %d 个工具（判据：声明名 ∈ 形参 或 ∈ param_alias）" % total)
+    print("参数绑定门禁 · 扫 %d 个工具（判据：声明名 ∈ 形参 或 ∈ param_alias；"
+          "★ 注入名 ∈ RESOLVERS **且** ∈ 目标函数形参）" % total)
     if problems:
         print("\n  [FAIL] %d 处：" % len(problems))
         for x in problems[:40]:
             print("    · %s" % x)
         return 1
-    print("  [PASS] 0 处 —— 每个声明参数都有归属，param_alias 目标都存在，注入名都是解析器的键")
+    print("  [PASS] 0 处 —— 声明参数都有归属、param_alias 目标都存在、"
+          "注入名既是解析器的键、也与目标函数的形参名一致（★ 事实 502）")
     return 0
 
 
