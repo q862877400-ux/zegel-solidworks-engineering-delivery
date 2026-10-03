@@ -137,6 +137,40 @@ def check() -> list[str]:
                     "★ 修法：把 `inject` 改成与目标函数首参一致，并在 `RESOLVERS` 里加一行"
                     "（★ 那张表就是为此设计的 —— 事实 169）"
                     % (spec.name, inj, spec.function, sorted(formals)[:10], inj))
+
+        #: ⑤ ★★★ 2026-10-03（接手轮）**目标函数的「必填形参」，spec 必须声明它**。
+        #:   ★ 为什么必须有它：①②④ 问的都是「**声明了的名字有没有去处**」，
+        #:     ★ **没有一条反过来问「函数要的东西，spec 给没给」**
+        #:     ⇒ ★★ **漏一个必填参不会被抓**。
+        #:   ★ 实测（`tools/probe_r3_tools.py` 的真机报错带出来的）：
+        #:     `solidworks_delivery_pack_and_go_audit_matrix`（`tool_specs_batch36.py`）
+        #:     **只声明 3 个参数、而函数要 8 个** ⇒ 真机
+        #:     `TypeError: … missing 2 required positional arguments: 'associated_drawings' and 'outputs'`
+        #:     （★ 另有 3 个 `KEYWORD_ONLY`，Python 补上位置参数后**再报**）。
+        #:   ★ 豁免（★ 写明理由，不静默）：① 该形参就是**注入名**（由 `RESOLVERS` 供给）；
+        #:     ② spec 有 **`derived_args`**（★ 它会补 kwargs、静态看不出来）。
+        _supplied = {alias.get(p.name, p.name) for p in spec.params}
+        if inj:
+            _supplied.add(inj)
+        try:
+            _params = inspect.signature(fn).parameters
+        except (TypeError, ValueError):
+            _params = {}
+        for _r, _par in _params.items():
+            if _par.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
+                continue
+            if _par.default is not inspect.Parameter.empty or _r in ("self", "cls"):
+                continue
+            if _r in _supplied:
+                continue
+            if getattr(spec, "derived_args", None) is not None:
+                continue
+            problems.append(
+                "%s: 目标函数 %s 的**必填形参 %r 没被声明** ⇒ 调用时必 "
+                "`TypeError: missing 1 required positional argument: %r`。"
+                "★ 修法：给它补一个 `Param(%r, …)`（★ 或确认它本该由 `derived_args` 供给 —— "
+                "那就给 spec 加上 `derived_args`）。"
+                % (spec.name, spec.function, _r, _r, _r))
     return problems
 
 
