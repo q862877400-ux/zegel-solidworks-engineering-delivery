@@ -37,13 +37,13 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    from .sw_connect import out_i4, get_com_member, set_com_member
+    from .sw_connect import out_i4, get_com_member, set_com_member, create_empty_dispatch_variant
 except ImportError:
     #: ★★ 2026-10-01（轮 319）：**这条 fallback 原本少了 `set_com_member`** ——
     #:   而本机走的**就是**这条（`scripts` 不是包）⇒ 修完"设属性"的 11 处之后
     #:   立刻报 `NameError: name 'set_com_member' is not defined`。
     #:   ★ 教训：两条 import 分支的**名字集合必须一致**（★ 否则"只在 package 模式能跑"）。
-    from sw_connect import out_i4, get_com_member, set_com_member
+    from sw_connect import out_i4, get_com_member, set_com_member, create_empty_dispatch_variant
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -217,23 +217,52 @@ def create_render_material(model, name: str, spec: RenderMaterialSpec):
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
-# 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IModelDocExtension 段
-# 定位:   官方调用序列的收尾两步：
-#           1) Boolean AddRenderMaterial(RenderMaterial, Int32& Count)  ← 应用
-#           2) Void   UpdateRenderMaterialsInSceneGraph(Boolean)       ← 刷新场景图
-#         两者是 ApplyRenderMaterial 的组成部分，与 CreateRenderMaterial 配套。
-# ⚠ 末位 Int32& 出参不保证回写，故不据此判成败（见 create_render_material 的说明）。
+# 仓库:   SolidWorks 官方 API（`C:\swapi`，三源之一）
+# 文件:   C:\swapi\types\IModelDocExtension\AddDisplayStateSpecificRenderMaterial.md
+#           → 签名 Boolean AddDisplayStateSpecificRenderMaterial(
+#               RenderMaterial, Int32 DisplayStateOption, Object DisplayStateNames,
+#               out Int32, out Int32)   ★ 5 参
+#         C:\swapi\enums\swDisplayStateOpts_e.md
+#           → ★ swThisDisplayState = 1 · **swAllDisplayState = 2** · swSpecifyDisplayState = 3
+#         C:\swapi\examples\Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md
+#           → ★ 官方例子的确切用法：
+#               swModelDocExt.AddDisplayStateSpecificRenderMaterial(
+#                   swRenderMaterial, swAllDisplayState, displayStateNames, id1, id2)
+# 定位:   官方调用序列的收尾两步：① 应用 ② 刷新场景图。
+# ★★★ 2026-10-03（接手轮）**换掉废弃入口 + 去掉"未实测"标签**（★ 真机已验）：
+#   ★ 旧的 `IModelDocExtension.AddRenderMaterial` 官方页逐字
+#     「**Not supported in SOLIDWORKS 2011 and later. Superseded by
+#      [[IModelDocExtension::AddDisplayStateSpecificRenderMaterial]]**」⇒ **该换** ✓
+#   ★★ 真机对照（`tools/probe_render_material_family.py` ·
+#     `output/render-material-family-evidence.json`）：
+#       · 旧 `AddRenderMaterial(mat, out)`          ⇒ ★ **能调（True）**
+#       · 新 `AddDisplayStateSpecificRenderMaterial(mat, 2, 空VARIANT, out, out)` ⇒ ★ **能调（True）** ✓
+#     ⇒ ★★★ **新的能调 ⇒ 换** ✓
+#   ★ 出参两个 id 本模块**不使用**（旧版也只用了一个），故仍不据此判成败。
 # ⚠ UpdateRenderMaterialsInSceneGraph 的 Boolean 语义未查到
 #   （两套官方源都未给参数说明），故默认传 True 并在此显式标注为待确认。
-# ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: ★ 官方枚举 `swDisplayStateOpts_e` 的「所有显示状态」（★ `C:\swapi\enums\swDisplayStateOpts_e.md`）
+SW_ALL_DISPLAY_STATE = 2
+
+
 def add_render_material(model, material) -> bool:
-    """把外观对象应用到文档，并刷新场景图。返回 AddRenderMaterial 的原始返回值。"""
+    """把外观对象应用到文档，并刷新场景图。返回官方入口的原始返回值。
+
+    ★ 走**后继入口** `AddDisplayStateSpecificRenderMaterial`（★ 旧的 `AddRenderMaterial`
+      官方页逐字「Not supported in SOLIDWORKS 2011 and later」）。
+    ★★ 真机已验证**能调**（★ 证据见上）。
+    """
     if material is None:
         raise ValueError("material 为 None：须先由 create_render_material 创建")
     extension = get_extension(model)
-    result = get_com_member(extension, "AddRenderMaterial", material, out_i4())
+    #: ★★★ 2026-10-03 换后继入口（★ 旧的 `AddRenderMaterial` 官方页逐字
+    #:   「Not supported in SOLIDWORKS 2011 and later」）★ 真机已验证能调 ✓
+    #: ★ `DisplayStateNames` 传**空 VARIANT**（★ 官方例子传 `Nothing`；★ 事实 33：
+    #:   pywin32 下要用 `VARIANT(VT_DISPATCH, None)`，传裸 `None` 会报"类型不匹配"）
+    result = get_com_member(extension, "AddDisplayStateSpecificRenderMaterial",
+                            material, SW_ALL_DISPLAY_STATE,
+                            create_empty_dispatch_variant(), out_i4(), out_i4())
     refresh_scene_graph(model)
     return bool(result)
 
@@ -260,16 +289,34 @@ def refresh_scene_graph(model, update: bool = True):
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 def list_render_materials(model) -> list[Any]:
-    """列出文档当前的外观定义对象。"""
+    """列出文档当前的外观定义对象。
+
+    ★★★ 2026-10-03 换后继入口（★ 旧的 `GetRenderMaterialsCount` / `GetRenderMaterials`
+      官方页逐字「**Obsolete. Superseded by …Count2 / …Materials2**」）。
+    ★★ 真机已验证：★ 新旧**读数一致**（★ 空文档时旧的 `0` / `None`，★ 新的 `0` / `None`）✓
+    """
     extension = get_extension(model)
-    count = int(get_com_member(extension, "GetRenderMaterialsCount") or 0)
-    materials = get_com_member(extension, "GetRenderMaterials")
+    #: ★ 官方例子用法：`GetRenderMaterialsCount2(swAllDisplayState, Nothing)`
+    count = int(get_com_member(extension, "GetRenderMaterialsCount2",
+                               SW_ALL_DISPLAY_STATE, create_empty_dispatch_variant()) or 0)
+    materials = get_com_member(extension, "GetRenderMaterials2",
+                               SW_ALL_DISPLAY_STATE, create_empty_dispatch_variant())
     items = list(materials) if isinstance(materials, (list, tuple)) else []
     return items[:count] if count else items
 
 
 def delete_render_material(model, index: int, cascade: bool = False) -> bool:
-    """按索引删除外观定义。"""
+    """按索引删除外观定义。
+
+    ★★★ 2026-10-03**刻意保留旧入口** `DeleteRenderMaterial` —— ★ **不是漏改**，★ 是有据的：
+      · ★ 官方后继是 `DeleteDisplayStateSpecificRenderMaterial`（★ 3 参）；
+      · ★★ 而**本机 pywin32 迟到绑定取不到它**：★ 真机报
+        「取回来的成员**不可调用**（`getattr` 回了 `bool`，★ 而它通常是 `(None, None, None)`）
+        —— ★ 这**多半是 pywin32 迟到绑定造不出**」（★ 与**事实 47**同族）；
+      · ★ 而**旧的 `DeleteRenderMaterial` 真机实测**能调**（回 `True`）✓
+      ⇒ ★★ **换过去 = 从"废弃但能调"变成"新但调不了"** ⇒ ★ 故**保留** ✓
+    ★ 证据：`tools/probe_render_material_family.py` · `output/render-material-family-evidence.json`
+    """
     extension = get_extension(model)
     return bool(get_com_member(extension, "DeleteRenderMaterial",
                                int(index), bool(cascade)))

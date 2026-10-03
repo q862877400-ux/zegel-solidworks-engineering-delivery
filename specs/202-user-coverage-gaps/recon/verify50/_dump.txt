@@ -1,0 +1,2904 @@
+### B31 solidworks_simulation_check_mesh_size -> sw_simulation.check_mesh_size_sane
+--- SPEC DOC ---
+Decide whether a global element size is sane for the ACTIVE part BEFORE meshing, and return `{ok, element_size, max_dim, reason}`. ★ Call this before solidworks_simulation_create_mesh: when `ok` is false the element is larger than the part itself, so the mesh would be degenerate and the subsequent solve would raise a modal dialog that hangs the COM session. ★ It does NOT create a mesh and does NOT run the solver.
+--- FN DOCSTRING ---
+★ **建网格之前**判一次：给定的单元尺寸对**这个零件**是否合理。
+
+★★★ 这是把"跑求解必挂"**掐断在源头**的那道闸 —— 依据见本段顶部的对照表：
+读到的 `element_size` 若**大于零件的最大边**，那么网格必然退化、
+`CreateMesh` 会**静默退回默认值**，而随后的 `RunAnalysis` **无解 ⇒ 弹模态框 ⇒ 挂住会话**。
+
+:param model: 活动文档（用来量零件包围盒）。
+:param element_size: 打算传给 ``CreateMesh`` 的单元尺寸（★ 单位口径见 `create_mesh` 的 docstring）。
+:returns: ``{"ok": bool, "element_size": float, "max_dim": float | None, "reason": str}``
+    ★ **`ok=False` 时调用方应当停下**（不要建网格、更不要跑求解）。
+--- FN SOURCE ---
+def check_mesh_size_sane(model, element_size: float) -> dict[str, Any]:
+    """★ **建网格之前**判一次：给定的单元尺寸对**这个零件**是否合理。
+
+    ★★★ 这是把"跑求解必挂"**掐断在源头**的那道闸 —— 依据见本段顶部的对照表：
+    读到的 `element_size` 若**大于零件的最大边**，那么网格必然退化、
+    `CreateMesh` 会**静默退回默认值**，而随后的 `RunAnalysis` **无解 ⇒ 弹模态框 ⇒ 挂住会话**。
+
+    :param model: 活动文档（用来量零件包围盒）。
+    :param element_size: 打算传给 ``CreateMesh`` 的单元尺寸（★ 单位口径见 `create_mesh` 的 docstring）。
+    :returns: ``{"ok": bool, "element_size": float, "max_dim": float | None, "reason": str}``
+        ★ **`ok=False` 时调用方应当停下**（不要建网格、更不要跑求解）。
+    """
+    out: dict[str, Any] = {"element_size": float(element_size), "max_dim": None,
+                           "ok": True, "reason": "", "★": "建网格前的合理性判据（段 5 修地基）"}
+    if not (float(element_size) > 0.0):
+        out.update({"ok": False, "reason": "element_size 不是正数（%r）" % element_size})
+        return out
+    try:
+        size = None
+        try:
+            import sw_part
+
+            bb = sw_part.get_bounding_box(model)
+            size = (bb or {}).get("size")
+        except Exception:                                      # noqa: BLE001
+            size = None
+        if not size:
+            out.update({"reason": "量不到零件包围盒 ⇒ **只记不判**（★ 不因为没有参照就误报）"})
+            return out
+        max_dim = max(float(x) for x in size)
+        out["max_dim"] = max_dim
+        if float(element_size) > max_dim:
+            out.update({
+                "ok": False,
+                "reason": ("单元尺寸 %.4f 大于零件最大边 %.4f ⇒ **网格必然退化**"
+                           "（CreateMesh 会静默退回默认值，随后 RunAnalysis 无解 ⇒ 弹模态框 ⇒ 挂住会话）"
+                           % (float(element_size), max_dim)),
+            })
+        return out
+    except Exception as exc:                                   # noqa: BLE001
+        out.update({"reason": "判据自身出错（★ 不因此阻断）：%s: %s"
+                              % (type(exc).__name__, str(exc)[:120])})
+        return out
+
+### B32 solidworks_part_shell -> sw_part.shell_report
+--- SPEC DOC ---
+Hollow the part with a wall thickness and return a READ-BACK report: whether the feature is in the tree, whether EditRebuild3 succeeded, and the What's Wrong item count (★ rule 6 — feature creation must not succeed silently). ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+★ **抽壳**并回**回读报告**（★ 规则 6：不静默成功）。
+
+⚠ `thickness` 在能力层的单位**随文档单位**（本项目零件按毫米 ⇒ 传毫米值）；
+  ★ 本函数收的形参名带 `_mm`（规则 2），**由调用方保证口径一致**。
+⚠ `feature_name` 默认取中文 UI 的「抽壳1」（★ 也可由调用方给）。
+--- FN SOURCE ---
+def shell_report(model, thickness_mm: float, feature_name: str = ""):
+    """★ **抽壳**并回**回读报告**（★ 规则 6：不静默成功）。
+
+    ⚠ `thickness` 在能力层的单位**随文档单位**（本项目零件按毫米 ⇒ 传毫米值）；
+      ★ 本函数收的形参名带 `_mm`（规则 2），**由调用方保证口径一致**。
+    ⚠ `feature_name` 默认取中文 UI 的「抽壳1」（★ 也可由调用方给）。
+    """
+    return _feature_report(model, feature_name or "抽壳1",
+                           lambda: shell(model, float(thickness_mm)), "shell")
+
+### B32 solidworks_part_rib -> sw_part.rib_report
+--- SPEC DOC ---
+Create a rib from an existing sketch and return a READ-BACK report (feature in tree + rebuild + What's Wrong count). ★ Rule 6. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+★ **筋**并回**回读报告**（★ 规则 6）。
+--- FN SOURCE ---
+def rib_report(model, sketch_name: str, thickness_mm: float, feature_name: str = "",
+               direction: bool = True):
+    """★ **筋**并回**回读报告**（★ 规则 6）。"""
+    return _feature_report(model, feature_name or "筋1",
+                           lambda: rib(model, sketch_name, float(thickness_mm), direction), "rib")
+
+### B32 solidworks_part_insert_dome -> sw_part.insert_dome_report
+--- SPEC DOC ---
+Add a dome on the selected face and return a READ-BACK report (★ rule 6). ⚠ The official Remarks require the face to be selected BEFORE the call. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+★ **圆顶**并回**回读报告**（★ 规则 6）。
+--- FN SOURCE ---
+def insert_dome_report(model, height_mm: float, feature_name: str = "",
+                       reverse: bool = False, elliptic: bool = False):
+    """★ **圆顶**并回**回读报告**（★ 规则 6）。"""
+    return _feature_report(model, feature_name or "圆顶1",
+                           lambda: insert_dome(model, float(height_mm), reverse, elliptic), "dome")
+
+### B32 solidworks_part_insert_composite_curve -> sw_part.insert_composite_curve_report
+--- SPEC DOC ---
+Join the selected entities into a composite curve and return a READ-BACK report (★ rule 6). The capability layer already raises when the official call returns False — this adds the tree/rebuild/What's Wrong read-back on top. ⚠ The official Remarks require the entities to be selected with mark = 1 first. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+★ **复合曲线**并回**回读报告**。
+
+★ 能力层的 `insert_composite_curve` **本身已经 raise on False**（★ 不是"假通过"），
+  所以这里主要补"**建完之后特征在不在 + 重建 + 查错**"那三条（★ 规则 6）。
+⚠ 调用前**必须先用 mark = 1 选好实体**（官方 Remarks；与 `insert_dome` 同一个坑）。
+--- FN SOURCE ---
+def insert_composite_curve_report(model, feature_name: str = ""):
+    """★ **复合曲线**并回**回读报告**。
+
+    ★ 能力层的 `insert_composite_curve` **本身已经 raise on False**（★ 不是"假通过"），
+      所以这里主要补"**建完之后特征在不在 + 重建 + 查错**"那三条（★ 规则 6）。
+    ⚠ 调用前**必须先用 mark = 1 选好实体**（官方 Remarks；与 `insert_dome` 同一个坑）。
+    """
+    return _feature_report(model, feature_name or "复合曲线1",
+                           lambda: insert_composite_curve(model), "composite_curve")
+
+### B33 solidworks_config_inspect -> sw_document_data.inspect_configurations
+--- SPEC DOC ---
+List the document's configurations and the active one as a JSON-able dict. ★ Read-only.
+--- FN DOCSTRING ---
+@brief 读取配置族清单并返回当前配置，配置修改仍需人工复核。
+--- FN SOURCE ---
+def inspect_configurations(model) -> dict[str, Any]:
+    """@brief 读取配置族清单并返回当前配置，配置修改仍需人工复核。"""
+    names = _configuration_names(model)
+    current = _active_configuration_name(model)
+    return {
+        "status": "pilot" if names else "blocked",
+        "configurations": names,
+        "active_configuration": current,
+        "review_required": True,
+        "limitations": ["未执行设计表创建/编辑和大型配置族批量变更", "配置间尺寸、属性、抑制状态和几何差异仍需人工复核"],
+    }
+
+### B33 solidworks_config_create -> sw_document_data.create_configuration
+--- SPEC DOC ---
+Create a configuration, optionally activate and rebuild, then read the result back. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+@brief 使用 AddConfiguration3 创建配置，并校验清单及活动配置回读。
+
+``options`` 对应官方 ``swConfigurationOptions2_e`` 位掩码。默认值 0 保持
+SolidWorks 默认行为；非零值必须由调用者基于目标版本枚举显式提供。
+--- FN SOURCE ---
+def create_configuration(
+    model,
+    configuration_name: str,
+    *,
+    comment: str = "",
+    alternate_name: str = "",
+    options: int = 0,
+    if_exists: str = "reuse",
+    activate: bool = True,
+    rebuild: bool = True,
+    save: bool = False,
+) -> dict[str, Any]:
+    """@brief 使用 AddConfiguration3 创建配置，并校验清单及活动配置回读。
+
+    ``options`` 对应官方 ``swConfigurationOptions2_e`` 位掩码。默认值 0 保持
+    SolidWorks 默认行为；非零值必须由调用者基于目标版本枚举显式提供。
+    """
+    requested_name = str(configuration_name).strip()
+    if not requested_name:
+        raise ValueError("configuration_name 不能为空")
+    if if_exists not in {"reuse", "error"}:
+        raise ValueError("if_exists 只支持 reuse 或 error")
+    if int(options) < 0:
+        raise ValueError("options 不能为负数")
+
+    before_names = _configuration_names(model)
+    existing_name = _resolve_configuration_name(before_names, requested_name)
+    existed = existing_name is not None
+    name = existing_name or requested_name
+    if existed and if_exists == "error":
+        raise FileExistsError(f"配置已存在: {name}")
+
+    created = None if existed else get_com_member(
+        model,
+        "AddConfiguration3",
+        name,
+        str(comment),
+        str(alternate_name),
+        int(options),
+    )
+    if not existed and created is None:
+        raise RuntimeError(f"AddConfiguration3 未返回配置对象: {name}")
+
+    after_names = _configuration_names(model)
+    listed_name = _resolve_configuration_name(after_names, name)
+    listed = listed_name is not None
+    name = listed_name or name
+    activation = (
+        activate_configuration(model, name, rebuild=rebuild, save=False)
+        if activate and listed
+        else None
+    )
+    if activation:
+        rebuild_success = bool(activation["rebuild_success"])
+    elif rebuild and listed:
+        rebuild_success = bool(call_com_member(model, "EditRebuild3"))
+    else:
+        rebuild_success = listed
+    active_verified = activation["readback_verified"] if activation else True
+    save_success = bool(save_document(model)) if save and listed and rebuild_success and active_verified else not save
+    success = listed and rebuild_success and active_verified and save_success
+    return {
+        "success": success,
+        "configuration": name,
+        "requested_configuration": requested_name,
+        "created": not existed,
+        "reused": existed,
+        "listed_after_create": listed,
+        "configurations_before": before_names,
+        "configurations_after": after_names,
+        "options": int(options),
+        "activation": activation,
+        "save_requested": save,
+        "save_success": save_success,
+        "review_required": True,
+    }
+
+### B33 solidworks_config_activate -> sw_document_data.activate_configuration
+--- SPEC DOC ---
+Activate a configuration and verify it by read-back. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+@brief 激活现有配置并通过活动配置名回读验证。
+--- FN SOURCE ---
+def activate_configuration(
+    model,
+    configuration_name: str,
+    *,
+    rebuild: bool = True,
+    save: bool = False,
+) -> dict[str, Any]:
+    """@brief 激活现有配置并通过活动配置名回读验证。"""
+    requested_name = str(configuration_name).strip()
+    if not requested_name:
+        raise ValueError("configuration_name 不能为空")
+    names = _configuration_names(model)
+    name = _resolve_configuration_name(names, requested_name)
+    if name is None:
+        raise LookupError(f"找不到配置: {requested_name}")
+
+    before = _active_configuration_name(model)
+    api_called = before != name
+    api_return = bool(get_com_member(model, "ShowConfiguration2", name)) if api_called else None
+    after = _active_configuration_name(model)
+    readback_verified = after == name
+    api_success = readback_verified
+    rebuild_success = bool(call_com_member(model, "EditRebuild3")) if rebuild and readback_verified else readback_verified
+    save_success = bool(save_document(model)) if save and readback_verified and rebuild_success else not save
+    success = readback_verified and rebuild_success and save_success
+    return {
+        "success": success,
+        "configuration": name,
+        "requested_configuration": requested_name,
+        "before": before,
+        "after": after,
+        "api_called": api_called,
+        "api_return": api_return,
+        "api_success": api_success,
+        "readback_verified": readback_verified,
+        "rebuild_success": rebuild_success,
+        "save_requested": save,
+        "save_success": save_success,
+        "review_required": True,
+    }
+
+### B33 solidworks_config_read_custom_property -> sw_document_data.read_custom_property
+--- SPEC DOC ---
+Read one custom property as a JSON-able dict. ★ Read-only.
+--- FN DOCSTRING ---
+读取一个文件级或配置级自定义属性。
+--- FN SOURCE ---
+def read_custom_property(model, name: str, *, configuration_name: str = "") -> dict[str, Any]:
+    """读取一个文件级或配置级自定义属性。"""
+    manager = _property_manager(model, configuration_name)
+    raw_value = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
+    resolved_value = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
+    was_resolved = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BOOL, False)
+    is_linked = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BOOL, False)
+    status = int(manager.Get6(name, False, raw_value, resolved_value, was_resolved, is_linked))
+    return {
+        "name": name,
+        "configuration": configuration_name,
+        "status": status,
+        "exists": status != 1,
+        "raw": str(raw_value.value or ""),
+        "resolved": str(resolved_value.value or ""),
+        "was_resolved": bool(was_resolved.value),
+        "is_linked": bool(is_linked.value),
+    }
+
+### B33 solidworks_config_set_custom_properties -> sw_document_data.set_custom_properties
+--- SPEC DOC ---
+Set several custom properties and return the read-back list. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+写入文件级或配置级属性，并逐项回读验证。
+--- FN SOURCE ---
+def set_custom_properties(
+    model,
+    properties: Mapping[str, Any],
+    *,
+    configuration_name: str = "",
+    property_type: str = "text",
+    save: bool = False,
+) -> dict[str, Any]:
+    """写入文件级或配置级属性，并逐项回读验证。"""
+    if not properties:
+        raise ValueError("properties 不能为空")
+    if property_type not in PROPERTY_TYPES:
+        raise ValueError(f"不支持的属性类型: {property_type}")
+    manager = _property_manager(model, configuration_name)
+    results = []
+    for raw_name, raw_value in properties.items():
+        name = str(raw_name).strip()
+        if not name:
+            raise ValueError("属性名不能为空")
+        value = str(raw_value)
+        add_status = int(manager.Add3(name, PROPERTY_TYPES[property_type], value, 2))
+        readback = read_custom_property(model, name, configuration_name=configuration_name)
+        verified = add_status == 0 and readback["exists"] and readback["raw"] == value
+        results.append({
+            "name": name,
+            "requested": value,
+            "add_status": add_status,
+            "verified": verified,
+            "readback": readback,
+        })
+    save_success = bool(save_document(model)) if save and all(item["verified"] for item in results) else not save
+    return {
+        "success": all(item["verified"] for item in results) and save_success,
+        "configuration": configuration_name,
+        "property_type": property_type,
+        "properties": results,
+        "save_requested": save,
+        "save_success": save_success,
+    }
+
+### B33 solidworks_config_update_dimension -> sw_document_data.update_dimension_mm
+--- SPEC DOC ---
+Update an exact named dimension and return a read-back report (before/after). ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+修改命名尺寸并返回可审计证据。
+
+``configuration_mode`` 支持 ``current``、``all``、``specific``；specific
+必须提供配置名。SolidWorks API 内部单位为米。
+--- FN SOURCE ---
+def update_dimension_mm(
+    model,
+    dimension_name: str,
+    value_mm: float,
+    *,
+    configuration_mode: str = "current",
+    configuration_names: Sequence[str] | None = None,
+    rebuild: bool = True,
+    save: bool = False,
+) -> dict[str, Any]:
+    """修改命名尺寸并返回可审计证据。
+
+    ``configuration_mode`` 支持 ``current``、``all``、``specific``；specific
+    必须提供配置名。SolidWorks API 内部单位为米。
+    """
+    if not dimension_name.strip():
+        raise ValueError("dimension_name 不能为空")
+    if value_mm <= 0:
+        raise ValueError("value_mm 必须大于 0")
+    if configuration_mode not in SET_VALUE_MODES:
+        raise ValueError(f"不支持的配置范围: {configuration_mode}")
+
+    dimension = model.Parameter(dimension_name)
+    if dimension is None:
+        raise LookupError(f"找不到尺寸: {dimension_name}")
+
+    requested_names = [str(name).strip() for name in (configuration_names or []) if str(name).strip()]
+    if configuration_mode == "specific" and not requested_names:
+        raise ValueError("specific 模式必须提供 configuration_names")
+    if configuration_mode == "all":
+        evidence_names = _configuration_names(model)
+    elif configuration_mode == "specific":
+        evidence_names = requested_names
+    else:
+        evidence_names = []
+
+    before = (
+        {name: _dimension_value_mm(dimension, name) for name in evidence_names}
+        if evidence_names
+        else {"current": _dimension_value_mm(dimension)}
+    )
+    names_variant = (
+        VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_BSTR, requested_names)
+        if configuration_mode == "specific"
+        else None
+    )
+    status_code = int(
+        dimension.SetSystemValue3(
+            float(value_mm) / 1000.0,
+            SET_VALUE_MODES[configuration_mode],
+            names_variant,
+        )
+    )
+    rebuild_success = (
+        bool(call_com_member(model, "EditRebuild3"))
+        if rebuild and status_code == 0
+        else status_code == 0
+    )
+    after = (
+        {name: _dimension_value_mm(dimension, name) for name in evidence_names}
+        if evidence_names
+        else {"current": _dimension_value_mm(dimension)}
+    )
+    save_success = bool(save_document(model)) if save and status_code == 0 and rebuild_success else not save
+    success = status_code == 0 and rebuild_success and save_success
+    return {
+        "success": success,
+        "dimension": dimension_name,
+        "configuration_mode": configuration_mode,
+        "configuration_names": requested_names,
+        "requested_mm": float(value_mm),
+        "before_mm": before,
+        "after_mm": after,
+        "set_status": status_code,
+        "set_status_label": SET_VALUE_STATUS.get(status_code, f"unknown_{status_code}"),
+        "rebuild_success": rebuild_success,
+        "save_requested": save,
+        "save_success": save_success,
+    }
+
+### B33 solidworks_export_step -> sw_export.export_step_report
+--- SPEC DOC ---
+Export the active document to STEP and return a READ-BACK report: the file must exist and be non-empty. ★ Rule: the criterion is the FILE, not the return value.
+--- FN DOCSTRING ---
+★ **导出 STEP** 并回**回读报告**（★ 判据 = 文件存在且非空）。
+--- FN SOURCE ---
+def export_step_report(model, output_path: str):
+    """★ **导出 STEP** 并回**回读报告**（★ 判据 = 文件存在且非空）。"""
+    return _export_report(model, output_path, lambda: export_to_step(model, output_path), "step")
+
+### B33 solidworks_export_stl -> sw_export.export_stl_report
+--- SPEC DOC ---
+Export to STL and return a READ-BACK report (file exists and is non-empty). ★ The criterion is the FILE.
+--- FN DOCSTRING ---
+★ **导出 STL** 并回**回读报告**。
+--- FN SOURCE ---
+def export_stl_report(model, output_path: str, quality: str = "fine"):
+    """★ **导出 STL** 并回**回读报告**。"""
+    return _export_report(model, output_path,
+                          lambda: export_to_stl(model, output_path, quality), "stl")
+
+### B33 solidworks_export_iges -> sw_export.export_iges_report
+--- SPEC DOC ---
+Export to IGES and return a READ-BACK report (file exists and is non-empty).
+--- FN DOCSTRING ---
+★ **导出 IGES** 并回**回读报告**。
+--- FN SOURCE ---
+def export_iges_report(model, output_path: str):
+    """★ **导出 IGES** 并回**回读报告**。"""
+    return _export_report(model, output_path, lambda: export_to_iges(model, output_path), "iges")
+
+### B33 solidworks_export_parasolid -> sw_export.export_parasolid_report
+--- SPEC DOC ---
+Export to Parasolid and return a READ-BACK report (file exists and is non-empty).
+--- FN DOCSTRING ---
+★ **导出 Parasolid** 并回**回读报告**。
+--- FN SOURCE ---
+def export_parasolid_report(model, output_path: str):
+    """★ **导出 Parasolid** 并回**回读报告**。"""
+    return _export_report(model, output_path,
+                          lambda: export_to_parasolid(model, output_path), "parasolid")
+
+### B33 solidworks_export_dxf -> sw_export.export_dxf_report
+--- SPEC DOC ---
+Export to DXF and return a READ-BACK report (file exists and is non-empty). ⚠⚠ THIS IS A SHEET-METAL FLAT-PATTERN EXPORT, not a general DXF export: on a non-sheet-metal part the capability layer refuses with 「导出展开 DXF 前必须先保存钣金零件」. ★ That refusal is deliberate — it is a readable, actionable failure rather than a silent one.
+--- FN DOCSTRING ---
+★ **导出 DXF** 并回**回读报告**。
+--- FN SOURCE ---
+def export_dxf_report(model, output_path: str):
+    """★ **导出 DXF** 并回**回读报告**。"""
+    return _export_report(model, output_path, lambda: export_to_dxf(model, output_path), "dxf")
+
+### B33 solidworks_export_bmp -> sw_export.export_bmp_report
+--- SPEC DOC ---
+Export a BMP image of the active document and return a READ-BACK report (file exists and is non-empty). ★ Covered by the existing smoke tools/verify_bmp_smoke.py.
+--- FN DOCSTRING ---
+★ **导出 BMP** 并回**回读报告**（★ 既有冒烟 `tools/verify_bmp_smoke.py` 覆盖它）。
+
+⚠ 两个尺寸参数是**像素**，★ 故命名 `pixel_*` 而**不是** `*_mm`（规则 2 只管长度/角度）。
+--- FN SOURCE ---
+def export_bmp_report(model, output_path: str, pixel_width: int = 0,
+                      pixel_height: int = 0):
+    """★ **导出 BMP** 并回**回读报告**（★ 既有冒烟 `tools/verify_bmp_smoke.py` 覆盖它）。
+
+    ⚠ 两个尺寸参数是**像素**，★ 故命名 `pixel_*` 而**不是** `*_mm`（规则 2 只管长度/角度）。
+    """
+    return _export_report(model, output_path,
+                          lambda: export_to_bmp(model, output_path, pixel_width, pixel_height), "bmp")
+
+### B34 solidworks_hole_through_by_selection -> sw_hole_features.create_through_hole_at_selection_report
+--- SPEC DOC ---
+Create a fully-through circular hole whose position comes from a declarative selection (★ rule 3: no coordinates in the tool signature). Returns the read-back evidence plus the point that was actually used.
+--- FN DOCSTRING ---
+★ **声明式建通孔**：★ 从 `selection` 读点 ⇒ 建完全贯穿圆孔 ⇒ 回**回读证据 + 用的那个点**。
+
+★★ 与 `create_through_hole` 的**唯一区别**：★ **它不要坐标**（★ 规则 3）。
+--- FN SOURCE ---
+def create_through_hole_at_selection_report(model, selection: str, diameter_mm: float,
+                                            plane_name: str = "Front Plane",
+                                            name: str = "通孔") -> dict:
+    """★ **声明式建通孔**：★ 从 `selection` 读点 ⇒ 建完全贯穿圆孔 ⇒ 回**回读证据 + 用的那个点**。
+
+    ★★ 与 `create_through_hole` 的**唯一区别**：★ **它不要坐标**（★ 规则 3）。
+    """
+    pt, err = _point_from_selection(model, selection)
+    if err:
+        return {"ok": False, "kind": "through", "selection": str(selection), "error": err}
+    ev = create_through_hole(model, pt, diameter_mm, plane_name=plane_name, name=name)
+    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
+    out.update({"ok": True, "selection": str(selection), "center_sent_mm": list(pt), "★_units": "从选区读到毫米 ⇒ 换算成米 ⇒ 取前两维（规则 2 的边界）",
+                "★": "点来自**声明式选择**（不是调用方传坐标）—— 规则 3"})
+    return out
+
+### B34 solidworks_hole_blind_by_selection -> sw_hole_features.create_blind_hole_at_selection_report
+--- SPEC DOC ---
+Create a blind circular hole at a declaratively selected point (★ rule 3). Returns the read-back evidence plus the point used.
+--- FN DOCSTRING ---
+★ **声明式建盲孔**（★ 吃 `selection` 与 `depth_mm`，★ 不要坐标）。
+--- FN SOURCE ---
+def create_blind_hole_at_selection_report(model, selection: str, diameter_mm: float, depth_mm: float,
+                                          plane_name: str = "Front Plane",
+                                          name: str = "盲孔") -> dict:
+    """★ **声明式建盲孔**（★ 吃 `selection` 与 `depth_mm`，★ 不要坐标）。"""
+    pt, err = _point_from_selection(model, selection)
+    if err:
+        return {"ok": False, "kind": "blind", "selection": str(selection), "error": err}
+    ev = create_blind_hole(model, pt, diameter_mm, depth_mm, plane_name=plane_name, name=name)
+    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
+    out.update({"ok": True, "selection": str(selection), "point_from_selection_mm": list(pt),
+                "★": "点来自**声明式选择** —— 规则 3"})
+    return out
+
+### B34 solidworks_hole_counterbore_by_selection -> sw_hole_features.create_counterbore_hole_at_selection_report
+--- SPEC DOC ---
+Create a counterbore hole at a declaratively selected point (★ rule 3).
+--- FN DOCSTRING ---
+★ **声明式建沉头孔**（★ 不要坐标）。
+--- FN SOURCE ---
+def create_counterbore_hole_at_selection_report(model, selection: str, hole_diameter_mm: float,
+                                               counterbore_diameter_mm: float,
+                                               counterbore_depth_mm: float,
+                                               plane_name: str = "Front Plane",
+                                               name: str = "沉头孔") -> dict:
+    """★ **声明式建沉头孔**（★ 不要坐标）。"""
+    pt, err = _point_from_selection(model, selection)
+    if err:
+        return {"ok": False, "kind": "counterbore", "selection": str(selection), "error": err}
+    ev = create_counterbore_hole(model, pt, hole_diameter_mm, counterbore_diameter_mm,
+                                 counterbore_depth_mm, plane_name=plane_name, name=name)
+    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
+    out.update({"ok": True, "selection": str(selection), "point_from_selection_mm": list(pt),
+                "★": "点来自**声明式选择** —— 规则 3"})
+    return out
+
+### B34 solidworks_hole_countersink_by_selection -> sw_hole_features.create_countersink_hole_at_selection_report
+--- SPEC DOC ---
+Create a countersink hole at a declaratively selected point (★ rule 3).
+--- FN DOCSTRING ---
+★ **声明式建锥沉孔**（★ 不要坐标；★ 角度参数带 `_deg`，规则 2）。
+--- FN SOURCE ---
+def create_countersink_hole_at_selection_report(model, selection: str, hole_diameter_mm: float,
+                                               countersink_diameter_mm: float,
+                                               included_angle_deg: float = 90.0,
+                                               plane_name: str = "Front Plane",
+                                               name: str = "锥沉孔") -> dict:
+    """★ **声明式建锥沉孔**（★ 不要坐标；★ 角度参数带 `_deg`，规则 2）。"""
+    pt, err = _point_from_selection(model, selection)
+    if err:
+        return {"ok": False, "kind": "countersink", "selection": str(selection), "error": err}
+    ev = create_countersink_hole(model, pt, hole_diameter_mm, countersink_diameter_mm,
+                                 included_angle_deg, plane_name=plane_name, name=name)
+    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
+    out.update({"ok": True, "selection": str(selection), "point_from_selection_mm": list(pt),
+                "★": "点来自**声明式选择** —— 规则 3"})
+    return out
+
+### B34 solidworks_slot_semicircular_by_selection -> sw_hole_features.create_semicircular_slot_at_selection_report
+--- SPEC DOC ---
+Create a semicircular-end slot spanning two declaratively selected points (★ rule 3: **both** endpoints come from selections, not coordinates).
+--- FN DOCSTRING ---
+★ **声明式建半圆端槽**：★ **两端各用一次声明式选择**（★ 于是**两个点都不是坐标参数**）。
+--- FN SOURCE ---
+def create_semicircular_slot_at_selection_report(model, start_selection: str, end_selection: str,
+                                                width_mm: float, depth_mm: float = 0.0,
+                                                plane_name: str = "Front Plane",
+                                                name: str = "半圆端槽") -> dict:
+    """★ **声明式建半圆端槽**：★ **两端各用一次声明式选择**（★ 于是**两个点都不是坐标参数**）。"""
+    pts = []
+    for sel in (start_selection, end_selection):
+        pt, err = _point_from_selection(model, sel)
+        if err:
+            return {"ok": False, "kind": "semicircular_slot", "selection": str(sel), "error": err}
+        pts.append(pt)
+    ev = create_semicircular_slot(model, pts[0], pts[1], width_mm, depth_mm,
+                                  plane_name=plane_name, name=name)
+    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
+    out.update({"ok": True, "start_selection": str(start_selection),
+                "end_selection": str(end_selection),
+                "centers_sent_mm": [list(p) for p in pts], "★_units": "同族：毫米 ⇒ 米 + 取前两维",
+                "★": "两个点都来自**声明式选择** —— 规则 3"})
+    return out
+
+### B35 solidworks_weldment_create_cut_list -> sw_weldment.create_cut_list
+--- SPEC DOC ---
+Create the weldment cut list and return the cut-list folders as evidence.
+--- FN DOCSTRING ---
+插入切割清单（零件/型材下料表）。
+
+⚠⚠ **本函数在当前后端（pywin32 迟到绑定）上跑不通**（2026-10-01 轮 95 真机实测）：
+`IFeatureManager.InsertWeldmentCutList`（0 参）与 `InsertWeldmentCutList2(Object)`
+**在权威类型库里有**（`iface_sldworks.txt` 两行都在），但 `get_com_member` **取到 `None`**
+⇒ 直接调用会抛**看不出真因**的 `TypeError: 'NoneType' object is not callable`。
+
+★ 修法与仓库对 `IModeler.Create*Surface` 的先例一致（已知事实 40）：
+**返回值不可靠时，唯一能修的是「让失败可见」** —— 先把 member 取出来**判空**，
+抛带**成员名与后端**的 `RuntimeError`，而不是让它崩在调用点上。
+
+⚠ 本函数**未验证可用**（从没跑通过）—— **不要**据此认为切割清单功能已就绪。
+--- FN SOURCE ---
+def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool = False):
+    """插入切割清单（零件/型材下料表）。
+
+    ⚠⚠ **本函数在当前后端（pywin32 迟到绑定）上跑不通**（2026-10-01 轮 95 真机实测）：
+    `IFeatureManager.InsertWeldmentCutList`（0 参）与 `InsertWeldmentCutList2(Object)`
+    **在权威类型库里有**（`iface_sldworks.txt` 两行都在），但 `get_com_member` **取到 `None`**
+    ⇒ 直接调用会抛**看不出真因**的 `TypeError: 'NoneType' object is not callable`。
+
+    ★ 修法与仓库对 `IModeler.Create*Surface` 的先例一致（已知事实 40）：
+    **返回值不可靠时，唯一能修的是「让失败可见」** —— 先把 member 取出来**判空**，
+    抛带**成员名与后端**的 `RuntimeError`，而不是让它崩在调用点上。
+
+    ⚠ 本函数**未验证可用**（从没跑通过）—— **不要**据此认为切割清单功能已就绪。
+    """
+    if sort_options is not None:
+        set_com_member(sort_options, "CollectIdenticalBodies",
+                       bool(collect_identical_bodies))
+    manager = get_com_member(model, "FeatureManager")
+    # ⚑ **判空再调**：`get_com_member` 取不到时返回 `None`，
+    #   直接 `member(*args)` 会抛「'NoneType' object is not callable」——**看不出是成员取不到**。
+    member = get_com_member(manager, "InsertWeldmentCutList2")
+    if member is None:
+        raise RuntimeError(
+            "IFeatureManager.InsertWeldmentCutList2 在当前后端（pywin32 迟到绑定）上**取不到**"
+            "（权威类型库里有该成员，但 COM 分发解析为 None）"
+            "⇒ 切割清单在当前后端**不可用**；这不是调用参数的问题。"
+        )
+    feature = get_com_member(manager, "InsertWeldmentCutList2", sort_options)
+    if feature is None:
+        raise RuntimeError("InsertWeldmentCutList2 未返回特征")
+    return feature
+
+### B35 solidworks_weldment_set_cut_list_properties -> sw_weldment.set_cut_list_properties
+--- SPEC DOC ---
+Set cut-list properties and return the read-back list. ⚠ Does NOT save the document. ★★ **属性名用中文（本地化）名**：`说明` / `材料`，★ **不是** `Description` / `Material`（真机：后者报「切割清单属性回读失败」，而前者写入并回读得到）。
+--- FN DOCSTRING ---
+@brief 将型材来源和材料规格写入每个原生切割清单项并回读。
+--- FN SOURCE ---
+def set_cut_list_properties(model, properties: dict[str, Any]) -> list[dict[str, Any]]:
+    """@brief 将型材来源和材料规格写入每个原生切割清单项并回读。"""
+    if not properties:
+        raise ValueError("切割清单属性不能为空")
+    ensure_cut_list(model)
+    results = []
+    seen_names = set()
+    for feature in iter_features_recursive(model):
+        if str(get_com_member(feature, "GetTypeName2") or "") != "CutListFolder":
+            continue
+        feature_name = str(get_com_member(feature, "Name") or "")
+        if feature_name in seen_names:
+            continue
+        seen_names.add(feature_name)
+        manager = get_com_member(feature, "CustomPropertyManager")
+        item = {"name": feature_name, "properties": {}}
+        for raw_name, raw_value in properties.items():
+            name = str(raw_name).strip()
+            if not name:
+                raise ValueError("切割清单属性名不能为空")
+            value = str(raw_value)
+            add_status = int(manager.Add3(name, 30, value, 2))
+            readback = _read_property(manager, name)
+            verified = readback["raw"] == value or readback["resolved"] == value
+            if not verified:
+                raise RuntimeError(f"切割清单属性回读失败: {item['name']} / {name}")
+            item["properties"][name] = {"add_status": add_status, **readback}
+        results.append(item)
+    return results
+
+### B35 solidworks_weldment_export_cut_list_csv -> sw_weldment.export_cut_list_csv
+--- SPEC DOC ---
+Write a cut-list evidence dict to CSV and return the path. ★ The criterion is the FILE (exists and non-empty), not the return value.
+--- FN DOCSTRING ---
+@brief 将完整切割清单属性导出为 UTF-8-SIG CSV。
+--- FN SOURCE ---
+def export_cut_list_csv(evidence: dict[str, Any], output_path: str | Path) -> Path:
+    """@brief 将完整切割清单属性导出为 UTF-8-SIG CSV。"""
+    target = Path(output_path).expanduser().resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    rows = evidence.get("cut_list_folders") or evidence.get("cut_list_items") or []
+    property_names = sorted({name for row in rows for name in row.get("properties", {})})
+    columns = ["index", "name", "body_count", *property_names]
+    with target.open("w", encoding="utf-8-sig", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=columns)
+        writer.writeheader()
+        for index, row in enumerate(rows, start=1):
+            values = {
+                "index": row.get("index", index),
+                "name": row.get("name", ""),
+                "body_count": row.get("body_count", ""),
+            }
+            for name, payload in row.get("properties", {}).items():
+                values[name] = payload.get("resolved") or payload.get("raw") or ""
+            writer.writerow(values)
+    return target
+
+### B35 solidworks_weldment_read_property_manager -> sw_weldment.read_property_manager
+--- SPEC DOC ---
+Read the active PropertyManager page's controls as a JSON-able dict. ★ Read-only.
+--- FN DOCSTRING ---
+@brief 枚举属性管理器中的制造属性，默认排除模板标题栏噪声。
+--- FN SOURCE ---
+def read_property_manager(manager, *, core_only: bool = True) -> dict[str, dict[str, Any]]:
+    """@brief 枚举属性管理器中的制造属性，默认排除模板标题栏噪声。"""
+    names = _as_tuple(get_com_member(manager, "GetNames"))
+    if core_only:
+        names = tuple(
+            name for name in names if str(name).strip().casefold() in CORE_CUT_LIST_PROPERTY_NAMES
+        )
+    return {str(name): _read_property(manager, str(name)) for name in names}
+
+### B35 solidworks_weldment_create_profile_center_mate -> sw_weldment.create_profile_center_mate
+--- SPEC DOC ---
+Create a profile-center mate between declaratively selected structural members.
+--- FN DOCSTRING ---
+在所选实体间创建型材中心配合。
+--- FN SOURCE ---
+def create_profile_center_mate(
+    model,
+    entities,
+    *,
+    mate_alignment: int = 0,
+    offset_distance: float = 0.0,
+    flip_dimension: bool = False,
+    lock_rotation: bool = False,
+):
+    """在所选实体间创建型材中心配合。"""
+    if entities is None:
+        raise ValueError("entities 为 None：须先选中要配合的实体")
+
+    def _apply(data):
+        set_com_member(data, "EntitiesToMate", entities)
+        set_com_member(data, "MateAlignment", int(mate_alignment))
+        set_com_member(data, "OffsetDistance", float(offset_distance))
+        set_com_member(data, "FlipDimension", bool(flip_dimension))
+        set_com_member(data, "LockRotation", bool(lock_rotation))
+
+    return _create_from_definition(model, SW_FM_MATE_PROFILE_CENTER, _apply)
+
+### B35 solidworks_weldment_create_weldment_profile -> sw_weldment.create_weldment_profile
+--- SPEC DOC ---
+Create a weldment profile from a declaratively selected sketch and write it to output_path. ★ The criterion is the FILE.
+--- FN DOCSTRING ---
+@brief 将选定轮廓草图保存为真实 ``.sldlfp`` 焊件型材。
+--- FN SOURCE ---
+def create_weldment_profile(
+    model,
+    sketch_ref,
+    output_path: str | Path,
+    *,
+    properties: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """@brief 将选定轮廓草图保存为真实 ``.sldlfp`` 焊件型材。"""
+    target = Path(output_path).expanduser().resolve()
+    if target.suffix.casefold() != ".sldlfp":
+        raise ValueError("焊件型材输出必须使用 .sldlfp 扩展名")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    _ensure_sketch_selected(model, sketch_ref)
+    configuration_name = _active_configuration_name(model)
+    if properties:
+        set_custom_properties(
+            model,
+            properties,
+            configuration_name=configuration_name,
+            save=False,
+        )
+        _ensure_sketch_selected(model, sketch_ref)
+    if not save_document(model, str(target)):
+        raise RuntimeError("自定义焊件型材保存失败")
+    if not target.is_file() or target.stat().st_size == 0:
+        raise RuntimeError("SolidWorks 返回成功，但未生成 .sldlfp 文件")
+    #: ★★★ 2026-10-01（轮 341）**补 `ok` 让返回契约统一** —— 真因（挖
+    #:   `weldment_profile_and_curve` 这条 `stitched` 时发现）：
+    #:   ★ 本函数**原先只回 `path` / `configuration_name` / `size_bytes` / `properties`，
+    #:     没有 `ok`** ⇒ ★ 而**判据其实是"不抛即成功"**（★ `save_document` 回 falsy ⇒ 抛；
+    #:     产物不存在或 0 字节 ⇒ 抛）—— ★ **那是一种合法契约，★ 但与仓库里"回 `ok`"那套混着**，
+    #:     ★★ **调用方无从用统一方式判成败**（★ 实测：真机上文件**确实建成了 49287 字节**，
+    #:     而按 `ok` 读会得到 `False`）。
+    #:   ⇒ ★ 现在**两者并存**：★ 成功回 `ok=True`，★ **失败仍抛**（★ 不改变既有行为）。
+    #: ⚠ 顺带记一条真机现象：★ 保存后目录里会多一个 **`~$<名字>.SLDLFP`（6 字节）** ——
+    #:   ★ 那是 **SolidWorks 的临时锁文件**，★ **不是产物**；★ 判"产物非空"时**要排除 `~$` 前缀**。
+    return {
+        "ok": True,
+        "path": str(target),
+        "configuration_name": configuration_name,
+        "size_bytes": target.stat().st_size,
+        "properties": dict(properties or {}),
+        "★": "★ 契约：★ **成功回 `ok=True`；失败**抛异常**（`RuntimeError` / `ValueError`）** —— "
+             "★ 两者并存；★ `size_bytes` 是**产物本身**的大小（★ 已排除 `~$` 锁文件）",
+    }
+
+### B36 solidworks_custom_property_count -> sw_custom_property.custom_property_count
+--- SPEC DOC ---
+Return how many custom properties the document (or one configuration) has. ★ Read-only.
+--- FN DOCSTRING ---
+自定义属性**条数**（`ICustomPropertyManager.Count`）。
+--- FN SOURCE ---
+def custom_property_count(model, config_name: str = "") -> int:
+    """自定义属性**条数**（`ICustomPropertyManager.Count`）。"""
+    return int(get_com_member(custom_property_manager(model, config_name), "Count"))
+
+### B36 solidworks_custom_property_names -> sw_custom_property.custom_property_names
+--- SPEC DOC ---
+Return the custom property names as a list. ★ Read-only.
+--- FN DOCSTRING ---
+自定义属性**名字清单**（`GetNames`）。空 ⇒ 回空表。
+--- FN SOURCE ---
+def custom_property_names(model, config_name: str = "") -> list[str]:
+    """自定义属性**名字清单**（`GetNames`）。空 ⇒ 回空表。"""
+    raw = get_com_member(custom_property_manager(model, config_name), "GetNames")
+    if raw is None:
+        return []
+    try:
+        return [str(x) for x in raw]
+    except TypeError:
+        return [str(raw)]
+
+### B36 solidworks_selector_resolve_direction -> sw_geometry_selectors.resolve_direction
+--- SPEC DOC ---
+Resolve a named direction selector to its (x, y, z) vector. ★ Pure lookup — no SolidWorks call.
+--- FN DOCSTRING ---
+把**命名轴**解析成单位向量 ``(dx, dy, dz)``。
+
+:param selector: 见 :data:`DIRECTION_SELECTORS`（与 `sw_simulation.FACE_SELECTORS`
+    用**同一套外法向命名**，避免同一概念两种写法）。
+:raises GeometrySelectorError: 选择器非法。
+--- FN SOURCE ---
+def resolve_direction(selector: str) -> tuple:
+    """把**命名轴**解析成单位向量 ``(dx, dy, dz)``。
+
+    :param selector: 见 :data:`DIRECTION_SELECTORS`（与 `sw_simulation.FACE_SELECTORS`
+        用**同一套外法向命名**，避免同一概念两种写法）。
+    :raises GeometrySelectorError: 选择器非法。
+    """
+    key = str(selector).strip().lower()
+    if key not in _AXIS:
+        raise GeometrySelectorError(
+            "非法的方向选择器 %r；合法值：%r。"
+            "⚠ **不接受裸向量**（并入规范规则 3）。"
+            % (selector, list(DIRECTION_SELECTORS))
+        )
+    return _AXIS[key]
+
+### B36 solidworks_selector_resolve_point -> sw_geometry_selectors.resolve_point
+--- SPEC DOC ---
+Resolve a named point selector to its (x, y, z) coordinates in MILLIMETRES. ★ No coordinates are passed in (rule 3).
+--- FN DOCSTRING ---
+把**声明式点选择器**解析成 ``(x, y, z)``（**米**）。
+
+:param selector: 见 :data:`POINT_SELECTORS`。
+:raises GeometrySelectorError: 选择器非法，或文档里没有实体/取不到包围盒。
+--- FN SOURCE ---
+def resolve_point(model, selector: str, *, body_index: int = 0) -> tuple:
+    """把**声明式点选择器**解析成 ``(x, y, z)``（**米**）。
+
+    :param selector: 见 :data:`POINT_SELECTORS`。
+    :raises GeometrySelectorError: 选择器非法，或文档里没有实体/取不到包围盒。
+    """
+    key = str(selector).strip().lower()
+    if key not in POINT_SELECTORS:
+        raise GeometrySelectorError(
+            "非法的点选择器 %r；合法值：%r。"
+            "⚠ **不接受裸坐标**（并入规范规则 3）—— 需要任意坐标时，请先建参照几何再选它。"
+            % (selector, list(POINT_SELECTORS))
+        )
+    if key == "origin":
+        return (0.0, 0.0, 0.0)
+
+    bodies = get_com_member(model, "GetBodies2", 0, True)   # 0 = swSolidBody
+    if not bodies:
+        raise GeometrySelectorError("活动文档里没有实体（swSolidBody）—— 先建几何")
+    if body_index >= len(bodies):
+        raise GeometrySelectorError(
+            "body_index=%d 越界（共 %d 个体）" % (body_index, len(bodies))
+        )
+    body = bodies[body_index]
+
+    if key.startswith("bbox:"):
+        box = get_com_member(body, "GetBodyBox")
+        if not box or len(box) < 6:
+            raise GeometrySelectorError("GetBodyBox 没返回 6 个数")
+        xmin, ymin, zmin, xmax, ymax, zmax = (float(box[i]) for i in range(6))
+        if key == "bbox:min":
+            return (xmin, ymin, zmin)
+        if key == "bbox:max":
+            return (xmax, ymax, zmax)
+        return ((xmin + xmax) / 2.0, (ymin + ymax) / 2.0, (zmin + zmax) / 2.0)
+
+    # centroid：走质量属性（已知事实 5：CreateMassProperty2 的 CenterOfMass）
+    ext = get_com_member(model, "Extension")
+    mp = call_com_member(ext, "CreateMassProperty2")
+    if mp is None:
+        raise GeometrySelectorError("CreateMassProperty2 返回 None ⇒ 取不到质心")
+    com = get_com_member(mp, "CenterOfMass")
+    if not com or len(com) < 3:
+        raise GeometrySelectorError("CenterOfMass 没返回 3 个数")
+    return (float(com[0]), float(com[1]), float(com[2]))
+
+### B36 solidworks_drawing_sheet_count -> sw_drawing_query.sheet_count
+--- SPEC DOC ---
+Return the number of sheets in the active drawing. ★ Read-only.
+--- FN DOCSTRING ---
+图纸张数（`IDrawingDoc.GetSheetCount`）。
+--- FN SOURCE ---
+def sheet_count(model) -> int:
+    """图纸张数（`IDrawingDoc.GetSheetCount`）。"""
+    require_drawing(model)
+    return int(get_com_member(model, "GetSheetCount"))
+
+### B36 solidworks_drawing_sheet_names -> sw_drawing_query.sheet_names
+--- SPEC DOC ---
+Return the drawing's sheet names as a list. ★ Read-only.
+--- FN DOCSTRING ---
+全部图纸名（`IDrawingDoc.GetSheetNames`）。
+--- FN SOURCE ---
+def sheet_names(model) -> list[str]:
+    """全部图纸名（`IDrawingDoc.GetSheetNames`）。"""
+    require_drawing(model)
+    raw = get_com_member(model, "GetSheetNames")
+    if raw is None:
+        return []
+    try:
+        return [str(x) for x in raw]
+    except TypeError:
+        return [str(raw)]
+
+### B36 solidworks_drawing_current_sheet_name -> sw_drawing_query.current_sheet_name
+--- SPEC DOC ---
+Return the name of the sheet currently being edited. ★ Read-only.
+--- FN DOCSTRING ---
+当前图纸名（`GetCurrentSheet` → `ISheet.GetName`）。
+--- FN SOURCE ---
+def current_sheet_name(model) -> str:
+    """当前图纸名（`GetCurrentSheet` → `ISheet.GetName`）。"""
+    require_drawing(model)
+    sheet = get_com_member(model, "GetCurrentSheet")
+    if sheet is None:
+        raise RuntimeError("GetCurrentSheet 回了 None —— 这张工程图没有活动图纸")
+    return str(get_com_member(sheet, "GetName"))
+
+### B36 solidworks_delivery_bom_traceability -> sw_delivery.build_bom_traceability
+--- SPEC DOC ---
+Build a traceability record from BOM rows. ★ Pure data — no SolidWorks call.
+--- FN DOCSTRING ---
+@brief 建立 BOM、模型、工程图和复核报告之间的可追溯关系。
+--- FN SOURCE ---
+def build_bom_traceability(bom_rows, *, model_path="", drawing_path="", review_path="") -> dict[str, Any]:
+    """@brief 建立 BOM、模型、工程图和复核报告之间的可追溯关系。"""
+    rows = list(bom_rows or [])
+    checks = [
+        {"id": "bom-not-empty", "status": "pass" if rows else "warning", "message": "BOM 包含组件行" if rows else "BOM 为空，需要确认是否为单零件或读取失败"},
+        {"id": "model-reference", "status": "pass" if model_path else "warning", "message": "已关联模型路径" if model_path else "未提供模型路径"},
+        {"id": "drawing-reference", "status": "pass" if drawing_path else "warning", "message": "已关联工程图路径" if drawing_path else "未提供工程图路径"},
+        {"id": "review-reference", "status": "pass" if review_path else "warning", "message": "已关联复核报告" if review_path else "未提供复核报告"},
+    ]
+    return {
+        "status": "pass" if rows and model_path and drawing_path else "warning",
+        "stage": "review",
+        "bom_row_count": len(rows),
+        "quantity_total": sum(int(row.get("quantity") or 0) for row in rows),
+        "model_path": str(model_path or ""),
+        "drawing_path": str(drawing_path or ""),
+        "review_path": str(review_path or ""),
+        "rows": [{"item": row.get("item"), "part_number": row.get("part_number"), "file": row.get("file"), "configuration": row.get("configuration"), "quantity": row.get("quantity")} for row in rows],
+        "checks": checks,
+        "manual_review_required": True,
+        "retryable": False,
+        "error_code": None,
+    }
+
+### B36 solidworks_delivery_pack_and_go_audit_matrix -> sw_delivery.build_pack_and_go_audit_matrix
+--- SPEC DOC ---
+Build the audit matrix that a Pack-and-Go hand-off is reviewed against. ★ Pure data — no SolidWorks call.
+--- FN DOCSTRING ---
+@brief 建立外部引用、Toolbox、配置、压缩组件和工程图审计矩阵。
+--- FN SOURCE ---
+def build_pack_and_go_audit_matrix(
+    source_path: str,
+    dependencies: list[str],
+    component_records: list[dict[str, Any]],
+    associated_drawings: list[str],
+    outputs: list[dict[str, Any]],
+    *,
+    include_drawings: bool,
+    include_toolbox_components: bool,
+    include_suppressed: bool,
+) -> dict[str, Any]:
+    """@brief 建立外部引用、Toolbox、配置、压缩组件和工程图审计矩阵。"""
+    required_dependencies = _required_pack_dependency_paths(
+        dependencies,
+        component_records,
+        associated_drawings,
+        include_drawings=include_drawings,
+        include_toolbox_components=include_toolbox_components,
+        include_suppressed=include_suppressed,
+    )
+    required_keys = {str(Path(path).resolve()).casefold() for path in required_dependencies}
+    output_by_name: dict[str, list[dict[str, Any]]] = {}
+    for output in outputs:
+        output_by_name.setdefault(Path(output["path"]).name.casefold(), []).append(output)
+    metadata_by_path: dict[str, list[dict[str, Any]]] = {}
+    for record in component_records:
+        if record["path"]:
+            metadata_by_path.setdefault(str(Path(record["path"]).resolve()).casefold(), []).append(record)
+
+    source = str(Path(source_path).expanduser().resolve())
+    candidate_paths = [source, *[str(Path(item).expanduser().resolve()) for item in dependencies], *associated_drawings]
+    seen = set()
+    rows = []
+    blocking_codes = []
+    review_codes = []
+    for raw_path in candidate_paths:
+        path = str(Path(raw_path).expanduser().resolve())
+        key = path.casefold()
+        if key in seen:
+            continue
+        seen.add(key)
+        records = metadata_by_path.get(key, [])
+        is_source = key == source.casefold()
+        is_drawing = Path(path).suffix.casefold() == ".slddrw"
+        required = is_source or key in required_keys
+        matches = output_by_name.get(Path(path).name.casefold(), [])
+        if len(matches) > 1:
+            blocking_codes.append("SW_PACK_AUDIT_OUTPUT_NAME_AMBIGUOUS")
+        included = len(matches) == 1
+        source_exists = Path(path).is_file()
+        configurations = sorted({record["configuration"] for record in records if record["configuration"]})
+        load_states = sorted({record["load_state"] for record in records})
+        toolbox_states = sorted({record["toolbox_state"] for record in records})
+        external_reference = any(record["external_reference"] is True for record in records) if records else _is_external_reference(path, source)
+        if not source_exists:
+            blocking_codes.append("SW_PACK_AUDIT_SOURCE_REFERENCE_MISSING")
+        if required and not included:
+            if is_source:
+                blocking_codes.append("SW_PACK_AUDIT_SOURCE_OUTPUT_MISSING")
+            elif is_drawing:
+                blocking_codes.append("SW_PACK_AUDIT_ASSOCIATED_DRAWING_MISSING")
+            elif external_reference:
+                blocking_codes.append("SW_PACK_AUDIT_EXTERNAL_REFERENCE_MISSING")
+            elif any(state in {"standard", "copied", "candidate"} for state in toolbox_states):
+                blocking_codes.append("SW_PACK_AUDIT_TOOLBOX_COMPONENT_MISSING")
+            elif any(state == "suppressed" for state in load_states):
+                blocking_codes.append("SW_PACK_AUDIT_SUPPRESSED_COMPONENT_MISSING")
+            else:
+                blocking_codes.append("SW_PACK_AUDIT_REQUIRED_FILE_MISSING")
+        if external_reference:
+            review_codes.append("SW_PACK_AUDIT_EXTERNAL_REFERENCE_REVIEW_REQUIRED")
+        if configurations:
+            review_codes.append("SW_PACK_AUDIT_CONFIGURATION_CONTENT_REVIEW_REQUIRED")
+        if any(state in {"lightweight", "fully_lightweight", "suppressed", "internal_id_mismatch"} for state in load_states):
+            review_codes.append("SW_PACK_AUDIT_COMPONENT_STATE_REVIEW_REQUIRED")
+        if include_toolbox_components and any(state in {"standard", "copied", "candidate", "unknown"} for state in toolbox_states):
+            review_codes.append("SW_PACK_AUDIT_TOOLBOX_REVIEW_REQUIRED")
+        rows.append({
+            "source_path": path,
+            "file_name": Path(path).name,
+            "reference_kind": "source" if is_source else "associated_drawing" if is_drawing else "model_dependency",
+            "required": required,
+            "source_exists": source_exists,
+            "included": included,
+            "output_path": matches[0]["path"] if included else None,
+            "produced_this_run": bool(matches[0].get("produced_this_run")) if included else False,
+            "external_reference": external_reference,
+            "configurations": configurations,
+            "load_states": load_states or ["unknown"],
+            "toolbox_states": toolbox_states or ["unknown"],
+        })
+
+    tracked_names = {row["file_name"].casefold() for row in rows}
+    for output in outputs:
+        if Path(output["path"]).name.casefold() not in tracked_names:
+            rows.append({
+                "source_path": None,
+                "file_name": Path(output["path"]).name,
+                "reference_kind": "untracked_output",
+                "required": False,
+                "source_exists": None,
+                "included": True,
+                "output_path": output["path"],
+                "produced_this_run": bool(output.get("produced_this_run")),
+                "external_reference": None,
+                "configurations": [],
+                "load_states": ["unknown"],
+                "toolbox_states": ["unknown"],
+            })
+    blocking_codes = list(dict.fromkeys(blocking_codes))
+    review_codes = list(dict.fromkeys(review_codes))
+    status = "blocked" if blocking_codes else "review_required" if review_codes else "pass"
+    required_rows = [row for row in rows if row["required"]]
+    checks = [
+        {"id": "pack-required-files", "status": "pass" if all(row["included"] for row in required_rows) else "fail", "message": f"必需文件 {sum(row['included'] for row in required_rows)}/{len(required_rows)} 已落盘"},
+        {"id": "pack-external-references", "status": "warning" if any(row["external_reference"] for row in rows) else "pass", "message": "外部引用需要人工重开验证" if any(row["external_reference"] for row in rows) else "未发现项目目录外引用"},
+        {"id": "pack-toolbox", "status": "warning" if any("unknown" in row["toolbox_states"] or any(item in {"standard", "copied", "candidate"} for item in row["toolbox_states"]) for row in rows if row["reference_kind"] == "model_dependency") else "pass", "message": "Toolbox 状态已记录；候选或未知项需人工确认"},
+        {"id": "pack-configurations", "status": "warning" if any(row["configurations"] for row in rows) else "pass", "message": "配置引用已记录，配置内容仍需重开验证"},
+        {"id": "pack-component-states", "status": "warning" if any(any(state in {"lightweight", "fully_lightweight", "suppressed", "internal_id_mismatch"} for state in row["load_states"]) for row in rows) else "pass", "message": "压缩、轻化和异常组件状态已纳入矩阵"},
+        {"id": "pack-associated-drawings", "status": "pass" if all(row["included"] for row in rows if row["reference_kind"] == "associated_drawing" and row["required"]) else "fail", "message": "已核对本机存在的同名关联工程图"},
+    ]
+    return {
+        "schema_version": "1.0",
+        "status": status,
+        "stage": "review",
+        "rows": rows,
+        "checks": checks,
+        "summary": {
+            "row_count": len(rows),
+            "required_count": len(required_rows),
+            "included_required_count": sum(row["included"] for row in required_rows),
+            "external_reference_count": sum(row["external_reference"] is True for row in rows),
+            "toolbox_candidate_count": sum(any(state in {"standard", "copied", "candidate"} for state in row["toolbox_states"]) for row in rows),
+            "configuration_reference_count": sum(len(row["configurations"]) for row in rows),
+            "suppressed_or_lightweight_count": sum(any(state in {"suppressed", "lightweight", "fully_lightweight"} for state in row["load_states"]) for row in rows),
+            "associated_drawing_count": sum(row["reference_kind"] == "associated_drawing" for row in rows),
+        },
+        "blocking_error_codes": blocking_codes,
+        "review_codes": review_codes,
+        "manual_review_required": True,
+        "retryable": bool(blocking_codes),
+        "error_code": blocking_codes[0] if blocking_codes else None,
+    }
+
+### B36 solidworks_delivery_export_bom_csv -> sw_delivery.export_assembly_bom_csv
+--- SPEC DOC ---
+Export the assembly BOM to CSV. ★ The criterion is the FILE (exists and non-empty). ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+导出 UTF-8 BOM CSV，并返回文件大小与 SHA-256 证据。
+--- FN SOURCE ---
+def export_assembly_bom_csv(
+    model,
+    output_path,
+    *,
+    include_excluded: bool = False,
+    overwrite: bool = False,
+) -> dict[str, Any]:
+    """导出 UTF-8 BOM CSV，并返回文件大小与 SHA-256 证据。"""
+    target = Path(os.path.expandvars(str(output_path))).expanduser().resolve()
+    if target.exists() and not overwrite:
+        raise FileExistsError(f"BOM 文件已存在，未允许覆盖: {target}")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    before = _file_signature(target)
+    rows = collect_assembly_bom(model, include_excluded=include_excluded)
+    headers = [
+        "item", "part_number", "description", "material", "quantity",
+        "file", "configuration", "component", "excluded_from_bom",
+    ]
+    with target.open("w", newline="", encoding="utf-8-sig") as stream:
+        writer = csv.DictWriter(stream, fieldnames=headers)
+        writer.writeheader()
+        writer.writerows(rows)
+    after = _file_signature(target)
+    produced = after is not None and after != before
+    return {
+        "success": produced,
+        "path": str(target),
+        "rows": rows,
+        "row_count": len(rows),
+        "quantity_total": sum(row["quantity"] for row in rows),
+        "size_bytes": after[0] if after else 0,
+        "sha256": _sha256(target) if produced else "",
+        "produced_this_run": produced,
+        "review_required": True,
+        "limitations": ["CSV 为装配组件属性清单，必须与 SolidWorks 原生 BOM 和工程图人工核对"],
+    }
+
+### B36 solidworks_simulation_list_setter_summary -> sw_simulation_study_options.list_setter_summary
+--- SPEC DOC ---
+Return the catalogue of simulation study-option setters (family / name / type) as a dict. ★ Zero-argument, no SolidWorks call — use it to discover valid family/name pairs before calling set_option.
+--- FN DOCSTRING ---
+返回各族 setter 数量与布尔型清单（供文档生成 / 自检使用）。
+--- FN SOURCE ---
+def list_setter_summary() -> dict[str, Any]:
+    """返回各族 setter 数量与布尔型清单（供文档生成 / 自检使用）。"""
+    return {
+        family: {
+            "total": len(items),
+            "boolean": len(BOOLEAN_SETTERS.get(family, ())),
+            "names": sorted(items),
+        }
+        for family, items in STUDY_OPTION_SETTERS.items()
+    }
+
+### B37 solidworks_simulation_configure_static_solver -> sw_simulation_study_options.configure_static_solver_report
+--- SPEC DOC ---
+Configure the static solver options of the injected study and return a report. ⚠ Only the non-None options are applied. Does NOT save the document.
+--- FN DOCSTRING ---
+★ **静力求解器设置**：★ 从 `study` 取 options ⇒ 调 `configure_static_solver`。
+
+★ kwargs 里**只传非 None 的**（★ 底层用 `None` 表示"不改"，★ 所以过滤掉 None 是**保持语义**）。
+--- FN SOURCE ---
+def configure_static_solver_report(study, family: str = "ICWStaticStudyOptions",
+                                   free_body_force=None, contact_penalty=None,
+                                   reference_pressure=None) -> dict:
+    """★ **静力求解器设置**：★ 从 `study` 取 options ⇒ 调 `configure_static_solver`。
+
+    ★ kwargs 里**只传非 None 的**（★ 底层用 `None` 表示"不改"，★ 所以过滤掉 None 是**保持语义**）。
+    """
+    opts, err = _options_from_study(study, family)
+    if err:
+        return {"ok": False, "family": family, "error": err}
+    #: ★ 显式列出（★ 与底层形参一致 ⇒ `check_param_binding.py` 可验 + **形参即文档**）
+    kw = {k: v for k, v in (("free_body_force", free_body_force),
+                            ("contact_penalty", contact_penalty),
+                            ("reference_pressure", reference_pressure)) if v is not None}
+    try:
+        r = configure_static_solver(opts, **kw)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "family": family, "changed": sorted(kw),
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    #: ★★ 2026-10-01（轮 347）**"nothing to change" 不是失败** ——
+    #:   ★ `set_options` 在 `kw` 为空时回 `{}`，而 `bool({})` 是 `False` ⇒
+    #:   ★★ 旧写法把「你没给参数」报成 `ok=False`，**让调用方以为能力坏了**（★ 我第一遍就这么误判）。
+    #:   ⚠ **本行必须在 `except` 块之外**（★ 我第一次按**行号**批量插入，把它插进了 `except` 里面 ⇒
+    #:     正常路径落空、函数回 `None`）—— ★ 与事实 61 同型：**按行插入会挤坏控制流**。
+    if not kw:
+        return {"ok": True, "family": family, "changed": [], "returned": r,
+                "note": "没有要改的项（★ 未传任何参数并非失败）"}
+    return {"ok": bool(r), "family": family, "changed": sorted(kw), "returned": r}
+
+### B37 solidworks_simulation_configure_frequency_solver -> sw_simulation_study_options.configure_frequency_solver_report
+--- SPEC DOC ---
+Configure the frequency solver options of the injected study. ⚠ Only the non-None options are applied.
+--- FN DOCSTRING ---
+★ **频率求解器设置**（★ 同族手法）。
+--- FN SOURCE ---
+def configure_frequency_solver_report(study, family: str = "ICWFrequencyStudyOptions",
+                                      decouple=None, reference_pressure=None) -> dict:
+    """★ **频率求解器设置**（★ 同族手法）。"""
+    opts, err = _options_from_study(study, family)
+    if err:
+        return {"ok": False, "family": family, "error": err}
+    kw = {k: v for k, v in (("decouple", decouple),
+                            ("reference_pressure", reference_pressure)) if v is not None}
+    try:
+        r = configure_frequency_solver(opts, **kw)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "family": family, "changed": sorted(kw),
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    #: ★★ 同 `configure_static_solver_report`（轮 347）：★ **空 `kw` ⇒ 不是失败**（★ 在 `except` 之外）。
+    if not kw:
+        return {"ok": True, "family": family, "changed": [], "returned": r,
+                "note": "没有要改的项（★ 未传任何参数并非失败）"}
+    return {"ok": bool(r), "family": family, "changed": sorted(kw), "returned": r}
+
+### B37 solidworks_simulation_configure_buckling_solver -> sw_simulation_study_options.configure_buckling_solver_report
+--- SPEC DOC ---
+Configure the buckling solver options of the injected study. ⚠ Only the non-None options are applied.
+--- FN DOCSTRING ---
+★ **屈曲求解器设置**（★ 同族手法）。
+--- FN SOURCE ---
+def configure_buckling_solver_report(study, family: str = "ICWBucklingStudyOptions",
+                                     modes=None, positive_only=None, reference_pressure=None) -> dict:
+    """★ **屈曲求解器设置**（★ 同族手法）。"""
+    opts, err = _options_from_study(study, family)
+    if err:
+        return {"ok": False, "family": family, "error": err}
+    kw = {k: v for k, v in (("modes", modes),
+                            ("positive_only", positive_only),
+                            ("reference_pressure", reference_pressure)) if v is not None}
+    try:
+        r = configure_buckling_solver(opts, **kw)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "family": family, "changed": sorted(kw),
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    #: ★★ 同 `configure_static_solver_report`（轮 347）：★ **空 `kw` ⇒ 不是失败**（★ 在 `except` 之外）。
+    if not kw:
+        return {"ok": True, "family": family, "changed": [], "returned": r,
+                "note": "没有要改的项（★ 未传任何参数并非失败）"}
+    return {"ok": bool(r), "family": family, "changed": sorted(kw), "returned": r}
+
+### B37 solidworks_simulation_set_study_option -> sw_simulation_study_options.set_study_option_report
+--- SPEC DOC ---
+Set one study option by its registered family/name and return a report. ★ Unknown family/name raises instead of being silently ignored.
+--- FN DOCSTRING ---
+★ **按登记表设一个求解器选项**（★ 从 `study` 取 options）。
+
+⚠ `set_option` 对**未登记的族名/选项名**抛 `KeyError`（★ **不静默忽略**）——
+  ★ 包装里如实回传（★ 于是调用方能看出"名字写错了"而不是"设了但没生效"）。
+--- FN SOURCE ---
+def set_study_option_report(study, family: str, name: str, value) -> dict:
+    """★ **按登记表设一个求解器选项**（★ 从 `study` 取 options）。
+
+    ⚠ `set_option` 对**未登记的族名/选项名**抛 `KeyError`（★ **不静默忽略**）——
+      ★ 包装里如实回传（★ 于是调用方能看出"名字写错了"而不是"设了但没生效"）。
+    """
+    opts, err = _options_from_study(study, family)
+    if err:
+        return {"ok": False, "family": family, "name": name, "error": err}
+    try:
+        r = set_option(opts, family, name, value)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "family": family, "name": name,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    return {"ok": bool(r), "family": family, "name": name, "value": value, "returned": r}
+
+### B37 solidworks_simulation_set_study_options -> sw_simulation_study_options.set_study_options_report
+--- SPEC DOC ---
+Set several study options and return the read-back dict. ★ Unknown family/name raises instead of being silently ignored.
+--- FN DOCSTRING ---
+★ **一次设一组求解器选项**（★ 从 `study` 取 options）。
+--- FN SOURCE ---
+def set_study_options_report(study, family: str, values: dict) -> dict:
+    """★ **一次设一组求解器选项**（★ 从 `study` 取 options）。"""
+    opts, err = _options_from_study(study, family)
+    if err:
+        return {"ok": False, "family": family, "error": err}
+    try:
+        r = set_options(opts, family, values)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "family": family,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    return {"ok": bool(r) if isinstance(r, bool) else True, "family": family,
+            "asked": sorted(values), "readback": r}
+
+### B38 solidworks_costing_evidence -> sw_costing.collect_costing_evidence_report
+--- SPEC DOC ---
+Return the Costing overview (body count + whether a cost analysis exists). ★ Read-only.
+--- FN DOCSTRING ---
+★ **成本状态概览**（★ 实体数 + 有没有成本分析）。
+--- FN SOURCE ---
+def collect_costing_evidence_report(cost_manager) -> dict:
+    """★ **成本状态概览**（★ 实体数 + 有没有成本分析）。"""
+    m, _d, err = _costing_chain(cost_manager)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        r = collect_costing_evidence(m)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    return {"ok": isinstance(r, dict), "readback": r}
+
+### B38 solidworks_costing_read_analysis -> sw_costing.read_cost_analysis_report
+--- SPEC DOC ---
+Read every readable field of the part's cost analysis as a dict. ★ Use it to discover the valid cost-method names. ★ Read-only.
+--- FN DOCSTRING ---
+★ **读成本分析的全部可读项**（★ 那是最有价值的一项读数）。
+--- FN SOURCE ---
+def read_cost_analysis_report(cost_manager) -> dict:
+    """★ **读成本分析的全部可读项**（★ 那是最有价值的一项读数）。"""
+    m, _d, err = _costing_chain(cost_manager)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        ca = get_cost_analysis(m)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "get_cost_analysis",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    if ca is None:
+        return {"ok": False, "stage": "get_cost_analysis",
+                "error": "成本分析为 None ⇒ ★ 该零件可能还没做过成本分析（★ 先 create_cost_analysis）"}
+    try:
+        r = read_cost_analysis(ca)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "read_cost_analysis",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    return {"ok": isinstance(r, dict), "readback": r}
+
+### B38 solidworks_costing_body_count -> sw_costing.get_body_count_report
+--- SPEC DOC ---
+Return how many bodies Costing sees (★ cost is computed per body). ★ Read-only.
+--- FN DOCSTRING ---
+★ **实体数**（★ 成本是按实体算的）。
+--- FN SOURCE ---
+def get_body_count_report(cost_manager) -> dict:
+    """★ **实体数**（★ 成本是按实体算的）。"""
+    m, _d, err = _costing_chain(cost_manager)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        n = get_body_count(m)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    return {"ok": n is not None, "body_count": n}
+
+### B38 solidworks_costing_list_bodies -> sw_costing.list_cost_bodies_report
+--- SPEC DOC ---
+Return the Costing body names (★ feed one to solidworks_costing_read_body). ★ Read-only.
+--- FN DOCSTRING ---
+★ **列出实体**（★ 回它们的名字 —— ★ 供 `read_cost_body_report` 用）。
+--- FN SOURCE ---
+def list_cost_bodies_report(cost_manager) -> dict:
+    """★ **列出实体**（★ 回它们的名字 —— ★ 供 `read_cost_body_report` 用）。"""
+    m, _d, err = _costing_chain(cost_manager)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        b = get_bodies(m)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    names = []
+    for x in (b or []):
+        try:
+            nm = get_com_member(x, "Name")
+        except Exception:                                      # noqa: BLE001
+            nm = None
+        names.append(str(nm) if nm else "?")
+    return {"ok": b is not None, "count": len(names), "names": names[:20]}
+
+### B38 solidworks_costing_read_body -> sw_costing.read_cost_body_report
+--- SPEC DOC ---
+Read one body's cost data. ★ An unknown body name fails with the list of valid names. ★ Read-only.
+--- FN DOCSTRING ---
+★ **按名字读一个实体的成本**（★ `body_name` 从 `list_cost_bodies_report` 来）。
+--- FN SOURCE ---
+def read_cost_body_report(cost_manager, body_name: str) -> dict:
+    """★ **按名字读一个实体的成本**（★ `body_name` 从 `list_cost_bodies_report` 来）。"""
+    m, _d, err = _costing_chain(cost_manager)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        bodies = get_bodies(m) or []
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "get_bodies",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    target = None
+    for x in bodies:
+        try:
+            nm = str(get_com_member(x, "Name") or "")
+        except Exception:                                      # noqa: BLE001
+            nm = ""
+        if nm == str(body_name):
+            target = x
+            break
+    if target is None:
+        got = []
+        for x in bodies:
+            try: got.append(str(get_com_member(x, "Name") or "?"))
+            except Exception: got.append("?")
+        return {"ok": False, "stage": "find_body",
+                "error": "没有名为 %r 的实体。★ 合法值：%s" % (body_name, got[:20])}
+    try:
+        r = read_cost_body(target)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "read_cost_body",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    return {"ok": isinstance(r, dict), "body_name": str(body_name), "readback": r}
+
+### B38 solidworks_costing_list_templates -> sw_costing.list_costing_templates_report
+--- SPEC DOC ---
+Return the Costing template names available for a category. ★ Read-only.
+--- FN DOCSTRING ---
+★ **成本模板清单**（★ 回清单 ⇒ ★ 于是调用方能看出合法值）。
+--- FN SOURCE ---
+def list_costing_templates_report(cost_manager, category: int = 0) -> dict:
+    """★ **成本模板清单**（★ 回清单 ⇒ ★ 于是调用方能看出合法值）。"""
+    _m, d, err = _costing_chain(cost_manager)
+    if err:
+        return {"ok": False, "error": err}
+    if d is None:
+        return {"ok": False, "stage": "CostingDefaults", "error": "取不到 CostingDefaults"}
+    try:
+        #: ★★★★ 2026-10-02（轮 366）**真 bug 修在一行上**：这里原先传的是 `d`（`CostingDefaults`），
+        #:   而 `GetTemplatePathnames` **挂在 `ICostManager` 上**（★ 反射转储
+        #:   `iface_sldcostingapi.txt` 的 `## ICostManager` 段里 `GetTemplateCount(Int32)` /
+        #:   `GetTemplatePathnames(Int32)` 成对）⇒ ★ **该传 `cost_manager`**。
+        #: ⚠ **报错极度误导**：COM 报 `<unknown>.GetTemplatePathnames`（★ 像"成员不存在"），
+        #:   而真因是**对象不对**（★ 事实 36 的形态）—— ★ 而 `get_default_template` 要的**是 `d``，
+        #:   ★★ **同一族里两个成员挂在不同接口上**。
+        #: ★ 证据：受控实验 A（只取 defaults）/ B（先 model 后 defaults）**都通**，★ 而工具层入口不通
+        #:   ⇒ 差别只剩这一处；★ 改成 `cost_manager` 后真机通过。
+        t = list_templates(cost_manager, category)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    return {"ok": t is not None, "category": int(category),
+            "count": len(t) if hasattr(t, "__len__") else None,
+            "templates": [str(x) for x in (t or [])][:20]}
+
+### B38 solidworks_costing_default_template -> sw_costing.get_default_template_report
+--- SPEC DOC ---
+Return the default Costing template name for a category. ★ Read-only.
+--- FN DOCSTRING ---
+★ **某类别的默认模板名**。
+--- FN SOURCE ---
+def get_default_template_report(cost_manager, category: int) -> dict:
+    """★ **某类别的默认模板名**。"""
+    _m, d, err = _costing_chain(cost_manager)
+    if err:
+        return {"ok": False, "error": err}
+    if d is None:
+        return {"ok": False, "stage": "CostingDefaults", "error": "取不到 CostingDefaults"}
+    try:
+        t = get_default_template(d, int(category))
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    return {"ok": t is not None, "category": int(category), "template": str(t) if t else None}
+
+### B38 solidworks_costing_method_value -> sw_costing.get_costing_method_report
+--- SPEC DOC ---
+Return the current value of one cost method. ★ Read-only.
+--- FN DOCSTRING ---
+★ **某个成本方法的取值**（★ `method_name` 见 `read_cost_analysis` 的方法清单）。
+--- FN SOURCE ---
+def get_costing_method_report(cost_manager, method_name: str) -> dict:
+    """★ **某个成本方法的取值**（★ `method_name` 见 `read_cost_analysis` 的方法清单）。"""
+    m, _d, err = _costing_chain(cost_manager)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        v = get_costing_method(m, str(method_name))
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "method_name": str(method_name),
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    return {"ok": v is not None, "method_name": str(method_name), "value": v}
+
+### B39 solidworks_equation_add -> sw_equation.add_equation
+--- SPEC DOC ---
+Add a global equation. ★ Verify by reading the equations back (the criterion the existing smoke uses). ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+加一条方程式。
+
+⚠ **走 `Add2`**（`Add` 官方已标 **Obsolete**）。
+
+:param equation: 方程式字符串，**按 UI 里那样写、维度名带双引号** ——
+    例 `'"B" = 2'` · `'"N_SPOKES@CirPattern" = "BARLENGTH@Sketch2" /10'`。
+:param index: 0 基下标；**`-1` = 追加到末尾**（官方语义）。
+:param solve: `True` 立即求解（官方 `Solve`）。
+:returns: 新方程式的下标（官方：失败返回 `-1`）。
+:raises RuntimeError: 传空串，或官方返回 `-1`（**不静默成功**）。
+--- FN SOURCE ---
+def add_equation(model, equation: str, *, index: int = APPEND_AT_END, solve: bool = True):
+    """加一条方程式。
+
+    ⚠ **走 `Add2`**（`Add` 官方已标 **Obsolete**）。
+
+    :param equation: 方程式字符串，**按 UI 里那样写、维度名带双引号** ——
+        例 `'"B" = 2'` · `'"N_SPOKES@CirPattern" = "BARLENGTH@Sketch2" /10'`。
+    :param index: 0 基下标；**`-1` = 追加到末尾**（官方语义）。
+    :param solve: `True` 立即求解（官方 `Solve`）。
+    :returns: 新方程式的下标（官方：失败返回 `-1`）。
+    :raises RuntimeError: 传空串，或官方返回 `-1`（**不静默成功**）。
+    """
+    text = (equation or "").strip()
+    if not text:
+        raise RuntimeError("方程式字符串为空 —— 官方 `Add2` 会返回 -1，这里提前拦下")
+    mgr = _manager(model)
+    got = get_com_member(mgr, "Add2", int(index), text, bool(solve))
+    if got is None or int(got) == -1:
+        raise RuntimeError(
+            "IEquationMgr.Add2 返回 -1（失败）—— 常见原因："
+            "**方程式的维度名没带双引号**，或引用的维度在本模型中不存在。"
+            "官方 Remarks：字符串必须按「在 UI 里输入那样」写。"
+        )
+    return int(got)
+
+### B39 solidworks_equation_list -> sw_equation.list_equations
+--- SPEC DOC ---
+Return the document's global equations as a list. ★ Read-only.
+--- FN DOCSTRING ---
+列出全部方程式（`GetCount()` + `Equation[i]`）。
+--- FN SOURCE ---
+def list_equations(model):
+    """列出全部方程式（`GetCount()` + `Equation[i]`）。"""
+    mgr = _manager(model)
+    count = int(get_com_member(mgr, "GetCount") or 0)
+    out = []
+    for i in range(count):
+        #: ★★ 2026-10-03（轮 470）**修正一次过度替换** ——
+        #:   本行原本是 `get_com_member(mgr, "Equation", i)`（★ **读**）：
+        #:   `Equation` 是**索引属性**，`i` 是**下标**，**返回值**是要取的等式文本。
+        #:   ⚠ 同轮我把 98 处「写 COM 属性」从 `get_com_member(对象, 名, 值)` 批量改名为
+        #:     `set_com_member` 时，**按形态匹配 ⇒ 把这一处也改了** ⇒ 于是它变成"写下标"
+        #:     并回 0/1/2 ⇒ 测试 `assert [0,1,2] == ['"A" = 1', …]` 当场失败。
+        #:   ★ **判据（可静态判）**：**返回值被使用 ⇒ 那是读**；返回值被丢掉才是写。
+        #:     ★★ 同族共 3 处（此处 + `sw_assembly.py` 的 `MateEntityType` / `MateComponentName`），
+        #:     已由「返回值被使用」这一条一次找全。
+        out.append(get_com_member(mgr, "Equation", i))
+    return out
+
+### B39 solidworks_equation_evaluate -> sw_equation.evaluate_equations
+--- SPEC DOC ---
+Solve the global equations and return the result. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+让官方把全部方程式求一遍值（`EvaluateAll()`）。
+--- FN SOURCE ---
+def evaluate_equations(model):
+    """让官方把全部方程式求一遍值（`EvaluateAll()`）。"""
+    mgr = _manager(model)
+    got = get_com_member(mgr, "EvaluateAll")
+    if got is None:
+        raise RuntimeError("IEquationMgr.EvaluateAll() 返回 None ⇒ 无法确认是否求解成功")
+    return int(got)
+
+### B39 solidworks_equation_delete -> sw_equation.delete_equation
+--- SPEC DOC ---
+Delete one global equation by index. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+删掉第 `index` 条方程式（官方 `Delete(Int32)`）。
+--- FN SOURCE ---
+def delete_equation(model, index: int):
+    """删掉第 `index` 条方程式（官方 `Delete(Int32)`）。"""
+    mgr = _manager(model)
+    got = get_com_member(mgr, "Delete", int(index))
+    if got is None or int(got) == -1:
+        raise RuntimeError("IEquationMgr.Delete 返回 -1（失败）—— 下标越界？index=%d" % index)
+    return int(got)
+
+### B39 solidworks_helix_insert -> sw_helix.insert_helix
+--- SPEC DOC ---
+Insert a helix/spiral. ★ Needs the document state the official API requires (a circular sketch to revolve about) — the capability layer reports it if not.
+--- FN DOCSTRING ---
+建**定距螺旋线 / 涡旋**。
+
+⚠ **调用前置条件**（与 `sw_mold.insert_parting_line` 同类）：
+官方示例显示要先**选中一个圆**（`SelectByID2` + `CreateCircle`）——
+螺旋线以那个圆为直径基准。**未选圆时行为未查证**（本模块不代选，保持"不猜"）。
+
+:param height_mm: 螺旋线高度，**毫米**（官方 `Height` 单位是米，这里换算）。
+:param pitch_mm: 螺距，**毫米**。⚠ 官方**未写单位**，本模块按米换算（同类推断）。
+:param revolution: 圈数（无量纲）。
+:param helix_def: `swHelixDefinedBy_e` 的**数值**；用 `HELIX_DEFINED_BY` 里的名字。
+:param reversed: 官方 `Reversed` —— 反向于定义圆的法向。
+:param clockwise: 官方 `Clockwised` —— 顺时针。
+:param tapered: 官方 `Tapered` —— 带锥度。
+:param outward: 官方 `Outward` —— 向外锥。
+:param taper_angle_deg: 锥角，**度**。⚠ 官方**未写单位**，本模块按度直传。
+:param start_angle_deg: 起始角，**度**（官方 `Startangle` 单位是**弧度**，这里换算）。
+:returns: 新建 Feature 的名字。
+:raises RuntimeError: 返回 `None`（最常见原因：**没有选中定义用的圆**）。
+--- FN SOURCE ---
+def insert_helix(
+    model,
+    *,
+    height_mm: float,
+    pitch_mm: float = 0.0,
+    revolution: float = 0.0,
+    helix_def: int = HELIX_DEFINED_BY["pitch_and_revolution"],
+    reversed: bool = False,
+    clockwise: bool = False,
+    tapered: bool = False,
+    outward: bool = False,
+    taper_angle_deg: float = 0.0,
+    start_angle_deg: float = 0.0,
+):
+    """建**定距螺旋线 / 涡旋**。
+
+    ⚠ **调用前置条件**（与 `sw_mold.insert_parting_line` 同类）：
+    官方示例显示要先**选中一个圆**（`SelectByID2` + `CreateCircle`）——
+    螺旋线以那个圆为直径基准。**未选圆时行为未查证**（本模块不代选，保持"不猜"）。
+
+    :param height_mm: 螺旋线高度，**毫米**（官方 `Height` 单位是米，这里换算）。
+    :param pitch_mm: 螺距，**毫米**。⚠ 官方**未写单位**，本模块按米换算（同类推断）。
+    :param revolution: 圈数（无量纲）。
+    :param helix_def: `swHelixDefinedBy_e` 的**数值**；用 `HELIX_DEFINED_BY` 里的名字。
+    :param reversed: 官方 `Reversed` —— 反向于定义圆的法向。
+    :param clockwise: 官方 `Clockwised` —— 顺时针。
+    :param tapered: 官方 `Tapered` —— 带锥度。
+    :param outward: 官方 `Outward` —— 向外锥。
+    :param taper_angle_deg: 锥角，**度**。⚠ 官方**未写单位**，本模块按度直传。
+    :param start_angle_deg: 起始角，**度**（官方 `Startangle` 单位是**弧度**，这里换算）。
+    :returns: 新建 Feature 的名字。
+    :raises RuntimeError: 返回 `None`（最常见原因：**没有选中定义用的圆**）。
+    """
+    model.InsertHelix(
+        bool(reversed),
+        bool(clockwise),
+        bool(tapered),
+        bool(outward),
+        int(helix_def),
+        mm(float(height_mm)),
+        mm(float(pitch_mm)),
+        float(revolution),
+        float(taper_angle_deg),
+        deg(float(start_angle_deg)),
+    )
+    return _newest_feature_name(model)
+
+### B39 solidworks_gtol_insert -> sw_gtol.insert_gtol
+--- SPEC DOC ---
+Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns an object and the feature tree changes. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+新建一个**空的**形位公差符号（官方 `IModelDoc2.InsertGtol()`，**0 参**）。
+
+⚠ 官方 Remarks：**引线连接点来自调用前选中的东西**；
+若**没有选中**，则符号无引线、独立存在，并**初始位于模型/工程图的原点**。
+
+:returns: 新建的 `IGtol` 对象（`InsertGtol` 返回的指针）。
+:raises RuntimeError: 返回 `None`。
+--- FN SOURCE ---
+def insert_gtol(model):
+    """新建一个**空的**形位公差符号（官方 `IModelDoc2.InsertGtol()`，**0 参**）。
+
+    ⚠ 官方 Remarks：**引线连接点来自调用前选中的东西**；
+    若**没有选中**，则符号无引线、独立存在，并**初始位于模型/工程图的原点**。
+
+    :returns: 新建的 `IGtol` 对象（`InsertGtol` 返回的指针）。
+    :raises RuntimeError: 返回 `None`。
+    """
+    gtol = call_com_member(model, "InsertGtol")
+    if gtol is None:
+        raise RuntimeError(
+            "IModelDoc2.InsertGtol() 返回 None ⇒ 形位公差没有建出来"
+            "（常见原因：当前文档类型不支持标注）"
+        )
+    return gtol
+
+### B40 solidworks_motion_create_study -> sw_motion.create_motion_study
+--- SPEC DOC ---
+Create a Motion Study on the active assembly and return it. ★ Needs an ASSEMBLY document — the capability layer reports it if the active document is not one. ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+@brief 创建并激活一个 Motion Study。
+@param asm_model 装配体 IModelDoc2/IAssemblyDoc。
+@param name 可选算例名称。
+@param duration 动画时长，单位秒。
+@param study_type 可选 Motion Study 类型；None 时保持 SolidWorks 默认。
+@return Motion Study COM 对象。
+--- FN SOURCE ---
+def create_motion_study(asm_model, name=None, duration=4.0, study_type=None):
+    """
+    @brief 创建并激活一个 Motion Study。
+    @param asm_model 装配体 IModelDoc2/IAssemblyDoc。
+    @param name 可选算例名称。
+    @param duration 动画时长，单位秒。
+    @param study_type 可选 Motion Study 类型；None 时保持 SolidWorks 默认。
+    @return Motion Study COM 对象。
+    """
+    manager = get_motion_study_manager(asm_model)
+    study = motion_member(manager, "CreateMotionStudy")
+    if study is None:
+        raise RuntimeError("新建 Motion Study 失败")
+    if name:
+        try:
+            study.Name = name
+        except Exception:
+            pass
+    if study_type is not None:
+        try:
+            study.StudyType = int(study_type)
+        except Exception:
+            pass
+    if not bool(motion_member(study, "Activate")):
+        raise RuntimeError("激活 Motion Study 失败")
+    if duration is not None:
+        try:
+            motion_member(study, "SetDuration", float(duration))
+        except Exception:
+            pass
+    return study
+
+### B40 solidworks_motion_collect_summary -> sw_motion.collect_motion_study_summary
+--- SPEC DOC ---
+Return a JSON-able summary of the assembly's motion studies. ★ Read-only.
+--- FN DOCSTRING ---
+@brief 收集装配体全部 Motion Study 的机器可读摘要。
+@param asm_model 装配体 IModelDoc2/IAssemblyDoc。
+@return 包含算例名称、类型、时长、马达/外力数量和结果状态的字典。
+
+本函数只读取官方类型库已公开的成员，不修改算例，也不把“存在算例”误报成
+“运动结果正确”。`results_out_of_date` 为 True 时必须重新 Calculate。
+--- FN SOURCE ---
+def collect_motion_study_summary(asm_model):
+    """
+    @brief 收集装配体全部 Motion Study 的机器可读摘要。
+    @param asm_model 装配体 IModelDoc2/IAssemblyDoc。
+    @return 包含算例名称、类型、时长、马达/外力数量和结果状态的字典。
+
+    本函数只读取官方类型库已公开的成员，不修改算例，也不把“存在算例”误报成
+    “运动结果正确”。`results_out_of_date` 为 True 时必须重新 Calculate。
+    """
+    manager = get_motion_study_manager(asm_model)
+    count = int(motion_member(manager, "GetMotionStudyCount") or 0)
+    names = motion_member(manager, "GetMotionStudyNames") or []
+    if isinstance(names, str):
+        names = [names]
+    names = [str(name) for name in list(names)[:count]]
+    studies = []
+    for name in names:
+        study = motion_member(manager, "GetMotionStudy", name)
+        if study is None:
+            studies.append({"name": name, "available": False})
+            continue
+        study_type = int(motion_member(study, "StudyType") or 0)
+        results = None
+        results_error = None
+        try:
+            results = motion_member(study, "GetResults", study_type)
+        except Exception as exc:
+            results_error = str(exc)
+        motion_features = _collect_motion_features(study)
+        reported_motor_count = int(motion_member(study, "GetNumOfExternalMotors") or 0)
+        motor_feature_count = sum("motor" in item.get("type_name", "").lower() for item in motion_features)
+        item = {
+            "name": str(motion_member(study, "Name") or name),
+            "available": True,
+            "study_type": study_type,
+            "duration_seconds": float(motion_member(study, "GetDuration") or 0.0),
+            "motor_count": max(reported_motor_count, motor_feature_count),
+            "reported_motor_count": reported_motor_count,
+            "motor_feature_count": motor_feature_count,
+            "external_force_count": int(motion_member(study, "GetNumOfExternalForces") or 0),
+            "feature_count": int(motion_member(study, "GetMotionFeaturesCount") or 0),
+            "active": bool(motion_member(study, "IsActive")),
+            "playing": bool(motion_member(study, "IsPlaying")),
+            "results_available": results is not None,
+            "motion_features": motion_features,
+        }
+        if results is not None:
+            item["results_out_of_date"] = bool(motion_member(results, "IsOutOfDate"))
+        if results_error:
+            item["results_error"] = results_error
+        studies.append(item)
+    return {
+        "motion_type_library": ensure_motion_type_library(raise_on_error=False),
+        "study_count": count,
+        "studies": studies,
+    }
+
+### B40 solidworks_motion_validate_studies -> sw_motion.validate_motion_studies_report
+--- SPEC DOC ---
+Validate the motion studies against the given requirements and return the result. ★ Read-only (★ it reports, it does not fix).
+--- FN DOCSTRING ---
+★ **显式形参版的 `validate_motion_studies`**（★ 只传非 None 的那些）。
+
+★ 返回里带上 **`asked`**（实际传下去的键）⇒ ★ 于是"我到底验了什么"可从结果里读出来。
+--- FN SOURCE ---
+def validate_motion_studies_report(asm_model, study_name=None, expected_study_type=None,
+                                   minimum_duration_seconds=None, minimum_motor_count=None,
+                                   require_results=None):
+    """★ **显式形参版的 `validate_motion_studies`**（★ 只传非 None 的那些）。
+
+    ★ 返回里带上 **`asked`**（实际传下去的键）⇒ ★ 于是"我到底验了什么"可从结果里读出来。
+    """
+    req = {}
+    for k, v in (("study_name", study_name),
+                 ("expected_study_type", expected_study_type),
+                 ("minimum_duration_seconds", minimum_duration_seconds),
+                 ("minimum_motor_count", minimum_motor_count),
+                 ("require_results", require_results)):
+        if v is not None:
+            req[k] = v
+    try:
+        r = validate_motion_studies(asm_model, **req)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "asked": sorted(req),
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    return {"ok": True, "asked": sorted(req), "returned": r}
+
+### B40 solidworks_motion_study_manager -> sw_motion.get_motion_study_manager
+--- SPEC DOC ---
+Return the assembly's motion study manager (★ the entry point for the rest). ★ Read-only.
+--- FN DOCSTRING ---
+@brief 获取装配体的 MotionStudyManager。
+@param asm_model 装配体 IModelDoc2/IAssemblyDoc。
+@param load_type_library 是否先加载 `swmotionstudy.tlb`。
+@return MotionStudyManager COM 对象。
+--- FN SOURCE ---
+def get_motion_study_manager(asm_model, load_type_library=True):
+    """
+    @brief 获取装配体的 MotionStudyManager。
+    @param asm_model 装配体 IModelDoc2/IAssemblyDoc。
+    @param load_type_library 是否先加载 `swmotionstudy.tlb`。
+    @return MotionStudyManager COM 对象。
+    """
+    if load_type_library:
+        ensure_motion_type_library(raise_on_error=False)
+    manager = safe_get_com_member(asm_model.Extension, "GetMotionStudyManager")
+    if manager is None:
+        raise RuntimeError("无法获取 MotionStudyManager，请确认当前文档是装配体且 SolidWorks Motion 可用")
+    return manager
+
+### B40 solidworks_motion_ensure_type_library -> sw_motion.ensure_motion_type_library
+--- SPEC DOC ---
+Check (and load) the Motion type library. ★ Zero-argument apart from the flag — use it to find out whether Motion is usable BEFORE asking for anything else. ★ 动画导出（AVI）在 known-facts 里记为 stitched —— 缺 Motion 加载项就是那条的原因。
+--- FN DOCSTRING ---
+@brief 生成 SolidWorks Motion Study 类型库的 pywin32 包装。
+@param raise_on_error 找不到或加载失败时是否抛异常。
+@return 成功加载的类型库路径；失败且 raise_on_error=False 时返回 None。
+
+Motion Study 的 `IMotionStudyManager` 位于 `swmotionstudy.tlb`，不在主
+`sldworks` 类型库里。未加载该类型库时，pywin32 动态对象常出现
+`CreateMotionStudy`、`GetMotionStudyCount` 等成员像属性不像方法的情况。
+--- FN SOURCE ---
+def ensure_motion_type_library(raise_on_error=False):
+    """
+    @brief 生成 SolidWorks Motion Study 类型库的 pywin32 包装。
+    @param raise_on_error 找不到或加载失败时是否抛异常。
+    @return 成功加载的类型库路径；失败且 raise_on_error=False 时返回 None。
+
+    Motion Study 的 `IMotionStudyManager` 位于 `swmotionstudy.tlb`，不在主
+    `sldworks` 类型库里。未加载该类型库时，pywin32 动态对象常出现
+    `CreateMotionStudy`、`GetMotionStudyCount` 等成员像属性不像方法的情况。
+    """
+    errors = []
+    for path in _motion_typelib_candidates():
+        try:
+            tlb = pythoncom.LoadTypeLib(path)
+            guid, lcid, _syskind, major, minor, _flags = tlb.GetLibAttr()
+            win32com_client.gencache.EnsureModule(guid, lcid, major, minor)
+            return path
+        except Exception as exc:
+            errors.append(f"{path}: {exc}")
+
+    if raise_on_error:
+        detail = "\n".join(errors) if errors else "未找到 swmotionstudy.tlb"
+        raise RuntimeError("无法加载 SolidWorks Motion Study 类型库:\n" + detail)
+    return None
+
+### B40 solidworks_motion_validate_summary -> sw_motion.validate_motion_study_summary
+--- SPEC DOC ---
+Validate a motion-study summary dict (★ pure data — no SolidWorks call). ★ Useful to re-check a summary recorded earlier.
+--- FN DOCSTRING ---
+@brief 验证 Motion Study 是否具备可交付的机器证据。
+@param summary collect_motion_study_summary() 的结果。
+@param study_name 可选目标算例名；None 时验证全部可用算例。
+@param expected_study_type 可选期望 StudyType 枚举值。
+@param minimum_duration_seconds 最小时长。
+@param minimum_motor_count 最少马达数量。
+@param require_results 是否强制要求已计算且结果不过期。
+@return 包含 status、checks、issues 和 matched_studies 的字典。
+--- FN SOURCE ---
+def validate_motion_study_summary(
+    summary,
+    study_name=None,
+    expected_study_type=None,
+    minimum_duration_seconds=0.001,
+    minimum_motor_count=1,
+    require_results=True,
+):
+    """
+    @brief 验证 Motion Study 是否具备可交付的机器证据。
+    @param summary collect_motion_study_summary() 的结果。
+    @param study_name 可选目标算例名；None 时验证全部可用算例。
+    @param expected_study_type 可选期望 StudyType 枚举值。
+    @param minimum_duration_seconds 最小时长。
+    @param minimum_motor_count 最少马达数量。
+    @param require_results 是否强制要求已计算且结果不过期。
+    @return 包含 status、checks、issues 和 matched_studies 的字典。
+    """
+    checks = []
+    issues = []
+
+    def check(check_id, passed, failure_message, study=None, success_message=None):
+        """@brief 追加单条验收检查。"""
+        message = success_message if passed and success_message else failure_message
+        item = {"id": check_id, "passed": bool(passed), "message": message}
+        if study:
+            item["study"] = study
+        checks.append(item)
+        if not passed:
+            issues.append(failure_message)
+
+    studies = [item for item in summary.get("studies", []) if item.get("available")]
+    if study_name is not None:
+        studies = [item for item in studies if item.get("name") == study_name]
+    check(
+        "study-present",
+        bool(studies),
+        f"未找到可用 Motion Study: {study_name or '任意算例'}",
+        success_message=f"已找到 Motion Study: {study_name or '任意算例'}",
+    )
+    check(
+        "type-library",
+        bool(summary.get("motion_type_library")),
+        "未确认 swmotionstudy.tlb，Motion 结果读取可能不完整",
+        success_message="已确认 swmotionstudy.tlb",
+    )
+
+    for study in studies:
+        name = str(study.get("name") or "未命名算例")
+        duration = float(study.get("duration_seconds") or 0.0)
+        motor_count = int(study.get("motor_count") or 0)
+        check(
+            "duration",
+            duration >= float(minimum_duration_seconds),
+            f"{name} 时长 {duration:g}s 小于要求 {minimum_duration_seconds:g}s",
+            name,
+            f"{name} 时长 {duration:g}s 满足要求",
+        )
+        check(
+            "motor-count",
+            motor_count >= int(minimum_motor_count),
+            f"{name} 马达数量 {motor_count} 小于要求 {minimum_motor_count}",
+            name,
+            f"{name} 检测到 {motor_count} 个马达特征",
+        )
+        if expected_study_type is not None:
+            actual_type = int(study.get("study_type") or 0)
+            check(
+                "study-type",
+                actual_type == int(expected_study_type),
+                f"{name} StudyType={actual_type}，期望 {expected_study_type}",
+                name,
+                f"{name} StudyType={actual_type} 符合要求",
+            )
+        if require_results:
+            available = bool(study.get("results_available"))
+            check("results-present", available, f"{name} 没有可读取的计算结果", name, f"{name} 计算结果可读取")
+            check(
+                "results-fresh",
+                available and study.get("results_out_of_date") is False,
+                f"{name} 结果不存在或已经过期，必须重新 Calculate",
+                name,
+                f"{name} 结果存在且未过期",
+            )
+        if study.get("results_error"):
+            check("results-readable", False, f"{name} 结果读取失败: {study['results_error']}", name)
+
+    return {
+        "status": "pass" if checks and all(item["passed"] for item in checks) else "fail",
+        "checks": checks,
+        "issues": issues,
+        "matched_studies": [item.get("name") for item in studies],
+        "requirements": {
+            "study_name": study_name,
+            "expected_study_type": expected_study_type,
+            "minimum_duration_seconds": float(minimum_duration_seconds),
+            "minimum_motor_count": int(minimum_motor_count),
+            "require_results": bool(require_results),
+        },
+    }
+
+### B41 solidworks_gear_calculate_spur -> sw_gear.calculate_external_spur_gear_report
+--- SPEC DOC ---
+Compute the external involute spur gear geometry from a spec dict. ★ Pure calculation — no SolidWorks call. ★ Verify against the analytic formulas (pitch diameter = module × teeth, etc.), not by eye.
+--- FN DOCSTRING ---
+★ **算外啮合直齿轮几何**（★ 吃 dict；★ 判据对**解析式**）。
+--- FN SOURCE ---
+def calculate_external_spur_gear_report(spec) -> dict:
+    """★ **算外啮合直齿轮几何**（★ 吃 dict；★ 判据对**解析式**）。"""
+    try:
+        s = _gear_spec_from_dict(spec)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "spec", "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    try:
+        g = calculate_external_spur_gear(s)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "calculate",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    out = {}
+    for name in ("pitch_diameter_mm", "base_diameter_mm", "outer_diameter_mm",
+                 "root_diameter_mm", "teeth", "module_mm"):
+        try:
+            out[name] = getattr(g, name, None)
+        except Exception:                                      # noqa: BLE001
+            out[name] = None
+    #: ★ 解析式核对：★ pitch = module × teeth（★ 事实 204/§5.0：期望值用几何推出的公式）
+    try:
+        pd, mm_, z = float(out.get("pitch_diameter_mm")), float(s.module_mm), float(s.teeth)
+        out["_check_pitch_equals_module_times_teeth"] = abs(pd - mm_ * z) < 1e-6
+    except Exception:                                          # noqa: BLE001
+        out["_check_pitch_equals_module_times_teeth"] = None
+    return {"ok": True, "readback": out}
+
+### B41 solidworks_gear_create_spur -> sw_gear.create_external_spur_gear_report
+--- SPEC DOC ---
+Create an external spur gear body. ★ The criterion is that the FEATURE TREE changes (rule 6 — never a silent success). ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+★ **建外啮合直齿轮实体**（★ 吃 dict；★ 判据是**特征树变化** —— 规则 6）。
+--- FN SOURCE ---
+def create_external_spur_gear_report(model, spec, plane_name: str = "Front Plane") -> dict:
+    """★ **建外啮合直齿轮实体**（★ 吃 dict；★ 判据是**特征树变化** —— 规则 6）。"""
+    try:
+        s = _gear_spec_from_dict(spec)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "spec", "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    try:
+        from sw_feature_readback import feature_names as _fn
+        before = _fn(model)
+    except Exception:                                          # noqa: BLE001
+        before = None
+    try:
+        r = create_external_spur_gear(model, s, plane_name=plane_name)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "create",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    try:
+        after = _fn(model)
+    except Exception:                                          # noqa: BLE001
+        after = None
+    new = [x for x in (after or []) if x not in (before or [])] if before is not None and after is not None else []
+    return {"ok": bool(new), "plane_name": plane_name, "new_features": new[:6],
+            "returned": str(r)[:80]}
+
+### B41 solidworks_toolbox_list_standards -> sw_toolbox_index.list_standards
+--- SPEC DOC ---
+List the Toolbox standards available in the local index. ★ Pure data — no SolidWorks call.
+--- FN DOCSTRING ---
+返回 {标准名: 零件数}。
+--- FN SOURCE ---
+def list_standards(index: dict[str, Any] | None = None) -> dict[str, int]:
+    """返回 {标准名: 零件数}。"""
+    data = index if index is not None else load_index()
+    out: dict[str, int] = {}
+    for item in data["parts"]:
+        out[item["standard"]] = out.get(item["standard"], 0) + 1
+    return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+
+### B41 solidworks_toolbox_load_index -> sw_toolbox_index.load_index
+--- SPEC DOC ---
+Load the Toolbox index as a JSON-able dict. ★ Pure data — no SolidWorks call.
+--- FN DOCSTRING ---
+读入索引。⚠ 文件不存在时**明说**，不返回空壳冒充成功。
+--- FN SOURCE ---
+def load_index(path: Path | None = None) -> dict[str, Any]:
+    """读入索引。⚠ 文件不存在时**明说**，不返回空壳冒充成功。"""
+    p = Path(path) if path else INDEX_PATH
+    if not p.is_file():
+        raise FileNotFoundError(
+            f"Toolbox 索引不存在：{p}\n"
+            f"⚠ SolidWorks Toolbox 装在 D:\\SOLIDWORKS Data\\。\n"
+            f"  若刚装 Toolbox，用 tools/build_toolbox_index.py 重建。")
+    return json.loads(p.read_text(encoding="utf-8"))
+
+### B41 solidworks_toolbox_search -> sw_toolbox_index.search
+--- SPEC DOC ---
+Search the Toolbox index by keyword. ★ Pure data — no SolidWorks call.
+--- FN DOCSTRING ---
+按关键词 / 标准 / 大类查零件。**关键词只匹配零件名，不做模糊拼写纠正**。
+
+返回的每条含 ``part`` / ``code`` / ``path`` / ``standard`` / ``category``。
+⚠ 官方命名里**不含尺寸**（尺寸是文件内配置）⇒ 按「Φ20」这种查不到，
+   要按零件名关键词（如 ``ball bearing``、``hex head``）。
+--- FN SOURCE ---
+def search(keyword: str, standard: str = "", category: str = "",
+           index: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """按关键词 / 标准 / 大类查零件。**关键词只匹配零件名，不做模糊拼写纠正**。
+
+    返回的每条含 ``part`` / ``code`` / ``path`` / ``standard`` / ``category``。
+    ⚠ 官方命名里**不含尺寸**（尺寸是文件内配置）⇒ 按「Φ20」这种查不到，
+       要按零件名关键词（如 ``ball bearing``、``hex head``）。
+    """
+    data = index if index is not None else load_index()
+    kw = keyword.strip().lower()
+    hits = []
+    for item in data["parts"]:
+        if standard and item["standard"].lower() != standard.strip().lower():
+            continue
+        if category and item["category"].lower() != category.strip().lower():
+            continue
+        if kw and kw not in item["part"].lower() and kw not in item["code"].lower():
+            continue
+        hits.append(item)
+    return hits
+
+### B41 solidworks_toolbox_part_path -> sw_toolbox_index.part_path
+--- SPEC DOC ---
+Resolve a Toolbox part name to its file path. ★ Pure data — no SolidWorks call. ★ An unknown name fails with what is available instead of returning nothing.
+--- FN DOCSTRING ---
+取某个零件的**完整路径**（供 `IAssemblyDoc.AddComponent5` 的 File 参数用）。
+
+⚠ 查不到就抛错，**不返回猜测的路径** —— 猜出来的路径插进装配会静默失败。
+--- FN SOURCE ---
+def part_path(standard: str, part_name: str,
+              index: dict[str, Any] | None = None) -> str:
+    """取某个零件的**完整路径**（供 `IAssemblyDoc.AddComponent5` 的 File 参数用）。
+
+    ⚠ 查不到就抛错，**不返回猜测的路径** —— 猜出来的路径插进装配会静默失败。
+    """
+    data = index if index is not None else load_index()
+    hits = [i for i in data["parts"]
+            if i["standard"].lower() == standard.strip().lower()
+            and i["part"].lower() == part_name.strip().lower()]
+    if not hits:
+        near = search(part_name, standard=standard, index=data)[:5]
+        hint = ("；相近的: " + ", ".join(h["part"] for h in near)) if near else ""
+        raise KeyError(
+            f"Toolbox 里没有 {standard} / {part_name}{hint}\n"
+            f"⚠ 尺寸是零件文件内的配置，不在文件名里 —— "
+            f"用 list_standards() + search() 先定位零件名。")
+    if len(hits) > 1:
+        paths = "\n    ".join(h["path"] for h in hits[:5])
+        raise KeyError(f"{standard} / {part_name} 命中多个，请写全路径:\n    {paths}")
+    return hits[0]["path"]
+
+### B41 solidworks_sketch_create_chamfer -> sw_sketch_edit.create_sketch_chamfer
+--- SPEC DOC ---
+Create a chamfer on the selected sketch entities. ★ Needs entities selected first (★ rule 3: select declaratively, do not pass coordinates). ⚠ The backend limit in known-facts 47 applies to the *feature* chamfer; this is the sketch one — the layer reports what actually happened.
+--- FN DOCSTRING ---
+在**已选中的两条草图实体**之间做倒角。
+
+⚠ **调用前置条件**：官方写明「creates a chamfer **between two selected sketch entities**」
+⇒ 调用方必须先选中**两条**草图实体（本模块**不代选**，保持"不猜"）。
+
+:param chamfer_type: `swSketchChamferType_e` 的数值；用 `SKETCH_CHAMFER_TYPE` 里的名字。
+:param distance_mm: 倒角距离，**毫米**（官方 `Distance` 是米，这里换算）。
+:param angle_or_distance: 官方 `AngleORdist` ——
+    按 `chamfer_type` 解释：距离-距离时是**第二个距离（毫米）**、
+    距离-角度时是**角度（度）**、距离-相等时**被忽略**。
+    ⚠ 官方**没写这一参的单位**（取决于类型）⇒ 本模块**不做换算**，按原样传，
+    并在 docstring 里点明这一处含糊。
+⚠⚠ **本函数当前「不可用」（2026-10-01 轮 122 真机实测）** ——
+在**新零件**上画两条相接直线、**已确认选中 2 条**，然后调 `CreateChamfer`：
+```
+type=2(distance_equal)  ⇒ **pywintypes.com_error: (-2147417851, '服务器出现意外情况')**
+```
+★ `0x80010105` **正是已知事实 47 / 28 那个错误码** ——
+即「**pywin32 迟到绑定到不了需要真实指针的接口**」这一**架构性限制**。
+⚠ **按事实 53 停手**（不再试别的类型/参数组合）；本模块保留该函数作**可复算的证据**。
+
+:returns: 倒角产生的草图线段（官方返回 `SketchSegment`）。
+:raises RuntimeError: 返回 `None`（最常见原因：**没有选中两条草图实体**）。
+--- FN SOURCE ---
+def create_sketch_chamfer(model, *, chamfer_type: int = SKETCH_CHAMFER_TYPE["distance_angle"],
+                          distance_mm: float, angle_or_distance: float = 0.0):
+    """在**已选中的两条草图实体**之间做倒角。
+
+    ⚠ **调用前置条件**：官方写明「creates a chamfer **between two selected sketch entities**」
+    ⇒ 调用方必须先选中**两条**草图实体（本模块**不代选**，保持"不猜"）。
+
+    :param chamfer_type: `swSketchChamferType_e` 的数值；用 `SKETCH_CHAMFER_TYPE` 里的名字。
+    :param distance_mm: 倒角距离，**毫米**（官方 `Distance` 是米，这里换算）。
+    :param angle_or_distance: 官方 `AngleORdist` ——
+        按 `chamfer_type` 解释：距离-距离时是**第二个距离（毫米）**、
+        距离-角度时是**角度（度）**、距离-相等时**被忽略**。
+        ⚠ 官方**没写这一参的单位**（取决于类型）⇒ 本模块**不做换算**，按原样传，
+        并在 docstring 里点明这一处含糊。
+    ⚠⚠ **本函数当前「不可用」（2026-10-01 轮 122 真机实测）** ——
+    在**新零件**上画两条相接直线、**已确认选中 2 条**，然后调 `CreateChamfer`：
+    ```
+    type=2(distance_equal)  ⇒ **pywintypes.com_error: (-2147417851, '服务器出现意外情况')**
+    ```
+    ★ `0x80010105` **正是已知事实 47 / 28 那个错误码** ——
+    即「**pywin32 迟到绑定到不了需要真实指针的接口**」这一**架构性限制**。
+    ⚠ **按事实 53 停手**（不再试别的类型/参数组合）；本模块保留该函数作**可复算的证据**。
+
+    :returns: 倒角产生的草图线段（官方返回 `SketchSegment`）。
+    :raises RuntimeError: 返回 `None`（最常见原因：**没有选中两条草图实体**）。
+    """
+    skm = get_com_member(model, "SketchManager")
+    if skm is None:
+        raise RuntimeError("IModelDoc2.SketchManager 为 None ⇒ 当前不在草图编辑态？")
+
+    #: ⚠⚠⚠ **2026-10-01（轮 164）更正上一段那段定性** —— 它是**误判**。
+    #: 上一段说「`0x80010105` ⇒ 架构性限制、到不了」，依据只是**看到异常**。
+    #: ★ 轮 164 用 `tools/probe_chamfer_forms.py` **逐类型试 + 回读线段数**：
+    #: ```
+    #:   type=0（默认 distance_angle）⇒ 段数 2 → 2（**没变**）· 返回 None
+    #:   type=1（distance_distance） ⇒ 段数 2 → 2（**没变**）· 返回 None
+    #:   type=2（distance_equal）     ⇒ 段数 **2 → 3**（**变了 ✚**）· com_error 0x80010105
+    #: ```
+    #: ⇒ ★★★ **`type=2` 的倒角其实建成了** —— 那个 `com_error` 是在**取返回值**
+    #:   （`SketchSegment`）那一步抛的，**不影响倒角本身**。
+    #: ⇒ ★★ 真正的限制是「**拿不到返回对象**」，**不是**「做不了倒角」。
+    #: ★ 根因：上一版**只看异常、没回读副作用** —— 与已知事实 94 那一族
+    #:   （**不信返回值/异常，回读状态**）同源。
+    def _seg_count():
+        """回读活动草图的线段数（判「倒角建成了没有」的**状态量**）。"""
+        try:
+            sk = get_com_member(model, "GetActiveSketch2")
+            if sk is None:
+                sk = get_com_member(get_com_member(model, "SketchManager"), "ActiveSketch")
+            segs = get_com_member(sk, "GetSketchSegments") if sk is not None else None
+            return len(list(segs)) if segs else 0
+        except Exception:      # noqa: BLE001
+            return -1
+
+    before = _seg_count()
+    try:
+        seg = get_com_member(skm, "CreateChamfer",
+                             int(chamfer_type), mm(float(distance_mm)), float(angle_or_distance))
+    except Exception as exc:      # noqa: BLE001
+        #: ★ **建成但拿不到返回对象** ⇒ 不算失败（回读线段数确认）
+        if _seg_count() > before >= 0:
+            return None
+        raise RuntimeError(
+            "ISketchManager.CreateChamfer 失败：%s\n"
+            "⚠ 已**回读线段数**（%s → %s）确认**没有建成**。"
+            "★ 实测：**只有 `distance_equal`(2) 能成**（type=0/1 段数不变）。"
+            "官方前置：**必须选中两条草图实体**。" % (exc, before, _seg_count())
+        ) from exc
+    if seg is None:
+        if _seg_count() > before >= 0:
+            return None      #: 同上：建成了，只是没有返回对象
+        raise RuntimeError(
+            "ISketchManager.CreateChamfer 返回 None 且**线段数没变**（%s → %s）⇒ 没建成。"
+            "★ 实测：**只有 `distance_equal`(2) 能成**；官方前置是**选中两条草图实体**。"
+            % (before, _seg_count())
+        )
+    return seg
+
+### B41 solidworks_sketch_mirror -> sw_sketch_edit.sketch_mirror
+--- SPEC DOC ---
+Mirror the selected sketch entities about the selected centerline. ★ The criterion is that the sketch entity count changes.
+--- FN DOCSTRING ---
+把**已选中的草图实体**镜像（生成新的镜像实体）。
+
+⚠ **调用前置条件（选中标记，官方写明）**：
+* 要镜像的是**草图线段** ⇒ 选中时用 **mark = 1**；
+* 要镜像的是**中心线**   ⇒ 选中时用 **mark = 2**。
+
+⇒ 本模块**不代选**；标记是"选中时定的"，不是传参定的（官方签名 **0 参**）。
+
+:returns: 新建的镜像实体数（回读草图的线段数变化无法可靠判定，故返回 `True`）。
+:raises RuntimeError: 无法确认草图处于可镜像状态。
+--- FN SOURCE ---
+def sketch_mirror(model):
+    """把**已选中的草图实体**镜像（生成新的镜像实体）。
+
+    ⚠ **调用前置条件（选中标记，官方写明）**：
+    * 要镜像的是**草图线段** ⇒ 选中时用 **mark = 1**；
+    * 要镜像的是**中心线**   ⇒ 选中时用 **mark = 2**。
+
+    ⇒ 本模块**不代选**；标记是"选中时定的"，不是传参定的（官方签名 **0 参**）。
+
+    :returns: 新建的镜像实体数（回读草图的线段数变化无法可靠判定，故返回 `True`）。
+    :raises RuntimeError: 无法确认草图处于可镜像状态。
+    """
+    skm = get_com_member(model, "SketchManager")
+    if skm is None:
+        raise RuntimeError("IModelDoc2.SketchManager 为 None ⇒ 当前不在草图编辑态？")
+    sketch = get_com_member(skm, "ActiveSketch")
+    if sketch is None:
+        raise RuntimeError(
+            "ISketchManager.ActiveSketch 为 None ⇒ 当前不在草图编辑态。"
+            "官方 SketchMirror 需要先进入草图并选中要镜像的实体"
+            "（线段 mark=1 / 中心线 mark=2）。"
+        )
+    model.SketchMirror()
+    return True
+
+### B41 solidworks_sketch_convert_entities -> sw_sketch_edit.convert_entities
+--- SPEC DOC ---
+Convert the selected model edges into the active sketch. ★ The criterion is that the sketch entity count changes.
+--- FN DOCSTRING ---
+把**已选中的边/环/面/曲线/外部草图轮廓**投影成本草图的实体（转换实体引用）。
+
+⚠ **调用前置条件**：官方写明「projects **selected** edges, loops, faces, curves,
+and external sketch contours」⇒ 调用方必须**先选中**要转换的东西并**进入草图**
+（本模块**不代选**，保持"不猜"）。
+
+:param chain: 官方 `Chain` —— `True` 连**整条链**一起转（同一草图轮廓/链上
+    相邻的几何）；`False` 只转**选中的那些**。
+:param inner_loops: 官方 `InnerLoops` —— `True` 把所选面的**内环**也转过来。
+:returns: `True`（官方成功返回 `True`）。
+:raises RuntimeError: 不在草图编辑态，或官方返回 `False`（**不静默成功**）。
+--- FN SOURCE ---
+def convert_entities(model, *, chain: bool = True, inner_loops: bool = False):
+    """把**已选中的边/环/面/曲线/外部草图轮廓**投影成本草图的实体（转换实体引用）。
+
+    ⚠ **调用前置条件**：官方写明「projects **selected** edges, loops, faces, curves,
+    and external sketch contours」⇒ 调用方必须**先选中**要转换的东西并**进入草图**
+    （本模块**不代选**，保持"不猜"）。
+
+    :param chain: 官方 `Chain` —— `True` 连**整条链**一起转（同一草图轮廓/链上
+        相邻的几何）；`False` 只转**选中的那些**。
+    :param inner_loops: 官方 `InnerLoops` —— `True` 把所选面的**内环**也转过来。
+    :returns: `True`（官方成功返回 `True`）。
+    :raises RuntimeError: 不在草图编辑态，或官方返回 `False`（**不静默成功**）。
+    """
+    skm = get_com_member(model, "SketchManager")
+    if skm is None:
+        raise RuntimeError("IModelDoc2.SketchManager 为 None ⇒ 当前不在草图编辑态？")
+    got = get_com_member(skm, "SketchUseEdge3", bool(chain), bool(inner_loops))
+    if not got:
+        raise RuntimeError(
+            "ISketchManager.SketchUseEdge3 返回 False（失败）—— 常见原因："
+            "**没有选中要转换的边/环/面/曲线**，或当前不在草图编辑态。"
+            "官方：它投影的是「**selected** edges, loops, faces, curves, and "
+            "external sketch contours」。"
+        )
+    return True
+
+### B42 solidworks_drawing_sheets_summary -> sw_drawing_query.sheets_summary
+--- SPEC DOC ---
+Return a per-sheet summary dict for the active drawing (★ 页名 / 视图数 等). ★ Read-only.
+--- FN DOCSTRING ---
+★ **图纸总览**（一个工具回答"这图几张纸、都叫什么、现在在哪张"）。
+
+★ 为什么合并而不是拆成两个工具：拆开会让 AI 必须调两次才拿到同一件事的全貌，
+  而这两样**总是被一起问**（"几张纸？叫什么？"）。
+--- FN SOURCE ---
+def sheets_summary(model) -> dict[str, Any]:
+    """★ **图纸总览**（一个工具回答"这图几张纸、都叫什么、现在在哪张"）。
+
+    ★ 为什么合并而不是拆成两个工具：拆开会让 AI 必须调两次才拿到同一件事的全貌，
+      而这两样**总是被一起问**（"几张纸？叫什么？"）。
+    """
+    require_drawing(model)
+    return {
+        "count": sheet_count(model),
+        "names": sheet_names(model),
+        "current": current_sheet_name(model),
+    }
+
+### B42 solidworks_drawing_current_sheet_info -> sw_drawing_query.current_sheet_info
+--- SPEC DOC ---
+Return info about the sheet currently being edited as a dict. ★ Read-only.
+--- FN DOCSTRING ---
+当前图纸的**读数**：图幅 + 尺寸（**毫米**）+ 比例 + 图纸格式名。
+
+★ 官方 `ISheet.GetProperties2()` 返回 **8 个 double**，次序照官方 Remarks：
+  `[paperSize, templateIn, scale1, scale2, firstAngle, width, height, sameCustomPrp]`
+★ **宽高单位是米** ⇒ 本函数换算成毫米（规则 2：换算只在边界做一次）。
+--- FN SOURCE ---
+def current_sheet_info(model) -> dict[str, Any]:
+    """当前图纸的**读数**：图幅 + 尺寸（**毫米**）+ 比例 + 图纸格式名。
+
+    ★ 官方 `ISheet.GetProperties2()` 返回 **8 个 double**，次序照官方 Remarks：
+      `[paperSize, templateIn, scale1, scale2, firstAngle, width, height, sameCustomPrp]`
+    ★ **宽高单位是米** ⇒ 本函数换算成毫米（规则 2：换算只在边界做一次）。
+    """
+    require_drawing(model)
+    sheet = get_com_member(model, "GetCurrentSheet")
+    if sheet is None:
+        raise RuntimeError("GetCurrentSheet 回了 None —— 这张工程图没有活动图纸")
+    props = get_com_member(sheet, "GetProperties2")
+    vals = [float(x) for x in props] if props is not None else []
+    if len(vals) < 7:
+        raise RuntimeError(
+            "ISheet.GetProperties2 返回了 %d 个元素（预期 ≥7：paperSize/…/width/height）"
+            "—— 官方返回结构可能变了，不要猜" % len(vals)
+        )
+    paper = int(round(vals[0]))
+    return {
+        "sheet_name": str(get_com_member(sheet, "GetName")),
+        "paper_size_code": paper,
+        "paper_size": PAPER_SIZE_NAMES.get(paper, "unknown(%d)" % paper),
+        "width_mm": round(vals[5] * 1000.0, 3),
+        "height_mm": round(vals[6] * 1000.0, 3),
+        "scale_num": vals[2],
+        "scale_den": vals[3],
+        "first_angle": bool(vals[4]),
+        "sheet_format_name": str(get_com_member(sheet, "GetSheetFormatName") or ""),
+    }
+
+### B43 solidworks_drawing_view_scale -> sw_drawing_view.get_view_scale_report
+--- SPEC DOC ---
+Get one view's scale by name. ★ An unknown name fails with the list of valid names. ★ Read-only.
+--- FN DOCSTRING ---
+★ **按视图名取比例**（★ 找不到就**列出合法值**）。
+--- FN SOURCE ---
+def get_view_scale_report(model, view_name: str) -> dict:
+    """★ **按视图名取比例**（★ 找不到就**列出合法值**）。"""
+    v, err = _find_view(model, view_name)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        return {"ok": True, "view_name": str(view_name), "scale": get_view_scale(v),
+                "scale_decimal": get_scale_decimal(v)}
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "view_name": str(view_name),
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+
+### B43 solidworks_drawing_view_set_scale -> sw_drawing_view.set_view_scale_report
+--- SPEC DOC ---
+Set one view's scale and return before/after. ★ The criterion is that the READ-BACK scale actually changed (rule 6 — never a silent success). ⚠ Does NOT save the document.
+--- FN DOCSTRING ---
+★ **按视图名设比例并回读**（★ 改走真机验证过的赋值形态，见 `set_view_scale_verified`）。
+--- FN SOURCE ---
+def set_view_scale_report(model, view_name: str, scale: float) -> dict:
+    """★ **按视图名设比例并回读**（★ 改走真机验证过的赋值形态，见 `set_view_scale_verified`）。"""
+    _v, _err = _find_view(model, view_name)
+    if _err:
+        return {"ok": False, "error": _err}
+    _r = set_view_scale_verified(_v, float(scale))
+    _r["view_name"] = str(view_name)
+    return _r
+
+### B43 solidworks_drawing_collect_view_evidence -> sw_drawing_view.collect_view_evidence_report
+--- SPEC DOC ---
+Collect the capability layer's per-view evidence for every view on the drawing. ★ Read-only.
+--- FN DOCSTRING ---
+★ **每个视图的完整证据**（★ 走 `collect_view_evidence`）。
+--- FN SOURCE ---
+def collect_view_evidence_report(model) -> dict:
+    """★ **每个视图的完整证据**（★ 走 `collect_view_evidence`）。"""
+    views, err = _iter_views(model)
+    if err:
+        return {"ok": False, "error": err}
+    out = []
+    for v in views:
+        try:
+            out.append(collect_view_evidence(v))
+        except Exception as exc:                               # noqa: BLE001
+            out.append({"error": "%s: %s" % (type(exc).__name__, str(exc)[:140])})
+    return {"ok": True, "count": len(out), "evidence": out}
+
+### B44 solidworks_drawing_sheet_scale -> sw_drawing_query.get_sheet_scale_report
+--- SPEC DOC ---
+★ **读工程图图纸的比例** —— 走官方 Remarks 指定的 `ISheet.GetProperties`，取其中两个数作为比例的分子/分母 ⇒ 回 `ratio_text`（如 `1:5`）。⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第 5 个是 Numerator。
+--- FN DOCSTRING ---
+★ **读图纸比例**（★ 走官方 Remarks 指定的 `ISheet.GetProperties`）。
+
+★ 回 `{"ok", "sheet_name", "numerator", "denominator", "ratio_text", "properties"}`。
+⚠ **`GetProperties` 的位置 3 / 4 是比例的两个数**（★ 位置 0/1 是纸张尺寸 · 位置 2 是视图比例标志 ·
+  位置 5/6 是宽高）；★ **本函数只认那两位**，★ 其余原样回在 `properties` 里供核对。
+--- FN SOURCE ---
+def get_sheet_scale_report(model, sheet_name: str = "") -> dict:
+    """★ **读图纸比例**（★ 走官方 Remarks 指定的 `ISheet.GetProperties`）。
+
+    ★ 回 `{"ok", "sheet_name", "numerator", "denominator", "ratio_text", "properties"}`。
+    ⚠ **`GetProperties` 的位置 3 / 4 是比例的两个数**（★ 位置 0/1 是纸张尺寸 · 位置 2 是视图比例标志 ·
+      位置 5/6 是宽高）；★ **本函数只认那两位**，★ 其余原样回在 `properties` 里供核对。
+    """
+    from sw_connect import get_com_member as _get
+    sheet, err = _sheet_by_name(model, sheet_name)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        props = list(_get(sheet, "GetProperties") or [])
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "error": "GetProperties 失败：%s: %s" % (type(exc).__name__, str(exc)[:150])}
+    if len(props) < 5:
+        return {"ok": False, "error": "GetProperties 只回了 %d 个元素（★ 预期 ≥7）" % len(props),
+                "properties": [str(x)[:30] for x in props]}
+    #: ★★★ 2026-10-01（轮 301）**顺序是真机定的**：传 `SetScale(1, 5)` 而读回
+    #:   **`5:1`** ⇒ ★★ **`props[3]` 是 Denominator、`props[4]` 是 Numerator**（与字面相反）。
+    #:   ★ 另一组：传 `SetScale(1, 2)` → 读回 `2:1`。⇒ ★ **两组同向 ⇒ 定序可信**。
+    den, num = float(props[3]), float(props[4])
+    return {"ok": True, "sheet_name": str(sheet_name) or "(当前)", "numerator": num, "denominator": den,
+            "ratio_text": "%g:%g" % (num, den),
+            "properties": [str(x)[:30] for x in props],
+            "★": "位置 3/4 是比例的两个数（官方 Remarks 指定 GetProperties 读比例）"}
+
+### B44 solidworks_drawing_set_sheet_scale -> sw_drawing_query.set_sheet_scale_report
+--- SPEC DOC ---
+★ **设工程图图纸的比例并回读** —— 走 `ISheet.SetScale(numerator, denominator, scale_anno_position, scale_anno_text_height)`（官方 4 参 · 回 bool）。★ 判据：**它回真、且回读的两个数真的变了**（规则 6：不静默成功）。⚠ `numerator != 1` 会被**显式拒绝**（★ 真机三组证据：`(1,5)→1:5` · `(3,7)→1:7` · `(2,1)→1:1`）。
+--- FN DOCSTRING ---
+★ **设图纸比例并回读**（★ 走 `ISheet.SetScale` —— 官方签名 4 参，★ 回 bool）。
+
+★ 判据：★ **`SetScale` 回真** · ★ **且回读的 (位置 3, 位置 4) 真的变成了 (numerator, denominator)**。
+⇒ ★ 两者缺一 ⇒ `ok: False`（★ 规则 6：不静默成功）。
+--- FN SOURCE ---
+def set_sheet_scale_report(model, numerator: float, denominator: float,
+                           scale_anno_position: bool = False, scale_anno_text_height: bool = False,
+                           sheet_name: str = "") -> dict:
+    """★ **设图纸比例并回读**（★ 走 `ISheet.SetScale` —— 官方签名 4 参，★ 回 bool）。
+
+    ★ 判据：★ **`SetScale` 回真** · ★ **且回读的 (位置 3, 位置 4) 真的变成了 (numerator, denominator)**。
+    ⇒ ★ 两者缺一 ⇒ `ok: False`（★ 规则 6：不静默成功）。
+    """
+    from sw_connect import get_com_member as _get
+    sheet, err = _sheet_by_name(model, sheet_name)
+    if err:
+        return {"ok": False, "error": err}
+    try:
+        num, den = float(numerator), float(denominator)
+    except (TypeError, ValueError) as exc:
+        return {"ok": False, "error": "比例两个数必须是数字：%s" % str(exc)[:120]}
+    if num <= 0 or den <= 0:
+        return {"ok": False, "error": "比例的两个数都必须 > 0（★ 收到 %r:%r）" % (num, den)}
+    #: ★★★★ 2026-10-01（轮 301）**真机定出的合法值：Numerator 只接受 1**。
+    #:   证据（三组，同一个图纸）：
+    #:     `SetScale(1, 5)` → 读回 **1:5** ✓；`SetScale(3, 7)` → 读回 **1:7**；
+    #:     `SetScale(2, 1)` → 读回 **1:1**
+    #:   ⇒ ★★ **Numerator 被强制成 1**（★ 而 `SetScale` **仍回 `True`** ——
+    #:     ★★★ **即：它不报错，只是静默地改成 1**）。
+    #:   ⇒ ★ 本函数**不替它静默**：★★ `numerator != 1` 时**显式拒绝并列合法值****
+    #:     （★ 与事实 197「报错要会列合法值」同族）。
+    if abs(num - 1.0) > 1e-9:
+        return {"ok": False, "stage": "validate", "asked": [num, den],
+                "error": "本机 `ISheet.SetScale` 的 Numerator **只接受 1**"
+                         "（★ 真机三组：(1,5)→`1:5` · (3,7)→`1:7` · (2,1)→`1:1`）"
+                         "⇒ 图纸比例只能是 **1:n** 形式；"
+                         "★ 合法值：Numerator = 1，Denominator > 0（★ 收到 %r:%r）" % (num, den)}
+    before = get_sheet_scale_report(model, sheet_name)
+    try:
+        ret = _get(sheet, "SetScale", num, den, bool(scale_anno_position), bool(scale_anno_text_height))
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "set", "asked": [num, den], "before": before,
+                "error": "SetScale 失败：%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    after = get_sheet_scale_report(model, sheet_name)
+    ok_readback = bool(after.get("ok") and abs(after.get("numerator", -1) - num) < 1e-9
+                       and abs(after.get("denominator", -1) - den) < 1e-9)
+    return {"ok": bool(ret) and ok_readback, "asked": [num, den], "set_scale_returned": bool(ret),
+            "before": before, "after": after, "readback_matches": ok_readback,
+            "★": "回读判据 = GetProperties 的位置 3/4 真的变了（★ 规则 6）"}
+
+### B45 solidworks_surface_create_extruded -> sw_surface_features.create_extruded_surface_report
+--- SPEC DOC ---
+★ **用已有草图建「曲面-拉伸」特征** —— 走 `IFeatureManager.FeatureExtruRefSurface3`（官方 **22 个参数** · ★★ **返回 `void`**）。★★ 判据**不是返回值**，而是「**特征树真的多了**」（规则 6：不静默成功）。★ 真机证据：10 mm 深度 ⇒ 建成 `曲面-拉伸1`（树 6→7）· 负例 `-5.0` ⇒ 显式拒绝。⚠ 与 `sw_surface.py` 的「`IModeler.Create*Surface` 造曲面**体**」是**两条不同的路** ——后者在本机返回值跨次都变（事实 40），本条**不走那条**。
+--- FN DOCSTRING ---
+★ **用已有草图建「曲面-拉伸」特征**（★ 走 `FeatureExtruRefSurface3`，官方 22 参）。
+
+★ **它回 `void`** ⇒ ★★ 判据**不能是返回值**，只能是「**特征树多了**」（★ 规则 6）。
+★ `depth_mm` 是**毫米**（★ 规则 2）；★ 换算在这里做一次。
+★ 回 `{"ok", "feature_name", "tree_before", "tree_after", "args_count", "verdict_basis"}`。
+--- FN SOURCE ---
+def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = "",
+                                   through_all: bool = False) -> dict:
+    """★ **用已有草图建「曲面-拉伸」特征**（★ 走 `FeatureExtruRefSurface3`，官方 22 参）。
+
+    ★ **它回 `void`** ⇒ ★★ 判据**不能是返回值**，只能是「**特征树多了**」（★ 规则 6）。
+    ★ `depth_mm` 是**毫米**（★ 规则 2）；★ 换算在这里做一次。
+    ★ 回 `{"ok", "feature_name", "tree_before", "tree_after", "args_count", "verdict_basis"}`。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    if not through_all:
+        try:
+            d = float(depth_mm)
+        except (TypeError, ValueError) as exc:
+            return {"ok": False, "error": "depth_mm 必须是数字：%s" % str(exc)[:100]}
+        if not math.isfinite(d) or d <= 0.0:
+            return {"ok": False, "error": "depth_mm 必须 > 0（★ 收到 %r）" % depth_mm}
+    else:
+        d = 0.010             #: ★ 贯穿时深度无效，★ 给一个有限值免得 API 抱怨
+    before_names = feature_names(model)
+    before = len(before_names)
+    args = _harden_defaults(d * 0.001, through_all)     #: ★ 毫米 ⇒ 米（★ 唯一的换算处）
+    try:
+        fm = get_com_member(model, "FeatureManager")
+        get_com_member(fm, "FeatureExtruRefSurface3", *args)
+    except Exception as exc:                                # noqa: BLE001
+        return {"ok": False, "stage": "call", "args_count": len(args),
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+                "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 22 个）"}
+    after_names = feature_names(model)
+    new = [n for n in after_names if n not in before_names]
+    return {"ok": len(after_names) > before, "feature_name": (new[-1] if new else None),
+            "new_features": new, "tree_before": before, "tree_after": len(after_names),
+            "args_count": len(args), "depth_mm": (None if through_all else float(depth_mm)),
+            "through_all": bool(through_all), "sketch_name": str(sketch_name),
+            "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；★ 官方 22 参 · 反射 arity 22"}
+
+### B45 solidworks_surface_knit -> sw_surface_features.knit_surfaces_report
+--- SPEC DOC ---
+★ **把曲面缝成一张** —— 走 `IFeatureManager.InsertSewRefSurface`（官方 **5 参**）。★ 官方 Remarks：选中项要 **selection mark = 1**，而**缝合容差的有效范围是 0.0001 ～ 0.1 mm**。★★ 判据（规则 6）：**特征树多出新特征** **且** **body 数变少**（真机：`曲面-缝合1` · 2→1）。★ 它按**对象**选面（实体没有名字 —— 事实 32），★ 选中数**回读** `GetSelectedObjectCount2(-1)`（★ 不信返回值 —— 事实 8）。
+--- FN DOCSTRING ---
+★ **把选中的曲面缝成一张**（★ 走 `InsertSewRefSurface`）。
+
+★ 官方：★ 选中项要 **mark = 1** · ★ 容差范围 **0.0001 ～ 0.1 mm**（★ 本包装按**毫米**收，
+★ 在边界换算一次 —— 规则 2）。
+★ 判据（规则 6）：★ **特征树多了新特征** **且** **body 数变少**。
+--- FN SOURCE ---
+def knit_surfaces_report(model, knit_tolerance_mm: float = 0.0001,
+                         try_to_form_solid: bool = False) -> dict:
+    """★ **把选中的曲面缝成一张**（★ 走 `InsertSewRefSurface`）。
+
+    ★ 官方：★ 选中项要 **mark = 1** · ★ 容差范围 **0.0001 ～ 0.1 mm**（★ 本包装按**毫米**收，
+    ★ 在边界换算一次 —— 规则 2）。
+    ★ 判据（规则 6）：★ **特征树多了新特征** **且** **body 数变少**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    try:
+        tol = float(knit_tolerance_mm)
+    except (TypeError, ValueError) as exc:
+        return {"ok": False, "error": "knit_tolerance_mm 必须是数字：%s" % str(exc)[:100]}
+    if not (0.0001 <= tol <= 0.1):
+        return {"ok": False, "stage": "validate",
+                "error": "knit_tolerance_mm 必须在 **0.0001 ～ 0.1 mm**（★ 官方给的上下限）；收到 %r" % tol}
+    before_names = feature_names(model)
+    before_bodies = _body_count(model)
+    selected = _select_all_surface_faces(model, mark=1)
+    if selected <= 0:
+        return {"ok": False, "stage": "select", "body_before": before_bodies,
+                "error": "没选中任何面（★ 文件里要有曲面体；★ 而曲面体用 GetBodies2(-1) 取）"}
+    try:
+        fm = get_com_member(model, "FeatureManager")
+        #: ★ 容差换算：毫米 ⇒ 米（★ 唯一的换算处）
+        get_com_member(fm, "InsertSewRefSurface", False, bool(try_to_form_solid), True,
+                       tol * 0.001, tol * 0.001)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "call", "faces_selected": selected,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    after_names = feature_names(model)
+    new = [n for n in after_names if n not in before_names]
+    after_bodies = _body_count(model)
+    return {"ok": bool(new) and after_bodies < before_bodies, "new_features": new,
+            "face_count_selected": selected, "body_before": before_bodies, "body_after": after_bodies,
+            "knit_tolerance_mm": tol,
+            "★": "判据 = **特征树多了新特征** 且 **body 数变少**（★ 规则 6）；★ 官方 mark=1 · 容差 0.0001–0.1 mm"}
+
+### B45 solidworks_surface_extend -> sw_surface_features.insert_extend_surface_report
+--- SPEC DOC ---
+★ **延伸曲面** —— 走 `IModelDoc2.InsertExtendSurface`（官方 **3 参** · ★★ **返回 `void`**）。★★ 判据**不是返回值**，而是「**特征树真的多了**」（规则 6）。★ 真机证据：10 mm ⇒ 建成 `曲面-延伸1`（树 7→8）· 负例 `distance_mm = 0` ⇒ 显式拒绝。⚠ **不选面它也能成**（它自己会找面）—— 真机实测，★ 故 `faces_selected = 0` 不构成失败。⚠ `end_condition = 1`（延伸到选定点）**未真机验证**。⚠ 与 `sw_surface.py` 的 `create_revolution_surface` 那族**不是一回事** ——那族是 `IModeler.Create*Surface`（造曲面**体**，事实 40 返回值不可靠），本条造的是**曲面特征**。
+--- FN DOCSTRING ---
+★ **延伸曲面**（★ 官方 `IModelDoc2.InsertExtendSurface`，**3 参**，★ 回 `void`）。
+
+:param distance_mm: 延伸距离（**毫米** —— ★ 换算只在本函数做一次）。
+:param extend_linear: True 线性延伸 / False 沿同一曲面延伸。
+:param end_condition: **0 = 按距离**（默认）· **1 = 延伸到选定点**。
+:returns: `{ok, feature_name, new_features, tree_before, tree_after, faces_selected, distance_mm}`
+    ★★ **判据是「特征树真的多了」** —— ★ 因为它回 `void`（★ 规则 6：建完必须回读）。
+--- FN SOURCE ---
+def insert_extend_surface_report(model, distance_mm: float, *, extend_linear: bool = True,
+                                 end_condition: int = 0) -> dict:
+    """★ **延伸曲面**（★ 官方 `IModelDoc2.InsertExtendSurface`，**3 参**，★ 回 `void`）。
+
+    :param distance_mm: 延伸距离（**毫米** —— ★ 换算只在本函数做一次）。
+    :param extend_linear: True 线性延伸 / False 沿同一曲面延伸。
+    :param end_condition: **0 = 按距离**（默认）· **1 = 延伸到选定点**。
+    :returns: `{ok, feature_name, new_features, tree_before, tree_after, faces_selected, distance_mm}`
+        ★★ **判据是「特征树真的多了」** —— ★ 因为它回 `void`（★ 规则 6：建完必须回读）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    try:
+        d = float(distance_mm)
+    except (TypeError, ValueError) as exc:
+        return {"ok": False, "error": "distance_mm 必须是数字：%s" % str(exc)[:100]}
+    if not math.isfinite(d) or d <= 0.0:
+        return {"ok": False, "error": "distance_mm 必须 > 0（★ 收到 %r）" % distance_mm}
+    if int(end_condition) not in (0, 1):
+        return {"ok": False, "error": "end_condition 只支持 0（按距离）/ 1（到选定点）：%r" % end_condition}
+    #: ★ 官方说 "along the **selected** faces or edges" ⇒ ★ 先按对象选面（★ 声明式）
+    selected = _select_all_surface_faces(model, mark=0)
+    if selected <= 0:
+        return {"ok": False, "stage": "select", "faces_selected": 0,
+                "error": "没有选中任何曲面面 —— 曲面延伸要求先选中要延伸的面/边",
+                "★": "官方描述：Extends a surface along the **selected** faces or edges"}
+    before_names = feature_names(model)
+    before = len(before_names)
+    try:
+        #: ★ 毫米 ⇒ 米（★ 与同模块 `FeatureExtruRefSurface3` 的做法一致；★ 真机复验这一点）
+        get_com_member(model, "InsertExtendSurface",
+                       bool(extend_linear), int(end_condition), d * 0.001)
+    except Exception as exc:                                    # noqa: BLE001
+        return {"ok": False, "stage": "call", "faces_selected": selected,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    after_names = feature_names(model)
+    new = [n for n in after_names if n not in before_names]
+    return {"ok": len(after_names) > before, "feature_name": (new[-1] if new else None),
+            "new_features": new, "tree_before": before, "tree_after": len(after_names),
+            "faces_selected": selected, "distance_mm": d,
+            "extend_linear": bool(extend_linear), "end_condition": int(end_condition),
+            "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；"
+                 "★ 官方 3 参 · 反射 arity 3 · EndCondition 0=按距离 / 1=到选定点"}
+
+### B45 solidworks_surface_fill -> sw_surface_features.insert_fill_surface_report
+--- SPEC DOC ---
+★ **填充曲面** —— 走 `IFeatureManager.InsertFillSurface2`（官方 **6 参**）。★★ 判据（规则 6）：**回 `Feature` 非 None** **且** **特征树增量非空**。★ 真机证据：建 `曲面填充1`（树 7→8）· 负例 `resolutions = 9` ⇒ 显式拒绝。★★ **边界边按中点 + `mark = 1` 选**（★ 官方 Remarks；`Select4` 没有 mark 参数 —— 事实 32；传 mark = 4 会静默失败：回 true 而计数 0 —— 事实 8）。★★ 2026-10-03（轮 435）**两条路都已真机 PASS**：★ 各建成 `曲面填充1`（树 [7,8]）。★ 而**选边时请用 `mark = 1`**（官方 Remarks：边界边用 mark 1）。★ 留空 `selection` 时**自动取最高那一圈**（★ 保留原行为）。
+--- FN DOCSTRING ---
+★ **填充曲面**（★ 官方 `IFeatureManager.InsertFillSurface2`，**6 参**，★ 回 `Feature`）。
+
+:param resolutions: 分辨率 **1 / 2 / 3**（★ 越大质量越好，官方原话）。
+:param options: `swFeatureFillSurfaceOptions_e` 的 **Bitmask**；★ 默认 `1`（`swOptimizeSurface`）。
+:param selection: ★★ **声明式选择**（★ 该填的**那一圈边**）。
+    ★ 留空 = **自动取最高那一圈**（★ 保留原行为）。
+    ★★ ★ 2026-10-03（轮 434）**原来这里是 `boundary_z: float`**（一个裸坐标），
+    ★ 而那**违反规则 3**（★ 官方原话：必须改用**具名实体 + 声明式 selection**）。
+    ★ 实测那条违反让 `tool_registry` 的声明门禁整批不过 ⇒ **4 个测试文件在收集期就 ERROR**。
+:returns: `{ok, feature_name, new_features, tree_before, tree_after, points_selected, boundary_z}`
+    ★★ **判据 = 回 `Feature` 非 None** **且** **特征树增量非空**（★ 两判据都要）。
+--- FN SOURCE ---
+def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _SW_OPTIMIZE_SURFACE,
+                               selection: str = "") -> dict:
+    """★ **填充曲面**（★ 官方 `IFeatureManager.InsertFillSurface2`，**6 参**，★ 回 `Feature`）。
+
+    :param resolutions: 分辨率 **1 / 2 / 3**（★ 越大质量越好，官方原话）。
+    :param options: `swFeatureFillSurfaceOptions_e` 的 **Bitmask**；★ 默认 `1`（`swOptimizeSurface`）。
+    :param selection: ★★ **声明式选择**（★ 该填的**那一圈边**）。
+        ★ 留空 = **自动取最高那一圈**（★ 保留原行为）。
+        ★★ ★ 2026-10-03（轮 434）**原来这里是 `boundary_z: float`**（一个裸坐标），
+        ★ 而那**违反规则 3**（★ 官方原话：必须改用**具名实体 + 声明式 selection**）。
+        ★ 实测那条违反让 `tool_registry` 的声明门禁整批不过 ⇒ **4 个测试文件在收集期就 ERROR**。
+    :returns: `{ok, feature_name, new_features, tree_before, tree_after, points_selected, boundary_z}`
+        ★★ **判据 = 回 `Feature` 非 None** **且** **特征树增量非空**（★ 两判据都要）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    try:
+        res = int(resolutions)
+    except (TypeError, ValueError):
+        return {"ok": False, "error": "resolutions 必须是整数（1/2/3）"}
+    if res not in (1, 2, 3):
+        return {"ok": False, "error": "resolutions 只支持 1 / 2 / 3（官方 Remarks）：%r" % resolutions}
+    if not (1 <= int(options) <= 31):
+        return {"ok": False, "error": "options 超出 Bitmask 范围（1..31）：%r" % options}
+    #: ★ 取全部边 ⇒ 按**起点/终点的中点**算 z ⇒ 选出一圈（★ 坐标单位是**米**，★ 不换算）
+    #: ★★★ 2026-10-03（轮 434）**声明式分支** —— ★ 而后半段**两条路共用**：
+    #:   ★ 给了 `selection` ⇒ **用它选**（★ 那是规则 3 要求的形态），★ 而 `_declarative = True`
+    #:     ⇒ ★★ **跳过后面那个"按点选边"的循环**（已经选好了）；
+    #:   ★ 否则走**原自动路**（按最高一圈边的 z 挑）——★ **行为不变**。
+    _declarative = bool(str(selection or "").strip())
+    _selected_readback = 0
+    _fallback_note: dict | None = None      #: ★ 声明式选区拿不到时的回退记录（★ 见下）
+    if _declarative:
+        #: ★★★ 2026-10-03（轮 435）**不重选** —— 而代价是一条**文档化的契约**。
+        #:   ★ 上一版走 `resolve_selection`（★ 它会**重选**），★ 而它走的是
+        #:     `IEntity.Select4` —— ★★ **而 `Select4` 没有 mark 参数**（**事实 32**）
+        #:     ⇒ 重选后 mark 变成 **0**，★ 而填充要 **1**（`MARK_BOUNDARY`，官方 Remarks）
+        #:     ⇒ ★ 真机：选中了 4 条而填充仍不成（树 `[7, 7]`）。
+        #:   ★★ **正解**：★ **尊重调用方已选好的选区（含它的 mark）** ——
+        #:     ★ 而那正是规则 3 的本意：**选择由调用方做**（★ 工具不越俣代庖）。
+        #:   ★ 而代价：★ **调用方选边时必须用 `mark = 1`** ⇒ ★★ 已写进工具文档与本函数的 docstring ✓
+        try:
+            _selected_readback = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                                    "GetSelectedObjectCount2", -1) or 0)
+        except Exception:                                      # noqa: BLE001
+            _selected_readback = 0
+        if _selected_readback <= 0:
+            #: ★★★★ 2026-10-03（接手轮）**从这里改成"回退"而不是"失败"**。
+            #:   ★★ **为什么**（★ 真机隔离出来的，事实 503）：注册器调工具的**顺序**是
+            #:     `kwargs[inj] = resolver(params)` → `pre_call` → `fn(**kwargs)`
+            #:     （`tool_registry.py:507/510/525`），★ 而 **`RESOLVERS["model"]` 经
+            #:     `connect_solidworks()` 会清空选区** ——
+            #:     ★ 实测：选完 2 个面 `mark1=2`，★ **调过 `RESOLVERS['model']` 之后变成 0**
+            #:     （证据 `output/selection-lifetime-evidence.json`）。
+            #:   ⇒ ★★ **"尊重调用方已选好的选区"这条前置，经工具层永远拿不到选区**
+            #:     （★ 而 MCP 客户端本来也没法预选）⇒ ★ 上一版在这里 `return` 失败，
+            #:     ★ 于是**这条工具只要传了 `selection` 就必然失败**。
+            #:   ★★ **正解**：★ **回退到下面那条"按最高一圈边自动选"的路** ——
+            #:     ★ 它用 `SelectByID2("", "EDGE", 中点, append=True, MARK_BOUNDARY=1, …)`
+            #:     ★ **在注入之后**执行 ⇒ ★ **不受影响**（★ 那条路真机建成过）。
+            #:   ★ 语义：调用方给 `selection` 的**意图是"给我填一张曲面"** ⇒
+            #:     ★ 拿不到预选时**回退**并**如实注明**，比直接失败更符合意图。
+            #:   ★★ 返回值里留 `fallback_from_declarative: True`，★ **不静默**。
+            _fallback_note = {
+                "stage": "selection_readback",
+                "selected": _selected_readback,
+                "★": "选区的**回读计数为 0** ⇒ ★ **回退到自动路**（按最高一圈边选）。"
+                     "★ 原因见事实 503：`RESOLVERS['model']` 会清空选区，"
+                     "★ 所以「调用方预选」经工具层不可能成立。",
+            }
+            _declarative = False
+    edges, mids = [], []
+    try:
+        for b in (get_com_member(model, "GetBodies2", -1, True) or []):
+            for e in (get_com_member(b, "GetEdges") or []):
+                try:
+                    a = [float(x) for x in get_com_member(
+                        get_com_member(e, "GetStartVertex"), "GetPoint")]
+                    c = [float(x) for x in get_com_member(
+                        get_com_member(e, "GetEndVertex"), "GetPoint")]
+                    edges.append(e)
+                    mids.append([(a[i] + c[i]) / 2.0 for i in range(3)])
+                except Exception:                              # noqa: BLE001
+                    continue
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "collect_edges", "error": str(exc)[:140]}
+    if not edges:
+        return {"ok": False, "stage": "collect_edges", "error": "模型上没有可选边（★ 填充要一个封闭边界）"}
+    z = max(m[2] for m in mids) if not _declarative else None
+    picked = [] if _declarative else [(m, e) for m, e in zip(mids, edges) if abs(m[2] - z) < 1e-9]
+    if not _declarative and len(picked) < 3:
+        return {"ok": False, "stage": "pick_boundary", "at_z": z,
+                "error": "z=%.6f 上只找到 %d 条边（★ 封闭边界至少要 3 条）" % (z, len(picked))}
+    #: ★★ **按中点 + mark=1 选中**（★ 官方 Remarks 要的 mark；★ `Select4` 没有 mark 参数 —— 事实 32）
+    callout = _empty_callout()
+    ext = get_com_member(model, "Extension")
+    #: ★★★ 2026-10-03（轮 435）**这一句必须护住** —— ★ 它是**无条件**的，
+    #:   ★★ 而它会把**调用方选好的边清掉** ⚠ ⇒ ★ 于是声明式路"回读计数 4、而选区是空的"
+    #:   ⇒ ★ 填充**不建**（★ 真机：树 `[7, 7]`）✓
+    #:   ★ 而**这正是**"调用方做选择、工具不越俎代庖"那条契约（规则 3 的本意）的**必要条件**。
+    if not _declarative:
+        try:
+            model.ClearSelection2(True)
+        except Exception:                                      # noqa: BLE001
+            pass
+    for m, _e in ([] if _declarative else picked):
+        try:
+            ext.SelectByID2("", "EDGE", m[0], m[1], m[2], True, MARK_BOUNDARY, callout, 0)
+        except Exception:                                      # noqa: BLE001
+            pass
+    selected = _selected_readback
+    if not _declarative:
+        try:
+            selected = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                          "GetSelectedObjectCount2", -1) or 0)
+        except Exception:                                      # noqa: BLE001
+            selected = 0
+    #: ★★ **回读计数为零 ⇒ 选择其实没生效**（★ 事实 8：bool 返回值不可信）⇒ **早退，不假装成功**
+    if selected <= 0:
+        return {"ok": False, "stage": "select", "points_selected": 0, "boundary_z": z,
+                "error": "SelectByID2 选了 %d 条边而回读计数为 0（★ 事实 8：静默失败）" % len(picked),
+                "★": "检查 mark 是否为 1（★ 传 4 会静默失败）"}
+    before_names = feature_names(model)
+    before = len(before_names)
+    try:
+        feat = get_com_member(get_com_member(model, "FeatureManager"), "InsertFillSurface2",
+                              res, int(options), None, None, None, None)
+    except Exception as exc:                                   # noqa: BLE001
+        _err = {"ok": False, "stage": "call", "points_selected": selected,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        if _fallback_note is not None:
+            #: ★ 早退也要带上回退标注（★ 否则调用方看不见"我回退过" —— 本轮就因此多查一轮）。
+            _err["fallback_from_declarative"] = True
+            _err["fallback_detail"] = _fallback_note
+        return _err
+    after_names = feature_names(model)
+    new = [n for n in after_names if n not in before_names]
+    _out = {"ok": (feat is not None) and len(after_names) > before,
+            "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": before, "tree_after": len(after_names),
+            "points_selected": selected, "boundary_z": z,
+            "resolutions": res, "options": int(options),
+            "★": "判据 = **回 Feature 非 None** **且** **特征树增量非空**（★ 两判据都要）；"
+                 "★ 边界按**中点 + mark=1** 选（★ 官方 Remarks；★ 传 mark=4 会静默失败）"}
+    if _fallback_note is not None:
+        #: ★★ 声明式选区拿不到（★ 事实 503）⇒ **回退到自动路**了 ⇒ **如实标注，不静默**。
+        _out["fallback_from_declarative"] = True
+        _out["fallback_detail"] = _fallback_note
+    return _out
