@@ -3312,3 +3312,38 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         痕迹：`tools/check_tool_param_binding.py`（新）· `tools/probe_inject_key.py`（新）·
         `output/inject-key-evidence.json` · `mcp-server/register_capabilities.py`（两个新解析器）·
         `tool_specs_batch10.py` / `tool_specs_batch38.py` · 对照事实 **36** · **169** |
+| 503 | **★★★★★ `RESOLVERS["model"]` 会清空活动文档的选区 ⇒ 凡"指望调用方预先选择"的工具，经工具层永远拿不到选区** —— 2026-10-03（接手轮，★ 单变量真机隔离出来的，已修两条工具）。
+      ★ **现象**：R3 探针里我选好面后**回读为真**（`readback_mark=1/2` · `all=1/2`），
+        而**工具自己读到全 0**（`selection_marks` 全零）⇒ ★ 一度记为"开放问题"。
+      ★★ **单变量隔离（`tools/diag_selection_lifetime.py`，证据 `output/selection-lifetime-evidence.json`）**：
+        选面后**逐步**加动作并每步回读 —— ★ `feature_names` · `GetBodies2` · `GetFaces` ·
+        `FeatureManager` · `SelectionManager` · 甚至**工具自己的 `_selection_marks`** 之后，
+        ★★ 选区**都还在**（`mark1=2`）；★ 而**唯独**在这一步之后变成 `mark1=0`：
+        ```
+        调过 RESOLVERS['model'] 之后        mark1=0   all=0   ← ★★ 就是它
+        ```
+        ⇒ ★★★ **`resolve_model` → `_connect()` → `connect_solidworks()` 清掉了选区**。
+      ★★★ **而注册器的顺序使这件事必然发生**（`tool_registry.py:507/510/525` 逐字）：
+        ```
+        kwargs[inject_as or inj] = resolver(params)   # ← ★ 先跑注入（清了选区）
+        spec.pre_call(params)                         # ← 再跑 pre_call（此时才能选）
+        kwargs.update(spec.derived_args(params) or {})
+        return getattr(mod, spec.function)(**kwargs)
+        ```
+        ⇒ ★★ **"调用方预先选择"这条前置在工具层是不可能成立的**（★ 而 MCP 客户端本来也没法预选）
+          ⇒ ★ 受影响的是一整族工具：凡 `capabilities.yaml` 里写着「调用前必须先选」而**没有** `pre_call` 的。
+      ★ **正确形态（本仓既有的先例）**：`solidworks_fillet` / `solidworks_chamfer` 用
+        **`pre_call=_select_edge`** —— ★ 在 `pre_call`（= 注入**之后**）才解析成真实选区 ⇒ ★ **能存活**。
+      ★ 修法（本轮已做）：`tool_specs_batch74.py` 新增 `_select_faces_for(mark, count)`，
+        给两条焊件工具挂上 —— ★ 端盖 **`mark=0` 选 1 个面**（官方例子）·
+        角撑板 **`mark=1` 选 2 个面**（官方逐字「two faces … with a Mark of 1」）；
+        ★ 判据用**回读计数**（★ 事实 8），★ 没选够就**抛**（不静默）。
+      ★★ **修后真机复验**：两条工具 **`preconditions_held=True`** ✓，且工具读到的选区**正确**
+        （端盖 `{'0':1,'all':1}` · 角撑板 `{'1':2,'all':2}`）⇒ ★ **前置这一环通了**
+        （★ 而 API 调用本身**仍未建成** ⇒ 那是**另一个问题**，如实分开记）。
+      ★★ **可复用的判据**：★ **"前置发生在注入之前还是之后"，决定了它经工具层能不能成立** ——
+        ★ 凡要"调用方先做点什么"的前置（选择 / 激活 / 指定算例），
+        ★ 都必须改写成 **`pre_call`**，★ 因为**只有 `pre_call` 跑在注入之后**。|
+        痕迹：`tools/diag_selection_lifetime.py`（新）· `output/selection-lifetime-evidence.json` ·
+        `mcp-server/tool_specs_batch74.py` 的 `_select_faces_for` · `tools/probe_r3_tools.py` ·
+        对照事实 **8**（bool 不可信、回读计数）· **491**（注入解析器机制） |

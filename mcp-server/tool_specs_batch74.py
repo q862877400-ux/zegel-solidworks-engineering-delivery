@@ -86,6 +86,61 @@ from tool_registry import Param, ToolSpec
 #: ★ ⇒ 见文件尾那段理由）；★ 模块名在这里**只出现一次**，★ 便于 grep 核对。
 _MODULE = "sw_sheet_metal_weld_entry"
 
+
+#: ★★★ 2026-10-03（接手轮）**`pre_call` 选面 —— 本批两条焊件工具的前置必须这样做**。
+#:   ★★ **为什么不能用"调用方预先选择"**（★ 单变量真机隔离出来的，证据
+#:     `output/selection-lifetime-evidence.json`）：
+#:     注册器的顺序是 `kwargs[inj] = resolver(params)` → `pre_call(params)` → `fn(**kwargs)`
+#:     （`tool_registry.py:507/510/525`），★ 而 **`RESOLVERS["model"]` 会经
+#:     `connect_solidworks()` 清空选区** —— 实测：选完 2 个面 `mark1=2`，
+#:     ★ **调过 `RESOLVERS['model']` 之后变成 `mark1=0`**。
+#:     ⇒ ★★ 于是"指望调用方预选"的工具**经工具层永远拿不到选区**
+#:       （★ 而 MCP 客户端本来也没法预选）。
+#:   ★ **正确形态照本仓既有先例**：`solidworks_fillet` / `solidworks_chamfer` 用的是
+#:     `pre_call=_select_edge` —— ★ 在 `pre_call`（= 注入**之后**）解析成真实选区 ⇒ **能存活**。
+#:   ★ 官方 mark（逐字）：顶端盖「select one or more **end faces**」**没给 mark**（官方例子用 **0**）；
+#:     角撑板「**two faces** … with a **Mark of 1**」。
+def _select_faces_for(mark: int, count: int):
+    """★ 造一个 `pre_call`：调目标函数前按官方 mark 选 `count` 个面。
+
+    ★ 判据用**回读计数**（★ 事实 8：`Select4` 的 bool 返回值不可信）——
+      ★ 没选够就**抛**（★ 不静默地把前置未成立当成能力不成）。
+    """
+
+    def _pick(params):                                                # noqa: ANN001, ARG001
+        from scripts.sw_connect import get_com_member
+        from scripts.sw_part import _select_com_object
+        import register_capabilities as _rc
+
+        model = _rc.RESOLVERS["model"](None)          #: ★ 与注册器取同一个对象
+        try:
+            get_com_member(model, "ClearSelection2", True)
+        except Exception:                                             # noqa: BLE001
+            pass
+        sm = get_com_member(model, "SelectionManager")
+        picked = 0
+        for body in list(get_com_member(model, "GetBodies2", 0, True) or []):
+            for face in list(get_com_member(body, "GetFaces") or []):
+                if picked >= count:
+                    break
+                try:
+                    _select_com_object(face, append=(picked > 0), mark=mark)
+                    got = int(get_com_member(sm, "GetSelectedObjectCount2", mark) or 0)
+                    if got > picked:
+                        picked = got
+                except Exception:                                     # noqa: BLE001
+                    continue
+            if picked >= count:
+                break
+        if picked < count:
+            raise RuntimeError(
+                "★ 前置未成立：按 mark=%d 只选上 %d/%d 个面（官方要求的面没备齐）"
+                % (mark, picked, count))
+        return picked
+
+    return _pick
+
+
 _BATCH74: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_sheet_metal_insert_miter_flange",
@@ -174,6 +229,8 @@ _BATCH74: list[ToolSpec] = [
         name="solidworks_weldment_insert_end_cap",
         title="Weldment End Cap",
         module=_MODULE, function="insert_weldment_end_cap",
+        #: ★ 官方「select one or more end faces」· 没给 mark（例子用 0）
+        pre_call=_select_faces_for(0, 1),  
         inject="model",
         param_alias={"depth_mm": "depth_mm",
                      "is_given_offset": "is_given_offset",
@@ -240,6 +297,8 @@ _BATCH74: list[ToolSpec] = [
         name="solidworks_weldment_gusset_create",
         title="Weldment Gusset (Corner Gusset)",
         module=_MODULE, function="insert_weldment_gusset",
+        #: ★ 官方「two faces … with a Mark of 1」
+        pre_call=_select_faces_for(1, 2),  
         inject="model",
         param_alias={"depth_mm": "depth_mm", "dir_type": "dir_type", "loc_type": "loc_type",
                      "is_profile": "is_profile",

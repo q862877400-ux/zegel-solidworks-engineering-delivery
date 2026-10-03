@@ -35,7 +35,7 @@ def tool_names() -> set[str]:
     out: set[str] = set()
     batches = batch_modules()
     for f in sorted(MCP.glob("tool_specs_batch*.py")):
-        mod = f.stem.replace("tool_specs_batch", "batch")
+        mod = f.stem
         if batches and mod not in batches:
             continue
         tree = ast.parse(f.read_text(encoding="utf-8", errors="replace"))
@@ -77,32 +77,76 @@ def hit(names: set[str], pats: tuple[str, ...]) -> list[str]:
     return sorted(n for n in names if any(p in n for p in pats))
 
 
-# ── 三路候选的建议工具名 ─────────────────────────────────────────────
-PROPOSED: dict[str, list[str]] = {
-    "sketch_dimension_horizontal": ["solidworks_sketch_add_horizontal_dimension"],
-    "sketch_dimension_vertical": ["solidworks_sketch_add_vertical_dimension"],
-    "sketch_slot_types": ["solidworks_sketch_create_sketch_slot"],
-    "sketch_line2": ["solidworks_sketch_create_line2"],
-    "sketch_spline3_2d": ["solidworks_sketch_create_spline3"],
-    "sketch_rotate_or_copy_3d": ["solidworks_sketch_rotate_or_copy_3d_sketch"],
-    "sketch_equation_curve": ["solidworks_sketch_equation_spline"],
-    "sketch_offset_on_surface": ["solidworks_sketch_offset_on_surface"],
-    "curve_and_split": [
-        "solidworks_insert_split_line_project",
-        "solidworks_insert_split_line_silhouette",
-        "solidworks_insert_mate_reference",
-    ],
-    "curve_through_xyz": ["solidworks_insert_curve_file"],
-    "surface_untrim": ["solidworks_untrim_surface"],
-    "surface_delete_hole": ["solidworks_delete_hole_surface"],
-    "feature_revolve_cut": ["solidworks_revolve_cut"],
-    "feature_loft_cut": ["solidworks_loft_cut"],
-    "autocad_script_backend": ["cadstudio_acad_script_run_command"],
-    "autocad_dotnet_backend": ["cadstudio_acad_dotnet_preflight"],
-    "animation_export": ["solidworks_motion_export_avi"],
-    "drawing_dimension_insertion": ["solidworks_drawing_dimension_insert"],
-    "render_material_library": ["solidworks_render_material_create", "solidworks_render_material_delete"],
-    "select_by_ray": ["solidworks_select_by_ray"],
+# ── 三路候选的「建议 / 已存在」工具名（★ 已存在者标 (已有)）─────────────
+PROPOSED: dict[str, tuple[str, list[str]]] = {
+    # —— 路 a ——
+    "sketch_primitives_b1": ("已有", [
+        "solidworks_sketch_add_3point_rectangle", "solidworks_sketch_add_3point_center_rectangle",
+        "solidworks_sketch_add_parallelogram", "solidworks_sketch_add_tangent_arc",
+        "solidworks_sketch_add_3point_arc", "solidworks_sketch_add_partial_ellipse",
+        "solidworks_sketch_add_parabola", "solidworks_sketch_add_conic",
+        "solidworks_sketch_add_perimeter_circle"]),
+    "sketch_edit_ops_b3": ("已有", [
+        "solidworks_sketch_trim", "solidworks_sketch_extend", "solidworks_sketch_offset",
+        "solidworks_sketch_fillet", "solidworks_sketch_linear_pattern",
+        "solidworks_sketch_circular_pattern"]),
+    "sketch_modify_ops": ("已有", [
+        "solidworks_sketch_move_entities", "solidworks_sketch_rotate_entities",
+        "solidworks_sketch_scale_entities", "solidworks_sketch_stretch_entities",
+        "solidworks_sketch_flip_entities"]),
+    "sketch_dimension_horizontal": ("新", ["solidworks_sketch_add_horizontal_dimension"]),
+    "sketch_dimension_vertical": ("新", ["solidworks_sketch_add_vertical_dimension"]),
+    "sketch_slot_types": ("新", ["solidworks_sketch_create_sketch_slot"]),
+    "sketch_line2": ("新", ["solidworks_sketch_create_line2"]),
+    "sketch_spline": ("已有", ["solidworks_sketch_spline"]),
+    "sketch_spline3_2d": ("新", ["solidworks_sketch_create_spline3"]),
+    "sketch_rotate_or_copy_3d": ("新", ["solidworks_sketch_rotate_or_copy_3d_sketch"]),
+    "sketch_equation_curve": ("新", ["solidworks_sketch_equation_spline"]),
+    "sketch_offset_on_surface": ("新", ["solidworks_sketch_offset_on_surface"]),
+    "curve_and_split": ("新", [
+        "solidworks_insert_split_line_project", "solidworks_insert_split_line_silhouette",
+        "solidworks_insert_mate_reference", "solidworks_insert_curve_through_points"]),
+    "curve_through_xyz": ("新", [
+        "solidworks_insert_curve_through_points", "solidworks_insert_curve_file"]),
+    # —— 路 b ——
+    "surface_modeling": ("已有", ["cadstudio_create_ocp_surface", "cadstudio_create_ocp_loft"]),
+    "surface_edit_ops": ("已有", [
+        "solidworks_insert_planar_surface", "solidworks_insert_offset_surface",
+        "solidworks_insert_ruled_surface", "solidworks_insert_delete_face",
+        "solidworks_insert_replace_face"]),
+    "surface_ref_ops": ("已有", ["solidworks_insert_lofted_ref_surface"]),
+    "surface_thicken_silent_noop": ("已有", ["solidworks_thicken"]),
+    "surface_offset": ("已有", ["solidworks_insert_offset_surface"]),
+    "surface_planar_region": ("已有", ["solidworks_insert_planar_surface"]),
+    "surface_revolve": ("已有", ["solidworks_create_revolved_surface"]),
+    "surface_flatten": ("已有", ["solidworks_flatten_surface"]),
+    "surface_untrim": ("新", ["solidworks_untrim_surface"]),
+    "surface_delete_hole": ("新", ["solidworks_delete_hole_surface"]),
+    "feature_readback_criterion": ("新", ["solidworks_feature_readback_criterion"]),
+    "feature_revolve_cut": ("新", ["solidworks_revolve_cut"]),
+    "feature_loft_cut": ("新", ["solidworks_loft_cut"]),
+    "feature_cosmetic_thread": ("已有", ["solidworks_feature_cosmetic_thread"]),
+    "feature_hole_wizard5": ("已有", ["solidworks_hole_wizard"]),
+    # —— 路 c ——
+    "autocad_basic_drafting": ("新", ["cadstudio_autocad_draw_brief"]),
+    "autocad_script_backend": ("新", ["cadstudio_acad_script_run_command"]),
+    "autocad_dotnet_backend": ("新", ["cadstudio_acad_dotnet_preflight"]),
+    "animation_export": ("新", ["solidworks_motion_export_avi"]),
+    "coverage_gap_batch1": ("已有", [
+        "solidworks_create_revolved_surface", "solidworks_hole_wizard",
+        "solidworks_sketch_fully_defined_status", "solidworks_sketch_move_entities"]),
+    "drawing_dimension_insertion": ("新", ["solidworks_drawing_dimension_insert"]),
+    "geometric_tolerance": ("已有", ["solidworks_gtol_insert"]),
+    "ref_geometry": ("已有", [
+        "solidworks_insert_ref_plane", "solidworks_insert_coordinate_system",
+        "solidworks_insert_reference_point", "solidworks_insert_center_of_mass",
+        "solidworks_insert_global_bounding_box"]),
+    "render_material_library": ("新", [
+        "solidworks_render_material_create", "solidworks_render_material_delete",
+        "solidworks_list_render_materials"]),
+    "replace_face": ("已有", ["solidworks_insert_replace_face"]),
+    "requirements_planning": ("新", []),
+    "select_by_ray": ("新", ["solidworks_select_by_ray"]),
 }
 
 
@@ -114,14 +158,26 @@ def main() -> int:
     print("当前未命中行 %d 项：" % len(unhit))
     for d, i, p in unhit:
         print("  - (%s, %s) %s" % (d, i, p))
-    print("\n逐条：建议工具名 → 命中的**当前未命中**行")
-    for cid, names in PROPOSED.items():
-        gains = []
+    print("\n逐条：建议/已存在工具名 → 命中的 CHECKLIST 行（★=当前未命中 ❌）")
+    rank = []
+    for cid, (kind, names) in PROPOSED.items():
+        gains, allrows = [], []
         for n in names:
-            for d, i, p in unhit:
+            for d, i, p in rows:
                 if any(pn in n for pn in p):
-                    gains.append("%s ⇒ (%s, %s)" % (n, d, i))
-        print("  %-28s %s" % (cid, "；".join(gains) if gains else "★ 净增 0 格"))
+                    mark = "*" if not hit(ours, p) else " "
+                    allrows.append("%s%s/%s" % (mark, d, i))
+                    if mark == "*":
+                        gains.append("%s => (%s, %s)" % (n, d, i))
+        rank.append((len(gains), len(allrows), cid, kind, gains, allrows))
+    for ng, na, cid, kind, gains, allrows in rank:
+        print("  %-30s [%-2s] 行 %d · 新增 %d  %s" % (
+            cid, kind, na, ng, "；".join(gains) if gains else ""))
+        if allrows:
+            print("        " + " | ".join(allrows))
+    print("\n按「新增未命中行」排序前 8：")
+    for ng, na, cid, kind, gains, allrows in sorted(rank, reverse=True)[:8]:
+        print("  %d 新增 / %d 命中行  %s [%s]" % (ng, na, cid, kind))
     return 0
 
 
