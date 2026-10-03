@@ -691,12 +691,32 @@ def set_view_scale(view, scale: float) -> bool:
     """★ **设视图比例** —— 走官方真名 `IView.ScaleRatio`（★ 按 `n:1` 形态写两个数）。
 
     ⚑⚑ **2026-10-01 更正**：本函数原调 `Scale`（★ 同样是不存在的成员名）。
+    ★★★★★ **2026-10-03（轮 467）修一条会说谎的路径** —— 起因是用户问
+      「你的 B5 探针那种问题在我们项目里**有别的类似的存在吗**」。用
+      `tools/scan_blind_criteria.py` 扫出来的答案：**有，就是本函数**。
+
+    ★★★ **本函数原来的两处毛病（★ 都在同一行里）**：
+      ```
+      ① ★ 它走 `get_com_member(view, "ScaleRatio", (s, 1.0))` ——
+         ★★ 而 `get_com_member(obj, name, *args)` 的语义是「取或调」：**有实参就一定调用**
+         ⇒ ★ 它在一个 **tuple** 上"调用" ⇒ **必然 `TypeError: 'tuple' object is not callable`**。
+         ⚑ ★ 而**项目早在轮 294 就查清了这件事**（见下方那段注释），
+           ★★ 只是**没回来改这个函数** ⇒ ★ 于是它一直**必然失败**。
+      ② ★★★ **而它 `return True`** —— 无条件说成功 ⇒
+         ★ **任何调用方都会以为"设好了"**，★ 而视图比例**根本没变**。
+      ```
+    ★ 真机硬证据：`output/scale-ratio-probe.json`（`set_try.ok=false` + 那句 TypeError）·
+      `output/set-view-scale-probe.json`（`before == after` 而 `ok=false`）✓
+
+    ★★ **现在的行为**：走 `set_com_member`（属性赋值 —— 本仓真机验证过的唯一可行形态），
+      然后**回读**，★ 只有**两个数真的变了**才回 `True`（★ 规则 6：不静默成功）。
+
+    :raises RuntimeError: 写了但**回读没变** ⇒ ★ **明确失败**，不再假装成功。
     """
     if view is None:
         raise ValueError("view 为 None")
-    s = float(scale)
-    get_com_member(view, "ScaleRatio", (s, 1.0))
-    return True
+    #: ★ 直接走**同文件后面**那个带回读的实现（★ Python 运行时解析名字 ⇒ 前后顺序无妨）
+    return bool(set_view_scale_verified(view, scale)["ok"])
 
 
 # ── 24h 计划 段 6 续（Spec Kit `162`）：**设视图比例的正确形态** ──────────────────────
