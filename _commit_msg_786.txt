@@ -1,0 +1,45 @@
+fix(阶段3): ★★★★★★ **继续清零 —— 4 条全修好**（★ 真基线 **12 → 8**）；★ 而其中一条是**最隐蔽的一类**（★ 报 `IndexError` 而非 `AttributeError`）
+
+■ 一 · ★ 本轮修的四条（★ **B 类：★ 换代后配套没跟上**）
+  | ★ # | ★ 文件 | ★ 真机读数 | ★ 真因 |
+  |---|---|---|---|
+  | ★ ① | ★ `test_tool_specs_batch1` | ★「★ 工具折算后 `['mesh_type','name']` ≠ 真实形参 `['delete_existing','mesh_type','name']`」 | ★ 实现**加了**带默认值的关键字参数 ✓ |
+  | ★ ② | ★ `test_tool_specs_batch2` | ★「★ 折算后 `['create_missing_cut_list']` ≠ `['create_missing_cut_list','update_cut_list_too']`」 | ★ 同上 ✓ |
+  | ★ ③ | ★ `test_sw_export_pdf_contract` | ★「★ **找不到 `SaveAs` 调用**」 | ★ 判据查的是**属性式** `.SaveAs(`、★ **而实现已换代成**包装式** `get_com_member(…, "SaveAs3", …)`** ✓ |
+  | ★★ ④ | ★ `test_extended_modules_contract` | ★★ **`IndexError: tuple index out of range`** | ★★ **实现换了后继入口 ⇒ mock 调不到 ⇒ `calls` 空** ✓ |
+
+■ 二 · ★★★★★★ 四条其实**都是同一个病**，★ 而**④ 最隐蔽**（★ 本轮最值记的一条）
+  ★ **① ②**：★ 都是「★ **实现加了参数、★ ToolSpec 没跟上**」⇒ ★ 已补（★ 默认值与实现一致）✓
+  ★★ **③**：★ 提交 `2656c26c`（★ **我自己**在阶段 1 做的）把三处保存路由统一到 `SaveAs3` ⇒
+    ★ 而**契约测试还在查旧的**属性式**形态** ⇒ ★★ **它报的是「找不到 X 调用」** ——
+    ★★★ **那看起来像「代码里没有它」、★ 而实际是「形态变了」** ✓
+    ⇒ **判据已改成新形态**（★ 找 `"SaveAs3"` + ★ 核第一实参是 `str(...)`）——
+      ★★ **而**判据的意图不变****（★ 路径必须 `str(...)` 包起来 —— ★ 那条是真的）✓
+  ★★★ **④**：★ `sw_render_material.add_render_material` **换了后继入口**
+    `AddDisplayStateSpecificRenderMaterial`（★ 它自己的注释逐字：★ 旧的 `AddRenderMaterial`
+    官方页写「**Not supported in SOLIDWORKS 2011 and later**」）⇒
+    ★★ **而 mock 只装了旧的那个** ⇒ **实现调不到它** ⇒ **`calls` 是空的** ⇒
+    ★★★ **⇒ 报的是 `IndexError`** ✓
+  > ★★★★★★ **可复用判据**：★★★ **`mock` 里 `calls` 为空导致的 `IndexError`，
+  >   与 `AttributeError: … Did you mean` **是同一个病** ——
+  >   都要先查**实现现在调的是哪个名字**** ✓
+  >   ★★ **⚠ 而前者**更隐蔽****：★ 它**没有 `Did you mean`**、★ 也**不报 `AttributeError`** ⇒
+  >   ★★★ **"名字变了"这件事**完全看不出来**** —— ★ 只能靠**读实现**才发现 ✓
+  >   ★★★★ **⇒ 所以"跑一遍"不够、★ 还要**读那个 mock 对应实现的调用点**** ✓
+
+■ 三 · ★★★★★★ 而这一族（★ "改了实现、★ 配套的没跟上"）**至此已见 8 次**
+  ★ mock 落后（★ `_oleobj_` · `SetSaveToName2` · `GetExcludeFromBOM2` ·
+    `GetDependencies` 的对象归属 · `call_com_member`(stub) · `MoldUndercutDetect2` ·
+    `ActiveSketch` · ★ **`AddDisplayStateSpecificRenderMaterial`**）·
+  ★★ 登记表落后（★ `_REGISTERED_OBSOLETE`）· ★★★ 行号漂移（★ `COMTYPES_CALL_SITES`）·
+  ★★★★ 钉死数量（★ 两处）· ★★★★★ **ToolSpec 参数落后**（★ 本轮 2 条）⇒
+  ★ **⇒ 一共 **六类**、★ 而**共同解法只有一条**：
+    ★★ **改完实现立刻 grep 谁记着它**（★ 名字 · ★ 行号 · ★ 数量 · ★ 参数表）✓
+
+■ 四 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK`** ✓ · ★ 相关：★ `batch1`+`batch2` **24 passed** ·
+    ★ `pdf_contract` **4 passed** · ★ `extended_modules` **15 passed** ✓
+  ★★ **⚠ 如实记**：★ **真基线 12 → 8**（★ 本轮修 4 条、★ 还剩 8）✓
+  ★★★ **⇒ 剩的 8 条**：★ `test_sw_sketch_edit_contract`（2）· ★ `test_unattended_equivalence`（3）·
+    ★ `test_no_uncalled_helpers`（1）· ★ `test_cad_reliability`（1）· ★ 以及 1 条待定 ⇒
+    ★★ **下一轮继续** ✓

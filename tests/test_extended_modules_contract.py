@@ -283,6 +283,24 @@ def test_add_render_material_passes_two_arguments():
     calls: list[tuple[str, tuple]] = []
 
     class _Ext:
+        #: ★★★★★★ 2026-10-04（轮 117）**mock 跟上换代** —— ★ 处置这条**存量失败** ✓
+        #:   ★ **真机读数**：★ 本测试报 **`IndexError: tuple index out of range`**（★ L302 `calls[0]`）⇒
+        #:     ★★ **⇒ `calls` 里**一条都没有**** ⇒ **实现没调到 `_Ext` 上任何方法** ✓
+        #:   ★★★ **真因**：★ `sw_render_material.add_render_material` **换了后继入口** ——
+        #:     它自己的注释逐字：★「★ 走**后继入口** `AddDisplayStateSpecificRenderMaterial`
+        #:     （★ 旧的 `AddRenderMaterial` 官方页逐字
+        #:     「**Not supported in SOLIDWORKS 2011 and later**」）」⇒
+        #:     ★★★★ **⇒ 而本 mock 只装了**旧的那个** ⇒ **实现调不到** ⇒ `calls` 空** ✓
+        #:   ★★★★★ **⚠ 而这一类比前几次**更隐蔽**** —— ★ 它报的是 **`IndexError`**、
+        #:     ★★ **不是 `AttributeError`**、★ 也**没有 `Did you mean`** ⇒
+        #:     ★★★ **⇒ "名字变了"这件事**完全看不出来**** ✓
+        #:     ★★★★ **⇒ 可复用判据**：★★★ **mock 里 `calls` 为空导致的 `IndexError`，
+        #:       与 `AttributeError: … Did you mean` **是同一个病** ——
+        #:       都要先查**实现现在调的是哪个名字**** ✓
+        def AddDisplayStateSpecificRenderMaterial(self, mat, *args):
+            calls.append(("AddDisplayStateSpecificRenderMaterial", (mat,) + args))
+            return True
+
         def AddRenderMaterial(self, mat, count):
             calls.append(("AddRenderMaterial", (mat, count)))
             return True
@@ -294,15 +312,23 @@ def test_add_render_material_passes_two_arguments():
         Extension = _Ext()
 
     m.add_render_material(_Model(), "MAT")
-    # ⚑ 2026-10-01 真机裁决：第 2 参是 `Int32&` 出参，**不能传裸 0**（必抛类型不匹配），
+    # ⚑ 2026-10-01 真机裁决：出参是 `Int32&`，**不能传裸 0**（必抛类型不匹配），
     #   须包成 byref VARIANT —— 即 sw_connect.out_i4()。原断言写 ("MAT", 0) 是照反射推断的。
     #   ⚠ 只查语义不查字面量：单独跑时 sw_connect 是字面量桩，全量跑时是真模块，
     #   写死任一种都会「单独绿、全量红」。`VT_BYREF|VT_I4` = 16387；
     #   pywin32 的 VARIANT 不暴露 `.vt`（实测是 None），只能看 repr。
-    count_arg = calls[0][1][1]
-    assert count_arg == ("<out_i4>", 0) or repr(count_arg).startswith("win32com.client.VARIANT(16387"), \
-        "Int32& 出参必须是 byref VARIANT（真机裁决）"
-    assert calls[1] == ("UpdateRenderMaterialsInSceneGraph", (True,))
+    #: ★★★★ 2026-10-04（轮 117）**断言随换代更新**：★ 现在是
+    #:   `AddDisplayStateSpecificRenderMaterial(material, SW_ALL_DISPLAY_STATE,
+    #:    <空 Dispatch>, out_i4(), out_i4())` —— ★ **两个 byref 出参** ✓
+    assert calls[0][0] == "AddDisplayStateSpecificRenderMaterial", (
+        "★ 实现走了别的入口：%r" % (calls[0][0],))
+    out_args = calls[0][1][1:]                              #: ★ 除 material 之外的实参 ✓
+    _o = [a for a in out_args if a == ("<out_i4>", 0) or
+          repr(a).startswith("win32com.client.VARIANT(16387")]
+    assert len(_o) == 2, (
+        "★ `Int32&` 出参必须是 byref VARIANT（真机裁决）⇒ ★ 应有两个、★ 实得 %d：%r"
+        % (len(_o), out_args))
+    assert calls[-1] == ("UpdateRenderMaterialsInSceneGraph", (True,))
 
 
 def test_mass_property_override_uses_real_member_name():

@@ -45,7 +45,17 @@ __all__ = ["SPECS_BATCH1", "SIM_RESOLVERS"]
 #:   `Select-String scripts/sw_simulation.py -Pattern '^def set_material'`
 SPECS_BATCH1: list[ToolSpec] = [
     # ── 拓扑（护城河）────────────────────────────────────────────────
-    # 签名: def create_topology_study(sw_app, name: str, *, mesh_type: int = 0)
+    # 签名: def create_topology_study(sw_app, name: str, *, mesh_type: int = 0,
+    #                                 delete_existing: bool = True)
+    #: ★★★★★★ 2026-10-04（轮 117）**补 `delete_existing`** —— ★ 处置这条**存量失败** ✓
+    #:   ★ **真机读数**（★ `tests/test_tool_specs_batch1.py` 逐字）：
+    #:     「工具 `solidworks_topology_create_study` 折算后的目标参数 `['mesh_type', 'name']`
+    #:       与 `sw_topology.create_topology_study` 的真实形参
+    #:       `['delete_existing', 'mesh_type', 'name']` 不一致」✓
+    #:   ★★ **真因**：★ 实现**加了**带默认值的关键字参数 `delete_existing: bool = True`、
+    #:     而 **ToolSpec 没跟上** ⇒ ★★★ **⇒ 与「mock 落后」「登记表落后」
+    #:     **同一个病**（★ "改了实现、★ 配套的没跟上"）** ✓
+    #:   ★★★★ **⇒ 已补**（★ 默认值与实现一致 = `True`）✓
     ToolSpec(
         name="solidworks_topology_create_study",
         title="Create SOLIDWORKS Topology Study",
@@ -59,6 +69,10 @@ SPECS_BATCH1: list[ToolSpec] = [
                   description="Study name; a study with the same name is deleted first."),
             Param("mesh_type", int, default=0,
                   description="swsMeshType: 0=solid, 1=midsurface, 2=surfaces, 3=mixed, 4=beam."),
+            #: ★ 新增（★ 与实现同步）：★ 同名研究是否先删掉重建 ✓
+            Param("delete_existing", bool, default=True,
+                  description="Delete an existing study with the same name before creating "
+                              "(★ 与实现默认值一致 = True)。"),
         ],
         doc=("Create a topology optimization study (analysis type 13) on the ACTIVE part. "
              "Topology optimization works on ONE single-body part at a time (official limit). "

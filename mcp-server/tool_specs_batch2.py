@@ -37,7 +37,16 @@ __all__ = ["SPECS_BATCH2", "CLASSIFICATION"]
 #:   `Select-String scripts/sw_surface.py     -Pattern '^def collect_surface_evidence'`
 SPECS_BATCH2: list[ToolSpec] = [
     # ── 焊件（A 类：只收 model + 标量）─────────────────────────────
-    # 签名: def weldment_evidence(model, *, create_missing_cut_list: bool = False) -> dict[str, Any]
+    # 签名: def weldment_evidence(model, *, create_missing_cut_list: bool = False,
+    #                             update_cut_list_too: bool | None = None) -> dict[str, Any]
+    #: ★★★★★★ 2026-10-04（轮 117）**补 `update_cut_list_too`** —— ★ 处置这条**存量失败** ✓
+    #:   ★ **真机读数**（★ `tests/test_tool_specs_batch2.py` 逐字）：
+    #:     「工具 `solidworks_weldment_evidence` 折算后 `['create_missing_cut_list']`
+    #:       ≠ `sw_weldment.weldment_evidence` 的真实形参
+    #:       `['create_missing_cut_list', 'update_cut_list_too']`」✓
+    #:   ★★ **真因**：★ 实现**加了**带默认值的关键字参数 `update_cut_list_too: bool | None = None`、
+    #:     而 **ToolSpec 没跟上** ⇒ ★★★ **⇒ 同一个病**（★ 与 `batch1` 那条同轮同因）✓
+    #:   ★★★★ **⇒ 已补**（★ 默认值与实现一致 = `None`）✓
     ToolSpec(
         name="solidworks_weldment_evidence",
         title="Collect Weldment Evidence",
@@ -47,6 +56,10 @@ SPECS_BATCH2: list[ToolSpec] = [
             Param("create_missing_cut_list", bool, default=False,
                   description="Create a missing cut list before reading. Side-effecting: "
                               "leave False for a pure read-back."),
+            #: ★ 新增（★ 与实现同步）：★ 只读回读时是否**顺带刷新**切割清单 ✓
+            Param("update_cut_list_too", bool, default=None,
+                  description="Also refresh the cut list when create_missing_cut_list is used "
+                              "(★ 默认 None = 沿用实现默认)。"),
         ],
         doc=("Read back the weldment state: structural members, cut-list folders, and their "
              "quantity/length/angle/source properties. Read-only when "
