@@ -3898,6 +3898,32 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 **⇒ 待核**：★ **逐条真机**（★ 建一个毫米文档 + 一个已知尺寸的板 ⇒ 看 `thicken` / `offset` / `ruled` /
   `extend` 的实际结果）⇒ ★★ **按铁律 5：未核不写成缺陷** ✓
 
+### 三之二 · ★★ 而**第一次真机尝试没定案**（★ 如实记 —— ★ 那是"否定结果"）
+★ 新增 `tools/probe_surface_scale.py`（★ 判据：★ 毫米文档 + 曲面 `depth_mm=10.0` + 加厚
+  `thickness_mm=2.0` ⇒ ★ **量实体厚**：★ 2 mm ⇒ `*0.001` 错；★ 0.002 mm ⇒ 对）✓
+★ **真机结果**（★ `sw_alive: true` · ★ 零弹窗 · ★ 2.33 s）：
+  ```
+  ★ GetUnits = [0, 1, 8, 2, 0]                      ← ★ 毫米文档（★ 确认）
+  ★ create_extruded_surface(depth_mm=10.0) ⇒ ok: **False** · new_features: **[]**
+  ★ thicken_surface(thickness_mm=2.0)      ⇒ ok: **False** · new_features: **[]**
+  ★ bbox ⇒ RuntimeError：「零件里可能没有实体」        ← ★ 确认两步都没建成
+  ```
+  ⇒ ★★★★ **所以"厚 2 mm vs 0.002 mm"两个分支**都没发生**** ⇒ ★ **本轮**不能**定案那个 `*0.001`** ✓
+
+★ **真因（★ 我随后回原文查到了）**：★ `IFeatureManager.FeatureExtruRefSurface3` 的 **Remarks 逐字**：
+  > ★ 「Before calling this method, **select the entities for the extruded surface**
+  >   using `IModelDocExtension::SelectByID2`.」
+  ★★ 而 **Base** 的 mark 表逐字：★ **2D 或 3D 草图 ⇒ mark `0`** · ★ 草图段 ⇒ `0` 或 `4` ·
+    ★ 单平面 ⇒ `0` · ★★ 多共面 ⇒ 第一个 `0`、★ 其余 `256` ✓
+  ⇒ ★★★ **所以"建不出"是**前置**问题（★ 没按 `mark=0` 选中草图）、★ **不是**单位问题** ✓
+  ★★★★ **⇒ 那也正是 `create_extruded_surface_report` 缺的一步**（★ 待下一轮补）✓
+
+★ ⚠★ **同一次踩到的另一个坑（★ 记下）**：★ **曲面不是实体** ⇒ `IPartDoc.GetBodies2` 拿不到 ⇒
+  ★ `sw_part.get_bounding_box` 会抛 `RuntimeError` ⇒ ★★ **要量曲面链的尺寸，必须先 `thicken` 成实体** ✓
+★ ⚠★ **而 `sw_guard.py` 的 `print` 在本机（GBK 终端）会 `UnicodeEncodeError`**（★ 它 `print`
+  含 `⇒` 的 JSON）⇒ ★ 修法是**先设 `$env:PYTHONIOENCODING='utf-8'`**（★ 那是**环境变量**、
+  ★★ 不是改既有工具 —— ★ 纪律上允许）✓
+
 ### 四 · ★★★ 可复用判据（★ 三条）
 > ① ★★★★ **「官方吃米」是**逐成员**的事，★ 不是**整族**的事** ——
 >    ★ 同一族的两个成员可以一个吃米、★ 一个吃文档单位（★ 本轮就是）✓

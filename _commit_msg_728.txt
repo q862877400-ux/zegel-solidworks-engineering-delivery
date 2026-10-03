@@ -1,0 +1,48 @@
+research(阶段1): ★★ **第一次真机尝试**没能定案 `sw_surface_features` 的 `*0.001` —— ★ **如实记下否定结果**；★ 并**回原文查到了真因**
+
+■ 一 · ★ 本轮的判据（★ 一个数就能定案）
+  ★ 新增 `tools/probe_surface_scale.py`：★ 在**毫米文档**里
+    · ★ 建曲面 `depth_mm = **10.0**` ⇒ ★ 曲面应高 **10 mm**
+    · ★★ 加厚 `thickness_mm = **2.0**` ⇒ ★ **量生成的实体厚度**：
+      ★ 厚 **2 mm** ⇒ `*0.001` **错**（★ 值被缩小 1000 倍）·
+      ★ 厚 **0.002 mm**（★ 或加厚不出）⇒ `*0.001` **对**（★ 官方确实吃米）✓
+  ★★ **锚定物**：★ `get_bounding_box` 的 `size`（★ 与参数走**完全不同的 COM 路径**）✓
+
+■ 二 · ★★★★★ 真机结果 —— ★ **两步都没建成**（★ 所以**没定案**）
+  ★ `sw_alive: true` · ★ **零弹窗** · ★ 2.33 s ✓
+  ```
+  ★ GetUnits = [0, 1, 8, 2, 0]                      ← ★ 毫米文档（★ 确认）
+  ★ create_extruded_surface(depth_mm=10.0) ⇒ ok: **False** · new_features: **[]**
+  ★ thicken_surface(thickness_mm=2.0)      ⇒ ok: **False** · new_features: **[]**
+  ★ bbox ⇒ RuntimeError：「零件里可能没有实体」        ← ★ 确认两步都没建成
+  ```
+  ⇒ ★★★★ **所以"厚 2 mm vs 0.002 mm"两个分支**都没发生**** ⇒
+    ★ **本轮**不能**定案那个 `*0.001`** —— ★★ **如实记下，不猜**（★ 铁律 5）✓
+
+■ 三 · ★★★★ 而**真因我随后回原文查到了**（★ 那才是本轮的收获）
+  ★ `IFeatureManager.FeatureExtruRefSurface3` 的 **Remarks 逐字**：
+    > ★ 「Before calling this method, **select the entities for the extruded surface**
+    >   using `IModelDocExtension::SelectByID2`.」
+  ★★ 而 **Base** 的 **mark 表逐字**：★
+    · ★ **2D 或 3D 草图 ⇒ mark `0`** ✓
+    · ★ 草图段 ⇒ `0` 或 `4` ✓
+    · ★ 单平面 ⇒ `0` ✓
+    · ★★ **多共面 ⇒ 第一个 `0`、★ 其余 `256`** ✓
+  ⇒ ★★★ **所以"建不出"是**前置**问题（★ 没按 `mark=0` 选中草图）、★ **不是**单位问题** ✓
+  ★★★★ **⇒ 那也正是 `create_extruded_surface_report` 缺的一步**（★ 待下一轮补）✓
+  ★★ **∴ 可复用判据**：★★★ **"建不出来"有两种可能 —— ★ 前置没做、★ 或参数错**；
+    ★ **而查官方 `## Remarks` 能**一秒分开**这两者**（★ 本轮就是）✓
+
+■ 四 · ★★ 同一次踩到的**两个坑**（★ 都记进事实 517）
+  ★ ⚠ **坑 ①**：★ **曲面不是实体** ⇒ `IPartDoc.GetBodies2` 拿不到 ⇒
+    ★★ `sw_part.get_bounding_box` 会抛 `RuntimeError` ⇒
+    ★★★ **要量曲面链的尺寸，必须先 `thicken` 成实体** ✓
+  ★★ ⚠ **坑 ②**：★ `sw_guard.py` 的 `print` 在本机（**GBK 终端**）会 `UnicodeEncodeError`
+    （★ 它 `print` 含 `⇒` 的 JSON）⇒ ★ 修法是**先设 `$env:PYTHONIOENCODING='utf-8'`** ✓
+    ★★★ 而**那是**环境变量**、★ 不是改既有工具** ⇒ ★ **纪律上允许**（★ `tools/` 只报不动）✓
+
+■ 五 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 5 passed** ✓
+  ★★ **`C_D_E` 的 🔴 16 条**：★ **#1 · #2 · #3 · #4 · #7 · #9 · #10 完成** ⇒ **剩 9 条** ✓
+  ★★★ **下一步明确**：★ **给 `create_extruded_surface_report` 补 `mark=0` 选草图的步骤** ⇒
+    ★ 再跑本探针 ⇒ **那时才能定案单位** ✓
