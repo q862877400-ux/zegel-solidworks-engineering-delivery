@@ -835,7 +835,8 @@
    "zh": "曲面展平",
    "api": "InsertFlattenSurface",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "surface_flatten"
   },
   {
    "tb": "曲面",

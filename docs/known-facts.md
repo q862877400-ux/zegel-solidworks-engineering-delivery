@@ -1841,3 +1841,16 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **下一步**：★ 补 **`mark = 16`（锚点）** 与/或 **`mark = 4`（映射边）**。
      ★ 而本轮**不登记、留在可攻关** —— ★ **不假装做到**。
      ★ **而它与事实 433（废弃入口地图）同一条路**：★ 先读官方把**入口与 arity 定死**，★ 再搭前置** —— ★ 而不是一边试参数一边猜入口。|真机：`tools/prove_flatten_surface2.py`；证据 `output/flatten-surface2-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFlattenSurface2.md` |
+| 435 | **★★★ 曲面展平 = `InsertFlattenSurface2` + **锚点 `mark = 16`（必需）****（★ 四格对照定下的根因）** —— 2026-10-03（轮 556）。
+     ★ 承事实 434（它把入口与 arity 定了、而面-only 前置不够）。
+     ★ 真机（`tools/prove_flatten_with_anchor.py`，零弹窗）—— ★ **四格对照**：
+     ```
+     ① 面(1) + **锚点(16)**               ⇒ **成** —— **`曲面-展平1`** · 类型 `FlattenSurface` ✓
+     ② 面(1) + 引导边(2)（**无锚点**）   ⇒ **不成** ✗
+     ③ 面(1) + 锚点(16) + 引导边(2)  ⇒ **成** ✓
+     ④ **只给面(1)**（★ 事实 434 那组）      ⇒ **不成** ✗
+     ```
+     ⇒ ★★ **故：`mark = 16`（锚点）是**必需的**** —— ★ 四格里**只有带锚点的两格成** ✓
+     ★ **而它也把事实 434 那句“面-only 不够”落到了具体的一个 mark 上** ⚠
+     ★ **落地**：`capabilities.yaml` 新增 **`surface_flatten`**（level = **verified**，共 **96** 条）；台账「曲面展平」补 `capability_id` ⇒ **已能 69**。
+     ★★ **方法论**：★ 一个“前置不够”的结论，要用**逐个 mark 的四格对照**把它**逼到具体的一个参数上** —— ★ 而**不是停在“前置不够”**（★ 事实 434 就停在那里）。|真机：`tools/prove_flatten_with_anchor.py`；证据 `output/flatten-with-anchor-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFlattenSurface2.md` |

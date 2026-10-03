@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 68 |
-| 可攻关 | 24 |
+| 已能 | 69 |
+| 可攻关 | 23 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -28,7 +28,6 @@
 |---|---|---|---|---|
 | 曲面 | 删除孔 | **可攻关** | `InsertDeleteHole` | — |
 | 曲面 | 扫描曲面 | **可攻关** | `InsertProtrusionSwept4`, `Surface` | — |
-| 曲面 | 曲面展平 | **可攻关** | `InsertFlattenSurface` | — |
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
 | 曲面 | 解除剪裁曲面 | **可攻关** | `InsertUntrimSurface` | — |
 | 特征 | 放样切除 | **可攻关** | `InsertCutBlend` | — |
@@ -84,6 +83,7 @@
 | 曲面 | 拉伸曲面 | **已能** | `FeatureExtruRefSurface3` | `sw_surface_features.create_extruded_surface_report` |
 | 曲面 | 放样曲面 | **已能** | `InsertProtrusionBlend2`, `Surface` | — |
 | 曲面 | 旋转曲面 | **已能** | — | — |
+| 曲面 | 曲面展平 | **已能** | `InsertFlattenSurface` | — |
 | 曲面 | 替换面 | **已能** | — | — |
 | 曲面 | 等距曲面 | **已能** | `InsertOffsetSurface` | — |
 | 曲面 | 缝合曲面 | **已能** | `InsertSewRefSurface` | `sw_surface_features.knit_surfaces_report` |

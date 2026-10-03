@@ -3938,6 +3938,32 @@
         "⚠ **未查**：★ `SlotLengthType = 1`（FullLength）；★ `CenterArcDirection = -1`；★ 三点圆弧的 **P3** 实际起作用的方式。",
         "⚠ **本包装未接进 MCP 工具层**（★ 现为探针可调用）。"
       ]
+    },
+    {
+      "id": "surface_flatten",
+      "label": "曲面展平（`InsertFlattenSurface2`）—— ★ **真机建成**·★★ 关键前置：**锚点 mark=16**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\IFeatureManager\\InsertFlattenSurface2.md`（**2 参**；`## Remarks` 给了五种 mark）。代码：`tools/prove_flatten_with_anchor.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 556）**真机建成**（走 `sw_guard`，零弹窗）：一张直线拉出的曲面 **+ 选它的面（mark=1）+ 它的一个顶点（mark=16）** ⇒ **建成 `曲面-展平1`**（类型名 **`FlattenSurface`**）。证据 `output/flatten-with-anchor-evidence.json`。",
+        "★★★ **而根因是一组**四格对照**定下的**：\n       ① 面(1) + **锚点(16)**        ⇒ **成** ✓\n       ② 面(1) + 引导边(2)（**无锚点**）⇒ **不成** ✗\n       ③ 面(1) + 锚点(16) + 引导边(2) ⇒ **成** ✓\n       ④ **只给面(1)**                ⇒ **不成** ✗\n       ⇒ ★★ **故：`mark = 16`（锚点）是**必需的****—— ★ 四格里**只有带锚点的两格成** ✓"
+      ],
+      "limitations": [
+        "★★ **前置（官方 Remarks）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）**；★ 另可选 2=引导边 · 4=映射边 · 8=撕裂边。",
+        "★ **`AccuracyFactor` 范围：10 ≥ 精度 ≥ 1**（1 = 最高）；★ 真机用 **4** 成。",
+        "⚠ **本包装未接进 MCP 工具层**（★ 现为探针可调用）；⚠ 未查：`ShouldUseTears = True`、以及非可展开曲面的行为。"
+      ]
     }
   ]
 }

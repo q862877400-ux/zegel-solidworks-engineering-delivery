@@ -1,9 +1,9 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 68,
+  "已能": 69,
   "待查": 20,
-  "可攻关": 24,
+  "可攻关": 23,
   "待验证": 7
  },
  "by_toolbar_gap": {
@@ -12,7 +12,7 @@
   "草图绘制": 4,
   "草图尺寸": 1,
   "草图编辑": 3,
-  "曲面": 5
+  "曲面": 4
  },
  "items": [
   {
@@ -1992,6 +1992,7 @@
    "api": "InsertFlattenSurface",
    "entry": "",
    "level": "不能",
+   "capability_id": "surface_flatten",
    "api_iface_hits": [],
    "api_member_hits": [
     "InsertFlattenSurface"
@@ -2002,7 +2003,7 @@
    "implemented_hits": [
     "InsertFlattenSurface"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "曲面",
