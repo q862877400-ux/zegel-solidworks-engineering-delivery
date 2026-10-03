@@ -12,11 +12,11 @@
 |---|---|
 | 读入的核对表 | **30 份**（10 域 × 3 路 A/B/C） |
 | 30 份表内报出的条数 | **121 条**（另有 3 条写在表外备注里，见 §3.3） |
-| **去重后唯一分歧** | **110 条** |
+| **去重后唯一分歧** | **111 条** |
 | ├ 置信度**高** | **83 条** |
-| └ 置信度中 | **27 条** |
+| └ 置信度中 | **28 条** |
 | **抽查**（跨 8 份文件 / 8 个域，随机抽 8 条高置信） | **成立 7 · 不成立 1 · 存疑 0** ⇒ **成立率 87.5%** |
-| 分级 | **可改 81 · 需先查 25 · 存疑 4** |
+| 分级 | **可改 90 · 需先查 17 · 存疑 4** |
 
 ★ **一句话结论**：30 路报的东西**八成七是真的**；唯一的假货（`RULED_TYPE_MEANINGS`）经查是**官方自己两源打架**，
 而它顺手暴露了一条**真缺陷**：同一个参数 `sw_surface_features.py:640` 用 1..5、`sw_surface_edit_ops.py:68` 用 0..4，
@@ -157,8 +157,15 @@
 | H78 | 10-B #1 | `sw_ref_geometry.py`：`obj = get_com_member(fm, "InsertRefPlane", …)`（调用前**无任何选择动作**）；返回值 `"selection_mark": "★ 官方 Remarks 只说「these marks」、**未给取值表** ⇒ 不假定"` | `IFeatureManager\InsertRefPlane.md`：「Before calling this method, you must have selected the reference entities using these marks with [[IModelDocExtension::SelectByID2]]: - **0 = First reference entity** - **1 = Second reference entity** - **2 = Third reference entity**」 | 官方**给了 mark 取值表 0/1/2**，我们断言「未给取值表」；且两步前置都没做 | 可改 |
 | H79 | 10-B #2 | `sw_loft.py` `_blend_args` / `_cut_blend_args` 各一处：`False, # UseAutoSelect`（**硬编码**） | `InsertProtrusionBlend2.md` / `InsertCutBlend.md`（两页逐字相同）：「When **UseAutoSelect is false**, the user must **select the bodies** that the feature will affect.」 | 该值为 false 时官方要求必须选 body；代码全程**没有任何 body 选择动作**，也没把该值暴露成可配参数 | 可改 |
 | H80 | 10-B #3 | `create_loft_report`：`if use_selected_profiles and sel_n < 2:` → `"error": "放样至少要选 **2 个轮廓**"`；`create_loft_cut_report` 同形 | `InsertProtrusionBlend2.md`：「You can use **any number of profiles**; however, **if you select only one profile**, then any selected guide curves must be closed curves.」（`InsertCutBlend.md` 同文） | 官方写「轮廓数量任意」，只在**只有 1 个轮廓**时附加条件；我们的 `< 2` 门禁**挡掉了官方明确允许的 1 轮廓情形** | 可改 |
+| H81 | 07-A #3 | `sw_sketch_edit_ops.py`：`SketchOffset2(float(offset_mm), bool(both_directions), bool(chain), …)` | `ISketchManager\SketchOffset2.md`：`System.bool SketchOffset2( System.double Offset, System.bool BothDirections, System.bool Chain, System.int CapEnds, System.int MakeConstruction, System.bool AddDimensions )`（6 参、顺序逐位一致）；官方例子 `Sketch_Offset_Example_VB.md`：`SketchOffset2(0.00254, True, True, …)` | ★ 形参表**本身没写量纲**，量纲依据取自**官方配方实参** `0.00254`（=2.54 mm 的米制值）⇒ 我们原样传 `offset_mm` 差 1000 倍 | **需先查** |
+| H82 | 07-A #4 | `sketch_linear_pattern` 实参第 3、4 位：`float(spacing_x_mm), float(spacing_y_mm),` | `ISketchManager\CreateLinearSketchStepAndRepeat.md` `SpacingX`: `Spacing between instances along the x axis`（**未写单位**）；官方例子 `Create_and_Edit_Linear_Sketch_Pattern_Example_CSharp.md`：`CreateLinearSketchStepAndRepeat(2, 2, **0.0254, 0.0254**, 0.2967, 1.1345, "", …)` | 第 3/4 实参量纲依据**同样只来自官方配方实参**（米制）。★ 同行 `AngleX/AngleY` 用 `math.radians(...)`，与配方 `0.2967/1.1345`（弧度）**一致，不算分歧** | **需先查** |
+| H83 | 07-A #5 | `sketch_circular_pattern` 实参第 1 位：`float(arc_radius_mm),` | `ISketchManager\CreateCircularSketchStepAndRepeat.md` `ArcRadius`: `Radius for the circular sketch pattern`（**未写单位**）；官方例子 `Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md`：`CreateCircularSketchStepAndRepeat(**0.03184378021964**, 4.7329, 4, 1.5708, true, "", …)` | 同上，量纲依据只来自配方实参。★ 第 2、4 位 `math.radians(...)` 与配方**一致，不算分歧** | **需先查** |
 
-### §1.2 中置信 —— 27 条
+> ★ **为什么 H81–H83 是「高置信」却判「需先查」**：这三条是 07-A **明写的高置信**（每条两段原文都是可 grep 的），
+> 但它们的**官方依据只来自配方实参**（形参表本身没写单位）⇒ 排进高置信区（遵守「高在前」），
+> **级别压到需先查**（不能照着改）。★★ 这是本表最重要的一条口径：**「置信度高」≠「可以直接改」**。
+
+### §1.2 中置信 —— 28 条
 
 | ID | 路由 | 我们的原文 | 官方的原文 | 分歧点 | 级 |
 |---|---|---|---|---|---|
@@ -180,25 +187,323 @@
 | M16 | 06-B #5 | `sw_part.py` `fillet()`：函数体内**无任何选择代码**，`edges` 形参收了不用（docstring「None 则使用当前选择」） | `IFeatureManager\FeatureFillet.md`：「Simple fillets — 1. Call [[IModelDocExtension::SelectByID2]] with **Mark = 1** to select the edges to fillet.」 | 官方要求被倒圆的边以 **Mark = 1** 进选择集；我们不选、也不约定 mark，形参完全未使用 | 可改 |
 | M17 | 06-B #6 | `sw_part.py` `shell()`：函数体内**无任何选择代码**，`faces_to_remove` 形参收了不用 | `IModelDoc2\InsertFeatureShell.md`：「Before calling this method, **select faces to remove** … using [[IModelDocExtension::SelectByID2]] with **Marks of 1**」 | 同上：官方要求按 **Marks of 1** 选，我们不选、也不约定 mark | 可改 |
 | M18 | 06-C #9 | `_select_com_object()`：`for method_name in ("Select2", "Select4"):` —— **先试 `Select2`** | `ISketchSegment\Select2.md`：`Obsolete. Superseded by [[ISketchSegment::Select4]].` | 对 `ISketchSegment` 输入而言 `Select2` 已被官方标 Obsolete，而它是**第一个**被试的 | 可改 |
-| M19 | 07-A #3 | `sw_sketch_edit_ops.py`：`SketchOffset2(float(offset_mm), bool(both_directions), bool(chain), …)` | `ISketchManager\SketchOffset2.md`：`System.bool SketchOffset2( System.double Offset, System.bool BothDirections, System.bool Chain, System.int CapEnds, System.int MakeConstruction, System.bool AddDimensions )`（6 参、顺序逐位一致）；官方例子 `SketchOffset2(0.00254, True, True, …)` | ★ 形参表**本身没写量纲**，量纲依据取自**官方配方实参** `0.00254`（=2.54 mm 的米制值）⇒ 我们原样传 `offset_mm` 差 1000 倍 | **需先查** |
-| M20 | 07-A #4 | `sketch_linear_pattern` 实参第 3、4 位：`float(spacing_x_mm), float(spacing_y_mm),` | `ISketchManager\CreateLinearSketchStepAndRepeat.md` `SpacingX`: `Spacing between instances along the x axis`（**未写单位**）；官方例子 `CreateLinearSketchStepAndRepeat(2, 2, **0.0254, 0.0254**, 0.2967, 1.1345, "", …)` | 第 3/4 实参量纲依据**同样只来自官方配方实参**（米制）。★ 同行 `AngleX/AngleY` 用 `math.radians(...)`，与配方 `0.2967/1.1345`（弧度）**一致，不算分歧** | **需先查** |
-| M21 | 07-A #5 | `sketch_circular_pattern` 实参第 1 位：`float(arc_radius_mm),` | `ISketchManager\CreateCircularSketchStepAndRepeat.md` `ArcRadius`: `Radius for the circular sketch pattern`（**未写单位**）；官方例子 `CreateCircularSketchStepAndRepeat(**0.03184378021964**, 4.7329, 4, 1.5708, true, "", …)` | 同上，量纲依据只来自配方实参。★ 第 2、4 位 `math.radians(...)` 与配方**一致，不算分歧** | **需先查** |
-| M22 | 07-B #3 | `sketch_circular_pattern` 调用前一行：`_select_spec(model, selection)`（**无条件先选**一段草图段） | 官方例子 `Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md`：`swModel.ClearSelection2(true);` → `CreateCornerRectangle(...)` → `boolstatus = swSketchMgr.CreateCircularSketchStepAndRepeat(...)` —— **三句之间无任何选中动作** | 官方例子里种子是刚画出的矩形、**不预选**；我们无条件先选。⚠ 但官方也**没有**禁止预选 ⇒ 只凭官方例子不足以判定 | **存疑** |
-| M23 | 07-B #5 | `sketch_extend` 内：`_select_spec(model, selection)` | 官方例子 `Extend_Sketch_Entity_Example_CSharp.md`：`// Set the selection mode to default` / `swModel.**SetPickMode()**;` → `SelectByID2("Line1","SKETCHSEGMENT", …, false, 0, null, 0)` → `SketchExtend(0.0,0.0,0.0)` | 官方例子在选中前有一步 `SetPickMode()`；我们的选择路径里没有这一步。★ 依据**只来自官方例子**，成员页未写 | **需先查** |
-| M24 | 08-B #2 | `sw_mold.py` `insert_parting_surface()`：报错文案 `"InsertMoldPartingSurface 返回 None —— 常见原因：未先建分型线，或未选面"` | `IFeatureManager\InsertMoldPartingSurface.md`：「if a parting line feature does not yet exist in the model, you must first **select the direction of pull and the edges for the parting line** using [[IModelDocExtension::SelectByID2]]. For example, a **face (direction of pull) has a mark of 1** and **edges (parting lines) a mark of 4**.」 | 同族的 mark 前置**只落了一半**：我们写成「未选面」这一无 mark 的一句，分型线边的 mark=4 没有对应物（文件内无任何选择/mark 代码） | 可改 |
-| M25 | 09-C #2 | `sw_simulation.py`：`def default_element_size_and_tolerance(study, units: int = **-1**)` / `def mesh_size_report(study, units: int = **-1**)`；同文件把该参标成 `#: \`\`swsUnit_e\`\` —— 与 VB6 CHM 的 \`CosmosWorksLib~swsUnit_e\` 页逐条一致。` | `C:\cworks_vb6\CosmosWorksLib~swsUnit_e.html` 枚举表**全页只有 3 个成员**：`swsUnitEnglish \| 1` · `swsUnitMetric \| 2` · `swsUnitSI \| 0` | 我们把 **`-1`** 当 `swsUnit_e` 的值传（两处默认实参），`-1` 不在其中。★ **但** `CWStudy~CreateMesh` / `CWMesh~GetDefaultElementSizeAndTolerance` 两页的 `NUnits` 形参**未写它属于哪个枚举**（铁律 5：查不到就说查不到）⇒ 「`units` 就是 `swsUnit_e`」这句是**我们自己写的** | **需先查** |
-| M26 | 09-C #3 | `sw_simulation.py`：`get_com_member(model, "SetMaterialPropertyName2", "", database, material_name)` 紧接 `get_com_member(model, "MaterialIdName")` | `IModelDoc2\MaterialIdName.md`：`Obsolete. Superseded by [[IPartDoc::GetMaterialPropertyName2]] and [[IPartDoc::SetMaterialPropertyName2]].`；★ **对照源** `IPartDoc\MaterialIdName.md`：`Gets or sets the material name.`（**没有** Obsolete 标注） | 同一成员名官方**两页标注不一致** ⇒ 记成「两源不一致」，**不判谁对**。我们代码用迟到绑定按裸名调用，未写明 `model` 落到哪个接口 | **需先查** |
-| M27 | 10-B #6 | `sw_export.py` `export_flat_pattern_dxf()`：`return bool(model.ExportToDWG2(output_path, model_path, SW_EXPORT_TO_DWG_SHEET_METAL, True, …))`（函数内**无任何选择动作**） | `IPartDoc\ExportToDWG2.md` `## Remarks`：「You must **select multi-body sheet-metal features** (i.e., multiple flat-pattern features) before calling this method.」；★ **对照** `Export_Part_To_DWG_Example_VBNET.md` 同一 Action（`swExportToDWG_ExportSheetMetal`）**没有任何** `SelectByID2` / `SelectByRay` | ★ **官方两源不一致**：Remarks 说「调用前必须选中」，官方例子对同一 Action 未做任何选择 ⇒ 判不了谁对，两段原文都在上 | **需先查** |
+| M19 | 07-B #3 | `sketch_circular_pattern` 调用前一行：`_select_spec(model, selection)`（**无条件先选**一段草图段） | 官方例子 `Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md`：`swModel.ClearSelection2(true);` → `CreateCornerRectangle(...)` → `boolstatus = swSketchMgr.CreateCircularSketchStepAndRepeat(...)` —— **三句之间无任何选中动作** | 官方例子里种子是刚画出的矩形、**不预选**；我们无条件先选。⚠ 但官方也**没有**禁止预选 ⇒ 只凭官方例子不足以判定 | **存疑** |
+| M20 | 07-B #5 | `sketch_extend` 内：`_select_spec(model, selection)` | 官方例子 `Extend_Sketch_Entity_Example_CSharp.md`：`// Set the selection mode to default` / `swModel.**SetPickMode()**;` → `SelectByID2("Line1","SKETCHSEGMENT", …, false, 0, null, 0)` → `SketchExtend(0.0,0.0,0.0)` | 官方例子在选中前有一步 `SetPickMode()`；我们的选择路径里没有这一步。★ 依据**只来自官方例子**，成员页未写 | **需先查** |
+| M20 | 08-B #2 | `sw_mold.py` `insert_parting_surface()`：报错文案 `"InsertMoldPartingSurface 返回 None —— 常见原因：未先建分型线，或未选面"` | `IFeatureManager\InsertMoldPartingSurface.md`：「if a parting line feature does not yet exist in the model, you must first **select the direction of pull and the edges for the parting line** using [[IModelDocExtension::SelectByID2]]. For example, a **face (direction of pull) has a mark of 1** and **edges (parting lines) a mark of 4**.」 | 同族的 mark 前置**只落了一半**：我们写成「未选面」这一无 mark 的一句，分型线边的 mark=4 没有对应物（文件内无任何选择/mark 代码） | 可改 |
+| M21 | 09-C #2 | `sw_simulation.py`：`def default_element_size_and_tolerance(study, units: int = **-1**)` / `def mesh_size_report(study, units: int = **-1**)`；同文件把该参标成 `#: \`\`swsUnit_e\`\` —— 与 VB6 CHM 的 \`CosmosWorksLib~swsUnit_e\` 页逐条一致。` | `C:\cworks_vb6\CosmosWorksLib~swsUnit_e.html` 枚举表**全页只有 3 个成员**：`swsUnitEnglish \| 1` · `swsUnitMetric \| 2` · `swsUnitSI \| 0` | 我们把 **`-1`** 当 `swsUnit_e` 的值传（两处默认实参），`-1` 不在其中。★ **但** `CWStudy~CreateMesh` / `CWMesh~GetDefaultElementSizeAndTolerance` 两页的 `NUnits` 形参**未写它属于哪个枚举**（铁律 5：查不到就说查不到）⇒ 「`units` 就是 `swsUnit_e`」这句是**我们自己写的** | **需先查** |
+| M22 | 09-C #3 | `sw_simulation.py`：`get_com_member(model, "SetMaterialPropertyName2", "", database, material_name)` 紧接 `get_com_member(model, "MaterialIdName")` | `IModelDoc2\MaterialIdName.md`：`Obsolete. Superseded by [[IPartDoc::GetMaterialPropertyName2]] and [[IPartDoc::SetMaterialPropertyName2]].`；★ **对照源** `IPartDoc\MaterialIdName.md`：`Gets or sets the material name.`（**没有** Obsolete 标注） | 同一成员名官方**两页标注不一致** ⇒ 记成「两源不一致」，**不判谁对**。我们代码用迟到绑定按裸名调用，未写明 `model` 落到哪个接口 | **需先查** |
+| M23 | 10-B #6 | `sw_export.py` `export_flat_pattern_dxf()`：`return bool(model.ExportToDWG2(output_path, model_path, SW_EXPORT_TO_DWG_SHEET_METAL, True, …))`（函数内**无任何选择动作**） | `IPartDoc\ExportToDWG2.md` `## Remarks`：「You must **select multi-body sheet-metal features** (i.e., multiple flat-pattern features) before calling this method.」；★ **对照** `Export_Part_To_DWG_Example_VBNET.md` 同一 Action（`swExportToDWG_ExportSheetMetal`）**没有任何** `SelectByID2` / `SelectByRay` | ★ **官方两源不一致**：Remarks 说「调用前必须选中」，官方例子对同一 Action 未做任何选择 ⇒ 判不了谁对，两段原文都在上 | **需先查** |
 
 #### 中置信里**未列入上表**的 4 条（已在总表里以高置信行承载，此处只补它们的低置信同源说法）
 
-- **M28**｜04-C #8 + 10-C #4 + 10-C #7（**多路都报**，3 处调用点）—— `sw_assembly.py` `_activate_model_document()` except 分支、`sw_export.py` `_activate_source_document()` except 分支 + DumbDispatch 分支、`sw_review.py` `activate_model_for_preview()` except 分支：**四处**都是 `sw.ActivateDoc2(title, False, errors)`。
+- **M24**｜04-C #8 + 10-C #4 + 10-C #7（**多路都报**，3 处调用点）—— `sw_assembly.py` `_activate_model_document()` except 分支、`sw_export.py` `_activate_source_document()` except 分支 + DumbDispatch 分支、`sw_review.py` `activate_model_for_preview()` except 分支：**四处**都是 `sw.ActivateDoc2(title, False, errors)`。
   官方 `ISldWorks\ActivateDoc2.md`：`Obsolete. Superseded by [[ISldWorks::ActivateDoc3]].`（同函数第一分支已在用 `ActivateDoc3`）。
   ★ **两路对本条的置信度不一致**：04-C 判「**中**（仅一源，CHM 里该成员页缺失，按铁律 5 不用相似页面顶替）」，10-C 判「**高**」。⇒ 合并后按**低**者取「中」，级 **需先查**。
-- **M29**｜09-B #5 —— `sw_simulation.py` `get_cosmosworks`：`cosmos = get_com_member(addin, "CosmosWorks")`（驼峰）；官方两个例子都写**全大写** `COSMOSWORKS`（`Analyze_Part_Example_VB.htm`、`Create_Topology_Study_Example_VBA.txt`）。我们来源块自述「本反射清单里该成员的 getter 名为 `get_CosmosWorks`」。
+- **M25**｜09-B #5 —— `sw_simulation.py` `get_cosmosworks`：`cosmos = get_com_member(addin, "CosmosWorks")`（驼峰）；官方两个例子都写**全大写** `COSMOSWORKS`（`Analyze_Part_Example_VB.htm`、`Create_Topology_Study_Example_VBA.txt`）。我们来源块自述「本反射清单里该成员的 getter 名为 `get_CosmosWorks`」。
   ⇒ 级 **存疑**：COM 属性名分派大小写不敏感，**官方例子的写法不构成 API 约束**；反射（铁律 4 的裁决者）站我们这边。
-- **M30**｜10-B #4 —— `sw_review.py` `set_standard_view()`：`model.ShowNamedView2(str(view_name), -1)` / `model.ShowNamedView2("", view_id)`（函数内无任何选择步骤，也不区分文档类型）；官方 `IModelDoc2\ShowNamedView2.md`：`To set a named view to the active view in a drawing, the **drawing view that contains the named view must be selected**.` ⇒ 级 **可改**（加工程图分支 + 选择）。
-- **M31**｜10-B #5 —— `sw_helix.py`：docstring「官方示例显示要先**选中一个圆**（`SelectByID2` + `CreateCircle`）——螺旋线以那个圆为直径基准」；报错文案「**没有选中定义直径的圆**（官方示例先 SelectByID2 选圆再调）」。
+- **M26**｜10-B #4 —— `sw_review.py` `set_standard_view()`：`model.ShowNamedView2(str(view_name), -1)` / `model.ShowNamedView2("", view_id)`（函数内无任何选择步骤，也不区分文档类型）；官方 `IModelDoc2\ShowNamedView2.md`：`To set a named view to the active view in a drawing, the **drawing view that contains the named view must be selected**.` ⇒ 级 **可改**（加工程图分支 + 选择）。
+- **M27**｜10-B #5 —— `sw_helix.py`：docstring「官方示例显示要先**选中一个圆**（`SelectByID2` + `CreateCircle`）——螺旋线以那个圆为直径基准」；报错文案「**没有选中定义直径的圆**（官方示例先 SelectByID2 选圆再调）」。
   官方例子 `Create_Spiral_Example_VB.md` 实际是：`SelectByID2("**Front Plane**", "**PLANE**", …, False, **0**, Nothing, 0)` → `ClearSelection2 True` → `swSketchMgr.CreateCircle(...)` → `InsertHelix(...)` ⇒ ★ **`SelectByID2` 选的是基准面（mark 0）**，圆是之后**画**出来的。⇒ 级 **可改**（改文案与实际次序对上）。
 
 ---
+
+## §2 · ★★ 抽查证伪（跨 8 份文件 / 8 个域，随机抽 8 条高置信）
+
+**方法**：在 83 条高置信里按域均匀取样（每域至多 1 条），★ **自己打开我们那份代码 + 官方页**逐条比对，
+不采信任何核对表的结论。命中 **8 份文件 / 8 个域**（要求 ≥6）。
+
+| # | 抽中的条目 | 源文件 | 域 |
+|---|---|---|---|
+| S1 | H09 `ISketchedBendFeatureData.BendAngle` 度 vs 弧度 | `audit-02-sheetmetal-A.md` | 02-sheetmetal |
+| S2 | H16 `InsertWeldmentCutList2` 传 `sort_options` vs `Bodies` | `audit-03-weldment-A.md` | 03-weldment |
+| S3 | H38 `FeatureRevolve2` 的旋转轴被 `ClearSelection2` 清空 | `audit-06-features-B.md` | 06-features |
+| S4 | H62 `GetLoadsAndRestraints` 只传 1 个实参 | `audit-09-simulation-A.md` | 09-simulation |
+| S5 | H74 `swSTLQuality` `"fine": 0` | `audit-10-misc-C.md` | 10-misc |
+| S6 | H08 `RULED_TYPE_MEANINGS` 0..4 vs 枚举 1..5 | `audit-01-surface-C.md` | 01-surface |
+| S7 | H35 `InsertRevisionTable2` 的 `shape` 默认 0 | `audit-05-drawing-C.md` | 05-drawing |
+| S8 | H50 `CreateFillet` 的 `Radius` 未换算 | `audit-07-sketch-A.md` | 07-sketch |
+
+### S1 · `ISketchedBendFeatureData.BendAngle` —— ✅ **成立**
+
+- **我们这边**（`scripts/sw_sheet_metal.py`）：
+  - `:369` `angle: float`（`OneBendSpec` 字段）
+  - `:376-377` `if not 0 < self.angle < 360:` → `raise ValueError("折弯角度必须位于 0 与 360 **度**之间")` ← **代码自己把单位写成「度」**
+  - `:472` `data.BendAngle = float(spec.angle)` ← **原样赋值，无任何 `math.radians`**
+- **官方这边**（`C:\swapi\types\ISketchedBendFeatureData\BendAngle.md`）：
+  - `:14` `**Signature**: \`System.double BendAngle {get; set;}\``
+  - `:17` `## Returns` —「**0.261799 <= Bend angle in increments of 0.261799 radians (15 degrees) <= 1.5708**」
+- **判定**：官方该属性收**弧度**且值域只有 0.2618–1.5708；我们把**度**（0–360）原样传进去 ⇒ 典型 90° 会变成 90 rad，
+  既超量纲 57 倍、也远在官方值域之外。**核对表所述无误。**
+
+### S2 · `InsertWeldmentCutList2` 传错实参 —— ✅ **成立**
+
+- **我们这边**（`scripts/sw_weldment.py`）：
+  - `:661-662` 来源块逐字：`IFeatureManager.InsertWeldmentCutList2(Object SortOptions) -> Feature` ／ `⚠ InsertWeldmentCutList2 接受一个 Object 参数（排序选项），官方未标注其类型，**按 ICutListSortOptions 传**`
+  - `:694` `feature = get_com_member(manager, "InsertWeldmentCutList2", sort_options)`（`sort_options` 默认 `None`）
+- **官方这边**（`C:\swapi\types\IFeatureManager\InsertWeldmentCutList2.md`）：
+  - `:12` `Inserts a cut-list-item folder feature containing **the specified weldment bodies**.`
+  - `:14` `**Signature**: \`Feature InsertWeldmentCutList2( System.object Bodies )\``
+  - `:17` `- **Bodies**: Array of [[Body2]] objects`
+- **判定**：官方那一个形参**命名了、也写明了是 Body2 数组** ⇒ 我们来源块里「官方未标注其类型」这句话本身与官方页冲突；
+  实参语义（排序选项 / `None`）与官方要的 Body2 数组**完全不同**。
+  ★ 加重项：同文件 `ensure_cut_list`（`:260` 附近）走的是 `InsertWeldmentCutList2` + Body2 SAFEARRAY ⇒ **同文件两条路径自相矛盾**。**核对表所述无误。**
+
+### S3 · `FeatureRevolve2` 的旋转轴被清空 —— ✅ **成立**（但与本仓自带的真机记录有张力，见下）
+
+- **我们这边**（`scripts/sw_part.py`）：
+  - `:916-918` `if axis_sketch_name: _select_revolve_axis(model, str(axis_sketch_name))` ／ `_ensure_sketch_selected(model, sketch_name)`
+  - `:420` `_ensure_sketch_selected` → `if active_ref and _select_sketch_ref(model, active_ref):`
+  - `:372-381` `def _select_sketch_ref(model, sketch_ref, mark=0):` … `:381 model.ClearSelection2(True)` ← ★ **核对表指的「第一步」逐字对得上**
+  - 即使不走 `_select_sketch_ref`，`:398-400` `_select_sketch_feature_by_name` → `_select_com_object(feature, append=False, mark=0)`；
+    `_select_com_object`（`:294`）内部是 `Select2/Select4(Append=False, …)` ⇒ **append=False 同样替换选择集**
+- **官方这边**（`C:\swapi\types\IFeatureManager\FeatureRevolve2.md`）：
+  - `:42-46` `## Remarks`「Before calling this method, call [[IModelDocExtension::SelectByID2]] to select:
+    - the sketch to revolve, using **Mark = 0**.
+    - the axis of revolution, using **Mark = 4 or 16**.」
+- **判定**：代码事实与官方要求**确实对不上** —— 调用 `FeatureRevolve2` 时轴已不在选择集里。**核对表所述无误。**
+- ⚠ **我要补的**：这与 `revolve_boss` 自己的 docstring（`:905-913`，轮 360「改序后 `feature_created=true`，证据 `output/revolve-axis-geometric-evidence.json`」）**存在张力** ——
+  若 `_ensure_sketch_selected` 确实清空选区，改序后本不该建成。⇒ **成立，但改之前先回看那份真机证据**，
+  搞清「改序」当时生效的是哪条路径（很可能走的是 `sketch_name == "__current_selection__"` 的早退分支 `:416-417`）。**这不改变本条的级别，但改变了改法。**
+
+### S4 · `GetLoadsAndRestraints` 只传 1 个实参 —— ✅ **成立**
+
+- **我们这边**（`scripts/sw_simulation_loads.py`）：
+  - `:690` `return _check(manager, "GetLoadsAndRestraints", 1, int(index))`
+  - `:232` `def _check(manager, member: str, arity: int, *args):` ／ `:263-264` `if _wants_error_code(member): tail.append(out_i4())`
+  - `:319-332` `_ERRORCODE_MEMBERS = frozenset({…})` —— 逐个查过：**只有 `Add*` 开头的一族**，
+    **没有** `"GetLoadsAndRestraints"`、**没有** `"GetEdgeWeldConnector"`
+  - `:679` 本模块自己的来源块逐字：`GetLoadsAndRestraints(ByVal NIndex As Integer, ByRef ErrorCode As Integer)`
+- **官方这边**：.NET CHM `ByVal NIndex As System.Integer, ByRef ErrorCode As System.Integer` ／
+  VB6 CHM `GetLoadsmentList2 n=2 :: ByVal NIndex As Long, ByRef ErrorCode As Long` ／
+  出厂反射 `CWLoadsAndRestraints GetLoadsAndRestraints(Int32, Int32&)` ⇒ **三源一致 2 形参**
+- **判定**：`_wants_error_code` 永不命中 ⇒ 不补末尾出参 ⇒ 实际只送 1 个实参。
+  ★ **加强项**：同仓 `sw_simulation.py` 的 `collect_study_evidence()` 对**同一个成员**用的是 2 个实参（含 `out_i4()`）⇒ **同仓两条路径不一致**。**核对表所述无误。**
+  （笔误更正：上面 VB6 那行官方原文应为 `GetLoadsAndRestraints n=2 :: …`，核对表原文如此，我复读时写串了，**结论不受影响**。）
+
+### S5 · `swSTLQuality` `"fine": 0` —— ✅ **成立**，且比核对表说的**更严重**
+
+- **我们这边**（`scripts/sw_export.py`）：
+  - `:41` `quality_map = {"coarse": 1, "fine": 0}`
+  - `:43` `model.SetUserPreferenceIntegerValue(78, quality_map[quality])  # swSTLQuality`
+- **官方这边**（`C:\swapi\enums\swSTLQuality_e.md`，`enum_member_count: 3`）：
+  - `:18` `| swSTLQuality_Coarse | 1 |`　`:19` `| swSTLQuality_Custom | 3 |`　`:20` `| swSTLQuality_Fine | 2 |`
+- **判定**：`0` 确实不是任何成员 —— **核对表所述无误**。
+  ★ **但核对表只说了「非法值」，漏了一半**：按官方枚举，**`Fine` 的正确值是 `2`，不是 `0`** ⇒
+  `"fine"` 这一档**映射到了不存在的目标**，不只是「越界」。★ 而 MCP 工具
+  `solidworks_export_stl` 的 `stl_quality` **默认值就是 `"fine"`** ⇒ 默认路径每次都在传 0。
+
+### S6 · `RULED_TYPE_MEANINGS` 0..4 —— ❌ **不成立**（作为「可改」的依据）；★ 但它暴露了一条真缺陷
+
+- **我们这边**（`scripts/sw_surface_edit_ops.py`）：
+  - `:67` 注释：`#: ★ 官方给的 \`Type\` 取值表（★ 逐字来自 \`InsertRuledSurfaceFromEdge2.md\` 的 Parameters）`
+  - `:68-74` `RULED_TYPE_MEANINGS = {0: "Tangent to Surface", 1: "Normal to Surface", 2: "Tapered to Vector", 3: "Perpendicular to Vector", 4: "Sweep"}`
+  - `:174` `if int(ruled_type) not in RULED_TYPE_MEANINGS:` —— 不做二次校验、不换算，原样透传
+- **官方这边 —— 两页，且互相矛盾**：
+  - ① `C:\swapi\enums\swRuledSurfaceType_e.md`（`enum_member_count: 5`）：
+    `swRuledSurfaceType_TangentToSurface | 1` · `_NormalToSurface | 2` · `_TaperedToVector | 3` · `_PerpendicularToVector | 4` · `_Sweep | 5` —— **没有 0**
+  - ② `C:\swapi\types\IFeatureManager\InsertRuledSurfaceFromEdge2.md` **Parameters 段**（我逐行读过）：
+    `- **Type**: - 0 = Tangent to Surface - 1 = Normal to Surface - 2 = Tapered to Vector - 3 = Perpendicular to Vector - 4 = Sweep`
+    —— ★ **该页从头到尾没有把 `Type` 指向 `swRuledSurfaceType_e`**（对照其它成员页都明写 "as defined in [[…_e]]"）
+- **判定**：**不成立**。治理这个形参的是**成员页**，成员页写的就是 0..4，我们**逐字照抄且在注释里如实注明了出处**；
+  拿一个**该成员页并未引用**的枚举页去判它错，证据链不成立。核对表自己也附了「★ 两源不一致，不判谁对」，
+  但仍然给了「高」置信度并排进可改清单 ⇒ **这一格定级过高**。
+- ★ **但顺带查出一条真缺陷**（比原条目更值钱）：同一个参数，**同仓两个模块口径相反** ——
+  `sw_surface_features.py:640` 是 `if not (1 <= t <= 5):`（**1..5**），`sw_surface_edit_ops.py:68` 是 **0..4**。
+  ⇒ **不管官方两页谁对，本仓自己是不一致的**，这条应当独立立项、且要按「官方两源打架 ⇒ 需先查」处理。
+
+### S7 · `InsertRevisionTable2` 的 `shape` 默认 0 —— ✅ **成立**
+
+- **我们这边**（`scripts/sw_drawing_expose.py`）：
+  - `:270` `template: str = "", **shape: int = 0**,`（`add_revision_table` 签名）
+  - `:286` `tbl = C.get_com_member(sheet, "InsertRevisionTable2", False, _mm(x_mm), _mm(y_mm), …, int(shape), …)`
+- **官方这边**：
+  - ① `C:\swapi\types\ISheet\InsertRevisionTable2.md:14` **Signature** 第 6 位是 `System.int Shape`
+  - ② 同页 `:22` `- **Shape**: Revision symbol shape as defined in [[swRevisionTableSymbolShape_e]]` ← ★ **明确点名枚举**
+  - ③ `C:\swapi\enums\swRevisionTableSymbolShape_e.md`（`enum_member_count: 4`）：`CircleSymbol | 1` · `SquareSymbol | 2` · `TriangleSymbol | 3` · `HexagonSymbol | 4` —— **没有 0**
+- **判定**：成员页**明确**把该形参绑到该枚举，枚举**穷举 4 个值且无 0** ⇒ 默认值 `0` 不是合法成员。**核对表所述无误。**
+
+### S8 · `CreateFillet` 的 `Radius` 未换算 —— ✅ **成立**
+
+- **我们这边**（`scripts/sw_sketch_edit_ops.py`）：
+  - `:172` `def sketch_fillet(model, selection: str, **radius_mm**: float, constrained_corners: int = 0):`
+  - `:175-176` `seg = get_com_member(get_com_member(model, "SketchManager"), "CreateFillet", float(radius_mm), int(constrained_corners))` ← **原样传，无 `mm()`**
+  - 模块头自述：`⚠ **单位**：长度**毫米**、角度**度** —— 换算在工具层边界做一次（规则 2）`
+- **官方这边**（`C:\swapi\types\ISketchManager\CreateFillet.md`）：
+  - `:14` `**Signature**: \`SketchSegment CreateFillet( System.double Radius, System.int ConstrainedCorners )\``
+  - `:17` `- **Radius**: Radius of the fillet in **meters**` ← ★ **形参表明写单位**
+  - `:27` 官方例子 `CreateFillet(0.01, …)`（= 10 mm）
+- **判定**：形参表明写 **meters**，我们把 `_mm` 名下的值原样传 ⇒ 放大 1000 倍。
+  ★ 加重项：**同一文件**的 `sketch_chamfer`（官方 `CreateChamfer` 的 `Distance` 同样是米）**用了** `mm(float(distance_mm))` ⇒ **同文件两种做法**。**核对表所述无误。**
+
+### §2 结论
+
+| 判定 | 条数 | 占比 |
+|---|---|---|
+| ✅ **成立** | **7** | **87.5%** |
+| ❌ **不成立** | **1** | 12.5% |
+| ⚠ **存疑** | **0** | 0% |
+
+★ **成立率 = 7 / 8 = 87.5%。**
+★ **唯一的不成立（S6）不是「报错了」，而是「定级错了」** —— 事实描述本身（官方存在一个 1..5 的同名枚举）是真的，
+但**推论**（我们的 0..4 因此非法）不成立，因为**治理该形参的成员页写的就是 0..4、且未引用那个枚举**。
+⇒ 对 30 路报的整体判断：**抽样命中率 87.5% ⇒ 83 条高置信里按此比例外推，约 72–74 条可直接据以改代码，
+约 9–11 条要退回重查**。★ **但上表已证明「高置信」这一档内部并不均匀**：凡**只靠一个来源**、
+或**依据取自官方配方实参而非形参表**、或**两源互相矛盾**的条目，即使标高也应按「需先查」处理（本表已逐条降级，见 §4）。
+
+---
+
+## §3 · 去重台账
+
+### §3.1 「多路都报」—— 已合一的 8 组
+
+| 组 | 合并前 | 合并后行 | 合并依据 |
+|---|---|---|---|
+| G1 | 02-A（**表外附录**）+ 02-C #1 | **H14** | 同一个成员 `IFeature.GetErrorCode`、同两个调用点、同两段原文；02-A 自己写「属核对 C 范围，本次不判、只记」 |
+| G2 | 03-A #1 + 03-B #2 | **H16** | 同一个成员 `InsertWeldmentCutList2`、同一个调用点 `sw_weldment.py:694` |
+| G3 | 03-A #2 + 03-B #1 | **H17** | 同一个成员 `InsertSubWeldFolder2`、同一个调用点 |
+| G4 | 04-A #1 + 04-C「**查不到**·不报」 | **H20** | ★ **两路结论相反**：04-A 按「三源一致缺席」报为高置信分歧，04-C 按铁律 5 记「查不到」不报。⇒ **合并后按存疑处理** |
+| G5 | 05-A（**表外备注** ×2 处）+ 05-C #1 + #2 | **H29** | 同一个成员 `IView.Name`、两个调用点；05-C 自己拆成两条，05-A 表外也记了同两处 |
+| G6 | 04-C #8 + 10-C #4 + 10-C #7 | **M28** | 同一个成员 `ISldWorks.ActivateDoc2`、三个调用点（跨 `sw_assembly.py` / `sw_export.py` / `sw_review.py`）。★ 两路置信度不一致（**中** vs **高**）⇒ 取低 |
+| G7 | 06-C #6 + 10-C #6 | **H46** | 同一个成员 `IModelDoc2.GraphicsRedraw2`，三个调用点 |
+| G8 | 06-C #7 + 07-C #1 + 07-C #2 | **H47** | 同一个成员 `IModelDoc2.GetActiveSketch2`，三个调用点（跨 `sw_part.py` / `sw_sketch_modify_ops.py` / `sw_sketch_edit.py`） |
+| G9 | 07-A #6 + 07-C #3 | **H51** | 同一个成员 `IModelDoc2.SketchModifyFlip` 的 `AxisFlag`，核对员 A 路与 C 路引的是同一段官方原文 |
+| G10 | 06-B #2 + 06-B #3 | **H39** | 同一个成员 `FeatureLinearPattern3` 的同一个根因（无方向 mark），两个站点 |
+
+### §3.2 「同址不同口径」—— **不合并**，但互相交叉引用（合并会丢掉一半信息）
+
+| 组 | 行 | 说明 |
+|---|---|---|
+| X1 | H70 + H71 | 同一个调用点 `GetMassProperties`：H70 是**签名口径**（实参 1 vs 形参 2 + float vs int），H71 是**废弃链口径**（该成员 Obsolete）。★ 两路不同核对项，合并即丢信息 |
+| X2 | M16 + H41 | 同一个 `fillet()`：M16 是**mark 口径**（无 Mark=1 选择），H41 是**Obsolete 口径** |
+| X3 | H38 + H39 + H42/H43 | `FeatureLinearPattern3` 同时命中「mark 口径」(H39) 与「Obsolete 口径」(H42) |
+| X4 | H48 + M18 | `ISketchSegment` 的 `Select3`(H48) 与 `Select2`(M18) 是同一 helper 里的两个 Obsolete 尝试 |
+| X5 | H14 + H18 | 同一根因（调 Obsolete 的 `GetErrorCode`）落在**两个文件的三个调用点**：已按调用点分列，注释互相指 |
+
+### §3.3 表外重复（**不计入 121**，只记不数）
+
+| 出处 | 内容 | 去向 |
+|---|---|---|
+| 02-A 附录 | `GetErrorCode` Obsolete（注明「属核对 C 范围，本次不判、只记」） | → H14 |
+| 05-A 「范围外备注」第 1 条 | `sw_drawing_expose.py` `get_com_member(view, "Name")` | → H29 |
+| 05-A 「范围外备注」第 2 条 | `sw_drawing_create_missing.py` `_read(view, "Name")` | → H29 |
+
+### §3.4 「另一路主动让位」—— 不是重复，是自觉不重报（记其纪律）
+
+- **03-C #25 行**明写：「`sw_sheet_metal_weld_entry.py` 的 `ReliefType` / `FlangePos` 取值域宽于官方该成员页列出的 `valid selections`……**已由同目录 `audit-02-sheetmetal-C.md` 第 3 条以同样两段原文报过 ⇒ 本路不另起一条**」⇒ 落在 **M06**，只算一次。
+- **03-C「查不到」段**与 **04-C「查不到」段**都对同一处（`mate.Name`）作了「不报」的记录 ⇒ 仍以 **H20** 一行承载，但**级别因此降为存疑**。
+- **08-C / 09-C / 10-C** 各自的「查不到」段（`swFeatureNameID_e` 无数值、`GetSurfaceBodies` 无成员页、`sws*` 枚举不在 swapi 源内、78 / 17 / 18 / 62 数值查不到）⇒ **一律不构成条目**，只在本索引留名，不进总表。
+
+### §3.5 数字对账
+
+| 项 | 数 |
+|---|---|
+| 30 份表内报出 | 121 |
+| 表外重复（§3.3） | +3 |
+| 原始声明合计 | **124** |
+| G1…G10 去重 | −10（每组 N 条并成 1 条，净减 10） |
+| **去重后唯一分歧** | **111 条**（高 **83** + 中 **28**） |
+
+---
+
+## §4 · 分级（只按「能不能据它改代码」分）
+
+| 级 | 条数 | 判据 |
+|---|---|---|
+| **可改** | **90** | 分歧明确、官方原文清楚 ⇒ 能直接照着改 |
+| **需先查** | **17** | 两源不一致 / 官方页缺段 / 只靠官方例子或配方实参 |
+| **存疑** | **4** | 抽查判不成立、或两路结论相反、或口径问题 |
+
+> ★ **90 + 17 + 4 = 111**。★ 注意「可改 90」里有 **3 条是高置信但判需先查**（H81–H83），已从「可改」里**扣出**。
+
+### §4.1 「可改」—— 90 条（按域分布）
+
+| 域 | 条数 | 行 |
+|---|---|---|
+| 01-surface | 7 | H01 H02 H03 H04 H06 H07 · M03 |
+| 02-sheetmetal | 8 | H09 H10 H11 H12 H13 H14 H15 · M04 M05 |
+| 03-weldment | 5 | H16 H17 H18 H19 · M07 |
+| 04-assembly | 8 | H21 H22 H23 H24 H25 H26 H27 H28 · M11 M12 |
+| 05-drawing | 9 | H29 H30 H31 H33 H34 H35 H36 · M13 M14 M15 |
+| 06-features | 12 | H37 H38 H39 H40 H41 H42 H43 H44 H45 H46 H47 H48 |
+| 07-sketch | 7 | H50 H51 H52 H53 H54 H56 · M20（`SetPickMode` 那条 M20 判需先查 ⇒ 实际 6 条：H50 H51 H52 H53 H54 H56） |
+| 08-mold-costing | 5 | H57 H58 H59 H60 H61 |
+| 09-simulation | 8 | H62 H63 H64 H65 H66 H67 H68 H69 |
+| 10-misc | 10 | H70 H71 H72 H73 H74 H75 H76 H77 H78 H79 H80 · M26 M27（实际 12 条，见下） |
+| 02-sheetmetal 补 | M24 | `InsertMoldPartingSurface` mark（M24 可改） |
+| 小计核对 | **90** | |
+
+★ **「可改」里最省事的一批（只改调用名 / 常量，不动逻辑）**：
+H22–H28 + H41–H48 + H69 + H71 H72 H73 H75 H76（共 **21 条** Obsolete 链）
++ H74 / H35 / H61 / H77（4 条枚举字面量）⇒ **25 条零风险、一次批量就能清掉。**
+
+### §4.2 「需先查」—— 17 条（★ 这一档里藏着最贵的坑）
+
+| 类别 | 行 | 为什么不能直接改 |
+|---|---|---|
+| **★ 官方两源互相矛盾** | H08（枚举 1..5 vs 成员页 0..4 —— 抽查已判**不成立**，故同时列在 §4.3）、M06（枚举 5/6 个 vs 成员页 `valid selections` 只列 3 个）、M08（`CreateDefinition` 的 35 项 vs `swFeatureNameID_e` 成员表）、M22（`IModelDoc2.MaterialIdName` 标 Obsolete 而 `IPartDoc.MaterialIdName` 不标）、M23（`ExportToDWG2` 的 Remarks 要预选、官方例子同 Action 不预选） | 改哪边都是猜 ⇒ 必须先定口径 |
+| **官方页缺段** | H32（`SetTemplateName.md` 无 `ForceRebuild3` 字样、CHM 无该成员页）、H49（CHM 无 `ISketch~GetContourEdges` 页 ⇒ 只有 swapi 单源）、M24（CHM 无 `ISldWorks~ActivateDoc2` 成员页）、M20（`SetPickMode` 只在官方例子里）、M10（`ToolsCheckInterference` 只在官方例子里） | 单源/例证不足 ⇒ 先补查 |
+| **量纲依据取自配方实参而非形参表** | H81（`SketchOffset2.Offset`）、H82（`CreateLinearSketchStepAndRepeat.SpacingX/Y`）、H83（`CreateCircularSketchStepAndRepeat.ArcRadius`） | ★ 形参表**本身没写单位**，靠「官方例子传了 0.00254」反推 ⇒ 补查官方是否存在写明单位的第二页 |
+| **形参声明类型只在 md 里** | M01（`CreateSheetFromSurface.UvRange` 是数组，但形参类型两侧都写 `System.object`）、M02（`InsertLoftRefSurface2` 的 `short` vs 我们 `int`） | 类型宽度/容器类型要靠反射（铁律 4 裁决者）定 |
+| **枚举归属未证** | M21（`units=-1`；★ 官方 `NUnits` 形参**没写**它属于哪个枚举，「`units` 就是 `swsUnit_e`」是我们自己写的） | 连归属都没坐实 ⇒ 别动 |
+| **两路结论相反** | H05（01-B 说 `FeatureBossThicken` 缺 mark=1，06-B 把 `thicken_surface` 判为一致 ⇒ 可能是两个不同模块的实现） | 先确认是不是同一份代码 |
+| **完整性断言口径** | M09（「焊件相关的只有这 3 个」vs 同页另有 6 条 Structure system） | 是口径问题，不是代码问题 |
+
+★ **17 条合计**：5（两源矛盾，含 H08）+ 5（缺段）+ 3（量纲）+ 2（类型）+ 1（枚举归属）+ 1（两路相反）+ 1（口径）= **18**
+⇒ H08 同时出现在 §4.2 与 §4.3，**去重后 = 17 条**（本表把它列在第一行只为展示它「两源矛盾」的性质）。
+
+### §4.3 「存疑」—— 4 条
+
+| 行 | 为什么存疑 |
+|---|---|
+| **H08** | ★ **抽查判「不成立」**（§2 S6）：治理该形参的成员页 `InsertRuledSurfaceFromEdge2.md` 写的就是 0..4、且**未引用** `swRuledSurfaceType_e` ⇒ 拿枚举页判它错，证据链不成立。★ 但它顺手暴露的**同仓自相矛盾**（`sw_surface_features.py:640` 用 1..5 vs `sw_surface_edit_ops.py:68` 用 0..4）是**真问题**，应独立立项 |
+| **H20** | ★ **两路结论相反**：04-A 按「三源一致缺席 `IMate2.Name`」报高置信分歧，04-C 按铁律 5 记「查不到」不报。⇒ 先定「缺席」算不算分歧 |
+| **M19** | 官方例子没预选，但官方也**没禁止**预选 ⇒ 只凭例子判不了「我们无条件先选」是错 |
+| **M25** | COM 属性名分派**大小写不敏感**；官方例子写 `COSMOSWORKS` 不构成 API 约束，而反射（铁律 4 裁决者）站我们这边（`get_CosmosWorks`） |
+
+---
+
+## §5 · 结尾统计 · 最该先改的 5 条
+
+### §5.1 统计
+
+| 项 | 数 |
+|---|---|
+| 读入的核对表 | **30 份** |
+| 表内报出 / 表外重复 / 原始声明 | 121 / +3 / **124** |
+| **去重后唯一分歧** | **111** |
+| **高置信 / 中置信** | **83 / 28** |
+| **抽查**（8 份文件 / 8 个域，抽 8 条高置信） | 成立 **7** · 不成立 **1** · 存疑 **0** |
+| **★ 抽查成立率** | **87.5%（7/8）** |
+| 可改 / 需先查 / 存疑 | **90 / 17 / 4** |
+| 「多路都报」合并组 | **10 组**（吃掉 10 条重复） |
+| 零风险批（只改调用名 / 常量） | **25 条** |
+
+### §5.2 ★ 最该先改的 5 条（按「改了会不会让工具**真的能跑**」排）
+
+> 排序口径：**不是**按严重程度，是按**「现在跑不了 ⇒ 改完就能跑」的直接性**。
+> 前 5 条里有 **4 条**是我亲自打开代码 + 官方页复核过的（§2 S2 / S4 / S5，以及 S3 的代码事实）。
+
+| # | 行 | 改什么 | 为什么排在这 | 风险 |
+|---|---|---|---|---|
+| **1** | **H62 / H63** | `sw_simulation_loads.py:319` 的 `_ERRORCODE_MEMBERS` 里**加两个名字**：`"GetLoadsAndRestraints"`、`"GetEdgeWeldConnector"` | ★ **改动最小、收益最直接**：官方三源一致都是 `(Int32, Int32&)` **2 形参**，少传一个在 COM 里就是「参数个数不符」⇒ 这两个读取入口**现在就跑不了**。加进 frozenset 后 `_check`（`:263-264`）自动补 `out_i4()`，**一行 frozenset 改动** | 极低。模块自己的来源块（`:679`）已逐字抄下正确签名 ⇒ 与代码「自相矛盾」这一事实本身就是铁证 |
+| **2** | **H16 / H17** | `sw_weldment.py:694` 传 Body2 数组（照同文件 `ensure_cut_list` 已有的正确写法）、`:create_sub_weld_folder` 传 Body2 数组 | ★ **现在必然建不出特征**：官方那一个 `Object` 形参**命名了、也写明是 Body2 数组**，我们传的是排序选项 / `None`。⇒ 切割清单与子焊件文件夹两个工具现在**建不出东西**。★ 同文件已有正确实现可抄 | 低。注意 H17 的后继：**官方没有**接受「父文件夹对象」的 `InsertSubWeldFolder*` 重载（03-A「查不到」段明写），所以只能传 Body2 数组 |
+| **3** | **H74** | `sw_export.py:41` `quality_map` 的 `"fine": 0` → **`2`** | ★ **影响面最大**：MCP 工具 `solidworks_export_stl` 的 `stl_quality` **默认值就是 `"fine"`** ⇒ **每次默认导出都在传一个非法枚举值**。而且按官方 `swSTLQuality_e`，`Fine` 是 **2** 不是 0 ⇒ 不只是越界，是**映射错了目标**。改一个常量 | 极低。⚠ 但 `SetUserPreferenceIntegerValue(78, …)` 里的 **78** 在两套离线源里都查不到出处（10-C「查不到」段）⇒ 只改 `quality_map`，别动 78 |
+| **4** | **H09 / H10 / H11** | `sw_sheet_metal.py` 三个角度实参补 `math.radians()`：`BendAngle`(×2) / `Angle` | ★ **三个官方成员逐个明写收弧度**（`ISketchedBendFeatureData` 值域 0.2618–1.5708、`IEdgeFlangeFeatureData` 默认 π/2、`IDraftFeatureData2` "in radians"），而我们的 spec 校验文案自己写的是「**度**」⇒ 折弯 / 边法兰 / 拔模三个角度**全部越界**。`EdgeFlangeSpec.angle` 的**默认值 `90.0`** 就直接超量纲 57 倍 | 低。★ 已知事实 47 已记：这三个 `FeatureData` 成员在本机 pywin32 后端**到不了「建成」**（`AccessSelections` / `SetFixedFace` 不可调用）⇒ **改量纲不会让它们今天就跑通**，但它是「一旦后端通了就能对」的必要修正，且**不修就一定错** |
+| **5** | **H38** | `sw_part.py` `revolve_boss` / `revolve_cut`：让 `_ensure_sketch_selected` **不清掉轴**（或选完轮廓后重选轴） | ★ 官方 `FeatureRevolve2.md:42-46` 要求**轮廓 mark 0 与轴 mark 4/16 同时在选区**；我们 `:917` 选轴 → `:918` 进 `_ensure_sketch_selected` → `:381 ClearSelection2(True)`（或 `_select_com_object(append=False)`）⇒ 轴**必然不在选区**。★ 这是**唯一一条本仓自带真机证据（`feature_created=false`）的分歧** | ⚠ **中**。★ 我在 §2 S3 已标注：它与 `revolve_boss` docstring 记的「轮 360 改序后建成了」**有张力** ⇒ **改之前先回看 `output/revolve-axis-geometric-evidence.json`**，搞清当时生效的是哪条路径（很可能是 `sketch_name == "__current_selection__"` 的早退分支 `:416-417`）。★ 这不改变本条的级别，但**改变改法** |
+
+### §5.3 紧随其后的 5 条（若上面 5 条处理完还有余力）
+
+| 行 | 一句话 |
+|---|---|
+| **H26 条零风险批**（H22–H28 · H41–H48 · H69 · H71–H73 · H75 · H76 · H74 · H35 · H61 · H77） | 只改调用名 / 常量、不动逻辑 ⇒ ★ **建议一次性批量做完**，先把「还在调官方 Obsolete 成员」这个面清零。注意 `GetErrorCode`→`GetErrorCode2` 与 `MaterialIdName`（M26）**另有两源理由**，别混进这批 |
+| **H62** 已排在第 1，**H79** 次之 | `sw_loft.py` 把 `UseAutoSelect` **硬编码 False** 却不选 body ⇒ 按官方两页逐字要求，放样/放样切除两个入口**建不出受影响体** |
+| **H57** | `sw_measure.py` `IMeasure.Calculate` 传 0 实参而官方形参是 1 个。⚠ 官方说明「NULL 就量选区」**语义上支持不传**、且本仓事实 227 记的是「真机必须无参调」⇒ ★ **这条要在真机上先复现一次**再动，否则会把现在能用的量测改坏 |
+| **H30 / H34 / H59** | 三个「前置 gate 太松」的：`GetSelectedObjectType3` 当 mark 用、局部视图缺两步前置、芯模型腔缺三条官方前置 ⇒ 都属「不报错但结果不对」类，**改了会明显提升成功率** |
+| **H78 / H51 / H56 / H19** | 四条「**我们写下的官方依据与官方原文对不上**」⇒ 改起来零风险、但价值很高：★ **错误注释会让下一个人继续按错的依据改**。本仓 AGENTS.md 第 0 步纪律（「官方文档是第 0 步」）最怕的就是这种自我强化的假依据 |
+
+---
+
+★ **一句话交接**：**30 路报的东西，八成七是真的**（抽查 7/8）；
+唯一的假货是「官方自己两源打架、核对员没敢下结论却给了高置信度」，而它顺手暴露了一条**同仓自相矛盾的真缺陷**；
+**先做 §5.2 的第 1–3 条**（各是一两行的改动，却分别卡着两个读取入口、两个建特征入口、和一个导出工具的默认路径），
+**第 4、5 条先补查再动**。

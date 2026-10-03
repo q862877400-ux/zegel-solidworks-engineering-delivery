@@ -714,7 +714,15 @@ def auto_dimension_sketch(model, sketch=None, sketch_segments=None):
             "selected": selected,
         }
     try:
-        model.GraphicsRedraw2()
+        #: ★★★ 2026-10-03（接手轮）**换成后继入口** —— 原来是 `model.GraphicsRedraw2()`。
+        #:   官方 `IModelDoc2/GraphicsRedraw2.md` 逐字：
+        #:     「**Obsolete. Superseded by [[IModelView::GraphicsRedraw]] and [[IModelView::IGraphicsRedraw]].**」
+        #:   ★ 而后继的签名多一个 `Rect`（`void GraphicsRedraw( System.object Rect )`）——
+        #:     ★★ 官方例子用 `(null)` / `(Empty)` / `(Nothing)` 传空，★ 真机已验证能调
+        #:     （`output/graphicsredraw-successor-evidence.json` · **PASS**）。
+        _view = get_com_member(model, "ActiveView")
+        if _view is not None:
+            get_com_member(_view, "GraphicsRedraw", None)
     except Exception:
         pass
     model.ClearSelection2(True)

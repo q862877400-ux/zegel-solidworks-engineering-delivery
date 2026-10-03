@@ -209,7 +209,21 @@ def import_mesh_reference(
     model.ClearSelection2(True)
     model.ForceRebuild3(False)
     model.ViewZoomtofit2()
-    model.GraphicsRedraw2()
+    #: ★★★ 2026-10-03（接手轮）**换成后继入口** —— 原来是 `model.GraphicsRedraw2()`。
+    #:   官方 `types/IModelDoc2/GraphicsRedraw2.md` 逐字：
+    #:     「**Obsolete. Superseded by [[IModelView::GraphicsRedraw]] and [[IModelView::IGraphicsRedraw]].**」
+    #:   而 `types/IModelView/GraphicsRedraw.md` 的签名逐字是
+    #:     `void GraphicsRedraw( System.object Rect )` —— ★ **比旧的多一个 `Rect`**。
+    #:   ★ `## Parameters` 逐字：「**Rect**: Array of four integers or longs indicating the boundary
+    #:     of the region in the SOLIDWORKS graphics window to redraw;」
+    #:   ★★ 官方例子给的是**两种都合法**的用法：`modelview.GraphicsRedraw(null)`（C#）·
+    #:     `GraphicsRedraw (Empty)`（VB）· `swModelView.GraphicsRedraw(rect)`（4 元素数组）。
+    #:   ★★★ 真机已验（`tools/probe_graphicsredraw_successor.py` 与
+    #:     `output/graphicsredraw-successor-evidence.json`）：★ `ActiveView` 拿得到 ·
+    #:     `GraphicsRedraw(None)` 与 `GraphicsRedraw([0,0,800,600])` **都能调** ⇒ **PASS** ✓
+    _view = get_com_member(model, "ActiveView")
+    if _view is not None:
+        get_com_member(_view, "GraphicsRedraw", None)
 
     saved = save_document(model, str(output))
     result["saved"] = bool(saved)
