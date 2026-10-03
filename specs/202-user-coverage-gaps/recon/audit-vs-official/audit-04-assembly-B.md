@@ -1,0 +1,43 @@
+# audit-04-assembly-B · 核对 B（前置与 mark）
+
+- **域**：04-assembly
+- **我们的文件**：`scripts/sw_assembly.py`（877 行，存在，已逐段读完）
+- **核对方式**：只读比对。未运行 SolidWorks、未运行 pytest、未改动仓内任何文件。
+- **官方源**：`C:\swapi\types\<接口>\<成员>.md`（Signature + Remarks）、`C:\swapi\examples\*.md`（官方调用序）、`D:\AI\SW\AI Solidworks\官方文档\SWhelp\sldworksapi\*.html`（CHM 解包说明）
+- **本路口径**：只报「官方 Remarks / 官方例子的**前置步骤**（先做什么、mark 几、调用先后）与我们代码实际做的对不上」。签名与枚举不在本表。
+
+| # | 我们的原文（文件 + 片段）| 官方的原文（文件 + 片段）| 分歧点 | 置信度 |
+|---|---|---|---|---|
+| 1 | `scripts/sw_assembly.py` — `interference.Done()`（紧接着下一行是 `count = int(safe_get_com_member(interference, "GetInterferenceCount") or 0)`，再往后 `_got = call_com_member(interference, "GetInterferences")`）| `C:\swapi\types\IInterferenceDetectionMgr\Done.md` — `Stops the interference detection.`（CHM 同源：`…IInterferenceDetectionMgr~Done.html` — `Stops the interference detection.`）；`C:\swapi\types\IInterferenceDetectionMgr\GetInterferences.md` — `Calculates and gets the interferences.`；`C:\swapi\types\IInterferenceDetectionMgr\GetInterferenceCount.md` — `Calculates and gets the number of interferences.`（CHM 同源同句）；`C:\swapi\examples\Run_Interference_Detection_Example_VB.md` — `'Stop interference detection and close Interference Detection pane` 紧跟着 `'pIntMgr.Done`（**被注释掉**，位于全例最后一行之后），而计算那步是 `'Run interference detection` 下的 `vInts = pIntMgr.GetInterferences`；`C:\swapi\examples\Run_Interference_Detection_Example_CSharp.md` 同序：`//Stop interference detection and close Inteference Detection pane` / `//pIntMgr.Done();` 出现在 `GetInterferences()` 之后 | `get_interference_detection()` 把官方定义为「**停止**干涉检测」的 `Done()` 放在**取结果之前**；两处官方例子的调用序都是「先 `GetInterferences()` / `GetInterferenceCount()`（这两者自身才是"计算并取"），`Done()` 在最后」，且官方成员说明写明 `GetInterferences` = `Calculates and gets the interferences.`、`GetInterferenceCount` = `Calculates and gets the number of interferences.`。分歧是**调用先后**，不是参数。 | 高 |
+| 2 | `scripts/sw_assembly.py` — `interference = asm_model.InterferenceDetectionManager`（本行之前没有任何调用）| `C:\swapi\examples\Run_Interference_Detection_Example_VB.md` — `'Open the Interference Detection pane` / `swAssemblyDoc.ToolsCheckInterference` / `Set pIntMgr = swAssemblyDoc.InterferenceDetectionManager`（三行相邻，先开面板再取管理器）；`C:\swapi\examples\Run_Interference_Detection_Example_CSharp.md` — `//Open the Interference Detection pane` / `swAssemblyDoc.ToolsCheckInterference();` / `pIntMgr = swAssemblyDoc.InterferenceDetectionManager;`（同序）；`C:\swapi\types\IAssemblyDoc\ToolsCheckInterference.md` — `Opens the Interference Detection PropertyManager.` | 取 `InterferenceDetectionManager` 之前，我们**没有**先调 `ToolsCheckInterference()`；两处官方例子的第 1 步都是它（注释写明作用是"打开干涉检测面板"）。分歧是**缺失的前置步骤**（`InterferenceDetectionManager.md` 自身的 Remarks 里**没有**写这条前置，故只给「中」）。 | 中 |
+| 3 | `scripts/sw_assembly.py` — `component = _add_component5(asm_model, component_path, config_name, x, y, z)`（在 `add_component()` 的第一个 `try` 里；此时只有 `if not os.path.exists(component_path):` 这样的**文件存在性**检查，打开文档的 `open_document(sw, component_path, ...)` 出现在后面的回退分支里）| `C:\swapi\types\IAssemblyDoc\AddComponent5.md` — `The specified file must be loaded in memory. A file is loaded into memory when you load the file in your SOLIDWORKS Design session ([[ISldWorks::OpenDoc6]]) or open an assembly that already contains the file.`；`C:\swapi\types\IAssemblyDoc\AddComponent4.md` — 同句；`C:\swapi\examples\Add_Component_and_Mate_Example_VB.md` — `' Open the component` / `Set tmpObj = swApp.OpenDoc6(tmpPath + strCompModelname, swDocPART, 0, "", errors, warnings)` … `' Activate the assembly so that you can add the component to it` / `Set swModel = swApp.ActivateDoc3(AssemblyTitle, True, swUserDecision, errors)` … `Set swcomponent = swAssy.AddComponent5(strCompModelname, ...)` | 官方把「**文件必须已在内存中**」写成 `AddComponent5/AddComponent4` 的前置（`must be loaded in memory`），官方例子的顺序是 `OpenDoc6(零件)` → `ActivateDoc3(装配体)` → `AddComponent5`；我们的**首选路径**在零件尚未载入时先调 `AddComponent5`，只有失败后才走 `open_document(...)` + 激活 + 重试的兜底路径。分歧是**首选路径上少了前置步骤**（兜底路径做了，故非高）。 | 中 |
+| 4 | `scripts/sw_assembly.py` — `if not entity1.Select2(False, mark):`（下一句 `if not entity2.Select2(True, mark):`，`mark` 由调用方传 `mark=1`）| `C:\swapi\types\IAssemblyDoc\AddMate5.md` — `1. Call [[IModelDoc2::ClearSelection2]] before selecting entities to mate.` / `2. Call [[IModelDocExtension::SelectByID2]] to select each entity to mate.` / `3. Call this method.` / `4. Call IModelDoc2::ClearSelection2 after the mate is created.`（CHM `…IAssemblyDoc~AddMate5.html` 同源同句）；`C:\swapi\examples\Add_Component_and_Mate_Example_VB.md` — `boolstat = swDocExt.SelectByID2(FirstSelection, "PLANE", 0, 0, 0, True, 1, Nothing, swSelectOptionDefault)` | `AddMate5` 官方调用序第 2 步点名的是 **`IModelDocExtension::SelectByID2`**（官方例子第 7 个实参就是 mark `1`）；`select_entities_for_mate()` 第 2 步走的是 **`IEntity::Select2(Append, Mark)`** 这条另一个入口。**mark 值本身对得上**（官方表：`Other swMateType_e option \| 1`；我们 `mark=1`），分歧只在**第 2 步用的入口成员**。 | 中 |
+
+## mark 通道 · 逐条查完、**未报**的部分（无分歧，不列入上表）
+
+| 我们的 mark 取值处 | 官方原文 |
+|---|---|
+| `select_entities_for_mate(asm_model, face_a, face_b, mark=1)`（`add_concentric_mate_by_cylinders` / `add_gear_mate_by_cylinders`）| `AddMate5.md` — mark 表：`swMateType_e.swMateCAMFOLLOWER \| 8` · `swMateType_e.swMateWIDTH \| 16` · `Other swMateType_e option \| 1` ⇒ 同心/齿轮配用 1，一致 |
+| `_select_by_id(asm_model.Extension, entity1_name, entity1_type, mark=1)` / `append=True, mark=1`（`add_mate_coincident` / `add_mate_concentric` / `add_mate_distance` / `add_mate_parallel`）| 同上 mark 表 ⇒ 一致；且 `Add_Component_and_Mate_Example_VB.md` 的两次 `SelectByID2` 第 7 参也都是 `1` |
+| `add_mate_coincident` 的 `asm_model.ClearSelection2(True)`（选之前）/ `add_mate5_checked` 的 `asm_model.ClearSelection2(True)`（建完之后）| `AddMate5.md` — 第 1 步 `Call IModelDoc2::ClearSelection2 before selecting entities to mate.` · 第 4 步 `Call IModelDoc2::ClearSelection2 after the mate is created.` ⇒ 一致 |
+| `_select_by_id(..., mark=0)`（`suppress_component` / `unsuppress_component` / `replace_component` 选 `COMPONENT`）| `IModelDoc2\EditSuppress.md`、`IModelDoc2\EditUnsuppress.md`、`IAssemblyDoc\ReplaceComponents2.md` 三页**均无 mark 相关字样**（`EditSuppress` 页连 Remarks 段都没有）⇒ 无可比对的官方 mark 要求，不构成「两段原文对不上」 |
+| `IEntity.Select2` 的第 2 形参传 `mark` | `C:\swapi\types\IEntity\Select2.md` — `System.bool Select2( System.bool Append, System.int Mark )` ⇒ 传 mark 的**位置与类型**与形参表一致（该成员被官方标 Obsolete 一事属核对 C，已由 `audit-04-assembly-C.md` 第 3 条记录，本表不重复）|
+
+## 前置 · 查过但**官方页未写**、故不报的项
+
+- `resolve_component()` 的 `component.SetSuppression2(state)`：`IComponent2\SetSuppression2.md` 的 Remarks 只有一句 `SOLIDWORKS does not allow suppressing components while a PropertyManager page is open.`；官方例子 `Set_All_Assembly_Components_Lightweight_or_Resolved_Example_VB.md` 里 `swFeatMgr.EnableFeatureTree = False` / `= True` 是例子自带的包裹写法、**不在成员页的前置里** ⇒ 我们没做这一步不构成「两段原文对不上」，按铁律 5 不报。
+- `apply_component_transform_x()` 的 `component.Transform2` / `component.SetTransformAndSolve2(transform)`：`IComponent2\Transform2.md` 与 `IComponent2\SetTransformAndSolve2.md` 的前置同为 `You must specify the transform in relation to the root component.`；我们是把**组件自身的 `Transform2`** 取出后改写再写回，属同一坐标系内的写法 ⇒ 两段原文之间没有可指认的对不上，不报。
+- `find_largest_cylinder_face()` 传给 `GetCorresponding` 的是 `IFace2`，而 `IComponent2\GetCorrespondingEntity.md` 的形参说明是 `Pointer to the Dispatch object of an entity (vertex, face, or edge)`、`GetCorresponding.md` 的 Remarks 只举 `IAnnotation, IFeature, ISketch, ISketchSegment, etc.` —— ★ 这是**「哪个成员收哪种对象」**的分歧，不属本路（前置与 mark），且 `etc.` 未封口 ⇒ 记此留痕，不列入上表。
+
+## 覆盖与口径
+
+- **核了 15 处**「有前置 / mark 含义」的调用点：① `SelectByID2`（`_select_by_id`，mark 通道）② `ClearSelection2`（选前）③ `IEntity.Select2`（`select_entities_for_mate`，mark 通道）④ `AddMate5`（`add_mate5_checked`）⑤ 四个 `add_mate_*` 封装的预选步（coincident / concentric / distance / parallel）⑥ `AddComponent5`（`_add_component5`）⑦ `AddComponent4`（`_add_component4`）⑧ `SetSuppression2`（`resolve_component`）⑨ `GetModelDoc2`（`get_component_model`）⑩ `GetCorresponding`（`get_assembly_entity`）⑪ `GetBodies2`（`find_largest_cylinder_face`）⑫ `EditSuppress` / `EditUnsuppress`（`suppress_component` / `unsuppress_component`）⑬ `ReplaceComponents2`（`replace_component`）⑭ `InterferenceDetectionManager` + `Done` + `GetInterferenceCount` + `GetInterferences`（`get_interference_detection`）⑮ `Transform2` / `SetTransformAndSolve2`（`apply_component_transform_x`）。
+- 每个前置步骤都比对了三处官方源：`types\<接口>\<成员>.md` 的 Remarks、`examples\*.md` 的调用序、CHM 解包页的说明句；**mark 通道 5 处全部查过**（见上节），**4 处一致、0 处不符**。
+- 合计**核了 15 处，报了 4 条**。
+
+---
+
+**结尾三行**
+- 核了几处：**15 处**（见「覆盖与口径」的枚举；mark 通道单独 5 处）
+- 报了几条：**4 条**
+- 置信度为高的：**#1 `IInterferenceDetectionMgr.Done` 的调用序**（`Done.md` + `GetInterferences.md` + `GetInterferenceCount.md` + VBA/C# 两处官方例子，四段官方原文同指）；#2（缺 `ToolsCheckInterference` 前置）、#3（`AddComponent5`「文件须先载入内存」的前置）、#4（`AddMate5` 第 2 步用 `Select2` 而非官方点名的 `SelectByID2`）均为**中**

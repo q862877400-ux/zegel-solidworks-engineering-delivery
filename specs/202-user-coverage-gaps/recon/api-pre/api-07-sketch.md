@@ -1564,4 +1564,2035 @@
 **前置一句话**：**查不到**。
 **配方一句话**：**查不到**。
 
-<!--APPEND-HERE-->
+---
+
+### 1.77 `ReverseEndPointTangent`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.int ReverseEndPointTangent( System.bool ForceDeleteConstraints )`
+   参数释义（逐字）：`- **ForceDeleteConstraints**: True to force the deletion of constraints, false to not`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 1.78 `RotateOrCopy3DAboutVector`（method，3D 草图）
+
+1. **精确签名**（**10 个形参**）
+   `System.bool RotateOrCopy3DAboutVector( System.bool Copy, System.int NumCopies, System.bool KeepRelations, System.double BaseX, System.double BaseY, System.double BaseZ, System.double VectorXCoord, System.double VectorYCoord, System.double VectorZCoord, System.double AngleAboutVector )`
+   参数释义（逐字）：`Copy: True to copy the 3D sketch entities, false to not`；`NumCopies: Number of copies`；`KeepRelations: True to keep sketch relations, false to not`；`BaseX/Y/Z: … base point from which to rotate`；`VectorXCoord/Y/Z: … vector component of the axis of rotation, parallel to the base point`；`AngleAboutVector: Angle at which to rotate the sketch entities`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**（`## Examples` 段只列了 `Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_*`，而那份例子调用的是 **`RotateOrCopy3DAboutXYZ`**，见 1.79）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**（页内为空；同族 `RotateOrCopy3DAboutXYZ` 的例子显示"先 `EditSketch` 进编辑态、再逐段 `Select4`"）。
+**配方一句话**：**查不到**（无调用该成员的例子）。
+
+---
+
+### 1.79 `RotateOrCopy3DAboutXYZ`（method，3D 草图）
+
+1. **精确签名**（**9 个形参**）
+   `System.bool RotateOrCopy3DAboutXYZ( System.bool Copy, System.int NumCopies, System.bool KeepRelations, System.double BaseX, System.double BaseY, System.double BaseZ, System.double AngleAboutXDir, System.double AngleAboutYDir, System.double AngleAboutZDir )`
+   参数释义（逐字）：`Copy: True to copy 3D sketch entities, false to not`；`AngleAboutXDir: Angle to rotate the 3D sketch entities in the x direction`；`AngleAboutYDir: … y direction`；`AngleAboutZDir: … z direction`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**（CHM 解包 `Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VB.htm`，逐字，含"先选什么"）：
+   ```vbnet
+   boolStatus = swModelDocExt.SelectByID2("3DSketch2", "SKETCH", 0, 0, 0, False, 0, Nothing, 0)
+   swModel.EditSketch
+   Set swSketch = swSketchMgr.ActiveSketch
+   varSketchSegments = swSketch.GetSketchSegments()
+   For i = 0 To UBound(varSketchSegments)
+       boolStatus = varSketchSegments(i).Select4(True, swSelData)
+   Next i
+   Debug.Print "Rotating and copying 3DSketch2 about the center point of 3DSketch1's arc? " & swSketchMgr.RotateOrCopy3DAboutXYZ(True, 1, True, -0.09925811702374, 0.004131001848179, 0, 1.5707963267949, 0, 0)
+   swModel.ClearSelection2 True
+   swSketchMgr.InsertSketch True
+   ...
+   Debug.Print "Rotating 3DSketch1 about the center point of its arc? " & swSketchMgr.RotateOrCopy3DAboutXYZ(False, 1, True, -0.09925811702374, 0.004131001848179, 0, 1.5707963267949, 0, 0)
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `SelectByID2("<name>","SKETCH",…)` + `swModel.EditSketch` 进编辑态，再 `GetSketchSegments()` 逐个 `Select4(True, swSelData)`。
+**配方一句话**：`(True, 1, True, -0.09925811702374, 0.004131001848179, 0, 1.5707963267949, 0, 0)`。
+
+---
+
+### 1.80 `SetDynamicMirror`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.bool SetDynamicMirror( System.bool DynamicMirror )`
+   参数释义（逐字）：`- **DynamicMirror**: True to enable dynamic sketch mirroring, false to disable it`
+2. **Remarks 逐字摘录**（★ 前置两条，逐字）：
+   > `If enabling dynamic sketch mirroring, then: - a sketch must be in edit mode. - a line segment or linear edge of a model must be selected before calling this method.`
+3. **官方例子调用序**（CHM 解包 `Dynamically_Mirror_Sketch_Entities_Example_VB.htm`，逐字；★ 例子的**前置**是 `Select an edge on the planar face selected in step 2`）：
+   ```vbnet
+   swSkMgr.SetDynamicMirror (True)
+   Set swSketch = swModel.GetActiveSketch2
+   Set swSketchSegment = swModel.CreateLine2(0, 0, 0, 1, 1, 1)
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ 两条前置：`a sketch must be in edit mode` + `a line segment or linear edge of a model must be selected before calling this method`。
+**配方一句话**：`SetDynamicMirror (True)`。
+
+---
+
+### 1.81 `SetGridOptions`（method）
+
+1. **精确签名**（**10 个形参**）
+   `void SetGridOptions( System.bool Display, System.double Spacing, System.bool Snap, System.bool DotStyle, System.short NumMajor, System.short NumMinor, System.bool AlignToEdge, System.bool AngleSnap, System.double AngleUnit, System.bool MinorAuto )`
+2. **Remarks 逐字摘录**（★ 前置，逐字）：
+   > `The AlignToEdge argument aligns the grid with the currently selected edge. If AlignToEdge is set to TRUE, then you must have selected an edge.`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：`If AlignToEdge is set to TRUE, then you must have selected an edge`。
+**配方一句话**：**查不到**（无例子）。
+
+---
+
+### 1.82 `SketchExtend`（method）
+
+1. **精确签名**（**3 个形参**）
+   `System.bool SketchExtend( System.double X, System.double Y, System.double Z )`
+2. **Remarks 逐字摘录**（★ 前置，逐字）：
+   > `Call this method multiple times to extend the selected line to meet successive sketch entities.`
+3. **官方例子调用序**（`C:\swapi\examples\Extend_Sketch_Entity_Example_VB.md`，逐字）：
+   ```vbnet
+   boolstatus = swSketchMgr.SketchExtend(0#, 0#, 0#)
+   ```
+   ★ CHM `Extend_Sketch_Entity_Example_VB.htm` 的**前置**逐字：`1. Inserts a new sketch is inserted. 2. Creates two non-parallel lines. 3. Extends the first line to meet the second line.` ⇒ **先造线**（该页正文只到 `Option Explicit`，函数体缺失 ⇒ 造线的调用序查不到）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：要**多次调用**才能把一条线依次延伸到多个草图实体（`successive sketch entities`）。
+**配方一句话**：`SketchExtend(0#, 0#, 0#)`。
+
+---
+
+### 1.83 `SketchOffset`（method，★ Obsolete）
+
+1. **精确签名**（**6 个形参**）
+   `System.bool SketchOffset( System.double Offset, System.bool BothDirections, System.bool Chain, System.bool CapEnds, System.bool MakeConstruction, System.bool AddDimensions )`
+2. **Remarks 逐字摘录**：
+   > `Specifying true to the Chain argument offsets the selected entity and any other entities that belong to the same contour or chain (contiguous geometric entities like edges).`
+3. **官方例子调用序**：**查不到**（`## Examples` 段为空；`Offset_Selected_Edges_in_Active_Sketch_Example_VB.md` 是 `SketchUseEdge` 的例子）。
+4. **枚举**：签名里 `CapEnds` / `MakeConstruction` 是 `System.bool`（旧版用 bool，不是枚举）。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketchManager::SketchOffset2]].`
+**前置一句话**：**查不到**（页内只写了 `Chain` 的语义）。
+**配方一句话**：**查不到**（Obsolete；新版的 `CapEnds` / `MakeConstruction` 是**枚举 int**，见 1.84）。
+
+---
+
+### 1.84 `SketchOffset2`（method）
+
+1. **精确签名**（**6 个形参**）
+   `System.bool SketchOffset2( System.double Offset, System.bool BothDirections, System.bool Chain, System.int CapEnds, System.int MakeConstruction, System.bool AddDimensions )`
+   参数释义（逐字）：`Offset: Offset value; negative value offsets the sketch entities in the opposite direction`；`CapEnds: Cap the ends as defined by [[swSkOffsetCapEndType_e]]`；`MakeConstruction: Convert original and offset sketch entities to construction sketch entities as defined by [[swSkOffsetMakeConstructionType_e]]`
+2. **Remarks 逐字摘录**：
+   > `Specifying true for Chain offsets the selected sketch entities and any other sketch entities that belong to the same contour or chain (contiguous geometric entities like edges).`
+3. **官方例子调用序**（CHM 解包 `Sketch_Offset_Example_VB.htm`，逐字，含"先选什么"与 mark）：
+   ```vbnet
+   swSketchManager.InsertSketch True
+   status = swModelDocExt.SelectByID2("Top Plane", "PLANE", -7.70466366627886E-02, 2.33041566204965E-03, 3.90732100788036E-02, False, 0, Nothing, 0)
+   swModel.ClearSelection2 True
+   Set swSketchSegment = swSketchManager.CreateLine(-0.081532, 0.028203, 0#, -0.029228, -0.017264, 0#)
+   Set swSketchSegment = swSketchManager.CreateLine(-0.029228, -0.017264, 0#, 0.035382, -0.025468, 0#)
+   Set swSketchSegment = swSketchManager.CreateLine(0.035382, -0.025468, 0#, 0.087008, -0.070346, 0#)
+   swModel.ClearSelection2 True
+   status = swModelDocExt.SelectByID2("Line3", "SKETCHSEGMENT", 0, 0, 0, False, 1, Nothing, 0)
+   status = swSketchManager.SketchOffset2(0.00254, True, True, swSkOffsetCapEndType_e.swSkOffsetArcCaps, swSkOffsetMakeConstructionType_e.swSkOffsetMakeBothConstruction, True)
+   swModel.ClearSelection2 True
+   swSketchManager.InsertSketch True
+   ```
+   ★ **mark**：例子选目标线用的是 **`SelectByID2("Line3", "SKETCHSEGMENT", 0,0,0, False, 1, Nothing, 0)`** ⇒ **mark = 1**（与 `FullyDefineSketch` 的 mark=6 不同，逐字照抄）。
+4. **枚举**：`swSkOffsetCapEndType_e`（`NoCaps=0` / `ArcCaps=1` / `LineCaps=2`）、`swSkOffsetMakeConstructionType_e`（`DontMakeConstruction=0` / `MakeOrigConstruction=1` / `MakeOffsConstruction=2` / `MakeBothConstruction=3`）。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `SelectByID2(<线名>,"SKETCHSEGMENT",…, Append=False, **Mark=1**, …)` 选中要偏置的线。
+**配方一句话**：`SketchOffset2(0.00254, True, True, swSkOffsetCapEndType_e.swSkOffsetArcCaps, swSkOffsetMakeConstructionType_e.swSkOffsetMakeBothConstruction, True)`。
+
+---
+
+### 1.85 `SketchReplace`（method，★ Obsolete）
+
+1. **精确签名**（**1 个形参**）
+   `System.bool SketchReplace( System.bool MakeConstruction )`
+2. **Remarks 逐字摘录**（★ **前置 + 后置，逐字**）：
+   > `Before calling this method, call [[IModelDocExtension::SelectByID2]] with Append set to true to select each of the following entities:`
+   > `1. Sketch entity to be replaced.`
+   > `2. Replacement sketch entity that does not reference downstream geometry or have references outside of the sketch.`
+   > `After calling this method, call [[ISketchManager::InsertSketch]] to rebuild the model with the replacement sketch.`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段；`Replace_Sketch_Example_*` 属于 1.86）。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketchManager::SketchReplace2]].`
+**前置一句话**：★ **必须用 `SelectByID2` 且 `Append = true`，选两个实体**：① 被替换的；② 替换用的（且它**不得**引用下游几何或草图外的引用）。
+**配方一句话**：调完必须 `InsertSketch` 重建。
+
+---
+
+### 1.86 `SketchReplace2`（method）
+
+1. **精确签名**（**2 个形参**）
+   `System.bool SketchReplace2( System.bool MakeConstruction, System.bool MakeContour )`
+2. **Remarks 逐字摘录**：与 1.85 逐字相同的前置/后置三段（`Before calling this method, call … SelectByID2 … with Append set to true …` / `After calling this method, call ISketchManager::InsertSketch to rebuild the model with the replacement sketch.`）
+3. **官方例子调用序**：CHM 与 `C:\swapi\examples\Replace_Sketch_Example_{VB,VBNET,CSharp}.md` 存在；**本轮未逐行抄其代码 → 调用序查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：同 1.85（两个实体 + `Append = true`）。
+**配方一句话**：**查不到**（例子未抄）。
+
+---
+
+### 1.87 `SketchTrim`（method，★ mark 全在此）
+
+1. **精确签名**（**4 个形参**）
+   `System.bool SketchTrim( System.int Option, System.double X, System.double Y, System.double Z )`
+   参数释义（逐字）：`Option: Sketch trim option as defined in [[swSketchTrimChoice_e]] (see **Remarks**)`；`X: x coordinate of pick location (see **Remarks**)`；`Z: z coordinate of pick location (for 3D sketch) (see **Remarks**)`
+2. **Remarks 逐字摘录**（★ **前置与 mark 逐字全抄**）：
+   > `Before calling this method, you must edit a sketch and select sketch segments to trim using [[IModelDocExtension::SelectByID2]].`
+   > `Specify X, Y, and Z with: - non-zero doubles only when Option is specified with swSketchTrimChoice_e.swSketchTrimEntityPoint. - 0.0, 0.0, and 0.0 for all other Options.`
+   > 表格逐行（`Option swSketchTrimChoice_e…` / `Corresponds to Trim PropertyManager's…` / `Before calling this method, you must select…`）：
+   > · `swSketchTrimClosest` → `Trim to closest` → `One, and only one, sketch segment to be trimmed to its closest intersection with another sketch entity.`
+   > · `swSketchTrimCorner` → `Corner` → `Two, and only two, sketch segments to extend/trim to form a corner.`
+   > · `swSketchTrimEntities` → `Power trim` → `One or more (up to total number) sketch segments in the model, specifying their pick points.`
+   > · `swSketchTrimEntityPoint` → `Power trim` → `One and only one sketch segment; trims to a specific point on the sketch segment. … The specified point must lie on the sketch segment.`
+   > · `swSketchTrimInside` → `Trim away inside` → `At least three sketch segments: two to create the boundary, and one or more that intersect both sketch segments in the boundary.`
+   > · `swSketchTrimOutside` → `Trim away outside` → `At least three sketch segments; two to create the trim boundary, and one or more that intersect both sketch segments in the boundary.`
+   > · `swSketchTrimTwoEntities` → `Power trim` → `Two intersecting sketch segments; trims the first selected sketch segment to the second intersecting sketch segment. **Use IModelDocExtension::SelectByID2 with Mark = 0 to select two sketch segments, specifying their pick points.** The order in which the sketch segments are selected determines which one is trimmed.`
+   ★ **数值**（`C:\swapi\enums\swSketchTrimChoice_e.md`）：`Closest=0`、`Corner=1`、`TwoEntities=2`、`EntityPoint=3`、`Entities=4`、`Outside=5`、`Inside=6`。
+   ★ **该枚举页自己写的 mark**（逐字）：`swSketchTrimEntities = 4 … use [[IModelDocExtension::SelectByID2]] with **Mark = 2** to select 1 or more sketch segments`；`swSketchTrimTwoEntities = 2 … use IModelDocExtension::SelectByID2 with **Mark = 0** to select two intersecting sketch segments`。
+3. **官方例子调用序**：**查不到** —— `C:\swapi\examples\Trim_Sketch_Entities_Example_{VB,VBNET,CSharp}.md` 的 `## Code` 段**只剩** `Sub main()` / `End Sub`（函数体被剥掉）；CHM 解包目录下**查不到** `Trim_Sketch_Entities_Example_*.htm`（三个语种全部 **ABSENT**）。
+4. **枚举**：`swSketchTrimChoice_e`（见上）。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ 必须**先编辑草图**并用 `SelectByID2` **选好**要裁剪的段；**mark 因 Option 而异**：`TwoEntities` 用 **Mark = 0**、`Entities` 用 **Mark = 2**；且 `X,Y,Z` **只有** `EntityPoint` 传非零，其余全传 `0.0`。
+**配方一句话**：**查不到**（官方例子正文缺失，见 3）。
+
+---
+
+### 1.88 `SketchUseEdge`（method，★ Obsolete）
+
+1. **精确签名**（**1 个形参**）
+   `System.bool SketchUseEdge( System.bool Chain )`
+2. **Remarks 逐字摘录**：
+   > `Specifying true for the Chain argument converts the selected entity and any other entities that belong to the same contour or chain (contiguous, geometric entities like edges) on a sketch plane.`
+   > `To display all sketch relations symbols, set [[IModelDoc2::SetUserPreferenceToggle]] swViewSketchRelations to true …`
+   > `See [[IModelDoc2::SketchOffsetEntities2]] method for similar functionality.`
+3. **官方例子调用序**：**查不到**（`## Examples` 段列的 `Insert_Sheet_Metal_Edge_Flange_Example_VB.md` / `Offset_Selected_Edges_in_Active_Sketch_Example_VB.md`，★ **本轮未逐行抄其代码**）。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketchManager::SketchUseEdge2]].`
+**前置一句话**：**查不到**（页内只写了 `Chain` 语义与显示性能提示）。
+**配方一句话**：**查不到**。
+
+---
+
+### 1.89 `SketchUseEdge2`（method，★ Obsolete）
+
+1. **精确签名**（**1 个形参**）
+   `System.bool SketchUseEdge2( System.bool Chain )`
+2. **Remarks 逐字摘录**：
+   > `Specifying true for the Chain argument creates the selected sketch entity and any other sketch entities that belong to the same contour or chain (contiguous geometric sketch entities like sketch edges) on a sketch plane.`
+   > `To display all sketch relations symbols, set [[IModelDocExtension::SetUserPreferenceToggle]] swViewSketchRelations to true …`
+3. **官方例子调用序**：CHM `Convert_Faces_Edges_to_Sketch_Entities_Example_VB.htm`（4185 字节）**正文只有前置注释**（已逐行读）：`Converts the edges of the selected faces to sketch entities onto Plane1, and creates Sketch3.` ⇒ **调用序查不到**。`C:\swapi\examples\Convert_Faces_Edges_to_Sketch_Entities_Example_{VB,VBNET}.md` 同样只剩 `Sub main()` / `End Sub`。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketchManager::SketchUseEdge3]].`
+**前置一句话**：**查不到**（页内只写 `Chain` 语义）。
+**配方一句话**：**查不到**（官方例子正文缺失）。
+
+---
+
+### 1.90 `SketchUseEdge3`（method，当前代）
+
+1. **精确签名**（**2 个形参**）
+   `System.bool SketchUseEdge3( System.bool Chain, System.bool InnerLoops )`
+2. **Remarks 逐字摘录**：
+   > `Specifying true for the Chain argument creates the selected sketch entity and any other sketch entities that belong to the same sketch contour or chain (contiguous geometric entities like sketch edges) on the sketch plane.`
+   > `To display all sketch relations symbols, set [[IModelDocExtension::SetUserPreferenceToggle]] swViewSketchRelations to true …`
+3. **官方例子调用序**：`Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_{CSharp,VBNET,VB}.md` 存在；**本轮未逐行抄其代码 → 调用序查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**（该页无 `Obsolete.` 行）。
+**前置一句话**：**查不到**（页内只写 `Chain` 语义）。
+**配方一句话**：**查不到**。
+
+---
+
+### 1.91 `SplitClosedSegment`（method）
+
+1. **精确签名**（**6 个形参**）
+   `System.object SplitClosedSegment( System.double X1, System.double Y1, System.double Z1, System.double X2, System.double Y2, System.double Z2 )`
+   参数释义（逐字）：`X1: X coordinate of first point` … `Z2: Z coordinate of second point`
+2. **Remarks 逐字摘录**（★ **前置，逐字**）：
+   > `Before calling this method, be sure to disable snapping by either: - De-selecting **System Options > Sketch > Relations/Snaps > Enable snapping** - or - - Calling [[ISldWorks::SetUserPreferenceToggle]]([[swUserPreferenceToggle_e]].swSketchInference, false).`
+3. **官方例子调用序**（`C:\swapi\examples\Split_Closed_Sketch_Segment_Example_VB.md`，逐字）：
+   ```vbnet
+   swModel.SketchManager.InsertSketch True
+   Set skSegment = swModel.SketchManager.CreateSpline((pointArray))
+   skSegmentArray = swModel.SketchManager.SplitClosedSegment(-2.43607314462504E-02, 4.04155099449417E-02, 0#, -0.023219392599761, 2.95727909032925E-02, 0#)
+   swModel.SketchManager.Insert3DSketch True
+   ```
+   ★ CHM `Split_Closed_Sketch_Segment_Example_VB.htm` **ABSENT**（查不到该文件）；`C:\swapi\examples\Split_Closed_Sketch_Segment_Example_{VBNET,CSharp}.md` 存在但未逐行抄。
+4. **枚举**：签名里无（前置提到的 `swUserPreferenceToggle_e.swSketchInference` 是**设置对象**上的，不是本方法形参）。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **必须先关捕捉**：要么取消 `System Options > Sketch > Relations/Snaps > Enable snapping`，要么 `ISldWorks::SetUserPreferenceToggle(swUserPreferenceToggle_e.swSketchInference, false)`。
+**配方一句话**：先 `CreateSpline((pointArray))` 建闭合样条，再传两点坐标。
+
+---
+
+### 1.92 `SplitOpenSegment`（method）
+
+1. **精确签名**（**3 个形参**）
+   `System.object SplitOpenSegment( System.double X, System.double Y, System.double Z )`
+   参数释义（逐字）：`X: X coordinate of the point that splits the sketch segment in two`；`Y: …`；`Z: …`
+2. **Remarks 逐字摘录**（★ 前置，逐字同 1.91）：
+   > `Before calling this method, be sure to disable snapping by either: - De-selecting **System Options > Sketch > Relations/Snaps > Enable snapping** - or - - Calling [[ISldWorks::SetUserPreferenceToggle]]([[swUserPreferenceToggle_e]].swSketchInference, false).`
+3. **官方例子调用序**（`C:\swapi\examples\Split_Open_Sketch_Segment_Example_VB.md`，逐字）：
+   ```vbnet
+   swModel.SketchManager.InsertSketch True
+   Set swSketchSegment = swModel.SketchManager.CreateLine(-0.055964, 0.033212, 0#, 0.102938, -0.014129, 0#)
+   skSegmentArray = swModel.SketchManager.SplitOpenSegment(0.02, 0.01, 0#)
+   swModel.SketchManager.Insert3DSketch True
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：同 1.91 —— **必须先关 snapping**。
+**配方一句话**：`SplitOpenSegment(0.02, 0.01, 0#)`（3 个 double）。
+
+---
+
+## 第 2 部分 · `ISketch` 全 104 成员
+
+> 官方自述（`C:\swapi\types\ISketch\_overview.md`，逐字）：`## Description` → `Provides access to sketch objects.`
+
+### 2.1 `AutoDimension`（method，★ Obsolete）
+
+1. **精确签名**（**5 个形参**）
+   `System.int AutoDimension( System.int EntitiesToDimension, System.int HorizontalScheme, System.int HorizontalPlacement, System.int VerticalScheme, System.int VerticalPlacement )`
+   ★ `## Parameters` 五项逐字全是 `- **EntitiesToDimension**: No description`（**官方对五个参数都没写描述**）。
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：签名里无（形参是 `System.int`，但 `## Parameters` 未点名枚举）。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::AutoDimension2]].`
+**前置一句话**：**查不到**（官方五个参数描述都写 `No description`）。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.2 `AutoDimension2`（method，★ Obsolete）
+
+1. **精确签名**（**5 个形参**）
+   `System.int AutoDimension2( System.int EntitiesToDimension, System.int HorizontalScheme, System.int HorizontalPlacement, System.int VerticalScheme, System.int VerticalPlacement )`
+2. **Remarks 逐字摘录**（★ **mark 全在此，逐字**）：
+   > `If the EntitiesToDimension argument takes the value swAutodimEntitiesSelected, then use [[IModelDocExtension::SelectByID2]] with a mark value of swAutodimMarkEntities to select the sketch entities to dimension.`
+   > `You can supply datums for horizontal and vertical dimensioning schemes. Select and mark a unique vertical edge, vertex, sketch point, or vertical sketch line as the datum for the horizontal dimensioning scheme, using swAutodimMarkHorizontalDatum as the mark value. Similarly, select a unique horizontal edge, vertex, sketch point, or horizontal sketch line as the datum for the vertical dimensioning scheme, using swAutodimMarkVerticalDatum as the mark value. It is an error to supply just one datum as indicated by the status value swAutodimStatus_DatumNotSupplied.`
+3. **官方例子调用序**（CHM 解包 `Autodimension_a_Sketch_Example_VB.htm`，逐字，★ **含 `Select3` 带 mark 的写法**）：
+   ```vbnet
+   sketchLines = swSketchManager.CreateCornerRectangle(0, 0, 0, 0.110951010058045, -0.066328380491143, 0)
+   bRet = swModelDocExt.SelectByID2("Line3", "SKETCHSEGMENT", 4.43505736694483E-03, -0.012832795562811, 6.37809258389225E-03, False, 0, Nothing, 0)
+   bRet = swModelDocExt.SelectByID2("Line4", "SKETCHSEGMENT", 0.095835993249203, -3.06185999393385E-02, -2.97695225643872E-02, True, 0, Nothing, 0)
+   Set swSelMgr = swModel.SelectionManager
+   Set swSketchSegHoriz = swSelMgr.GetSelectedObject6(1, -1)
+   Set swSketchSegVert = swSelMgr.GetSelectedObject6(2, -1)
+   swModel.ClearSelection2 True
+   ' Reselect sketch segments with correct marks for autodimensioning
+   bRet = swSketchSegHoriz.Select3(True, swAutodimMarkHorizontalDatum, Nothing)
+   bRet = swSketchSegVert.Select3(True, swAutodimMarkVerticalDatum, Nothing)
+   Set swSketch = swModel.GetActiveSketch2
+   nRetVal = swSketch.AutoDimension2(swAutodimEntitiesAll, swAutodimSchemeBaseline, swAutodimHorizontalPlacementBelow, swAutodimSchemeBaseline, swAutodimVerticalPlacementLeft)
+   Debug.Print "Status of autodimensioning sketch (0 = success): " & nRetVal
+   swModel.GraphicsRedraw2
+   ```
+   ★ **关键**：例子先用 `SelectByID2`（mark=0）取到对象，再**改用 `Select3(True, <mark>, Nothing)` 带 mark 重选**。
+4. **枚举**：`swAutodimEntities_e`、`swAutodimScheme_e`、`swAutodimHorizontalPlacement_e`、`swAutodimVerticalPlacement_e`、`swAutodimMark_e`、`swAutodimStatus_e`（逐条见第 0 部分）。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketchManager::FullyDefineSketch]].`
+**前置一句话**：★ `EntitiesToDimension = swAutodimEntitiesSelected` 时**必须**用 `SelectByID2` 带 **mark = `swAutodimMarkEntities`** 选实体；两个 datum 各自的 mark 是 `swAutodimMarkHorizontalDatum` / `swAutodimMarkVerticalDatum`，**只给一个 datum 是错误**。
+**配方一句话**：`Select3(True, swAutodimMarkHorizontalDatum, Nothing)` + `Select3(True, swAutodimMarkVerticalDatum, Nothing)` → `AutoDimension2(swAutodimEntitiesAll, swAutodimSchemeBaseline, swAutodimHorizontalPlacementBelow, swAutodimSchemeBaseline, swAutodimVerticalPlacementLeft)`。
+
+---
+
+### 2.3 `CheckFeatureUse`（method）
+
+1. **精确签名**（**3 个形参**）
+   `System.int CheckFeatureUse( System.int FeatureType, out System.int OpenCount, out System.int ClosedCount )`
+   参数释义（逐字）：`FeatureType: Determine if this type of feature can be created as defined in [[swSketchCheckFeatureProfileUsage_e]]`；`OpenCount: Number of open contours found in this sketch`；`ClosedCount: Number of closed contours found in this sketch`
+2. **Remarks 逐字摘录**（★ 前置与出参语义，逐字）：
+   > `The OpenCount and ClosedCount arguments are output values. If this method returns swSketchCheckFeatureStatus_OK, meaning that the sketch can be used to create the specified feature, then these two arguments contain useful information. If this method returns something else, then OpenCount and ClosedCount both return 0.`
+   > `If the featureType value is not valid, this method returns swSketchCheckFeatureStatus_UnknownError.`
+3. **官方例子调用序**（CHM 解包 `Determine_If_Sketch_Suitable_for_Feature_Example_VB.htm`，逐字）：
+   ```vbnet
+   Set swSketch = swFeat.GetSpecificFeature2
+   Debug.Print "Feature = " & swFeat.Name
+   For i = 0 To 22
+       nRetVal = swSketch.CheckFeatureUse(i, nOpenCount, nClosedCount)
+       Debug.Print "  FeatCheckType  = " & i
+       Debug.Print "    RetVal       = " & nRetVal
+       Debug.Print "    OpenCount    = " & nOpenCount
+       Debug.Print "    ClosedCount  = " & nClosedCount
+       Debug.Print ""
+   Next i
+   ```
+   ★ 例子把 `0 To 22` 全跑一遍；且**该例正文自带两份枚举表**（`swSketchCheckFeatureProfileUsage_e`、`swSketchCheckFeatureStatus_e`，已抄进第 0 部分）。
+4. **枚举**：`swSketchCheckFeatureProfileUsage_e`、`swSketchCheckFeatureStatus_e`（逐条见第 0 部分）。
+5. **废弃链**：**查不到**。
+**前置一句话**：`OpenCount` / `ClosedCount` 是 **out**；返回非 `OK` 时**两个都回 0**。
+**配方一句话**：`CheckFeatureUse(i, nOpenCount, nClosedCount)`，`i` 从 `0` 跑到 `22`。
+
+---
+
+### 2.4 `ConstrainAll`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int ConstrainAll()`
+2. **Remarks 逐字摘录**（★ 逐字，★ 注意官方首字漏了 `I`）：
+   > `f the sketch already has constraints, then no constraints are added (in the same way that the user-interface button **Constrain All** can only be pressed once for a sketch.)`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：草图已有约束时**不会再加**（等价于界面按钮"每张草图只能按一次"）。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.5 `GetArcCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetArcCount()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before [[ISketch::IGetArcs2]] to determine the size of the array for that method.`
+3. **官方例子调用序**（CHM 解包 `Get_Arcs_in_Sketch_Example_VB.htm`，逐字）：
+   ```vbnet
+   Set swSketch = swFeat.GetSpecificFeature
+   NumArcs = swSketch.GetArcCount
+   Debug.Print "Feature = " & swFeat.GetTypeName
+   vArcs = swSketch.GetArcs2
+   If IsEmpty(vArcs) Then Exit Sub
+   Debug.Assert UBound(vArcs) + 1 = 16 * NumArcs
+   For i = 0 To NumArcs - 1
+       Debug.Print "    Arc(" & i & ")"
+       Debug.Print "      colour         = " & vArcs(16 * i + 0)
+       …
+       Debug.Print "      RotDir         = " & vArcs(16 * i + 15)
+   Next i
+   ```
+   ★ **每条弧 16 个 double**（原文 `This set of data repeats for each arc in the sketch. The size of the array is (NumArcs * 16).`）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：必须**先调它**给 `IGetArcs2` / `GetArcs2` 拿数组大小。
+**配方一句话**：`NumArcs = swSketch.GetArcCount` 然后 `vArcs = swSketch.GetArcs2`，每弧 **16 个 double**。
+
+---
+
+### 2.6 `GetArcs`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetArcs()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetArcs2]] and [[ISketch::IGetArcs2]].`（★ **点名两个后继**）
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**（Obsolete）。
+
+---
+
+### 2.7 `GetArcs2`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetArcs2()`
+2. **Remarks 逐字摘录**（★ 数组形状原话）：
+   > `To determine the number of arcs, use [[ISketch::GetArcCount]].`
+   > `Return value is an array of doubles with the format: [** Color, Type, Line Font, Line Width, Layer ID, Layer Override, [Start], [End], [Center] Rotation Dir **]`
+   > `- Rotation Dir - Rotational direction (CW = -1, CCW = 1)`
+   > `This set of data repeats for each arc in the sketch. The size of the array is (NumArcs * 16).`
+   ★ 逐字段：`Color`（`Return value could be 0 or -1 for default color`）；`Type`（`Valid returns as defined in [[swLineTypes_e]]`）；`Line Font`（`Valid line styles as defined in [[swLineStyles_e]] enumeration`）；`Line Width`（`Valid width values as defined in [[swLineWeights_e]]`）；`Layer Override`（`color = 0x1, style = 0x2, and width = 0x4`）。
+3. **官方例子调用序**：CHM `Get_Arcs_in_Sketch_Example_VB.htm`（逐字，见 2.5 整段）：
+   ```vbnet
+   NumArcs = swSketch.GetArcCount
+   vArcs = swSketch.GetArcs2
+   Debug.Assert UBound(vArcs) + 1 = 16 * NumArcs
+   ```
+4. **枚举**：`swLineTypes_e`、`swLineStyles_e`、`swLineWeights_e`（逐条见第 0 部分）。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetArcCount` 定大小。
+**配方一句话**：`vArcs(16*i + 0..15)` 逐项读。
+
+---
+
+### 2.8 `GetAutomaticSolve`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.bool GetAutomaticSolve()`
+2. **Remarks 逐字摘录**：
+   > `This method can be controlled with [[ISketch::SetAutomaticSolve]].`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：读当前 `Automatic Solve` 状态，供 `SetAutomaticSolve` 恢复用。
+
+---
+
+### 2.9 `GetConstrainedStatus`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetConstrainedStatus()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写**（★ 官方没给取值表 ⇒ 不要自行解释"完全定义"）。
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无；该页**未点名**任何枚举（`swConstrainedStatus_e` 是**别的**枚举文件，本页未引用）⇒ **查不到**。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **前置未写**；本仓工具描述里说的是"必须有一个正在编辑的草图"，★ 但**那不是本文件的官方原文**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.10 `GetContourEdgeCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetContourEdgeCount()`
+2. **Remarks 逐字摘录**（★ 前置 + 返回 0 的条件，逐字）：
+   > `If the sketch contour is not closed or contains interior non-construction elements, this method returns 0.`
+   > `Call this method before calling [[ISketch::IGetContourEdges]] to get the size of the array for that method.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：轮廓不闭合或含内部非构造元素时**返回 0**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.11 `GetContourEdges`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.object GetContourEdges( System.object Xform )`
+2. **Remarks 逐字摘录**（★ 单轮廓限制 + 变换语义，逐字）：
+   > `This method supports sketches with one contour only. For sketches with multiple contours, use [[ISketch::GetSketchContours]] or [[ISketch::IGetSketchContours]] and then [[ISketchContour::GetEdges]] or [[ISketchContour::IGetEdges]].`
+   > `Specifying the unit transform returns the edges in the space of the sketch.`
+   > `If your application is expecting the returned edges to be in the context of the model's coordinate system, then xform should be the inverse of the transform returned by [[ISketch::ModelToSketchTransform]].`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **只支持单轮廓**；`xform` 要模型坐标系就传 `ModelToSketchTransform` 的**逆**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.12 `GetDetachSegmentOnDrag`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.bool GetDetachSegmentOnDrag()`
+2. **Remarks 逐字摘录**（★ 有效期限制，逐字）：
+   > `Although this setting can be returned or set at any time, SOLIDWORKS sets it to false upon exiting or entering a sketch. Thus, this method is only useful if called while a sketch is active.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：`only useful if called while a sketch is active` —— 进/出草图会被 SOLIDWORKS 重置为 `false`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.13 `GetEllipseCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetEllipseCount()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::GetEllipses3]] to determine the size of the array for that method.`
+3. **官方例子调用序**（CHM `Get_Polylines_Information_Example_VB.htm`，逐字一行）：
+   ```vbnet
+   Write #1, " Number of ellipses = " & CStr(swSketch.GetEllipseCount())
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `GetEllipses3`。
+**配方一句话**：**查不到**（例子只调用它读计数）。
+
+---
+
+### 2.14 `GetEllipses`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetEllipses()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetEllipses3]] and [[ISketch::IGetEllipses3]].`（★ **点名两个后继**）
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.15 `GetEllipses2`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetEllipses2()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetEllipses3]] and [[ISketch::IGetEllipses3]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.16 `GetEllipses3`（method，椭圆族当前代）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetEllipses3()`
+2. **Remarks 逐字摘录**（★ 数组形状原话）：
+   > `See [[ISketch::GetSketchSegments]] or [[ISketch::IEnumSketchSegments]] for access to individual [[ISketchSegment]] and [[ISketchEllipse]] objects.`
+   > `The return values are in an array of doubles: [** Color, LineType, LineFont, LineWidth, LayerID, LayerOverride, StartPt[3], EndPt[3], CenterPt[3], MajorPt[3], MinorPt[3],Direction ... **]`
+   > `- Direction : -1 for clockwise, +1 for counterclockwise`
+   > `This set of data repeats for each ellipse in the sketch. The size of the array is (NumEllipses * 20).`
+   > `To determine the number of ellipses, use [[ISketch::GetEllipseCount]].`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：`swLineTypes_e`、`swLineWeights_e`（见第 0 部分）。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetEllipseCount`。
+**配方一句话**：每条椭圆 **20 个 double**（`StartPt/EndPt/CenterPt/MajorPt/MinorPt` 各 3 个）。
+
+---
+
+### 2.17 `GetLineCount`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetLineCount()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetLineCount2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.18 `GetLineCount2`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.int GetLineCount2( System.short CrossHatchOption )`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetLines2]] to determine the size of the array for that method.`
+3. **官方例子调用序**（CHM `Get_Lines_in_Sketch_Example_VB.htm`，逐字，含"先选什么"）：
+   ```vbnet
+   Set swFeat = swSelMgr.GetSelectedObject6(1, -1)
+   Debug.Print "Feature = " & swFeat.GetTypeName
+   Set swSketch = swFeat.GetSpecificFeature2
+   NumLines = swSketch.GetLineCount2(1) ' Exclude crosshatch lines
+   Debug.Print "  Number of lines = " & NumLines
+   vLines = swSketch.GetLines2(1) 'Exclude crosshatch lines
+   For i = 0 To NumLines - 1
+       Debug.Print "  Line(" & i & ")"
+       Debug.Print "    Start = (" & vLines(12 * i + 6) * 1000# & "," & vLines(12 * i + 7) * 1000# & "," & vLines(12 * i + 8) * 1000# & ") mm"
+       Debug.Print "    End   = (" & vLines(12 * i + 9) * 1000# & "," & vLines(12 * i + 10) * 1000# & "," & vLines(12 * i + 11) * 1000# & ") mm"
+   Next i
+   ```
+   ★ 例子实参是 **`1`**，注释逐字写 `Exclude crosshatch lines`。★ 每条线 **12 个 double**。
+4. **枚举**：签名里 `System.short CrossHatchOption` —— **该成员页未点名任何枚举 → 查不到**。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **必须先选中草图特征**（`swSelMgr.GetSelectedObject6(1,-1)` → `GetSpecificFeature2`）。
+**配方一句话**：`GetLineCount2(1)` + `GetLines2(1)`，每线 **12 个 double**。
+
+---
+
+### 2.19 `GetLines`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetLines()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetLines2]] and [[ISketch::IGetLines2]].`（★ **点名两个**）
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.20 `GetLines2`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.object GetLines2( System.short CrossHatchOption )`
+2. **Remarks 逐字摘录**（★ 数组形状原话）：
+   > `The return value is the following array of doubles: [** Color, Type, Line Font, Line Width, Layer ID, Layer Override, [Start], [End] **]`
+   > `Start[3] = array of 3 doubles (X,Y,Z) describing the line start point.`
+   > `This set of data repeats for each line in the sketch. The number of doubles returned is (lineCount * 12). To determine the number of lines in the sketch, use [[ISketch::GetLineCount2]].`
+   > `See [[ISketch::GetSketchSegments]] or [[ISketch::IEnumSketchSegments]] for access to individual [[ISketchSegment]] and [[ISketchLine]] objects.`
+3. **官方例子调用序**：CHM `Get_Lines_in_Sketch_Example_VB.htm`（逐字，见 2.18）：
+   ```vbnet
+   NumLines = swSketch.GetLineCount2(1) ' Exclude crosshatch lines
+   vLines = swSketch.GetLines2(1) 'Exclude crosshatch lines
+   ```
+4. **枚举**：`swLineTypes_e`、`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetLineCount2`。
+**配方一句话**：每线 **12 个 double**（`vLines(12*i + 6..11)` 是起/止点）。
+
+---
+
+### 2.21 `GetParabolaCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetParabolaCount()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetParabolas2]] to determine the size of the array for that method.`
+3. **官方例子调用序**（CHM `Get_Polylines_Information_Example_VB.htm`，逐字一行）：
+   ```vbnet
+   Write #1, " Number of parabolas = " & CStr(swSketch.GetParabolaCount())
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetParabolas2`。
+**配方一句话**：**查不到**（例子只读计数）。
+
+---
+
+### 2.22 `GetParabolas`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetParabolas()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetParabolas2]] and [[ISketch::IGetParabolas2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.23 `GetParabolas2`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetParabolas2()`
+2. **Remarks 逐字摘录**（★ 数组形状原话）：
+   > `The return values are in an array of doubles: [** Color, LineType, LineStyleIndex, LineWidth, LayerID, LayerOverride, StartPt[3], EndPt[3], FocusPt[3], ApexPt[3] **]`
+   > `This set of data repeats for each parabola in the sketch. The size of the array is (NumParabolas * 18). To determine the number of parabolas, see [[ISketch::GetParabolaCount]].`
+3. **官方例子调用序**：**查不到** —— `C:\swapi\examples\Get_Parabolas_in_Sketch_Example_VB.md` 的 `## Code` 段只剩前置注释；CHM `Get_Parabolas_in_Sketch_Example_VB.htm`（10700 字节）**正文同样只到 `Option Explicit`**（已逐行读）。
+4. **枚举**：`swLineTypes_e`、`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetParabolaCount`。
+**配方一句话**：每条抛物线 **18 个 double**（`FocusPt[3]` + `ApexPt[3]`）。
+
+---
+
+### 2.24 `GetPolyLineCount`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.int GetPolyLineCount( ref System.int PointCount )`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.25 `GetPolylines`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetPolylines()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**（`Get_Polylines_Information_Example_VB.htm` 的正文只调 `swView.GetPolylines5(0)` 与 `swSketch.GetSketchSegments`，★ **没有调本成员**）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.26 `GetReferenceEntity`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.object GetReferenceEntity( out System.int LEntityType )`
+2. **Remarks 逐字摘录**（★ 失效条件 + 绕过办法，逐字）：
+   > `If the sketch resides on a face that is consumed by subsequent features, then this method returns NULL and swSelNOTHING. To get to the face, edit the sketch using [[IModelDoc2::EditSketch]].`
+3. **官方例子调用序**（CHM `Get_Plane_on_which_Sketch_Created_Example_VB.htm`，逐字）：
+   ```vbnet
+   boolstatus = swModel.Extension.SelectByID2("Revolve1", "BODYFEATURE", 0, 0, 0, False, 0, Nothing, swSelectOptionDefault)
+   Set swFeat = swSelMgr.GetSelectedObject5(1)
+   parents = swFeat.GetParents
+   For i = 0 To UBound(parents)
+       Set swParentFeat = parents(i)
+       If swParentFeat.GetTypeName = "ProfileFeature" Then
+          Set swSketch = swParentFeat.GetSpecificFeature2
+          Set swSketchPlane = swSketch.GetReferenceEntity(longstatus)
+          'The plane can be either a face or a Feature object
+          Debug.Print ("Type of reference entity (4 = swSelectType_e.swSelDATUMPLANES): " & longstatus)
+       End If
+   Next i
+   ```
+4. **枚举**：`swSelNOTHING`（★ 该成员页**只点了这个名字**，**没给数值** ⇒ 数值**查不到**；例子里出现的 `4 = swSelectType_e.swSelDATUMPLANES` 是**另一枚举** `swSelectType_e`，本成员页未点名它）。
+5. **废弃链**：**查不到**。
+**前置一句话**：草图所在的**面被后续特征消耗**时返回 `NULL` + `swSelNOTHING`；要拿到面得先 `EditSketch`。
+**配方一句话**：`swSketch.GetReferenceEntity(longstatus)`（VBA 传 ByRef 变量）。
+
+---
+
+### 2.27 `GetSketchBlockInstanceCount`（method，块）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetSketchBlockInstanceCount()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetSketchBlockInstances]] to get the size of the array for that method.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSketchBlockInstances`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.28 `GetSketchBlockInstances`（method，块）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchBlockInstances()`
+2. **Remarks 逐字摘录**：
+   > `See [Block Definitions and Block Instances](<../../docs/Programming with the SOLIDWORKS API/Block Definitions and Block Instances.md>) for details.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.29 `GetSketchContourCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetSketchContourCount()`
+2. **Remarks 逐字摘录**（★ 前置 + 抑制状态，逐字）：
+   > `Call this method before calling [[ISketch::IGetSketchContours]] to get the size of the array for that method.`
+   > `This method works even if the sketch is suppressed.`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSketchContours`；★ **草图被抑制时也可用**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.30 `GetSketchContours`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchContours()`
+2. **Remarks 逐字摘录**：
+   > `This method works even if the sketch is suppressed.`
+3. **官方例子调用序**：**查不到**（该页 `## Examples` 列出 `Get_Sketch_Contours_Example_VB.md` 与 `Get_Corresponding_Objects_in_Assembly_Component_Example_*`；★ **本轮未逐行抄其代码**）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：草图被抑制时也可用。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.31 `GetSketchHatches`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchHatches()`
+2. **Remarks 逐字摘录**（逐字，指路）：
+   > `For information about hatches: - in drawing views, use [[IView::GetFaceHatchCount]], [[IView::GetFaceHatches]], and [[IView::IGetFaceHatches]]. - detail, broken, or crop views, use [[IView::GetSolidHatchCount]], [[IView::GetSolidHatchInfo]], and [[IView::IGetSolidHatchInfo]]`
+3. **官方例子调用序**：**查不到**（`## Examples` 列出 `Get_Area_Hatch_Data_Example_VB.md` / `Get_Hatching_Data_Example_VB.md` / `Insert_Hatch_Example_VB.md`；★ 未逐行抄）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**（该页只指路到 `IView` 一族）。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.32 `GetSketchPathCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetSketchPathCount()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetSketchPaths]] to get the sketch paths in this sketch.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSketchPaths`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.33 `GetSketchPaths`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchPaths()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**（CHM `Create_Sketch_Path_Example_VB.htm`，逐字）：
+   ```vbnet
+   bRet = swSketchMgr.MakeSketchChain
+   swModel.ClearSelection2(True)
+   vSketchPath = swSketch.GetSketchPaths
+   swModel.CreateCircle -0.07515069296375, 0.04810565031983, 0, -0.06525335820896, 0.04189104477612, 0
+   boolstatus = swModel.Extension.SelectByID2("Arc1", "SKETCHSEGMENT", -5.44261072733269E-02, 4.71088420855688E-02, -3.28513702299429E-03, False, 0, Nothing, 0)
+   boolstatus = swModel.Extension.SelectByID2("Line1", "SKETCHSEGMENT", -4.22450565500339E-02, 3.67651345154678E-02, -2.68554920844266E-03, True, 0, Nothing, 0)
+   swModel.SketchAddConstraints ("sgTANGENT")
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **必须先 `MakeSketchChain`**（例子逐字：`bRet = swSketchMgr.MakeSketchChain` 之后才 `GetSketchPaths`）。
+**配方一句话**：`MakeSketchChain` → `ClearSelection2(True)` → `GetSketchPaths`。
+
+---
+
+### 2.34 `GetSketchPictureCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetSketchPictureCount()`
+2. **Remarks 逐字摘录**（★ 前置；★ 注意原文把 `Pictures` 拼成 `Pcitures`）：
+   > `Call this method before calling [[ISketch::IGetSketchPcitures]] to get the size of the array for that method.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSketchPcitures`（原文如此拼写）。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.35 `GetSketchPictures`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchPictures()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.36 `GetSketchPoints`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchPoints()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSketchPoints2]], [[ISketch::IGetSketchPoints2]], and [[ISketch::IEnumSketchPoints]].`（★ **点名三个后继**）
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.37 `GetSketchPoints2`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchPoints2()`
+2. **Remarks 逐字摘录**（★ 差异原话）：
+   > `The difference between this method and the now obsolete method [[ISketch::GetSketchPoints]] is that this method does not return sketch points intended for internal SOLIDWORKS use only.`
+3. **官方例子调用序**：**查不到**（`## Examples` 列出 9 个例子，含 `Get_Sketch_Points_and_Their_Persistent_IDs_Example_VB.md`、`Get_Sketch_Points_Example_VB.md`、`Get_x,y,z_Locations_of_Points_in_Sketch_Example_VB.md`；★ 未逐行抄）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.38 `GetSketchPointsCount`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetSketchPointsCount()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSketchPointsCount2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.39 `GetSketchPointsCount2`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetSketchPointsCount2()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetSketchPoints2]] to get the size of the array for that method.`
+3. **官方例子调用序**（CHM `Get_Spline_Points_Example_CPlusPlus_COM.htm`，逐字）：
+   ```cpp
+   pSwSketch->GetSketchPointsCount2(&nbrSketchPoints);
+   long splineArraySize = 1 + (nbrSketchPoints * 3);
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSketchPoints2`。
+**配方一句话**：★ 例子用它算数组大小：★ `1 + (nbrSketchPoints * 3)`。
+
+---
+
+### 2.40 `GetSketchRegionCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetSketchRegionCount()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetSketchRegions]] to get the size of the array for that method.`
+3. **官方例子调用序**：**查不到**（`Get_Sketch_Regions_Example_{VB,VBNET,CSharp}.md` 存在但未逐行抄）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSketchRegions`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.41 `GetSketchRegions`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchRegions()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**（同上）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.42 `GetSketchSegments`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchSegments()`
+2. **Remarks 逐字摘录**（★ 失效条件，逐字）：
+   > `If the sketch has errors, this method does not return all of the sketch segments.`
+3. **官方例子调用序**（CHM `Create_Sketch_Path_Example_VB.htm`，逐字）：
+   ```vbnet
+   swModel.EditSketch
+   vSketchSeg = swSketch.GetSketchSegments
+   For i = 0 To UBound(vSketchSeg)
+       Set swSketchSeg = vSketchSeg(i)
+       swSketchSeg.Select4 True, Nothing
+   Next
+   bRet = swSketchMgr.MakeSketchChain
+   ```
+   另一份（`Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VB.htm`）：
+   ```vbnet
+   varSketchSegments = swSketch.GetSketchSegments()
+   For i = 0 To UBound(varSketchSegments)
+       boolStatus = varSketchSegments(i).Select4(True, swSelData)
+   Next i
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：草图**有错误**时返回的段**不完整**。
+**配方一句话**：遍历数组逐个 `Select4(True, swSelData)`。
+
+### 2.43 `GetSketchSlotCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetSketchSlotCount()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetSketchSlots]] to determine the size of the array for that method.`
+3. **官方例子调用序**：**查不到**（`Get_Sketch_Slot_Data_Example_vb.md` 存在但未逐行抄）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSketchSlots`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.44 `GetSketchSlots`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchSlots()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.45 `GetSketchTextSegments`（method，★ 文字域）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSketchTextSegments()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+> ★ **文字域的「查不到」记录**（用户点名要查的域）：
+> · 对 `C:\swapi\types\ISketchManager\` 全文检索 `Text` → **0 命中** ⇒ **ISketchManager 里没有任何创建草图文字的成员**（无 `CreateText` 之类）⇒ **查不到**。
+> · 本域里与文字相关的只有 **2 个读取成员**：`ISketch.GetSketchTextSegments` 与 `ISketch.IEnumSketchTextSegments`。
+> · `swSketchTEXT = 4` 在 `C:\swapi\enums\swSketchSegments_e.md` 里有（见第 0 部分）。
+> · 另有 `C:\swapi\types\ISketchText\` 目录（**不在本轮范围内**，本轮未读）。
+
+---
+
+### 2.46 `GetSplineCount`（method，样条）
+
+1. **精确签名**（**1 个形参**）
+   `System.int GetSplineCount( ref System.int PointCount )`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetSplines]] to get the size of the array for that method.`
+3. **官方例子调用序**（CHM `Get_Each_Splines_Parameters_Example_VB.htm`，逐字）：
+   ```vbnet
+   splineCount = swSketch.GetSplineCount(splinePointCount)
+   For i = 1 To splineCount
+       Debug.Print "Spline " & i & ": "
+       Set swSplineParamData = swSketch.GetSplineParams5(True, i - 1)
+       Debug.Print "  Dimension: " & swSplineParamData.Dimension
+       Debug.Print "  Order: " & swSplineParamData.Order
+       Debug.Print "  Periodicity: " & swSplineParamData.Periodic
+       Debug.Print "  Number of control points: " & swSplineParamData.ControlPointsCount
+       status = swSplineParamData.GetControlPoints(varCtrlPoints)
+       Debug.Print "  Number of knots: " & swSplineParamData.KnotPointsCount
+       status = swSplineParamData.GetKnotPoints(varKnotPoints)
+   Next i
+   ```
+   ★ 例子在 `GetSplineCount` **之前**的建样条片段：
+   ```vbnet
+   Set swSketchMgr = swModel.SketchManager
+   Set swSketchSegment = swSketchMgr.CreateSpline((pointArray))
+   swModel.ClearSelection2 True
+   …（第二条样条）…
+   Set swSketchSegment = swSketchMgr.CreateSpline((pointArray))
+   swModel.ClearSelection2 True
+   swSketchMgr.InsertSketch (True)
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSplines`；`PointCount` 是 `ref` 出参。
+**配方一句话**：`splineCount = swSketch.GetSplineCount(splinePointCount)`，再 `GetSplineParams5(True, i - 1)`。
+
+---
+
+### 2.47 `GetSplineInterpolateCount`（method，样条）
+
+1. **精确签名**（**1 个形参**）
+   `System.int GetSplineInterpolateCount( ref System.int PointCount )`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetSplinesInterpolate]] to get the size of the array for that method.`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetSplinesInterpolate`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.48 `GetSplineParams`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSplineParams()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSplineParams2]] and [[ISketch::IGetSplineParams2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.49 `GetSplineParams2`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSplineParams2()`
+2. **Remarks 逐字摘录**（★ 数组布局原话，逐字；★ 本节与 2.50/2.84/2.85 **同一段文字**）：
+   > `See [[ISketch::GetSketchSegments]] or [[ISketch::IEnumSketchSegments]] for access to individual [[ISketchSegment]] and [[ISketchSpline]] objects.`
+   > `The return value is an array of doubles containing data for all the splines in the sketch: [** packedDouble1, packedDouble2, ControlPoint1[Dimension elements], ControlPoint2[Dimension elements],... knot1, knot2,..., packedDouble3, packedDouble4, packedDouble5, **]`
+   > `The first two array elements for each spline contain four integer values holding information that describes the rest of the data in that spline's parameters:` —— 表格：`0` → `low part = Dim` / `high part = Order`；`1` → `low part = nCtrlPoints` / `high part = Periodic`
+   > `- Dim is the number of dimensions in which the spline is defined - Order is the order of the spline - nCtrlPoints is the number of control points - Periodic is 1 for a closed spline or 0 for an open spline`
+   > `The number of knots depends on whether the spline is periodic or not: Periodic: numKnots = nCtrlPoints + 1  Non-Periodic: numKnots = nCtrlPoints + Order`
+   > `The last three array elements for each spline contain five integer values holding style and layer information:` —— 表格：`i` → `Color` / `lineStyle`；`i+1` → `lineWidth` / `Layer`；`i+2` → `layerOverride` / `Not used`
+   > `- i is the index following the last Knot or [2 + numKnots + numControlPointDoubles * Dim]`
+   > `Therefore, the size of the data for each spline is given by: 2 + numKnots + numControlPointDoubles * Dim + 3`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：`swLineStyles_e`、`swLineWeights_e`（`lineStyle` / `lineWidth` 两项）。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSplineParams3]].`
+**前置一句话**：**查不到**（页内无前置句；只给了布局公式）。
+**配方一句话**：每条样条占 `2 + numKnots + numControlPointDoubles * Dim + 3` 个 double。
+
+---
+
+### 2.50 `GetSplineParams3`（method，★ Obsolete）
+
+1. **精确签名**（**1 个形参**）
+   `System.object GetSplineParams3( System.bool ForceNonPeriodic )`
+2. **Remarks 逐字摘录**：与 2.49 **逐字同文**（同一段 packed-double 布局 + 末尾 `Therefore, the size of the data for each spline is given by: 2 + numKnots + numControlPointDoubles * Dim + 3`）。
+3. **官方例子调用序**（`C:\swapi\examples\Get_Spline's_Parameters_Example_{VB,VBNET,CSharp}.md` 是它的 `## Examples`；★ **但那份例子的正文调用的是 `GetSplineParams4(True)`**，见 2.85 ⇒ **本成员的调用序查不到**）。
+4. **枚举**：`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSplineParams4]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**（官方例子已改用 `GetSplineParams4`）。
+
+---
+
+### 2.51 `GetSplineParams4`（method，★ Obsolete）
+
+1. **精确签名**（**1 个形参**）
+   `SplineParamData GetSplineParams4( System.bool ForceNonPeriodic )`
+2. **Remarks 逐字摘录**：**空 —— 官方没写**（★ 返回类型是 `SplineParamData`，**不是** packed-double 数组）。
+3. **官方例子调用序**（`C:\swapi\examples\Get_Spline's_Parameters_Example_VB.md`，逐字）：
+   ```vbnet
+   boolstatus = swModel.Extension.SelectByID2("Sketch1", "SKETCH", 0, 0, 0, False, 0, Nothing, swSelectOptionDefault)
+   Set swSelMgr = swModel.SelectionManager
+   Set swFeat = swSelMgr.GetSelectedObject6(1, -1)
+   Set swSketch = swFeat.GetSpecificFeature2
+   Debug.Print swFeat.Name
+   Set swSplineParaData = swSketch.GetSplineParams4(True)
+   Debug.Print "The dimension is: " & swSplineParaData.Dimension
+   Debug.Print "The order is: " & swSplineParaData.Order
+   Debug.Print "The periodicity is: " & swSplineParaData.Periodic
+   Debug.Print "The control point count is: " & swSplineParaData.ControlPointsCount
+   boolStatus = swSplineParaData.GetControlPoints(varCtrlPoints)
+   boolStatus = swSplineParaData.GetKnotPoints(varKnotPoints)
+   Debug.Print "The color is: " & swSplineParaData.Color
+   Debug.Print "The line style is: " & swSplineParaData.LineStyle
+   Debug.Print "The line width is: " & swSplineParaData.LineWidth
+   Debug.Print "The layer is: " & swSplineParaData.Layer
+   Debug.Print "The layer override is: " & swSplineParaData.LayerOverride
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSplineParams5]].`
+**前置一句话**：★ 先 `SelectByID2("Sketch1","SKETCH",…)` 取到 `Feature` → `GetSpecificFeature2` 得到 `ISketch`。
+**配方一句话**：`GetSplineParams4(True)` 返回对象，逐属性读（`ISplineParamData` 形状见第 0.2 节）。
+
+---
+
+### 2.52 `GetSplineParams5`（method，样条当前代）
+
+1. **精确签名**（**2 个形参**）
+   `System.object GetSplineParams5( System.bool ForceNonPeriodic, System.int Index )`
+   参数释义（逐字）：`ForceNonPeriodic: True to attempt to convert a non-periodic spline to a periodic one, false to not`；`Index: 0-based index indicating the spline whose parameterization data to get`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**（CHM `Get_Each_Splines_Parameters_Example_VB.htm`，逐字）：
+   ```vbnet
+   splineCount = swSketch.GetSplineCount(splinePointCount)
+   For i = 1 To splineCount
+       Debug.Print "Spline " & i & ": "
+       Set swSplineParamData = swSketch.GetSplineParams5(True, i - 1)
+       Debug.Print "  Dimension: " & swSplineParamData.Dimension
+       Debug.Print "  Order: " & swSplineParamData.Order
+       Debug.Print "  Periodicity: " & swSplineParamData.Periodic
+       Debug.Print "  Number of control points: " & swSplineParamData.ControlPointsCount
+       status = swSplineParamData.GetControlPoints(varCtrlPoints)
+       Debug.Print "  Number of knots: " & swSplineParamData.KnotPointsCount
+       status = swSplineParamData.GetKnotPoints(varKnotPoints)
+   Next i
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ `Index` 是 **0-based**，而例子的循环变量 `i` 是 **1-based** ⇒ 官方写的是 `GetSplineParams5(True, i - 1)`。
+**配方一句话**：先 `GetSplineCount` 拿条数，再逐条 `GetSplineParams5(True, i - 1)`。
+
+---
+
+### 2.53 `GetSplineParamsCount`（method，★ Obsolete）
+
+1. **精确签名**（**1 个形参**）
+   `System.int GetSplineParamsCount( out System.int Size )`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSplineParamsCount2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.54 `GetSplineParamsCount2`（method，★ Obsolete）
+
+1. **精确签名**（**1 个形参**）
+   `System.int GetSplineParamsCount2( out System.int Size )`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSplineParamsCount3]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.55 `GetSplineParamsCount3`（method）
+
+1. **精确签名**（**2 个形参**）
+   `System.int GetSplineParamsCount3( System.bool ForceNonPeriodic, out System.int Size )`
+   参数释义（逐字）：`ForceNonPeriodic: True to attempt to convert all non-periodic splines to periodic, false to not`；`Size: Size of array required for a call to [[ISketch::IGetSplineParams3]]`
+2. **Remarks 逐字摘录**：**空 —— 官方没写**（★ 出参 `Size` 的语义只在 `## Parameters` 里）。
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **`Size` 是给 `IGetSplineParams3` 用的数组长度**（见 `## Parameters` 原文）。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.56 `GetSplines`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSplines()`
+2. **Remarks 逐字摘录**（★ 数组形状 + 语义警示，逐字）：
+   > `The returned array of doubles has the format: [ [ Color, LineType, NumSplinePoints, [x,y,z] ] ]`
+   > `This complete set of data repeats itself for each spline found in the sketch. For each spline, the array returned contains the color, the line type, the number of spline points in the spline, and the X,Y,Z value for each of those points. Therefore, the [x,y,z] parameter is an array of NumSplinePoints, which may vary in size from spline to spline.`
+   > `The [x,y,z] points for each spline are not the same as the points used to generate the spline. This method tessellates the spline based on the display quality and places points along the spline appropriately. LineType may take one of the values in [[swLineTypes_e]].`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：`swLineTypes_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ 返回的是**细分点**，**不是**生成样条用的点（原文 `not the same as the points used to generate the spline`）。
+**配方一句话**：`[Color, LineType, NumSplinePoints, x,y,z …]`；每条样条长度**可变**。
+
+---
+
+### 2.57 `GetSplinesInterpolate`（method，样条）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetSplinesInterpolate()`
+2. **Remarks 逐字摘录**（★ **数组形状 + 具体数字示例**，逐字）：
+   > `The return value is an array of doubles formatted as: [ [NumSplinePoints, [x, y, z] ], ]`
+   > `This complete set of data repeats itself for each spline found in the sketch. For each spline, the array returned contains the number of spline points in the spline, and the X,Y,Z value for each of those points.`
+   > `The [x,y,z] parameter is an array of NumSplinePoints. For example, if your sketch has two splines and each spline has three points, then the data would be in the following format:`
+   > `**[** 3, x1_1, y1_1, z1_1, x2_1, y2_1, z2_1, x3_1, y3_1, z3_1, 3, x1_2, y1_2, z1_2, x2_2, y2_2, z2_2, x3_2, y3_2, z3_2 **]**`
+   > `The [x,y,z] points for each spline are the same points used to generate the spline.`
+3. **官方例子调用序**（CHM `Get_Spline_Points_Example_CPlusPlus_COM.htm`，逐字）：
+   ```cpp
+   VARIANT vSplines;
+   ::VariantInit(&vSplines);
+   pSwSketch->GetSplinesInterpolate(&vSplines);
+   //First value in vSplines array is the number of
+   //sketch (or spline) points, followed by the x, y, z
+   //coordinates of each point in the spline, so calculate
+   //the size of the array
+   long nbrSketchPoints;
+   pSwSketch->GetSketchPointsCount2(&nbrSketchPoints);
+   long splineArraySize = 1 + (nbrSketchPoints * 3);
+   for (int idx = 0; idx < splineArraySize; idx++){
+       double sketchPointValue;
+       pSwSafeArray->GetDouble(vSplines, idx, &sketchPointValue);
+       …
+   }
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ 它返回的是**生成样条时用的那些点**（与 `GetSplines` 相反）。
+**配方一句话**：扁平数组 `N, x,y,z, x,y,z, …`；数组大小 `1 + n * 3`。
+
+---
+
+### 2.58 `GetUserPoints`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetUserPoints()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetUserPoints2]] and [[ISketch::IGetUserPoints2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.59 `GetUserPoints2`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.object GetUserPoints2()`
+2. **Remarks 逐字摘录**（★ 数组形状，逐字）：
+   > `The return value is an array of doubles with this format: [** Color, Line Font, Line Width, Layer ID, Layer Override, ptLoc[3] **]`
+   > `This set of data repeats for each user point in the sketch. The size of the array is (NumPts * 8). To determine the number of points in the sketch, use [[ISketch::GetUserPointsCount]].`
+   > `See [[ISketch::GetSketchPoints2]], [[ISketch::IGetSketchPoints2]], or [[ISketch::IEnumSketchPoints]] for access to individual [[ISketchPoint]] objects.`
+3. **官方例子调用序**：**查不到**（`Get_Sketch_Points_and_Their_Persistent_IDs_Example_VB.md` 存在但未逐行抄）。
+4. **枚举**：`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetUserPointsCount`。
+**配方一句话**：每个用户点 **8 个 double**（`Color, Line Font, Line Width, Layer ID, Layer Override, x, y, z`）。
+
+---
+
+### 2.60 `GetUserPointsCount`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.int GetUserPointsCount()`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call this method before calling [[ISketch::IGetUserPoints2]] to get the size of the array for that method.`
+3. **官方例子调用序**（CHM `Get_Polylines_Information_Example_VB.htm`，逐字一行）：
+   ```vbnet
+   Write #1, " Number of points = " & CStr(swSketch.GetUserPointsCount())
+   ```
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先它、后 `IGetUserPoints2`。
+**配方一句话**：**查不到**（例子只读计数）。
+
+---
+
+### 2.61 `IEnumSketchHatches`（method）
+
+1. **精确签名**（**0 个形参**）
+   `EnumSketchHatches IEnumSketchHatches()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.62 `IEnumSketchPoints`（method）
+
+1. **精确签名**（**0 个形参**）
+   `EnumSketchPoints IEnumSketchPoints()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：CHM `Get_Spline_Points_Example_CPlusPlus_COM.htm` 的**前置注释**逐字写：`Nearly identical code could be used to also select all the sketch points in the active sketch by replacing IEnumSketchSegments with IEnumSketchPoints.`（★ 那句实际出现在 `Select_All_Sketch_Segments_Example_CPlusPlus_COM.htm`）⇒ **本成员的调用序查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.63 `IEnumSketchSegments`（method）
+
+1. **精确签名**（**0 个形参**）
+   `EnumSketchSegments IEnumSketchSegments()`
+2. **Remarks 逐字摘录**：
+   > `Sketch segments include line, arc, spline, parabola, and ellipse entities.`
+3. **官方例子调用序**（CHM `Select_All_Sketch_Segments_Example_CPlusPlus_COM.htm`，逐字）：
+   ```cpp
+   LPSKETCH pSketch = NULL;
+   hres = pModelDoc->IGetActiveSketch2(&pSketch);
+   // No Active Sketch
+   if (pSketch == NULL) return;
+   LPENUMSKETCHSEGMENTS pSketchSegEnum = NULL;
+   hres = pSketch->IEnumSketchSegments(&pSketchSegEnum);
+   // No Sketch segments exist
+   if (pSketchSegEnum == NULL) return;
+   int segNum = 0;
+   LPSKETCHSEGMENT pSketchSegment = NULL;
+   long skReturned = -1
+   hres = pSketchSegEnum->Next(1, &pSketchSegment, &skReturned);
+   while (S_OK == hres)
+   {
+     VARIANT_BOOL ok = FALSE;
+     // Select the SketchSegment object
+     hres = pSketchSegment->Select(TRUE, &ok);
+     if (!ok) AfxMessageBox (_T("Error Selecting Sketch Segment! Continuing..."));
+     pSketchSegment->Release();
+     pSketchSegment = NULL;
+     hres = pSketchSegEnum->Next(1, &pSketchSegment, &skReturned);
+   }
+   if (pSketchSegEnum != NULL) pSketchSegEnum->Release();
+   ```
+4. **枚举**：签名里无（返回的 `EnumSketchSegments` 遍历出的段类型是 `swSketchSegments_e`，见第 0 部分）。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ 例子先 `IGetActiveSketch2`，`pSketch == NULL` 即无活动草图；枚举器 `Next` 返回 `S_OK` 才继续。
+**配方一句话**：`IEnumSketchSegments` → 循环 `Next(1, &seg, &ret)` → `seg->Select(TRUE, &ok)`。
+
+---
+
+### 2.64 `IEnumSketchTextSegments`（method，★ 文字域）
+
+1. **精确签名**（**0 个形参**）
+   `EnumSketchSegments IEnumSketchTextSegments()`
+   ★ ★ 返回类型是 **`EnumSketchSegments`**（不是 `EnumSketchTextSegments`）—— 逐字照抄签名，未作修正。
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.65 `IGetArcs`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetArcs()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetArcs2]] and [[ISketch::IGetArcs2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.66 `IGetArcs2`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.double IGetArcs2( System.int ArraySize )`
+2. **Remarks 逐字摘录**：与 2.7 `GetArcs2` **逐字同文**（`[** Color, Type, Line Font, Line Width, Layer ID, Layer Override, [Start], [End], [Center] Rotation Dir **]` / `The size of the array is (NumArcs * 16).` / `To determine the number of arcs, use [[ISketch::GetArcCount]].`）
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：`swLineTypes_e`、`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetArcCount` 定 `ArraySize`。
+**配方一句话**：每弧 **16 个 double**。
+
+---
+
+### 2.67 `IGetContourEdges`（method）
+
+1. **精确签名**（**2 个形参**）
+   `Edge IGetContourEdges( ref System.double Xform, System.int EdgeCount )`
+2. **Remarks 逐字摘录**（★ 单轮廓限制 + ★ **官方把方法名写错成 `GetContourEdgesCount`**，逐字照抄）：
+   > `This method supports sketches with one contour only. For sketches with multiple contours, use [[ISketch::GetSketchContours]] or [[ISketch::IGetSketchContours]] and then [[ISketchContour::GetEdges]] or [[ISketchContour::IGetEdges]].`
+   > `To get the number of edges, call [[ISketch::GetContourEdgesCount]] before calling this method.`
+   > `Specifying the unit transform returns the edges in the space of the sketch.`
+   > `If your application is expecting the returned edges to be in the context of the model's coordinate system, then xform should be the inverse of the transform returned by [[ISketch::ModelToSketchTransform]].`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ 只支持单轮廓；`Xform` 是 **`ref System.double`**（单位变换矩阵）。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.68 `IGetEllipses`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetEllipses()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetEllipses3]] and [[ISketch::IGetEllipses3]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.69 `IGetEllipses2`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetEllipses2()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetEllipses3]] and [[ISketch::IGetEllipses3]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.70 `IGetEllipses3`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.double IGetEllipses3( System.int ArraySize )`
+2. **Remarks 逐字摘录**：与 2.16 `GetEllipses3` **逐字同文**（`[** Color, LineType, LineFont, LineWidth, LayerID, LayerOverride, StartPt[3], EndPt[3], CenterPt[3], MajorPt[3], MinorPt[3],Direction … **]` / `The size of the array is (NumEllipses * 20).` / `To determine the number of ellipses, use [[ISketch::GetEllipseCount]].`）
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：`swLineTypes_e`、`swLineWeights_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetEllipseCount`。
+**配方一句话**：每椭圆 **20 个 double**。
+
+---
+
+### 2.71 `IGetLines`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetLines()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetLines2]] and [[ISketch::IGetLines2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.72 `IGetLines2`（method）
+
+1. **精确签名**（**2 个形参**）
+   `System.double IGetLines2( System.short CrossHatchOption, System.int ArraySize )`
+2. **Remarks 逐字摘录**：与 2.20 `GetLines2` **逐字同文**（`The number of doubles returned is (lineCount * 12). To determine the number of lines in the sketch, use [[ISketch::GetLineCount2]].`）
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：`swLineTypes_e`、`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetLineCount2(CrossHatchOption)`。
+**配方一句话**：每线 **12 个 double**。
+
+---
+
+### 2.73 `IGetParabolas`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetParabolas()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetParabolas2]] and [[ISketch::IGetParabolas2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.74 `IGetParabolas2`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.double IGetParabolas2( System.int ArraySize )`
+2. **Remarks 逐字摘录**：与 2.23 `GetParabolas2` **逐字同文**（`[** Color, LineType, LineStyleIndex, LineWidth, LayerID, LayerOverride, StartPt[3], EndPt[3], FocusPt[3], ApexPt[3] **]` / `The size of the array is (NumParabolas * 18).`）
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：`swLineTypes_e`、`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetParabolaCount`。
+**配方一句话**：每抛物线 **18 个 double**。
+
+---
+
+### 2.75 `IGetPolylines`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetPolylines()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.76 `IGetSketchBlockInstances`（method，块）
+
+1. **精确签名**（**1 个形参**）
+   `SketchBlockInstance IGetSketchBlockInstances( System.int Count )`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call [[ISketch::GetSketchBlockInstanceCount]] before calling this method to get the number of block instances in this sketch.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetSketchBlockInstanceCount`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.77 `IGetSketchContours`（method）
+
+1. **精确签名**（**1 个形参**）
+   `SketchContour IGetSketchContours( System.int Count )`
+2. **Remarks 逐字摘录**（★ 前置 + 抑制状态）：
+   > `Call [[ISketch::GetSketchContourCount]] before calling this method to get Count.`
+   > `This method works even if the sketch is suppressed.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetSketchContourCount`；草图被抑制时也可用。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.78 `IGetSketchPaths`（method）
+
+1. **精确签名**（**1 个形参**）
+   `SketchPath IGetSketchPaths( System.int Count )`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call [[ISketch::GetSketchPathCount]] before calling this method to get the value of Count.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetSketchPathCount`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.79 `IGetSketchPictures`（method）
+
+1. **精确签名**（**1 个形参**）
+   `SketchPicture IGetSketchPictures( System.int Count )`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call [[ISketch::GetSketchPictureCount]] before calling this method to get the value of Count.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetSketchPictureCount`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.80 `IGetSketchPoints2`（method）
+
+1. **精确签名**（**1 个形参**）
+   `SketchPoint IGetSketchPoints2( System.int Count )`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Call [[ISketch::GetSketchPointsCount2]] before calling this method to get the number of sketch points in this sketch.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetSketchPointsCount2`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.81 `IGetSketchRegions`（method）
+
+1. **精确签名**（**1 个形参**）
+   `SketchRegion IGetSketchRegions( System.int Count )`
+2. **Remarks 逐字摘录**（★ 前置）：
+   > `Before calling this method, call [[ISketch::GetSketchRegionCount]] to get Count.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetSketchRegionCount`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.82 `IGetSketchSlots`（method）
+
+1. **精确签名**（**1 个形参**）
+   `SketchSlot IGetSketchSlots( System.int Count )`
+2. **Remarks 逐字摘录**（★ 前置；★ 原文把 `this` 拼成 `htis`）：
+   > `Before calling htis method, call [[ISketch::GetSketchSlotCount]] to get Count.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetSketchSlotCount`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.83 `IGetSplineParams`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetSplineParams()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSplineParams2]] and [[ISketch::IGetSplineParams2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.84 `IGetSplineParams2`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetSplineParams2()`
+2. **Remarks 逐字摘录**：与 2.49 `GetSplineParams2` **同一段 packed-double 布局**；★ **唯二差别（逐字）**：
+   > ★ 该页**没有** `**NOTE:** For information about unpacking double arrays into integer pairs, see:` 那一段（`GetSplineParams2` 有，`IGetSplineParams2` 没有）；
+   > ★ 末句相同：`Therefore, the size of the data for each spline is given by: 2 + numKnots + numControlPointDoubles * Dim + 3`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：★ 逐字 `Obsolete. Superseded by [[ISketch::IGetSplineParameters3]].`（★ 注意官方把后继写成 **`IGetSplineParameters3`**，而本接口里实际存在的成员是 **`IGetSplineParams3`** —— 名字不一致，逐字照抄，不代为"修正"）。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.85 `IGetSplineParams3`（method，★ Obsolete）
+
+1. **精确签名**（**1 个形参**）
+   `System.double IGetSplineParams3( System.bool ForceNonPeriodic )`
+2. **Remarks 逐字摘录**：与 2.84 **逐字同文**（同一段布局公式，★ 同样**没有** `unpacking double arrays` 那一段）。
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetSplineParams4]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.86 `IGetSplines`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetSplines()`
+2. **Remarks 逐字摘录**：与 2.56 `GetSplines` **逐字同文**（`[ [ Color, LineType, NumSplinePoints, [x,y,z] ] ]` / `This method tessellates the spline based on the display quality …` / `LineType may take one of the values in [[swLineTypes_e]].`）
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：`swLineTypes_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ 返回的是**细分点**，不是生成点。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.87 `IGetSplinesInterpolate`（method，样条）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetSplinesInterpolate()`
+2. **Remarks 逐字摘录**：
+   > `To determine the size of the array returned, call [[ISketch:GetSplineInterpolateCount]].`（★ 官方链接写的是 **`ISketch:GetSplineInterpolateCount`**，冒号，不是双冒号 —— 逐字照抄）
+   > 其余与 2.57 `GetSplinesInterpolate` **逐字同文**：`[ [NumSplinePoints, [x, y, z] ], ]` + 两条样条三个点的具体数字示例 + `The [x,y,z] points for each spline are the same points used to generate the spline.`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段；CHM `Get_Spline_Points_Example_CPlusPlus_COM.htm` 调的是 `GetSplinesInterpolate`，不是本成员）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetSplineInterpolateCount`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.88 `IGetUserPoints`（method，★ Obsolete）
+
+1. **精确签名**（**0 个形参**）
+   `System.double IGetUserPoints()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::GetUserPoints2]] and [[ISketch::IGetUserPoints2]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.89 `IGetUserPoints2`（method)
+
+1. **精确签名**（**1 个形参**）
+   `System.double IGetUserPoints2( System.int ArraySize )`
+2. **Remarks 逐字摘录**：与 2.59 `GetUserPoints2` **逐字同文**（`[** Color, Line Font, Line Width, Layer ID, Layer Override, ptLoc[3] **]` / `The size of the array is (NumPts * 8).`）
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：`swLineStyles_e`、`swLineWeights_e`。
+5. **废弃链**：**查不到**。
+**前置一句话**：先 `GetUserPointsCount`。
+**配方一句话**：每点 **8 个 double**。
+
+---
+
+### 2.90 `IModelToSketchXform`（property，★ Obsolete）
+
+1. **精确签名**（0 个形参）
+   `System.double IModelToSketchXform {get;}`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::ModelToSketchTransform]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.91 `InsertRouteLine`（method）
+
+1. **精确签名**（**4 个形参**）
+   `System.bool InsertRouteLine( System.object ItemsToConnect, System.object Reverse, System.object AlternatePath, System.object AlongXYZ )`
+   参数释义（逐字）：`ItemsToConnect: Array of faces, edges, and vertices to which to connect the route line`；`Reverse: Array of Booleans indicating whether to reverse the route line at the corresponding item to connect …`；`AlternatePath: … true to display another possible path for the route line, false to not`；`AlongXYZ: Array of Booleans indicating whether to create a path parallel to the X, Y, and Z directions from the corresponding item to connect; true to use the X, Y, and Z directions, false to use the shortest route`
+2. **Remarks 逐字摘录**：
+   > `You insert a route line in an [[explode line sketch]].`
+3. **官方例子调用序**（CHM `Insert_Exploded_Line_Sketch_and_Route_Line_Example_VB.htm`，逐字，含"先选什么"）：
+   ```vbnet
+   swSketchMgr.InsertExplodeLineSketch
+   boolstatus = swModelDocExt.SelectByID2("", "FACE", -5.55234504082591E-03, 2.71707519863185E-02, 3.37956573349629E-03, False, 0, Nothing, 0)
+   Set swFace = swSelMgr.GetSelectedObject6(1, -1)
+   Set itemsToConnect(0) = swFace
+   boolstatus = swModelDocExt.SelectByID2("", "FACE", 5.81777224675761E-03, 2.11322449790146E-02, 0.127676153954326, True, 0, Nothing, 0)
+   Set swFace = swSelMgr.GetSelectedObject6(1, -1)
+   Set itemsToConnect(1) = swFace
+   itemsReverse(0) = False
+   itemsReverse(1) = False
+   itemsPath(0) = False
+   itemsPath(1) = False
+   alongXYZ(0) = False
+   alongXYZ(1) = False
+   Set swSketch = swModel.GetActiveSketch2
+   boolstatus = swSketch.InsertRouteLine((itemsToConnect), itemsReverse, itemsPath, alongXYZ)
+   Debug.Print "Route line inserted in explode line sketch? " & boolstatus
+   swSketchMgr.InsertExplodeLineSketch
+   ```
+   ★ 四个形参**长度相同**（例子两个元素 ⇒ `Dim itemsToConnect(1) As Variant` 等四个数组都是 `0..1`）。
+4. **枚举**：签名里无（是 `System.object` 装布尔数组）。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **必须在爆炸线草图里**（原文 `You insert a route line in an explode line sketch.`）⇒ 先 `InsertExplodeLineSketch` + `GetActiveSketch2`。
+**配方一句话**：先按顺序选面放进 `itemsToConnect(0..n-1)`，另外三个布尔数组逐项填 `False`/`True`。
+
+---
+
+### 2.92 `Is3D`（method，3D 草图）
+
+1. **精确签名**（**0 个形参**）
+   `System.bool Is3D()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.93 `IsBoundaryBoxSketch`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.bool IsBoundaryBoxSketch()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.94 `IsDerived`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.bool IsDerived()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.95 `IsShared`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.bool IsShared()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.96 `IsSketchEditable`（method）
+
+1. **精确签名**（**0 个形参**）
+   `System.bool IsSketchEditable()`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.97 `MergePoints`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.bool MergePoints( System.double Distance )`
+2. **Remarks 逐字摘录**（★ 前置，逐字）：
+   > `This method requires that only one open contour exists in the sketch. To specify a distance below which points are automatically merged while creating the segments, use [[ISketchRelationManager::AddRelation]] or [[ISketchRelationManager::IAddRelation]] and swConstraintType_COINCIDENT.`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：前置点名 `swConstraintType_COINCIDENT`（★ **该成员页未给数值**；`swConstraintType_e` 逐条数值本轮未抄 ⇒ **查不到**）。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **草图里必须只有一个开放轮廓**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.98 `ModelToSketchTransform`（property）
+
+1. **精确签名**（0 个形参）
+   `MathTransform ModelToSketchTransform {get; set;}`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段；★ 但 `GetContourEdges` / `IGetContourEdges` / `CreateSplineByEqnParams` 的 Remarks 都反向引用它）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**（该页无 `Obsolete.` 行；它是 `ModelToSketchXform` / `IModelToSketchXform` 点名的后继）。
+**前置一句话**：**查不到**（页内为空）。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.99 `ModelToSketchXform`（property，★ Obsolete）
+
+1. **精确签名**（0 个形参）
+   `System.object ModelToSketchXform {get; set;}`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：逐字 `Obsolete. Superseded by [[ISketch::ModelToSketchTransform]].`
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.100 `RelationManager`（property）
+
+1. **精确签名**（0 个形参）
+   `SketchRelationManager RelationManager {get;}`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.101 `SetAutomaticSolve`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.bool SetAutomaticSolve( System.bool SolveFlag )`
+2. **Remarks 逐字摘录**（★ 前置/收尾，逐字）：
+   > `If an application is making many changes in a sketch, then the **Automatic Solve** option may be turned off temporarily. After changes are completed, this option should be restored to its previous value, which can be obtained by calling [[ISketch::GetAutomaticSolve]] before calling this method.`
+3. **官方例子调用序**：**查不到**（该页无 `## Examples` 段）。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ 大批量改草图时可临时关掉；**改完必须恢复**，恢复值由 `GetAutomaticSolve` 先读出。
+**配方一句话**：**查不到**（无例子）。
+
+---
+
+### 2.102 `SetDetachSegmentOnDrag`（method）
+
+1. **精确签名**（**1 个形参**）
+   `System.bool SetDetachSegmentOnDrag( System.bool Detach )`
+2. **Remarks 逐字摘录**（★ 有效期限制，逐字）：
+   > `Although this setting can be returned or set at any time, SOLIDWORKS sets it to false upon exiting or entering a sketch. Thus, this method is only useful if called while a sketch is active.`
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：与 `GetDetachSegmentOnDrag` 同文 —— `only useful if called while a sketch is active`。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.103 `SetSketchEditable`（method）
+
+1. **精确签名**（**1 个形参**）
+   `void SetSketchEditable( System.bool Editable )`
+2. **Remarks 逐字摘录**：**空 —— 官方没写。**
+3. **官方例子调用序**：**查不到**。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：**查不到**。
+**配方一句话**：**查不到**。
+
+---
+
+### 2.104 `SetWorkingPlaneOrientation`（method，3D 草图）
+
+1. **精确签名**（**12 个形参**）
+   `System.bool SetWorkingPlaneOrientation( System.double OriginX, System.double OriginY, System.double OriginZ, System.double XAxisX, System.double XAxisY, System.double XAxisZ, System.double YAxisX, System.double YAxisY, System.double YAxisZ, System.double NormalX, System.double NormalY, System.double NormalZ )`
+2. **Remarks 逐字摘录**：
+   > `This method sets the planar location for new 2D and 3D geometry in a 3D sketch.`
+3. **官方例子调用序**（CHM `Create_3D_Sketch_Plane_Example_VB.htm`，逐字）：
+   ```vbnet
+   Set swSketch = swSketchManager.ActiveSketch
+   status = swSketch.SetWorkingPlaneOrientation(0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+   Set swSketchSegment = swSketchManager.CreateCenterLine(-0.049926, 0.045073, 0#, -0.049926, -0.022634, -0.065874)
+   Set swSketch = swSketchManager.ActiveSketch
+   status = swSketch.SetWorkingPlaneOrientation(0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0)
+   ```
+   ★ 形参分组（由实参数个数与名字推读，非我推断语义）：前 3 = 原点，接着 3 = X 轴向量，再 3 = Y 轴向量，最后 3 = 法向。
+4. **枚举**：签名里无。
+5. **废弃链**：**查不到**。
+**前置一句话**：★ **必须先取到 `ISketch`**（`swSketchManager.ActiveSketch`）；用于 **3D 草图**里新几何的放置平面。
+**配方一句话**：`SetWorkingPlaneOrientation(0,0,0, 0,1,0, 0,0,1, 1,0,0)`（原点 + X 轴 + Y 轴 + 法向）。
+
+---
+
+## 第 3 部分 · 明确的「查不到」清单（逐条列出，不留空白）
+
+| # | 事项 | 查到的依据 |
+| --- | --- | --- |
+| 1 | `ISketchManager` 里的**草图文字创建成员** | 对 `C:\swapi\types\ISketchManager\` 全部 93 个文件检索 `Text` → **0 命中**。域内只有读取成员 `ISketch.GetSketchTextSegments` / `ISketch.IEnumSketchTextSegments`。 |
+| 2 | `swEndCapThicknessDirection_e` 的**出处** | 该枚举在两接口的任何签名 / `## Parameters` / `## Remarks` 里都**查不到**。 |
+| 3 | `SketchTrim` 的**官方例子调用序** | `C:\swapi\examples\Trim_Sketch_Entities_Example_{VB,VBNET,CSharp}.md` 的 `## Code` 只剩 `Sub main()` / `End Sub`；CHM 解包目录 `…\SWhelp\sldworksapi\` 下**三个语种文件全部 ABSENT**。 |
+| 4 | `Convert_Faces_Edges_to_Sketch_Entities`（`SketchUseEdge2` 的例子）调用序 | CHM `.htm`（4185 B）正文只有前置注释，无函数体。 |
+| 5 | `Get_Parabolas_in_Sketch`（`GetParabolas2` 的例子）调用序 | CHM `.htm`（10700 B）正文只到 `Option Explicit`。 |
+| 6 | `Create_Sketch_Point_Example_VB` 调用序 | CHM 与 `.md` 正文都只有前置注释。 |
+| 7 | `Extend_Sketch_Entity_Example_VB` 的**造线**片段 | CHM `.htm` 正文只到 `Option Explicit`（只抄到了 `SketchExtend(0#,0#,0#)` 一行）。 |
+| 8 | `swConstraintType_e` 的逐条数值 | `CreateSketchPlane` 的 `## Parameters` 与 `MergePoints` 的 Remarks 都点了这个枚举名，但**两页都没给数值**；官方例子只给了实参 `9, 9, 0`。 |
+| 9 | `swSelNOTHING` 的数值 | `GetReferenceEntity` 的 Remarks 只写了名字，没写数值。 |
+| 10 | `swSketchCheckFeatureStatus_e` 的 `C:\swapi\enums\` 文件 | 该文件**不在** `C:\swapi\enums\`；数值改抄自 CHM 例子正文里的 `Public Enum`。 |
+| 11 | `IGetSplineParams2` 废弃链上的 `IGetSplineParameters3` | 官方 `Obsolete` 行这么写，但**本接口里查不到**名为 `IGetSplineParameters3` 的成员（实际成员是 `IGetSplineParams3`）。逐字照抄，不代为修正。 |
+| 12 | 21 个 ISketchManager 成员 + 29 个 ISketch 成员的 `## Remarks` | 那些成员页的 `## Remarks` 段**本身是空的**（不是我没抄）；本文件在每节都写明了「空 —— 官方没写」。 |
+
+---
+
+## 计数与自查
+
+| 项 | 数 |
+| --- | --- |
+| `ISketchManager` 成员（小节 1.1 – 1.92） | **92** |
+| `ISketch` 成员（小节 2.1 – 2.104） | **104** |
+| 合计抄录成员 | **196** |
+| 其中标 **Obsolete** 的成员（已抄点名后继） | ISketchManager **12** · ISketch **28** · 合计 **40** |
+| 附抄的 `ISplineParamData` 成员（样条数组形状配套） | **10** |
+| 抄录的枚举 | **23**（另 1 个「签名里没有」的 `swEndCapThicknessDirection_e` 单独记在 0.1） |
+
+**五项齐备自查**：每节都给了 ① 精确签名（含形参个数）② `## Remarks` 逐字摘录（或逐字写明「空 —— 官方没写」）③ 官方例子调用序（或逐字写明「查不到」）④ 签名里出现的枚举 ⑤ 废弃链（或逐字写明「查不到」），并逐节以「**前置一句话**」「**配方一句话**」两行收尾。

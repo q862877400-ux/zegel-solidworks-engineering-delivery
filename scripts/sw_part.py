@@ -291,7 +291,7 @@ def _get_selection_count(model):
     return count_member(-1) if callable(count_member) else int(count_member)
 
 
-def _select_com_object(obj, append=False, mark=0):
+def _select_com_object(obj, append=False, mark=0, model=None):
     """使用对象自身 Select2/Select4 选择，优先避开 SelectByID2 名称解析。
 
     ★★★★ 2026-10-03（轮 535）**真机定下的一条边界（事实 416）**：
@@ -314,18 +314,49 @@ def _select_com_object(obj, append=False, mark=0):
     """
     if obj is None:
         return False
-    for method_name in ("Select2", "Select4"):
-        method = getattr(obj, method_name, None)
-        if not method:
-            continue
+    #: ★★★★ 2026-10-03（接手轮）**修掉一处静默的 mark 丢失**
+    #:   （★ bunny 读官方文档指出、我复核确认；★★ 官方页 `IEntity/Select2.md` 逐字
+    #:    「**Obsolete. Superseded by [[IEntity::Select4]].**」，而 `Select4` 签名逐字是
+    #:    `System.bool Select4( System.bool Append, SelectData Data )` —— ★★ **第 2 参是 `ISelectData`**）。
+    #:   ★ 而本函数**原先**给 `Select4` 传 `_empty_callout()`（**空 VARIANT**）
+    #:     ⇒ ★★ **`Select4` 分支的 `Mark` 永远是 0**。
+    #:   ★ 之所以按 mark 的选择**此前还能工作**：★ 循环把 **`Select2` 排在前面**，
+    #:     ★ 而 `Select2(Append, **Mark**)` **直接收 mark** ⇒ 它先成功就 `return` 了
+    #:     ⇒ bug 被盖住；★ 而 `Select2` **是废弃成员** ⇒ ★ 一旦它被移除，**mark 静默丢失**。
+    #:   ★ 修法（★ 铁律 4「**取后继，不取废弃成员**」）：★ 传了 `model` ⇒ **先走 `Select4` + `SelectData`**
+    #:     （`ISelectionMgr.CreateSelectData()` 建对象、设 **`Mark = mark`**）——
+    #:     ★ **三源互证**：官方签名 + 官方 C# 例子（`data.Mark = 1; entity.Select4(true, data);`）
+    #:     + 反射（`ISelectData` 有 `Mark`）。
+    #:   ⚠ 两条 `Select*` 的布尔返回值**都不可信**（★ 事实 8）⇒ ★ **调用方仍须回读计数**。
+    if model is not None:
+        #: ① ★ 首选**后继成员** `Select4` + 真 `ISelectData`（★ 这样 `mark` 才真的写得进去）
         try:
-            if method_name == "Select2":
-                if bool(method(append, mark)):
+            from sw_connect import get_com_member as _gcm
+            from sw_connect import set_com_member as _scm
+            _sm = _gcm(model, "SelectionManager")
+            _data = _gcm(_sm, "CreateSelectData") if _sm is not None else None
+            if _data is not None:
+                _scm(_data, "Mark", int(mark))
+                if bool(_gcm(obj, "Select4", bool(append), _data)):
                     return True
-            elif bool(method(append, _empty_callout())):
+        except Exception:                                                 # noqa: BLE001
+            pass
+    #: ② ★ 退回废弃但**直接收 mark** 的 `Select2`（★ 它的 `Mark` 是第 2 个形参）
+    _m2 = getattr(obj, "Select2", None)
+    if _m2:
+        try:
+            if bool(_m2(append, int(mark))):
                 return True
-        except Exception:
-            continue
+        except Exception:                                                 # noqa: BLE001
+            pass
+    #: ③ ★ 最后退回 `Select4` + 空 VARIANT（★ 保原行为；⚠ **它丢 mark**，已知）
+    _m4 = getattr(obj, "Select4", None)
+    if _m4:
+        try:
+            if bool(_m4(append, _empty_callout())):
+                return True
+        except Exception:                                                 # noqa: BLE001
+            pass
     return False
 
 

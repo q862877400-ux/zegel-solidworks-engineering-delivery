@@ -291,7 +291,7 @@ def _pre_parting(model, params):
 
 
 def _pre_mold_parting_line(params):
-    """`pre_call` for `solidworks_mold_parting_line`（`sw_mold.insert_parting_line`）。
+    r"""`pre_call` for `solidworks_mold_parting_line`（`sw_mold.insert_parting_line`）。
 
     官方依据：`C:\swapi\types\IFeatureManager\InsertMoldPartingLine.md` §Remarks
     「Before calling this method, you must select the direction of pull and the edges for
@@ -308,7 +308,7 @@ def _pre_mold_parting_line(params):
 
 
 def _pre_mold_parting_surface(params):
-    """`pre_call` for `solidworks_mold_parting_surface`（`sw_mold.insert_parting_surface`）。
+    r"""`pre_call` for `solidworks_mold_parting_surface`（`sw_mold.insert_parting_surface`）。
 
     官方依据：`C:\swapi\types\IFeatureManager\InsertMoldPartingSurface.md` §Remarks
     「**f a parting line feature does not yet exist in the model**, you must first select
@@ -339,7 +339,7 @@ def _pre_mold_parting_surface(params):
 
 # ── ③ 包覆（草图 mark 4 + 面 mark 1）──────────────────────────────────────────
 def _pre_part_wrap(params):
-    """`pre_call` for `solidworks_part_wrap`（`sw_wrap.create_wrap_report`）。
+    r"""`pre_call` for `solidworks_part_wrap`（`sw_wrap.create_wrap_report`）。
 
     官方依据：
       · `C:\swapi\types\IFeatureManager\InsertWrapFeature2.md` §Remarks mark 表：
@@ -449,12 +449,12 @@ def _pre_part_wrap(params):
 #                        description="分型线**边**（官方 mark = 4）。'index:<n>'；" + _MULTI_HINT),
 #                  Param("pull_direction_name", str, default="",
 #                        description="★ 可选：改用**有名字**的实体当拔模方向（基准面/轴）。"
-+                            "给了就走官方字面那条 SelectByID2 路。★ 留空则用上面的面路线。"
-+                            "⚠ 边与面**按名字选不中**（本仓事实 32）—— 只对基准面/轴/草图这类"
-+                            "**有名字**的实体有效。"),
+#                            "给了就走官方字面那条 SelectByID2 路。★ 留空则用上面的面路线。"
+#                            "⚠ 边与面**按名字选不中**（本仓事实 32）—— 只对基准面/轴/草图这类"
+#                            "**有名字**的实体有效。"),
 #                  Param("pull_direction_type", str, default="PLANE",
 #                        description="`pull_direction_name` 的官方类型串（'PLANE' / 'AXIS' / …）。"
-+                            "只在给了名字时才有意义。"),
+#                            "只在给了名字时才有意义。"),
 #                  Param("body_index", int, default=0,
 #                        description="第几个实体体（0 基）。⚠ 序号顺序官方未承诺稳定。") ]
 #     ★ 为什么**必须**加参数：MCP 客户端**没有机会**在调工具前操作 SolidWorks 选区，
@@ -479,9 +479,9 @@ def _pre_part_wrap(params):
 #         params=[ …第 1 条那 5 个 Param…,
 #                  Param("has_parting_line", bool, default=False,
 #                        description="模型里**是否已有分型线特征**。官方 §Remarks 的前置是"
-+                            "**有条件的**（「f a parting line feature does not yet exist…」）；"
-+                            "★ 官方与 CHM 都**没给**「如何判断分型线已存在」⇒ 本工具**不猜**，"
-+                            "改由调用方声明。False ⇒ 按官方做两步选择；True ⇒ 跳过选择。") ]
+#                            "**有条件的**（「f a parting line feature does not yet exist…」）；"
+#                            "★ 官方与 CHM 都**没给**「如何判断分型线已存在」⇒ 本工具**不猜**，"
+#                            "改由调用方声明。False ⇒ 按官方做两步选择；True ⇒ 跳过选择。") ]
 #     ★ 置信度：**中** —— mark 本身**高**（与第 1 条同一段官方表述，逐字给了 1 与 4），
 #       但「**什么时候该跳过**」这一步需要调用方声明 `has_parting_line`，
 #       ★ 而**本仓没有**一个经过验证的「判断分型线特征是否存在」的实现
@@ -500,17 +500,17 @@ def _pre_part_wrap(params):
 #         pre_call=_pre_part_wrap,
 #         params=[ Param("sketch_name", str,
 #                        description="★ **必需**：包覆草图的特征名（官方 mark = **4**；官方逐字"
-+                            "「**3D sketches are invalid**」）。官方例子逐字走 "
-+                            "`SelectByID2(\"Sketch30\",\"SKETCH\",0,0,0,False,4,…)`。"
-+                            "★ 草图是**特征** ⇒ 有名字 ⇒ 事实 32 的「按名字选不通」不适用。"),
+#                            "「**3D sketches are invalid**」）。官方例子逐字走 "
+#                            "`SelectByID2(\"Sketch30\",\"SKETCH\",0,0,0,False,4,…)`。"
+#                            "★ 草图是**特征** ⇒ 有名字 ⇒ 事实 32 的「按名字选不通」不适用。"),
 #                  Param("face_selection", str,
 #                        description="★ **必需**：包覆所在**面**（官方 mark = **1**；官方例子用 "
-+                            "`SelectByRay(…, Mark=1)`）。面**没有名字** ⇒ 走 Select4+ISelectData。"
-+                            "'index:<n>'；" + _MULTI_HINT),
+#                            "`SelectByRay(…, Mark=1)`）。面**没有名字** ⇒ 走 Select4+ISelectData。"
+#                            "'index:<n>'；" + _MULTI_HINT),
 #                  Param("pull_direction_selection", str, default="",
 #                        description="★ 可选：拔模方向实体（官方 mark = **2**，只有 Emboss/Engrave "
-+                            "才需要）。★ 官方逐字「To wrap the sketch normal to the sketch plane,"
-+                            " **do not select** a pull direction entity」⇒ 默认**不选**。"),
+#                            "才需要）。★ 官方逐字「To wrap the sketch normal to the sketch plane,"
+#                            " **do not select** a pull direction entity」⇒ 默认**不选**。"),
 #                  Param("pull_direction_name", str, default="",
 #                        description="★ 可选：同上，但用**有名字**的实体（基准面/轴）走 SelectByID2。"),
 #                  Param("pull_direction_type", str, default="PLANE",
