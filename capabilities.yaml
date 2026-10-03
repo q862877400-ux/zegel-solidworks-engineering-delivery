@@ -1572,7 +1572,7 @@
       "source": "original",
       "source_evidence": "唯一实现模块 `scripts/sw_costing.py` **不在** `origin/main`（硬证据 `git cat-file -e origin/main:scripts/sw_costing.py` 不通过）⇒ 代码是我们新增的；且**无** `provenance` ⇒ 与 `source: original` 自洽（R13）。2026-10-01（轮 61）真机跑通完整闭环 ⇒ 升 verified",
       "evidence": [
-        "python tools/verify_costing_e2e.py（⇒ verdict: pass；证据 output/costing-evidence.json）"
+        "python tools/verify_costing_e2e.py（⇒ ★★ **verdict 是 `partial`、不是 `pass`** —— ★⚠ 2026-10-04（接手轮）更正：★ 此处原写「verdict: pass」，★ 而**证据文件** output/costing-evidence.json 逐字是 `\"verdict\": \"partial\"` · `\"passed\": 5` · `\"of\": 6` ⇒ ★★★ **5/6**；★ 唯一未过的那一步是 **`list_templates`**（★ 其余五步 `get_costing_manager` / `evidence` / `body_count` / `list_bodies` / `read_analysis` 全 `true`）✓ 处置 `JUDGE-A_B.md` 的 🔴 **A-moldcosting V-1**：「★ 条目写 `verdict: pass`，★ 文件是 `partial`（5/6）；★ 同仓另两条文字（`costing_readback` + ROADMAP）都写 partial ⇒ ★ **一个文件被写成两种结论**」✓ 依据 output/costing-evidence.json 逐字）"
       ],
       "mcp_tools": [
         "solidworks_costing_body_count",
