@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **85** 条能力。
+共 **86** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 73 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 74 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 11 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 55 | **本项目自研**（护城河域等） |
+| `original` | 56 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -136,6 +136,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `surface_edit_ops` | · `★ 2026-10-03（轮 474）**真机 5/5**（走 `tools/sw_guard.py`，全程 `sw_alive: true`、**零弹窗**）：`python tools/sw_guard.py --timeout 600 -- python tools/prove_b6a_surface_edit.py`。证据 output/b6a-surface-edit-evidence.json。★ 逐条：平面区域 树 6→7 `曲面-基准面1`；等距曲面 树 7→8 `曲面-等距1`；直纹曲面 树 7→8 `直纹曲面1`；删除面 树 7→8 `删除面1`；替换面 树 7→8 `替换面1`。★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`），★ 3/5 的官方返回是 `void`。`<br>· `★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **241 → 246**。`<br>· `★ 走 MCP 契约的真机调用（`tools/prove_tools_by_contract.py`）：1/5 —— ★ 而那**是预期的**：该探针**不建前置**，而本批 4/5 都要先选面/边（★ 不是能力不行）。`<br>· `★ 三源互证里**两处“台账给的名字是旧的”**：`InsertRuledSurface` ⇒ 真名在 `IFeatureManager`，且 `…FromEdge` 官方标 **Obsolete**（用 `…FromEdge2`）；`InsertReplaceFace` ⇒ `InsertFeatureReplaceFace`。` |
 | `surface_ref_ops` | · `★ 2026-10-03（轮 476）**真机建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b6b_surface_ref.py`。★ **放样曲面**：树 **7→8**，新增 **`曲面-放样1`**。证据 output/b6b-surface-ref-evidence.json。★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`）—— 本条官方回 `void`。`<br>· `★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **246 → 247**。`<br>· `★ 三源互证里**台账给的两个名字都不对**：`FeatureRevolveRefSurface` ⇒ swapi 里**根本没有**（真名 `IFeatureManager.InsertRevolvedRefSurface`）；`InsertProtrusionBlend2(Surface)` ⇒ 真名 **`IModelDoc2.InsertLoftRefSurface2`**。★ 同族 `FeatureExtruRefSurface{,2,3}` 命名不同 ⇒ **不能按前缀猜**。` |
 | `ref_geometry` | · `★ 2026-10-03（轮 479）**真机 3/5 建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b8_ref_geometry.py`。★ **质心**（`InsertCenterOfMass()`）· **边界框**（`InsertGlobalBoundingBox2`，**`Status=0 (Success)`**）· **坐标系**（`InsertCoordinateSystem`）。证据 output/b8-ref-geometry-evidence.json。`<br>· `★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **247 → 250**。`<br>· `★★ **`out` 参数的正确传法**（本轮踩到并修好）：`InsertGlobalBoundingBox2` 的第 5 个形参 `Status` 是 **out**，★ 裸传 `0` 真机回 `com_error: (-2147352571, '类型不匹配。', None, **5**)`（**位置 5 就是它**）；★ 必须用 **`sw_connect.out_i4()`**（其 docstring：「创建 `Int32&` 出参的 VARIANT 包装 —— **唯一被真机验证通过的形态**」）。★ 而判据也因此**更强**：`Status == Success(0)` 是**官方给的成败码**。`<br>· `★★ **台账 T701 给的成员是错的**：它写 `Create3DBoundingBox`，而官方原话是「for a **cut list item in a weldment part**」⇒ **焊件切割清单专用**，普通零件上不成是**应然的**；★ 工具栏那个的真名是 **`InsertGlobalBoundingBox2`**。`<br>· `★★ 2026-10-03（轮 480）**补齐到 5/5** —— 上一轮那两条（基准面 / 点）**缺的是同一件事**：★ **调用前按 `mark` 选一个参考实体**。★ 真机：基准面 `预选 ok=True {face_index:0, mark:0, sel_count:1}` ⇒ 树新增 **`基准面1`**；点同样 `mark=0` ⇒ 树新增 **`点1`**。★ 而 **mark 表就在官方 Remarks 里**：`0 = First reference entity · 1 = Second reference entity · 2 = Third reference entity`。★★ 另正上一轮的一句错话：我上轮写的「官方**未给**那张 mark 表」—— **那是错的**，表就在**同一条** Remarks 的紧下一段，我当时没读到。` |
+| `curve_and_split` | · `★ 2026-10-03（轮 481）**真机 2/4**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b7a_curve_split.py`。★ **通过参考点的曲线**：树新增 **`曲线1`**（`InsertCurveFileBegin/Point/End` 三步式）；★ **配合参考**：树新增 **`['配合参考', 'MCP_MateRef-<1>', '配合参考___EndTag___']`**。证据 output/b7a-curve-split-evidence.json。`<br>· `★★ **`类型不匹配` 位置 6 ⇒ 未用的 entity 槽要传「空 Dispatch」**：`InsertMateReference2` 的 `Secondary/TertiaryReferenceEntity` 类型是 `Entity`，★ 裸传 `None` 不行；★ 用本仓 `sw_connect.create_empty_dispatch_variant()`（★ 它就是**事实 12**那条）。`<br>· `★★ **`无效的参数数目` ⇒ 官方第三组少一个形参**：完整签名是 **12** 个（`… TertiaryReferenceType, TertiaryReferenceAlignment )``<br>· `—— **没有 `TertiaryReferenceAlignAxes`**）；★ 我按“三组同形”推成 13 个 ⇒ 报错。★ **别按同形推，要逐数完整签名**。` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

@@ -17,18 +17,18 @@
 | 9 | 未认领的族 | domain 是「全量索引/<程序集>」（未归业务域） | **507** | `同上，取其补集` |
 | 10 | 我们调用过的族 | 该族有成员被使用过（used > 0） | **537** | `family-coverage.json 里 used > 0 的行数` |
 | 11 | 零调用族 | 该族一个成员都没被调用过 | **344** | `同上，used == 0` |
-| 12 | 函数（顶格，含 _ 开头） | scripts/sw_*.py 里**顶格**的 def（含 _ 开头的内部函数） | **1030** | `python tools/gen_metrics.py（本行由 tools/ 现算）` |
-| 13 | ★ 公开函数（可挂工具的候选） | 顶格**且不以 _ 开头**的 def。⚠ 不含类方法与嵌套函数 —— 那些不是候选 | **827** | `同上前提下，名字不以 _ 开头` |
-| 14 | 函数（含类方法与嵌套） | scripts/sw_*.py 里所有 def（含缩进的）—— ★ 与上一行**不是同一个东西**，不可与「工具」相比 | **1184** | `正则允许前导空白，抓缩进的 def` |
-| 15 | 函数（含工具层与声明层） | scripts/ + mcp-server/ 里的 def | **1821** | `同上，扫两个目录` |
+| 12 | 函数（顶格，含 _ 开头） | scripts/sw_*.py 里**顶格**的 def（含 _ 开头的内部函数） | **1034** | `python tools/gen_metrics.py（本行由 tools/ 现算）` |
+| 13 | ★ 公开函数（可挂工具的候选） | 顶格**且不以 _ 开头**的 def。⚠ 不含类方法与嵌套函数 —— 那些不是候选 | **831** | `同上前提下，名字不以 _ 开头` |
+| 14 | 函数（含类方法与嵌套） | scripts/sw_*.py 里所有 def（含缩进的）—— ★ 与上一行**不是同一个东西**，不可与「工具」相比 | **1190** | `正则允许前导空白，抓缩进的 def` |
+| 15 | 函数（含工具层与声明层） | scripts/ + mcp-server/ 里的 def | **1827** | `同上，扫两个目录` |
 | 16 | 测试文件 | tests/ 下的 test_*.py | **152** | `C:\swprojects\sw-skill-fork\tests\test_*.py` |
-| 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **252** | `register_capabilities.all_specs()` |
+| 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **253** | `register_capabilities.all_specs()` |
 | 18 | MCP 工具（上游原有） | server.py 里的 @mcp.tool 装饰器 | **45** | `server.py 里 @mcp.tool 出现次数` |
-| 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **297** | `两行相加` |
+| 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **298** | `两行相加` |
 | 20 | 四家工具数（原始相加） | 四家各自工具数直接相加（有重名，会虚高） | **510** | `union-sources.json 的 sources[].tools 长度相加` |
 | 21 | ★ 四家工具数（去重＝并集） | 去掉重名后的总数（★ 与上一行不是同一个东西） | **349** | `union-sources.json 的 union_operations 长度` |
-| 22 | 能力清单条目 | capabilities.yaml 的条目数 | **85** | `capabilities.yaml 里 level 字段出现次数` |
-| 23 |   其中 verified | 有我们自己的运行证据 | **73** | `同上，按取值分组` |
+| 22 | 能力清单条目 | capabilities.yaml 的条目数 | **86** | `capabilities.yaml 里 level 字段出现次数` |
+| 23 |   其中 verified | 有我们自己的运行证据 | **74** | `同上，按取值分组` |
 | 24 |   其中 stitched | 代码写好但没真机跑过 | **11** | `同上` |
 | 25 |   其中 not_implemented | 没做 | **1** | `同上` |
 | 26 | 门禁 | scripts/check_*.py 的自动检查程序 | **20** | `scripts/check_*.py` |

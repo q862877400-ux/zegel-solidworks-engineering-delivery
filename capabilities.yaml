@@ -3677,6 +3677,34 @@
         "★ 基准面的 `*_angle_or_dist`，与点的 `distance_or_percent`，**官方都是「同一个形参承载两种量纲」**（角度**或**距离 / 距离**或**百分比）⇒ ★ 本模块**不换算、不加单位后缀**（★ 加任何一个都会在另一档说错话），并在返回值里显式声明。★ 两条已登记进 `tool_registry` 的 `_LEN_SUFFIX_EXEMPT` / `_ANGLE_SUFFIX_EXEMPT` 并写明理由。",
         "★ **边界框用的是 `InsertGlobalBoundingBox2`**，而**不是**台账 T701 给的 `Create3DBoundingBox`（官方：「for a **cut list item in a weldment part**」，焊件切割清单专用）。"
       ]
+    },
+    {
+      "id": "curve_and_split",
+      "label": "通过参考点的曲线 · 配合参考（★ 分割线两条**未登记**）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建；依据为**官方三源**（`C:\\swapi\\types\\` + `_raw/reflect_sldworks/` 反射），见 `scripts/sw_curve_and_split.py` 的来源块。★ 补的是 `specs/201-toolbar-gaps` 的 **B7**。",
+      "evidence": [
+        "★ 2026-10-03（轮 481）**真机 2/4**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b7a_curve_split.py`。★ **通过参考点的曲线**：树新增 **`曲线1`**（`InsertCurveFileBegin/Point/End` 三步式）；★ **配合参考**：树新增 **`['配合参考', 'MCP_MateRef-<1>', '配合参考___EndTag___']`**。证据 output/b7a-curve-split-evidence.json。",
+        "★★ **`类型不匹配` 位置 6 ⇒ 未用的 entity 槽要传「空 Dispatch」**：`InsertMateReference2` 的 `Secondary/TertiaryReferenceEntity` 类型是 `Entity`，★ 裸传 `None` 不行；★ 用本仓 `sw_connect.create_empty_dispatch_variant()`（★ 它就是**事实 12**那条）。",
+        "★★ **`无效的参数数目` ⇒ 官方第三组少一个形参**：完整签名是 **12** 个（`… TertiaryReferenceType, TertiaryReferenceAlignment )`",
+        "—— **没有 `TertiaryReferenceAlignAxes`**）；★ 我按“三组同形”推成 13 个 ⇒ 报错。★ **别按同形推，要逐数完整签名**。"
+      ],
+      "limitations": [
+        "★ **分割线两条本条不登记**：`InsertSplitLineProject` 与 `InsertSplitLineSil` 真机都是「**树无增量**」。★ 它们**不要求 mark**（官方 Remarks 没给 mark 表）⇒ 前置是「**要有可投影的草图 / 可选的面**」，★ 探针里那个前置显然不够。★ 下一轮按 `Create_Ref_Plane` 那次的教训重试：**选完立刻调**、**把选中数带进证据**。",
+        "★ **配合参考的实现层已真机建成，但未登记成工具**：它第 2 个形参 `PrimaryReferenceEntity` 是 **`IEntity`（COM 对象）**，★ `ToolSpec` 的 `Param` 只表达基本类型 ⇒ **表达不了**。★ 本仓既有做法是走**声明式选择器**（`selection` + `sw_selection_spec`）⇒ ★ 那一层要另加，**不假装塞一个 `str` 参数当实体**。",
+        "★ **台账给的两条已废弃**：变量阵列（`InsertVaryInstanceIncrement`/`…Override`）与投影曲线（`InsertProjectedSketch2`）**都标 Obsolete**，继任者是 `IInstanceToVaryOptions` / `IProjectionCurveFeatureData` + **`CreateDefinition`** 那族（新架构）⇒ ★ 另列。"
+      ]
     }
   ]
 }

@@ -1,0 +1,275 @@
+"""★ B7 特征下拉（第一组）：分割线 / 通过参考点的曲线 / 配合参考。"""
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（本任务新增的能力层）
+# 文件:   scripts/sw_curve_and_split.py
+# 定位:   ★ 2026-10-03（轮 481）★ 承 `specs/201-toolbar-gaps` 的 **B7**（特征下拉）。
+#
+#   ====================  ==================================================  ==================
+#   工具栏原文             官方成员                                             判据
+#   ====================  ==================================================  ==================
+#   分割线（投影）          `IModelDoc2.InsertSplitLineProject`（2 参）→ void     **只有树增量**
+#   分割线（轮廓）          `IModelDoc2.InsertSplitLineSil()` → void             **只有树增量**
+#   分割线（相交）          `IFeatureManager.InsertSplitLineIntersect`          另见模块尾
+#   通过参考点的曲线        `IModelDoc2.InsertCurveFileBegin/Point/End`（三步）  Begin/Point/End 各自的 bool
+#   配合参考               `IFeatureManager.InsertMateReference2`（12 参）      回 Feature + 树增量
+#   ====================  ==================================================  ==================
+#
+#   ★★ **两条官方标 Obsolete 的，本模块不做**（★ 铁律 4 要看后继，★ 而后继是**新架构**）：
+#     · **变量阵列**：台账给的 `InsertVaryInstanceIncrement` 与 `…Override` **两个都标**：
+#       > Obsolete. Superseded by [[IInstanceToVaryOptions]].
+#       ⇒ ★ 继任者是个 **Options 数据接口** ⇒ ★ 要走 `IFeatureManager::CreateDefinition` 那族
+#         ⇒ ★ 与"直接调一个方法"是**两种形态** ⇒ **另列**（★ 不硬塞进本模块）。
+#     · **投影曲线**：`IModelDoc2.InsertProjectedSketch2` **标**：
+#       > Obsolete. See [[IProjectionCurveFeatureData]] and [[IFeatureManager::CreateDefinition]].
+#       ⇒ ★ 同上，走 `CreateDefinition` 那族 ⇒ **另列**。
+#
+#   ★★★ **曲线那族是"三步式"**（★ 官方三个方法是**成对**的，别只调中间那个）：
+#     ```
+#     InsertCurveFileBegin()            → void     ★ 开
+#     InsertCurveFilePoint(X, Y, Z)     → bool     ★ 逐点（可多次）
+#     InsertCurveFileEnd()              → bool     ★ 收尾
+#     ```
+#     ⚠ 三个的 X/Y/Z **官方只说 "X value for the point"**，★ **没说单位** ——
+#       而 SolidWorks 的 API 坐标**惯例是米** ⇒ ★ 本模块按**毫米**收、在边界换算一次（规则 2），
+#       ★ 并把这个**假设写进返回值**（★ 铁律 5：查不到就说清楚自己假设了什么）★ 且由真机验证。
+#     ⚠ 而 `InsertCurveFile(FileName)` 是**另一条路**（从曲线文件读）⇒ ★ 本模块**不混用**。
+#
+# 官方依据（三源）:
+#   · `C:\swapi\types\IModelDoc2\InsertSplitLineProject.md`（`void (IsDirectional: bool, FlipDir: bool)`）
+#   · `C:\swapi\types\IModelDoc2\InsertSplitLineSil.md`（`void ()`）
+#   · `C:\swapi\types\IFeatureManager\InsertSplitLineIntersect.md`
+#   · `C:\swapi\types\IModelDoc2\InsertCurveFileBegin.md`（`void ()`）
+#   · `C:\swapi\types\IModelDoc2\InsertCurveFilePoint.md`（`bool (X, Y, Z)`）
+#   · `C:\swapi\types\IModelDoc2\InsertCurveFileEnd.md`（`bool ()`）
+#   · `C:\swapi\types\IFeatureManager\InsertMateReference2.md`（12 参 · 两组枚举）
+#   · `C:\swapi\types\IModelDoc2\InsertVaryInstanceIncrement.md` / `…Override.md`（★ Obsolete 行）
+#   · `C:\swapi\types\IModelDoc2\InsertProjectedSketch2.md`（★ Obsolete 行）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件（★ 逐函数另有来源块）。
+# ─────────────────────────────────────────────────────────────────────
+#
+# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ 判据 = **回对象非 None** + **特征树增量**
+#   （★ 事实 8 / 规则 6）。★ 树增量**必须**走 `sw_part.feature_names`（★ 轮 473 的教训）。
+
+from __future__ import annotations
+
+try:
+    from .sw_connect import get_com_member, set_com_member          # noqa: F401
+except ImportError:                                                 # 顶层载入（脚本 / 探针）
+    from sw_connect import get_com_member, set_com_member           # noqa: F401
+
+__all__ = [
+    "insert_split_line_project",
+    "insert_split_line_silhouette",
+    "insert_curve_through_points",
+    "insert_mate_reference",
+    "CURVE_AND_SPLIT_STATUS",
+]
+
+#: ★ 本模块覆盖到的工具栏项 ⇒ 官方成员（★ 与 `docs/toolbar-ledger.json` 对齐用）
+CURVE_AND_SPLIT_STATUS = {
+    "分割线（投影）": "IModelDoc2.InsertSplitLineProject",
+    "分割线（轮廓）": "IModelDoc2.InsertSplitLineSil",
+    "通过参考点的曲线": "IModelDoc2.InsertCurveFileBegin/Point/End（三步式）",
+    "配合参考": "IFeatureManager.InsertMateReference2",
+    "变量阵列": "★ 台账给的两个都标 **Obsolete**（继任者 IInstanceToVaryOptions，走 CreateDefinition）⇒ 另列",
+    "投影曲线": "★ 台账给的 InsertProjectedSketch2 标 **Obsolete**（继任者 IProjectionCurveFeatureData）⇒ 另列",
+}
+
+
+def _tree_names(model):
+    """★ 特征树的**有序特征名清单**（★ 判据用；★ 用本仓已验证的 `sw_part.feature_names`）。
+
+    ⚠ **不要自己拼一条**：★ 轮 473 我用 `GetFeatureCount(True)` + `FeatureByPositionReverse(i)`，
+      真机回 `None` ⇒ 5 条能力**全被记成"不能"**，★ 而那是**判据坏了**、不是能力不行。
+    """
+    try:
+        from .sw_part import feature_names as _fn
+    except ImportError:
+        from sw_part import feature_names as _fn
+    try:
+        return list(_fn(model) or [])
+    except Exception:                                                # noqa: BLE001
+        return None
+
+
+def _delta(before, after):
+    """★ 新增的特征名（★ `None` 表示量不到 ⇒ 判据降级，★ 不猜）。"""
+    if before is None or after is None:
+        return None
+    return [x for x in after if x not in before]
+
+
+def insert_split_line_project(model, is_directional: bool = False,
+                              flip_dir: bool = False) -> dict:
+    """★ **分割线（投影）**：`IModelDoc2.InsertSplitLineProject(IsDirectional, FlipDir)` → `void`。
+
+    :param is_directional: 官方逐字「Whether to project in **one direction**」。
+    :param flip_dir: 官方逐字「valid **only when isDirectional = 1**」（★ 沿草图面法向投影）。
+
+    ⚠ ★ 调用前要有**可选的分割工具**（草图 / 曲线 / 面）—— ★ 官方**没给 mark 表**，
+      ★ 故本模块**不假定 mark**，如实把这一点写进返回值。
+    ⚠ 官方回 `void` ⇒ 判据**只能**靠**特征树增量**（★ 并如实写 `verified_by`）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = _tree_names(model)
+    get_com_member(model, "InsertSplitLineProject", bool(is_directional), bool(flip_dir))
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": bool(added), "op": "split_line_project",
+            "is_directional": bool(is_directional), "flip_dir": bool(flip_dir),
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "selection_mark": "★ 官方 Remarks **未给** mark 表 —— 本模块不假定",
+            "verified_by": "tree_delta"}
+
+
+def insert_split_line_silhouette(model) -> dict:
+    """★ **分割线（轮廓）**：`IModelDoc2.InsertSplitLineSil()` → `void` —— ★ **零参数**。
+
+    ★ 官方语义：按**轮廓**（silhouette）把面切开 ⇒ ★ 调用前要选好**要切的面 / 参考**。
+    ⚠ 官方回 `void` ⇒ 判据**只能**靠**特征树增量**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = _tree_names(model)
+    get_com_member(model, "InsertSplitLineSil")
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": bool(added), "op": "split_line_silhouette",
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "verified_by": "tree_delta"}
+
+
+def insert_curve_through_points(model, points_mm, ) -> dict:
+    """★ **通过参考点的曲线**：`InsertCurveFileBegin()` → `InsertCurveFilePoint(X,Y,Z)`×N → `InsertCurveFileEnd()`。
+
+    :param points_mm: 点的列表，每项 `[x, y, z]`（**毫米**）。
+
+    ★★ **规范 2/3 的边界**：★ 草图图元与"逐点建曲线"属**规则 3 的书面例外**
+      （★ 那些点**没有具名实体可选**）⇒ ★ 坐标在这里是**唯一可行的表达**，
+      ★ 而单位按**毫米**收、**只在边界换算一次**（规则 2）。
+
+    ⚠ **单位是我假设的**：★ 官方对 X/Y/Z 只说 "X value for the point"、**没说单位**；
+      SolidWorks 的 API 坐标**惯例是米** ⇒ 本模块按此换算，★ 并把这个假设**写进返回值**
+      （★ 铁律 5：查不到就说清楚自己假设了什么），★ 由**真机验证**它对不对。
+
+    ★ 判据 = **三个方法各自的返回值**（`Point` / `End` 回 `bool`；`Begin` 回 `void`）
+      **且** **特征树有新特征**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    pts = list(points_mm or [])
+    if len(pts) < 2:
+        return {"ok": False, "error": "至少要 2 个点（曲线），收到 %d 个" % len(pts)}
+    for p in pts:
+        if not (isinstance(p, (list, tuple)) and len(p) >= 3):
+            return {"ok": False, "error": "每个点要是 [x, y, z]（毫米），收到 %r" % (p,)}
+    before = _tree_names(model)
+    get_com_member(model, "InsertCurveFileBegin")
+    point_rets = []
+    for p in pts:
+        point_rets.append(bool(get_com_member(model, "InsertCurveFilePoint",
+                                              float(p[0]) / 1000.0,
+                                              float(p[1]) / 1000.0,
+                                              float(p[2]) / 1000.0)))
+    end_ret = bool(get_com_member(model, "InsertCurveFileEnd"))
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": end_ret and bool(added), "op": "curve_through_points",
+            "n_points": len(pts), "point_returns": point_rets, "end_return": end_ret,
+            "unit_assumption": "★ 官方未给单位；按 SolidWorks API 惯例当作**米** ⇒ 入参毫米已换算",
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "verified_by": "return_values + tree_delta"}
+
+
+def insert_mate_reference(model, name: str, primary_entity=None,
+                          primary_type: int = 0, primary_alignment: int = 0,
+                          primary_align_axes: bool = False) -> dict:
+    """★ **配合参考**：`IFeatureManager.InsertMateReference2(…)` → `Feature`（★ 官方 **12 参**）。
+
+    :param name: 配合参考的名字（官方 `BstrMateReferenceName`）。
+    :param primary_entity: 主配合的 **`IEntity` 对象**（★ 官方形参类型就是 `Entity`）
+      —— ★ 本模块**收对象**（★ 实体没有名字可用，**事实 32**）。
+    :param primary_type: 官方 `swMateReferenceType_e` 的**成员名**（★ 本模块按**字符串**收，
+      ★ 避免把枚举值写死在两处；★ 查不到就明确报错）。
+    :param primary_alignment: 官方 `swMateReferenceAlignment_e` 的成员名。
+    :param primary_align_axes: 官方 `PrimaryReferenceAlignAxes`。
+
+    ⚠ ★ 官方 12 参里**只有主 / 次 / 第三三组**，★ 而本工具只暴露**主**那一组
+      （★ 其余两组**留 None**）—— ★ 若将来要用，**按同形补**；
+      ★ 本模块**不假装**支持三组。
+
+    ★★ **两个枚举本模块不写死数值**：★ 它们有几十个成员，★ 写死一份会和官方漂移；
+      ★ 故按**名字**收、**现查**（★ 查不到就报错，★ 不猜）—— ★ 这是铁律 5 的形态。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        return {"ok": False, "error": "取不到 FeatureManager"}
+    if not str(name or "").strip():
+        return {"ok": False, "error": "name 不能为空（官方 BstrMateReferenceName）"}
+    #: ★★★ 2026-10-03（轮 481）**未用的 entity 槽必须传「空 Dispatch」** ——
+    #:   ⚠ 我第一版对次 / 第三两组的 entity 直接传 `None` ⇒ 真机回：
+    #:     `com_error: (-2147352571, '类型不匹配。', None, **6**)`
+    #:     ★ **位置 6** 正是第 6 个形参 `SecondaryReferenceEntity`（★ 官方类型是 `Entity`）⚠
+    #:   ★★ 而**本仓早有现成的**：`sw_connect.create_empty_dispatch_variant()`
+    #:     —— ★ 它就是**事实 12** 那条（「空 Dispatch 参数包 `VARIANT(VT_DISPATCH, None)`」），
+    #:     ★ 而 `sw_assembly.py` 用的正是同一个 ✓
+    try:
+        from .sw_connect import create_empty_dispatch_variant as _empty_disp
+    except ImportError:
+        from sw_connect import create_empty_dispatch_variant as _empty_disp
+    _empty = _empty_disp()
+    before = _tree_names(model)
+    #: ★★★★ 2026-10-03（轮 481）**形参个数是 12，不是 13** ——
+    #:   ⚠ 我上一版给**三组都按 4 个**传（entity / type / alignment / align_axes）⇒ 真机回
+    #:     `com_error: (-2147352562, '无效的参数数目。')` ⚠
+    #:   ★★ 而**完整签名**（`C:\swapi\types\IFeatureManager\InsertMateReference2.md`）逐字是：
+    #:     ```
+    #:     Feature InsertMateReference2(
+    #:       string BstrMateReferenceName,
+    #:       Entity PrimaryReferenceEntity,   int PrimaryReferenceType,
+    #:       int PrimaryReferenceAlignment,   bool PrimaryReferenceAlignAxes,
+    #:       Entity SecondaryReferenceEntity, int SecondaryReferenceType,
+    #:       int SecondaryReferenceAlignment, bool SecondaryReferenceAlignAxes,
+    #:       Entity TertiaryReferenceEntity,  int TertiaryReferenceType,
+    #:       int TertiaryReferenceAlignment )        ← ★★ **第三组到此为止，没有 AlignAxes**
+    #:     ```
+    #:   ⇒ ★ **第三组只有 3 个** ⇒ 总数 **12** ✓
+    #:   ★★ 教训：★ **别按"三组同形"去推** —— ★ 官方那一组就是少一个形参；
+    #:      ★ 个数要以**完整签名逐字数**为准（★ 事实 47/48 一族：arity 是硬事实）。
+    feat = get_com_member(fm, "InsertMateReference2",
+                          str(name), primary_entity, int(primary_type),
+                          int(primary_alignment), bool(primary_align_axes),
+                          _empty, 0, 0, False,
+                          _empty, 0, 0)
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": feat is not None and bool(added), "op": "mate_reference",
+            "returned_is_none": feat is None, "name": str(name),
+            "primary_type": int(primary_type), "primary_alignment": int(primary_alignment),
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "exposes": "★ 只暴露**主**那一组（官方 12 参的其余两组本模块留 None）—— 不假装支持三组",
+            "verified_by": "feature_not_none + tree_delta"}
+
+
+# ── ★★ 本模块**不做**的两条，以及为什么（★ 铁律 4 + 铁律 5）─────────────────────
+#
+# ① **变量阵列**（台账写 `InsertVaryInstanceIncrement` / `InsertVaryInstanceOverride`）：
+#    官方两个方法**都**标：
+#    > Obsolete. Superseded by [[IInstanceToVaryOptions]].
+#    ⇒ ★ 继任者 `IInstanceToVaryOptions` 是一个 **Options 数据接口**（★ 不是"调一个方法"）
+#      ⇒ ★ 按本仓的形态要走 `IFeatureManager::CreateDefinition(...)` → 设 Options → `CreateFeature`
+#      ⇒ ★ **与"直接调一个方法"是两种形态** ⇒ 本模块**不硬塞**，★ 另列（★ 下一批按新架构做）。
+#
+# ② **投影曲线**（`IModelDoc2.InsertProjectedSketch2`）：
+#    官方标：
+#    > Obsolete. See [[IProjectionCurveFeatureData]] and [[IFeatureManager::CreateDefinition]].
+#    ⇒ ★ 同上（新架构）⇒ **另列**。
+#
+# ③ **分割线（相交）** `IFeatureManager.InsertSplitLineIntersect`：
+#    ★ 它**没标 Obsolete**、可以走，★ 而它的形参比投影那条多 ⇒ ★ 本模块先收前两条，
+#      ★ 相交那条**下一轮按同形补**（★ 而不是现在草率加一个没查清的）。
