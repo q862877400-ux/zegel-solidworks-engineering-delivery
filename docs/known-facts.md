@@ -1479,3 +1479,25 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ⇒ ★★ **故：它只能当人工挖线索的入口**（★ 像事实 413 那样**顺着读一页的 See Also**），★ **而不该机械化成一个门禁** ⚠
      ★★ **这是一条“不要把好手法硬做成门禁”的记录** —— ★ 它节省了后人一个**只会报噪的检查器**。
      ★ 而它与事实 408（把影响面收窄）同族：★ **一个看着很好用的东西，要先用反例量一下它的区分度**。|真机：本轮两次纯静态扫描（`C:\swapi\types` 的 `## See Also` × `scripts/`+`mcp-server/` 的 `get_com_member` 字面量）；产物 `output/_seealso.json` · `output/_called.json`；对照事实 408 / 410 / 413 |
+| 415 | **★★★ 第六种源：官方**例子**（它给的是**调用序**，签名与 Remarks 都给不了）—— 而剔裁曲面的正确顺序与我的**相反**** —— 2026-10-03（轮 534），B6/T607。
+     ★ **怎么找到的**（那把钥匙的第四次使用）：读 `IFeatureManager.PreTrimSurface` 的 **CHM 页**，★ 而它顶上写着「See Also **Example**」⇒ 顺着走到 `Create_Trimmed_Surface_Feature_Example_{CSharp,VB,VBNET}.htm` ✓
+     ★★★★ **官方例子的完整调用序**（逐字）：
+     ```
+     ① 建两张相交曲面
+     ② **PreTrimSurface(False, True, False, False)**  ← ★ **先调它！且此时尚未选任何东西**
+     ③ **SelectByID2("", "SURFACEBODY", x, y, z, True, 0, Nothing, 0)**
+          ← ★★ **选的是 `SURFACEBODY` 类型（按坐标）**，而 `True` = append
+     ④ **PostTrimSurface(True)**                     ← ★ **然后才提交**
+     ```
+     ⇒ ★★ **故本仓轮 519 的错一目了然**：★ **顺序反了**（我**先选面、再**调 `PreTrimSurface`）；★ 而**选择类型**也不同（我按**对象选 FACE**，例子选 **`SURFACEBODY`**）。
+     ★ 真机（`tools/probe_trim_surface_per_example.py`，零弹窗）：
+     ```
+     照例子（Pre → 选 SURFACEBODY → Post） ⇒ **picked = False** ⚠
+          ← ★ **`SelectByID2("", "SURFACEBODY", x,y,z, …)` 五次全失败**，因为**我猜的坐标没落在曲面上**（例子用的是它自己几何的精确坐标）
+     对照（Pre → 按对象选面 → Post） ⇒ picked=True · sel=8 · 而 `Post` 回 **None** · 树不动
+     ```
+     ⇒ ★★ **本轮拿到的确定结论**：★ 「先 Pre、后选、再 Post」这个**顺序已被执行**，而**按对象选面**那条仍不成 ✓
+     ★ **而“照例子”那条没真试到**（★ `picked=False`）—— ★ 而**那是探针的毛病**（坐标猜偏了）。
+     ★ **下一步明确**：★ **按**对象**选曲面体**（★ 而不是按坐标）—— 即 `_select_com_object(surface_body)`（★ 本仓有那个手法）。
+     ★★ **而本轮最大的收获是那个源本身**：★ **官方例子是第六种源**（★ md · CHM · 反射 · 类型库 · CHM 的 Remarks 之外），★ 而它给的是**调用序** —— ★ 那是**签名与 Remarks 都给不了的东西** ✓
+     ★ **而它还顺手给出一条可复用的路**：★ **CHM 页顶上那个「Example」链接**（★ 而本仓从来没点过）。|真机：`tools/probe_trim_surface_per_example.py`；证据 `output/trim-surface-per-example-evidence.json`；例子：`Create_Trimmed_Surface_Feature_Example_VBNET.htm`；对照事实 410 / 413 / 414 |
