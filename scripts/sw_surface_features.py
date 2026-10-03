@@ -448,6 +448,7 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
     #:   ★ 否则走**原自动路**（按最高一圈边的 z 挑）——★ **行为不变**。
     _declarative = bool(str(selection or "").strip())
     _selected_readback = 0
+    _fallback_note: dict | None = None      #: ★ 声明式选区拿不到时的回退记录（★ 见下）
     if _declarative:
         #: ★★★ 2026-10-03（轮 435）**不重选** —— 而代价是一条**文档化的契约**。
         #:   ★ 上一版走 `resolve_selection`（★ 它会**重选**），★ 而它走的是
@@ -463,10 +464,30 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
         except Exception:                                      # noqa: BLE001
             _selected_readback = 0
         if _selected_readback <= 0:
-            return {"ok": False, "stage": "selection_readback", "selected": _selected_readback,
-                    "error": "选区回读计数为 0（★ 事实 8：请以计数为准）",
-                    "★": "请先选上该填的那一圈边，**且用 mark = 1**"
-                           "（官方 Remarks：边界边用 mark 1）"}
+            #: ★★★★ 2026-10-03（接手轮）**从这里改成"回退"而不是"失败"**。
+            #:   ★★ **为什么**（★ 真机隔离出来的，事实 503）：注册器调工具的**顺序**是
+            #:     `kwargs[inj] = resolver(params)` → `pre_call` → `fn(**kwargs)`
+            #:     （`tool_registry.py:507/510/525`），★ 而 **`RESOLVERS["model"]` 经
+            #:     `connect_solidworks()` 会清空选区** ——
+            #:     ★ 实测：选完 2 个面 `mark1=2`，★ **调过 `RESOLVERS['model']` 之后变成 0**
+            #:     （证据 `output/selection-lifetime-evidence.json`）。
+            #:   ⇒ ★★ **"尊重调用方已选好的选区"这条前置，经工具层永远拿不到选区**
+            #:     （★ 而 MCP 客户端本来也没法预选）⇒ ★ 上一版在这里 `return` 失败，
+            #:     ★ 于是**这条工具只要传了 `selection` 就必然失败**。
+            #:   ★★ **正解**：★ **回退到下面那条"按最高一圈边自动选"的路** ——
+            #:     ★ 它用 `SelectByID2("", "EDGE", 中点, append=True, MARK_BOUNDARY=1, …)`
+            #:     ★ **在注入之后**执行 ⇒ ★ **不受影响**（★ 那条路真机建成过）。
+            #:   ★ 语义：调用方给 `selection` 的**意图是"给我填一张曲面"** ⇒
+            #:     ★ 拿不到预选时**回退**并**如实注明**，比直接失败更符合意图。
+            #:   ★★ 返回值里留 `fallback_from_declarative: True`，★ **不静默**。
+            _fallback_note = {
+                "stage": "selection_readback",
+                "selected": _selected_readback,
+                "★": "选区的**回读计数为 0** ⇒ ★ **回退到自动路**（按最高一圈边选）。"
+                     "★ 原因见事实 503：`RESOLVERS['model']` 会清空选区，"
+                     "★ 所以「调用方预选」经工具层不可能成立。",
+            }
+            _declarative = False
     edges, mids = [], []
     try:
         for b in (get_com_member(model, "GetBodies2", -1, True) or []):
@@ -524,17 +545,27 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
         feat = get_com_member(get_com_member(model, "FeatureManager"), "InsertFillSurface2",
                               res, int(options), None, None, None, None)
     except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "call", "points_selected": selected,
+        _err = {"ok": False, "stage": "call", "points_selected": selected,
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        if _fallback_note is not None:
+            #: ★ 早退也要带上回退标注（★ 否则调用方看不见"我回退过" —— 本轮就因此多查一轮）。
+            _err["fallback_from_declarative"] = True
+            _err["fallback_detail"] = _fallback_note
+        return _err
     after_names = feature_names(model)
     new = [n for n in after_names if n not in before_names]
-    return {"ok": (feat is not None) and len(after_names) > before,
+    _out = {"ok": (feat is not None) and len(after_names) > before,
             "feature_name": (new[-1] if new else None), "new_features": new,
             "tree_before": before, "tree_after": len(after_names),
             "points_selected": selected, "boundary_z": z,
             "resolutions": res, "options": int(options),
             "★": "判据 = **回 Feature 非 None** **且** **特征树增量非空**（★ 两判据都要）；"
                  "★ 边界按**中点 + mark=1** 选（★ 官方 Remarks；★ 传 mark=4 会静默失败）"}
+    if _fallback_note is not None:
+        #: ★★ 声明式选区拿不到（★ 事实 503）⇒ **回退到自动路**了 ⇒ **如实标注，不静默**。
+        _out["fallback_from_declarative"] = True
+        _out["fallback_detail"] = _fallback_note
+    return _out
 
 
 def _empty_callout():
