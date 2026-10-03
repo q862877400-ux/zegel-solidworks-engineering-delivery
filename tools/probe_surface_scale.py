@@ -59,17 +59,30 @@ def main() -> int:
     rec("sketch_done", features=P.feature_names(model)[-3:])
 
     #: ① 建曲面（★ L87 那处 `d * 0.001`）
+    #: ★★★★ 2026-10-04（★ 第二轮修正）：★ **把整个返回值原样落盘** ——
+    #:   ★ 上一版只记 `ok` / `new_features` / `surface_body_count` ⇒
+    #:   ★★ 而第一轮跑出 `new_features: []`（★ 调了没建）、★ 第二轮变成 `None`（★ 根本没调）
+    #:   ⇒ ★★★ **我却看不到 `error` 与 `selection`**（★ 那正是我上一轮刚定的
+    #:     「探针必须把**每一次尝试 + 原始返回值**落盘」）✓
     surf = S.create_extruded_surface_report(model, 10.0, "Sketch1")
     rec("create_extruded_surface(depth_mm=10.0)", ok=(surf or {}).get("ok"),
         new_features=(surf or {}).get("new_features"),
-        surface_bodies=(surf or {}).get("surface_body_count"))
+        surface_bodies=(surf or {}).get("surface_body_count"),
+        stage=(surf or {}).get("stage"),
+        error=str((surf or {}).get("error"))[:220],
+        selection=str((surf or {}).get("selection"))[:280],
+        select_returned=(surf or {}).get("select_returned"),
+        selection_count=(surf or {}).get("selection_count"))
+    R["surface_return_full"] = {k: str(v)[:240] for k, v in (surf or {}).items()}
     R["surface_ok"] = (surf or {}).get("ok")
     R["surface_new_features"] = (surf or {}).get("new_features")
 
     #: ② 加厚成实体（★ L318 那处 `th * 0.001`）—— ★ 不这样量不到（★ 曲面不是实体）
     th = S.thicken_surface_report(model, 2.0)
     rec("thicken_surface(thickness_mm=2.0)", ok=(th or {}).get("ok"),
-        new_features=(th or {}).get("new_features"))
+        new_features=(th or {}).get("new_features"),
+        stage=(th or {}).get("stage"), error=str((th or {}).get("error"))[:200])
+    R["thicken_return_full"] = {k: str(v)[:240] for k, v in (th or {}).items()}
     R["thicken_ok"] = (th or {}).get("ok")
 
     #: ③ 量实体

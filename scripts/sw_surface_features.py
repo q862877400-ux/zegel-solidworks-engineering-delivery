@@ -84,7 +84,52 @@ def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = ""
         d = 0.010             #: ★ 贯穿时深度无效，★ 给一个有限值免得 API 抱怨
     before_names = feature_names(model)
     before = len(before_names)
-    args = _harden_defaults(d * 0.001, through_all)     #: ★ 毫米 ⇒ 米（★ 唯一的换算处）
+    #: ★★★★ 2026-10-04（接手轮）**补上官方 Remarks 要求的第一步：按 `mark 0` 选中草图** ——
+    #:   处置：★ `tools/probe_surface_scale.py` 真机跑出 **`ok: False` · `new_features: []`** ⇒
+    #:     ★★ 我**回原文**查到了真因（★ 那是"建不出来"的第一类可能：★ **前置没做**）✓
+    #:   ★★★ **官方 `IFeatureManager.FeatureExtruRefSurface3` 的 `## Remarks` 逐字**：
+    #:     > ★ 「Before calling this method, **select the entities for the extruded surface**
+    #:     >   using `IModelDocExtension::SelectByID2`.」
+    #:     ★★ 而 **Base** 的 **mark 表逐字**：★
+    #:       · ★ **2D 或 3D 草图 ⇒ mark `0`** ✓
+    #:       · ★ 草图段 ⇒ `0` 或 `4` ✓
+    #:       · ★ 单平面 ⇒ `0` · ★★ 多共面 ⇒ 第一个 `0`、★ 其余 `256` ✓
+    #:   ★★ **修法**：★ 给了 `sketch_name` 就先按 `mark 0` 选它（★ **旧行为保留**：
+    #:     ★ 名字为空时**不代选** —— ★ 因为那时调用方可能已经自己选好了）✓
+    selection_note = "★ 未代选（sketch_name 为空 ⇒ 用调用方自己的选区）"
+    if sketch_name:
+        #: ★★★★ 2026-10-04（★ **第二轮修正**）：★ **不再自己写选中**，★ 而是**复用
+        #:   `sw_part._ensure_sketch_selected`** —— ★★ 那是本仓既有的**四级回退**选中器：
+        #:     ① `_capture_sketch_ref`（★ **活动草图对象** ⇒ 按**对象**选）·
+        #:     ② `_find_cached_sketch_ref`（★ 缓存）·
+        #:     ③ `_select_sketch_feature_by_name`（★ `FeatureByName`）·
+        #:     ④ `_select_first_candidate(…, "SKETCH")`（★ **中英文候选名**）✓
+        #:   ★★★ **而我第一版只写了第 ④ 级的一种形式**（★ `SelectByID2("草图1","SKETCH",…)`）
+        #:     ⇒ ★ 真机 **`select_returned: False` · `selection_count: **0**`** ⇒
+        #:     ★★★★ **四级回退一次都没走** ✓
+        #:   ★★ **这一课（★ 值记）**：★★★ **本仓已有的东西，先找、再写** ——
+        #:     ★ `extrude_boss` 之所以能建成，★ **正是因为它走的是那个四级回退** ✓
+        try:
+            from sw_part import _ensure_sketch_selected as _ensure
+            picked = _ensure(model, str(sketch_name))
+            try:
+                sel_count = int(get_com_member(model.SelectionManager,
+                                               "GetSelectedObjectCount2", -1) or 0)
+            except Exception:                                             # noqa: BLE001
+                sel_count = None
+            selection_note = ("★ 已走 `sw_part._ensure_sketch_selected`（★ 四级回退）选中 %r；"
+                              "★ 回读选区计数 = %s（★ 事实 8：不信返回值、只看回读）"
+                              % (str(picked), sel_count))
+            if not sel_count:
+                return {"ok": False, "stage": "select", "sketch_name": str(sketch_name),
+                        "picked": str(picked), "selection_count": sel_count,
+                        "error": "★ 四级回退走完仍选不中草图 ⇒ 前置未成立",
+                        "★": "官方 Remarks：要用 `SelectByID2` 选中 Base（★ 草图 mark 0）"}
+        except Exception as exc:                                          # noqa: BLE001
+            return {"ok": False, "stage": "select", "sketch_name": str(sketch_name),
+                    "error": "★ 选草图抛 %s: %s" % (type(exc).__name__, str(exc)[:160]),
+                    "★": "官方 Remarks：要用 `SelectByID2` 选中 Base（★ 草图 mark 0）"}
+    args = _harden_defaults(d * 0.001, through_all)     #: ★ 毫米 ⇒ 米（★ 唯一的换算处；★ 该假设**待核**，见事实 517）
     try:
         fm = get_com_member(model, "FeatureManager")
         get_com_member(fm, "FeatureExtruRefSurface3", *args)
@@ -98,6 +143,7 @@ def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = ""
             "new_features": new, "tree_before": before, "tree_after": len(after_names),
             "args_count": len(args), "depth_mm": (None if through_all else float(depth_mm)),
             "through_all": bool(through_all), "sketch_name": str(sketch_name),
+            "selection": selection_note,
             "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；★ 官方 22 参 · 反射 arity 22"}
 
 
