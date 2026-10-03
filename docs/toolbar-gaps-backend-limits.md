@@ -187,9 +187,36 @@ hole-pattern-evidence.json  ·  flat-pattern-dxf-evidence.json
   ★★ **⇒ 「`AccessSelections` 到不了」这条**只对 §3.3 表里那几个成员成立****，
     ★ **不能推广成"这一族都到不了"** ⚠
 
-★★ **而 `Component` 参数有个坑**（★ 事实 425）：★ **必须传空 Dispatch 变体**
-  （`create_empty_dispatch_variant()`），★ **传 `None` 会报 `类型不匹配（位置 2）`** ——
-  ★ 而那个错**看不出是它的错**（★ 事实 12/33 的第三次应验）。
+★★★ **2026-10-03（轮 547）再补一层 —— ★ 边界要写成**「哪个接口」****：
+
+★ 本节（§3.4）刚立时，与**§二**（线性阵列族）看上去**冲突**：★ 那边记
+  `(model, 空Dispatch)` ⇒ **`0x80010105`**。★ 故本轮**把 §二 那三种传法在同一脚本里重跑**
+  （`tools/probe_linear_pattern_access_recheck.py`）—— ★ 结果**逐行复现**：
+  ```
+  ① `(model, None)`       ⇒ 类型不匹配（位置 2）      ✓ 一致
+  ② `(model, 空Dispatch)` ⇒ **0x80010105**            ✓ 一致
+  ③ `(None, None)`        ⇒ 类型不匹配（位置 1）      ✓ 一致
+  ★ 而 `CreateDefinition(6)` 三组**都**拿到 `CDispatch` ⇒ 不是"没拿到 data"
+  ```
+
+⇒ ★★ **故两边**不矛盾**，原因就是**接口不同****：
+
+| 接口 | `AccessSelections(doc, 空Dispatch)` |
+|---|---|
+| `ISurfaceCutFeatureData` · `IOffsetSurfaceFeatureData` · `IRevolvedRefSurfaceFeatureData` 等 | ★ **过**（**6/6**） |
+| **`ILinearPatternFeatureData`**（★ 线性阵列新架构那个） | ★ **`0x80010105`** |
+
+⇒ ★★ **故本节的标题那种写法还不够** —— ★ 边界要写成
+  **「**哪个接口**的 `AccessSelections` 通」**，★ 而**不是「`AccessSelections` 通不通」** ⚠
+  ★ 这与**事实 128**（可达性结论必须带**绑定层次**）**同族**：★ 可达性结论也**必须带接口**。
+
+★ 证据：`tools/probe_linear_pattern_access_recheck.py` ·
+  `output/linear-pattern-access-recheck-evidence.json` · 事实 **427**。
+
+★★ **而 §二 的结论因此**不变****（★ 线性阵列族**仍到不了**）—— ★ 只是它的**理由现在更精确**：
+  ★ **不是"指针族"，而是"`ILinearPatternFeatureData` 这个接口"**。
+
+★★ **而 `Component` 参数有个坑**（★ 事实 425）：★ **必须传空 Dispatch 变体**（`create_empty_dispatch_variant()`），★ **传 `None` 会报 `类型不匹配（位置 2）`** —— ★ 而那个错**看不出是它的错**（★ 事实 12/33 的第三次应验）。
 
 ★ 证据：`tools/probe_access_selections_matrix.py` ·
   `output/access-selections-matrix-evidence.json` · 事实 **425 / 426**。

@@ -1,0 +1,34 @@
+test(limits): 解一个**直接冲突** —— 线性阵列族的 `AccessSelections` **可稳定复现地到不了**（事实 427）
+
+★ **冲突是什么**（★ 两边都有真机证据）：
+  · `docs/toolbar-gaps-backend-limits.md` **§二**（轮 484）记 `(model, 空Dispatch)` ⇒ **`0x80010105`**；
+  · 而**事实 425/426**（轮 545/546）测出 `(doc, 空Dispatch)` ⇒ **过 = True**（6/6）。
+
+★ 故本轮**把 §二 那三种传法在同一个脚本里重跑**（`tools/probe_linear_pattern_access_recheck.py`）：
+  ```
+  ① `(model, None)`       ⇒ **类型不匹配（位置 2）**   ✓ 与 §二 逐字一致
+  ② `(model, 空Dispatch)` ⇒ **`0x80010105`**           ✓ 逐字一致
+  ③ `(None, None)`        ⇒ **类型不匹配（位置 1）**   ✓ 逐字一致
+  ★ 而 `CreateDefinition(6)` 三组**都**拿到 `CDispatch` ⇒ 不是「没拿到 data」
+  ```
+  ⇒ ★★ **故：不是「当年有别的毛病」—— ★ 它**可稳定复现**** ✓
+
+★★★ **而两边**不矛盾**，原因就是**接口不同****：
+
+| 接口 | `AccessSelections(doc, 空Dispatch)` |
+|---|---|
+| `ISurfaceCutFeatureData` · `IOffsetSurfaceFeatureData` · `IRevolvedRefSurfaceFeatureData` 等 | ★ **过**（**6/6**） |
+| **`ILinearPatternFeatureData`**（★ 线性阵列新架构那个） | ★ **`0x80010105`** |
+
+⇒ ★★ **故边界要写成**「**哪个接口**的 `AccessSelections` 通」**，
+  ★ 而**不是「`AccessSelections` 通不通」** ⚠
+  ★ 这与**事实 128**（可达性结论必须带**绑定层次**）**同族**：★ **可达性结论也必须带接口**。
+
+★ **落地**：`docs/toolbar-gaps-backend-limits.md` 的 **§3.4** 加了一层「边界要写成哪个接口」
+  —— ★ 并**明确 §二 的结论不变**（★ 线性阵列族**仍到不了**），★ 只是**理由更精确**：
+  ★ **不是「指针族」，而是「`ILinearPatternFeatureData` 这个接口」** ✓
+  （★ 并**补回了**被前一次 edit 换掉的那两行「`Component` 参数的坑」）
+
+★★ **方法论**：★ **两个都有真机证据的结论冲突时，把它们放在同一个脚本里同时跑**（★ 而不是挑一个信）✓
+
+★ 记成 **事实 427**。语法门禁 0 处。

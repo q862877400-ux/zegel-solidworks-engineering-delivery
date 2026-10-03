@@ -1690,3 +1690,20 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **而本轮还修了一个自己的错**：第一版我**按猜的类型名过滤**（`OffsetSurface` / `SewSurface` / `ReplaceFace` …）⇒ **六条里五条拿到 `None`**（★ 即**没真试到**）⚠
        ⇒ ★ **改成「取最后一个真特征」（不猜类型名）** 后才 5/5 ✓ —— ★ **真实类型名是 `OffsetRefSurface` / `ExtendRefSurface`…** （★ **而我猜的那几个都不对**）。
      ★★ **方法论**：★ **类型名不要猜** —— ★ 与事实 418/422（“能不用猜的名字就不用”）**同族**。|真机：`tools/probe_access_selections_matrix.py`；证据 `output/access-selections-matrix-evidence.json`；对照事实 47 / 424 / 425 |
+| 427 | **★★★ 线性阵列族的 `AccessSelections` **可稳定复现地到不了****（`0x80010105`）—— ★ 而它与事实 425/426（6/6 通）**不矛盾**：**接口不同**** —— 2026-10-03（轮 547）。
+     ★ **本轮解的是一个直接冲突**（★ 两边都有真机证据）：
+       · `docs/toolbar-gaps-backend-limits.md` **§二**（轮 484）记 `(model, 空Dispatch)` ⇒ **`0x80010105`**；
+       · 而**事实 425/426**（轮 545/546）测出 `(doc, 空Dispatch)` ⇒ **过 = True**（6/6）。
+     ★ 故本轮**把 §二 那三种传法在同一个脚本里重跑**（`tools/probe_linear_pattern_access_recheck.py`）：
+     ```
+     ① `(model, None)`       ⇒ **类型不匹配（位置 2）**   ✓ 与 §二 逐字一致
+     ② `(model, 空Dispatch)` ⇒ **`0x80010105`（服务器出现意外情况）**  ✓ 逐字一致
+     ③ `(None, None)`        ⇒ **类型不匹配（位置 1）**   ✓ 逐字一致
+     ★ 而 `CreateDefinition(6)` 三组**都**拿到 `CDispatch`（★ 故**不是“没拿到 data”**）
+     ```
+     ⇒ ★★ **故：不是“当年有别的毛病” —— 它**可稳定复现**** ✓
+     ★ 而两边**不矛盾的原因是**接口不同****：
+       · ★ **通**：`ISurfaceCutFeatureData` · `IOffsetSurfaceFeatureData`（实例为 `OffsetRefSurface`）· `IRevolvedRefSurfaceFeatureData`（`RevolvRefSurf`）等 —— **6/6**；
+       · ★ **不通**：**`ILinearPatternFeatureData`**（★ 而它**正是线性阵列新架构的那个接口**）。
+     ★★ **故边界要写成**「**哪个接口**」，而不是「`AccessSelections` 通不通」** ⚠ —— ★ 而这正是**事实 128 那条定则**（可达性结论必须带**绑定层次**）的**同族**：★ 可达性结论也必须带**接口**。
+     ★★ **而本轮的方法论**：★ **两个都有真机证据的结论冲突时，把它们放在**同一个脚本里同时跑**（★ 而不是挑一个信）** ✓|真机：`tools/probe_linear_pattern_access_recheck.py`；证据 `output/linear-pattern-access-recheck-evidence.json`；对照事实 47 / 128 / 425 / 426 |
