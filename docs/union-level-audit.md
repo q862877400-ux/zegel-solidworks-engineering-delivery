@@ -90,21 +90,22 @@
 | 80 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
 | 81 | `surface_edit_ops` | `verified` | `original` | ✓ | — |
 | 82 | `surface_features` | `verified` | `mixed` | ✓ | — |
-| 83 | `surface_modeling` | `stitched` | `mixed` | — | — |
-| 84 | `surface_offset` | `verified` | `original` | ✓ | — |
-| 85 | `surface_planar_region` | `verified` | `original` | ✓ | — |
-| 86 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
-| 87 | `surface_revolve` | `verified` | `original` | ✓ | — |
-| 88 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
-| 89 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
-| 90 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
-| 91 | `topology_optimization` | `verified` | `original` | ✓ | — |
-| 92 | `topology_readback` | `stitched` | `original` | ✓ | — |
-| 93 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
-| 94 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
-| 95 | `weldments` | `verified` | `upstream` | ✓ | — |
+| 83 | `surface_flatten` | `verified` | `original` | ✓ | — |
+| 84 | `surface_modeling` | `stitched` | `mixed` | — | — |
+| 85 | `surface_offset` | `verified` | `original` | ✓ | — |
+| 86 | `surface_planar_region` | `verified` | `original` | ✓ | — |
+| 87 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
+| 88 | `surface_revolve` | `verified` | `original` | ✓ | — |
+| 89 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
+| 90 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
+| 91 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
+| 92 | `topology_optimization` | `verified` | `original` | ✓ | — |
+| 93 | `topology_readback` | `stitched` | `original` | ✓ | — |
+| 94 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
+| 95 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
+| 96 | `weldments` | `verified` | `upstream` | ✓ | — |
 
-**合计 95 条**。
+**合计 96 条**。
 
 ## 二、`level` 分布
 
@@ -114,7 +115,7 @@
 | `not_implemented` | 1 |
 | `source_verified` | 0 |
 | `stitched` | 12 |
-| `verified` | 82 |
+| `verified` | 83 |
 
 ## 三、`source` 分布
 
@@ -122,7 +123,7 @@
 |---|---|
 | `merged` | 0 |
 | `mixed` | 11 |
-| `original` | 65 |
+| `original` | 66 |
 | `undetermined` | 1 |
 | `upstream` | 18 |
 
@@ -134,7 +135,7 @@
 | `not_implemented` | 0 | 0 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
 | `stitched` | 0 | 3 | 9 | 0 | 0 |
-| `verified` | 0 | 8 | 56 | 1 | 17 |
+| `verified` | 0 | 8 | 57 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

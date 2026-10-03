@@ -1854,3 +1854,16 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **而它也把事实 434 那句“面-only 不够”落到了具体的一个 mark 上** ⚠
      ★ **落地**：`capabilities.yaml` 新增 **`surface_flatten`**（level = **verified**，共 **96** 条）；台账「曲面展平」补 `capability_id` ⇒ **已能 69**。
      ★★ **方法论**：★ 一个“前置不够”的结论，要用**逐个 mark 的四格对照**把它**逼到具体的一个参数上** —— ★ 而**不是停在“前置不够”**（★ 事实 434 就停在那里）。|真机：`tools/prove_flatten_with_anchor.py`；证据 `output/flatten-with-anchor-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFlattenSurface2.md` |
+| 436 | **★★★ 剪裁曲面（Pre/Post）**几何上真的剪**（面数 8→7）——★ 而它**不产生树增量**；而曲面切除则**几何完全不变**** —— 2026-10-03（轮 557）。
+     ★ **怎么发现的**：事实 433 留的下一步是“**先造一张真被剪裁过的曲面**”⇒ 本轮把**两把裁刀都试了**，★ 而**数面数**（★ 而不是看树）。
+     ★ 真机（`tools/prove_untrim_with_trimmed_surface.py`，零弹窗）：
+     ```
+     ① 用**曲面切除**当裁刀   ⇒ 面数 8 → **8**（★ 几何**完全没变**）· 回 `CDispatch`
+     ② 用**剪裁曲面**(Pre/Post) ⇒ 面数 8 → **7**（★ **真剪掉了一张面**）· 回 `CDispatch`
+     ```
+     ⇒ ★★ **故两条**：
+       ① ★★★ **剪裁曲面是起作用的** —— ★ 而它**不产生树增量** ⇒ ★ **与事实 406 同族**（“特征树增量”这个判据**看不见它**）⚠ —— ★ 故**前几轮我把它记成“不成”是错的**；
+       ② ★ 而**曲面切除则几何完全不变** ⇒ ★ **印证事实 407**（它回对象、而对象浮在树外）✓
+     ★ 而**解除剪裁仍不成**（回 `None` · 树不动）—— ★ 而**现在的前置已是真被剪裁过的曲面**（面 7）⇒ ★ **故缺的不是前置** ✓
+     ★ **下一步**：① 改选**边**（Remarks 说 “face **or edges**”）；② 换 `FaceUntrimType`/`EdgeUntrimType` 取值；③ 试 `BTrimOppositeSide`。
+     ★★ **方法论**：★ 当一个能力“看不到效果”时，先问**它到底改了什么**（★ 数面数 / 体数那类**几何量**）—— ★ 而**不是只看树** ⚠ —— ★ **本轮就是那么发现剪裁曲面其实是起作用的**。|真机：`tools/prove_untrim_with_trimmed_surface.py`；证据 `output/untrim-with-trimmed-surface-evidence.json`；对照事实 406 / 407 / 415 / 433 |
