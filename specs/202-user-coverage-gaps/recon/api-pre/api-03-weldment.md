@@ -16,7 +16,12 @@
 >
 > **★ 关于 CHM 目录结构（事实，不是建议）**
 > `SWhelp\` 下有 4 棵子树：`cosworks`(47) / `sldworksapi`(11579) / `sldworksapivb6`(16718) / `swconst`(1353)。
-> ★ **[chm-api] 全名含 `SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeatureManager~`，只在 `sldworksapi\` 树**（该树顶层文件按 `IFeatureManager~<成员>.html` 计数 = 289）。
+> ★ **[chm-api] 全名含 `SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeatureManager~`，只在 `sldworksapi\` 树**（该树按**含** `IFeatureManager~` 计数 = **285**）。
+> ⚠⚠ 2026-10-04（接手轮）**改正一个数字（B-4）**：★ 这里原写 **289** —— ★★ 而实测 **289 是 **VBA 树**（`sldworksapivb6\`）按 `SldWorks~FeatureManager~` 的计数**，不是 `sldworksapi\` 的。★ 逐条实测：
+> · `sldworksapi\` 按**含** `IFeatureManager~` = **285** ✓（本条要用的那个数）
+> · `sldworksapi\` 按**前缀** `IFeatureManager~` = **0**（★ 因为真名以 `SolidWorks.Interop…` 开头）
+> · `sldworksapivb6\` 按 `SldWorks~FeatureManager~` = **289**（★ 原写的那个数出自这里）
+> · `sldworksapivb6\` 按 `IFeatureManager` 过滤 = **0**（★ 下一条那半句**仍然成立**，★ 两处别混为一谈）
 > ★ **[chm-vb6] 名叫 `SldWorks~FeatureManager~<成员>.html`，只在 `sldworksapivb6\` 树**，该树按 `IFeatureManager` 过滤 = **0 个文件** —— 用 `*IFeatureManager*` 在 `sldworksapi\` 外搜索会得到「查不到」的假阴性，须按上面的两种命名分别取。
 
 ---

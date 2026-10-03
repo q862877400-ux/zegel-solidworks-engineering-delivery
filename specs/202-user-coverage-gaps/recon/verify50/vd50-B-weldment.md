@@ -144,7 +144,12 @@ CHM 同页 `SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeatureMana
 
 后继页 `C:\swapi\types\IFeature\GetErrorCode2.md`（**无** Obsolete 行）：
 > `**Signature**: `System.int GetErrorCode2( out System.bool IsWarning )``
-> `- **IsWarning**: True if the error is a warning, false to not`
+> `- **IsWarning**: True if the error is a warning, false if not`
+>
+> ⚠★ 2026-10-04（接手轮）**改正**：本行原复述作 `false to not` —— ★ **官方这一页逐字是 `false if not`**
+> （★ 实测 `C:\swapi\types\IFeature\GetErrorCode2.md`）；★ 而 `false to not` 在**别的**官方页确实成篇出现
+> ⇒ ★ **这是复述时抄错一行，不是「官方通例」** ✓
+> ★★ 同源的另一处（`audit-vs-official/audit-03-weldment-C.md` #1）已一并改正 ✓
 
 **一句话依据**：我们**实际调用**的成员带官方 `Obsolete. Superseded by [[IFeature::GetErrorCode2]].` 行，官方逐字点名的后继（多一个 `out bool IsWarning`）在代码里既没有、也没有任何换用说明 ⇒ 对不上。
 
