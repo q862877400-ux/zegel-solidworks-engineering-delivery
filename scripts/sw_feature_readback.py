@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -784,6 +784,89 @@ def csys_params(model, feature_name: str = "") -> dict:
                 out["Transform.ArrayData_head"] = [round(float(x), 6) for x in arr[:4]]
         except Exception as exc:                                          # noqa: BLE001
             out["Transform"] = "err: %s" % str(exc)[:60]
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\IBaseFlangeFeatureData\\`）
+# 文件:   `scripts/sw_feature_readback.py::base_flange_params`（★ 新增）
+# 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第八个**、★ **第七个族**、★ **钣金域** ✓
+#   ★★ **官方逐字（★ 逐个成员的 `## Returns`）** ⇒ ★ **七个长度量**都没写单位****：
+#     ★ `Thickness` ⇒ 「Value for thickness」· ★ `BendRadius` ⇒ 「Value of the bend radius」·
+#     ★ `TableRadius` ⇒ 「Bend radius」· ★ `TableThickness` ⇒ 「Thickness」·
+#     ★ `ReliefWidth` ⇒ 「Bend relief width」· ★ `ReliefDepth` ⇒ 「Bend relief depth」 ✓
+#     ★★ （★ 与 `IWizardHoleFeatureData2` **同型** ⇒ ★ **按铁律 5：如实标 `unknown`、★ 真机测**）✓
+#   ★★★ `KFactor` / ★ `TableKFactor` / ★ `ReliefRatio` ⇒ ★ **无量纲比例** ✓
+#     ★ `ReliefType` ⇒ `swSheetMetalReliefTypes_e` · ★ `D1EndConditionType` ⇒
+#       `swFlangeOffsetTypes_e` ✓
+#   ★★★★ **⚠ `D1OffsetDistance` ⇒ **真废弃****（★ 新判据也认）⇒ **本函数不读** ✓
+#   ★★★★★ **⚠ 本仓入口**（★ **按功能词搜出来的**）：★
+#     `sw_sheet_metal.create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def base_flange_params(model, feature_name: str = "") -> dict:
+    """★ 读**钣金基体法兰特征的一组参数**（★ 厚度 / 折弯半径 / K 因子 / 释放槽 / 若干开关）✓
+
+    ★★★★★ **单位口径（★ 第七个族 · ★ 与异型孔同型）**：
+      ★ 官方 `## Returns` **只写光名字** ⇒ ★★ **本函数如实标 `unknown`、★ 不猜** ✓
+      ★★★ **真机测出来的口径写在 docstring 的历史里**
+        （★ 见 `tools/probe_base_flange_params_recheck.py` 与 `output/base-flange-params-capability-recheck.json`）✓
+    ★★★ **⚠ 本函数不读 `D1OffsetDistance`**（★ 官方标**真废弃**）✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    UNK = "unknown（★ 官方 ## Returns 未写；★ 真机实测见证据）"
+    out: dict = {"feature": feature_name, "definition": None, "error": None,
+                 "★_单位口径": {k: UNK for k in (
+                     "Thickness", "BendRadius", "TableRadius", "TableThickness",
+                     "ReliefWidth", "ReliefDepth")},
+                 "★_无量纲": ["KFactor", "TableKFactor", "ReliefRatio"],
+                 "★_不读（★ 官方标真废弃）": ["D1OffsetDistance"]}
+    try:
+        feat = None
+        if feature_name:
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★★ 兜底：★ 找**最后一个**基体法兰特征（★ 类型名含 `BaseFlange`）——
+            #:   ★★★ **两层过滤**（★ 前几轮的教训）✓
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    nm = str(safe_get_com_member(f, "Name") or "")
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if nm not in _CONTAINER_NODES and "BaseFlange" in tn:
+                        feat, out["feature"] = f, nm
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = "找不到基体法兰特征（★ 类型名含 `BaseFlange`）"
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        #: ★★ **七个长度/比例量 + 三个开关类**（★ 全是有页的）⇒ ★ 直接取 ✓
+        for name in ("Thickness", "BendRadius", "KFactor", "TableKFactor", "TableRadius",
+                     "TableThickness", "ReliefType", "ReliefRatio", "ReliefWidth",
+                     "ReliefDepth", "UseReliefRatio", "OverrideThickness", "OverrideRadius",
+                     "OverrideKFactor", "UseGaugeTable", "UseDefaultBendAllowance",
+                     "UseDefaultBendRelief", "SymmetricThickness", "ReverseDirection",
+                     "ReverseThickness", "D1EndConditionType", "ThicknessTableName",
+                     "OverrideDefaultSheetMetalParameters"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+        #: ★★★ 两个**计数**（★ 零参方法）⇒ ★ 也取 ✓
+        for name in ("GetTableRadiiCount", "GetTableThicknessesCount"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out

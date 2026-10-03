@@ -118,4 +118,17 @@ SPECS_BATCH77 = [
             "★★★ **⚠ 本族**没有长度量****（★ 三是计数、★ 一是枚举、★ 一是变换对象）⇒"
             "**不涉及单位口径** —— ★ 那是本会话**唯一**一个这样的一族 ✓",
     ),
+    ToolSpec(
+        name="solidworks_base_flange_params",
+        title="Read Sheet Metal Base Flange Parameters",
+        module="sw_feature_readback", inject="model", function="base_flange_params",
+        params=[_FEAT_NAME],
+        doc="★ **读钣金基体法兰特征的一组参数**（★ 厚度 / 折弯半径 / K 因子 / 释放槽 / 若干开关）。"
+            "★★★ **单位口径（★ 第七族）**：★ 官方 `## Returns` **七个长度量全没写单位** ⇒"
+            "★ 而**本仓 `BaseFlangeSpec` 的 docstring 逐字写着「全部长度单位为米」** ⇒"
+            "★★ **实机一致性**：★ 传 `thickness=0.002` ⇒ ★ `Thickness` 回 **`0.002`** ✓"
+            "★★ **另外三个表值**（★ `TableKFactor` / `TableRadius` / `TableThickness`）"
+            "在不用 gauge table 时**必然是 `0.0`** ⇒ **与 `UseGaugeTable` 互相印证** ✓"
+            "★★★★ **⚠ 本工具**不读 `D1OffsetDistance`****（★ 官方标**真废弃**）✓",
+    ),
 ]
