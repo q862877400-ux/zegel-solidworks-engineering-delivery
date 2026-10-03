@@ -1,0 +1,129 @@
+"""★ L3 草稿：把 subskill 的 auto_insert_center_marks 接成一条 ToolSpec（只写草稿，未注册）。"""
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（ToolSpec 声明层）· 规格 `specs/202-user-coverage-gaps`
+# 文件:   specs/202-user-coverage-gaps/recon/bunny-L3-toolspec-draft.py.txt
+# 定位:   ★ L3「按模板产出」★ 草稿 —— 把
+#           `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`
+#           里的 `auto_insert_center_marks`（读稿时约在第 **1878**–**1883** 行）
+#           接成一条 `ToolSpec`（工具名 `solidworks_drawing_auto_center_marks`）。
+#   ⚠★ **本文件是草稿**：未注册 —— ★ `register_capabilities.py` 未改、`BATCH_MODULES` 未加行、
+#     也没有跑 `check_spec` / SolidWorks / pytest。★ 只新建了这一个 `.txt`。
+#   ⚠ **行号会漂**：同一次会话里三次读同一个文件，总行数从 2741 → 2743 → 2746
+#     （有别的进程在并发改它）⇒ ★ **不要把行号当稳定引用**，按函数名定位。
+#
+#   ★★ 这条能力**不是新覆盖** —— 按 `specs/202-user-coverage-gaps/recon/drawing-existing-coverage.md:24`，
+#     它已经被 `solidworks_generate_drawing`（`server.py`）经 DrawingSpec 的
+#     `professionalAnnotations.centerMarks` 走到。本稿只是给它一个**单点入口**
+#     （不画图、只对**当前活动**工程图补中心标记）—— 写出来是为了不重复发明。
+#
+#   ── ★ `module` 字段怎么定的（判断依据，三条都是逐字可查的） ────────────────
+#   ① `mcp-server/tool_registry.py:524` 逐字是
+#        `mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])`
+#      ⇒ ★★ `module` **不是**文件路径、也**不是**点分路径，它是**拼在 `scripts.` 之后的一段**
+#        ⇒ 能写的只能是「仓库根 `scripts/` 下的一个模块名」。
+#   ② 实现文件在 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`
+#      —— ★ **父目录 `solidworks-engineering-drawing` 带连字符，不是合法 Python 标识符**
+#      ⇒ 「把 subskill 目录直接写进 `module`」这条路**走不通**（点分名每段都得是标识符）。
+#   ③ ★★ 本仓**已经**铺好桥：`scripts/sw_drawing.py`（29 行）用
+#        `importlib.util.spec_from_file_location` 按**文件路径**加载上面那个实现，
+#        再把公开名逐个 `globals()[name] = getattr(_MODULE, name)` 导出
+#        ⇒ **`scripts.sw_drawing.auto_insert_center_marks` 真的可取到**。
+#      ★ 旁证：`tests/test_sw_drawing_structure.py:9` 逐字就是
+#        `from scripts.sw_drawing import (... auto_insert_center_marks ...)`。
+#      ⇒ ★★ **结论：`module="sw_drawing"`**（不是 `subskills.…`，也不是 `drawing_workflow`）。
+#
+#   ── ⚠★ `inject` 这里有一个**已知冲突**，本稿如实留档、不擅自改 ─────────────
+#   · 形参逐字是 `auto_insert_center_marks(drawing_model, requirements)` —— **首参叫 `drawing_model`**。
+#   · 注册器注入走 `kwargs[inject_as or inj] = resolver(params)`（`tool_registry.py:507`），
+#     而 `register()`（同文件 559 行）**不把 `inject_as` 往下传** ⇒ ★ **注入键字面上等于 `inject` 的值**。
+#   · ⇒ 本稿按要求写 `inject="model"` ⇒ 实际会得到 `kwargs["model"]=…`，
+#     ★ 而函数要的是 `drawing_model` ⇒ 运行期会是 **`TypeError: unexpected keyword argument 'model'`**。
+#   · 这不是本稿的错，而是 `docs/known-facts.md` 第 **169** 条记的那条机制；该条给的**本项目正当解法**
+#     是给 `register_capabilities.py` 的 `RESOLVERS` 加一行 `"drawing_model": resolve_model`
+#     （与既有的 `"asm_model"` / `"manager"` 两行同一手法，**不动 `tool_registry`**），
+#     再把 `inject` 改成 `"drawing_model"` —— ★ `drawing_model` 是合法标识符且 `check_spec` 不限制取值，**门禁不会拦**。
+#     ⇒ ★★ **本稿按指令保留 `inject="model"`**；要真跑起来必须先做上面那一步（属**另一件事**，不在本稿范围）。
+#
+#   ── ★ 官方依据（成员名 + 参数个数，逐字） ─────────────────────────────────
+#   ★ 建（唯一的写动作，`get_com_member(view, "AutoInsertCenterMarks2", …)` 传 10 个实参）：
+#     · `IView::AutoInsertCenterMarks2` — ★★ **10 个参数**
+#         `System.bool AutoInsertCenterMarks2(System.int InsertType, System.int InsertOption,
+#          System.bool LinearSlotCenter, System.bool ArcSlotCenter, System.bool UseDocumentDefaults,
+#          System.double Size, System.double Gap, System.bool ExtendedLines,
+#          System.bool CenterLineFont, System.double Angle)`
+#       ⇒ 与实现的 10 个实参逐位对上（`insert_type, 0, True, True, True, 0.0, 0.0, False, True, 0.0`）。
+#       ⇒ 官方 Remarks：调用前须先 `IDrawingDoc::ActivateView` 再取活动视图；
+#         要**单个**中心标记请用 `IDrawingDoc::InsertCenterMark3`（本函数走的是「自动」那条）。
+#   ★ 回读（★ 本工具的**成功判据**：不信返回值、只信**实体数量**，规则 6）：
+#     · `IView::GetFirstCenterMark2` — **0 个参数**（`System.object GetFirstCenterMark2()`）
+#     · `IView::GetFirstCenterMark`  — **0 个参数**（`CenterMark GetFirstCenterMark()`；SW2025 SP1 之前回退）
+#     · `IView::GetCenterMarks`     — **0 个参数**（`System.object GetCenterMarks()`；旧版兼容回退）
+#     · `ICenterMark::GetNext`      — **0 个参数**（`CenterMark GetNext()`）
+#     · `IView::GetCenterLines`     — **0 个参数**（`System.object GetCenterLines()`；★ 只有读、**无创建**）
+#   ★ 定位 / 刷新：
+#     · `ISheet::GetViews` — **0 个参数** · `IDrawingDoc::GetViews` — **0 个参数**
+#     · `IDrawingDoc::ActivateView` — **1 个参数**（`System.bool ActivateView(System.string ViewName)`）
+#     · `IModelDoc2::ForceRebuild3` — **1 个参数**（`System.bool ForceRebuild3(System.bool TopOnly)`）
+#     · `IModelDoc2::GraphicsRedraw2` — **0 个参数**（`void GraphicsRedraw2()`）
+#   ★ 枚举 `swAutoInsertCenterMarkTypes_e`（位掩码，官方共 3 项）：
+#     Hole = 1 · Fillet = 2 · Slots = 4
+#     ⇒ 实现里 `AUTO_CENTER_MARK_TARGETS = {"holes": 1, "fillets": 2, "slots": 4}` 是**照录**（可位或）。
+#   官方源: `C:\swapi\types\IView\AutoInsertCenterMarks2.md` · `C:\swapi\types\IView\GetFirstCenterMark2.md`
+#           · `C:\swapi\types\IView\GetFirstCenterMark.md` · `C:\swapi\types\IView\GetCenterMarks.md`
+#           · `C:\swapi\types\IView\GetCenterLines.md` · `C:\swapi\types\ICenterMark\GetNext.md`
+#           · `C:\swapi\types\IDrawingDoc\{ActivateView,GetViews}.md` · `C:\swapi\types\ISheet\GetViews.md`
+#           · `C:\swapi\types\IModelDoc2\{ForceRebuild3,GraphicsRedraw2}.md`
+#           · `C:\swapi\enums\swAutoInsertCenterMarkTypes_e.md`
+#   许可:   本仓库 MIT。★ **无第三方代码引入**（只是把本仓已有函数写成声明，不抄外部项目）。
+#   覆盖:   本文件
+# ─────────────────────────────────────────────────────────────────────────────
+
+from __future__ import annotations
+
+from tool_registry import Param, ToolSpec
+
+#: ★ 草稿：只声明、不注册（`register_capabilities.py` 的 `BATCH_MODULES` 里**没有**本模块）。
+_BATCH_BUNNY_L3: list[ToolSpec] = [
+    ToolSpec(
+        name="solidworks_drawing_auto_center_marks",
+        title="Auto Insert Drawing Center Marks",
+        module="sw_drawing", function="auto_insert_center_marks",
+        inject="model",
+        # ★ `drawing_model` 是注入进来的宿主对象（`IModelDoc2`）⇒ **故意不声明成 Param**；
+        #   按 ToolSpec 的要求「省略必须是显式的」，这里显式记一笔。
+        #   ⚠ 见上方「inject 的已知冲突」：注入键目前会是 `model` 而函数要 `drawing_model`。
+        omitted_params=("drawing_model",),
+        params=[
+            Param("requirements", list,
+                  description="★ 要插入的中心标记需求列表，每项是一个 dict："
+                              "`{\"id\": str, \"view\": str, \"count\": int, \"targets\": list[str]}`。"
+                              "· `view` —— 标准视图方向，官方/实现的口径是 `front` / `top` / `right`"
+                              "（实现另接受 `frontview` / `topview` / `rightview` 与"
+                              " `前视`/`主视`/`上视`/`俯视`/`右视`）；★ 先由 `ISheet::GetViews`"
+                              " 映射到图纸上真实存在的视图，**映射不到就整条记 failed**，不猜。"
+                              "· `count` —— **期望的实体数量**（不是插入次数）：★ 只有"
+                              " `回读到的实体数 < count` 时才真的调 `AutoInsertCenterMarks2`。"
+                              "· `targets` —— 官方 `swAutoInsertCenterMarkTypes_e` 的位掩码，"
+                              "可多选：`holes`(1) / `fillets`(2) / `slots`(4)。"
+                              "★ 空列表 ⇒ 直接回 `not_requested`（不碰 SolidWorks，零副作用）。"
+                              "⚠ 这是个 **list of dict**：注册器只按 `list` 建 Pydantic 字段、"
+                              "**不校验每一项的键** ⇒ 拼错键名只会在返回里以 `status: failed` 呈现。"),
+        ],
+        doc="★ **按视图自动插入中心标记**：`IView::AutoInsertCenterMarks2`（★ 官方 **10 个参数**）。"
+            "★★ 判据是**实体回读数量**，★ **不信返回值**（规则 6）："
+            "插入前 `GetFirstCenterMark2`/`GetFirstCenterMark` → `ICenterMark::GetNext` 遍历计数，"
+            "插入后再数一次 ⇒ `after_count >= count` 才算 pass。"
+            "⚠ `api_returned=True` 而回读不足时，**仍判 failed**，并给"
+            " `DRAWING_CENTER_MARK_DRAWING_SAVE_REQUIRED` —— ★ **新建未保存的工程图**会出现"
+            "「API 成功但实体读不出来」的已知假阳性（SKILL.md 与 "
+            "`tests/test_sw_drawing_structure.py` 都有对应用例）。"
+            "★ 返回里带 `mapping_method` / `mapping_diagnostics`（视图映射的口径与诊断）"
+            " 与 `manual_review_required: True`。"
+            "⚠ 图纸**中心线**只有读（`GetCenterLines`，**0 个参数**）★ **没有创建入口**，别混为一谈。",
+    ),
+]
+
+#: ★ 草稿聚合名：若将来真要注册，再照 `tool_specs_batch72.py` 的做法起一个 `SPECS_*` 名，
+#:   并在 `register_capabilities.py` 的 `BATCH_MODULES` 里加一行。
+SPECS_BUNNY_L3 = _BATCH_BUNNY_L3

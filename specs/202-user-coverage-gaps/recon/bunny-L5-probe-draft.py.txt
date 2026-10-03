@@ -1,0 +1,695 @@
+"""★ 草稿（★ 未执行）：IView.InsertBreak3 —— 工程图断裂线，逐格先回读前置再调用，判据含可回读的断裂线计数。"""
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（探针）· 规格 `specs/202-user-coverage-gaps`（工程图域 / recon/drawing_views.md）
+# 文件:   specs/202-user-coverage-gaps/recon/bunny-L5-probe-draft.py.txt（★ 本文件是**草稿**，
+#         ★ 落点是 `.py.txt` ⇒ 门禁 `scripts/check_python_syntax.py`（只 parse `*.py`）**不会**扫它；
+#         ★ 改成 `.py` 之前先跑 `python -c "import ast;ast.parse(open(p,encoding='utf-8').read())")`）
+# 定位:   L5 档 · 接近边界 · **只写草稿、不许跑**。
+#         ★ 官方成员 `IView.InsertBreak3`（★ `InsertBreak` / `InsertBreak2` **都已 Obsolete**，
+#           见 `C:\swapi\types\IView\InsertBreak.md` 第 12 行 "Obsolete. Superseded by GetBreakLineCount2"
+#           同族写法 + `specs/202-user-coverage-gaps/recon/api/InsertBreak.md` 第 5 行已登记
+#           本仓 `'InsertBreak3': 6`（`scripts/sw_drawing_view.py`）—— ★ **arity 静态对得上**）。
+#         ★ 结构照抄两处既有探针：`tools/prove_coverage_gap_batch1.py`（三格 + 每格 try/except）
+#           与 `tools/prove_split_line_minimal_matrix.py`（**前置先回读、不成立就写明「不能当能力不成的证据」**）；
+#           工程图侧的零件/视图脚手架直接复用 `tools/prove_drawing_batch.py` 已真机跑过的写法
+#           （`_build_part` 存盘 / `_new_drawing` / `CreateDrawViewFromModelView3` / `_sel_counts`）。
+# 官方依据:
+#   ★★ **签名逐字**抄自 `C:\swapi\types\IView\InsertBreak3.md` 第 14 行（原文一字不改）：
+#         **Signature**: `System.object InsertBreak3( System.int Orientation, System.double Position1, System.double Position2, System.int Style, System.int ShapeIntensity, System.bool BreakSketchBlocks )`
+#   —— 即 **6 个实参**：`Orientation:int` · `Position1:double` · `Position2:double` ·
+#      `Style:int` · `ShapeIntensity:int` · `BreakSketchBlocks:bool`。
+#   ★ 该页 **Remarks 逐字**（第 28–39 行，探针的坐标口径全在这里）：
+#         "A break in a drawing view consists of a pair of break lines. This method inserts the break
+#          lines at the locations indicated by Position1 and Position2."
+#         "If the orientation of the break is... Then Position1 and Position2 are...
+#          Horizontal → Y values relative to the drawing view origin, indicating where along the Y axis
+#          to place the breaks
+#          Vertical   → X values relative to the drawing view origin, indicating where along the X axis
+#          to place the breaks"
+#   ★ **调用序**来自官方例子 `C:\swapi\examples\Insert_Jagged_Cut_Break_Example_VB.md`（★ 签名与 Remarks
+#     给不了调用序，只有例子给）—— 第 43–47 行逐字：
+#         status = swDrawingDoc.ActivateView("Drawing View1")
+#         status = swModelDocExt.SelectByID2("Drawing View1", "DRAWINGVIEW", 0, 0, 0, False, 0, Nothing, 0)
+#         Set swView = swModel.SelectionManager.GetSelectedObject6(1, -1)
+#         Set swBreakLine = swView.InsertBreak3(2, -2.91950859897372E-02, 1.98236302285804E-02,
+#                                              swBreakLineStyle_e.swBreakLine_Jagged, 2, True)
+#         Debug.Print "Break line style (5 = jagged cut): " & swBreakLine.Style
+#         Debug.Print " Shape intensity: " & swBreakLine.ShapeIntensity
+#     ⇒ ★ 由例子逐字读出的三条：① `Orientation=2`（Vertical ⇒ 走 **X** 分量）；② `Style` 是**枚举**不是裸数
+#       （名字 `swBreakLine_Jagged`，官方页 `swBreakLineStyle_e` 的 Value = 5 ⇒ ★ 本探针**不写死 5**，
+#        在运行期读 `C:\swapi\enums\swBreakLineStyle_e.md`，照抄 `prove_drawing_batch._enum` 的口径）；
+#       ③ **回读走返回的 `BreakLine` 对象**（`Style` / `ShapeIntensity` 两个属性）。
+#   ★ 枚举页（运行期读，不写死）：`swBreakLineOrientation_e` = {swBreakLineHorizontal 1, swBreakLineVertical 2}；
+#     `swBreakLineStyle_e` = {Straight 1, ZigZag 2, Curve 3, SmallZigZag 4, Jagged 5}。
+#   ★ 判据侧的官方回读成员（★ **三源互证后的取舍，见文件末尾「卡住的地方」第 ② 条**）：
+#     `C:\swapi\types\IView\IsBroken.md` → `System.bool IsBroken()`（★ 零参、可读：视图**是否已断开**）
+#     `C:\swapi\types\IView\GetBreakLines.md` → `System.object GetBreakLines()`（★ 零参、回 `Breaks` 集合 ⇒ 数组长度 = 断裂对数）
+#     `C:\swapi\types\IView\GetBreakLineCount2.md` → `System.int GetBreakLineCount2( out System.int Size )`（★ **带 out**）
+# 许可:   本仓库 MIT（上游部分见 `THIRD-PARTY-NOTICES.md`）。无第三方代码引入 —— ★ 本文件只读官方文档页 +
+#         沿用本仓既有探针的写法（铁律 1：来源是官方 API 文档 + 本项目自身既有模式）。
+# 覆盖:   全文件 —— ★ L5 档草稿：① 来源块 ② 四格探针 ③ 判据含可回读量 ④ 末尾「卡住的地方」如实清单。
+# ─────────────────────────────────────────────────────────────────────────────
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+import time
+from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8")
+R = Path(r"D:\AI\SW")
+sys.path.insert(0, str(R))
+sys.path.insert(0, str(R / "scripts"))
+sys.path.insert(0, str(R / "tools"))
+
+from scripts import sw_connect as C                                     # noqa: E402
+from scripts import sw_part as P                                        # noqa: E402
+import scripts.sw_drawing_query as DQ                                  # noqa: E402
+
+#: ★ 官方枚举页根（★ 取值**运行期**现读，见 `_enum` —— 照抄 `tools/prove_drawing_batch.py` 的纪律：
+#:   枚举值属于官方数据，写死就会与出厂值漂移；读不到就回 None 并**跳过该格**，不硬凑）。
+SWAPI_ENUMS = Path(r"C:\swapi\enums")
+
+#: ★ 临时零件（★ 官方 `CreateDrawViewFromModelView3` 的 Remarks 逐字要求 `ModelName` 是
+#:   **含 `.sldprt` 的完整路径** ⇒ 所以零件**必须存盘**）。
+PART_PATH = R / "output" / "_probe_break3_part.SLDPRT"
+OUT_JSON = R / "output" / "break3-probe-evidence.json"
+
+#: ★ 视图落位（**米** —— 官方对 `CreateDrawViewFromModelView3` 的 Loc* 逐字写着 "in meters"；
+#:   ★ 与 `tools/prove_drawing_batch.py::VIEW_LOC_M` 同口径）。
+VIEW_LOC_M = (0.14, 0.12)
+
+#: ★★ **单位假设**（★ 铁律 5：官方没给单位就写明假设，不装成已知）。
+#:   `InsertBreak3` 的 Position1/Position2 官方只写 "relative to the drawing view origin"、
+#:   **没写单位**；★ 而官方例子给的量级是 `-0.0292 / 0.0198` ⇒ 与工程图 API 的**米**一致
+#:   （同一个例子里 `CreateDrawViewFromModelView3` 的落位也是米）⇒ 本探针按**米**传。
+#:   ★ 另注意：这两个值是**视图局部坐标**（相对**视图原点**），不是图纸坐标 —— 官方例子里的
+#:   -0.0292/0.0198 就是那张视图自己的局部值。★ 本探针的零件 80×60×10 mm（±0.04 / ±0.03 m）
+#:   ⇒ 取 ±0.015 落在视图内部（★ 若改成别的板厚/尺寸，这两格数值必须重算）。
+POSITION_UNIT_ASSUMPTION = ("★ 官方只写 'relative to the drawing view origin'、未给单位；"
+                            "官方例子量级与**米**一致 ⇒ 本探针按米传，且是**视图局部坐标**")
+BREAK_POS_M = (-0.015, 0.015)
+
+_ENUM_CACHE: dict[tuple[str, str], tuple[int | None, str | None]] = {}
+
+
+# ── 小助手（与 tools/prove_drawing_batch.py 同形，不重新发明） ────────────────
+def _get(o, name, *a):
+    """★ 本仓统一的 COM 取/调（`sw_connect.get_com_member`）。"""
+    return C.get_com_member(o, name, *a)
+
+
+def _close(sw, doc):
+    """★ 关掉**自己开的**文档（★ 不保存）。"""
+    if doc is None:
+        return
+    try:
+        t = str(_get(doc, "GetTitle") or "")
+        if t:
+            _get(sw, "CloseDoc", t)
+    except Exception as exc:                                           # noqa: BLE001
+        print("  ⚠ 关文档时：%s: %s" % (type(exc).__name__, str(exc)[:120]))
+
+
+def _clear(doc):
+    """★ 清空选区（`IModelDoc2.ClearSelection2(True)`）—— 每格开头都做，免得上格残留。"""
+    try:
+        _get(doc, "ClearSelection2", True)
+    except Exception:                                                  # noqa: BLE001
+        pass
+
+
+def _sel_counts(doc, marks=(0, 1, 2, 4, 8)) -> dict:
+    """★ 回读**按标记分组**的选区计数（★ 事实 8：`SelectByID2` 的返回值不可信，只有计数算数）。"""
+    out = {}
+    for m in marks:
+        try:
+            out[str(m)] = int(_get(_get(doc, "SelectionManager"),
+                                  "GetSelectedObjectCount2", m) or 0)
+        except Exception:                                              # noqa: BLE001
+            out[str(m)] = -1
+    return out
+
+
+def _enum(enum_name: str, member: str):
+    """★ **在官方枚举页里现场取枚举值** ⇒ `(value|None, 来源或原因)`（照抄 `prove_drawing_batch._enum`）。"""
+    key = (enum_name, member)
+    if key in _ENUM_CACHE:
+        return _ENUM_CACHE[key]
+    page = SWAPI_ENUMS / ("%s.md" % enum_name)
+    val: int | None = None
+    note: str | None = None
+    if not page.is_file():
+        note = "★ 官方枚举页不在本机：%s" % page
+    else:
+        try:
+            text = page.read_text(encoding="utf-8", errors="replace")
+        except OSError as exc:
+            text, note = "", "★ 读官方枚举页失败：%s" % str(exc)[:120]
+        if text:
+            for line in text.splitlines():
+                if not line.startswith("|"):
+                    continue
+                cells = [c.strip() for c in line.strip().strip("|").split("|")]
+                if len(cells) < 2 or cells[0] != member:
+                    continue
+                raw = cells[1]
+                m = re.match(r"^0x([0-9a-fA-F]+)", raw) or re.match(r"^(-?\d+)", raw)
+                if m:
+                    val = int(m.group(1), 16) if raw.lower().startswith("0x") else int(m.group(1))
+                    note = str(page)
+                else:
+                    note = "★ %s 的 Value 列不是数字（%r）⇒ 不解析、不猜" % (member, raw[:60])
+                break
+            else:
+                note = "★ 官方枚举页 %s 里没有成员 %s ⇒ 不猜" % (page.name, member)
+    _ENUM_CACHE[key] = (val, note)
+    return val, note
+
+
+def _need_enum(row: dict, enum_name: str, member: str):
+    """★ 取枚举；取不到就**记进 row 并回 None**（★ 调用方据此跳过该格，不硬凑一个数）。"""
+    val, note = _enum(enum_name, member)
+    if val is None:
+        row.setdefault("enum_missing", []).append("%s.%s ⇒ %s" % (enum_name, member, note or ""))
+    return val
+
+
+def _vname(view) -> str:
+    """★ 视图名（`GetName2`，退回 `Name` —— 与 `sw_drawing_query` 同口径）。"""
+    for attr in ("GetName2", "Name"):
+        try:
+            v = _get(view, attr)
+            if v:
+                return str(v)
+        except Exception:                                              # noqa: BLE001
+            continue
+    return ""
+
+
+def _chain(doc) -> list:
+    """★ 视图链 `GetFirstView()` → `GetNextView()`（★ **含**"图纸本身"那个伪视图 —— 真机实测过）。"""
+    out: list = []
+    try:
+        v = _get(doc, "GetFirstView")
+    except Exception:                                                  # noqa: BLE001
+        return out
+    n = 0
+    while v is not None and n < 500:                                   #: ★ 上限防死循环
+        n += 1
+        out.append(v)
+        try:
+            v = _get(v, "GetNextView")
+        except Exception:                                              # noqa: BLE001
+            break
+    return out
+
+
+def _real_views(doc) -> list:
+    """★ **真视图**（排除"图纸本身"）—— 先向已真机验证过的 `DQ.list_views` 取名单，再按名对上对象。"""
+    try:
+        names = [str((r or {}).get("name") or "") for r in (DQ.list_views(doc) or [])]
+    except Exception:                                                  # noqa: BLE001
+        return []
+    return [v for v in _chain(doc) if _vname(v) in names and _vname(v)]
+
+
+# ── 判据：★ 全部是**可回读**的量，且每格调用前后各读一次 ────────────────────────
+def _break_state(view) -> dict:
+    """★ 视图的断裂状态读数。
+
+    ★ 三个来源，口径各不相同，★ 所以**三个都读、都报**（让人看得见是哪一份变了）：
+      | 键 | 官方成员 | 签名 | 口径 |
+      |---|---|---|---|
+      | `is_broken` | `IView.IsBroken()` | `System.bool IsBroken()` | **零参**可读：视图**是否已断开** |
+      | `breaks_len` | `IView.GetBreakLines()` | `System.object GetBreakLines()` | **零参**可读：回 `Breaks` 集合 ⇒ **数组长度 = 断裂对数**（官方：一对断裂线算**一个** break）|
+      | `count2` | `IView.GetBreakLineCount2(out Int32 Size)` | `System.int GetBreakLineCount2( out System.int Size )` | ★ **带 out** ⇒ 必须按 `sw_connect.out_i4()`（唯一真机验证通过的 byref 形态）传，★ 失败就如实记 `err` |
+    """
+    st: dict = {"is_broken": None, "breaks_len": None, "count2": None}
+    try:
+        st["is_broken"] = bool(_get(view, "IsBroken"))
+    except Exception as exc:                                           # noqa: BLE001
+        st["is_broken_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    try:
+        arr = _get(view, "GetBreakLines")
+        st["breaks_len"] = len(list(arr)) if arr is not None else 0
+    except Exception as exc:                                           # noqa: BLE001
+        st["breaks_len_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    try:
+        st["count2"] = int(_get(view, "GetBreakLineCount2", C.out_i4(0)) or 0)
+    except Exception as exc:                                           # noqa: BLE001
+        #: ★ `out` 参数族在 pywin32 迟到绑定下常常到不了（与已知事实 47 同族）⇒ ★ 这里**预期会失败**，
+        #: ★ 失败不是判负，只是"这条回读口径不可用"⇒ 判据退到上面两个零参成员。
+        st["count2_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    return st
+
+
+def _delta(before: dict, after: dict) -> dict:
+    """★ 只对**两个零参口径**算增量（★ `count2` 可能一直是 None，不参与判定）。"""
+    out = {}
+    for k in ("breaks_len",):
+        b, a = before.get(k), after.get(k)
+        out[k + "_delta"] = (a - b) if isinstance(a, int) and isinstance(b, int) else None
+    out["is_broken"] = [before.get("is_broken"), after.get("is_broken")]
+    out["count2"] = [before.get("count2"), after.get("count2")]
+    return out
+
+
+# ── 脚手架：零件（存盘）→ 工程图 → 一个真视图 ────────────────────────────────
+def _build_part(sw, row: dict):
+    """★ 建 80×60×10 mm 的板并**存盘**（★★ 存盘是硬要求，见 `PART_PATH` 那行注释）。"""
+    doc = None
+    try:
+        doc = C.new_document(sw, "part")
+        P.start_sketch(doc, plane_name="Front Plane")
+        _get(_get(doc, "SketchManager"), "CreateCornerRectangle",
+             -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+        P.end_sketch(doc)
+        names = [n for n in (P.feature_names(doc) or [])
+                 if n.startswith("草图") or n.lower().startswith("sketch")]
+        if not names:
+            row["extrude_err"] = "找不到草图特征名（feature_names 没回草图）"
+            return None
+        P.extrude_boss(doc, names[-1], 0.01)
+        row["extrude_sketch"] = names[-1]
+        row["saved"] = bool(C.save_document(doc, str(PART_PATH)))
+        row["part_exists"] = PART_PATH.is_file()
+        return doc if row.get("saved") else None
+    except Exception as exc:                                           # noqa: BLE001
+        row["part_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
+        return doc
+
+
+def _drawing_with_view(sw, part_doc, row: dict, view_name="*Front"):
+    """★ 建工程图 + 插一个模型视图 ⇒ `(drawing, 真视图, 视图名, 信息)`。
+
+    ★ 前置（官方 Remarks 逐字）：`ModelName` 必须是**含 `.sldprt` 的完整路径**；
+      `ViewName` 与模型视图名**完全一致**，标准视图名**带星号**；Loc* 单位是**米**。
+    """
+    info: dict = {}
+    if part_doc is None:
+        return None, None, None, {"err": "★ 前置未成立：零件文档不在（没建成/没存盘）"}
+    try:
+        doc = C.new_document(sw, "drawing")
+    except Exception as exc:                                           # noqa: BLE001
+        info["drawing_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
+        return None, None, None, info
+    try:
+        ret = _get(doc, "CreateDrawViewFromModelView3", str(PART_PATH), str(view_name),
+                   float(VIEW_LOC_M[0]), float(VIEW_LOC_M[1]), 0.0)
+        info["ret_is_none"] = ret is None
+    except Exception as exc:                                           # noqa: BLE001
+        info["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
+    views = _real_views(doc)
+    info["view_count"] = len(views)
+    return doc, (views[0] if views else None), (_vname(views[0]) if views else None), info
+
+
+def _select_view_by_id(doc, view_name: str, row: dict):
+    """★ 照官方例子取视图：`ActivateView(name)` → `SelectByID2(name,"DRAWINGVIEW",0,0,0,False,0,…)`
+    → `SelectionManager.GetSelectedObject6(1, -1)`；★ 每一步都回读，**不回读到就如实说前置不成立**。"""
+    got: dict = {"view_name": view_name}
+    try:
+        got["activate"] = bool(_get(doc, "ActivateView", str(view_name)))
+    except Exception as exc:                                           # noqa: BLE001
+        got["activate_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    _clear(doc)
+    ext = _get(doc, "Extension")
+    try:
+        #: ★ 官方例子第 8 个实参写的是 `Nothing` ⇒ 空 Dispatch（已知事实 33：裸 None 会"类型不匹配"）。
+        got["select_return_ignored"] = bool(
+            ext.SelectByID2(str(view_name), "DRAWINGVIEW", 0.0, 0.0, 0.0,
+                            False, 0, C.out_dispatch(None), 0))
+    except Exception as exc:                                           # noqa: BLE001
+        got["select_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    got["sel_by_mark"] = _sel_counts(doc)
+    view = None
+    try:
+        view = _get(_get(doc, "SelectionManager"), "GetSelectedObject6", 1, -1)
+    except Exception as exc:                                           # noqa: BLE001
+        got["get_sel_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    got["view_from_selection"] = view is not None
+    got["view_name_readback"] = _vname(view) if view is not None else None
+    #: ★★ **前置判据只看计数**（事实 8）⇒ 视图取不到 ⇒ 后面那一格**不作"能力不成"的证据**。
+    got["preconditions_held"] = bool(view is not None
+                                     and got.get("view_name_readback") == view_name)
+    if view is None:
+        row.setdefault("precondition_note", []).append(
+            "★ 前置未成立：GetSelectedObject6 没取到视图（sel_by_mark=%s）" % got["sel_by_mark"])
+    return view, got
+
+
+# ── 四格 ────────────────────────────────────────────────────────────────────
+def case_l5a_official_call_order(sw):
+    """★ **A · 官方调用序逐字照搬**：Jagged + ShapeIntensity=2 + BreakSketchBlocks=True + Vertical。
+
+    ★ 判据（三条都要）：
+      ① 返回对象非 None（官方 `Returns: Break line`）；
+      ② `breaks_len`（`GetBreakLines()` 数组长度）**+1** —— ★ 官方逐字「一个 break = **一对**断裂线」
+         ⇒ 涨 **1**（不是 2）；若实测涨 2 ★ 就说明这个口径数的是**线**不是**对**，必须把结论写回去；
+      ③ 返回对象的 `Style` / `ShapeIntensity` 能回读（官方例子就是这么回读的）。
+    """
+    row = {"tag": "★ A 官方调用序（Vertical · Jagged · 2 · True）", "ok": False,
+           "position_unit_assumption": POSITION_UNIT_ASSUMPTION,
+           "break_pos_m": list(BREAK_POS_M), "signature_verbatim": SIGNATURE_VERBATIM}
+    part = None
+    doc = None
+    try:
+        orient = _need_enum(row, "swBreakLineOrientation_e", "swBreakLineVertical")
+        style = _need_enum(row, "swBreakLineStyle_e", "swBreakLine_Jagged")
+        if orient is None or style is None:
+            row["note"] = "★ 官方枚举页读不到 ⇒ 本格跳过（★ 不硬凑一个数，★ 也不写死官方值）"
+            return row
+        row["args"] = {"Orientation": orient, "Position1": BREAK_POS_M[0],
+                       "Position2": BREAK_POS_M[1], "Style": style,
+                       "ShapeIntensity": 2, "BreakSketchBlocks": True}
+        part = _build_part(sw, row)
+        if part is None:
+            row["note"] = "★ 前置未成立：零件没建/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, _v, view_name, info = _drawing_with_view(sw, part, row)
+        row["view_info"] = info
+        if doc is None or not view_name:
+            row["note"] = "★ 前置未成立：没建出真视图 ⇒ 本格不作判据"
+            return row
+        view, pre = _select_view_by_id(doc, view_name, row)
+        row["pre"] = pre
+        if not pre.get("preconditions_held"):
+            return row
+        before = _break_state(view)
+        bl = None
+        try:
+            #: ★★ **6 个实参，顺序与官方签名逐字一致**（Orientation, Position1, Position2,
+            #:    Style, ShapeIntensity, BreakSketchBlocks）—— ★ 一个都不许增删。
+            bl = _get(view, "InsertBreak3", int(orient), float(BREAK_POS_M[0]),
+                      float(BREAK_POS_M[1]), int(style), 2, True)
+            row["returned_is_none"] = bl is None
+        except Exception as exc:                                       # noqa: BLE001
+            row["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
+        after = _break_state(view)
+        row["break_before"] = before
+        row["break_after"] = after
+        row["delta"] = _delta(before, after)
+        if bl is not None:
+            for attr in ("Style", "ShapeIntensity", "Orientation"):
+                try:
+                    row.setdefault("breakline_props", {})[attr] = _get(bl, attr)
+                except Exception as exc:                               # noqa: BLE001
+                    row.setdefault("breakline_prop_errs", {})[attr] = \
+                        "%s: %s" % (type(exc).__name__, str(exc)[:140])
+        row["ok"] = bool(bl is not None
+                         and row["delta"].get("breaks_len_delta") == 1)
+        row["verified_by"] = "GetBreakLines().len +1 AND return_not_none"
+    except Exception as exc:                                           # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    finally:
+        _close(sw, doc)
+        _close(sw, part)
+    return row
+
+
+def case_l5b_view_from_chain_no_selection(sw):
+    """★ **B · 隔离「是否必须选中视图」**：视图从**视图链**取（`_real_views`），**不选**。
+
+    ★ 为什么值得单独一格：官方例子是「先 `SelectByID2` 再 `GetSelectedObject6` 取视图」，
+      ★ 而 `InsertBreak3` 吃的是**视图对象** ⇒ ★ 例子里的选区**很可能只是取对象的手段**、不是前置。
+      ★ 本格若也成 ⇒ 可断言"选中不是前置"；★ 若不成 ⇒ 说明例子那句调用序是承重的。
+    ★ 判据同 A：`breaks_len` +1 且返回非 None。
+    """
+    row = {"tag": "★ B 视图链取对象 · 不选（隔离'选区是否前置'）", "ok": False}
+    part = None
+    doc = None
+    try:
+        orient = _need_enum(row, "swBreakLineOrientation_e", "swBreakLineHorizontal")
+        style = _need_enum(row, "swBreakLineStyle_e", "swBreakLine_ZigZag")
+        if orient is None or style is None:
+            row["note"] = "★ 官方枚举页读不到 ⇒ 本格跳过"
+            return row
+        #: ★ Horizontal ⇒ Position 走 **Y** 分量（官方 Remarks 的那张表）
+        y1, y2 = -0.010, 0.010
+        row["args"] = {"Orientation": orient, "Position1": y1, "Position2": y2,
+                       "Style": style, "ShapeIntensity": 3, "BreakSketchBlocks": False}
+        part = _build_part(sw, row)
+        if part is None:
+            row["note"] = "★ 前置未成立：零件没建/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, view, view_name, info = _drawing_with_view(sw, part, row)
+        row["view_info"] = info
+        if view is None:
+            row["note"] = "★ 前置未成立：没建出真视图 ⇒ 本格不作判据"
+            return row
+        _clear(doc)
+        row["sel_by_mark"] = _sel_counts(doc)
+        row["preconditions_held"] = bool(view is not None
+                                         and row["sel_by_mark"].get("0") == 0)
+        before = _break_state(view)
+        bl = None
+        try:
+            bl = _get(view, "InsertBreak3", int(orient), float(y1), float(y2),
+                      int(style), 3, False)
+            row["returned_is_none"] = bl is None
+        except Exception as exc:                                       # noqa: BLE001
+            row["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
+        after = _break_state(view)
+        row["break_before"] = before
+        row["break_after"] = after
+        row["delta"] = _delta(before, after)
+        row["ok"] = bool(bl is not None and row["delta"].get("breaks_len_delta") == 1)
+        row["verified_by"] = "GetBreakLines().len +1 AND return_not_none (no selection)"
+    except Exception as exc:                                           # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    finally:
+        _close(sw, doc)
+        _close(sw, part)
+    return row
+
+
+def case_l5c_break_sketch_blocks_false(sw):
+    """★ **C · `BreakSketchBlocks=False` 的最小格**（官方逐字 "True to break sketch blocks, false to not"）。
+
+    ★ 与 A 的差别**只在这一位**（并顺带把 `ShapeIntensity` 换成 3、Style 换成 SmallZigZag）
+      ⇒ A/C 之差可归因到这一位 + 那两个从属参数。★ 若要严格单变量，★ 应把 Style 与 ShapeIntensity
+      保持与 A 相同 —— ★ **本文件的已知不足，见末尾「卡住的地方」第 ④ 条**。
+    ★ 判据：`breaks_len` +1 且返回非 None。
+    """
+    row = {"tag": "★ C BreakSketchBlocks=False（最小格）", "ok": False}
+    part = None
+    doc = None
+    try:
+        orient = _need_enum(row, "swBreakLineOrientation_e", "swBreakLineVertical")
+        style = _need_enum(row, "swBreakLineStyle_e", "swBreakLine_SmallZigZag")
+        if orient is None or style is None:
+            row["note"] = "★ 官方枚举页读不到 ⇒ 本格跳过"
+            return row
+        row["args"] = {"Orientation": orient, "Position1": BREAK_POS_M[0],
+                       "Position2": BREAK_POS_M[1], "Style": style,
+                       "ShapeIntensity": 3, "BreakSketchBlocks": False}
+        part = _build_part(sw, row)
+        if part is None:
+            row["note"] = "★ 前置未成立：零件没建/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, _v, view_name, info = _drawing_with_view(sw, part, row)
+        row["view_info"] = info
+        if doc is None or not view_name:
+            row["note"] = "★ 前置未成立：没建出真视图 ⇒ 本格不作判据"
+            return row
+        view, pre = _select_view_by_id(doc, view_name, row)
+        row["pre"] = pre
+        if not pre.get("preconditions_held"):
+            return row
+        before = _break_state(view)
+        bl = None
+        try:
+            bl = _get(view, "InsertBreak3", int(orient), float(BREAK_POS_M[0]),
+                      float(BREAK_POS_M[1]), int(style), 3, False)
+            row["returned_is_none"] = bl is None
+        except Exception as exc:                                       # noqa: BLE001
+            row["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
+        after = _break_state(view)
+        row["break_before"] = before
+        row["break_after"] = after
+        row["delta"] = _delta(before, after)
+        row["ok"] = bool(bl is not None and row["delta"].get("breaks_len_delta") == 1)
+        row["verified_by"] = "GetBreakLines().len +1 AND return_not_none"
+    except Exception as exc:                                           # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    finally:
+        _close(sw, doc)
+        _close(sw, part)
+    return row
+
+
+def case_l5d_readback_only(sw):
+    """★ **D · 只验回读口径本身**（★ 不调 `InsertBreak3`）：断裂线计数的三个官方口径能不能在本后端读到。
+
+    ★ 为什么单独一格：★ `GetBreakLineCount2` 带 `out System.int Size` ⇒ pywin32 迟到绑定**很可能到不了**
+      （与已知事实 47 同族）；★ 而 `IsBroken()` / `GetBreakLines()` 是零参。★ 若这一格发现
+      **三个口径全都读不到** ⇒ ★ 那 A/B/C 的判据就全塌了，★ 必须先修判据再谈能力。
+    ★ 判据：`is_broken` 与 `breaks_len` 至少有一个**读得出**（不是 None、不是异常）。
+    """
+    row = {"tag": "★ D 只验回读口径（不调 InsertBreak3）", "ok": False}
+    part = None
+    doc = None
+    try:
+        part = _build_part(sw, row)
+        if part is None:
+            row["note"] = "★ 前置未成立：零件没建/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, view, view_name, info = _drawing_with_view(sw, part, row)
+        row["view_info"] = info
+        if view is None:
+            row["note"] = "★ 前置未成立：没建出真视图 ⇒ 本格不作判据"
+            return row
+        row["view_name"] = view_name
+        st = _break_state(view)
+        row["state"] = st
+        row["callable_counters"] = [k for k, v in st.items()
+                                    if k in ("is_broken", "breaks_len", "count2")
+                                    and v is not None]
+        row["ok"] = bool(row["callable_counters"])
+        row["verified_by"] = "at_least_one_zero_arg_break_counter_readable"
+        if "count2_err" in st:
+            row["note"] = ("★ `GetBreakLineCount2(out Int32)` 用 `sw_connect.out_i4()` 仍失败 ⇒ "
+                           "★ 这条 out 参口径在本后端不可用（★ 与已知事实 47 同族）；"
+                           "★ 判据退回零参的 IsBroken / GetBreakLines")
+    except Exception as exc:                                           # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    finally:
+        _close(sw, doc)
+        _close(sw, part)
+    return row
+
+
+#: ★★ 签名逐字（来源块里那份，这里再存一份给运行时回读用 —— ★ 判据之一就是"实参个数 == 6"）。
+SIGNATURE_VERBATIM = ("System.object InsertBreak3( System.int Orientation, System.double Position1,"
+                      " System.double Position2, System.int Style, System.int ShapeIntensity,"
+                      " System.bool BreakSketchBlocks )")
+SIGNATURE_ARITY = 6
+
+CASES = (
+    ("D", "只验回读口径（不调 InsertBreak3）", case_l5d_readback_only),
+    ("A", "官方调用序（Vertical · Jagged · 2 · True）", case_l5a_official_call_order),
+    ("B", "视图链取对象 · 不选（隔离'选区是否前置'）", case_l5b_view_from_chain_no_selection),
+    ("C", "BreakSketchBlocks=False（最小格）", case_l5c_break_sketch_blocks_false),
+)
+
+
+def _selected(filters, label) -> bool:
+    if not filters:
+        return True
+    return any(f.lower() in label.lower() for f in filters)
+
+
+def main() -> int:
+    """★ 跑格子（或筛选后的）⇒ 写 `output/break3-probe-evidence.json` 并打印判读。
+
+    ⚠ ★★ **本文件是草稿、★ 本轮按指令没有执行过它** ⇒ 下面这些读数**一个都不存在**；
+      ★ 跑法（★ 真机一律走弹窗护栏，★ 且**不由本文件的作者随手跑**）：
+          python tools/sw_guard.py --timeout 1800 -- python <本文件改名为 .py 之后>
+      ★ 只跑某几格：把标签子串当参数传，例如 `… python …py D A`
+    """
+    filters = [a for a in sys.argv[1:] if not a.startswith("-")]
+    sw, _meta = C.connect_solidworks(wait_seconds=30)
+    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+          "_": "IView.InsertBreak3（★ InsertBreak/2 已 Obsolete）—— ★ 每格先回读前置再调用；"
+               "★ 判据 = GetBreakLines().len +1 ∧ 返回非 None ∧ BreakLine.Style/ShapeIntensity 可读",
+          "spec": "specs/202-user-coverage-gaps",
+          "official_signature": SIGNATURE_VERBATIM,
+          "official_signature_arity": SIGNATURE_ARITY,
+          "position_unit_assumption": POSITION_UNIT_ASSUMPTION,
+          "filters": filters, "part_path": str(PART_PATH), "cases": []}
+    try:
+        #: ★ 铁律 2：未抑制的模态框会把会话挂死 ⇒ 跑之前先置位（★ 收尾必复位）
+        try:
+            sw.CommandInProgress = True
+            ev["command_in_progress"] = True
+        except Exception as exc:                                       # noqa: BLE001
+            ev["command_in_progress"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
+        for label, desc, fn in CASES:
+            if not _selected(filters, label):
+                continue
+            t0 = time.time()
+            try:
+                case = fn(sw)
+            except Exception as exc:                                   # noqa: BLE001
+                #: ★ 不许吞异常：★ 异常本身进 dict
+                case = {"tag": label, "ok": False,
+                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:240])}
+            case["label"] = label
+            case["desc"] = desc
+            case["seconds"] = round(time.time() - t0, 2)
+            ev["cases"].append(case)
+            print("  %-3s %-40s ok=%-6s pre=%-6s %ss"
+                  % (label, desc, case.get("ok"), case.get("preconditions_held"),
+                     case.get("seconds")))
+            for k in ("delta", "break_before", "break_after", "args", "breakline_props",
+                      "callable_counters", "enum_missing", "err", "call_err", "note"):
+                if k in case:
+                    print("        %-22s %s" % (k, str(case[k])[:200]))
+    finally:
+        try:
+            sw.CommandInProgress = False
+        except Exception:                                              # noqa: BLE001
+            pass
+    ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
+    ev["total"] = len(ev["cases"])
+    ev["preconditions_held_count"] = sum(1 for c in ev["cases"] if c.get("preconditions_held"))
+    OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
+    OUT_JSON.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+                        encoding="utf-8")
+    print("  判读：成 %d / %d（★ 前置成立的 %d 格）"
+          % (ev["passed"], ev["total"], ev["preconditions_held_count"]))
+    print("  ⚠ ★ `ok=False` 且 `preconditions_held=False` 的格子**不能**当「能力不成」的证据。")
+    print("  产物：%s" % OUT_JSON)
+    return 0
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ 卡住的地方 / 已知不足（如实清单 —— ★ 不编造"跑得通"的样子）
+# ══════════════════════════════════════════════════════════════════════════════
+# ① ★★ **本轮按指令没有执行本文件**：没跑 SolidWorks、没跑 pytest、没改任何已有文件。
+#     ⇒ 上面四格的 `delta` / `breaks_len` / `is_broken` **一个真实读数都没有**。
+#     ⇒ ★ 因此本文件**不能**作为 `IView.InsertBreak3` "可用/不可用"的证据，★ 只能作为探针草稿。
+# ② ★★ **断裂线计数的主判据口径本身有疑问（★ 这条最要紧）**：
+#     官方 `IView.GetBreakLineCount2` 的签名是 `System.int GetBreakLineCount2( out System.int Size )`
+#     —— ★ **带一个 out 参数**；`GetBreakLineCount` 同样带 `out`（且官方标 Obsolete）。
+#     ⇒ ★ `tools/prove_drawing_batch.py:305` 的 `_COUNTERS` 里 `("breakline", "GetBreakLineCount")`
+#       是**零参调用**（`int(_get(v, member) or 0)`）—— ★ 按官方签名它**必须**带 out 参数，
+#       所以那个读数要么是异常被吞成 `None`、要么是 COM 侧的宽容返回。★ **这是既有探针的一处
+#       口径隐患，不是本文件的错**，★ 但它意味着"断裂线计数"这条判据**不能**直接沿用那个计数器。
+#     ⇒ 本文件的对策：主判据改成**零参**的 `GetBreakLines()`（回数组 ⇒ 取长度）与 `IsBroken()`，
+#       把 `GetBreakLineCount2` 降级成 D 格里单独试的一口（用 `C.out_i4()`）；★ 若 D 格发现三个口径
+#       全不可用，★ **先修判据**，★ 不要拿"读不到计数"当"能力不成"。
+# ③ ★ **out 参族在 pywin32 迟到绑定下大概率到不了**（与已知事实 47 同族）⇒ D 格**预期会记 `count2_err`**。
+#     ★ 这不是失败，★ 只是"这条回读口径在本后端不可用"。
+# ④ ★ **C 格不是严格的单变量对照**：它同时改了 `BreakSketchBlocks`（False）与 `Style`/`ShapeIntensity`
+#     ⇒ A/C 之差**不可**单独归因给 `BreakSketchBlocks`。★ 若要归因，C 格应只改这一位。
+# ⑤ ★ **Position1/Position2 的单位官方没写**（只写 "relative to the drawing view origin"）
+#     ⇒ 本文件按**米**传（依据是官方例子的量级 -0.0292/0.0198），★ 并把这条**假设**写进每个 row。
+#     ★ 且它们是**视图局部坐标** ⇒ 换零件尺寸就必须重算 `BREAK_POS_M`（现在写死 ±0.015 m，
+#     ★ 对应 80×60 mm 的板；★ 板若改小，这两个值可能落在视图外 ⇒ 断裂不成且**原因会被误读成"能力不成"**）。
+# ⑥ ★ **官方例子的 `Position1=-0.0292 / Position2=+0.0198` 不能照抄** —— ★ 那是**那张样例视图**的局部值；
+#     本文件换成 ±0.015 m。★ 所以"与官方例子逐字相同"这件事**只在调用序与实参个数上成立**，
+#     位置值是**按同一量级口径重算的**，★ 不是逐字。
+# ⑦ ★ **官方例子依赖的样例文件本机是否存在未验证**：它写的是
+#     `C:\Users\Public\Documents\SOLIDWORKS\SOLIDWORKS **2018**\samples\tutorial\api\box.slddrw`
+#     —— ★ 本机是 SW 2026 SP4.1，★ 那个 2018 路径**未查**。⇒ 本草稿刻意**不**依赖它，
+#     自己建零件 + 投影视图（照 `tools/prove_drawing_batch.py` 已跑通的路子）。
+#     ★ 若要改成"照官方例子原样跑"，★ 须先单独确认该文件在本机存在。
+# ⑧ ★ **`ShapeIntensity` 的有效范围官方写的是 1（最强）～ 5（最弱），且"仅对锯齿切口有效"**；
+#     本文件三格分别传 2 / 3 / 3 ⇒ ★ 在非 Jagged 的格子里这个参数**按官方说法本不该起作用**，
+#     ★ 那两格若出现"ShapeIntensity 读数没跟着变"，★ 那是**应然的**，不是 bug。
+# ⑨ ★ **`ActivateView` 需要视图名字符串** —— 本文件的视图名是从 `_vname()`（`GetName2`）读的，
+#     ★ 而**没验证过** `ActivateView` 接受的就是这个名字（★ 例子里是 `"Drawing View1"`）。
+#     ★ 若 A/C 格的 `activate` 读回 False，★ 那是这张的前置问题，★ 不是 `InsertBreak3` 的问题。
+# ⑩ ★ **判据里"一个 break = 一对线 ⇒ 数组长度 +1"**：官方逐字是"returns the number of **breaks**…
+#     even though there are … six lines" ⇒ 官方口径是**对**。★ 但 `GetBreakLines()` 回的集合名是
+#     `Breaks` ⇒ ★ 若实测 `breaks_len` 涨 **2**，★ 说明这个成员数的是**线**，★ 那就把判据改成 +2
+#     并把这条结论写回 `recon/api/InsertBreak.md`。★ 本文件**先按 +1 写**，★ 不假装已验证。
+# ⑪ ★ 落点是 `.py.txt` ⇒ ① 不会被 `scripts/check_python_syntax.py` 扫；② 改名成 `.py` 之前
+#     ★ 必须自己 parse 一遍；③ ★ 本文件 `import` 了 `tools/prove_drawing_batch.py` 没有的任何东西，
+#     ★ 只依赖 `scripts/` 下三个已存在的模块（`sw_connect` / `sw_part` / `sw_drawing_query`）
+#     ⇒ **没有新建或修改任何既有文件**。
