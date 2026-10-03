@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 82 |
-| 可攻关 | 4 |
+| 已能 | 83 |
+| 可攻关 | 3 |
 | 待验证 | 6 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -27,7 +27,6 @@
 | 工具条 | 条目 | 档 | 官方成员（已核） | 本仓入口 |
 |---|---|---|---|---|
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform2` | — |
-| 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
 | 曲面 | 圆角(曲面) | **待验证** | `FeatureFillet` | `sw_part.fillet` |
@@ -90,6 +89,7 @@
 | 特征下拉 | 参考几何体-点 | **已能** | `InsertReferencePoint` | — |
 | 特征下拉 | 参考几何体-质心 | **已能** | `InsertCenterOfMass` | — |
 | 特征下拉 | 圆周阵列 | **已能** | `FeatureCircularPattern4` | `sw_part.circular_pattern` |
+| 特征下拉 | 曲线-分割线 | **已能** | `InsertSplitLineProject` | `scripts/sw_curve_and_split.py::insert_split_line_project / insert_split_line_silhouette` |
 | 特征下拉 | 曲线-通过XYZ点的曲线 | **已能** | `InsertCurveFile` | — |
 | 特征下拉 | 螺纹线 | **已能** | `InsertCosmeticThread3` | — |
 | 特征下拉 | 高级孔 | **已能** | `HoleWizard5` | — |

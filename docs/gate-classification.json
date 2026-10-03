@@ -38,6 +38,12 @@
       "reason": "代码里写了官方不存在的成员名 ⇒ **必然在运行时炸**，必须拦。"
     },
     {
+      "gate": "check_official_md_claims.py",
+      "runner": "_run_official_md_claims_gate",
+      "kind": "hard",
+      "reason": "代码里「官方没有 X」的断言与官方页相反 ⇒ **会把真机失败归因错**（实测：一句假断言让两轮攻关白走，并把失败记成「能力不成」）；接上去当场又抓出第二处同形错误。"
+    },
+    {
       "gate": "check_workspace_shadowing.py",
       "runner": "_run_workspace_shadowing_gate",
       "kind": "hard",

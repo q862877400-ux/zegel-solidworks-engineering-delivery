@@ -1575,7 +1575,13 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ⇒ ★★★ **故把它们并成一类：★ 「官方例子给出的调用序已完整执行、而这条后端上特征仍不建」** —— ★ 与事实 391 那一族同源。
      ★ **按事实 53 停手**（分割线已 3 轮：537 · 538 · 539）。
      ★★ **而它的净收获不是“成”**：★ **它把两条能力的「前置没对」这个可能性彻底排除掉了** —— ★ 以后不必再围着前置转。
-     ★ 而那两个例子页名（★ 可直接重现）：`Create_Trimmed_Surface_Feature_Example_VBNET.htm` · `Create_Projection_Split_Line_Example_VBNET.htm`。|真机：`tools/probe_split_line_projection_per_example.py`；证据 `output/split-line-projection-per-example-evidence.json`；对照事实 391 / 415 / 417 / 418 |
+     ★ 而那两个例子页名（★ 可直接重现）：`Create_Trimmed_Surface_Feature_Example_VBNET.htm` · `Create_Projection_Split_Line_Example_VBNET.htm`。★★ **⚠ 本条结论已被更正（2026-10-03 接手轮，见事实 484）**：
+        ★「**前置已照官方例子完全对上**」**只对了一半** —— ★ 对的是 **mark**（草图 4 · 面 1），
+        ★ **错的是几何**：★ 上一轮探针把**实体拉成 z∈[-30,30]**、而投影草图留在 **Front Plane（z=0）**
+        ⇒ ★ **草图被实体夹在中间**；★ 且面取的是 **`GetFaces()[0]`**（与投影落点无关）。
+        ⇒ ★ 照官方例子的**几何**（草图在实体之外 + 面按落点选）重做 ⇒ ★ **真机建成**。
+        ⇒ ★ 故本条的正确表述是：★「**mark 已对上、而几何没对上**时特征不建」。
+      |真机：`tools/probe_split_line_projection_per_example.py`；证据 `output/split-line-projection-per-example-evidence.json`；对照事实 391 / 415 / 417 / 418 |
 | 420 | **★★★ 一条**分类判据**：看**返回值**——「回对象」= 特征其实建了（树外）；「回 `None`」= 真的没建**** —— 2026-10-03（轮 540）。
      ★ **缺口是我自己的**：轮 537-539 我对分割线只记了 **`new = []`**（树增量），★ **而没记返回值** ⚠ —— 而**事实 406 的教训正相反**：`InsertCutSurface` 当时**回了对象**（`Name` = 「使用曲面切除1」·`GetTypeName2` = `SurfCut`）—— ★ **特征其实建了、只是树回读看不见**。
      ★ 真机（`tools/probe_split_line_returns.py`，零弹窗）：
@@ -1592,7 +1598,12 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      回**对象**（带 `Name` / `GetTypeName2`）  ⇒ 特征**其实建了**（★ 只是在树外）：`InsertCutSurface`
      回 **`None`**                        ⇒ **真的没建**：分割线（三条）· 加厚 · 直纹曲面 · 剪裁曲面 · 扫描曲面
      ```
-     ★ 而它与**事实 391**（静默不干活）与**事实 406**（回读盲区）合起来才是完整的图景。|真机：`tools/probe_split_line_returns.py`；证据 `output/split-line-returns-evidence.json`；对照事实 391 / 406 / 417-419 |
+     ★ 而它与**事实 391**（静默不干活）与**事实 406**（回读盲区）合起来才是完整的图景。★★★ **⚠ 本条已被证伪（2026-10-03 接手轮，见事实 486）**：
+        ★ 本轮真机上**投影型与轮廓型都在 `ret = None` 的情况下建成了**
+        （★ 树新增「分割线1」· 面数 +1）⇒ ★ **`ret is None` 对分割线这族零信息量**。
+        ★ 而"树增量"也不够：★ M5/M6 里**树新增了「分割线1」、而面数 6→6**（一个面也没切开）。
+        ⇒ ★ 正确判据要落到**几何读数**上（实体面数 / `IFace2.GetLoopCount` 环数）。
+      |真机：`tools/probe_split_line_returns.py`；证据 `output/split-line-returns-evidence.json`；对照事实 391 / 406 / 417-419 / 486 |
 | 421 | **★★★ 「水平/竖直尺寸**会挂**」这个定性是**错的**：它弹的是**数值输入框**、在等人填数** —— 2026-10-03（轮 541）。
      ★ 起因：本轮去查 T501/T502（`AddHorizontalDimension2` / `AddVerticalDimension2`）那条“**会挂**”的记录（★ 计划里写着“单跑 4.41s / **120.42s** 后 `sw_alive: null`”）。
      ★ 而**护栏早就把它落盘了**（★ 每个弹窗一个文件）：`output/dialog-events/2026-10-03T13:4*.json`，★ 而**它的控件树逐字是**：
@@ -2861,3 +2872,122 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 官方：`C:\swapi\types\ISketchManager\SketchUseEdge3.md` ·
 `C:\swapi\examples\Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md`；
 对照事实 32 / 481 / 482 |
+| 484 | **★★★★ 投影型分割线（`InsertSplitLineProject`）在本后端**建成**了 —— ★ 而卡了两轮的"前置"其实是**几何**，不是 mark** —— 2026-10-03（接手轮），台账 `特征下拉 · 曲线-分割线`。
+      ★ **起因**：★ 接手时台账那行写着「★ 待重查：官方 `## Remarks` 的 **mark 表**与**选择顺序**」，
+        ★ 而**官方那一页的 Remarks 里就有 mark 表、Examples 里还有完整调用序** ⇒ ★ **我先前根本没读**。
+      ★★ **官方 `## Remarks` 逐字**（`C:\swapi\types\IModelDoc2\InsertSplitLineProject.md`）：
+        ```
+        The sketch to project must be selected using IModelDocExtension::SelectByID2
+        with a mark value of 4.
+        The faces to split must be selected using IModelDocExtension::SelectByID2
+        with mark values of 1.
+        ```
+      ★★ **官方 `## Examples`**（`Create_Projection_Split_Line_Example_VB.htm`）给的**调用序**四步：
+        ```
+        ① SelectByID2("Boss-Extrude1","BODYFEATURE",0,0,0,False, 0,…)
+        ② SelectByID2("Sketch1",      "SKETCH",     x,y,0,True, **4**,…)
+        ③ SelectByID2("",             "FACE", x,y,z,True, **1**,…)
+        ④ Part.InsertSplitLineProject True, True
+        ```
+      ★★★ **真机（`tools/prove_split_line_geometry_per_example.py`，零弹窗）**：
+        ```
+        (True, True)  ⇒ **成**：树新增「分割线1」· 面数 6→7 · 有面 1 环→2 环
+        (True, False) ⇒ 不成      (False, True) ⇒ **也成**
+        ```
+      ★★★ **★ 为什么上一会话"照官方例子做"仍失败 —— 他们只对上了 mark、没对上几何**：
+        · 上一轮探针（`probe_split_line_projection_per_example.py`）的实体是 **Top 面拉 20 mm**
+          ⇒ 实体 **z∈[-30,30]**，★ 而投影草图在 **Front Plane（z=0）** ⇒ ★ **草图被实体夹在中间**；
+        · 而它选的面是 **`GetFaces()[0]`（第一张面）** ⇒ ★ **与投影落点无关**。
+        ⇒ ★★ **官方的真前置是几何**：★ **投影草图所在面要在实体之外、与某个面平行、沿投影方向隔开**
+          （★ 例子：草图 z=0 · 实体 z∈[17.78, 20.32]）。
+      ★★ **单变量对照（`tools/prove_split_line_minimal_matrix.py`，每格先回读标记计数）**：
+        ```
+        M1 正确几何 + 近面（mark 1）      ⇒ 成 · 切开的面**恰在 z = 0.01778 m**（＝投影落点平面）
+        M2 正确几何 + **垂直侧脸**        ⇒ **也成**，★ 而切开的**仍是那张近面**
+                                            ⇒ ★ **选哪张面不影响切哪张：切的是投影落点那张面**
+        M3 正确几何 + **不选面**          ⇒ 不成 ⇒ ★ Remarks 的"面 mark 1"**必要**
+        M4 正确几何 + **不选草图**        ⇒ 不成 ⇒ ★ Remarks 的"草图 mark 4"**必要**
+        M5/M6 上一会话几何（草图在实体内）⇒ ★ 树**新增了「分割线1」、而面数 6→6**（一个面也没切开）
+        ```
+      ★★★ **由此立一条判据（★ 比"树增量"硬）**：★ 分割线这类"切开面"的操作，
+        判据必须含 **实体面数增量** 或 **`IFace2.GetLoopCount` 的环数变化** ——
+        ★ 因为 **M5/M6 证明「特征进了树」并不等于「面被切开了」**。
+      ★ **落地**：`scripts/sw_curve_and_split.py::insert_split_line_project` 已改写
+        （写明官方 mark 表 · 回读前置 · 判据三条一起）；★ 台账那行的 note 已改。
+      |真机：`tools/prove_split_line_geometry_per_example.py` · `tools/prove_split_line_geometry_controls.py` · `tools/prove_split_line_minimal_matrix.py`；
+      证据 `output/split-line-geometry-per-example-evidence.json` · `output/split-line-geometry-controls-evidence.json` · `output/split-line-minimal-matrix-evidence.json`；
+      官方：`C:\swapi\types\IModelDoc2\InsertSplitLineProject.md` · `C:\swapi\examples\Create_Projection_Split_Line_Example_VB.md`；
+      对照事实 417 / 418 / 419 / 420 / 53 / 480 / 482 |
+| 485 | **★★★★ 轮廓型分割线（`InsertSplitLineSil`）也建成了 —— ★ 而它是**新门禁逼出来的**（★ 我自己没想到）** —— 2026-10-03（接手轮）。
+      ★★ **怎么发现的**：★ 我新写 `scripts/check_official_md_claims.py`（扫"官方没给 mark"这类断言、拿官方页核对）
+        ⇒ ★ **它一跑就报了 `mcp-server/tool_specs_batch71.py`**：
+        ```
+        我方断言：（★ 官方 Remarks 没给 mark 表）
+        官方页（InsertSplitLineSil.md）逐字：
+          The item selected for direction must be selected using SelectByID2
+          with a mark value of **2**. The faces to split must be selected using
+          SelectByID2 with mark values of **1**.
+        ```
+        ⇒ ★★ **与投影型是同一个错的形态**（把"官方有 mark"写成"没有"）——
+        ★ 而上一会话在这条上**只选了一个基准面、mark = 0** ⇒ ★ **第一步就错了**。
+      ★★★ **真机（`tools/prove_split_line_silhouette_marks.py`，零弹窗）**：
+        ```
+        S5 上视面 mark **2** + 侧面 mark 1（横着看）⇒ **成** · 面数 +1 ·
+           圆柱侧面 **2 环 → 两张各 1 环**（[1,1,2] → [1,1,1,1]）
+        S6 上视面 mark 2 + **不选面**             ⇒ 不成 ⇒ ★ "面 mark 1" 必要
+        S7 上视面 mark **0** + 侧面 mark 1         ⇒ 不成 ⇒ ★★ **只差 mark**
+                                                     ⇒ ★ **官方那个 2 是承重的**（单变量证明）
+        S1/S2 前视面（法向 = 圆柱轴 +Z）           ⇒ **都不成**
+        ```
+      ★★ **几何前提**：轮廓 = 曲面与视线**相切**的线 ⇒ ★ **视线不能顺着回转轴**
+        （顺着轴时轮廓退化成圆环本身、与已有边重合）⇒ ★ 换**上视面**横着看才成。
+      ★★ **判据要分开**：★ 轮廓型沿曲面切出**两张独立的面**、**不会新增内环**
+        ⇒ ★ 若沿用投影型那条"要有面出现 2 个环"，会把**成功误判成失败**。
+      |真机：`tools/prove_split_line_silhouette_marks.py`；证据 `output/split-line-silhouette-marks-evidence.json`；
+      官方：`C:\swapi\types\IModelDoc2\InsertSplitLineSil.md`；
+      门禁：`scripts/check_official_md_claims.py`；对照事实 417 / 420 / 484 / 486 |
+| 486 | **★★★ 「回 `None` ⇒ 真的没建」这条分类判据被证伪了；而「树长了」也不足以判成** —— 2026-10-03（接手轮）。★ **更正事实 420**。
+      ★ **事实 420 原文逐字**：「一条分类判据：看返回值——「回对象」= 特征其实建了（树外）；「回 `None`」= 真的没建」
+        （★ 它当时据 `tools/probe_split_line_returns.py` 的三条**分割线**全回 `None` 而立）。
+      ★★★ **本轮真机证伪**：
+        ```
+        投影型建成时 ret = **None**（★ 而树新增「分割线1」· 面数 6→7）   ⚠
+        轮廓型建成时 ret = **None**（★ 而树新增「分割线1」· 面数 +1）    ⚠
+        ```
+        ⇒ ★★ **`ret is None` 既不能证明"建了"，也不能证明"没建"** —— ★ 它对分割线这族**零信息量**。
+      ★★ **而"树增量"也不够**（★ 这一条是新的、比更正 420 更有用）：
+        ```
+        M5/M6（草图被实体夹住）⇒ ★ 树**新增「分割线1」**、而 **面数 6→6**（一个面也没切开）
+        ```
+        ⇒ ★★★ **两个教训合起来**：★ 「树增量」只能说明**命令被接受了**，
+          ★ **不能**说明**几何真的变了** ⇒ ★ 判据要落到**几何读数**上（面数 / 环数 / 包围盒）。
+      |真机：`tools/prove_split_line_minimal_matrix.py` · `tools/prove_split_line_geometry_per_example.py`；
+      证据 `output/split-line-minimal-matrix-evidence.json`；对照事实 420（被更正）· 391 · 406 · 484 |
+| 487 | **★★★★ 新门禁 `check_official_md_claims.py`：把「官方没有 X」变成**可机器核对的断言** —— ★ 而它一接上就抓出第二处真错** —— 2026-10-03（接手轮）。
+      ★ **判据**（★ 门禁在**运行时读官方源**，★ 不是读我们自己的转述）：
+        ```
+        ① 在 scripts/*.py 与 mcp-server/*.py 里找「否定词(+可选动词) + <token>」的断言（token 集当前 = {mark}）
+        ② 沿该行**向上**找最近的、能解析到官方页的**主语**成员
+           （解析 = C:\swapi\types\**\<name>.md 存在 **且** front-matter 的 `member:` == <name>）
+        ③ 主语不唯一 / 解析不到 ⇒ **跳过并计数**（★ 不猜 —— ★ 猜错会把**对的断言**报成违规）
+        ④ 解析到了 ⇒ 读那一页；★ 页里**出现了该 token** ⇒ **违规**
+        ```
+      ★★ **三道既有门禁都不管这一层**（★ 这就是缺口的形状）：
+        `check_member_names` 守「名字在**某个**接口里存在」· `check_interface_member_ownership` 守「属于**这个**接口」·
+        `check_unreachable_members` 守「本机**调得动**吗」—— ★ **没有一道守"官方文档里写了没有"**。
+      ★★★ **它接上去当场抓出两条**（★ 逐条人工核过）：
+        ```
+        真阳性 ① mcp-server/tool_specs_batch71.py  InsertSplitLineSil  ⇒ ★ 官方**有** mark（2/1）
+                  ⇒ ★ **直接变成了一次真机攻关**（★ 见事实 485，那条**建成了**）
+        真阳性 ② scripts/sw_curve_and_split.py      InsertSplitLineProject ⇒ ★ 官方**有** mark（4/1）
+        （另有 2 条是**我自己的更正引述**、1 条是**主语认错** ⇒ 前者按"已撤回"跳过、后者进**带理由的豁免**）
+        ```
+      ★★ **配套**：`docs/gate-classification.json` 登记（kind = **hard**）· 接进 `release_check.py` **三处**
+        （函数 + 调用 + **进返回体**）· 负例测试 `tests/test_official_md_claims_gate.py` **6/6 通过** ——
+        ★ 其中最关键的一条**拿修复前的原文**（`git show 9db64e7:scripts/sw_curve_and_split.py`）当输入，
+        ★ 断言门禁**必须报出那条**（★ 事实 62：★ 门禁"写了"不等于"有效"）。
+      ★★ **可复用的一条纪律**：★ **"官方没有 X"与"我查不到 X"是两件事** ——
+        ★ 前者**是可核对的断言**，★ 写进代码前必须**真的核对过**；★ 否则它会**把失败归因错**（★ 本轮两次都是）。
+      |门禁：`scripts/check_official_md_claims.py`；登记 `docs/gate-classification.json`；测试 `tests/test_official_md_claims_gate.py`；
+      对照事实 486 · 485 · 484 · 62 · 5（铁律 5） |
+

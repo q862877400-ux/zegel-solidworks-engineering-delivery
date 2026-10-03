@@ -3683,7 +3683,7 @@
     },
     {
       "id": "curve_and_split",
-      "label": "通过参考点的曲线 · 配合参考（★ 分割线两条**未登记**）",
+      "label": "通过参考点的曲线 · 配合参考 · **分割线（投影/轮廓）**（★ 后两条 2026-10-03 真机建成）",
       "level": "verified",
       "backends": [
         "solidworks-com-pywin32"
@@ -3701,10 +3701,16 @@
         "★ 2026-10-03（轮 481）**真机 2/4**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b7a_curve_split.py`。★ **通过参考点的曲线**：树新增 **`曲线1`**（`InsertCurveFileBegin/Point/End` 三步式）；★ **配合参考**：树新增 **`['配合参考', 'MCP_MateRef-<1>', '配合参考___EndTag___']`**。证据 output/b7a-curve-split-evidence.json。",
         "★★ **`类型不匹配` 位置 6 ⇒ 未用的 entity 槽要传「空 Dispatch」**：`InsertMateReference2` 的 `Secondary/TertiaryReferenceEntity` 类型是 `Entity`，★ 裸传 `None` 不行；★ 用本仓 `sw_connect.create_empty_dispatch_variant()`（★ 它就是**事实 12**那条）。",
         "★★ **`无效的参数数目` ⇒ 官方第三组少一个形参**：完整签名是 **12** 个（`… TertiaryReferenceType, TertiaryReferenceAlignment )`",
-        "—— **没有 `TertiaryReferenceAlignAxes`**）；★ 我按“三组同形”推成 13 个 ⇒ 报错。★ **别按同形推，要逐数完整签名**。"
+        "—— **没有 `TertiaryReferenceAlignAxes`**）；★ 我按“三组同形”推成 13 个 ⇒ 报错。★ **别按同形推，要逐数完整签名**。",
+        "★★★★ **2026-10-03（接手轮）分割线（投影）真机建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_split_line_geometry_per_example.py` + `tools/prove_split_line_minimal_matrix.py`。★ 判据**三条一起**：树新增 **`分割线1`**（`GetTypeName2` = `PLine`）· **面数 6→7** · **有一张面从 1 环变 2 环**（`IFace2.GetLoopCount`）；★ 且**切开的那张面的包围盒**恰在 **z = 0.01778 m**（＝投影落点平面）⇒ 证明切的是**投影落点那张面**。证据 output/split-line-geometry-per-example-evidence.json · output/split-line-minimal-matrix-evidence.json。",
+        "★★★★ **2026-10-03（接手轮）分割线（轮廓）真机建成**：`python tools/prove_split_line_silhouette_marks.py` 的 **S5**：树新增 `分割线1` · **面数 +1** · 圆柱侧面 **2 环 → 两张各 1 环**（`[1,1,2] → [1,1,1,1]`）。证据 output/split-line-silhouette-marks-evidence.json。",
+        "★★★ **前置（真机单变量对照，★ 两个前件都必要）**：投影型 = **草图 mark 4 + 面 mark 1**；轮廓型 = **方向项 mark 2 + 面 mark 1**。★ 缺任一个都**不成**（M3/M4 · S6）；★ 而轮廓型**只把 mark 2 换成 mark 0**（S7）就不成 ⇒ **官方那个 2 是承重的**。",
+        "★★★ **几何前提（★ 官方签名与 Remarks 都没写，★ 只有官方例子的调用序给得出，★ 并由真机单变量对照确认）**：★ 投影型要求**投影草图所在面在实体之外**、与目标面平行、沿投影方向隔开；★ 轮廓型要求**视线不能顺着回转轴**（圆柱轴 = +Z 时用前视面不成、换上视面成）。★ 反例：草图被实体夹住时**特征会建出来而一个面也切不开**（`分割线1` 进树、面数 6→6）。",
+        "★★★ **`InsertSplitLineProject` / `InsertSplitLineSil` 建成时都回 `None`** ⇒ ★ 「回 `None` ⇒ 真的没建」**不成立**（本轮真机证伪了 `docs/known-facts.md` 事实 420 的那条分类判据）。"
       ],
       "limitations": [
-        "★ **分割线两条本条不登记**：`InsertSplitLineProject` 与 `InsertSplitLineSil` 真机都是「**树无增量**」。★ 它们**不要求 mark**（官方 Remarks 没给 mark 表）⇒ 前置是「**要有可投影的草图 / 可选的面**」，★ 探针里那个前置显然不够。★ 下一轮按 `Create_Ref_Plane` 那次的教训重试：**选完立刻调**、**把选中数带进证据**。",
+        "★ **分割线两条：实现层已真机建成、但未登记成工具**（★ 与「配合参考」同一个原因）：它们的「选择」必须由调用方在**工具层之外**先做好（投影型：草图 mark 4 / 面 mark 1；轮廓型：方向项 mark 2 / 面 mark 1），★ 而 `ToolSpec` 表达不了「先替我选好一个草图与一个面」⇒ ★ 要接**声明式选择器**那一层（`selection` + `sw_selection_spec`）★ 不在本轮草率塞。",
+        "⚠ **本条此前那句归因是错的（留档）**：原文逐字是「真机都是树无增量。★ 它们**不要求 mark**（官方 Remarks 没给 mark 表）」—— ★★ **「官方没给 mark 表」是假的**（投影型 Remarks 给的是 4/1，轮廓型给的是 2/1，★ 两页都逐字核过）。★ 那句假断言把真机失败**归因成了「能力不成」**，★ 并让台账挂了 3 轮「待重查 mark 表」。★ 现由门禁 `scripts/check_official_md_claims.py` 守这一类断言（已登记进 `docs/gate-classification.json`）。",
         "★ **配合参考的实现层已真机建成，但未登记成工具**：它第 2 个形参 `PrimaryReferenceEntity` 是 **`IEntity`（COM 对象）**，★ `ToolSpec` 的 `Param` 只表达基本类型 ⇒ **表达不了**。★ 本仓既有做法是走**声明式选择器**（`selection` + `sw_selection_spec`）⇒ ★ 那一层要另加，**不假装塞一个 `str` 参数当实体**。",
         "★ **台账给的两条已废弃**：变量阵列（`InsertVaryInstanceIncrement`/`…Override`）与投影曲线（`InsertProjectedSketch2`）**都标 Obsolete**，继任者是 `IInstanceToVaryOptions` / `IProjectionCurveFeatureData` + **`CreateDefinition`** 那族（新架构）⇒ ★ 另列。"
       ]

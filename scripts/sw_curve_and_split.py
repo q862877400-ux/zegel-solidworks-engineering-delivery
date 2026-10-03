@@ -222,18 +222,60 @@ def insert_split_line_project(model, is_directional: bool = False,
 def insert_split_line_silhouette(model) -> dict:
     """★ **分割线（轮廓）**：`IModelDoc2.InsertSplitLineSil()` → `void` —— ★ **零参数**。
 
-    ★ 官方语义：按**轮廓**（silhouette）把面切开 ⇒ ★ 调用前要选好**要切的面 / 参考**。
-    ⚠ 官方回 `void` ⇒ 判据**只能**靠**特征树增量**。
+    ★★ **官方 `## Remarks` 也明写了 mark 表**（★ 逐字，★ 本模块 2026-10-03 更正）：
+      > The silhouette curves differ based on your orientation. Therefore, this method
+      > requires a selection to specify the desired direction.
+      > Valid items to select to specify the direction are: reference plane · planar face ·
+      > edge · axis · two points
+      > The item selected for direction must be selected using
+      > [[IModelDocExtension::SelectByID2]] with a mark value of **2**.
+      > The faces to split must be selected using IModelDocExtension::SelectByID2
+      > with mark values of **1**.
+    ⚠ **本模块此前写的是「官方 Remarks 没给 mark 表」—— 那句是错的**
+      （★ 由新门禁 `scripts/check_official_md_claims.py` 抓出来；★ 见事实 484/486）。
+
+    ★★ **调用前必须自己选好**：**方向项** mark=**2** · 要切的**面** mark=**1**。
+      ★★ 真机**单变量对照**（`output/split-line-silhouette-marks-evidence.json`）：
+        · 上视面 mark **2** + 侧面 mark 1 ⇒ **成**（`分割线1` · 面数 +1）
+        · 上视面 mark **0** + 侧面 mark 1 ⇒ **不成**（★ 只差了 mark ⇒ **官方那个 2 是承重的**）
+        · 不选面（mark 1） ⇒ **不成** ⇒ ★ 面那条 Remarks 也是**必要**的
+    ★★ **几何前提**：轮廓 = 曲面与视线**相切**的线 ⇒ ★ 视线**不能顺着回转轴**
+      （真机：圆柱轴 = +Z 时用**前视面**（法向也 +Z）**不成** —— 轮廓退化成圆环本身；
+       换**上视面**（法向 +Y）横着看 ⇒ **成**）。
+
+    ⚠ 官方回 `void` ⇒ ★ 判据**三条一起**：**特征树增量** · **实体面数增量** · **环数直方图**。
+      ⚠ ★ 与投影型**不同**：轮廓型沿曲面切出**两张独立的面**（★ **不会**新增内环）
+        ⇒ ★ 若沿用投影型那条"要有面出现 2 个环"，会把**成功误判成失败**。
+        ★ 真机：圆柱侧面 2 环 → 切成两张**各 1 环**的面（`[1,1,2] → [1,1,1,1]`）。
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}
-    before = _tree_names(model)
+    marks = _selection_mark_counts(model)
+    before_tree = _tree_names(model)
+    before_faces = _face_loop_stats(model)
     get_com_member(model, "InsertSplitLineSil")
-    after = _tree_names(model)
-    added = _delta(before, after)
-    return {"ok": bool(added), "op": "split_line_silhouette",
-            "tree_before": before, "tree_after": after, "new_features": added,
-            "verified_by": "tree_delta"}
+    after_tree = _tree_names(model)
+    after_faces = _face_loop_stats(model)
+    added = _delta(before_tree, after_tree)
+    face_delta = None
+    if before_faces is not None and after_faces is not None:
+        face_delta = after_faces["face_count"] - before_faces["face_count"]
+    pre = None
+    if marks is not None:
+        pre = bool(marks.get("2", 0) >= 1 and marks.get("1", 0) >= 1)
+    return {"ok": bool(added) or (face_delta or 0) > 0,
+            "op": "split_line_silhouette",
+            "tree_before": before_tree, "tree_after": after_tree, "new_features": added,
+            "faces_before": before_faces, "faces_after": after_faces,
+            "face_delta": face_delta,
+            "selection_marks": marks,
+            "preconditions_held": pre,
+            "selection_mark": "★ 官方 Remarks 逐字：**方向项** mark = **2** · 要切的**面** mark = **1**",
+            "geometry_requirement": ("视线**不能顺着回转轴**（否则轮廓退化成已有边）；"
+                                     "圆柱轴 = +Z 时用前视面不成、换上视面成"),
+            "inner_loop_expected": False,
+            "returns_none_even_on_success": True,
+            "verified_by": "tree_delta+face_count_delta"}
 
 
 def insert_curve_through_points(model, points_mm, ) -> dict:

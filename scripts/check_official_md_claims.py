@@ -79,10 +79,35 @@ SUBJECT_EXCLUDE = {
 #:   （★ 见 `sw_curve_and_split.py` 的更正段），★ 而那种**引述**不该被当成新违规。
 #:   ⚠ 限度如实写明：★ 它**是一个可被滥用的排除**（★ 写上"更正"就能躲）——
 #:   ★ 故门禁把跳过的条数**打印出来**，★ 让人看得见有多少条走了这条路。
-QUOTED_MARKERS = ("更正", "此前", "原先", "曾经", "是错的", "错了", "已被证伪", "撤销")
+QUOTED_MARKERS = ("更正", "此前", "原先", "曾经", "是错的", "是假的", "错了", "已被证伪", "撤销")
+
+
+def _is_retracted(lines: list[str], lineno: int) -> bool:
+    """★ 该行是不是「**已被我撤回的引述**」。
+
+    ★ 判据：**本行或紧邻上方 2 行**里出现撤回标记 —— ★ 因为撤回的写法通常是
+      「★★ 此前这里是 X」+ 下一行引述 X ⇒ ★ 引述那一行自己**不带**标记。
+    """
+    lo = max(0, lineno - 3)
+    for i in range(lo, lineno):
+        if i < len(lines) and any(mk in lines[i] for mk in QUOTED_MARKERS):
+            return True
+    return False
 
 #: ★ 向上找主语的窗口（★ 越窄越不易误认；★ 窗口内主语不唯一就**跳过**）
 WINDOW = 25
+
+#: ★★ **已人工核对过的豁免** —— ★ 门禁"向上找主语"会在这两处**认错主语**：
+#:   `scripts/sw_surface_ref_ops.py` 里那句"旋转曲面…没给 mark"，★ **真主语是
+#:   `InsertRevolvedRefSurface`**（★ 它只出现在**下方**的"官方依据"块里 ⇒ 向上找不到），
+#:   而门禁越过去认成了 `InsertProtrusionSwept3`。
+#:   ⇒ ★★ **我逐字核过** `C:\swapi\types\{IFeatureManager,IModelDoc2}\InsertRevolvedRefSurface.md`：
+#:     ★ 它的 `## Remarks` **确实一处 mark 都没有** ⇒ ★ **那句断言是对的**，★ 是门禁错、不是代码错。
+#:   ⚠ 豁免**按 (文件, 被认错的主语, token)** 给 ⇒ ★ 只挡这一处，★ 不挡住该文件里别的断言。
+ALLOWED = {
+    ("scripts/sw_surface_ref_ops.py", "InsertProtrusionSwept3", "mark"):
+        "主语认错：真主语是 InsertRevolvedRefSurface（官方页 Remarks 确实无 mark，已逐字核过）",
+}
 
 
 def _member_pages() -> dict[str, Path] | None:
@@ -135,10 +160,10 @@ def _resolve_upward(lines: list[str], lineno: int, pages: dict[str, Path]):
     return None, None
 
 
-def scan() -> tuple[list, int, int, int]:
-    """★ 返回 ``(violations, claims_total, unresolved, quoted)``。"""
+def scan() -> tuple[list, int, int, int, int]:
+    """★ 返回 ``(violations, claims_total, unresolved, quoted, exempted)``。"""
     pages = _member_pages() or {}
-    violations, total, unresolved, quoted = [], 0, 0, 0
+    violations, total, unresolved, quoted, exempted = [], 0, 0, 0, 0
     for d in SCAN_DIRS:
         root = REPO / d
         if not root.is_dir():
@@ -153,12 +178,16 @@ def scan() -> tuple[list, int, int, int]:
             for lineno, token, text in claims:
                 total += 1
                 #: ★ 「我已撤回这条」的引述 ⇒ 不算活断言
-                if any(mk in text for mk in QUOTED_MARKERS):
+                if _is_retracted(lines, lineno):
                     quoted += 1
                     continue
                 member, mline = _resolve_upward(lines, lineno, pages)
                 if member is None or member == "__ambiguous__":
                     unresolved += 1
+                    continue
+                #: ★ 已人工核对过的豁免（★ 带理由，★ 见文件头 ALLOWED）
+                if (f"{d}/{path.name}", member, token) in ALLOWED:
+                    exempted += 1
                     continue
                 page = pages[member]
                 body = page.read_text(encoding="utf-8", errors="replace")
@@ -173,7 +202,7 @@ def scan() -> tuple[list, int, int, int]:
                         "member": member, "member_line": mline, "token": token,
                         "claim": text, "page": str(page), "page_says": snippet,
                     })
-    return violations, total, unresolved, quoted
+    return violations, total, unresolved, quoted, exempted
 
 
 def main() -> int:
@@ -182,12 +211,12 @@ def main() -> int:
         print("[SKIP] 官方源 C:\\swapi 不在本机，无法校验（这是静默通过，不算通过）")
         return 0
     pages = _member_pages() or {}
-    violations, total, unresolved, quoted = scan()
+    violations, total, unresolved, quoted, exempted = scan()
     print("官方断言门禁 · 官方成员页 %d 份 · 扫描目录 %s"
           % (len(pages), " / ".join(SCAN_DIRS)))
     print("  断言 %d 条（token 集 %s）· 引述已撤回 %d 条 · 主语不唯一/解析不到而**跳过** %d 条"
-          " · 违规 %d 条"
-          % (total, ",".join(CLAIM_TOKENS), quoted, unresolved, len(violations)))
+          " · 已核对豁免 %d 条 · 违规 %d 条"
+          % (total, ",".join(CLAIM_TOKENS), quoted, unresolved, exempted, len(violations)))
     if not violations:
         return 0
     print("\n★ 以下断言与**官方页内容相反**（页里出现了被说成「没有」的东西）：")

@@ -785,6 +785,38 @@ def _run_unreachable_members_gate() -> dict[str, object]:
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
+def _run_official_md_claims_gate() -> dict[str, object]:
+    """@brief 跑官方断言门禁（`scripts/check_official_md_claims.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_official_md_claims.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "官方断言门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把「**官方文档断言必须核对过**」接进发布前检查）
+# 文件:   `scripts/check_official_md_claims.py`（本门禁的实现）
+# 定位:   新增 `_run_official_md_claims_gate`：**硬门禁**。
+#   ★★ **为什么是硬门禁**（★ 2026-10-03 接手轮的真因）：
+#     `scripts/sw_curve_and_split.py` 逐字写着「官方**没给 mark 表**」——
+#     ★ 而官方 `## Remarks` 里**就给了**（草图 4 · 面 1）⇒ ★ 这条假断言让
+#     **两轮真机失败被归因成"能力不成"**（台账挂了 3 轮"待重查 mark 表"）。
+#     ⇒ ★ 而**没有任何门禁在守这一层**：既有三道（`check_member_names` /
+#     `check_interface_member_ownership` / `check_unreachable_members`）
+#     分别守「名字在不在」「属于哪个接口」「调不调得动」，★ **都不管"文档里写了没有"**。
+#     ⇒ ★ 而门禁一接上去就**当场抓出第二处**（`InsertSplitLineSil` 同样是假的，
+#       官方给的是方向项 2 / 面 1）—— ★ 那条**直接变成了一次真机攻关**。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
 def _run_workspace_shadowing_gate() -> dict[str, object]:
     """@brief 跑工作区遮蔽门禁（`scripts/check_workspace_shadowing.py`）。"""
     try:
@@ -1125,6 +1157,14 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "枚举值门禁未通过（代码里的官方枚举值与出厂反射对不上）：\n"
             + str(enum_values.get("output", "")))
+    # ⚑ **官方断言门禁**（硬门禁）：代码里「官方没有 X」的断言必须与官方页一致。
+    #   立它的真因：`sw_curve_and_split.py` 谎称"官方没给 mark 表"，而官方 Remarks 里就有
+    #   ⇒ 两轮真机失败被**归因错了**。★ 接上去当场又抓出 `InsertSplitLineSil` 同样的错。
+    official_md = _run_official_md_claims_gate()
+    if official_md.get("status") == "fail":
+        raise AssertionError(
+            "官方断言门禁未通过（代码里「官方没有 X」的断言与官方页相反）：\n"
+            + str(official_md.get("output", "")))
     # ⚑ 并入规范门禁（docs/union-conventions.md §四）：
     #   校验「来源出处 / 许可白名单 / 规范与地图存在 / 地图与来源同步 /
     #   能力验证等级合法」五条。**放在成员名之后、bundled 校验之前** ——
@@ -1316,6 +1356,10 @@ def run_release_check() -> dict[str, object]:
         "report_criteria_alignment": crit_align,
         "negative_input_selfproof": selfproof,
         "enum_values": enum_values,
+        #: ★ 2026-10-03（接手轮）：**官方断言门禁**必须进返回体 ——
+        #:   理由同 `py_syntax` 那条：★ 不进返回体，外面就**看不见它是跑了还是跳了**
+        #:   （★ 静默跳过与没跑等价；★ 这条元门禁当场抓到过两次）。
+        "official_md_claims": official_md,
         "interface_ownership": ownership,
         #: ★ 2026-10-01（轮 356）：**`.py` 语法门禁**必须汇总进返回体 ——
         #:   元门禁当场报了「`py_syntax` 的结果**没有进返回体** ⇒ 『它跳过了/它没跑』在外面**看不见**

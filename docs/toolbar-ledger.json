@@ -269,9 +269,9 @@
    "tb": "特征下拉",
    "zh": "曲线-分割线",
    "api": "InsertSplitLineProject/Silhouette",
-   "entry": "",
-   "level": "不能",
-   "note": "★ 2026-10-03（轮 537–539）**已真机试过**：★ `InsertSplitLineProject` 在 `IModelDoc2` 上、**未标废弃**；★ 而**mark 全错**后改正仍未建成。★ 待重查：官方 `## Remarks` 的 **mark 表**与**选择顺序**。"
+   "entry": "scripts/sw_curve_and_split.py::insert_split_line_project / insert_split_line_silhouette",
+   "level": "能",
+   "note": "★★ 2026-10-03（接手轮）**已真机建成** —— ★ 而卡了两轮的原因**不是能力不成、是我的记录错了**。★ 官方 ## Remarks **两页都给了 mark 表**（投影型：草图 **4** · 面 **1**；轮廓型：方向项 **2** · 面 **1**），★ 而我此前逐字写着「官方没给 mark 表」。★★ **真机**（\tools/prove_split_line_geometry_per_example.py / prove_split_line_minimal_matrix.py / prove_split_line_silhouette_marks.py，零弹窗）：投影型建成「分割线1」(PLine) · 面数 6→7 · 该面 1 环→2 环，且切开的面**恰在投影落点平面 z=0.01778 m**；轮廓型建成「分割线1」· 面数 +1 · 圆柱侧面 2 环→两张各 1 环。★★ **第二个前置是几何、不是 mark**：投影草图所在面要在**实体之外**且与目标面平行（★ 上一轮把实体拉成 z∈[-30,30]、草图留在 z=0 ⇒ 草图被夹在中间）；轮廓型的**视线不能顺着回转轴**（前视面不成、上视面成）。★ 单变量对照：不选面 / 不选草图 / mark 换 0 都**不成** ⇒ 两个前置都必要。⚠ **判据要含几何读数**：★ 草图被夹住时**树也新增「分割线1」而面数 6→6** ⇒ 「树增量」不足。"
   },
   {
    "tb": "特征下拉",
