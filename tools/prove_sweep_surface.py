@@ -68,9 +68,15 @@ def main() -> int:
           "steps": []}
     doc = C.new_document(sw, "part")
     try:
-        #: ① 轮廓：在前视基准面画一个圆（★ 扫描轮廓）
-        P.start_sketch(doc, plane_name="Front Plane")
-        SPK.sketch_3point_corner_rectangle(doc, -5, -5, 5, -5, 5, 5)
+        #: ① 轮廓：在**上视基准面**（XY · **Z=0**）画一个**圆**（★ 扫描最标准的轮廓）
+        #: ★★★ 2026-10-03（轮 487）**换成圆，并把两个草图都安排成"路径起点在轮廓平面上"** ——
+        #:   ★ 官方逐字（`…\Sweep Features and SweepFeatureData Objects.md`）：
+        #:     > 「the **start point of the path must lie on the plane of the profile**」（1 方向扫描）
+        #:   ★★ 而★ 轮廓在上视面（Z=0）⇒ ★ **路径的起点必须 Z=0** ⇒
+        #:     路径画在**前视面**（XZ · Y=0）上、**从 (0,0) 沿 X** ⇒ 起点 (0,0,0) 的 Z=0 ✓
+        P.start_sketch(doc, plane_name="Top Plane")
+        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
+                         0.0, 0.0, 0.0, 5.0 / 1000.0)
         P.end_sketch(doc)
         ev["steps"].append({"step": "profile_sketch", "tree": P.feature_names(doc)})
 
@@ -90,29 +96,37 @@ def main() -> int:
                 C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0)
         except Exception:                                                # noqa: BLE001
             ev["sel_before_path_sketch"] = None
-        P.start_sketch(doc, plane_name="Right Plane")
+        P.start_sketch(doc, plane_name="Front Plane")
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
-                         0.0, 0.0, 0.0, 0.0, 40.0, 0.0)
+                         0.0, 0.0, 0.0, 40.0, 0.0, 0.0)
         P.end_sketch(doc)
         ev["steps"].append({"step": "path_sketch", "tree": P.feature_names(doc)})
 
         #: ③ ★ 选 **轮廓 mark=1** + **路径 mark=4**（★ 官方专文给的 mark）
-        #: ★★★★ 2026-10-03（轮 486）**两个坑都在这一步，而第二个更隐蔽** ——
-        #:   ① ⚠ 我第一版写 `get_com_member(fm, "FeatureName", name)` —— ★ 而
-        #:      **`FeatureName` 是 `IFeatureManager` 上的属性**（取值，不是取特征）；
-        #:      ★★ **真名是 `IModelDoc2.FeatureByName(name)`**（**方法**）⚠ 两个名字极像。
-        #:   ② ⚠ 第二版改用本仓的 `_select_sketch_feature_by_name` ⇒ ★ 真机 `mark1=0 · mark4=1`
-        #:      —— ★★ 因为**它内部用 `append=False`**（见 `sw_part.py` L350）⇒
-        #:      **第二次调用把第一次的挤掉了** ⚠
-        #:   ⇒ ★ 正解：**用 `FeatureByName` 拿对象** ⇒ **用 `append=True` 逐个追加** ✓
+        #: ★★★★★ 2026-10-03（轮 487）**改用 `SelectByID2`（`sw_part._select_by_id`）** ——
+        #:   ★★ 真因（★ 前三版的 `sel_by_mark` 已经把线索给全了）：
+        #:     `sw_part._select_com_object` 的实现是
+        #:     ```
+        #:     for method_name in ("Select2", "Select4"):
+        #:         if method_name == "Select2":  method(append, mark)      # ★ 带 mark
+        #:         elif bool(method(append, _empty_callout())): ...        # ★★ **Select4 没有 mark** ⚠
+        #:     ```
+        #:     ⇒ ★★ **若 `Select2(append, mark)` 失败而 `Select4` 成功 ⇒ 那一次「没有 mark」** ⚠
+        #:     ⇒ ★ 那正是真机 `{1:1, 4:0}` 的形态（★ 轮廓进了，★ 而路径那次走了 `Select4`）。
+        #:   ★★★ 而**特征是有名字的**（★ **事实 32**：「按名字选**只对特征成立**」）
+        #:     ⇒ ★ 故正解是官方的 **`SelectByID2(名, "SKETCH", …, mark)`** ✓
+        #:   ★ 官方专文给的 mark（★ `…\Sweep Features and SweepFeatureData Objects.md`）：
+        #:     **草图轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128
+        ext = C.get_com_member(doc, "Extension")
         picked = {}
         for cand, mark, label in (("\u8349\u56fe1", 1, "profile"), ("\u8349\u56fe2", 4, "path")):
             for name in P._get_sketch_name_candidates(cand):
                 try:
-                    feat = C.get_com_member(doc, "FeatureByName", name)
+                    ok = P._select_by_id(ext, name, "SKETCH",
+                                         append=bool(picked), mark=mark)
                 except Exception:                                        # noqa: BLE001
-                    feat = None
-                if feat is not None and P._select_com_object(feat, append=True, mark=mark):
+                    ok = False
+                if ok:
                     picked[label] = name
                     break
         ev["picked"] = picked
