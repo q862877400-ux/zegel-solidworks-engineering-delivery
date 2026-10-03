@@ -1882,3 +1882,17 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★★ **而它还纠了官方一句**：Remarks 逐字说 “requires preselection of the **face or edges**” —— ★ 而**本机上面那条路五个组合全败** ⚠ ⇒ ★ **官方说“两条都行”不等于本机两条都行**。
      ★ **落地**：`capabilities.yaml` 新增 **`surface_untrim`**（level = **verified**，共 **97** 条）；台账「解除剪裁曲面」补 `capability_id` ⇒ **已能 70**。
      ★★ **方法论**：★ 把“前置不够”**收窄成三个可能之后**，就该**一次把它们全试完**（★ 而不是一轮一个）—— ★ 而**六格矩阵里只有一组成**，那就是答案。|真机：`tools/prove_untrim_matrix.py`；证据 `output/untrim-matrix-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md` × 反射枚举 |
+| 438 | **★★ 「删除孔」`IModelDoc2.InsertDeleteHole()` 在**原生实体上是静默 no-op**（★ 名字误导）；而「自由样式」是**四步序列**、不是一条调用**** —— 2026-10-03（轮 559）。
+     ★ **静态已定**（全接口查）：成员在 **`IModelDoc2`** 下、**0 参**、回 **`void`**（★ 故判据只能用**几何量**）。
+     ★ 真机（`tools/prove_delete_hole.py`，零弹窗）：
+     ```
+     有孔时调它   ⇒ 面 7 → **7**（Δ 0）· 体积无变化 · 树不动   ⚠
+     对照：无孔时 ⇒ 面 6 → **6**（Δ 0）· 同上                    ⚠
+     ```
+     ⇒ ★★ **故它在我的前置上是静默 no-op** ✓ —— ★ 而**最可能的解释是“它不是那个意思”**：
+       ★★ **SolidWorks 界面的「删除孔」是**曲面 / 导入体的修补**命令** —— 它填的是**曲面体上的缺口**，★ **而不是“删掉某个钻孔特征”** ⚠
+       ⇒ ★ **故在**原生实体**上它是 no-op 是**应然的****（★ **名字误导**）✓
+     ★ **下一步**：★ 在**带缺口的曲面体**上试（★ 而不是在实体上）。
+     ★★ **而本轮还读到一条值得记的**：「自由样式」`InsertFreeform2(Nsided, Symmetric0, Symmetric1, Angle)` **不是一条调用** ——
+       它的 `## Remarks` 逐字给了**五步交互序列**：① 选面 · ② 加曲线（`SetFreeformCurveData`）· ③ 加点（`SetFreeformPointData`）· ④ 定边界连续性（`SetFreeformBoundaryContinuity`）· ⑤ **本方法**；
+       ★ 而它开头就写着：“**intended to journal the actions performed by an interactive user**” ⚠ —— ★ **journal 类 API 往往要求先有一整套交互状态** 。|真机：`tools/prove_delete_hole.py`；证据 `output/delete-hole-evidence.json`；官方：`C:\swapi\types\IModelDoc2\InsertDeleteHole.md` × `IFeatureManager\InsertFreeform2.md` |
