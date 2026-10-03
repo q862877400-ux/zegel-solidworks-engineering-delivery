@@ -62,7 +62,7 @@ def _feature_type_name(model, name):
     return None
 
 
-def create_sweep_report(model, cut: bool = False) -> dict:
+def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
     """★ **用选中的「轮廓（mark=1）+ 路径（mark=4）」建扫描特征**。
 
     ★ 走官方**现代入口**：★ `CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`
@@ -113,6 +113,24 @@ def create_sweep_report(model, cut: bool = False) -> dict:
         access = bool(get_com_member(data, "AccessSelections", model, _ec()))
     except Exception as exc:                                   # noqa: BLE001
         access = "ERR %s: %s" % (type(exc).__name__, str(exc)[:110])
+    #: ★★★★★★★ 2026-10-04（轮 129）**在 `CreateFeature` **之前**给数据对象一次机会** ——
+    #:   ★ **为什么要有这个钩子**（★ 官方 `## Remarks` 逐字、★ 我上一轮漏读的那句）：
+    #:     ★ `ISweepFeatureData::ThinFeature` 的 Remarks：
+    #:       「To make a thin sweep, you must set this property **before calling
+    #:        `IFeatureManager::CreateFeature`**. ★★ **You cannot make a thin-walled
+    #:        sweep feature after the sweep has been created**, and ★★ **you cannot edit
+    #:        a sweep feature to make it thin walled**.」✓
+    #:     ★★ 而 `IsThinFeature` 的 Remarks 同款：
+    #:       「only by setting `ThinFeature` at the time of creation」✓
+    #:   ★★★ **⇒ 真机验证过"后改"不成**（★ `tools/probe_sweep_wall_units_recheck.py`：
+    #:     设了 `ThinFeature` 后 `ModifyDefinition` 回 `true`、★ **而体积**一点没变****：
+    #:     `before = after = 1130.973` ⇒ ★ **与实体圆柱解析值 1130.97 距离 0.0**）✓
+    #:   ★★★★ **⇒ 本钩子是**唯一能设薄壁的位置**** —— ★ 它在 `CreateDefinition`
+    #:     之后、★ `CreateFeature` 之前** ✓
+    #:   ★★★★★ **⚠ 钩子是**显式可选**的**（★ `mutate=None` ⇒ 行为**与从前逐字相同**）⇒
+    #:     ★ **不改变既有调用方的语义** ✓ · ★★ 而它**不吞异常**（★ 免得静默跳过）✓
+    if mutate is not None:
+        mutate(data)
     try:
         feat = get_com_member(fm, "CreateFeature", data)
     except Exception as exc:                                   # noqa: BLE001

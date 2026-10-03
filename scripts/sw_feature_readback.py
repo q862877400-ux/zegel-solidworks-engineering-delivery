@@ -1063,6 +1063,34 @@ def sweep_params(model, feature_name: str = "") -> dict:
         **「valid only if `ISweepFeatureData::IsThinFeature` is true」** ⇒
         ★★ **⇒ 要量它必须先有一个**薄壁**扫描** ✓
 
+      ★★★★★★★ **✅ 而它**也量出来了（★ 2026-10-04 轮 129 · ★ **第十二族**）** ——
+        ★ **`GetWallThickness` 的口径 = **随文档单位（★ 毫米文档 ⇒ 毫米值）** ✓
+
+        **怎么量的**（★ 两步：★ 先在**正确的位置**设、★ 再用**几何**独立判）：
+          ★★ **① 位置**：★ 轮 128 已证明「**先建后改**」**不存在**（★ 官方 `## Remarks`
+            逐字：「You **cannot** make a thin-walled sweep feature after the sweep has
+            been created … you **cannot** edit a sweep feature to make it thin walled」）⇒
+            為此**给 `sw_sweep.create_sweep_report` 加了一个显式钩子 `mutate=None`**
+            （★ 它在 `CreateDefinition` 之后、★ **`CreateFeature` 之前**被调用）⇒
+            ★ **用那个钩子设**：★ `ThinFeature = True` · ★ `ThinWallType = 0` ·
+            ★ `SetWallThickness(True, **0.002**)` ✓
+          ★★★ **② 判据**：★ **最近候选分类**（★ 三个候选都摆上、★ **不许漏**）——
+            ★ 轮廓半径 3 mm · ★ 路径 40 mm ⇒
+            ★ **实体圆柱 = 1130.97** mm³ · ★ **米环带（0.002 m = 2 mm）= 1005.31** ·
+            ★ **毫米环带（0.002 mm）= 1.51** ✓
+
+        ★★★ **真机读数**（★ `output/sweep-wall-via-hook-recheck.json`）：
+          · ★ `ok=true · feature = **扫描-薄件1** · type_name = Sweep` ✓
+          · ★ 钩子里 `ThinFeature` 回读 = **true** ⇒ ★ **薄壁**这次真的设上了**** ✓
+          · ★★ 读回：★ `IsThinFeature = **true**` · ★ `ThinFeature = **true**` ·
+            ★ `GetWallThickness = {**forward: 0.002**, backward: 1e-07}` ✓
+          · ★★★ **体积 = **1.508** mm³** ⇒ ★ 与**毫米环带 1.51** 距离 **0.002**、
+            ★ **次近（1003.80）** ⇒ ★★★★ **⇒ 口径 = 毫米、★ 毫无歧义** ✓
+          · ★ 而 `forward = **0.002**` **正是我写进去的那个数** ⇒ **两侧互相印证** ✓
+          · ★★ `backward = 1e-07`（≈0）也**自洽** —— ★ 因为 `ThinWallType = 0` 是
+            **One Direction** ⇒ ★ **只有方向 1 被设**（★ 官方逐字：
+            「sets the thickness in Direction 1 and Direction 2, depending on `ThinWallType`」）✓
+
       ★★★★★★★ **✅ 而"薄壁扫描"这条路**已经查清（★ 2026-10-04 轮 128）** ——
         ★★ **结论：★ **不能"先建后改"****（★ 官方 `## Remarks` 逐字、★ **三条互相印证**）：
           ★ `ISweepFeatureData::ThinFeature` 的 `## Remarks`：
