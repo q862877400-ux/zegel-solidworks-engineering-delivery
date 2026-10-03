@@ -1821,3 +1821,23 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而**真正的问题是我的前置**：Remarks 要求“a face or edges you want to untrim”，而我造的是**从未被剪裁过的**拉伸曲面 ⚠
      ```
      ★ 故状态：**入口与 arity 已定，前置（得先有一张被剪裁的曲面）尚未搭对**—— ★ **不登记、留在可攻关**。|真机：`tools/prove_untrim_surface2.py`；证据 `output/untrim-surface2-evidence.json`；对照事实 51 / 429 |
+| 434 | **★★ 曲面展平的**arity 与 mark 分工已定**（★ 第二代 2 参 / 第一代 1 参）；而**面-only 的前置不够**** —— 2026-10-03（轮 555）。
+     ★ **官方第二代签名**：`InsertFlattenSurface2(int AccuracyFactor, bool ShouldUseTears)`；★ `AccuracyFactor`：**10 ≥ 精度 ≥ 1**（★ 1 = 最高）。
+     ★★ **而它的 `## Remarks` 给了**五种 mark**（逐字）**：
+     ```
+     1  = **Faces or surfaces to flatten**   ← ★ 必需
+     2  = Edges to guide the shape and length
+     4  = Map edges
+     8  = Tear edges
+     16 = **Anchor point** from which to flatten   ← ★ 疑似本轮缺的那个
+     ```
+     ★ 真机（`tools/prove_flatten_surface2.py`，零弹窗）：
+     ```
+     `InsertFlattenSurface2`（2 参） ⇒ **无错 · 树不动**（★ **arity = 2 对**）
+     `InsertFlattenSurface`（第一代）传 2 参 ⇒ **无效的参数数目**（★ 它只收 **1**）
+     ★ 而两组的前置都是：一张直线拉出的曲面 **+ 面 mark=1**（★ `mark1 = 1`）
+     ```
+     ⇒ ★★ **故：入口与 arity 已定、mark 分工已知，★ 而**面-only 的前置不够**（★ 两代都不建）** ⚠
+     ★ **下一步**：★ 补 **`mark = 16`（锚点）** 与/或 **`mark = 4`（映射边）**。
+     ★ 而本轮**不登记、留在可攻关** —— ★ **不假装做到**。
+     ★ **而它与事实 433（废弃入口地图）同一条路**：★ 先读官方把**入口与 arity 定死**，★ 再搭前置** —— ★ 而不是一边试参数一边猜入口。|真机：`tools/prove_flatten_surface2.py`；证据 `output/flatten-surface2-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFlattenSurface2.md` |
