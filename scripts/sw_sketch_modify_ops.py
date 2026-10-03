@@ -171,9 +171,17 @@ def sketch_flip(model, axis_flag: int) -> dict:
 
 
 def _active_sketch_name(model):
-    """★ 旁证：当前活动草图的名字（★ 取不到就回 None，**不猜、不兜底**）。"""
+    """★ 旁证：当前活动草图的名字（★ 取不到就回 None，**不猜、不兜底**）。
+
+    ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `get_com_member(model, "GetActiveSketch2")`。
+      ★ 官方 `IModelDoc2/GetActiveSketch2.md` 逐字：
+        「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+      ★★ 真机已验证两者行为等价（`output/activesketch-successor-evidence.json` · PASS）。
+      ★ 共用帮手：`scripts/sw_sketch.py::active_sketch`（★ 事实 60 定则④）。
+    """
     try:
-        sk = get_com_member(model, "GetActiveSketch2")
+        from sw_sketch import active_sketch as _active_sketch
+        sk = _active_sketch(model)
         if sk is None:
             return None
         return str(get_com_member(sk, "Name") or "") or None

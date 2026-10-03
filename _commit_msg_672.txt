@@ -1,0 +1,57 @@
+fix(能力层): ★★★★★ `GetActiveSketch2` 生产代码**清零** —— 换后继 `ISketchManager.ActiveSketch`；★ 并给扫描器加"生产 / 探针"这一维
+
+■ 一 · ★★ 官方依据（三源里的 `C:\swapi`，逐条可复核）
+  · `types/IModelDoc2/GetActiveSketch2.md` 逐字：
+    「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+    ★ 旧的是**方法**：`System.object GetActiveSketch2()`（★ 无参）
+  · `types/ISketchManager/ActiveSketch.md` 签名逐字：
+    `Sketch ActiveSketch {get;}` —— ★★ **是**属性**（只读），不是方法** ✓
+
+■ 二 · ★★★ 真机验证（★ 改之前先证 —— `tools/probe_activesketch_successor.py`）
+  | 场景 | `GetActiveSketch2` | ★ `SketchManager.ActiveSketch` |
+  |---|---|---|
+  | 无活动草图 | `None` | `None` |
+  | ★ 草图开着 | `<COMObject>` | `<COMObject>`（★ 且 `.Name = **'草图1'**`）|
+  | 草图已关闭 | `None` | `None` |
+  ⇒ ★★ **verdict: PASS —— 行为完全等价** ✓
+  ★ 证据：`output/activesketch-successor-evidence.json` · ★ 走 `sw_guard`、**零弹窗** ✓
+  ★★ 顺带**独立复核**了本仓原先那句「两者都是 None」（★ `sw_sketch.py` 的 `resolve_sketch` 文档里）。
+
+■ 三 · ★★ 抽出一个**共用帮手**（★ 事实 60 定则④：好用的工具函数要在**所有**同类场合用它）
+  ★ 新增 `scripts/sw_sketch.py::active_sketch(model)` —— ★ 与既有 `resolve_sketch` 分工：
+    · `resolve_sketch` = **按名字稳健地找**（★ 中英文候选 + 特征树兜底）
+    · ★ `active_sketch` = **只问当前活动草图**，★ 没有就是 `None`（★ 不猜、不兜底）
+  ★ 文档里带**完整的官方依据 + 真机对照表**，★ 后人不必再探一遍。
+
+■ 四 · 三处调用点（★ 三种不同形态，★ 都改成调那个帮手）
+  | 文件 | ★ 形态 | ★ 处置 |
+  |---|---|---|
+  | `scripts/sw_part.py` | ★ 装饰器**守卫**（★ 查有没有活动草图，★ 没有就抛）| ★ 换帮手 |
+  | `scripts/sw_sketch_modify_ops.py` | ★ **旁证**函数（★ 取草图文名）| ★ 换帮手 |
+  | ★★ `scripts/sw_sketch_status.py` | ★★ **兜底链**：`GetActiveSketch2` **优先**、`ActiveSketch` 退回 | ★★★ **顺序反了 ⇒ 去掉兜底链，只用后继** |
+
+  ★★ 第三处就是 bunny `PATTERNS.md` 说的**档②「把后继提到首位」** ✓
+  ★ 既然真机已证两者等价 ⇒ ★ **不必再留兜底链** ⇒ ★ 少一层分支、也少一处废弃调用 ✓
+
+■ 五 · ★★★ 给扫描器加"生产 / 探针"这一维（★ 本轮新加的判据维度）
+  ★ 起因：★ `GetActiveSketch2` 的 17 处里**只有 3 处在 `scripts/`**，★ 其余 **14 处都在 `tools/`**。
+  ★★ **探针与证据脚本是**历史证据**，改了会破坏"证据不可变"**
+    （★ 这条我在 `gate-cand/GATE-FINAL.md` 的 **C12 证据不可变**里也写了）⇒
+    ★ **只改 `scripts/`（生产）**，★ `tools/` 的**只报不动** ✓
+  ★ 读数（★ 判据与自检都没改）：
+    ```
+    ★★ 真命中（待修）      66
+         ★ 其中**生产（scripts/）**  35   ← ★★ 只有这批该改
+         ★ 其中探针/证据（tools/） 30   ← ★ 只报不动
+    ★ 兜底分支 15 · 疑似登记表 4
+    ```
+
+■ 六 · ★ 收尾
+  · ★ `python scripts/sync_bundled_skill.py`（★ 改了运行时文件，事实 55）
+  · ★ **`release_check 第 1 轮 OK` · 6 passed** ✓
+  · ★ `GetActiveSketch2` 由 **17 → 15**（★ 剩余全在 `tools/`）· ★ **真命中 68 → 66** · ★ **生产 37 → 35**
+
+■ 七 · ★★ 本轮的可复用判据
+  ★★ **"生产 / 探针"必须分开报** —— ★ 探针是**证据**，★ 它记录的是**当时的探索**；
+    ★★★ **把证据改了，就等于篡改历史**（★ 而判据会因此失去可复核性）。
+  ★ 与**事实 62**（负例是门禁有效的唯一证明）同族：★ **证据与判据都要求"不可变"**。

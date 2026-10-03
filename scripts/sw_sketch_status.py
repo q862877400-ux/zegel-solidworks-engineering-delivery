@@ -41,19 +41,21 @@ MEANING_UNKNOWN = "查不到官方取值表（GetConstrainedStatus.md 无 ## Rem
 
 
 def _active_sketch(model):
-    """★ 取**当前活动草图**对象：先 `GetActiveSketch2()`，退回 `SketchManager.ActiveSketch`。
+    """★ 取**当前活动草图**对象 —— ★ 走**后继入口** `ISketchManager.ActiveSketch`。
+
+    ★★★ 2026-10-03（接手轮）**把顺序倒过来了**：★ 原来是
+      「**先** `GetActiveSketch2()`（★ 已废弃），★ 退回 `SketchManager.ActiveSketch`」
+      —— ★★ 正好把**废弃的排在前面**。★ 现在**只用后继**（★ 真机已验证两者行为等价，
+      ★ 所以不必再留兜底链 ⇒ 少一层分支、也少一处废弃调用）。
+      ★ 官方 `IModelDoc2/GetActiveSketch2.md` 逐字：
+        「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+      ★★ 真机证据：`tools/probe_activesketch_successor.py` ·
+        `output/activesketch-successor-evidence.json` ⇒ ★ **PASS** ✓
 
     ⚠ 官方**要求草图处于打开（编辑）状态** —— ★ 关掉的草图取不到（真机：两个入口都回 `None`）。
     """
-    for getter in (lambda: get_com_member(model, "GetActiveSketch2"),
-                   lambda: get_com_member(get_com_member(model, "SketchManager"), "ActiveSketch")):
-        try:
-            sk = getter()
-        except Exception:                                                # noqa: BLE001
-            sk = None
-        if sk is not None:
-            return sk
-    return None
+    from sw_sketch import active_sketch as _shared_active_sketch
+    return _shared_active_sketch(model)
 
 
 def get_constrained_status(model, *, raise_on_no_sketch: bool = True) -> dict:

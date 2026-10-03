@@ -573,6 +573,37 @@ def count_segments(sketch) -> int:
 #   基准面名 `Front Plane` / `前视基准面` 同理）⇒ **一律走候选名，不写死一种**。
 # 覆盖:   本组 1 个函数
 # ────────────────────────────────────────────────────────────────────
+def active_sketch(model):
+    """★ 取**当前活动草图**对象 —— ★ 走**后继入口** `ISketchManager.ActiveSketch`。
+
+    ★★ 2026-10-03（接手轮）**为「消解废弃成员」抽出来的共用帮手**
+      （★ 事实 60 定则④：写了一个好用的工具函数，就要在**所有**同类场合用它）。
+
+    ★ 为什么换成它：★ 官方 `types/IModelDoc2/GetActiveSketch2.md` 逐字：
+      「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+    ★ 而后继是**属性**（`Sketch ActiveSketch {get;}`），★ 不是方法 ⇒ ★ 调用形态变成取属性。
+
+    ★★★ 真机已验证两者**行为等价**（`tools/probe_activesketch_successor.py` ·
+      `output/activesketch-successor-evidence.json`）：
+      | 场景 | `GetActiveSketch2` | `SketchManager.ActiveSketch` |
+      |---|---|---|
+      | 无活动草图 | `None` | `None` |
+      | ★ 草图开着 | `<COMObject>` | `<COMObject>`（★ 且 `.Name = '草图1'`）|
+      | 草图已关闭 | `None` | `None` |
+      ⇒ ★ **PASS** ✓ 这也**独立复核了**本仓原先那句「两者都是 None」。
+
+    ★ 取不到就回 `None`（★ **不猜、不兜底** —— 与本模块 `resolve_sketch` 的分工：
+      ★ `resolve_sketch` 是"按名字稳健地找"，★ 本函数是"只问当前活动草图，★ 没有就是没有"）。
+    """
+    try:
+        sketch_manager = get_com_member(model, "SketchManager")
+        if sketch_manager is None:
+            return None
+        return get_com_member(sketch_manager, "ActiveSketch")
+    except Exception:                                                     # noqa: BLE001
+        return None
+
+
 def resolve_sketch(model, name: str = ""):
     """★ **稳健地**取到一个 `ISketch`，中英文名都能用，留空则取"最后一个草图"。
 

@@ -1541,7 +1541,16 @@ def _require_active_sketch(fn):
     @functools.wraps(fn)
     def _wrapped(model, *args, **kwargs):
         try:
-            sk = get_com_member(model, "GetActiveSketch2")
+            #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `get_com_member(model, "GetActiveSketch2")`。
+            #:   ★ 官方 `types/IModelDoc2/GetActiveSketch2.md` 逐字：
+            #:     「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+            #:   ★★ 真机已验证两者**行为等价**（`tools/probe_activesketch_successor.py` ·
+            #:     `output/activesketch-successor-evidence.json`）：★ 开着草图时都非 None、
+            #:     关闭与无草图时都是 None ⇒ **PASS** ✓
+            #:   ★ 共用帮手在 `scripts/sw_sketch.py::active_sketch`（★ 事实 60 定则④：
+            #:     同一个工具函数要在**所有**同类场合用它）。
+            from sw_sketch import active_sketch as _active_sketch
+            sk = _active_sketch(model)
         except Exception:                                      # noqa: BLE001
             sk = None                                          #: ★ 取不到 ⇒ 走下面的报错（不静默放过）
         if sk is None:

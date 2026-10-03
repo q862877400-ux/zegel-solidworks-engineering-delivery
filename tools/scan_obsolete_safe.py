@@ -163,6 +163,16 @@ def main() -> int:
                         "file": str(f.relative_to(REPO)), "line": i + 1, "member": name,
                         "how": how, "successor": succ, "fallback_branch": fallback,
                         "registry_like": registry,
+                        #: ★★★ 2026-10-03（接手轮）**加"生产 vs 探针/证据"这一维**：
+                        #:   ★ 实测 `GetActiveSketch2` 的 17 处里 **只有 3 处在 `scripts/`**，
+                        #:   ★ 其余 14 处都在 `tools/`（★ 探针与历史证据脚本）。
+                        #:   ★★ **探针是**历史证据**，改了会破坏"证据不可变"**
+                        #:   （★ 我在 `gate-cand/GATE-FINAL.md` 的 **C12 证据不可变**里也写了这条）
+                        #:   ⇒ ★ **只改 `scripts/`（生产）**，★ `tools/` 的**只报不动** ✓
+                        "scope": ("★ 生产（scripts/）" if str(f.relative_to(REPO)).startswith("scripts")
+                                  else "★ 探针/证据（tools/，★ 只报不动）"
+                                  if str(f.relative_to(REPO)).startswith("tools")
+                                  else "★ 其它"),
                         "ctx": lines[i].strip()[:160] if i < len(lines) else "",
                     })
     #: ★ 分类
@@ -202,6 +212,11 @@ def main() -> int:
     print()
     print("★★★ 分类：")
     print("   ★★ 真命中（待修）      **%d**" % len(real))
+    #: ★★★ 生产 / 探针 分开报（★ 探针是**历史证据**，★ 改了会破坏"证据不可变" —— GATE-FINAL C12）
+    print("        ★ 其中**生产（scripts/）**  **%d**  ← ★★ **只有这批该改**"
+          % len([r for r in real if str(r.get("scope", "")).startswith("★ 生产")]))
+    print("        ★ 其中探针/证据（tools/）**%d**  ← ★ **只报不动**"
+          % len([r for r in real if str(r.get("scope", "")).startswith("★ 探针")]))
     print("   ★ 兜底分支（不算缺陷）  **%d**" % R["命中"]["兜底分支"])
     print("   ★ 疑似登记表（要人看）  **%d**" % R["命中"]["疑似登记表"])
     print()
