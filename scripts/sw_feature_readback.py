@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth"]
+           "extrude_depth", "extrude_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -263,6 +263,90 @@ def extrude_depth(model, feature_name: str = "", *, forward: bool = True) -> dic
             out["end_condition"] = get_com_member(fd, "GetEndCondition", bool(forward))
         except Exception:                                                 # noqa: BLE001
             out["end_condition"] = None
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`）
+# 文件:   `scripts/sw_feature_readback.py::extrude_params`（★ 新增）
+# 定位:   ★ 阶段 3 · 按密度图补能力（★ `查 × 特征` 那一格）⇒ ★ 本函数是**第二个** ✓
+#   ★★ **官方逐字（★ 逐个成员读的 `## Returns`）**：
+#     · ★ `GetEndCondition(bool Forward)` ⇒ 回 **`swEndConditions_e`**（★ 盲拉 = 0）✓
+#     · ★★ **`GetDraftAngle(bool Forward)`** ⇒ 「Draft angle of the extrusion
+#       **in radians**」⇒ ★★★ **官方**明写弧度**** ——
+#       ★★ **与 `extrude_depth` 的"随文档单位"**相反**** ⇒
+#       ★★★ **那正是「单位是**逐成员**的事」的又一例**（★ 本会话早先那条判据）✓
+#     · ★ `GetContoursCount()` ⇒ 「Number of selected contours」（★ 一个闭合轮廓 = 1）✓
+#     · ★ `ReverseDirection {get;set}` / `BothDirections {get;set}` ⇒ ★ **属性**（★ bool）✓
+#     · ★★ `GetFace` ⇒ **已废弃** ⇒ ★ **不用**（★ T1 那批刚处理过）✓
+#     · ★ `GetDirectionReference(out Ref1, out Type1, …)` ⇒ ★ **带 out 参数** ⇒
+#       ★★ **pywin32 有风险**（★ 事实 47 那一族）⇒ **本函数不碰它** ✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def extrude_params(model, feature_name: str = "") -> dict:
+    """★ 读**拉伸特征的一组参数**（★ 端条件 / 拔模角 / 轮廓数 / 两个方向开关）✓
+
+    ★★★★★ **单位口径（★ 本函数的核心判断 —— 逐成员、★ 不是整族）**：
+      ★ `GetDepth` ⇒ ★ **随文档单位**（★ 真机两轮：★ 20mm ⇒ 20.0 ⇒ `unit_source='document'`）✓
+      ★★ `GetDraftAngle` ⇒ ★★ **官方明写 `in radians`** ⇒ ★ **不随文档单位** ✓
+      ⇒ ★★★ **⇒ 所以本函数的返回值里**每个量各自带口径**、★ 而不是给一个全局口径** ✓
+      ★★★★ **可复用判据**：★★★ **「单位口径」是**逐成员**的事 ——
+        ★ 同一个接口里的两个成员可以一个随文档、★ 一个写死** ✓
+        （★ 与本会话早先那条「官方吃米是逐成员的事、★ 不是整族的事」**同源**）✓
+    ★★★ **⚠ `GetFace` 已废弃** ⇒ ★ **本函数不调它**；★ `GetDirectionReference` 带 out ⇒ **也不碰** ✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    out: dict = {"feature": feature_name, "definition": None, "error": None,
+                 "forward": {}, "reverse": {}, "★_单位口径": {
+                     "depth": "document（★ 真机：20mm ⇒ 20.0）",
+                     "draft_angle": "radians（★ 官方逐字 in radians）",
+                 }}
+    try:
+        feat = None
+        if feature_name:
+            #: ★★ 名字是 `FeatureByName`（★ **不带 `Get`**）——
+            #:   ★ 我上一轮写错过、★ 被成员名门禁抓到（★ 见 `extrude_depth` 的说明）✓
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if "Extrusion" in tn:
+                        feat, out["feature"] = f, str(safe_get_com_member(f, "Name") or "")
+                        break
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = "找不到拉伸特征"
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        for tag, fwd in (("forward", True), ("reverse", False)):
+            row = {}
+            for name in ("GetDepth", "GetDraftAngle", "GetEndCondition"):
+                try:
+                    row[name] = get_com_member(fd, name, fwd)
+                except Exception as exc:                                  # noqa: BLE001
+                    row[name] = "err: %s" % str(exc)[:60]
+            out[tag] = row
+        #: ★★ 两个**属性**（★ `{get;set}`）⇒ ★ 用 `get_com_member` 直接取 ✓
+        for name in ("ReverseDirection", "BothDirections"):
+            try:
+                out[name] = bool(get_com_member(fd, name))
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:60]
+        try:
+            out["GetContoursCount"] = get_com_member(fd, "GetContoursCount")
+        except Exception as exc:                                          # noqa: BLE001
+            out["GetContoursCount"] = "err: %s" % str(exc)[:60]
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
