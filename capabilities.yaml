@@ -656,7 +656,9 @@
         "reviewed"
       ],
       "evidence": [
-        "pytest tests/test_cad_reliability.py（参数更新回读）"
+        "pytest tests/test_cad_reliability.py（参数更新回读）",
+        "★ **真机运行证据（★ 2026-10-04 补 —— 这才是 A4 要的那一条）**：`python tools/sw_guard.py --timeout 300 -- python tools/probe_a4_runtime_evidence.py` ⇒ ★ `sw_alive: true` · ★ **零弹窗** · ★ `parameter_updates_ok: **True**`；★ 证据文件 `output/a4-runtime-evidence.json` ✓ ★★ **逐字读数**：★ 建 100×60×20 板 ⇒ 草图矩形 + `extrude_boss(20mm)` ⇒ ★ 改 `D1@凸台-拉伸1` 为 **35.0** ⇒ ★ `set_status: **0**` · ★ `after_mm.current = **35.0**` ⇒ ★★ **回读等于所要求的值** ✓",
+        "⚠★ **同一次真机顺带量到一处可疑（★ 未定性 —— ★ 要另核）**：★ 那次调用的 `before_mm.current` 是 **20000.0**，★ 而该模型那个尺寸的**本意是 20 mm**（★ `extrude_boss(..., 20.0)`）⇒ ★★ **20 → 20000 正好是 ×1000 两次** ⇒ ★★★ **可能是 `_dimension_value_mm` 的单位换算多做了一次**（★ **也可能是我读错了对象** —— ★ 例如那个名字其实指**别的**尺寸）⇒ ★ **按铁律 5：未核不写成缺陷**，★ 只把这次读数如实记下 ✓"
       ],
       "source": "upstream",
       "source_evidence": "scripts/sw_document_data.py 含 `model.Parameter(dimension_name)` 且在 origin/main",

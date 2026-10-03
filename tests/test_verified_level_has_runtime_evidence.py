@@ -41,6 +41,9 @@ RUNTIME_MARKERS = (
     "evidence.json", "evidence", "verdict", "passed",
     #: ④ **回归**类说法（★ 第四次补 —— `pack_and_go` 就是这么写的）
     "回归", "连续三次", "连续通过", "三次通过",
+    #: ⑤ **「已验证」/「已跑通」**（★ 第五次补 —— `drawings_and_bom` 写的是
+    #:    「★ SW2026 **已验证**三视图、6 个真实尺寸实体、PDF 和非空 BMP」）✓
+    "已验证", "已验", "已跑通", "已建成", "跑通",
 )
 
 
@@ -59,7 +62,15 @@ def _caps() -> list:
 #:        （★ **另一条产品线**）」⇒ ★★ **A4 的「我们自己的运行证据」对它应是 AutoCAD 运行** ✓
 #:   ★★★ **∴ 下一步**：★ **对那 3 个真缺口各跑一次真机**（★ 它们全是基本零件/装配操作）✓
 #:   ★★ **账的全文见 `docs/known-facts.md` 事实 516** ✓
-BASELINE = 4
+#:   ★★★★ **2026-10-04（同轮稍后）真机跑掉了其中两个**：
+#:     · ★ `parameter_updates` ⇒ ★ **`python tools/sw_guard.py --timeout 300 -- python
+#:       tools/probe_a4_runtime_evidence.py`** 跑通（★ `sw_alive: true` · ★ 零弹窗 ·
+#:       ★ `parameter_updates_ok: True`）⇒ ★★ **已补进它的 `evidence`** ✓
+#:     · ★★ `custom_properties_and_bom` ⇒ ★ **同一个探针也跑了它**，★ 而结果是
+#:       **`verified: True` 配 `readback_value: None`**（★ 两者矛盾）⇒
+#:       ★★★ **未定性 ⇒ 仍留在账上**（★ 按铁律 5：★ 未核不写成通过）✓
+#:     · ★★★ `autocad_script_backend` ⇒ ★ **口径问题**（★ 非 SolidWorks 线）✓
+BASELINE = 2
 
 
 def _cap_text(cap: dict) -> str:
