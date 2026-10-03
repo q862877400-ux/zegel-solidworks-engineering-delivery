@@ -3377,3 +3377,41 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         `tools/probe_endcap_official_args.py` · `output/endcap-face-matrix-evidence.json` ·
         `output/weldment-feature-kind-evidence.json` · `output/endcap-official-args-evidence.json` ·
         对照 **事实 503**（前置必须走 `pre_call`）· **53**（≥3 次就停下）· **40**（返回值不可靠） |
+| 505 | **焊件顶端盖（end cap）在本机经**两条**官方路线都建不成** —— ★ 五轮排除后的**诚实负面结论**（★ 不是"未定"，是"排除了已知全部变量仍未建成"）。
+      ★★ **两条路线**（都是官方页点名的）：
+        ① `IFeatureManager.InsertEndCapFeature3`（10 参）—— Remarks：「select one or more **end faces**」；
+        ② `IFeatureManager.InsertEndCapFeature2`（7 参，★ 末位是 **`System.object Faces` 数组**）——
+           Remarks 逐字「Call `InsertEndCapFeature3` if you want to **pre-select** the faces」⇒ ★ **2 把面当参数收**。
+      ★ **两条都静默回 `None`、树增量 0、不抛异常。**
+      ★★ **已排除（每条都留了 evidence）**：
+        ① 选面 —— `tools/probe_endcap_face_matrix.py`：**6 张面逐张**试（每案例重造件）⇒ 全 `None`；
+        ② 体不是焊件 —— `tools/diag_weldment_feature_kind.py`（★ 用**正确的**遍历
+           `IModelDoc2.**FirstFeature**` + `GetNextFeature`）⇒ 树里有 `WeldmentFeature` + `WeldMemberFeat`；
+        ③ 实参 —— 照官方例子**逐字配方** `(0.005, False, True, 0.003, 0.5, 0.003, 面数组)` 重测 ⇒ 仍 `None`；
+        ④ 型材实心/空心 —— `al cs`（实心）与 `ansi\al pipe structural`（**空心管**）都试 ⇒ 都 `None`；
+        ⑤ **我器械自己的 bug** —— 选面的点原用 `IFace2.GetBox` 的**包围盒中心**
+           ⇒ ★ **空心管端面是"环"、其包围盒中心落在孔里**（★ 那个点根本不在面上）；
+           ★ 改用**面自己的曲面**参数中点 `IFace.GetSurface().Evaluate(0.5, 0.5)`
+           ⇒ 点确实落在面上（实测 `(0.08, 0, 0)`）、`SelectByID2` 回 `sel_cnt=1` ⇒ ★ **仍 `None`**。
+      ★ **过程中的三个真实收获**（★ 都是"官方文档是第 0 步"的实例）：
+        · ★★ **官方例子给的是"配方"** —— `Insert_Weldment_Features_Example_VB.md` 里
+          `face = selMgr.GetSelectedObject6(1, -1)` → 装数组 → `InsertEndCapFeature2(…)` 的**调用序**，
+          ★ 签名与 Remarks 都给不了；★ 且官方配方与**我们工具一直传的值**差在
+          `BIsChamfer`（官方 True）· `WallThicknessRatio`（官方 0.5/0.6）· `BIsEndCapInward`（官方 2）；
+        · ★ 官方 Remarks 我**第一遍只看到 "end faces" 就动手**，漏了后一句「Instead of using this method,
+          you can pass the faces in an argument array of `InsertEndCapFeature2`」—— ★ 那句话**直接给了第二条路**；
+        · ★★ **事实 33 又踩一次**：`SelectByID2` 的 `Callout` 传 `None` ⇒ `类型不匹配`，
+          ★ 而**那个错误看不出是 Callout 的问题**（改用 `sw_part._empty_callout()` 即通）。
+      ★★ **结论**：★ **工具层是对的**（注入 · 形参 · `pre_call` 选面全对）· ★ **前置已成立** ·
+        ★ 而**能力本身在本机建不成** ⇒ ★ 台账里这条**只能留在"未验证"**，★ **不得标 `verified`**。
+      ★★★ **纪律**：★ 这是**第五轮**在同一处追 ⇒ 按**事实 53**（同一处连续修补 ≥3 次就停下回退）
+        **停止**，★ 把五条排除项与三条收获留档，★ **不写"能"也不写"不能"** —— 写"**排除了已知全部变量仍未建成**"。
+        ★ 若要再动，**必须先换条件**（换后端 `comtypes` / 换 SolidWorks 版本 / 换零件来源），
+        ★ 而不是第六次换参数。
+      ★★ **可复用判据**：★ **"两条官方路线都回 `None`"应被当成能力级的负面结论**（不是工具缺陷）；
+        ★ 而**测试器械自己的几何假设也要证伪**（本例：包围盒中心 ≠ 面上的点）。|
+        痕迹：`tools/probe_endcap_face_matrix.py` · `tools/diag_weldment_feature_kind.py` ·
+        `tools/probe_endcap_official_args.py` · `tools/probe_endcap_feature2.py` ·
+        `C:\swapi\types\IFeatureManager\InsertEndCapFeature2.md` 与 `…Feature3.md` ·
+        `C:\swapi\examples\Insert_Weldment_Features_Example_VB.md` ·
+        对照 **事实 504**（第一轮排除）· **503**（前置走 `pre_call`）· **33**（Callout）· **53**（≥3 次停下）|
