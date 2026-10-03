@@ -50,6 +50,11 @@
 """
 from __future__ import annotations
 
+from pathlib import Path as _Path
+
+#: ★★ 本仓库 `scripts/` 的绝对路径（★ 供 `_active_sketch_segment_count` 按顶层路径 import `sw_sketch`）
+_REPO_SCRIPTS = _Path(__file__).resolve().parent
+
 try:
     from .sw_connect import get_com_member, mm
 except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
@@ -149,6 +154,32 @@ def create_sketch_chamfer(model, *, chamfer_type: int = SKETCH_CHAMFER_TYPE["dis
     return seg
 
 
+def _active_sketch_segment_count(model):
+    """★ 活动草图的**实体计数**（★ 线段 + 圆弧/圆）；★ 取不到 ⇒ `None`（★ 不许当成 0）。
+
+    ★★ 复用本仓既有读法（★ 不发明）：`sw_sketch.get_lines` / `get_arcs` ——
+      ★ 它们各自回**坐标数组**（★ 每条线 12 个 float、每个弧 16 个）⇒ 除以宽度即条数 ✓
+    """
+    try:
+        import sys as _sys
+        if str(_REPO_SCRIPTS) not in _sys.path:
+            _sys.path.insert(0, str(_REPO_SCRIPTS))
+        from sw_sketch import get_arcs, get_lines                        # noqa: PLC0415
+    except Exception:                                                     # noqa: BLE001
+        return None
+    try:
+        n_lines = len(get_lines(model) or []) // 12
+    except Exception:                                                     # noqa: BLE001
+        n_lines = None
+    try:
+        n_arcs = len(get_arcs(model) or []) // 16
+    except Exception:                                                     # noqa: BLE001
+        n_arcs = None
+    if n_lines is None and n_arcs is None:
+        return None
+    return int((n_lines or 0) + (n_arcs or 0))
+
+
 def sketch_mirror(model):
     """把**已选中的草图实体**镜像（生成新的镜像实体）。
 
@@ -158,8 +189,22 @@ def sketch_mirror(model):
 
     ⇒ 本模块**不代选**；标记是"选中时定的"，不是传参定的（官方签名 **0 参**）。
 
-    :returns: 新建的镜像实体数（回读草图的线段数变化无法可靠判定，故返回 `True`）。
+    :returns: ★★ **2026-10-04 起改为回 dict**（★ 见下）—— 原来是裸 `True`。
     :raises RuntimeError: 无法确认草图处于可镜像状态。
+
+    ★★★★ **2026-10-04（接手轮）修掉一处「doc 承诺了判据、而代码写死 `True`」** ——
+      处置 `JUDGE-C_D_E.md` 的 🔴 **#3**（★ `E-3 #1`）—— ★ 裁判逐字：
+      「★ doc 承诺的判据（**草图实体计数变化**）在目标函数里**明写着做不到**，
+       且函数体**无条件 `return True`**」✓
+      ★★ **实测复核**：★ 对外契约（`mcp-server/tool_specs_batch41.py`）逐字写
+        「★ The criterion is that the sketch entity count changes.」；
+        ★★★ 而本函数原 docstring **自己承认**「回读草图的线段数变化**无法可靠判定**，故返回 `True`」，
+        ★ 函数体只有 `model.SketchMirror()` + `return True` ⇒ **全函数没有任何计数回读** ✓
+      ★★★ **而那个「无法可靠判定」的说法不成立**：★ 本仓 `sw_sketch` 里**早就有** `get_lines` /
+        `get_arcs` / `count_segments`（★ 我在同一批的 E5-1 里刚用过它们读草图几何）⇒
+        ★★ **判据是可行的，★ 只是当年没去接** ✓
+      ⇒ ★ 修法：★ **接上真实的计数回读**，★ 并按**三态**报（★ 与 E5-1 的做法一致）：
+        · ★ **变了** ⇒ `ok=True`；★ **没变** ⇒ `ok=False`；★★ **取不到** ⇒ `ok=None`（★ **不报成功**）✓
     """
     skm = get_com_member(model, "SketchManager")
     if skm is None:
@@ -171,8 +216,26 @@ def sketch_mirror(model):
             "官方 SketchMirror 需要先进入草图并选中要镜像的实体"
             "（线段 mark=1 / 中心线 mark=2）。"
         )
+    #: ★★★★ 2026-10-04：调用前后各取一次**草图实体计数**（★ 那正是 doc 承诺的判据）✓
+    before_segments = _active_sketch_segment_count(model)
     model.SketchMirror()
-    return True
+    after_segments = _active_sketch_segment_count(model)
+    delta = None
+    if before_segments is not None and after_segments is not None:
+        delta = int(after_segments) - int(before_segments)
+    #: ★ 三态：★ 变了 True · ★ 没变 False · ★★ 取不到 None（★ 不许把"取不到"当"变了"）
+    if delta is None:
+        ok = None
+    else:
+        ok = bool(delta != 0)
+    return {
+        "ok": ok,
+        "op": "sketch_mirror",
+        "segments_before": before_segments,
+        "segments_after": after_segments,
+        "new_segments": delta,
+        "verified_by": "★ 草图实体计数变化（★ doc 承诺的判据；★ 取不到时 ok 为 None，不报成功）",
+    }
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -201,12 +264,25 @@ def convert_entities(model, *, chain: bool = True, inner_loops: bool = False):
     :param chain: 官方 `Chain` —— `True` 连**整条链**一起转（同一草图轮廓/链上
         相邻的几何）；`False` 只转**选中的那些**。
     :param inner_loops: 官方 `InnerLoops` —— `True` 把所选面的**内环**也转过来。
-    :returns: `True`（官方成功返回 `True`）。
+    :returns: ★★ **2026-10-04 起改为回 dict**（★ 见下）—— 原来是裸 `True`。
     :raises RuntimeError: 不在草图编辑态，或官方返回 `False`（**不静默成功**）。
+
+    ★★★★ **2026-10-04（接手轮）修掉同一处「doc 承诺了判据、而代码写死 `True`」** ——
+      处置 `JUDGE-C_D_E.md` 的 🔴 **#3**（★ `E-3 #2`）—— ★ 裁判逐字：
+      「★ 同一条 doc 承诺，★ 这条**同样没有实现**」✓
+      ★★ **实测复核**：★ 对外契约逐字「Convert the selected model edges into the active sketch.
+        ★ The criterion is that the **sketch entity count changes**.」；
+        ★★★ 而本函数原判据**只是 `SketchUseEdge3` 的布尔返回值**（★ 失败才抛）+ 裸 `return True` ⇒
+        ★★ **没有任何计数回读** ✓
+      ⇒ ★ 修法：★ **接上真实的计数回读**（★ 与 `sketch_mirror` 同一套三态判据）✓
+        ★★ **而官方的 `bool` 返回值也保留**（★ 它是**另一层**判据：★ 官方自己说失败会回 False）⇒
+        ★★★ **两层都要**（★ 跨种类 ⇒ `and`，★ 与 E5-3/E5-4 那条规则一致）✓
     """
     skm = get_com_member(model, "SketchManager")
     if skm is None:
         raise RuntimeError("IModelDoc2.SketchManager 为 None ⇒ 当前不在草图编辑态？")
+    #: ★★★ 调用前后各取一次**草图实体计数**（★ doc 承诺的判据）✓
+    before_segments = _active_sketch_segment_count(model)
     got = get_com_member(skm, "SketchUseEdge3", bool(chain), bool(inner_loops))
     if not got:
         raise RuntimeError(
@@ -215,7 +291,26 @@ def convert_entities(model, *, chain: bool = True, inner_loops: bool = False):
             "官方：它投影的是「**selected** edges, loops, faces, curves, and "
             "external sketch contours」。"
         )
-    return True
+    after_segments = _active_sketch_segment_count(model)
+    delta = None
+    if before_segments is not None and after_segments is not None:
+        delta = int(after_segments) - int(before_segments)
+    if delta is None:
+        geom_ok = None
+    else:
+        geom_ok = bool(delta != 0)
+    #: ★★ 跨种类 ⇒ `and`：★ 官方布尔（对象类）**且** 计数变化（结构类）✓
+    #:   ★ 而"计数取不到"（★ `geom_ok is None`）⇒ **不算通过**（★ 与 sketch_mirror 的三态一致）
+    return {
+        "ok": bool(bool(got) and geom_ok is True),
+        "op": "convert_entities",
+        "segments_before": before_segments,
+        "segments_after": after_segments,
+        "new_segments": delta,
+        "official_return": got,
+        "verified_by": "★ `SketchUseEdge3` 回非假 **and** 草图实体计数变化"
+                       "（★ doc 承诺的判据；★ 取不到时不算通过）",
+    }
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
