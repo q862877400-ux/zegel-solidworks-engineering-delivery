@@ -2149,3 +2149,24 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **按事实 53 停手**（★ 已四轮）—— ★ 而状态是「**未证实原因**」、不是「到不了」。
      ★★ **方法论一条**：★ **前置搭成之后再试一次，状态就升级了** —— ★ 从「尚未证实」变成「**已按官方例子试过**」，★ **而那是更值钱的一句话** ✓
      ★ 本轮**不登记能力**（★ 仍未建成）。|真机：`tools/prove_composite_curve_per_example.py`；证据 `output/composite-curve-per-example-evidence.json`；单列：`docs/toolbar-gaps-backend-limits.md` §五之三；对照事实 451 / 452 |
+| 454 | **★★★ `CreateSpline3` 是 `CreateSpline2` 的**继任者****（★ 而**它才是“曲面上的样条”的正主**）；★ 而它的 **2D 用法已真机建成** —— 2026-10-03（轮 576）。
+     ★ **两代的关系是查 md 头顶查出来的**（★ 事实 433 那张地图的用法）：
+       `CreateSpline2.md` 逐字："**Obsolete. Superseded by `ISketchManager::CreateSpline3`.**"
+     ★★ **故我上一轮（轮 574，事实 452）证的那个只是第一代** ⚠
+     ★ **`CreateSpline3` 的签名（5 参）与 Remarks 逐字**：
+     ```
+     object CreateSpline3(object PointData, object Surfs, object Direction,
+                          bool SimulateNaturalEnds, out object Status)
+     ★ **2D 样条**：PointData 至少 **6 个坐标**（首尾两点）；
+        SimulateNaturalEnds = true/false；★ **其余参数全给 `null`/`Nothing`**
+     ★ **曲面上的样条**：PointData = 两个以上 3D 点；**Surfs** = `ISurface` 数组；**Direction** = `IMathVector` 数组；**Status** = 每点状态数组
+     ```
+     ★ 真机（`tools/prove_createspline3.py`，零弹窗）—— ★ **三格**：
+     ```
+     ★ **2D**（6 坐标 + 其余 null）   ⇒ **段 0 → 1** · 回 `CDispatch` ✓
+     只给**一个点**（不足 6 坐标）     ⇒ 不成 ✗（★ 与官方那句一致）
+     曲面上的样条（Surfs + Direction） ⇒ **本轮未成**：`AttributeError: <unknown>.GetMathUtility`⚠
+     ```
+     ⇒ ★★ **故两条**：① **2D 已登记为 verified**；② ★ **on-surface 未成的原因是我在 `IModelDoc2` 上取 `GetMathUtility`**—— ★ **它不在那里**（★ **第四类形态**）；★ **下一步**：换到**正确的入口**取 `IMathUtility`。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_spline3_2d`**（level = **verified**，共 **103** 条）；台账「样式样条曲线」补 `capability_id` ⇒ **已能 77**。
+     ★★ **方法论**：★ **证一个方法之前，先看 md 头顶有没有 `Obsolete`** —— ★ 否则可能证的是**已废弃的那一代** ⚠|真机：`tools/prove_createspline3.py`；证据 `output/createspline3-evidence.json`；对照事实 433（废弃地图）· 452 |

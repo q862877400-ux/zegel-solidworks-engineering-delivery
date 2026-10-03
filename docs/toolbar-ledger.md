@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 76 |
-| 可攻关 | 16 |
+| 已能 | 77 |
+| 可攻关 | 15 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -38,7 +38,6 @@
 | 特征下拉 | 高级孔 | **可攻关** | `HoleWizard5` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
 | 草图绘制 | 方程式驱动的曲线 | **可攻关** | `CreateEquationSpline2`, `CreateSplinesByEqnParams2` | — |
-| 草图绘制 | 样式样条曲线 | **可攻关** | `CreateSpline3` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
 | 草图编辑 | 复制实体 | **可攻关** | `IModelDoc2` | — |
 | 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
@@ -125,6 +124,7 @@
 | 草图绘制 | 平行四边形 | **已能** | `CreateParallelogram` | `sw_sketch_primitives.sketch_parallelogram` |
 | 草图绘制 | 抛物线 | **已能** | `CreateParabola` | `sw_sketch_primitives.sketch_parabola` |
 | 草图绘制 | 曲面上的样条曲线 | **已能** | `CreateSpline` | — |
+| 草图绘制 | 样式样条曲线 | **已能** | `CreateSpline3` | — |
 | 草图绘制 | 样条曲线 | **已能** | `CreateSpline2`, `CreateSpline3` | `sw_part.sketch_spline` |
 | 草图绘制 | 椭圆 | **已能** | `CreateEllipse` | `sw_part.sketch_ellipse` |
 | 草图绘制 | 直槽口 | **已能** | `CreateSketchSlot` | `sw_part.sketch_slot` |

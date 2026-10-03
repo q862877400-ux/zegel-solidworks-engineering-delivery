@@ -4121,6 +4121,31 @@
         "★ **必须先有活动草图**；★ **2D 草图里 Z 被忽略**（官方）；★ 官方说它**不配合 `AddToDB`**。",
         "⚠ 本包装未接进 MCP 工具层；⚠ 未查：`SimulateNaturalEnds = True` 的行为。"
       ]
+    },
+    {
+      "id": "sketch_spline3_2d",
+      "label": "样条曲线（`CreateSpline3` 的 **2D** 用法）—— ★ **真机建成**·★★ 它是 `CreateSpline2` 的**继任者**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\ISketchManager\\CreateSpline3.md`（**5 参**，★ md **未标 `Obsolete`**）；★ 而 `CreateSpline2.md` 逐字写着\"**Obsolete. Superseded by `ISketchManager::CreateSpline3`**\"。代码：`tools/prove_createspline3.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 576）**真机建成**（走 `sw_guard`，零弹窗）：`CreateSpline3(PointData=[至少 6 个坐标], Surfs=None, Direction=None, SimulateNaturalEnds=False, Status=byref)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/createspline3-evidence.json`。",
+        "★★ **而两格对照把参数说清了**：\n       ★ **2D**（至少 6 坐标 + 其余 `null`） ⇒ **成** ✓\n       ★ 只给**一个点**（不足 6 坐标）          ⇒ 不成 ✗\n       ★ 而官方 Remarks 逐字：**2D 要至少 6 个坐标；其余参数全给 `null`/`Nothing`** ✓"
+      ],
+      "limitations": [
+        "★★ **2D 用法**：`PointData` **至少 6 个坐标**；`Surfs`/`Direction` 给 **`None`**；`Status` 是 **out**（byref）。",
+        "⚠ **本包装未接进 MCP 工具层**；⚠ **曲面上的样条（on-surface）本轮未成** —— ★ 原因是我在 `IModelDoc2` 上取 `GetMathUtility`（★ **它不在那里**）；★ **下一步**：换到**正确的入口**取 `IMathUtility`。"
+      ]
     }
   ]
 }

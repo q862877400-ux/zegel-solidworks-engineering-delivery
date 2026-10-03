@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **102** 条能力。
+共 **103** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 89 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 90 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 72 | **本项目自研**（护城河域等） |
+| `original` | 73 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -176,6 +176,10 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ② ★ **数组形态 = `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** （★ 而**扁平 list / list of tuples 都回 `None`**）
        ③ ★ **第二个参数 = `False`**（`SimulateNaturalEnds`）
        ⇒ ★★ **四格里只有一格成** ✓`<br>· `★★ **而本轮还证明了一件事**：★ `call_com_member` **就是 `get_com_member` 的别名**（实现只有一行；★ 只是**名字即意图**）⇒ ★ **换名字不会改行为** ⚠` |
+| `sketch_spline3_2d` | · `★★ 2026-10-03（轮 576）**真机建成**（走 `sw_guard`，零弹窗）：`CreateSpline3(PointData=[至少 6 个坐标], Surfs=None, Direction=None, SimulateNaturalEnds=False, Status=byref)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/createspline3-evidence.json`。`<br>· `★★ **而两格对照把参数说清了**：
+       ★ **2D**（至少 6 坐标 + 其余 `null`） ⇒ **成** ✓
+       ★ 只给**一个点**（不足 6 坐标）          ⇒ 不成 ✗
+       ★ 而官方 Remarks 逐字：**2D 要至少 6 个坐标；其余参数全给 `null`/`Nothing`** ✓` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

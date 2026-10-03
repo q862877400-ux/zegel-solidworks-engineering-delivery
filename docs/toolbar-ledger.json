@@ -350,7 +350,8 @@
    "zh": "样式样条曲线",
    "api": "CreateSpline3",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_spline3_2d"
   },
   {
    "tb": "草图绘制",
