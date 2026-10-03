@@ -2220,3 +2220,23 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **落地**：`capabilities.yaml` 新增 **`sketch_rotate_or_copy_3d`**（level = **verified**，共 **104** 条）；台账「复制实体」补 `capability_id` ⇒ **已能 78**。
      ★★ **方法论**：★ **当一个 UI 名称在 API 里查不到时，围绕那个**动作的词**（这里是 `Copy`）在**合适的接口**上搜** —— ★ **而不是放弃** ⚠
        （★ 本例：名字里的 `OrCopy` 就是答案）。|真机：`tools/prove_rotate_or_copy_3d.py`；证据 `output/rotate-or-copy-3d-evidence.json`；官方：`C:\swapi\types\ISketchManager\RotateOrCopy3DAboutXYZ.md` × 反射 arity |
+| 458 | **★★ 方程式驱动的曲线：显式用法真机建成**（`CreateEquationSpline2` **11 参**；★ 而参数用法本轮未成） —— 2026-10-03（轮 581）。
+     ★ **两代的关系是查出来的**：`CreateEquationSpline.md` 逐字："**Obsolete. Superseded by `ISketchManager::CreateEquationSpline2`**"；★ 同理 `CreateSplinesByEqnParams` ⇒ `...2`。
+     ★ **官方的两套用法（Remarks 逐字）**：
+     ```
+     ★ **显式曲线（只有 2D） y=f(x)**：**XExpression 给 `""`**；YExpression = 以 x 表达（★ 例 `y=exp(x)`）
+     ★ **参数曲线**：XExpression = x 关于 t（★ 例 `x=sin(t)`）；YExpression = y 关于 t（★ `y=cos(t)`）
+     ★ 参数：XExpression · YExpression · ZExpression · RangeStart · RangeEnd · IsAngleRange ·
+             RotationAngle(rad) · XOffset · YOffset · LockStart · LockEnd（**11 参**）
+     ```
+     ★ 真机（`tools/prove_equation_driven_curve.py`，零弹窗）—— ★ **三格**：
+     ```
+     ★ **显式** `y=exp(x)`（**X 给 `""`**） ⇒ **段 0 → 1** · 回 `CDispatch` ✓
+     参数 `x=sin(t)`/`y=cos(t)`          ⇒ 段 0 → 0（★ 而**回了 `CDispatch`**）⚠
+     坏表达式 `y=zzz(x)`                 ⇒ 段 0 → 0 · 回 `None`（★ 合理）
+     ```
+     ⇒ ★★ **故两条**：① **显式已登记为 verified**；② ★ **参数用法未成、而它返回了 `CDispatch`**（★ **第五种形态的候选**：对象给了而没进树）⚠
+       ★ **下一步**：先查参数用法的 `RangeStart`/`RangeEnd` 是否要换口径。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_equation_curve`**（level = **verified**，共 **105** 条）；台账「方程式驱动的曲线」补 `capability_id` ⇒ **已能 79**。
+     ★★ **方法论**：★ **当官方 Remarks 把一个成员分成“两套用法”时，要**分开立桁** ** —— ★ 本例两套用法的**第一个参数就不同**；
+       ★ 而把它们合在一个结论里，就会把**一半成功说成失败**（或反之）。|真机：`tools/prove_equation_driven_curve.py`；证据 `output/equation-driven-curve-evidence.json`；官方：`C:\swapi\types\ISketchManager\CreateEquationSpline2.md` |

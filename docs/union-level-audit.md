@@ -88,31 +88,32 @@
 | 78 | `sketch_modify_ops` | `verified` | `original` | ✓ | — |
 | 79 | `sketch_primitives_b1` | `verified` | `original` | ✓ | — |
 | 80 | `sketch_query` | `verified` | `original` | ✓ | — |
-| 81 | `sketch_slot_types` | `verified` | `original` | ✓ | — |
-| 82 | `sketch_spline` | `verified` | `original` | ✓ | — |
-| 83 | `sketch_spline3_2d` | `verified` | `original` | ✓ | — |
-| 84 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
-| 85 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
-| 86 | `surface_delete_hole` | `verified` | `original` | ✓ | — |
-| 87 | `surface_edit_ops` | `verified` | `original` | ✓ | — |
-| 88 | `surface_features` | `verified` | `mixed` | ✓ | — |
-| 89 | `surface_flatten` | `verified` | `original` | ✓ | — |
-| 90 | `surface_modeling` | `stitched` | `mixed` | — | — |
-| 91 | `surface_offset` | `verified` | `original` | ✓ | — |
-| 92 | `surface_planar_region` | `verified` | `original` | ✓ | — |
-| 93 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
-| 94 | `surface_revolve` | `verified` | `original` | ✓ | — |
-| 95 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
-| 96 | `surface_untrim` | `verified` | `original` | ✓ | — |
-| 97 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
-| 98 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
-| 99 | `topology_optimization` | `verified` | `original` | ✓ | — |
-| 100 | `topology_readback` | `stitched` | `original` | ✓ | — |
-| 101 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
-| 102 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
-| 103 | `weldments` | `verified` | `upstream` | ✓ | — |
+| 81 | `sketch_rotate_or_copy_3d` | `verified` | `original` | ✓ | — |
+| 82 | `sketch_slot_types` | `verified` | `original` | ✓ | — |
+| 83 | `sketch_spline` | `verified` | `original` | ✓ | — |
+| 84 | `sketch_spline3_2d` | `verified` | `original` | ✓ | — |
+| 85 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
+| 86 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
+| 87 | `surface_delete_hole` | `verified` | `original` | ✓ | — |
+| 88 | `surface_edit_ops` | `verified` | `original` | ✓ | — |
+| 89 | `surface_features` | `verified` | `mixed` | ✓ | — |
+| 90 | `surface_flatten` | `verified` | `original` | ✓ | — |
+| 91 | `surface_modeling` | `stitched` | `mixed` | — | — |
+| 92 | `surface_offset` | `verified` | `original` | ✓ | — |
+| 93 | `surface_planar_region` | `verified` | `original` | ✓ | — |
+| 94 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
+| 95 | `surface_revolve` | `verified` | `original` | ✓ | — |
+| 96 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
+| 97 | `surface_untrim` | `verified` | `original` | ✓ | — |
+| 98 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
+| 99 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
+| 100 | `topology_optimization` | `verified` | `original` | ✓ | — |
+| 101 | `topology_readback` | `stitched` | `original` | ✓ | — |
+| 102 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
+| 103 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
+| 104 | `weldments` | `verified` | `upstream` | ✓ | — |
 
-**合计 103 条**。
+**合计 104 条**。
 
 ## 二、`level` 分布
 
@@ -122,7 +123,7 @@
 | `not_implemented` | 1 |
 | `source_verified` | 0 |
 | `stitched` | 12 |
-| `verified` | 90 |
+| `verified` | 91 |
 
 ## 三、`source` 分布
 
@@ -130,7 +131,7 @@
 |---|---|
 | `merged` | 0 |
 | `mixed` | 11 |
-| `original` | 73 |
+| `original` | 74 |
 | `undetermined` | 1 |
 | `upstream` | 18 |
 
@@ -142,7 +143,7 @@
 | `not_implemented` | 0 | 0 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
 | `stitched` | 0 | 3 | 9 | 0 | 0 |
-| `verified` | 0 | 8 | 64 | 1 | 17 |
+| `verified` | 0 | 8 | 65 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

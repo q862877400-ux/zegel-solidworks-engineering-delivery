@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 78 |
-| 可攻关 | 14 |
+| 已能 | 79 |
+| 可攻关 | 13 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -37,7 +37,6 @@
 | 特征下拉 | 表格驱动的阵列 | **可攻关** | `InsertTableDrivenPattern` | — |
 | 特征下拉 | 高级孔 | **可攻关** | `HoleWizard5` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
-| 草图绘制 | 方程式驱动的曲线 | **可攻关** | `CreateEquationSpline2`, `CreateSplinesByEqnParams2` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
 | 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
 | 曲面 | 圆角(曲面) | **待验证** | `FeatureFillet` | `sw_part.fillet` |
@@ -122,6 +121,7 @@
 | 草图绘制 | 圆锥 | **已能** | `CreateConic` | `sw_sketch_primitives.sketch_conic` |
 | 草图绘制 | 平行四边形 | **已能** | `CreateParallelogram` | `sw_sketch_primitives.sketch_parallelogram` |
 | 草图绘制 | 抛物线 | **已能** | `CreateParabola` | `sw_sketch_primitives.sketch_parabola` |
+| 草图绘制 | 方程式驱动的曲线 | **已能** | `CreateEquationSpline2`, `CreateSplinesByEqnParams2` | — |
 | 草图绘制 | 曲面上的样条曲线 | **已能** | `CreateSpline` | — |
 | 草图绘制 | 样式样条曲线 | **已能** | `CreateSpline3` | — |
 | 草图绘制 | 样条曲线 | **已能** | `CreateSpline2`, `CreateSpline3` | `sw_part.sketch_spline` |

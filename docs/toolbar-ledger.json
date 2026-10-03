@@ -366,7 +366,8 @@
    "zh": "方程式驱动的曲线",
    "api": "CreateEquationSpline2/CreateSplinesByEqnParams2",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_equation_curve"
   },
   {
    "tb": "草图绘制",

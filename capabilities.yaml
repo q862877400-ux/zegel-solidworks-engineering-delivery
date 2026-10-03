@@ -4174,6 +4174,33 @@
         "★ **9 参**：`Copy` · `NumCopies` · `KeepRelations` · `BaseX/Y/Z` · `AngleAboutXDir/YDir/ZDir`。",
         "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：**2D 草图**的复制（★ 那一条可能走 `EditCopy`/`EditPaste`）。"
       ]
+    },
+    {
+      "id": "sketch_equation_curve",
+      "label": "方程式驱动的曲线（`ISketchManager.CreateEquationSpline2` 的 **显式用法**）—— ★ **真机建成**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\ISketchManager\\CreateEquationSpline2.md`（**11 参**，★ md **未标 `Obsolete`**）；★ 而 `CreateEquationSpline.md` 逐字写着\"Obsolete. Superseded by `ISketchManager::CreateEquationSpline2`\"。代码：`tools/prove_equation_driven_curve.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 581）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateEquationSpline2(\"\", \"exp(x)\", \"\", \"-1\", \"1\", False, 0.0, 0.0, 0.0, True, True)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/equation-driven-curve-evidence.json`。",
+        "★★ **而三格把两套用法的边界钉死了**：\n       ★ **显式** `y=exp(x)`（**X 给 `\"\"`**） ⇒ **段 0 → 1** ✓\n       ★ 参数 `x=sin(t)`/`y=cos(t)`           ⇒ 段 0 → 0（★ 而**回了 `CDispatch`**）⚠\n       ★ 坏表达式 `y=zzz(x)`                  ⇒ 段 0 → 0 · 回 `None`（★ 合理）"
+      ],
+      "limitations": [
+        "★★ **显式用法**：`XExpression` 给 **`\"\"`**；`YExpression` = 以 **x** 表达的函数（★ 官方例 `y=exp(x)`）；`RangeStart`/`RangeEnd` = **x** 的范围。",
+        "★ **11 参**：`XExpression` · `YExpression` · `ZExpression` · `RangeStart` · `RangeEnd` · `IsAngleRange` · `RotationAngle`(rad) · `XOffset` · `YOffset` · `LockStart` · `LockEnd`。",
+        "⚠ **参数曲线（给 t 的表达式）本轮未成** —— ★ 而**它返回了 `CDispatch`**（★ 第**五**种形态的候选：**对象给了而没进树**）；★ **下一步**：先查参数用法的 `RangeStart`/`RangeEnd` 是否要换口径。",
+        "⚠ 本包装未接进 MCP 工具层。"
+      ]
     }
   ]
 }

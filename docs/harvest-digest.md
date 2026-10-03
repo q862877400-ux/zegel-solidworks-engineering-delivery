@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **104** 条能力。
+共 **105** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 91 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 92 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 74 | **本项目自研**（护城河域等） |
+| `original` | 75 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -182,6 +182,10 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ★ 而官方 Remarks 逐字：**2D 要至少 6 个坐标；其余参数全给 `null`/`Nothing`** ✓` |
 | `sketch_rotate_or_copy_3d` | · `★★ 2026-10-03（轮 580）**真机建成**（走 `sw_guard`，零弹窗）：`Insert3DSketch(True)` 开一个 **3D 草图** · 里面 `CreateLine` 画一条线 · 再 `RotateOrCopy3DAboutXYZ(Copy=True, 1, True, 0,0,0, 0.785, 0, 0)` ⇒ **草图段数 1 → 2**（★ 增 1 = 复制了一份）· 返回 `True`。证据 `output/rotate-or-copy-3d-evidence.json`。`<br>· `★★ **而对照组把那个布尔钉死了**：`<br>· ``Copy=False` ⇒ **段 1 → 1**（★ 只旋转、不复制）· 而也回 `True` ✓`<br>· `★★★ **而本轮又纠了一个自己的错**：我第一版传了 **8 个参数**（★ **漏了 `AngleAboutZDir`**）⇒ `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）；
        ★ 而**那个错看不出是哪个参数漏了** ⚠ —— ★ 故又靠**反射的 arity**把它钉出来（铁律 4）。` |
+| `sketch_equation_curve` | · `★★ 2026-10-03（轮 581）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateEquationSpline2("", "exp(x)", "", "-1", "1", False, 0.0, 0.0, 0.0, True, True)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/equation-driven-curve-evidence.json`。`<br>· `★★ **而三格把两套用法的边界钉死了**：
+       ★ **显式** `y=exp(x)`（**X 给 `""`**） ⇒ **段 0 → 1** ✓
+       ★ 参数 `x=sin(t)`/`y=cos(t)`           ⇒ 段 0 → 0（★ 而**回了 `CDispatch`**）⚠
+       ★ 坏表达式 `y=zzz(x)`                  ⇒ 段 0 → 0 · 回 `None`（★ 合理）` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 
