@@ -292,7 +292,26 @@ def _get_selection_count(model):
 
 
 def _select_com_object(obj, append=False, mark=0):
-    """使用对象自身 Select2/Select4 选择，优先避开 SelectByID2 名称解析。"""
+    """使用对象自身 Select2/Select4 选择，优先避开 SelectByID2 名称解析。
+
+    ★★★★ 2026-10-03（轮 535）**真机定下的一条边界（事实 416）**：
+      ★★ **它适用于面 / 边 / 顶点，而对体（`IBody2`）不生效** ⚠
+      实测（`tools/probe_trim_surface_by_object.py`）：
+      ```
+      _select_com_object(曲面体的**面**)  ⇒ **True**  · 计数 4  ✓
+      _select_com_object(**曲面体**本身)  ⇒ **False** · 计数 0  ✗
+      ```
+      ⇒ `Select2` 与 `Select4` **都试过、都不成**，★ 而**失败是静默的**
+        （返回 `False`、不抛异常）⇒ ★★ **调用方必须检查返回值** ⚠
+      ★ 这与**事实 32**（「实体（边/面）没有可用的名字」）**互补**：
+        那条说的是**名字**不可用，★ 这条说的是**体**连"按对象选"都不行。
+      ★ 要用某个体：★ **选它的面 / 边**（★ 或按 `SelectByID2("", "SURFACEBODY", x, y, z, …)`
+        按**坐标**选 —— ★ 而那要求坐标**真的落在体上**，见事实 415/416）。
+
+    .. note::
+        ★ 本仓**生产代码从不把体传进来**（轮 535 全仓扫描：**0 处命中**）⇒
+        ★ 这条边界目前**只是给后人的护栏**，不是已发生的 bug。
+    """
     if obj is None:
         return False
     for method_name in ("Select2", "Select4"):
