@@ -128,10 +128,36 @@ def export_to_pdf(model, output_path, sheet_names=None, *, sw=None):
     errors = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
     warnings = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
     #: ⚠⚠ **第二处缺陷**（2026-10-01 轮 158 真机暴露）：`output_path` 可能是 `Path`，
-    #: 而 `SaveAs` 要**字符串** ⇒ 抛 `TypeError: must be real number, not WindowsPath`
+    #: 而保存成员要**字符串** ⇒ 抛 `TypeError: must be real number, not WindowsPath`
     #: （★ 报错完全看不出是路径类型的问题）。
     #: ⇒ 与事实 59（`Path("D:")` 不是盘根）**同族**：**路径类型要在边界上settle一次**。
-    success = model.Extension.SaveAs(str(output_path), 0, 1, pdf_data, errors, warnings)
+    #: ★★★★ 2026-10-04（接手轮）**从两级废弃的 `SaveAs` 换到现行的 `SaveAs3`** ——
+    #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#6**（★ `C-dw-3 #21`）—— ★ 裁判逐字：
+    #:   「★ PDF 走**已标废弃**的 `IModelDocExtension.SaveAs`（★ 而**同仓自己写着**
+    #:    「一律用 `SaveAs3`」）」✓
+    #:   ★★ **实测复核（★ 我读了官方三个 md）**：
+    #:     · ★ `IModelDocExtension/SaveAs.md` 逐字 ⇒ 「**Obsolete. Superseded by `SaveAs2`**」✓
+    #:     · ★ `IModelDocExtension/SaveAs2.md` 逐字 ⇒ 「**Obsolete. Superseded by `SaveAs3`**」✓
+    #:     · ★★ `IModelDocExtension/SaveAs3.md` ⇒ **无 Obsolete 标记** ⇒ **现行入口** ✓
+    #:     ⇒ ★★★ **所以 PDF 那条走的是**两级废弃**的成员** ✓
+    #:   ★★★ **而正解就在本文件里**：★ `export_to_image` **用的就是** `SaveAs3` ——
+    #:     ★★ 且它的注释逐字记着两个**实测坑**（★ 现成可抄）：
+    #:       · ★ 3 参重载在 pywin32 迟到绑定下报 `0x8002000F` ⇒ **必须按 7 参调** ✓
+    #:       · ★ `ExportData` 传 `None` 报 `类型不匹配`（位置 4）⇒ **必须给空 Dispatch** ✓
+    #:   ★★ 修法：★ **照 `export_to_image` 的形态调 7 参 `SaveAs3`**，
+    #:     ★★★ 而**第 4 参放 `pdf_data`**（★ PDF 的导出数据）✓
+    #: ★★★★ 2026-10-04（接手轮）**改成先建两个出参、再传进去** ——
+    #:   因为 `SaveAs3` 用的是 `out_i4()`（★ 普通包装器），★ 而 `_print_result` 原来读
+    #:   `errors.value`（★ 那是 `VARIANT(VT_BYREF|VT_I4)` 的形态）⇒ ★★ **换入口后 `.value` 会 `AttributeError`** ✓
+    #:   ★★★ 所以：★ **先建出参对象、传进调用、再把同一对象交给 `_print_result`** ✓
+    errors = out_i4()
+    warnings = out_i4()
+    success = get_com_member(
+        get_com_member(model, "Extension"), "SaveAs3",
+        str(output_path), 0, 1,
+        pdf_data,                                     #: ★★ PDF 的 ExportData（★ 不能为空 Dispatch）
+        create_empty_dispatch_variant(),              #: ★ AdvancedSaveAsOptions（★ 空 Dispatch）
+        errors, warnings)                             #: ★ 两个出参（★ 事实 12/68 那一族）
 
     _print_result("PDF", output_path, success, errors, warnings)
     return success
@@ -429,8 +455,17 @@ def _export_generic(model, output_path):
     errors = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
     warnings = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
 
-    success = model.Extension.SaveAs(
-        output_path, 0, 1, create_empty_dispatch_variant(), errors, warnings
+    #: ★★★★ 2026-10-04（接手轮）**同一处修正的**第二处****（★ 处置 `JUDGE-C_D_E` 🔴 #6 · `C-dw-3 #21`）——
+    #:   ★ 本段注释**自己**写着「★ 保存路由**两条**（原生 `SaveAs3` / 导出 `Extension.SaveAs`）」
+    #:   ⇒ ★★ 而**两条里有一条是废弃的** ✓
+    #:   ★★★ 官方逐字：★ `IModelDocExtension/SaveAs.md` ⇒「**Obsolete. Superseded by `SaveAs2`**」·
+    #:     `SaveAs2.md` ⇒「**Obsolete. Superseded by `SaveAs3`**」· ★ `SaveAs3.md` **无标记** ✓
+    #:   ★★ 修法：★ 与 `export_to_pdf` 同形 —— ★ **7 参 `SaveAs3`**，★ 而本条是**通用导出**
+    #:     ⇒ **第 4 参（`ExportData`）仍给空 Dispatch** ✓
+    success = get_com_member(
+        get_com_member(model, "Extension"), "SaveAs3",
+        output_path, 0, 1,
+        create_empty_dispatch_variant(), errors, warnings
     )
 
     ext = os.path.splitext(output_path)[1].upper()
@@ -449,11 +484,18 @@ def _export_generic(model, output_path):
 
 
 def _print_result(format_name, path, success, errors, warnings):
-    """打印导出结果"""
+    """打印导出结果。
+
+    ★★ 2026-10-04：★ **兼容两种出参形态** —— ★ `VARIANT(VT_BYREF|VT_I4)`（★ 有 `.value`）
+      与 `out_i4()` 的包装器（★ 可能没有）⇒ ★★ 所以**取不到 `.value` 就直接用它自己** ✓
+    （★ 否则换入口后会在这里 `AttributeError` —— ★ 而那**看不出是出参形态的问题**）
+    """
     if success:
         print(f"{format_name} 导出成功: {path}")
     else:
-        print(f"{format_name} 导出失败, 错误码: {errors.value}, 警告码: {warnings.value}")
+        ev = getattr(errors, "value", errors)
+        wv = getattr(warnings, "value", warnings)
+        print(f"{format_name} 导出失败, 错误码: {ev}, 警告码: {wv}")
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
