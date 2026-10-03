@@ -36,77 +36,78 @@
 | 26 | `export_delivery` | `verified` | `upstream` | ✓ | — |
 | 27 | `external_spur_gear_geometry` | `verified` | `upstream` | ✓ | — |
 | 28 | `feature_build_extrude` | `verified` | `original` | ✓ | — |
-| 29 | `feature_readback_criterion` | `verified` | `original` | ✓ | — |
-| 30 | `feature_revolve_cut` | `verified` | `original` | ✓ | — |
-| 31 | `file_custom_property_read` | `verified` | `original` | ✓ | — |
-| 32 | `geometric_tolerance` | `stitched` | `original` | ✓ | — |
-| 33 | `geometry_and_delivery_review` | `verified` | `upstream` | ✓ | — |
-| 34 | `geometry_measurement` | `verified` | `original` | ✓ | — |
-| 35 | `gtol_insert` | `verified` | `original` | ✓ | — |
-| 36 | `headless_open_format_writing` | `verified` | `upstream` | ✓ | — |
-| 37 | `helix_and_spiral` | `verified` | `original` | ✓ | — |
-| 38 | `holes_and_finishing` | `verified` | `upstream` | ✓ | — |
-| 39 | `loft_and_sweep` | `verified` | `mixed` | ✓ | — |
-| 40 | `mass_property_read` | `verified` | `original` | ✓ | — |
-| 41 | `mesh_create_readback` | `verified` | `original` | ✓ | — |
-| 42 | `mesh_size_sanity_gate` | `verified` | `original` | ✓ | — |
-| 43 | `modeling_feature_readback_tools` | `verified` | `original` | ✓ | — |
-| 44 | `mold_analysis` | `verified` | `original` | ✓ | — |
-| 45 | `mold_parting_geometry` | `stitched` | `original` | ✓ | — |
-| 46 | `mold_tools` | `stitched` | `mixed` | — | ✓ |
-| 47 | `motion_study` | `verified` | `mixed` | ✓ | — |
-| 48 | `motion_validation_and_preconditions` | `verified` | `original` | ✓ | — |
-| 49 | `pack_and_go` | `verified` | `upstream` | ✓ | — |
-| 50 | `parameter_updates` | `verified` | `upstream` | ✓ | — |
-| 51 | `part_and_features` | `verified` | `upstream` | ✓ | — |
-| 52 | `pattern_and_mirror` | `verified` | `original` | ✓ | — |
-| 53 | `preview_and_review_report` | `verified` | `original` | ✓ | — |
-| 54 | `ref_geometry` | `verified` | `original` | ✓ | — |
-| 55 | `reference_axis` | `verified` | `mixed` | ✓ | — |
-| 56 | `render_material_library` | `verified` | `original` | ✓ | — |
-| 57 | `render_materials_and_appearance` | `verified` | `original` | ✓ | — |
-| 58 | `replace_face` | `verified` | `original` | ✓ | — |
-| 59 | `requirements_planning` | `verified` | `upstream` | ✓ | — |
-| 60 | `routing` | `stitched` | `mixed` | ✓ | — |
-| 61 | `selection_helpers` | `verified` | `original` | ✓ | — |
-| 62 | `sheet_metal` | `verified` | `upstream` | ✓ | — |
-| 63 | `sheet_metal_creation` | `stitched` | `original` | ✓ | — |
-| 64 | `simulation_and_fea` | `verified` | `original` | ✓ | — |
-| 65 | `simulation_load_family_breadth` | `verified` | `original` | ✓ | — |
-| 66 | `simulation_loads_wiring` | `verified` | `original` | ✓ | — |
-| 67 | `simulation_solver_options` | `verified` | `original` | ✓ | — |
-| 68 | `simulation_study_create` | `verified` | `original` | ✓ | — |
-| 69 | `sketch_build` | `verified` | `original` | ✓ | — |
-| 70 | `sketch_chamfer` | `verified` | `original` | ✓ | — |
-| 71 | `sketch_dimension_horizontal` | `verified` | `original` | ✓ | — |
-| 72 | `sketch_dimension_vertical` | `verified` | `original` | ✓ | — |
-| 73 | `sketch_edit_ops` | `stitched` | `original` | ✓ | — |
-| 74 | `sketch_edit_ops_b3` | `verified` | `original` | ✓ | — |
-| 75 | `sketch_modify_ops` | `verified` | `original` | ✓ | — |
-| 76 | `sketch_primitives_b1` | `verified` | `original` | ✓ | — |
-| 77 | `sketch_query` | `verified` | `original` | ✓ | — |
-| 78 | `sketch_slot_types` | `verified` | `original` | ✓ | — |
-| 79 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
-| 80 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
-| 81 | `surface_edit_ops` | `verified` | `original` | ✓ | — |
-| 82 | `surface_features` | `verified` | `mixed` | ✓ | — |
-| 83 | `surface_flatten` | `verified` | `original` | ✓ | — |
-| 84 | `surface_modeling` | `stitched` | `mixed` | — | — |
-| 85 | `surface_offset` | `verified` | `original` | ✓ | — |
-| 86 | `surface_planar_region` | `verified` | `original` | ✓ | — |
-| 87 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
-| 88 | `surface_revolve` | `verified` | `original` | ✓ | — |
-| 89 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
-| 90 | `surface_untrim` | `verified` | `original` | ✓ | — |
-| 91 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
-| 92 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
-| 93 | `topology_optimization` | `verified` | `original` | ✓ | — |
-| 94 | `topology_readback` | `stitched` | `original` | ✓ | — |
-| 95 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
-| 96 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
-| 97 | `weldments` | `verified` | `upstream` | ✓ | — |
+| 29 | `feature_loft_cut` | `verified` | `original` | ✓ | — |
+| 30 | `feature_readback_criterion` | `verified` | `original` | ✓ | — |
+| 31 | `feature_revolve_cut` | `verified` | `original` | ✓ | — |
+| 32 | `file_custom_property_read` | `verified` | `original` | ✓ | — |
+| 33 | `geometric_tolerance` | `stitched` | `original` | ✓ | — |
+| 34 | `geometry_and_delivery_review` | `verified` | `upstream` | ✓ | — |
+| 35 | `geometry_measurement` | `verified` | `original` | ✓ | — |
+| 36 | `gtol_insert` | `verified` | `original` | ✓ | — |
+| 37 | `headless_open_format_writing` | `verified` | `upstream` | ✓ | — |
+| 38 | `helix_and_spiral` | `verified` | `original` | ✓ | — |
+| 39 | `holes_and_finishing` | `verified` | `upstream` | ✓ | — |
+| 40 | `loft_and_sweep` | `verified` | `mixed` | ✓ | — |
+| 41 | `mass_property_read` | `verified` | `original` | ✓ | — |
+| 42 | `mesh_create_readback` | `verified` | `original` | ✓ | — |
+| 43 | `mesh_size_sanity_gate` | `verified` | `original` | ✓ | — |
+| 44 | `modeling_feature_readback_tools` | `verified` | `original` | ✓ | — |
+| 45 | `mold_analysis` | `verified` | `original` | ✓ | — |
+| 46 | `mold_parting_geometry` | `stitched` | `original` | ✓ | — |
+| 47 | `mold_tools` | `stitched` | `mixed` | — | ✓ |
+| 48 | `motion_study` | `verified` | `mixed` | ✓ | — |
+| 49 | `motion_validation_and_preconditions` | `verified` | `original` | ✓ | — |
+| 50 | `pack_and_go` | `verified` | `upstream` | ✓ | — |
+| 51 | `parameter_updates` | `verified` | `upstream` | ✓ | — |
+| 52 | `part_and_features` | `verified` | `upstream` | ✓ | — |
+| 53 | `pattern_and_mirror` | `verified` | `original` | ✓ | — |
+| 54 | `preview_and_review_report` | `verified` | `original` | ✓ | — |
+| 55 | `ref_geometry` | `verified` | `original` | ✓ | — |
+| 56 | `reference_axis` | `verified` | `mixed` | ✓ | — |
+| 57 | `render_material_library` | `verified` | `original` | ✓ | — |
+| 58 | `render_materials_and_appearance` | `verified` | `original` | ✓ | — |
+| 59 | `replace_face` | `verified` | `original` | ✓ | — |
+| 60 | `requirements_planning` | `verified` | `upstream` | ✓ | — |
+| 61 | `routing` | `stitched` | `mixed` | ✓ | — |
+| 62 | `selection_helpers` | `verified` | `original` | ✓ | — |
+| 63 | `sheet_metal` | `verified` | `upstream` | ✓ | — |
+| 64 | `sheet_metal_creation` | `stitched` | `original` | ✓ | — |
+| 65 | `simulation_and_fea` | `verified` | `original` | ✓ | — |
+| 66 | `simulation_load_family_breadth` | `verified` | `original` | ✓ | — |
+| 67 | `simulation_loads_wiring` | `verified` | `original` | ✓ | — |
+| 68 | `simulation_solver_options` | `verified` | `original` | ✓ | — |
+| 69 | `simulation_study_create` | `verified` | `original` | ✓ | — |
+| 70 | `sketch_build` | `verified` | `original` | ✓ | — |
+| 71 | `sketch_chamfer` | `verified` | `original` | ✓ | — |
+| 72 | `sketch_dimension_horizontal` | `verified` | `original` | ✓ | — |
+| 73 | `sketch_dimension_vertical` | `verified` | `original` | ✓ | — |
+| 74 | `sketch_edit_ops` | `stitched` | `original` | ✓ | — |
+| 75 | `sketch_edit_ops_b3` | `verified` | `original` | ✓ | — |
+| 76 | `sketch_modify_ops` | `verified` | `original` | ✓ | — |
+| 77 | `sketch_primitives_b1` | `verified` | `original` | ✓ | — |
+| 78 | `sketch_query` | `verified` | `original` | ✓ | — |
+| 79 | `sketch_slot_types` | `verified` | `original` | ✓ | — |
+| 80 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
+| 81 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
+| 82 | `surface_edit_ops` | `verified` | `original` | ✓ | — |
+| 83 | `surface_features` | `verified` | `mixed` | ✓ | — |
+| 84 | `surface_flatten` | `verified` | `original` | ✓ | — |
+| 85 | `surface_modeling` | `stitched` | `mixed` | — | — |
+| 86 | `surface_offset` | `verified` | `original` | ✓ | — |
+| 87 | `surface_planar_region` | `verified` | `original` | ✓ | — |
+| 88 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
+| 89 | `surface_revolve` | `verified` | `original` | ✓ | — |
+| 90 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
+| 91 | `surface_untrim` | `verified` | `original` | ✓ | — |
+| 92 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
+| 93 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
+| 94 | `topology_optimization` | `verified` | `original` | ✓ | — |
+| 95 | `topology_readback` | `stitched` | `original` | ✓ | — |
+| 96 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
+| 97 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
+| 98 | `weldments` | `verified` | `upstream` | ✓ | — |
 
-**合计 97 条**。
+**合计 98 条**。
 
 ## 二、`level` 分布
 
@@ -116,7 +117,7 @@
 | `not_implemented` | 1 |
 | `source_verified` | 0 |
 | `stitched` | 12 |
-| `verified` | 84 |
+| `verified` | 85 |
 
 ## 三、`source` 分布
 
@@ -124,7 +125,7 @@
 |---|---|
 | `merged` | 0 |
 | `mixed` | 11 |
-| `original` | 67 |
+| `original` | 68 |
 | `undetermined` | 1 |
 | `upstream` | 18 |
 
@@ -136,7 +137,7 @@
 | `not_implemented` | 0 | 0 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
 | `stitched` | 0 | 3 | 9 | 0 | 0 |
-| `verified` | 0 | 8 | 58 | 1 | 17 |
+| `verified` | 0 | 8 | 59 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

@@ -1925,3 +1925,21 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ★ 而与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **“切”会换类型名** 。
      ★ **落地**：`capabilities.yaml` 新增 **`feature_loft_cut`**（level = **verified**，共 **98** 条）；台账「放样切除」「边界切除」**两条均补** ⇒ **已能 72**。
      ★★ **方法论**：★ **照“已成的那条”抄判据时，必须把**“切”与“不切”的类型名差异一并考虑** —— ★ 否则**会把已建成的特征判成失败** ⚠ （★ 本会话已第 **三次** 踩这个：事实 420 · 431 · 本条）。|真机：`tools/prove_loft_cut.py`；证据 `output/loft-cut-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertCutBlend.md` |
+| 441 | **★★★ 更正事实 439：那条“第五种形态”的实证用的是**废弃入口****—— ★ 而**继任者就叫 `InsertDeleteHoleForSurface`** —— 2026-10-03（轮 562）。
+     ★ **怎么发现的**：本轮扫“剩下 20 条哪些废弃”时看到：
+       > `InsertDeleteHole.md` 逐字："**Obsolete. Supserseded by `IFeatureManager::InsertDeleteHoleForSurface`.**" ⚠
+     ★★ **故：轮 559/560 那“六种前置零效果”的真因是**入口错****（★ 我打的是废弃的第一代），★ **而不是那个成员本身是 no-op** ✓
+     ★★ **而继任者的文档又把前置说得很清楚**：
+       `Feature InsertDeleteHoleForSurface()` —— **0 参**、★ **回 `IFeature`**（★ 不是 `void`）；
+       Remarks："call `SelectByID2` to select the **hole edges to remove** from the surface"。
+     ★ 真机（`tools/prove_delete_hole_for_surface.py`，零弹窗）：
+     ```
+     继任者 + 选“孔的边” ⇒ 回 `None` · 面 5→5 · **而 `picked = 12`**（★ 那是**整个体的所有边**，不是孔的）⚠
+     对照：**废弃的第一代**（建在 `IFeatureManager` 上）⇒ **`AttributeError: <unknown>.InsertDeleteHole`**
+     ```
+     ⇒ ★★ **故两条**：
+       ① ★★★ **事实 439 那条“第五种形态”的实证不成立**（★ 用的是废弃入口）⇒ ★ **已在那两处加了更正注**。
+         ★ **而“第五种形态”这个**分类本身仍然有用****（★ 它描述的是**判据盲区**）—— ★ **只是本例不能当它的证据**。
+       ② ★ 而**“选孔的边”这个前置我还没真搭对**（★ 我选了整个体的 12 条边）⇒ ★ **下一步**：只选**内环（孔）那圈边。
+     ★★ **方法论**：★ **用一个“零效果”去立一条边界之前，必须先确认自己打的是**不是废弃的那个入口**** —— ★ 而**查废弃只需读 md 头顶一行** ⚠
+     ★ **而这也是本会话**第四次“失败在我这边”**（★ 事实 420 · 431 · 440 · 本条）。|真机：`tools/prove_delete_hole_for_surface.py`；证据 `output/delete-hole-for-surface-evidence.json`；对照事实 439 / 433 |

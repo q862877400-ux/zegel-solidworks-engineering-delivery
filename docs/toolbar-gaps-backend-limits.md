@@ -322,6 +322,12 @@ output/weldment-evidence.json · output/weldment-profile-evidence.json · output
 
 ## 五之二、★ **第五种形态：静默 no-op**（★ 调用不报错、也不改变任何东西）
 
+> ⚠⚠ **2026-10-03（轮 562）★ 更正**：★ 本节原先拿「**删除孔**」当**唯一实证** ——
+> ★ 而轮 562 查出**那个入口是废弃的第一代**（md 逐字：*Obsolete. Supserseded by
+> `IFeatureManager::InsertDeleteHoleForSurface`*）⇒ ★ **故本节的那个实证不成立**（★ 见 §5.2.3）。
+> ★ **而「第五种形态」这个**分类本身仍然有用**** —— ★ 它描述的是**判据盲区**；
+> ★ **只是本文件目前还没有一个站得住的实例** ⚠ ★ 故它暂时是**待补的分类**、不是已证的形态。
+
 ★ 事实 420 / 428 记了**四种**失败形态（① 回对象 · ② 回 `None` · ③ 报错 · ④ 成员不在对象上）。
 ★ **本节补第五种**，★ 而它是**最容易被误记成"做成了"**的一种 —— ★ 因为**它不报错** ⚠
 
@@ -368,6 +374,37 @@ output/weldment-evidence.json · output/weldment-profile-evidence.json · output
 
 ★ ★ **配套的可复用定则**：★ **凡"成员是 0 参且回 `void`"的，判据必须是几何量的前后差** ——
   ★ 因为**返回值里没有任何东西能证明它做过什么**，★ 而**树增量也常常看不见**（★ 事实 436）。
+
+---
+
+### 5.2.3 ⚠ **撤销本节原本的实证**（★ 事实 441 · 轮 562）
+
+★ 本节 §5.2.1 那六格，用的入口是 **`IModelDoc2.InsertDeleteHole()`** ——
+  ★ 而它的 md **逐字**写着：
+
+> "**Obsolete. Supserseded by `IFeatureManager::InsertDeleteHoleForSurface`.**"
+
+⇒ ★★ **故「六格零效果」的真因是**入口错**（★ 我打的是废弃的第一代），
+  ★ **而不是"那个成员本身是 no-op"** ⚠ ⇒ ★ **本节的实证不成立**。
+
+★ **而继任者的文档把前置说得很清楚**：
+
+```
+Feature InsertDeleteHoleForSurface()      ← **0 参**、★ **回 `IFeature`**（不是 void）
+Remarks: call SelectByID2 to select the **hole edges to remove** from the surface
+```
+
+★ 真机（`tools/prove_delete_hole_for_surface.py`）：
+```
+继任者 + 选"孔的边" ⇒ 回 `None` · 面 5→5 · ★ **而 `picked = 12`**（★ 那是**整个体的所有边**，不是孔的）⚠
+对照：废弃的第一代（建在 `IFeatureManager` 上）⇒ **`AttributeError: <unknown>.InsertDeleteHole`**
+```
+
+⇒ ★★ **故**：★ ① 本节原本的实证**撤销**；② ★ **"选孔的边"这个前置我还没真搭对**
+  （★ 我选了整个体的 12 条边）；★ **下一步**：★ **只选内环（孔）那一圈边**。
+
+★ ★★ **可复用的方法论**：★ 用「零效果」去立一条边界**之前**，
+  ★ 必须先确认自己打的**不是废弃的那个入口** —— ★ 而**查废弃只需读 md 头顶一行** ⚠
 
 ---
 
