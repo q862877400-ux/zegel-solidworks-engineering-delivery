@@ -221,6 +221,26 @@ hole-pattern-evidence.json  ·  flat-pattern-dxf-evidence.json
 ★ 证据：`tools/probe_access_selections_matrix.py` ·
   `output/access-selections-matrix-evidence.json` · 事实 **425 / 426**。
 
+### 3.5 ★★★ 2026-10-03（轮 567）**该族的新实例** —— 投影曲线的 FeatureData 也在里面
+
+★ 上一条说「`*FeatureData.AccessSelections` **6/6 通**」—— ★ **而本节补一条边界**：
+  ★ **那 6 个里不包含「投影曲线」这个接口** ⚠
+
+```
+IProjectionCurveFeatureData.AccessSelections(doc, 空Dispatch)
+  ⇒ com_error(-2147417851) = **0x80010105**（★ 与事实 47 同一个错误码）
+★ 而同一接口的 ReleaseSelectionAccess() **是通的**
+```
+
+★ 怎么到这儿的：★ 事实 445 把**投影曲线**的链推到第 4 步（★ `CreateDefinition(swFmRefCurve=14)`
+  **回 `CDispatch`** · 三个非实体属性**均设成**）⇒ ★ 而 `CreateFeature` 回 `None`
+  ⇒ ★ 本轮把 `AccessSelections` **插进去验证「它是不是缺的那一步」** ⇒ ★ **结果给出了一条边界**。
+
+⇒ ★★ **故正确说法是**：★ **那一族的可达性要**逐接口看****（★ 与**事实 128**同族：
+  「可达性结论必须带**绑定层次**」）—— ★ **不能拿"6/6 通"推广到整个族** ⚠
+
+★ 证据：`tools/prove_projection_curve.py` · `output/projection-curve-evidence.json` · 事实 **446**。
+
 ---
 
 

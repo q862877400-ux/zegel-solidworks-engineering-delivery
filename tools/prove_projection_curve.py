@@ -149,7 +149,22 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                     except Exception as exc:                              # noqa: BLE001
                         setp["Sketch"] = "%s" % type(exc).__name__
                 row["props_set"] = setp
+                #: \u2605\u2605\u2605 \u7b2c 98 \u8f6e\uff08\u8f6e 567\uff09\u8865\u7684\u90a3\u4e00\u6b65\uff1a
+                #:   **`AccessSelections` \u2192 \u8bbe\u5b9e\u4f53\u6570\u636e \u2192 `CreateFeature` \u2192 `ReleaseSelectionAccess`**
+                #:   \u2605 \u4f9d\u636e\uff1a\u4e8b\u5b9e 425/426\uff08\u2605 FeatureData \u90a3\u65cf\u7684 `AccessSelections`
+                #:   **6/6 \u901a**\uff1b\u2605 \u800c `Component` \u8981\u4f20**\u7a7a Dispatch \u53d8\u4f53**\uff09\u3002
+                try:
+                    acc = C.get_com_member(data, "AccessSelections", doc,
+                                           C.create_empty_dispatch_variant())
+                    row["access_selections"] = str(acc)
+                except Exception as exc:                                  # noqa: BLE001
+                    row["access_selections"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
                 feat = _g(fm, "CreateFeature", data)
+                try:
+                    C.get_com_member(data, "ReleaseSelectionAccess")
+                    row["released"] = True
+                except Exception as exc:                                  # noqa: BLE001
+                    row["released"] = "%s" % type(exc).__name__
             row["returned"] = type(feat).__name__ if feat is not None else "None"
             if feat is not None:
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):

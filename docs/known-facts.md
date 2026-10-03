@@ -2017,3 +2017,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而本轮**不登记能力**（★ 仍未建成）。
      ★★ **方法论**：★ **一条官方配方里，“通了几步”就要**逐步记下来**（★ `data_type` / `props_set` / `returned`）—— ★ 那样**缺哪一步一目了然** ⚠
        （★ 本轮就是那么定位到“第 4 步”与“可能缺 `AccessSelections`”的）。|真机：`tools/prove_projection_curve.py`；证据 `output/projection-curve-evidence.json`；官方：`C:\swapi\types\IProjectionCurveFeatureData\_overview.md` × `IFeatureManager\CreateDefinition.md` × 反射枚举 |
+| 446 | **★★★ `IProjectionCurveFeatureData.AccessSelections` ⇒ `0x80010105`**（★ 与事实 47 同一个错误码）** —— ★ **而它是目标点名的第二族的**新实例**** —— 2026-10-03（轮 567）。
+     ★ **怎么到这一步的**：事实 445 把投影曲线的链推到第 4 步，★ 而猜“可能缺 `AccessSelections`”⇒ 本轮把它插进去。
+     ★ 真机（`tools/prove_projection_curve.py`，零弹窗）：
+     ```
+     mark=1 目标面 + mark=2 草图 ⇒ `CreateDefinition(14)` **回 `CDispatch`** ✓
+     三个属性均设成（`Bidirectional`/`Reverse`/`Sketch`）✓
+     `AccessSelections(doc, 空Dispatch)` ⇒ **`com_error(-2147417851)` = `0x80010105`** ⚠
+     `ReleaseSelectionAccess()` ⇒ **通**（★ 而它本该在建成之后才调）
+     `CreateFeature(data)` ⇒ 回 `None` · 树不动
+     ```
+     ⇒ ★★ **故：这条链卡在 `AccessSelections` 上** —— ★ 而那正是**目标点名的第二族**（**`IAccessSelections` 指针族**），★ **而这是该族的一个新实例** ✓
+     ★★ **而它修正了事实 425/426 的适用范围**：那条说“`*FeatureData.AccessSelections` **6/6 通**” —— ★ 而**那 6 个里不包含投影曲线这个接口** ⚠
+       ⇒ ★ 故正确说法是：**那族的可达性要逐接口看**（★ 事实 128 同族）。
+     ★ **下一步**：★ 换一条**不需 `AccessSelections`** 的路——★ 例如**只用 mark 预选 + `FaceArray` 属性**（★ 不调 `AccessSelections`）。
+     ★ 而本轮**不登记能力**（★ 仍未建成）。
+     ★★ **方法论**：★ 把 `AccessSelections` 插进去**不是为了“再试一次”**，★ 而是**去验证它到底是不是那个缺的步骤** —— ★ 而结果给出了**一条边界**（★ 而不只是“又不成”）。|真机：`tools/prove_projection_curve.py`；证据 `output/projection-curve-evidence.json`；对照事实 47 / 128 / 425 / 426 / 445 |
