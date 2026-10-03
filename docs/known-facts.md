@@ -2571,3 +2571,26 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ① ★ 真机对比 `AccessSelections(model, None)` 与 `AccessSelections(model, 空 Dispatch)` —— ★ 那直接决定“指针族能不能留条活路”；
        ② ★ 把 `swFmLinearPattern` / `swFmCurveDrivenPattern` 的**真值**查出来**（★ 而**不是猜**）。
      ★ **而本轮把一个空壳探针删了**（★ 它的循环体没真测）—— ★ **不留假东西** ✓|本仓：`scripts/sw_pattern.py`（`_SelectionAccess` L160）· `_raw/enum_values_sldworks.txt`；对照事实 43 / 47 / 472 |
+| 474 | **★★★★ `AccessSelections` 的四种第 2 参形态**全到不了****（★ 而**那同时撤销了 §2.2 那句“新架构已做”**） —— 2026-10-03（轮 598）。
+     ★ **怎么测的**：在一个真的 `CreateDefinition(swFmFillPattern = **105**)` 产物上（★ 值取自**反射 dump**），★ **四种第 2 参形态各试一次**：
+     ```
+     `None`（★ `sw_pattern.py` 用的）  ⇒ **`类型不匹配。`**（★ 位置 **2**）
+     空 Dispatch（★ 事实 47 用的）     ⇒ **`服务器出现意外情况`**（`0x80010105`）
+     空变体                        ⇒ `类型不匹配`（位置 2）
+     byref 空 Dispatch               ⇒ `远程过程调用失败`
+     ```
+     ⇒ ★★ **故两条**：① **事实 47 对、而理由可更精确**（★ 不只空 Dispatch、**`None` 也不行**）；
+       ② ★★ **`sw_pattern.py` 那套“新架构”的选区事务本身调不通** ⚠
+     ★★★ **而本轮还发现了一件更重要的事**：§2.2 引的那些“真机证据”**记的是失败**：
+     ```
+     `output/linear-pattern-geometry-evidence.json` 逐字：
+        trial = pattern_named_feature
+        ★ raw_none = **True** · raw_type = **NoneType**
+        ★ tree_before_after = [**7, 7**]（★ 树**没长**）· geom_changed = **False**
+     ```
+     ⇒ ★★ **故那些证据证的是“调了、而什么都没发生”** —— ★ **而不是“已实现”** ⚠
+       ★ 而那正是**第五种形态（静默 no-op）**的形态（★ 事实 439 那族）。
+     ★ **故本轮撤销了 §2.2 那句结论**，并写了 **§2.2.1**（★ 含撤销依据 + 四种形态的错误码）：
+       ★ **线性阵列族在 pywin32 这条后端上目前到不了**（★ 而依据比原先更硬）；
+       ★ 而**“换后端能不能行”仍不写结论**（★ 那没有本机实测）。
+     ★★ **方法论**：★ **引用证据时，要读**证据里的数字**、★ 而不是只读它的文件名** ** —— ★ 本例的 11 份证据**看着像成功、而内容是失败** ⚠|真机：`tools/probe_access_selections_param2.py`；证据 `output/access-selections-param2-evidence.json` · `output/linear-pattern-geometry-evidence.json`；文档：`docs/toolbar-gaps-backend-limits.md` §2.2.1（★ **新增**）；对照事实 47 / 439 / 473 |

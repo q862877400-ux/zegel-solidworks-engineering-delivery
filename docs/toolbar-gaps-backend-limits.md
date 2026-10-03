@@ -112,6 +112,47 @@ hole-pattern-evidence.json  ·  flat-pattern-dxf-evidence.json
 ⇒ ★★ **结论：线性阵列族不能记成「后端到不了」** —— ★ 它属于**"旧入口废弃、新架构已做"**那一类。
   ★ 台账那 5 条**应改判**（★ 而改判要**按本仓的 W2 判据**：凡「能」必有真机证据 —— ★ 证据就在上面）。
 
+### 2.2.1 ⚠⚠ **2026-10-03（轮 598）撤销本节上面那句结论**
+
+★ **上面那句「新架构已做」是**过度解读**的** —— ★ 而**撤销它的正是本节自己引的那些证据** ⚠
+
+```
+`output/linear-pattern-geometry-evidence.json`（★ 本节上面引的"真机证据"之一）逐字：
+   trial               = pattern_named_feature
+   ★ raw_none          = True        ← ★ 它回的是 None
+   ★ raw_type          = NoneType    ← ★ 而不是一个 Feature
+   ★ tree_before_after = [7, 7]      ← ★ 特征树**没长**
+   ★ geom_changed      = False       ← ★ 几何**也没变**
+```
+  ⇒ ★★★ **故那些证据记的是「调了、而什么都没发生」** —— ★ **不是"已实现"** ⚠
+    ★★ 而那是**第五种形态（静默 no-op）**的形态（★ 事实 439 那族）。
+
+★ **而本轮还把那套"新架构"的**机理**读了、并真机测了**（事实 473 / 474）：
+
+```
+`scripts/sw_pattern.py::_SelectionAccess.__enter__` ⇒ `data.AccessSelections(model, None)`
+★ 真机四种第 2 参形态（`tools/probe_access_selections_param2.py`，零弹窗，
+  ★ 在一个真的 `CreateDefinition(swFmFillPattern=105)` 产物上试）：
+     None                 ⇒ **`类型不匹配。`**（★ 位置 **2**）
+     空 Dispatch           ⇒ **`服务器出现意外情况`**（`0x80010105`）
+     空变体                ⇒ `类型不匹配`（位置 2）
+     byref 空 Dispatch     ⇒ `远程过程调用失败`
+  ⇒ ★★ **四种全到不了** ⚠
+```
+
+  ⇒ ★★ **故正确的说法是**：
+    · ★ **事实 47 的判定是对的**，★ 而**理由可以更精确** —— ★ 不只"空 Dispatch 不行"，
+      ★ **`None` 也不行**（★ 四种形态全试过）；
+    · ★★ **`sw_pattern.py` 那套"新架构"的选区事务**本身**调不通** ⚠
+
+  ★ **故本节的正确定论**（★ 取代上面那句）：
+    ★★ **线性阵列族在 pywin32 这条后端上**目前到不了** —— ★ 而**依据比原先更硬**：
+      ★ **四种第 2 参形态的真机错误码**（★ 上表）**+** ★ **那 11 份证据记的是 no-op**。
+    ★ 而**"换后端能不能行"仍不写结论**（★ 那没有本机实测 —— 见 §3.3 的诚实边界）。
+
+  ★ 证据：`tools/probe_access_selections_param2.py` · `output/access-selections-param2-evidence.json` ·
+    `output/linear-pattern-geometry-evidence.json` · 事实 47 / 473 / 474。
+
 ---
 
 ## 三、`IAccessSelections` 指针族 —— ✅ **这一族是真的到不了**
