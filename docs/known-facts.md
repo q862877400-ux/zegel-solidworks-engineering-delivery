@@ -1269,3 +1269,14 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ✗ **两条路都不成的**：**扫描曲面**（旧式 6 参 + 4 参 + 新架构 62）· 加厚 · 直纹曲面。
        ⇒ ★★ **故「旧式 vs 新架构」不是分界线** —— 真正的分界是**那个特征本身**。
      ★ **方法论收获**：★ 「旧式侧是成的」作为**方向**是好的（★ 它已经带出 3 条新能力），★ 而不能当成**定律**（★ 一遇到反例就该收窄）。|真机：`tools/probe_sweep_oldstyle.py`；证据 `output/sweep-oldstyle-evidence.json`；对照事实 391 / 393 / 395 / 396 / 398 |
+| 400 | **★★ 「剪裁曲面」的**真名不是 `InsertTrimSurface`**（铁律 5 的一个边界教训）· 两段式真机状态** —— 2026-10-03（轮 516-519）。
+     ★ 轮 516/518 我按 `InsertTrimSurface` 查 ⇒ **swapi 里查不到**，按**铁律 5** 记了「查不到」。★ 而轮 518 从**类型库 dump** 里发现`IModelDoc2` 上有 **`PreTrimSurface` / `PostTrimSurface`**（各 1 参），而 `IFeatureManager` 上有**更全的新版**（`PreTrimSurface` **4 个 in** + `Retval`）⇒ ★★ **故真名是这一对（两段式）** ✓
+     ⚠ **教训（值得记）**：**铁律 5 的「查不到」应当**限定在查过的名字**上** —— ★ 我查的是**猜的名字**，★ 而**没穷举** `TrimSurface` 那一族（★ 下一步该是“拿后缀去类型库里加通配筛一遍”）。
+     ★ 三源分工（铁律 4 的典型实例）：**md 只给签名、四个参数全是 `No description`** ⚠；**CHM** 逐字给了语义（mutual / splitSystem / splitLinear / removePicked + sew）；**类型库** 给 arity 与方向。
+     ★ 真机（`output/trim-surface-evidence.json`，走 `sw_guard`、零弹窗）：**前置完美** —— **两张相交曲面都建成**、**8 张面全选上**；三组参数（`mutual=True` / `mutual=False` / `mutual=True+sew=True`）结果**逐字相同**：
+     ```
+     PreTrimSurface  ⇒ **回 True**     ← ★ 第一段说“准备好了”
+     PostTrimSurface ⇒ 回 None · 特征树不动
+     ```
+     ⇒ ★★ **形态：两段都“成功”而结果没有** —— ★ 与**事实 391**（静默不干活）同族，★ 而这次**连 `pre` 都回了 `True`**（★ 比之前那几条**多一个正面信号**）。
+     ★ **下一步该试的**：`BRemovePickedIn=True`（★ CHM 说它“**移除**选中面”，★ 可能才会触发产出）· `BSplitLinearIn=True` · 以及**只选部分面**（★ 本轮是全选 8 张）。|真机：`tools/prove_trim_surface.py`；证据 `output/trim-surface-evidence.json`；对照事实 391 / 399 |

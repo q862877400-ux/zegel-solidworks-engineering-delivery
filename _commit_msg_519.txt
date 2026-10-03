@@ -1,0 +1,33 @@
+feat(B6/T607): 剪裁曲面 —— 找到**真名**（`Pre/PostTrimSurface` 两段式）· 实现已立 · 真机 `pre=True` 而产出没有
+
+★ 轮 516/518 我按 `InsertTrimSurface` 查 ⇒ **swapi 里查不到**，按**铁律 5** 记了「查不到」。
+  轮 518 从**类型库 dump** 里发现 `IModelDoc2` 上有 **`PreTrimSurface` / `PostTrimSurface`**（各 1 参），
+  而 `IFeatureManager` 上有**更全的新版**（`PreTrimSurface` **4 个 in** + `Retval`）
+  ⇒ ★★ **故真名是这一对（两段式）** ✓
+
+⚠ **教训（值得记）**：**铁律 5 的「查不到」应当限定在查过的名字上** ——
+  我查的是**猜的名字**，★ 而**没有穷举** `TrimSurface` 那一族
+  （★ 下一步该是"拿后缀去类型库里加通配筛一遍"）。
+
+★ 三源分工（铁律 4 的典型实例）：
+  · **swapi md** ⇒ 只给签名，★ **四个参数全是 `No description`** ⚠
+  · **CHM** ⇒ ★ 逐字给了语义（`mutual` / `splitSystem` / `splitLinear` / `removePicked` + `sew`）
+  · **类型库** ⇒ arity 与方向
+
+★ 实现（`scripts/sw_surface_features.py`）：`trim_surface_report(model, *, mutual, split_system,
+  split_linear, remove_picked, sew)` —— ★ 两段式 · 并把 CHM 那四个参数的语义写进 docstring。
+
+★ 真机（`tools/prove_trim_surface.py`，走 `sw_guard`、`sw_alive: true`、零弹窗）：
+  · **前置完美** —— **两张相交曲面都建成**（`made=2`）· **8 张面全选上**（`sel=8`）
+  · 三组参数（`mutual=True` / `mutual=False` / `mutual=True+sew=True`）结果**逐字相同**：
+    ```
+    PreTrimSurface  ⇒ **回 True**      ← ★ 第一段说"准备好了"
+    PostTrimSurface ⇒ 回 None · 特征树不动
+    ```
+  ⇒ ★★ **形态：两段都"成功"而结果没有** —— ★ 与**事实 391**（静默不干活）同族，
+    ★ 而这次**连 `pre` 都回了 `True`**（★ 比之前那几条**多一个正面信号**）⚠
+
+★ **下一步该试的**（写在事实 400 里）：`BRemovePickedIn=True`（★ CHM 说它"**移除**选中面"，
+  ★ 可能才会触发产出）· `BSplitLinearIn=True` · 以及**只选部分面**（★ 本轮是全选 8 张）。
+
+★ 记成 **事实 400**。语法门禁 0 处 · `git diff --numstat` = **added=90 · deleted=0**。

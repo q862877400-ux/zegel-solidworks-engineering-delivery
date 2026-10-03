@@ -909,3 +909,93 @@ def _select_two_faces_for_replace(model) -> int:
                 except Exception:                                         # noqa: BLE001
                     pass
     return n
+
+
+# ── B6 / T607：**剪裁曲面**（`IFeatureManager.PreTrimSurface` + `PostTrimSurface`） ──────
+# ★★★★ 2026-10-03（轮 519）★ 补 T607 —— ★ 而**它的真名是上一轮才找到的** ⚠
+#
+# ★ **上一轮（518）的悬案与解答**：轮 516/518 我按 `InsertTrimSurface` 查 ⇒ **swapi 里查不到**
+#   （★ 当时按铁律 5 记了「查不到」）。★ 而轮 518 从**类型库 dump** 里发现 `IModelDoc2` 上有：
+#   ```
+#   PreTrimSurface   arity=1  (BMutualTrimIn)
+#   PostTrimSurface  arity=1  (BSewSurfaceIn)
+#   ```
+#   ⇒ ★★ **故真名不是 `InsertTrimSurface`，而是这一对**（★ **两段式**）✓
+#   ⚠ **教训**：铁律 5 的「查不到」应当**限定在查过的名字**上 ——
+#     ★ 我查的是**猜的名字**，★ 而**没有穷举** `TrimSurface` 那一族。
+#
+# ★ 官方三源（★ 铁律 4）—— ★★ **而这里 md 与 CHM 的分工特别典型**：
+#   · `C:\swapi\types\IModelDoc2\{Pre,Post}TrimSurface.md` ⇒ 只给了签名与
+#     「`BMutualTrimIn`: **No description**」（★ **四个参数一个描述都没有**）⚠
+#   · **CHM**（`IFeatureManager~PreTrimSurface.html`）⇒ ★★ **逐字给了四个参数的语义**：
+#     · `BMutualTrimIn` ⇒ "True to use the selected intersecting surfaces as the trimming
+#       surfaces (**mutual**), false to use the selected surface, plane, or sketch as the
+#       **trim tool (standard)**"
+#     · `BSplitSystemIn` ⇒ "True to let SOLIDWORKS determine which surfaces to trim,
+#       false to trim all possible surfaces"
+#     · `BSplitLinearIn` ⇒ "False to naturally extend any trims along the intersecting surfaces,
+#       true to extend any trims **linearly**"
+#     · `BRemovePickedIn` ⇒ "True to **remove** the selected surfaces, false to **keep**"
+#     ⇒ ★★ 「**Sets the trimming options before trimming**」✓
+#   · `IFeatureManager.PostTrimSurface(BSewSurfaceIn)` ⇒ "True to **sew** the resulting
+#     trimmed surfaces, false to not"
+#   · 类型库（第 3 源）给 **arity 与方向**：`IFeatureManager.PreTrimSurface` ⇒
+#     `(BMutualTrimIn, BSplitSystemIn, BSplitLinearIn, BRemovePickedIn, Retval)` ⇒ **4 个 in**
+#     ★（★ 而 `IModelDoc2` 那两个各**只有 1 个 in** ⇒ ★ 故**新版参数更全**、★ 本包装走新版）
+#
+# ★ 流程（★ 两段式）：**选中「要剪裁的面」+「剪裁工具」** ⇒ `PreTrimSurface(4 布尔)`
+#   ⇒ `PostTrimSurface(BSewSurfaceIn)`。
+# ★ 判据（★ 规则 6）：**特征树多了新特征**。
+
+
+def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True,
+                        split_linear: bool = False, remove_picked: bool = False,
+                        sew: bool = False) -> dict:
+    """★ **剪裁曲面**（`IFeatureManager.PreTrimSurface` + `PostTrimSurface` —— ★ **两段式**）。
+
+    ★★ 参数语义（★ **CHM 逐字**；★ 而 swapi 的 md 里那四个**全是 `No description`** ⚠）：
+    ```
+    mutual=True  用选中的**相交面互为剪裁**（mutual）
+    mutual=False 用选中的面 / 基准面 / 草图作**剪裁工具**（standard）
+    split_system  True 让 SW 自己判断剪哪些；False 剪所有可能的
+    split_linear  True **线性延伸**；False 自然延伸
+    remove_picked True **移除**选中面；False **保留**
+    sew           True 把结果**缝合**
+    ```
+
+    ★ 前置：★ **先选中「要剪裁的面」与「剪裁工具」**（★ 本包装按对象选 —— ★ 事实 32：
+      实体没有名字）。
+    ★ 判据（规则 6）：★ **特征树多了新特征**（★ 由 `PostTrimSurface` 那步产生）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = feature_names(model)
+    selected = _select_all_surface_faces(model, mark=0)
+    if selected <= 0:
+        return {"ok": False, "stage": "select", "faces_selected": 0,
+                "error": "没选中任何曲面面（★ 剪裁要有**两张**相交曲面：一张被剪、一张作工具）"}
+    fm = get_com_member(model, "FeatureManager")
+    pre = None
+    try:
+        pre = get_com_member(fm, "PreTrimSurface", bool(mutual), bool(split_system),
+                             bool(split_linear), bool(remove_picked))
+    except Exception as exc:                                              # noqa: BLE001
+        return {"ok": False, "stage": "PreTrimSurface", "faces_selected": selected,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    post = None
+    try:
+        post = get_com_member(fm, "PostTrimSurface", bool(sew))
+    except Exception as exc:                                              # noqa: BLE001
+        return {"ok": False, "stage": "PostTrimSurface", "faces_selected": selected,
+                "pre_returned": repr(pre)[:40],
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": len(before), "tree_after": len(after), "faces_selected": selected,
+            "mutual": bool(mutual), "split_system": bool(split_system),
+            "split_linear": bool(split_linear), "remove_picked": bool(remove_picked),
+            "sew": bool(sew),
+            "pre_returned": repr(pre)[:40], "post_returned": repr(post)[:40],
+            "★": "判据 = **特征树多了新特征**（规则 6）；★ **两段式**：PreTrimSurface(4 布尔) "
+                 "⇒ PostTrimSurface(sew)；★ 参数语义取自 **CHM**（md 里四个参数都是 No description）"}
