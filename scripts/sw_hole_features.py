@@ -317,30 +317,42 @@ def get_fastener_table(sw, standard_name: str, fastener_id: int, table_id: int,
                        hole_type_id: int = 0):
     """取某紧固件的**孔表本体**（官方 `IHoleStandardsData.GetFastenerTable`）。
 
-    ⚠⚠ **本函数当前「不可用」（2026-10-01 轮 125 真机实测）** ——
-    官方签名 `Boolean GetFastenerTable(String StandardName, Int32 FastenerID,
-    Int32 TableID, **out Object** HoleTable)`，第 4 参是 `out IHoleDataTable`。
-    用**同一套**已经验过的容器形态 `VARIANT(VT_BYREF|VT_VARIANT, None)` 传：
-    ```
-    GetFastenerTable('ANSI Inch', 4, 0) ⇒ com_error -2147352571「类型不匹配」**位置 4**
-    GetFastenerTable('ANSI Inch', 4, 1) ⇒ 同上
-    GetFastenerTable('ANSI Inch', 4, 2) ⇒ 同上
-    ```
-    ★ **同族的另外三个成员用同一形态都通**（`GetHoleStandards` / `GetFastenerTypes` /
-    `GetFastenerTableTypes`）⇒ **只有这一个到不了**。
-    ⚠ **按事实 53 停手**（不再变着法试）；保留本函数作**可复算的证据**。
+    ★★★ 2026-10-03（轮 500）**本函数已修好并真机跑通** —— ★ 它原来被记成「不可用」 ⚠
+      ★ 原文（2026-10-01 轮 125）说：官方第 4 参是 `out IHoleDataTable`，
+      用同族已验过的容器形态 **`VARIANT(VT_BYREF|VT_VARIANT, None)`** 传 ⇒ 三个 `TableID`
+      全报 `类型不匹配`**位置 4**，★ 于是按事实 53 停手、判「到不了」。
 
-    :raises RuntimeError: 取不到表（当前必然）。
+      ★★ **真因不是"到不了"，而是那个包装形态对该方法不对** ⚠
+      本轮逐形态实测（SW 2026 SP4.1）：
+      ```
+      VARIANT(VT_BYREF | VT_DISPATCH, None)   ✓ **通过**
+      VARIANT(VT_BYREF | VT_VARIANT, None)    ✗ 类型不匹配（第 4 参） ← **原来用的就是这个**
+      VARIANT(VT_DISPATCH, None)              ✗ 类型不匹配（第 4 参）
+      裸 None                                  ✗ 类型不匹配（第 4 参）
+      ```
+      ⇒ ★ 现在改用 **`sw_connect.out_dispatch()`**（真机验证过的 `IDispatch&` 形态）✓
+      ⇒ ★★ **定则**：`out` 参数一律 **`VT_BYREF | VT_<该出参的类型>`**，
+        ★ **不是** `VT_VARIANT`、★ 也**不是**省掉 `BYREF` ✓
+
+    ⚠ **仍未查**：`ok=False` 时那是**参数 / 前置**问题（★ 标准名 / 紧固件 ID / 表类型 ID
+      要取真实存在的组合，用 `list_fastener_types()` 与 `list_fastener_table_types()` 拿）。
+
+    :raises RuntimeError: 官方返回 `False`（★ 而那**不再是**「类型不匹配」）。
     """
     data = _hole_standards_data(sw, hole_type_id)
-    out = _out_container()
+    #: ★★ 用**真机验证过**的 `IDispatch&` 包装（`out_dispatch`）——
+    #:   ⚠ 而不是 `_out_container()`（那个是 `VT_BYREF|VT_VARIANT`，对**本方法**报类型不匹配）
+    from sw_connect import out_dispatch
+    out = out_dispatch()
     ok = get_com_member(data, "GetFastenerTable", str(standard_name),
                         int(fastener_id), int(table_id), out)
     if not ok:
         raise RuntimeError(
             "IHoleStandardsData.GetFastenerTable(%r, %r, %r) 返回 False —— "
-            "⚠ 真机实测该成员**在 pywin32 后台上报「类型不匹配（位置 4）」**，"
-            "属同族里唯一到不了的一个（见模块来源块与已知事实）"
+            "★ 官方语义是「没查到该表」，★ 而**不是**「类型不匹配」"
+            "（后者是旧包装形态的问题，已由 `out_dispatch()` 修掉）。"
+            "★ 常见原因：标准名 / 紧固件 ID / 表类型 ID 不是**真实存在的**组合"
+            "（用 `list_fastener_types()` 与 `list_fastener_table_types()` 取）"
             % (standard_name, fastener_id, table_id)
         )
     return _out_value(out)
@@ -384,8 +396,25 @@ def get_fastener_table(sw, standard_name: str, fastener_id: int, table_id: int,
 def _out_container():
     """造一个**容器出参**（`Object&` / `Variant&` 用）。
 
-    ★ 真机裁断：`VARIANT(VT_BYREF|VT_VARIANT, None)` 是唯一能用的形态
-    （裸 `None` 与 `VT_BYREF|VT_DISPATCH` 都报「类型不匹配」，见已知事实 68）。
+    ★★★ 2026-10-03（轮 500）**更正 —— 本函数原来的注释把真机结论写反了** ⚠
+      原文写：「★ 真机裁断：`VARIANT(VT_BYREF|VT_VARIANT, None)` 是唯一能用的形态
+      （裸 `None` 与 **`VT_BYREF|VT_DISPATCH`** 都报「类型不匹配」）」。
+      ★★ 而本轮逐形态实测**恰好相反**（测 `IHoleStandardsData.GetFastenerTable`，SW 2026 SP4.1）：
+      ```
+      VARIANT(VT_BYREF | VT_DISPATCH, None)   ✓ 通过
+      VARIANT(VT_BYREF | VT_VARIANT, None)    ✗ 类型不匹配（第 4 参）
+      VARIANT(VT_DISPATCH, None)              ✗ 类型不匹配（第 4 参）
+      裸 None                                  ✗ 类型不匹配（第 4 参）
+      ```
+
+    ★★ **而「两者都有人用、且都通」这件事本身是信息**：同族的 `GetHoleStandards` /
+      `GetFastenerTypes` / `GetFastenerTableTypes` 用 **`VT_BYREF|VT_VARIANT`** 通，
+      而 `GetFastenerTable` 用它**不通**、必须用 **`VT_BYREF|VT_DISPATCH`**
+      ⇒ ★★ **即「哪个形态对」是**按方法**而变的** ⚠
+
+    ★ 故本函数**保留**（那三个还在用、且它们确实通），★ 而**新代码优先用
+      `sw_connect.out_dispatch()`**（★ 真机验证过的 `IDispatch&` 形态，
+      ★ 也与 `out_i4()` 的定则一致：**`out` 参数一律 `VT_BYREF | VT_<该出参的类型>`**）✓
     """
     import pythoncom
     from win32com.client import VARIANT
