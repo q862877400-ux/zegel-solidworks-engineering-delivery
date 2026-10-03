@@ -278,7 +278,14 @@ SPECS_BATCH4: list[ToolSpec] = [
                   description="Use the part default bend radius instead of bend_radius_mm."),
             Param("reverse_direction", bool, default=False, description="Reverse the flange direction."),
         ],
-        doc=("Create a native edge flange on a SELECTED edge. The edge is selected for you from `selection` BEFORE the call (the implementation requires a pre-existing selection). *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: setting `ReverseDirection` gave `Property ... can not be set`. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works."),
+        doc=("Create a native edge flange on a SELECTED edge. The edge is selected for you from `selection` BEFORE the call (the implementation requires a pre-existing selection). "
+             "⚠ **仍不可用，但报错已前移**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #2）。"
+             "★★ **旧描述（已作废）**：`setting \\`ReverseDirection\\` gave \\`Property ... can not be set\\`` ——"
+             "★ 那条**属性层**的错**已修掉**：`ReverseDirection` **不属于** `IEdgeFlangeFeatureData`（★ 跨接口泄漏），"
+             "★★ **代码里已删除**该设置（★ 原处只剩一条说明性注释）。"
+             "★★★ **现在的事实**：★ 报错已从「属性设不上」**前移到** `CreateFeature(37) 创建失败` ⇒ **卡点在创建、不在属性**。"
+             "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 第一现场）；"
+             "★ 按旧描述排查会**停在一条已经不存在的死路上**。"),
     ),
     # 签名: def create_gusset(model, spec: GussetSpec)
     ToolSpec(
@@ -304,7 +311,15 @@ SPECS_BATCH4: list[ToolSpec] = [
             Param("profile_angle_deg", float, default=0.0,
                   description="Profile angle in DEGREES."),
         ],
-        doc=("Create a native sheet-metal gusset on a SELECTED supporting face. The face is selected for you from `selection` BEFORE the call. *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: setting `Thickness` gave `Property ... can not be set`. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works."),
+        doc=("Create a native sheet-metal gusset on a SELECTED supporting face. The face is selected for you from `selection` BEFORE the call. "
+             "⚠ **仍不可用，但属性层已修好**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #3）。"
+             "★★ **旧描述（已作废）**：`setting \\`Thickness\\` gave \\`Property ... can not be set\\`` ——"
+             "★ **真因不是「属性只读」，是接口不对**：`Thickness` 是**焊件族**的名字，★ 本工具要走的是**钣金族**的 "
+             "`ISMGussetFeatureData` ⇒ ★ 已改设 `GussetThickness`（★ 源码里注明「原 Thickness（焊件名）」）。"
+             "★★★ **现在的事实**：★ 改用 `GussetThickness` / `ProfileHeightDim` / `ProfileLengthDim` / `ProfileAngleDim` 后"
+             "**真机属性层读回全部成功**（0.002 / 0.01 / 0.01 / 45.0）；★ 报错已变为 `CreateFeature(118) 创建失败` ⇒ **卡点在创建、不在属性**。"
+             "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 第一现场）；"
+             "★ 按旧描述排查会**以为属性设不上而去找别的属性名**。"),
     ),
     # 签名: def create_draft(model, face_ref, spec: DraftFeatureSpec)
     # ⚠⚠ `face_ref` 在实现里**从未被使用**（见模块头）⇒ **显式省略**，
