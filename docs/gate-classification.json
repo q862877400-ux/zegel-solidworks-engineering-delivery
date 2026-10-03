@@ -156,6 +156,12 @@
    "runner": "_run_server_side_tools_gate",
    "kind": "hard",
    "reason": "★ **硬门禁**：本仓的工具声明**有两条路** —— **ToolSpec 路**（过五统一门禁）与 **`server.py` 装饰器路**（`@mcp.tool`，**而它不过那套门禁**）。★ 故把**静态可判**的那一条看住：**两条路上的 `solidworks_*` 工具名不许重名**（重名会让后注册的**遮掉**先注册的）。★ 而它**自己写明了诚实话**：过了参数名**不等于**过了门禁 ⇒ **不下合规的结论**。（来源：事实 364；而它是 `plan-200r-v3` §五 ① 的兑现）"
+  },
+  {
+   "gate": "check_inject_binding.py",
+   "runner": "_run_inject_binding_gate",
+   "kind": "hard",
+   "reason": "**硬门禁**：每个 ToolSpec 声明的 **`inject`** 必须**覆盖包装的必需对象形参**。★ 触发它的是 **2026-10-03（轮 461）真机撞出来的真缺陷**：走 MCP 工具调 `solidworks_part_mass_properties` 报 `TypeError: mass_properties() missing 1 required positional argument: 'model'` —— 那条 spec **漏了 `inject=\"model\"`** ⇒ 调用时不注入文档 ⇒ 包装拿到 0 个实参 ⇒ **必炸**。★★ 而**既有的 `check_param_binding.py` 抓不到它**：那道判「**声明了的**参数名 ∈ 形参」，**不判「注入的对象覆盖了包装的必需形参」**。⇒ 全扫 **221 个 ToolSpec 里 16 个漏**（★ 含草图 / 拉伸 / 圆角 / 倒角 / 工程图读 / 属性读 —— **都是基本功能**）⇒ 已修（提交 `2fb0e1b`）。★ **它自己有负例自证**：`tests/test_inject_binding_gate.py`（**4 passed**，★ 含「漏 inject 必须被抓到」与「有 derived_args 的不该报」两个负例 —— 事实 62）。⚠ **覆盖边界**：只判**第一个**必需形参（更靠后的可能由转换层喂进来）⇒ **过了它不等于那条工具一定跑得通**。"
   }
  ]
 }

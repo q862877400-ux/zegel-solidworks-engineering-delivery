@@ -432,6 +432,33 @@ def _run_judge_preflight_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_inject_binding_gate() -> dict[str, object]:
+    """@brief 跑**注入绑定门禁**（`tools/check_inject_binding.py`）。
+
+    ★★ 为什么有这一道：★ 2026-10-03（轮 461）**真机撞出来**的一个真缺陷 ——
+    走 MCP 工具调 `solidworks_part_mass_properties` 报
+    `TypeError: mass_properties() missing 1 required positional argument: 'model'`；
+    ★ 根因是那条 ToolSpec **漏了 `inject="model"`**（★ 调用时不注入文档 ⇒ 包装拿到 0 个实参）。
+    ★★ 而**既有的 `check_param_binding.py` 抓不到它** —— 那道门禁判「**声明了的**参数名 ∈ 形参」，
+    而**不判「注入的对象覆盖了包装的必需形参」**。
+    ⇒ ★ 全扫一遍：**221 个 ToolSpec 里有 16 个漏**（★ 含草图 / 拉伸 / 圆角 / 倒角 /
+      工程图读 / 属性读 —— ★ 都是**基本功能**）⇒ 已修 ✓
+    ★ 而它**自己有负例自证**：`tests/test_inject_binding_gate.py`（事实 62）✓
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "tools" / "check_inject_binding.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "注入绑定门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_typelib_tables_gate() -> dict[str, object]:
     """@brief 跑**出厂类型库对照门禁**（`tools/check_typelib_tables.py`）。
 
@@ -1033,6 +1060,15 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "判据前置门禁未通过（有判据没登记清楚、或它的“已知成功”证据不成立）：\n"
             + str(jp.get("output", "")))
+    #: ★ 注入绑定门禁（硬）：每条 ToolSpec 声明的 inject 必须覆盖包装的必需对象形参。
+    #:   ⚠ 它**必须紧跟自己的 fail 检查** —— 元门禁 `check_gate_wiring.py` 判 hard/diagnostic
+    #:   看的就是「该赋值节点的**下一个兄弟语句**是不是 fail 检查」。
+    #:   ★ 我第一版把它插在 `jp` 与 `jp` 的检查**之间** ⇒ 两条一起被判成 diagnostic（实测）。
+    ib = _run_inject_binding_gate()
+    if ib.get("status") == "fail":
+        raise AssertionError(
+            "注入绑定门禁未通过（有 ToolSpec 漏声明 inject ⇒ 那条工具走 MCP 必炸）：\n"
+            + str(ib.get("output", "")))
     tl_tables = _run_typelib_tables_gate()
     if tl_tables.get("status") == "fail":
         raise AssertionError(
@@ -1131,6 +1167,7 @@ def run_release_check() -> dict[str, object]:
         "typelib_tables": tl_tables,
         #: ★ 2026-10-03（轮 420）：判据前置也必须进返回体（元门禁的第三条）
         "judge_preflight": jp,
+        "inject_binding": ib,
         #: ★ 2026-10-03（轮 450）：服务端侧工具名也进返回体（元门禁的第三条）
         "server_side_tools": ss,
     }
