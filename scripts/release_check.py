@@ -311,6 +311,36 @@ def _run_env_pitfalls_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把 `GATE-FINAL` 的 **C8** 接进发布前检查）
+# 文件:   `scripts/check_refuted_patterns.py`（本门禁的实现）
+#         `specs/202-user-coverage-gaps/recon/gate-cand/GATE-FINAL.md` 的 C8
+# 定位:   新增 `_run_refuted_patterns_gate`：**硬门禁** ——
+#         ★ C8 的判据逐字：「`docs/refuted-patterns.json` 里每条的 `anchor_quote`
+#           **必须逐字出现在 `docs/known-facts.md` 中**。有一个不命中 ⇒ 失败」。
+#         ★★ **它自称「唯一常驻硬门禁」** —— 而 2026-10-04（接手轮）的 A-3 查出：
+#           ★ **它唯一依据的那个 JSON 当时在仓里不存在** ⇒ ★ 那条闸**没有可读对象、
+#           永远「通过」**（★ 与**事实 40**「存在但没人用的守卫与没有守卫等价」同族）✓
+#         ★★★ **本函数 = 把那条闸从「有对象」推进到「在跑」** —— 一个不发动的门禁不算门禁 ✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────
+def _run_refuted_patterns_gate() -> dict[str, object]:
+    """@brief 跑 **C8 · 台账分叉门禁**（`scripts/check_refuted_patterns.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_refuted_patterns.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "C8 台账分叉门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把验收命令可跑性接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_spec_acceptance_paths.py`（本门禁的实现）
 #         `D:\AI\SW\docs\ROADMAP.md` §〇 纪律三「**验收必须是可跑的命令** —— 『我检查过了』不算」
@@ -1086,6 +1116,16 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "成员名门禁未通过（代码里用了官方不存在的成员名）：\n"
             + str(member_names.get("output", "")))
+    # ⚑ **C8 · 台账分叉门禁**（硬门禁，2026-10-04 接手轮接进）：
+    #   ★ C8 自称「**唯一常驻硬门禁**」，而**它唯一依据的 `docs/refuted-patterns.json`
+    #     当时在仓里不存在** ⇒ ★ 那条闸**没有可读对象、永远「通过」**（★ 事实 40 同族）✓
+    #   ★★ 现已建表（10 条，`anchor_quote` 逐字取自 `known-facts.md`）**并把闸接在这里** ——
+    #     ★ 负例实测：★ 改掉一条的锚点 ⇒ **退出码 1 并点名 id**（★ 事实 62：负例是唯一证明）✓
+    refuted = _run_refuted_patterns_gate()
+    if refuted.get("status") == "fail":
+        raise AssertionError(
+            "C8 台账分叉门禁未通过（已证伪清单的锚点没有逐字命中 known-facts.md）：\n"
+            + str(refuted.get("output", "")))
     # ⚑ **可达性门禁**（硬门禁，2026-10-03 轮 579 接进）：前三道「名字」门禁判的是
     #   「**存在 / 属于哪个接口**」，而**本道判「在本机调不调得动」** ——
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
@@ -1343,6 +1383,11 @@ def run_release_check() -> dict[str, object]:
         "provenance": provenance,
         "diff_markers": markers,
         "member_names": member_names,
+        #: ★★ 2026-10-04（接手轮）★ **同一道元门禁第**三次**教同一课** ——
+        #:   我加了 `_run_refuted_patterns_gate` 与它的 fail 判据，**却没汇总进 `_gate_results`**
+        #:   ⇒ 它报「`refuted` 的结果**没有进返回体** ⇒ ★ **静默跳过与没跑等价**」⚠
+        #:   ★ 这与前两次（轮 579 的 `unreachable` · 轮 594 的 `verified_evidence`）**逐字同型** ✓
+        "refuted": refuted,
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
         #:   `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价」⚠
         "unreachable": unreachable,
@@ -1432,6 +1477,9 @@ def run_release_check() -> dict[str, object]:
         "provenance": provenance,
         "diff_markers": markers,
         "member_names": member_names,
+        #: ★★ 2026-10-04（接手轮）**返回体这一处**（★ 元门禁要的**第二处**）——
+        #:   与 `_gate_results` 那处**必须同时加**，★ 否则元门禁报「没进返回体」✓
+        "refuted": refuted,
         #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点** ⚠
         "unreachable": unreachable,
         "verified_evidence": verified_ev,

@@ -198,6 +198,12 @@
       "runner": "_run_backend_limited_completeness_gate",
       "kind": "hard",
       "reason": "**硬门禁**：名单的**完整性**—— ★ 补上一道的缺口（事实 475）：上一道**只查名单**内部**（字段齐不齐、依据指得到吗），\n       ★ **而不查“该在名单里的漏了没”** —— ★ 而轮 601 实测：**「草图驱动的阵列」就漏在「可攻关」里**。\n★ 判据（★ 静态、取自全接口索引）：台账里 `tier == \"可攻关\"` 而 `api` 提到一个**带 `AccessSelections` 的 `*FeatureData`**\n       ⇒ ★ **疑似该进名单**。★ 另有**提示级**：`api` 的名字全接口都查不到（★ 铁律 5）。\n★ **便携性**：接口目录（`C:\\swapi\\types`）不在 ⇒ **SKIP 并 exit 0**。\n★ 它**自己有负例自证**：`tests/test_backend_limited_completeness_gate.py`（**4 passed**；★ 而那个测试**曾经成功地把我的第一版判据否掉**—— ★ 因为它当时**只能注入谓词、注入不了台账**）。"
+    },
+    {
+      "gate": "check_refuted_patterns.py",
+      "runner": "_run_refuted_patterns_gate",
+      "kind": "hard",
+      "reason": "C8 · 台账分叉：★ docs/refuted-patterns.json 里每条的 anchor_quote 必须**逐字**出现在 docs/known-facts.md 中。★ 它自称「唯一常驻硬门禁」，而 2026-10-04（接手轮）的 A-3 查出它唯一依据的文件当时不存在 ⇒ 那条闸永远「通过」（事实 40 同族）；★ 现已建表并接进本处 ⇒ **必须拦发布**，否则又是一条「存在但没人用」的守卫。"
     }
   ]
 }
