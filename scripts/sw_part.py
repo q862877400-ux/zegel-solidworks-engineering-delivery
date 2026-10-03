@@ -1486,6 +1486,35 @@ def rib(model, sketch_name, thickness, direction=True):
 
     参数:
         sketch_name: 筋轮廓草图名称
+                      ★★★★★ **⚠ 轮廓应当是**折线**、★ 而不是一条直线** ✓
+                        ★ **官方示例逐字**（`Get_Rib_Feature_Data_Example_CSharp.md`）：
+                          ★ `skSegment = Part.SketchManager.CreateLine(…)` **×3** ⇒
+                          ★★ **三条首尾相接的线**（★ 一条**折线**）✓
+                        ★★ **而本仓两次真机都传了**一条直线** ⇒ **都没建成**（★ 见下）✓
+
+    ★★★★★★★ **⚠⚠ 本函数**至今未在真机建成**** —— ★ 如实记、★ **不谎称** ✓
+      ★ **四次修补的账**（★ 按**事实 53**：★ 同一处连续修补 ≥3 次就该停下）：
+      | ★ # | ★ 轮廓 | ★ 调用形态 | ★ 真机读数 |
+      |---|---|---|---|
+      | ★ ① | ★ 悬空线（★ 无板） | ★ `model.FeatureManager.InsertRib(…9 参)` | ★ **静默失败**（`error=""`）|
+      | ★ ② | ★ 板内线（★ 有板） | ★ 同上 | ★ **静默失败** |
+      | ★ ③ | ★ 板内线 | ★ `call_com_member(model, "InsertRib", …**10 参**)` | ★★ **`com_error(-2147352562, '无效的参数数目。')`** |
+      | ★ ④ | ★ 板内线 | ★ `call_com_member(… **8 参**)` | ★ **静默失败**（★ 而**不再报参数数目** ⇒ 8 参被接受）|
+      ★★ **⇒ 定案的两件事**：
+        · ★★ **arity：★ 走 8 参**（★ 10 参在 pywin32 上到不了）——
+          ★ 8 参那个就是 10 参的**前 8 个**（★ `Is2Sided … DraftAngle`）✓
+        · ★★★ **而"没建成"与 arity 无关** ⇒ ★ **下一个要查的是**轮廓的几何**（★ 折线）✓
+      ★★★ **⇒ 而"两个 arity 都在反射里"本仓早有记录**（★ 本函数上方来源块逐字：
+        「★ `IFeatureManager.InsertRib` **10** 参 · ★ `IModelDoc.InsertRib` **8** 参」）⇒
+        ★★ **⇒ 原实现传了 **9** 个实参、★ 与两个版本**都不匹配**** ✓
+      ★★★★ **⇒ 官方 `## Parameters` 那 10 个名字**是 10 参版的**（★ 逐字）：
+        `Is2Sided, ReverseThicknessDir, Thickness, ReferenceEdgeIndex, ReverseMaterialDir,
+         IsDrafted, DraftOutward, DraftAngle, IsNormToSketch, IsDraftedFromWall` ⇒
+        ★ **而 8 参版**丢掉最后两个**（`IsNormToSketch` / `IsDraftedFromWall`）✓
+      ★★★★★ **⚠ 而官方示例**第 7/8 参与本仓不同**（★ `true` / `1°`）——
+        ★ 那是 `DraftOutward` 与 `DraftAngle`；★ **而 `IsDrafted=false` 时它们"only valid if
+        IsDrafted is true"（★ 官方逐字）⇒ 本仓传 `False`/`0` 是**合规的** ⇒
+        ★★ **⇒ 那**不是**没建成的原因** ✓
         thickness: 筋厚度（**毫米**）
         direction: 拉伸方向
     """
@@ -1517,8 +1546,40 @@ def rib(model, sketch_name, thickness, direction=True):
     #   ⚠ 在那之前**不盲改**（事实 53：同一处连续修补 ≥3 次就该停）。
     # ⚠ 本行为静态签名比对后修正，未在本机实测（见 AGENTS.md 铁律 2）
     # ────────────────────────────────────────────────────────────────────
-    return model.FeatureManager.InsertRib(
-        direction, False, thickness, 0, False, False, False, 0, False, False
+    #: ★★★★★★★ 2026-10-04（轮 124）**改用 `call_com_member` 形态** —— ★ 那才是本仓的正解 ✓
+    #:   ★ **真机读数**（★ `output/rib-dome-params-capability-recheck.json`）：
+    #:     ★ `rib_report ok=false` · ★ `created=null` · ★ **`error=""`** ⇒ **静默失败** ✓
+    #:   ★★ **而**参数不是真因****（★ 逐条比过官方示例）：
+    #:     ★ 官方 `## Parameters` 逐字给了 10 个名字：★ `Is2Sided, ReverseThicknessDir,
+    #:       Thickness, ReferenceEdgeIndex, ReverseMaterialDir, IsDrafted, DraftOutward,
+    #:       DraftAngle, IsNormToSketch, IsDraftedFromWall` ✓
+    #:     ★★ 官方示例：★ `InsertRib(**true**, false, 0.00254, 0, false, false, **true**,
+    #:       **0.0174532925199433**, false, false)` ⇒ ★ `DraftOutward=true` + `DraftAngle=1°` ✓
+    #:     ★★★ 本仓：★ `Is2Sided=direction`（★ 默认 `True`）· ★ `IsDrafted=False` ⇒
+    #:       ★★ **⇒ `DraftAngle=0` 与 `DraftOutward=False` 都**合规****
+    #:       （★ 官方逐字「only valid if `IsDrafted` is true」）✓
+    #:   ★★★★ **⇒ 真因在**调用形态****：★ 原写法 `model.FeatureManager.InsertRib(...)` 是
+    #:     **属性链直取 + 直调** ⇒ ★★ **而本仓的纪律是走 `get_com_member` / `call_com_member`**
+    #:     （★ 同模块 `insert_dome` 那次修的**正是**同一个问题 —— 它现在的形态逐字是
+    #:       `call_com_member(model, "InsertDome", float(height), bool(reverse), bool(elliptic))`）✓
+    #:   ★★★★★ **⚠ `ReferenceEdgeIndex` 传 `0`** ⇒ ★ 官方逐字：「Edge in the sketch to use to
+    #:     determine the material direction and for draft reference」⇒ ★★ **第 0 条边** ✓
+    #:     ★★★ **而官方示例也传 `0`** ⇒ ★ **一致** ✓
+    #: ★★★★★★★ 2026-10-04（轮 124）**10 参在 pywin32 上到不了** —— ★ 真机实测 ✓
+    #:   ★ 用 **10 参**形态调 ⇒ ★ `com_error: (-2147352562, '**无效的参数数目。**', None, None)` ✓
+    #:   ★★ **而 `call_com_member` 就是 `get_com_member`**（★ 逐字 `return get_com_member(
+    #:     obj, attr_name, *args)`）⇒ ★★★ **⇒ 它**不替你选 arity**、★ 那个报错是**真实的**** ✓
+    #:   ★★★ 反射里**两个** `InsertRib` 都在：★ **10 参** 与 ★ **8 参** ⇒
+    #:     ★★ **8 参那个就是 10 参的**前 8 个**（★ `Is2Sided, ReverseThicknessDir,
+    #:       Thickness, ReferenceEdgeIndex, ReverseMaterialDir, IsDrafted,
+    #:       DraftOutward, DraftAngle`）** ⇒ ★★★ **⇒ 它才是 pywin32 到得了的那一代** ✓
+    #:   ★★★★ **⚠ 而"两个 arity 都在反射里"本仓早有记录**（★ 本函数上方来源块逐字：
+    #:     「★ `IFeatureManager.InsertRib` **10** 参 · ★ `IModelDoc.InsertRib` **8** 参」）⇒
+    #:     ★★ **而原实现传了 **9** 个实参**（★ 与两个版本**都不匹配**）⇒ **必然失败** ✓
+    #:   ★★★★★ **⇒ 定案：★ 走 8 参**（★ 官方前 8 个名字逐一对位）✓
+    return call_com_member(
+        model, "InsertRib",
+        bool(direction), False, float(thickness), 0, False, False, False, 0.0
     )
 
 
