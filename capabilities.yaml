@@ -3565,6 +3565,34 @@
         "⚠ **交叉曲线未验成**：官方前置是 3D 草图 + 两个相交面，而 `Insert3DSketch` 在本机回 `None` ⇒ 包装留在模块里但**不挂工具**。",
         "⚠ `SketchTrim` 的**每个选项对“该选几条段”有硬要求**（closest=1、corner=2），选错官方会失败 ⇒ 本包装如实抛，不静默。"
       ]
+    },
+    {
+      "id": "sketch_modify_ops",
+      "label": "草图编辑·移动族（移动 / 旋转 / 缩放 / 伸展 / 镜像）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "evidence": [
+        "★ 2026-10-03（轮 472）**真机 5/5**（走 `tools/sw_guard.py`，全程 `sw_alive: true`、**零弹窗**）：`python tools/sw_guard.py --timeout 500 -- python tools/prove_b4_sketch_modify.py`。证据 output/b4-sketch-modify-evidence.json。★★ **判据按操作分**（★ 本批最要紧的经验）：改**坐标系**的（移动/旋转/镜像）看 `Sketch.ModelToSketchTransform.ArrayData`；改**几何**的（缩放/伸展）看草图线段端点的 bbox。★ 具体数值：移动 5mm ⇒ 平移 [0,0,0]→**[-0.005,-0.005,0]**（严格对应）；旋转 30° ⇒ 3×3 首行 **[0.866025,-0.500001,0]**（cos30°/sin30°）；镜像 ⇒ 首行 **[1,0,0]→[-1,0,0]**；缩放 1.5 ⇒ bbox ±20/±10→**±30/±15**（×1.5）。",
+        "★ 2026-10-03（轮 472）**走 MCP 契约的真机调用 5/5**（★ 不手调内部实现，而按 `ToolSpec` 声明的 `inject` + `params` 装配）：`python tools/sw_guard.py --timeout 600 -- python tools/prove_tools_by_contract.py solidworks_sketch_`。证据 output/tools-by-contract-evidence.json。",
+        "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**（★ 每个声明都覆盖了包装的必需对象形参）；五统一门禁（`ToolSpec` 声明时）通过；`tests/test_tool_registry.py` **20 passed**。",
+        "★ 三源互证（swapi + CHM + 出厂反射，**成员名三方一致**）：`IModelDoc2.SketchModify{Translate,Rotate,Scale,Flip}`、`IModelDocExtension.Stretch`。★ **不用 `Tools*` 族**（`ToolsSketchTranslate()` 零参数、交互式弹框，与无人值守红线冲突）。"
+      ],
+      "limitations": [
+        "★ **2D 草图的「复制实体」本条不解** —— 三源里都**没有** `SketchModifyCopy`；官方确有 `ISketchManager.RotateOrCopy3D*`，而它逐字写着 「the selected **3D sketch** entities」⇒ **2D 用不了**。★ 这是**三源都指不出入口**，不是漏了（铁律 5）。",
+        "`SketchModifyFlip` 的 `AxisFlag` 取值表**官方两个源都未给** ⇒ 原样透传、不下语义断言。（真机已知：`axis_flag=1` ⇒ X 轴符号翻转。）",
+        "★ 「伸展实体」官方说明是 「Stretch the **selected** entities」 ⇒ **要求先选中实体**；本次真机测到的变化很小（±20 → -19.997/20.003），★ 与「没选中时只有极小效应」一致。"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建；依据为**官方三源**（`C:\\swapi\\types\\` **结构化文档** + CHM 官方文档 + `_raw/reflect_sldworks/` **出厂类型库反射**，★ **成员名三方一致**），见 `scripts/sw_sketch_modify_ops.py` 的来源块（逐成员列了三源路径）。★ 补的是 `specs/201-toolbar-gaps` 的 **B4** 批（用户工具栏：移动 / 伸展 / 旋转 / 缩放实体比例，另加同族的镜像）。"
     }
   ]
 }

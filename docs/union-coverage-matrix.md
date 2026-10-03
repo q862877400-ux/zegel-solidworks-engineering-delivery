@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 262 | 262 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 267 | 267 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -39,7 +39,7 @@
 |---|---|---|---|---|---|---|---|---|
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 16 | 59⚠ | 49 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 1 | 32⚠ | 5 | **4** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 35 | 99⚠ | 69 | **34** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 40 | 99⚠ | 74 | **34** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 18⚠ | 16 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 22 | 82⚠ | 47 | **25** |
 | ⑥ 曲面 | 11 | · | 1 | · | 8 | 26⚠ | 20 | **12** |
@@ -55,7 +55,7 @@
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 27 | 14 | 27 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 44 | 465⚠ | 86 | **42** |
 
-**合计**：并集 581 个操作；**MCP 暴露面**缺 **319** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 586 个操作；**MCP 暴露面**缺 **319** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 232 个操作只有本仓库有：
+共 237 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -313,9 +313,14 @@
 - `sketch_count_segments`（③ 草图）
 - `sketch_create_chamfer`（③ 草图）
 - `sketch_end`（③ 草图）
+- `sketch_flip_entities`（③ 草图）
 - `sketch_is_3d`（③ 草图）
+- `sketch_move_entities`（③ 草图）
 - `sketch_relation`（③ 草图）
+- `sketch_rotate_entities`（③ 草图）
+- `sketch_scale_entities`（③ 草图）
 - `sketch_start`（③ 草图）
+- `sketch_stretch_entities`（③ 草图）
 - `slot_semicircular_by_selection`（③ 草图）
 - `standard_view`（⑪ 工程图）
 - `surface_create_extruded`（⑥ 曲面）

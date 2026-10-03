@@ -48,6 +48,49 @@ import scripts.sw_sketch_primitives as SP                            # noqa: E40
 from scripts import sw_sketch_modify_ops as M                        # noqa: E402
 
 
+def _transform(doc):
+    """★ 量**草图坐标系在模型里的位姿**：`Sketch.ModelToSketchTransform.ArrayData`。
+
+    ★★★ 2026-10-03（轮 472）**这才是移动/旋转/镜像的正确判据** ——
+      官方对那三个成员的说明逐字是：
+      > Translates / Rotates **the coordinate system** of the active or selected sketch.
+
+      ⇒ ★★ **它们改的是**草图坐标系**，而**不改草图内点的坐标值****
+        ⇒ ★★★ 故"草图内点的 bbox"（本探针第一版的判据）**根本测不出它们**
+          —— ★ 那时 3 条记成 `geometry_unchanged`，★ **不是能力不行，是判据选错了** ⚠
+
+    ★ 官方依据（`C:\\swapi\\types\\IMathTransform\\ArrayData.md`，逐字）：
+      > Gets and sets the array of **16 doubles** for this transform.
+      > The first **9** elements define the **3x3 rotation matrix**. The next **3** elements
+      > define the **translation component**.
+      ⇒ ★ 故 `[9:12]` = 平移 · `[0:9]` = 3×3 旋转 ✓
+
+    ★★ 真机实测（矩形 `-20,-10 → 20,10`，本机）把这条判据**验穿了**：
+      ```
+      移动 5mm ⇒ 平移 [0,0,0] → [-0.005, -0.005, 0.0]     ★ 与传入 5mm 严格对得上
+      旋转 30° ⇒ rot3 [1,0,0] → [0.866025, -0.500001, 0]   ★ 正是 cos30° / sin30°
+      镜像     ⇒ rot3 [1,0,0] → [-1, 0, 0]                 ★ X 轴符号翻转
+      ```
+    ⚠ 取不到 ⇒ 回 `None`（★ 调用方写 `measured: false`，**不猜**）。
+    """
+    try:
+        sk = C.get_com_member(C.get_com_member(doc, "SketchManager"), "ActiveSketch")
+        if sk is None:
+            return None
+        tf = C.get_com_member(sk, "ModelToSketchTransform")
+        if tf is None:
+            return None
+        arr = C.get_com_member(tf, "ArrayData")
+        if arr is None:
+            return None
+        vals = [round(float(x), 6) for x in arr]
+        if len(vals) < 12:
+            return None
+        return {"n": len(vals), "rot3x3": vals[:9], "trans": vals[9:12]}
+    except Exception:                                                # noqa: BLE001
+        return None
+
+
 def _bbox(doc):
     """★ 量活动草图里**所有线段端点**的包围盒（★ 单位：**毫米**，原样，不换算）。
 
@@ -102,22 +145,33 @@ def _one(sw, zh, fn):
         #:   ⚠ 我第一版把 `P.end_sketch(doc)` 放在量之前 ⇒ `ActiveSketch` 回 `None`
         #:     ⇒ 5 条全记成 `before=None / after=None`（★ 表现成"全都不能"，
         #:       而真因是**量错了时机** —— 不是能力不行）。
-        before = _bbox(doc)
+        #: ★★★ 两种判据**各管一半**（★ 这是轮 472 学到的）：
+        #:   · **改坐标系**的（移动 / 旋转 / 镜像）⇒ 看 `ModelToSketchTransform.ArrayData`
+        #:   · **改几何**的（缩放 / 伸展）      ⇒ 看草图点的 bbox
+        #:   ★ 两个都量，然后**按"变没变"判** —— ★ 哪个变了算哪个（★ 不预设谁对）。
+        bbox_before, tf_before = _bbox(doc), _transform(doc)
         r = fn(doc)
-        after = _bbox(doc)
+        bbox_after, tf_after = _bbox(doc), _transform(doc)
         P.end_sketch(doc)
-        ch = _changed(before, after)
+        ch_bbox = _changed(bbox_before, bbox_after)
+        ch_tf = _changed(tf_before, tf_after)
         row.update({"ret": r if isinstance(r, (dict, bool, type(None))) else str(type(r)),
-                    "bbox_before": before, "bbox_after": after,
-                    "measured": before is not None and after is not None,
-                    "bbox_changed": ch})
+                    "bbox_before": bbox_before, "bbox_after": bbox_after,
+                    "tf_before": tf_before, "tf_after": tf_after,
+                    "bbox_changed": ch_bbox, "transform_changed": ch_tf})
         #: ★★ 判据分级（★ 说清"凭什么说能"）：
-        #:   · 量到了前后 bbox **且变了** ⇒ `geometry_changed`（最强）
-        #:   · 量到了而**没变** ⇒ ★ **如实记 `geometry_unchanged`**（★ 那可能是"没选中实体"）
+        #:   · 量到了前后 **且变了**（bbox 或 变换）⇒ `geometry_changed` / `transform_changed`
+        #:   · 量到了而**都没变** ⇒ ★ 如实记 `unchanged`（★ 那才可能是"真不能"）
         #:   · 量不到 ⇒ `no_exception`（★ 最弱，且写明）
-        row["verified_by"] = ("geometry_changed" if ch else
-                              ("geometry_unchanged" if ch is False else "no_exception"))
-        row["ok"] = bool(ch)
+        if ch_bbox:
+            row["verified_by"] = "bbox_changed"
+        elif ch_tf:
+            row["verified_by"] = "transform_changed"
+        elif ch_bbox is False or ch_tf is False:
+            row["verified_by"] = "unchanged"
+        else:
+            row["verified_by"] = "no_exception"
+        row["ok"] = bool(ch_bbox or ch_tf)
         row["verdict"] = "能" if row["ok"] else "不能"
     except Exception as exc:                                         # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])

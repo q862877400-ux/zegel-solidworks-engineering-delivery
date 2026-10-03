@@ -308,6 +308,11 @@ BATCH_MODULES = (
     "tool_specs_batch64",   # 轮 459：连接件族第三条（link · 两个顶点）
     "tool_specs_batch65",   # 轮 464：B1 批草图图元（3点矩形/平行四边形/切线弧/3点圆弧/部分椭圆/抛物线/圆锥/周边圆）
     "tool_specs_batch66",   # 轮 465：B3 批草图编辑 6 个（剪裁/延伸/等距/圆角/线性阵列/圆周阵列）
+    #: ★ 2026-10-03（轮 472）：B4 批草图编辑·移动族 5 个（移动/旋转/缩放/伸展/镜像）。
+    #:   ★ 真机 **5/5**（`output/b4-sketch-modify-evidence.json`）。
+    #:   ★★ 判据**按操作分**：改坐标系的（移动/旋转/镜像）看
+    #:     `ModelToSketchTransform.ArrayData`；改几何的（缩放/伸展）看草图端点的 bbox。
+    "tool_specs_batch67",
 )
 
 def all_specs() -> list:
