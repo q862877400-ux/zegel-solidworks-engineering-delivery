@@ -50,7 +50,21 @@ def test_capability_manifest_marks_unverified_workflows():
     assert index["pack_and_go"]["level"] == "verified"
     assert index["configurations_and_design_tables"]["level"] == "verified"
     assert index["configurations_and_design_tables"]["verified_versions"] == ["2026"]
-    assert index["drawing_dimension_insertion"]["level"] == "verified"
+    #: ★★★★★★★ 2026-10-04（轮 120）**本条随清单更正** —— ★ 处置这条**存量失败** ✓
+    #:   ★ **真机读数**：★ `assert 'not_implemented' == 'verified'` ✓
+    #:   ★★ **真因**：★ 本会话**阶段 1**（★ 提交 `a04c68c7`）**把这条降了级** ——
+    #:     ★ 它原本写 `verified`、★ **而它的能力层**零实现****（★ **整条虚标**）⇒
+    #:     ★★★ **⇒ 降成 `not_implemented`、★ 并从 `allowed_modes` 去掉 `unattended`** ✓
+    #:   ★★★★ **⇒ 而本测试还在钉旧的 `verified`** ⇒ **红** ——
+    #:     ★ 那与「mock 落后」「登记表落后」「ToolSpec 参数落后」**是同一个病**
+    #:     （★ "改了清单/实现、★ 配套的断言没跟上"）✓
+    #:   ★★★★★ **⚠ 而这次降级是**有据的****：★ `docs/known-facts.md` 与本仓的记录都写明
+    #:     「★ 它的能力层**零实现**」⇒ ★★ **按 A4「`verified` 必须有我们自己的运行证据」**，
+    #:     ★ **它本来就该是 `not_implemented`** ✓
+    #:   ★★★★★★ **⇒ 判据**：★ 改成 `not_implemented`、★ **并把它**从"跑过 ⇒ verified"那一段
+    #:     挪出来**（★ 它不属于那一段）✓
+    assert index["drawing_dimension_insertion"]["level"] == "not_implemented", (
+        "★ 本会话阶段 1 已把它降级（★ 能力层零实现 ⇒ 整条虚标）⇒ 这里要跟上")
     assert index["sheet_metal"]["level"] == "verified"
     assert index["sheet_metal"]["verified_versions"] == ["2026"]
     assert index["weldments"]["level"] == "verified"
