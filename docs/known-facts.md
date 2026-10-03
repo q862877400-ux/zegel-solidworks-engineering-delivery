@@ -3775,3 +3775,85 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ③ ★★★ **不改**：★ 探针 `tools/probe_dimension_edge_pairs.py`（★ 它写的是「66 对」的**计划**，★ 没错）· ★ 裁判稿（★ 核错记录 —— ★ 引错是**证据**）✓
      ④ ⚠★ **一条通道的说明**：★ `docs/harvest-digest.md` 是**生成物** ⇒ ★ 它下次重跑时会同步 ✓
      ★★ **依据**：`specs/202-user-coverage-gaps/recon/verify50/JUDGE-A_B.md`（★ A-features F1 · ★ 两处）· `vd50-A-features.md`（★ §38 判定 · §57/§59 逐条对照）· `output/dimension-edge-pairs-evidence.json` ✓
+
+---
+
+## 516 · ★★★★★ A4 的存量账：**13 个 `verified` 条目挂在一个「自己说没实测过」的文件上**
+
+**发现时间**：2026-10-04（接手轮 · 处置 `JUDGE-C_D_E` 🔴 #10 · `C-sm-1 V-2 / V-3`）
+
+### 一 · 起因（★ 一条很小的事）
+★ 裁判说 `sheet_metal` 的 `level: verified` **违反 A4**：
+> ★ 「两条 evidence 一条**不碰 COM**、一条按字面 pytest **收 0 个用例**」✓
+
+★ **我实跑复核，两条都对**：
+| ★ evidence | ★ 实跑结果 | ★ 为什么不构成运行证据 |
+|---|---|---|
+| ★ `pytest tests/test_sw_sheet_metal.py` | ★ **6 passed** | ★ 该文件 71 行、只 `import sw_export` 与 `BaseFlangeSpec`（**一个 dataclass**）⇒ `COM` / `connect` / `get_com_member` / `SolidWorks` **各 0 次** |
+| ★ `pytest tests/solidworks_sheet_metal_regression.py` | ★★ **`no tests ran`（收 0 个，exit 1）** | ★ **什么都没验** |
+
+### 二 · ★★★ 而顺手写出的判据，把问题**放大到了全仓**
+★ 判据（★ 可核）：★ `level == "verified"` 的条目，★ 其 `evidence` 里**至少一条**要含运行证据的措辞 ✓
+★ 第一版**太窄**（★ 只认「真机/实跑/实测」）⇒ 报了 **21** 个，★ 而其中**有明显是运行证据的**：
+  · `python tools/verify_dfm_e2e.py`（**11/11 通过 · verdict: pass**）
+  · `output/b1-sketch-primitives-evidence.json`（★ 真机证据**文件**）
+  · 「既有冒烟（**权威 · 本仓库自己的判据**）：`python tools/verify_dome_smoke.py`」
+⇒ ★★ **补齐三类形态**（★ `tools/verify` / `evidence.json` / `verdict`）后 ⇒ ★★★ **降到 13 个** ✓
+
+### 三 · ★★★★★ 那 13 个的形态**完全一致**（★ 这才是本条事实的要点）
+★ **13 个的 evidence 全是 `pytest tests/xxx.py`** —— ★ **一个纯文件名，★ 没有任何运行结果的痕迹** ✓
+★ 而**其中 12 个指向同一个文件**：`tests/test_cad_reliability.py` ✓
+
+**而那个文件自己逐字写着**（★ 来源块）：
+> ★ 「⚠ **未在本机实测 SolidWorks**（见 AGENTS.md 铁律 2）。本次是清单形状与授权判据的迁移，
+>   ★ **不改变任何 COM 调用**」✓
+
+★ **实测复核**：★ `sw_guard` **0** 次 · ★ `get_com_member` **0** 次 · ★ `mock` **0** 次 · ★ `fake` **0** 次 ✓
+
+⇒ ★★★★ **即：12 个 `verified` 条目，★ 它们唯一的证据是一个"自己声明没实测过 SolidWorks"的文件** ✓
+
+### 四 · 那 13 个 id（★ 待核账）
+```
+ 1. requirements_planning                pytest tests/test_engineering_orchestrator.py
+ 2. solidworks_addin_host                pytest tests/test_cad_reliability.py   ← 12 个共用它
+ 3. external_spur_gear_geometry          pytest tests/test_cad_reliability.py
+ 4. parameter_updates                    pytest tests/test_cad_reliability.py
+ 5. custom_properties_and_bom            pytest tests/test_cad_reliability.py
+ 6. pack_and_go                          pytest tests/test_sw_delivery.py
+ 7. motion_study                         pytest tests/test_sw_motion_audit.py
+ 8. drawing_dimension_insertion          pytest tests/test_cad_reliability.py
+ 9. drawings_and_bom                     pytest tests/test_delivery_compare.py
+10. geometry_and_delivery_review         pytest tests/test_delivery_compare.py
+11. configurations_and_design_tables     pytest tests/test_cad_reliability.py
+12. autocad_script_backend               pytest tests/test_acad_script_backend.py
+13. autocad_dotnet_backend               pytest tests/test_acad_dotnet_preflight.py
+```
+
+### 五 · ★ 本轮做了什么、没做什么（★ 如实）
+★ **做了**：★ `sheet_metal` 那一条**补齐**了真机证据（★ 指向
+  `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS`，★ 逐字含「**闭轮廓**真机建成：特征树出现
+  「钣金6 / 基体-法兰1 / 平展型式6」」+ 时间 2026-10-01 + 版本 SW 2026 SP4.1 + **范围仅闭轮廓**）✓
+★★ **没做**：★ **那 13 个** —— ★ 因为**每个都要核实机证据到底在不在**（★ 有的可能真跑过、
+  ★ 只是没把结果写进 `evidence`）⇒ ★★ **不是一轮能清完的** ✓
+★★★ **而我的处理是**：★ 新增 `tests/test_verified_level_has_runtime_evidence.py`，
+  ★★ **断言"存量不增加"**（★ `BASELINE = 13`）—— ★★★ **而不是把判据放宽到看不见它** ✓
+  ★ **每减少一个就调小 `BASELINE`**，★ 到 0 时改成 `assert not bad` ✓
+
+### 六 · ★★★★ 可复用判据（★ 三条）
+> ① ★★★★ **「pytest 文件名」不是运行证据** —— ★ 它是**"我们跑过某个文件"**，
+>    ★ 而**不是"我们跑过 SolidWorks"**；★ 两者只有在那个文件**真的碰 COM** 时才等价 ✓
+> ② ★★★★ **判"某文件碰不碰 COM"的判据是**可数的**** —— ★ `sw_guard` / `get_com_member` /
+>    ★ `win32` / ★ `dispatch` 的出现次数 ⇒ ★★ **0 次就是不碰**（★ 不必读全文）✓
+> ③ ★★★★ **判据第一次跑出来的清单里，★ 要先看"有没有明显不该报的"** ——
+>    ★ 有 ⇒ ★ **那是判据太窄**（★ 不是条目错）⇒ ★ 补形态、★ 再跑 ✓
+>    ★★ **本条的 21 → 13 就是这么来的** ✓
+
+### 七 · ★ 与已有序号的关系
+★ **A4** 是 `AGENTS.md §一` 的验收标准（★ 「`verified` 必须有**我们自己的运行证据**」）⇒
+  ★★ **本条事实是 A4 在全仓的第一次**可执行盘点**** ✓
+★ 与**事实 62**（★ 负例是门禁有效的唯一证明）**互补**：★ 62 说的是「门禁要能抓」，
+  ★★ **本条说的是「门禁抓出来的清单要有人去清」** ✓
+★ **依据**：`specs/202-user-coverage-gaps/recon/verify50/JUDGE-C_D_E.md`（★ 🔴 #10 · `C-sm-1 V-2 / V-3`）·
+  `vd50-C-sm-1.md` §3 · ★ 本轮的 `tests/test_verified_level_has_runtime_evidence.py` ·
+  ★ 实跑：`python -m pytest tests/test_sw_sheet_metal.py -q`（6 passed）·
+  `python -m pytest tests/solidworks_sheet_metal_regression.py -q`（no tests ran）✓

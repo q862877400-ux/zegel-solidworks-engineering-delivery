@@ -1134,8 +1134,10 @@
         "reviewed"
       ],
       "evidence": [
-        "pytest tests/test_sw_sheet_metal.py",
-        "pytest tests/solidworks_sheet_metal_regression.py（钣金）"
+        "pytest tests/test_sw_sheet_metal.py（★ ⚠ 只覆盖 `dataclass` 与参数校验 —— ★ **不碰 COM**）",
+        "pytest tests/solidworks_sheet_metal_regression.py（钣金）",
+        "🕓 **2026-10-04（接手轮）更正上两条 —— 它们都不构成「我们自己的运行证据」** （★ 处置 `JUDGE-C_D_E.md` 的 🔴 **#10** · `C-sm-1 V-2 / V-3`）—— ★ 裁判逐字：「★ 两条 evidence 一条**不碰 COM**、一条按字面 pytest **收 0 个用例** ⇒ ★ 直接**违反验收标准 A4**」✓ ★★ **我逐条复核（★ 两条都实跑了）**：<br>· ★ **第 1 条**：★ `pytest tests/test_sw_sheet_metal.py` ⇒ **6 passed** —— ★★ 而该文件 71 行、只 `import sw_export` 与 `BaseFlangeSpec`（**一个 dataclass**）⇒ ★★★ **`COM` / `connect` / `get_com_member` / `SolidWorks` 各 0 次** ✓<br>· ★★ **第 2 条**：★ `pytest tests/solidworks_sheet_metal_regression.py` ⇒ ★★★ **`no tests ran`（收 0 个用例，exit 1）** ⇒ ★★ **它什么都没验** ✓<br>★★★ **⇒ 而真机证据是**有的**，★ 只是从没写进 `evidence`**：★ `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 逐字记着「★ **闭轮廓**真机建成：特征树出现「钣金6 / 基体-法兰1 / 平展型式6」」（★ 2026-10-01，SW 2026 SP4.1）⇒ ★★★★ **本轮把它补进 `evidence`** ✓",
+        "★ **真机运行证据（★ 这才是 A4 要的那一条）**：`scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 的 `create_base_flange` 项逐字 —— 「★ **闭轮廓**真机建成：特征树出现「钣金6 / 基体-法兰1 / 平展型式6」」· ★ 时间/版本：2026-10-01 · SW 2026 SP4.1 → ★ `sheet_metal_evidence` 项：「★ 真机读回正确：thickness_m=0.002、has_base_flange=True、all_solid_bodies_are_sheet_metal=True」✓ ★★ **范围**：★ 仅**闭轮廓**（★ 开放折线实测失败，★ 见 `limitations`）✓"
       ],
       "source": "upstream",
       "source_evidence": "`tools/propose_capability_sources.py` 的关键词提案（命中模块的上游/新增归属已由该工具用 `git cat-file -e origin/main:<path>` 判定）",
