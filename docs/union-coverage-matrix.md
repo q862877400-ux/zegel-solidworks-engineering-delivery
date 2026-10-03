@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 306 | 306 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 312 | 312 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -41,7 +41,7 @@
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 37⚠ | 5 | **2** |
 | ③ 草图 | 26 | 15 | 16 | 20 | 42 | 107⚠ | 75 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 22⚠ | 16 | **10** |
-| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 23 | 103⚠ | 47 | **24** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 28 | 103⚠ | 52 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 17 | 47⚠ | 25 | **8** |
 | ⑦ 钣金 | 10 | · | 1 | · | 8 | 19⚠ | 19 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 14 | 19⚠ | 19 | **5** |
@@ -53,9 +53,9 @@
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 12 | 46⚠ | 22 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 1 | 20⚠ | 43 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 29 | 14 | 29 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 52 | 498⚠ | 94 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 53 | 498⚠ | 95 | **42** |
 
-**合计**：并集 617 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 623 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 268 个操作只有本仓库有：
+共 274 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -204,14 +204,18 @@
 - `export_dxf`（① 会话 / 文档 / 文件）
 - `export_parasolid`（① 会话 / 文档 / 文件）
 - `extrude_boss`（⑤ 零件特征）
+- `extrude_depth`（⑤ 零件特征）
 - `extrude_midplane`（⑤ 零件特征）
+- `extrude_params`（⑤ 零件特征）
 - `fastener_table_types`（⑰ 未归类）
 - `fastener_types`（⑰ 未归类）
 - `fea_preflight`（⑰ 未归类）
 - `feature_cosmetic_thread`（⑰ 未归类）
 - `feature_delete`（⑰ 未归类）
+- `feature_info`（⑰ 未归类）
 - `feature_suppress`（⑰ 未归类）
 - `feature_unsuppress`（⑰ 未归类）
+- `fillet_params`（⑤ 零件特征）
 - `flatten_surface`（⑥ 曲面）
 - `gear_calculate_spur`（⑰ 未归类）
 - `gear_create_spur`（⑰ 未归类）
@@ -224,6 +228,7 @@
 - `hole_counterbore_by_selection`（⑤ 零件特征）
 - `hole_countersink_by_selection`（⑤ 零件特征）
 - `hole_feature`（⑤ 零件特征）
+- `hole_params`（⑤ 零件特征）
 - `hole_pattern`（⑤ 零件特征）
 - `hole_standards`（⑤ 零件特征）
 - `hole_through_by_selection`（⑤ 零件特征）
@@ -259,6 +264,7 @@
 - `part_shell`（⑤ 零件特征）
 - `part_sweep`（⑤ 零件特征）
 - `part_wrap`（⑤ 零件特征）
+- `pattern_params`（⑤ 零件特征）
 - `prepare_fea`（⑰ 未归类）
 - `read_document_units`（① 会话 / 文档 / 文件）
 - `read_sensors`（⑫ 检查 / 测量 / 反馈）
