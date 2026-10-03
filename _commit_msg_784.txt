@@ -1,0 +1,60 @@
+fix(阶段3): ★★★★★★★ **一族 9 条全修好** —— ★ `tests/test_sw_delivery.py` **9 failed → 17 passed**（★ 真基线 **25 → 14**）
+
+■ 一 · ★ 起手：★ 上一轮归因时留下的那 8 条（★ 同族：★ 都报 `report["success"] is False`）
+  ★ **7 条**是 `assert report["success"] is True`（★ 实为 False）·
+  ★★ 1 条 `'failed' == 'blocked'` · ★ 1 条 `required_count == 2` ⇒
+  ★★★ **⇒ 一个真因、★ 修一处** ✓
+
+■ 二 · ★★★★★★ 逐层剥出来的**四个结构性缺口**（★ 全在 mock 上、★ 不是实现）
+  | ★ # | ★ 缺什么 | ★ 真机读数（★ 逐字） |
+  |---|---|---|
+  | ★ ① | ★ `FakePackAndGo` 缺 **`_oleobj_`** | ★「★ 类型 **FakePackAndGo** —— ★ 多半是 **bound method**」✓ |
+  | ★ ② | ★ `FakePackAndGo` 缺 **`SetSaveToName2`** | ★ `'FakePackAndGo' object has no attribute 'SetSaveToName2'` ✓ |
+  | ★ ③ | ★ `FakeComponent` 缺 **`GetExcludeFromBOM2`**（★ 轮 114 修） | ★ `… no attribute 'GetExcludeFromBOM2'. **Did you mean: 'ExcludeFromBOM'?**` ✓ |
+  | ★★ ④ | ★★ `FakeDependencyAssembly` 的依赖**挂在错的对象上** | ★ 补完前三个后 → ★ **`status = pass`**、★ **`missing_dependencies = []`**（★ **没有报错**）✓ |
+  ★ **① 的依据**（★ `sw_delivery.py` L774 逐字）：★ `if package is not None and hasattr(package, "_oleobj_"):`
+    ⇒ ★★ **它要求"返回的**真的是 COM 对象**"**、★ 而 COM 对象**有 `_oleobj_`** ✓
+    ★★★ **而那个判据自己写明了为什么不用 `_coerce_dispatch`**：
+      「★ 实测它**除 `None` 外什么都放行**」⇒ ★ **与事实 40 同族** ✓
+  ★ **② 的依据**（★ 官方逐字）：★「**Obsolete. Superseded by `IPackAndGo::SetSaveToName2`**」⇒
+    ★★ 后继 `SetSaveToName2(bool Override, string SaveToName)` ⇒ **同样 2 参** ✓
+    ★★★ **⚠ 而那次换代**正是我在轮 87 做的****（★ 证据文件 `output/setsavetoname-successor-evidence.json`
+      的名字就写在实现注释里）⇒ ★★ **⇒ 而测试的 fake 当时没跟上、★ 留了 28 轮** ✓
+  ★ **③ 的依据**：★「**Obsolete. Superseded by `IComponent2::GetExcludeFromBOM2`**」✓
+  ★★ **④ 的依据**：★「**Obsolete. Superseded by `IModelDocExtension::GetDependencies`**」⇒
+    ★★★ **旧的在 **`model`** 上（★ 3 参）、★ 新的在 **`model.Extension`** 上（★ 5 参）** ⇒
+    ★★★★ **⇒ fake 装了 `GetDependencies2` ⇒ 实现读不到它** ⇒
+      **`missing = []` ⇒ 原生路"成功"** ⇒ **而测试期望的 `pilot` / `blocked` 分支没走到** ✓
+
+■ 三 · ★★★★★★ 修后读数
+  | ★ 文件 | ★ 修前 | ★ 修后 |
+  |---|---|---|
+  | ★ `tests/test_sw_delivery.py` | ★ **9 failed / 8 passed** | ★★ **17 passed** ✓ |
+  ⇒ ★★★ **⇒ 那一族**全绿**** ✓ ⇒ ★★★★ **⇒ 真基线 **25 → 14**** ✓
+
+■ 四 · ★★★★★★ 可复用判据（★ 本轮**两条**）
+  > ① ★★★★ **换代时**"对象归属"也会变**** —— ★ 旧的在 `model` 上、★ 新的在 `model.Extension` 上 ⇒
+  >   ★★ **mock 光改名字不够、★ 还要把它挂到**对的对象**上** ✓
+  >   ★★★ **⚠ 而"读不到它"的表现是**沉默的**** —— ★ `missing = []`、★ **没有任何报错**、
+  >     ★★ 它看起来像"依赖本来就为空" ✓（★ 与**事实 40**同族）✓
+  > ② ★★★★ **"改了实现之后，要**立刻** grep 谁在 mock 它"** ——
+  >   ★ 我轮 87 换了 `SetSaveToName` → `SetSaveToName2`、★ **而 fake 留了 28 轮才被全量基线暴露** ⇒
+  >   ★★ **⇒ 若当时就改、★ 那 8 条一直是绿的** ✓
+  >   ★★★ **⇒ 而这一族一共 **6 次**同型**：★ `_oleobj_` · `SetSaveToName2` · `GetExcludeFromBOM2` ·
+  >     `GetDependencies`（★ 对象归属）· ★ 轮 112 的 `call_com_member`（stub）·
+  >     `MoldUndercutDetect2` · `ActiveSketch` ✓
+
+■ 五 · ★★ 新增测试（★ `tests/test_mock_follows_successor_object.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★★ **核心断言** | ★ **四个**结构特征都在 fake 里 ✓ |
+  | ★★★★ **核心断言** | ★ `GetDependencies` **挂在 `Extension` 上**（★ 不是 model）+ ★ **旧的也留着** ✓ |
+  | ★★★ **负例 · 实现那边也要核查** | ★ `sw_delivery.py` **确实**在走后继、★ **且没退回旧入口** ✓ |
+  | ★★★★ **负例 · 用 `pytest` 真的跑一遍** | ★ 且**通过条数 == 17**（★ 文本判据证明不了"测试真的过"）✓ |
+
+■ 六 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **⚠ 如实记**：★ **真基线 25 → 14** —— ★ **本轮修掉 9 条、★ 还剩 14 条** ✓
+  ★★★ **⇒ 剩的那 14 条**（★ 按上一轮归因）：★ `test_unattended_equivalence`（3）·
+    ★ `test_sw_sketch_edit_contract`（2）· ★ `test_tool_specs_batch{1,2}`（2）·
+    ★ 以及各 1 条的 7 个 ⇒ **下一轮继续** ✓

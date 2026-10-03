@@ -49,14 +49,54 @@ class FakeComponent:
 
 
 class FakePackAndGo:
+    """@brief 模拟 `IPackAndGo`。
+
+    ★★★★★★ 2026-10-04（轮 115）**补 `_oleobj_` 哨兵** —— ★ 处置这族失败 ✓
+      ★ **真机读数**（★ `pack_and_go` 的 `fallback_errors[0]` 逐字）：
+        「★ `pywin32: SolidWorks 未返回 IPackAndGo 对象: zero-arg: 返回的不是 COM 对象
+          （★ 类型 **FakePackAndGo**）—— ★ 多半是 bound method，即 `get_com_member`
+          的无参调用失败了，★ 它把**成员本身**回了回来」✓
+      ★★ **真因**：★ `scripts/sw_delivery.py` L774 的**有据判据**逐字 ——
+        `if package is not None and hasattr(package, "_oleobj_"):` ⇒
+        ★★★ **⇒ 它要求"返回的**真的是 COM 对象**"**（★ 而 COM 对象**有 `_oleobj_`**）⇒
+        ★★★★ **⇒ 本 fake 是普通 Python 类 ⇒ **当然没有** ⇒ 被判"不是 COM 对象"** ✓
+      ★★★★★ **⇒ 要改的是 fake、★ 不是实现** —— ★ 那个判据自己写明了两条理由：
+        ★ ① 「**必须验证它真的是 COM dispatch 对象**」·
+        ★★ ② 「**不能用 `_coerce_dispatch` 来验**：★ 实测它**除 `None` 外什么都放行**」
+          （★ 与**事实 40**「一个存在但没人用的守卫与没有守卫等价」同族）✓
+      ★★★★★ **可复用判据**：★★★ **"fake 要长出真对象的那几个**结构特征**"** ——
+        ★ 本轮要的是 **`_oleobj_`**（★ 一件）；★ 前几轮分别是
+        `GetExcludeFromBOM2` / `MoldUndercutDetect2` / `ActiveSketch` / `call_com_member` ✓
+        ★★ **⇒ 共同点：★ 判据**读的是结构特征**、★ 而 fake 只**模仿了名字**** ✓
+    """
+
     def __init__(self, count=2):
         self.count = count
         self.target = None
+        #: ★ `_oleobj_` 是"这是 COM 对象"的**结构特征**（★ 判据读的就是它）✓
+        self._oleobj_ = object()
 
     def GetDocumentNamesCount(self):
         return self.count
 
     def SetSaveToName(self, _folder_mode, target):
+        self.target = Path(target)
+        return True
+
+    #: ★★★★★★ 2026-10-04（轮 115）**补后继 `SetSaveToName2`** —— ★ **第 5 次同型** ✓
+    #:   ★ **真机读数**（★ `pack_and_go` 的 `fallback_errors[0]` 逐字）：
+    #:     `'FakePackAndGo' object has no attribute 'SetSaveToName2'` ✓
+    #:   ★★ **真因**：★ `scripts/sw_delivery.py` **已换代**（★ 两处调用点 L847 与 L994）——
+    #:     ★ 官方逐字「**Obsolete. Superseded by `IPackAndGo::SetSaveToName2`**」⇒
+    #:     ★★★ **后继逐字**：★ `SetSaveToName2(bool Override, string SaveToName)`
+    #:       ⇒ ★★ **同样 2 参、★ 同名同型** ⇒ ★★★ **⇒ 而本 fake 只装了旧的** ✓
+    #:   ★★★★ **⇒ 而那次换代**正是我在轮 87 做的**（★ 证据文件叫
+    #:     `output/setsavetoname-successor-evidence.json`、★ 名字就写在实现的注释里）⇒
+    #:     ★★★ **⇒ 而**测试的 fake 当时没跟上**** ✓
+    #:   ★★★★★ **可复用判据**：★★★ **"改了实现之后，要**立刻**grep 谁在 mock 它"** ——
+    #:     ★ 我轮 87 换了成员、★ **而 fake 留了 28 轮才被这轮的全量基线暴露** ✓
+    #:     ★★ **⇒ 若是当时就改，★ 那 8 条一直是绿的** ✓
+    def SetSaveToName2(self, _override, target):
         self.target = Path(target)
         return True
 
@@ -170,11 +210,37 @@ class FakeAssembly:
 
 
 class FakeDependencyAssembly(FakeAssembly):
-    """@brief 提供 GetDependencies2，用于验证 Pack and Go 漏包门禁。"""
+    """@brief 提供依赖枚举，用于验证 Pack and Go 漏包门禁。
+
+    ★★★★★★ 2026-10-04（轮 115）**补后继入口 `Extension.GetDependencies`** —— ★ **第 6 次同型** ✓
+      ★ **真机读数**：★ 本轮修完 `_oleobj_` + `SetSaveToName2` 之后，★
+        `pack_and_go` 对它报 **`status = pass`**（★ **而测试期望 `pilot` / `blocked`**）、
+        ★★ **`missing_dependencies = []`** ⇒ ★★★ **⇒ **依赖根本没被读到**** ✓
+      ★★ **真因**：★ `scripts/sw_delivery.py` **已换代**（★ 我在轮 87 做的）——
+        ★ 官方逐字「**Obsolete. Superseded by `IModelDocExtension::GetDependencies`**」⇒
+        ★★★ **实现在 L234 走的是 `ext.GetDependencies(False, True, False, False, False)`
+          （★ 5 参、★ 在 **`Extension`** 上）** ⇒
+        ★★★★ **⇒ 而本 fake 装的是 `GetDependencies2`（★ 3 参、★ 在 **model** 上）** ⇒
+          **两者**对象不同、★ 参数不同** ⇒ **实现读不到它** ✓
+      ★★★★★ **可复用判据**：★★★ **换代时"对象归属"也会变** ——
+        ★ 旧的在 `model` 上、★ 新的在 `model.Extension` 上 ⇒
+        ★★ **mock 光改名字不够、★ 还要把它挂到**对的对象**上** ✓
+        （★ 本轮第一次出现这一类；★ 前 5 次都只是名字/参数不同）✓
+    """
 
     def __init__(self, source, components, dependencies):
         super().__init__(source, components)
         self.dependencies = dependencies
+        #: ★★★★ **把后继挂到**对的对象**上**（★ `Extension`、★ 不是 model）——
+        #:   ★ 实现在 L234 走 `ext.GetDependencies(False, True, False, False, False)` ✓
+        #:   ★★ **5 参**（★ 官方后继逐字 5 参）⇒ ★ **本 fake 照那个形状** ✓
+        self.Extension.GetDependencies = self._get_dependencies
+
+    def _get_dependencies(self, *_args):
+        values = []
+        for path in self.dependencies:
+            values.extend([Path(path).stem, str(path)])
+        return tuple(values)
 
     def GetDependencies2(self, *_args):
         values = []
