@@ -278,6 +278,25 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
       · ⚠ **按 A4 不登记成工具、不写 `verified`** —— ★ **不假装做到**。
       · ★ 若下一轮还要动它，**该换的方向**：★ 试 `IModelDoc2.FeatureBossThicken`
         （★ 它标 `Obsolete`，而**废弃入口有时在 pywin32 上反而更顺** —— ★ 本仓在别处见过这种反转）⚠
+
+    ★★★★ 2026-10-03（轮 504）**那个方向也试过了 —— ★ 假设被否证** ✓
+      · `IModelDoc2.FeatureBossThicken`（`kind: method` · **3 参** ·
+        官方 `Obsolete. Superseded by [[IFeatureManager::FeatureBossThicken]]`）
+        ⇒ ★★ **3 组（基准 / `direction=1` / 厚 5mm）全部返回 `None`**、树不动 ⚠
+      · 而★ **`pre` 同样完美**（每次 `solid = 0 · surface = 1`）✓
+      ⇒ ★★★ **故「废弃入口更顺」这个假设在这一条上**不成立****。
+
+    ★★★★★ **本条的完整总账（★ 那才是"写明依据"）**：
+      | 轮 | 入口 | 组数 | 结果 |
+      |---|---|---|---|
+      | 502 | `IFeatureManager.FeatureBossThicken`（7 参） | 1 | 全 `None` |
+      | 503 | 同上 | **7**（官方开关的主要组合） | 全 `None` |
+      | 504 | `IModelDoc2.FeatureBossThicken`（3 参 · Obsolete） | 3 | 全 `None` |
+      ⇒ ★★ **共 11 组 · 两条入口 · 前置每次完美（`solid=0 · surface=1`）** ⇒
+        ★ **「加厚」在本机是「静默不成」** —— ★★ 而**不是**「参数没找对」、
+        ★ 也**不是**「废弃入口反而顺」（★ 那条假设已否证）✓
+      证据：`output/thicken-surface-evidence.json` · `output/thicken-matrix-evidence.json` ·
+      `output/thicken-obsolete-entry-evidence.json`
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}

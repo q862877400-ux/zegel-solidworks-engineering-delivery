@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **86** 条能力。
+共 **87** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
 | `verified` | 74 | **有我们自己的运行证据**（`evidence` 非空） |
-| `stitched` | 11 | 已缝合，**缺我们自己的运行证据** |
+| `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 56 | **本项目自研**（护城河域等） |
+| `original` | 57 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -140,7 +140,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 
-### 4.1 未达 `verified` 的能力（12 条）
+### 4.1 未达 `verified` 的能力（13 条）
 
 | 能力 | `level` | `source` | 为什么还没到 `verified`（取 `limitations` 首条）|
 |---|---|---|---|
@@ -157,6 +157,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `topology_readback` | `stitched` | `original` | ★★ 2026-10-02（轮 383）**真机 7/8**：★ **读数与设参的 7 项全部真机通过**（★ 含 `set_goal` 的「设置生效」判据：`before_taken 0 → after_taken 1`）；★ **唯一不过的是 `set_topology_iteration_options`**，报 **`0x80010105`**（`com_error: (-21474178 |
 | `sheet_metal_creation` | `stitched` | `original` | ★★ 从 `sheet_metal` **拆出**（轮 275）：★ 那一条覆盖「钣金建模与展开」（含读数与展开），★ 而本族是**建的六个** |
 | `mold_parting_geometry` | `stitched` | `original` | ★★ 2026-10-03（轮 392）`insert_shut_off_surface` 已试三次（无孔 / 有孔 / 孔+分型线+分型面）⇒ 都回 true 而特征树不变 ⇒ ★ 穷尽式结论：不是缺前置，而是「没有可关的断面」（★ 假设：孔需穿过分型面）。★ 不再换条件试（事实 53）。★ 下一步只剩 `insert_core_cavity_solids` —— 它要一整条链（分离成型芯/型腔 |
+| `surface_thicken_silent_noop` | `stitched` | `original` | ★★ **实现层已按三源立好**（`sw_surface_features.thicken_surface_report` + `_solid_body_count` / `_surface_body_count`），★ 而**真机静默不成**（★ 11 组 · 两条入口 · 前置完美）⇒ ★ **按 A4 不登记成工具、不写 `verified`** —— **不假装做到**。 |
 
 ### 4.2 明确「不做」的（4 条，A1 的另一半）
 

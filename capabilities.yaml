@@ -3706,6 +3706,32 @@
         "★ **配合参考的实现层已真机建成，但未登记成工具**：它第 2 个形参 `PrimaryReferenceEntity` 是 **`IEntity`（COM 对象）**，★ `ToolSpec` 的 `Param` 只表达基本类型 ⇒ **表达不了**。★ 本仓既有做法是走**声明式选择器**（`selection` + `sw_selection_spec`）⇒ ★ 那一层要另加，**不假装塞一个 `str` 参数当实体**。",
         "★ **台账给的两条已废弃**：变量阵列（`InsertVaryInstanceIncrement`/`…Override`）与投影曲线（`InsertProjectedSketch2`）**都标 Obsolete**，继任者是 `IInstanceToVaryOptions` / `IProjectionCurveFeatureData` + **`CreateDefinition`** 那族（新架构）⇒ ★ 另列。"
       ]
+    },
+    {
+      "id": "surface_thicken_silent_noop",
+      "label": "加厚曲面（★ 真机**静默不成** —— 已单列）",
+      "level": "stitched",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建；依据为**官方三源**（`C:\\swapi\\types\\IFeatureManager\\FeatureBossThicken.md` + `IModelDoc2\\FeatureBossThicken.md` + 反射），见 `scripts/sw_surface_features.py` 的 `thicken_surface_report` 注释。",
+      "evidence": [
+        "★★ 2026-10-03（轮 502-504）**真机总账：共 11 组 · 两条入口 · 前置每次完美**——结果**全部 `None`、特征树不动、连错误都不报**：★ 轮 502：`IFeatureManager.FeatureBossThicken`（7 参）**1 组**；★ 轮 503：同上**7 组**（官方开关的主要组合）；★ 轮 504：**`IModelDoc2.FeatureBossThicken`（3 参 · Obsolete）**3 组。★ 而每次 `pre` 都是 **`solid = 0 · surface = 1`**（一张曲面体、零个实体）⇒ ★★ **前置没问题**。证据 `output/thicken-surface-evidence.json` · `output/thicken-matrix-evidence.json` · `output/thicken-obsolete-entry-evidence.json`。",
+        "★ **两个软件侧的事实**：① 官方参数表逐字写 `FaceIndex` ⇒ **「Not used」**（★ 故本包装**不收面索引** —— 收了是骗人）；② 形态与**事实 40**（`IModeler.Create*Surface` 返 `None` 而几何不变）**同族**：★ 「**静默不干活**」，**而不是**「报错说参数不对」。"
+      ],
+      "limitations": [
+        "★★ **实现层已按三源立好**（`sw_surface_features.thicken_surface_report` + `_solid_body_count` / `_surface_body_count`），★ 而**真机静默不成**（★ 11 组 · 两条入口 · 前置完美）⇒ ★ **按 A4 不登记成工具、不写 `verified`** —— **不假装做到**。",
+        "★ **已否证的假设**：「废弃入口在 pywin32 上反而更顺」（★ 轮 504 专门试了 `IModelDoc2` 那个 3 参版，结果同样全 `None`）。",
+        "⚠ **未查**：① 能否先 `knit` 成一张再加厚；② 能否对**实体表面**加厚（而不是曲面体）；③ 能否走 `CreateDefinition` 那新架构。"
+      ]
     }
   ]
 }
