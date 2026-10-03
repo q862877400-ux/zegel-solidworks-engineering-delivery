@@ -1,9 +1,9 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 69,
+  "已能": 70,
   "待查": 20,
-  "可攻关": 23,
+  "可攻关": 22,
   "待验证": 7
  },
  "by_toolbar_gap": {
@@ -12,7 +12,7 @@
   "草图绘制": 4,
   "草图尺寸": 1,
   "草图编辑": 3,
-  "曲面": 4
+  "曲面": 3
  },
  "items": [
   {
@@ -2133,6 +2133,7 @@
    "api": "InsertUntrimSurface",
    "entry": "",
    "level": "不能",
+   "capability_id": "surface_untrim",
    "api_iface_hits": [],
    "api_member_hits": [
     "InsertUntrimSurface"
@@ -2143,7 +2144,7 @@
    "implemented_hits": [
     "InsertUntrimSurface"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "曲面",

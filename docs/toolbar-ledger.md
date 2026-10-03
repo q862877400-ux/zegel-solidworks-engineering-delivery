@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 69 |
-| 可攻关 | 23 |
+| 已能 | 70 |
+| 可攻关 | 22 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -29,7 +29,6 @@
 | 曲面 | 删除孔 | **可攻关** | `InsertDeleteHole` | — |
 | 曲面 | 扫描曲面 | **可攻关** | `InsertProtrusionSwept4`, `Surface` | — |
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
-| 曲面 | 解除剪裁曲面 | **可攻关** | `InsertUntrimSurface` | — |
 | 特征 | 放样切除 | **可攻关** | `InsertCutBlend` | — |
 | 特征 | 边界切除 | **可攻关** | `InsertCutBlend` | — |
 | 特征下拉 | 填充阵列 | **可攻关** | `FeatureFillPattern` | — |
@@ -87,6 +86,7 @@
 | 曲面 | 替换面 | **已能** | — | — |
 | 曲面 | 等距曲面 | **已能** | `InsertOffsetSurface` | — |
 | 曲面 | 缝合曲面 | **已能** | `InsertSewRefSurface` | `sw_surface_features.knit_surfaces_report` |
+| 曲面 | 解除剪裁曲面 | **已能** | `InsertUntrimSurface` | — |
 | 特征 | 包覆 | **已能** | `InsertWrapFeature2` | `sw_wrap.create_wrap_report` |
 | 特征 | 参考几何体-基准轴 | **已能** | `InsertAxis2` | `sw_part.create_axis_report` |
 | 特征 | 圆角 | **已能** | `FeatureFillet` | `sw_part.fillet` |

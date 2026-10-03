@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **96** 条能力。
+共 **97** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 83 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 84 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 66 | **本项目自研**（护城河域等） |
+| `original` | 67 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -153,6 +153,14 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ③ 面(1) + 锚点(16) + 引导边(2) ⇒ **成** ✓
        ④ **只给面(1)**                ⇒ **不成** ✗
        ⇒ ★★ **故：`mark = 16`（锚点）是**必需的****—— ★ 四格里**只有带锚点的两格成** ✓` |
+| `surface_untrim` | · `★★ 2026-10-03（轮 558）**真机建成**（走 `sw_guard`，零弹窗）：★ **先造出一张真被剪裁过的曲面**（`PreTrimSurface` + 选 `SURFACEBODY` + `PostTrimSurface` —— 面数 8→7），★ **再选它的边 · `EdgeUntrimType = 2`** ⇒ **建成 `曲面-解除剪裁1`**（类型名 **`UnTrimRefSurf`**）。证据 `output/untrim-matrix-evidence.json`。`<br>· `★★★ **而根因是一组**六格矩阵**定下的—— ★ 六组里**只有一组成**：
+       ① 面 · Face=0(AllEdges)           ⇒ 不成
+       ② 面 · Face=1(InternalEdges)      ⇒ 不成
+       ③ 面 · Face=2(ExternalEdges)      ⇒ 不成
+       ④ **边 · Edge=1(ConnectEndPoints)** ⇒ 不成
+       ⑤ **边 · Edge=2(ExtendEdges)**     ⇒ **成** ✓
+       ⑥ 面 · BTrimOppositeSide=True  ⇒ 不成
+       ⇒ ★★ **故：必须选**边**，且 `EdgeUntrimType = 2`** ✓` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

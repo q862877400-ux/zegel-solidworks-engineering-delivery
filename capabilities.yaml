@@ -3964,6 +3964,32 @@
         "★ **`AccuracyFactor` 范围：10 ≥ 精度 ≥ 1**（1 = 最高）；★ 真机用 **4** 成。",
         "⚠ **本包装未接进 MCP 工具层**（★ 现为探针可调用）；⚠ 未查：`ShouldUseTears = True`、以及非可展开曲面的行为。"
       ]
+    },
+    {
+      "id": "surface_untrim",
+      "label": "解除剪裁曲面（`InsertUntrimSurface2`）—— ★ **真机建成**·★★ 关键：**选边 + `EdgeUntrimType=2`**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与枚举**立）：`C:\\swapi\\types\\IFeatureManager\\InsertUntrimSurface2.md`（**5 参**）；枚举取自反射：`swFaceUntrimType_e` 0/1/2 · `swEdgeUntrimType_e` **1 = ConnectEndPoints · 2 = ExtendEdges**。代码：`tools/prove_untrim_matrix.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 558）**真机建成**（走 `sw_guard`，零弹窗）：★ **先造出一张真被剪裁过的曲面**（`PreTrimSurface` + 选 `SURFACEBODY` + `PostTrimSurface` —— 面数 8→7），★ **再选它的边 · `EdgeUntrimType = 2`** ⇒ **建成 `曲面-解除剪裁1`**（类型名 **`UnTrimRefSurf`**）。证据 `output/untrim-matrix-evidence.json`。",
+        "★★★ **而根因是一组**六格矩阵**定下的—— ★ 六组里**只有一组成**：\n       ① 面 · Face=0(AllEdges)           ⇒ 不成\n       ② 面 · Face=1(InternalEdges)      ⇒ 不成\n       ③ 面 · Face=2(ExternalEdges)      ⇒ 不成\n       ④ **边 · Edge=1(ConnectEndPoints)** ⇒ 不成\n       ⑤ **边 · Edge=2(ExtendEdges)**     ⇒ **成** ✓\n       ⑥ 面 · BTrimOppositeSide=True  ⇒ 不成\n       ⇒ ★★ **故：必须选**边**，且 `EdgeUntrimType = 2`** ✓"
+      ],
+      "limitations": [
+        "★★ **前置两层**：① 得先有一张**真被剪裁过**的曲面（★ `PreTrimSurface` + `PostTrimSurface` 可造，面数 8→7）；② 选的是**边**。",
+        "⚠ **官方 Remarks 说 “face **or edges**”** —— ★ 而本机上**面那条路五个组合全败**（Face=0/1/2 与 BTrimOppositeSide=True）⚠ —— ★ 不碰它。",
+        "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：`Distance` 的有效范围。"
+      ]
     }
   ]
 }

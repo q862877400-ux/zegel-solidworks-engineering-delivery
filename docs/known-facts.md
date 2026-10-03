@@ -1867,3 +1867,18 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而**解除剪裁仍不成**（回 `None` · 树不动）—— ★ 而**现在的前置已是真被剪裁过的曲面**（面 7）⇒ ★ **故缺的不是前置** ✓
      ★ **下一步**：① 改选**边**（Remarks 说 “face **or edges**”）；② 换 `FaceUntrimType`/`EdgeUntrimType` 取值；③ 试 `BTrimOppositeSide`。
      ★★ **方法论**：★ 当一个能力“看不到效果”时，先问**它到底改了什么**（★ 数面数 / 体数那类**几何量**）—— ★ 而**不是只看树** ⚠ —— ★ **本轮就是那么发现剪裁曲面其实是起作用的**。|真机：`tools/prove_untrim_with_trimmed_surface.py`；证据 `output/untrim-with-trimmed-surface-evidence.json`；对照事实 406 / 407 / 415 / 433 |
+| 437 | **★★★ 解除剪裁曲面 = `InsertUntrimSurface2` + **选边** + `EdgeUntrimType = 2`**（★ 六格矩阵里**只有一组成**） —— 2026-10-03（轮 558）。
+     ★ 承事实 436（它把前置造对了、而收窄出三个可能）。
+     ★ 真机（`tools/prove_untrim_matrix.py`，零弹窗）—— ★ **六格矩阵**：
+     ```
+     ① 面 · Face=0(AllEdges)           ⇒ **不成**
+     ② 面 · Face=1(InternalEdges)      ⇒ **不成**
+     ③ 面 · Face=2(ExternalEdges)      ⇒ **不成**
+     ④ **边 · Edge=1(ConnectEndPoints)** ⇒ **不成**
+     ⑤ **边 · Edge=2(ExtendEdges)**     ⇒ **成** —— **`曲面-解除剪裁1`** · 类型 `UnTrimRefSurf` ✓
+     ⑥ 面 · BTrimOppositeSide=True  ⇒ **不成**
+     ```
+     ⇒ ★★ **故根因：必须选**边**（不是面），且 `EdgeUntrimType = 2`（ExtendEdges）** ✓
+     ★★★ **而它还纠了官方一句**：Remarks 逐字说 “requires preselection of the **face or edges**” —— ★ 而**本机上面那条路五个组合全败** ⚠ ⇒ ★ **官方说“两条都行”不等于本机两条都行**。
+     ★ **落地**：`capabilities.yaml` 新增 **`surface_untrim`**（level = **verified**，共 **97** 条）；台账「解除剪裁曲面」补 `capability_id` ⇒ **已能 70**。
+     ★★ **方法论**：★ 把“前置不够”**收窄成三个可能之后**，就该**一次把它们全试完**（★ 而不是一轮一个）—— ★ 而**六格矩阵里只有一组成**，那就是答案。|真机：`tools/prove_untrim_matrix.py`；证据 `output/untrim-matrix-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md` × 反射枚举 |
