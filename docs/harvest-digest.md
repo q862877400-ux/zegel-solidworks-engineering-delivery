@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **100** 条能力。
+共 **101** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 87 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 88 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 70 | **本项目自研**（护城河域等） |
+| `original` | 71 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -166,6 +166,11 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ★ 而与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **“切”会换类型名** 。` |
 | `surface_delete_hole` | · `★★ 2026-10-03（轮 564）**真机建成**（零弹窗）：在**一张真正的带孔平面**（面 1 / 环 2）上选**孔那圈边** ⇒ `InsertDeleteHoleForSurface()` ⇒ **名 `删除孔1`**·**型 `DelHole`**·★ **环Δ = −1**（孔被填上）✓` |
 | `sketch_line2` | · `★★ 2026-10-03（轮 565）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateLine2(-0.02,-0.01,0, 0.02,0.01,0)` ⇒ **草图段数 0 → 1**（★ 增 1）· 返回 `CDispatch`。证据 `output/createline2-and-createspline-evidence.json`。`<br>· `★★ **而负例与官方 Remarks 逐字对上**：★ **无活动草图**时调它 ⇒ **回 `None`**、草图段数**不可读（-1）** —— ★ 官方："If a sketch is **not active**, then the line is **not created and NULL is returned**" ✓` |
+| `feature_cosmetic_thread` | · `★★ 2026-10-03（轮 568）**真机建成**（走 `sw_guard`，零弹窗）：一个带圆孔的实体 · **选圆柱面的一条圆边** ⇒ `InsertCosmeticThread3(1, "", "", 0.008, 2, 0.0, "")` ⇒ **名 `装饰螺纹线1`** · **型 `CosmeticThread`**。证据 `output/cosmetic-thread-evidence.json`。`<br>· `★★★ **而根因是三格对照定下的**：
+       ★ 选**圆柱面的边**   ⇒ **成** ✓
+       ★ 选**圆柱面本身**   ⇒ 不成 ✗
+       ★ **什么都不选**     ⇒ 不成 ✗`<br>· `★★★ **而本轮又一次证明“失败在我这边”**：第一版我用 `str(Surface.Identity)` 里含 `"Cylinder"` 来**猜**哪个面是圆柱面 ⇒ ★ **三组全 `cyl=False`**（★ 根本没找到面）⚠；
+       ★ 而官方有现成的 **`ISurface.IsCylinder()`** ⇒ ★ 换成它之后**一次就成** ✓` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

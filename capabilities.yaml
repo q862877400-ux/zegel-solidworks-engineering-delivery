@@ -4067,6 +4067,33 @@
         "★ 2D 草图里 **Z 被忽略**（官方）。",
         "⚠ 本包装未接进 MCP 工具层；⚠ 工具层原本用的是 `ISketchManager.CreateLine`（★ **未废弃**）—— ★ **本条不替换它**，只记下继任者的真机证据。"
       ]
+    },
+    {
+      "id": "feature_cosmetic_thread",
+      "label": "螺纹线（`InsertCosmeticThread3`）—— ★ **真机建成**·★★ 前置：选**圆柱面的边**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与枚举**立）：`C:\\swapi\\types\\IFeatureManager\\InsertCosmeticThread3.md`（**7 参**，★ md **未标 `Obsolete`**）；枚举值取自反射（`swCosmeticStandardType_e`、`swCosmeticEndConditions_e`）。代码：`tools/prove_cosmetic_thread.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 568）**真机建成**（走 `sw_guard`，零弹窗）：一个带圆孔的实体 · **选圆柱面的一条圆边** ⇒ `InsertCosmeticThread3(1, \"\", \"\", 0.008, 2, 0.0, \"\")` ⇒ **名 `装饰螺纹线1`** · **型 `CosmeticThread`**。证据 `output/cosmetic-thread-evidence.json`。",
+        "★★★ **而根因是三格对照定下的**：\n       ★ 选**圆柱面的边**   ⇒ **成** ✓\n       ★ 选**圆柱面本身**   ⇒ 不成 ✗\n       ★ **什么都不选**     ⇒ 不成 ✗",
+        "★★★ **而本轮又一次证明“失败在我这边”**：第一版我用 `str(Surface.Identity)` 里含 `\"Cylinder\"` 来**猜**哪个面是圆柱面 ⇒ ★ **三组全 `cyl=False`**（★ 根本没找到面）⚠；\n       ★ 而官方有现成的 **`ISurface.IsCylinder()`** ⇒ ★ 换成它之后**一次就成** ✓"
+      ],
+      "limitations": [
+        "★★ **前置**：选**圆柱面的边**（★ 而**不是面**）。",
+        "★ **7 参**：`Standard`（**1 = ANSI Metric**）· `StandardType` · `Size` · `Diameter` · `EndType`（**2 = Through**）· `Depth`（仅 Blind 类有效）· `Note`。",
+        "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：Blind（`EndType=0`）与 `Depth` 的配合。"
+      ]
     }
   ]
 }

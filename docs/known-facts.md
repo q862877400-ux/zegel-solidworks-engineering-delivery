@@ -2033,3 +2033,18 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **下一步**：★ 换一条**不需 `AccessSelections`** 的路——★ 例如**只用 mark 预选 + `FaceArray` 属性**（★ 不调 `AccessSelections`）。
      ★ 而本轮**不登记能力**（★ 仍未建成）。
      ★★ **方法论**：★ 把 `AccessSelections` 插进去**不是为了“再试一次”**，★ 而是**去验证它到底是不是那个缺的步骤** —— ★ 而结果给出了**一条边界**（★ 而不只是“又不成”）。|真机：`tools/prove_projection_curve.py`；证据 `output/projection-curve-evidence.json`；对照事实 47 / 128 / 425 / 426 / 445 |
+| 447 | **★★★ 螺纹线 = `InsertCosmeticThread3`（7 参）· 前置 = 选**圆柱面的边****（★ 而不是面）；★ 而本轮又一次**失败在我这边** —— 2026-10-03（轮 568）。
+     ★ **静态已定**：签名 **7 参**，★ **md 未标 `Obsolete`**；两个枚举值取自**反射**：`swCosmeticStandardType_e`（**1 = ANSI Metric**）· `swCosmeticEndConditions_e`（**2 = Through**）。
+     ★ 真机（`tools/prove_cosmetic_thread.py`，零弹窗）—— ★ **三格对照**：
+     ```
+     选**圆柱面的边**  ⇒ **成** —— **`装饰螺纹线1`** · 型 **`CosmeticThread`** ✓
+     选**圆柱面本身**  ⇒ 不成 ✗
+     **什么都不选**    ⇒ 不成 ✗
+     ```
+     ⇒ ★★ **故：必须选**圆柱面的边**** ✓
+     ★★★ **而本轮最值钱的一条是“我怎么找那个面”**：
+       ★ 我第一版用 **`str(Surface.Identity)` 里含 `"Cylinder"`** 来**猜**哪个面是圆柱面 ⇒ ★ **三组全 `cyl=False`**（★ **根本没找到面**）⚠
+       ★ 而**官方有现成的一整族判形方法**：**`ISurface.IsCylinder()` · `IsCone()` · `IsPlane()` · `IsSphere()` · `IsTorus()` · `IsRevolved()` · `IsSwept()` · `IsBlending()`** —— ★ 换成 `face.GetSurface().IsCylinder()` 之后**一次就成** ✓
+     ★★ **方法论**：★ **“找一个某种面”之前，先问官方有没有**判形方法**** —— ★ 而**不是拿字符串去猜** ⚠（★ 那属于**编造**，★ 违反铁律 1）。
+     ★ 而这是本会话**第五次**“失败在我这边”（★ 事实 420 · 431 · 440 · 441 · 本条）。
+     ★ **落地**：`capabilities.yaml` 新增 **`feature_cosmetic_thread`**（level = **verified**，共 **101** 条）；台账「螺纹线」补 `capability_id` ⇒ **已能 75**。|真机：`tools/prove_cosmetic_thread.py`；证据 `output/cosmetic-thread-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertCosmeticThread3.md` × `ISurface\IsCylinder.md` × 反射枚举 |

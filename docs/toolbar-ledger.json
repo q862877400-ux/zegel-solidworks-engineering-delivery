@@ -166,7 +166,8 @@
    "zh": "螺纹线",
    "api": "InsertCosmeticThread3",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "feature_cosmetic_thread"
   },
   {
    "tb": "特征下拉",
