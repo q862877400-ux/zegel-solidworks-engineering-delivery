@@ -102,6 +102,15 @@ def main() -> int:
             row["verdict"] = "能" if row["built"] else "不能"
         except Exception as e:
             row["err"] = "%s: %s" % (type(e).__name__, str(e)[:130])
+            #: ★★★ 2026-10-03（轮 491）**补这一行** ——
+            #:   ⚠ 原来的异常分支**只写 `err`、没写 `verdict`**，而 `run()` 里
+            #:     `row["verdict"]` 是**无条件读**的 ⇒ ★★ 一旦 `act` 抛异常，
+            #:     **探针自己就 `KeyError: 'verdict'` 崩掉** ⚠
+            #:   ★★ 而它**看起来像"这条能力不行"**（★ 真机：`--only 4` 尺寸链，
+            #:     rc=1 · Traceback 落在 `run()` 里 · ★ 而 evidence 里**那条根本没进**）⚠
+            #:   ⇒ ★ 这正是本仓反复出现的那一类（★ 轮 473/479/486/487 都是）：
+            #:     **「失败」看着像能力问题，实际是我这边的判据 / 前置 / 探针** ✓
+            row["verdict"] = "不能"
         finally:
             if doc is not None:
                 try:
