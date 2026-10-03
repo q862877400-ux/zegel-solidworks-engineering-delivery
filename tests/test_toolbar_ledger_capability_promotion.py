@@ -40,12 +40,14 @@ def _load_funcs():
     """
     src = GEN.read_text(encoding="utf-8")
     tree = ast.parse(src)
-    want = {"promoted_by_capability", "tier"}
+    want = {"promoted_by_capability", "tier", "is_backend_limited"}
     fns = [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name in want]
     assert {f.name for f in fns} == want, "生成器里没找齐 %s" % sorted(want)
     mod = ast.Module(body=fns, type_ignores=[])
     ast.fix_missing_locations(mod)
-    ns: dict = {"VERIFIED_IDS": set()}
+    #: ★ 2026-10-03（轮 599）★ 第三个名字：`tier()` 的**第五桶**读模块级
+    #:   `_BACKEND_LIMITED_TOOLBARS` ⇒ ★ 与 `VERIFIED_IDS` 同理，**注入命名空间** ✓
+    ns: dict = {"VERIFIED_IDS": set(), "_BACKEND_LIMITED_TOOLBARS": set()}
     exec(compile(mod, str(GEN), "exec"), ns)          # noqa: S102
     return ns
 

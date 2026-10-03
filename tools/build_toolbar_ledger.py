@@ -66,6 +66,20 @@ def _load_backend_limited() -> tuple[set, dict]:
 _BACKEND_LIMITED_TOOLBARS, _BACKEND_LIMITED_MAP = _load_backend_limited()
 
 
+def is_backend_limited(item: dict, toolbars: set | None = None) -> bool:
+    """★ 这条台账条目是否落在「**已知后端到不了**」名单里。
+
+    ★★★ 2026-10-03（轮 599）★ **为什么做成模块级函数**：★ 它**原先是 `tier()` 里内联的一行**，
+      而 `tier()` 是 `main()` 里的**嵌套函数**、读的是**外层/模块级变量**
+      ⇒ ★ **抽出来单测就 `NameError`** ⚠ —— ★ **而那正是事实 549 那句的原话**
+      （★ 事实 549 记的就是同一处：`_VERIFIED` 那个外层变量让单测炸）。
+      ★ 而**这次是测试抓到的**（★ `test_negative_does_not_promote_when_capability_is_not_verified`）✓
+    ⇒ ★ 故照那次的做法：★ 做成**自洽的模块级函数** —— ★ 依赖**显式传入或自己加载**，★ 不靠闭包 ✓
+    """
+    names = _BACKEND_LIMITED_TOOLBARS if toolbars is None else toolbars
+    return str(item.get("zh") or "") in names
+
+
 def promoted_by_capability(item: dict, verified_ids: set | None = None) -> bool:
     """⇒ 这条台账条目是否该因 `capabilities.yaml` 而判「已能」。
 
@@ -248,7 +262,8 @@ def main() -> int:
             return "\u5f85\u67e5"
         #: \u2605\u2605 2026-10-03\uff08\u8f6e 599\uff09**\u7b2c\u4e94\u6876**\uff1a\u547d\u4e2d\u300c\u5df2\u77e5\u540e\u7aef\u5230\u4e0d\u4e86\u300d\u540d\u5355
         #:   \u2014\u2014 \u2605 \u4efb\u52a1\u4e66\uff1a\u90a3\u4e09\u65cf\u8981\u300c\u5199\u660e\u4f9d\u636e\u5e76**\u5355\u5217**\u300d\uff08\u2605 \u800c\u539f\u5148\u65e0\u5904\u53ef\u5355\u5217\uff09
-        if it.get("zh") in _BACKEND_LIMITED_TOOLBARS:
+        #: \u2605 \u6539\u8c03**\u6a21\u5757\u7ea7\u51fd\u6570**\uff08\u2605 \u800c\u4e0d\u662f\u5185\u8054 \u2014\u2014 \u2605 \u5426\u5219\u5355\u6d4b\u4f1a `NameError`\uff0c\u4e8b\u5b9e 549\uff09
+        if is_backend_limited(it):
             return "\u540e\u7aef\u5230\u4e0d\u4e86"
         #: ★★★ 轮 483 修掉那个盲点（★ 事实 379）：★ 原判据是 `not it.get("entry")`，
         #:   而 `entry` 是**手填的**、且**没人查它真不真** ⇒ ★ **假入口**
