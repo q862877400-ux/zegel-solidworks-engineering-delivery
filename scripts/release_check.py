@@ -702,6 +702,24 @@ def _run_member_name_gate() -> dict[str, object]:
 #: ★ 2026-10-03（轮 600）接进：**「后端到不了」名单必须写明依据**。
 #:   任务书逐字：那三族要「**写明依据并单列**」——
 #:   ★ 而轮 599 才刚把那个桶接进台账 ⇒ 名单内容还没人守（事实 40：没人查的桶等于没桶）。
+def _run_backend_limited_completeness_gate() -> dict[str, object]:
+    """跑名单**完整性**门禁（scripts/check_backend_limited_completeness.py）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_backend_limited_completeness.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "reason": f"检查**无法启动**（超时/OSError）: {exc}"}
+    return {
+        "status": "pass" if proc.returncode == 0 else "fail",
+        "output": (proc.stdout or "").strip()[-1500:],
+    }
+
+
 def _run_backend_limited_gate() -> dict[str, object]:
     """跑「后端到不了」名单的证据门禁（scripts/check_backend_limited_evidence.py）。"""
     try:
@@ -1034,6 +1052,11 @@ def run_release_check() -> dict[str, object]:
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
     #   事实 428 的 `InsertWeldmentCutList2` …）。
     #   ★ 接进来的理由（事实 40）：**存在但没人用的守卫，与没有守卫等价、且更糟**。
+    backend_full = _run_backend_limited_completeness_gate()
+    if backend_full.get("status") == "fail":
+        raise AssertionError(
+            "名单完整性门禁未通过（★ 该进「后端到不了」的漏了）：\n"
+            + str(backend_full.get("output", "")))
     backend_lim = _run_backend_limited_gate()
     if backend_lim.get("status") == "fail":
         raise AssertionError(
@@ -1279,6 +1302,7 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-03（轮 594）★ 同一道元门禁，★ **第二次**教了同一课
         "verified_evidence": verified_ev,
         "backend_limited": backend_lim,
+        "backend_limited_complete": backend_full,
         "workspace_shadowing": shadowing,
         "gate_wiring": wiring,
         "param_binding": param_binding,

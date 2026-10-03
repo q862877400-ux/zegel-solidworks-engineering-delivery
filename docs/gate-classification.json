@@ -186,6 +186,12 @@
       "runner": "_run_backend_limited_gate",
       "kind": "hard",
       "reason": "**硬门禁**：任务书逐字——那三族要「**写明依据并单列**」。★ 判据：`docs/backend-limited-items.json` 的**每一条**必须\n       ① `toolbar`/`member`/`where`/`section` **四个字段非空**；② **至少一个 `facts` 编号**；③ **`section` 引的小节真存在于 `docs/toolbar-gaps-backend-limits.md`**。\n★ 而**名单不能是空的**（★ 空名单 = 什么都没单列，与任务书矛盾）。\n★★ **而它第一次跑就找出 6 处**：两条缺 `facts`、四条的 `section` 指不到真小节\n       ⇒ ★ 而修的时候**发现 `### 2.3` 从没建过**（★ 轮 130 那次 edit 失败了）⇒ **把它建了出来** ✓\n★ 它**自己有负例自证**：`tests/test_backend_limited_evidence_gate.py`（**6 passed**）。⚠ **覆盖边界**：只查**名单里那几条**的字段与指向 —— ★ 过了它**不等于依据本身成立**。"
+    },
+    {
+      "gate": "check_backend_limited_completeness.py",
+      "runner": "_run_backend_limited_completeness_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：名单的**完整性**—— ★ 补上一道的缺口（事实 475）：上一道**只查名单**内部**（字段齐不齐、依据指得到吗），\n       ★ **而不查“该在名单里的漏了没”** —— ★ 而轮 601 实测：**「草图驱动的阵列」就漏在「可攻关」里**。\n★ 判据（★ 静态、取自全接口索引）：台账里 `tier == \"可攻关\"` 而 `api` 提到一个**带 `AccessSelections` 的 `*FeatureData`**\n       ⇒ ★ **疑似该进名单**。★ 另有**提示级**：`api` 的名字全接口都查不到（★ 铁律 5）。\n★ **便携性**：接口目录（`C:\\swapi\\types`）不在 ⇒ **SKIP 并 exit 0**。\n★ 它**自己有负例自证**：`tests/test_backend_limited_completeness_gate.py`（**4 passed**；★ 而那个测试**曾经成功地把我的第一版判据否掉**—— ★ 因为它当时**只能注入谓词、注入不了台账**）。"
     }
   ]
 }
