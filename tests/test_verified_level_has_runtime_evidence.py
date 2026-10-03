@@ -70,7 +70,20 @@ def _caps() -> list:
 #:       **`verified: True` 配 `readback_value: None`**（★ 两者矛盾）⇒
 #:       ★★★ **未定性 ⇒ 仍留在账上**（★ 按铁律 5：★ 未核不写成通过）✓
 #:     · ★★★ `autocad_script_backend` ⇒ ★ **口径问题**（★ 非 SolidWorks 线）✓
-BASELINE = 2
+#:   ★★★★ **2026-10-04（接手轮）真机补掉了 `custom_properties_and_bom`** ——
+#:     · ★ `python tools/sw_guard.py --timeout 300 -- python tools/probe_a4_custom_properties.py`
+#:       ⇒ ★ `sw_alive: true` · ★ **零弹窗** · ★ 1.72 s ·
+#:       ★ `service_ok: **true**` · ★★ **`independent_ok: **true**`**（★ **两层独立** ——
+#:       ★ 不借被测者自己的回读）✓
+#:     · ★★ **并更正了上面那条旧读数**：★ 轮 55 那个 `readback_value: None` **是**探针的错****
+#:       （★ 它取 `readback.get("value")`、★ 而 `read_custom_property` 回的键是 **`raw`**）⇒
+#:       ★★★ **能力层一直是对的** ✓
+#:       ★★★★ **而那正是**事实 517** 那一族的判据：★ 「我读错了」与「能力坏了」长得一模一样** ✓
+#:   ★★★★★ **⇒ 现在只剩 `autocad_script_backend` 一个** —— ★ 而它**不是 SolidWorks 线**：
+#:     它的 `limitations` 逐字「★ **本条不挂 SolidWorks 工具**…是 **AutoCAD SCR / AutoLISP
+#:     白名单命令桥**（★ **另一条产品线**）」⇒ ★★ **A4 的「我们自己的运行证据」对它应是
+#:     **AutoCAD 运行**** ✓ ⇒ ★★★ **所以 SolidWorks 线的 `verified` 已**全部满足**** ✓
+BASELINE = 1
 
 
 def _cap_text(cap: dict) -> str:

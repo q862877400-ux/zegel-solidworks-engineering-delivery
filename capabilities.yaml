@@ -690,7 +690,8 @@
         "reviewed"
       ],
       "evidence": [
-        "pytest tests/test_cad_reliability.py（自定义属性与 BOM）"
+        "pytest tests/test_cad_reliability.py（自定义属性与 BOM ⇒ ★⚠ **那是形状检查、不是运行证据** —— ★ 见下条）",
+        "★★★★ **真机运行证据（★ 2026-10-04 补 —— 这才是 A4 要的那一条）**：`python tools/sw_guard.py --timeout 300 -- python tools/probe_a4_custom_properties.py` ⇒ ★ `sw_alive: true` · ★ **零弹窗** · ★ 1.72 s · ★ 证据文件 `output/a4-custom-properties-evidence.json` ✓ ★★ **判据是**两层独立**（★ 不能只信被测者自己的回读）**：★ ① `set_custom_properties` 自报的 `verified` 全 `True`（★ `service_ok: true`）；★★ ② **本探针独立再调一次 `read_custom_property`**、逐条等于所写（★ `independent_ok: true`）✓ ★★★ **逐字读数**：★ 写 `{A4_探针_甲: alpha, A4_探针_乙: beta, A4_探针_丙: gamma}` ⇒ 三条 `verified: True` · `raw` 分别是 `alpha` / `beta` / `gamma` · `exists: true` · `status: 2` ✓ ★★★★ **并更正一条旧读数**：★ 轮 55 那次探针记的 `readback_value: None` **是**探针的错**（★ 它取 `readback.get(\"value\")`、★ 而 `read_custom_property` 回的键是 **`raw`**）—— ★ **能力层一直是对的** ✓（★ 旧探针按「`tools/` 只报不动」原样保留，★ 它那次读数作为历史证据仍然有效）✓"
       ],
       "source": "upstream",
       "source_evidence": "scripts/sw_document_data.py 在 origin/main（自定义属性读写的实现）",
