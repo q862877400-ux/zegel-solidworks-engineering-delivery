@@ -1308,3 +1308,20 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 已写进实现层：`scripts/sw_surface_features.py` 的 `cut_surface_report`（★ 带**两条路的 `attempts`** 记录，★ 而不是只报最后一个错）；证据 `output/cut-surface-evidence.json`；探针 `tools/prove_cut_surface.py`。
      ★ **按事实 53 停手**（这一处已 3 次）—— ★ 而把这条**错码链留下**。
      ★★ **方法论：一个“参数形态”问题，它的错码会随参数变化 —— ★ 故**逐步把错码记下来**，比只记最后一个有信息量。**|真机：`tools/prove_cut_surface.py`；证据 `output/cut-surface-evidence.json`；对照事实 390 / 397 / 401 |
+| 403 | **★★★ 一个“参数个数”问题的**正解是“5 in + 中间那个 out”**（★ 而**末尾那个不传**）** —— 2026-10-03（轮 522），对象 = `IFeatureManager.InsertCutSurface`。
+     ★ 上一轮（事实 402）留下的推论是「`Bodies` 那个位置该是 `VARIANT`」。
+     ★ 本轮**先否证了它**：五种 `Bodies` 形态（Python `list` · `VARIANT(VT_ARRAY\|VT_DISPATCH, [])` · `VARIANT(VT_ARRAY\|VT_VARIANT, [])` · `None`）**逐字相同**地报 `无效的参数数目` ⇒ ★ **`Bodies` 的形态不是原因**。
+     ★ 于是把问题**收窄回“个数”**（★ 两个错码把它**夹住**：5 参 ⇒ `非选择性的参数`、7 参 ⇒ `无效的参数数目`）⇒ ★ **去试**中间那个数**。
+     ★ 真机（五组 **6 参**，鲋头对准“哪个位置是 out”）：
+     ```
+     6 参 flip,keep,scope,auto,bodies,**error**   ⇒ **回 `None`（★ 无错！）** · 特征树不动
+     6 参 flip,keep,scope,auto,bodies,retval  ⇒ 类型不匹配（位置 6）
+     6 参 flip,keep,scope,auto,error,retval   ⇒ 类型不匹配（位置 6）
+     6 参 flip,keep,scope,bodies,error,retval ⇒ 类型不匹配（位置 4）
+     6 参 keep,scope,auto,bodies,error,retval ⇒ 类型不匹配（位置 4）
+     ```
+     ⇒ ★★ **唯一不报错的形态是「5 in + `Error`」** ⇒ ★★★ **故正解：`arity = 6`（5 in + `Error` out），★ 而**末尾那个 `Retval` 不传**。**
+     ★ 而它**与事实 397 一致**：类型库的 arity **含末尾 out** ⇒ pywin32 侧**不传它**。
+     ⚠ 而我上轮试 **7 参**是**多传了一个**。
+     ★ **现状**：**调用层已经通了**（★ 从“报错”变成“回 `None`”），而特征还没建 ⇒ ★ 剩下的是**前置**（★ 或那个 `None` 属于事实 391 那类静默）。
+     ★★ **方法论（值得复用）**：当**两个错码一个说“少了”、一个说“不对”时 —— ★ **去试它们中间的那个数**；★ 并用**鲋头对准“哪个位置是 out”**的组合去分辨。|真机：`tools/probe_cut_surface_bodies.py`；证据 `output/cut-surface-bodies-evidence.json`；对照事实 390 / 397 / 402 |
