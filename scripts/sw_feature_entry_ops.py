@@ -147,5 +147,107 @@ def insert_cosmetic_thread(model, *, standard: int = STD_ANSI_METRIC, standard_t
     return out
 
 
-__all__ = ["insert_cosmetic_thread", "find_cylindrical_face",
+__all__ = ["insert_cosmetic_thread", "create_flatten_surface", "find_cylindrical_face",
            "STD_ANSI_METRIC", "END_TYPE_BLIND", "END_TYPE_THROUGH"]
+
+
+#: ★ `GetBodies2` 的 `Type` 参数：★ 0 = 实体体 · **1 = 曲面体**（★ 展平要的是**曲面体**）
+_BODY_TYPE_SURFACE = 1
+_BODY_TYPE_SOLID = 0
+
+
+def create_flatten_surface(model, *, accuracy_factor: int = 4, should_use_tears: bool = False,
+                           body_type: str = "surface") -> dict:
+    """★ **曲面展平**：`IFeatureManager.InsertFlattenSurface2(AccuracyFactor, ShouldUseTears)`（**2 参**）。
+
+    ★★ **官方前置（台账 `surface_flatten.limitations` 逐字）**：必须选中 **面（mark = 1）** 与
+      **锚点（mark = 16）**；★ 另可选 **2 = 引导边** · **4 = 映射边** · **8 = 撕裂边**。
+      ★ 本函数**自己选**（★ 调用方不必先选）：取**曲面体的第一张面**按 `mark=1`，
+      再取**该体第一条边的一个顶点**按 `mark=16`（★ 与那次建成的探针同一手法）。
+    ★ **`AccuracyFactor` 范围（台账逐字）：10 ≥ 精度 ≥ 1**（1 = 最高）；★ **真机用 4 成**。
+    ★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 真机建成时是 **`FlattenSurface`**、
+      名 `曲面-展平1`）。
+    ★ `body_type="surface"` ⇒ 取 **`GetBodies2(1, …)`**（曲面体）；`"solid"` ⇒ 取 `GetBodies2(0, …)`。
+      ★ 取不到时**如实报** `preconditions_held=False`（★ 曲面展平需要一个**曲面体**）。
+    """
+    if model is None:
+        return {"ok": False, "op": "create_flatten_surface", "error": "model 为 None"}
+    btype = _BODY_TYPE_SURFACE if str(body_type).lower().startswith("surf") else _BODY_TYPE_SOLID
+    try:
+        get_com_member(model, "ClearSelection2", True)
+    except Exception:                                                   # noqa: BLE001
+        pass
+    try:
+        bodies = list(get_com_member(model, "GetBodies2", btype, True) or [])
+    except Exception as exc:                                            # noqa: BLE001
+        return {"ok": False, "op": "create_flatten_surface",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    out = {"op": "create_flatten_surface", "body_type": "surface" if btype else "solid",
+           "body_count": len(bodies), "accuracy_factor": int(accuracy_factor),
+           "should_use_tears": bool(should_use_tears),
+           "official_marks": "面=1 · 锚点=16 · 引导边=2 · 映射边=4 · 撕裂边=8（官方 Remarks 逐字）",
+           "verified_by": "特征树新增 + 返回对象 GetTypeName2（★ 真机建成时为 FlattenSurface）"}
+    if not bodies:
+        out["ok"] = False
+        out["preconditions_held"] = False
+        out["error"] = ("★ 前置未成立：`GetBodies2(%d, True)` 回空 ⇒ ★ 该文档**没有%s体**"
+                        % (btype, "曲面" if btype else "实体"))
+        return out
+    body = bodies[0]
+    faces = list(get_com_member(body, "GetFaces") or [])
+    if not faces:
+        out["ok"] = False
+        out["preconditions_held"] = False
+        out["error"] = "★ 前置未成立：那个体**取不到面**"
+        return out
+    try:
+        import scripts.sw_part as SP
+        if not SP._select_com_object(faces[0], append=False, mark=1):
+            out["ok"] = False
+            out["preconditions_held"] = False
+            out["error"] = "★ 前置未成立：面**没按 mark=1 选上**"
+            return out
+    except Exception as exc:                                            # noqa: BLE001
+        out["ok"] = False
+        out["preconditions_held"] = False
+        out["error"] = "★ 前置未成立：选面抛错 %s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    got_anchor = False
+    for edge in list(get_com_member(body, "GetEdges") or [])[:1]:
+        for memo in ("GetStartVertex", "GetEndVertex"):
+            try:
+                v = get_com_member(edge, memo)
+                if v is not None and SP._select_com_object(v, append=True, mark=16):
+                    got_anchor = True
+                    break
+            except Exception:                                           # noqa: BLE001
+                continue
+        if got_anchor:
+            break
+    out["anchor_selected"] = got_anchor
+    if not got_anchor:
+        out["ok"] = False
+        out["preconditions_held"] = False
+        out["error"] = ("★ 前置未成立：**锚点（mark=16）没选上** —— ★ 而台账逐字记着"
+                        "「面-only（mark=1）**不够**」⇒ ★ 这正是那一格失败的原因")
+        return out
+    out["preconditions_held"] = True
+    before = _feature_names(model)
+    try:
+        ret = get_com_member(get_com_member(model, "FeatureManager"), "InsertFlattenSurface2",
+                             int(accuracy_factor), bool(should_use_tears))
+    except Exception as exc:                                            # noqa: BLE001
+        out["ok"] = False
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        return out
+    after = _feature_names(model)
+    out["ret_is_none"] = ret is None
+    for k, memo in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
+        try:
+            out[k] = str(get_com_member(ret, memo))
+        except Exception:                                               # noqa: BLE001
+            pass
+    if before is not None and after is not None:
+        out["new_features"] = [n for n in after if n not in before]
+    out["ok"] = bool(out.get("ret_type") == "FlattenSurface" or out.get("new_features"))
+    return out

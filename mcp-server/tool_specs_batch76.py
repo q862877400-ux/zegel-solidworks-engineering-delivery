@@ -88,5 +88,34 @@ _BATCH76.append(
     )
 )
 
+#: ★★ **第 3 条：曲面展平** —— ★ 同形态（真机已建成过、代码只在探针里）
+_BATCH76.append(
+    ToolSpec(
+        name="solidworks_flatten_surface",
+        title="Flatten Surface (face mark=1 + anchor mark=16)",
+        module=_MODULE, function="create_flatten_surface",
+        inject="model",
+        params=[
+            Param("accuracy_factor", int, description="精度因子（官方第 1 参）：**10 ≥ 精度 ≥ 1**（1 = 最高）；"
+                                                      "★ 真机用 **4** 成（台账逐字）。"),
+            Param("should_use_tears", bool, description="是否使用撕裂（官方第 2 参）—— ★ 台账标注**未查**，"
+                                                        "★ 本工具原样透传。"),
+            Param("body_type", str, description="`surface`（默认，取 `GetBodies2(1, …)` 曲面体）"
+                                                "或 `solid`（取 `GetBodies2(0, …)`）。"),
+        ],
+        doc="★ **曲面展平**：`IFeatureManager.InsertFlattenSurface2(AccuracyFactor, ShouldUseTears)`（**2 参**）。"
+            "★★★ **官方前置（台账逐字）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）**；"
+            "★ 另可选 2 = 引导边 · 4 = 映射边 · 8 = 撕裂边。"
+            "★★ 台账还逐字记着那组**四格对照**的结论：「**面-only（mark=1）不够**」"
+            "⇒ ★ 本工具**自己两个都选**（面按 1、该体第一条边的一个顶点按 16）；"
+            "★ 锚点没选上时**如实报** `preconditions_held=False` 并**指明**那正是失败原因。"
+            "★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 真机建成时是 **`FlattenSurface`**、"
+            "名 `曲面-展平1`）。"
+            "★★ **真机证据（探针级）**：`output/flatten-with-anchor-evidence.json`"
+            "（2026-10-03 轮 556，走 `sw_guard`、零弹窗）。"
+            "⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。",
+    )
+)
+
 #: ★ 注册器按 `SPECS_*` 找
 SPECS_BATCH76 = _BATCH76
