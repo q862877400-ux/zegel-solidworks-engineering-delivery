@@ -110,10 +110,16 @@ _BATCH75: list[ToolSpec] = [
         params=[
             Param("format_path", str, description="图纸格式文件路径（`.slddrt`）。"),
         ],
-        doc="★ **图纸格式/模板**：`SetupSheet6`。"
-            "★ 真机证据：返回真 **且** 图纸信息回读真的变了（证据 JSON 的 A1 格）。"
-            "★ 官方 Remarks 逐字：调完要 `ForceRebuild3` 才刷新第一角/第三角投影（★ 底层已处理）。"
-            "★ 官方 Returns 逐字：换 `TemplateName` 会同时更新图纸格式。",
+        doc="★ **图纸格式/模板**：**`ISheet.SetTemplateName(String NameIn)`**（官方 **`void`、未废弃**）。"
+            "★★ **为什么不是 `SetupSheet6`**（★ 本 doc 原先写的是它，2026-10-03 更正）："
+            "`ISheet.SetTemplateName` 才是**换图框**的成员；`SetupSheet6` 是用来**新建/重置图纸**的"
+            "（17 参）—— ★ 两者不是一件事。"
+            "★★★ **而真机踩过一个坑**：能力层原先是 `sheet = GetCurrentSheet(); sheet.SetTemplateName(p)`"
+            "（**直接属性访问**）⇒ 经工具层报 **`com_error: 找不到成员`**；"
+            "★ 定点诊断（`output/_diag_sheetfmt.json`）证明**同一个成员、同一个对象**用 `get_com_member` "
+            "就成功（返回 `None` = `void` 成功）⇒ ★ 是**通道**问题、不是名字问题（known-facts 499）。"
+            "★ 官方 Remarks 逐字：调完要 `ForceRebuild3` 才刷新第一角/第三角投影（★ 现已在能力层里补上）。"
+            "★ 判据：`SetTemplateName` 回 `None` **且** `GetTemplateName` 回读等于新路径。",
     ),
     ToolSpec(
         name="solidworks_drawing_add_note",

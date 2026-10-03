@@ -37,31 +37,20 @@ END_TYPE_THROUGH = 2         #: `EndType`：2 = Through
 
 
 def _feature_names(model):
-    """★ 读特征树的名字表（★ 取不到回 None —— **降级，不猜空表**）。"""
+    """★ 读特征树的名字表 —— ★★ **委托给仓内规范助手**，不自己走树。
+
+    ★★ **为什么改（2026-10-03 接手轮，自查发现）**：本函数**原来自己走**
+      `GetFeatureTreeRootItem2` → `GetFirstChild`/`GetNext` → `GetFeature`，
+      ★ 而真机跑下来它**回一个不完整的表** —— 证据：`tools/probe_flatten_tool.py` 里
+      `ret_type` 明明是 **`FlattenSurface`**、`ret_name` 是 **`曲面-展平1`**，
+      ★ 而 `new_features` 却是 **`[]`** ⇒ ★ 那说明"**树增量**"这条判据在本模块里**是假的**
+      （★ 本格的 `ok` 是靠 `ret_type` 成立的，不是靠树）。
+    ★ 修法：**委托** `scripts/sw_feature_readback.feature_names`（★ 仓内规范实现）。
+    ★ **取不到回 `None`**（★ **降级，不猜空表** —— ★ 否则"没读到"会被当成"没变化"）。
+    """
     try:
-        fm = get_com_member(model, "FeatureManager")
-        f = get_com_member(fm, "GetFeatureTreeRootItem2", 0)
-        out = []
-
-        def walk(item, depth=0):
-            if item is None or depth > 6:
-                return
-            try:
-                fobj = get_com_member(item, "GetFeature")
-                if fobj is not None:
-                    out.append(str(get_com_member(fobj, "Name") or ""))
-            except Exception:                                           # noqa: BLE001
-                pass
-            try:
-                child = get_com_member(item, "GetFirstChild")
-                while child is not None:
-                    walk(child, depth + 1)
-                    child = get_com_member(child, "GetNext")
-            except Exception:                                           # noqa: BLE001
-                pass
-
-        walk(f)
-        return out
+        from scripts import sw_feature_readback as FR
+        return list(FR.feature_names(model) or [])
     except Exception:                                                   # noqa: BLE001
         return None
 
@@ -147,8 +136,101 @@ def insert_cosmetic_thread(model, *, standard: int = STD_ANSI_METRIC, standard_t
     return out
 
 
-__all__ = ["insert_cosmetic_thread", "create_flatten_surface", "find_cylindrical_face",
+__all__ = ["insert_cosmetic_thread", "create_flatten_surface", "thicken_surface",
+           "find_cylindrical_face",
            "STD_ANSI_METRIC", "END_TYPE_BLIND", "END_TYPE_THROUGH"]
+
+
+def thicken_surface(model, *, thickness_mm: float, cut: bool = False, direction: int = 0,
+                    fill_volume: bool = False, merge: bool = True, use_feat_scope: bool = True,
+                    use_auto_select: bool = True) -> dict:
+    """★ **加厚 / 加厚切除** —— ★★ **两个都未废弃的直入成员**（★ 这是 R4「换名重查」的产出）。
+
+    ★★★ **为什么是这两个成员**（★ 都逐字读过官方页，见 `recon/r4-e-class-rename-lookup.md`）：
+      · ✓ **未废弃**：`IFeatureManager.FeatureBossThicken`（**7 参**）·
+        `IFeatureManager.FeatureCutThicken`（**6 参**）
+      · ⛔ **废弃**：`IModelDoc2.FeatureBossThicken{,2}` / `FeatureCutThicken{,2}`
+        （`FeatureBossThicken2` 头顶逐字：`Superseded by [[IFeatureManager::FeatureBossThicken]].`）
+      · ★ 另一族 `IModeler.ThickenSheet` 造的是**片体**、**不是特征** ⇒ **不当入口**。
+    ★★ **官方前置（Remarks 逐字）**：
+      · 「by thickening a **selected reference surface**. **The surface must be selected with a mark of 1.**」
+      · 「If **FillVolume** is true, **other arguments are ignored**. A **closed surface is required**
+        when FillVolume is true.」
+      · （切减）「When **UseAutoSelect is false**, the user must **select the bodies** that the feature
+        will affect.」
+      ⇒ ★ 本函数**自己把第一张面按 `mark=1` 选上**（★ 与展平那条同一手法），★ 选不上就**如实报前置**。
+    ★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`。
+    ★ `thickness_mm` 对外收**毫米** ⇒ ★ **只在边界换算一次**（COM 吃**米**）。
+    ⚠ **未真机验证**（★ 由 `tools/probe_thicken_tool.py` 单独验，★ 在那之前不许写 `verified`）。
+    """
+    if model is None:
+        return {"ok": False, "op": "thicken_surface", "error": "model 为 None"}
+    kind = "FeatureCutThicken" if cut else "FeatureBossThicken"
+    out = {"op": "thicken_surface", "member": kind, "thickness_mm": float(thickness_mm),
+           "cut": bool(cut), "fill_volume": bool(fill_volume),
+           "official_precondition": "参考面必须按 **mark=1** 选中（官方 Remarks 逐字）",
+           "verified_by": "特征树新增 + 返回对象 GetTypeName2"}
+    try:
+        get_com_member(model, "ClearSelection2", True)
+    except Exception:                                                   # noqa: BLE001
+        pass
+    #: ★ 找一张**参考面**：先试**曲面体**（加厚曲面的常见情形），再退到实体体的面
+    face = None
+    for btype in (_BODY_TYPE_SURFACE, _BODY_TYPE_SOLID):
+        for body in list(get_com_member(model, "GetBodies2", btype, True) or []):
+            faces = list(get_com_member(body, "GetFaces") or [])
+            if faces:
+                face, out["body_type"] = faces[0], ("surface" if btype else "solid")
+                break
+        if face is not None:
+            break
+    if face is None:
+        out["ok"] = False
+        out["preconditions_held"] = False
+        out["error"] = ("★ 前置未成立：**找不到可作参考的面**（曲面体与实体体都取不到面）"
+                        "⇒ 官方 Remarks 要求先有一张**参考面**并给 `mark=1`")
+        return out
+    try:
+        import scripts.sw_part as SP
+        if not SP._select_com_object(face, append=False, mark=1):
+            out["ok"] = False
+            out["preconditions_held"] = False
+            out["error"] = "★ 前置未成立：参考面**没按 `mark=1` 选上**"
+            return out
+    except Exception as exc:                                            # noqa: BLE001
+        out["ok"] = False
+        out["preconditions_held"] = False
+        out["error"] = "★ 前置未成立：选面抛错 %s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    out["preconditions_held"] = True
+    fm = get_com_member(model, "FeatureManager")
+    before = _feature_names(model)
+    thick_m = float(thickness_mm) / 1000.0                              #: ★ 规则 2：换算只此一次
+    try:
+        if cut:
+            #: ★ `FeatureCutThicken(Thickness, Direction, FaceIndex, FillVolume, UseFeatScope, UseAutoSelect)`
+            ret = get_com_member(fm, kind, thick_m, int(direction), 0, bool(fill_volume),
+                                 bool(use_feat_scope), bool(use_auto_select))
+        else:
+            #: ★ `FeatureBossThicken(Thickness, Direction, FaceIndex, FillVolume, Merge,
+            #:   UseFeatScope, UseAutoSelect)`
+            ret = get_com_member(fm, kind, thick_m, int(direction), 0, bool(fill_volume),
+                                 bool(merge), bool(use_feat_scope), bool(use_auto_select))
+    except Exception as exc:                                            # noqa: BLE001
+        out["ok"] = False
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        return out
+    after = _feature_names(model)
+    out["ret_is_none"] = ret is None
+    for k, memo in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
+        try:
+            out[k] = str(get_com_member(ret, memo))
+        except Exception:                                               # noqa: BLE001
+            pass
+    if before is not None and after is not None:
+        out["new_features"] = [n for n in after if n not in before]
+    out["ok"] = bool(out.get("new_features") or out.get("ret_type"))
+    return out
 
 
 #: ★ `GetBodies2` 的 `Type` 参数：★ 0 = 实体体 · **1 = 曲面体**（★ 展平要的是**曲面体**）

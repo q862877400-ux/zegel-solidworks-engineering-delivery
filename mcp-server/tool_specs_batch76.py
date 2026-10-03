@@ -117,5 +117,40 @@ _BATCH76.append(
     )
 )
 
+#: ★★ **第 4 条：加厚 / 加厚切除** —— ★★★ **本条的成员名与前置来自 R4「E 类换名重查」的产出**
+#:   （`recon/r4-e-class-rename-lookup.md`）⇒ ★ 两个都**未废弃**、官方 Remarks 给了明确前置。
+_BATCH76.append(
+    ToolSpec(
+        name="solidworks_thicken", 
+        title="Thicken / Thicken Cut (FeatureBossThicken | FeatureCutThicken)",
+        module=_MODULE, function="thicken_surface",
+        inject="model",
+        params=[
+            Param("thickness_mm", float, description="厚度（**毫米**）—— ★ 官方 `Thickness` 是 `System.double`，"
+                                                     "★ 本工具收毫米、**只在边界换算一次**（COM 吃米）。"),
+            Param("cut", bool, description="True = **加厚切除**（`FeatureCutThicken`）；"
+                                           "False = **加厚凸台**（`FeatureBossThicken`）。"),
+            Param("direction", int, description="方向（官方 `Direction`）。"),
+            Param("fill_volume", bool, description="★ 官方逐字：「If FillVolume is true, **other arguments are "
+                                                   "ignored**. A **closed surface is required** when FillVolume is true.」"),
+            Param("merge", bool, description="★ **仅加厚凸台**有此参（官方 `Merge`）。"),
+            Param("use_feat_scope", bool, description="官方 `UseFeatScope`。"),
+            Param("use_auto_select", bool, description="★ 官方（切减）逐字：「When `UseAutoSelect` is **false**, "
+                                                       "the user must **select the bodies** that the feature will affect.」"),
+        ],
+        doc="★ **加厚 / 加厚切除**：**`IFeatureManager.FeatureBossThicken`（7 参）** / "
+            "**`IFeatureManager.FeatureCutThicken`（6 参）** —— ★★ **两个都未废弃**。"
+            "★★★ **为什么是这两个成员**（★ 本条的来历）：`IModelDoc2` 那份**同名**成员已废弃"
+            "（`FeatureBossThicken2` 头顶逐字：`Superseded by [[IFeatureManager::FeatureBossThicken]].`），"
+            "★ 而另一族 `IModeler.ThickenSheet` 造的是**片体、不是特征** ⇒ ★ 入口只有这两个。"
+            "★★ **官方前置（Remarks 逐字）**：参考面**必须按 `mark=1` 选中**；"
+            "`FillVolume=true` 时**其余参数被忽略**、且**必须闭合曲面**；切减时 `UseAutoSelect=false` "
+            "要**先选实体** ⇒ ★ 本工具**自己把第一张面按 `mark=1` 选上**，选不上就**如实报前置**。"
+            "★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 两条都报）。"
+            "⚠ **尚未真机验证**（★ 由 `tools/probe_thicken_tool.py` 单独验）⇒ "
+            "★ 在那之前不许把它写成 `verified`。",
+    )
+)
+
 #: ★ 注册器按 `SPECS_*` 找
 SPECS_BATCH76 = _BATCH76
