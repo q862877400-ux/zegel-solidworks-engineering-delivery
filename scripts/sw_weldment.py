@@ -497,6 +497,35 @@ def _create_from_definition(model, fm_type: int, apply_definition):
     feature = get_com_member(manager, "CreateFeature", data)
     if feature is None:
         raise RuntimeError(f"CreateFeature({fm_type}) 创建失败")
+    # ── 来源 ─────────────────────────────────────────────────────────
+    # 仓库:   SolidWorks 官方 API（`C:\swapi`，三源之一）+ 本项目既有模式
+    # 文件:   C:\swapi\types\IFeature\GetErrorCode.md
+    #           → 逐字「**Obsolete. Superseded by [[IFeature::GetErrorCode2]].**」
+    #         C:\swapi\types\IFeature\GetErrorCode2.md
+    #           → `System.int GetErrorCode2( **out** System.bool IsWarning )`
+    # 定位:   ★★ 2026-10-04（接手轮）**处置阶段 2 生产第 15 条** ——
+    #         `workflow-15` 的 **B-3** 逐字点出：「★ 我们**实际调用**的 `IFeature.GetErrorCode()`
+    #         带着官方的 `Obsolete. Superseded by [[IFeature::GetErrorCode2]].` 行；
+    #         ★ 官方逐字点名的后继是 `IFeature::GetErrorCode2`（多一个 `out bool IsWarning`），
+    #         ★★ **我们代码里没有它、也没有任何换用后继的说明**」✓
+    #        ★★★ **真机实测（不许凭签名就下结论 —— 铁律 2）**：
+    #         `tools/probe_geterrorcode2.py` · `output/geterrorcode2-evidence.json`
+    #         | ★ 形态 | ★ 结果 |
+    #         |---|---|
+    #         | ★ 旧 `GetErrorCode()` | ★ 回 **`0`** —— ★ **真的工作** ✓ |
+    #         | ★★ 新 `GetErrorCode2()`（0 参）| ★★ 回 **`<bound method GetErrorCode2 of <COMObject>>`** ——
+    #           ★★★ **那不是"调通了"**，★ 那是 `get_com_member` 的「取或调」**失败后原样返回成员本身** ✓
+    #           （★ 实测字段：`是成员本身=True`）|
+    #         | ★★ 新 `GetErrorCode2(out_i4)` | ★★ **`类型不匹配`（位置 1）** ✓ |
+    #        ★★★★ **⇒ 结论：后继在 pywin32 这条后端上**到不了**** ——
+    #         与**事实 47**（★ 含 by-ref 的成员在 pywin32 迟到绑定下到不了）**一致** ✓
+    #         ⇒ ★ **保留旧的**，★ 并按本仓纪律**把理由写在这里**（★ 而不是让它沉默）✓
+    #        ⚠⚠ **本探针自己的结论行写错了**：★ 它把"拿到 bound method"当成了"能调"
+    #          （★ 因为 `get_com_member` 不抛异常）⇒ ★★ **按纪律 `tools/` 只报不动**，
+    #          ★ 故**不改探针**，★ 而在此**如实纠正** ✓
+    #          ★★★ **可复用判据**：★ **判"一个成员调没调通"，要看 `hasattr(返回值, "_oleobj_")`，
+    #          不是"没抛异常"** ✓
+    # ─────────────────────────────────────────────────────────────────
     error_code = int(get_com_member(feature, "GetErrorCode") or 0)
     if error_code:
         raise RuntimeError(f"焊件特征 {fm_type} 返回特征错误码: {error_code}")
