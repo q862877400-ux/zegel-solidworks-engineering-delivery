@@ -2135,3 +2135,17 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **方法论**：★ **一个失败的探针与一个成功的探针之间，差异可能只在一个成员名的后缀上** —— ★ 而**先读旧探针的原文**比重写一个快得多** ⚠
      ★ **落地**：`capabilities.yaml` 新增 **`sketch_spline`**（level = **verified**，共 **102** 条）；台账「曲面上的样条曲线」补 `capability_id` ⇒ **已能 76**。
      ★ **而它顺手解开了另一条**：事实 451 里复合曲线卡在“造样条”上 ⇒ ★ **现在那一步可以跑了** ✓|真机：`tools/prove_spline_with_variant.py`；证据 `output/spline-with-variant-evidence.json`；旧探针与证据：`tools/probe_spline_forms.py` · `output/spline-forms.json` |
+| 453 | **★★ 复合曲线：前置补齐后**仍不成** ⇒ 状态从「尚未证实」升级为「**已按官方例子试过**」**** —— 2026-10-03（轮 575）。
+     ★ **事实 452 刚把“造样条”那一步解开**（`CreateSpline2` + `VARIANT(VT_ARRAY|VT_R8)` + `False`）⇒ ★ **故本轮把例子那组真跑到了目标调用**：
+     ```
+     两个**样条**草图 ⇒ 草图=['草图1','草图2'] · **sel=2**（★ 都选中了）
+                    ⇒ `InsertCompositeCurve` ⇒ **仍回 `False`** ⚠
+     对照：两个直线草图 ⇒ 同上 · **仍 `False`**
+     ```
+     ⇒ ★★ **故状态升级**：★ 从「**尚未证实**」（★ 上一轮卡在造样条）
+       ⇒ ★★ **「已按官方例子试过（两个样条草图 + `SelectByID2` mark=1）」** ✓
+       ★ 而**这仍不等于「到不了」** —— ★ 原因尚未查明。
+     ★ **剩下的假设**（★ 皆未验证）：① 两个草图要**同类型**（★ 我造的是两条 3 点样条）；② 跨两个平面的**特定相对位置**；③ **创建**也许也要走 `ICompositeCurveFeatureData`（★ 例子只把它用于**读回**）。
+     ★ **按事实 53 停手**（★ 已四轮）—— ★ 而状态是「**未证实原因**」、不是「到不了」。
+     ★★ **方法论一条**：★ **前置搭成之后再试一次，状态就升级了** —— ★ 从「尚未证实」变成「**已按官方例子试过**」，★ **而那是更值钱的一句话** ✓
+     ★ 本轮**不登记能力**（★ 仍未建成）。|真机：`tools/prove_composite_curve_per_example.py`；证据 `output/composite-curve-per-example-evidence.json`；单列：`docs/toolbar-gaps-backend-limits.md` §五之三；对照事实 451 / 452 |

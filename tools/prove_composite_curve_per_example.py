@@ -36,24 +36,31 @@ R = Path(r"D:\AI\SW")
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import pythoncom
+import win32com.client
 from scripts import sw_connect as C                                   # noqa: E402
 from scripts import sw_part as P                                      # noqa: E402
 import scripts.sw_feature_readback as FR                              # noqa: E402
 
 
 def _sketch_with_spline(doc, plane, pts):
-    """★ 一个**只含一条样条**的草图（★ 例子里的形态）。"""
+    """★ 一个**只含一条样条**的草图（★ 例子里的形态）。
+
+    ⚠ 2026-10-03（轮 575）★ **本函数原来用 `CreateSpline(pts)` —— 那是建不出来的形态**：
+      ★ 事实 452 证明**三个条件缺一不可**：
+        · 成员名 = **`CreateSpline2`**（`CreateSpline` 在迟到绑定下**取不到**）
+        · 数组形态 = **`VARIANT(VT_ARRAY|VT_R8, 扁平 list)`**
+        · 第二参 = **`False`**（`SimulateNaturalEnds`）
+      ⇒ ★★ **故上一轮那一组"卡在造样条上"是我这边的错**（★ 而事实 451 已如实记成"未跑到那一步"）✓
+    """
     try:
         doc.ClearSelection2(True)
     except Exception:                                                     # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name=plane)
     sm = C.get_com_member(doc, "SketchManager")
-    #: \u2605 \u4f8b\u5b50\u7528 `CreateSpline2`\uff08\u2605 \u800c\u672c\u4ed3 `ISketchManager` \u4e0a\u6709 `CreateSpline`\uff09
-    try:
-        C.get_com_member(sm, "CreateSpline", pts)
-    except Exception:                                                     # noqa: BLE001
-        C.get_com_member(sm, "CreateSpline2", pts)
+    data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, list(pts))
+    C.get_com_member(sm, "CreateSpline2", data, False)
     P.end_sketch(doc)
     names = [n for n in (P.feature_names(doc) or [])
              if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
