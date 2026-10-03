@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -434,6 +434,102 @@ def pattern_params(model, feature_name: str = "") -> dict:
                 out[name] = get_com_member(fd, name)
             except Exception as exc:                                      # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\IWizardHoleFeatureData2\\`）
+# 文件:   `scripts/sw_feature_readback.py::hole_params`（★ 新增）
+# 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第四个**、★ **第三个族** ✓
+#   ★★ **这一族的官方 `## Returns` **没写单位****（★ 逐个读都是「Hole diameter」这种光名字）⇒
+#     ★★★ **铁律 5：★ 单位查不到 ⇒ ★ 返回值要**如实标 `unknown`**、★ 不猜** ✓
+#   ★★★ **单位口径的**第四层****（★ 本会话已见四层）：
+#     ★ ① `GetDepth` ⇒ **随文档** · ★★ ② `GetDraftAngle` ⇒ **写死 radians** ·
+#     ★★★ ③ `D1Spacing` ⇒ **写死 meters** · ★★★★ ④ **本族** ⇒ **官方没写**（★ 未定）✓
+#     ⇒ ★★★★★ **可复用判据**：★★★ **「没写单位」≠「随文档单位」** ——
+#       ★ 前者是**官方没说**（★ 要真机测 / 如实标未知）、★★ 后者是**实测确认过** ⇒
+#       ★★★ **两者在返回值里必须用不同的词** ✓
+#   ★★★★ **官方逐字**：★ `Type` ⇒ `swWzdHoleTypes_e` · ★ `EndCondition` ⇒ `swEndConditions_e` ·
+#     ★ `CosmeticThreadType` ⇒ `swWzdHoleCosmeticThreadTypes_e` · ★ `ThreadClass` ⇒ `1B`/`2B`/`3B` ·
+#     ★ `GetSketchPointCount()` ⇒ 「Number of center-hole sketch points」·
+#     ★★ `FastenerType` ⇒ **已废弃** ⇒ **不读** ✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def hole_params(model, feature_name: str = "") -> dict:
+    """★ 读**异型孔向导特征的一组参数**（★ 尺寸 / 标准 / 类型 / 端条件）✓
+
+    ★★★★★ **单位口径（★ 与前三个**都不同** —— ★ 而**本族内部还分裂**）**：
+      ★ 本族成员的官方 `## Returns` **只写光名字**（「Hole diameter」）、★ **没写单位** ⇒
+      ★★ **本函数如实标 `unknown（★ 官方 ## Returns 未写）`**、★ **不猜** ✓
+      ★★★ **而真机测出来了**（★ `tools/probe_hole_params_recheck.py` · ★ `sw_guard` · ★ 零弹窗 ⇒
+        `output/hole-params-capability-recheck.json`）——
+        ★ 建一个 **`M8` 通孔**（★ 板厚 20mm）⇒ 逐字读数：
+        | ★ 成员 | ★ 读数 | ★ 口径 |
+        |---|---|---|
+        | ★★ **`ThruHoleDiameter`** | ★ **0.008** | ★★ **米**（★ M8 = 8mm）✓ |
+        | ★★ **`ThruHoleDepth`** | ★ **20.0** | ★★ **毫米**（★ 板厚 20mm）✓ |
+        | ★ `HoleDiameter` | ★ `0.0` | ★ 通孔类型下**不使用它** ✓ |
+        | ★ `Standard` / `FastenerSize` | ★ `"ANSI Metric"` / `"M8"` | ★ 字符串 ✓ |
+        | ★ `Type` / `EndCondition` | ★ `25` / `1` | ★ 枚举 ✓ |
+      ★★★★ **⇒ **同一个接口里两个量的口径不同**！！** ——
+        ★ **`ThruHoleDiameter` 是米、★ 而 `ThruHoleDepth` 是毫米** ✓
+      ★★★★★ **⇒ 本会话的**第五层**口径**（★ 也是最强的一层）：
+        ★ ① `GetDepth` ⇒ **随文档** · ★ ② `GetDraftAngle` ⇒ **写死 radians** ·
+        ★ ③ `D1Spacing` ⇒ **写死 meters** · ★ ④ 本族（官方没写）· ★ ⑤ **本族内部**就分裂 ✓
+        ⇒ ★★★★ **可复用判据**：★★★ **「没写单位」≠「随文档单位」**、
+          ★★ 而 **「同一个接口」也**不**保证同一口径** ——
+          ★★★ **每读一个量都要单独真机验**（★ 官方没写时**只能这样**）✓
+          （★ 铁律 5：★ 查不到就写「查不到」—— ★ 而本轮**测出来了**、
+           ★★ 所以**把实测口径写进返回值**、★★★ 并**保留 "官方未写" 那个事实**）✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    UNK = "unknown（★ 官方 ## Returns 未写；★ 真机实测见 docstring 的表）"
+    out: dict = {"feature": feature_name, "definition": None, "error": None,
+                 "★_单位口径": {k: UNK for k in (
+                     "HoleDiameter", "HoleDepth", "ThreadDepth", "ThruHoleDiameter",
+                     "CounterBoreDiameter", "CounterBoreDepth", "CounterSinkDiameter",
+                     "CounterSinkAngle", "HeadClearance")}}
+    try:
+        feat = None
+        if feature_name:
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★ 兜底：★ 找**最后一个**异型孔特征（★ 类型名含 `HoleWzd`）
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if "HoleWzd" in tn or "Wzd" in tn:
+                        feat, out["feature"] = f, str(safe_get_com_member(f, "Name") or "")
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = "找不到异型孔向导特征"
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        #: ★★ 属性（★ `{get;set}`）⇒ ★ 直接取；★ **`FastenerType` 已废弃 ⇒ 不读** ✓
+        for name in ("HoleDiameter", "HoleDepth", "ThreadDepth", "ThruHoleDiameter",
+                     "ThruHoleDepth", "CounterBoreDiameter", "CounterBoreDepth",
+                     "CounterSinkDiameter", "CounterSinkAngle", "HeadClearance",
+                     "Standard", "FastenerSize", "ThreadClass", "Type", "EndCondition",
+                     "CosmeticThreadType", "ReverseDirection"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+        #: ★★★ 零参方法 ⇒ ★ 也取 ✓
+        try:
+            out["GetSketchPointCount"] = get_com_member(fd, "GetSketchPointCount")
+        except Exception as exc:                                          # noqa: BLE001
+            out["GetSketchPointCount"] = "err: %s" % str(exc)[:50]
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
