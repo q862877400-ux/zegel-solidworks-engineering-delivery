@@ -174,6 +174,12 @@
       "runner": "_run_unreachable_members_gate",
       "kind": "hard",
       "reason": "**硬门禁**：别去调**已证到不了**的成员。★ 它与已有三道“名字”门禁**分工不同**：`check_member_names` 判「名字在**某个**接口里存在」·`check_interface_member_ownership` 判「属于**这个**接口」·★ **本道判「在本机**调不调得动**」**。★ 依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 · 事实 428 的 `InsertWeldmentCutList2`）。★ 取证豁免必须**按 `(文件, 成员)` 精确匹配且带理由**（★ 通配 = 失效）。★ 它**自己有负例自证**：`tests/test_unreachable_members_gate.py`（**6 passed**，★ 四条负例：只提名字不算 · 名单外不抓 · `I` 前缀走提示 · 豁免是精确匹配）。⚠ **覆盖边界**：只查**名单里那几个** —— ★ 过了它**不等于别的都能调**。"
+    },
+    {
+      "gate": "check_verified_evidence.py",
+      "runner": "_run_verified_evidence_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：**A4** —— `level: verified` 必须带**我们自己的运行证据**（★ `AGENTS.md` 逐字）。★ 判据：每条 `verified` 的 `evidence` 必须是**非空列表**且**至少有一条非空字符串**（★ 空串不算证据）。★ 而**可核性**（证据里有没有文件名）**只提示、不拦** —— ★ 口述证据也可能是证据。★ 实测（轮 594）：95 条 verified、**0 条无 evidence**（★ 数据干净）—— ★ 而**之前没有门禁在守它**；★ 而它第一次跑就**给出 2 条可核性提示**（★ 而不拦）。★ 它**自己有负例自证**：`tests/test_verified_evidence_gate.py`（**6 passed**）。"
     }
   ]
 }

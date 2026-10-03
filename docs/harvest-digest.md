@@ -294,7 +294,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 五 门禁栈（**方法论沉淀**：把判定交给机器，而不是靠人记得）
 
-`scripts/check_*.py` 共 **21** 道；其中接进 `release_check.py`（发布前硬失败）的：
+`scripts/check_*.py` 共 **22** 道；其中接进 `release_check.py`（发布前硬失败）的：
 
 | 门禁 | 接进 `release_check`？ |
 |---|---|
@@ -318,6 +318,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_undefined_names.py` | ✅ |
 | `scripts/check_union_conventions.py` | ✅ |
 | `scripts/check_unreachable_members.py` | ✅ |
+| `scripts/check_verified_evidence.py` | ✅ |
 | `scripts/check_workspace_shadowing.py` | ✅ |
 
 > 还有两个**生成器 + 新鲜度门禁**配对（生成物不许手改）：

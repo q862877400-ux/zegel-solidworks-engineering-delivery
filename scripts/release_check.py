@@ -696,6 +696,27 @@ def _run_member_name_gate() -> dict[str, object]:
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
+#: ★ 2026-10-03（轮 594）接进：**A4** —— `level: verified` 必须带**我们自己的运行证据**。
+#:   实测：95 条 verified、**0 条无 evidence**（数据干净）——
+#:   而**之前没有任何门禁在守它** ⇒ 危险在于「数据干净、而没有东西保证它继续干净」。
+def _run_verified_evidence_gate() -> dict[str, object]:
+    """跑 A4 证据门禁（scripts/check_verified_evidence.py）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_verified_evidence.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "reason": f"检查**无法启动**（超时/OSError）: {exc}"}
+    return {
+        "status": "pass" if proc.returncode == 0 else "fail",
+        "output": (proc.stdout or "").strip()[-1500:],
+    }
+
+
 def _run_unreachable_members_gate() -> dict[str, object]:
     """跑可达性门禁（scripts/check_unreachable_members.py）。"""
     try:
@@ -992,6 +1013,11 @@ def run_release_check() -> dict[str, object]:
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
     #   事实 428 的 `InsertWeldmentCutList2` …）。
     #   ★ 接进来的理由（事实 40）：**存在但没人用的守卫，与没有守卫等价、且更糟**。
+    verified_ev = _run_verified_evidence_gate()
+    if verified_ev.get("status") == "fail":
+        raise AssertionError(
+            "证据门禁未通过（A4：`verified` 必须带运行证据）：\n"
+            + str(verified_ev.get("output", "")))
     unreachable = _run_unreachable_members_gate()
     if unreachable.get("status") == "fail":
         raise AssertionError(
@@ -1224,6 +1250,8 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
         #:   `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价」⚠
         "unreachable": unreachable,
+        #: ★ 2026-10-03（轮 594）★ 同一道元门禁，★ **第二次**教了同一课
+        "verified_evidence": verified_ev,
         "workspace_shadowing": shadowing,
         "gate_wiring": wiring,
         "param_binding": param_binding,
@@ -1304,6 +1332,7 @@ def run_release_check() -> dict[str, object]:
         "member_names": member_names,
         #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点** ⚠
         "unreachable": unreachable,
+        "verified_evidence": verified_ev,
         "interface_ownership": ownership,
         "missing": [],
     }
