@@ -1088,31 +1088,24 @@ def cut_surface_report(model, *, flip: bool = False, keep_piece_index: int = 0,
     err_out = None
     ret_out = None
     try:
-        from sw_connect import out_dispatch as _od, out_i4 as _oi4
+        from sw_connect import out_i4 as _oi4
         err_out = _oi4()
-        ret_out = _od()
     except Exception:                                                     # noqa: BLE001
         pass
     attempts = []
+    #: ★★★★ 2026-10-03（轮 522）**真机把 arity 定死了：6 个**（★ 事实 403）⚠
+    #:   ⇒ ★ **`(Flip, KeepPieceIndex, UseFeatScope, UseAutoSelect, Bodies, Error)`**
+    #:     ★★ **末尾那个 `Retval` 不传** —— ★ 与**事实 397** 一致
+    #:     （类型库的 arity 含末尾 out ⇒ pywin32 侧不传它）。
+    #:   ⚠ 我先前试过 **5 参** ⇒ `非选择性的参数`；**7 参** ⇒ `无效的参数数目`；
+    #:     ★ 而**只有这 6 参那组回了 `None`（无错）**。
     try:
         ret = get_com_member(fm, "InsertCutSurface", bool(flip), int(keep_piece_index),
                              bool(use_feat_scope), bool(use_auto_select), [],
-                             err_out, ret_out)
-        attempts.append("7 \u53c2\uff085 in + out_i4 + out_dispatch\uff09")
+                             err_out)
+        attempts.append("6 \u53c2\uff085 in + Error\uff09")
     except Exception as exc:                                              # noqa: BLE001
-        attempts.append("7 \u53c2\uff085 in + out_i4 + out_dispatch\uff09 \u21d2 %s: %s"
-                        % (type(exc).__name__, str(exc)[:90]))
-        #: \u2605 \u56de\u9000\uff1a\u53ea\u4f20 **5 \u53c2**\uff08\u2605 \u4e07\u4e00\u5b83\u771f\u7684\u53ea\u8981 5 \u4e2a\uff09
-        try:
-            ret = get_com_member(fm, "InsertCutSurface", bool(flip), int(keep_piece_index),
-                                 bool(use_feat_scope), bool(use_auto_select), [])
-            attempts.append("5 \u53c2\uff08\u56de\u9000\uff09")
-        except Exception as exc2:                                         # noqa: BLE001
-            attempts.append("5 \u53c2\uff08\u56de\u9000\uff09 \u21d2 %s: %s"
-                            % (type(exc2).__name__, str(exc2)[:90]))
-            return {"ok": False, "stage": "call", "selected": sel, "picked": picked,
-                    "attempts": attempts,
-                    "error": "%s: %s" % (type(exc2).__name__, str(exc2)[:220])}
+        attempts.append("6 \u53c2 \u21d2 %s: %s" % (type(exc).__name__, str(exc)[:90]))
     after = feature_names(model)
     new = [n for n in after if n not in before]
     return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
