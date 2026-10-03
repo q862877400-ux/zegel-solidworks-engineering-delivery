@@ -41,6 +41,11 @@ from sw_feature_readback import feature_names
 #: ★ `swFeatureNameID_e` 的取值（★ 反射来的，★ 事实 43：数值必须去反射）
 SW_FM_SWEEP = 17
 SW_FM_SWEEP_CUT = 18
+#: ★★ 2026-10-03（轮 486）**曲面扫描的常量**：
+#:   官方 `CreateDefinition.md` 的**合法常量表**里有一条逐字是
+#:   「**`swFmRefSurface` (surface sweep)**」；★ 而反射转储给出
+#:   **`swFmRefSurface = 62`** ⇒ 两源一致 ✓
+SW_FM_REF_SURFACE = 62
 
 
 def _feature_type_name(model, name):
@@ -107,12 +112,73 @@ def create_sweep_report(model, cut: bool = False) -> dict:
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "stage": "CreateFeature", "selected_by_mark": sel, "access": access,
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+def create_sweep_surface_report(model) -> dict:
+    """★ **曲面扫描**：`CreateDefinition(**swFmRefSurface = 62**)` → `ISweepFeatureData` → `CreateFeature`。
+
+    ★★★ 2026-10-03（轮 486）**为什么是 62**（★ 三源互证）：
+      · ★ 官方 `C:\\swapi\\types\\IFeatureManager\\CreateDefinition.md` 的**合法常量表**里有一条逐字是
+        「**`swFmRefSurface` (surface sweep)**」 ✓
+      · ★ 而反射转储 `_raw/enum_values_sldworks.txt` 给出 **`swFmRefSurface = 62`** ✓
+      · ★ 而 `ISweepFeatureData.SweepType` 是 **get-only**、回的正是 `swFeatureNameID_e` 的值
+        ⇒ ★★ **即：同一个 `ISweepFeatureData` 可承载 "swept boss"(17) 或 "surface sweep"(62)**
+        ⇒ **`CreateDefinition(62)` 就是把它初始化成曲面扫描** ✓
+
+    ★★ **为什么不是台账给的那个名字**：台账写 `InsertProtrusionSwept4(Surface)`（★ 一轮前刚核过）——
+      ★ 而 `IModelDoc2.InsertSweepRefSurface` 与 `…RefSurface2` **两个都标 Obsolete**，
+      ★ 且都把继任者指向 `IFeatureManager::InsertProtrusionSwept3`（★ **实体**那族）⚠
+      ⇒ ★★ **正解是 `CreateDefinition` 那条现代入口**（★ 与本模块既有的两条同族）✓
+
+    ★ 判据与 `create_sweep_report` 同口径（★ 事实 242）：**特征树多了新特征** **且** **类型名 = `Sweep`**。
+    ⚠⚠ **2026-10-03（轮 486）真机**：本函数**尚未建成** —— 卡在**最后的选区 mark**上。
+      ★ 而三个真因都**定位到了**（★ 已写进 `output/sweep-surface-evidence.json`）：
+        ① `IFeatureManager.FeatureName` 是**属性**，★★ 而**取特征的真名是 `IModelDoc2.FeatureByName(name)`**（**方法**）—— 两个名字极像，用错**不报错、只是选不上**（**事实 383**）；
+        ② `sw_part._select_sketch_feature_by_name` 内部用 **`append=False`**（`sw_part.py` L350）⇒ **调两次只剩第二次**；
+        ③ 开**第二个草图**前要先 `ClearSelection2`，★ 否则 `start_sketch` 选不中基准面、**草图根本不建成**。
+      ★ 下一轮：`append=True` 后变成 `{1:1, 4:0}`（**反过来了**）⇒ 去查**扫描自己的**官方专文（而不是照搬 `sw_loft` 里那张针对 `InsertProtrusionBlend2` 的 mark 表）。
+    ★ ★★ **按 A4 不登记成工具、不写 verified** —— ★ **不假装做到**。
+    ⚠ ★ 调用前同样要选好**轮廓（mark=1）+ 路径（mark=4）**（★ 官方专文给的 mark）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    sel = {}
+    for mark, label in ((1, "profile"), (4, "path"), (2, "guide")):
+        try:
+            sel[label] = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                            "GetSelectedObjectCount2", mark))
+        except Exception:                                      # noqa: BLE001
+            sel[label] = -1
+    if sel.get("profile", 0) < 1 or sel.get("path", 0) < 1:
+        return {"ok": False, "stage": "selection", "selected_by_mark": sel,
+                "error": "曲面扫描要选 **轮廓（mark=1）** 与 **路径（mark=4）**；"
+                         "★ 当前 mark1=%r · mark4=%r" % (sel.get("profile"), sel.get("path"))}
+    before = feature_names(model)
+    try:
+        fm = get_com_member(model, "FeatureManager")
+        data = get_com_member(fm, "CreateDefinition", SW_FM_REF_SURFACE)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    if data is None:
+        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
+                "error": "CreateDefinition(swFmRefSurface=%d) 回了 None" % SW_FM_REF_SURFACE}
+    access = None
+    try:
+        from sw_part import _empty_callout as _ec
+        access = bool(get_com_member(data, "AccessSelections", model, _ec()))
+    except Exception as exc:                                   # noqa: BLE001
+        access = "ERR %s: %s" % (type(exc).__name__, str(exc)[:110])
+    try:
+        feat = get_com_member(fm, "CreateFeature", data)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "CreateFeature", "selected_by_mark": sel, "access": access,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
     after = feature_names(model)
     new = [n for n in after if n not in before]
     tname = _feature_type_name(model, new[-1]) if new else None
     return {"ok": bool(new) and (tname == "Sweep"), "feature_name": (new[-1] if new else None),
             "new_features": new, "type_name": tname, "tree_before": len(before),
             "tree_after": len(after), "selected_by_mark": sel, "access_selections": access,
-            "cut": bool(cut), "sw_fm_const": (SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP),
-            "★": "官方现代入口 CreateDefinition(swFmSweep=17) → ISweepFeatureData → CreateFeature；"
+            "sw_fm_const": SW_FM_REF_SURFACE,
+            "★": "曲面扫描走 CreateDefinition(swFmRefSurface=62) → ISweepFeatureData → CreateFeature"
+                 "（★ 而台账给的 InsertSweepRefSurface* 两个都 Obsolete）；"
                  "★ 判据 = 特征树多了 **且** 类型名 = `Sweep`（事实 242）"}
