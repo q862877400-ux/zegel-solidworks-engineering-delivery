@@ -4028,7 +4028,7 @@
     },
     {
       "id": "surface_delete_hole",
-      "label": "删除孔（曲面）（`InsertDeleteHoleForSurface`）—— ★ **真机建成**·★★ **继任者**（第一代 `InsertDeleteHole` 已废弃）",
+      "label": "删除孔（曲面）（`InsertDeleteHoleForSurface`）—— ★ **真机建成**（★ **仅在「真正的带孔平面」上**）·★★ **继任者**（第一代 `InsertDeleteHole` 已废弃）",
       "level": "verified",
       "backends": [
         "solidworks-com-pywin32"
@@ -4044,10 +4044,17 @@
       "source_evidence": "`C:\\swapi\\types\\IFeatureManager\\InsertDeleteHoleForSurface.md`（**0 参 · 回 IFeature**）与它的 `## Remarks`（选 **hole edges**）。代码：`tools/prove_planar_region_then_delete_hole.py`。",
       "evidence": [
         "★★ 2026-10-03（轮 564）**真机建成**（零弹窗）：在**一张真正的带孔平面**（面 1 / 环 2）上选**孔那圈边** ⇒ `InsertDeleteHoleForSurface()` ⇒ **名 `删除孔1`**·**型 `DelHole`**·★ **环Δ = −1**（孔被填上）✓",
-        "★ **证据文件**：`output/delete-hole-for-surface-evidence.json`（★ **同族的还有** `output/delete-hole-inner-loop-evidence.json`、`output/delete-hole-on-surface-evidence.json`）。"
+        "★★★ **★ 成功那一次的证据文件**：`output/planar-region-and-delete-hole-evidence.json` —— ★ 它的 `verdict` 逐字是 **`planar_region_and_delete_hole_work`**、★ 且 `cases[1]`（「★ 平面区域 + **删除孔**」）的 `ok` 是 **`True`** ✓",
+        "⚠⚠ 2026-10-04（接手轮）**修正一条容易误导的引证**：★ 本条目原来在 evidence 里**并列引了三份文件**，★ 而**其中两份的 `verdict` 是否定的** —— ★ `output/delete-hole-for-surface-evidence.json` 的 `verdict` 是 **`successor_also_fails`**、`output/delete-hole-inner-loop-evidence.json` 的 `verdict` 是 **`inner_loop_still_fails`**。★★ 它们记的是**试过但失败的路**，★ **不是**本条能力的成功证据 ⇒ ★ 已挪到 `limitations` ✓"
       ],
       "limitations": [
         "★★ **三层前置**：① 用**继任者**（第一代已废弃）；② 得是**真正的带孔平面**（★ 用平面区域造；★ **拉伸得到的是 5 面 / 6 环、不行**）；③ 只选**孔那圈边**。",
+        "★★★ **试过但失败的四条路**（★ 由真机证据记着，★ 免得后人重走）—— ★ 都是**同一族的否定结果**：",
+        "  · ★ `output/delete-hole-evidence.json` ⇒ `verdict` **`delete_hole_silent_noop`**（★ 在拉伸体上调它 **静默无操作**）",
+        "  · ★ `output/delete-hole-on-surface-evidence.json` ⇒ `verdict` **`delete_hole_still_noop_on_surface`**（★ 选面 / 选孔的边 / 两者都选，★ 三种都 **`ok=False`**）",
+        "  · ★ `output/delete-hole-for-surface-evidence.json` ⇒ `verdict` **`successor_also_fails`**（★ **换继任者也不行**）",
+        "  · ★ `output/delete-hole-inner-loop-evidence.json` ⇒ `verdict` **`inner_loop_still_fails`**（★ 内环仍失败）",
+        "  ⇒ ★★ **上面四条合起来说明**：★ 这个 API **不是「调了就行」**，★ 而是**对前置极敏感** —— 只有**真正带孔的平面 + 只选孔那圈边**才成 ✓",
         "⚠ 本包装未接进 MCP 工具层。"
       ]
     },

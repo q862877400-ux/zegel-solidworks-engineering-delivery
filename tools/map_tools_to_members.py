@@ -139,20 +139,102 @@ def _global_pool() -> dict:
         ★★ **找不到再按该模块的 `import` 解析到真正的来源模块** ⇒ ★ **精确、不串** ✓
     """
     pool = {}
+    #: ★★★★ 2026-10-03（接手轮）**扫描范围要含 `subskills/`** ——
+    #:   ★ 病灶：★ `scripts/sw_drawing.py` 逐字是一个**动态桥接**：
+    #:     ```
+    #:     _IMPLEMENTATION = … / "subskills" / "solidworks-engineering-drawing"
+    #:                          / "scripts" / "drawing_workflow.py"
+    #:     _SPEC = importlib.util.spec_from_file_location(…); _SPEC.loader.exec_module(_MODULE)
+    #:     for _name in __all__: globals()[_name] = getattr(_MODULE, _name)
+    #:     ```
+    #:   ★★ 即：★ **`sw_drawing` 里没有任何 `def`**（★ 实测 `^def` 匹配 **0 个**、★ 文件只 **29 行**），
+    #:     ★★★ **真正的实现在 `subskills/` 下** ✓
+    #:   ★★★★ 后果：★ **整个工程图族**（★ 30+ 个工具，★ 它们都委托到 `sw_drawing`）
+    #:     抽到的成员**近 0** ⇒ ★ 矩阵把它们算成"低密度格"
+    #:     ⇒ ★★ **补能力的排期因此被误导**（★ 见上一轮的记录）✓
+    #:   ⇒ ★ 修法：★ **把 `subskills/**/scripts/*.py` 也收进池** ✓
+    #:   ★★ 可复用判据：★★ **"扫描范围"本身是一个判据** ——
+    #:     ★ 凡"扫某个目录"的工具，★ 都要问一句"**这个仓库还有没有别的地方放着实现**" ✓
+    #:     （★ 与**事实 51**「分析范围要贴合组织单元」同族，★ 而本条是它的**目录版**）✓
     for d in ("scripts", "mcp-server"):
         for f in sorted((REPO / d).glob("*.py")):
             stem = f.stem
             for name, src in _func_sources(f).items():
                 pool["%s.%s" % (stem, name)] = src
+    #: ★★ 子技能里的实现（★ 与本仓 `scripts/` 里的模块**同名同辈**地进池）
+    for f in sorted((REPO / "subskills").rglob("scripts/*.py")):
+        stem = f.stem
+        for name, src in _func_sources(f).items():
+            pool.setdefault("%s.%s" % (stem, name), src)
+    #: ★★★★★ 2026-10-03（接手轮）**桥接模块** —— ★ 本仓有一类文件**自己没有任何 `def`**，
+    #:   而是用 `importlib` 把另一个模块的名字转出来（★ `scripts/sw_drawing.py` 逐字）：
+    #:     ```
+    #:     _IMPLEMENTATION = … / "subskills" / … / "scripts" / "drawing_workflow.py"
+    #:     _SPEC = importlib.util.spec_from_file_location(…); _SPEC.loader.exec_module(_MODULE)
+    #:     for _name in __all__: globals()[_name] = getattr(_MODULE, _name)
+    #:     ```
+    #:   ★★ **后果**：★ 池里只有 `drawing_workflow.add_view`，★ **而没有 `sw_drawing.add_view`**
+    #:     ⇒ ★★★ 于是 `from scripts import sw_drawing as D` + `D.add_view(…)` **跟不下去**
+    #:     ⇒ ★★★★ **整个工程图族（30+ 工具）抽到 0** ✓
+    #:   ⇒ ★ 修法：★ **认"桥接"这一形态** —— ★ 从文件里抽 `_IMPLEMENTATION` 指向的**目标模块名**，
+    #:     ★★ 并把 `目标模块.X` 的**键再挂一份到桥接模块名下** ✓
+    #:   ★★ 可复用判据：★★ **"模块"不等于"文件"** ——
+    #:     ★ 一个 `.py` 可能**只是转发**（★ 本仓有 `sw_drawing` 这种兼容入口）⇒
+    #:     ★★★ **凡按"文件 → 函数"建索引的地方，都要处理"转发文件"** ✓
+    _BRIDGE_PAT = re.compile(
+        r"_IMPLEMENTATION\s*=\s*\(?(.{0,400}?)\)?\s*\n\s*_SPEC", re.S)
+    _PYNAME_PAT = re.compile(r'"([A-Za-z_]\w*\.py)"')
+    for d in ("scripts", "mcp-server"):
+        for f in sorted((REPO / d).glob("*.py")):
+            try:
+                txt = f.read_text(encoding="utf-8", errors="replace")
+            except Exception:                                             # noqa: BLE001
+                continue
+            if "importlib" not in txt:
+                continue
+            m2 = _BRIDGE_PAT.search(txt)
+            if not m2:
+                continue
+            inner = _PYNAME_PAT.search(m2.group(1))
+            if not inner:
+                continue
+            target = inner.group(1)[:-3]
+            for k, v in list(pool.items()):
+                if k.startswith(target + "."):
+                    pool.setdefault("%s.%s" % (f.stem, k.split(".", 1)[1]), v)
     return pool
 
 
 #: ★★ 从源码里抽 `import` 映射：★ `from X import a, b as c` ⇒ `{a: X, c: X}`
 _IMPORT_PAT = re.compile(r"^\s*from\s+([A-Za-z_][\w.]*)\s+import\s+(.+)$", re.M)
+#: ★★★★ 2026-10-03（接手轮）**新增：模块别名** ——
+#:   ★ 病灶：★ `scripts/sw_drawing_expose.py` 逐字有两行：
+#:     ```
+#:     from scripts import sw_drawing **as D**      ← ★ `from <包> import <模块> as <别名>`
+#:     res = **D.add_view**(drawing_model, …)        ← ★★ 用**模块别名**调
+#:     ```
+#:   ★★ 而 `_import_map` 原来只认「**名字 → 模块**」（★ `from X import a as b` 里的 `a` 是**函数**）⇒
+#:     ★★★ **不认「模块别名 → 模块」** ⇒ 于是 `D.add_view` **跟不下去** ✓
+#:   ★★★★ 后果（★ 实测）：★ **整个工程图族**（★ `sw_drawing_expose` 里 30+ 个工具）
+#:     抽到的成员**近 0**（★ `create_projected_view` 0 个 · `create_section_view` 1 个 ·
+#:     `set_sheet_scale` 0 个）⇒ ★★★ **矩阵把它们算成"低密度格"** ✓
+#:   ⇒ ★ 修法：★ **同时抽 `import X as Y` 与 `from P import M as A`（★ 后者当"模块别名"）**，
+#:     ★★ 并在跟图时**把 `A.foo` 解析成 `M.foo`** ✓
+_IMPORT_ALIAS_PAT = re.compile(r"^\s*import\s+([A-Za-z_][\w.]*)(?:\s+as\s+([A-Za-z_]\w*))?\s*$", re.M)
+
+
+#: ★★ 函数池的键的**副本**（★ 由 `main` 在建池后填）—— ★ 供 `_import_map` 判断"这个名字是不是模块"
+_POOL_KEYS: set = set()
 
 
 def _import_map(mod_file: Path) -> dict:
-    """★ 该模块的 `名字 → 来源模块` 映射（★ 用于精确跟跨模块调用）。"""
+    """★ 该模块的 `名字 → 来源模块` 映射（★ 用于精确跟跨模块调用）。
+
+    ★★★ 两类都收（★ 见上面两段说明）：
+      · ★ **函数名 → 模块**：`from X import f, g as h` ⇒ `{f: X, h: X}`
+      · ★★ **模块别名 → 模块**：`from P import M as A` ⇒ `{A: M}` · `import M as A` ⇒ `{A: M}`
+        （★ 而 `from P import M`（★ 无 `as`）⇒ `{M: M}` —— ★ 因为用法就是 `M.foo`）✓
+    """
     out = {}
     try:
         src = mod_file.read_text(encoding="utf-8", errors="replace")
@@ -166,8 +248,23 @@ def _import_map(mod_file: Path) -> dict:
                 continue
             bits = part.split(" as ")
             name = (bits[1] if len(bits) > 1 else bits[0]).strip()
-            if name.isidentifier():
+            if not name.isidentifier():
+                continue
+            if len(bits) > 1:
+                #: ★ `from X import a as b` ⇒ ★ **`b` 指向 `X`**（★ `a` 通常是个**函数**）
                 out[name] = srcmod
+            else:
+                #: ★★★ 无 `as` 时**要分辨**：★ `from P import M` 里的 `M` 可能是
+                #:   ★ **函数**（⇒ 指向 `P`）★ 或 **模块**（⇒ 指向 `M` 自己，★ 用法 `M.foo`）
+                #:   ⇒ ★★ **用一个可核的判据**：★ **`M` 在函数池里吗**（★ 即 `M.<某函数>` 存在）✓
+                is_module = any(k.startswith(name + ".") for k in _POOL_KEYS)
+                out[name] = name if is_module else srcmod
+    #: ★★ `import X as Y` / `import X`
+    for m in _IMPORT_ALIAS_PAT.finditer(src):
+        mod = m.group(1).split(".")[-1]
+        alias = m.group(2) or mod
+        if alias.isidentifier():
+            out[alias] = mod
     return out
 
 
@@ -188,6 +285,8 @@ def main() -> int:
     rows, cache = [], {}
     #: ★★★ 2026-10-03（第 3 版）：**按 `模块.函数` 键 + import 精确解析**（★ 见 `_global_pool` 的说明）
     pool = _global_pool()
+    _POOL_KEYS.clear()
+    _POOL_KEYS.update(pool.keys())      #: ★ 供 `_import_map` 判"这个名字是不是模块"
     imap_cache: dict = {}
     for s in specs:
         mod, fn = getattr(s, "module", "") or "", getattr(s, "function", "") or ""
@@ -219,6 +318,23 @@ def main() -> int:
                         continue
                     short = key.split(".", 1)[1]
                     if re.search(r"\b%s\s*\(" % re.escape(short), text_cur):
+                        seen.add(key)
+                        nxt.append(key)
+                        parts.append(pool.get(key, ""))
+                #: ★★★★ 2026-10-03（接手轮）**新增：模块别名调用** `A.foo(` ⇒ `M.foo` ——
+                #:   ★ 病灶：★ `sw_drawing_expose` 逐字 `from scripts import sw_drawing **as D**`
+                #:     然后 `**D.add_view**(…)` ⇒ ★★ 而上面那圈只找**裸函数名** ⇒ **跟不下去** ✓
+                #:   ★★★ 后果：★ 整个工程图族（30+ 工具）抽到的成员**近 0** ⇒
+                #:     矩阵把它们算成"低密度格" ⇒ ★★ **补能力的排期因此被误导**（见上一轮的记录）✓
+                #:   ★ 修法：★ 用 `_import_map` 里的**别名 → 模块**项，★ 把 `别名.函数` 也当候选 ✓
+                for alias, srcmod in (imap_cache.get(cur_mod) or {}).items():
+                    if srcmod in _PIPE_MODULES or srcmod == alias:
+                        continue
+                    for member in re.findall(r"\b%s\.([A-Za-z_]\w*)\s*\(" % re.escape(alias),
+                                             text_cur):
+                        key = "%s.%s" % (srcmod, member)
+                        if key in seen or key not in pool:
+                            continue
                         seen.add(key)
                         nxt.append(key)
                         parts.append(pool.get(key, ""))
