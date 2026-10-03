@@ -1,0 +1,42 @@
+fix(工程图): 修两处**真 bug** —— ① 注入名机制缺 `drawing_model` ② 探针把带 out 参数的计数当零参调
+
+> ★ 两处都**不是**本地 Qwen 的问题（那件事另开对话处理）⇒ 按业主指示**直接修**。
+> ★ 两处都是 **space-bunny 的 L5/L3 档实测发现**的，Lead **逐条核官方页/源码**确认后动手。
+
+■ bug ① · **`RESOLVERS` 缺 `drawing_model` ⇒ 挂任何工程图 subskill 函数都会 `TypeError`**
+  机制（★ 逐字核过源码）：
+    · `mcp-server/tool_registry.py:507`：`kwargs[inject_as or inj] = resolver(params)`
+    · `register()`（同文件 `:559`）**不往下传 `inject_as`** ⇒ **注入键字面上等于 `inject` 的值**
+    · 而 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py` 里那批函数**首参叫 `drawing_model`**
+      ⇒ 若按 `inject="model"` 挂，运行期必 **`TypeError: unexpected keyword argument 'model'`**
+    · ★ 该机制本仓早已记录：`docs/known-facts.md` **第 169 条**（「注入名只能是 `RESOLVERS` 的键…解法是给那张表加一行」）
+  ★ 修法（★ 本仓手法，**不动 `tool_registry`** —— 它明确「不硬编码宿主 API，全从这里供给」）：
+    给 `mcp-server/register_capabilities.py:112` 的 `RESOLVERS` 加一行
+      `"drawing_model": resolve_model,`
+    与既有 `"asm_model": resolve_model` **同一手法**（工程图文档同样是 `IModelDoc2` ⇒ 复用同一个解析器），
+    并把机制与依据写进表内注释。
+  ★ 修后 `RESOLVERS` 六个键：`model` · `sw_app` · `study` · `asm_model` · `manager` · **`drawing_model`**
+  ➡ ★★ **这条是「把 8 项已有实现挂成工具」的前置**：不修它，挂上去就炸。
+
+■ bug ② · **`tools/prove_drawing_batch.py` 把带 `out` 参数的计数成员当零参调**
+  官方签名逐字：`System.int GetBreakLineCount( out System.int Size )` —— ★ **带 out 参数**。
+  而探针原先把 `("breakline", "GetBreakLineCount")` 放进了**零参表** `_COUNTERS`，
+  ⇒ ★ **两条路径都错**：(a) 泛读循环 `_get(v, member)`、(b) V4 格的 `_count_of(view, "GetBreakLineCount")`。
+  ★ 后果：`sw_connect.out_i4()` 没传 ⇒ `类型不匹配` ⇒ 被 `except` 吃成 `None`
+  ⇒ ★ **判据静默降级**（只看到"量不到"，看不出是**调用形态错**）；★ 后果**不是**错值（原作者写了「降级不猜 0」）。
+  ★ 修法：
+    · 新增 `_OUT_COUNTERS = (("breakline", "GetBreakLineCount", "GetBreakLines"),)`
+      —— ★ 带 out 的成员**单独一张表**，注释写明为什么不能混进零参表
+    · 新增 `_out_count_of()`（传 `C.out_i4(0)`）与 `_list_len_of()`（取零参数组长度）
+    · 泛读循环与 V4 格都改走正确通道；★ V4 **兼用零参 `GetBreakLines()` 数组长度做交叉核**
+      （两条**独立**读数一致才算稳），交叉核量不到**不判失败**（★ 不猜）
+    · V4 的 docstring 里那句 `GetBreakLineCount()` **也改对**（原文写的正是错误的零参形态）
+  ★★ **一个值得记的观察**：本仓**已有** `tools/audit_byref_args.py` 专抓「裸传 by-ref」这一类，
+     ★ 但它是**静态 AST** 审计 —— 而探针是**用字符串成员名**间接调的（`_count_of(view, "GetBreakLineCount")`）
+     ⇒ ★ **审计看不见**，所以漏了。（★ 记在此处，供以后决定要不要补这一类。）
+
+■ 验证
+  · 两个文件 `ast.parse` 均 OK；`RESOLVERS` 键表实测为上述六个
+  · ★ **收尾链**：生成器全跑 → **`release_check 第 1 轮 OK`** → **4 passed**（合计 35.0 s）
+
+★ 未做（留给下一轮）：把 13 项里那 8 项**已实现**的函数挂成工具 —— ★ 现在前置已修（①），可以开工。

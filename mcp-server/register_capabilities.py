@@ -121,6 +121,19 @@ RESOLVERS: dict[str, Any] = {
     #: ★ 24h 计划 段 2.1（Spec Kit `143`）：`sw_simulation_loads` 那批函数首参是 `manager`
     #:   ⇒ 加一行即可挂（★ 这条表**就是**为"注入名各不相同"而设计的，见 known-facts 169）。
     "manager": resolve_manager,
+    #: ★ 2026-10-03（接手轮）：**工程图 subskill 里的函数首参叫 `drawing_model`**
+    #:   —— 实现文件 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`，
+    #:   经 `scripts/sw_drawing.py`（`spec_from_file_location` 按路径加载后再逐个导出公开名）可达。
+    #:   ★ 依据（逐字核过源码）：`tool_registry.py:507` 是 `kwargs[inject_as or inj] = resolver(params)`，
+    #:     而 `register()`（同文件 `:559`）**不往下传 `inject_as`** ⇒ **注入键字面上等于 `inject` 的值**；
+    #:     ★ 而那个文件的父目录名 `solidworks-engineering-drawing` **带连字符**（非合法标识符）
+    #:     ⇒ 无法写进 `module=`（`tool_registry.py:524` 是 `__import__("scripts.%s" % spec.module, …)`）。
+    #:   ⇒ ★ 不在这里加这一行，任何挂它的工具都会在运行期
+    #:     **`TypeError: unexpected keyword argument 'model'`**。
+    #:   ★ 工程图文档同样是 `IModelDoc2` ⇒ **复用 `resolve_model`**，与 `asm_model` 同一手法。
+    #:   ★ 本条由 space-bunny 的 L3 档实测发现、Lead 逐条核源码确认
+    #:     （见 `specs/202-user-coverage-gaps/recon/bunny-L3-toolspec-draft.py.txt`）。
+    "drawing_model": resolve_model,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。

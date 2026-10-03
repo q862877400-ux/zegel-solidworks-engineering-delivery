@@ -302,7 +302,18 @@ _COUNTERS = (
     ("center", "GetCenterMarkCount2"),       #: 中心符号线
     ("table", "GetTableAnnotationCount"),    #: 表格（孔表 / 修订表 / BOM）
     ("datum_origin", "GetDatumOriginCount"), #: 基准原点
-    ("breakline", "GetBreakLineCount"),      #: 断裂线
+)
+#: ★★ **带 `out` 参数的计数成员** —— ★ 与上面那张**零参表不能混**：
+#:   官方签名逐字 `System.int GetBreakLineCount( out System.int Size )` ⇒
+#:   ★ **必须传 by-ref 包装**（本仓 `sw_connect.out_i4()`；与 known-facts 47 同族）；
+#:   ★ 零参调用会 `类型不匹配`，而被 `except` 吃成 `None` ⇒ **判据静默降级**，
+#:     表面上只看到"量不到"，看不出是**调用形态错**。
+#:   ★ 2026-10-03：space-bunny 的 L5 档实测发现此处原先把 `GetBreakLineCount` 放进了上面那张零参表
+#:     （于是**两条路径都错**）；Lead 核官方页确认后分到这里。
+#:   ★ 格式：`(键, 带 out 的成员, 零参交叉核成员)` —— ★ **兼用零参 `GetBreakLines()` 数组长度做交叉核**，
+#:     两条独立读数一致才算稳（单条读数不可靠时不许当判据）。
+_OUT_COUNTERS = (
+    ("breakline", "GetBreakLineCount", "GetBreakLines"),
 )
 
 
@@ -324,11 +335,20 @@ def _anno_state(doc) -> dict:
                     row[key] = int(_get(v, member) or 0)
                 except Exception:                                      # noqa: BLE001
                     row[key] = None
+            # ★ 带 `out` 参数的成员走**另一条**通道（★ 零参调它会 `类型不匹配` ⇒ 见 `_OUT_COUNTERS`）
+            for key, member, member2 in _OUT_COUNTERS:
+                row[key] = _out_count_of(v, member)
+                row[key + "_crosscheck"] = _list_len_of(v, member2)
             rows.append(row)
         totals = {}
         for key, _m in _COUNTERS:
             vals = [r[key] for r in rows if isinstance(r.get(key), int)]
             totals[key] = sum(vals) if vals else None
+        for key, _m, _m2 in _OUT_COUNTERS:
+            vals = [r[key] for r in rows if isinstance(r.get(key), int)]
+            totals[key] = sum(vals) if vals else None
+            vals2 = [r[key + "_crosscheck"] for r in rows if isinstance(r.get(key + "_crosscheck"), int)]
+            totals[key + "_crosscheck"] = sum(vals2) if vals2 else None
         state[label] = {"count": len(rows), "totals": totals, "per_view": rows}
     return state
 
@@ -782,7 +802,10 @@ def case_v4_break_view(sw):
       `SelectByID2(视图名,"DRAWINGVIEW")` → `SelectionManager.GetSelectedObject6(1,-1)` 取出 `IView`。
     ★ 官方 Remarks：Position1/Position2 **相对视图原点**；**Horizontal 时是 Y 值**、
       **Vertical 时是 X 值**（★ 例子用 `Orientation = 2` = `swBreakLineVertical`）。
-    ★ 判据：该视图 `GetBreakLineCount()` **+1** 且 `IsBroken` 为真（★ 副作用：视图数**不该变**）。
+    ★ 判据：该视图 `GetBreakLineCount(out_i4())` **+1** 且 `IsBroken` 为真（★ 副作用：视图数**不该变**）。
+    ★★ 注意：官方签名是 `GetBreakLineCount( out System.int Size )` **带 out 参数**
+    ⇒ ★ **必须传 `out_i4()`**；★ 零参调它会 `类型不匹配` 而被 `except` 吃成 `None`（静默降级）。
+    ★ 另用零参 `GetBreakLines()` 的数组长度做**交叉核**（两条独立读数）。
     """
     row = {"tag": "★ V4 断裂视图（InsertBreak3）", "ok": False}
     part = None
@@ -819,7 +842,8 @@ def case_v4_break_view(sw):
         bbox = _outline(view)
         row["view_outline_m"] = [round(v, 6) for v in bbox] if bbox else None
         dx = 0.25 * (bbox[2] - bbox[0]) if bbox else 0.01
-        before_bl = _count_of(view, "GetBreakLineCount")
+        before_bl = _out_count_of(view, "GetBreakLineCount")
+        before_bl2 = _list_len_of(view, "GetBreakLines")
         before_is_broken = _bool_of(view, "IsBroken")
         before_views = _view_count(doc)
         try:
@@ -828,18 +852,25 @@ def case_v4_break_view(sw):
             row["ret_is_none"] = ret is None
         except Exception as exc:                                       # noqa: BLE001
             row["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
-        after_bl = _count_of(view, "GetBreakLineCount")
+        after_bl = _out_count_of(view, "GetBreakLineCount")
+        after_bl2 = _list_len_of(view, "GetBreakLines")
         row.update({"orientation": orientation, "style": style, "shape_intensity": 2,
                     "break_sketch_blocks": True, "positions_relative_to_view_origin": [-dx, dx],
                     "breaklines": [before_bl, after_bl],
+                    "breaklines_crosscheck": [before_bl2, after_bl2],
                     "is_broken": [before_is_broken, _bool_of(view, "IsBroken")],
                     "views_before": before_views, "views_after": _view_count(doc),
                     "note_positions": ("★ 官方 Remarks：Position1/2 **相对视图原点**；"
                                        "Vertical ⇒ 它们是 **X 值**（★ 例子里就是这个形态）")})
         gained = (None if (before_bl is None or after_bl is None) else after_bl - before_bl)
+        gained2 = (None if (before_bl2 is None or after_bl2 is None) else after_bl2 - before_bl2)
         row["breakline_delta"] = gained
+        row["breakline_delta_crosscheck"] = gained2
+        # ★ 判据：**主读数**（带 out 的 `GetBreakLineCount`）增量 ≥1；
+        #   ★ 交叉核（零参 `GetBreakLines()` 长度）**只作对照**，量不到不判失败（★ 不猜）。
         row["ok"] = bool(row["preconditions_held"] and (gained or 0) >= 1)
-        row["verified_by"] = "GetBreakLineCount_delta + IsBroken"
+        row["verified_by"] = ("GetBreakLineCount_delta（★ 传 out_i4，官方带 out 参数）"
+                              " + 交叉核 GetBreakLines() 数组长度 + IsBroken")
     except Exception as exc:                                           # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
@@ -854,6 +885,31 @@ def _count_of(obj, member):
     """★ 读一个零参计数成员；读不到回 `None`（★ 判据降级，不猜 0）。"""
     try:
         return int(_get(obj, member) or 0)
+    except Exception:                                                  # noqa: BLE001
+        return None
+
+
+def _out_count_of(obj, member):
+    """★ 读**带 `out` 参数**的计数成员；读不到回 `None`（★ 判据降级，不猜 0）。
+
+    ★ 官方形态逐字：`System.int GetBreakLineCount( out System.int Size )`
+    ⇒ ★ **必须传 `sw_connect.out_i4()` 的 by-ref 包装**（与 known-facts 47 同族）。
+    ★ 零参调它会 `类型不匹配`，`except` 一吃就成 `None` ⇒ **静默降级**（这是 2026-10-03 踩到的坑）。
+    """
+    try:
+        return int(_get(obj, member, C.out_i4(0)) or 0)
+    except Exception:                                                  # noqa: BLE001
+        return None
+
+
+def _list_len_of(obj, member):
+    """★ 读一个**零参返回数组**的成员并取长度；读不到回 `None`。
+
+    ★ 用途：给带 `out` 参数的计数成员做**交叉核** —— 两条**独立**读数一致才算稳。
+    """
+    try:
+        v = _get(obj, member)
+        return len(v) if v is not None else None
     except Exception:                                                  # noqa: BLE001
         return None
 
