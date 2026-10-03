@@ -3993,6 +3993,40 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 
 ---
 
+
+### 六 · ★★★★ 而**本条已出现第三次实例**（★ 2026-10-04 · 轮 80）
+★ 场景：★ 我把「标了 `verified` 的能力**有没有实现**」这件事**系统化**（★ 新扫描器
+  `tools/scan_verified_without_implementation.py`）✓
+★★ **判据**：★ 每个 `verified` 条目挂的 MCP 工具 ⇒ ★ 其声明的 `function` **必须**能在实现面找到 ✓
+★★★ **第一版结果**：★ 报 **6** 个「工具不在注册表里」——
+  `solidworks_addin_host_status` · ★ `solidworks_pack_and_go` · ★ `cadstudio_write_open_format` ·
+  ★ `cadstudio_check_dfm` · ★ `cadstudio_build_dxf_preview_scene`（×2）✓
+★★★★ **而其中 `cadstudio_check_dfm` 我**一直在用****（★ 本会话的工具清单里就有它）⇒
+  ★ **所以"报出来的"不是"东西不存在"、★ 而是"我的表不全"** ✓
+★ **真因**：★ **本仓有**两套**注册路径** ——
+  · ★ `mcp-server/register_capabilities.py` 的 `ToolSpec`（★ **280** 条 · 带 `module`/`function`）✓
+  · ★★ `mcp-server/server.py` 里的 `name="cadstudio_*"` 那批（★ **45** 条 · **只有名字**）✓
+★★ **修法**：★ **第二条也读**、★ 并对"只有名字"那一类用一个**哨兵**
+  （★ 标记"由 `server.py` 提供、★ 本扫描不做函数级核对"）—— ★★ **而不是当成"找不到"** ✓
+★★★ **修后**：★ 工具数 **280 → 325** · ★ **`verified` 里"指不到实现"的：★ **0** 个** ✓
+
+### 七 · ★★★★ 而那个 **0** 本身是有价值的结论
+★ 它说明：★★★ **本仓**没有第二个 `drawing_dimension_insertion` 那种"零实现却标 `verified`"的条目** ✓
+★★ 而**轮 79 那条**是**真的**（★ 它有自己的 `limitations` 记着、★ 且我独立复核过）✓
+★★★ **⇒ 可复用判据**：★★★ **一个"负面扫描"的结果要以**先补全表**为前提** ——
+  ★ 否则**报出来的每一条都可能是假阳性** ✓
+  （★ **这正是事实 518 的推广**：★ 518 说"表里没有 ≠ 不存在"、
+    ★★ **本条说"扫出问题"也要先问"表全不全"**）✓
+
+### 八 · ★ 依据（第三次实例）
+★ `tools/scan_verified_without_implementation.py`（★ **只报不动**）·
+★ `tests/test_verified_tools_point_to_implementation.py`（★ **4 条**）·
+★ `output/verified-without-implementation-scan.json` ✓
+★ 提交：阶段 1 · 轮 80 ✓
+
+
+---
+
 ## 519 · ★★★★ 覆盖矩阵里的 `✅` **要追到"命中是怎么来的"** —— ★ 而「命中工具名」不等于「做成了那件事」
 
 **发现时间**：2026-10-04（接手轮 · 轮 74–75）
