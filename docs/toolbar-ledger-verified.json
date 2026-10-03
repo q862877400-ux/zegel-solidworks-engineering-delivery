@@ -658,6 +658,7 @@
    "api": "InsertSplitLineProject/Silhouette",
    "entry": "",
    "level": "不能",
+   "note": "★ 2026-10-03（轮 537–539）**已真机试过**：★ `InsertSplitLineProject` 在 `IModelDoc2` 上、**未标废弃**；★ 而**mark 全错**后改正仍未建成。★ 待重查：官方 `## Remarks` 的 **mark 表**与**选择顺序**。",
    "api_iface_hits": [],
    "api_member_hits": [
     "InsertSplitLineProject"
@@ -1426,6 +1427,7 @@
    "api": "AddSymmetricDimension",
    "entry": "",
    "level": "不能",
+   "note": "★★ 2026-10-03（轮 461–463）**真机追到底了**：★ 前置链已按官方例子备齐（centerline + line 选择 · `SKETCHSEGMENT` 按名选 · `swInputDimValOnCreate=10` 抑制弹窗）；★ 而**返回的 `CDispatch` 七个成员全 `AttributeError`** ⇒ ★ **空壳**（事实 463）。★ **故它不产出真尺寸** —— ★ 而那是一条**有结论的**负结果。",
    "api_iface_hits": [],
    "api_member_hits": [
     "AddSymmetricDimension"
@@ -1546,6 +1548,7 @@
    "api": "SketchUseEdge3(Silhouette)",
    "entry": "",
    "level": "不能",
+   "note": "★ 已真机试过：`SketchUseEdge3` 在 `ISketchManager` 上、★ **未标废弃**；★ 而当时未建成。★ 待重查：它的第 2 参（★ **侧影**开关）与选区前置。",
    "api_iface_hits": [],
    "api_member_hits": [
     "SketchUseEdge3"
@@ -1754,6 +1757,7 @@
    "api": "SketchOffsetOnSurface",
    "entry": "",
    "level": "不能",
+   "note": "★★ 2026-10-03（轮 460 那一批）**真机试过**：前置全满足（★ 实体 / 3D 草图 / `UseFront=True`）★ 而**仍回 `False`** ⚠；★ 而 `by_point` 选边卡在 `GetCurveParams2`（`AttributeError`）。★ **下一步**：读它的 `## Remarks` 看**选区与面的要求**。",
    "api_iface_hits": [],
    "api_member_hits": [
     "SketchOffsetOnSurface"

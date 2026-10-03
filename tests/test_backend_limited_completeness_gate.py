@@ -97,3 +97,28 @@ def test_obsolete_is_warn_not_blocking():
     assert not bad, "废弃被当成违规拦下了 ⇒ 太严（★ 应只提示）：%r" % (bad[:2],)
     if GATE.SWAPI_TYPES.exists():
         assert warn, "废弃没进提示 ⇒ 那条新判据没生效"
+
+
+def test_warns_when_ke_gong_guan_has_no_note():
+    """★★ 2026-10-03（轮 611）★ 新判据：★ **「可攻关」的条目必须带 `note`**。
+
+    ★ 为什么（★ 事实 481 / 482）：★ "可攻关"的意思是「**还可以攻**」，
+      ★ 而它们大多**已经试过并有结论** ⇒ ★ 不写 `note`，读者会以为「还没试」⚠
+    ★ 判据：★ **提示级**（`warn`）—— ★ 那是一道"提醒写结论"的门禁，★ 不是拦截。
+    """
+    no_note = [{"tier": "可攻关", "zh": "某未写结论的项", "api": "SketchUseEdge3"}]
+    bad, warn, ran = GATE.check(idx=FAKE_IDX, has_acc=lambda i: False,
+                                items=no_note, limited=set())
+    assert ran
+    assert not bad, "没写 note 被当违规拦了 ⇒ 太严（★ 应为提示）"
+    assert warn, "「可攻关」没写 note 却没进提示 ⇒ 那条新判据没生效"
+
+
+def test_negative_with_note_passes():
+    """★ 负例：★ **写了 `note`** 的「可攻关」条目 ⇒ **不该报**（★ 否则永远红）。"""
+    with_note = [{"tier": "可攻关", "zh": "某已写结论的项", "api": "InsertSplitLineProject",
+                  "note": "★ 已试过：回 False（事实 460）"}]
+    bad, warn, ran = GATE.check(idx=FAKE_IDX, has_acc=lambda i: False,
+                                items=with_note, limited=set())
+    assert ran
+    assert not bad and not warn, "写了 note 仍被报：bad=%r warn=%r" % (bad[:2], warn[:2])
