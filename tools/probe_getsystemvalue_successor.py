@@ -64,18 +64,50 @@ def main() -> int:
         nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
         P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
 
-        #: ★ 从特征树里挖一个 IDimension（★ 取第一个 DisplayDimension 的尺寸）
-        dim = None
-        feat = _g(doc, "FirstFeature")
-        while feat is not None and dim is None:
-            dd = _try(_g, feat, "GetFirstDisplayDimension")
-            if dd.get("ok") and "CDispatch" in str(dd.get("ret", "")):
-                dd_obj = _g(feat, "GetFirstDisplayDimension")
-                got = _try(_g, dd_obj, "GetDimension")
-                if got.get("ok") and "CDispatch" in str(got.get("ret", "")):
-                    dim = _g(dd_obj, "GetDimension")
-            feat = _g(feat, "GetNextFeature")
+        #: ★★★ 先把草图**开着**并**自动加尺寸** —— ★ 否则 `Parameter("D1@草图1")` 找不到尺寸
+        #:   （★ 实测：矩形草图**本来就没有尺寸** ⇒ 前一版因此挖不到 `IDimension` ✓）
+        #:   ★ 用官方 `ISketchManager.AutoDimension2()` 自动标注（★ 注意它自己也在本仓的废弃名单里，
+        #:     后继是 `FullyDefineSketch` —— ★ 本探针只用它**造前置**，★ 不评它该不该换）
+        try:
+            P.start_sketch(doc, plane_name="Top Plane")
+            _g(_g(doc, "SketchManager"), "CreateCornerRectangle",
+               -0.05, -0.03, 0.0, 0.05, 0.03, 0.0)
+            R["AutoDimension2"] = _try(_g, _g(doc, "SketchManager"), "AutoDimension2")
+            R["FullyDefineSketch"] = _try(_g, _g(doc, "SketchManager"), "FullyDefineSketch",
+                                         1, 0, 0, True, 0, 0)
+            P.end_sketch(doc)
+        except Exception as exc:                                          # noqa: BLE001
+            R["造前置出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
+
+        #: ★★★ 2026-10-03 修：★ 改用**本仓自己已验证的取法**
+        #:   —— `scripts/sw_document_data.py` L246 逐字 `dimension = model.Parameter(dimension_name)`
+        #:   ⇒ ★★ `IModelDoc2.Parameter("D1@草图1")` 直接给 `IDimension` ✓
+        #:   ⚠ 上一版我从特征树挖 `GetFirstDisplayDimension` ⇒ ★ 拉伸特征**没有 display dimension**
+        #:     ⇒ ★ 挖不到 ⇒ 验证跳过（★ 那是**我取法的问题**，不是 API 的问题）✓
+        dim, dim_name = None, ""
+        for cand in ("D1@草图1", "D1@Sketch1", "D2@草图1", "D1@草图2"):
+            got = _try(_g, doc, "Parameter", cand)
+            if got.get("ok") and got.get("ret") not in ("None",):
+                dim, dim_name = _g(doc, "Parameter", cand), cand
+                break
         R["尺寸对象"] = repr(dim)[:90]
+        R["尺寸名"] = dim_name or "（没找到）"
+
+        #: ★ 若仍没有 ⇒ **显式加一个尺寸**（★ 本仓 `sw_part` 有现成的，但需先选中实体）
+        if dim is None:
+            try:
+                from sw_part import add_dimension as _add_dim
+                r = _try(_add_dim, doc, 0.0, 0.0)
+                R["加尺寸尝试"] = r
+                for cand in ("D1@草图1", "D1@Sketch1", "D1@草图2"):
+                    got = _try(_g, doc, "Parameter", cand)
+                    if got.get("ok") and got.get("ret") not in ("None",):
+                        dim, dim_name = _g(doc, "Parameter", cand), cand
+                        break
+                R["加尺寸后的对象"] = repr(dim)[:90]
+                R["加尺寸后的名字"] = dim_name or "（仍没有）"
+            except Exception as exc:                                      # noqa: BLE001
+                R["加尺寸出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
 
         if dim is not None:
             R["旧_GetSystemValue2(默认)"] = _try(_g, dim, "GetSystemValue2", "默认")

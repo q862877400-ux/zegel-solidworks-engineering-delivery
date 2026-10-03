@@ -127,6 +127,27 @@ def main() -> int:
                 lines.append(line)
             return "\n".join(lines)
 
+    #: ★★★ 2026-10-03（接手轮）**新增"跨库存疑"档**（★ 由 OCP 的 `bounds.Get()` 暴露）：
+    #:   ★ 病灶：★ `scripts/advanced_geometry_ocp.py` 与 `headless_occt_service.py` 里的
+    #:     `xmin, ymin, zmin, xmax, ymax, zmax = **bounds.Get()**` 是 **OCP/OpenCASCADE** 的调用
+    #:     （★ `Bnd_Box.Get()` 正是回 6 元组），★ 而本扫描器**按名字**把它算成了
+    #:     SolidWorks 的 `ICustomPropertyManager.Get` ⇒ ★★ **跨库假阳性** ✓
+    #:   ★★★ 根因与**事实 511**同源：★ **点调用（`obj.M()`）的宿主是运行时的，静态判不出来**。
+    #:   ⇒ ★ 判据：★ **点调用** 且 **同文件里没有任何 SolidWorks 标志**（`sw_`/`SldWorks`/
+    #:     `get_com_member`/`IModelDoc`/`SolidWorks`…）⇒ ★★ **降级为「跨库存疑」，不计入真命中** ✓
+    #:   ⚠ 限度（★ 如实记）：★ 这是**启发式**（★ 同文件可能恰好没有那些词），
+    #:     所以它**只降级、不删除** —— 存疑条目**仍会单独列出**供人看 ✓
+    SW_MARKERS = ("get_com_member", "call_com_member", "set_com_member", "SldWorks",
+                  "SolidWorks", "IModelDoc", "sw_app", "sldworks")
+    SUSPECT_LIB = ("ocp", "occ", "opencascade", "pythonocc", "cadquery")
+
+    def _is_crosslib_suspect(f: Path, raw: str) -> bool:
+        low = str(f).lower()
+        if any(k in low for k in SUSPECT_LIB):
+            return True
+        head = raw[:4000]
+        return not any(m in head for m in SW_MARKERS)
+
     rows, scanned, calls = [], 0, 0
     for f in files:
         if f.name.startswith("_"):
@@ -173,14 +194,19 @@ def main() -> int:
                                   else "★ 探针/证据（tools/，★ 只报不动）"
                                   if str(f.relative_to(REPO)).startswith("tools")
                                   else "★ 其它"),
+                        #: ★★★ 「跨库存疑」：★ **点调用** 且 **同文件没有 SolidWorks 标志**
+                        #:   ⇒ ★ 降级（★ 见上面 `_is_crosslib_suspect` 的说明）
+                        "crosslib": bool(how != "get_com_member" and _is_crosslib_suspect(f, raw)),
                         "ctx": lines[i].strip()[:160] if i < len(lines) else "",
                     })
     #: ★ 分类
     for r in rows:
         r["class"] = ("★ 兜底分支（不算缺陷）" if r["fallback_branch"]
                       else "★ 疑似登记表（要人看）" if r["registry_like"]
+                      else "★ 跨库存疑（点调用 + 无 SolidWorks 标志）" if r.get("crosslib")
                       else "★★ 待修（真命中）")
     real = [r for r in rows if r["class"] == "★★ 待修（真命中）"]
+    crosslib = [r for r in rows if r["class"] == "★ 跨库存疑（点调用 + 无 SolidWorks 标志）"]
     agg = Counter(r["member"] for r in real)
 
     R = {
@@ -212,6 +238,9 @@ def main() -> int:
     print()
     print("★★★ 分类：")
     print("   ★★ 真命中（待修）      **%d**" % len(real))
+    #: ★★★ 新增档：★ 跨库存疑（★ 由 OCP 的 `bounds.Get()` 暴露 —— 与事实 511 同源）
+    print("   ★ 跨库存疑（★ 点调用 + 无 SolidWorks 标志）**%d**  ← ★ 降级，不计入真命中"
+          % len(crosslib))
     #: ★★★ 生产 / 探针 分开报（★ 探针是**历史证据**，★ 改了会破坏"证据不可变" —— GATE-FINAL C12）
     print("        ★ 其中**生产（scripts/）**  **%d**  ← ★★ **只有这批该改**"
           % len([r for r in real if str(r.get("scope", "")).startswith("★ 生产")]))
