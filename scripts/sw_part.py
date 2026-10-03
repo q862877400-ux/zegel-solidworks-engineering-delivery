@@ -1124,6 +1124,45 @@ def feature_unsuppress(model, feature_name: str) -> bool:
     return bool(get_com_member(model, "EditUnsuppress2"))
 
 
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   SolidWorks 官方 API（`C:\swapi`，三源之一）+ 本项目既有模式
+# 文件:   C:\swapi\types\IModelDoc2\EditDelete.md → `void EditDelete()`（0 参，★ 无废弃）
+# 定位:   ★ 阶段 5「按缺口密度补能力」—— ★ 继续补**「改 × 特征」格**
+#           （★ 本仓密度**最低**的一格：★ 官方 275 / 我们 2 ⇒ 0.7%）。
+#         ★★ 与 `feature_suppress` **同族**：★ `EditDelete()` 也是**文档级**、
+#            ★ **作用在当前选择上**（★ 官方 `## Parameters` 无参数 ⇒ 无对象形参）✓
+#        ★★★ 真机证据见 `tools/probe_feature_edit_e2e.py` ·
+#          `output/feature-edit-e2e-evidence.json`
+#        ⚠ 与 `EditSuppress2` 一样：★ **空选区下调用会静默什么都不做** ⇒ 本函数**先回读选区计数**、
+#          ★ **为 0 就抛错**（★ 本项目一贯纪律：不静默失败）✓
+# ────────────────────────────────────────────────────────────────────
+def feature_delete(model, feature_name: str) -> None:
+    """★ 删除一个**特征**（★ 走官方 `IModelDoc2.EditDelete()`，0 参、无废弃）。
+
+    ★★ 与 `feature_suppress` **同族** —— ★ `EditDelete()` 同样是**文档级**的、
+      ★ **作用在当前选择上** ⇒ ★ 所以**先选特征**、★ 再调它 ✓
+    ★★★ 官方 `types/IModelDoc2/EditDelete.md` 逐字：`void EditDelete()`（★ 返回 `void`）。
+
+    :param model: `IModelDoc2` / `IPartDoc`
+    :param feature_name: 特征名（★ 中文 UI 如「凸台-拉伸1」）
+    :raises RuntimeError: 特征没选中 ⇒ **不静默** ✓
+    :returns: `None`（★ 官方是 `void` ⇒ ★ **判据只能是"特征树里它没了"**，★ 见证据脚本）
+    """
+    get_com_member(model, "ClearSelection2", True)         #: ★ 在 model 上（不是 Extension）
+    selection = get_com_member(model, "Extension")
+    ok = get_com_member(selection, "SelectByID2", str(feature_name), "BODYFEATURE",
+                        0.0, 0.0, 0.0, False, 0, _empty_callout(), 0)
+    count = int(get_com_member(get_com_member(model, "SelectionManager"),
+                               "GetSelectedObjectCount2", -1) or 0)
+    if not ok or count == 0:
+        raise RuntimeError(
+            "特征 %r 没被选中（★ SelectByID2 回 %r、★ 选区计数 %d）"
+            "⇒ 拒绝调用 EditDelete：★ 它作用在**当前选择**上，"
+            "★ 空选区下调用会**静默什么都不做**（★ 而它返回 void，★ 连错误码都没有）。"
+            % (feature_name, ok, count))
+    get_com_member(model, "EditDelete")
+
+
 def circular_pattern(model, feature_name, axis_name, angle_rad, count, equal_spacing=True):
     """
     圆形阵列

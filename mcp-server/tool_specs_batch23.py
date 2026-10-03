@@ -180,4 +180,34 @@ SPECS_BATCH23 = [
             "(0 params). ★ Same selection contract and same refusal guard as "
             "`solidworks_feature_suppress`.",
     ),
+    #: ★★★★★ 2026-10-03（接手轮，★ 阶段 5）**继续补「改 × 特征」格** ——
+    #:   ★ 与上两条**同族**：★ `EditDelete()` 也是**文档级**、★ **作用在当前选择上** ✓
+    #:   ★★ 官方 `IModelDoc2/EditDelete.md` 逐字 `void EditDelete()`（0 参、★ **无废弃**）✓
+    #:   ★★★ 真机（★ `tools/probe_feature_edit_e2e.py` ·
+    #:     `output/feature-edit-e2e-evidence.json`）：★ **特征真的被删掉**
+    #:     （★ `['…','草图1','凸台-拉伸1']` ⇒ `['…','草图1']`）、
+    #:     ★★ **负例（不存在的特征名）抛 `RuntimeError`** ⇒ ★★★ **PASS** ✓
+    #:   ★★★★ **判据上的一个要点**：★ `EditDelete` 返回 `void` ⇒
+    #:     ★ **判据只能是"特征树里它没了"**（★ 没有返回值可看）——
+    #:     ★ 而这**恰恰是最好的判据**：★ **能直接观测** ✓
+    #:     （★ 对比 `feature_suppress`：★ 它的判据要读 `IsSuppressed2`，
+    #:      ★ 而我那个读数**没读对** ⇒ ★ 判据选"能直接观测的"更稳）✓
+    ToolSpec(
+        name="solidworks_feature_delete",
+        title="Delete a Feature",
+        module="sw_part", function="feature_delete",
+        inject="model",
+        param_alias={"feature_name": "feature_name"},
+        params=[
+            Param("feature_name", str,
+                  description="Feature name as it appears in the FeatureManager tree "
+                              "(Chinese UI: e.g. 「凸台-拉伸1」). ★ Features CAN be selected by "
+                              "name (unlike edges/faces — known fact 32)."),
+        ],
+        doc="Delete one FEATURE via `IModelDoc2.EditDelete()` (0 params, NOT deprecated). "
+            "★ It acts on the CURRENT SELECTION, so the capability layer selects the named "
+            "feature first and REFUSES to call when the selection read-back is 0. "
+            "★ The official return is `void`, so success is observed as the feature "
+            "disappearing from the tree.",
+    ),
 ]
