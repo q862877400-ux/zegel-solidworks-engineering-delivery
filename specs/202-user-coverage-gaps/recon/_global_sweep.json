@@ -1,0 +1,282 @@
+[
+ {
+  "name": "solidworks_current_selection",
+  "file": "tool_specs_batch5.py",
+  "module": "sw_selection_spec",
+  "function": "current_selection",
+  "tokens": [
+   "GetSelectedObject6",
+   "SelectionManager",
+   "_selection_count",
+   "get_selection_count",
+   "selection_count"
+  ],
+  "in_a": true,
+  "in_b": false,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_clear_selection_for_preview",
+  "file": "tool_specs_batch7.py",
+  "module": "sw_review",
+  "function": "clear_selection_for_preview",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager"
+  ],
+  "in_a": true,
+  "in_b": false,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_surface_fill",
+  "file": "tool_specs_batch45.py",
+  "module": "sw_surface_features",
+  "function": "insert_fill_surface_report",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager"
+  ],
+  "in_a": false,
+  "in_b": true,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_measure_selection",
+  "file": "tool_specs_batch46.py",
+  "module": "sw_measure",
+  "function": "measure_selection_report",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager"
+  ],
+  "in_a": false,
+  "in_b": true,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_part_loft",
+  "file": "tool_specs_batch47.py",
+  "module": "sw_loft",
+  "function": "create_loft_report",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager"
+  ],
+  "in_a": false,
+  "in_b": true,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_part_sweep",
+  "file": "tool_specs_batch48.py",
+  "module": "sw_sweep",
+  "function": "create_sweep_report",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager"
+  ],
+  "in_a": false,
+  "in_b": true,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_part_axis",
+  "file": "tool_specs_batch49.py",
+  "module": "sw_part",
+  "function": "create_axis_report",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager"
+  ],
+  "in_a": false,
+  "in_b": true,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_part_wrap",
+  "file": "tool_specs_batch50.py",
+  "module": "sw_wrap",
+  "function": "create_wrap_report",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager"
+  ],
+  "in_a": false,
+  "in_b": true,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_selection_count",
+  "file": "tool_specs_batch53.py",
+  "module": "sw_selection_spec",
+  "function": "get_selection_count",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager",
+   "_selection_count",
+   "get_selection_count",
+   "selection_count"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_resolve_selection",
+  "file": "tool_specs_batch53.py",
+  "module": "sw_selection_spec",
+  "function": "resolve_selection",
+  "tokens": [
+   "_selection_count",
+   "get_selection_count",
+   "selection_count"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_selection_point",
+  "file": "tool_specs_batch53.py",
+  "module": "sw_selection_spec",
+  "function": "selection_point",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "GetSelectionPoint",
+   "GetSelectionPoint2",
+   "SelectionManager",
+   "selection_count"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_select_by_selector",
+  "file": "tool_specs_batch53.py",
+  "module": "sw_selection_spec",
+  "function": "select_by_selector_report",
+  "tokens": [
+   "GetSelectedObjectCount2"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_resolve_entity",
+  "file": "tool_specs_batch53.py",
+  "module": "sw_selection_spec",
+  "function": "resolve_entity_report",
+  "tokens": [
+   "_selection_count",
+   "get_selection_count",
+   "selection_count"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_hole_wizard",
+  "file": "tool_specs_batch72.py",
+  "module": "sw_hole_features",
+  "function": "create_hole_wizard_at_selection_report",
+  "tokens": [
+   "GetSelectedObjectCount2",
+   "SelectionManager"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": false
+ },
+ {
+  "name": "solidworks_drawing_create_auxiliary_view",
+  "file": "tool_specs_batch73.py",
+  "module": "sw_drawing_create_missing",
+  "function": "create_auxiliary_view",
+  "tokens": [
+   "_selection_count",
+   "selection_count"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_drawing_insert_surface_finish_symbol",
+  "file": "tool_specs_batch73.py",
+  "module": "sw_drawing_create_missing",
+  "function": "insert_surface_finish_symbol",
+  "tokens": [
+   "_selection_count",
+   "selection_count"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_drawing_insert_datum_tag",
+  "file": "tool_specs_batch73.py",
+  "module": "sw_drawing_create_missing",
+  "function": "insert_datum_tag",
+  "tokens": [
+   "_selection_count",
+   "selection_count"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_sheet_metal_insert_miter_flange",
+  "file": "tool_specs_batch74.py",
+  "module": "sw_sheet_metal_weld_entry",
+  "function": "insert_sheet_metal_miter_flange",
+  "tokens": [
+   "_selection_marks"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_sheet_metal_insert_closed_corner",
+  "file": "tool_specs_batch74.py",
+  "module": "sw_sheet_metal_weld_entry",
+  "function": "insert_sheet_metal_closed_corner",
+  "tokens": [
+   "_selection_marks"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_drawing_create_section_view",
+  "file": "tool_specs_batch75.py",
+  "module": "sw_drawing_expose",
+  "function": "create_section_view",
+  "tokens": [
+   "_selection_count",
+   "selection_count"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ },
+ {
+  "name": "solidworks_drawing_create_hole_table",
+  "file": "tool_specs_batch75.py",
+  "module": "sw_drawing_expose",
+  "function": "create_hole_table",
+  "tokens": [
+   "_selection_marks"
+  ],
+  "in_a": false,
+  "in_b": false,
+  "in_c": true
+ }
+]
