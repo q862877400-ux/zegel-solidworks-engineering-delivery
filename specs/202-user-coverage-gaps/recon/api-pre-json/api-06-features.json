@@ -1,0 +1,225 @@
+{
+  "file": "api-06-features.md",
+  "member_count": 15,
+  "members": [
+    {
+      "member": "InsertScale",
+      "interface": "IFeatureManager",
+      "param_count": 5,
+      "has_remarks": true,
+      "remarks_precondition": "缩放图形体时须先在 FeatureManager 树的 Graphic Bodies 文件夹里选中那个图形体再调用；缩放当前模型时官方没写任何选择前置。",
+      "has_example": true,
+      "example_recipe": "不做任何选择、只传参：InsertScale(swScaleAboutOrigin, True, 3, 3, 3)，随后 GetDefinition() 取 IScaleFeatureData。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "InsertRib",
+      "interface": "IFeatureManager",
+      "param_count": 10,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "SelectByID2(草图名, SKETCH, 0,0,0, append=false, mark=0) → InsertRib(true, false, 厚度, 0, false, false, true, 拔模角, false, false) → GetSelectedObject6(1,-1).GetDefinition() 取 RibFeatureData2。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "InsertIndent",
+      "interface": "IFeatureManager",
+      "param_count": 6,
+      "has_remarks": true,
+      "remarks_precondition": "调用前必须已选中目标体（mark = 1）与工具体区域（mark = 4），用 SelectByID2 带上这两个不同的 mark。",
+      "has_example": true,
+      "example_recipe": "SelectByID2(体名, SOLIDBODY, …, mark=1) 加 SelectByID2(空名, FACE, x,y,z, append=true, mark=4) → InsertIndent(0.01, 0, true, true, false, false)。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "InsertFlexFeature",
+      "interface": "IFeatureManager",
+      "param_count": 17,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "InsertWrapFeature",
+      "interface": "IFeatureManager",
+      "param_count": 3,
+      "has_remarks": true,
+      "remarks_precondition": "用 SelectByID2 按 mark 选：面 = 1、pull 方向 = 2（仅 Type 为 Emboss/Engrave 时）、2D 草图 = 4；官方明写 3D 草图无效。",
+      "has_example": true,
+      "example_recipe": "SelectByID2(草图, SKETCH, …, mark=4) 加 SelectByID2(空名, FACE, x,y,z, append=true, mark=1) → InsertWrapFeature(2, 0.001, false)；本例不选 pull 方向。",
+      "obsolete": true,
+      "successor": "InsertWrapFeature2"
+    },
+    {
+      "member": "InsertWrapFeature2",
+      "interface": "IFeatureManager",
+      "param_count": 5,
+      "has_remarks": true,
+      "remarks_precondition": "用 SelectByID2 或 SelectByRay 选：一个或多个面 mark=1、pull 方向实体 mark=2（仅 Emboss/Engrave）、不含开放轮廓的 2D 草图 mark=4，3D 草图不支持。",
+      "has_example": true,
+      "example_recipe": "草图 SelectByID2(…, mark=4) 加 6 个 SelectByRay(…, mark=1) → InsertWrapFeature2((int)swWrapSketchType_Scribe, 0.00254, false, (int)swWrapMethods_SplineSurface, 5)。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "InsertCombineFeature",
+      "interface": "IFeatureManager",
+      "param_count": 3,
+      "has_remarks": true,
+      "remarks_precondition": "要么直接传 MainBody + ToolVar；要么先 SelectByID2 按 MainBody = mark 1、ToolVar bodies = mark 2 选中，再把 MainBody 传 Nothing/null 且 ToolVar 传空数组。",
+      "has_example": true,
+      "example_recipe": "先 mark=0 试选 → ClearSelection2(true) → mark=2 重选 → InsertCombineFeature((int)swBodyOperationType_e.SWBODYADD, null, null)，两个体参数都传 null。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "IInsertCombineFeature",
+      "interface": "IFeatureManager",
+      "param_count": 4,
+      "has_remarks": true,
+      "remarks_precondition": "同 InsertCombineFeature（MainBody = mark 1、ToolVar bodies = mark 2）；另明写 ToolsArr 在 VBA/VB.NET/C#/C++/CLI 下 Not supported，仅进程内非托管 C++ 可用。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "PreIntersect",
+      "interface": "IFeatureManager",
+      "param_count": 1,
+      "has_remarks": true,
+      "remarks_precondition": "调用前必须已选中构成相交特征的 surfaces/solids/planes；调用后必须接着调 IFeatureManager::PostIntersect 建出相交特征。",
+      "has_example": true,
+      "example_recipe": "在特征树上多选（例子没写 mark）→ PreIntersect(False) → ClearSelection2 True → PostIntersect(intToExclude, True, False)。",
+      "obsolete": true,
+      "successor": "PreIntersect2"
+    },
+    {
+      "member": "PreIntersect2",
+      "interface": "IFeatureManager",
+      "param_count": 2,
+      "has_remarks": true,
+      "remarks_precondition": "调用前必须已选中相交的 surfaces/solids/planes；调用后必须接着调 IFeatureManager::PostIntersect 建出相交特征。",
+      "has_example": true,
+      "example_recipe": "SelectByID2(体名, SOLIDBODY, …, mark=0) 加 SelectByID2(Plane6, PLANE, …, mark=0) → PreIntersect2(false, 1) → ClearSelection2(true) → PostIntersect(excludeArray, true, false)。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "PostIntersect",
+      "interface": "IFeatureManager",
+      "param_count": 3,
+      "has_remarks": true,
+      "remarks_precondition": "调用前必须先调 IFeatureManager::PreIntersect 取得相交体数组（官方前置句点名的是 PreIntersect，不是 PreIntersect2）。",
+      "has_example": true,
+      "example_recipe": "PostIntersect(intToExclude, True, False)：第一实参是与相交区域数对齐的 bool 数组（例子为 4 元素 boolArr(3)），Merge=True、Consume=False。",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "InsertSplitLineIntersect",
+      "interface": "IFeatureManager",
+      "param_count": 1,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "FeatureLocalCurveDrivenPattern",
+      "interface": "IFeatureManager",
+      "param_count": 13,
+      "has_remarks": true,
+      "remarks_precondition": "按 mark 选：要阵列的组件 = 1、方向 1 的曲线/边/草图/草图实体 = 2、方向 2 同类 = 4、参考点 = 32（取 swLocalSketchPatternSelectedPoint 时必须选顶点）、3D 曲线所在面 = 64。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": true,
+      "successor": "CreateFeature"
+    },
+    {
+      "member": "SetFreeformBoundaryContinuity",
+      "interface": "IFeatureManager",
+      "param_count": 2,
+      "has_remarks": true,
+      "remarks_precondition": "官方明说 Freeform 族方法只用来 journal 交互用户的动作，因需交互，完全自动化创建 Freeform 特征不可能；顺序为选面→SetFreeformCurveData→SetFreeformPointData→本方法→InsertFreeform2。",
+      "has_example": false,
+      "example_recipe": "",
+      "obsolete": false,
+      "successor": ""
+    },
+    {
+      "member": "CreateDefinition",
+      "interface": "IFeatureManager",
+      "param_count": 1,
+      "has_remarks": false,
+      "remarks_precondition": "",
+      "has_example": true,
+      "example_recipe": "CreateDefinition((int)swFeatureNameID_e.<常量>) → base flange / corner relief / solid-to-sheet-metal / library / simple fillet / thread 这六类必须再调各自 Initialize*，再 CreateFeature(data)。",
+      "obsolete": false,
+      "successor": ""
+    }
+  ],
+  "not_found": [
+    {
+      "member": "FeatureRecogn",
+      "topic": "IFeatureManager 下查不到任何成员：目录清单无 *FeatureRecogn* 文件，CHM 成员表全文检索 Recogn 0 命中"
+    },
+    {
+      "member": "Dome",
+      "topic": "IFeatureManager 下查不到任何成员：目录清单无 *Dome* 文件，CHM 成员表全文检索 Dome 0 命中（只有 IDomeFeatureData 等特征数据接口）"
+    },
+    {
+      "member": "Deform",
+      "topic": "IFeatureManager 下查不到任何成员：目录清单无 *Deform* 文件，CHM 成员表全文检索 Deform 0 命中"
+    },
+    {
+      "member": "InsertRib",
+      "topic": "md 与 CHM 都没有 ## Remarks 节，调用前置文字查不到"
+    },
+    {
+      "member": "InsertFlexFeature",
+      "topic": "md 与 CHM 都没有 ## Remarks 节，调用前置文字查不到"
+    },
+    {
+      "member": "InsertFlexFeature",
+      "topic": "官方例子查不到：md 与 CHM 的 Examples 段都为空或缺"
+    },
+    {
+      "member": "InsertFlexFeature",
+      "topic": "Type 的内联整数表（-1..4）没给枚举名，enums 目录下也查不到对应 md"
+    },
+    {
+      "member": "IInsertCombineFeature",
+      "topic": "官方例子查不到：md 与 CHM 都没有 ## Examples 节"
+    },
+    {
+      "member": "InsertSplitLineIntersect",
+      "topic": "md 与 CHM 都没有 ## Remarks 节，调用前置文字查不到"
+    },
+    {
+      "member": "InsertSplitLineIntersect",
+      "topic": "官方例子查不到：md 与 CHM 都没有 ## Examples 节"
+    },
+    {
+      "member": "FeatureLocalCurveDrivenPattern",
+      "topic": "官方例子查不到：md 只有 See Also，CHM 该页同样无 Example 条目"
+    },
+    {
+      "member": "SetFreeformBoundaryContinuity",
+      "topic": "官方例子查不到：md 与 CHM 都没有 ## Examples 节，官方只给了交互录制宏的做法"
+    },
+    {
+      "member": "CreateDefinition",
+      "topic": "Remarks 没有 Before calling 式的选择前置，只区分哪些常量需再调专属 initialize 方法，选用式前置查不到"
+    }
+  ]
+}
