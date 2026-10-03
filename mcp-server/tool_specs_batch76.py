@@ -62,5 +62,31 @@ _BATCH76: list[ToolSpec] = [
     ),
 ]
 
+#: ★★ **第 2 条：样条曲线** —— ★ 这一条修掉了**一个从没被发现的真 bug**（见 ToolSpec 的 doc）
+_BATCH76.append(
+    ToolSpec(
+        name="solidworks_sketch_spline",
+        title="Sketch Spline (CreateSpline2, VARIANT array)",
+        module="sw_part", function="sketch_spline",
+        inject="model",
+        params=[
+            Param("points", list, description="控制点列表 `[[x, y], …]`（**毫米**，★ 至少 2 组 —— "
+                                              "官方 Remarks 要求至少两组 X,Y,Z）⇒ ★ 换算只在能力层边界做一次。"),
+        ],
+        doc="★ **草图样条曲线**：`ISketchManager.CreateSpline2(data, False)`。"
+            "★★★ **本条修掉了一个真 bug（★ 且是一处「被误记成架构限制」的假阴性）**："
+            "能力层 `scripts/sw_part.sketch_spline` **此前每次都抛**，其 docstring 断言"
+            "「**本机实测建不出来**」并把原因归给 **事实 47/68 的 pywin32 架构限制**。"
+            "★ 而真因是 **数组的包装形态**：✗ `array.array('d')` ⇒ **静默回 `None`**；"
+            "✓ **`VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** ⇒ **建成**（草图段数 0→1）。"
+            "★ 证据：`output/spline-with-variant-evidence.json`（四格对照，`form=spline2` ⇒ `ok=true`）。"
+            "★★ 而**正解早在本仓**：`scripts/sketch_relations.create_spline:272-273` 逐字写着"
+            "「★★★ 必须包 `VARIANT(VT_ARRAY|VT_R8)` —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」"
+            "⇒ ★ **同一个仓里两条路，一条修了、另一条从没跟上**。"
+            "★ 前置（官方 Remarks）：**必须先有活动草图**。"
+            "⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。",
+    )
+)
+
 #: ★ 注册器按 `SPECS_*` 找
 SPECS_BATCH76 = _BATCH76

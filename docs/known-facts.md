@@ -3247,5 +3247,33 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         本条说"前置的成果会被算进目标格"（**假绿**）⇒ ★ **两个方向都要防**。|
         痕迹：`tools/probe_drawing_tools_e2e.py`（`_RUN_TAG` 唯一文件名 + `views_before_call` 重取基线）·
         `output/drawing-tools-e2e-evidence.json` · 对照事实 **496**（前置与能力分开记） |
+| 501 | **★★★★ 「被误记成架构限制的假阴性」—— 一个函数每次都抛，把原因归给 pywin32 架构限制，而正解早就在同一个仓里的另一条路上** —— 2026-10-03（接手轮，★ **本次修好并真机验证**）。
+      ★ **病灶**：`scripts/sw_part.sketch_spline` 的 docstring 逐字断言「**本机实测：本函数建不出样条**」，
+        并把原因归给 **事实 47/68 的 pywin32 迟到绑定架构限制**（理由：`CreateSpline2` 已废弃、
+        后继 `CreateSpline3` 末参是 BYREF `Object&`）。★ 于是它**每次都 `raise RuntimeError`**。
+      ★★ **真因（本轮查明）**：**数组的包装形态** ——
+        · ✗ `array.array('d')`（★ 它原先传的）⇒ ★ **静默回 `None`**
+        · ✓ **`VARIANT(VT_ARRAY | VT_R8, 扁平 list)`** ⇒ ★★ **建成**（草图段数 **0 → 1**）
+      ★★★ **而正解早在本仓**：`scripts/sketch_relations.py:272-273` **逐字写着**
+        「★★★ **必须包 `VARIANT(VT_ARRAY | VT_R8)`** —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」
+        ⇒ ★★ **同一个仓里两条路做同一件事，一条在轮 183 修了、另一条从没跟上** ——
+        ★ 而**没跟上的那条**把失败**归因成了架构限制**（★ 这条错误结论一直留在 docstring 里）。
+      ★ 改法：把 `sw_part.sketch_spline` 改成 `VARIANT(VT_ARRAY|VT_R8)` 形态（照抄 `sketch_relations` 的正解），
+        ★ 顺手修掉一处**单位不一致**（docstring 声明**毫米**、旧实现却把值**原样**送进 COM——COM 吃**米**）
+        ⇒ ★ 现按规则 2 **在边界换算一次**（★ 因为该函数此前**每次都抛**，**没有可用调用方会被破坏**）。
+      ★★ **真机复验通过**：新建零件 · 开草图 · `sketch_spline(doc, [[0,0],[20,15],[40,-5]])` ⇒
+        `seg_before=0` → `seg_after=1` · 返回 `CDispatch` · **`ok=true`**
+        （证据 `output/spline-fix-evidence.json`，走 `sw_guard`、零弹窗）。
+      ★★ **可复用的判据（★ 这条最值钱）**：
+        ① ★ **一个函数声称"架构上做不到"时，先去同一个仓里找有没有别的路在做同一件事** ——
+           ★ 找到就先比"**传参形态**"（数组包装是重灾区：裸 array / 裸 list / `VT_ARRAY|VT_R8` /
+           `VT_ARRAY|VT_VARIANT` / 逐元素 VARIANT），★ **不要**先信那个归因；
+        ② ★ **"每次都抛"的函数是安全的修改对象** —— ★ 它没有可用调用方，改它不会破坏别人；
+        ③ ★ 与事实 **40**（`IModeler.Create*Surface` 返回值不可靠 ⇒ **让失败可见**）**不冲突**：
+           ★ 40 说的是"**不要静默**"，★ 本条说的是"**报出来的原因可能是错的**" —— ★ **两条一起用**：
+           **既让失败可见，又不轻信失败给出的归因**。|
+        痕迹：`scripts/sw_part.py`（本轮修）· `scripts/sketch_relations.py:272-284`（正解）·
+        `output/spline-with-variant-evidence.json`（四格对照）· `output/spline-fix-evidence.json`（复验）·
+        `tools/probe_spline_fix.py` · 对照事实 **40**（让失败可见）· **47 / 68**（指针族/pywin32 限制）|
 
 

@@ -22,9 +22,9 @@
 | 14 | 函数（含类方法与嵌套） | scripts/sw_*.py 里所有 def（含缩进的）—— ★ 与上一行**不是同一个东西**，不可与「工具」相比 | **1260** | `正则允许前导空白，抓缩进的 def` |
 | 15 | 函数（含工具层与声明层） | scripts/ + mcp-server/ 里的 def | **1922** | `同上，扫两个目录` |
 | 16 | 测试文件 | tests/ 下的 test_*.py | **160** | `C:\swprojects\sw-skill-fork\tests\test_*.py` |
-| 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **274** | `register_capabilities.all_specs()` |
+| 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **275** | `register_capabilities.all_specs()` |
 | 18 | MCP 工具（上游原有） | server.py 里的 @mcp.tool 装饰器 | **45** | `server.py 里 @mcp.tool 出现次数` |
-| 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **319** | `两行相加` |
+| 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **320** | `两行相加` |
 | 20 | 四家工具数（原始相加） | 四家各自工具数直接相加（有重名，会虚高） | **510** | `union-sources.json 的 sources[].tools 长度相加` |
 | 21 | ★ 四家工具数（去重＝并集） | 去掉重名后的总数（★ 与上一行不是同一个东西） | **349** | `union-sources.json 的 union_operations 长度` |
 | 22 | 能力清单条目 | capabilities.yaml 的条目数 | **110** | `capabilities.yaml 里 level 字段出现次数` |
@@ -32,7 +32,7 @@
 | 24 |   其中 stitched | 代码写好但没真机跑过 | **12** | `同上` |
 | 25 |   其中 not_implemented | 没做 | **1** | `同上` |
 | 26 | 门禁 | scripts/check_*.py 的自动检查程序 | **25** | `scripts/check_*.py` |
-| 27 | 已知事实条数 | docs/known-facts.md 里编号的条目 | **498** | `known-facts.md 里 ^| N | 的行数` |
+| 27 | 已知事实条数 | docs/known-facts.md 里编号的条目 | **499** | `known-facts.md 里 ^| N | 的行数` |
 | 28 | Spec Kit 特性 | specs/<NNN>-* 目录数 | **149** | `D:\AI\SW\specs 下形如 NNN- 的目录数` |
 | 29 | 覆盖口径 ①「名字出现过」（宽） | 台账 hit / 成员位次。★★ **无判别力** —— 我们的全量索引把 774 族的名字都抄了，所以它必然接近 100%，**不能用来说「覆盖广」** | **100.0%（15466 / 15466）** | `family-coverage.json 各行 hit 相加 ÷ members 相加` |
 | 30 | 覆盖口径 ②「真的被调用」（中） | 台账 used / 成员位次 —— 代码里真的有调用，不只是抄了名字 | **17.6%（2722 / 15466）** | `family-coverage.json 各行 used 相加 ÷ members 相加` |

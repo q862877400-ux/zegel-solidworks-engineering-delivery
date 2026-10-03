@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 300 | 300 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 301 | 301 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -39,7 +39,7 @@
 |---|---|---|---|---|---|---|---|---|
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 16 | 59⚠ | 49 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 37⚠ | 5 | **2** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 41 | 103⚠ | 75 | **34** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 42 | 103⚠ | 75 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 18⚠ | 16 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 23 | 90⚠ | 47 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 15 | 45⚠ | 23 | **8** |
@@ -55,7 +55,7 @@
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 29 | 14 | 29 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 49 | 493⚠ | 91 | **42** |
 
-**合计**：并集 612 个操作；**MCP 暴露面**缺 **312** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 612 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -64,8 +64,8 @@
 | ⑪ 工程图 | 49 |
 | ⑮ 宏 / 自动化 | 42 |
 | ⑰ 未归类 | 42 |
-| ③ 草图 | 34 |
 | ① 会话 / 文档 / 文件 | 33 |
+| ③ 草图 | 33 |
 | ⑤ 零件特征 | 24 |
 | ⑩ 装配 | 19 |
 | ⑫ 检查 / 测量 / 反馈 | 16 |
@@ -409,7 +409,7 @@
 
 缺口操作：`ref_axis`、`reference_planes`
 
-### ③ 草图（缺 34）
+### ③ 草图（缺 33）
 
 | 来源 | 该域有 | 许可 | 来源验证 |
 |---|---|---|---|
@@ -419,7 +419,7 @@
 | `andrewbartels1/SolidworksMCP-python` | 15 | MIT | **未声明** |
 
 缺口操作：`3d_sketch`、`3point_arc`、`check_sketch_fully_defined`、`circle`、`close_sketch`、`construction_geometry`、`convert_entities`、`edit_sketch`、`ellipse`、`exit_sketch`、`hide_all_sketches`、`polygon`、`rectangle`、`show_all_sketches`、`sketch`、`sketch_arc`、`sketch_chamfer`、`sketch_circle`、`sketch_constraint`、`sketch_construction`、`sketch_dimension`、`sketch_ellipse`、`sketch_line`、`sketch_polygon`
-（还有 10 个，见 `tools/union-sources.json`）
+（还有 9 个，见 `tools/union-sources.json`）
 
 ### ④ 尺寸 / 约束 / 参数（缺 10）
 

@@ -562,35 +562,51 @@ def sketch_spline(model, points):
     参数:
         points: [(x1,y1), (x2,y2), ...] 控制点列表（单位: **毫米**）
 
-    ⚠⚠ **2026-10-01（轮 141）真机实测：本函数建不出样条，而且此前是**静默**的。**
-    证据 `tools/probe_spline_creation.py` / `probe_spline_redraw.py`（SW 2026 SP4.1）::
+    ★★★ **2026-10-03（接手轮）修正：本函数此前那条「建不出来」的结论是**错的**。**
+    轮 141 真机确实见到 `CreateSpline2(arr, False)` ⇒ `None`，★ 但**真因不是**架构限制
+    （事实 47/68 那族），而是 **数组的包装形态**：
 
-        ① `CreateSpline2(arr, False)` ⇒ 返回 **None** ⇒ `get_sketch_segments` = **0**
-        ② **重绘后**（`IModelView::GraphicsRedraw`）仍是 **0**
-           ⇒ ★ **排除了官方 Remarks 那句"必须重绘才看得见"的解释**
-        ③ `CreateSpline`（1 参旧版）⇒ **迟到绑定里没有这个成员**
-        ④ 对照·同样流程画**直线** ⇒ 段数 **1** ⇒ **流程本身没问题**
+        · ✗ `array.array('d')`（本函数原先传的）⇒ ★ **静默回 `None`**
+        · ✓ **`VARIANT(VT_ARRAY | VT_R8, 扁平 list)`** ⇒ ★★ **建成**（草图段数 **0 → 1**）
 
-    ★ **为什么**：`CreateSpline2` 官方已标 **Obsolete**，后继是
-    `CreateSpline3(Object, Object, Object, Boolean, **Object&**)` ——
-    ⚠ 末参是 **BYREF `Object&`** ⇒ 已知事实 47/68 的**架构限制**（pywin32 迟到绑定到不了）
-    ⇒ **这条后端上「建成样条」不达**。
+    ★ 证据：`output/spline-with-variant-evidence.json`（2026-10-03 轮 574，走 `sw_guard`、零弹窗）
+    的四格对照 —— `form=spline2` ⇒ `ok=true · seg_after=1`，另三种形态全 `ok=false`。
+    ★★ 而**正解早就在本仓**：`scripts/sketch_relations.create_spline` 第 272-273 行逐字写着
+    「★★★ **必须包 VARIANT(VT_ARRAY | VT_R8)** —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」
+    ⇒ ★ **本函数只是从没跟上那次修复**（同一个仓里两条路，一条修了、一条没修）。
 
-    :raises RuntimeError: 官方**返回 `None`** ⇒ **抛**（不再静默）。
-        ★ 照 `sw_surface._invoke` 的先例（已知事实 40）：
-        **一个失败如果看起来像正常值，比没有守卫更糟。**
+    ⚠ 仍然有效的两点（官方 + 真机）：
+      · `CreateSpline`（1 参旧版）**在迟到绑定里取回 `None`** ⇒ 走它会在 `get_com_member` 里报
+        `TypeError: 'NoneType' object is not callable`（★ **错误信息指不出真因**）⇒ 只走 `CreateSpline2`；
+      · `CreateSpline2` 官方已标 **Obsolete**（后继 `CreateSpline3` 末参是 **BYREF `Object&`**，
+        pywin32 到不了）⇒ ★ **能用的是这个已废弃的 `CreateSpline2`**（★ 已知事实 12 那族：废弃 ≠ 不可达）。
+
+    ★ **单位（2026-10-03 顺手修的一处不一致）**：`points` 的声明单位是**毫米**，★ 而**旧实现把值原样**
+    送进了 COM（★ COM 吃的是**米**）⇒ ★ 声明与实际不符。★ 本函数此前**每次都抛**（见下）
+    ⇒ **没有可用的调用方会被这次修正破坏** ⇒ 现按规则 2 **在边界换算一次**（`/1000.0`）。
+
+    :raises RuntimeError: 真回 `None` 时**抛**（★ 不再静默）—— ★ 照 `sw_surface._invoke` 的先例
+        （已知事实 40）：**一个失败如果看起来像正常值，比没有守卫更糟。**
     """
-    import array
-    point_array = array.array('d')
-    for x, y in points:
-        point_array.extend([x, y, 0.0])
-    seg = get_com_member(model, "SketchManager").CreateSpline2(point_array, False)
+    import pythoncom
+    import win32com.client
+    flat: list = []
+    for p in points:
+        x, y = (p[0], p[1]) if len(p) >= 2 else (p[0], 0.0)
+        #: ★ 规则 2：对外收**毫米**，**只在这里换算一次**（COM 吃米）
+        flat.extend([float(x) / 1000.0, float(y) / 1000.0, 0.0])
+    if len(flat) < 6:
+        raise ValueError("控制点太少：官方 Remarks 要求**至少两组 X,Y,Z**（6 个数），收到 %d 个" % len(flat))
+    #: ★★★ **必须包 `VARIANT(VT_ARRAY | VT_R8)`** —— ★ 裸 `array.array('d')` / list / tuple
+    #: **静默回 `None`**（★ 而这正是本函数此前那条"建不出来"结论的**真因**）。
+    data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, flat)
+    seg = get_com_member(model, "SketchManager").CreateSpline2(data, False)
     if seg is None:
         raise RuntimeError(
-            "ISketchManager.CreateSpline2 返回 None ⇒ **样条没建出来**（本机实测，轮 141）。"
-            "原因：该成员官方已废弃，后继 `CreateSpline3` 末参是 BYREF `Object&`，"
-            "**pywin32 迟到绑定到不了**（已知事实 47 / 68）⇒ 这条后端上不达。"
-            "`sw_surface` 的先例是**让失败可见**，本函数照办（已知事实 40）。"
+            "ISketchManager.CreateSpline2 返回 None ⇒ **样条没建出来**。"
+            "★ 先核对两点：① 数组是否包了 `VARIANT(VT_ARRAY|VT_R8)`（★ 裸 array/list 会静默回 None）；"
+            "② 是否**已有活动草图**（官方 Remarks 要求）。"
+            "★ 修法参照 `scripts/sketch_relations.create_spline`（那条路已验证可建）。"
         )
     return seg
 
