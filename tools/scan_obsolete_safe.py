@@ -222,10 +222,24 @@ def main() -> int:
         lines = raw.splitlines()
         code_lines = code.splitlines()
         #: ★ E2 依据：本文件里出现过的官方**后继**名字集合
-        succ_here = set()
-        for _m, pat in CALL_FORMS:
-            for g in pat.findall(code):
-                succ_here.add(g)
+        #: ★★★★ 2026-10-03（接手轮）**第三次修法 —— 前两次都错，★ 这次找到了真因**：
+        #:   ★ 病灶：★ `AddComponent4` 明明是**刻意兜底**（`AddComponent5 → 返回 None → 退回 4`），
+        #:     却一直被算成"真命中" ⇒ ★★ **生产里一条兜底都认不出来**（实测 0 条）✓
+        #:   ★★ 第 1 版：★ `succ_short in succ_here` ⇒ 大小写敏感 ⇒ 漏。
+        #:   ★★ 第 2 版：★ `.lower()` ⇒ **还是漏** —— 后继 `AddComponent5` 在本仓写作
+        #:     **`add_component5`（蛇形 + 下划线）** = `事实 513` 那一族"名字形态不匹配"。
+        #:   ★★★ 第 3 版（本版）：★ **找到了真根因** —— ★ `succ_here` 原来**只从 `CALL_FORMS`
+        #:     里抽**（★ 即 `get_com_member(x,"M")` 与 `obj.M(` 两种形态）⇒
+        #:     ★★ 而真正的兜底往往是**裸函数调用**：`_add_component5(...)` ——
+        #:     ★★★ **它没有点、也不是 `get_com_member`** ⇒ **压根没进集合** ✓
+        #:   ⇒ ★ 修法：★ **改成"在后继名出现过的任何位置"都算**（★ 用裸标识符扫描 + 归一化：
+        #:     ★ 去下划线 + 小写），★ 不再依赖调用形态 ✓
+        #:   ⚠ 代价（★ 如实记）：★ 这会让"兜底"这一类**更容易成立** ⇒ ★ 即**更保守**
+        #:     （★ 宁少勿滥 —— ★ 把非兜底判成兜底，★ 后果是"少改一处废弃调用"，
+        #:      ★ 而把兜底判成真命中，★ 后果是"改错一处会跑不了的兜底"）✓
+        def _norm(x: str) -> str:
+            return x.replace("_", "").lower()
+        succ_here = {_norm(tok) for tok in re.findall(r"[A-Za-z_]\w*", code)}
         for i, cl in enumerate(code_lines):
             s = cl.strip()
             #: ★★★ 2026-10-03（接手轮）**兜底过滤**：★ 剥注释/剥 docstring 之后**仍以 `#` 开头**的行
@@ -245,7 +259,16 @@ def main() -> int:
                     succ = successor.get(name, "")
                     succ_short = succ.split("::")[-1] if succ else ""
                     #: ★ E2：后继在本文件里出现过 ⇒ 这是兜底/回退分支
-                    fallback = bool(succ_short) and succ_short in succ_here
+                    #: ★★★★ 2026-10-03（接手轮）**两次修法 —— 第二次才抓到真因**：
+                    #:   ★ 第 1 版 `succ_short in succ_here` ⇒ 大小写敏感 ⇒ 漏。
+                    #:   ★★ 第 2 版 `.lower()` ⇒ ★★ **还是漏** —— 因为**本仓的内部帮手是蛇形命名**：
+                    #:     后继 `AddComponent5` ⇒ 源码里写的是 **`add_component5`（带下划线）**
+                    #:     ⇒ `'addcomponent5'` ≠ `'add_component5'` ✓
+                    #:   ★★★ 第 3 版（本版）：★ **两侧都"去下划线 + 小写"** ⇒ 归一化后比较 ✓
+                    #:   实证：`scripts/sw_assembly.py` 的 `AddComponent4` 是
+                    #:     「AddComponent5 → 返回 None → **退回 AddComponent4**」的**刻意兜底** ✓
+                    #: ★ `_norm` 与 `succ_here` 已在外层定义（★ 见文件上方的 E2 段）
+                    fallback = bool(succ_short) and _norm(succ_short) in succ_here
                     #: ★ E3：该行只有字符串/登记，没有真正的调用括号
                     registry = (how != "dot_call" and "(" not in s.replace("#", "")) or \
                                bool(re.match(r'^\s*["\']', s))
@@ -266,7 +289,13 @@ def main() -> int:
                         #: ★★★ 「跨库存疑」：★ **点调用** 且 **同文件没有 SolidWorks 标志**
                         #:   ⇒ ★ 降级（★ 见上面 `_is_crosslib_suspect` 的说明）
                         "crosslib": bool(how != "get_com_member" and _is_crosslib_suspect(f, raw)),
-                        "ctx": lines[i].strip()[:160] if i < len(lines) else "",
+                        #: ★★★ 2026-10-03（接手轮）**修 ctx 的行号错位**：
+                        #:   ★ 原来 `ctx` 取 `lines[i]`（★ **剥前的原文**），
+                        #:   ★★ 而**匹配是在 `cl`（剥后的行）上做的** ⇒ 两者**会错位**
+                        #:   ⇒ 实证：`AddMate5` / `SetTransformAndSolve2` 的 `ctx` 显示成 `"""` ✓
+                        #:   ★ 修法：★ **ctx 就用 `cl`（剥后的那一行）** ——
+                        #:     ★★ 它才是**匹配依据**；★ 展示依据 == 匹配依据，★ 就不会错位 ✓
+                        "ctx": s[:160],
                     })
     #: ★ 分类
     for r in rows:
