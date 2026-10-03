@@ -58,7 +58,17 @@ def _dims(doc):
         sk = C.get_com_member(doc, "GetActiveSketch2")
         if sk is None:
             return -1
-        return len(list(C.get_com_member(sk, "GetSketchDimensions") or []))
+        #: ★ 2026-10-03（轮 585）**修正**：★ 取法换成
+        #:   `ISketch.GetDimensionCount2()`（★ 反射里有 `GetDimensionCount2`/`3`）
+        #:   —— ★ 上一轮用 `GetSketchDimensions` **回 -1**（本仓没那个名字）。
+        for nm in ("GetDimensionCount2", "GetDimensionCount3", "GetDimensionCount"):
+            try:
+                v = C.get_com_member(sk, nm)
+                if v is not None:
+                    return int(v)
+            except Exception:                                             # noqa: BLE001
+                continue
+        return -1
     except Exception:                                                     # noqa: BLE001
         return -1
 
@@ -86,11 +96,16 @@ def _one(sw, tag, do_select):
         steps = {}
         if do_select:
             #: \u2605 **\u7167\u4f8b\u5b50\u9010\u5b57**\uff1a`("Line1","SKETCHSEGMENT", x,y,z, append, 0, Nothing, 0)`
+            #: ★★ **直接调 `SelectByID2`**（★ 而**不是** `_select_by_id` ——
+            #:   ★ 后者的签名是 `(extension, name, type, append, mark)`，
+            #:   ★ **根本没有 x/y/z**（★ 上一轮我把坐标按位置传 ⇒ 撞上 `append`））。
+            #:   ★ 官方 9 参：`(name, type, x, y, z, Append, mark, Callout, SelectOption)`
             for nm, (x, y), app in (("Line1", (-2.22223294397278e-04, 2.23334410869282e-02), False),
                                     ("Line3", (0.113556103437018, -1.44445141358242e-03), True)):
                 try:
-                    ok = P._select_by_id(ext, nm, "SKETCHSEGMENT", x, y, 0.0,
-                                         append=app, mark=0)
+                    ok = C.get_com_member(ext, "SelectByID2", nm, "SKETCHSEGMENT",
+                                          x, y, 0.0, bool(app), 0,
+                                          _empty_callout(), 0)
                     steps["SelectByID2(%s)" % nm] = str(ok)
                 except Exception as exc:                                  # noqa: BLE001
                     steps["SelectByID2(%s)" % nm] = "%s: %s" % (type(exc).__name__, str(exc)[:60])
@@ -118,7 +133,8 @@ def _one(sw, tag, do_select):
             for nm, (x, y), app in (("Line1", (-2.22223294397278e-04, 2.23334410869282e-02), False),
                                     ("Line3", (0.113556103437018, -1.44445141358242e-03), True)):
                 try:
-                    P._select_by_id(ext, nm, "SKETCHSEGMENT", x, y, 0.0, append=app, mark=0)
+                    C.get_com_member(ext, "SelectByID2", nm, "SKETCHSEGMENT",
+                                     x, y, 0.0, bool(app), 0, _empty_callout(), 0)
                 except Exception:                                         # noqa: BLE001
                     pass
         before_dims = _dims(doc)

@@ -2322,3 +2322,26 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ① 把 `_select_by_id` 的**形参传对**（★ 按它的真签名）；
        ② 把**草图尺寸计数**那个取法换对（★ 本轮回 `-1`）。
      ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；例子：`…\SWhelp\sldworksapi\Create_Full_Symmetrical_Angular_Dimension_Example_VB.htm`；对照事实 32 / 53 |
+| 462 | **★★ 对称线性直径尺寸：前置链条已跑通，★ 而**缺一个能区分的判据**** —— 2026-10-03（轮 585）。
+     ★ **事实 461 留了两个下一步** ⇒ 本轮都做了：
+     ```
+     ① ★ `sw_part._select_by_id` 的真签名是
+        `(extension, entity_name, entity_type, append=False, mark=0)`
+        —— ★ **它根本没有 x/y/z**！★ 而例子要的坐标是 `SelectByID2` 的第 3/4/5 参 ⚠
+        ⇒ ★ **故得直接调 `SelectByID2`**（官方 9 参）。
+     ② ★ 尺寸计数换成 `ISketch.GetDimensionCount2/3`
+     ```
+     ★ 真机（零弹窗）：
+     ```
+     ★ **照例子**：SelectByID2(Line1)=**True** · SelectByID2(Line3)=**True** · ClearSelection2=ok
+                   ⇒ AddSymmetricDimension ⇒ 回 **`CDispatch`** ✓（选中了）
+     ★ 对照（什么都不选）               ⇒ 也回 **`CDispatch`** ⚠
+     ★ 而 **`dims` 两格都是 `-1`** —— ★ `GetDimensionCount2/3` 也没通 ⚠
+     ```
+     ⇒ ★★ **故诚实结论是**：**选择那一步已通、而我没找到能区分的判据** ——
+       ★ 而**两格都回 `CDispatch`** ⇒ ★ **那个判据不能区分** ⚠
+       ⇒ ★ **按原则不能算建成**。
+     ★ **按事实 53 停手**（★ 已三轮）；★ **下一步就是换判据**：
+       ★ 试 **文档级**的尺寸计数（`IModelDoc2` 上那个）或 **从特征树看 `DisplayDimension`**。
+     ★★ **而这一条的教训值得单独记**：★ **当两栿都回同一个对象时，“回了对象”就不是判据** —— ★ 必须找**可分的量**（★ 与事实 436 同族）。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；例子：`…\SWhelp\sldworksapi\Create_Full_Symmetrical_Angular_Dimension_Example_VB.htm`；对照事实 436 / 461 |
