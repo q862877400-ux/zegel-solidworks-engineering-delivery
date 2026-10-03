@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params"]
+           "extrude_depth", "extrude_params", "pattern_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -347,6 +347,93 @@ def extrude_params(model, feature_name: str = "") -> dict:
             out["GetContoursCount"] = get_com_member(fd, "GetContoursCount")
         except Exception as exc:                                          # noqa: BLE001
             out["GetContoursCount"] = "err: %s" % str(exc)[:60]
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ILinearPatternFeatureData\`）
+# 文件:   `scripts/sw_feature_readback.py::pattern_params`（★ 新增）
+# 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ 本函数是**第三个** ✓
+#   ★★ **换了一个族**（★ 前两个都在 `IExtrudeFeatureData2`）⇒ ★ 覆盖面扩大 ✓
+#   ★★★ **官方逐字（★ 逐个成员的 `## Returns`）**：
+#     · ★★ **`D1Spacing` / `D2Spacing`** ⇒ 「Distance **in meters** between pattern instances」
+#       ⇒ ★★★ **官方**明写米**** ✓
+#     · ★ `D1TotalInstances` / `D2TotalInstances` ⇒ ★ `int`（★ 实例数）✓
+#     · ★ `GetPatternFeatureCount()` ⇒ 「Number of **seed features**」✓
+#     · ★ `GetPatternBodyCount()` ⇒ 「Number of **seed bodies**」✓
+#     · ★ `GetSkippedItemCount()` ⇒ 「Number of **skipped instances**」✓
+#     · ★ `GetD1AxisType()` ⇒ ★ 官方**给了取值表**（0 = axis or ref axis · 1 = edge …）✓
+#     · ★ `IsDirection2Specified()` ⇒ 「True if direction 2 is specified」✓
+#     · ★ `D1ReverseDirection` / `GeometryPattern` / `D2PatternSeedOnly` / `VarySketch` /
+#       `BodyPattern` / `PropagateVisualProperty` ⇒ ★ **属性**（★ bool）✓
+#   ★★★★ **⚠ 单位口径的**第三层****（★ 本会话已见三层）：
+#     ★ **① `GetDepth`** ⇒ ★ **随文档单位**（★ 真机：20mm ⇒ 20.0）✓
+#     ★★ **② `GetDraftAngle`** ⇒ ★ **写死 radians**（★ 官方逐字）✓
+#     ★★★ **③ `D1Spacing` / `D2Spacing`** ⇒ ★★ **写死 meters**（★ 官方逐字）✓
+#     ⇒ ★★★★★ **可复用判据**：★★★ **「官方 API 吃什么单位」是**逐成员**的事 ——
+#       ★ 同一个仓里已经有**三种**口径**：★ **随文档 · 写死弧度 · 写死米**
+#       ★★ ⇒ **每读一个量都要单独查它那一页的 `## Returns`** ✓
+#       （★ 铁律 5：★ 查不到就写「查不到」、**不许按族推断**）✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def pattern_params(model, feature_name: str = "") -> dict:
+    """★ 读**线性阵列特征的一组参数**（★ 两个方向的实例数/间距 + 若干开关 + 计数）✓
+
+    ★★★★★ **返回值里逐项标口径** —— ★ 本接口里**两个量是写死米的**：
+      ★ `D1Spacing` / `D2Spacing` ⇒ ★ 官方 `## Returns` 逐字「Distance **in meters**」✓
+      ★★ 而 `D1TotalInstances` 是**实例数**（★ 无量纲）✓
+    ★★★ **⚠ 本函数不替调用方换算** —— ★ 米就是米 ⇒ ★ 要毫米自己乘 1000 ✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    out: dict = {"feature": feature_name, "definition": None, "error": None,
+                 "★_单位口径": {
+                     "D1Spacing": "meters（★ 官方逐字 in meters）",
+                     "D2Spacing": "meters（★ 同上）",
+                     "D1TotalInstances": "无量纲（★ 实例数，含原件）",
+                     "D2TotalInstances": "无量纲",
+                 }}
+    try:
+        feat = None
+        if feature_name:
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★ 兜底：★ 找**最后一个**线性阵列特征（★ 类型名含 `LPattern`）
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if "LPattern" in tn:
+                        feat, out["feature"] = f, str(safe_get_com_member(f, "Name") or "")
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = "找不到线性阵列特征"
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        #: ★★ 属性一类（★ `{get;set}`）⇒ ★ 直接取 ✓
+        for name in ("D1TotalInstances", "D1Spacing", "D2TotalInstances", "D2Spacing",
+                     "D1ReverseDirection", "D2ReverseDirection", "GeometryPattern",
+                     "D2PatternSeedOnly", "VarySketch", "BodyPattern",
+                     "PropagateVisualProperty", "D1EndCondition"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+        #: ★★★ **方法**一类（★ 零参）⇒ ★ 也直接取 ✓
+        for name in ("GetPatternFeatureCount", "GetPatternFaceCount", "GetPatternBodyCount",
+                     "GetSkippedItemCount", "GetD1AxisType", "GetD2AxisType",
+                     "IsDirection2Specified"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
