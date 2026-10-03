@@ -216,7 +216,22 @@ def _collect_new_outputs(target: Path, existing_files: dict[str, tuple[int, int]
 def _document_dependency_paths(model, source_path: str) -> list[str]:
     """@brief 读取当前文档引用路径，用于校验 Pack and Go 是否漏包。"""
     try:
-        dependencies = get_com_member(model, "GetDependencies2", False, True, False) or []
+        #: ★★★★ 2026-10-04（接手轮）**换掉一个官方废弃成员** ——
+        #:   处置阶段 2 · T1（★ `tools/scan_obsolete_safe.py` 的真命中）★ 逐条流程第 ① 步 ✓
+        #:   ★ **官方逐字**（★ `C:\swapi\types\IModelDoc2\GetDependencies2.md`）：
+        #:     「**Obsolete. Superseded by `IModelDocExtension::GetDependencies`**.」✓
+        #:     旧签名：★ `GetDependencies2(bool Traverseflag, bool Searchflag, bool AddReadOnlyInfo)` ⇒ **3 参** ✓
+        #:   ★★ **后继逐字**（★ `IModelDocExtension/GetDependencies.md`）：
+        #:     `GetDependencies(bool Traverseflag, bool Searchflag, bool AddReadOnlyInfo,
+        #:       bool ListBrokenRefs, bool AppendImportedPaths)` ⇒ **5 参** ✓
+        #:     `## Parameters` 逐字：★ `ListBrokenRefs` = get broken references ·
+        #:       ★ `AppendImportedPaths` = append imported path names ✓
+        #:   ★★★ **修法**：★ **接口从 `model` 换到 `model.Extension`**（★ 那是后继的归属）·
+        #:     ★★ **原三个实参原样保留**（★ `False, True, False`）· ★★★ **两个新参都给 `False`**
+        #:     （★ 不要 broken refs、★ 不要 imported paths —— ★ 与原来那三个的语义**同一口径**）✓
+        ext = get_com_member(model, "Extension")
+        dependencies = get_com_member(
+            ext, "GetDependencies", False, True, False, False, False) or []
     except Exception:
         return []
     values = list(dependencies)
