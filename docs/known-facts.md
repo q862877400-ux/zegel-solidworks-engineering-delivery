@@ -1218,3 +1218,12 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ✗ **新建独立体**：加厚（改体类型）· 直纹（长新曲面）· 扫描曲面（从草图新建）⇒ **0/3 成**。
      ★ **边界（★ 不能当成普遍定律）**：★ 这 6 个点**全在曲面域**；★ 而**实体**那侧的“新建”是**成的**（拉伸 / 旋转 / 扫描实体 17 / 放样 均建成）⇒ ★★ 故它是**曲面域内**的规律，★ **不能外推**。
      ⚠ **仍未查明**：**为什么**会这样（★ 而事实 391 已排除了两种解释：★ What’s Wrong 面板**一条错都没有** · ★ 参数**已穷尽**）⇒ 按铁律 5 写「查不到」。|真机：`tools/probe_surface_control.py` · `tools/probe_surface_modify_vs_create.py`；证据 `output/surface-control-evidence.json` · `output/surface-modify-vs-create-evidence.json`；对照事实 391 / 393 / 394 |
+| 396 | **★★★ 一张「否证清单」：曲面扫描 / 加厚 / 直纹为何不成——以下五条**都已被实验排除**** —— 2026-10-03（轮 505-512）。★ 它们各自都是**一个看着合理的猜测**，★★ **而排除它们正是本阶段的收获**（★ 以后不必重走）：
+     ✗ **「`AccessSelections` 报错导致」** —— ★ 而**117 个** `I*FeatureData` 接口都带它，且本仓大量能力成功过；★ 而**跳过它也回 `None`**（轮 509）；
+     ✗ **「参数没给全」** —— ★ 加厚 **11 组**、直纹 **11 参 + 8 条边**；
+     ✗ **「新建 vs 改动」** —— ★★ **有反例**：`create_extruded_surface_report`（**曲面-拉伸**）**本身就是新建**而**成**（轮 510-511）；
+     ✗ **「必须先设属性」** —— ★ 轮 512 把 `ISweepFeatureData` 的 **`Profile` 与 `Path` 都设上了**（★ 真机 `refs = {"Profile": "CDispatch", "Path": "CDispatch"}`），★★ **而 `CreateFeature` 仍回 `None`**；
+     ✗ **「SW 内部前置未满足」** —— ★ `whats_wrong` 读三次都是 **`count = 0`**、`entries = []`（轮 507）。
+     ★ **剩下最可能**：★★ **`CreateDefinition` 这条「新架构」路本身**，在这条 pywin32 后端上**对这批特征失效**（★ 而**旧式方法**那侧是成的：填充 / 延伸 / 缝合 / 曲面-拉伸）。
+     ★ **按事实 53 停手**（这一处已 6+ 次）—— ★ 而**把上面这张清单留下**，★ **比继续试参数有价值** ✓
+     ★ **若下一步还要动**：该换的是**后端**（★ 如 `comtypes` 早绑定）或**旧式方法**（★ 如找扫描面的非新架构入口）—— ★ 而不是继续在同一入口上换参数。|真机：`output/sweep-set-props-evidence.json`（轮 512）· `output/ruled-whats-wrong-evidence.json`（轮 507）· `output/sweep-surface-skip-access-evidence.json`（轮 509）；对照事实 391 / 393 / 394 / 395 |
