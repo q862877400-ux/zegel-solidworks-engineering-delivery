@@ -165,6 +165,29 @@ def _body_count(model) -> int:
         return -1
 
 
+def _solid_body_count(model) -> int:
+    """★ 数**实体**数（`swSolidBody = 0`）—— ★ 加厚后它该**变多**。
+
+    ★ 本仓既有的 `GetBodies2(-1, True)` 取的是**全部体**；
+    ★ 而加厚的语义是「**曲面 ⇒ 实体**」⇒ ★★ 故要**分开数**才看得出变化
+    （★ 参数取自 `swBodyType_e`：`swSolidBody = 0` · `swSheetBody = 1`）。
+    """
+    from sw_connect import get_com_member as _get
+    try:
+        return len(list(_get(model, "GetBodies2", 0, True) or []))
+    except Exception:                                          # noqa: BLE001
+        return -1
+
+
+def _surface_body_count(model) -> int:
+    """★ 数**曲面体**数（`swSheetBody = 1`）—— ★ 加厚后它该**变少**。"""
+    from sw_connect import get_com_member as _get
+    try:
+        return len(list(_get(model, "GetBodies2", 1, True) or []))
+    except Exception:                                          # noqa: BLE001
+        return -1
+
+
 def knit_surfaces_report(model, knit_tolerance_mm: float = 0.0001,
                          try_to_form_solid: bool = False) -> dict:
     """★ **把选中的曲面缝成一张**（★ 走 `InsertSewRefSurface`）。
@@ -203,6 +226,91 @@ def knit_surfaces_report(model, knit_tolerance_mm: float = 0.0001,
             "face_count_selected": selected, "body_before": before_bodies, "body_after": after_bodies,
             "knit_tolerance_mm": tol,
             "★": "判据 = **特征树多了新特征** 且 **body 数变少**（★ 规则 6）；★ 官方 mark=1 · 容差 0.0001–0.1 mm"}
+
+# ── B6 / T610：**加厚（曲面⇒实体）** ─────────────────────────────────────────────
+# ★★★★ 2026-10-03（轮 502）★ 补 `specs/201-toolbar-gaps` 的 **T610**（★ 那条一直空着）。
+#
+# 官方三源（★ 铁律 4）：
+#   · `C:\swapi\types\IFeatureManager\FeatureBossThicken.md`：
+#     `Feature FeatureBossThicken(System.double Thickness, System.int Direction, System.int FaceIndex,
+#      System.bool FillVolume, System.bool Merge, System.bool UseFeatScope, System.bool UseAutoSelect)`
+#     ★★ **参数表逐字**：`FaceIndex` ⇒ 「**Not used**」 ✓
+#     （★ 故本包装**不传面索引** —— ★ 那会误导调用方以为选了面在起作用）
+#     · `Direction` ⇒ `swThickenThicknessType_e`（★ 枚举值本机转储里有）
+#   · `C:\swapi\types\IModelDoc2\FeatureBossThicken.md` ⇒ **Obsolete**，继任者是 `IFeatureManager` 那个
+#     ⇒ ★ **故必须走 `IFeatureManager`**（★ 与 `InsertRuledSurfaceFromEdge` 的 `…2` 是同一类更正）
+#
+# ★ 判据（★ 规则 6）：★ **特征树多了新特征** ——
+#   ★ 而**加厚的语义**是"曲面变实体" ⇒ 更贴的判据是 **实体数变多 / 曲面体数变少**（★ 一并记账）。
+
+
+def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
+                           fill_volume: bool = True, merge: bool = True,
+                           use_feat_scope: bool = False,
+                           use_auto_select: bool = True) -> dict:
+    """★ **加厚**：把选中的曲面体加厚成实体（`IFeatureManager.FeatureBossThicken`）。
+
+    ★ 官方：`FaceIndex` **「Not used」** ⇒ ★ 本包装**不收面索引**（★ 收了是骗人）。
+    ★ 前置：★ **文件里要有曲面体**（★ 与 `knit_surfaces_report` 同款前置 ——
+      ★ 而 `use_auto_select=True` 时官方会"自动选所有体"）。
+    ★ 判据（规则 6）：★ **特征树多了新特征**；★ 并同时记账**实体数 / 曲面体数**的变化
+      （★ 加厚的语义就是那个变化）。
+    ★ 单位：★ `thickness_mm` 按**毫米**收，★ 在边界换算一次（规则 2）。
+
+    ★★★★ 2026-10-03（轮 503）**真机状态：⚠ 尚未建成 —— ★ 而按事实 53 停手** ⚠
+      · ★ **前置是完美的**：每次 `pre` 都是 `solid = 0 · surface = 1`
+        （★ 一张曲面体、零个实体 —— ★ 正是加厚该有的起点）✓
+      · ★★ 而 **7 组参数组合全部返回 `None`**、特征树不动、★ **连错误都不报**：
+        ```
+        基准（fill=True · scope=False · auto=True）   回 None  树不动
+        scope=True + 先选中曲面体                     回 None  树不动
+        auto=False                                  回 None  树不动
+        scope=True + auto=False + 选体                回 None  树不动
+        fill=False                                  回 None  树不动
+        direction=1                                 回 None  树不动
+        scope=True + auto=False                      回 None  树不动
+        ```
+        （★ 矩阵见 `tools/probe_thicken_matrix.py` · `output/thicken-matrix-evidence.json`）
+      · ⇒ ★★ **故「不是参数没找对」在这一条上是有据的** —— ★ 官方参数表里那 4 个布尔/枚举开关的
+        **主要组合已穷尽** ✓
+      · ★ 形态与**事实 40**（`IModeler.Create*Surface` 返回 `None` 而几何不变）**同族**：
+        ★ 即「**静默不干活**」，★ 而**不是**「报错说参数不对」。
+      · ⚠ **按 A4 不登记成工具、不写 `verified`** —— ★ **不假装做到**。
+      · ★ 若下一轮还要动它，**该换的方向**：★ 试 `IModelDoc2.FeatureBossThicken`
+        （★ 它标 `Obsolete`，而**废弃入口有时在 pywin32 上反而更顺** —— ★ 本仓在别处见过这种反转）⚠
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    try:
+        th = float(thickness_mm)
+    except (TypeError, ValueError) as exc:
+        return {"ok": False, "error": "thickness_mm 必须是数字：%s" % str(exc)[:100]}
+    if not (th > 0.0):
+        return {"ok": False, "stage": "validate",
+                "error": "thickness_mm 必须 > 0（★ 加厚是给曲面一个壁厚）；收到 %r" % th}
+    before_names = feature_names(model)
+    before_solid = _solid_body_count(model)
+    before_surf = _surface_body_count(model)
+    try:
+        fm = get_com_member(model, "FeatureManager")
+        #: ★ 调用序照官方签名：Thickness(米) ⇒ Direction ⇒ FaceIndex(★「Not used」⇒ 0)
+        #:   ⇒ FillVolume ⇒ Merge ⇒ UseFeatScope ⇒ UseAutoSelect
+        feat = get_com_member(fm, "FeatureBossThicken",
+                              th * 0.001, int(direction), 0,
+                              bool(fill_volume), bool(merge),
+                              bool(use_feat_scope), bool(use_auto_select))
+    except Exception as exc:                                             # noqa: BLE001
+        return {"ok": False, "stage": "call", "thickness_mm": th,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    after_names = feature_names(model)
+    new = [n for n in after_names if n not in before_names]
+    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
+            "returned_none": feat is None,
+            "solid_before": before_solid, "solid_after": _solid_body_count(model),
+            "surface_before": before_surf, "surface_after": _surface_body_count(model),
+            "thickness_mm": th, "direction": int(direction),
+            "★": "判据 = **特征树多了新特征**（规则 6）；★ 官方 `FaceIndex` 标注「Not used」故传 0；"
+                 "★ 而**加厚的语义**看实体数/曲面体数的变化"}
 
 # ── objective② / 段 6 续：**延伸曲面（`IModelDoc2.InsertExtendSurface`）** ──────────────
 # ★★★★ 2026-10-02（轮 386）**补 `extend_surface`** —— 它是 objective② 重核后确认的**真缺**之一
