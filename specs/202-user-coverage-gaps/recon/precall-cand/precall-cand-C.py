@@ -345,7 +345,7 @@ def _entity_point(model, selector, kind, body_index=0):
     return vals if len(vals) == 3 else None
 
 
-def _select_named(model, name, type_str, mark, append):
+def _select_named(model, name, type_str, mark, append=None):
     """**按名字**选**有名字的东西**（`SKETCH` / `PLANE` / `AXIS`）——带 mark。
 
     ★ 合法性的官方依据（`SelectByID2.md` 第 75 行逐字）:
@@ -353,7 +353,12 @@ def _select_named(model, name, type_str, mark, append):
       ⇒ ★ 名字**只**用于特征类（草图/基准面/基准轴），★ 面/边/顶点**绝不走这条**（事实 32）。
     ★ 第 83 行逐字还给了「按名字选**可以**把 x,y,z 传 (0,0,0)」⇒ ★ 这里就传 0。
     ★ 调用序范例 = 官方 `Insert_Wrap_Feature_Example_VB.md` 第 44 行（草图 mark 4）。
+    ★★ `append=None` = **自动**（选区里已有东西就 True）—— ★ 同 `_select_marked` 的理由：
+      `Append=False` 会**清掉整个选区** ⇒ ★ 包覆/放样这类「多个 mark  coexist」的场景
+      ★ 只要选区非空就必须 `True`（官方 wrap 例子的两条 `SelectByID2` 都写了 `True`）。
     """
+    if append is None:
+        append = _count_by_mark(model, -1) > 0
     ext = _get(model, "Extension")
     _get(ext, "SelectByID2", str(name), str(type_str), 0.0, 0.0, 0.0,
          bool(append), int(mark), _callout(), 0)
@@ -412,7 +417,7 @@ def _select_by_point(model, point, kind, mark, append, want_at_least):
 
 
 def _select_by_object(model, obj, mark, append):
-    """`ISelectionMgr::CreateSelectData()` → 设 `.Mark` → `entity.Select4(Append, sd)`。
+    r"""`ISelectionMgr::CreateSelectData()` → 设 `.Mark` → `entity.Select4(Append, sd)`。
 
     ★★★ 这是**官方逐字给出的、按对象带 mark 的非废弃选法**:
       · `C:\swapi\types\ISelectionMgr\CreateSelectData.md` §Description 逐字
@@ -456,7 +461,7 @@ def _resolve_object(model, selector, kind, body_index=0):
     return resolve_entity(model, selector, kind, body_index=body_index)
 
 
-def _select_marked(model, selector, kind, mark, *, append=False, body_index=0,
+def _select_marked(model, selector, kind, mark, *, append=None, body_index=0,
                    min_count=1, label="项"):
     """★★ **本文件的通用选法**：把一个声明式选择器变成**带 `mark` 的选中**，并**回读计数**。
 
@@ -546,7 +551,7 @@ def _select_marked(model, selector, kind, mark, *, append=False, body_index=0,
 # 2 · A 组
 # ══════════════════════════════════════════════════════════════════════════════
 def _pre_parting(params):
-    """★★ **分型线 / 分型面共用的 `pre_call`**（两条工具官方形态完全相同 ⇒ 共用一份实现）。
+    r"""★★ **分型线 / 分型面共用的 `pre_call`**（两条工具官方形态完全相同 ⇒ 共用一份实现）。
 
     官方依据（两条**逐字**同形，所以共用）:
       · `IFeatureManager\InsertMoldPartingLine.md` §Remarks:
@@ -595,7 +600,7 @@ def _pre_parting(params):
         picked = 0
         for i, one in enumerate(_split(edges)):
             picked = _select_marked(model, one, "EDGE", PARTING_EDGE_MARK,
-                                    append=(i > 0), min_count=1 + i,
+                                    min_count=1 + i,
                                     label="分型线边 #%d" % (i + 1))
         got = _count_by_mark(model, PARTING_EDGE_MARK)
         if got < want:
@@ -623,7 +628,7 @@ def _pre_mold_parting_surface(params):
 
 
 def _pre_part_wrap(params):
-    """`solidworks_part_wrap` 的 `pre_call` —— ★ **草图 mark 4 + 面 mark 1，两个都要选**。
+    r"""`solidworks_part_wrap` 的 `pre_call` —— ★ **草图 mark 4 + 面 mark 1，两个都要选**。
 
     官方依据（★★ 本批 mark 证据最齐的一条：Remarks + **两个**官方例子）:
       · `IFeatureManager\InsertWrapFeature2.md` §Remarks: 面 → **1** · 拔模方向 → **2** ·
@@ -668,8 +673,8 @@ def _pre_part_wrap(params):
     if not faces:
         raise PreCallError("★ 包覆必须给 `face`（官方 mark=1 的那一条）")
     for i, one in enumerate(faces):
-        _select_marked(model, one, "FACE", WRAP_FACE_MARK, append=(i > 0),
-                       min_count=i + 1, label="包覆面 #%d" % (i + 1))
+        _select_marked(model, one, "FACE", WRAP_FACE_MARK, min_count=i + 1,
+                       label="包覆面 #%d" % (i + 1))
 
     # ── ③ 拔模方向（mark 2）· ★ 只在 emboss / engrave 时才要 ────────────────────
     wrap_type = str(getattr(params, "wrap_type", "emboss") or "emboss").strip().lower()
@@ -693,7 +698,7 @@ def _pre_part_wrap(params):
 # 3 · B 组（四条同型：都是「按官方 mark 把几样东西选上」）
 # ══════════════════════════════════════════════════════════════════════════════
 def _pre_part_sweep(params):
-    """`solidworks_part_sweep` 的 `pre_call` —— ★ 轮廓 1 · 路径 4 · 引导线 2（· 方向向量 128）。
+    r"""`solidworks_part_sweep` 的 `pre_call` —— ★ 轮廓 1 · 路径 4 · 引导线 2（· 方向向量 128）。
 
     官方依据（★★ 本批最齐的一条，**专文 + 例子 + `SelectByID2` §Remarks 三处点名同一组 mark**）:
       · `C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeatureData
@@ -744,8 +749,8 @@ def _pre_part_sweep(params):
             raise PreCallError("★ 扫描路径草图打 mark=%d 后回读计数为 0" % SWEEP_PATH_MARK)
     else:
         for i, one in enumerate(_split(path)):
-            _select_marked(model, one, "EDGE", SWEEP_PATH_MARK, append=(i > 0),
-                           min_count=i + 1, label="扫描路径 #%d" % (i + 1))
+            _select_marked(model, one, "EDGE", SWEEP_PATH_MARK, min_count=i + 1,
+                           label="扫描路径 #%d" % (i + 1))
 
     # ── ③ 引导线（mark 2）· ★ 官方:「used only with sketch profiles」⇒ 可选 ────────
     for i, one in enumerate(_split(guides)):
@@ -769,7 +774,7 @@ def _pre_part_sweep(params):
 
 
 def _pre_part_loft(params):
-    """`solidworks_part_loft` 的 `pre_call` —— ★ **轮廓 mark 1（★ 顺序 = 选择顺序）**。
+    r"""`solidworks_part_loft` 的 `pre_call` —— ★ **轮廓 mark 1（★ 顺序 = 选择顺序）**。
 
     官方依据（Remarks **给的是完整表**，且例子逐字给出调用序）:
       · `IFeatureManager\InsertProtrusionBlend2.md` §Remarks 逐字:「1 = profile selections /
@@ -806,13 +811,13 @@ def _pre_part_loft(params):
     for i, one in enumerate(profiles):
         if one.lower().startswith("sketch:"):
             name = one.split(":", 1)[1].strip()
-            n = _select_named(model, name, "SKETCH", LOFT_PROFILE_MARK, append=(i > 0))
+            n = _select_named(model, name, "SKETCH", LOFT_PROFILE_MARK, append=None)
             if n < 1:
                 raise PreCallError("★ 第 %d 个轮廓草图 %r 打 mark=%d 回读计数为 0"
                                    "★ ⇒ 草图名不对（中文 UI 是「草图1」—— 事实 9）"
                                    % (i + 1, name, LOFT_PROFILE_MARK))
         else:
-            _select_marked(model, one, "FACE", LOFT_PROFILE_MARK, append=(i > 0),
+            _select_marked(model, one, "FACE", LOFT_PROFILE_MARK,
                            min_count=i + 1, label="放样轮廓 #%d" % (i + 1))
 
     # ── 引导线（mark 2 × k）· ★ 官方例子给的是 4098/8194/…（= 2 × 序号）──────────
@@ -838,7 +843,7 @@ def _pre_part_loft(params):
 
 
 def _pre_part_axis(params):
-    """`solidworks_part_axis` 的 `pre_call` —— ★★ **mark 查不到；按 0 试（★ 明标未证实）**。
+    r"""`solidworks_part_axis` 的 `pre_call` —— ★★ **mark 查不到；按 0 试（★ 明标未证实）**。
 
     ★★ **官方依据的完整交代**（铁律 5：查不到就说查不到）:
       · `C:\swapi\types\IModelDoc2\InsertAxis2.md` **整页没有 `## Remarks` 段**
@@ -876,9 +881,9 @@ def _pre_part_axis(params):
         if low.startswith(("plane:", "axis:", "sketch:")):
             kind, _, name = one.partition(":")
             type_str = {"plane": "PLANE", "axis": "AXIS", "sketch": "SKETCH"}[kind]
-            _select_named(model, name, type_str, AXIS_MARK, append=(i > 0))
+            _select_named(model, name, type_str, AXIS_MARK, append=None)
         else:
-            _select_marked(model, one, "FACE", AXIS_MARK, append=(i > 0),
+            _select_marked(model, one, "FACE", AXIS_MARK,
                            min_count=i + 1, label="建轴的几何 #%d" % (i + 1))
     return {"mark": AXIS_MARK,
             "selected": _count_by_mark(model, -1),
