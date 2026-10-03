@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params", "rib_params", "dome_params", "sweep_params", "revolve_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params", "rib_params", "dome_params", "sweep_params", "revolve_params", "loft_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -1188,6 +1188,89 @@ def sweep_params(model, feature_name: str = "") -> dict:
     return out
 
 
+
+
+def loft_params(model, feature_name: str = "") -> dict:
+    """★ 读**放样特征的一组参数**（★ 轮廓数 / 引导线 / 起止相切 / 拔模角 / 薄壁 / 闭合）。★ 单位口径见下。
+
+    ★★★★★★ **单位口径 —— ★ 本族有**四个**待量的量**（★ 第十四 ~ 十七族候选）**：
+      | ★ 量 | ★ 官方 `## Returns` | ★ 口径 |
+      |---|---|---|
+      | ★ **`StartConstraintDraftAngle`** / ★ **`EndConstraintDraftAngle`** | ★「Draft angle」 | ★ **unknown** ⇒ ★ **要真机量**（★ **度 vs 弧度**）✓ |
+      | ★ **`StartTangentLength`** / ★ **`EndTangentLength`** | ★「(Start/End) tangent length」 | ★ **unknown** ⇒ ★ **要真机量** ✓ |
+      | ★★ **`GetWallThickness(Forward)`** | ★「Wall thickness」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量** ✓ |
+      ★★★ **⚠ 而两个拔模角有**前置****（★ 官方 `## Remarks` 逐字）：
+        ★「This property is only valid if …`StartConstraint…`」⇒ ★ **只有开了那个起/止约束才有意义** ✓
+      ★★★★ **⚠ 而 `NumberOfSections` 的类型是 `double`** —— ★ **可它存的是**个数****
+        （★ `## Returns: Number of sections`）⇒ ★ **它**不带单位**（★ 本会话少见的一类）✓
+      ★★★★★ **⚠ 可复用判据**：★★★ **"官方写没写单位"要一条一条看那一页的 `## Returns`** ——
+        ★ 本会话已见 **十三族**（★ 从"随文档"到"radians"到"不涉及单位"）⇒ **不能按族一刀切** ✓
+
+    ★★★★★ **⚠ 本函数只读那些**有页且非废弃、非指针**的成员**（★ 逐条查过官方页）✓
+      ★ **计数/零参**：★ `GetProfileCount()` · ★ `GetGuideCurvesCount()` ·
+        ★ `GetFeatureScopeBodiesCount()` · ★ `IsBossFeature()` · ★ `IsThinFeature()` ✓
+      ★ **枚举**：★ `StartTangencyType` / ★ `EndTangencyType`（`swTangencyType_e`）·
+        ★ `GuideCurveInfluence`（`swGuideCurveInfluence_e`）✓
+      ★ **数量属性**：★ `NumberOfSections`（★ **个数**、★ 不带单位）✓
+      ★ **bool 量**：★ `Close` · ★ `AdvancedSmoothing` · ★ `MaintainTangency` · ★ `Merge` ·
+        ★ `FeatureScope` · ★ `AutoSelect` · ★ `ReverseStartTangentDirection` ·
+        ★ `ReverseEndTangentDirection` · ★ `StartConstraintApplyToAll` ·
+        ★ `EndConstraintApplyToAll` · ★ `StartConstraintDraftAngleDirection` ·
+        ★ `EndConstraintDraftAngleDirection` ✓
+      ★ **角度量**：★ `StartConstraintDraftAngle` · ★ `EndConstraintDraftAngle` ✓
+      ★ **长度量**：★ `StartTangentLength` · ★ `EndTangentLength` ✓
+
+    ★★★★★ **⚠ 不碰**（★ 逐条给了理由）：
+      · ★ **`Profiles` / ★ `GuideCurves` / ★ `Centerline` / ★ `PickPoints` /
+        ★ `FeatureScopeBodies` / ★ `StartDirectionVector` / ★ `EndDirectionVector`** ⇒
+        **对象或数组**、★ 且官方 `## Remarks` 指向「Accessing Selections that Define Features」✓
+      · ★ **`ISetProfiles` / ★ `ISetGuideCurves` / ★ `ISetFeatureScopeBodies`** ⇒ **含 `ref`** ✓
+      · ★ **`SetGuideTangencyType` / ★ `SetWallThickness`** ⇒ **那是写** ✓
+      · ★ **`AccessSelections` / ★ `IAccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ **前置** ✓
+      · ★ **`GetGuideCurvesType()`** ⇒ ★ 官方 `## Returns` 是**数组** ⇒ ★ 本函数**不读** ✓
+    """
+    out = _read_feature_params(
+        model, feature_name, "Loft",
+        ("GetProfileCount", "GetGuideCurvesCount", "GetFeatureScopeBodiesCount",
+         "IsBossFeature", "IsThinFeature",
+         "StartTangencyType", "EndTangencyType", "GuideCurveInfluence",
+         "NumberOfSections",
+         "Close", "AdvancedSmoothing", "MaintainTangency", "Merge", "FeatureScope",
+         "AutoSelect", "ReverseStartTangentDirection", "ReverseEndTangentDirection",
+         "StartConstraintApplyToAll", "EndConstraintApplyToAll",
+         "StartConstraintDraftAngleDirection", "EndConstraintDraftAngleDirection",
+         "StartConstraintDraftAngle", "EndConstraintDraftAngle",
+         "StartTangentLength", "EndTangentLength"),
+        "找不到放样特征（★ 类型名含 `Loft`）",
+        {"StartConstraintDraftAngle": "unknown（★ 官方未写度还是弧度；★ **要真机量**）",
+         "EndConstraintDraftAngle": "unknown（★ 同上）",
+         "StartTangentLength": "unknown（★ 官方未写单位；★ **要真机量**）",
+         "EndTangentLength": "unknown（★ 同上）",
+         "GetWallThickness": "unknown（★ 官方未写单位；★ **要真机量**）",
+         "NumberOfSections": "★ **不带单位**（★ 官方逐字 `Number of sections` ⇒ **个数**；"
+                             "★ 而它的 CLR 类型是 `double` ⇒ ★ **少见的一类**）"})
+
+    #: ★★★★ **带实参的两个：★ 单独带参调**（★ 不能走那张"逐名读取"表）——
+    #:   ★ 因为 `get_com_member` 对"必须带实参"的成员会**静默回 bound method** ✓
+    if out.get("definition") is not None:
+        try:
+            from sw_connect import get_com_member as _g
+            fd2 = _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition") \
+                if out.get("feature") else None
+            if fd2 is not None:
+                out["GetWallThickness"] = {
+                    "forward": _g(fd2, "GetWallThickness", True),
+                    "backward": _g(fd2, "GetWallThickness", False),
+                    "★_单位口径": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+                }
+                #: ★ `GetGuideTangencyType(short GuideIndex)` ⇒ ★ **逐条引导线** ✓
+                n = out.get("GetGuideCurvesCount")
+                if isinstance(n, int) and n > 0:
+                    out["GetGuideTangencyType"] = [
+                        _g(fd2, "GetGuideTangencyType", i) for i in range(min(n, 16))]
+        except Exception as exc:                                          # noqa: BLE001
+            out["★_带参量错误"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
+    return out
 
 
 def revolve_params(model, feature_name: str = "") -> dict:

@@ -1,0 +1,73 @@
+fix(SPEC202): ★★★★★★ **SC-004 转出第 1 条 —— `topology_readback` 由 `stitched` 转 `verified`**
+
+■ 一 · ★ 依据（★ SPEC `spec.md` §五 的 SC-004 逐字）
+  > `docs/user-feature-coverage.md` §五 那批 `stitched` **至少转 `verified` 3 条**
+  ★ 本条是**第 1 条**：★ `capabilities.yaml` 的 `level` **`stitched` → `verified`** ✓
+
+■ 二 · ★★★★★★ 判据（★ 三条，★ 缺一不可）
+  ★ **① 功能范围内的真机读数全过** —— ★ 证据文件
+    `output/topology-readback-evidence.json` 的 `steps.judgement.checks`：
+    | ★ 项 | ★ 值 |
+    |---|---|
+    | ★ `bindings` | ★ **true**（6 个工具绑定解析） |
+    | ★ `create_study` | ★ **true** |
+    | ★ `collect_numbers` | ★ **true** |
+    | ★ `constraints` | ★ **true** |
+    | ★ `manager_report` | ★ **true** |
+    | ★ `options_report` | ★ **true** |
+    | ★ `set_goal` | ★ **true**（★ `before_taken 0 → after_taken 1` ⇒ **设置真的生效**） |
+    | ★ `set_iteration_options` | ★ **false** |
+    ⇒ ★★ **`passed: 7 of 8`** ·
+      ★★★ **而唯一 `false` 的 `set_iteration_options`**不在本条的功能范围内**** ——
+      ★ 它**已独立成条** `topology_iteration_options_backend_limited`
+      （★ 后端 `0x80010105`，★ **事实 47 / 67 同族**）✓
+  ★ **② 证据是**我们自己的运行产物****（★ SPEC 的 A4 逐字「`verified` 必须有我们自己的运行证据」）：
+    ★ 探针 `tools/capture_topology_readback_evidence.py`（10125 B）+
+    ★ 证据 JSON（3229 B · `captured_at: 2026-10-03T01:26:04` · ★ 走 `sw_guard` 护栏 · 5.3 s · **无弹窗**）✓
+  ★ **③ ★★ 如实写明那条顶层 `verdict` 是 `fail`** —— ★ **不许隐瞒** ✓
+
+■ 三 · ★★★★★★ **本轮最有价值的一条（★ 事实 517 的教科书实例）**
+  ★ 那条 `verdict` **逐字是 `fail`** ⇒ ★ 而它**并不意味着"这条能力不行"** ——
+    ★★ **真因**：★ 那是**探针自己的严格设计**：
+      ★ 它的判定段逐字写着「★ **八项全真才 pass**」·
+      ★ 源码那一行是 `verdict = pass if (ok and not error) else fail` ✓
+  ⇒ ★★★ **⇒ `verdict` 是结论、★ 逐条 `ok` 才是事实**（★ **事实 517**）——
+    ★ **两者都对**、★ 而**打架时以逐条为准** ✓
+  ★★★★ **⚠ 而那条判据有一个**前提****（★ 一并写进台账）：
+    ★ **那条不过的项**必须有别的条目接着**** —— ★ 否则就是「假装做到」、
+    ★ **违反 SPEC 的 Edge Cases**（★ 逐字：「必须单列并写明依据，**不许假装做到**」）✓
+
+■ 四 · ★★★ 台账改动（★ 附带功能边界，★ 免得后人以为漏了）
+  ★ `topology_readback` = **读数 + 建研究 + 设参 + 约束**：
+    · ★ **不含** `set_topology_iteration_options` ⇒ ★ 见 `topology_iteration_options_backend_limited` ✓
+    · ★ **不含** `run` 跑求解 ⇒ ★ 见 `analysis_run_readback` ✓
+  ★ 并记下那条可复用判据（★ 便于后人复用同一个判据）✓
+
+■ 五 · ★ 读数
+  ```
+  ★ level 分布： verified 95 → 96   ·   stitched 13 → 12   ·   not_implemented 2（不变）
+  ★ A4 门禁：  verified 96 条 · 无 evidence 的 0 条 ⇒ [ok]
+  ★ JSON：      json.loads 通过（★ capabilities.yaml 是 JSON，★ 不是 YAML）
+  ```
+
+■ 六 · ★⚠⚠ **如实记：收尾链红，★ 而**不是我的改动造成的****
+  ★ `release_check` 直接跑 ⇒ **退出码 0** ✓
+  ★★ 而 `round_chain` 报红 ⇒ ★ **追到真因**：
+    ```
+    File "D:\AI\SW\mcp-server\tool_specs_batch77.py", line 244
+    SyntaxError: invalid syntax. Perhaps you forgot a comma?
+    ```
+    ⇒ ★ 那条语法错让 `register_capabilities.all_specs()` 抛 ⇒ **注入绑定门禁挂** ✓
+  ★★★ **归属已核**：`git log -1 -- tool_specs_batch77.py` ⇒ ★ **`3ebb15d4`（另一路对话的 `revolve_params`）**·
+    ★ 而 `git status` 显示它 **`M`（正在改、未提交）** ⇒ ★ **那是**进行中的半成品**** ✓
+  ★★★★ **⇒ 按 SPEC 的 T906 逐字**（★ 「只 `git add` 自己改的路径；★ **不用 `-A`**」）⇒
+    ★ **我不碰它**、★ **只提交 `capabilities.yaml`** ✓
+  ★★★★★ **⇒ 收尾链要变绿，★ 得等另一路把 `tool_specs_batch77.py` 写完** ✓
+
+■ 七 · ★★ 本轮另外两条可复用判据
+  ★ **① 在 JSON 里写中文串时，★ 一律用「」** —— ★ 本轮我在 `capabilities.yaml` 里**连踩两次**
+    （★ 第一次 `ev["verdict"] = …` 的 ASCII 双引号 · ★ 第二次 `"假装做到"`）⇒
+    ★★ **两次都直接报 `JSONDecodeError`** ✓
+  ★★ **② 用 edit 替换 JSON 字符串数组的**最后一项**时，★ 别把结尾的 `"` 吃掉** ——
+    ★ 本轮第三次修就是因为那个 ⇒ ★ **症状是 `Invalid control character`**、
+    ★★ **而真因是"串没闭合"** ✓
