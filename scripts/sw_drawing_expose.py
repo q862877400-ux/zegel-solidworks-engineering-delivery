@@ -61,16 +61,44 @@ def _result(op: str, payload: dict, verified_by: str, *, pre_ok=None) -> dict:
     return out
 
 
-def create_projected_view(drawing_model, part_path: str, *, projection: str = "first_angle") -> dict:
-    """★ 投影视图（`CreateDrawViewFromModelView3`，含第一角/第三角投影布局）。
+def create_projected_view(drawing_model, part_path: str, *, view_name: str = "*Front",
+                          x_mm: float = 140.0, y_mm: float = 120.0, scale: float = 0.0) -> dict:
+    """★ 投影/模型视图 —— ★ **走 `add_view`（真机已验证可用）**，不是 `create_standard_views_with_projection`。
 
+    ★★ **为什么改走这条**（2026-10-03 真机工具层 e2e 实测）：
+      · `create_standard_views_with_projection` 在本机**被另一件事挡住** —— 它内部先试
+        `CreateFirstAngleViews2`，而层自己返回
+        `{"status": "blocked", "method": "CreateFirstAngleViews2",
+          "error_code": "DRAWING_PROJECTION_API_UNAVAILABLE"}` ⇒ ★ **本机 COM 代理没有那个成员**，
+        ★ **与视图名无关**（是**另一条**已知限制，不属本函数）。
+      · 而 `add_view` → `CreateDrawViewFromModelView3` **实测建成**（返回真实 `CDispatch` 视图对象），
+        ★ 且它走的正是 `_create_model_view` ⇒ **本地化名字由底层自动解析**（事实 494）。
     ★ 前置：`part_path` 必须是**已存盘的模型完整路径且含 `.sldprt`/`.sldasm`**（官方 Remarks 逐字）。
-    ★★ 视图名由底层**自己解析本地化名**（`_create_model_view`，事实 494）—— 调用方**不必**知道中文界面叫什么。
+    ★ `scale=0.0` 表示不设视图比例（用图纸默认）；`>0` 时按 `1:1/scale` 写 `ScaleRatio`。
+    """
+    res = D.add_view(drawing_model, part_path, view_name, _mm(x_mm), _mm(y_mm),
+                     scale=(scale if scale and scale > 0 else None))
+    return _result("create_projected_view", {"ok": res is not None, "view": res},
+                   "返回非 None（★ 底层为 CreateDrawViewFromModelView3，视图名自动本地化）",
+                   pre_ok=bool(part_path and str(part_path).lower().endswith((".sldprt", ".sldasm"))))
+
+
+def create_three_standard_views(drawing_model, part_path: str, *,
+                                projection: str = "first_angle") -> dict:
+    """★ 三视图布局（第一角/第三角）—— ⚠ **本机被挡**，见返回值里的 `error_code`。
+
+    ★★ **已知限制（真机实测）**：底层先试 `CreateFirstAngleViews2`，本机 COM 代理**没有该成员**
+      ⇒ 返回 `{"status": "blocked", "error_code": "DRAWING_PROJECTION_API_UNAVAILABLE"}`。
+    ★ 本函数**如实把这个结果带回来**（★ 不假装建成、也不吞掉错误码）。
     """
     res = D.create_standard_views_with_projection(drawing_model, part_path, projection=projection)
-    return _result("create_projected_view", res if isinstance(res, dict) else {"value": res},
-                   "视图数增量 + 返回非 None（★ 底层为 CreateDrawViewFromModelView3）",
-                   pre_ok=bool(part_path and str(part_path).lower().endswith((".sldprt", ".sldasm"))))
+    ok = bool(isinstance(res, dict) and res.get("status") not in ("blocked",)
+              and any((v is not None) for v in (res.get("views") or []))) if isinstance(res, dict) else \
+        res is not None
+    out = _result("create_three_standard_views", res if isinstance(res, dict) else {"value": res},
+                  "返回里有建成视图（★ 本机实测为 blocked：CreateFirstAngleViews2 不可用）")
+    out["ok"] = ok
+    return out
 
 
 def create_section_view(drawing_model, *, x_mm: float, y_mm: float) -> dict:
@@ -116,34 +144,109 @@ def add_drawing_note(drawing_model, *, x_mm: float, y_mm: float, text: str) -> d
     return _result("add_note", {"ok": res is not None, "note": res}, "注解计数增量")
 
 
-def create_hole_table(drawing_model, *, x_mm: float, y_mm: float, table_type: int,
-                      row: int = 0, column: int = 0, template: str = "",
-                      use_anchor_point: bool = False) -> dict:
-    """★ 孔表（`InsertHoleTable3` / 通用表注解）。
+def _selection_marks(model) -> dict:
+    """★ 回读"当前选区里每个 mark 各有几个对象"（★ 判前置用；取不到回空 dict，不猜）。"""
+    out: dict = {}
+    try:
+        mgr = C.get_com_member(model, "SelectionManager")
+        n = int(C.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+        for i in range(1, n + 1):
+            try:
+                m = C.get_com_member(mgr, "GetSelectedObject6", i, -1)
+                mark = C.get_com_member(mgr, "GetSelectedObjectType3", i, -1)
+                if mark is not None:
+                    out[str(mark)] = out.get(str(mark), 0) + 1
+                _ = m
+            except Exception:                                           # noqa: BLE001
+                continue
+    except Exception:                                                   # noqa: BLE001
+        return {}
+    return out
 
-    ⚠ **`table_type` 的取值表官方两源都查不到**（★ 铁律 5）⇒ ★ 本函数**原样透传**、
-    ★ **不写死**、也**不猜**；选值由调用方按官方枚举给。
+
+def _view_by_name(drawing_model, view_name: str):
+    """★ 按名取 `IView`（★ 沿 `GetFirstView`/`GetNextView` 链；取不到回 None）。"""
+    try:
+        view = C.get_com_member(drawing_model, "GetFirstView")
+        while view is not None:
+            if str(C.get_com_member(view, "Name") or "") == str(view_name):
+                return view
+            view = C.get_com_member(view, "GetNextView")
+    except Exception:                                                   # noqa: BLE001
+        return None
+    return None
+
+
+def create_hole_table(drawing_model, *, view_name: str, x_mm: float, y_mm: float,
+                      anchor_type: int, start_value: str = "A", template: str = "",
+                      tag_order: int = 1, tag_type: int = 1) -> dict:
+    """★ 孔表 —— **`IView.InsertHoleTable3`（9 参、未废弃）**。
+
+    ★★ **为什么不用 `InsertTableAnnotation`**（★ 2026-10-03 真机工具层 e2e 实测的教训）：
+      官方签名逐字 `IDrawingDoc.InsertTableAnnotation(X, Y, **AnchorType**, Rows, Columns)`
+      ⇒ ★ 它第 3 个 int 是 **`AnchorType`**、后两个是 **`Rows`/`Columns`**，
+      ★ **没有任何参数说"这是孔表"** ⇒ ★ **它建的是通用表，建不出孔表**。
+      ⇒ ★ 本函数改走**真入口** `IView.InsertHoleTable3`（★ 探针 A6 格**真机建成**过）。
+    ★★★ **前置（官方 Remarks 的 mark 表，逐字）**：基准原点**顶点 mark 1** ·
+      孔**边与面 mark 2** · 原点 X 向参考 mark 4 · Y 向参考 mark 8。
+      ★ 本函数**不代选**：先回读选区里 mark 1/2 各几个，`preconditions_held` 如实给出。
+    ★ `Template` 用 `.sldholtbt`（官方 Remarks：在 `install_dir\\lang\\<language>`）；
+      `ManualTags` 传**空 Dispatch**（★ 事实 12；官方例子里是 `Nothing`）。
     """
-    res = D.insert_table_annotation(drawing_model, _mm(x_mm), _mm(y_mm), int(table_type),
-                                    row, column, template=template,
-                                    use_anchor_point=use_anchor_point)
-    return _result("create_hole_table", {"ok": res is not None, "table": res}, "表注解计数增量")
+    view = _view_by_name(drawing_model, view_name)
+    if view is None:
+        return {"ok": False, "op": "create_hole_table", "preconditions_held": False,
+                "err": "★ 前置未成立：按名找不到视图 %r" % view_name,
+                "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）"}
+    marks = _selection_marks(drawing_model)
+    pre = bool(marks.get("1", 0) >= 1 and marks.get("2", 0) >= 1)
+    out = {"op": "create_hole_table", "preconditions_held": pre, "selection_marks": marks,
+           "official_marks": "顶点=1 · 孔边与面=2 · X 向参考=4 · Y 向参考=8（官方 Remarks 逐字）",
+           "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）"}
+    if not pre:
+        out["ok"] = False
+        out["err"] = ("★ 前置未成立（官方 mark 表要求的 **1 与 2** 没同时在选区里）"
+                      "⇒ ★ 不能据此判「孔表不成」")
+        return out
+    try:
+        tbl = C.get_com_member(view, "InsertHoleTable3", False, _mm(x_mm), _mm(y_mm),
+                               int(anchor_type), str(start_value), str(template),
+                               int(tag_order), int(tag_type),
+                               C.create_empty_dispatch_variant())
+        out["ok"] = tbl is not None
+        out["raw_is_none"] = tbl is None
+    except Exception as exc:                                            # noqa: BLE001
+        out["ok"] = False
+        out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    return out
 
 
-def create_revision_table(drawing_model, *, x_mm: float, y_mm: float, table_type: int,
-                          row: int = 0, column: int = 0, template: str = "",
-                          use_anchor_point: bool = False) -> dict:
-    """★ 修订表（`InsertRevisionTable2`）。
+def create_revision_table(drawing_model, *, x_mm: float, y_mm: float, anchor_type: int,
+                          template: str = "", shape: int = 0,
+                          auto_update_zoom_cells: bool = True) -> dict:
+    """★ 修订表 —— **`ISheet.InsertRevisionTable2`（7 参、未废弃）**。
 
-    ★ 官方 Returns 逐字：**已有修订表时回 `null`** ⇒ ★ 第二次调用"回 null"是**契约**、不是失败
-    （★ 本函数把它报成 `ok=False` 但**不判为出错**，由调用方按契约解释）。
-    ⚠ `table_type` 同孔表：取值表查不到 ⇒ **原样透传**。
+    ★★ 同上：`InsertTableAnnotation` **建不出修订表**（它没有"表类型"这个参数）⇒ 本函数走**真入口**。
+    ★★ **官方 Returns 逐字：已有修订表时回 `null`** ⇒ ★ 第二次调用"回 null"是**契约、不是失败**
+      （★ 本函数把 `raw_is_none` 如实报出来，由调用方按契约解释）。
+    ★ `Template` 是 `.sldrevtbt`；★ 官方 Remarks：模板与表**必须同型**。
     """
-    res = D.insert_table_annotation(drawing_model, _mm(x_mm), _mm(y_mm), int(table_type),
-                                    row, column, template=template,
-                                    use_anchor_point=use_anchor_point)
-    return _result("create_revision_table", {"ok": res is not None, "table": res},
-                   "返回非 None + ISheet.RevisionTable 回读")
+    sheet = C.get_com_member(drawing_model, "GetCurrentSheet")
+    if sheet is None:
+        return {"ok": False, "op": "create_revision_table", "preconditions_held": False,
+                "err": "★ 前置未成立：取不到当前图纸（GetCurrentSheet 回 None）"}
+    out = {"op": "create_revision_table", "preconditions_held": True,
+           "verified_by": "返回非 None + ISheet.RevisionTable 回读"}
+    try:
+        tbl = C.get_com_member(sheet, "InsertRevisionTable2", False, _mm(x_mm), _mm(y_mm),
+                               int(anchor_type), str(template), int(shape),
+                               bool(auto_update_zoom_cells))
+        out["raw_is_none"] = tbl is None
+        out["ok"] = tbl is not None
+    except Exception as exc:                                            # noqa: BLE001
+        out["ok"] = False
+        out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    return out
 
 
 def insert_center_marks(drawing_model, requirements) -> dict:
@@ -158,6 +261,7 @@ def insert_center_marks(drawing_model, requirements) -> dict:
 
 
 __all__ = [
-    "create_projected_view", "create_section_view", "create_detail_view", "set_sheet_format",
+    "create_projected_view", "create_three_standard_views", "create_section_view",
+    "create_detail_view", "set_sheet_format",
     "add_drawing_note", "create_hole_table", "create_revision_table", "insert_center_marks",
 ]

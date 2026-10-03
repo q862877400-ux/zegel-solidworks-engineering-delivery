@@ -3183,5 +3183,33 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         ★ 而曲线驱动阵列指向的是**另一个建特征机制**（`CreateFeature` + FeatureData）⇒ **工作量不同级**。|
         痕迹：`specs/202-user-coverage-gaps/recon/r4-e-class-rename-lookup.md`；
         对照事实 **43**（`CreateFeature`/`CreateDefinition` 的常量白名单）· **484**（带 `AccessSelections` 不等于做不到） |
+| 498 | **★★★★ `InsertTableAnnotation` 建不出孔表/修订表 —— 它第 3 个 int 是 `AnchorType` 不是"表类型"** —— 2026-10-03（接手轮）。
+      ★★ **官方签名逐字**（两页都读过）：
+        · `IDrawingDoc.InsertTableAnnotation(X, Y, **AnchorType**, Rows, Columns)` （**5 参**）
+        · `IDrawingDoc.InsertTableAnnotation2(UseAnchorPoint, X, Y, **AnchorType**, TableTemplate, Rows, Columns)` （**7 参**）
+        · ★ `AnchorType` 的取值：**`swBOMConfigurationAnchorType_e`**（`InsertTableAnnotation.md` 的 Parameters
+          那页没写，但 `InsertTableAnnotation2.md` 逐字写了 "as defined in [[swBOMConfigurationAnchorType_e]]"）
+      ⇒ ★★ **它没有任何参数能说"这是孔表"**（`Rows`/`Columns` 是行/列数）⇒ **它建的是"通用表注解"**。
+      ★★★ **本仓踩过这个坑**：`subskills/…/drawing_workflow.py` 的 `insert_table_annotation(drawing_model, x, y,
+        **table_type**, row, column)` **把第 3 参命名成 `table_type`** —— ★ 而它实际落进的是 **`AnchorType`** 槽，
+        `row`/`column` 落进 **`Rows`/`Columns`** ⇒ ★ **名字骗人**。
+      ★ 后果（真机实测）：2026-10-03 工具层 e2e 里，拿它做的 `solidworks_drawing_create_hole_table` /
+        `create_revision_table` **两条都是"注解数 72→72、什么都没建"** —— ★ 而**不是**报错。
+      ★★ **真入口（都是 9/7 参、都未废弃）**：
+        · 孔表 → **`IView.InsertHoleTable3(UseAnchorPoint, X, Y, AnchorType, StartValue, Template,
+          TagOrder, TagType, ManualTags)`**
+        · 修订表 → **`ISheet.InsertRevisionTable2(UseAnchorPoint, X, Y, AnchorType, TableTemplate,
+          Shape, AutoUpdateZoomCells)`**
+        ★ 两者的 **X/Y 官方 Parameters 逐字写着 `meters`**。
+        ★ 孔表的官方 Remarks 给 **mark 表**：基准原点**顶点 1** · 孔**边与面 2** · X 参考 4 · Y 参考 8。
+        ★ 修订表官方 Returns 逐字：**已有修订表时回 `null`**（★ 第二次"回 null"是**契约**）。
+      ★ 改法（本轮已做）：那两条工具**改走真入口**，`table_type` 改名 `anchor_type` ⇒ ★ 真机 e2e 里
+        **修订表建成**（注解 72→73）、★ 孔表如实报"前置未成立（未选 mark 1+2）"。
+      ★★ **可复用的判据**：★ **形参名不等于官方语义** —— 本仓的既有包装层里，
+        **一个"看起来对"的参数名可能落在完全不同的官方槽位上**。
+        ⇒ ★ 凡"包装层函数名/形参名像某个功能"的地方，**都要回官方签名核它到底把值传进了哪个槽**
+        （★ 与事实 **36**「用错接口 = 对任何成员都没反应」是同一族，★ 但更隐蔽：**这次连报错都没有**）。|
+        痕迹：`scripts/sw_drawing_expose.py`（改走真入口）· `tools/probe_drawing_tools_e2e.py` ·
+        `output/drawing-tools-e2e-evidence.json`（改前 1/8、改后 **3/8**）· 对照事实 **36**（接口用错）· **493**（已实现≠已暴露） |
 
 

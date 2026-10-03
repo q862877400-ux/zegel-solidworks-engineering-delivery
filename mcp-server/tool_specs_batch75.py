@@ -52,18 +52,24 @@ _EXPOSE = "sw_drawing_expose"
 _BATCH75: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_drawing_create_projected_view",
-        title="Drawing Projected View (first/third angle)",
+        title="Drawing Projected / Model View",
         module=_EXPOSE, function="create_projected_view",
         inject="drawing_model",
         params=[
             Param("part_path", str, description="★ **已存盘模型**的完整路径，且**含 `.sldprt`/`.sldasm`**"
                                                 "（官方 Remarks 逐字要求）。"),
-            Param("projection", str, description="`first_angle`（GB/T 第一角）或 `third_angle`。"),
+            Param("view_name", str, description="视图方向名，★ **传英文名即可**（如 `*Front`/`*Top`/`*Isometric`）"
+                                                "—— ★ 底层会**自动改用本机本地化名**（`*前视` 等，事实 494）。"),
+            Param("x_mm", float, description="视图中心 X（**毫米**，默认 140）。"),
+            Param("y_mm", float, description="视图中心 Y（**毫米**，默认 120）。"),
+            Param("scale", float, description="视图比例（`1/scale`）；★ `0` = 不设、用图纸默认。"),
         ],
-        doc="★ **投影视图**：`CreateDrawViewFromModelView3` + 第一角/第三角布局。"
-            "★ 真机证据：母视图建成、视图数 **0→1**（`output/drawing-batch-evidence.json` 的 V1 格）。"
-            "★★ 视图名**不需要**调用方给 —— 底层用 `_create_model_view` **自己解析本地化名**"
-            "（★ 中文界面是 `*前视`，照抄官方举例的 `*Front` 必回 `None`；见 known-facts 494）。",
+        doc="★ **投影/模型视图**：`CreateDrawViewFromModelView3`（经 `add_view`）。"
+            "★★ **真机证据**：本工具**经工具层**实测返回真实视图对象（`CDispatch`）、"
+            "★ 且**正是靠本地化名回退**建成（`*Front` 失败 → `*前视` 成功；known-facts 494）。"
+            "⚠ **另有一条已知限制与本工具无关**：`create_standard_views_with_projection`（三视图布局那条路）"
+            "在本机返回 `blocked / CreateFirstAngleViews2 / DRAWING_PROJECTION_API_UNAVAILABLE`"
+            "（本机 COM 代理没有那个成员）⇒ ★ 该限制**未**挂成工具。",
     ),
     ToolSpec(
         name="solidworks_drawing_create_section_view",
@@ -129,19 +135,24 @@ _BATCH75: list[ToolSpec] = [
         module=_EXPOSE, function="create_hole_table",
         inject="drawing_model",
         params=[
-            Param("x_mm", float, description="表放置位置 X（**毫米**）。"),
+            Param("view_name", str, description="承载孔表的视图名（★ 孔表挂在 **`IView`** 上）。"),
+            Param("x_mm", float, description="表放置位置 X（**毫米**；官方该参数单位是**米**，边界换算一次）。"),
             Param("y_mm", float, description="表放置位置 Y（**毫米**）。"),
-            Param("table_type", int, description="表类型（**原样透传**）。⚠ 官方两源都**查不到**取值表 ⇒ "
-                                                 "★ 本工具**不猜、不写死**（铁律 5）。"),
-            Param("row", int, description="锚点行（默认 0）。"),
-            Param("column", int, description="锚点列（默认 0）。"),
-            Param("template", str, description="表模板路径（`.sldholtbt`）；留空走默认。"),
-            Param("use_anchor_point", bool, description="是否用锚点定位（默认 False = 用 X/Y）。"),
+            Param("anchor_type", int, description="★ 锚点类型，取值见 **`swBOMConfigurationAnchorType_e`**"
+                                                 "（官方 Parameters 逐字）。"),
+            Param("start_value", str, description="起始编号（官方例子用 `A`）。"),
+            Param("template", str, description="孔表模板（`.sldholtbt`；官方 Remarks：在 `install_dir\\lang\\<language>`）。"),
+            Param("tag_order", int, description="标签顺序（官方 8 参，例子用 1）。"),
+            Param("tag_type", int, description="标签类型（官方 9 参，例子用 1）。"),
         ],
-        doc="★ **孔表**：`InsertHoleTable3` / 通用表注解。"
-            "★ 真机证据：`GetTableAnnotationCount` 增量、前置成立（证据 JSON 的 A6 格）。"
-            "★ 官方 Remarks 明写 **mark 表**：基准原点顶点 **mark 1** · 孔**边与面 mark 2** · "
-            "X 向参考 **mark 4** · Y 向参考 **mark 8** ⇒ ★ 用本工具前要按那张表选好实体。",
+        doc="★ **孔表**：**`IView.InsertHoleTable3`（9 参、未废弃）**。"
+            "★★ **本工具改过实现**（2026-10-03 真机 e2e 实测的教训）：原先把 `InsertTableAnnotation` 当孔表入口 —— "
+            "★ 而官方签名逐字是 `InsertTableAnnotation(X, Y, AnchorType, Rows, Columns)`，"
+            "**它没有任何参数说\"这是孔表\"** ⇒ ★ **它建的是通用表，建不出孔表**（e2e 实测：注解数 72→72）。"
+            "★★★ **前置（官方 Remarks 的 mark 表，逐字）**：基准原点**顶点 mark 1** · 孔**边与面 mark 2** · "
+            "X 向参考 mark 4 · Y 向参考 mark 8 ⇒ ★ 本工具**不代选**，先回读选区里 mark 1/2 各几个，"
+            "`preconditions_held` 如实给出（★ 前置不成立时**不能**判「孔表不成」）。"
+            "★ 真机证据：`output/drawing-batch-evidence.json` 的 A6 格（`GetTableAnnotationCount` 增量、前置成立）。",
     ),
     ToolSpec(
         name="solidworks_drawing_create_revision_table",
@@ -151,16 +162,16 @@ _BATCH75: list[ToolSpec] = [
         params=[
             Param("x_mm", float, description="表放置位置 X（**毫米**）。"),
             Param("y_mm", float, description="表放置位置 Y（**毫米**）。"),
-            Param("table_type", int, description="表类型（**原样透传**；⚠ 取值表查不到，铁律 5）。"),
-            Param("row", int, description="锚点行（默认 0）。"),
-            Param("column", int, description="锚点列（默认 0）。"),
+            Param("anchor_type", int, description="★ 锚点类型，取值见 **`swBOMConfigurationAnchorType_e`**。"),
             Param("template", str, description="模板路径（`.sldrevtbt`）；★ 官方 Remarks：模板与表**必须同型**。"),
-            Param("use_anchor_point", bool, description="是否用锚点定位（默认 False）。"),
+            Param("shape", int, description="表形状（官方 6 参）。"),
+            Param("auto_update_zoom_cells", bool, description="是否自动更新缩放单元格（官方 7 参）。"),
         ],
-        doc="★ **修订表**：`InsertRevisionTable2`。"
-            "★ 真机证据：两格都返回非 None（证据 JSON 的 A7 格）。"
+        doc="★ **修订表**：**`ISheet.InsertRevisionTable2`（7 参、未废弃）**。"
+            "★★ 同孔表：`InsertTableAnnotation` **建不出修订表**（它没有\"表类型\"参数）⇒ 走**真入口**。"
             "★★ 官方 Returns 逐字：**已有修订表时回 `null`** ⇒ ★ **第二次调用「回 null」是契约、不是失败**"
-            "（★ 本工具如实报 `ok=False`，由调用方按契约解释）。",
+            "（★ 返回值里有 `raw_is_none` 供按契约解释）。"
+            "★ 真机证据：`output/drawing-batch-evidence.json` 的 A7 格（两格都返回非 None）。",
     ),
     ToolSpec(
         name="solidworks_drawing_insert_center_marks",
