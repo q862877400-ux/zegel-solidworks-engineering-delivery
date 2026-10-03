@@ -1,0 +1,46 @@
+test(boundary): 高级孔 —— ★ 射线定位成了、27 参对了，★ **而 `HoleWizard5` 回 `None`**（事实 467）
+
+★ 执行**事实 466 留的下一步**（★ 用 `SelectByRay` 定位 + 真建孔）。
+
+## 一、★ 本轮把**能静态拿的都拿了**
+
+```
+★ 射线定位：`SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, swSelFACES=2, False, Mark=0, 0)`
+   ⇒ **选中 1 → 2** · 回 `True` ✓
+★ **27 参数全对**（★ 反射与 swapi **两源一致**：`'HoleWizard5': 27`）✓
+★ 枚举全取自**反射 dump**：`swWzdHole = 2` · `swEndCondThroughAll = 1` · `swSelFACES = 2`
+★ 而**孔标准与紧固件类型取自本仓的 lookup**（★ 真数据）：
+   标准 **17** 条（ANSI Inch/Metric · AS · BSI · DIN · **GB** · IS · ISO · JIS · KS ·
+            PEM® Inch/Metric · DME · HASCO Metric · PCS · Progressive · Superior）
+   `swWzdHole`(2) 下 ANSI Metric 的**合法** `FastenerTypeIndex`：
+            **704**（暗销孔）· **38**（螺旋螺纹钻孔）· **41**（螺纹钻孔）· **40**（螺钉间隙）
+```
+
+## 二、★ 真机四格（零弹窗）—— ★ **四格全 `None`**
+
+```
+螺钉间隙(40) ThroughAll ⇒ 回 `None` · 特征 7 → 7
+暗销孔(704)   ThroughAll ⇒ 回 `None` · 特征 7 → 7
+螺纹钻孔(41)  ThroughAll ⇒ 回 `None` · 特征 7 → 7
+对照：**非法值(0)**      ⇒ 回 `None` · 特征 7 → 7
+```
+  ⇒ ★★ **故合法值与非法值表现**一样** ⇒ 说明**卡在别的参数上**（★ 而不是 `FastenerTypeIndex`）⚠
+
+## 三、★★ 故剩下的嫌疑集**只有一个最大**
+
+★ **`SSize` 传的是空串** —— ★ 而官方说它**必须合法**。
+
+## 四、★ 按事实 53 停手 + 下一步很具体
+
+★ 从本仓 `sw_hole_features.get_fastener_table(sw, standard_name, fastener_id, table_id, hole_type_id)`
+  **拿一个真的 `SSize`**（★ 而不是空串）再试。
+
+## 五、交付
+
+```
+docs/known-facts.md   **事实 467**（+24 · ★ 含真值表 + 四格记录 + 嫌疑收敛）
+tools/prove_hole_wizard5_build.py（新 · ★ 射线定位 + 27 参 + 四格）
+output/hole-wizard5-build-evidence.json
+★ 本轮**不登记能力**（★ 未建成 —— 不假装做到）
+★ 语法门禁 0 处（782 个文件）
+```

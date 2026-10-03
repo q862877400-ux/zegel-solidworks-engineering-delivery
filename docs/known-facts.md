@@ -2428,3 +2428,32 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        —— ★ **故 `HoleWizard5` 的 `StandardIndex` 有了可核的取值来源**。
      ★ **落地**：`capabilities.yaml` 新增 **`select_by_ray`**（level = **verified**，共 **107** 条）—— ★ 它**本身就是一条能力**（一个真的选择原语）。
      ★ 下一步：用它定位 + `HoleWizard5`（27 参）建孔。|真机：`tools/prove_hole_wizard5.py`；证据 `output/hole-wizard5-evidence.json`；官方：`C:\swapi\types\IModelDocExtension\SelectByRay.md` × 反射 arity |
+| 467 | **★★ 高级孔：射线定位成了、27 参也对了，★ 而 `HoleWizard5` **回 `None`**；剩下的嫌疑是 `SSize`**** —— 2026-10-03（轮 590）。
+     ★ **官方对两个参数的警告逐字**（★ 而它们**都不叫“报错”、只是**回 `None`**）**：
+       · `FastenerTypeIndex` **必须与 standard 匹配、且对该孔型有效**；
+       · `SSize` **必须是该紧固件类型的合法尺寸**。
+     ★ **而本轮把能静态拿的都拿了**：
+     ```
+     ★ 射线定位：`SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, swSelFACES=2, False, Mark=0, 0)`
+        ⇒ **选中 1 → 2** · 回 `True` ✓
+     ★ **27 参数全对**（★ 反射与 swapi **两源一致**：`'HoleWizard5': 27`）✓
+     ★ 枚举全取自**反射 dump**：`swWzdHole = 2` · `swEndCondThroughAll = 1` · `swSelFACES = 2`
+     ★ 而**孔标准与紧固件类型取自本仓的 lookup**（★ 真数据）：
+        标准 **17** 条（ANSI Inch/Metric · AS · BSI · DIN · **GB** · IS · ISO · JIS · KS ·
+                 PEM® Inch/Metric · DME · HASCO Metric · PCS · Progressive · Superior）
+        `swWzdHole`(2) 下 ANSI Metric 的**合法** `FastenerTypeIndex`：
+                 **704**（暗销孔）· **38**（螺旋螺纹钻孔）· **41**（螺纹钻孔）· **40**（螺钉间隙）
+     ```
+     ★ **真机四格**（零弹窗）—— **四格全 `None`**：
+     ```
+     螺钉间隙(40) ThroughAll ⇒ 回 `None` · 特征 7 → 7（★ 无增量）
+     暗销孔(704)   ThroughAll ⇒ 回 `None` · 特征 7 → 7
+     螺纹钻孔(41)  ThroughAll ⇒ 回 `None` · 特征 7 → 7
+     对照：**非法值(0)**      ⇒ 回 `None` · 特征 7 → 7
+     ⇒ ★ **故合法值与非法值表现**一样** ⇒ ★ 说明**卡在别的参数上**（★ 而不是 `FastenerTypeIndex`）⚠
+     ```
+     ★★ **故剩下的嫌疑集只有一个最大**：**`SSize` 传的是空串** —— ★ 而官方说它**必须合法**。
+     ★ **按事实 53 停手**（★ 本轮同一处已两次）；★ **下一步很具体**：
+       ★ 从本仓 `sw_hole_features.get_fastener_table(sw, standard_name, fastener_id, table_id, hole_type_id)`
+         **拿一个真的 `SSize`**（★ 而不是空串）再试。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_hole_wizard5_build.py`；证据 `output/hole-wizard5-build-evidence.json`；官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md` × `IHoleStandardsData` 族；对照事实 464 / 465 / 466 |
