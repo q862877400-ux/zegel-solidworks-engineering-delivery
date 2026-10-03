@@ -21,7 +21,7 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    from .sw_connect import get_com_member
+    from .sw_connect import get_com_member, set_com_member
 except ImportError:
     from sw_connect import get_com_member, set_com_member
 

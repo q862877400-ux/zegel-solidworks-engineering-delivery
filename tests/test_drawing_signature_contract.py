@@ -85,6 +85,9 @@ def _load_workflow():
     connect = types.ModuleType("scripts.sw_connect")
     connect.create_empty_dispatch_variant = lambda *a, **k: None
     connect.get_com_member = _faithful_get_com_member
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful_get_com_member
     connect.call_com_member = _faithful_get_com_member
     sys.modules.setdefault("scripts.sw_connect", connect)
 
@@ -94,6 +97,9 @@ def _load_workflow():
     spec.loader.exec_module(module)
     # 无条件覆盖模块自己的引用，避免被其它测试先 import 时换成真 COM 调用
     module.get_com_member = _faithful_get_com_member
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful_get_com_member
     module.call_com_member = _faithful_get_com_member
     return module
 
@@ -320,6 +326,9 @@ def _load_drawing_workflow():
     sys.modules["drawing_workflow_tables"] = module
     spec.loader.exec_module(module)
     module.get_com_member = _faithful_get_com_member
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful_get_com_member
     module.call_com_member = _faithful_get_com_member
     return module
 

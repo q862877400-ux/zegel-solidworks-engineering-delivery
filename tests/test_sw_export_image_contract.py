@@ -36,6 +36,9 @@ def _load():
         return getattr(obj, "_ret", True)
 
     mod.get_com_member = rec
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    mod.set_com_member = rec
     mod.out_i4 = lambda v=0: ("OUT", v)
     mod.create_empty_dispatch_variant = lambda: "EMPTY"
     return mod, calls

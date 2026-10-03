@@ -7,7 +7,7 @@ from pathlib import Path
 
 try:
     from .sw_preflight import import_com_dependencies
-    from .sw_connect import create_empty_dispatch_variant, get_com_member, open_document
+    from .sw_connect import create_empty_dispatch_variant, get_com_member, open_document, set_com_member
     from .sw_connect import out_i4
 except ImportError:
     from sw_preflight import import_com_dependencies

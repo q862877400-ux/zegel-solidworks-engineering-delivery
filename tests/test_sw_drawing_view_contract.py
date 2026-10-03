@@ -88,6 +88,9 @@ def _load():
     connect.__getattr__ = _connect_attr
     connect.set_com_member = _faithful_write
     connect.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful
     connect.call_com_member = _faithful
     sys.modules.setdefault("sw_connect", connect)
     spec = importlib.util.spec_from_file_location("sw_drawing_view", MODULE_PATH)
@@ -96,6 +99,9 @@ def _load():
     spec.loader.exec_module(module)
     module.set_com_member = _faithful_write
     module.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful
     module.call_com_member = _faithful
     return module
 
@@ -272,6 +278,9 @@ def test_scale_and_name_are_properties_not_methods():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or 1.0)
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or 1.0)
     m.call_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or 1.0)
     m.set_view_scale(object(), 2.0)
     #: ★★★ 2026-10-01（轮 293）**契约随证据更新**：
@@ -283,6 +292,9 @@ def test_scale_and_name_are_properties_not_methods():
     assert seen == [("ScaleRatio", ((2.0, 1.0),))]
     seen2 = []
     m.get_com_member = lambda o, n, *a, **k: (seen2.append((n, a)) or "V1")
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: (seen2.append((n, a)) or "V1")
     m.call_com_member = lambda o, n, *a, **k: (seen2.append((n, a)) or "V1")
     assert m.get_view_name(object()) == "V1"
     assert seen2 == [("Name", ())]

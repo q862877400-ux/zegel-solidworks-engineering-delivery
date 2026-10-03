@@ -78,6 +78,9 @@ def _load():
     sys.modules["sw_simulation_loadprops"] = module
     spec.loader.exec_module(module)
     module.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful
     module.call_com_member = _faithful
     return module
 
@@ -94,6 +97,9 @@ def test_configure_force_wraps_everything_in_edit_transaction():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 0
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 0
     m.configure_force(object(), magnitude=100.0, force_type=1, unit=0)
     names = [n for n, _ in seen]
     assert names[0] == "ForceBeginEdit", "属性设置前必须先开编辑事务"
@@ -113,6 +119,9 @@ def test_edit_transaction_closes_even_when_a_property_raises():
         return 0
 
     m.get_com_member = _boom
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = _boom
     m.call_com_member = _boom
     try:
         m.configure_force(object(), magnitude=1.0)
@@ -143,6 +152,9 @@ def test_non_uniform_uses_boolean_variant_only():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 0
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 0
     m.configure_force(object(), include_non_uniform=True)
     names = [n for n, _ in seen]
     assert "IncludeNonUniformDistribution2" in names
@@ -186,6 +198,9 @@ def test_pressure_readback_uses_boolean_reverse_variant():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append(n) or 7
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: seen.append(n) or 7
     result = m.configure_pressure(object())
     assert result["pressure_type"] == 7
     assert "ReverseDirection2" in seen and "ReverseDirection" not in seen
@@ -195,6 +210,9 @@ def test_heat_flux_and_contact_set_are_read_only():
     """反射这两个族无 setter，模块如实只读（不编可写的假象）。"""
     m = _load()
     m.get_com_member = lambda o, n, *a, **k: 1.0
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: 1.0
     assert isinstance(m.configure_heat_flux(object()), dict)
     assert isinstance(m.configure_contact_set(object()), dict)
     source = MODULE_PATH.read_text(encoding="utf-8")

@@ -184,8 +184,11 @@ _LEN_SUFFIX_EXEMPT: dict = {
     #:   `_LEN_WORDS` 里有 `spacing`；★ 而**一个参数不可能同时是长度与角度**
     #:   ⇒ 走门禁文档写明的这条通道，**不改它的名字**（改成 `_mm` 反而是说错话）。
     ("solidworks_sketch_circular_pattern", "pattern_spacing_deg"):
-        "它**是角度**：名字已含 `_deg`，官方 `PatternSpacing` 收弧度、本工具收度。\n"
-        "★ 命中只因为 `_LEN_WORDS` 里有 `spacing` —— **一个参数不可能同时是长度与角度**。",
+        "★ 参数**不是长度**（★ 它是**角度**：名字已含 `_deg`，官方 `PatternSpacing` 收弧度、"
+        "本工具在边界收度并换算一次）。★ 门禁命中它只因为 `_LEN_WORDS` 里有 `spacing` —— "
+        "**一个参数不可能同时是长度与角度**。"
+        "★★ 也**不是**「交给 SolidWorks 的**文档默认**量」（那是另一类豁免的形态）—— "
+        "它**是我们自己换算出的度**，只是后缀该是 `_deg` 而非 `_mm`。",
 }
 
 

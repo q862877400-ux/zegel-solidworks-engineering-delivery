@@ -197,6 +197,9 @@ def _load():
     connect.__getattr__ = _connect_attr
     connect.set_com_member = _faithful_write
     connect.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful
     connect.call_com_member = _faithful
     connect.out_i4 = _fake_out_i4
     #: ★★★ 2026-10-01（轮 349）**`create_empty_dispatch_variant` 也要提供** ——
@@ -215,6 +218,9 @@ def _load():
     spec.loader.exec_module(module)
     module.set_com_member = _faithful_write
     module.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful
     module.call_com_member = _faithful
     module.out_i4 = _fake_out_i4
     module.create_empty_dispatch_variant = _fake_empty_dispatch
@@ -318,6 +324,9 @@ def test_arity_guard_passes_through_when_correct():
         return "OBJ"
 
     m.get_com_member = _record
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = _record
     m.call_com_member = _record
     assert m._check(object(), "AddForce", 3, 1, "E", None) == "OBJ"
     _assert_call(seen, "AddForce", 1, "E", None)
@@ -361,6 +370,9 @@ def test_plain_restraint_passes_none_for_ref_geom():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "RESTRAINT"
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "RESTRAINT"
     m.add_fixed_restraint(object(), "ENTS")
     _assert_call(seen, "AddRestraint", 0, "ENTS", None)
     #: ★ 第 3 参（RefGeom）必须是**换过**的空 Dispatch，而不是裸 None
@@ -384,6 +396,9 @@ def test_torque_uses_official_force_type_two():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "FORCE"
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "FORCE"
     m.add_torque(object(), "ENTS")
     member, args = seen[0]
     assert member == "AddForce"
@@ -400,6 +415,9 @@ def test_gravity_takes_single_entity_not_array():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "GRAV"
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "GRAV"
     m.add_gravity(object(), "ONE_FACE")
     _assert_call(seen, "AddGravity", "ONE_FACE")
 

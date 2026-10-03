@@ -66,7 +66,7 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    from .sw_connect import get_com_member, call_com_member
+    from .sw_connect import get_com_member, call_com_member, set_com_member
 except ImportError:
     from sw_connect import get_com_member, call_com_member# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）

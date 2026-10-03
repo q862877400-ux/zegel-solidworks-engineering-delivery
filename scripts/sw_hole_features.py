@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass
 from typing import Iterable, Sequence
 
 try:
-    from .sw_connect import get_com_member
+    from .sw_connect import get_com_member, set_com_member
     from .sw_part import _select_com_object, extrude_cut, sketch, sketch_circle, sketch_slot
 except ImportError:
     from sw_connect import get_com_member, set_com_member

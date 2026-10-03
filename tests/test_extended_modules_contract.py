@@ -168,6 +168,9 @@ def _load(name: str):
     module = importlib.import_module(name)
     # 关键：无条件覆盖模块自己的引用，不受 import 顺序影响
     module.get_com_member = _faithful_get_com_member
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful_get_com_member
     module.call_com_member = _faithful_get_com_member
     return module
 

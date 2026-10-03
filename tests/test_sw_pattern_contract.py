@@ -106,6 +106,9 @@ def _load():
     connect.__getattr__ = _connect_attr
     connect.set_com_member = _faithful_write
     connect.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful
     connect.call_com_member = _faithful
     sys.modules.setdefault("sw_connect", connect)
     spec = importlib.util.spec_from_file_location("sw_pattern", MODULE_PATH)
@@ -114,6 +117,9 @@ def _load():
     spec.loader.exec_module(module)
     module.set_com_member = _faithful_write
     module.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful
     module.call_com_member = _faithful
     return module
 
@@ -176,6 +182,9 @@ def test_selection_is_released_even_when_a_setter_raises():
         return None
 
     m.get_com_member = _boom
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = _boom
     m.call_com_member = _boom
     try:
         m.configure_linear_pattern(object(), object(), d1_spacing=1.0)

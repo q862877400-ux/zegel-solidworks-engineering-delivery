@@ -45,7 +45,7 @@
 from __future__ import annotations
 
 try:
-    from .sw_connect import get_com_member
+    from .sw_connect import get_com_member, set_com_member
 except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
     from sw_connect import get_com_member, set_com_member          # type: ignore, set_com_member
 
@@ -96,7 +96,16 @@ def list_equations(model):
     count = int(get_com_member(mgr, "GetCount") or 0)
     out = []
     for i in range(count):
-        out.append(set_com_member(mgr, "Equation", i))
+        #: ★★ 2026-10-03（轮 470）**修正一次过度替换** ——
+        #:   本行原本是 `get_com_member(mgr, "Equation", i)`（★ **读**）：
+        #:   `Equation` 是**索引属性**，`i` 是**下标**，**返回值**是要取的等式文本。
+        #:   ⚠ 同轮我把 98 处「写 COM 属性」从 `get_com_member(对象, 名, 值)` 批量改名为
+        #:     `set_com_member` 时，**按形态匹配 ⇒ 把这一处也改了** ⇒ 于是它变成"写下标"
+        #:     并回 0/1/2 ⇒ 测试 `assert [0,1,2] == ['"A" = 1', …]` 当场失败。
+        #:   ★ **判据（可静态判）**：**返回值被使用 ⇒ 那是读**；返回值被丢掉才是写。
+        #:     ★★ 同族共 3 处（此处 + `sw_assembly.py` 的 `MateEntityType` / `MateComponentName`），
+        #:     已由「返回值被使用」这一条一次找全。
+        out.append(get_com_member(mgr, "Equation", i))
     return out
 
 

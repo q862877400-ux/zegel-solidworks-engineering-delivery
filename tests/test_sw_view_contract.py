@@ -133,6 +133,9 @@ def _load():
     connect.__getattr__ = _connect_attr
     connect.set_com_member = _faithful_write
     connect.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful
     connect.call_com_member = _faithful
     sys.modules.setdefault("sw_connect", connect)
     spec = importlib.util.spec_from_file_location("sw_view", MODULE_PATH)
@@ -141,6 +144,9 @@ def _load():
     spec.loader.exec_module(module)
     module.set_com_member = _faithful_write
     module.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful
     module.call_com_member = _faithful
     return module
 

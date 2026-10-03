@@ -199,6 +199,9 @@ def test_entrypoint_delegates_to_upstream_get_com_member():
     connect.__getattr__ = _connect_attr
     connect.set_com_member = _faithful_write
     connect.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful
     connect.call_com_member = _faithful
     sys.modules.setdefault("sw_connect", connect)
     for asm in sorted(p.stem[len("sw_api_"):]
@@ -226,6 +229,9 @@ def test_entrypoint_delegates_to_upstream_get_com_member():
 def test_entrypoint_rejects_unknown_family_and_bad_arity():
     connect = types.ModuleType("sw_connect")
     connect.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful
     connect.call_com_member = _faithful
     sys.modules.setdefault("sw_connect", connect)
     spec = importlib.util.spec_from_file_location("swa",
@@ -234,6 +240,9 @@ def test_entrypoint_rejects_unknown_family_and_bad_arity():
     sys.modules["swa"] = m
     spec.loader.exec_module(m)
     m.get_com_member = lambda o, n, *a, **k: None
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: None
     m.call_com_member = lambda o, n, *a, **k: None
     for args, exc in ((("INotAFamily", "X"), KeyError),
                       ((m.FAMILIES[0], "NotRealMember"), KeyError)):

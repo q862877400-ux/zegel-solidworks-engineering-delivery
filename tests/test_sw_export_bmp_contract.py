@@ -41,6 +41,9 @@ def _load():
 
     #: ★ 只替换这一个 —— `export_to_bmp` 是唯一用到它的地方
     mod.get_com_member = rec
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    mod.set_com_member = rec
     return mod, calls
 
 

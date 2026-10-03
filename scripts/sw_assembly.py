@@ -26,7 +26,7 @@ import os
 
 try:
     from .sw_preflight import import_com_dependencies
-    from .sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member
+    from .sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member, set_com_member
 except ImportError:
     from sw_preflight import import_com_dependencies
     from sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member, set_com_member
@@ -859,9 +859,15 @@ def collect_mate_in_place_evidence(mate_in_place) -> dict:
     entities = []
     for index in range(count):
         entities.append({
-            "entity_type": int(set_com_member(mate_in_place, "MateEntityType", index) or -1),
+            #: ★★ 2026-10-03（轮 470）**修正一次过度替换（同 `sw_equation.py` 那处）** ——
+            #:   这两行原本是 `get_com_member(...)`（★ **读**）：`MateEntityType` /
+            #:   `MateComponentName` 是**索引属性**，`index` 是**下标**，**返回值**是要取的值。
+            #:   ⚠ 同轮我把 98 处「写 COM 属性」批量改名为 `set_com_member` 时按形态匹配
+            #:     ⇒ 把这两处也改了 ⇒ 于是变成"写下标"。
+            #:   ★ 判据：**返回值被使用 ⇒ 读**。
+            "entity_type": int(get_com_member(mate_in_place, "MateEntityType", index) or -1),
             "component_name": str(
-                set_com_member(mate_in_place, "MateComponentName", index) or ""
+                get_com_member(mate_in_place, "MateComponentName", index) or ""
             ),
         })
     return {

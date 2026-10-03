@@ -81,7 +81,11 @@ def custom_property_manager(model, config_name: str = ""):
     ext = get_com_member(model, "Extension")
     if ext is None:
         raise RuntimeError("取不到 model.Extension —— 无法读自定义属性")
-    mgr = set_com_member(ext, "CustomPropertyManager", str(config_name))
+    #: ★★ 2026-10-03（轮 470）**修正一次过度替换（同族第 4 处）** ——
+    #:   官方 `IModelDocExtension.CustomPropertyManager` 是**方法**（★ 收一个配置名参数、
+    #:   返回 `ICustomPropertyManager`）⇒ ★ 这里**必须**走 `get_com_member`（★ 它会**调用**）
+    #:   ★ 判据：**返回值被使用**（`mgr`）⇒ 那是**取/调**，不是"写属性"。
+    mgr = get_com_member(ext, "CustomPropertyManager", str(config_name))
     if mgr is None or not hasattr(mgr, "Count"):
         #: 兜底：个别环境下把它当属性取反而可用 ⇒ 再试一次（但判据仍是行为）
         alt = get_com_member(ext, "CustomPropertyManager")

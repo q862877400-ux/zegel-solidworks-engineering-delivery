@@ -288,6 +288,9 @@ def _install_fake_get_com_member(monkeypatch_target, fake):
     def _get(obj, member, *args):
         return getattr(fake, member)(*args)
     monkeypatch_target.get_com_member = _get
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    monkeypatch_target.set_com_member = _get
     monkeypatch_target.call_com_member = _get
 
 

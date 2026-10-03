@@ -112,6 +112,9 @@ def _load():
     connect.__getattr__ = _connect_attr
     connect.set_com_member = _faithful_write
     connect.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful
     connect.call_com_member = _faithful
     connect.set_com_member = _set_faithful
     sys.modules.setdefault("sw_connect", connect)
@@ -122,6 +125,9 @@ def _load():
     spec.loader.exec_module(module)
     module.set_com_member = _faithful_write
     module.get_com_member = _faithful
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    module.set_com_member = _faithful
     module.call_com_member = _faithful
     module.set_com_member = _set_faithful
     return module
@@ -264,6 +270,9 @@ def test_set_option_prefers_set_com_member_for_properties():
     set_calls, get_calls = [], []
     m.set_com_member = lambda o, n, v: set_calls.append((n, v)) or True
     m.get_com_member = lambda o, n, *a, **k: get_calls.append(n) or 1
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: get_calls.append(n) or 1
     target = types.SimpleNamespace()
     m.set_option(target, "ICWStaticStudyOptions", "DefinedReferencePressure", "1.5")
     assert [n for n, _ in set_calls] == ["DefinedReferencePressure"], set_calls
@@ -306,6 +315,9 @@ def test_set_options_skips_none_values():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append(n) or 1
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: seen.append(n) or 1
     applied = m.set_options(object(), "ICWStaticStudyOptions", {
         "DefinedReferencePressure": 1.0, "CheckFlowPressure2": None})
     assert seen == ["DefinedReferencePressure"]
@@ -329,6 +341,9 @@ def test_study_options_of_uses_property_form():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "OPTS"
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "OPTS"
     m.study_options_of(object(), "ICWStaticStudyOptions")
     assert seen == [("StaticStudyOptions", ())]
 

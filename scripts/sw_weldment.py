@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 try:
-    from .sw_connect import get_com_member, call_com_member, save_document
+    from .sw_connect import get_com_member, call_com_member, save_document, set_com_member
     from .sw_document_data import set_custom_properties
     from .sw_part import _ensure_sketch_selected
     from .sw_preflight import import_com_dependencies

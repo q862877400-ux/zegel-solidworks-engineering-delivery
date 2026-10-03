@@ -115,6 +115,9 @@ def _load_module():
     connect.__getattr__ = _connect_attr
     connect.set_com_member = _faithful_write
     connect.get_com_member = _faithful_get_com_member
+    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
+    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
+    connect.set_com_member = _faithful_get_com_member
     connect.call_com_member = _faithful_get_com_member
     # ⚑ 2026-10-01 真机实测后新增的两个 helper，桩必须一并提供 ——
     #   否则被测模块在 `from sw_connect import out_i4, ...` 处直接 ImportError（本轮撞了）。
