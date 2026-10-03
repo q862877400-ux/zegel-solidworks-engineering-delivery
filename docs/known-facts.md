@@ -1227,3 +1227,15 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **剩下最可能**：★★ **`CreateDefinition` 这条「新架构」路本身**，在这条 pywin32 后端上**对这批特征失效**（★ 而**旧式方法**那侧是成的：填充 / 延伸 / 缝合 / 曲面-拉伸）。
      ★ **按事实 53 停手**（这一处已 6+ 次）—— ★ 而**把上面这张清单留下**，★ **比继续试参数有价值** ✓
      ★ **若下一步还要动**：该换的是**后端**（★ 如 `comtypes` 早绑定）或**旧式方法**（★ 如找扫描面的非新架构入口）—— ★ 而不是继续在同一入口上换参数。|真机：`output/sweep-set-props-evidence.json`（轮 512）· `output/ruled-whats-wrong-evidence.json`（轮 507）· `output/sweep-surface-skip-access-evidence.json`（轮 509）；对照事实 391 / 393 / 394 / 395 |
+| 397 | **★★ 类型库的 arity **含末尾那个 `Retval` 出参** —— 而反射转储给的是「**不含 Retval**」** —— 2026-10-03（轮 513）。★ 用**事实 128 推荐的第 4 套签名源**（`comtypes.client.GetModule('<sldworks.tlb>').<IIface>._methods_`）核实：
+     ```
+     IFeatureManager.InsertRuledSurfaceFromEdge2  arity=12
+       argtypes = c_long, c_double, VB, VB, VB, c_double, VB, c_double, c_double, c_double, VB, **LP_POINTER(IFeature)**
+       flags    = (Type·Length·FlipPullDir·FlipDir·TrimAndSew·Angle·CoordInput·X·Y·Z·BConnectSurface) 均 flag=1(in)，**末尾 (10, 'Retval')**
+     IFeatureManager.FeatureBossThicken            arity=8   （★ 7 个 in + 末尾 (10,'Retval')）
+     IModelDoc2.FeatureBossThicken                 arity=3   （★ 全 in，**无 Retval**）
+     IModelDoc2.InsertExtendSurface                arity=3   （★ 全 in，**无 Retval**）
+     IFeatureManager.CreateDefinition              flags = ((1,'Type'), **(10,'PDispOut')**)
+     ```
+     ⇒ ★★ **故**：类型库的 arity **含末尾那个 out**；★ 而反射转储给的**11**（直纹）/ **8**（加厚）**正是不含它** ⇒ ★★ **两源其实**一致****，★ 而我当初以为“冲突”是因为**没数末尾那个出参** ⚠
+     ★ ★★ **因此得两个结论**：① 直纹的 **11** 与加厚的 **7** **都传对了**（★ 故它们的失败**不是 arity 问题**）；② ★★ **新定则：拿类型库数 arity 时要减 1**（末尾那个 `Retval` / `PDispOut` 是**返回值**，pywin32 侧**不传**）—— ★ 而**对照反射转储的 arity 就不用减**。★ 而反射的 `CreateDefinition` arity是 **4**（★ 反射里 **不含**那个 out）—— ★ 与本仓 `sw_pattern` / `sw_sweep` 实际传的一致。|真机：`comtypes.client.GetModule(r'D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\sldworks.tlb')`（★ 本机存在，2020872 B；`comtypes 1.4.17`）；对照事实 128 / 129 / 396 |
