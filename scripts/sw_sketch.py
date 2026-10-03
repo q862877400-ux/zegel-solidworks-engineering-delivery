@@ -46,7 +46,7 @@ from typing import Any
 try:
     from .sw_connect import get_com_member
 except ImportError:
-    from sw_connect import get_com_member
+    from sw_connect import get_com_member, set_com_member
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -426,7 +426,7 @@ def set_model_to_sketch_transform(sketch, transform) -> bool:
     """设「模型坐标 → 草图坐标」变换。⚑ 官方是**属性**（新式）。"""
     if sketch is None:
         raise ValueError("sketch 为 None")
-    get_com_member(sketch, "ModelToSketchTransform", transform)
+    set_com_member(sketch, "ModelToSketchTransform", transform)
     return True
 
 

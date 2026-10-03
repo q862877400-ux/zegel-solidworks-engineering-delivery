@@ -315,15 +315,15 @@ def apply_visual_properties(
     if blend_color is not None:
         set_com_member(data, "BlendColor", bool(blend_color))
     if apply_material_color_to_part is not None:
-        get_com_member(data, "ApplyMaterialColorToPart",
+        set_com_member(data, "ApplyMaterialColorToPart",
                        bool(apply_material_color_to_part))
     if apply_material_hatch_to_section is not None:
-        get_com_member(data, "ApplyMaterialHatchToSection",
+        set_com_member(data, "ApplyMaterialHatchToSection",
                        bool(apply_material_hatch_to_section))
     if angle is not None:
         set_com_member(data, "Angle", float(angle))
     if scale2 is not None:
-        get_com_member(data, "Scale2", float(scale2))
+        set_com_member(data, "Scale2", float(scale2))
     return data
 
 

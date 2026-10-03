@@ -48,7 +48,7 @@ from typing import Any
 try:
     from .sw_connect import get_com_member
 except ImportError:
-    from sw_connect import get_com_member
+    from sw_connect import get_com_member, set_com_member
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -158,10 +158,10 @@ def configure_force(
     applied: dict[str, Any] = {}
     with edit_transaction(force, FORCE_BEGIN_EDIT, "ICWForce"):
         if force_type is not None:
-            get_com_member(force, "ForceType", int(force_type))
+            set_com_member(force, "ForceType", int(force_type))
             applied["ForceType"] = int(force_type)
         if unit is not None:
-            get_com_member(force, "Unit", int(unit))
+            set_com_member(force, "Unit", int(unit))
             applied["Unit"] = int(unit)
         if magnitude is not None:
             get_com_member(force, "NormalForceOrTorqueValue", float(magnitude))
@@ -173,7 +173,7 @@ def configure_force(
             get_com_member(force, "PhaseAngleUnit", int(phase_angle_unit))
             applied["PhaseAngleUnit"] = int(phase_angle_unit)
         if equation is not None:
-            get_com_member(force, "Equation", str(equation))
+            set_com_member(force, "Equation", str(equation))
             applied["Equation"] = str(equation)
         if equation_linear_unit is not None:
             get_com_member(force, "EquationLinearUnit", int(equation_linear_unit))

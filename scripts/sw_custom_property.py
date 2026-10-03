@@ -47,7 +47,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from sw_connect import get_com_member
+from sw_connect import get_com_member, set_com_member
 
 __all__ = [
     "SW_CUSTOM_INFO_TYPES",
@@ -81,7 +81,7 @@ def custom_property_manager(model, config_name: str = ""):
     ext = get_com_member(model, "Extension")
     if ext is None:
         raise RuntimeError("取不到 model.Extension —— 无法读自定义属性")
-    mgr = get_com_member(ext, "CustomPropertyManager", str(config_name))
+    mgr = set_com_member(ext, "CustomPropertyManager", str(config_name))
     if mgr is None or not hasattr(mgr, "Count"):
         #: 兜底：个别环境下把它当属性取反而可用 ⇒ 再试一次（但判据仍是行为）
         alt = get_com_member(ext, "CustomPropertyManager")

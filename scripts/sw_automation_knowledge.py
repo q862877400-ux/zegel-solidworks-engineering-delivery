@@ -24,7 +24,7 @@ from typing import Any
 try:
     from .sw_connect import get_com_member
 except ImportError:
-    from sw_connect import get_com_member
+    from sw_connect import get_com_member, set_com_member
 
 __all__ = [
     "HRESULTS",
@@ -131,7 +131,7 @@ def enter_command_lock(sldworks) -> bool:
     """
     if sldworks is None:
         raise ValueError("sldworks 为 None")
-    get_com_member(sldworks, "CommandInProgress", True)
+    set_com_member(sldworks, "CommandInProgress", True)
     return True
 
 
@@ -139,7 +139,7 @@ def exit_command_lock(sldworks) -> bool:
     """解除 :func:`enter_command_lock`。⚠ 忘了调用会让 SolidWorks 一直拒收操作。"""
     if sldworks is None:
         raise ValueError("sldworks 为 None")
-    get_com_member(sldworks, "CommandInProgress", False)
+    set_com_member(sldworks, "CommandInProgress", False)
     return True
 
 

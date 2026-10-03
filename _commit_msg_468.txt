@@ -1,0 +1,37 @@
+fix(com): 98 处「用 get_com_member 写**属性**」全部改成 set_com_member —— 那是一族会说谎的 API
+
+★ 用户的指令：「逐个看逐个修」。而"看"的结果把我上一轮的结论**推翻了一半**：
+  ★ 我原以为族 D 那 28 处大多是假阳性 —— ★ 实测证明**是真问题**，而且**比 28 处多得多**。
+  真机（轮 468）：
+    CommandInProgress        → TypeError: 'bool' object is not callable
+    EnableSelection          → TypeError: 'bool' object is not callable
+    EnableContourSelection   → TypeError: 'bool' object is not callable
+  ⇒ 根因：get_com_member(obj, name, *args) 的语义是「取或**调**」——**有实参就一定调用**
+    ⇒ 它在一个 bool / tuple 上"调用" ⇒ TypeError ⇒ 而外面 `return True` ⇒ **失败被报成成功**。
+  ★★ 而本仓 sw_connect.set_com_member 的 docstring **早就写明了规矩**（逐字）：
+     > ⇒ 与已知事实 4（读用 get_com_member）成对：**读走 get_com_member，写走本函数。**
+     ⇒ 即：**不是我发现新 bug，是这条规矩没被遵守。**
+
+★ 做法：
+  ① 新门禁 tools/check_com_write_form.py —— 判据用官方源 `kind: property`
+     （扫全部 get_com_member(obj,"<属性>",值) 调用）⇒ 报出 **98 处**
+  ② tools/fix_com_write_form.py 按 **AST span** 精确替换函数名（不用正则，不动实参）
+     ⇒ 15 个文件 / 98 处；git diff --stat = **98 insertions, 98 deletions**（等量，事实 61 的形态）
+     大头：sw_pattern 33 · sw_weldment 21 · sw_hole_features 12 · sw_view 7
+  ③ 补 import 时**栽了一次**：第一版把名字追加到**行尾注释之后** ⇒
+     `from sw_connect import ...# ── 来源 ──, set_com_member` ⇒ 名字掉进注释里 ⇒ NameError。
+     ⇒ 第二版插在注释之前，并用 **AST 验证"真的 import 到了"**（比看文本靠谱）。
+  ④ 真机复验（tools/prove_family_d_readback.py，判据=**最后一次请求 vs 最后一次回读一致**）：
+     CommandInProgress  True→True · False→False   ✓
+     EnableSelection    False→False · True→True   ✓
+     EnableContourSelection True→True · False→False ✓   ⇒ **诚实 3/3 PASS**
+
+★★ 最要紧的一处：**scripts/sw_automation_knowledge.py 的 enter/exit_command_lock**
+   —— 它正是**铁律 2 点名的那个保护**（"先置 ISldWorks.CommandInProgress = True … 是无人值守
+   挂起的头号原因"）⇒ 而它**从来没生效过**（走的正是被调用属性的那条路）。现已实测生效。
+
+★ 附带更新 docs/signature-audit.md 的 sw_weldment 行（78 → 57 —— 调用点因改名而减少），
+  那是门禁给的修法，照做而不是改门禁。
+★ 我的探针判据也自己修了两次（大小写比较 / 两个列表不同 vs 最后一次一致）——
+  ★ 教训与事实 62 同族：判据要自己先被验过。
+★ release_check exit 0。

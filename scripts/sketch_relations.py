@@ -23,7 +23,7 @@ from typing import Any
 try:
     from .sw_connect import get_com_member
 except ImportError:
-    from sw_connect import get_com_member
+    from sw_connect import get_com_member, set_com_member
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -210,7 +210,7 @@ def suppress_relation(relation, suppressed: bool = True):
     """抑制 / 取消抑制一个约束。"""
     if relation is None:
         raise ValueError("relation 为 None")
-    get_com_member(relation, "Suppressed", bool(suppressed))
+    set_com_member(relation, "Suppressed", bool(suppressed))
     return relation
 
 
@@ -312,9 +312,9 @@ def set_slot_length(slot, length: float, length_type: int | None = None):
     """设置槽长。``length_type`` 见 SKETCH_SLOT_LENGTH_TYPES。"""
     if slot is None:
         raise ValueError("slot 为 None：须先创建槽")
-    get_com_member(slot, "Length", float(length))
+    set_com_member(slot, "Length", float(length))
     if length_type is not None:
-        get_com_member(slot, "LengthType", int(length_type))
+        set_com_member(slot, "LengthType", int(length_type))
     return slot
 
 
@@ -322,7 +322,7 @@ def set_slot_width(slot, width: float):
     """设置槽宽。"""
     if slot is None:
         raise ValueError("slot 为 None：须先创建槽")
-    get_com_member(slot, "Width", float(width))
+    set_com_member(slot, "Width", float(width))
     return slot
 
 

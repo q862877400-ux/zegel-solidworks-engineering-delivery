@@ -68,7 +68,7 @@ from typing import Any
 try:
     from .sw_connect import get_com_member, call_com_member
 except ImportError:
-    from sw_connect import get_com_member, call_com_member# ── 来源 ─────────────────────────────────────────────────────────────
+    from sw_connect import get_com_member, call_com_member, set_com_member# ── 来源 ─────────────────────────────────────────────────────────────, set_com_member
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_view.py —— 本文件自身
 # 定位:   模块导出清单与方法型成员签名表。
@@ -265,10 +265,10 @@ def get_view_frame(view) -> dict[str, int]:
 def set_view_frame(view, left: int, top: int, width: int, height: int) -> bool:
     """设窗口几何。⚑ 四个都是**属性**。"""
     _require(view)
-    get_com_member(view, "FrameLeft", int(left))
-    get_com_member(view, "FrameTop", int(top))
-    get_com_member(view, "FrameWidth", int(width))
-    get_com_member(view, "FrameHeight", int(height))
+    set_com_member(view, "FrameLeft", int(left))
+    set_com_member(view, "FrameTop", int(top))
+    set_com_member(view, "FrameWidth", int(width))
+    set_com_member(view, "FrameHeight", int(height))
     return True
 
 
@@ -281,7 +281,7 @@ def get_display_mode(view) -> int:
 def set_display_mode(view, mode: int) -> bool:
     """设显示模式。⚑ 官方是**属性**。枚举在 swconst 册，不内嵌。"""
     _require(view)
-    get_com_member(view, "DisplayMode", int(mode))
+    set_com_member(view, "DisplayMode", int(mode))
     return True
 
 
@@ -294,7 +294,7 @@ def get_view_scale(view) -> float:
 def set_view_scale(view, scale: float) -> bool:
     """设视图缩放比。⚑ 官方是**属性**（另有 Scale2，本模块用基础版）。"""
     _require(view)
-    get_com_member(view, "Scale", float(scale))
+    set_com_member(view, "Scale", float(scale))
     return True
 
 
@@ -382,7 +382,7 @@ def get_view_orientation(view):
 def set_view_orientation(view, transform) -> bool:
     """设视图姿态。⚑ 官方 3 号是**属性**。"""
     _require(view)
-    get_com_member(view, "Orientation3", transform)
+    set_com_member(view, "Orientation3", transform)
     return True
 
 

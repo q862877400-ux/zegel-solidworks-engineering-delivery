@@ -11,7 +11,7 @@ try:
     from .sw_connect import get_com_member
     from .sw_part import _select_com_object, extrude_cut, sketch, sketch_circle, sketch_slot
 except ImportError:
-    from sw_connect import get_com_member
+    from sw_connect import get_com_member, set_com_member
     from sw_part import _select_com_object, extrude_cut, sketch, sketch_circle, sketch_slot
 
 
@@ -534,19 +534,19 @@ def configure_straight_tap(
     # 静态签名审计（audit_call_arity.py）无法归因，会让这 3 个族在
     # docs/family-coverage.md 里显示为「未触及」。显式写同时也更好读。
     if custom_sizing is not None:
-        get_com_member(element, "CustomSizing", int(custom_sizing))
+        set_com_member(element, "CustomSizing", int(custom_sizing))
     if end_shape is not None:
-        get_com_member(element, "EndShape", int(end_shape))
+        set_com_member(element, "EndShape", int(end_shape))
     if equation is not None:
-        get_com_member(element, "Equation", int(equation))
+        set_com_member(element, "Equation", int(equation))
     if thread_class is not None:
-        get_com_member(element, "ThreadClass", int(thread_class))
+        set_com_member(element, "ThreadClass", int(thread_class))
     if thread_class_override is not None:
-        get_com_member(element, "ThreadClassOverride", bool(thread_class_override))
+        set_com_member(element, "ThreadClassOverride", bool(thread_class_override))
     if drill_point_angle is not None:
-        get_com_member(element, "DrillPointAngle", float(drill_point_angle))
+        set_com_member(element, "DrillPointAngle", float(drill_point_angle))
     if drill_point_angle_override is not None:
-        get_com_member(element, "DrillPointAngleOverride",
+        set_com_member(element, "DrillPointAngleOverride",
                        bool(drill_point_angle_override))
     return element
 
@@ -565,15 +565,15 @@ def configure_tapered_tap(
         raise ValueError("element 为 None：须先取得锥螺纹攻丝元素数据")
     # 显式逐项赋值，原因同 configure_straight_tap（见上方注释）
     if custom_sizing is not None:
-        get_com_member(element, "CustomSizing", int(custom_sizing))
+        set_com_member(element, "CustomSizing", int(custom_sizing))
     if thread_class is not None:
-        get_com_member(element, "ThreadClass", int(thread_class))
+        set_com_member(element, "ThreadClass", int(thread_class))
     if thread_class_override is not None:
-        get_com_member(element, "ThreadClassOverride", bool(thread_class_override))
+        set_com_member(element, "ThreadClassOverride", bool(thread_class_override))
     if end_condition_override is not None:
-        get_com_member(element, "EndConditionOverride", bool(end_condition_override))
+        set_com_member(element, "EndConditionOverride", bool(end_condition_override))
     if use_standard_depth is not None:
-        get_com_member(element, "UseStandardDepth", bool(use_standard_depth))
+        set_com_member(element, "UseStandardDepth", bool(use_standard_depth))
     return element
 
 

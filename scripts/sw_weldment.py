@@ -11,7 +11,7 @@ try:
     from .sw_part import _ensure_sketch_selected
     from .sw_preflight import import_com_dependencies
 except ImportError:
-    from sw_connect import get_com_member, call_com_member, save_document
+    from sw_connect import get_com_member, call_com_member, save_document, set_com_member
     from sw_document_data import set_custom_properties
     from sw_part import _ensure_sketch_selected
     from sw_preflight import import_com_dependencies
@@ -552,18 +552,18 @@ def configure_member_profile(
     if profile is None:
         raise ValueError("profile 为 None：须先取得 IStructureSystemMemberProfile 对象")
     if profile_standard is not None:
-        get_com_member(profile, "ProfileStandard", str(profile_standard))
+        set_com_member(profile, "ProfileStandard", str(profile_standard))
     if profile_type is not None:
-        get_com_member(profile, "ProfileType", str(profile_type))
+        set_com_member(profile, "ProfileType", str(profile_type))
     if profile_size is not None:
-        get_com_member(profile, "ProfileSize", str(profile_size))
-    get_com_member(profile, "MirrorProfile", bool(mirror))
-    get_com_member(profile, "ProfileMirrorType", int(profile_mirror_type))
-    get_com_member(profile, "ProfileAlignmentType", int(alignment_type))
-    get_com_member(profile, "ProfileAlignmentAngle", float(alignment_angle))
-    get_com_member(profile, "OffsetPiercePoint", bool(offset_pierce_point))
-    get_com_member(profile, "OffsetPiercePointHorizontalAxis", float(pierce_horizontal))
-    get_com_member(profile, "OffsetPiercePointVerticalAxis", float(pierce_vertical))
+        set_com_member(profile, "ProfileSize", str(profile_size))
+    set_com_member(profile, "MirrorProfile", bool(mirror))
+    set_com_member(profile, "ProfileMirrorType", int(profile_mirror_type))
+    set_com_member(profile, "ProfileAlignmentType", int(alignment_type))
+    set_com_member(profile, "ProfileAlignmentAngle", float(alignment_angle))
+    set_com_member(profile, "OffsetPiercePoint", bool(offset_pierce_point))
+    set_com_member(profile, "OffsetPiercePointHorizontalAxis", float(pierce_horizontal))
+    set_com_member(profile, "OffsetPiercePointVerticalAxis", float(pierce_vertical))
     return profile
 
 
@@ -597,11 +597,11 @@ def create_profile_center_mate(
         raise ValueError("entities 为 None：须先选中要配合的实体")
 
     def _apply(data):
-        get_com_member(data, "EntitiesToMate", entities)
-        get_com_member(data, "MateAlignment", int(mate_alignment))
-        get_com_member(data, "OffsetDistance", float(offset_distance))
-        get_com_member(data, "FlipDimension", bool(flip_dimension))
-        get_com_member(data, "LockRotation", bool(lock_rotation))
+        set_com_member(data, "EntitiesToMate", entities)
+        set_com_member(data, "MateAlignment", int(mate_alignment))
+        set_com_member(data, "OffsetDistance", float(offset_distance))
+        set_com_member(data, "FlipDimension", bool(flip_dimension))
+        set_com_member(data, "LockRotation", bool(lock_rotation))
 
     return _create_from_definition(model, SW_FM_MATE_PROFILE_CENTER, _apply)
 
@@ -642,11 +642,11 @@ def configure_split_member(
     result = None
     if split_references is not None:
         result = get_com_member(split, "SetSplitReferences", split_references)
-    get_com_member(split, "SplitLength", float(split_length))
-    get_com_member(split, "SplitLengthRevDirection", bool(split_length_reverse))
-    get_com_member(split, "NumberofSplitInstances", int(number_of_instances))
-    get_com_member(split, "DimensionType", int(dimension_type))
-    get_com_member(split, "MemberType", int(member_type))
+    set_com_member(split, "SplitLength", float(split_length))
+    set_com_member(split, "SplitLengthRevDirection", bool(split_length_reverse))
+    set_com_member(split, "NumberofSplitInstances", int(number_of_instances))
+    set_com_member(split, "DimensionType", int(dimension_type))
+    set_com_member(split, "MemberType", int(member_type))
     return result
 
 
@@ -679,7 +679,7 @@ def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool 
     ⚠ 本函数**未验证可用**（从没跑通过）—— **不要**据此认为切割清单功能已就绪。
     """
     if sort_options is not None:
-        get_com_member(sort_options, "CollectIdenticalBodies",
+        set_com_member(sort_options, "CollectIdenticalBodies",
                        bool(collect_identical_bodies))
     manager = get_com_member(model, "FeatureManager")
     # ⚑ **判空再调**：`get_com_member` 取不到时返回 `None`，

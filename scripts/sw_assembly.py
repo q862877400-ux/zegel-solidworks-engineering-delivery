@@ -29,7 +29,7 @@ try:
     from .sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member
 except ImportError:
     from sw_preflight import import_com_dependencies
-    from sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member
+    from sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member, set_com_member
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 
@@ -844,7 +844,7 @@ def configure_mate_feature_data(mate_data, type_name: int | None = None):
     if mate_data is None:
         raise ValueError("mate_data 为 None：须先由 IFeature.GetDefinition() 取回")
     if type_name is not None:
-        get_com_member(mate_data, "TypeName", int(type_name))
+        set_com_member(mate_data, "TypeName", int(type_name))
     return {
         "error_status": int(get_com_member(mate_data, "ErrorStatus") or -1),
         "type_name": int(get_com_member(mate_data, "TypeName") or -1),
@@ -859,9 +859,9 @@ def collect_mate_in_place_evidence(mate_in_place) -> dict:
     entities = []
     for index in range(count):
         entities.append({
-            "entity_type": int(get_com_member(mate_in_place, "MateEntityType", index) or -1),
+            "entity_type": int(set_com_member(mate_in_place, "MateEntityType", index) or -1),
             "component_name": str(
-                get_com_member(mate_in_place, "MateComponentName", index) or ""
+                set_com_member(mate_in_place, "MateComponentName", index) or ""
             ),
         })
     return {

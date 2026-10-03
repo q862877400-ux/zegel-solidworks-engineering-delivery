@@ -58,7 +58,7 @@ from typing import Any
 try:
     from .sw_connect import get_com_member, call_com_member
 except ImportError:
-    from sw_connect import get_com_member, call_com_member# ── 来源 ─────────────────────────────────────────────────────────────
+    from sw_connect import get_com_member, call_com_member, set_com_member# ── 来源 ─────────────────────────────────────────────────────────────, set_com_member
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_selection.py —— 本文件自身
 # 定位:   模块导出清单与签名表。
@@ -340,7 +340,7 @@ def set_selection_color(selection, color: int) -> bool:
     """设选中高亮颜色。⚑ 官方是**属性**（set_SelectionColor）。"""
     if selection is None:
         raise ValueError("selection 为 None：须先由 IModelDoc2.SelectionManager 取得")
-    get_com_member(selection, "SelectionColor", int(color))
+    set_com_member(selection, "SelectionColor", int(color))
     return True
 
 
@@ -367,7 +367,7 @@ def set_enable_selection(selection, enabled: bool) -> bool:
     """开关选中功能。⚑ 官方是**属性**。"""
     if selection is None:
         raise ValueError("selection 为 None：须先由 IModelDoc2.SelectionManager 取得")
-    get_com_member(selection, "EnableSelection", bool(enabled))
+    set_com_member(selection, "EnableSelection", bool(enabled))
     return True
 
 
@@ -375,7 +375,7 @@ def set_enable_contour_selection(selection, enabled: bool) -> bool:
     """开关轮廓选择。⚑ 官方是**属性**。"""
     if selection is None:
         raise ValueError("selection 为 None：须先由 IModelDoc2.SelectionManager 取得")
-    get_com_member(selection, "EnableContourSelection", bool(enabled))
+    set_com_member(selection, "EnableContourSelection", bool(enabled))
     return True
 
 

@@ -47,7 +47,7 @@ from typing import Any
 try:
     from .sw_connect import get_com_member
 except ImportError:
-    from sw_connect import get_com_member
+    from sw_connect import get_com_member, set_com_member
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -298,7 +298,7 @@ def set_bend_radius(route_property, radius: float) -> bool:
     """设弯曲半径。⚑ 官方是**属性**（set_BendRadius），不是方法。"""
     if route_property is None:
         raise ValueError("route_property 为 None")
-    get_com_member(route_property, "BendRadius", float(radius))
+    set_com_member(route_property, "BendRadius", float(radius))
     return True
 
 

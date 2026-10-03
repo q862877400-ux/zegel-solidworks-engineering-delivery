@@ -11,7 +11,7 @@ try:
     from .sw_connect import out_i4
 except ImportError:
     from sw_preflight import import_com_dependencies
-    from sw_connect import create_empty_dispatch_variant, get_com_member, open_document, out_i4
+    from sw_connect import create_empty_dispatch_variant, get_com_member, open_document, out_i4, set_com_member
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 
@@ -529,9 +529,9 @@ def set_mass_property_override(
     """
     if override_options is None:
         raise ValueError("override_options 为 None：须先取 GetOverrideOptions()")
-    get_com_member(override_options, "OverrideMass", bool(override_mass))
-    get_com_member(override_options, "OverrideCenterOfMass", bool(override_center_of_mass))
-    get_com_member(override_options, "OverrideMomentsOfInertia",
+    set_com_member(override_options, "OverrideMass", bool(override_mass))
+    set_com_member(override_options, "OverrideCenterOfMass", bool(override_center_of_mass))
+    set_com_member(override_options, "OverrideMomentsOfInertia",
                    bool(override_moments_of_inertia))
     if mass_value is not None:
         get_com_member(override_options, "SetOverrideMassValue", float(mass_value))

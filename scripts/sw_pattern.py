@@ -51,7 +51,7 @@ from typing import Any
 try:
     from .sw_connect import get_com_member
 except ImportError:
-    from sw_connect import get_com_member
+    from sw_connect import get_com_member, set_com_member
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -246,66 +246,66 @@ def configure_linear_pattern(
     applied: dict[str, Any] = {}
     with edit_selection(data, model, "ILinearPatternFeatureData"):
         if d1_axis is not None:
-            get_com_member(data, "D1Axis", d1_axis)
+            set_com_member(data, "D1Axis", d1_axis)
             applied["D1Axis"] = d1_axis
         if d1_spacing is not None:
-            get_com_member(data, "D1Spacing", float(d1_spacing))
+            set_com_member(data, "D1Spacing", float(d1_spacing))
             applied["D1Spacing"] = float(d1_spacing)
         if d1_total_instances is not None:
-            get_com_member(data, "D1TotalInstances", int(d1_total_instances))
+            set_com_member(data, "D1TotalInstances", int(d1_total_instances))
             applied["D1TotalInstances"] = int(d1_total_instances)
         if d1_end_condition is not None:
-            get_com_member(data, "D1EndCondition", int(d1_end_condition))
+            set_com_member(data, "D1EndCondition", int(d1_end_condition))
             applied["D1EndCondition"] = int(d1_end_condition)
         if d1_reverse is not None:
-            get_com_member(data, "D1ReverseDirection", bool(d1_reverse))
+            set_com_member(data, "D1ReverseDirection", bool(d1_reverse))
             applied["D1ReverseDirection"] = bool(d1_reverse)
         if d1_end_use_spacing is not None:
-            get_com_member(data, "D1EndUseSpacing", bool(d1_end_use_spacing))
+            set_com_member(data, "D1EndUseSpacing", bool(d1_end_use_spacing))
             applied["D1EndUseSpacing"] = bool(d1_end_use_spacing)
         if d1_end_seed_reference is not None:
-            get_com_member(data, "D1EndSeedReference", d1_end_seed_reference)
+            set_com_member(data, "D1EndSeedReference", d1_end_seed_reference)
             applied["D1EndSeedReference"] = d1_end_seed_reference
         if d1_end_use_seed_reference is not None:
-            get_com_member(data, "D1EndUseSeedReference",
+            set_com_member(data, "D1EndUseSeedReference",
                            bool(d1_end_use_seed_reference))
             applied["D1EndUseSeedReference"] = bool(d1_end_use_seed_reference)
         if d1_end_ref_offset is not None:
-            get_com_member(data, "D1EndRefOffset", float(d1_end_ref_offset))
+            set_com_member(data, "D1EndRefOffset", float(d1_end_ref_offset))
             applied["D1EndRefOffset"] = float(d1_end_ref_offset)
         if d1_end_ref_reverse_offset is not None:
-            get_com_member(data, "D1EndRefReverseOffset",
+            set_com_member(data, "D1EndRefReverseOffset",
                            bool(d1_end_ref_reverse_offset))
             applied["D1EndRefReverseOffset"] = bool(d1_end_ref_reverse_offset)
         if d2_axis is not None:
-            get_com_member(data, "D2Axis", d2_axis)
+            set_com_member(data, "D2Axis", d2_axis)
             applied["D2Axis"] = d2_axis
         if d2_spacing is not None:
-            get_com_member(data, "D2Spacing", float(d2_spacing))
+            set_com_member(data, "D2Spacing", float(d2_spacing))
             applied["D2Spacing"] = float(d2_spacing)
         if d2_total_instances is not None:
-            get_com_member(data, "D2TotalInstances", int(d2_total_instances))
+            set_com_member(data, "D2TotalInstances", int(d2_total_instances))
             applied["D2TotalInstances"] = int(d2_total_instances)
         if d2_end_condition is not None:
-            get_com_member(data, "D2EndCondition", int(d2_end_condition))
+            set_com_member(data, "D2EndCondition", int(d2_end_condition))
             applied["D2EndCondition"] = int(d2_end_condition)
         if d2_reverse is not None:
-            get_com_member(data, "D2ReverseDirection", bool(d2_reverse))
+            set_com_member(data, "D2ReverseDirection", bool(d2_reverse))
             applied["D2ReverseDirection"] = bool(d2_reverse)
         if d2_pattern_seed_only is not None:
-            get_com_member(data, "D2PatternSeedOnly", bool(d2_pattern_seed_only))
+            set_com_member(data, "D2PatternSeedOnly", bool(d2_pattern_seed_only))
             applied["D2PatternSeedOnly"] = bool(d2_pattern_seed_only)
         if geometry_pattern is not None:
-            get_com_member(data, "GeometryPattern", bool(geometry_pattern))
+            set_com_member(data, "GeometryPattern", bool(geometry_pattern))
             applied["GeometryPattern"] = bool(geometry_pattern)
         if body_pattern is not None:
-            get_com_member(data, "BodyPattern", bool(body_pattern))
+            set_com_member(data, "BodyPattern", bool(body_pattern))
             applied["BodyPattern"] = bool(body_pattern)
         if instances_to_vary is not None:
-            get_com_member(data, "InstancesToVary", bool(instances_to_vary))
+            set_com_member(data, "InstancesToVary", bool(instances_to_vary))
             applied["InstancesToVary"] = bool(instances_to_vary)
         if vary_sketch is not None:
-            get_com_member(data, "VarySketch", bool(vary_sketch))
+            set_com_member(data, "VarySketch", bool(vary_sketch))
             applied["VarySketch"] = bool(vary_sketch)
     return applied
 
@@ -354,43 +354,43 @@ def configure_curve_driven_pattern(
     applied: dict[str, Any] = {}
     with edit_selection(data, model, "ICurveDrivenPatternFeatureData"):
         if d1_direction is not None:
-            get_com_member(data, "D1Direction", d1_direction)
+            set_com_member(data, "D1Direction", d1_direction)
             applied["D1Direction"] = d1_direction
         if d1_face_normal is not None:
-            get_com_member(data, "D1FaceNormal", d1_face_normal)
+            set_com_member(data, "D1FaceNormal", d1_face_normal)
             applied["D1FaceNormal"] = d1_face_normal
         if d1_spacing is not None:
-            get_com_member(data, "D1Spacing", float(d1_spacing))
+            set_com_member(data, "D1Spacing", float(d1_spacing))
             applied["D1Spacing"] = float(d1_spacing)
         if d1_is_equal_spaced is not None:
-            get_com_member(data, "D1IsEqualSpaced", bool(d1_is_equal_spaced))
+            set_com_member(data, "D1IsEqualSpaced", bool(d1_is_equal_spaced))
             applied["D1IsEqualSpaced"] = bool(d1_is_equal_spaced)
         if d1_reverse is not None:
-            get_com_member(data, "D1ReverseDirection", bool(d1_reverse))
+            set_com_member(data, "D1ReverseDirection", bool(d1_reverse))
             applied["D1ReverseDirection"] = bool(d1_reverse)
         if d2_direction is not None:
-            get_com_member(data, "D2Direction", d2_direction)
+            set_com_member(data, "D2Direction", d2_direction)
             applied["D2Direction"] = d2_direction
         if d2_spacing is not None:
-            get_com_member(data, "D2Spacing", float(d2_spacing))
+            set_com_member(data, "D2Spacing", float(d2_spacing))
             applied["D2Spacing"] = float(d2_spacing)
         if d2_is_equal_spaced is not None:
-            get_com_member(data, "D2IsEqualSpaced", bool(d2_is_equal_spaced))
+            set_com_member(data, "D2IsEqualSpaced", bool(d2_is_equal_spaced))
             applied["D2IsEqualSpaced"] = bool(d2_is_equal_spaced)
         if d2_reverse is not None:
-            get_com_member(data, "D2ReverseDirection", bool(d2_reverse))
+            set_com_member(data, "D2ReverseDirection", bool(d2_reverse))
             applied["D2ReverseDirection"] = bool(d2_reverse)
         if d2_pattern_seed_only is not None:
-            get_com_member(data, "D2PatternSeedOnly", bool(d2_pattern_seed_only))
+            set_com_member(data, "D2PatternSeedOnly", bool(d2_pattern_seed_only))
             applied["D2PatternSeedOnly"] = bool(d2_pattern_seed_only)
         if geometry_pattern is not None:
-            get_com_member(data, "GeometryPattern", bool(geometry_pattern))
+            set_com_member(data, "GeometryPattern", bool(geometry_pattern))
             applied["GeometryPattern"] = bool(geometry_pattern)
         if body_pattern is not None:
-            get_com_member(data, "BodyPattern", bool(body_pattern))
+            set_com_member(data, "BodyPattern", bool(body_pattern))
             applied["BodyPattern"] = bool(body_pattern)
         if vary_sketch is not None:
-            get_com_member(data, "VarySketch", bool(vary_sketch))
+            set_com_member(data, "VarySketch", bool(vary_sketch))
             applied["VarySketch"] = bool(vary_sketch)
     return applied
 
