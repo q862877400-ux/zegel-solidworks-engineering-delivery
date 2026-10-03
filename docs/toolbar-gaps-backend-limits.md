@@ -247,7 +247,41 @@ hole-pattern-evidence.json  ·  flat-pattern-dxf-evidence.json
 > ⇒ ★ **归因成立**（★ 结构系统到不了），★ **而"理由"是「切割清单那条入口取不到」**，
 >   ★ **不是"整族不行"** —— ★ 准确说法是 **partial**：**轮廓库与导出可用、切割清单不可用** ✓
 
-### 4.1 官方现状
+### 4.1 ★★★ 2026-10-03（轮 548）补两点证据 —— 「取不到」的形态 + **焊件特征真能建**（事实 428）
+
+> ★★ **本节是加法** —— ★ 上面 §四 的归因**已经是对的**（★ 包含「不是"整族不行"」那句），
+> ★ 本节只补**两条它没写到的证据**。
+
+★ **第一点：「取不到」的**精确形态**（★ 一个**第四类失败****）
+
+★ 真机（`tools/probe_weldment_cutlist_recheck.py`，★ 两体件、零弹窗）：
+  ```
+  ① `InsertWeldmentCutList2([])`   ⇒ **`getattr` 回 `NoneType`**（成员**不可调用**）
+     ★ 即：**它在权威类型库里有（arity=2 · 1 in `Bodies`）、而在**实际对象上取不到**
+  ② `InsertWeldmentCutList()`（旧版）⇒ **`silent_none`**（回 `None` · 树不动）
+  ③ **`InsertWeldmentFeature()`**      ⇒ **`CDispatch` · 名 = `焊接件` · 型 = `WeldmentFeature`**
+     ★ 而 `new = ['焊接件']` ⇒ ★★★ **它真机建成了！** ✓
+  ```
+  ★ 而静态先查过：★ **两源都有 `InsertWeldmentCutList2`**（swapi md + CHM）
+  ⇒ ★ **故"取不到"不是"官方没有它"** ✓
+
+⇒ ★★ **故失败形态至此有**四类****（★ 事实 420 那三类 + 本轮这一类）：
+
+| 类 | 表现 | 例 |
+|---|---|---|
+| ① 回**对象** | 建了但在树外 | `InsertCutSurface` |
+| ② 回**`None`** | 真的没建 | 加厚 · 直纹 · 剪裁 · 扫描曲面 · 分割线 |
+| ③ **报错** | 抛异常 | `ILinearPatternFeatureData.AccessSelections`（`0x80010105`） |
+| ④ ★★ **成员不在对象上** | `getattr` 回 `NoneType` | **`InsertWeldmentCutList2`** |
+
+★★ **第二点（★ 这是最该记的）：`InsertWeldmentFeature` **真机建成「焊接件」** ✓**
+  ⇒ ★★ **故到不了的是「切割清单」这一条能力**，
+  ★ 而**「焊件特征本身」是**能建的**** ⚠ —— ★ 与 §四 那句"不是整族不行"一致，★ 而**本轮给了正面证据**。
+
+★ 证据：`tools/probe_weldment_cutlist_recheck.py` ·
+  `output/weldment-cutlist-recheck-evidence.json` · 事实 **428**。
+
+### 4.2 官方现状
 
 | 官方成员 | 状态 | 继任者 |
 |---|---|---|

@@ -1707,3 +1707,24 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        · ★ **不通**：**`ILinearPatternFeatureData`**（★ 而它**正是线性阵列新架构的那个接口**）。
      ★★ **故边界要写成**「**哪个接口**」，而不是「`AccessSelections` 通不通」** ⚠ —— ★ 而这正是**事实 128 那条定则**（可达性结论必须带**绑定层次**）的**同族**：★ 可达性结论也必须带**接口**。
      ★★ **而本轮的方法论**：★ **两个都有真机证据的结论冲突时，把它们放在**同一个脚本里同时跑**（★ 而不是挑一个信）** ✓|真机：`tools/probe_linear_pattern_access_recheck.py`；证据 `output/linear-pattern-access-recheck-evidence.json`；对照事实 47 / 128 / 425 / 426 |
+| 428 | **★★★ 第三族（结构系统/焊件）的**精确形态****：★ **到不了的是「切割清单」，而「焊件特征本身」**真机建成了**** —— 2026-10-03（轮 548）。
+     ★ **静态先查**（★ 因为“取不到”是个含糊的词）：
+       · ★ **两源都有它** —— `C:\swapi\types\IFeatureManager\InsertWeldmentCutList2.md` + CHM ✓
+         ⇒ **故“取不到”不是“官方没有它”**；
+       · 类型库：`InsertWeldmentCutList2` **arity=2（1 in `Bodies` + out）**；旧版 `InsertWeldmentCutList` **arity=1（0 in + out）**；
+         ★ 而 **`IWeldmentCutListFolder` 在类型库里查不到** ⚠
+     ★ 真机（`tools/probe_weldment_cutlist_recheck.py`，零弹窗、两体件）：
+     ```
+     ① `InsertWeldmentCutList2([])`   ⇒ **`getattr` 回 `NoneType`**（成员**不可调用**）  ⚠
+        ★ 即：**它在类型库里有、而在实际对象上取不到**
+     ② `InsertWeldmentCutList()`（★ 旧版） ⇒ **`silent_none`**（回 `None` · 树不动）
+     ③ **`InsertWeldmentFeature()`**      ⇒ **`CDispatch` · 名 = `焊接件` · 型 = `WeldmentFeature`**
+        ★ 而 `new = ['焊接件']` ⇒ ★★★ **它真机建成了！** ✓
+     ```
+     ⇒ ★★ **故三层结论**：
+       ① ★ **不同成员的失败**形态不同**** —— `CutList2` 是“**成员不在对象上**”、`CutList`（旧）是“静默 `None`”。
+         ★ 而那**正是事实 420 分类判据的第四类**：★ **回对象** / **静默 `None`** / **报错** / **★★ 成员不存在于对象上**。
+       ② ★★★ **「结构系统」这一族**并非全到不了**** —— **`InsertWeldmentFeature` 真机建成了「焊接件」特征** ✓
+       ③ ★ 故到不了的是**「切割清单」这一条能力**，★ 而**不是“整个结构系统”** ⚠
+     ★ **故 §四 的结论要收窄**：★ **到不了的是 `InsertWeldmentCutList2`**（成员不在对象上）**，★ 而焊件特征**能建**。
+     ★★ **方法论**：★ 一个“**取不到**”的描述**是不够的** —— ★ 要问到**具体形态**（回什么、报什么、还是成员不在）。|真机：`tools/probe_weldment_cutlist_recheck.py`；证据 `output/weldment-cutlist-recheck-evidence.json`；静态：`C:\swapi\types\IFeatureManager\InsertWeldmentCutList2.md` × 出厂类型库；对照事实 420 / 425 / 426 / 427 |
