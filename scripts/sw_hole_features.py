@@ -753,6 +753,66 @@ def _point_from_selection(model, selection: str):
     return center, None
 
 
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（本仓既有模式的抽取）+ Python 标准库
+# 文件:   `scripts/sw_part.py::feature_names`（★ 本仓既有的特征树取名入口）
+# 定位:   ★★★★ 2026-10-04（接手轮）**新增判据助手** —— ★ 处置 `JUDGE-C_D_E.md` 的
+#   🔴 #1 · **E5-2**（★ 裁判逐字：「★ batch72 孔向导 —— ★ 仓内 doc 原文：
+#   `★ 判据 = **特征树增量**（★ 真机新增 异型孔向导）。` · ★ 而目标原文：
+#   `sw_hole_features.py`：`if feature is None: raise RuntimeError(` ／ `return { "ok": True,`
+#   ⇒ ★★ **无任何 before/after 取样**」· ★ 判定「**确认**」）✓
+#
+#   ★★★ **病灶（★ 实测的形态比裁判说的更精确）**：★ 那 5 个
+#   `*_at_selection_report` 函数逐字都写：
+#     ```python
+#     ev = create_xxx(model, ...)                     # ★ 底层回"证据"，★ 而它**没有 `ok` 键**
+#     out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
+#     out.update({"ok": **True**, ...})                # ★★★ **无条件覆盖**
+#     ```
+#   ★★ 而底层的 `HoleFeatureEvidence.to_dict()` 逐字是 `value = asdict(self)`
+#     ⇒ ★★★ **它只回 `feature_names` / `through` 等字段、★ 根本没有 `ok`** ✓
+#     ⇒ ★★★★ **所以上层那个 `"ok": True` 连"底层成没成"都不知道** —— ★ 那正是「静默成功」 ✓
+#   ⇒ 修法：★ **按 doc 承诺的判据（**特征树增量**）真取样** —— ★ 见 `_with_tree_judgement` ✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def _feature_names_here(model) -> list:
+    """★ 当前文档的特征名列表（★ 取样用 —— ★ 失败就回**空列表**，★ 不让取样本身炸掉主流程）。"""
+    try:
+        from scripts.sw_part import feature_names                     # noqa: PLC0415
+    except Exception:                                                     # noqa: BLE001
+        try:
+            from sw_part import feature_names                         # type: ignore # noqa: PLC0415
+        except Exception:                                                 # noqa: BLE001
+            return []
+    try:
+        return [str(x) for x in (feature_names(model) or [])]
+    except Exception:                                                     # noqa: BLE001
+        return []
+
+
+def _with_tree_judgement(model, fn, *args, **kwargs) -> dict:
+    """★ **在 `fn` 前后各取一次特征树** ⇒ `ok = bool(新增特征)` —— ★ **doc 承诺的那个判据**。
+
+    ★★★ 为什么必须这样（★ 而不是沿用 `"ok": True`）：
+      ★ 底层 `create_xxx` 回的是**证据**（★ `HoleFeatureEvidence.to_dict()`，★ **无 `ok` 键**），
+      ★★ 所以上层**没有**"底层成没成"的信息 ⇒ ★★★ 只能**自己取样判** ✓
+    ★★ 而判据取**特征树增量**，★ 是因为 doc 逐字这么承诺的（★ E5-2 的仓内原文）✓
+    ★ 附带：★ `new_features` / `tree_before` / `tree_after` **都进返回值** ⇒ ★ **可回读、可复核** ✓
+    """
+    before = _feature_names_here(model)
+    evidence = fn(*args, **kwargs)
+    after = _feature_names_here(model)
+    added = [n for n in after if n not in before]
+    out = dict(evidence) if isinstance(evidence, dict) else {"evidence": evidence}
+    out["ok"] = bool(added)
+    out["new_features"] = added
+    out["tree_before"] = before
+    out["tree_after"] = after
+    out["verified_by"] = "★ 特征树增量（★ doc 承诺的判据；★ 底层的 to_dict() 无 ok 键）"
+    return out
+
+
 def create_through_hole_at_selection_report(model, selection: str, diameter_mm: float,
                                             plane_name: str = "Front Plane",
                                             name: str = "通孔") -> dict:
@@ -763,11 +823,11 @@ def create_through_hole_at_selection_report(model, selection: str, diameter_mm: 
     pt, err = _point_from_selection(model, selection)
     if err:
         return {"ok": False, "kind": "through", "selection": str(selection), "error": err}
-    ev = create_through_hole(model, pt, diameter_mm, plane_name=plane_name, name=name)
-    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
-    out.update({"ok": True, "selection": str(selection), "center_sent_mm": list(pt), "★_units": "从选区读到毫米 ⇒ 换算成米 ⇒ 取前两维（规则 2 的边界）",
-                "★": "点来自**声明式选择**（不是调用方传坐标）—— 规则 3"})
-    return out
+    ev = _with_tree_judgement(model, create_through_hole, pt, diameter_mm,
+                              plane_name=plane_name, name=name)
+    ev.update({"selection": str(selection), "center_sent_mm": list(pt), "★_units": "从选区读到毫米 ⇒ 换算成米 ⇒ 取前两维（规则 2 的边界）",
+               "★": "点来自**声明式选择**（不是调用方传坐标）—— 规则 3"})
+    return ev
 
 
 def create_blind_hole_at_selection_report(model, selection: str, diameter_mm: float, depth_mm: float,
@@ -777,11 +837,11 @@ def create_blind_hole_at_selection_report(model, selection: str, diameter_mm: fl
     pt, err = _point_from_selection(model, selection)
     if err:
         return {"ok": False, "kind": "blind", "selection": str(selection), "error": err}
-    ev = create_blind_hole(model, pt, diameter_mm, depth_mm, plane_name=plane_name, name=name)
-    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
-    out.update({"ok": True, "selection": str(selection), "point_from_selection_mm": list(pt),
-                "★": "点来自**声明式选择** —— 规则 3"})
-    return out
+    ev = _with_tree_judgement(model, create_blind_hole, pt, diameter_mm, depth_mm,
+                              plane_name=plane_name, name=name)
+    ev.update({"selection": str(selection), "point_from_selection_mm": list(pt),
+               "★": "点来自**声明式选择** —— 规则 3"})
+    return ev
 
 
 def create_counterbore_hole_at_selection_report(model, selection: str, hole_diameter_mm: float,
@@ -793,12 +853,12 @@ def create_counterbore_hole_at_selection_report(model, selection: str, hole_diam
     pt, err = _point_from_selection(model, selection)
     if err:
         return {"ok": False, "kind": "counterbore", "selection": str(selection), "error": err}
-    ev = create_counterbore_hole(model, pt, hole_diameter_mm, counterbore_diameter_mm,
-                                 counterbore_depth_mm, plane_name=plane_name, name=name)
-    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
-    out.update({"ok": True, "selection": str(selection), "point_from_selection_mm": list(pt),
-                "★": "点来自**声明式选择** —— 规则 3"})
-    return out
+    ev = _with_tree_judgement(model, create_counterbore_hole, pt, hole_diameter_mm,
+                              counterbore_diameter_mm, counterbore_depth_mm,
+                              plane_name=plane_name, name=name)
+    ev.update({"selection": str(selection), "point_from_selection_mm": list(pt),
+               "★": "点来自**声明式选择** —— 规则 3"})
+    return ev
 
 
 def create_countersink_hole_at_selection_report(model, selection: str, hole_diameter_mm: float,
@@ -810,12 +870,12 @@ def create_countersink_hole_at_selection_report(model, selection: str, hole_diam
     pt, err = _point_from_selection(model, selection)
     if err:
         return {"ok": False, "kind": "countersink", "selection": str(selection), "error": err}
-    ev = create_countersink_hole(model, pt, hole_diameter_mm, countersink_diameter_mm,
-                                 included_angle_deg, plane_name=plane_name, name=name)
-    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
-    out.update({"ok": True, "selection": str(selection), "point_from_selection_mm": list(pt),
-                "★": "点来自**声明式选择** —— 规则 3"})
-    return out
+    ev = _with_tree_judgement(model, create_countersink_hole, pt, hole_diameter_mm,
+                              countersink_diameter_mm, included_angle_deg,
+                              plane_name=plane_name, name=name)
+    ev.update({"selection": str(selection), "point_from_selection_mm": list(pt),
+               "★": "点来自**声明式选择** —— 规则 3"})
+    return ev
 
 
 def create_semicircular_slot_at_selection_report(model, start_selection: str, end_selection: str,
@@ -829,14 +889,13 @@ def create_semicircular_slot_at_selection_report(model, start_selection: str, en
         if err:
             return {"ok": False, "kind": "semicircular_slot", "selection": str(sel), "error": err}
         pts.append(pt)
-    ev = create_semicircular_slot(model, pts[0], pts[1], width_mm, depth_mm,
-                                  plane_name=plane_name, name=name)
-    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
-    out.update({"ok": True, "start_selection": str(start_selection),
-                "end_selection": str(end_selection),
-                "centers_sent_mm": [list(p) for p in pts], "★_units": "同族：毫米 ⇒ 米 + 取前两维",
-                "★": "两个点都来自**声明式选择** —— 规则 3"})
-    return out
+    ev = _with_tree_judgement(model, create_semicircular_slot, pts[0], pts[1], width_mm, depth_mm,
+                              plane_name=plane_name, name=name)
+    ev.update({"start_selection": str(start_selection),
+               "end_selection": str(end_selection),
+               "centers_sent_mm": [list(p) for p in pts], "★_units": "同族：毫米 ⇒ 米 + 取前两维",
+               "★": "两个点都来自**声明式选择** —— 规则 3"})
+    return ev
 
 
 # ── 24h 计划 段 4 续（Spec Kit `163`）：**让"找不到入口圆边"的失败可见** ──────────────
@@ -1109,6 +1168,8 @@ def create_hole_wizard_at_selection_report(
             "面选择器 %r 解析不了（★ 合法值：+x/-x/+y/-y/+z/-z；"
             "★ 而它**只对轴对齐的实体可靠**）" % selection)
     x, y, z = (float(pt[0]), float(pt[1]), float(pt[2]))   #: ★ 已是**米**
+    #: ★★★★ 2026-10-04（接手轮）**取样：调用前记一次特征树**（★ doc 承诺的判据是"树增量"）✓
+    _before_wizard = _feature_names_here(model)
     #: 从那个点沿反方向抬起，再向下打 —— 保证射线从体外进来
     sx = x - ray_dir[0] * (plane_offset_mm / 1000.0)
     sy = y - ray_dir[1] * (plane_offset_mm / 1000.0)
@@ -1143,8 +1204,18 @@ def create_hole_wizard_at_selection_report(
             "① `size` 不是规格串（必须如 M8）；② `fastener_index` 与 `standard_index` 不匹配；"
             "③ 射线没命中了面。")
     feat_name = _feature_name(feature, name or "异型孔向导")
+    #: ★★★★ 2026-10-04（接手轮）**补上 doc 承诺的第二个判据**（★ `JUDGE-C_D_E` 🔴 #1 · E5-2）——
+    #:   ★ 仓内 doc 逐字：「★ 判据 = **特征树增量**（★ 真机新增 `异型孔向导`）」✓
+    #:   ★★ 本函数**原来只有** `feature is None ⇒ raise` 这一层（★ 那**已经**保证不会静默成功），
+    #:     ★★★ 但 doc 承诺的**树增量**没做 ⇒ ★ 现在补上（★ 两层判据都留着）✓
+    after = _feature_names_here(model)
+    added = [n for n in after if n not in _before_wizard]
     return {
-        "ok": True,
+        "ok": bool(added),
+        "new_features": added,
+        "tree_before": _before_wizard,
+        "tree_after": after,
+        "verified_by": "★ 特征树增量（★ doc 承诺）+ ★ `HoleWizard5` 回非 None（★ 两层）",
         "feature_name": feat_name,
         "size": str(size),
         "fastener_index": int(fastener_index),

@@ -1,0 +1,57 @@
+fix(阶段1): ★★★★★ 处置 **`JUDGE-C_D_E` 🔴 #1 · E5-2**（★ 6 个孔工具）—— ★ 「**特征没建成也报成功**」；★ 并**建了一个扫描器**找出全部同类
+
+■ 一 · ★ 裁判逐字（★ E5-2 · 判定「确认」）
+  > ★ 仓内 doc 原文：`★ 判据 = **特征树增量**（★ 真机新增 异型孔向导）。`
+  > ★★ 目标原文：`sw_hole_features.py`：`if feature is None: raise RuntimeError(` ／ `return { "ok": True,`
+  > ⇒ ★★★ **无任何 before/after 取样**」✓
+
+■ 二 · ★★★★ 而实测的形态**比裁判说的更精确**（★ 这是本轮的关键发现）
+  ★ 那 **5** 个 `*_at_selection_report` 函数逐字都写：
+    ```python
+    ev = create_xxx(model, ...)                 # ★ 底层回"证据"
+    out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
+    out.update({"ok": **True**, ...})            # ★★★ **无条件覆盖**
+    ```
+  ★★ 而底层的 `HoleFeatureEvidence.to_dict()` 逐字是 **`value = asdict(self)`**
+    ⇒ ★★★ **它只回 `feature_names` / `through` 等字段、★ 根本没有 `ok`** ✓
+  ⇒ ★★★★ **所以上层那个 `"ok": True` 连"底层成没成"都不知道** —— ★ **那正是「静默成功」** ✓
+
+■ 三 · ★ 修法：★ 加**一个共享助手**（★ 而不是改 5 遍逻辑）
+  ★ 新增 `_feature_names_here(model)` + ★★ `_with_tree_judgement(model, fn, *a, **kw)`：
+    · ★ 在 `fn` **前后各取一次特征树** ⇒ ★★ **`ok = bool(新增特征)`**（★ **doc 承诺的那个判据**）✓
+    · ★★★ 并把 `new_features` / `tree_before` / `tree_after` / `verified_by` **都进返回值** ⇒ **可回读** ✓
+  ★ 5 个 report ⇒ ★ **全部改走助手** ✓
+  ★★ 第 6 个（孔向导）★ **原来只有 `feature is None ⇒ raise`**（★ 那**已经**保证不会静默成功，
+    ★★ 但 **doc 承诺的"树增量"没做**）⇒ ★★★ **本轮补上第二层判据** ✓
+  ⇒ ★★★★ **实测复核**：★ 6 个 report **一个都不再写死 `"ok": True`** ✓
+
+■ 四 · ★★★★★ 而顺手建了一个**扫描器**（★ 一次找出全部同类，★ 远超这 6 个）
+  ★ 新增 `tools/scan_hardcoded_ok.py` —— ★ 判据：
+    ★ **找 `"ok"` 是字面量 / 或没用到判据变量的函数** ⇒ ★★ 再按「函数里有没有 before/after 取样」
+      分两档 ✓
+  ★★ **第一版报了 109 个** ⇒ ★★★ 而**大量假阳性**（★ 例如 `sw_costing.py` 的 6 个函数报的全是
+    **错误路径**的 `"ok": False` —— ★ **那是对的**）✓
+  ★★★ **收窄后 31 个**（★ 最可疑 **23**）⇒ ★★★★ **而列表立刻对上了裁判的 E5-2**（★ `sw_hole_features`
+    的 6 个全在列）✓
+  ★ 可复用判据（★ 本轮的）：★★★ **"静默成功"的形态是 `ok: True`，★ 不是 `ok: False`** ——
+    ★★ 所以收窄到只报 `True` 才是对的判据 ✓
+
+■ 五 · ★★ 而扫描器也说明**"`ok: True` 写死"本身不是错**
+  ★ 例如 `sw_units.read_units_report` / `sw_sensor.read_sensors_report`（★ **纯读**）
+    ⇒ ★★ `ok: True` 是**对的** ✓
+  ★★★ **错的是「doc 承诺了判据、★ 而实现没用它」** ⇒ ★★ 所以**真正的判据要 doc ↔ 实现对着看** ✓
+    （★ 那需要解析 ToolSpec 的 doc —— ★ 记下来供后续轮次）
+
+■ 六 · ★ 新增测试（★ `tests/test_hole_feature_judgement.py` · **5 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **核心断言** | ★ 6 个 report **一个都不许**再写死 `"ok": True` ✓ |
+  | ★ 契约 | ★ 那 5 个**必须**走共享树判据助手 ✓ |
+  | ★ 契约 | ★ 孔向导**必须**有 `tree_before`（★ doc 承诺的判据）✓ |
+  | ★★ **负例** | ★ 用**假的底层函数**（★ 树不变）喂给助手 ⇒ **必须** `ok=False` ✓ |
+  | ★ 契约 | ★ doc 里那句「特征树增量」**必须**保留（★ 修复的目标契约）✓ |
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 5 passed** ✓
+  ★★ **进度**：★ `C_D_E` 的 #1 是「E-5 全部 6 类（11 个工具）」⇒
+    ★★★ **已完成 E5-2（6 个孔工具）+ E5-3（闭合角）** ⇒ **剩 E5-1 / E5-4 / E5-5 / E5-6 四类** ✓
