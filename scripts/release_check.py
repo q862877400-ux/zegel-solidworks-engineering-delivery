@@ -1221,6 +1221,9 @@ def run_release_check() -> dict[str, object]:
         "provenance": provenance,
         "diff_markers": markers,
         "member_names": member_names,
+        #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
+        #:   `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价」⚠
+        "unreachable": unreachable,
         "workspace_shadowing": shadowing,
         "gate_wiring": wiring,
         "param_binding": param_binding,
@@ -1299,6 +1302,8 @@ def run_release_check() -> dict[str, object]:
         "provenance": provenance,
         "diff_markers": markers,
         "member_names": member_names,
+        #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点** ⚠
+        "unreachable": unreachable,
         "interface_ownership": ownership,
         "missing": [],
     }

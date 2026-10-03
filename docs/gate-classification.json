@@ -168,6 +168,12 @@
       "runner": "_run_inout_array_audit_gate",
       "kind": "hard",
       "reason": "**硬门禁**：`tools/audit_inout_array_params.py` 的产物（`output/inout-array-params.json`）是事实 128/129 的落地物 —— 它用**第 4 套签名源**（类型库方法表）查出 **62 条 `in,out` 数组形参**（涉及本仓调用过的 496 个成员名）。★★ 而本轮（轮 514-515）查明**它自己没有被任何门禁引用**（只有 `scripts/audit_byref_args.py` 的**注释**提到它）⇒ ★ **它“跑过一次”之后就再也不会被跑**、产物会**悄悄过期** ⚠\n本道把它变成「**发布时必查**」：跑那 5 条契约测试（纯静态 · ~0.1s），断言产物**结构在**、**扫了多个库**、**记录字段齐**、★ **审计自己那句「不做结论」还在**（★ 那是它的安全边界）、**产物内部自洽**。★ 它**自己有负例自证**：把 `output/inout-array-params.json` 挪走再跑 ⇒ 必然 fail（事实 62）。"
+    },
+    {
+      "gate": "check_unreachable_members.py",
+      "runner": "_run_unreachable_members_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：别去调**已证到不了**的成员。★ 它与已有三道“名字”门禁**分工不同**：`check_member_names` 判「名字在**某个**接口里存在」·`check_interface_member_ownership` 判「属于**这个**接口」·★ **本道判「在本机**调不调得动**」**。★ 依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 · 事实 428 的 `InsertWeldmentCutList2`）。★ 取证豁免必须**按 `(文件, 成员)` 精确匹配且带理由**（★ 通配 = 失效）。★ 它**自己有负例自证**：`tests/test_unreachable_members_gate.py`（**6 passed**，★ 四条负例：只提名字不算 · 名单外不抓 · `I` 前缀走提示 · 豁免是精确匹配）。⚠ **覆盖边界**：只查**名单里那几个** —— ★ 过了它**不等于别的都能调**。"
     }
   ]
 }
