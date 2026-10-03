@@ -236,4 +236,29 @@ SPECS_BATCH77 = [
             "★★★★★ **⚠ 而两个带参量**（`GetRevolutionAngle` / `GetWallThickness`）**单独带参调** ——"
             "★ 因为 `get_com_member` 对「必须带实参」的成员会**静默回 bound method** ✓",
     ),
+    ToolSpec(
+        name="solidworks_loft_params",
+        title="Read Loft Feature Parameters",
+        module="sw_feature_readback", inject="model", function="loft_params",
+        params=[_FEAT_NAME],
+        doc="★ **读放样特征的一组参数**（★ 轮廓数 / 引导线 / 起止相切 / 拔模角 / 薄壁 / 闭合）。"
+            "★★★★★ **真机读数（★ 建成了 ⇒ 读回来了）**：★ 建放样（★ 两个草图、按 mark=1 选）⇒"
+            "★ `ok=True · feature_name=**放样1** · **type_name='Blend'** · tree 7→8` ⇒"
+            "★★ 读回：★ `GetProfileCount=**2**`（★ 两个轮廓 ⇒ 对）· ★ `GetGuideCurvesCount=0` ·"
+            "★ `IsBossFeature=true` · ★ `IsThinFeature=false` · ★ `Close=false` ·"
+            "★ `StartTangencyType=0` · ★ `EndTangencyType=0` ·"
+            "★ `StartConstraintDraftAngle=0.0` · ★ `StartTangentLength=**0.1**` ✓"
+            "★★★★ **⚠ `NumberOfSections=**1.0**` 与 `GetProfileCount=**2**` 不一致** ——"
+            "★ 那**不是矛盾**：★ 官方那两个名字逐字是「Number of **sections**」与"
+            "「Number of **profiles**」⇒ ★ 是两个不同的量 ✓"
+            "★★★★ **⚠ 那几个量的口径仍 `unknown`**（★ 拔模角 / 相切长度 / 壁厚）——"
+            "★ 它们**都带前置**（★ 拔模角要开起/止约束）⇒ ★ **本探针的几何没打开它们** ⇒"
+            "★ **不谎称量到了** ✓"
+            "★★★★★ **⚠ 类型名走 `FEATURE_TYPE_NAMES` 表**（★ 每个名字都有**证据引用**）——"
+            "★ 本会话**连续两轮**在「猜类型名」上栽了（★ `Revolve` vs `Revolution` · ★ `Loft` vs `Blend`）⇒"
+            "★ **⇒ 不再凭记忆写** ✓"
+            "★★★★ **⚠ 不碰**：★ `Profiles`/`GuideCurves`/`Centerline`/`PickPoints`/"
+            "`FeatureScopeBodies`/`StartDirectionVector`/`EndDirectionVector`（★ 对象或数组）·"
+            "★ `ISet*`（★ `ref`）· ★ `Set*`（★ 写）· ★ `AccessSelections`（★ 前置）✓",
+    ),
 ]

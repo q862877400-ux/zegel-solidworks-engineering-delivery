@@ -872,6 +872,29 @@ def base_flange_params(model, feature_name: str = "") -> dict:
     return out
 
 
+
+#: ★★★★★★★ **族 → **真机打出来的**类型名**（★ 2026-10-04 轮 131 建）——
+#:   ★ **为什么要这张表**：★ 本会话**连续两轮**栽在同一处 ——
+#:     · ★ 轮 130：★ 我猜 `Revolve`、★ 而真机是 **`Revolution`**（★ `Revol`+`ution` vs `Revol`+`ve`）✗
+#:     · ★★ 轮 131：★ 我猜 `Loft`、★ 而真机是 **`Blend`** ✗
+#:   ★★★ **⇒ 两次都是"我以为类型名该叫什么"**（★ 而那**不是知识、是猜测**）⇒
+#:     ★★ **⇒ 所以每个名字都要**有证据引用****（★ 本表每一行都指到一份 `output/*.json`）✓
+#:   ★★★★ **⚠ `unknown` 的意思是**没核过**** —— ★ **不是**"大概是那个"（★ 铁律 5）✓
+#:   ★★★★★ **⚠ 用法**：★ 新加一个族时**先跑一次真机、★ 把 `GetTypeName2` 打出来**、
+#:     ★★ **再把那个字面量抄进本表** ⇒ ★ **不要凭记忆写** ✓
+FEATURE_TYPE_NAMES = {
+    #: ★ 证据：★ `output/rib-dome-params-capability-recheck.json`（★ `圆顶1`）
+    "dome": "Dome",
+    #: ★ 证据：★ `output/rib-dome-params-capability-recheck.json`（★ **⚠ 还没打出过真名**）
+    "rib": "unknown（★ 未核 —— ★ 那个族至今没在真机建成过）",
+    #: ★ 证据：★ `output/sweep-params-capability-recheck.json`（★ `扫描1` ⇒ `type_name=Sweep`）
+    "sweep": "Sweep",
+    #: ★ 证据：★ `output/revolve-params-capability-recheck.json`（★ `旋转1` ⇒ `Revolution`）
+    "revolve": "Revolution",
+    #: ★ 证据：★ `output/loft-params-capability-recheck.json`（★ `放样1` ⇒ `type_name='Blend'`）
+    "loft": "Blend",
+}
+
 def _read_feature_params(model, feature_name: str, type_substring: str,
                          readable: tuple, container_label: str,
                          unit_note: dict | None = None) -> dict:
@@ -965,7 +988,7 @@ def rib_params(model, feature_name: str = "") -> dict:
       ★ `IAccessSelections` / ★ `AccessSelections` / ★ `ReleaseSelectionAccess`（★ 前置）✓
     """
     return _read_feature_params(
-        model, feature_name, "Rib",
+        model, feature_name, FEATURE_TYPE_NAMES["rib"],
         ("Thickness", "DraftAngle", "Type", "ExtrusionDirection", "RefSketchIndex",
          "NextReference", "EnableDraft", "DraftOutward", "DraftFromWall", "FlipSide",
          "IsTwoSided", "ReverseThicknessDir"),
@@ -1006,7 +1029,7 @@ def dome_params(model, feature_name: str = "") -> dict:
         ★ 官方 `## Remarks` 指向「Accessing Selections that Define Features」✓
     """
     out = _read_feature_params(
-        model, feature_name, "Dome",
+        model, feature_name, FEATURE_TYPE_NAMES["dome"],
         ("Height", "Elliptical", "ReverseDir", "GetFaceCount"),
         "找不到圆顶特征（★ 类型名含 `Dome`）",
         {"Height": "unknown（★ 官方未写单位；★ 真机实测见证据）"})
@@ -1150,7 +1173,7 @@ def sweep_params(model, feature_name: str = "") -> dict:
       · ★ **`AccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ **前置** ✓
     """
     out = _read_feature_params(
-        model, feature_name, "Sweep",
+        model, feature_name, FEATURE_TYPE_NAMES["sweep"],
         ("SweepType", "IsBossFeature", "IsThinFeature", "ThinFeature", "ThinWallType",
          "CircularProfile", "CircularProfileDiameter",
          "GetTwistAngle", "GetD2TwistAngle", "TwistControlType",
@@ -1220,6 +1243,20 @@ def loft_params(model, feature_name: str = "") -> dict:
       ★ **角度量**：★ `StartConstraintDraftAngle` · ★ `EndConstraintDraftAngle` ✓
       ★ **长度量**：★ `StartTangentLength` · ★ `EndTangentLength` ✓
 
+    ★★★★★ **✅ 真机读数（★ 轮 131 · ★ 建成了 ⇒ 读回来了）**：
+      ★ 建放样（★ 两个草图 · ★ 按 **mark=1** 选）⇒
+        ★ **`ok=True · feature_name = **放样1** · **type_name = 'Blend'** · tree 7→8`** ✓
+      ★★ **读回**：★ `GetProfileCount = **2**`（★ 两个轮廓 ⇒ **对**）·
+        ★ `GetGuideCurvesCount = **0**`（★ 没引导线 ⇒ 对）· ★ `IsBossFeature = **true**` ·
+        ★ `IsThinFeature = false` · ★ `Close = false` · ★ `StartTangencyType = 0` ·
+        ★ `EndTangencyType = 0` · ★ `StartConstraintDraftAngle = **0.0**` ·
+        ★ `StartTangentLength = **0.1**` ✓
+      ★★★ **⚠ 而 `NumberOfSections = **1.0**` 与 `GetProfileCount = **2**` **不一致**** ⇒
+        ★★ **⇒ 那**不是矛盾、★ 而是**两个不同的量**** —— ★ 官方那两个名字逐字是
+        「Number of **sections**」与「Number of **profiles**」⇒ ★ **如实记** ✓
+      ★★★★ **⚠ 那几个量的口径**仍 `unknown`**** —— ★ 它们**都带前置**
+        （★ 拔模角要开起/止约束）⇒ ★ **本探针的几何没打开它们** ⇒ ★ **不谎称量到了** ✓
+
     ★★★★★ **⚠ 不碰**（★ 逐条给了理由）：
       · ★ **`Profiles` / ★ `GuideCurves` / ★ `Centerline` / ★ `PickPoints` /
         ★ `FeatureScopeBodies` / ★ `StartDirectionVector` / ★ `EndDirectionVector`** ⇒
@@ -1230,7 +1267,13 @@ def loft_params(model, feature_name: str = "") -> dict:
       · ★ **`GetGuideCurvesType()`** ⇒ ★ 官方 `## Returns` 是**数组** ⇒ ★ 本函数**不读** ✓
     """
     out = _read_feature_params(
-        model, feature_name, "Loft",
+        #: ★★★★★★★ 2026-10-04（轮 131）**真机打出来的类型名是 `Blend`、★ 不是 `Loft`** ——
+        #:   ★ 真机读数：★ `create_loft_report` ⇒ `ok=True · feature_name=**放样1** ·
+        #:     **type_name='Blend'** · tree 7→8`（★ `output/loft-params-capability-recheck.json`）✓
+        #:   ★★ **⇒ 而与上一轮 `Revolve` vs `Revolution` **完全同型**** ——
+        #:     ★ 而那一次我**刚记过**「先打出真名、★ 不要猜」⇒ ★★★ **⇒ 我记了、★ 却没做成机制** ✗
+        #:   ★★★ **⇒ 机制见本模块的 `FEATURE_TYPE_NAMES`**（★ 每个名字都要有**证据引用**）✓
+        model, feature_name, FEATURE_TYPE_NAMES["loft"],
         ("GetProfileCount", "GetGuideCurvesCount", "GetFeatureScopeBodiesCount",
          "IsBossFeature", "IsThinFeature",
          "StartTangencyType", "EndTangencyType", "GuideCurveInfluence",
@@ -1313,7 +1356,7 @@ def revolve_params(model, feature_name: str = "") -> dict:
         #:       ★★★ **⇒ 它竟然是 `False`**（★ `Revol`+`ution` vs ★ `Revol`+`ve` ⇒ 在 `Revol` 后分岔）✓
         #:   ★★★★ **⇒ 而我先前**把它写成"本该是 True"**** ⇒ ★ **那正是"我以为"** ✗
         #:   ★★★★★ **⇒ 教训**：★★★ **"我以为一个子串在里面"不可靠 ⇒ 让机器判** ✓
-        model, feature_name, "Revolution",
+        model, feature_name, FEATURE_TYPE_NAMES["revolve"],
         ("GetAxisType", "IsBossFeature", "IsThinFeature", "GetContoursCount",
          "GetFeatureScopeBodiesCount", "ThinWallType",
          "ReverseDirection", "Merge", "FeatureScope", "AutoSelect",

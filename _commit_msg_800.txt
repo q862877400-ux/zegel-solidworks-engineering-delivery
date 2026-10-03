@@ -1,73 +1,65 @@
-fix(SPEC202): ★★★★★★ **SC-004 转出第 1 条 —— `topology_readback` 由 `stitched` 转 `verified`**
+feat(阶段5): ★★★★★★★ **`loft_params` 建成并挂出**（★ ToolSpec **293**）；★ 并把「猜类型名」**做成机制**（★ 连续两轮栽在同一处）
 
-■ 一 · ★ 依据（★ SPEC `spec.md` §五 的 SC-004 逐字）
-  > `docs/user-feature-coverage.md` §五 那批 `stitched` **至少转 `verified` 3 条**
-  ★ 本条是**第 1 条**：★ `capabilities.yaml` 的 `level` **`stitched` → `verified`** ✓
+■ 一 · ★★★ **同一个坑的第二次**（★ 本轮最值钱的产出**不是**能力、★ 是**机制**）
+  ★ 真机：★ 放样建成了 ⇒ ★★ **`type_name = **'Blend'`****（★ **不是** `Loft`）✓
+  ★★ **而 `loft_params` 报「找不到放样特征（★ 类型名含 `Loft`）」** ✗
+  ★★★ **⇒ 那与上一轮 `Revolve` vs `Revolution` **完全同型**** ——
+    ★ 而**我上一轮刚记过**那条教训（★「★ **先打出真名、不要猜**」）⇒
+    ★★★★ **⇒ 说明我**记了、★ 却没做成机制**** ⇒ ★ **⇒ 那才是真问题** ✓
 
-■ 二 · ★★★★★★ 判据（★ 三条，★ 缺一不可）
-  ★ **① 功能范围内的真机读数全过** —— ★ 证据文件
-    `output/topology-readback-evidence.json` 的 `steps.judgement.checks`：
-    | ★ 项 | ★ 值 |
-    |---|---|
-    | ★ `bindings` | ★ **true**（6 个工具绑定解析） |
-    | ★ `create_study` | ★ **true** |
-    | ★ `collect_numbers` | ★ **true** |
-    | ★ `constraints` | ★ **true** |
-    | ★ `manager_report` | ★ **true** |
-    | ★ `options_report` | ★ **true** |
-    | ★ `set_goal` | ★ **true**（★ `before_taken 0 → after_taken 1` ⇒ **设置真的生效**） |
-    | ★ `set_iteration_options` | ★ **false** |
-    ⇒ ★★ **`passed: 7 of 8`** ·
-      ★★★ **而唯一 `false` 的 `set_iteration_options`**不在本条的功能范围内**** ——
-      ★ 它**已独立成条** `topology_iteration_options_backend_limited`
-      （★ 后端 `0x80010105`，★ **事实 47 / 67 同族**）✓
-  ★ **② 证据是**我们自己的运行产物****（★ SPEC 的 A4 逐字「`verified` 必须有我们自己的运行证据」）：
-    ★ 探针 `tools/capture_topology_readback_evidence.py`（10125 B）+
-    ★ 证据 JSON（3229 B · `captured_at: 2026-10-03T01:26:04` · ★ 走 `sw_guard` 护栏 · 5.3 s · **无弹窗**）✓
-  ★ **③ ★★ 如实写明那条顶层 `verdict` 是 `fail`** —— ★ **不许隐瞒** ✓
+■ 二 · ★★★★★★ **机制：`FEATURE_TYPE_NAMES` 表**（★ 每个名字都带**证据引用**）
+  ★ 集中一张模块级表（★ 族 → **真机打出来的**类型名）⇒ ★★ **调用点一律走表、
+    不许再就地写字符串字面量** ✓
+  | ★ 族 | ★ 真机类型名 | ★ 证据 |
+  |---|---|---|
+  | ★ `sweep` | ★ `Sweep` | ★ `output/sweep-params-capability-recheck.json` |
+  | ★ `revolve` | ★ `Revolution` | ★ `output/revolve-params-capability-recheck.json` |
+  | ★ `loft` | ★ **`Blend`** | ★ `output/loft-params-capability-recheck.json` |
+  | ★ `dome` | ★ `Dome` | ★ `output/rib-dome-params-capability-recheck.json` |
+  | ★ `rib` | ★ **`unknown（★ 未核）`** | ★ **那个族至今没建成过** ⇒ ★ **不猜** ✓ |
+  ★★ **⇒ 用法（写在表头）**：★ 新加族时**先跑真机、把 `GetTypeName2` 打出来**、
+    ★★ **再把字面量抄进表** ✓
+  ★★★ **⇒ 有一条负例测试守着它**：★ **表里不许有就地字面量** + ★ **每个已核名字都要指到
+    一份 `output/*.json`** + ★ **未核的必须写 `unknown`** ✓
 
-■ 三 · ★★★★★★ **本轮最有价值的一条（★ 事实 517 的教科书实例）**
-  ★ 那条 `verdict` **逐字是 `fail`** ⇒ ★ 而它**并不意味着"这条能力不行"** ——
-    ★★ **真因**：★ 那是**探针自己的严格设计**：
-      ★ 它的判定段逐字写着「★ **八项全真才 pass**」·
-      ★ 源码那一行是 `verdict = pass if (ok and not error) else fail` ✓
-  ⇒ ★★★ **⇒ `verdict` 是结论、★ 逐条 `ok` 才是事实**（★ **事实 517**）——
-    ★ **两者都对**、★ 而**打架时以逐条为准** ✓
-  ★★★★ **⚠ 而那条判据有一个**前提****（★ 一并写进台账）：
-    ★ **那条不过的项**必须有别的条目接着**** —— ★ 否则就是「假装做到」、
-    ★ **违反 SPEC 的 Edge Cases**（★ 逐字：「必须单列并写明依据，**不许假装做到**」）✓
+■ 三 · ★★★★ **真机读数**（★ 建成了 ⇒ 读回来了）
+  ★ 证据：★ `output/loft-params-capability-recheck.json` ✓
+  | ★ 步骤 | ★ 读数 |
+  |---|---|
+  | ★ 建放样（★ 两个草图、★ 按 **mark=1** 选） | ★ `ok=True · **放样1** · type_name='Blend' · tree 7→8 · mark1_selected=2` |
+  | ★ `GetProfileCount` | ★ **2**（★ 两个轮廓 ⇒ **对**）|
+  | ★ `GetGuideCurvesCount` | ★ **0**（★ 没引导线 ⇒ 对）|
+  | ★ `IsBossFeature` / ★ `IsThinFeature` | ★ **true** / ★ false |
+  | ★ `Close` / ★ `StartTangencyType` / ★ `EndTangencyType` | ★ false / 0 / 0 |
+  | ★ `StartConstraintDraftAngle` / ★ `StartTangentLength` | ★ **0.0** / ★ **0.1** |
+  ★★ **⚠ 而 `NumberOfSections = **1.0**` 与 `GetProfileCount = **2**` **不一致**** ⇒
+    ★★★ **⇒ 那**不是矛盾、★ 而是两个不同的量**** —— ★ 官方逐字：
+    「Number of **sections**」 vs ★「Number of **profiles**」⇒ ★ **如实记**（★ 免得后人去"修"）✓
+  ★★★★ **⚠ 那几个量的口径仍 `unknown`**（★ 拔模角 / 相切长度 / 壁厚）—— ★ 它们**都带前置**
+    （★ 拔模角要开起/止约束）⇒ ★ **本探针的几何没打开它们** ⇒ ★ **不谎称量到了** ✓
 
-■ 四 · ★★★ 台账改动（★ 附带功能边界，★ 免得后人以为漏了）
-  ★ `topology_readback` = **读数 + 建研究 + 设参 + 约束**：
-    · ★ **不含** `set_topology_iteration_options` ⇒ ★ 见 `topology_iteration_options_backend_limited` ✓
-    · ★ **不含** `run` 跑求解 ⇒ ★ 见 `analysis_run_readback` ✓
-  ★ 并记下那条可复用判据（★ 便于后人复用同一个判据）✓
+■ 四 · ★★ 而本轮**我自己又踩了两次**（★ 都留了记号）
+  ★ **① 用错了模块**：★ `insert_ref_plane` 在 **`sw_ref_geometry`**、
+    `select_face_selector` 在 **`sw_simulation`**（★ **都不在** `sw_part`）⇒
+    ★★ **⇒ 那正是本仓那条**「在仓里搜要搜够」**（★ 别只猜某个模块）⇒
+      ★★★ **⇒ 正解：★ 先问 `rc.all_specs()` 该能力挂在哪个模块** ✓
+  ★★ **② 又在中文串里写了 ASCII `"`** ⇒ `SyntaxError: Perhaps you forgot a comma?`（★ 本会话已多次）
+    ⇒ ★★★ **⇒ 而我顺手查了「有没有门禁管这一类」** ⇒ **有**：
+      ★ `scripts/check_python_syntax.py`（★ **第 19 道**、★ `ast.parse` 每个 `.py`）⇒
+      ★★★★ **⇒ 实测：★ 扫 1001 个文件 · 失败 0 处** ⇒ **⇒ 所以问题不是"没机制"、★ 是**没跑它**** ✓
+      ★★ **⇒ ⇒ 而**不新增门禁****（★ **已有机制就别加** —— ★ 只会多一个假阳性来源）✓
 
-■ 五 · ★ 读数
-  ```
-  ★ level 分布： verified 95 → 96   ·   stitched 13 → 12   ·   not_implemented 2（不变）
-  ★ A4 门禁：  verified 96 条 · 无 evidence 的 0 条 ⇒ [ok]
-  ★ JSON：      json.loads 通过（★ capabilities.yaml 是 JSON，★ 不是 YAML）
-  ```
+■ 五 · ★★ 新增测试（★ `tests/test_loft_params_capability.py` · **5 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★★ **核心断言** | ★ 真机那几个读数在能力里（★ `放样1` / 轮廓数 2 / `0.1`）✓ |
+  | ★★★★ **核心断言** | ★ `sections` 与 `profiles` 是**两个量**（★ 免得后人当矛盾去修）✓ |
+  | ★★★ **核心断言** | ★ **没量到的**仍标 `unknown`（★ 不谎称）✓ |
+  | ★★★★★ **负例 · 机制** | ★ 类型名走表、★ **不许就地字面量**、★ **每个名字要指证据**、★ **未核写 `unknown`** ✓ |
+  | ★★★★ **负例 · 探针** | ★ `step` 要**每步落盘**（★ 轮 130 我读到过旧证据）✓ |
 
-■ 六 · ★⚠⚠ **如实记：收尾链红，★ 而**不是我的改动造成的****
-  ★ `release_check` 直接跑 ⇒ **退出码 0** ✓
-  ★★ 而 `round_chain` 报红 ⇒ ★ **追到真因**：
-    ```
-    File "D:\AI\SW\mcp-server\tool_specs_batch77.py", line 244
-    SyntaxError: invalid syntax. Perhaps you forgot a comma?
-    ```
-    ⇒ ★ 那条语法错让 `register_capabilities.all_specs()` 抛 ⇒ **注入绑定门禁挂** ✓
-  ★★★ **归属已核**：`git log -1 -- tool_specs_batch77.py` ⇒ ★ **`3ebb15d4`（另一路对话的 `revolve_params`）**·
-    ★ 而 `git status` 显示它 **`M`（正在改、未提交）** ⇒ ★ **那是**进行中的半成品**** ✓
-  ★★★★ **⇒ 按 SPEC 的 T906 逐字**（★ 「只 `git add` 自己改的路径；★ **不用 `-A`**」）⇒
-    ★ **我不碰它**、★ **只提交 `capabilities.yaml`** ✓
-  ★★★★★ **⇒ 收尾链要变绿，★ 得等另一路把 `tool_specs_batch77.py` 写完** ✓
-
-■ 七 · ★★ 本轮另外两条可复用判据
-  ★ **① 在 JSON 里写中文串时，★ 一律用「」** —— ★ 本轮我在 `capabilities.yaml` 里**连踩两次**
-    （★ 第一次 `ev["verdict"] = …` 的 ASCII 双引号 · ★ 第二次 `"假装做到"`）⇒
-    ★★ **两次都直接报 `JSONDecodeError`** ✓
-  ★★ **② 用 edit 替换 JSON 字符串数组的**最后一项**时，★ 别把结尾的 `"` 吃掉** ——
-    ★ 本轮第三次修就是因为那个 ⇒ ★ **症状是 `Invalid control character`**、
-    ★★ **而真因是"串没闭合"** ✓
+■ 六 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 5 passed** ✓
+  ★★ 语法门禁：★ **扫 1001 个文件 · 失败 0 处** ✓
+  ★★★ 相关：★ 四个守卫 **25 passed** ✓
+  ★★★★ **⚠ 如实记**：★ 那几个量的口径**仍是 `unknown`** ⇒ ★ **不谎称** ✓
