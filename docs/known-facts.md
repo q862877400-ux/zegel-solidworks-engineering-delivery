@@ -1349,3 +1349,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **可复用的观测：☌ 参数不变、只动选区，返回值的**种类**变了** —— ★ 那说明**选区真的进去了**（★ 而不是被忽略）。
      ★ **按事实 53 停手**（这一处已 4 轮：521 · 522 · 523 · 524）。
      ★ **下一步该试的**：**把那个 `CDispatch` 读出来**（★ 看它的类型名 / 名字 ⇒ ★ 可能直接告诉我们“特征建了没有”）。|真机：`tools/probe_cut_surface_selection.py`；证据 `output/cut-surface-selection-evidence.json`；对照事实 391 / 403 / 404 |
+| 406 | **★★★★ 「特征树增量」这个判据**有盲区**：特征对象存在、而它不在 `FirstFeature` 链上** —— 2026-10-03（轮 525）。★★ **而它翻案了上四轮的一个结论** ⚠
+     ★ **起因**：事实 405 里「只选一张时 `InsertCutSurface` 回一个 `CDispatch`」—— ★ 而本轮**把它读出来了**：
+     ```
+     Name          ⇒ 「使用曲面切除1」
+     GetTypeName2  ⇒ 「SurfCut」        ← ★ 曲面切除
+     GetType       ⇒ 22
+     GetID         ⇒ 87
+     ```
+     ⇒ ★★★ **故特征**其实建了**！** —— ★ 而**我的判据（特征树增量）没抓到它** ⚠
+     ★ 于是本轮 dump了**全链**（`tools/probe_feature_names_blindspot.py`）：★ 调用**前**链 = **22 节点**、调用**后**也是 **22** ⇒ ★★ **链确实没长**；而 `feature_names` 也一个都没多 ⚠
+     ★ 而链尾是 `曲面-拉伸1`（`ExtruRefSurface`）—— ★ **`SurfCut` 不在那条链上**。
+     ★★ **故：特征对象存在、而 `FirstFeature` 链看不见它** —— ★ 可能 ① 它是**未提交/预览**的特征；② 或挂在**某个容器的子特征**下。
+     ★ 而本轮的 `_dump_chain` **只走 `GetNextFeature`**（★ **不走 `GetFirstSubFeature`**）⇒ ★★ **正解：该走递归遍历**（★ 本仓 `sw_weldment.iter_features_recursive` 就走）。
+     ★★★ **影响面（★ 这才是它的分量）**：本仓有**大量**判据写着「**特征树增量**」（规则 6 的落地）⇒ ★ 故**它们都可能在同一个盲区上误判** ⚠
+     ★ 而**本轮修正的是**：事实 402/403/404/405 里「`InsertCutSurface` 静默不干活」那半**不成立**（★ 它**干了**）；★ 而**arity = 6** 那条**仍然对**（★ 它是有用的）✓
+     ★ **下一步**：用 `iter_features_recursive` 重读一次，看 `SurfCut` 在**子特征**里或不在。|真机：`tools/probe_cut_surface_returned.py` · `tools/probe_feature_names_blindspot.py`；证据 `output/cut-surface-returned-evidence.json` · `output/feature-names-blindspot-evidence.json`；对照事实 391 / 402-405 |
