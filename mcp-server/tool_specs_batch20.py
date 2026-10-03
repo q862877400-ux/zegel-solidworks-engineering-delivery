@@ -68,6 +68,9 @@ SPECS_BATCH20 = [
         name="solidworks_custom_property_get",
         title="Get One Custom Property",
         module="sw_custom_property", function="custom_property",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         params=[
             Param("name", str, description="Custom property name (e.g. \"零件号\" / \"PartNo\"). "
                                           "⚠ Property names follow the UI language and are "
@@ -81,6 +84,9 @@ SPECS_BATCH20 = [
         name="solidworks_custom_property_list",
         title="List All Custom Properties",
         module="sw_custom_property", function="custom_properties",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         params=[Param("config_name", str, default="", description=_CONFIG)],
         doc="Read ALL file custom properties of the active document: every name with its value and "
             "type, plus how many were read. " + _WHY,

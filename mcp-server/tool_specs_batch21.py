@@ -79,6 +79,9 @@ SPECS_BATCH21 = [
         name="solidworks_sketch_start",
         title="Start a Sketch",
         module="sw_part", function="start_sketch",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         params=[Param("plane_name", str, default="Front Plane", description=_PLANE)],
         doc="Enter a new sketch on a reference plane. ★ This is the prerequisite for every "
             "sketch-based feature (extrude, revolve, hole, sheet-metal flange).",
@@ -87,6 +90,9 @@ SPECS_BATCH21 = [
         name="solidworks_sketch_end",
         title="End the Sketch",
         module="sw_part", function="end_sketch",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
         doc="Leave the current sketch. ★ The resulting sketch reference is reusable by "
             "solidworks_extrude_* and other feature tools, so features can be built right after.",
@@ -95,6 +101,9 @@ SPECS_BATCH21 = [
         name="solidworks_sketch_add_line",
         title="Add a Line to the Sketch",
         module="sw_part", function="sketch_line",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={"start_x_mm": "x1", "start_y_mm": "y1", "end_x_mm": "x2", "end_y_mm": "y2"},
         params=[
             Param("start_x_mm", float, description="Start point X, mm."),
@@ -108,6 +117,9 @@ SPECS_BATCH21 = [
         name="solidworks_sketch_add_circle",
         title="Add a Circle to the Sketch",
         module="sw_part", function="sketch_circle",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={"center_x_mm": "cx", "center_y_mm": "cy", "radius_mm": "radius"},
         params=[
             Param("center_x_mm", float, description="Centre X, mm."),
@@ -120,6 +132,9 @@ SPECS_BATCH21 = [
         name="solidworks_sketch_add_rectangle",
         title="Add a Rectangle to the Sketch (two opposite corners)",
         module="sw_part", function="sketch_corner_rectangle",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={"x1_mm": "x1", "y1_mm": "y1", "x2_mm": "x2", "y2_mm": "y2"},
         params=[
             Param("x1_mm", float, description="First corner X, mm."),

@@ -77,6 +77,9 @@ SPECS_BATCH22 = [
         name="solidworks_extrude_boss",
         title="Extrude a Boss (add material)",
         module="sw_part", function="extrude_boss",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={"depth_mm": "depth"},
         params=[
             Param("sketch_name", str, description=_SKETCH),
@@ -93,6 +96,9 @@ SPECS_BATCH22 = [
         name="solidworks_extrude_cut",
         title="Extrude a Cut (remove material)",
         module="sw_part", function="extrude_cut",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={"depth_mm": "depth"},
         params=[
             Param("sketch_name", str, description=_SKETCH),
@@ -109,6 +115,9 @@ SPECS_BATCH22 = [
         name="solidworks_extrude_midplane",
         title="Extrude Symmetrically About the Sketch Plane",
         module="sw_part", function="extrude_midplane",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={"total_depth_mm": "total_depth"},
         params=[
             Param("sketch_name", str, description=_SKETCH),

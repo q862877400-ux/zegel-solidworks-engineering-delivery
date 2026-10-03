@@ -106,6 +106,9 @@ SPECS_BATCH23 = [
         name="solidworks_chamfer",
         title="Chamfer the Selected Edge(s)",
         module="sw_part", function="chamfer",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={**_ALIAS_SEL(), "distance_mm": "distance"},
         pre_call=_select_edge,
         params=[
@@ -122,6 +125,9 @@ SPECS_BATCH23 = [
         name="solidworks_fillet",
         title="Round (Fillet) the Selected Edge(s)",
         module="sw_part", function="fillet",
+        inject="model",
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
+        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={**_ALIAS_SEL(), "radius_mm": "radius"},
         pre_call=_select_edge,
         params=[
