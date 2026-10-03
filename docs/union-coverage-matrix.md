@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 267 | 267 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 272 | 272 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -42,7 +42,7 @@
 | ③ 草图 | 26 | 15 | 16 | 20 | 40 | 99⚠ | 74 | **34** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 18⚠ | 16 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 22 | 82⚠ | 47 | **25** |
-| ⑥ 曲面 | 11 | · | 1 | · | 8 | 29⚠ | 20 | **12** |
+| ⑥ 曲面 | 11 | · | 1 | · | 12 | 29⚠ | 21 | **9** |
 | ⑦ 钣金 | 10 | · | 1 | · | 6 | 16⚠ | 17 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 12 | 15⚠ | 17 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
@@ -53,9 +53,9 @@
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 12 | 46⚠ | 22 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 1 | 19⚠ | 43 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 27 | 14 | 27 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 44 | 469⚠ | 86 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 45 | 469⚠ | 87 | **42** |
 
-**合计**：并集 586 个操作；**MCP 暴露面**缺 **319** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 588 个操作；**MCP 暴露面**缺 **316** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -69,10 +69,10 @@
 | ⑤ 零件特征 | 25 |
 | ⑩ 装配 | 19 |
 | ⑫ 检查 / 测量 / 反馈 | 16 |
-| ⑥ 曲面 | 12 |
 | ⑦ 钣金 | 11 |
 | ④ 尺寸 / 约束 / 参数 | 10 |
 | ⑭ 外观 / 材质 / 配置 | 10 |
+| ⑥ 曲面 | 9 |
 | ⑧ 焊件 | 5 |
 | ② 参考几何 | 4 |
 | ⑬ 仿真 / Motion | 4 |
@@ -103,7 +103,7 @@
 | ③ 草图 | 16 个：`3d_sketch`, `3point_arc`, `check_sketch_fully_defined`, `close_sketch`, `construction_geometry`, `convert_entities`… | Eduardof0nt/Solidworks-MCP-Server |
 | ④ 尺寸 / 约束 / 参数 | 8 个：`delete_equation`, `design_table_create`, `design_table_refresh`, `diameter_dimension`, `global_var`, `link_dimension_to_equation`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑤ 零件特征 | 17 个：`combine_bodies`, `curve_driven_pattern`, `delete_body`, `dome`, `fill_pattern`, `helix`… | Eduardof0nt/Solidworks-MCP-Server |
-| ⑥ 曲面 | 12 个：`boundary_boss`, `delete_face`, `extend_surface`, `extruded_surface`, `filled_surface`, `knit_surfaces`… | Eduardof0nt/Solidworks-MCP-Server |
+| ⑥ 曲面 | 9 个：`boundary_boss`, `extend_surface`, `extruded_surface`, `filled_surface`, `knit_surfaces`, `revolved_surface`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑦ 钣金 | 11 个：`base_flange`, `edge_flange`, `export_flat_pattern`, `flat_pattern_info`, `flatten_sheet_metal`, `hem`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑧ 焊件 | 5 个：`end_cap`, `gusset`, `structural_member`, `trim_weldment`, `weld_symbol` | Eduardof0nt/Solidworks-MCP-Server |
 | ⑨ 模具 | 3 个：`parting_line`, `shut_off_surface`, `tooling_split` | Eduardof0nt/Solidworks-MCP-Server |
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 237 个操作只有本仓库有：
+共 239 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -242,6 +242,7 @@
 - `read_sensors`（⑫ 检查 / 测量 / 反馈）
 - `refresh_scene_graph`（⑰ 未归类）
 - `render_materials`（⑭ 外观 / 材质 / 配置）
+- `replace_face`（⑰ 未归类）
 - `resolve_backend`（⑰ 未归类）
 - `resolve_entity`（⑰ 未归类）
 - `resolve_selection`（⑰ 未归类）
@@ -252,6 +253,7 @@
 - `revolve_boss`（⑤ 零件特征）
 - `rotary_motor`（⑰ 未归类）
 - `routing_preflight`（⑯ 高级 / 专项（含护城河候选））
+- `ruled_surface`（⑥ 曲面）
 - `run_fea`（⑰ 未归类）
 - `run_fea_convergence`（⑰ 未归类）
 - `select_by_selector`（⑰ 未归类）
@@ -418,14 +420,14 @@
 缺口操作：`combine_bodies`、`curve_driven_pattern`、`delete_body`、`dome`、`draft`、`extrude`、`fill_pattern`、`helix`、`hole`、`intersect`、`linear_pattern`、`loft`、`mirror`、`move_body`、`pattern_circular`、`pattern_features`、`revolve`、`save_body_as_part`、`scale_body`、`shell`、`simple_extrude`、`split_body`、`sweep`、`tutorial_simple_hole`
 （还有 1 个，见 `tools/union-sources.json`）
 
-### ⑥ 曲面（缺 12）
+### ⑥ 曲面（缺 9）
 
 | 来源 | 该域有 | 许可 | 来源验证 |
 |---|---|---|---|
 | `Eduardof0nt/Solidworks-MCP-Server` | 11 | MIT | **未声明** |
 | `vespo92/SolidworksMCP-TS` | 1 | MIT | **未声明** |
 
-缺口操作：`boundary_boss`、`delete_face`、`extend_surface`、`extruded_surface`、`filled_surface`、`knit_surfaces`、`offset_surface`、`planar_surface`、`revolved_surface`、`surface_modeling`、`thicken_surface`、`trim_surface`
+缺口操作：`boundary_boss`、`extend_surface`、`extruded_surface`、`filled_surface`、`knit_surfaces`、`revolved_surface`、`surface_modeling`、`thicken_surface`、`trim_surface`
 
 ### ⑦ 钣金（缺 11）
 

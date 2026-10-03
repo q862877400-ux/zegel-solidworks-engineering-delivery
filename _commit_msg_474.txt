@@ -1,0 +1,47 @@
+feat(B6-a): 曲面编辑 5 条 **真机 5/5** —— 两处"换法"被真机验证 + ToolSpec 5 条 + 能力条目
+
+★ 承上一轮（3/5）。**剩下两条也成了**，而两条各靠一个"换法"：
+
+## ① 替换面 ❌→✅：**换前置**（曲面体的面 → 实体的面）
+
+★ 上一轮用「拉伸**曲面**的面」调 ⇒ 树 7→7 无增量。
+★ 改用 `sw_part.extrude_boss` 建**实体** ⇒ 取它的面 ⇒ **树 7→8，新增 `替换面1`** ✓
+★ 官方语义上说得通：替换面要的是**实体的面**（★ 而拉伸曲面只有 4 个开放边界面）。
+
+## ② 删除面 ❌→✅：**换 API 代际**（Obsolete → 后继版 + 正经枚举）
+
+★★ 查 swapi 全文才发现**两件我上一轮说错的事**：
+· `IModelDoc2.InsertDeleteFace2` **官方标 Obsolete**：
+  > Obsolete. Superseded by [[IModelDocExtension::InsertDeleteFace]].
+  ⇒ ★ 按**铁律 4**（以后继版为准）改用 **`IModelDocExtension.InsertDeleteFace(Option)`** ✓
+· 而它的 `Option` **有正经枚举**（★ 我上一轮写"两源都没给"是**错的**）：
+  `swFaceDeleteOption_e` ⇒ **0=Default · 1=Patch · 2=Fill · 3=FillWithTangent**
+  ⇒ ★ 而**旧版 `Refill` 的功能位与这一代不可互译** —— 我上轮直接传 `1` 是**把旧版的位当新版的位** ⚠
+★ 改完 ⇒ **树 7→8，新增 `删除面1`** ✓
+
+## ③ 真机 5/5（`sw_guard` 全程 `sw_alive: true` · 零弹窗）
+
+```
+平面区域  树 6→7 ['曲面-基准面1']
+等距曲面  树 7→8 ['曲面-等距1']
+直纹曲面  树 7→8 ['直纹曲面1']
+删除面    树 7→8 ['删除面1']
+替换面    树 7→8 ['替换面1']
+```
+★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`）—— ★ 3/5 的官方返回是 `void`。
+
+## ④ 工具层与门禁
+
+· `mcp-server/tool_specs_batch68.py` **5 条** ⇒ `ToolSpec` **241 → 246**（已登记 `BATCH_MODULES`）。
+· `tools/check_inject_binding.py` **PASS 0 条** · 五统一门禁通过 · 5/5 签名对得上。
+· **走 MCP 契约**的真机调用 **1/5** —— ★★ 而那是**预期的**：
+  ★ 该探针**不建前置**，而本批 4/5 都要先选面/边。
+  ⇒ ★ 故把这条**定位写进了探针本身**（`_scope` + `n_prerequisites_missing`），
+    免得下次又把"前置没建"误读成"能力不行"。
+· `capabilities.yaml` 新增 **`surface_edit_ops`**（`verified` · `source: original`）⇒ **82 → 83**。
+
+## ⑤ 本轮的两条经验（★ 都写进了实现层注释与能力条目）
+
+1. **`void` 返回的成员，判据只能是特征树/几何读数** —— 而★ 判据函数本身**也要用本仓验证过的**
+   （★ 我上一轮自己写的 `FeatureByPositionReverse` 那条路真机回 `None` ⇒ 5 条**全记成"不能"**）。
+2. **官方标 Obsolete 的成员要先看后继版** —— ★ 换了代际、且用了正经枚举，**一次就成**。

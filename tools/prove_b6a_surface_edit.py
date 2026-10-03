@@ -149,6 +149,29 @@ def _make_surface(doc):
     return SF.create_extruded_surface_report(doc, 30.0)
 
 
+def _make_solid(doc):
+    """★ 建一个**实体**当前置（★ 马上用于“删除面 / 替换面”）。
+
+    ★★ 2026-10-03（轮 474）**为什么要换前置** ——
+      上一轮这两条用的是“拉伸**曲面**”的面，而它们都回 `树 7→7 无新增`。
+      ★ 而官方语义上：`InsertDeleteFace2` 是“删除选中的面”、
+      `InsertFeatureReplaceFace` 是“把选中的面**替换成**另一些面”
+      ⇒ ★ 它们要的是**实体的面**（★ 而拉伸曲面只有 4 个开放边界面）。
+      ★ 故改用 `sw_part.extrude_boss`（★ 已验证的实体拉伸）。
+    """
+    P.start_sketch(doc, plane_name="Front Plane")
+    SP.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
+    P.end_sketch(doc)
+    for cand in ("\u8349\u56fe1", "Sketch1"):
+        try:
+            r = P.extrude_boss(doc, cand, 0.02)
+            if r:
+                return r
+        except Exception:                                                # noqa: BLE001
+            continue
+    return None
+
+
 def _case_offset(doc):
     _make_surface(doc)
     fs = _faces(doc)
@@ -167,15 +190,16 @@ def _case_ruled(doc):
 
 
 def _case_delete(doc):
-    _make_surface(doc)
+    _make_solid(doc)
     fs = _faces(doc)
     if fs:
         _select(fs[0], mark=0)
-    return M.insert_delete_face(doc, 1)
+    return M.insert_delete_face(doc, 0)
 
 
 def _case_replace(doc):
-    _make_surface(doc)
+    #: ★ 先建**实体**（★ 替换面的语义对象），再取它的两个面
+    _make_solid(doc)
     fs = _faces(doc)
     if len(fs) >= 2:
         _select(fs[0], mark=1)

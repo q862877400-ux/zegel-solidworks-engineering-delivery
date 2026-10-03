@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **82** 条能力。
+共 **83** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 70 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 71 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 11 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 52 | **本项目自研**（护城河域等） |
+| `original` | 53 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -133,6 +133,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `sketch_primitives_b1` | · `output/b1-sketch-primitives-evidence.json` |
 | `sketch_edit_ops_b3` | · `output/b3-sketch-edit-evidence.json` |
 | `sketch_modify_ops` | · `★ 2026-10-03（轮 472）**真机 5/5**（走 `tools/sw_guard.py`，全程 `sw_alive: true`、**零弹窗**）：`python tools/sw_guard.py --timeout 500 -- python tools/prove_b4_sketch_modify.py`。证据 output/b4-sketch-modify-evidence.json。★★ **判据按操作分**（★ 本批最要紧的经验）：改**坐标系**的（移动/旋转/镜像）看 `Sketch.ModelToSketchTransform.ArrayData`；改**几何**的（缩放/伸展）看草图线段端点的 bbox。★ 具体数值：移动 5mm ⇒ 平移 [0,0,0]→**[-0.005,-0.005,0]**（严格对应）；旋转 30° ⇒ 3×3 首行 **[0.866025,-0.500001,0]**（cos30°/sin30°）；镜像 ⇒ 首行 **[1,0,0]→[-1,0,0]**；缩放 1.5 ⇒ bbox ±20/±10→**±30/±15**（×1.5）。`<br>· `★ 2026-10-03（轮 472）**走 MCP 契约的真机调用 5/5**（★ 不手调内部实现，而按 `ToolSpec` 声明的 `inject` + `params` 装配）：`python tools/sw_guard.py --timeout 600 -- python tools/prove_tools_by_contract.py solidworks_sketch_`。证据 output/tools-by-contract-evidence.json。`<br>· `★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**（★ 每个声明都覆盖了包装的必需对象形参）；五统一门禁（`ToolSpec` 声明时）通过；`tests/test_tool_registry.py` **20 passed**。`<br>· `★ 三源互证（swapi + CHM + 出厂反射，**成员名三方一致**）：`IModelDoc2.SketchModify{Translate,Rotate,Scale,Flip}`、`IModelDocExtension.Stretch`。★ **不用 `Tools*` 族**（`ToolsSketchTranslate()` 零参数、交互式弹框，与无人值守红线冲突）。` |
+| `surface_edit_ops` | · `★ 2026-10-03（轮 474）**真机 5/5**（走 `tools/sw_guard.py`，全程 `sw_alive: true`、**零弹窗**）：`python tools/sw_guard.py --timeout 600 -- python tools/prove_b6a_surface_edit.py`。证据 output/b6a-surface-edit-evidence.json。★ 逐条：平面区域 树 6→7 `曲面-基准面1`；等距曲面 树 7→8 `曲面-等距1`；直纹曲面 树 7→8 `直纹曲面1`；删除面 树 7→8 `删除面1`；替换面 树 7→8 `替换面1`。★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`），★ 3/5 的官方返回是 `void`。`<br>· `★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **241 → 246**。`<br>· `★ 走 MCP 契约的真机调用（`tools/prove_tools_by_contract.py`）：1/5 —— ★ 而那**是预期的**：该探针**不建前置**，而本批 4/5 都要先选面/边（★ 不是能力不行）。`<br>· `★ 三源互证里**两处“台账给的名字是旧的”**：`InsertRuledSurface` ⇒ 真名在 `IFeatureManager`，且 `…FromEdge` 官方标 **Obsolete**（用 `…FromEdge2`）；`InsertReplaceFace` ⇒ `InsertFeatureReplaceFace`。` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

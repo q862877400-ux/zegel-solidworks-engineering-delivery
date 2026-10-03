@@ -78,7 +78,7 @@ SURFACE_EDIT_STATUS = {
     "平面区域": "IModelDoc2.InsertPlanarRefSurface",
     "等距曲面": "IModelDoc2.InsertOffsetSurface",
     "直纹曲面": "IFeatureManager.InsertRuledSurfaceFromEdge2",
-    "删除面": "IModelDoc2.InsertDeleteFace2",
+    "删除面": "IModelDocExtension.InsertDeleteFace",
     "替换面": "IModelDoc2.InsertFeatureReplaceFace",
 }
 
@@ -194,22 +194,43 @@ def insert_ruled_surface(model, ruled_type: int, length_mm: float = 0.0,
             "verified_by": "feature_not_none + tree_delta"}
 
 
-def insert_delete_face(model, refill: int = 1) -> dict:
-    """★ **删除面**：`IModelDoc2.InsertDeleteFace2(Refill)` —— 回 `bool`。★ 官方语义：删除选中面。
+def insert_delete_face(model, option: int = 0) -> dict:
+    """★ **删除面**：`IModelDocExtension.InsertDeleteFace(Option)` —— ★★ **官方后继版**。
 
-    :param refill: 官方 `Refill`（★ 两个源**都没给取值表** ⇒ ★ 原样透传，**不猜语义**）。
+    ★★★ 2026-10-03（轮 474）**换了两处，都是"没查就用了旧的"** ——
+      · ★ 上一版走 `IModelDoc2.InsertDeleteFace2(Refill)`，★ 而它**官方标 Obsolete**：
+        > Obsolete. Superseded by [[IModelDocExtension::InsertDeleteFace]].
+        ⇒ ★ 按**铁律 4**（以后继版为准）改用 `IModelDocExtension.InsertDeleteFace` ✓
+      · ★ 而 `Option` **有正经枚举**（`swFaceDeleteOption_e`，★ 官方 swapi 给了取值表）：
+        | 成员 | 值 |
+        |---|---|
+        | `swFaceDelete_Default` | **0** |
+        | `swFaceDelete_Patch` | **1** |
+        | `swFaceDelete_Fill` | **2** |
+        | `swFaceDelete_FillWithTangent` | **3** |
+        ⇒ ★ 默认用 **`0`（Default）** —— ★ 而**旧版那个 `Refill` 的功能位与这一代语义不同**，
+          两者**不可互译**（★ 我上轮直接传 `1` 是**把旧版的位当新版的位**）⚠
 
-    ★ 判据 = 返回值非假 **且** 特征树有新特征。
+    :param option: `swFaceDeleteOption_e` 的值（★ 默认 `0` = Default）。
+
+    ★ 判据 = 返回值非假 **且** 特征树有新特征（★ 官方 Returns 逐字：
+      "True if a **DeleteFace feature** is inserted, false if not"）。
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}
+    if int(option) not in (0, 1, 2, 3):
+        return {"ok": False, "error": "option 不在 swFaceDeleteOption_e 的取值表 0..3 内：%r" % option}
+    ext = get_com_member(model, "Extension")
+    if ext is None:
+        return {"ok": False, "error": "取不到 model.Extension"}
     before = _tree_names(model)
-    r = get_com_member(model, "InsertDeleteFace2", int(refill))
+    r = get_com_member(ext, "InsertDeleteFace", int(option))
     after = _tree_names(model)
     added = _delta(before, after)
     return {"ok": bool(r) and bool(added), "op": "delete_face",
-            "returned": r, "refill": int(refill),
-            "refill_semantics": "官方 swapi 与 CHM 均未给取值表 —— 原样透传",
+            "returned": r, "option": int(option),
+            "option_meaning": {0: "swFaceDelete_Default", 1: "swFaceDelete_Patch",
+                               2: "swFaceDelete_Fill", 3: "swFaceDelete_FillWithTangent"}[int(option)],
             "tree_before": before, "tree_after": after, "new_features": added,
             "verified_by": "return_value + tree_delta"}
 

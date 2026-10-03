@@ -3593,6 +3593,34 @@
       ],
       "source": "original",
       "source_evidence": "本项目自建；依据为**官方三源**（`C:\\swapi\\types\\` **结构化文档** + CHM 官方文档 + `_raw/reflect_sldworks/` **出厂类型库反射**，★ **成员名三方一致**），见 `scripts/sw_sketch_modify_ops.py` 的来源块（逐成员列了三源路径）。★ 补的是 `specs/201-toolbar-gaps` 的 **B4** 批（用户工具栏：移动 / 伸展 / 旋转 / 缩放实体比例，另加同族的镜像）。"
+    },
+    {
+      "id": "surface_edit_ops",
+      "label": "曲面编辑（平面区域 / 等距曲面 / 直纹曲面 / 删除面 / 替换面）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建；依据为**官方三源**（`C:\\swapi\\types\\` **结构化文档** + CHM 官方文档 + `_raw/reflect_sldworks/` **出厂类型库反射**），见 `scripts/sw_surface_edit_ops.py` 的来源块。★ 补的是 `specs/201-toolbar-gaps` 的 **B6-a**（用户工具栏「曲面」栏里判「不能」的 5 条）。",
+      "evidence": [
+        "★ 2026-10-03（轮 474）**真机 5/5**（走 `tools/sw_guard.py`，全程 `sw_alive: true`、**零弹窗**）：`python tools/sw_guard.py --timeout 600 -- python tools/prove_b6a_surface_edit.py`。证据 output/b6a-surface-edit-evidence.json。★ 逐条：平面区域 树 6→7 `曲面-基准面1`；等距曲面 树 7→8 `曲面-等距1`；直纹曲面 树 7→8 `直纹曲面1`；删除面 树 7→8 `删除面1`；替换面 树 7→8 `替换面1`。★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`），★ 3/5 的官方返回是 `void`。",
+        "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **241 → 246**。",
+        "★ 走 MCP 契约的真机调用（`tools/prove_tools_by_contract.py`）：1/5 —— ★ 而那**是预期的**：该探针**不建前置**，而本批 4/5 都要先选面/边（★ 不是能力不行）。",
+        "★ 三源互证里**两处“台账给的名字是旧的”**：`InsertRuledSurface` ⇒ 真名在 `IFeatureManager`，且 `…FromEdge` 官方标 **Obsolete**（用 `…FromEdge2`）；`InsertReplaceFace` ⇒ `InsertFeatureReplaceFace`。"
+      ],
+      "limitations": [
+        "★ **删除面用的是后继版**：`IModelDoc2.InsertDeleteFace2` 官方标 **Obsolete**，本模块走 `IModelDocExtension.InsertDeleteFace(Option)`，`Option` 取 `swFaceDeleteOption_e`（0=Default / 1=Patch / 2=Fill / 3=FillWithTangent）。★ 旧版那个 `Refill` 的功能位**与这一代不可互译**。",
+        "★ **替换面要先选好两组面**（官方 Remarks：被替换的面 **mark=1**、替换面 **mark=2**）；直纹曲面要先把边按 **mark=4** 选中。★ 本模块**不代替调用方选择**（★ 那是声明式 selection 层的事）。",
+        "★ **前置很具体**：删除面 / 替换面 要的是**实体的面**——实测拿“拉伸**曲面**的面”去调两条**都不成**，改成**实体**后**两条都成**。"
+      ]
     }
   ]
 }

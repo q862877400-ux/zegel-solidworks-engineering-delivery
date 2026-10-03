@@ -313,6 +313,10 @@ BATCH_MODULES = (
     #:   ★★ 判据**按操作分**：改坐标系的（移动/旋转/镜像）看
     #:     `ModelToSketchTransform.ArrayData`；改几何的（缩放/伸展）看草图端点的 bbox。
     "tool_specs_batch67",
+    #: ★ 2026-10-03（轮 474）：B6-a 曲面编辑 5 个
+    #:   （平面区域 / 等距曲面 / 直纹曲面 / 删除面 / 替换面）。
+    #:   ★ 真机 **5/5**（`output/b6a-surface-edit-evidence.json`）。
+    "tool_specs_batch68",
 )
 
 def all_specs() -> list:

@@ -66,8 +66,18 @@ def main(argv) -> int:
     _SW[0] = sw
     ev = {"probe": "tools-by-contract", "prefix": prefix, "items": []}
 
-    todo = [s for s in RC.all_specs() if s.name.startswith(prefix)
-            and s.module == "sw_sketch_modify_ops"]
+    #: ★★ 2026-10-03（轮 474）**去掉写死的模块过滤** ——
+    #:   我第一版写死了 `s.module == "sw_sketch_modify_ops"`，
+    #:   ★ 于是拿别的前缀跑就得 `0 / 0`（★ 看着像失败，实则是**过滤器没命中**）。
+    #:   ★ 现改成：**按前缀取到哪些声明**，再只保留“实现层真能 import”的那些。
+    _all = [s for s in RC.all_specs() if s.name.startswith(prefix)]
+    todo = []
+    for _s in _all:
+        try:
+            importlib.import_module("scripts." + _s.module)
+            todo.append(_s)
+        except Exception:                                            # noqa: BLE001
+            continue
     ev["n_tools"] = len(todo)
 
     for spec in todo:
@@ -106,6 +116,16 @@ def main(argv) -> int:
                     pass
         ev["items"].append(row)
 
+    #: ★★ 2026-10-03（轮 474）**本探针的定位要写清**（★ 免得被误读）：
+    #:   它只证**两件**：① `ToolSpec` 声明的 `inject`/`params` 与实现**签名对得上**；
+    #:   ② 对着一个**空文档**调不会炸。
+    #:   ★★ 它**不建前置** ⇒ 凡是“要先选面/选边/先有实体”的工具，
+    #:     在本探针里**必然回 `不能`**（★ 而那**不是**能力不行）❗
+    #:   ⇒ ★ 故本证据里另存 `n_prerequisites_missing`，并在 cwd 说明里点明。
+    ev["n_prerequisites_missing"] = sum(1 for i in ev["items"] if not i.get("ok"))
+    ev["_scope"] = ("本探针不建前置 —— 不能的那些"
+                    "多半是“需要先选中实体/面”，"
+                    "而不是能力不行；功能是否建成看专项探针")
     ev["passed"] = sum(1 for i in ev["items"] if i.get("ok"))
     p = R / "output" / "tools-by-contract-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
