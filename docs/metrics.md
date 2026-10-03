@@ -17,11 +17,11 @@
 | 9 | 未认领的族 | domain 是「全量索引/<程序集>」（未归业务域） | **507** | `同上，取其补集` |
 | 10 | 我们调用过的族 | 该族有成员被使用过（used > 0） | **537** | `family-coverage.json 里 used > 0 的行数` |
 | 11 | 零调用族 | 该族一个成员都没被调用过 | **344** | `同上，used == 0` |
-| 12 | 函数（顶格，含 _ 开头） | scripts/sw_*.py 里**顶格**的 def（含 _ 开头的内部函数） | **1110** | `python tools/gen_metrics.py（本行由 tools/ 现算）` |
+| 12 | 函数（顶格，含 _ 开头） | scripts/sw_*.py 里**顶格**的 def（含 _ 开头的内部函数） | **1111** | `python tools/gen_metrics.py（本行由 tools/ 现算）` |
 | 13 | ★ 公开函数（可挂工具的候选） | 顶格**且不以 _ 开头**的 def。⚠ 不含类方法与嵌套函数 —— 那些不是候选 | **872** | `同上前提下，名字不以 _ 开头` |
-| 14 | 函数（含类方法与嵌套） | scripts/sw_*.py 里所有 def（含缩进的）—— ★ 与上一行**不是同一个东西**，不可与「工具」相比 | **1275** | `正则允许前导空白，抓缩进的 def` |
-| 15 | 函数（含工具层与声明层） | scripts/ + mcp-server/ 里的 def | **1951** | `同上，扫两个目录` |
-| 16 | 测试文件 | tests/ 下的 test_*.py | **176** | `C:\swprojects\sw-skill-fork\tests\test_*.py` |
+| 14 | 函数（含类方法与嵌套） | scripts/sw_*.py 里所有 def（含缩进的）—— ★ 与上一行**不是同一个东西**，不可与「工具」相比 | **1276** | `正则允许前导空白，抓缩进的 def` |
+| 15 | 函数（含工具层与声明层） | scripts/ + mcp-server/ 里的 def | **1952** | `同上，扫两个目录` |
+| 16 | 测试文件 | tests/ 下的 test_*.py | **177** | `C:\swprojects\sw-skill-fork\tests\test_*.py` |
 | 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **280** | `register_capabilities.all_specs()` |
 | 18 | MCP 工具（上游原有） | server.py 里的 @mcp.tool 装饰器 | **45** | `server.py 里 @mcp.tool 出现次数` |
 | 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **325** | `两行相加` |

@@ -214,7 +214,33 @@ def create_configuration(
     }
 
 
-def _dimension_value_mm(dimension, configuration_name: str | None = None) -> float:
+def _document_length_unit_scale(model) -> float:
+    """★ 从**文档单位**推出「系统值 → 毫米」的倍数（★ 而不是硬编码 1000）。
+
+    ★★★★ **为什么需要它（★ 2026-10-04 真机定案）**：★ `GetSystemValue3` / `SetSystemValue3`
+      **吃的就是文档单位** —— ★ 真机实测（`tools/probe_dimension_unit.py` + 独立交叉核
+      `output/extrude-depth-unit-evidence.json`）：
+        · ★ 文档 `GetUnits() = [**0**, …]` ⇒ **`swLengthUnit_e = 0 = swMM`** ✓
+        · ★ 一个**厚 20 mm** 的板 ⇒ `GetSystemValue3` 原始回 **`(20.0,)`** ✓
+        · ★ 而**同一次**建出来的实体 `size = [100, 60, **20**]` ⇒ ★ **真的是 20 mm** ✓
+      ⇒ ★★★ **所以在这份文档上，系统值 == 毫米 ⇒ 倍数应为 `1.0`，★ 而不是 `1000.0`** ✓
+    ★★ **旧代码硬编码 `× 1000`** ⇒ ★ 把 20 mm 读成 **20000 mm**（★ 大 1000 倍）✓
+    ★ **回退**：★ 读不到 ⇒ **维持旧行为 `1000.0`**（★ 米）✓
+    """
+    try:
+        from sw_connect import get_com_member as _g
+        raw = _g(model, "GetUnits")
+        if raw is None:
+            return 1000.0
+        seq = list(raw)
+        #: ★ `swLengthUnit_e`：0=swMM · 1=swCM · 2=swM · 3=swINCHES · 4=swFEET …
+        return {0: 1.0, 1: 10.0, 2: 1000.0, 3: 25.4, 4: 304.8}.get(int(seq[0]), 1000.0)
+    except Exception:                                                     # noqa: BLE001
+        return 1000.0
+
+
+def _dimension_value_mm(dimension, configuration_name: str | None = None, *,
+                        model=None) -> float:
     """读取尺寸系统值并转为毫米。
 
     ★★★★ 2026-10-03（接手轮）**换走后继入口 + 处理"返回值是数组"** ——
@@ -247,8 +273,19 @@ def _dimension_value_mm(dimension, configuration_name: str | None = None) -> flo
         | ★★ 新 `GetSystemValue3(2, 空VARIANT)` | ★ **`(0.01,)`** |
         ⇒ ★★ **三者数值一致、且新的是元组 ⇒ 可换** ✓
     """
-    from sw_connect import create_empty_dispatch_variant as _empty
-    from sw_connect import get_com_member as _g
+    #: ★★★★ 2026-10-04（接手轮）**修掉一个"从来跑不通"的导入** ——
+    #:   ★ 病灶：★ 原来写 `from sw_connect import …`（★ **裸顶层名**）⇒
+    #:     ★★ 而测试用 `from scripts import sw_document_data` ⇒ ★ **`sw_connect` 不在 `sys.path`** ⇒
+    #:     ★★★ `ModuleNotFoundError: No module named 'sw_connect'` ✓
+    #:   ★★ **实测确认它是存量**（★ 不是本轮引入）：★ `git stash` 掉本轮全部改动后，
+    #:     `pytest tests/test_sw_document_data.py` **同样 2 failed / 8 passed** ✓
+    #:   ★★★ 修法：★ **与模块其他部分一致**（★ `try: from .sw_connect … / except ImportError: …`）✓
+    try:
+        from .sw_connect import create_empty_dispatch_variant as _empty
+        from .sw_connect import get_com_member as _g
+    except ImportError:                                                   # pragma: no cover
+        from sw_connect import create_empty_dispatch_variant as _empty     # type: ignore
+        from sw_connect import get_com_member as _g                        # type: ignore
 
     if configuration_name:
         raw = _g(dimension, "GetSystemValue3", 3, [configuration_name])   #: ★ swSpecifyConfiguration
@@ -257,7 +294,18 @@ def _dimension_value_mm(dimension, configuration_name: str | None = None) -> flo
     #: ★★ 新入口回**数组** ⇒ 取第一个（★ 官方例子也是这么取的：`dimValue_1(0)`）
     if isinstance(raw, (list, tuple)):
         raw = raw[0] if raw else 0.0
-    return float(raw) * 1000.0
+    #: ★★★★ 2026-10-04（接手轮）**修掉「硬编码 ×1000」** —— ★★ 它假定文档单位是**米**、
+    #:   而**本机新建文档的单位是**毫米****（★ 真机实测 `GetUnits() = [0, 1, 8, 2, 0]`，
+    #:   ★ 第 1 个 `swLengthUnit_e = 0 = swMM`）✓
+    #:   ★★★ **真机证据（`tools/probe_dimension_unit.py`）**：★ 一个**厚 20 mm** 的板，
+    #:    ★ `GetSystemValue3` 原始回 **`(20.0,)`** ⇒ ★★ **它回的是**文档单位**（毫米），★ 不是米** ✓
+    #:   ★★★ **而另一份证据**（`output/extrude-depth-unit-evidence.json`）**独立确认**：
+    #:    ★ `extrude_boss(model, "Sketch1", 20.0)` 建出来的实体 **`size = [100, 60, **20**]`**
+    #:    ⇒ ★★ **实体真的是 20 mm 厚** ⇒ ★ **`GetSystemValue3` 回 20.0 就是毫米** ✓
+    #:   ⇒ ★ 修法：★ **按文档单位换算**（★ 读一次 `GetUnits()`，★ 不再假定）✓
+    #:   ★ 而 `model` 为 `None`（★ 老调用方）⇒ ★ **回退到旧行为 `× 1000`**（★ 不破坏既有调用）✓
+    scale = _document_length_unit_scale(model) if model is not None else 1000.0
+    return float(raw) * scale
 
 
 def update_dimension_mm(
@@ -296,10 +344,17 @@ def update_dimension_mm(
     else:
         evidence_names = []
 
+    #: ★★★★ 2026-10-04（接手轮）**修正换算 —— 两处一起改**：
+    #:   ★ **病灶**：★ `_dimension_value_mm` 硬编码 `× 1000`、★ 而这里硬编码 `/ 1000` ⇒
+    #:     ★★ **两个相反方向的错、★ 互相掩盖**（★ 读回来的值**看起来对**）✓
+    #:   ★★★ **真机定案**：★ `GetSystemValue3` / `SetSystemValue3` **吃的就是文档单位**
+    #:     （★ 实测：★ 毫米文档 + 厚 20mm 的板 ⇒ 回 `(20.0,)`；★ 而实体 `size=[100,60,**20**]`）✓
+    #:   ★★ 而 `model` 是**本函数已有**的入参 ⇒ ★ 用它读单位；★ `None` ⇒ 回退旧行为 ✓
+    _scale = _document_length_unit_scale(model)
     before = (
-        {name: _dimension_value_mm(dimension, name) for name in evidence_names}
+        {name: _dimension_value_mm(dimension, name, model=model) for name in evidence_names}
         if evidence_names
-        else {"current": _dimension_value_mm(dimension)}
+        else {"current": _dimension_value_mm(dimension, model=model)}
     )
     names_variant = (
         VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_BSTR, requested_names)
@@ -308,7 +363,7 @@ def update_dimension_mm(
     )
     status_code = int(
         dimension.SetSystemValue3(
-            float(value_mm) / 1000.0,
+            float(value_mm) / _scale,
             SET_VALUE_MODES[configuration_mode],
             names_variant,
         )
@@ -319,9 +374,9 @@ def update_dimension_mm(
         else status_code == 0
     )
     after = (
-        {name: _dimension_value_mm(dimension, name) for name in evidence_names}
+        {name: _dimension_value_mm(dimension, name, model=model) for name in evidence_names}
         if evidence_names
-        else {"current": _dimension_value_mm(dimension)}
+        else {"current": _dimension_value_mm(dimension, model=model)}
     )
     save_success = bool(save_document(model)) if save and status_code == 0 and rebuild_success else not save
     success = status_code == 0 and rebuild_success and save_success

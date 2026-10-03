@@ -21,6 +21,17 @@ class FakeDimension:
     def GetSystemValue2(self, name):
         return self.values[name]
 
+    #: ★★★★ 2026-10-04（接手轮）**补 `GetSystemValue3`** —— ★ 存量失败的真因：
+    #:   ★ 2026-10-03 那次换入口（`GetSystemValue2` → `3`）**没更新本假对象** ⇒
+    #:     ★★ `AttributeError: 'FakeDimension' object has no attribute 'GetSystemValue3'` ✓
+    #:   ★★★ **实测确认是存量**：★ `git stash` 掉本轮全部改动后**同样失败** ✓
+    #:   ★ 真机形态：★ 新入口回**元组**（★ `output/getsystemvalue-on-existing-evidence.json`
+    #:     逐字 `"(0.01,)"`）⇒ ★ **这里如实照做** ✓
+    def GetSystemValue3(self, mode, names):
+        if mode == 3:
+            return (self.values[names[0]],)
+        return (self.values[self.current],)
+
     def SetSystemValue3(self, value, mode, names):
         if mode == 1:
             self.values[self.current] = value
@@ -30,6 +41,22 @@ class FakeDimension:
             for name in names.value:
                 self.values[name] = value
         return 0
+
+
+class FakeModelForUnits:
+    """★ 假的**文档**：★ 只实现 `GetUnits()`（★ 换算要读的东西）✓
+
+    ★★★★ 2026-10-04：★ `values` 的量纲是**米**（★ `0.01` = 10 mm）⇒ ★ 所以这个假文档
+      **必须**声明自己是**米制**（★ `swLengthUnit_e = 2`）—— ★★ 否则换算倍数会是 1.0、
+      而两个测试的期望值（10.0）就对不上了 ✓
+    ★ **这样改尊重原测试的意图**：★ 它测的是「**换算**」这条逻辑，★ 不是「**单位假设**」✓
+    """
+
+    def __init__(self, unit_code: int = 2) -> None:
+        self._units = [unit_code, 1, 8, 2, 0]
+
+    def GetUnits(self):                                                   # noqa: N802
+        return self._units
 
 
 class FakePropertyManager:
