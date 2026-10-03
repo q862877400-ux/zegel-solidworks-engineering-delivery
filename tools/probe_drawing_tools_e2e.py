@@ -38,7 +38,11 @@ import register_capabilities as RC                                      # noqa: 
 from scripts import sw_connect as C                                     # noqa: E402
 
 OUT = REPO / "output" / "drawing-tools-e2e-evidence.json"
-PART = REPO / "output" / "_probe_tools_e2e_part.SLDPRT"
+#: ★★ **每次运行用唯一文件名** —— 否则上一轮留下的同名文件可能仍被 SolidWorks 打开
+#:   ⇒ `SaveAs` 失败（`part_saved=False`）⇒ ★ 后续"需要已存盘零件"的格子会**静默跳过前置**
+#:   （2026-10-03 实测：那正是"两格都 views_before=0"的原因，且会让 `projected_view` **误用旧文件**）。
+_RUN_TAG = time.strftime("%H%M%S")
+PART = REPO / "output" / ("_probe_tools_e2e_part_%s.SLDPRT" % _RUN_TAG)
 
 #: ★ 8 条工具各自要给的实参（★ 名字**必须与 `tool_specs_batch75.py` 里 `Param(...)` 的第一个参数逐字一致**）。
 TOOL_ARGS: dict[str, dict] = {
@@ -55,11 +59,14 @@ TOOL_ARGS: dict[str, dict] = {
     "solidworks_drawing_create_revision_table": {"x_mm": 100.0, "y_mm": 80.0, "anchor_type": 1,
                                                  "template": "", "shape": 0,
                                                  "auto_update_zoom_cells": True},
-    "solidworks_drawing_insert_center_marks": {"requirements": []},
+    "solidworks_drawing_insert_center_marks": {"requirements": [
+        {"id": "e2e-cm", "view": "front", "count": 1, "targets": ["holes"]}]},
 }
 
 #: ★ 需要"同一张图上先有视图"才能测的工具（★ 逐个建一张新工程图 ⇒ 先补一个视图）。
-NEEDS_VIEW = {"solidworks_drawing_create_hole_table"}
+#: ★ `insert_center_marks` 也在内 —— 它先 `_map_standard_views_from_sheet_views` 找 **front/top/right**，
+#:   ★ 图上没视图时 `mapped_views.get("front")` 是 None ⇒ 直接判 failed（★ 那是**前置**，不是能力）。
+NEEDS_VIEW = {"solidworks_drawing_create_hole_table", "solidworks_drawing_insert_center_marks"}
 
 
 def _get(o, name, *a):
@@ -94,6 +101,14 @@ def _build_part(sw, row: dict):
         if names:
             P.extrude_boss(doc, names[-1], 0.01)
             row["extrude_sketch"] = names[-1]
+        # ★ 打一个孔：★ 好让"孔表 / 中心符号线（targets=['holes']）"有**圆边**可用
+        #   （★ 与 `tools/prove_drawing_batch.py::_build_part` 同一手法；★ 孔不成**不阻断**）
+        try:
+            from scripts import sw_hole_features as HF
+            rep = HF.create_hole_wizard_at_selection_report(doc, "+z", "M8")
+            row["hole"] = {k: rep.get(k) for k in ("ok",) if k in rep}
+        except Exception as exc:                                        # noqa: BLE001
+            row["hole_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
     except Exception as exc:                                            # noqa: BLE001
         row["part_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     try:
@@ -206,24 +221,38 @@ def main() -> int:
             row["views_before"] = _view_count(doc)
             row["annotations_before"] = _annotation_total(doc)
             # ★ 有的工具要求"同一张图上先有视图" ⇒ 先补一个（★ 用**能力层**建，避免又引入一层变量）
-            if name in NEEDS_VIEW and part_path:
-                try:
-                    from scripts import sw_drawing as _D
-                    v = _D.add_view(doc, part_path, "*Front", 0.10, 0.10)
-                    row["pre_view_created"] = v is not None
-                    args["view_name"] = "*Front"          # ★ 占位名；下面按实际视图名改写
-                    views_now = _view_count(doc)
-                    row["views_after_pre_step"] = views_now
-                    import scripts.sw_drawing_query as _DQ
-                    names_now = [x.get("name") for x in (_DQ.list_views(doc) or [])]
-                    if names_now:
-                        args["view_name"] = str(names_now[0])
-                    row["pre_view_name"] = args.get("view_name")
-                except Exception as exc:                                # noqa: BLE001
-                    row["pre_step_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+            if name in NEEDS_VIEW:
+                if not part_path:
+                    row["pre_step_skip"] = ("★ 前置未成立：零件没存盘 ⇒ 无法建母视图"
+                                            "（★ 本格据此判前置，**不判能力**）")
+                    row["preconditions_held"] = False
+                else:
+                    try:
+                        from scripts import sw_drawing as _D
+                        v = _D.add_view(doc, part_path, "*Front", 0.10, 0.10)
+                        row["pre_view_created"] = v is not None
+                        args["view_name"] = "*Front"      # ★ 占位名；下面按实际视图名改写
+                        row["views_after_pre_step"] = _view_count(doc)
+                        import scripts.sw_drawing_query as _DQ
+                        names_now = [x.get("name") for x in (_DQ.list_views(doc) or [])]
+                        if names_now:
+                            args["view_name"] = str(names_now[0])
+                        row["pre_view_name"] = args.get("view_name")
+                    except Exception as exc:                            # noqa: BLE001
+                        row["pre_step_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             # ★ 视图类工具的前置：零件已存盘
             if "part_path" in args:
                 row["preconditions_held"] = bool(part_path)
+            # ★★ **重新取基线** —— 前置步骤自己会建一个母视图；★ 若不在调工具前重取，
+            #   `view_delta` 会把**前置步骤的成果**算成本工具的成果 ⇒ ★ **假绿**
+            #   （2026-10-03 实测踩到：`hole_table` / `insert_center_marks` 两格被误判为 ok）。
+            if name in NEEDS_VIEW:
+                row["views_before_call"] = _view_count(doc)
+                row["annotations_before_call"] = _annotation_total(doc)
+                if row["views_before_call"] is not None:
+                    row["views_before"] = row["views_before_call"]
+                if row["annotations_before_call"] is not None:
+                    row["annotations_before"] = row["annotations_before_call"]
             ret, how = _call_tool(spec, RC.RESOLVERS, args)
             row["call_path"] = how
             row["ret_type"] = type(ret).__name__

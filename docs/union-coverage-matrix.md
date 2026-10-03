@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 294 | 294 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 298 | 298 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -43,8 +43,8 @@
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 18⚠ | 16 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 23 | 89⚠ | 47 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 14 | 44⚠ | 22 | **8** |
-| ⑦ 钣金 | 10 | · | 1 | · | 6 | 19⚠ | 17 | **11** |
-| ⑧ 焊件 | 5 | · | · | · | 12 | 17⚠ | 17 | **5** |
+| ⑦ 钣金 | 10 | · | 1 | · | 8 | 19⚠ | 19 | **11** |
+| ⑧ 焊件 | 5 | · | · | · | 14 | 17⚠ | 19 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
 | ⑩ 装配 | 13 | 7 | 4 | 3 | 10 | 56⚠ | 29 | **19** |
 | ⑪ 工程图 | 18 | 18 | 15 | 17 | 29 | 67⚠ | 78 | **49** |
@@ -55,7 +55,7 @@
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 29 | 14 | 29 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 48 | 491⚠ | 90 | **42** |
 
-**合计**：并集 606 个操作；**MCP 暴露面**缺 **312** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 610 个操作；**MCP 暴露面**缺 **312** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 257 个操作只有本仓库有：
+共 261 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -287,6 +287,8 @@
 - `sheet_metal_create_one_bend`（⑦ 钣金）
 - `sheet_metal_create_swept_flange`（⑦ 钣金）
 - `sheet_metal_evidence`（⑦ 钣金）
+- `sheet_metal_insert_closed_corner`（⑦ 钣金）
+- `sheet_metal_insert_miter_flange`（⑦ 钣金）
 - `simulation_apply_fixed_restraint`（⑬ 仿真 / Motion）
 - `simulation_apply_link_connector`（⑬ 仿真 / Motion）
 - `simulation_apply_normal_force`（⑬ 仿真 / Motion）
@@ -372,6 +374,8 @@
 - `weldment_ensure_cut_list`（⑧ 焊件）
 - `weldment_evidence`（⑧ 焊件）
 - `weldment_export_cut_list_csv`（⑧ 焊件）
+- `weldment_insert_end_cap`（⑧ 焊件）
+- `weldment_insert_gusset`（⑧ 焊件）
 - `weldment_read_property_manager`（⑧ 焊件）
 - `weldment_set_cut_list_properties`（⑧ 焊件）
 - `weldment_update_cut_list`（⑧ 焊件）

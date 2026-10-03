@@ -1,0 +1,1323 @@
+"""★ 工程图 8 条工具的**工具层**端到端探针（★ 手工按 ToolSpec 契约组装 kwargs；★ 本稿未运行）。"""
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（真机探针草稿）· 规格 `specs/202-user-coverage-gaps`（R1 · 工程图 8 项接线）
+# 文件:   specs/202-user-coverage-gaps/recon/probe-drawing-tools-cand-b.py.txt
+# 定位:   ★ 验证 `mcp-server/tool_specs_batch75.py` 里那 8 条工程图工具**经工具层**能不能跑通
+#         （★ **不是**直接调能力层）。
+#   ★★ **本稿的调用路子（按任务指定）** —— 手工按 `spec.params` 组装 kwargs，再照
+#     `tool_registry.make_tool_function` 的**最后两行**取函数调用（不依赖它的内部签名）：
+#         `mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])`
+#         `return getattr(mod, spec.function)(**kwargs)`
+#     · 参数规则**逐条照抄注册器**（`tool_registry.py:492-498`）：同名直传、
+#       `param_alias[名] is None` 的不传、`response_format` **不进**实参
+#       （注册器只遍历 `spec.params`，而 `response_format` 是 `build_input_model` 后加的）；
+#     · 注入走**注册器同一张表** `register_capabilities.RESOLVERS[spec.inject]`（与真机同源），
+#       ★ 注入键**字面上等于 `inject` 的值**（`tool_registry.py:507` `kwargs[inject_as or inj]`，
+#       而 `register()`（同文件 `:559`）**不往下传 `inject_as`**）；
+#     · `effective_inject` 也**复用注册器的**（不自己重写一套归一逻辑）。
+#   ⚠★ **本稿自认的保真度边界（写进证据的 `contract.registry_only_hooks`）**：
+#     `extra_op` / `derived_args` / `pre_call` 这三个注册器钩子本稿**没有**实现
+#     ⇒ 若某条 spec 用了它们，本格就**不是**工具层等价路径。8 条**逐条查过**都没用。
+#     `param_alias` 本稿**实现了**（见 `_build_kwargs`）。
+#
+#   官方依据（★ 只引用**本轮真读过的官方页**；★ **读不到就写"读不到"，不编 API 名**）:
+#     · `C:\swapi\types\IDrawingDoc\Create3rdAngleViews2.md`（第三角三视图；调用侧只经能力层）
+#     · `C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md` —— ★★★ **官方名字是 `1st`**，
+#       而实现层 `drawing_workflow.create_standard_views_with_projection` 取的是
+#       **`CreateFirstAngleViews2`** ⇒ ★ 本机官方镜像里该串**零命中**（grep `C:\swapi` 全库 0 条）
+#       ⇒ `first_angle` 那格**预期**回 `status="blocked"` / `DRAWING_PROJECTION_API_UNAVAILABLE`
+#       ⇒ 本稿把它判成「**真阴性**（成因在实现层成员名，**不是**工具层不通）」，并把
+#         「运行期 COM 上这两个成员各存不存在」一起记进证据（不是只记结论）。
+#     · `C:\swapi\types\IDrawingDoc\InsertTableAnnotation{,2}.md` —— ★ 5 参那个官方标
+#       `Obsolete. Superseded by InsertTableAnnotation2`；★ 且**两版第 3/4 个参数都是 `AnchorType`**,
+#       实现层 `insert_table_annotation` 把 `table_type` 正好传在那个位 ⇒ ★ 本稿据此
+#       **用 `swBOMConfigurationAnchor_*` 作为 `table_type` 的实参**（有官方签名依据，不是猜），
+#       并把 `swTableAnnotationType_e` 的取值**也**读出来记进证据（供 Lead 判读，不据此断言）。
+#     · `C:\swapi\types\ISldWorks\ActivateDoc3.md`
+#       （`object ActivateDoc3(string Name, bool UseUserPreferences, int Option, out int Errors)`
+#        ⇒ ★ 激活工程图用这一条，`Errors` 用 `C.out_i4()` 包；`ActiveDoc`/`ActiveDoc2` 属**读**。）
+#     · `C:\swapi\enums\swTableAnnotationType_e.md` · `C:\swapi\enums\swBOMConfigurationAnchorType_e.md`
+#       —— ★ 枚举值**运行期现读**（复用 `tools/prove_drawing_batch.py` 那套表解析），
+#       读不到 ⇒ **前置未成立**、不猜、不写死（铁律 5）。
+#     · 其余读数成员（`GetNoteCount` / `GetTableAnnotationCount` / `GetCenterMarkCount2` /
+#       `GetAnnotationCount` / `GetOutline` / `GetName2` / `ISheet.RevisionTable` /
+#       `ISketchManager.CreateLine2` / `CreateCircle` / `IView.GetFirstView→GetNextView`）
+#       ★ 全部沿用本仓**已跑过**的 `tools/prove_drawing_batch.py` 与 `scripts/sw_drawing_query.py`
+#       （`list_views` / `current_sheet_info`），本稿不新造读法。
+#   许可:   本仓库 MIT。★ 无第三方代码引入。
+#   覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# ★ 怎么跑（★ 真机一律走弹窗护栏；★ 本稿**不由作者执行**，等 Lead 审完改名启用）：
+#     python tools/sw_guard.py --timeout 1800 -- python <改名后的>.py
+# ★ 只跑某几格（★ 卡住时省时间）：把**标签子串**当参数传进去，例如
+#     python tools/sw_guard.py --timeout 900 -- python <脚本>.py T3 T6
+# ★ 产物：`output/drawing-tools-e2e-evidence.json`
+#   临时件：`output/_probe_drawing_tools_part.SLDPRT`（★ 视图类前置：官方要求 `.sldprt` 完整路径）
+#           `output/_probe_drawing_tools_drawing.SLDDRW`（★ 只为中心符号线那格存盘，见该格注释）
+# ★ 收尾：每格关掉**自己开的**文档 · `CommandInProgress` 复位 · ★ **不保存任何已有文件**
+#   （只在 `output/` 下新建临时件）。
+# ★ 后缀是 `.py.txt` ⇒ 改名前**不会被** `scripts/check_python_syntax.py` 扫到（★ 那是刻意的）。
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+import time
+import types
+from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8")
+
+REPO = Path(r"D:\AI\SW")
+sys.path.insert(0, str(REPO))                 # `scripts.*` / `subskills.*` 走仓库根
+sys.path.insert(0, str(REPO / "scripts"))     # 与两份参考探针一致
+sys.path.insert(0, str(REPO / "mcp-server"))  # `tool_registry` / `register_capabilities`
+
+from scripts import sw_connect as C                                        # noqa: E402
+from scripts import sw_part as P                                           # noqa: E402
+import scripts.sw_drawing_query as DQ                                     # noqa: E402
+import scripts.sw_hole_features as HF                                      # noqa: E402
+from tool_registry import effective_inject                                 # noqa: E402
+import register_capabilities as RC                                         # noqa: E402
+
+OUT_JSON = REPO / "output" / "drawing-tools-e2e-evidence.json"
+PART_PATH = REPO / "output" / "_probe_drawing_tools_part.SLDPRT"
+DRAW_PATH = REPO / "output" / "_probe_drawing_tools_drawing.SLDDRW"
+
+#: ★ 工程图模板（★ 任务给的事实：`C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\templates\gb_a3.drwdot`
+#:   实测存在）；★ **仍在本稿里现查**，查不到就如实记 `drawing_template_found=False`
+#:   ⇒ 那一格判「前置未成立」，**不**当成"能力不成"。
+DRAWING_TEMPLATES = (
+    Path(r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\templates\gb_a3.drwdot"),
+    Path(r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\templates\gb_a4.drwdot"),
+)
+
+#: ★ 模板搜索根（★ 逐字沿用 `tools/prove_drawing_batch.py` 的 `TEMPLATE_ROOTS`
+#:   —— 官方对 `.slddrt` / `.sldholtbt` / `.sldrevtbt` 都写「在 install_dir\lang\<language>」）。
+TEMPLATE_ROOTS = (
+    r"C:\ProgramData\SOLIDWORKS",
+    r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang",
+    r"C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang",
+    r"C:\ProgramData\SolidWorks",
+)
+
+#: ★ 官方枚举页根（★ 取值现读，不写死 —— 见 `_enum`）。
+SWAPI_ENUMS = Path(r"C:\swapi\enums")
+
+#: ★ 本格清单 = `tool_specs_batch75` 声明的 8 条工具名（★ 逐字，取自该文件 `ToolSpec(name=...)`）。
+TOOL_NAMES = (
+    "solidworks_drawing_create_projected_view",
+    "solidworks_drawing_create_section_view",
+    "solidworks_drawing_create_detail_view",
+    "solidworks_drawing_set_sheet_format",
+    "solidworks_drawing_add_note",
+    "solidworks_drawing_create_hole_table",
+    "solidworks_drawing_create_revision_table",
+    "solidworks_drawing_insert_center_marks",
+)
+
+#: ★ 三态判词（★ 任务硬要求：建成 / 前置未成立 / 真阴性 —— ★ 三者**不许**混）。
+BUILT = "built"
+PRECONDITION_NOT_MET = "precondition_not_met"
+TRUE_NEGATIVE = "true_negative"
+
+_ENUM_CACHE: dict[tuple[str, str], tuple[int | None, str | None]] = {}
+
+
+# ── 小助手（COM 读数） ───────────────────────────────────────────────────────
+def _get(obj, name, *args):
+    """★ 本仓统一的 COM 取/调（`sw_connect.get_com_member`）。"""
+    return C.get_com_member(obj, name, *args)
+
+
+def _close(sw, doc):
+    """★ 关掉**自己开的**文档（不保存）。"""
+    if doc is None:
+        return
+    try:
+        title = str(_get(doc, "GetTitle") or "")
+        if title:
+            _get(sw, "CloseDoc", title)
+    except Exception:                                                 # noqa: BLE001
+        pass
+
+
+def _clear(doc):
+    """★ 清选区（★ 每格开头都做，免得上格残留）。"""
+    try:
+        _get(doc, "ClearSelection2", True)
+    except Exception:                                                 # noqa: BLE001
+        pass
+
+
+def _sel_counts(doc, marks=(0, 1, 2, 4, 8)) -> dict:
+    """★ 回读**按标记分组**的选区计数 —— ★ 判"前置成不成立"只能用回读计数
+    （`SelectByID2` 的返回值不可信，本仓已知事实 8）。"""
+    out = {}
+    for mark in marks:
+        try:
+            out[str(mark)] = int(_get(_get(doc, "SelectionManager"),
+                                     "GetSelectedObjectCount2", mark) or 0)
+        except Exception:                                             # noqa: BLE001
+            out[str(mark)] = -1
+    return out
+
+
+def _any_selected(counts: dict) -> bool:
+    return any(v > 0 for v in (counts or {}).values())
+
+
+def _vname(view) -> str:
+    """★ 视图名（`GetName2` → 退回 `Name`，与 `sw_drawing_query` 同口径）。"""
+    for attr in ("GetName2", "Name"):
+        try:
+            value = _get(view, attr)
+            if value:
+                return str(value)
+        except Exception:                                             # noqa: BLE001
+            continue
+    return ""
+
+
+def _view_chain(doc):
+    """★ 视图链：`GetFirstView()` → `GetNextView()`（★ 含"图纸本身"那个伪视图）。"""
+    out = []
+    try:
+        view = _get(doc, "GetFirstView")
+    except Exception as exc:                                          # noqa: BLE001
+        return out, "%s: %s" % (type(exc).__name__, str(exc)[:120])
+    guard = 0
+    while view is not None and guard < 500:                           #: ★ 防死循环
+        guard += 1
+        out.append(view)
+        try:
+            view = _get(view, "GetNextView")
+        except Exception:                                             # noqa: BLE001
+            break
+    return out, None
+
+
+def _real_views(doc):
+    """★ **真视图**（★ 排除"图纸本身"那个伪视图）⇒ `(views, names, err)`。"""
+    try:
+        listed = [str((r or {}).get("name") or "") for r in (DQ.list_views(doc) or [])]
+    except Exception as exc:                                          # noqa: BLE001
+        return [], [], "取视图清单失败：%s: %s" % (type(exc).__name__, str(exc)[:120])
+    chain, err = _view_chain(doc)
+    if err:
+        return [], [], err
+    return [v for v in chain if _vname(v) in listed], listed, None
+
+
+def _view_count(doc):
+    """★ 视图数（判据之一 —— 不用特征树增量）。"""
+    try:
+        return len(DQ.list_views(doc) or [])
+    except Exception:                                                 # noqa: BLE001
+        return None
+
+
+#: ★ 各族**官方回读成员**（★ 全部零参；★ 判据不许只看"返回非 None"）。
+_COUNTERS = (
+    ("anno", "GetAnnotationCount"),
+    ("note", "GetNoteCount"),
+    ("table", "GetTableAnnotationCount"),
+    ("center", "GetCenterMarkCount2"),
+)
+
+
+def _counts_totals(doc) -> dict:
+    """★ 注解读数：真视图与整条链各一份（★ 有些注解挂在图纸上而不挂在视图里 ⇒ 两份都报）。"""
+    real, _names, err = _real_views(doc)
+    chain, _e = _view_chain(doc)
+    state: dict = {"err": err}
+    for label, views in (("real", real), ("all", chain)):
+        totals = {}
+        for key, member in _COUNTERS:
+            vals = []
+            for view in views:
+                try:
+                    vals.append(int(_get(view, member) or 0))
+                except Exception:                                     # noqa: BLE001
+                    pass
+            totals[key] = sum(vals) if vals else None
+        totals["count"] = len(views)
+        state[label] = totals
+    state["per_view"] = [{"name": _vname(v),
+                          **{k: _safe_count(v, m) for k, m in _COUNTERS}}
+                         for v in real]
+    return state
+
+
+def _safe_count(view, member):
+    try:
+        return int(_get(view, member) or 0)
+    except Exception:                                                 # noqa: BLE001
+        return None
+
+
+def _delta(before, after, key, bucket="all"):
+    """★ 增量（★ 任一份量不到就回 None ⇒ 判据降级，不猜 0）。"""
+    try:
+        b = before[bucket][key]
+        a = after[bucket][key]
+    except Exception:                                                 # noqa: BLE001
+        return None
+    if b is None or a is None:
+        return None
+    return int(a) - int(b)
+
+
+def _outline(view):
+    """★ `IView.GetOutline`：**4 个 double，单位米**，`[xmin, ymin, xmax, ymax]`。"""
+    try:
+        vals = [float(x) for x in (_get(view, "GetOutline") or [])]
+    except Exception:                                                 # noqa: BLE001
+        return None
+    return vals if len(vals) >= 4 else None
+
+
+def _activate_view(doc, name) -> bool:
+    """★ 激活视图（`IDrawingDoc.ActivateView(string)`）。"""
+    try:
+        return bool(_get(doc, "ActivateView", str(name)))
+    except Exception:                                                 # noqa: BLE001
+        return False
+
+
+def _revision_table_readback(doc):
+    """★ `ISheet.RevisionTable` 回读（★ 官方 `InsertRevisionTable2` 的 Returns 就是它）。"""
+    try:
+        sheet = _get(doc, "GetCurrentSheet")
+    except Exception as exc:                                          # noqa: BLE001
+        return None, "%s: %s" % (type(exc).__name__, str(exc)[:120])
+    if sheet is None:
+        return None, "GetCurrentSheet 回 None"
+    try:
+        return _get(sheet, "RevisionTable"), None
+    except Exception as exc:                                          # noqa: BLE001
+        return None, "%s: %s" % (type(exc).__name__, str(exc)[:120])
+
+
+def _enum(enum_name: str, member: str):
+    """★ **在官方枚举页里现场取枚举值** ⇒ `(value|None, 来源或原因)`。
+
+    ★★ 沿用 `tools/prove_drawing_batch.py` 的 `_enum`（同一份解析规则）：只认页里
+    `| Member | Value |` 那张表；Value 列形如 `12` / `1 = Upper-left corner` / `4 or 0x4; 说明…`
+    ⇒ 先试 `0x…` 再试十进制。★ 读不到 ⇒ `(None, 原因)` ⇒ **调用方据此判前置未成立，不猜**。
+    """
+    key = (enum_name, member)
+    if key in _ENUM_CACHE:
+        return _ENUM_CACHE[key]
+    page = SWAPI_ENUMS / ("%s.md" % enum_name)
+    value: int | None = None
+    note: str | None = None
+    if not page.is_file():
+        note = "★ 官方枚举页不在本机：%s" % page
+    else:
+        try:
+            text = page.read_text(encoding="utf-8", errors="replace")
+        except OSError as exc:
+            text, note = "", "★ 读官方枚举页失败：%s" % str(exc)[:120]
+        if text:
+            for line in text.splitlines():
+                if not line.startswith("|"):
+                    continue
+                cells = [c.strip() for c in line.strip().strip("|").split("|")]
+                if len(cells) < 2 or cells[0] != member:
+                    continue
+                raw = cells[1]
+                match = re.match(r"^0x([0-9a-fA-F]+)", raw) or re.match(r"^(-?\d+)", raw)
+                if match:
+                    value = int(match.group(1), 16) if raw.lower().startswith("0x") \
+                        else int(match.group(1))
+                    note = str(page)
+                else:
+                    note = "★ %s 的 Value 列不是数字（%r）⇒ 不解析、不猜" % (member, raw[:60])
+                break
+            else:
+                note = "★ 官方枚举页 %s 里没有成员 %s ⇒ 不猜" % (page.name, member)
+    _ENUM_CACHE[key] = (value, note)
+    return value, note
+
+
+def _enum_or_note(row: dict, enum_name: str, member: str, label: str = ""):
+    """★ 取枚举值；取不到就**记进 row** 并回 None（★ 调用方据此跳过该格，不硬凑）。"""
+    value, note = _enum(enum_name, member)
+    if value is None:
+        row.setdefault("enum_missing", []).append(
+            "%s.%s%s ⇒ %s" % (enum_name, member, ("（%s）" % label) if label else "", note or ""))
+    else:
+        row.setdefault("enum_read", {})["%s.%s" % (enum_name, member)] = value
+    return value
+
+
+def _find_files(patterns, roots=TEMPLATE_ROOTS):
+    """★ 在若干根目录下按文件名找（★ 用到才找，找不到就**如实回空**）。"""
+    hits: list[str] = []
+    for root in roots:
+        base = Path(root)
+        if not base.is_dir():
+            continue
+        for pattern in patterns:
+            try:
+                hits.extend(sorted(str(p) for p in base.rglob(pattern)))
+            except OSError:
+                continue
+    return hits
+
+
+# ── spec 装载与契约回读（★ 任务硬要求①：按 ToolSpec 的契约调） ───────────────
+def load_batch75_specs():
+    """★ 取 batch75 的 8 条 spec。
+
+    ★ 主路：`register_capabilities.all_specs()`（★ 任务指定的那条），按 `TOOL_NAMES` 过滤；
+    ★ 备路：直接 `tool_specs_batch75.SPECS_BATCH75`（★ 只在主路抛错时用，并把用了哪条写进证据）。
+    ★ **两条都读不到** ⇒ 返回 `(specs, info)` 且 `info["ok"] = False` ⇒ 整份探针判"前置未成立"。
+    """
+    info: dict = {"source": None, "missing_tools": list(TOOL_NAMES), "error": None}
+    try:
+        specs = [s for s in RC.all_specs() if getattr(s, "name", "") in TOOL_NAMES]
+        if specs:
+            info["source"] = "register_capabilities.all_specs()"
+            info["ok"] = True
+            info["missing_tools"] = [n for n in TOOL_NAMES
+                                     if n not in {s.name for s in specs}]
+            return {s.name: s for s in specs}, info
+        info["error"] = "★ all_specs() 里没有这 8 条（缺：%s）" % info["missing_tools"]
+    except Exception as exc:                                          # noqa: BLE001
+        info["error"] = "all_specs() 抛错：%s: %s" % (type(exc).__name__, str(exc)[:200])
+    try:
+        import tool_specs_batch75 as B75                                # noqa: PLC0415
+        specs = [s for s in (B75.SPECS_BATCH75 or []) if getattr(s, "name", "") in TOOL_NAMES]
+        info["source"] = "tool_specs_batch75.SPECS_BATCH75（备路）"
+        info["ok"] = bool(specs)
+        info["missing_tools"] = [n for n in TOOL_NAMES if n not in {s.name for s in specs}]
+        return {s.name: s for s in specs}, info
+    except Exception as exc:                                          # noqa: BLE001
+        info["error"] = "%s ｜ 备路也抛错：%s: %s" % (
+            info.get("error") or "", type(exc).__name__, str(exc)[:160])
+        info["ok"] = False
+        return {}, info
+
+
+def contract_of(spec) -> dict:
+    """★ 把一条 spec 的**契约**回读成可核对的 dict（★ 不改一个字）。"""
+    return {
+        "tool_name": spec.name,
+        "title": spec.title,
+        "module": spec.module,
+        "function": spec.function,
+        "inject": effective_inject(spec),
+        "params": [{"name": p.name, "kind": getattr(p.kind, "__name__", str(p.kind)),
+                    "required": bool(p.is_required), "description": (p.description or "")[:120]}
+                   for p in spec.params],
+        "param_alias": dict(getattr(spec, "param_alias", {}) or {}),
+        "registry_only_hooks": [name for name in ("extra_op", "derived_args", "pre_call")
+                                if getattr(spec, name, None) is not None],
+        "omitted_params": list(getattr(spec, "omitted_params", ()) or ()),
+    }
+
+
+def _build_kwargs(spec, args: dict) -> dict:
+    """★ 按 `spec.params` 逐个取实参（★ 规则照抄 `tool_registry.py:492-498`）。
+
+    ★ `param_alias[名] is None` ⇒ 该参数由解析器消费、**不进**目标函数；
+    ★ 未列出的参数**同名直传**；★ 必填参数没准备 ⇒ **抛**（不静默补默认）。
+    """
+    kwargs: dict = {}
+    missing: list[str] = []
+    alias = dict(getattr(spec, "param_alias", {}) or {})
+    for p in spec.params:
+        target = alias.get(p.name, p.name) if alias else p.name
+        if target is None:
+            continue
+        if p.name not in args:
+            missing.append(p.name)
+            continue
+        kwargs[target] = args[p.name]
+    if missing:
+        raise RuntimeError("工具 %s 的参数没准备：%s（★ 按 spec.params 逐条核对，不猜）"
+                           % (spec.name, missing))
+    return kwargs
+
+
+def call_tool(spec, args: dict):
+    """★ **经工具层**调一条工具 ⇒ `(结果, 调用信息)`。
+
+    ★ 四步与 `make_tool_function` 的 `op()` 同序：
+      ① 组装 kwargs（见 `_build_kwargs`）② 注入宿主对象 ③ `__import__("scripts.%s")`
+      ④ `getattr(mod, spec.function)(**kwargs)`
+    ★ `response_format` **不传**（注册器也不传 —— 它只遍历 `spec.params`）。
+    """
+    info: dict = {"tool_name": spec.name, "module": spec.module,
+                  "function": spec.function, "args_given": dict(args)}
+    kwargs = _build_kwargs(spec, args)
+    inject_key = effective_inject(spec)
+    if inject_key:
+        resolver = (RC.RESOLVERS or {}).get(inject_key)
+        if resolver is None:
+            raise RuntimeError(
+                "工具 %s 声明了 inject=%r，但注册时没给对应解析器（已给：%r）"
+                % (spec.name, inject_key, sorted((RC.RESOLVERS or {}).keys())))
+        shim = types.SimpleNamespace(**kwargs)      # ★ 与注册器一样，把 params 传给解析器
+        host = resolver(shim)
+        kwargs[inject_key] = host                   # ★ 注入键 = inject 的值（`tool_registry.py:507`）
+        info["inject_key"] = inject_key
+        info["inject_host_title"] = _safe_str(host, "GetTitle")
+        info["inject_host_path"] = _safe_str(host, "GetPathName")
+        info["inject_host_type"] = _safe_count(host, "GetType")
+    info["kwargs_keys"] = sorted(kwargs)
+    mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
+    fn = getattr(mod, spec.function)
+    info["resolved_callable"] = "%s.%s" % (mod.__name__, spec.function)
+    return fn(**kwargs), info
+
+
+def _safe_str(obj, member):
+    try:
+        return str(_get(obj, member) or "")
+    except Exception:                                                 # noqa: BLE001
+        return None
+
+
+def check_inject_is_active_doc(sw, host, info: dict) -> None:
+    """★ 回读「注入进去的就是**当前活动**工程图吗」—— ★ 这是 `inject="drawing_model"`
+    的前提（`RESOLVERS["drawing_model"] = resolve_model` = **活动文档**）。"""
+    try:
+        active = sw.ActiveDoc
+    except Exception as exc:                                          # noqa: BLE001
+        info["inject_active_check"] = "读 ActiveDoc 失败：%s: %s" % (type(exc).__name__,
+                                                                    str(exc)[:120])
+        return
+    info["inject_active_title"] = _safe_str(active, "GetTitle")
+    info["inject_active_path"] = _safe_str(active, "GetPathName")
+    info["inject_matches_active_doc"] = bool(
+        info.get("inject_host_title") and info.get("inject_host_title") == info["inject_active_title"])
+
+
+# ── 前置：零件与工程图 ───────────────────────────────────────────────────────
+def build_saved_part(sw, row: dict):
+    """★ 建一个**带孔**的板并**存盘**（★ 存盘是硬前置 —— 见下）。
+
+    ★★ 为什么必须存盘：官方 `CreateDrawViewFromModelView3` 的 Remarks 逐字要求 `ModelName` 是
+      **含 `.sldprt`/`.sldasm` 扩展名的完整路径** ⇒ `create_projected_view` 的 `preconditions_held`
+      就是按这个判的（`scripts/sw_drawing_expose.py:73`）。
+    ★ 板上打一个孔：让"孔表 / 中心符号线"那两格有圆边可用。
+    ★ 结构逐字沿用 `tools/prove_drawing_batch.py::_build_part`（★ 已真机跑过）。
+    """
+    doc = C.new_document(sw, "part")
+    try:
+        P.start_sketch(doc, plane_name="Front Plane")
+        _get(_get(doc, "SketchManager"), "CreateCornerRectangle",
+             -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+        P.end_sketch(doc)
+        names = [n for n in (P.feature_names(doc) or [])
+                 if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+        if not names:
+            row["part_err"] = "找不到草图特征名（feature_names 没回草图）"
+            return None
+        P.extrude_boss(doc, names[-1], 0.01)
+        row["extrude_sketch"] = names[-1]
+    except Exception as exc:                                          # noqa: BLE001
+        row["part_err"] = "建板失败：%s: %s" % (type(exc).__name__, str(exc)[:180])
+        return None
+    try:
+        rep = HF.create_hole_wizard_at_selection_report(doc, "+z", "M8")
+        row["hole"] = {k: rep.get(k) for k in ("ok", "selection_mark") if k in rep}
+    except Exception as exc:                                          # noqa: BLE001
+        #: ★ 孔不成**不阻断**：只是"孔表 / 中心符号线"的前置更弱 ⇒ 如实记下来。
+        row["hole_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
+    try:
+        row["part_saved"] = bool(C.save_document(doc, str(PART_PATH)))
+    except Exception as exc:                                          # noqa: BLE001
+        row["part_save_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
+        row["part_saved"] = False
+    return doc if row.get("part_saved") else None
+
+
+def find_drawing_template() -> str | None:
+    """★ 工程图模板（★ 现查；查不到就如实回 None ⇒ 那格判前置未成立）。"""
+    for candidate in DRAWING_TEMPLATES:
+        if candidate.is_file():
+            return str(candidate)
+    hits = _find_files(("gb_a3.drwdot", "*.drwdot"), (r"C:\ProgramData\SOLIDWORKS",))
+    return (hits or [None])[0]
+
+
+def new_activated_drawing(sw, row: dict):
+    """★ 新建工程图 → **激活** → 回读"活动文档就是它" ⇒ `(drawing|None, info)`。
+
+    ★ 为什么必须激活：`RESOLVERS["drawing_model"] = resolve_model` 取的是 **ActiveDoc**
+      ⇒ ★ 不激活的话，工具层会拿到**上一张文档**（或报错），那就不是"经工具层"了。
+    ★ 激活用官方 `ISldWorks::ActivateDoc3(Name, UseUserPreferences, Option, out Errors)`
+      （`Errors` 用 `C.out_i4()` 包 —— 官方那四个 out 参数形态只有这一种真机验证过）。
+    """
+    template = find_drawing_template()
+    row["drawing_template"] = template
+    if not template:
+        row["drawing_template_found"] = False
+        return None, {"err": "★ 前置未成立：找不到 `.drwdot` 工程图模板"}
+    row["drawing_template_found"] = True
+    try:
+        doc = C.new_document(sw, "drawing", template_path=str(template))
+    except Exception as exc:                                          # noqa: BLE001
+        return None, {"err": "新建工程图失败：%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    info: dict = {"template": str(template)}
+    errors = C.out_i4(0)
+    try:
+        _get(sw, "ActivateDoc3", str(_get(doc, "GetTitle") or ""), False, 0, errors)
+        info["activate_doc3_returned"] = True
+    except Exception as exc:                                          # noqa: BLE001
+        info["activate_doc3_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    try:
+        info["activate_errors_code"] = int(getattr(errors, "value", -1))
+    except Exception:                                                 # noqa: BLE001
+        info["activate_errors_code"] = None
+    info["active_title"] = _safe_str(sw.ActiveDoc, "GetTitle")
+    info["is_active"] = bool(info["active_title"]) and \
+        info["active_title"] == _safe_str(doc, "GetTitle")
+    info["doc_type"] = _safe_count(doc, "GetType")           #: ★ 3 = `swDocDRAWING`
+    try:
+        info["sheet_name"] = DQ.current_sheet_name(doc)
+        info["views_before"] = _view_count(doc)
+    except Exception as exc:                                          # noqa: BLE001
+        info["sheet_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    if not info.get("is_active"):
+        info["err"] = "★ 激活没生效（ActiveDoc=%r，期望=%r）⇒ 这一格不算工具层路径" % (
+            info["active_title"], _safe_str(doc, "GetTitle"))
+    return doc, info
+
+
+def setup_views_through_tool(sw, specs, doc, row: dict, projection="third_angle"):
+    """★ 用**工具层**的那条投影视图把视图建起来（★ 后面几格的前置）。
+
+    ★ 为什么经工具而不是直接 `Create3rdAngleViews2`：① 后面几格的前置**就是**这条工具的产物；
+      ② ★ 这样"工具层能不能建视图"与"别的工具能不能在有视图的图上跑"是**同一个**读数。
+    ★ 用 `third_angle`（官方成员 `Create3rdAngleViews2` 在本机官方镜像里**有**），
+      ★ `first_angle` 单独一格（见 T2）⇒ 前置不因那条成员名问题而垮掉。
+    """
+    spec = specs.get("solidworks_drawing_create_projected_view")
+    if spec is None:
+        row["setup"] = {"err": "spec 里没有投影视图那条"}
+        return False
+    before = _view_count(doc)
+    try:
+        result, info = call_tool(spec, {"part_path": str(PART_PATH), "projection": projection})
+    except Exception as exc:                                          # noqa: BLE001
+        row["setup"] = {"err": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+        return False
+    after = _view_count(doc)
+    views, names, err = _real_views(doc)
+    row["setup"] = {"projection": projection, "call": info, "raw": result,
+                    "views_before": before, "views_after": after,
+                    "view_names": names, "view_chain_err": err}
+    row["setup"]["ok"] = bool(before is not None and after is not None and after > before)
+    return bool(row["setup"]["ok"])
+
+
+# ── 格子 ────────────────────────────────────────────────────────────────────
+def case_t1_projected_view_third(sw, specs):
+    """★ T1 投影视图（`projection="third_angle"`）—— ★ 判据：**视图数 +1 以上** 且
+    能力层 `created` 为真（`Create3rdAngleViews2` 官方 Returns 逐字：成功 true）。
+    ★ 前置：已存盘的 `.sldprt`（★ 工具层自己会把它报成 `preconditions_held`）。"""
+    row = {"tag": "★ T1 投影视图（third_angle · Create3rdAngleViews2）", "ok": False,
+           "verdict": PRECONDITION_NOT_MET}
+    part = doc = None
+    try:
+        part = build_saved_part(sw, row)
+        row["preconditions_held"] = bool(part is not None
+                                         and PART_PATH.is_file()
+                                         and str(PART_PATH).lower().endswith(".sldprt"))
+        if not row["preconditions_held"]:
+            row["note"] = "★ 前置未成立：零件没建成/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, info = new_activated_drawing(sw, row)
+        row["drawing"] = info
+        if doc is None or not info.get("is_active"):
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (info.get("err") or "没拿到工程图")
+            return row
+        before = info.get("views_before")
+        result, call = call_tool(specs["solidworks_drawing_create_projected_view"],
+                                 {"part_path": str(PART_PATH), "projection": "third_angle"})
+        check_inject_is_active_doc(sw, doc, call)
+        after = _view_count(doc)
+        views, names, _err = _real_views(doc)
+        row.update({"call": call, "tool_raw": result,
+                    "views_before": before, "views_after": after,
+                    "view_names": names,
+                    "view_delta": None if (before is None or after is None) else after - before,
+                    "tool_ok": bool((result or {}).get("ok")) if isinstance(result, dict) else None,
+                    "tool_preconditions_held": (result or {}).get("preconditions_held")
+                    if isinstance(result, dict) else None})
+        row["ok"] = bool((row["view_delta"] or 0) >= 1)
+        row["verdict"] = BUILT if row["ok"] else TRUE_NEGATIVE
+        row["verified_by"] = "view_count_delta（★ 判据是视图数，不是「返回非 None」）"
+    except Exception as exc:                                          # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row["verdict"] = TRUE_NEGATIVE
+    finally:
+        if part is not None:
+            _close(sw, part)
+        if doc is not None:
+            _close(sw, doc)
+    return row
+
+
+def case_t2_projected_view_first(sw, specs):
+    """★ T2 投影视图（`projection="first_angle"`）—— ★ **单变量对照格**（只变 projection）。
+
+    ★★★ 本格预期是「**真阴性**」，且**成因在实现层、不在工具层**：
+      官方成员是 `IDrawingDoc::Create1stAngleViews2`（`C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md`
+      逐字 `bool Create1stAngleViews2(string ModelName)`），而实现层
+      `drawing_workflow.create_standard_views_with_projection` 取的是 **`CreateFirstAngleViews2`**
+      ⇒ ★ `getattr(...)` 回 None ⇒ 能力层自己回 `status="blocked"` /
+      `error_code="DRAWING_PROJECTION_API_UNAVAILABLE"`（★ 是**响亮地失败**，不是静默成功）。
+    ★ 所以本格**额外回读**运行期 COM 上这两个成员各存不存在 —— 把"结论"与"依据"分开记。"""
+    row = {"tag": "★ T2 投影视图（first_angle · ★ 预期 blocked：实现层成员名与官方不一致）",
+           "ok": False, "verdict": PRECONDITION_NOT_MET}
+    part = doc = None
+    try:
+        part = build_saved_part(sw, row)
+        row["preconditions_held"] = bool(part is not None and PART_PATH.is_file())
+        if not row["preconditions_held"]:
+            row["note"] = "★ 前置未成立：零件没建成/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, info = new_activated_drawing(sw, row)
+        row["drawing"] = info
+        if doc is None or not info.get("is_active"):
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (info.get("err") or "没拿到工程图")
+            return row
+        row["runtime_member_first_angle"] = getattr(doc, "CreateFirstAngleViews2", None) is not None
+        row["runtime_member_1st_angle"] = getattr(doc, "Create1stAngleViews2", None) is not None
+        row["official_member_page"] = r"C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md"
+        row["official_name_note"] = ("★ 官方镜像是 `Create1stAngleViews2`；`CreateFirstAngleViews2` "
+                                     "在 C:\\swapi 全库 grep **零命中**")
+        before = _view_count(doc)
+        result, call = call_tool(specs["solidworks_drawing_create_projected_view"],
+                                 {"part_path": str(PART_PATH), "projection": "first_angle"})
+        check_inject_is_active_doc(sw, doc, call)
+        after = _view_count(doc)
+        raw = result.get("raw") if isinstance(result, dict) else None
+        row.update({"call": call, "tool_raw": result,
+                    "views_before": before, "views_after": after,
+                    "view_delta": None if (before is None or after is None) else after - before,
+                    "tool_ok": bool((result or {}).get("ok")) if isinstance(result, dict) else None,
+                    "capability_status": (raw or {}).get("status") if isinstance(raw, dict) else None,
+                    "capability_error_code": (raw or {}).get("error_code")
+                    if isinstance(raw, dict) else None})
+        blocked = row.get("capability_status") == "blocked"
+        row["ok"] = False
+        row["verdict"] = TRUE_NEGATIVE
+        row["note"] = (
+            "★ 工具层**链路是通的**（注入解析成功 · 返回结构完整），但"
+            "`first_angle` 这条**能力层自己报了 blocked**：%s"
+            "⇒ ★ **真阴性**（成员名与官方不一致），★ **不是**「工具层不通」，也不是「前置未成立」"
+            % (row.get("capability_error_code") or "无 error_code")) if blocked else (
+            "★ 与预期不同：first_angle 既没建成也没回 blocked ⇒ 如实记，不下结论")
+        row["verified_by"] = "capability status/error_code + 视图数增量 + 运行期成员存在性"
+    except Exception as exc:                                          # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row["verdict"] = TRUE_NEGATIVE
+    finally:
+        if part is not None:
+            _close(sw, part)
+        if doc is not None:
+            _close(sw, doc)
+    return row
+
+
+def case_t3_section_view(sw, specs):
+    """★ T3 剖视图 —— ★ 官方 Remarks 逐字要求「**调用前先选好剖面线**」，
+    而能力层**不代选**、只回读选区计数并把 `preconditions_held` 带回（★ 事实 496）。
+
+    ★ 本格照官方例子 `Create_Section_View_at_Specified_Location_Example_VB` 的**调用序**做前置：
+      `ActivateView` → `SelectByID2(视图名,"DRAWINGVIEW")` → `ClearSelection2` →
+      `SketchManager.CreateLine2(...)`（★ 剖面线就是活动视图里画的一条草图线）。
+    ★ 判据：**视图数 +1**（★ 且前置成立才算）。"""
+    row = {"tag": "★ T3 剖视图（create_section_view · 前置＝先选剖面线）",
+           "ok": False, "verdict": PRECONDITION_NOT_MET}
+    part = doc = None
+    try:
+        part = build_saved_part(sw, row)
+        if part is None or not PART_PATH.is_file():
+            row["note"] = "★ 前置未成立：零件没建成/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, info = new_activated_drawing(sw, row)
+        row["drawing"] = info
+        if doc is None or not info.get("is_active"):
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (info.get("err") or "没拿到工程图")
+            return row
+        if not setup_views_through_tool(sw, specs, doc, row):
+            row["note"] = "★ 前置未成立：母视图没建成（★ 见 setup）⇒ 本格不作判据"
+            return row
+        views, names, _err = _real_views(doc)
+        target = next((n for n in names if n), "")
+        row["activated"] = _activate_view(doc, target) if target else False
+        _clear(doc)
+        view = next((v for v in views if _vname(v) == target), None)
+        bbox = _outline(view) if view is not None else None
+        row["view_outline_m"] = [round(v, 6) for v in bbox] if bbox else None
+        if not bbox:
+            row["note"] = "★ 前置未成立：取不到视图包围盒 ⇒ 画不出剖面线"
+            return row
+        y_mid = (bbox[1] + bbox[3]) / 2.0
+        p1 = (bbox[0] + 0.1 * (bbox[2] - bbox[0]), y_mid)
+        p2 = (bbox[2] - 0.1 * (bbox[2] - bbox[0]), y_mid)
+        try:
+            _get(_get(doc, "SketchManager"), "CreateLine2",
+                 float(p1[0]), float(p1[1]), 0.0, float(p2[0]), float(p2[1]), 0.0)
+            row["section_line_drawn"] = [round(p1[0], 6), round(p1[1], 6),
+                                         round(p2[0], 6), round(p2[1], 6)]
+        except Exception as exc:                                      # noqa: BLE001
+            row["note"] = "★ 前置未成立：CreateLine2 失败（%s: %s）⇒ 画不出剖面线" % (
+                type(exc).__name__, str(exc)[:140])
+            return row
+        row["sel_by_mark_before_call"] = _sel_counts(doc)
+        row["preconditions_held"] = _any_selected(row["sel_by_mark_before_call"])
+        before = _view_count(doc)
+        result, call = call_tool(specs["solidworks_drawing_create_section_view"],
+                                 {"x_mm": 180.0, "y_mm": 120.0})
+        check_inject_is_active_doc(sw, doc, call)
+        after = _view_count(doc)
+        row.update({"call": call, "tool_raw": result,
+                    "views_before": before, "views_after": after,
+                    "view_delta": None if (before is None or after is None) else after - before,
+                    "tool_ok": bool((result or {}).get("ok")) if isinstance(result, dict) else None,
+                    "tool_preconditions_held": (result or {}).get("preconditions_held")
+                    if isinstance(result, dict) else None})
+        #: ★ **工具层自己回的** `preconditions_held` 与探针独立回读的选区计数**互为交叉核**
+        #:   （★ 两者不一致本身就是一条要报的发现）。
+        row["preconditions_agree_with_tool"] = (
+            row["preconditions_held"] == row.get("tool_preconditions_held"))
+        if not row["preconditions_held"]:
+            row["note"] = ("★ 前置未成立（调用前选区为空）⇒ 本格**不能**当「剖面视图不成」的证据；"
+                           "★ 要解决的是「剖面线怎么被选中」")
+            row["verdict"] = PRECONDITION_NOT_MET
+            return row
+        row["ok"] = bool(row["view_delta"] == 1)
+        row["verdict"] = BUILT if row["ok"] else TRUE_NEGATIVE
+        row["verified_by"] = "view_count_delta（★ 前置成立才算）+ 工具层 preconditions_held 交叉核"
+    except Exception as exc:                                          # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row["verdict"] = TRUE_NEGATIVE
+    finally:
+        if part is not None:
+            _close(sw, part)
+        if doc is not None:
+            _close(sw, doc)
+    return row
+
+
+def case_t4_detail_view(sw, specs):
+    """★ T4 局部视图 —— ★ 官方页没有 Remarks；★ 官方例子
+    `Create_Detail_Circle_and_Detail_View_Example_VB` 的调用序是
+    `ActivateView` → `SketchManager.CreateCircle(...)`（★ **局部圆＝草图圆**）→ 才调。
+    ★ 判据：**视图数 +1**。"""
+    row = {"tag": "★ T4 局部视图（create_detail_view · 前置＝图上有局部圆）",
+           "ok": False, "verdict": PRECONDITION_NOT_MET}
+    part = doc = None
+    try:
+        part = build_saved_part(sw, row)
+        if part is None or not PART_PATH.is_file():
+            row["note"] = "★ 前置未成立：零件没建成/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, info = new_activated_drawing(sw, row)
+        row["drawing"] = info
+        if doc is None or not info.get("is_active"):
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (info.get("err") or "没拿到工程图")
+            return row
+        if not setup_views_through_tool(sw, specs, doc, row):
+            row["note"] = "★ 前置未成立：母视图没建成（★ 见 setup）⇒ 本格不作判据"
+            return row
+        views, names, _err = _real_views(doc)
+        target = next((n for n in names if n), "")
+        row["activated"] = _activate_view(doc, target) if target else False
+        _clear(doc)
+        view = next((v for v in views if _vname(v) == target), None)
+        bbox = _outline(view) if view is not None else None
+        row["view_outline_m"] = [round(v, 6) for v in bbox] if bbox else None
+        if not bbox:
+            row["note"] = "★ 前置未成立：取不到视图包围盒 ⇒ 画不出局部圆"
+            return row
+        cx, cy = (bbox[0] + bbox[2]) / 2.0, (bbox[1] + bbox[3]) / 2.0
+        radius = 0.2 * min(bbox[2] - bbox[0], bbox[3] - bbox[1])
+        try:
+            _get(_get(doc, "SketchManager"), "CreateCircle",
+                 float(cx), float(cy), 0.0, float(cx + radius), float(cy), 0.0)
+            row["detail_circle"] = {"center_m": [round(cx, 6), round(cy, 6)],
+                                    "r_m": round(radius, 6)}
+        except Exception as exc:                                      # noqa: BLE001
+            row["note"] = "★ 前置未成立：CreateCircle 失败（%s: %s）" % (
+                type(exc).__name__, str(exc)[:140])
+            return row
+        row["preconditions_held"] = True
+        before = _view_count(doc)
+        #: ★ 实参**按 spec.params 逐条**给（五个全是必填：x_mm/y_mm/scale/label/shape_intensity）。
+        #: ★ `x_mm/y_mm` 给的是**毫米**（★ 换算只发生在 `scripts/sw_drawing_expose.py` 的 `_mm()` 里）。
+        result, call = call_tool(specs["solidworks_drawing_create_detail_view"],
+                                 {"x_mm": round((bbox[2] + 0.03) * 1000.0, 3),
+                                  "y_mm": round(cy * 1000.0, 3),
+                                  "scale": 2.0, "label": "A", "shape_intensity": 5})
+        check_inject_is_active_doc(sw, doc, call)
+        after = _view_count(doc)
+        views_after, names_after, _e = _real_views(doc)
+        row.update({"call": call, "tool_raw": result,
+                    "views_before": before, "views_after": after,
+                    "view_names_after": names_after,
+                    "view_delta": None if (before is None or after is None) else after - before,
+                    "tool_ok": bool((result or {}).get("ok")) if isinstance(result, dict) else None,
+                    "shape_intensity_note": ("★ 能力层默认 jagged_outline=False / no_outline=False "
+                                             "⇒ 官方那句「仅当 jagged_outline=True 且 "
+                                             "no_outline=False 时有效」⇒ 本格这个值**不参与生效**")})
+        row["ok"] = bool(row["view_delta"] == 1)
+        row["verdict"] = BUILT if row["ok"] else TRUE_NEGATIVE
+        row["verified_by"] = "view_count_delta"
+    except Exception as exc:                                          # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row["verdict"] = TRUE_NEGATIVE
+    finally:
+        if part is not None:
+            _close(sw, part)
+        if doc is not None:
+            _close(sw, doc)
+    return row
+
+
+def case_t5_sheet_format(sw, specs):
+    """★ T5 图纸格式/模板 —— 官方 `SetupSheet6` 的 Remarks 逐字说「换 `TemplateName` 会更新图纸格式」。
+
+    ★ 注意**能力层走的是 `ISheet.SetTemplateName`**（不是 `SetupSheet6` 本身）⇒
+    ★ 回读用 `scripts.sw_drawing_query.current_sheet_info` 里的 `sheet_format_name`
+      （它逐字取自 `ISheet.GetSheetFormatName`）★ —— 判据是**图纸读数真的变了**（★ 规则 6）。
+    ★ 前置：找到 `.slddrt`（官方说在 `install_dir\lang\<language>`）。"""
+    row = {"tag": "★ T5 图纸格式（set_sheet_format · 判据＝图纸读数真的变了）",
+           "ok": False, "verdict": PRECONDITION_NOT_MET}
+    doc = None
+    try:
+        template = (_find_files(("a - landscape.slddrt",)) or
+                    _find_files(("*.slddrt",)) or [None])[0]
+        row["format_path"] = template
+        if not template:
+            row["note"] = "★ 前置未成立：找不到 `.slddrt` 图纸格式 ⇒ 本格不作判据"
+            return row
+        doc, info = new_activated_drawing(sw, row)
+        row["drawing"] = info
+        if doc is None or not info.get("is_active"):
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (info.get("err") or "没拿到工程图")
+            return row
+        row["preconditions_held"] = True
+        try:
+            before = DQ.current_sheet_info(doc)
+        except Exception as exc:                                      # noqa: BLE001
+            row["note"] = "★ 前置未成立：读不到当前图纸信息（%s: %s）" % (
+                type(exc).__name__, str(exc)[:140])
+            return row
+        result, call = call_tool(specs["solidworks_drawing_set_sheet_format"],
+                                 {"format_path": str(template)})
+        check_inject_is_active_doc(sw, doc, call)
+        try:
+            after = DQ.current_sheet_info(doc)
+        except Exception as exc:                                      # noqa: BLE001
+            after = {"_err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+        changed = {k: [before.get(k), after.get(k)] for k in sorted(set(before) | set(after))
+                   if before.get(k) != after.get(k)}
+        row.update({"call": call, "tool_raw": result,
+                    "sheet_before": before, "sheet_after": after,
+                    "readback_changed": changed,
+                    "tool_ok": bool((result or {}).get("ok")) if isinstance(result, dict) else None})
+        row["ok"] = bool(changed)
+        row["verdict"] = BUILT if row["ok"] else TRUE_NEGATIVE
+        row["verified_by"] = "current_sheet_info（sheet_format_name / 宽高）读回前后对比（★ 不静默成功）"
+    except Exception as exc:                                          # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row["verdict"] = TRUE_NEGATIVE
+    finally:
+        if doc is not None:
+            _close(sw, doc)
+    return row
+
+
+def case_t6_add_note(sw, specs):
+    """★ T6 注释/文字 —— 官方 `InsertNote` 的 Remarks 逐字：引线附着点来自**调用前**的选择；
+    没选中时**无引线、自由放置、在原点** ⇒ ★ 本格**不选**（单变量：只测自由放置那一条路）。
+
+    ★ 判据：**`GetNoteCount` 增量**（★ 视图链与真视图各算一份），★ 并且把能力层自己回的
+    `text_evidence` / `position_evidence_m` / `verified` 一并记进证据（★ 它自己会做回读核验）。"""
+    row = {"tag": "★ T6 注释（add_note · 不选 ⇒ 官方说自由放置）",
+           "ok": False, "verdict": PRECONDITION_NOT_MET}
+    part = doc = None
+    try:
+        part = build_saved_part(sw, row)
+        if part is None or not PART_PATH.is_file():
+            row["note"] = "★ 前置未成立：零件没建成/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, info = new_activated_drawing(sw, row)
+        row["drawing"] = info
+        if doc is None or not info.get("is_active"):
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (info.get("err") or "没拿到工程图")
+            return row
+        if not setup_views_through_tool(sw, specs, doc, row):
+            row["note"] = "★ 前置未成立：母视图没建成（★ 见 setup）⇒ 本格不作判据"
+            return row
+        views, names, _err = _real_views(doc)
+        _activate_view(doc, next((n for n in names if n), ""))
+        _clear(doc)
+        row["sel_by_mark_before_call"] = _sel_counts(doc)
+        row["preconditions_held"] = True      #: ★ 本格的前置只是"有一张激活的工程图"
+        before = _counts_totals(doc)
+        result, call = call_tool(specs["solidworks_drawing_add_note"],
+                                 {"x_mm": 60.0, "y_mm": 200.0, "text": "PROBE-NOTE"})
+        check_inject_is_active_doc(sw, doc, call)
+        after = _counts_totals(doc)
+        raw = result.get("raw") if isinstance(result, dict) else None
+        row.update({"call": call, "tool_raw": result,
+                    "counts_before": before, "counts_after": after,
+                    "note_delta_all": _delta(before, after, "note", "all"),
+                    "note_delta_real": _delta(before, after, "note", "real"),
+                    "tool_ok": bool((result or {}).get("ok")) if isinstance(result, dict) else None,
+                    "capability_evidence": {k: (raw or {}).get(k) for k in
+                                             ("text_evidence", "position_evidence_m", "verified",
+                                              "status", "error_code")} if isinstance(raw, dict) else None})
+        row["ok"] = bool((row["note_delta_all"] or 0) >= 1)
+        row["verdict"] = BUILT if row["ok"] else TRUE_NEGATIVE
+        row["verified_by"] = "GetNoteCount_delta（视图链 / 真视图各一份）"
+    except Exception as exc:                                          # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row["verdict"] = TRUE_NEGATIVE
+    finally:
+        if part is not None:
+            _close(sw, part)
+        if doc is not None:
+            _close(sw, doc)
+    return row
+
+
+def _table_cell(sw, specs, row: dict, tool_name: str, template_patterns,
+                template_label: str, table_type_enum_member: str):
+    """★ 孔表 / 修订表**共用**的格子骨架（★ 两格只有模板与 `table_type` 不同）。
+
+    ★★ 关于 `table_type`（★ **不猜**，依据写在下面）：
+      · 官方 `IDrawingDoc.InsertTableAnnotation2(bool, double X, double Y, int AnchorType,
+        string TableTemplate, int Rows, int Columns)` 与 5 参的 `InsertTableAnnotation`
+        —— ★ **两版的第 3 个位置都是 `AnchorType`**，而实现层 `insert_table_annotation`
+        把 `table_type` 正好传在那个位 ⇒ ★ 本格用 `swBOMConfigurationAnchor_*` 的取值
+        （**运行期现读官方枚举页**，读不到 ⇒ 前置未成立、不写死）。
+      · `table_type_enum_member` 那个 `swTableAnnotationType_*` 取值**也**读出来记进证据 ——
+        ★ 它是 spec 描述里"表类型"的字面语义，★ **本稿不据此断言任何行为**（铁律 5）。
+      · ★ 真正的"表是孔表还是修订表"由**模板文件**决定（官方 Remarks：模板与表**必须同型**）。
+    ★ 判据：**`GetTableAnnotationCount` 增量**。"""
+    row = {"tag": "★ %s（%s）" % (tool_name, template_label),
+           "ok": False, "verdict": PRECONDITION_NOT_MET}
+    part = doc = None
+    try:
+        template = (_find_files(template_patterns) or [None])[0]
+        row["template"] = template
+        anchor = _enum_or_note(row, "swBOMConfigurationAnchorType_e",
+                               "swBOMConfigurationAnchor_TopLeft", "table_type 实参（AnchorType 位）")
+        literal = _enum_or_note(row, "swTableAnnotationType_e",
+                                table_type_enum_member, "spec 字面语义取值（★ 不据此断言）")
+        if not template or anchor is None:
+            row["note"] = ("★ 前置未成立：%s ⇒ 本格不作判据"
+                           % ("找不到模板 %s" % (template_label,) if not template
+                              else "官方枚举取值读不到（★ 见 enum_missing）"))
+            return row
+        part = build_saved_part(sw, row)
+        if part is None or not PART_PATH.is_file():
+            row["note"] = "★ 前置未成立：零件没建成/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, info = new_activated_drawing(sw, row)
+        row["drawing"] = info
+        if doc is None or not info.get("is_active"):
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (info.get("err") or "没拿到工程图")
+            return row
+        if not setup_views_through_tool(sw, specs, doc, row):
+            row["note"] = "★ 前置未成立：母视图没建成（★ 见 setup）⇒ 本格不作判据"
+            return row
+        views, names, _err = _real_views(doc)
+        _activate_view(doc, next((n for n in names if n), ""))
+        _clear(doc)
+        row["sel_by_mark_before_call"] = _sel_counts(doc)
+        #: ★★ 如实标注：★ **本格不适用**官方 `IView.InsertHoleTable3` 那张 mark 表
+        #:   （顶点=1 / 孔边与面=2 / X 向参考=4 / Y 向参考=8）—— ★ 因为能力层走的是
+        #:   **通用表注解入口** `IDrawingDoc.InsertTableAnnotation{,2}`（那族**不吃 mark**）。
+        row["official_mark_table_applies"] = False
+        row["preconditions_held"] = True
+        before = _counts_totals(doc)
+        result, call = call_tool(specs[tool_name],
+                                 {"x_mm": 120.0, "y_mm": 40.0, "table_type": int(anchor),
+                                  "row": 0, "column": 0, "template": str(template),
+                                  "use_anchor_point": False})
+        check_inject_is_active_doc(sw, doc, call)
+        after = _counts_totals(doc)
+        row.update({"call": call, "tool_raw": result,
+                    "table_type_anchor_value": anchor,
+                    "table_type_literal_value": literal,
+                    "counts_before": before, "counts_after": after,
+                    "table_delta_all": _delta(before, after, "table", "all"),
+                    "table_delta_real": _delta(before, after, "table", "real"),
+                    "tool_ok": bool((result or {}).get("ok")) if isinstance(result, dict) else None})
+        if tool_name.endswith("revision_table"):
+            table_obj, err = _revision_table_readback(doc)
+            row["isheet_revision_table_is_none"] = None if table_obj is None else False
+            row["isheet_revision_table_err"] = err
+            row["isheet_revision_table_readback_note"] = (
+                "★ 官方 `InsertRevisionTable2` 的 Returns 就是 `ISheet.RevisionTable`；"
+                "★ 但能力层走的是**通用表注解**入口 ⇒ 这里回空**不是**失败，"
+                "★ 如实记、不据此判否")
+        row["ok"] = bool((row["table_delta_all"] or 0) >= 1)
+        row["verdict"] = BUILT if row["ok"] else TRUE_NEGATIVE
+        row["verified_by"] = "GetTableAnnotationCount_delta"
+    except Exception as exc:                                          # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row["verdict"] = TRUE_NEGATIVE
+    finally:
+        if part is not None:
+            _close(sw, part)
+        if doc is not None:
+            _close(sw, doc)
+    return row
+
+
+def case_t7_hole_table(sw, specs):
+    """★ T7 孔表（`create_hole_table` · 模板 `.sldholtbt`）—— 判据 `GetTableAnnotationCount` +1。"""
+    return _table_cell(sw, specs, row={},
+                       tool_name="solidworks_drawing_create_hole_table",
+                       template_patterns=("standard hole table--letters.sldholtbt", "*.sldholtbt"),
+                       template_label="孔表模板 .sldholtbt",
+                       table_type_enum_member="swTableAnnotation_HoleChart")
+
+
+def case_t8_revision_table(sw, specs):
+    """★ T8 修订表（`create_revision_table` · 模板 `.sldrevtbt`）。
+
+    ★ 官方 Returns 逐字：**已有修订表时回 `null`** ⇒ 那是**契约、不是失败**
+    ⇒ ★ 本稿只在**第一次**调用（每格都新开工程图），并在返回值里把该契约写进 `note`。"""
+    return _table_cell(sw, specs, row={},
+                       tool_name="solidworks_drawing_create_revision_table",
+                       template_patterns=("standard revision block.sldrevtbt", "*.sldrevtbt"),
+                       template_label="修订表模板 .sldrevtbt",
+                       table_type_enum_member="swTableAnnotation_RevisionBlock")
+
+
+def case_t9_center_marks(sw, specs):
+    """★ T9 中心符号线（`insert_center_marks` · 走**批量** `AutoInsertCenterMarks2`）。
+
+    ★★ `requirements` 的形状**逐字取自实现层**（`drawing_workflow.auto_insert_center_marks`）：
+      每项读 `id` / `view`（方向，经 `_normalise_orientation` 归一到 `front`/`top`/`right`）/
+      `count`（**期望**条数）/ `targets`（键取自 `AUTO_CENTER_MARK_TARGETS` =
+      `holes` / `fillets` / `slots`）⇒ ★ **不是编的字段**。
+    ★★ 前置：视图族可解析（实现层要能把 sheet 视图映射成 front/top/right）★ 且
+      **工程图已存盘**（实现层的 `DRAWING_CENTER_MARK_DRAWING_SAVE_REQUIRED` 这条错误码
+      就是"没存盘"时给的 ⇒ ★ 存盘是这条能力自己的前置）。
+    ★ 判据：**`GetCenterMarkCount2` 增量** ★ 并且能力层自己也会回 `before_count/after_count`
+      （`create_count`）—— ★ 两条读数互为交叉核。"""
+    row = {"tag": "★ T9 中心符号线（insert_center_marks · AutoInsertCenterMarks2 批量）",
+           "ok": False, "verdict": PRECONDITION_NOT_MET}
+    part = doc = None
+    try:
+        part = build_saved_part(sw, row)
+        if part is None or not PART_PATH.is_file():
+            row["note"] = "★ 前置未成立：零件没建成/没存盘 ⇒ 本格不作判据"
+            return row
+        doc, info = new_activated_drawing(sw, row)
+        row["drawing"] = info
+        if doc is None or not info.get("is_active"):
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (info.get("err") or "没拿到工程图")
+            return row
+        if not setup_views_through_tool(sw, specs, doc, row):
+            row["note"] = "★ 前置未成立：母视图没建成（★ 见 setup）⇒ 本格不作判据"
+            return row
+        #: ★ 存盘（★ 实现层要求 drawing 有路径；★ 只写到 `output/` 下的临时文件）
+        try:
+            row["drawing_saved"] = bool(C.save_document(doc, str(DRAW_PATH)))
+        except Exception as exc:                                      # noqa: BLE001
+            row["drawing_saved"] = False
+            row["drawing_save_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+        views, names, _err = _real_views(doc)
+        _activate_view(doc, next((n for n in names if n), ""))
+        _clear(doc)
+        row["view_names"] = names
+        requirements = [{"id": "probe-front", "view": "front", "count": 1, "targets": ["holes"]}]
+        row["requirements_given"] = requirements
+        row["requirements_contract_note"] = (
+            "★ 形状取自实现层 `auto_insert_center_marks`：`targets` 的键取自 "
+            "`AUTO_CENTER_MARK_TARGETS`（holes/fillets/slots）；`view` 经 `_normalise_orientation` "
+            "归一到 front/top/right（★ 中文别名 前视/主视/上视/俯视/右视 也认）")
+        row["preconditions_held"] = bool(row.get("drawing_saved")) and bool(names)
+        if not row["preconditions_held"]:
+            row["note"] = "★ 前置未成立：%s ⇒ 本格不作判据" % (
+                "工程图没存盘（实现层要 drawing_path）" if not row.get("drawing_saved")
+                else "图上没有视图")
+            return row
+        before = _counts_totals(doc)
+        result, call = call_tool(specs["solidworks_drawing_insert_center_marks"],
+                                 {"requirements": requirements})
+        check_inject_is_active_doc(sw, doc, call)
+        after = _counts_totals(doc)
+        raw = result.get("raw") if isinstance(result, dict) else None
+        per_req = (raw or {}).get("requirements") if isinstance(raw, dict) else None
+        row.update({"call": call, "tool_raw": result,
+                    "counts_before": before, "counts_after": after,
+                    "center_delta_all": _delta(before, after, "center", "all"),
+                    "center_delta_real": _delta(before, after, "center", "real"),
+                    "tool_ok": bool((result or {}).get("ok")) if isinstance(result, dict) else None,
+                    "capability_status": (raw or {}).get("status") if isinstance(raw, dict) else None,
+                    "capability_error_code": (raw or {}).get("error_code")
+                    if isinstance(raw, dict) else None,
+                    "capability_mapping_method": (raw or {}).get("mapping_method")
+                    if isinstance(raw, dict) else None,
+                    "capability_per_requirement": per_req})
+        created = 0
+        for item in (per_req or []):
+            try:
+                created += int(item.get("created_count") or 0)
+            except Exception:                                         # noqa: BLE001
+                pass
+        row["capability_created_count"] = created
+        row["ok"] = bool((row["center_delta_all"] or 0) >= 1 or created >= 1)
+        row["verdict"] = BUILT if row["ok"] else TRUE_NEGATIVE
+        row["verified_by"] = "GetCenterMarkCount2_delta + 能力层 created_count（★ 两条交叉核）"
+        row["note"] = ("★ 单点入口 `InsertCenterMark3` 已知为真机阴性（证据 JSON 的 A8 格）"
+                       "⇒ ★ 本格走的是**批量**那条；★ 本格若失败，不能反推单点那条的结论")
+    except Exception as exc:                                          # noqa: BLE001
+        row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row["verdict"] = TRUE_NEGATIVE
+    finally:
+        if part is not None:
+            _close(sw, part)
+        if doc is not None:
+            _close(sw, doc)
+    return row
+
+
+#: ★ 格子表：`(标签, 说明, 调用)` —— ★ 标签用于命令行筛选（★ 卡住时只跑某几格）。
+CASES = (
+    ("T1", "投影视图（third_angle）", case_t1_projected_view_third),
+    ("T2", "投影视图（first_angle · 预期 blocked 对照格）", case_t2_projected_view_first),
+    ("T3", "剖视图（前置＝先选剖面线）", case_t3_section_view),
+    ("T4", "局部视图（前置＝图上有局部圆）", case_t4_detail_view),
+    ("T5", "图纸格式（判据＝图纸读数变了）", case_t5_sheet_format),
+    ("T6", "注释（不选）", case_t6_add_note),
+    ("T7", "孔表（.sldholtbt）", case_t7_hole_table),
+    ("T8", "修订表（.sldrevtbt）", case_t8_revision_table),
+    ("T9", "中心符号线（批量 AutoInsertCenterMarks2）", case_t9_center_marks),
+)
+
+
+def _selected(filters, label) -> bool:
+    return (not filters) or any(f.lower() in label.lower() for f in filters)
+
+
+def main() -> int:
+    """★ 跑（或筛选后跑）全部格子 ⇒ 写 `output/drawing-tools-e2e-evidence.json`。"""
+    filters = [a for a in sys.argv[1:] if not a.startswith("-")]
+    evidence: dict = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "★ 工程图 8 条工具的**工具层**端到端探针 —— ★ 每格按 ToolSpec 契约组装 kwargs；"
+             "★ 三态判词：built（建成）/ precondition_not_met（前置未成立，写明缺什么）/"
+             "true_negative（真阴性）；★ ★ ok=False 且 verdict=precondition_not_met 的格子"
+             "**不能**当「能力不成」的证据",
+        "spec": "specs/202-user-coverage-gaps",
+        "how_called": "★ 手工按 spec.params 组装 kwargs + 照 tool_registry.make_tool_function 的"
+                      "最后两行 __import__(\"scripts.%s\" % spec.module) + getattr(...)(**kwargs)；"
+                      "★ 注入走 register_capabilities.RESOLVERS[spec.inject]（与真机同源）",
+        "run_with_guard": "python tools/sw_guard.py --timeout 1800 -- python <本脚本>",
+        "filters": filters,
+        "temp_files": {"part": str(PART_PATH), "drawing": str(DRAW_PATH)},
+        "cases": [],
+    }
+
+    specs, spec_info = load_batch75_specs()
+    evidence["spec_loading"] = spec_info
+    evidence["contract"] = {
+        "tool_count": len(specs),
+        "missing_tools": spec_info.get("missing_tools"),
+        "tools": [contract_of(specs[name]) for name in TOOL_NAMES if name in specs],
+    }
+    #: ★ 自认的保真度边界：注册器那三个钩子本稿**没有**实现 ⇒ 用了就不算工具层等价路径。
+    evidence["contract"]["registry_only_hooks_present"] = sorted(
+        {hook for c in evidence["contract"]["tools"] for hook in c["registry_only_hooks"]})
+    if not specs:
+        evidence["summary"] = {BUILT: 0, PRECONDITION_NOT_MET: len(CASES), TRUE_NEGATIVE: 0,
+                                "total": 0,
+                                "note": "★ spec 没装载上 ⇒ 全部格子判「前置未成立」"
+                                        "（★ 这是探针自身的前置问题，**不是**能力问题）"}
+        _write(evidence)
+        print("  ★ spec 没装载上：%s" % spec_info.get("error"))
+        print("  产物：%s" % OUT_JSON)
+        return 0
+
+    sw, _model = C.connect_solidworks(wait_seconds=30)
+    try:
+        #: ★ 铁律 2：未抑制的模态框会把会话挂死 ⇒ 跑之前置位（★ 收尾必复位）。
+        try:
+            sw.CommandInProgress = True
+            evidence["command_in_progress"] = True
+        except Exception as exc:                                      # noqa: BLE001
+            evidence["command_in_progress"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+        for label, desc, fn in CASES:
+            if not _selected(filters, label):
+                continue
+            started = time.time()
+            try:
+                case = fn(sw, specs)
+            except Exception as exc:                                  # noqa: BLE001
+                #: ★ 不许吞异常：★ 异常本身进 dict（★ 任务硬要求）。
+                case = {"tag": label, "ok": False, "verdict": TRUE_NEGATIVE,
+                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:240])}
+            case["label"] = label
+            case["desc"] = desc
+            case["seconds"] = round(time.time() - started, 2)
+            evidence["cases"].append(case)
+            print("  %-4s %-40s %-22s ok=%-6s %ss"
+                  % (label, desc, case.get("verdict"), case.get("ok"), case.get("seconds")))
+            for key in ("view_delta", "note_delta_all", "table_delta_all", "center_delta_all",
+                        "readback_changed", "capability_status", "capability_error_code",
+                        "preconditions_held", "tool_ok", "tool_preconditions_held",
+                        "enum_missing", "note", "err"):
+                if key in case:
+                    print("        %-26s %s" % (key, str(case[key])[:170]))
+    finally:
+        try:
+            sw.CommandInProgress = False
+        except Exception:                                             # noqa: BLE001
+            pass
+
+    cases = evidence["cases"]
+    evidence["summary"] = {
+        BUILT: sum(1 for c in cases if c.get("verdict") == BUILT),
+        PRECONDITION_NOT_MET: sum(1 for c in cases if c.get("verdict") == PRECONDITION_NOT_MET),
+        TRUE_NEGATIVE: sum(1 for c in cases if c.get("verdict") == TRUE_NEGATIVE),
+        "total": len(cases),
+    }
+    #: ★ **工具自己回的 ok 与探针读数不一致**的那些格子单列 —— ★ 这是工具层最该看的一栏
+    #:   （例如 `create_projected_view`：能力层回的是 `status/created` 而不是 `ok`，
+    #:   而包装层 `_result` 取 `payload["ok"]` ⇒ **建成时工具的 ok 也会是 False**）。
+    evidence["tool_ok_vs_readback"] = [
+        {"tool": c.get("label"), "tool_ok": c.get("tool_ok"), "ok": c.get("ok"),
+         "note": "★ 工具的 ok 与读数判定不一致 —— 按读数解释，★ 如实留档"}
+        for c in cases
+        if isinstance(c.get("tool_ok"), bool) and bool(c.get("tool_ok")) != bool(c.get("ok"))
+    ]
+    _write(evidence)
+    print("  判读：建成 %d · 前置未成立 %d · 真阴性 %d（共 %d 格）"
+          % (evidence["summary"][BUILT], evidence["summary"][PRECONDITION_NOT_MET],
+             evidence["summary"][TRUE_NEGATIVE], evidence["summary"]["total"]))
+    print("  ⚠ ★ verdict=precondition_not_met 的格子**不能**当「能力不成」的证据。")
+    print("  ⚠ ★ verdict=true_negative 的格子请连 `note` 一起读（★ 分清是能力层还是工具层）。")
+    print("  产物：%s" % OUT_JSON)
+    return 0
+
+
+def _write(evidence: dict) -> None:
+    OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
+    OUT_JSON.write_text(json.dumps(evidence, ensure_ascii=False, indent=1, default=str) + "\n",
+                        encoding="utf-8")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
