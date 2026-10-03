@@ -1,0 +1,48 @@
+fix(阶段1): ★★★★★ **查出并降级一条**整条虚标**的能力** —— `drawing_dimension_insertion` **能力层零实现**、★ 而 `level` 写着 `verified`（★ 且允许 `unattended`）
+
+■ 一 · ★ 起点：★ 补 A4 的 `drawing_dimension_insertion`（★ 上轮标的"待补真机"）
+  ★ 而**顺着核下去，发现的是比"证据是循环的"更重的事** ✓
+
+■ 二 · ★★★★★ 病灶（★ **本条目自己早就记着**）
+  ★ `limitations[0]` 逐字（★ 2026-10-01 轮 290）：
+    > ★ 「**核了实现在哪 —— 结论是「实现层没有对应函数」**：★ 全仓搜 `InsertModelDimensions` ⇒
+    >   ★ **只在 `scripts/sw_api_sldworks.py` 里**（★ 那是**签名索引**、不是实现）」✓
+  ★★ **而它的 `level` 一直写着 `verified`** · ★★★ 且 `allowed_modes` 里有 **`unattended`** ✓
+  ★★★★ **⇒ 即：★ 一条「没有实现」的能力标着 `verified`、★ 还允许无人值守** ✓
+
+■ 三 · ★★★★ 我**独立复核**了一遍（★ 不信本条目自己的话）
+  ★ 全仓搜 `AddDimension` / `AddDimension2` / `InsertModelDimensions`（★ 排除被引用的目录）⇒
+    · ★ **`scripts/sw_part.py` L768** ⇒ `model.AddDimension2(x, y, 0)` —— ★★ **那是**零件上**的
+      尺寸标注（`solidworks_add_dimension`）** ✓
+    · ★★ **`InsertModelDimensions` ⇒ 一处都没有**（★ 除 ARITY 表）✓
+  ⇒ ★★★ **两者不是一回事**：★ **零件草图/特征上的尺寸** vs ★ **工程图上导入模型尺寸** ✓
+  ⇒ ★★★★ **⇒ 降级是对的** ✓
+
+■ 四 · ★ 修法
+  ★ **`level`：`verified` → **`not_implemented`****（★ 五级枚举里最贴的那个）✓
+  ★★ **`allowed_modes`：去掉 `unattended`**（★ **没有实现的东西不能无人值守** ——
+    ★ 与 `assembly_and_mates` 那次同一纪律）✓
+  ★★★ **并写明降级依据**（★ 含"本条目自己记着"与"我独立复核"**两层**）✓
+  ★★★★ **而那条历史记录保留**（★ 「补正而不是删除」）✓
+  ★ **台账分布**：★ `verified` **96 → 95** · ★ `not_implemented` **1 → 2** ✓
+
+■ 五 · ★★ 新增测试（★ `tests/test_verified_level_needs_implementation.py` · **5 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★★ **核心断言** | ★ 它**不许**再是 `verified`（★ 它没有实现层）✓ |
+  | ★★★ **核心断言** | ★ 降级后**不许**留 `unattended` ✓ |
+  | ★★★ **负例** | ★ 实现面里**仍然没有** `InsertModelDimensions`（★ 确认降级是对的）✓ |
+  | ★★ **负例 · 分辨点** | ★ `AddDimension2` **确实在** `sw_part.py`（★ **零件**那条）—— ★ 别把两件事混起来 ✓ |
+  | ★★ **负例 · 补正** | ★ 那条「实现层没有对应函数」的历史记录**必须**还在 ✓ |
+
+  ★★★★ **而写第 3 条时我第一版是错的**（★ 值记）：★ 我写「实现面里不许有 `AddDimension`」⇒
+    ★★ **而 `sw_part.py` 里**确实有** `AddDimension2`** ⇒ **测试红了** ✓
+    ★★★ **正解**：★ **精确到**那件事的那个成员**（`InsertModelDimensions`）——
+      ★ 用"看起来同族"的名字会**误判成"已经做了"** ✓
+    ⇒ ★★★★ **可复用判据**：★★★ **判「有没有实现」时，名字要精确到**那件事的那个成员**** ✓
+
+■ 六 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 5 passed** ✓
+  ★★ **A4 账**：★ 剩下的那个 `autocad_script_backend` 是**口径**问题（★ 非 SolidWorks 线）✓
+  ★★★ **而本轮降级的那条**，★ **比 A4 的缺口更重** —— ★ A4 问的是"证据真不真"、
+    ★★ **而本条目问的是"东西在不在"** ✓

@@ -45,9 +45,9 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 96 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 95 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 13 | 已缝合，**缺我们自己的运行证据** |
-| `not_implemented` | 1 | 明确未实现 |
+| `not_implemented` | 2 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
@@ -72,7 +72,6 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `custom_properties_and_bom` | · `pytest tests/test_cad_reliability.py（自定义属性与 BOM ⇒ ★⚠ **那是形状检查、不是运行证据** —— ★ 见下条）`<br>· `★★★★ **真机运行证据（★ 2026-10-04 补 —— 这才是 A4 要的那一条）**：`python tools/sw_guard.py --timeout 300 -- python tools/probe_a4_custom_properties.py` ⇒ ★ `sw_alive: true` · ★ **零弹窗** · ★ 1.72 s · ★ 证据文件 `output/a4-custom-properties-evidence.json` ✓ ★★ **判据是**两层独立**（★ 不能只信被测者自己的回读）**：★ ① `set_custom_properties` 自报的 `verified` 全 `True`（★ `service_ok: true`）；★★ ② **本探针独立再调一次 `read_custom_property`**、逐条等于所写（★ `independent_ok: true`）✓ ★★★ **逐字读数**：★ 写 `{A4_探针_甲: alpha, A4_探针_乙: beta, A4_探针_丙: gamma}` ⇒ 三条 `verified: True` · `raw` 分别是 `alpha` / `beta` / `gamma` · `exists: true` · `status: 2` ✓ ★★★★ **并更正一条旧读数**：★ 轮 55 那次探针记的 `readback_value: None` **是**探针的错**（★ 它取 `readback.get("value")`、★ 而 `read_custom_property` 回的键是 **`raw`**）—— ★ **能力层一直是对的** ✓（★ 旧探针按「`tools/` 只报不动」原样保留，★ 它那次读数作为历史证据仍然有效）✓` |
 | `pack_and_go` | · `pytest tests/test_sw_delivery.py`<br>· `pytest tests/solidworks_week3_delivery_regression.py（Pack and Go 交付）` |
 | `motion_study` | · `pytest tests/test_sw_motion_audit.py（旋转马达创建与结果审计）` |
-| `drawing_dimension_insertion` | · `pytest tests/test_cad_reliability.py（工程图尺寸插入回读）`<br>· `⚠⚠ ★★★★ **2026-10-04（接手轮）如实标注：上面那条**不是运行证据**** —— 处置 `JUDGE-A_B.md` 的 🔴 **A-drawing 一**，★ 裁判逐字：「★ `drawing_dimension_insertion` 的 evidence 唯一相关行是 `assert index[...]["level"] == "verified"` —— ★ **循环自证**，★ 测试文件**自己写「未在本机实测」**」✓ ★★ **我复核了那个文件**：★ 逐字 L8「⚠ **未在本机实测 SolidWorks**（见 AGENTS.md 铁律 2）」· ★ L53 `assert index["drawing_dimension_insertion"]["level"] == "verified"` ⇒ ★★★ **即：★ 它的证据是「一个断言自己是 verified 的形状检查」** ✓ ⇒ ★★★★ **本条的 `level: verified` 因此**缺我们自己的运行证据****（★ 验收标准 **A4** 的原话）⇒ ★ **待补**：★ 真机跑一次「插尺寸 + 回读」（★ 需要**一个打开着的工程图**）✓ ★ **在那之前不许再把它当「已跑过」引用** ✓` |
 | `drawings_and_bom` | · `pytest tests/test_delivery_compare.py`<br>· `pytest tests/test_drawing_subskill.py（工程图与 BOM）` |
 | `export_delivery` | · `python 真机（轮 403）★ **PASS** —— 24h 计划 v2 段 6（导出）：`solidworks_export_image`（`sw_export.export_image_report`）。真机（走 `sw_guard`，4.0 s 无弹窗）：一张 PNG ⇒ **`exists=true` · `size_bytes=67997` · `grew_or_created=true`**；负例（非法目录）⇒ `ok=false`。★ 判据**复用本模块既有的 `_export_report`**（回读文件：存在且 size>0，并记 `size_before` / `grew_or_created`）—— 不另造一套。证据 output/export-two-evidence.json。★★ 同轮真机抓到一个真 bug 并修掉：`export_to_image` 里用了 `out_i4()`（标量出参包装）而本模块**漏了导入** ⇒ 一调就 `NameError`（★ **而这正是它一直没被挂的原因**）。`<br>· `pytest tests/test_delivery_compare.py（导出交付）`<br>· `python tools/verify_bmp_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：`export_to_bmp(model, path, 800, 600)` 建成 ⇒ **读回 BMP 头（偏移 18/22，小端 int32）尺寸 == 800x600**（**定量往返**，空操作满足不了）；官方 Remarks 那条也验了 —— 宽高 ≤ 0 ⇒ 读回 (1460, 1049) 即**窗口尺寸**；扩展名不是 `.bmp` ⇒ ValueError；**8/8 通过**，证据落 output/bmp-smoke-evidence.json）`<br>· `python tools/verify_png_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：`export_to_image` 出 **PNG 129437 字节**（魔数 `89 50 4E 47…` + `IHDR` 尺寸 **1232x1049**）与 **JPG 54431 字节**（魔数 `FF D8 FF`）；**9/9 通过**，证据落 output/png-smoke-evidence.json）`<br>· `python tools/probe_dwg_magic.py（**真机**，轮 156，钣金件 60x40x1 mm 已保存到 output/）：**读魔数**取证 —— `.dxf` ⇒ **20208 字节**，头部 `  0\r\nSECTI` ⇒ **DXF** ✓；`.dwg` ⇒ **272032 字节**，头部 `AC1015` ⇒ **真 DWG（AC1015 = AutoCAD 2000 / R2000）** ✓。★ 结论：`export_to_dxf` 的「DXF/DWG」是**名实相符**的（正面结论）。★ 另记前置条件：**零件路径要求「钣金件 + 必须先保存」** —— 普通拉伸件会报`ValueError: 导出展开 DXF 前必须先保存钣金零件`（**错误清晰、是对的**）。`<br>· `python tools/probe_export_magic_matrix.py（**真机**，轮 157，钣金件 60x40x1 mm 已保存）：**逐格式读文件头** ⇒ **9/10 名实相符** —— STEP `ISO-10303-21` · STL `stlbn`（二进制）· IGES `SolidWorks IGES file` · Parasolid `**ABCDEFGH…` · DXF `  0\r\nSECTION` · DWG `AC1015` · PNG `\x89PNG` · JPEG `\xff\xd8\xff\xe0…JFIF` · BMP `BM`；★ **`pdf` 在零件上失败**：`AttributeError: <unknown>.GetSldWorksObject``<br>· `python tools/probe_pdf_on_drawing.py（**真机**，轮 158，工程图 1 张图纸已保存）：★★ 修好后 `export_to_pdf` 成功 ⇒ **39830 字节 · 头部 `%PDF-1.4` · 页数 = 1**（数 `/Type /Page`）⇒ 定量证据；★ 同时 `export_to_dxf(.dwg)` 在**工程图**上 ⇒ **279450 字节 · 头部 `AC1015`**（真 DWG）⇒ 轮 156 那条「只测钣金件」的限度补上了。` |
 | `headless_open_format_writing` | · `pytest tests/test_headless_cad_writer.py（**7 passed**；覆盖非 OCP 的全部写出格式：.cadstudio.json / STL / OBJ / DXF / SVG / PDF / PNG —— 含 PNG 魔数、%PDF、<svg、STL solid、OBJ `\nf `、previewManifest，以及**输入文档只读**与 **dwg 必须 blocked 且不产文件**）`<br>· `pytest tests/test_mcp_headless_open_format.py（**8 passed**；⭐ **它验的是 MCP 层的参数传递** ——OCP 后端由 `monkeypatch.setattr` 替换为假实现，**不代表 OCP 真能跑**，见本条 limitations 末条）` |
@@ -211,11 +210,14 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 
-### 4.1 未达 `verified` 的能力（14 条）
+### 4.1 未达 `verified` 的能力（15 条）
 
 | 能力 | `level` | `source` | 为什么还没到 `verified`（取 `limitations` 首条）|
 |---|---|---|---|
 | `assembly_and_mates` | `stitched` | `mixed` | ★★ **2026-10-01（轮 161）补了「在上下文编辑」与「外部参考计数」两个封装**（来源：`D:\AI\SW-transfer\in-context-reference-proposal.md`）：`sw_assembly_doc.edit_part_in_context` · `exit_edit_part_in_context` · `list_external_file_refe |
+| `drawing_dimension_insertion` | `not_implemented` | `mixed` | ★★ 2026-10-01（轮 290）**核了实现在哪 —— 结论是"实现层没有对应函数"**：
+★ 全仓搜 `InsertModelDimensions` ⇒ ★ **只在 `scripts/sw_api_sldworks.py` 里**（★ 那是**签名索引**，
+不是实现）；★ `sw_drawing_view.py` 的 12 个函数**全是读 + `set_view_scale`**， |
 | `autocad_basic_drafting` | `not_implemented` | `upstream` | AutoCAD 2024 ActiveX 当前真机回归被阻塞：Documents、Layers、SelectionSets 代理不稳定；不得宣称原生 DWG 绘图已完成 |
 | `surface_modeling` | `stitched` | `mixed` | headless-occt 已真实生成并重开受限封闭直纹/平滑 Loft、直线/单圆弧 Sweep、闭壳 Knit 和开放面 Thicken；操作均要求版本化 B-Rep 证据 |
 | `mold_tools` | `stitched` | `mixed` | ⚑ 2026-10-01 并入「生成」侧：新增 scripts/sw_mold.py（InsertMoldPartingLine / InsertMoldPartingSurface / InsertMoldShutOffSurface / InsertMoldCoreCavitySolids / MoldDraftAnalysis / MoldUndercutDetect + mold_evid |

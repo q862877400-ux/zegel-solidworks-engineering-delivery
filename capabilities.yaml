@@ -820,7 +820,8 @@
     {
       "id": "drawing_dimension_insertion",
       "label": "SolidWorks 工程图模型尺寸自动插入",
-      "level": "verified",
+      "level": "not_implemented",
+      "★_2026-10-04_降级说明": "★★★★ 从 `verified` 降为 `not_implemented` —— ★ 处置 `JUDGE-A_B.md` 的 🔴 **A-drawing 一**（★ 那条只说「evidence 是循环自证」，★ **而顺着它往下核，发现的是更重的事**）✓ ★★ **本条目自己的 `limitations[0]` 早就记着**（★ 2026-10-01 轮 290）：「★ **核了实现在哪 —— 结论是「实现层没有对应函数」**：★ 全仓搜 `InsertModelDimensions` ⇒ ★ **只在 `scripts/sw_api_sldworks.py` 里**（★ 那是**签名索引**、不是实现）」✓ ⇒ ★★★ **即：★ 这条能力**没有实现**、★ 而 `level` 一直写着 `verified`** ✓ ★★★★ **而本轮我又独立复核了一遍**（★ 全仓搜 `AddDimension` / `AddDimension2` / `InsertDimension`）⇒ ★ **命中的**只有** ARITY 表**（★ `scripts/sw_api_sldworks.py`）—— ★★ **能力层零实现** ✓ ⇒ ★ **所以按五级枚举**（`verified` / `source_verified` / `stitched` / `indexed` / `not_implemented`）**取最贴的 `not_implemented`** ✓",
       "backends": [
         "solidworks-com"
       ],
@@ -838,9 +839,9 @@
       ],
       "allowed_modes": [
         "interactive",
-        "reviewed",
-        "unattended"
+        "reviewed"
       ],
+      "★_allowed_modes_说明": "★★ 2026-10-04：★ **去掉 `unattended`** —— ★ 因为本条的 `level` 已降为 `not_implemented`（★ **能力层零实现**）⇒ ★ 没有实现的东西**不能无人值守** ✓",
       "evidence": [
         "pytest tests/test_cad_reliability.py（工程图尺寸插入回读）",
         "⚠⚠ ★★★★ **2026-10-04（接手轮）如实标注：上面那条**不是运行证据**** —— 处置 `JUDGE-A_B.md` 的 🔴 **A-drawing 一**，★ 裁判逐字：「★ `drawing_dimension_insertion` 的 evidence 唯一相关行是 `assert index[...][\"level\"] == \"verified\"` —— ★ **循环自证**，★ 测试文件**自己写「未在本机实测」**」✓ ★★ **我复核了那个文件**：★ 逐字 L8「⚠ **未在本机实测 SolidWorks**（见 AGENTS.md 铁律 2）」· ★ L53 `assert index[\"drawing_dimension_insertion\"][\"level\"] == \"verified\"` ⇒ ★★★ **即：★ 它的证据是「一个断言自己是 verified 的形状检查」** ✓ ⇒ ★★★★ **本条的 `level: verified` 因此**缺我们自己的运行证据****（★ 验收标准 **A4** 的原话）⇒ ★ **待补**：★ 真机跑一次「插尺寸 + 回读」（★ 需要**一个打开着的工程图**）✓ ★ **在那之前不许再把它当「已跑过」引用** ✓"

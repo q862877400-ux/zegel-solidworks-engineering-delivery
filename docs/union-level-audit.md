@@ -29,7 +29,7 @@
 | 19 | `declarative_hole_creation` | `verified` | `original` | ✓ | — |
 | 20 | `dfm_checks` | `verified` | `mixed` | ✓ | — |
 | 21 | `drawing_current_sheet_query` | `verified` | `original` | ✓ | — |
-| 22 | `drawing_dimension_insertion` | `verified` | `mixed` | ✓ | — |
+| 22 | `drawing_dimension_insertion` | `not_implemented` | `mixed` | ✓ | — |
 | 23 | `drawing_view_operations` | `verified` | `original` | ✓ | — |
 | 24 | `drawing_views_and_summary` | `verified` | `original` | ✓ | — |
 | 25 | `drawings_and_bom` | `verified` | `mixed` | ✓ | — |
@@ -126,10 +126,10 @@
 | level | 条数 |
 |---|---|
 | `indexed` | 0 |
-| `not_implemented` | 1 |
+| `not_implemented` | 2 |
 | `source_verified` | 0 |
 | `stitched` | 13 |
-| `verified` | 96 |
+| `verified` | 95 |
 
 ## 三、`source` 分布
 
@@ -146,10 +146,10 @@
 | level \ source | merged | mixed | original | undetermined | upstream |
 |---|---|---|---|---|---|
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
-| `not_implemented` | 0 | 0 | 0 | 0 | 1 |
+| `not_implemented` | 0 | 1 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
 | `stitched` | 0 | 4 | 9 | 0 | 0 |
-| `verified` | 0 | 7 | 71 | 1 | 17 |
+| `verified` | 0 | 6 | 71 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。
