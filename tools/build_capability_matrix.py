@@ -106,6 +106,30 @@ def classify(text: str, rules: list) -> str:
     return "（未归类）"
 
 
+def tool_text(name: str) -> str:
+    """★ 把 **MCP 工具名**规范化成与规则同形的文本（★ 2026-10-04 修 · 轮 93）✓
+
+    ★★★★★ **为什么要它**：★ 第一版的判据①报 **无处可放率 = 100.00%（280/280）**、
+      ★★ 而逐条打印显示**全部落在 `（未归类）×（未归类）`** ⇒ ★ **那不是"矩阵全空"、
+      是**喂进去的文本形态不对**** ✓
+    ★ **真因**（★ 我做了**证伪实验** `output/_why_all_unplaced.py`）：
+      ★ `OPS` / `OBJ_RULES` 的规则是 **CamelCase**（★ `Add` / `Sketch` / `Get`）、
+      ★★ 而 MCP 工具名是 **snake_case + 前缀**（★ `solidworks_add_dimension`）⇒
+      ★★★ `classify` 用的是 `re.search(pat, text)`（★ **大小写敏感**）⇒ **一个都命中不了** ✓
+    ★★ **证伪读数**：★ 原样 ⇒ **280/280 = 100.0%** · ★ 驼峰化后 ⇒ **35/280 = 12.5%** ✓
+      ★ 逐条对上：★ `add_dimension` ⇒ **建** · ★ `assembly_list_components` ⇒ **组合** ·
+      ★ `available_direction_selectors` ⇒ **查** ✓
+    ★★★ **⚠ 本函数只规范**输入形态**、★ 一个字都没动阈值**（★ 三个判据的阈值
+      在文件头写死、★ 「跑之前写死、跑完不改」）✓
+    ★★★★ **可复用判据**：★★★ **一个"全为 0 / 全未归类"的统计，
+      先怀疑**输入形态**、★ 再怀疑**结论**** ——
+      ★ 因为"全都归不进去"在真实系统里**极罕见**（★ 与**事实 517**同族：
+      ★★ **"我读错了"与"能力坏了"长得一模一样**）✓
+    """
+    s = re.sub(r"^(?:solidworks|cadstudio)_", "", str(name))
+    return "".join(w.capitalize() for w in s.split("_")) or str(name)
+
+
 def main() -> int:
     started = time.time()
     fams = load_families()
@@ -124,9 +148,12 @@ def main() -> int:
         cell = (classify(m, OPS), classify(member_to_fam[m] + " " + m, OBJ_RULES))
         cell_members[cell].append(m)
     #: ★★ 每个工具也分类（★ 用工具名 + 它的注入/模块名做不到 ⇒ 只用工具名，★ 如实标注这个局限）
+    #: ★★★ **⚠ 工具名要先经 `tool_text` 规范化** —— ★ 规则是 CamelCase、★ 工具名是 snake_case，
+    #:   ★★ 不规范化会**全落 `（未归类）`**（★ 轮 93 修；★ 证伪见 `output/_why_all_unplaced.py`）✓
     tool_cells, tool_unplaced = {}, []
     for t in tools:
-        op, obj = classify(t, OPS), classify(t, OBJ_RULES)
+        text = tool_text(t)
+        op, obj = classify(text, OPS), classify(text, OBJ_RULES)
         tool_cells[t] = (op, obj)
         if op == "（未归类）" or obj == "（未归类）":
             tool_unplaced.append({"tool": t, "op": op, "obj": obj})
