@@ -2097,3 +2097,18 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **方法论**：★ 当 swapi 的 `## Remarks` 说**“看 Help”时**，★ 那就是**它在把你指向第三套源** —— ★ 而**那里往往有一个能直接照拄的例子** ⚠
      ★ 而例子里那句“**using two sketches of splines**”就是**签名与 Remarks 都给不了的东西**（★ 事实 415 同族）✓
      ★ 而本轮**不登记能力**（★ 仍未建成）；★ **下一步已具体**：★ 造**两个各含一条样条的草图**、★ 用 `SelectByID2` 按名选它们。|真机：`tools/prove_composite_curve_entities.py`；证据 `output/composite-curve-entities-evidence.json`；官方：`Insert_a_Composite_Curve_Example_VBNET.htm`（CHM）× `IModelDoc2\InsertCompositeCurve.md`（swapi）；对照事实 415 / 441 / 449 |
+| 451 | **★★ 复合曲线：三轮不成 ⇒ **按事实 53 停手****；★ 而**“照例子那一组”并未真跑到那一步**（★ 卡在**造样条**上）** —— 2026-10-03（轮 573）。
+     ★ **三轮的记录**：
+     ```
+     轮 570  选**体的两条边**（mark=1）        ⇒ 回 False
+     轮 572  选**同一草图的两段** / 体的两边 / 不选 ⇒ **三格全 False**
+     轮 573  照例子：两个样条草图 + `SelectByID2` ⇒ ★ **卡在造样条**（`草图=None`）**未跑到那一步**
+                对照：两个直线草图 + `SelectByID2` ⇒ `sel=2` 而**仍 False**
+     ```
+     ★★ **故诚实状态是两句**：
+       ① ★ **已试过的四种实体形态全失败**（体的边 · 同草图两段 · 不选 · 直线草图）；
+       ② ★ **而例子里那个形态（样条草图）**还没真试到** —— ★ 故**不能说它到不了**（★ 只能说“**尚未证实**”）⚠
+     ★ 而卡住的那一步很具体**：**`ISketchManager.CreateSpline(pts)` 报 `com_error(-2147352561, ‘非选择性的参数。’)`** —— ★ 即**点数组的传法**不对（★ 而官方 Remarks 说过它要**至少两个 X,Y,Z**）。
+     ★★ **故本轮按事实 53 停手**（★ 三轮同一处），★ 并把它**单列**进 `docs/toolbar-gaps-backend-limits.md` —— ★ 而**标注清楚“尚未证实”**（★ 而不是“到不了”）。
+     ★ **而给后面留的一步**：★ 先把 **`CreateSpline` 的点数组传对**（★ 那本身是一条**草图图元**能力），★ 再回来试复合曲线。
+     ★★ **方法论**：★ **“我试过了”与“我试到了那一步了”不是一回事** —— ★ 一组因为**前置没搭成**而没跑到目标调用的，★ **不能计入“试过了”** ⚠|真机：`tools/prove_composite_curve_per_example.py`；证据 `output/composite-curve-per-example-evidence.json`；对照事实 449 / 450（例子）· 事实 53（停手） |
