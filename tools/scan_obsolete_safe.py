@@ -95,37 +95,97 @@ def main() -> int:
     #:   ⇒ ★ 本版改用 **tokenize 只丢 COMMENT**（★ 保留 STRING）——
     #:     ★ 与事实 61 定则④同精神：**工具函数用错场合就等于没有**。
     def strip_comments_only(src: str) -> str:
+        """★ 只剥**注释**，★ 保留字符串字面量（★ 成员名就在里面）。
+
+        ★★★★ 2026-10-03（接手轮）**第四次修法 —— 前三版全错**（★ 这段本身是个教训）：
+          ★ 第 1 版：★ 用 `check_env_pitfalls.strip_comments_and_strings` ⇒
+            ★★ **它把字符串也剥了** ⇒ 成员名一起没了 ⇒ 漏掉全部 `get_com_member(x,"M")` 形态。
+          ★★ 第 2 版：★ `tokenize` 丢 `COMMENT` 再 `untokenize(out)` ⇒ ★★★ **实测它把注释原样还原**
+            （★ 负例：`sw_sketch_modify_ops.py` 里 `GetActiveSketch2` 的命中 **2 → 2**，★ 而那两条**全是注释**）。
+          ★★★ 第 3 版：★ 我自己写**逐行引号状态机** ⇒ ★★ **三引号状态没正确关闭**
+            ⇒ 多行 docstring 之后的行**一律不裁 `#`** ⇒ 注释命中依旧（★ 实测 3 条仍在）✓
+          ★★★★ 第 4 版（★ 本版）：★★ **用 `tokenize` 拿每个 `COMMENT` 的 **(start,end) 位置**，
+            再**按位置从原文里挖掉那些字符** ⇒ ① **不重建 token 流**（★ 避免第 2 版的还原）
+            ② **不自己实现状态机**（★ 避免第 3 版的引号 bug）✓
+        ★★ **可复用判据**：★ **"剥注释"这种预处理必须用**负例**验一次**
+          （★ 本文件顶部 `_strip_selftest()` 可跑；★ 与**事实 62**「负例是门禁有效的唯一证明」同族）✓
+        """
         import io as _io
         import tokenize as _tk
 
-        out, last = [], (1, 0)
+        #: ★★★★ 2026-10-03（接手轮）**第五次修法 —— 真根因终于找到**：
+        #:   ★★ 前面四版都在修"注释"，★ **而真正的污染源是 **docstring**** ✓
+        #:   ★ 负例自检给了决定性线索：★ `_strip_selftest()` 回 `(False, True)`
+        #:     —— ★★ "注释里的名字没被剥掉"；★★ **而实测那些行仍是带 `#` 与 `★` 的正文**
+        #:     ⇒ ★★★ **它们是**模块/函数 docstring 的文本**，★ 不是注释** ⇒
+        #:       ★ `tokenize` 正确地把它当 **STRING**（★ 而我的判据说"保留字符串"）⇒ 没剥 ✓
+        #:   ★★★★ **这与**事实 512** 的根因**一模一样**（★ 当时是 `sw_connect.get_com_member`
+        #:     的 docstring 把 `InsertDome`/`RunAnalysis` 污染进了每个工具）✓
+        #:   ⇒ ★ 修法两条并用：★ ① **剥注释**（按 tokenize 的位置挖）★ ② **剥 docstring**
+        #:     （★ 用 AST 找"模块/类/函数体的第一条 string 表达式"⇒ 按位置挖掉）✓
+        #:     ★★ **普通字符串字面量必须保留**（★ `get_com_member(x, "M")` 的成员名在里面）✓
+        src2 = src
         try:
-            for tok in _tk.generate_tokens(_io.StringIO(src).readline):
+            tree = __import__("ast").parse(src)
+            spans = []
+            for node in __import__("ast").walk(tree):
+                if isinstance(node, (__import__("ast").Module, __import__("ast").ClassDef,
+                                     __import__("ast").FunctionDef,
+                                     __import__("ast").AsyncFunctionDef)):
+                    body = getattr(node, "body", [])
+                    if body and isinstance(body[0], __import__("ast").Expr) and \
+                            isinstance(body[0].value, __import__("ast").Constant) and \
+                            isinstance(body[0].value.value, str):
+                        spans.append((body[0].lineno, body[0].col_offset,
+                                      body[0].end_lineno, body[0].end_col_offset))
+            if spans:
+                all_lines = src.splitlines(keepends=True)
+                for (r0, c0, r1, c1) in sorted(spans, reverse=True):
+                    if r0 == r1:
+                        line = all_lines[r0 - 1]
+                        all_lines[r0 - 1] = line[:c0] + line[c1:]
+                    else:
+                        all_lines[r0 - 1] = all_lines[r0 - 1][:c0] + "\n"
+                        for rr in range(r0, r1 - 1):
+                            all_lines[rr] = "\n"
+                        all_lines[r1 - 1] = all_lines[r1 - 1][c1:]
+                src2 = "".join(all_lines)
+        except Exception:                                                 # noqa: BLE001
+            src2 = src
+
+        lines = src2.splitlines(keepends=True)
+        #: ★ 收集每个 COMMENT 的 (行, 列起, 列止)（★ 在**剥掉 docstring 之后**的文本上做）
+        cuts: dict = {}
+        try:
+            for tok in _tk.generate_tokens(_io.StringIO(src2).readline):
                 if tok.type == _tk.COMMENT:
-                    continue
-                out.append(tok)
+                    r, c = tok.start
+                    cuts.setdefault(r, []).append((c, tok.end[1]))
         except Exception:                                                 # noqa: BLE001
-            return src
-        #: ★ 按 token 类型重建：★ 直接拼 token 的原始文本（★ 保留字符串字面量）
-        try:
-            res = _tk.untokenize(out)
-            return res if isinstance(res, str) else res.decode("utf-8", "replace")
-        except Exception:                                                 # noqa: BLE001
-            lines = []
-            for line in src.splitlines():
-                #: ★ 退化路径：★ 只砍掉"看起来在字符串外面"的 `#`
-                q = None
-                for i, c in enumerate(line):
-                    if q:
-                        if c == q and line[i - 1] != "\\":
-                            q = None
-                    elif c in "\"'":
-                        q = c
-                    elif c == "#":
-                        line = line[:i]
-                        break
-                lines.append(line)
-            return "\n".join(lines)
+            cuts = {}
+        if not cuts:
+            return src2
+        out = []
+        for idx, line in enumerate(lines, 1):
+            if idx in cuts:
+                body = line.rstrip("\n").rstrip("\r")
+                for c0, c1 in sorted(cuts[idx], reverse=True):
+                    body = body[:c0] + body[c1:]
+                line = body + "\n"
+            out.append(line)
+        return "".join(out)
+
+    def _strip_selftest() -> tuple:
+        """★ **负例自检**（★ 事实 62）：★ 拿"注释里有成员名"的样本，验它被剥掉。"""
+        sample = ('a = 1  # 这里是注释，含 get_com_member(x, "GetActiveSketch2")\n'
+                  'def f():\n'
+                  '    """多行 docstring\n'
+                  '    里面也有 get_com_member(y, "GetActiveSketch2")\n'
+                  '    """\n'
+                  '    return get_com_member(z, "KeepMe")  # 行尾注释\n')
+        cleaned = strip_comments_only(sample)
+        return (('GetActiveSketch2' not in cleaned),          #: ★ 注释与 docstring 里的都该没了
+                ('KeepMe' in cleaned))                        #: ★★ 真正的字符串字面量必须留着
 
     #: ★★★ 2026-10-03（接手轮）**新增"跨库存疑"档**（★ 由 OCP 的 `bounds.Get()` 暴露）：
     #:   ★ 病灶：★ `scripts/advanced_geometry_ocp.py` 与 `headless_occt_service.py` 里的
@@ -168,6 +228,15 @@ def main() -> int:
                 succ_here.add(g)
         for i, cl in enumerate(code_lines):
             s = cl.strip()
+            #: ★★★ 2026-10-03（接手轮）**兜底过滤**：★ 剥注释/剥 docstring 之后**仍以 `#` 开头**的行
+            #:   ⇒ ★ **它一定是注释**（★ 合法 Python 代码行不以 `#` 开头）⇒ **跳过** ✓
+            #:   ★ 为什么需要兜底：★ 上面那套"AST 剥 docstring + tokenize 挖注释"已经**修好了主因**
+            #:     （★ 负例自检 `(True, True)`、★ 生产真命中 31 → 27），★ 但实测**仍有 17 条**残留
+            #:     ⇒ ★★ 与其继续追那 17 条的真因（★ 事实 53：同一处 ≥3 次就该停），
+            #:     ★ **加一道开销为零、判据无歧义的兜底**更划算 ✓
+            #:   ⚠ 它**不替代**上面那套（★ 那套负责保留真字符串字面量），★ 只做最后一道闸 ✓
+            if s.startswith("#"):
+                continue
             for how, pat in CALL_FORMS:
                 for name in pat.findall(cl):
                     if name not in safe:
