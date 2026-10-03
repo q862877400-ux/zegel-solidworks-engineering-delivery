@@ -58,6 +58,12 @@ from pathlib import Path
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 
+#: ★★ 2026-10-03（轮 470）**修一个真 bug**：`_ROOT_S` 原定义在下面，而本行就用了它
+#:   ⇒ `NameError` ⇒ **`import compare_geometry` 直接失败** ⇒ 该测试文件收集期就报错。
+#:   ★ 它是**事实 375 记的那族**（用了却没定义 / 定义在使用之后）——
+#:   合并那轮修了 7 个同类，**漏了这一个**。
+_ROOT_S = str(Path(__file__).resolve().parents[1])
+
 sys.path[:0] = [str(Path(__file__).resolve().parent),
                 r"" + _ROOT_S + r"\scripts"]
 
@@ -65,8 +71,6 @@ from sw_connect import get_com_member                              # noqa: E402
 
 #: ★ 相对容差（★ 来自来源 README 的 1% —— 那是一个**量级**，不是我们拍的）
 
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 REL_TOL = 0.01
 
 

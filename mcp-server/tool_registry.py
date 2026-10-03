@@ -180,6 +180,12 @@ _LEN_SUFFIX_EXEMPT: dict = {
         "只能在这里登记。★ 登记的理由要写清：加 `_mm` 会把「像素」说成「毫米」——**那是说错话**。",
     ("solidworks_export_bmp", "pixel_height"):
         "同 `pixel_width`：官方 `ExportToBMP` 的 `Height`，单位是**像素**不是长度。",
+    #: ★★ 2026-10-03（轮 470）：它**是角度**（名字里就写着 `_deg`）。门禁命中它只因为
+    #:   `_LEN_WORDS` 里有 `spacing`；★ 而**一个参数不可能同时是长度与角度**
+    #:   ⇒ 走门禁文档写明的这条通道，**不改它的名字**（改成 `_mm` 反而是说错话）。
+    ("solidworks_sketch_circular_pattern", "pattern_spacing_deg"):
+        "它**是角度**：名字已含 `_deg`，官方 `PatternSpacing` 收弧度、本工具收度。\n"
+        "★ 命中只因为 `_LEN_WORDS` 里有 `spacing` —— **一个参数不可能同时是长度与角度**。",
 }
 
 

@@ -45,6 +45,20 @@ SIG = re.compile(r"^\S+\s+(\w+)\s*\(")
 INTERNAL = re.compile(r"^I[A-Z][a-z]")
 
 
+
+
+def _faithful_write(obj, name, value, *args, **kwargs):
+    """★ 写属性的"忠实替身"：**就是 `setattr`**。
+
+    ★★ 2026-10-03（轮 470）新增：本仓把 98 处「写 COM 属性」从
+    `get_com_member(obj, 名, 值)` 改成了 `set_com_member(obj, 名, 值)`
+    （★ 前者有实参就**调用**属性 ⇒ `TypeError: 'bool' object is not callable`
+    ⇒ 而外面 `return True` ⇒ 失败报成成功）。
+    ⇒ ★ 故本文件的契约装置也得认得这个新名字 ✓
+    """
+    setattr(obj, name, value)
+    return value
+
 def _faithful(obj, name, *args, **kwargs):
     if obj is None:
         return None
@@ -172,6 +186,18 @@ def test_index_is_complete_against_reflection():
 def test_entrypoint_delegates_to_upstream_get_com_member():
     """入口**不得**自己造调用路径 —— 必须走上游自带的 ``get_com_member``。"""
     connect = types.ModuleType("sw_connect")
+    #: ★★★ 2026-10-03（轮 470）假模块的**其余名字一律转发给真模块**。
+    #:   原先只手装了一两个名字，而被测模块顶层还 import 了别的
+    #:   ⇒ 报 `cannot import name … from 'sw_connect' (**unknown location**)`
+    #:   （★ "unknown location" 正因为假模块**没有 __file__** ⇒ 指不到真因）。
+    #:   ★ 故加 PEP 562 的模块级 `__getattr__` 兜底 ✓
+    import sw_connect as _real_connect
+
+    def _connect_attr(name):  # noqa: ANN001
+        return getattr(_real_connect, name)
+
+    connect.__getattr__ = _connect_attr
+    connect.set_com_member = _faithful_write
     connect.get_com_member = _faithful
     connect.call_com_member = _faithful
     sys.modules.setdefault("sw_connect", connect)
@@ -185,6 +211,7 @@ def test_entrypoint_delegates_to_upstream_get_com_member():
         assert m.ASSEMBLY == asm
         seen = []
         m.get_com_member = lambda o, n, *a, **k: seen.append((n, a))
+        m.set_com_member = lambda o, n, v, **k: sink.append((n, (v,))) or result
         m.call_com_member = lambda o, n, *a, **k: seen.append((n, a))
         # ⚑ 取**任意一个**有零参成员的族 —— 早先固定取 FAMILIES[0]，
         #   而 SWRoutingLib 的第一个族没有零参成员，样本取不到（断言本身的毛病）。

@@ -88,20 +88,58 @@ def _faithful(obj, name, *args, **kwargs):
     return attr
 
 
+def _faithful_write(obj, name, value, *args, **kwargs):
+    """★ 写属性的"忠实替身"：**就是 `setattr`** —— 与 `sw_connect.set_com_member` 同一实现。
+
+    ★★ 2026-10-03（轮 470）新增。为什么要它：本仓把 98 处「写 COM 属性」从
+    `get_com_member(obj, 名, 值)` 改成了 `set_com_member(obj, 名, 值)`
+    ⇒ ★ 本文件的契约测试（"is property not method"）要能**记录到那次写**
+      ⇒ 故假模块上也得有 `set_com_member` 这个名字 ✓
+    """
+    setattr(obj, name, value)
+    return value
+
+
 def _load():
     connect = types.ModuleType("sw_connect")
+    #: ★★★ 2026-10-03（轮 470）：**假模块的其余名字一律转发给真模块**。
+    #:   原先这里**只手装了一两个名字**（`get_com_member`），而 `sw_selection.py`
+    #:   顶层还 import 了别的（如 `call_com_member`）⇒ ★ 假模块上没有 ⇒ 报
+    #:   `cannot import name 'call_com_member' from 'sw_connect' (**unknown location**)`
+    #:   —— ★ 而"unknown location"正是因为假模块**没有 `__file__`**，**错误信息指不到真因**。
+    #:   ★ 故加 PEP 562 的模块级 `__getattr__` 兜底 ⇒ 以后无论被测模块还 import 什么，
+    #:     都能从**真** `sw_connect` 拿到 ⇒ 这份契约装置**不必随实现改名继续手维护** ✓
+    import sw_connect as _real_connect
+
+    def _connect_attr(name):                                   # noqa: ANN001
+        return getattr(_real_connect, name)
+
+    connect.__getattr__ = _connect_attr
     connect.get_com_member = _faithful
-    sys.modules.setdefault("sw_connect", connect)
+    #: ★★ 2026-10-03（轮 470）：**契约测试要跟着实现形态一起改**。
+    #:   本仓 2026-10-03 把 98 处「写 COM 属性」从 `get_com_member(obj, 名, 值)`
+    #:   改成了 `set_com_member(obj, 名, 值)`（★ 前者有实参就**调用**属性 ⇒
+    #:   `TypeError: 'bool' object is not callable` ⇒ 而外面 `return True` ⇒ 失败报成成功）。
+    #:   ⇒ ★★ 而本文件原先把**假模块的 `get_com_member`** 当成"写"的记录点 ⇒
+    #:      改完之后**猴补丁补不到** ⇒ 断言 `seen` 为空而失败。
+    #:   ★ 故这里把**两个名字都**装上（★ 读走 get、写走 set），
+    #:     这样测试无论走哪条路都记录得到 ✓
+    connect.set_com_member = _faithful_write
+    sys.modules["sw_connect"] = connect            # ★ 不用 setdefault：要的是"确定装上"
     spec = importlib.util.spec_from_file_location("sw_selection", MODULE_PATH)
     module = importlib.util.module_from_spec(spec)
     sys.modules["sw_selection"] = module
     spec.loader.exec_module(module)
     module.get_com_member = _faithful
+    module.set_com_member = _faithful_write
     return module
 
 
 def _record(m, sink, result="OBJ"):
+    #: ★★ 同 `_load` 的说明：**两个名字都补** —— 实现改为 `set_com_member` 之后，
+    #:   只补 `get_com_member` 就记不到任何东西（★ 那正是本文件曾失败的根因）。
     m.get_com_member = lambda o, n, *a, **k: sink.append((n, a)) or result
+    m.set_com_member = lambda o, n, v, **k: sink.append((n, (v,))) or result
 
 
 # ── 签名对账 ─────────────────────────────────────────────────────────

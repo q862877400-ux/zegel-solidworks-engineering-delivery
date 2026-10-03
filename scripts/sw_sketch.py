@@ -612,7 +612,15 @@ def resolve_sketch(model, name: str = ""):
             return None
 
     #: 1+2 · 显式名，或"当前草图名"（★ 两者都试中英文变体）
-    from scripts.sw_part import _get_sketch_name_candidates, current_sketch_name
+    #: ★★ 2026-10-03（轮 470）：**统一导入口径** —— 本行原写 `from scripts.sw_part import …`
+    #:   （★ 包内却用**绝对包路径**），而本模块别处走 `from .sw_connect import …`（相对）
+    #:   ⇒ ★ 同一个包内混用两套口径 ⇒ `sys.modules` 里可能出现**同一模块两份实例**
+    #:   ⇒ 那是 `cannot import name … from '<unknown module name>'` 的来源之一。
+    #:   ★ 现改为**相对优先、绝对回退**（与本仓模块级 `try/except` 的写法一致）。
+    try:
+        from .sw_part import _get_sketch_name_candidates, current_sketch_name
+    except ImportError:                                        # 顶层载入（脚本 / 探针）
+        from scripts.sw_part import _get_sketch_name_candidates, current_sketch_name
 
     base = str(name or "").strip() or current_sketch_name(model)
     for cand in _get_sketch_name_candidates(base):

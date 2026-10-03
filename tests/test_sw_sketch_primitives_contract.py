@@ -24,10 +24,20 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "mcp-server"))
 
-import sw_sketch as SK                                              # noqa: E402
+#: ★★ 2026-10-03（轮 470）**改导入口径：顶层名 → 包内名**。
+#:   原先写 `import sw_sketch`（★ **顶层**载入）⇒ `sw_sketch.__package__ == ''`
+#:   ⇒ ★ 它内部那句 `from .sw_connect import …`（包内相对导入）**必然失败**，
+#:     只能落到 `except ImportError: from sw_connect import …` 那一支 ——
+#:     而那一支的表现是
+#:     `ImportError: cannot import name 'set_com_member' from '<unknown module name>'`
+#:     （★ **错误信息指不到真因**；★ 真因是"两种导入口径并存 ⇒ `sys.modules` 里有残缺条目"）。
+#:   ★ 改成 `scripts.sw_sketch` ⇒ `__package__ == 'scripts'` ⇒ **相对导入成立**（★ 已实测）✓
+#:   ★★ 依据：pytest 官方文档 `explanation/pythonpath.html` —— 包化测试目录 + 以包名导入。
+import scripts.sw_sketch as SK                                      # noqa: E402
 import sw_part as P                                                # noqa: E402
 
 #: ★ 工具名 ⇒ 目标函数名（★ 与 batch54 的声明一致）

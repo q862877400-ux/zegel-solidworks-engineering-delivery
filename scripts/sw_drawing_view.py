@@ -525,7 +525,14 @@ def _iter_views(model):
     #:   它的 docstring 记着一条**真机实测的陷阱**：空图纸上 `GetFirstView()` 回的是**图纸本身**
     #:   （`Type == 1`、名字等于图纸名）⇒ 不排除就会列出**假视图**。
     #:   ★★ 所以本处不自己判陷阱，而是**先取已验证的名单**，再按名对上 view 对象。
-    from scripts.sw_drawing_query import list_views as _list_views
+    #: ★★ 2026-10-03（轮 470）：**统一导入口径**（★ 同 `sw_sketch.py` 那一处）——
+    #:   本行原写 `from scripts.sw_drawing_query import …`（包内用绝对包路径）
+    #:   ⇒ 与本模块别处的相对口径混用 ⇒ 可能出现同一模块两份实例。
+    #:   ★ 改为相对优先、绝对回退。
+    try:
+        from .sw_drawing_query import list_views as _list_views
+    except ImportError:                                        # 顶层载入（脚本 / 探针）
+        from scripts.sw_drawing_query import list_views as _list_views
     try:
         _names = [str((_r or {}).get("name") or "") for _r in (_list_views(model) or [])]
     except Exception as exc:                                   # noqa: BLE001
