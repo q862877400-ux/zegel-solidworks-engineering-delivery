@@ -1039,8 +1039,29 @@ def sweep_params(model, feature_name: str = "") -> dict:
         ★★ **而那两个 `0.0` 是**应然的**** —— ★ 本探针用的是**草图轮廓**（★ `CircularProfile=false`）
           ⇒ **直径本就该是 0**；★ 而官方逐字说 `GetWallThickness`
           **「valid only if `ISweepFeatureData::IsThinFeature` is true」** ⇒ ★ **非薄壁时它不适用** ✓
-        ★★★ **⇒ 要量那两个口径，必须**让它们非零****（★ 圆轮廓 / ★ 薄壁）⇒
-          ★★ **⇒ 如实留作待办**、★ **不谎称"量到了"** ✓
+        ★★★ **⇒ 要量那两个口径，必须**让它们非零****（★ 圆轮廓 / ★ 薄壁）✓
+
+      ★★★★★★★ **✅ 其中一个已量出（★ 2026-10-04 轮 127 · ★ 第十一族）**：
+        ★ **`CircularProfileDiameter` 的口径 = **随文档单位（★ 毫米文档 ⇒ 毫米值）** ✓
+        **怎么量的**（★ 关键是**判据要独立** —— ★ 不能"写 `12.0` 再读回 `12.0`"那样自证）：
+          · ★ 给扫描设 `CircularProfile = True` · ★ `CircularProfileDiameter = **12.0**` ⇒
+            ★ 用 `IFeature::ModifyDefinition(Data, TopDoc, Component)` 落地 ⇒ **`modify_ok = true`** ✓
+          · ★★ **再量**包围盒****（★ 那是**几何**、★ 与那个属性**互相独立**）：
+            ★ `bbox_before = [**6.0, 6.0**, 40.0]`（★ 草图轮廓半径 3 ⇒ 直径 **6** · ★ 路径 40）⇒
+            ★ `bbox_after  = [**12.0, 12.0**, 40.0]` ⇒
+            ★★★ **⇒ 横截面从 **6** 变成 **12**、★ 正好等于我写进去的 `12.0`** ⇒
+              ★★ **⇒ 口径 = 毫米**（★ 若口径是**米**，★ `12.0` 会是 **12 米** ⇒ 横截面 ≈**12000**）✓
+          · ★★★ **两次读数**自洽**（★ 6.0 与 12.0 都能由各自的输入推出）⇒ **可信** ✓
+        ★★★★ **⚠ 而那次成功卡在**第 3 参**上**（★ 值记）：
+          ★ 传 `None` ⇒ ★ `com_error: (-2147352571, '**类型不匹配。**', None, **3**)` ⇒
+          ★★ **⇒ 位置 3** 正是 `Component` ⇒ ★ **正解：★ 传
+            `sw_connect.create_empty_dispatch_variant()`** ——
+            ★ **事实 12/33 那一族**：★ 空 Dispatch 参数包**必须**用 `VARIANT(VT_DISPATCH, None)`、
+            ★★ **传裸 `None` 会报「类型不匹配」、★ 而那个错误**看不出是哪个参数**** ✓
+
+      ★★★★★ **⚠ 而 `GetWallThickness` 的口径**仍未定案**** —— ★ 官方逐字说它
+        **「valid only if `ISweepFeatureData::IsThinFeature` is true」** ⇒
+        ★★ **⇒ 要量它必须先建一个**薄壁扫描** ⇒ ★ **如实留作待办、★ 不谎称** ✓
 
       ★★★★★ **而本轮的真机读数**（★ 建成了、★ 读回来了、★ **全部自洽**）：
         ★ `create_sweep_report` ⇒ ★ **`ok=True · type_name=**Sweep** · 树 9→10`** ✓
