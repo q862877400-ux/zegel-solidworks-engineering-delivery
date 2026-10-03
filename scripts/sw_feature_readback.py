@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -530,6 +530,100 @@ def hole_params(model, feature_name: str = "") -> dict:
             out["GetSketchPointCount"] = get_com_member(fd, "GetSketchPointCount")
         except Exception as exc:                                          # noqa: BLE001
             out["GetSketchPointCount"] = "err: %s" % str(exc)[:50]
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\IFeature\\`）
+# 文件:   `scripts/sw_feature_readback.py::feature_info`（★ 新增）
+# 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第五个**、★ **第四个族**（★ `IFeature` ×51）✓
+#   ★★ **本族先用**新判据**重扫**（★ 上一轮修的 · `tools/check_obsolete_heuristic.py`）：
+#     ★ **126 个成员** ⇒ ★ **真废弃 24** · ★★ **没废弃 102** ⇒
+#     ★★★ **而旧判据会多报 2 个假阳性**：★ `GetTypeName` · ★ **`GetTypeName2`**
+#       ⇒ ★★★★ **⇒ 而 `GetTypeName2` 正是本仓在用的那个** ⇒ **用它是对的** ✓
+#   ★★★ **官方逐字（★ 逐个成员的 `## Returns`）**：
+#     · ★ `GetID()` ⇒ 「Feature ID of this feature」⇒ **unique within the document** ✓
+#     · ★ `GetFaceCount()` ⇒ 「Number of faces in this feature」✓
+#     · ★ `Visible` ⇒ `swVisibilityState_e` · ★ `GetEditStatus()` ⇒ `swFeatureEditStatus_e` ✓
+#     · ★ `GetMaterialIdName()` ⇒ 「Material name」· ★ `Description` / ★ `CreatedBy` ⇒ 字符串 ✓
+#     · ★ `GetChildren()` ⇒ 「Array of child features」· ★ `GetParents()` ⇒ 父特征 ✓
+#     · ★★ **`GetBox(out BBox)`** ⇒ ★★★ **官方 `## Remarks` 逐字**：
+#       「**IMPORTANT:** The values returned are **approximate** and **should not be used for
+#         comparison or calculation purposes**.」⇒ ★★★★ **⇒ **本函数**不用它**** ✓
+#       （★ 而本仓 `part_bounding_box` 早已记着同一条 ⇒ **两处一致**）✓
+#   ★★★★ **⚠ 废弃的那 24 个（★ 新判据）⇒ 一个都不碰**：
+#     ★ `GetBody` / `GetErrorCode` / `GetSpecificFeature` / `IsSuppressed` / `Select` /
+#     ★★ `SetBody` / `SetSuppression` / `MoveFreezeBarTo` … ✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def feature_info(model, feature_name: str = "") -> dict:
+    """★ 读**一个特征的一组通用属性**（★ 元数据 / 面数 / 可见性 / 子父特征）✓
+
+    ★★★★★ **⚠ 本函数**不读 `GetBox`**** —— ★ 官方 `## Remarks` 逐字：
+      「The values returned are **approximate** and **should not be used for comparison or
+        calculation purposes**」⇒ ★★ **那是官方明说的"不可核"** ⇒
+      ★★★ **要包围盒请用 `part_bounding_box`**（★ 它带着同一条警告）✓
+    ★★★ **⚠ 也**不读那 24 个废弃成员****（★ 新判据扫出来的）✓
+    ★★★★★★ **⚠ 而"取哪个特征"这条我改了**三次**（★ 值记 —— 三次都不是能力错）**：
+      ★ ① 兜底取 `FirstFeature` ⇒ ★ 中文 UI 下回 **`收藏`**（★ `FavoriteFolder` · 容器）⇒
+        `GetFaceCount = 0` ✓
+      ★★ ② 加 `_is_real_feature` ⇒ ★★ 而它**只判"有没有类型名"**、
+        ★ `收藏` 的 `FavoriteFolder` **是一个类型名** ⇒ **仍回 `收藏`** ⇒
+        ★★ 改成**两层过滤**（★ 名字不在 `_CONTAINER_NODES` + ★ `_is_real_feature`）✓
+      ★★★ ③ 过了两层 ⇒ 回 **`前视基准面`**（★ `RefPlane` · ★ **官方文档说基准面也是合法特征**）⇒
+        ★★ **而 `GetFaceCount = 0` 是**应然的****（★ 基准面没有面）⇒
+        ★★★ **⇒ 是我的判据「面数 = 6」只对**拉伸**成立** ⇒ **要按名字取那个拉伸** ✓
+      ★★★★ **⇒ 三次全是**判据/兜底**的错、★ 能力一直是对的**（★ 事实 51 的第三次实例）✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    out: dict = {"feature": feature_name, "error": None}
+    try:
+        feat = None
+        if feature_name:
+            #: ★ 名字是 `FeatureByName`（★ **不带 `Get`**）✓
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★★★★★ **兜底要过**两层**过滤**（★ 我第一版只过了第二层）——
+            #:   ★ 真机回的是 **`收藏`**（★ `GetTypeName2 = FavoriteFolder`）⇒ ★★ **`GetFaceCount = 0`** ✓
+            #:   ★★★ **根因**：★ `_is_real_feature` 只判"**有没有类型名**" ⇒
+            #:     而 `收藏` 的 `FavoriteFolder` **是一个类型名** ⇒ **它漏了这类"有类型名的容器"** ✓
+            #:   ★★★★ **修法**：★ **照 `feature_names()` 的**两层过滤**** ——
+            #:     ① 名字不在 `_CONTAINER_NODES` 里 · ★★ ② `_is_real_feature` ✓
+            #:     （★ 第一层就是 `feature_names` 早就在用的那个）✓
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                nm = str(safe_get_com_member(f, "Name") or "")
+                if nm not in _CONTAINER_NODES and _is_real_feature(f):
+                    feat = f
+                    break
+                f = safe_get_com_member(f, "GetNextFeature")
+            out["feature"] = str(safe_get_com_member(feat, "Name") or "") if feat is not None else ""
+        if feat is None:
+            out["error"] = "没有特征"
+            return out
+        #: ★★ 属性（★ `{get;}` / `{get;set}`）⇒ ★ 直接取 ✓
+        for name in ("Name", "Description", "CreatedBy", "Visible", "GetMaterialIdName"):
+            try:
+                out[name] = get_com_member(feat, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+        #: ★★★ 零参方法 ⇒ ★ 也取 ✓
+        for name in ("GetID", "GetFaceCount", "GetEditStatus", "GetTypeName2", "GetChildren",
+                     "GetParents"):
+            try:
+                v = get_com_member(feat, name)
+                #: ★ 数组类：★ 取长度（★ 回 `None` 就是空）✓
+                if name in ("GetChildren", "GetParents"):
+                    out[name] = len(list(v)) if v is not None else 0
+                else:
+                    out[name] = v
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+        #: ★★ **⚠ 读 `GetTypeName2` 是**对的**** —— ★ 上一轮修的判据证明它**没废弃** ✓
+        #:   （★ 旧判据 `"Obsolete" in t` 会把它误报成废弃 ⇒ ★ **而本函数按新判据**）
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out

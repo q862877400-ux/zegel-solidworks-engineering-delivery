@@ -72,7 +72,9 @@
 |---|---|
 | `analysis_run_readback` | `stitched` |
 | `animation_export` | `stitched` |
+| `assembly_and_mates` | `stitched` |
 | `autocad_basic_drafting` | `not_implemented` |
+| `drawing_dimension_insertion` | `not_implemented` |
 | `geometric_tolerance` | `stitched` |
 | `mold_parting_geometry` | `stitched` |
 | `mold_tools` | `stitched` |
