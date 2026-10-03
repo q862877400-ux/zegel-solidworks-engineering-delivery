@@ -1450,3 +1450,20 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ② 坐标筛子写成 `|m[2] - 20| < 0.5`，而拉伸是 **Z=-20→0**（前视面拉 20mm）⇒ **筛空了、退回边 0**（★ 修成 `|m[2] - 0| < 0.5` 后才挑到 edge 8）。
      ★ **按事实 53 停手**（直纹已 3 轮：505 · 506 · 531）。
      ★★ **方法论回扣**：同一把钥匙（“原话里的名词”）**在旋转曲面上开了一把锁、在加厚与直纹上没开开** —— ★ 三次里一次成，★ 而**三次都是有价值的结果**。|真机：`tools/probe_ruled_surface_on_feature.py`；证据 `output/ruled-surface-on-feature-evidence.json`；对照事实 398 / 410 / 411 |
+| 413 | **★★★ 扫描曲面有**专用方法** `InsertSweepSurface2/3`（★ 而本仓从未查过）；而五条入口现已**穷尽**（全部回 `None`）** —— 2026-10-03（轮 532）。
+     ★ **怎么找到的**（★ 那把钥匙的第三次使用 —— 事实 410：**官方文档里的每个名字都要落实**）：
+     ★ 先读 `InsertProtrusionSwept4` 的 **Remarks** ⇒ 「SOLIDWORKS 2018 introduces a new sweep architecture…」⇒ 而它的 `## See Also` 里列着
+       **`IFeatureManager::InsertSweepSurface2 Method`** ⚠ —— ★★ **名字里就有 `SweepSurface`**，而**本仓从来没查过它**。
+     ★ 而它的 `Remarks` 第一句逐字是：
+       > "**Because you are creating a surface, the sections can be open.**"
+       ⇒ ★ 它**明说在建曲面** ✓（★ 而 mark 分工与其他扫描同：1=轮廓、2=引导线、**4=路径**）
+     ★ 真机（`tools/probe_sweep_surface_dedicated.py`，零弹窗、选区 `{1:1, 4:1}` **对**）：
+     ```
+     InsertSweepSurface2（**11 in** · 类型库 arity=12） ⇒ 回 **None** · 树不动
+     InsertSweepSurface3（**14 in** · 类型库 arity=15） ⇒ 回 **None** · 树不动
+     ★ 而传 11 参给 `…3` ⇒ **`非选择性的参数`**（★ 反过来**确认了 arity = 14**）
+     ```
+     ⇒ ★★ **故扫描曲面的五条入口现已穷尽**：新架构 `CreateDefinition(62)` · 旧式 `InsertSweepRefSurface2`（6）· `InsertSweepRefSurface`（4）· **专用 `InsertSweepSurface2`（11）** · **`InsertSweepSurface3`（14）` —— ★ **全部回 `None` · 树不动** ✓
+     ★ **按事实 53 停手**（扫描已 4 轮：486 · 488 · 509 · 518 · 532）。
+     ★★ **方法论回扣**：同一把钥匙三次使用 —— ★ **旋转曲面成了**、★ **加厚与直纹没成**、★而**本次又找到一个本仓从未查过的专用方法**（★ 而它也没成）。
+     ★ 而它的**净收获不是“成”**：★★ **它把一个“入口没穷举”的漏洞堆上了** —— ★ 与事实 401（加厚）同样的作用。|真机：`tools/probe_sweep_surface_dedicated.py`；证据 `output/sweep-surface-dedicated-evidence.json`；对照事实 384 / 401 / 410 / 412 |

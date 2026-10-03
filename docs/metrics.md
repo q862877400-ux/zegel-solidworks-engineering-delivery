@@ -32,7 +32,7 @@
 | 24 |   其中 stitched | 代码写好但没真机跑过 | **12** | `同上` |
 | 25 |   其中 not_implemented | 没做 | **1** | `同上` |
 | 26 | 门禁 | scripts/check_*.py 的自动检查程序 | **20** | `scripts/check_*.py` |
-| 27 | 已知事实条数 | docs/known-facts.md 里编号的条目 | **410** | `known-facts.md 里 ^| N | 的行数` |
+| 27 | 已知事实条数 | docs/known-facts.md 里编号的条目 | **411** | `known-facts.md 里 ^| N | 的行数` |
 | 28 | Spec Kit 特性 | specs/<NNN>-* 目录数 | **148** | `D:\AI\SW\specs 下形如 NNN- 的目录数` |
 | 29 | 覆盖口径 ①「名字出现过」（宽） | 台账 hit / 成员位次。★★ **无判别力** —— 我们的全量索引把 774 族的名字都抄了，所以它必然接近 100%，**不能用来说「覆盖广」** | **100.0%（15466 / 15466）** | `family-coverage.json 各行 hit 相加 ÷ members 相加` |
 | 30 | 覆盖口径 ②「真的被调用」（中） | 台账 used / 成员位次 —— 代码里真的有调用，不只是抄了名字 | **17.6%（2722 / 15466）** | `family-coverage.json 各行 used 相加 ÷ members 相加` |
