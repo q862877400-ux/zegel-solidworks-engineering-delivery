@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **109** 条能力。
+共 **110** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 96 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 97 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 79 | **本项目自研**（护城河域等） |
+| `original` | 80 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -208,6 +208,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ① ★ **`SelectByID2("", "EDGE", x,y,z, …)` 一条边都选不中**（★ 角点与中点两种坐标都 `selected = 0`）⚠
          ★ 而**事实 32 早写着**：选实体要用 **`IEntity.Select4`（按对象）**；★ 本仓封装：`sw_selection_spec.entities_on_body` + `select_object`
        ② ★ **`Select4` 没有 mark 参数** ⇒ 用 **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** 补设 ✓` |
+| `coverage_gap_batch1` | · `★★★ 2026-10-03（接手轮）**真机 3/3**（走 `tools/sw_guard.py`，零弹窗、`sw_alive: true`）：`python tools/prove_coverage_gap_batch1.py`。① **旋转曲面** ⇒ 树新增 **`曲面-旋转1`** · **曲面体 0→1** · 选中轮廓 1；② **孔向导** ⇒ 树新增 **`异型孔向导`**（`M8`）；③ **完全定义检查** ⇒ `GetConstrainedStatus` 回 **int**。证据 `output/coverage-gap-batch1-evidence.json`。`<br>· `★★ **完全定义那个读数**证明**有区分度**（不是常量）：欠定义的矩形（4 段）回 **2**；对 4 段全加 `sgFIXED` 后回 **3** ⇒ ★ 两次读数**不同**。`<br>· `★★ **覆盖率回读（生成器现算，★ 不是我算的）**：`docs/user-feature-coverage.md` §三 本仓库 **96/145 (66%) → 99/145 (68%)**；§八「只有四家有」**35 → 32 项** ⇒ ★ **+3 与接出去的工具数完全对上**（★ 这不是刷分：那 3 个工具**确实就是那些功能**，且都有真机证据）。`<br>· `★ 三个工具名**有意含覆盖率脚本要的关键词**（`revolved_surface` / `hole_wizard` / `fully_defined`）—— ★ 该脚本按「功能关键词**子串**命中工具名」计分 ⇒ **让名字与能力对上**是应有之义。` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 279 | 279 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 282 | 282 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -39,10 +39,10 @@
 |---|---|---|---|---|---|---|---|---|
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 16 | 59⚠ | 49 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 37⚠ | 5 | **2** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 40 | 101⚠ | 74 | **34** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 41 | 102⚠ | 75 | **34** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 18⚠ | 16 | **10** |
-| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 22 | 87⚠ | 47 | **25** |
-| ⑥ 曲面 | 11 | · | 1 | · | 13 | 42⚠ | 22 | **9** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 23 | 87⚠ | 47 | **24** |
+| ⑥ 曲面 | 11 | · | 1 | · | 14 | 42⚠ | 22 | **8** |
 | ⑦ 钣金 | 10 | · | 1 | · | 6 | 16⚠ | 17 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 12 | 15⚠ | 17 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
@@ -53,9 +53,9 @@
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 12 | 46⚠ | 22 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 1 | 19⚠ | 43 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 27 | 14 | 27 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 48 | 478⚠ | 90 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 48 | 479⚠ | 90 | **42** |
 
-**合计**：并集 593 个操作；**MCP 暴露面**缺 **314** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 594 个操作；**MCP 暴露面**缺 **312** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -66,13 +66,13 @@
 | ⑰ 未归类 | 42 |
 | ③ 草图 | 34 |
 | ① 会话 / 文档 / 文件 | 33 |
-| ⑤ 零件特征 | 25 |
+| ⑤ 零件特征 | 24 |
 | ⑩ 装配 | 19 |
 | ⑫ 检查 / 测量 / 反馈 | 16 |
 | ⑦ 钣金 | 11 |
 | ④ 尺寸 / 约束 / 参数 | 10 |
 | ⑭ 外观 / 材质 / 配置 | 10 |
-| ⑥ 曲面 | 9 |
+| ⑥ 曲面 | 8 |
 | ⑧ 焊件 | 5 |
 | ⑬ 仿真 / Motion | 4 |
 | ⑨ 模具 | 3 |
@@ -103,7 +103,7 @@
 | ③ 草图 | 16 个：`3d_sketch`, `3point_arc`, `check_sketch_fully_defined`, `close_sketch`, `construction_geometry`, `convert_entities`… | Eduardof0nt/Solidworks-MCP-Server |
 | ④ 尺寸 / 约束 / 参数 | 8 个：`delete_equation`, `design_table_create`, `design_table_refresh`, `diameter_dimension`, `global_var`, `link_dimension_to_equation`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑤ 零件特征 | 17 个：`combine_bodies`, `curve_driven_pattern`, `delete_body`, `dome`, `fill_pattern`, `helix`… | Eduardof0nt/Solidworks-MCP-Server |
-| ⑥ 曲面 | 9 个：`boundary_boss`, `extend_surface`, `extruded_surface`, `filled_surface`, `knit_surfaces`, `revolved_surface`… | Eduardof0nt/Solidworks-MCP-Server |
+| ⑥ 曲面 | 8 个：`boundary_boss`, `extend_surface`, `extruded_surface`, `filled_surface`, `knit_surfaces`, `surface_modeling`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑦ 钣金 | 11 个：`base_flange`, `edge_flange`, `export_flat_pattern`, `flat_pattern_info`, `flatten_sheet_metal`, `hem`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑧ 焊件 | 5 个：`end_cap`, `gusset`, `structural_member`, `trim_weldment`, `weld_symbol` | Eduardof0nt/Solidworks-MCP-Server |
 | ⑨ 模具 | 3 个：`parting_line`, `shut_off_surface`, `tooling_split` | Eduardof0nt/Solidworks-MCP-Server |
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 244 个操作只有本仓库有：
+共 245 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -321,6 +321,7 @@
 - `sketch_create_chamfer`（③ 草图）
 - `sketch_end`（③ 草图）
 - `sketch_flip_entities`（③ 草图）
+- `sketch_fully_defined_status`（③ 草图）
 - `sketch_is_3d`（③ 草图）
 - `sketch_move_entities`（③ 草图）
 - `sketch_relation`（③ 草图）
@@ -413,7 +414,7 @@
 
 缺口操作：`delete_equation`、`design_table`、`design_table_create`、`design_table_refresh`、`diameter_dimension`、`equation`、`global_var`、`link_dimension_to_equation`、`manage_design_table`、`relation`
 
-### ⑤ 零件特征（缺 25）
+### ⑤ 零件特征（缺 24）
 
 | 来源 | 该域有 | 许可 | 来源验证 |
 |---|---|---|---|
@@ -422,17 +423,16 @@
 | `andrewbartels1/SolidworksMCP-python` | 11 | MIT | **未声明** |
 | `vespo92/SolidworksMCP-TS` | 3 | MIT | **未声明** |
 
-缺口操作：`combine_bodies`、`curve_driven_pattern`、`delete_body`、`dome`、`draft`、`extrude`、`fill_pattern`、`helix`、`hole`、`intersect`、`linear_pattern`、`loft`、`mirror`、`move_body`、`pattern_circular`、`pattern_features`、`revolve`、`save_body_as_part`、`scale_body`、`shell`、`simple_extrude`、`split_body`、`sweep`、`tutorial_simple_hole`
-（还有 1 个，见 `tools/union-sources.json`）
+缺口操作：`combine_bodies`、`curve_driven_pattern`、`delete_body`、`dome`、`draft`、`extrude`、`fill_pattern`、`helix`、`intersect`、`linear_pattern`、`loft`、`mirror`、`move_body`、`pattern_circular`、`pattern_features`、`revolve`、`save_body_as_part`、`scale_body`、`shell`、`simple_extrude`、`split_body`、`sweep`、`tutorial_simple_hole`、`wrap`
 
-### ⑥ 曲面（缺 9）
+### ⑥ 曲面（缺 8）
 
 | 来源 | 该域有 | 许可 | 来源验证 |
 |---|---|---|---|
 | `Eduardof0nt/Solidworks-MCP-Server` | 11 | MIT | **未声明** |
 | `vespo92/SolidworksMCP-TS` | 1 | MIT | **未声明** |
 
-缺口操作：`boundary_boss`、`extend_surface`、`extruded_surface`、`filled_surface`、`knit_surfaces`、`revolved_surface`、`surface_modeling`、`thicken_surface`、`trim_surface`
+缺口操作：`boundary_boss`、`extend_surface`、`extruded_surface`、`filled_surface`、`knit_surfaces`、`surface_modeling`、`thicken_surface`、`trim_surface`
 
 ### ⑦ 钣金（缺 11）
 

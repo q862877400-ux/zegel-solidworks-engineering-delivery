@@ -336,6 +336,47 @@ ICreatePoint / ICreateVector（**带 I**）
 
 ---
 
+### 3.7 ★★★ 2026-10-03（接手轮）**该族的新实例：草图「样条曲线」**（★ 而它纠正了一次"有实现"的误读）
+
+**项**：草图绘制 · **样条曲线**（`docs/user-feature-coverage.md` §八 的缺口项之一）。
+
+**官方现状**（`C:\swapi\types\ISketchManager\`）：
+
+| 成员 | 签名（逐字） | 备注 |
+|---|---|---|
+| `CreateSpline2` | `SketchSegment CreateSpline2( System.object PointData, System.bool SimulateNaturalEnds )` | ★ 官方标 **Obsolete** |
+| `CreateSpline` | `SketchSegment CreateSpline( System.object PointData )` | 旧版（1 参） |
+| `CreateSpline3` | `SketchSegment CreateSpline3( Object, Object, Object, Boolean, **Object&** )` | ★ 后继；★ **末参是 BYREF 引用** |
+
+**真机证据**（2026-10-01 轮 141，`tools/probe_spline_creation.py` / `probe_spline_redraw.py`）：
+
+```
+① CreateSpline2(arr, False)            ⇒ 返回 None ⇒ 草图段数 = 0
+② 重绘后（IModelView::GraphicsRedraw）  ⇒ 段数仍 = 0
+   ⇒ ★ 排除了官方 Remarks 那句"必须重绘才看得见"的解释
+③ CreateSpline（1 参旧版）              ⇒ ★ 迟到绑定里**没有这个成员**
+④ 对照·同样流程画直线                    ⇒ 段数 = 1 ⇒ ★ **流程本身没问题**
+```
+
+**归因**：★ `CreateSpline2` 已废弃，★ **后继 `CreateSpline3` 的末参是 BYREF `Object&`**
+⇒ ★ 与 §3.1 同一个机理（**引用参数在 pywin32 迟到绑定下到不了**，事实 47 / 68）。
+
+**★ 本条另有一个方法论价值（★ 它纠正了一次"有实现"的误读）**：
+`tools/audit_gap_implementations.py`（**AST**：本仓有没有**真调用**该成员）报本项「**有实现**」——
+★ 因为 `scripts/sw_part.py::sketch_spline` **确实调了** `CreateSpline2`。
+★★ 而**读那个函数自己的文档串**才发现：它**早在本轮之前就被真机判为不达**，并已改成**抛异常**（不再静默）。
+⇒ ★★★ **故「有实现」≠「能用」** —— 中间**必须**再过两关：**① 读它自己的文档串；② 真机**。
+★ 这正是本轮**故意不把样条接成工具**的原因（★ 不假装做到）。
+
+★ **与 §3.4 的关系**：★ 本条**不扩大** §3.4 已经收窄过的边界 ——
+★ 判据仍是**"参数里有 BYREF / 指针"**，★ **不是**"存在 `*FeatureData`"。
+★★ 反例就在本会话：分割线也有 `ISplitLineFeatureData`，★ 而它的**直入法真机建成了**（事实 484）。
+
+**证据**：`tools/probe_spline_creation.py` · `tools/probe_spline_redraw.py` · `scripts/sw_part.py::sketch_spline`
+（★ 连带登记：`docs/backend-limited-items.json` 第 13 条）。
+
+---
+
 ## 四、结构系统（焊件）—— ✅ **成立**（★ 本节已在轮 485 更正）
 
 > ★★★ **2026-10-03（轮 485）更正** —— ★ 本节**原文**判它「不成立」，★ 而**理由是"本仓有 `sw_weldment.py` 与证据"**

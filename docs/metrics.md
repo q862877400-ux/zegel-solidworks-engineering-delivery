@@ -17,23 +17,23 @@
 | 9 | 未认领的族 | domain 是「全量索引/<程序集>」（未归业务域） | **507** | `同上，取其补集` |
 | 10 | 我们调用过的族 | 该族有成员被使用过（used > 0） | **537** | `family-coverage.json 里 used > 0 的行数` |
 | 11 | 零调用族 | 该族一个成员都没被调用过 | **344** | `同上，used == 0` |
-| 12 | 函数（顶格，含 _ 开头） | scripts/sw_*.py 里**顶格**的 def（含 _ 开头的内部函数） | **1053** | `python tools/gen_metrics.py（本行由 tools/ 现算）` |
-| 13 | ★ 公开函数（可挂工具的候选） | 顶格**且不以 _ 开头**的 def。⚠ 不含类方法与嵌套函数 —— 那些不是候选 | **843** | `同上前提下，名字不以 _ 开头` |
-| 14 | 函数（含类方法与嵌套） | scripts/sw_*.py 里所有 def（含缩进的）—— ★ 与上一行**不是同一个东西**，不可与「工具」相比 | **1209** | `正则允许前导空白，抓缩进的 def` |
-| 15 | 函数（含工具层与声明层） | scripts/ + mcp-server/ 里的 def | **1871** | `同上，扫两个目录` |
+| 12 | 函数（顶格，含 _ 开头） | scripts/sw_*.py 里**顶格**的 def（含 _ 开头的内部函数） | **1055** | `python tools/gen_metrics.py（本行由 tools/ 现算）` |
+| 13 | ★ 公开函数（可挂工具的候选） | 顶格**且不以 _ 开头**的 def。⚠ 不含类方法与嵌套函数 —— 那些不是候选 | **844** | `同上前提下，名字不以 _ 开头` |
+| 14 | 函数（含类方法与嵌套） | scripts/sw_*.py 里所有 def（含缩进的）—— ★ 与上一行**不是同一个东西**，不可与「工具」相比 | **1211** | `正则允许前导空白，抓缩进的 def` |
+| 15 | 函数（含工具层与声明层） | scripts/ + mcp-server/ 里的 def | **1873** | `同上，扫两个目录` |
 | 16 | 测试文件 | tests/ 下的 test_*.py | **160** | `C:\swprojects\sw-skill-fork\tests\test_*.py` |
-| 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **253** | `register_capabilities.all_specs()` |
+| 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **256** | `register_capabilities.all_specs()` |
 | 18 | MCP 工具（上游原有） | server.py 里的 @mcp.tool 装饰器 | **45** | `server.py 里 @mcp.tool 出现次数` |
-| 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **298** | `两行相加` |
+| 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **301** | `两行相加` |
 | 20 | 四家工具数（原始相加） | 四家各自工具数直接相加（有重名，会虚高） | **510** | `union-sources.json 的 sources[].tools 长度相加` |
 | 21 | ★ 四家工具数（去重＝并集） | 去掉重名后的总数（★ 与上一行不是同一个东西） | **349** | `union-sources.json 的 union_operations 长度` |
-| 22 | 能力清单条目 | capabilities.yaml 的条目数 | **109** | `capabilities.yaml 里 level 字段出现次数` |
-| 23 |   其中 verified | 有我们自己的运行证据 | **96** | `同上，按取值分组` |
+| 22 | 能力清单条目 | capabilities.yaml 的条目数 | **110** | `capabilities.yaml 里 level 字段出现次数` |
+| 23 |   其中 verified | 有我们自己的运行证据 | **97** | `同上，按取值分组` |
 | 24 |   其中 stitched | 代码写好但没真机跑过 | **12** | `同上` |
 | 25 |   其中 not_implemented | 没做 | **1** | `同上` |
 | 26 | 门禁 | scripts/check_*.py 的自动检查程序 | **25** | `scripts/check_*.py` |
-| 27 | 已知事实条数 | docs/known-facts.md 里编号的条目 | **485** | `known-facts.md 里 ^| N | 的行数` |
-| 28 | Spec Kit 特性 | specs/<NNN>-* 目录数 | **148** | `D:\AI\SW\specs 下形如 NNN- 的目录数` |
+| 27 | 已知事实条数 | docs/known-facts.md 里编号的条目 | **487** | `known-facts.md 里 ^| N | 的行数` |
+| 28 | Spec Kit 特性 | specs/<NNN>-* 目录数 | **149** | `D:\AI\SW\specs 下形如 NNN- 的目录数` |
 | 29 | 覆盖口径 ①「名字出现过」（宽） | 台账 hit / 成员位次。★★ **无判别力** —— 我们的全量索引把 774 族的名字都抄了，所以它必然接近 100%，**不能用来说「覆盖广」** | **100.0%（15466 / 15466）** | `family-coverage.json 各行 hit 相加 ÷ members 相加` |
 | 30 | 覆盖口径 ②「真的被调用」（中） | 台账 used / 成员位次 —— 代码里真的有调用，不只是抄了名字 | **17.6%（2722 / 15466）** | `family-coverage.json 各行 used 相加 ÷ members 相加` |
 | 31 | ★ 覆盖口径 ③「真机碰过」（窄） | 证据/探针脚本里出现过的**官方成员名**（下界；★ 这个才是「真能用」的证据） | **1.55%（128 / 8238 个不重复成员名）** | `python tools/gen_metrics.py（扫 capture_*.py + 工作区 probe*.py）` |

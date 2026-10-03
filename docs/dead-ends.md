@@ -10,8 +10,8 @@
 
 | 口径 | 数 |
 |---|---|
-| 「死路」条目 | **45** |
-| 涉及能力 | **28** |
+| 「死路」条目 | **46** |
+| 涉及能力 | **29** |
 
 ## 逐条（★ 按能力分组；等级 = 该能力当前等级）
 
@@ -26,6 +26,10 @@
 ### `costing_readback`（verified）
 
 - ⚠ `list_bodies` 的实体名回 `'?'` ⇒ ★ 那个 body 对象上取 `Name` 取不到 ⇒ **按名字读**那条路在本机走不通（★ 要改用索引）
+
+### `coverage_gap_batch1`（verified）
+
+- ★★ **本批故意不收「样条曲线」** —— ★ `audit_gap_implementations.py` 也报它「有实现」，★ 而读那个函数自己的文档串才发现：它**2026-10-01 轮 141 已真机实测不达**（`CreateSpline2` 回 `None`、重绘后段数仍 0；旧版 `CreateSpline` 在迟到绑定里不存在；后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ pywin32 到不了，事实 47/68）。⇒ ★ 它已登记进 `docs/backend-limited-items.json`。**教训：「有实现」≠「能用」。**
 
 ### `declarative_hole_creation`（verified）
 

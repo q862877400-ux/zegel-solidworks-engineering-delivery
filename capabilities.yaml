@@ -4324,6 +4324,36 @@
         "⚠ **本包装未接进 MCP 工具层**；⚠ **未查**：`GetActiveSketch2` 回的 `is_3d=False` / `segments=0`（★ 可能拿错了草图对象）。",
         "⚠ **未查**：`GeodesicSketchOffset`（★ 官方提的**测地线**那个）。"
       ]
+    },
+    {
+      "id": "coverage_gap_batch1",
+      "label": "覆盖面缺口批 1：旋转曲面 · 孔向导 · 完全定义检查（★ 规格 `202-user-coverage-gaps`）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建；★ 规格 `specs/202-user-coverage-gaps`（T201/T401）。判据来自 `tools/audit_gap_implementations.py`（★ **AST**，不用 grep —— grep 会把来源块里引用的官方成员名算成「有实现」）。官方依据：`C:\\swapi\\types\\IFeatureManager\\InsertRevolvedRefSurface.md` · `…\\HoleWizard5.md` · `C:\\swapi\\types\\ISketch\\GetConstrainedStatus.md`。",
+      "evidence": [
+        "★★★ 2026-10-03（接手轮）**真机 3/3**（走 `tools/sw_guard.py`，零弹窗、`sw_alive: true`）：`python tools/prove_coverage_gap_batch1.py`。① **旋转曲面** ⇒ 树新增 **`曲面-旋转1`** · **曲面体 0→1** · 选中轮廓 1；② **孔向导** ⇒ 树新增 **`异型孔向导`**（`M8`）；③ **完全定义检查** ⇒ `GetConstrainedStatus` 回 **int**。证据 `output/coverage-gap-batch1-evidence.json`。",
+        "★★ **完全定义那个读数**证明**有区分度**（不是常量）：欠定义的矩形（4 段）回 **2**；对 4 段全加 `sgFIXED` 后回 **3** ⇒ ★ 两次读数**不同**。",
+        "★★ **覆盖率回读（生成器现算，★ 不是我算的）**：`docs/user-feature-coverage.md` §三 本仓库 **96/145 (66%) → 99/145 (68%)**；§八「只有四家有」**35 → 32 项** ⇒ ★ **+3 与接出去的工具数完全对上**（★ 这不是刷分：那 3 个工具**确实就是那些功能**，且都有真机证据）。",
+        "★ 三个工具名**有意含覆盖率脚本要的关键词**（`revolved_surface` / `hole_wizard` / `fully_defined`）—— ★ 该脚本按「功能关键词**子串**命中工具名」计分 ⇒ **让名字与能力对上**是应有之义。"
+      ],
+      "limitations": [
+        "★★ **本批故意不收「样条曲线」** —— ★ `audit_gap_implementations.py` 也报它「有实现」，★ 而读那个函数自己的文档串才发现：它**2026-10-01 轮 141 已真机实测不达**（`CreateSpline2` 回 `None`、重绘后段数仍 0；旧版 `CreateSpline` 在迟到绑定里不存在；后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ pywin32 到不了，事实 47/68）。⇒ ★ 它已登记进 `docs/backend-limited-items.json`。**教训：「有实现」≠「能用」。**",
+        "⚠ **完全定义状态：官方没给取值表** ⇒ 本工具**如实回原始 int**，★ **不把它解释成「欠定义 / 完全定义」**（铁律 5）。★ 本轮只实测到两个取值（2 与 3）。",
+        "⚠ **孔向导的孔位靠声明式面选择器**（`+x/-x/…`）⇒ ★ `resolve_face_selector` **只对轴对齐的实体可靠**；★ 非轴对齐零件上会解析失败（本工具会显式报错，不静默）。",
+        "⚠ **审计工具只判「本仓有没有引用该成员」**，★ **不判「该不该暴露成工具」** —— ★ 很多函数是同一流程的内部步骤（事实 53：不为它调启发式）。",
+        "⚠ **本批未跑全量 pytest**（按 AGENTS.md：全量只在发布前或改了 `sw_connect.py`/门禁本体时跑）。"
+      ]
     }
   ]
 }

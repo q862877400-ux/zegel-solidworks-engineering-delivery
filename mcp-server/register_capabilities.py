@@ -328,6 +328,12 @@ BATCH_MODULES = (
     #:   ★ 配合参考实现层**已真机建成**，★ 而它第 2 个形参是 **`IEntity` 对象**，
     #:     `Param` 表达不了 ⇒ 留待接声明式选择器（★ 不假装）。
     "tool_specs_batch71",
+    #: ★ 2026-10-03（接手轮）· 规格 `specs/202-user-coverage-gaps` 的 T201/T401：
+    #:   把 `docs/user-feature-coverage.md` §八 缺口项里**真有实现**的接成工具 ——
+    #:   旋转曲面 · 孔向导 · 完全定义检查（★ 三个都带真机证据：`output/coverage-gap-batch1-evidence.json`）。
+    #:   ⚠ 判据来自 `tools/audit_gap_implementations.py`（**AST**，★ 不用 grep ——
+    #:     grep 会把来源块里引用的官方成员名算成"有实现"）。
+    "tool_specs_batch72",
 )
 
 def all_specs() -> list:

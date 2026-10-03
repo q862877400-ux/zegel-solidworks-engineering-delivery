@@ -2990,4 +2990,72 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         ★ 前者**是可核对的断言**，★ 写进代码前必须**真的核对过**；★ 否则它会**把失败归因错**（★ 本轮两次都是）。
       |门禁：`scripts/check_official_md_claims.py`；登记 `docs/gate-classification.json`；测试 `tests/test_official_md_claims_gate.py`；
       对照事实 486 · 485 · 484 · 62 · 5（铁律 5） |
+| 488 | **★★★ 覆盖面缺口批 1：三项真机建成，覆盖率 96/145 (66%) → 99/145 (68%)；★ 而「有实现」≠「能用」当场撞到一个反例** —— 2026-10-03（接手轮），规格 `specs/202-user-coverage-gaps`。
+      ★ **起因**：业主给的是「从 `docs/user-feature-coverage.md` 的视角提升覆盖面」⇒ ★ 缺口 = 该文件 **§八** 的 35 项。
+      ★★ **第一步不是写代码，是量「最便宜的待办」**：
+        ```
+        ① `tools/audit_gap_implementations.py`（★ 新写）：对 35 个缺口项，
+           用 **AST** 量本仓有没有**真调用**该官方成员
+        ② ★★ **为什么必须用 AST、不能用 grep**：★ 本仓的来源块**大量引用官方成员名**（那是它的用途）
+           ⇒ ★ 实测 grep 把 `CreateExplodedView` / `InsertProtrusionBlend2` / `InsertRevolvedRefSurface`
+             都算成"有实现"，★ **而逐行看是在文档串里** ⚠
+        ③ 结果：35 项里 **6 项有真实现**（★ 其余 29 项需从零做或判到不了）
+        ```
+      ★★★ **而"有实现"≠"能用"—— 本轮撞到的反例（★ 这条比结果更值钱）**：
+        ★ AST 报 **样条曲线**"有实现"（`sw_part.sketch_spline`），
+        ★★ **而读那个函数自己的文档串**才发现：它**2026-10-01 轮 141 已真机实测不达** ——
+        `CreateSpline2` 回 `None`（重绘后段数仍 0）· 旧版 `CreateSpline` 在迟到绑定里不存在 ·
+        后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ pywin32 到不了（事实 47/68）。
+        ⇒ ★★ **故本批故意不收它**，★ 并把它登记进 `docs/backend-limited-items.json`（12 → 13 条）。
+        ⇒ ★★★ **定则：★「有实现」与「能用」之间隔着两关 —— ① 读它自己的文档串；② 真机。**
+      ★★★ **真机 3/3**（走 `tools/sw_guard.py`，零弹窗、`sw_alive: true`）：
+        ```
+        ① 旋转曲面 InsertRevolvedRefSurface ⇒ 树新增「曲面-旋转1」· 曲面体 0→1 · 选中轮廓 1
+        ② 孔向导   HoleWizard5            ⇒ 树新增「异型孔向导」（M8）
+        ③ 完全定义 ISketch.GetConstrainedStatus ⇒ 回 int
+        ```
+      ★★ **完全定义那个读数**特意证了**区分度**（★ 否则"回了个数"什么也说明不了）：
+        ★ 欠定义矩形（4 段）回 **2**；★ 对 4 段全加 `sgFIXED` 后回 **3** ⇒ **两次不同** ✓
+      ★★ **覆盖率回读（★ 由生成器现算，不是我算的）**：
+        ```
+        docs/user-feature-coverage.md §三：本仓库 **96/145 (66%) → 99/145 (68%)**
+        §八「只有四家有」：**35 → 32 项**
+        ```
+        ⇒ ★ **+3 与接出去的工具数完全对上**。★ 而工具名**有意含该脚本要的关键词**
+          （`revolved_surface` / `hole_wizard` / `fully_defined`）—— 该脚本按「关键词子串命中工具名」计分，
+          ★ 而这 3 个工具**确实就是那些功能**且**都有真机证据** ⇒ **不是刷分，是让名字与能力对上**。
+      ★ **落地**：`scripts/sw_sketch_status.py`（新）· `mcp-server/tool_specs_batch72.py`（新，3 个 ToolSpec）·
+        `register_capabilities.py` 注册（工具 253 → **256**）· `capabilities.yaml` 新增 `coverage_gap_batch1`
+        （109 → **110** 条 · verified 96 → **97**）。
+      |规格：`specs/202-user-coverage-gaps/`（spec/plan/tasks）；
+      审计：`tools/audit_gap_implementations.py`；真机：`tools/prove_coverage_gap_batch1.py`；
+      证据：`output/coverage-gap-batch1-evidence.json` · `output/gap-implementation-audit.json`；
+      对照事实 141 · 47 · 68 · 420 · 486 |
+| 489 | **★★★★ 「便宜模型助手」的两条并发纪律 —— ★ 用错会把本机卡死**（★ 业主当场纠正）—— 2026-10-03（接手轮）。
+      ★★ **起因（我的错）**：★ 我把「按域侦察 35 个缺口项」一次性**并发 6 路**派给了**本地模型**
+        （`ninfer-sm89` / `qwen3.8-27b`）⇒ ★★★ **业主打断**：
+        「**这个模型一次只能运行一个子代理或者任务，这是本地模型，你多个并发就卡死了**」。
+      ★★★ **两条模型的路由与用法（本机真值，来自 `~/.dsh/team-roles.yaml`）**：
+        ```
+        · 本地模型：provider `ninfer-sm89` · model `qwen3.8-27b`
+          ★ **串行 —— 一次只跑一个任务/子代理**；多路并发 ⇒ 卡死 ⚠
+          rig：`~/.dsh/profiles/web/cordis.patch.yml` → providers.ninfer-sm89（端点 127.0.0.1:18092）
+          ★ 懒启动（待机零显存，权重 8.87 GiB）⇒ ★ **第一次请求要等它加载** ⇒ 必须**后台起**
+        · `space-bunny-free`：provider `opencode-zen`
+          ★ **可高并发**；★ 而**更擅长前端/美术** ⇒ 用它就派**简单、机械、重复**的活
+        ```
+      ★★ **故派活的正确形态**（★ 与 `docs/SUBAGENT-USAGE.md` 互补 —— 该文成文时还不知道这条）：
+        ```
+        · 机械重复（逐项抄签名 / 逐文件 grep / 格式搬运）⇒ **bunny，高并发** ✓
+        · 需要多步判断或长链推理 ⇒ **本地模型，串行**（一次一个）✓
+        · ★ 两条都**不许我原地等** —— 一律 `run_in_background: true`，我继续干活 ✓
+        ```
+      ★ **而 DSH 的通道限制（事实 483 那条）仍然成立**：`subagent` **没有** model 参数 ⇒
+        ★ 要**指定模型**只能走 `workflow` 的 per-agent `provider`/`model` 覆盖；
+        ★ 而 `workflow` 支持 `run_in_background` ⇒ ★ **正好满足"不阻塞"**。
+      ★★ **本轮实测**：按上述改正后，bunny 8 路并发侦察 **7/8 域产出文件**（★ 与我自己的静态审计**交叉印证**），
+        ★ 而**全程没有卡住我**（我同时在跑真机探针与写代码）。
+      |trace：`workflow-1`（★ 被我 kill 的 6 路本地并发）· `workflow-2`（★ bunny 8 路，成功）；
+      配置：`~/.dsh/team-roles.yaml` · `~/.dsh/配置索引.md` §1/§3；对照事实 483 · `docs/SUBAGENT-USAGE.md` |
+
 

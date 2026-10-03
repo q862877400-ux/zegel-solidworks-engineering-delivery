@@ -134,6 +134,18 @@
         474
       ],
       "note": "★ 代际：`InsertProjectedSketch` ⇒ 弃 ⇒ `InsertProjectedSketch2` ⇒ **也弃**，\n                ★ 而它逐字指向「`IProjectionCurveFeatureData` 与 `CreateDefinition`」（**11 成员、带 `AccessSelections`**）。"
+    },
+    {
+      "toolbar": "草图绘制 · 样条曲线",
+      "member": "ISketchManager.CreateSpline2",
+      "where": "回 None",
+      "section": "### 3.7",
+      "facts": [
+        47,
+        68,
+        141
+      ],
+      "note": "★ 真机实测（轮 141）：CreateSpline2 回 None ⇒ 草图段数 ×× 0××（重绘后仍 0）；旧版 CreateSpline（1 参）在迟到绑定里不存在。后继 CreateSpline3(Object,Object,Object,Boolean,Object&) 末参是 **BYREF Object&** ⇒ pywin32 迟到绑定到不了（事实 47/68）。同流程画直线段数 = 1 ⇒ 流程本身没问题。证据 \tools/probe_spline_creation.py / probe_spline_redraw.py。"
     }
   ]
 }

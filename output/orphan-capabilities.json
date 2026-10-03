@@ -1,9 +1,9 @@
 {
   "note": "本文件是**生成物**（tools/probe_unexposed_functions.py 写）；别手改。它只列事实，不判『该不该暴露』。",
   "counts": {
-    "public": 821,
-    "exposed_lower_bound": 110,
-    "orphans": 285
+    "public": 1053,
+    "exposed_lower_bound": 270,
+    "orphans": 323
   },
   "orphans": [
     {
@@ -214,6 +214,17 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_sketch_dimensions.py",
+      "function": "add_horizontal_dimension",
+      "params": [
+        "model",
+        "x_mm",
+        "y_mm"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_pdm.py",
       "function": "add_invisible_custom_property",
       "params": [
@@ -221,17 +232,6 @@
         "name",
         "info_type",
         "value"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_simulation_loads.py",
-      "function": "add_link_connector",
-      "params": [
-        "manager",
-        "first_vertex",
-        "second_vertex"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -259,6 +259,17 @@
         "face2_name"
       ],
       "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch_dimensions.py",
+      "function": "add_path_length_dimension",
+      "params": [
+        "model",
+        "x_mm",
+        "y_mm"
+      ],
+      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {
@@ -402,6 +413,27 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_sketch_dimensions.py",
+      "function": "add_vertical_dimension",
+      "params": [
+        "model",
+        "x_mm",
+        "y_mm"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_centrifugal_force_report",
+      "params": [
+        "manager",
+        "model"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_assembly.py",
       "function": "apply_component_transform_x",
       "params": [
@@ -410,6 +442,16 @@
         "ty",
         "tz",
         "angle_rad"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_convection_report",
+      "params": [
+        "manager",
+        "model"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -425,11 +467,168 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_distributed_mass_report",
+      "params": [
+        "manager",
+        "model",
+        "mass",
+        "units"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_elastic_connector_report",
+      "params": [
+        "manager",
+        "model"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_force_report",
+      "params": [
+        "manager",
+        "model",
+        "force_type"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_gravity_report",
+      "params": [
+        "manager",
+        "model"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_heat_flux_report",
+      "params": [
+        "manager",
+        "model"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_heat_power_report",
+      "params": [
+        "manager",
+        "model"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_link_connector_report",
+      "params": [
+        "manager",
+        "model"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_appearance.py",
       "function": "apply_named_appearance",
       "params": [
         "target",
         "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_pin_connector_report",
+      "params": [
+        "manager",
+        "model",
+        "*",
+        "first",
+        "second"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_pressure_report",
+      "params": [
+        "manager",
+        "model",
+        "pressure_type",
+        "reg_geom"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_radiation_report",
+      "params": [
+        "manager",
+        "model",
+        "radiation_type"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_remote_load_report",
+      "params": [
+        "manager",
+        "model",
+        "load_type",
+        "units",
+        "dx",
+        "dy",
+        "dz"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_rigid_connector_report",
+      "params": [
+        "manager",
+        "model",
+        "*",
+        "faces_per_side"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_temperature_report",
+      "params": [
+        "manager",
+        "model"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_loads.py",
+      "function": "apply_torque_report",
+      "params": [
+        "manager",
+        "model",
+        "ref_geom"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -775,26 +974,6 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_weldment.py",
-      "function": "configure_member_profile",
-      "params": [
-        "profile",
-        "*",
-        "profile_standard",
-        "profile_type",
-        "profile_size",
-        "mirror",
-        "profile_mirror_type",
-        "alignment_type",
-        "alignment_angle",
-        "offset_pierce_point",
-        "pierce_horizontal",
-        "pierce_vertical"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
       "module": "sw_import_mesh_reference.py",
       "function": "configure_mesh_import_preferences",
       "params": [
@@ -805,35 +984,6 @@
         "import_textures",
         "as_ps_mesh",
         "segmented"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_weldment.py",
-      "function": "configure_split_member",
-      "params": [
-        "split",
-        "*",
-        "split_references",
-        "split_length",
-        "split_length_reverse",
-        "number_of_instances",
-        "dimension_type",
-        "member_type"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_simulation_study_options.py",
-      "function": "configure_static_solver",
-      "params": [
-        "options",
-        "*",
-        "free_body_force",
-        "contact_penalty",
-        "reference_pressure"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -872,6 +1022,25 @@
         "poll_ms"
       ],
       "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch_dimensions.py",
+      "function": "count_sketch_relations",
+      "params": [
+        "model",
+        "filter"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_ref_geometry.py",
+      "function": "create_3d_bounding_box",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {
@@ -939,6 +1108,50 @@
         "direction"
       ],
       "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_hole_features.py",
+      "function": "create_hole_wizard_at_selection_report",
+      "params": [
+        "model",
+        "selection",
+        "size",
+        "*",
+        "diameter_mm",
+        "depth_mm",
+        "through",
+        "fastener_index",
+        "standard_index",
+        "generic_type",
+        "ray_dir",
+        "0.0",
+        "-1.0"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_loft.py",
+      "function": "create_loft_cut_report",
+      "params": [
+        "model",
+        "closed",
+        "use_selected_profiles"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_worker.py",
+      "function": "create_mesh_by_name",
+      "params": [
+        "study_name",
+        "units",
+        "element_size",
+        "tolerance"
+      ],
+      "first_param_is_injectable": false,
       "has_bare_coord_param": false
     },
     {
@@ -1013,6 +1226,15 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_sweep.py",
+      "function": "create_sweep_surface_report",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_surface.py",
       "function": "create_swept_surface",
       "params": [
@@ -1035,6 +1257,29 @@
         "h"
       ],
       "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface_features.py",
+      "function": "cut_surface_report",
+      "params": [
+        "model",
+        "*",
+        "flip",
+        "keep_piece_index",
+        "use_feat_scope",
+        "use_auto_select"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch_dimensions.py",
+      "function": "delete_all_sketch_relations",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {
@@ -1064,6 +1309,18 @@
         "model",
         "index",
         "cascade"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch_dimensions.py",
+      "function": "delete_sketch_relation",
+      "params": [
+        "model",
+        "index",
+        "*",
+        "filter"
       ],
       "first_param_is_injectable": true,
       "has_bare_coord_param": false
@@ -1146,17 +1403,6 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_selection_tx.py",
-      "function": "edit_feature_selection",
-      "params": [
-        "data",
-        "model",
-        "family"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
       "module": "sw_assembly_doc.py",
       "function": "edit_part_in_context",
       "params": [
@@ -1174,17 +1420,6 @@
       "function": "edit_route",
       "params": [
         "route_manager"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_selection_tx.py",
-      "function": "edit_sheet_metal_selection",
-      "params": [
-        "data",
-        "model",
-        "family"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -1250,6 +1485,20 @@
         "code"
       ],
       "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_export.py",
+      "function": "export_flat_pattern_dxf_report",
+      "params": [
+        "model",
+        "output_path",
+        "*",
+        "include_bend_lines",
+        "include_sketches",
+        "include_hidden_edges"
+      ],
+      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {
@@ -1363,6 +1612,24 @@
         "sess"
       ],
       "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_sketch_dimensions.py",
+      "function": "fully_define_sketch",
+      "params": [
+        "model",
+        "*",
+        "entities_to_fully_define",
+        "use_relations",
+        "relations_to_apply",
+        "use_dimensions",
+        "horizontal_dim_scheme",
+        "vertical_dim_scheme",
+        "horizontal_dim_placement",
+        "vertical_dim_placement"
+      ],
+      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {
@@ -1570,15 +1837,6 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_drawing_view.py",
-      "function": "get_first_view",
-      "params": [
-        "drawing"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
       "module": "sw_automation_knowledge.py",
       "function": "get_flag",
       "params": [
@@ -1622,16 +1880,6 @@
       "params": [
         "mesh",
         "element_number"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_motion.py",
-      "function": "get_motion_study_manager",
-      "params": [
-        "asm_model",
-        "load_type_library"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -1911,6 +2159,15 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_drawing_view.py",
+      "function": "get_view_scale_ratio",
+      "params": [
+        "view"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_view.py",
       "function": "get_view_translation",
       "params": [
@@ -2028,8 +2285,55 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_part.py",
-      "function": "insert_composite_curve",
+      "module": "sw_sketch_dimensions.py",
+      "function": "insert_chain_dimensions",
+      "params": [
+        "model",
+        "selection"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_curve_and_split.py",
+      "function": "insert_mate_reference",
+      "params": [
+        "model",
+        "name",
+        "primary_entity",
+        "primary_type",
+        "primary_alignment",
+        "primary_align_axes"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface_features.py",
+      "function": "insert_offset_surface_report",
+      "params": [
+        "model",
+        "thickness_mm",
+        "*",
+        "reverse"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface_features.py",
+      "function": "insert_planar_ref_surface_report",
+      "params": [
+        "model",
+        "*",
+        "sketch_name"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface_features.py",
+      "function": "insert_replace_face_report",
       "params": [
         "model"
       ],
@@ -2037,13 +2341,27 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_part.py",
-      "function": "insert_dome",
+      "module": "sw_surface_features.py",
+      "function": "insert_ruled_surface_report",
       "params": [
         "model",
-        "height",
-        "reverse",
-        "elliptic"
+        "*",
+        "surface_type",
+        "length_mm",
+        "flip_pull_dir",
+        "flip_dir",
+        "trim_and_sew",
+        "angle_deg",
+        "coord_input"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_curve_and_split.py",
+      "function": "insert_split_line_silhouette",
+      "params": [
+        "model"
       ],
       "first_param_is_injectable": true,
       "has_bare_coord_param": false
@@ -2078,12 +2396,13 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_weldment.py",
-      "function": "iter_features_recursive",
+      "module": "sw_com_traps.py",
+      "function": "iter_real_sources",
       "params": [
-        "model"
+        "root",
+        "pattern"
       ],
-      "first_param_is_injectable": true,
+      "first_param_is_injectable": false,
       "has_bare_coord_param": false
     },
     {
@@ -2107,6 +2426,27 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_part.py",
+      "function": "linear_pattern_report",
+      "params": [
+        "model",
+        "feature_name",
+        "spacing_mm",
+        "count",
+        "*",
+        "d1_x",
+        "d1_y",
+        "d1_z",
+        "spacing2_mm",
+        "count2",
+        "d2_x",
+        "d2_y",
+        "d2_z"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_misumi.py",
       "function": "list_brands",
       "params": [
@@ -2116,22 +2456,21 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_drawing_view.py",
+      "function": "list_drawing_views_report",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_assembly_doc.py",
       "function": "list_external_file_references_count",
       "params": [
         "component",
         "*",
         "include_hidden"
-      ],
-      "first_param_is_injectable": false,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_toolbox_index.py",
-      "function": "list_standards",
-      "params": [
-        "index",
-        "Any] | None"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -2189,6 +2528,15 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_mass_property.py",
+      "function": "mass_property_object",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_appearance.py",
       "function": "material_values",
       "params": [
@@ -2222,21 +2570,20 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_jlcfa_fill.py",
-      "function": "model_row",
+      "module": "sw_simulation_worker.py",
+      "function": "mesh_size_by_name",
       "params": [
-        "win"
+        "study_name",
+        "units"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_motion.py",
-      "function": "motion_member",
+      "module": "sw_jlcfa_fill.py",
+      "function": "model_row",
       "params": [
-        "obj",
-        "attr_name",
-        "*args"
+        "win"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -2260,22 +2607,28 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_jlcfa_fill.py",
-      "function": "param_rows",
+      "module": "sw_sensor.py",
+      "function": "out_bstr",
       "params": [
-        "win"
+        "value"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_toolbox_index.py",
-      "function": "part_path",
+      "module": "sw_sensor.py",
+      "function": "out_double",
       "params": [
-        "standard",
-        "part_name",
-        "index",
-        "Any] | None"
+        "value"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_jlcfa_fill.py",
+      "function": "param_rows",
+      "params": [
+        "win"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -2360,6 +2713,15 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_mass_property.py",
+      "function": "require_mass_property_document",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_surface.py",
       "function": "require_runtime_available",
       "params": [
@@ -2379,12 +2741,12 @@
     },
     {
       "module": "sw_part.py",
-      "function": "rib",
+      "function": "revolve_cut",
       "params": [
         "model",
         "sketch_name",
-        "thickness",
-        "direction"
+        "angle_rad",
+        "axis_sketch_name"
       ],
       "first_param_is_injectable": true,
       "has_bare_coord_param": false
@@ -2395,6 +2757,15 @@
       "params": [
         "win",
         "label"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_simulation_worker.py",
+      "function": "run_analysis_by_name",
+      "params": [
+        "study_name"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -2487,38 +2858,11 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_selection_spec.py",
-      "function": "select_entity_by_index",
+      "module": "sw_sketch_edit_ops.py",
+      "function": "select_sketch_segment",
       "params": [
         "model",
-        "kind",
         "index",
-        "*",
-        "body_index",
-        "append"
-      ],
-      "first_param_is_injectable": true,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_simulation.py",
-      "function": "select_face_by_selector",
-      "params": [
-        "model",
-        "selection",
-        "*",
-        "mark",
-        "append"
-      ],
-      "first_param_is_injectable": true,
-      "has_bare_coord_param": false
-    },
-    {
-      "module": "sw_selection_spec.py",
-      "function": "select_object",
-      "params": [
-        "model",
-        "obj",
         "*",
         "append"
       ],
@@ -2727,6 +3071,18 @@
     },
     {
       "module": "sw_topology.py",
+      "function": "set_topology_goal_report",
+      "params": [
+        "study",
+        "*",
+        "goal_type",
+        "mass_reduce_percent"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
       "function": "set_topology_iteration_options",
       "params": [
         "study",
@@ -2739,11 +3095,33 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_topology.py",
+      "function": "set_topology_iteration_options_report",
+      "params": [
+        "study",
+        "*",
+        "iteration_option",
+        "iteration_limit"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_view.py",
       "function": "set_view_camera_by_name",
       "params": [
         "view",
         "name"
+      ],
+      "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_drawing_view.py",
+      "function": "set_view_scale_verified",
+      "params": [
+        "view",
+        "scale"
       ],
       "first_param_is_injectable": false,
       "has_bare_coord_param": false
@@ -2771,17 +3149,6 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_part.py",
-      "function": "shell",
-      "params": [
-        "model",
-        "thickness",
-        "faces_to_remove"
-      ],
-      "first_param_is_injectable": true,
-      "has_bare_coord_param": false
-    },
-    {
       "module": "sw_preflight.py",
       "function": "shell_command_text",
       "params": [
@@ -2791,44 +3158,20 @@
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_part.py",
-      "function": "sketch_arc",
+      "module": "sw_sketch.py",
+      "function": "sketch_by_name",
       "params": [
         "model",
-        "cx",
-        "cy",
-        "x1",
-        "y1",
-        "x2",
-        "y2",
-        "direction"
+        "name"
       ],
       "first_param_is_injectable": true,
       "has_bare_coord_param": false
     },
     {
-      "module": "sw_part.py",
-      "function": "sketch_centerline",
+      "module": "sw_sketch_edit_ops.py",
+      "function": "sketch_intersect_curves",
       "params": [
-        "model",
-        "x1",
-        "y1",
-        "x2",
-        "y2",
-        "z"
-      ],
-      "first_param_is_injectable": true,
-      "has_bare_coord_param": true
-    },
-    {
-      "module": "sw_part.py",
-      "function": "sketch_polygon",
-      "params": [
-        "model",
-        "cx",
-        "cy",
-        "radius",
-        "sides"
+        "model"
       ],
       "first_param_is_injectable": true,
       "has_bare_coord_param": false
@@ -2950,6 +3293,64 @@
       "has_bare_coord_param": false
     },
     {
+      "module": "sw_surface_features.py",
+      "function": "thicken_surface_report",
+      "params": [
+        "model",
+        "thickness_mm",
+        "*",
+        "direction",
+        "fill_volume",
+        "merge",
+        "use_feat_scope",
+        "use_auto_select"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "topology_constraints_report",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "topology_manager_report",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_topology.py",
+      "function": "topology_options_report",
+      "params": [
+        "study"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_surface_features.py",
+      "function": "trim_surface_report",
+      "params": [
+        "model",
+        "*",
+        "mutual",
+        "split_system",
+        "split_linear",
+        "remove_picked",
+        "sew"
+      ],
+      "first_param_is_injectable": true,
+      "has_bare_coord_param": false
+    },
+    {
       "module": "sw_jlcfa_fill.py",
       "function": "type_into",
       "params": [
@@ -3028,6 +3429,15 @@
         "win"
       ],
       "first_param_is_injectable": false,
+      "has_bare_coord_param": false
+    },
+    {
+      "module": "sw_feature_readback.py",
+      "function": "whats_wrong",
+      "params": [
+        "model"
+      ],
+      "first_param_is_injectable": true,
       "has_bare_coord_param": false
     }
   ]
