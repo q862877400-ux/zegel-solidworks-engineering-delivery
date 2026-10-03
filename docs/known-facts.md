@@ -1981,3 +1981,16 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **方法论**：★ 一个**跨多轮的链**，每一环都应该**把“缺什么”写成下一步** —— ★ 而**不是重写一遍** ⚠
      ★ 而这个链是：轮 559（入口）→ 轮 560（前置）→ 轮 562（**发现入口废弃**）→ 轮 563（**发现前置形态不对**）→ 轮 564（**三层对齐 ⇒ 建成**）。
      ★ **落地**：`capabilities.yaml` 新增 **`surface_delete_hole`**（level = **verified**，共 **99** 条）；台账「删除孔」补 `capability_id` ⇒ **已能 73**。|真机：`tools/prove_planar_region_then_delete_hole.py`；证据 `output/planar-region-and-delete-hole-evidence.json`；对照事实 441 / 442 · `surface_planar_region`（轮 517）|
+| 444 | **★★ `IModelDoc2.CreateLine2`（6 参）真机建成**；而★ **`ISketchManager.CreateSpline`（1 参）报第四类形态**（成员不可调用）** —— 2026-10-03（轮 565）。
+     ★ **两条的第一代都被标了废弃**（★ 事实 433 的地图）：
+       `CreateLine(Midpoint)` ⇒ `IModelDoc2::CreateLine2`；`CreateSpline(3D)` ⇒ `ISketchManager::CreateSpline`。
+     ★ 真机（`tools/prove_createline2_and_createspline.py`，零弹窗）：
+     ```
+     ★ **中点线** `CreateLine2`（6 参）        ⇒ 草图段 **0 → 1** · 回 `CDispatch` ✓
+     负例：**无活动草图**时调它       ⇒ 回 `None` · 段数不可读 ✓（★ 与官方 Remarks 逐字一致）
+     `ISketchManager.CreateSpline`（1 参）   ⇒ 回 `None` · 段 **0 → 0** ⚠
+     ```
+     ⇒ ★★ **故两条**：★ 中点线**已登记为 verified**；★ 而 `CreateSpline` 报的是**第四类形态**（★ `getattr` 回 `NoneType` ⇒ ★ **成员不可调用**）⚠
+     ★ 而它与**事实 36 同族**：★ **同名成员在**不同接口**上的可达性不同**—— ★ 故下一步是**换到正确的接口上调**。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_line2`**（level = **verified**，共 **100** 条）；台账「中点线」补 `capability_id` ⇒ **已能 74**。
+     ★★ **方法论**：★ 找到继任者只是**一半**；★ 而**它在哪个接口上、可不可调**，★ **只有真机能答** ⚠（★ 两条都是官方继任者，★ 而一成一不成）。|真机：`tools/prove_createline2_and_createspline.py`；证据 `output/createline2-and-createspline-evidence.json`；对照事实 36 / 433 |

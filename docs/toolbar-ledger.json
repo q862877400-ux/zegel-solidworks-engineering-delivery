@@ -317,7 +317,8 @@
    "zh": "中点线",
    "api": "CreateLine(Midpoint)",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_line2"
   },
   {
    "tb": "草图绘制",

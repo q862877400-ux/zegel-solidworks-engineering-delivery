@@ -4041,6 +4041,32 @@
         "★★ **三层前置**：① 用**继任者**（第一代已废弃）；② 得是**真正的带孔平面**（★ 用平面区域造；★ **拉伸得到的是 5 面 / 6 环、不行**）；③ 只选**孔那圈边**。",
         "⚠ 本包装未接进 MCP 工具层。"
       ]
+    },
+    {
+      "id": "sketch_line2",
+      "label": "中点线 / 直线（`IModelDoc2.CreateLine2`）—— ★ **真机建成**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\IModelDoc2\\CreateLine2.md`（**6 参**）。★ 第一代 `CreateLine` 的 md 逐字写着 \"**Obsolete. Superseded by `IModelDoc2::CreateLine2`.**\"。代码：`tools/prove_createline2_and_createspline.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 565）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateLine2(-0.02,-0.01,0, 0.02,0.01,0)` ⇒ **草图段数 0 → 1**（★ 增 1）· 返回 `CDispatch`。证据 `output/createline2-and-createspline-evidence.json`。",
+        "★★ **而负例与官方 Remarks 逐字对上**：★ **无活动草图**时调它 ⇒ **回 `None`**、草图段数**不可读（-1）** —— ★ 官方：\"If a sketch is **not active**, then the line is **not created and NULL is returned**\" ✓"
+      ],
+      "limitations": [
+        "★ **必须先有活动草图**（否则不建、回 `None`）。",
+        "★ 2D 草图里 **Z 被忽略**（官方）。",
+        "⚠ 本包装未接进 MCP 工具层；⚠ 工具层原本用的是 `ISketchManager.CreateLine`（★ **未废弃**）—— ★ **本条不替换它**，只记下继任者的真机证据。"
+      ]
     }
   ]
 }

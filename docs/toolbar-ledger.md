@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 73 |
-| 可攻关 | 19 |
+| 已能 | 74 |
+| 可攻关 | 18 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -38,7 +38,6 @@
 | 特征下拉 | 表格驱动的阵列 | **可攻关** | `InsertTableDrivenPattern` | — |
 | 特征下拉 | 高级孔 | **可攻关** | `HoleWizard5` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
-| 草图绘制 | 中点线 | **可攻关** | `CreateLine` | — |
 | 草图绘制 | 方程式驱动的曲线 | **可攻关** | `CreateEquationSpline2`, `CreateSplinesByEqnParams2` | — |
 | 草图绘制 | 曲面上的样条曲线 | **可攻关** | `CreateSpline` | — |
 | 草图绘制 | 样式样条曲线 | **可攻关** | `CreateSpline3` | — |
@@ -118,6 +117,7 @@
 | 草图绘制 | 中心点直槽口 | **已能** | `CreateSketchSlot` | — |
 | 草图绘制 | 中心矩形 | **已能** | `CreateCenterRectangle` | `sw_part.sketch_rectangle` |
 | 草图绘制 | 中心线 | **已能** | `CreateCenterLine` | `sw_part.sketch_centerline` |
+| 草图绘制 | 中点线 | **已能** | `CreateLine` | — |
 | 草图绘制 | 切线弧 | **已能** | `CreateTangentArc` | `sw_sketch_primitives.sketch_tangent_arc` |
 | 草图绘制 | 周边圆 | **已能** | `PerimeterCircle` | `sw_sketch_primitives.sketch_perimeter_circle` |
 | 草图绘制 | 圆 | **已能** | `CreateCircle` | `sw_part.sketch_circle` |

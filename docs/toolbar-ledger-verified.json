@@ -1,14 +1,14 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 73,
+  "已能": 74,
   "待查": 20,
   "待验证": 7,
-  "可攻关": 19
+  "可攻关": 18
  },
  "by_toolbar_gap": {
   "特征下拉": 9,
-  "草图绘制": 4,
+  "草图绘制": 3,
   "草图尺寸": 1,
   "草图编辑": 3,
   "曲面": 2
@@ -779,6 +779,7 @@
    "api": "CreateLine(Midpoint)",
    "entry": "",
    "level": "不能",
+   "capability_id": "sketch_line2",
    "api_iface_hits": [],
    "api_member_hits": [
     "CreateLine"
@@ -790,7 +791,7 @@
     "CreateLine",
     "Midpoint"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "草图绘制",
