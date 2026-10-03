@@ -16,9 +16,9 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 41 |
-| 可攻关 | 52 |
-| 待验证 | 4 |
+| 已能 | 47 |
+| 可攻关 | 45 |
+| 待验证 | 5 |
 | 待查 | 22 |
 | **合计** | **119** |
 
@@ -64,24 +64,18 @@
 | 草图绘制 | 方程式驱动的曲线 | **可攻关** | `CreateEquationSpline2`, `CreateSplinesByEqnParams2` | — |
 | 草图绘制 | 曲面上的样条曲线 | **可攻关** | `CreateSpline` | — |
 | 草图绘制 | 样式样条曲线 | **可攻关** | `CreateSpline3` | — |
-| 草图绘制 | 绘制圆角 | **可攻关** | `CreateFillet` | — |
-| 草图编辑 | 交叉曲线 | **可攻关** | `IntersectCurves` | — |
 | 草图编辑 | 伸展实体 | **可攻关** | `IModelDoc2` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
-| 草图编辑 | 剪裁实体 | **可攻关** | `SketchTrim` | — |
-| 草图编辑 | 圆周草图阵列 | **可攻关** | `CreateCircularSketchStepAndRepeat` | — |
 | 草图编辑 | 复制实体 | **可攻关** | `IModelDoc2` | — |
-| 草图编辑 | 延伸实体 | **可攻关** | `SketchExtend` | — |
 | 草图编辑 | 旋转实体 | **可攻关** | `IModelDoc2`, `SketchModifyRotate` | — |
 | 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
 | 草图编辑 | 移动实体 | **可攻关** | `IModelDoc2`, `SketchModifyTranslate` | — |
-| 草图编辑 | 等距实体 | **可攻关** | `SketchOffset2` | — |
-| 草图编辑 | 线性草图阵列 | **可攻关** | `CreateLinearSketchStepAndRepeat` | — |
 | 草图编辑 | 缩放实体比例 | **可攻关** | `IModelDoc2`, `SketchModifyScale` | — |
 | 曲面 | 圆角(曲面) | **待验证** | `FeatureFillet` | `sw_part.fillet` |
 | 特征 | 筋 | **待验证** | `InsertRib` | `sw_part.rib_report` |
 | 特征 | 线性阵列 | **待验证** | `FeatureLinearPattern4` | `sw_part.linear_pattern` |
 | 特征下拉 | 曲线-组合曲线 | **待验证** | `InsertCompositeCurve` | `sw_part.insert_composite_curve_report` |
+| 草图编辑 | 交叉曲线 | **待验证** | `IntersectCurves` | `sw_sketch_edit_ops.sketch_intersect_curves` |
 | 曲面 | 使用曲面切除 | **待查** | — | — |
 | 曲面 | 剪裁曲面 | **待查** | — | — |
 | 曲面 | 加厚 | **待查** | — | — |
@@ -140,8 +134,14 @@
 | 草图绘制 | 直槽口 | **已能** | `CreateSketchSlot` | `sw_part.sketch_slot` |
 | 草图绘制 | 直线 | **已能** | `CreateLine` | `sw_part.sketch_line` |
 | 草图绘制 | 绘制倒角 | **已能** | `CreateChamfer` | `sw_sketch_edit.create_sketch_chamfer` |
+| 草图绘制 | 绘制圆角 | **已能** | `CreateFillet` | `sw_sketch_edit_ops.sketch_fillet` |
 | 草图绘制 | 转换实体引用 | **已能** | `SketchUseEdge3` | `sw_sketch_edit.convert_entities` |
 | 草图绘制 | 边角矩形 | **已能** | `CreateCornerRectangle` | `sw_part.sketch_corner_rectangle` |
 | 草图绘制 | 退出草图 | **已能** | `InsertSketch` | `sw_part.end_sketch` |
 | 草图绘制 | 部分椭圆 | **已能** | `CreateEllipticalArc` | `sw_sketch_primitives.sketch_elliptical_arc` |
 | 草图绘制 | 镜向实体 | **已能** | `GetDynamicMirror`, `SetDynamicMirror` | `sw_sketch_edit.sketch_mirror` |
+| 草图编辑 | 剪裁实体 | **已能** | `SketchTrim` | `sw_sketch_edit_ops.sketch_trim` |
+| 草图编辑 | 圆周草图阵列 | **已能** | `CreateCircularSketchStepAndRepeat` | `sw_sketch_edit_ops.sketch_circular_pattern` |
+| 草图编辑 | 延伸实体 | **已能** | `SketchExtend` | `sw_sketch_edit_ops.sketch_extend` |
+| 草图编辑 | 等距实体 | **已能** | `SketchOffset2` | `sw_sketch_edit_ops.sketch_offset` |
+| 草图编辑 | 线性草图阵列 | **已能** | `CreateLinearSketchStepAndRepeat` | `sw_sketch_edit_ops.sketch_linear_pattern` |

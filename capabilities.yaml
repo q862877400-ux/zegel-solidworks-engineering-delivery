@@ -3540,6 +3540,31 @@
       ],
       "source": "original",
       "source_evidence": "★ **本仓自建**（不是从外部项目搬来的）。依据：9 个成员的**精确签名**逐条取自本机官方离线源 `C:\\swapi\\types\\ISketchManager\\<member>.md`（铁律 4 的第一源）；包装在 `scripts/sw_sketch_primitives.py`（六字段来源块里逐条列了签名）；真机证据 `output/b1-sketch-primitives-evidence.json`（**9/9 pass**，判据是草图实体段数增量）。★ 与四家外部项目无交集（它们那几个草图图元我们没搬）。"
+    },
+    {
+      "id": "sketch_edit_ops_b3",
+      "label": "草图编辑 B3 批（剪裁 / 延伸 / 等距 / 草图圆角 / 线性与圆周草图阵列）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "evidence": [
+        "output/b3-sketch-edit-evidence.json"
+      ],
+      "source": "original",
+      "source_evidence": "★ 本仓自建（按官方签名）。签名与枚举逐条取自 `C:\\swapi\\types\\ISketchManager\\`（6 个成员）与 `C:\\swapi\\enums\\`（swSketchTrimChoice_e / swSkOffsetCapEndType_e / swSkOffsetMakeConstructionType_e）；真机证据 output/b3-sketch-edit-evidence.json（6/7，判据**按操作分**）。",
+      "limitations": [
+        "2026-10-03（轮 465）：6/7 真机建成。★ 判据**按操作分**：剪裁会让段数**下降**（2→1）、延伸**不改段数**而改几何（35→60）⇒ 一个判据套不住 7 个操作。",
+        "⚠ **交叉曲线未验成**：官方前置是 3D 草图 + 两个相交面，而 `Insert3DSketch` 在本机回 `None` ⇒ 包装留在模块里但**不挂工具**。",
+        "⚠ `SketchTrim` 的**每个选项对“该选几条段”有硬要求**（closest=1、corner=2），选错官方会失败 ⇒ 本包装如实抛，不静默。"
+      ]
     }
   ]
 }

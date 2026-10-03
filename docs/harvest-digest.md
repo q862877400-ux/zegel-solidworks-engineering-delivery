@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **80** 条能力。
+共 **81** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 68 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 69 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 11 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 50 | **本项目自研**（护城河域等） |
+| `original` | 51 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -131,6 +131,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `loft_and_sweep` | · `python 真机（轮 315）★ **扫描建成 `扫描1`** · **type=`Sweep`**（★ 走 CreateDefinition(swFmSweep=17)）· 未选中 ⇒ 显式拒绝 · 证据 output/sweep-evidence.json`<br>· `python 真机（轮 314）★ **PASS 3/3** —— 同平面与两平面都建成 **`放样1`** 且 **类型名 = `Blend`**（★ 对照拉伸 = `Extrusion`）· 未选中 ⇒ 显式拒绝 · 证据 output/loft-evidence.json · loom-type-evidence.json` |
 | `reference_axis` | · `python 真机（轮 317）★ `model.InsertAxis2(True)` 回 **True** 且出现 **`基准轴1`**；★ 而 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`（★ 入口层级错）· 证据 output/pattern-axis-evidence.json` |
 | `sketch_primitives_b1` | · `output/b1-sketch-primitives-evidence.json` |
+| `sketch_edit_ops_b3` | · `output/b3-sketch-edit-evidence.json` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

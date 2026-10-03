@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 256 | 256 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 262 | 262 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -39,9 +39,9 @@
 |---|---|---|---|---|---|---|---|---|
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 16 | 59⚠ | 49 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 1 | 32⚠ | 5 | **4** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 29 | 79⚠ | 69 | **40** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 35 | 88⚠ | 69 | **34** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 14⚠ | 16 | **10** |
-| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 22 | 79⚠ | 47 | **25** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 22 | 82⚠ | 47 | **25** |
 | ⑥ 曲面 | 11 | · | 1 | · | 8 | 26⚠ | 20 | **12** |
 | ⑦ 钣金 | 10 | · | 1 | · | 6 | 16⚠ | 17 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 12 | 15⚠ | 17 | **5** |
@@ -53,9 +53,9 @@
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 12 | 46⚠ | 22 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 1 | 19⚠ | 43 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 27 | 14 | 27 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 44 | 463⚠ | 86 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 44 | 464⚠ | 86 | **42** |
 
-**合计**：并集 581 个操作；**MCP 暴露面**缺 **325** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 581 个操作；**MCP 暴露面**缺 **319** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -64,7 +64,7 @@
 | ⑪ 工程图 | 49 |
 | ⑮ 宏 / 自动化 | 42 |
 | ⑰ 未归类 | 42 |
-| ③ 草图 | 40 |
+| ③ 草图 | 34 |
 | ① 会话 / 文档 / 文件 | 33 |
 | ⑤ 零件特征 | 25 |
 | ⑩ 装配 | 19 |
@@ -100,7 +100,7 @@
 |---|---|---|
 | ① 会话 / 文档 / 文件 | 26 个：`activate_document`, `active_document_info`, `apply_template`, `close_all`, `close_document`, `compare_templates`… | andrewbartels1/SolidworksMCP-python |
 | ② 参考几何 | 1 个：`reference_planes` | Slacker-LLC/solidworks-mcp |
-| ③ 草图 | 17 个：`3d_sketch`, `3point_arc`, `check_sketch_fully_defined`, `close_sketch`, `construction_geometry`, `convert_entities`… | Eduardof0nt/Solidworks-MCP-Server |
+| ③ 草图 | 16 个：`3d_sketch`, `3point_arc`, `check_sketch_fully_defined`, `close_sketch`, `construction_geometry`, `convert_entities`… | Eduardof0nt/Solidworks-MCP-Server |
 | ④ 尺寸 / 约束 / 参数 | 8 个：`delete_equation`, `design_table_create`, `design_table_refresh`, `diameter_dimension`, `global_var`, `link_dimension_to_equation`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑤ 零件特征 | 17 个：`combine_bodies`, `curve_driven_pattern`, `delete_body`, `dome`, `fill_pattern`, `helix`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑥ 曲面 | 12 个：`boundary_boss`, `delete_face`, `extend_surface`, `extruded_surface`, `filled_surface`, `knit_surfaces`… | Eduardof0nt/Solidworks-MCP-Server |
@@ -378,7 +378,7 @@
 
 缺口操作：`ref_axis`、`ref_plane`、`reference_planes`、`reference_point`
 
-### ③ 草图（缺 40）
+### ③ 草图（缺 34）
 
 | 来源 | 该域有 | 许可 | 来源验证 |
 |---|---|---|---|
@@ -387,8 +387,8 @@
 | `vespo92/SolidworksMCP-TS` | 16 | MIT | **未声明** |
 | `andrewbartels1/SolidworksMCP-python` | 15 | MIT | **未声明** |
 
-缺口操作：`3d_sketch`、`3point_arc`、`check_sketch_fully_defined`、`circle`、`close_sketch`、`construction_geometry`、`convert_entities`、`edit_sketch`、`ellipse`、`exit_sketch`、`hide_all_sketches`、`polygon`、`rectangle`、`show_all_sketches`、`sketch`、`sketch_arc`、`sketch_chamfer`、`sketch_circle`、`sketch_circular_pattern`、`sketch_constraint`、`sketch_construction`、`sketch_dimension`、`sketch_ellipse`、`sketch_extend`
-（还有 16 个，见 `tools/union-sources.json`）
+缺口操作：`3d_sketch`、`3point_arc`、`check_sketch_fully_defined`、`circle`、`close_sketch`、`construction_geometry`、`convert_entities`、`edit_sketch`、`ellipse`、`exit_sketch`、`hide_all_sketches`、`polygon`、`rectangle`、`show_all_sketches`、`sketch`、`sketch_arc`、`sketch_chamfer`、`sketch_circle`、`sketch_constraint`、`sketch_construction`、`sketch_dimension`、`sketch_ellipse`、`sketch_line`、`sketch_polygon`
+（还有 10 个，见 `tools/union-sources.json`）
 
 ### ④ 尺寸 / 约束 / 参数（缺 10）
 

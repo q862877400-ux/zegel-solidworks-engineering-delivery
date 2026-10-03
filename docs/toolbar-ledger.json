@@ -496,8 +496,11 @@
       "tb": "草图绘制",
       "zh": "绘制圆角",
       "api": "CreateFillet",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_edit_ops.sketch_fillet",
+      "level": "能",
+      "tool": "solidworks_sketch_fillet",
+      "batch": "B3",
+      "evidence": "output/b3-sketch-edit-evidence.json"
     },
     {
       "tb": "草图绘制",
@@ -601,15 +604,21 @@
       "tb": "草图编辑",
       "zh": "剪裁实体",
       "api": "SketchTrim",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_edit_ops.sketch_trim",
+      "level": "能",
+      "tool": "solidworks_sketch_trim",
+      "batch": "B3",
+      "evidence": "output/b3-sketch-edit-evidence.json"
     },
     {
       "tb": "草图编辑",
       "zh": "延伸实体",
       "api": "SketchExtend",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_edit_ops.sketch_extend",
+      "level": "能",
+      "tool": "solidworks_sketch_extend",
+      "batch": "B3",
+      "evidence": "output/b3-sketch-edit-evidence.json"
     },
     {
       "tb": "草图编辑",
@@ -622,22 +631,31 @@
       "tb": "草图编辑",
       "zh": "交叉曲线",
       "api": "IntersectCurves",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_edit_ops.sketch_intersect_curves",
+      "level": "没验过",
+      "tool": "",
+      "batch": "B3",
+      "note": "★ 包装已写，而**前置未打通**：官方要 3D 草图 + 两个相交面，而 `Insert3DSketch` 在本机回 None（证据 output/b3-intersect-curves-evidence.json）⇒ 故记「没验过」而不是「不能」（铁律 5）"
     },
     {
       "tb": "草图编辑",
       "zh": "线性草图阵列",
       "api": "CreateLinearSketchStepAndRepeat",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_edit_ops.sketch_linear_pattern",
+      "level": "能",
+      "tool": "solidworks_sketch_linear_pattern",
+      "batch": "B3",
+      "evidence": "output/b3-sketch-edit-evidence.json"
     },
     {
       "tb": "草图编辑",
       "zh": "圆周草图阵列",
       "api": "CreateCircularSketchStepAndRepeat",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_edit_ops.sketch_circular_pattern",
+      "level": "能",
+      "tool": "solidworks_sketch_circular_pattern",
+      "batch": "B3",
+      "evidence": "output/b3-sketch-edit-evidence.json"
     },
     {
       "tb": "草图编辑",
@@ -678,8 +696,11 @@
       "tb": "草图编辑",
       "zh": "等距实体",
       "api": "SketchOffset2",
-      "entry": "",
-      "level": "不能"
+      "entry": "sw_sketch_edit_ops.sketch_offset",
+      "level": "能",
+      "tool": "solidworks_sketch_offset",
+      "batch": "B3",
+      "evidence": "output/b3-sketch-edit-evidence.json"
     },
     {
       "tb": "草图编辑",

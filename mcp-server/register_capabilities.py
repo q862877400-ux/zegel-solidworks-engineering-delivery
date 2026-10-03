@@ -307,6 +307,7 @@ BATCH_MODULES = (
     "tool_specs_batch63",   # 轮 452：按声明式选择器选面
     "tool_specs_batch64",   # 轮 459：连接件族第三条（link · 两个顶点）
     "tool_specs_batch65",   # 轮 464：B1 批草图图元（3点矩形/平行四边形/切线弧/3点圆弧/部分椭圆/抛物线/圆锥/周边圆）
+    "tool_specs_batch66",   # 轮 465：B3 批草图编辑 6 个（剪裁/延伸/等距/圆角/线性阵列/圆周阵列）
 )
 
 def all_specs() -> list:
