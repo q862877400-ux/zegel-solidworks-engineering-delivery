@@ -3080,5 +3080,38 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         ★ 而**判据是它真写出文件**（★ 不是它说"我读到了"）。| 痕迹：`output/_qwen_tooltest.txt`；
         配置：`~/.dsh/team-roles.yaml`（worker/researcher 的 persona）· `~/.dsh/配置索引.md` §6；
         对照事实 489（并发纪律）· 483（通道限制） |
+| 491 | **★★★★ 工程图 subskill 的函数**首参叫 `drawing_model`** ⇒ 不先给 `RESOLVERS` 加键，挂上去必 `TypeError`** —— 2026-10-03（接手轮）。
+      ★ **机制**（★ 逐字核过源码）：`mcp-server/tool_registry.py:507` 是 `kwargs[inject_as or inj] = resolver(params)`，
+        而 `register()`（同文件 `:559`）**不往下传 `inject_as`** ⇒ ★★ **注入键字面上等于 `inject` 的值**。
+      ★ 那批函数在 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`，**首参叫 `drawing_model`**
+        （经 `scripts/sw_drawing.py` 用 `spec_from_file_location` 按路径加载后 `globals()` 再导出 ⇒
+        `scripts.sw_drawing.<函数名>` 可达；旁证 `tests/test_sw_drawing_structure.py:9`）。
+      ★ 修法（★ 本仓手法，**不动 `tool_registry`** —— 它明确「不硬编码宿主 API，全从这里供给」）：
+        给 `mcp-server/register_capabilities.py` 的 `RESOLVERS` 加一行 `"drawing_model": resolve_model,`
+        （与既有 `"asm_model": resolve_model` **同一手法**；工程图文档同样是 `IModelDoc2`）⇒ 修后六个键
+        `model` · `sw_app` · `study` · `asm_model` · `manager` · `drawing_model`。
+      ★★ **这是事实 169 机理的一个具体后果**，不是新机理 —— ★ 由 space-bunny 的 L3 档**独立复现**并指出（Lead 逐条核源码确认）。| 痕迹：`specs/202-user-coverage-gaps/recon/bunny-L3-toolspec-draft.py.txt`；
+        提交 `822661c`；对照事实 **169**（注入名只能是 RESOLVERS 的键） |
+| 492 | **★★★ 用「字符串成员名」间接调 COM 的站点，会**逃过 `tools/audit_byref_args.py` 的静态审计**** —— 2026-10-03（接手轮）。
+      ★ **实例**：`tools/prove_drawing_batch.py` 原先把 `("breakline", "GetBreakLineCount")` 放进一张**零参表**，
+        而官方签名逐字是 **`System.int GetBreakLineCount( out System.int Size )`** ⇒ ★ **必须传 `sw_connect.out_i4()`**。
+      ★ **为什么审计没抓到**：`audit_byref_args.py` 是**静态 AST** 审计，它看的是**字面写出的调用**；
+        而探针那类的形态是 `_count_of(view, "GetBreakLineCount")` —— ★ **成员名是字符串**，审计**看不见**。
+      ★ **后果是"静默降级"而不是错值**：零参调用报 `类型不匹配` ⇒ 被 `except` 吃成 `None`
+        （★ 正因为原作者写了「降级不猜 0」，才没变成假读数）⇒ ★ 表面上只看到"量不到"，
+        **看不出是调用形态错**。⇒ ★ 修法：**带 `out` 的成员单独一张表**（`_OUT_COUNTERS`），
+        并**兼用零参成员做交叉核**（如 `GetBreakLines()` 的数组长度）—— 两条独立读数一致才算稳。
+      ★★ **可复用的判据**：★ 换一个**零参**成员做同一件事；★ 或**两条独立读数互核**。| 痕迹：提交 `822661c`；
+        发现者 space-bunny 的 L5 档（`recon/bunny-L5-probe-draft.py.txt`）；对照事实 47（by-ref 包装） |
+| 493 | **★★ 「已实现」≠「已暴露」—— 同一个错觉在本仓出现了第二次** —— 2026-10-03（接手轮）。
+      ★ **读数**：★ 工程图 13 项里，本仓**已实现 8 项**，但**只有 4 项挂成了 MCP 工具**
+        （且那 4 项全靠**同一个**工具 `solidworks_drawing`）⇒ 用户视角看是"只有 1 个功能"。
+      ★ **依据**：`specs/202-user-coverage-gaps/recon/drawing-existing-coverage.md`（bunny 机械对表，
+        ★ 它同时给了两种口径并说明**不替读者选**：按"有对应函数"算 8、按"能专门建出这种表"算 6）。
+      ★★ **与 P9 缺口批 1 是同一类**（旋转曲面 / 孔向导当时也是"实现了但没暴露"）
+        ⇒ ★ **动手前必须先问「这个是没实现，还是没挂」** —— ★ 后者**不用写代码**，只要挂。
+      ⚠ **反面**：★ 「有实现」也**不等于"能用"** —— 本仓已有反例：样条曲线的 `CreateSpline2/3` **有实现但真机到不了**
+        （`docs/backend-limited-items.json` §3.7）⇒ ★ 挂之前要**先确认它真机跑得通**。|
+        痕迹：`recon/drawing-existing-coverage.md`；提交 `c9350fa`（同一轮发现的「视图类型两个家」）；对照事实 488 |
 
 
