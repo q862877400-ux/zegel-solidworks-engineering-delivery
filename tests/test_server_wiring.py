@@ -192,7 +192,21 @@ def test_expected_batch_size(server):
     #:   `tool_specs_batch71.py` 的 **1 条**（通过参考点的曲线），★ 真机建成。
     #:   ★ 配合参考实现层已成、但契约表达不了 `IEntity` ⇒ 留待接声明式选择器。
     #: ★★ 2026-10-03（接手轮）：**253 -> 277**（★ 本轮前几批累计新增；★ 本测试的 docstring 自己写着「数字变了就跟着更新」，这里照办）。
-    assert len(all_specs()) == 277
+    #: ★★ 2026-10-04（24h 任务 · 阶段 3 · 轮 95–109）：**277 → 288**（★ 按本测试自己的设计意图
+    #:   ——「**加批次必须同时改这里**」）✓
+    #:   ★ **说明：这 11 条的增量里只有 8 条是本会话的** —— ★★ **如实拆开记**：
+    #:     · ★ **本会话（★ 轮 103–109）新增 `tool_specs_batch77.py`** ⇒ ★ **8 条** ✓
+    #:       ★ 那是**阶段 3 的「读特征参数」族**（★ 每条都走了「查官方签名 → 建能力 →
+    #:       **挂 ToolSpec** → 真机验证 → 提交」五步）：
+    #:       ★ ① `solidworks_extrude_depth` ② `solidworks_extrude_params`
+    #:       ③ `solidworks_pattern_params` ④ `solidworks_hole_params`
+    #:       ⑤ `solidworks_feature_info` ⑥ `solidworks_fillet_params`
+    #:       ⑦ `solidworks_csys_params` ⑧ `solidworks_base_flange_params` ✓
+    #:       ★★ **端到端 6/6**（★ `output/e2e-readback-tools.json`）✓
+    #:     · ★★ **另 3 条（277 → 280）是**本会话之前**就有的** ——
+    #:       ★ **我没有逐个回溯它们属于哪批**（★ **不编造来源** —— ★ 与上一条「以实测值为准」同办）✓
+    #:   ⇒ ★★★ **⇒ 288 = 277（接手时）+ 3（接手前已加未记）+ 8（本会话）** ✓
+    assert len(all_specs()) == 288
 
 
 # ── ③ 命名与「两者不混用」（规则 1）──────────────────────────────

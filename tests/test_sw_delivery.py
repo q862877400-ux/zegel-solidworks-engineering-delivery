@@ -14,7 +14,26 @@ class FakeComponent:
         self.path = str(path)
         self.ReferencedConfiguration = configuration
         self.Name2 = name
+        #: ★★★★ 2026-10-04（轮 114）**fake 跟上换代** —— ★ 处置这条**存量失败** ✓
+        #:   ★ **真机报错逐字**：
+        #:     `AttributeError: 'FakeComponent' object has no attribute 'GetExcludeFromBOM2'.
+        #:      Did you mean: 'ExcludeFromBOM'?` ✓
+        #:   ★★ **真因**：★ `sw_delivery.py` **已换代**（★ 官方逐字
+        #:     「**Obsolete. Superseded by [[IComponent2::GetExcludeFromBOM2]]**」⇒
+        #:     ★ 后继是**方法**、★ **2 参**）⇒ ★★★ **而本 fake 只装了**旧的属性**** ✓
+        #:   ★★★★ **⇒ 与轮 112 修的那两条**完全同型**（★ mock 落后于换代）——
+        #:     ★ 而那两条的判据**第一次就写在这里用上了** ✓
+        #:   ★★★★★ **⚠ 两代都留**：★ 旧的是属性、★ 新的是**方法（2 参）** ⇒
+        #:     ★ **不能只留一个**（★ 实测证据在 `sw_delivery.py` 的 L86：
+        #:     旧 ⇒ `False` · ★ 新 ⇒ `(False,)`）✓
         self.ExcludeFromBOM = excluded
+        self._excluded = excluded
+
+        def _get_exclude_from_bom2(_config_opt, _config_names):
+            #: ★ 新的是**方法**、★ 回**元组**（★ 官方 `## Returns` 是数组）✓
+            return (self._excluded,)
+
+        self.GetExcludeFromBOM2 = _get_exclude_from_bom2
         self.model = FakeReferencedModel(properties)
         self.model.Extension = type("Extension", (), {"ToolboxPartType": toolbox_type})()
         self.suppression = suppression
