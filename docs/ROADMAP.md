@@ -48,9 +48,19 @@
 ```
 当前阶段:  ★ **P9 · 用户视角覆盖面缺口**（规格 `specs/202-user-coverage-gaps`，2026-10-03 立）；
            A1–A10 仍全部达成；P8 仍按用户决定推迟；T-011 的「暴露」线并入 P9 一起走
+           ★★ **本阶段长程计划** = `specs/202-user-coverage-gaps/plan-24h.md`（轮次队列 R1–R6+ 与三条作业方式 M1–M3）
 状态:      ✅ P0–P3 · ✅ P7 · ✅ A1–A10 · 🟢 **P9 进行中**（缺口批 1 已交付：3 项真机建成，
            覆盖率 §三 **96/145 (66%) → 99/145 (68%)**，§八缺口 **35 → 32**）
 下一步:    ⓪ ★★ **P9 下一批 = C 类「候选直入法」19 项**（顺序见 `specs/202-user-coverage-gaps/research.md` §七）：
+              ★★★ **2026-10-03（接手轮）对本条的关键纠正 —— 先读这一段再动手**：
+                · ★ **工程图那 13 项里，本仓已实现 8 项、但只有 4 项挂成了工具**（见 `recon/drawing-existing-coverage.md`）
+                  ⇒ ★★ **该做的是「把已有的挂出来」，不是重写实现**（重写 = 造第二个家；业主当场指出过这类重复）。
+                · ★ **挂它的前置已修**：`RESOLVERS` 加了 `"drawing_model": resolve_model`
+                  （那批函数首参叫 `drawing_model`；而 `register()` 不传 `inject_as` ⇒ 注入键字面上等于 `inject` 的值，
+                  见 known-facts 169）⇒ ★ 不修就会 `TypeError`。
+                · ★ **真缺口只有 5 项**：断裂视图 · 辅助视图 · 表面粗糙度 · 基准符号 · 气泡序号。
+                · ★ **废弃链（已逐字核实）**：`InsertBreak`→`InsertBreak2`→**`InsertBreak3`**；
+                  `InsertSheetMetalMiterFlange` 的 `IModelDoc2` 那份**废弃** ⇒ 用 **`IFeatureManager`** 那份（14 参）。
              ① 先 **工程图视图族 5 项 + 标注族 8 项**（★ 侦察已确认官方入口 **13/13 命中**：
                 `recon/drawing_views.md` · `recon/drawing_anno.md`）
              ② 再 **钣金/焊件 5 项** —— ★ **先试直入法**，真名已回查到：
