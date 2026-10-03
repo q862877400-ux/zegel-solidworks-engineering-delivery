@@ -1,10 +1,10 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 47,
-  "可攻关": 41,
-  "待查": 22,
-  "待验证": 9
+  "已能": 54,
+  "可攻关": 38,
+  "待查": 20,
+  "待验证": 7
  },
  "by_toolbar_gap": {
   "特征": 4,
@@ -12,7 +12,7 @@
   "草图绘制": 7,
   "草图尺寸": 1,
   "草图编辑": 7,
-  "曲面": 9
+  "曲面": 6
  },
  "items": [
   {
@@ -1336,6 +1336,7 @@
    "level": "没验过",
    "batch": "B5",
    "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。",
+   "capability_id": "sketch_dimension_horizontal",
    "api_iface_hits": [],
    "api_member_hits": [
     "AddHorizontalDimension2"
@@ -1346,7 +1347,7 @@
    "implemented_hits": [
     "AddHorizontalDimension2"
    ],
-   "tier": "待验证"
+   "tier": "已能"
   },
   {
    "tb": "草图尺寸",
@@ -1356,6 +1357,7 @@
    "level": "没验过",
    "batch": "B5",
    "note": "★ 包装已写，★★ 而**整批探针把 SolidWorks 弄崩了三次**（用户亲眼看到三个「意外关闭」窗口）⇒ **不挂工具**。最可疑：`FullyDefineSketch` 的空 Dispatch 与 `InsertChainDimensions` 的 Python list（见事实 376）。",
+   "capability_id": "sketch_dimension_vertical",
    "api_iface_hits": [],
    "api_member_hits": [
     "AddVerticalDimension2"
@@ -1366,7 +1368,7 @@
    "implemented_hits": [
     "AddVerticalDimension2"
    ],
-   "tier": "待验证"
+   "tier": "已能"
   },
   {
    "tb": "草图尺寸",
@@ -1828,6 +1830,7 @@
    "api": "FeatureRevolveRefSurface",
    "entry": "",
    "level": "不能",
+   "capability_id": "surface_revolve",
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
@@ -1836,7 +1839,7 @@
    "implemented_hits": [
     "FeatureRevolveRefSurface"
    ],
-   "tier": "待查"
+   "tier": "已能"
   },
   {
    "tb": "曲面",
@@ -1864,6 +1867,7 @@
    "api": "InsertProtrusionBlend2(Surface)",
    "entry": "",
    "level": "不能",
+   "capability_id": "surface_ref_ops",
    "api_iface_hits": [],
    "api_member_hits": [
     "InsertProtrusionBlend2",
@@ -1876,7 +1880,7 @@
     "InsertProtrusionBlend2",
     "Surface"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "曲面",
@@ -1936,6 +1940,7 @@
    "api": "InsertPlanarRefSurface",
    "entry": "",
    "level": "不能",
+   "capability_id": "surface_planar_region",
    "api_iface_hits": [],
    "api_member_hits": [
     "InsertPlanarRefSurface"
@@ -1946,7 +1951,7 @@
    "implemented_hits": [
     "InsertPlanarRefSurface"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "曲面",
@@ -1954,6 +1959,7 @@
    "api": "InsertOffsetSurface",
    "entry": "",
    "level": "不能",
+   "capability_id": "surface_offset",
    "api_iface_hits": [],
    "api_member_hits": [
     "InsertOffsetSurface"
@@ -1964,7 +1970,7 @@
    "implemented_hits": [
     "InsertOffsetSurface"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "曲面",
@@ -2042,6 +2048,7 @@
    "api": "InsertReplaceFace",
    "entry": "",
    "level": "不能",
+   "capability_id": "replace_face",
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
@@ -2050,7 +2057,7 @@
    "implemented_hits": [
     "InsertReplaceFace"
    ],
-   "tier": "待查"
+   "tier": "已能"
   },
   {
    "tb": "曲面",

@@ -30,6 +30,15 @@ docs/dead-ends.md      # ★ 由 tools/gen_dead_ends.py 生成（45 条 / 28 能
 ⇒ ★★ **顺序：① `docs/dead-ends.md`（全局扫一眼）→ ② 该能力的 `limitations`（第一现场）→ ③ `known-facts.md` → ④ 动手。**
 ★ 该文件由 `tools/gen_dead_ends.py` 从 `capabilities.yaml` 生成，**不要手改**；已接进每轮收尾链。
 
+## ★★ 官方文档是第 0 步（★ 不是"试不出来再去查"）
+
+**动手碰任何一个 API 成员之前，先读完它那三样**：① `C:\swapi\types\<接口>\<成员>.md` 的签名 ·
+② **它的 `## Remarks`**（前置与语义都在这）· ③ **CHM 那页顶上的 `Example` / `See Also`**（★ **例子给的是"调用序"，签名与 Remarks 都给不了**）。
+⇒ ★ **"试参数"是最后手段** —— ★ 读完仍不成才开探针，★ 且探针 `来源块` 要**写明读的是哪一页**。
+★ 顺序：**① 官方页 → ② `docs/dead-ends.md` → ③ 该能力的 `limitations` → ④ `known-facts.md` → ⑤ 动手。**
+**为什么**：2026-10-03 轮 501–548 我在这件事上**栽了六次**（剪裁顺序反了 · 分割线 mark 全错 · 旋转曲面缺中心线 7 轮 · 扫描曲面从没查过 `InsertSweepSurface2` · 指针族误判 · "会挂"没读自己的弹窗落盘）—— **每一处官方都写着**。
+详见 **[docs/official-docs-first.md](docs/official-docs-first.md)**。
+
 ## 〇、一句话任务
 
 > 自建仓库，把 SolidWorks 自动化做到「官方 SolidWorks API 全覆盖 + 集四家 MIT/Apache MCP 项目之广度 + 业界空白域护城河」；交付形态是我们自己的仓库，上游 `wzyn20051216/solidworks-automation-skill`（1010 星, MIT）与四家外部项目同为来源，一件一件搬、搬一件过一遍并入六条规则。

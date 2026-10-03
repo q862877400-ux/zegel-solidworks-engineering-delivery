@@ -16,10 +16,10 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 47 |
-| 可攻关 | 41 |
-| 待验证 | 9 |
-| 待查 | 22 |
+| 已能 | 54 |
+| 可攻关 | 38 |
+| 待验证 | 7 |
+| 待查 | 20 |
 | **合计** | **119** |
 
 ## 逐条
@@ -28,11 +28,8 @@
 |---|---|---|---|---|
 | 曲面 | 删除孔 | **可攻关** | `InsertDeleteHole` | — |
 | 曲面 | 删除面 | **可攻关** | `InsertDeleteFace2` | — |
-| 曲面 | 平面区域 | **可攻关** | `InsertPlanarRefSurface` | — |
 | 曲面 | 扫描曲面 | **可攻关** | `InsertProtrusionSwept4`, `Surface` | — |
-| 曲面 | 放样曲面 | **可攻关** | `InsertProtrusionBlend2`, `Surface` | — |
 | 曲面 | 曲面展平 | **可攻关** | `InsertFlattenSurface` | — |
-| 曲面 | 等距曲面 | **可攻关** | `InsertOffsetSurface` | — |
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
 | 曲面 | 解除剪裁曲面 | **可攻关** | `InsertUntrimSurface` | — |
 | 特征 | 放样切除 | **可攻关** | `InsertCutBlend` | — |
@@ -73,15 +70,11 @@
 | 特征下拉 | 曲线-组合曲线 | **待验证** | `InsertCompositeCurve` | `sw_part.insert_composite_curve_report` |
 | 草图关系 | 显示/删除几何关系 | **待验证** | `ISketch`, `DeleteRelation` | `sw_sketch_dimensions.*` |
 | 草图关系 | 添加几何关系 | **待验证** | `SketchAddConstraints` | `sw_part.add_sketch_relation` |
-| 草图尺寸 | 水平尺寸 | **待验证** | `AddHorizontalDimension2` | `sw_sketch_dimensions.*` |
-| 草图尺寸 | 竖直尺寸 | **待验证** | `AddVerticalDimension2` | `sw_sketch_dimensions.*` |
 | 草图编辑 | 交叉曲线 | **待验证** | `IntersectCurves` | `sw_sketch_edit_ops.sketch_intersect_curves` |
 | 曲面 | 使用曲面切除 | **待查** | — | — |
 | 曲面 | 剪裁曲面 | **待查** | — | — |
 | 曲面 | 加厚 | **待查** | — | — |
 | 曲面 | 加厚切除 | **待查** | — | — |
-| 曲面 | 旋转曲面 | **待查** | — | — |
-| 曲面 | 替换面 | **待查** | — | — |
 | 曲面 | 直纹曲面 | **待查** | — | — |
 | 曲面 | 边界曲面 | **待查** | — | — |
 | 特征 | 扫描切除 | **待查** | — | `sw_sweep.create_sweep_report(cut=True)` |
@@ -99,8 +92,13 @@
 | 草图尺寸 | 路径长度尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 链尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
 | 曲面 | 填充曲面 | **已能** | `InsertFillSurface2` | `sw_surface_features.insert_fill_surface_report` |
+| 曲面 | 平面区域 | **已能** | `InsertPlanarRefSurface` | — |
 | 曲面 | 延伸曲面 | **已能** | `InsertExtendSurface` | `sw_surface_features.insert_extend_surface_report` |
 | 曲面 | 拉伸曲面 | **已能** | `FeatureExtruRefSurface3` | `sw_surface_features.create_extruded_surface_report` |
+| 曲面 | 放样曲面 | **已能** | `InsertProtrusionBlend2`, `Surface` | — |
+| 曲面 | 旋转曲面 | **已能** | — | — |
+| 曲面 | 替换面 | **已能** | — | — |
+| 曲面 | 等距曲面 | **已能** | `InsertOffsetSurface` | — |
 | 曲面 | 缝合曲面 | **已能** | `InsertSewRefSurface` | `sw_surface_features.knit_surfaces_report` |
 | 特征 | 包覆 | **已能** | `InsertWrapFeature2` | `sw_wrap.create_wrap_report` |
 | 特征 | 参考几何体-基准轴 | **已能** | `InsertAxis2` | `sw_part.create_axis_report` |
@@ -117,6 +115,8 @@
 | 特征下拉 | 圆周阵列 | **已能** | `FeatureCircularPattern4` | `sw_part.circular_pattern` |
 | 草图关系 | 完全定义草图 | **已能** | `FullyDefineSketch` | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 智能尺寸 | **已能** | `AutoDimension2` | `sw_part.auto_dimension_sketch` |
+| 草图尺寸 | 水平尺寸 | **已能** | `AddHorizontalDimension2` | `sw_sketch_dimensions.*` |
+| 草图尺寸 | 竖直尺寸 | **已能** | `AddVerticalDimension2` | `sw_sketch_dimensions.*` |
 | 草图绘制 | 3点中心矩形 | **已能** | `Create3PointCenterRectangle` | `sw_sketch_primitives.sketch_3point_center_rectangle` |
 | 草图绘制 | 3点圆弧 | **已能** | `Create3PointArc` | `sw_sketch_primitives.sketch_3point_arc` |
 | 草图绘制 | 3点边角矩形 | **已能** | `Create3PointCornerRectangle` | `sw_sketch_primitives.sketch_3point_corner_rectangle` |

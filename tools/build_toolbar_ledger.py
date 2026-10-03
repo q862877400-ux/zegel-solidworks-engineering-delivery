@@ -37,6 +37,42 @@ SWAPI = Path(r"C:\swapi")
 LEDGER = R / "docs" / "toolbar-ledger.json"
 OUT_MD = R / "docs" / "toolbar-ledger.md"
 OUT_JSON = R / "docs" / "toolbar-ledger-verified.json"
+CAPABILITIES = R / "capabilities.yaml"
+#: ★ 模块级缓存（★ 供 promoted_by_capability 的默认参数）
+VERIFIED_IDS: set = set()
+
+
+def promoted_by_capability(item: dict, verified_ids: set | None = None) -> bool:
+    """⇒ 这条台账条目是否该因 `capabilities.yaml` 而判「已能」。
+
+    ★★★ 2026-10-03（轮 549）★ **为什么做成模块级函数**：★ 它**原先是 `tier()` 里内联的一段**，
+      而 `tier()` 是 `main()` 里的**嵌套函数**、读的是外层变量 `_VERIFIED` ⇒
+      ★ **抽出来单测就 `NameError`**（★ 那是**测试抓到的**，不是我自己想到的）⚠
+      ⇒ ★ 故改成**自洽的模块级函数**：★ 依赖**显式传入或自己加载**，★ 不靠闭包 ✓
+    """
+    ids = VERIFIED_IDS if verified_ids is None else verified_ids
+    cid = item.get("capability_id")
+    return bool(cid and cid in ids)
+
+
+def load_verified_capabilities() -> set:
+    """⇒ `capabilities.yaml` 里 `level == "verified"` 的 id 集（★ 本轮新增）。
+
+    ★★★ 2026-10-03（轮 549）**为什么加这个**（★ 那是一个真实记账 bug）：
+      ★ `tier()` 原先**只用台账里手填的 `level`** —— 而**本脚本自己的 docstring 就写着**
+      「台账那三条 `level` / `entry` 都是 2026-10-03 五轮问答时手填的，★ **之后从不自动更新**」⚠
+      ⇒ ★★ **后果**：★ 轮 529-542 我把 **旋转曲面 / 等距曲面 / 平面区域 / 替换面 / 放样曲面 /
+        水平尺寸 / 竖直尺寸** 等做成了 `verified`（★ 有真机证据），
+        ★ 而**台账仍标它们「不能 / 没验过」** ⇒ ★ **下一步的攻关清单是错的** ⚠
+      ⇒ ★ 修法：★ **先查 capabilities** —— ★ 台账条目可用 `capability_id` 指向能力条目，
+        ★ 那条已 `verified` ⇒ ★ **直接判「已能」**（★ 而**不再依赖手填的 `level`**）✓
+    """
+    try:
+        data = json.loads(CAPABILITIES.read_text(encoding="utf-8"))
+    except Exception:                                                     # noqa: BLE001
+        return set()
+    caps = data.get("capabilities") or []
+    return {c.get("id") for c in caps if c.get("level") == "verified" and c.get("id")}
 
 
 def index_swapi() -> tuple[set, set]:
@@ -170,7 +206,18 @@ def main() -> int:
         it.update(check_repo(it, _IDX, set(ids)))
 
     #: \u2605 \u5206\u6863\uff1a\u53ef\u505a = \u5f53\u524d"\u4e0d\u80fd/\u6ca1\u9a8c\u8fc7" \u4e14 api \u6838\u5b9e\u547d\u4e2d \u4e14 \u672c\u4ed3\u65e0\u5165\u53e3
+    global VERIFIED_IDS
+    VERIFIED_IDS = load_verified_capabilities()
+
     def tier(it: dict) -> str:
+        #: ★★★ 2026-10-03（轮 549）**最先查 capabilities** —— ★ 修一个记账 bug：
+        #:   原判据只用**手填的 `level`**（★ 而本脚本 docstring 自己写着「之后从不自动更新」）
+        #:   ⇒ ★ 做成了的能力**永远不会被台账知道** ⚠
+        #:   ★ 现在：条目若有 `capability_id` 且那条已 `verified` ⇒ **直接判「已能」** ✓
+        #: ★ 改调**模块级函数**（★ 而不是内联 —— ★ 那样单测会 NameError）
+        #: ★★ 而**不传第二个参数** ⇒ 走它的默认 `VERIFIED_IDS`（★ 那才是"自洽"的意思）
+        if promoted_by_capability(it):
+            return "已能"
         if it.get("level") == "\u80fd":
             return "\u5df2\u80fd"
         if not it.get("api_verified"):
