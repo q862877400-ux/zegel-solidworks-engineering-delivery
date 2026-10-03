@@ -1994,3 +1994,26 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而它与**事实 36 同族**：★ **同名成员在**不同接口**上的可达性不同**—— ★ 故下一步是**换到正确的接口上调**。
      ★ **落地**：`capabilities.yaml` 新增 **`sketch_line2`**（level = **verified**，共 **100** 条）；台账「中点线」补 `capability_id` ⇒ **已能 74**。
      ★★ **方法论**：★ 找到继任者只是**一半**；★ 而**它在哪个接口上、可不可调**，★ **只有真机能答** ⚠（★ 两条都是官方继任者，★ 而一成一不成）。|真机：`tools/prove_createline2_and_createspline.py`；证据 `output/createline2-and-createspline-evidence.json`；对照事实 36 / 433 |
+| 445 | **★★★ 投影曲线的正路是**第三代****：`CreateDefinition(swFmRefCurve=14)` + `IProjectionCurveFeatureData`；★ 而本轮**数据对象可达、三个属性可设、`CreateFeature` 仍回 `None`**** —— 2026-10-03（轮 566）。
+     ★★ **而本轮发现一件事**：这条的**两代都是废弃的** ——
+       · `InsertProjectedSketch` ⇒ `InsertProjectedSketch2`（★ 事实 433 的地图只挖到这里）·
+       · 而 **`InsertProjectedSketch2` 自己也已废弃**："Obsolete. See `IProjectionCurveFeatureData` and `IFeatureManager::CreateDefinition`" ⚠
+     ★ 而**官方把第三代给成了一条**五步配方**（`IProjectionCurveFeatureData` 的 `## Remarks` 逐字）**：
+     ```
+     1. 预选实体，Marks：mark=1 目标面 · **mark=2 要投的草图** · 4 目标草图 · 8 方向
+     2. `CreateDefinition(swFmRefCurve)`     ← ★ 常量值来自**反射**：**swFmRefCurve = 14**
+     3. 在接口上设**非实体**属性（★ 接口正好有 **3 个**：`Bidirectional` · `Reverse` · **`Sketch`**）
+     4. `IFeatureManager::CreateFeature`
+     ```
+     ★ 真机（`tools/prove_projection_curve.py`，零弹窗）：
+     ```
+     目标面(mark=1) + 草图(mark=2) ⇒ `CreateDefinition(14)` **回 `CDispatch`** ✓（★ 数据对象**可达**）
+     而三个属性均设成（`Bidirectional`/`Reverse`/**`Sketch`** 均 `ok`）✓
+     ★ 而 `CreateFeature(data)` ⇒ **回 `None`** · 树不动 ⚠
+     ```
+     ⇒ ★★ **故：这条链已经推进到**第 4 步**（★ 前三步都通）**；
+       ★ **而缺的很可能是一个步骤**：**`AccessSelections` → 设实体数据 → `CreateFeature` → `ReleaseSelectionAccess`** —— ★ 那是**事实 425/426** 说过的模式（★ FeatureData 那族 **6/6 通**）。
+     ★ **下一步**：★ 在 `CreateDefinition` 与 `CreateFeature` **之间插入 `AccessSelections`**。
+     ★ 而本轮**不登记能力**（★ 仍未建成）。
+     ★★ **方法论**：★ **一条官方配方里，“通了几步”就要**逐步记下来**（★ `data_type` / `props_set` / `returned`）—— ★ 那样**缺哪一步一目了然** ⚠
+       （★ 本轮就是那么定位到“第 4 步”与“可能缺 `AccessSelections`”的）。|真机：`tools/prove_projection_curve.py`；证据 `output/projection-curve-evidence.json`；官方：`C:\swapi\types\IProjectionCurveFeatureData\_overview.md` × `IFeatureManager\CreateDefinition.md` × 反射枚举 |

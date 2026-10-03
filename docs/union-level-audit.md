@@ -83,32 +83,33 @@
 | 73 | `sketch_dimension_vertical` | `verified` | `original` | ✓ | — |
 | 74 | `sketch_edit_ops` | `stitched` | `original` | ✓ | — |
 | 75 | `sketch_edit_ops_b3` | `verified` | `original` | ✓ | — |
-| 76 | `sketch_modify_ops` | `verified` | `original` | ✓ | — |
-| 77 | `sketch_primitives_b1` | `verified` | `original` | ✓ | — |
-| 78 | `sketch_query` | `verified` | `original` | ✓ | — |
-| 79 | `sketch_slot_types` | `verified` | `original` | ✓ | — |
-| 80 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
-| 81 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
-| 82 | `surface_delete_hole` | `verified` | `original` | ✓ | — |
-| 83 | `surface_edit_ops` | `verified` | `original` | ✓ | — |
-| 84 | `surface_features` | `verified` | `mixed` | ✓ | — |
-| 85 | `surface_flatten` | `verified` | `original` | ✓ | — |
-| 86 | `surface_modeling` | `stitched` | `mixed` | — | — |
-| 87 | `surface_offset` | `verified` | `original` | ✓ | — |
-| 88 | `surface_planar_region` | `verified` | `original` | ✓ | — |
-| 89 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
-| 90 | `surface_revolve` | `verified` | `original` | ✓ | — |
-| 91 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
-| 92 | `surface_untrim` | `verified` | `original` | ✓ | — |
-| 93 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
-| 94 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
-| 95 | `topology_optimization` | `verified` | `original` | ✓ | — |
-| 96 | `topology_readback` | `stitched` | `original` | ✓ | — |
-| 97 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
-| 98 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
-| 99 | `weldments` | `verified` | `upstream` | ✓ | — |
+| 76 | `sketch_line2` | `verified` | `original` | ✓ | — |
+| 77 | `sketch_modify_ops` | `verified` | `original` | ✓ | — |
+| 78 | `sketch_primitives_b1` | `verified` | `original` | ✓ | — |
+| 79 | `sketch_query` | `verified` | `original` | ✓ | — |
+| 80 | `sketch_slot_types` | `verified` | `original` | ✓ | — |
+| 81 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
+| 82 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
+| 83 | `surface_delete_hole` | `verified` | `original` | ✓ | — |
+| 84 | `surface_edit_ops` | `verified` | `original` | ✓ | — |
+| 85 | `surface_features` | `verified` | `mixed` | ✓ | — |
+| 86 | `surface_flatten` | `verified` | `original` | ✓ | — |
+| 87 | `surface_modeling` | `stitched` | `mixed` | — | — |
+| 88 | `surface_offset` | `verified` | `original` | ✓ | — |
+| 89 | `surface_planar_region` | `verified` | `original` | ✓ | — |
+| 90 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
+| 91 | `surface_revolve` | `verified` | `original` | ✓ | — |
+| 92 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
+| 93 | `surface_untrim` | `verified` | `original` | ✓ | — |
+| 94 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
+| 95 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
+| 96 | `topology_optimization` | `verified` | `original` | ✓ | — |
+| 97 | `topology_readback` | `stitched` | `original` | ✓ | — |
+| 98 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
+| 99 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
+| 100 | `weldments` | `verified` | `upstream` | ✓ | — |
 
-**合计 99 条**。
+**合计 100 条**。
 
 ## 二、`level` 分布
 
@@ -118,7 +119,7 @@
 | `not_implemented` | 1 |
 | `source_verified` | 0 |
 | `stitched` | 12 |
-| `verified` | 86 |
+| `verified` | 87 |
 
 ## 三、`source` 分布
 
@@ -126,7 +127,7 @@
 |---|---|
 | `merged` | 0 |
 | `mixed` | 11 |
-| `original` | 69 |
+| `original` | 70 |
 | `undetermined` | 1 |
 | `upstream` | 18 |
 
@@ -138,7 +139,7 @@
 | `not_implemented` | 0 | 0 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
 | `stitched` | 0 | 3 | 9 | 0 | 0 |
-| `verified` | 0 | 8 | 60 | 1 | 17 |
+| `verified` | 0 | 8 | 61 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。
