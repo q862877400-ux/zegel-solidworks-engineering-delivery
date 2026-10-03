@@ -999,3 +999,126 @@ def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True
             "pre_returned": repr(pre)[:40], "post_returned": repr(post)[:40],
             "★": "判据 = **特征树多了新特征**（规则 6）；★ **两段式**：PreTrimSurface(4 布尔) "
                  "⇒ PostTrimSurface(sew)；★ 参数语义取自 **CHM**（md 里四个参数都是 No description）"}
+
+
+# ── ★ 曲面**切除**（`IFeatureManager.InsertCutSurface`）—— 与"剪裁曲面"是**两件事** ──────
+# ★★★★ 2026-10-03（轮 521）★ 从**通配筛**（事实 401 那条手法）里抓到的第二个候选。
+#
+#   ★★ **先纠正一个容易混的地方**：它**不是**"剪裁曲面"（那是 B6/T607 的
+#     `PreTrimSurface`/`PostTrimSurface`，剪的是**曲面**）；
+#     ★ `InsertCutSurface` 官方逐字是「**Inserts a surface-cut feature** using the
+#     **preselected surface or plane**」⇒ ★★ **它是拿一个曲面/基准面去**切实体**** ✓
+#     ⚠ 两者中文名都含"裁/切"、API 名都含 `CutSurface`/`TrimSurface`，★ **极易混**。
+#
+# 官方三源（★ 铁律 4）：
+#   · `C:\swapi\types\IFeatureManager\InsertCutSurface.md`：
+#     `Feature InsertCutSurface(bool Flip, int KeepPieceIndex, bool UseFeatScope,
+#      bool UseAutoSelect, <Bodies>, <Error out>, <Retval out>)`
+#     · `Flip` ⇒ "True to flip the direction of the cut"
+#     · `KeepPieceIndex` ⇒ "**Piece to keep if there is ambiguity**"
+#     · `UseFeatScope` ⇒ True 只切传给 `Bodies` 且与切面相交的体
+#     · `UseAutoSelect` ⇒ True 自动切**所有**与切面相交的体
+#     · `Bodies` ⇒ 具体体的数组；★「**Empty array indicating to cut all bodies**」
+#   · `C:\swapi\types\IModelDoc2\InsertCutSurface.md` ⇒ **Obsolete**，继任者是 `IFeatureManager` 那个
+#   · 类型库（第 3 源）给 arity 与方向：`IFeatureManager.InsertCutSurface` ⇒
+#     `(Flip, KeepPieceIndex, UseFeatScope, UseAutoSelect, Bodies, Error(out), Retval(out))`
+#     ⇒ ★ **5 个 in + 2 个 out**（★ 与 md 一致）✓
+#
+# ★ 前置：★ 官方说「using the **preselected** surface or plane」⇒ ★ **先选中一个面或基准面**。
+# ★ 判据（★ 规则 6）：**特征树多了新特征**。
+
+
+def cut_surface_report(model, *, flip: bool = False, keep_piece_index: int = 0,
+                       use_feat_scope: bool = False, use_auto_select: bool = True) -> dict:
+    """★ **曲面切除**（`IFeatureManager.InsertCutSurface`）—— ★ 拿选中的面/基准面**切实体**。
+
+    ⚠★ **别与"剪裁曲面"混**：那个是 `PreTrimSurface`/`PostTrimSurface`（剪**曲面**）；
+      ★ 本条是**曲面切除**（切**实体**）—— ★ 官方逐字「Inserts a **surface-cut** feature」。
+
+    ★ 参数（★ 官方逐字）：
+      · `flip` ⇒ 反向 · `keep_piece_index` ⇒ **有歧义时留哪一块**
+      · `use_feat_scope` ⇒ 只切传给 `Bodies` 的体 · `use_auto_select` ⇒ 自动切**所有**相交体
+    ★ 前置：★ **先选中一个曲面或基准面**（官方：「using the **preselected** surface or plane」）。
+    ★ 判据（规则 6）：★ **特征树多了新特征**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = feature_names(model)
+    #: ★ 试两种选区：① 曲面面（mark=0）② 基准面（按名字选）
+    picked = {"surface_faces": 0, "plane": None}
+    try:
+        model.ClearSelection2(True)
+    except Exception:                                                     # noqa: BLE001
+        pass
+    picked["surface_faces"] = _select_all_surface_faces(model, mark=0)
+    if picked["surface_faces"] <= 0:
+        ext = get_com_member(model, "Extension")
+        for plane in ("\u524d\u89c6\u57fa\u51c6\u9762", "Front Plane", "\u4e0a\u89c6\u57fa\u51c6\u9762",
+                      "Top Plane", "\u53f3\u89c6\u57fa\u51c6\u9762", "Right Plane"):
+            try:
+                if get_com_member(ext, "SelectByID2", plane, "PLANE", False, 0, 0.0, 0.0, 0.0,
+                                  False, 0, None, 0):
+                    picked["plane"] = plane
+                    break
+            except Exception:                                             # noqa: BLE001
+                continue
+    try:
+        sel = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                 "GetSelectedObjectCount2", -1) or 0)
+    except Exception:                                                     # noqa: BLE001
+        sel = -1
+    if sel <= 0:
+        return {"ok": False, "stage": "select", "selected": sel, "picked": picked,
+                "error": "没选中任何面或基准面（★ 官方：这条要用 **preselected** surface or plane）"}
+    fm = get_com_member(model, "FeatureManager")
+    ret = None
+    #: ★★ 2026-10-03（轮 521）**真机栽在这里、而它正是事实 390 那条定则的用例** ⚠
+    #:   我第一版按「**5 个 in**」调（★ 依据是事实 397：类型库的 arity 含末尾 out ⇒ pywin32 侧不传）
+    #:   ⇒ 真机回 **`非选择性的参数`**（`DISP_E_PARAMNOTOPTIONAL` = **"某个参数没给"**）。
+    #:   ★★ **真因**：这条方法有 **两个 out**（`Error` 与 `Retval`）——
+    #:     ★ 而**事实 397 那条"不传末尾 out"只适用于末尾只有 `Retval` 的情形**；
+    #:     ★ 这里有 **中间那个 `Error`**，★ 它**必须占位** ⇒ ★★ **故要传 7 个** ✓
+    #:   ★ 用 **`out_i4()`**（★ **`Error` 是错误码 ⇒ `VT_BYREF|VT_I4`**）与
+    #:     **`out_dispatch()`**（★ **`Retval` 是 Feature ⇒ `VT_BYREF|VT_DISPATCH`**）把两个 out 位置填上。
+    #:   ⚠ **我第一版两个都用了 `out_dispatch()`** ⇒ 真机回
+    #:     **`类型不匹配`（位置 6）** —— ★★ **而那正好指在第 7 个参数（`Error`）上**：
+    #:     ★ 一个**错误码**位置被塞了 Dispatch 容器 ⇒ ★ 两个错码**各说了一半**
+    #:     （`非选择性的参数` 说"少给了"、`类型不匹配 位置 6` 说"第 7 个给错了"）✓
+    #:   ★ 而那是**事实 390 定则**（见 `DISP_E_PARAMNOTOPTIONAL` ⇒ **先数参数个数**）的正当执行。
+    err_out = None
+    ret_out = None
+    try:
+        from sw_connect import out_dispatch as _od, out_i4 as _oi4
+        err_out = _oi4()
+        ret_out = _od()
+    except Exception:                                                     # noqa: BLE001
+        pass
+    attempts = []
+    try:
+        ret = get_com_member(fm, "InsertCutSurface", bool(flip), int(keep_piece_index),
+                             bool(use_feat_scope), bool(use_auto_select), [],
+                             err_out, ret_out)
+        attempts.append("7 \u53c2\uff085 in + out_i4 + out_dispatch\uff09")
+    except Exception as exc:                                              # noqa: BLE001
+        attempts.append("7 \u53c2\uff085 in + out_i4 + out_dispatch\uff09 \u21d2 %s: %s"
+                        % (type(exc).__name__, str(exc)[:90]))
+        #: \u2605 \u56de\u9000\uff1a\u53ea\u4f20 **5 \u53c2**\uff08\u2605 \u4e07\u4e00\u5b83\u771f\u7684\u53ea\u8981 5 \u4e2a\uff09
+        try:
+            ret = get_com_member(fm, "InsertCutSurface", bool(flip), int(keep_piece_index),
+                                 bool(use_feat_scope), bool(use_auto_select), [])
+            attempts.append("5 \u53c2\uff08\u56de\u9000\uff09")
+        except Exception as exc2:                                         # noqa: BLE001
+            attempts.append("5 \u53c2\uff08\u56de\u9000\uff09 \u21d2 %s: %s"
+                            % (type(exc2).__name__, str(exc2)[:90]))
+            return {"ok": False, "stage": "call", "selected": sel, "picked": picked,
+                    "attempts": attempts,
+                    "error": "%s: %s" % (type(exc2).__name__, str(exc2)[:220])}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": len(before), "tree_after": len(after), "selected": sel,
+            "picked": picked, "flip": bool(flip), "keep_piece_index": int(keep_piece_index),
+            "use_feat_scope": bool(use_feat_scope), "use_auto_select": bool(use_auto_select),
+            "attempts": attempts, "returned": repr(ret)[:40],
+            "★": "判据 = **特征树多了新特征**（规则 6）；★ 它是**曲面切除**（切实体），"
+                 "★ 不是「剪裁曲面」（剪曲面）；★ 参数要 **7 个**（5 in + 2 out —— 事实 390）"}

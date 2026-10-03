@@ -1296,3 +1296,15 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 真机（`output/thicken2-evidence.json`）：`FeatureBossThicken2`（4 参）⇒ **回 `None` · 树不动**；`FeatureCutThicken2`（4 参）⇒ **同**；而只传 3 参 ⇒ **`非选择性的参数`**（★ 反过来**确认了 4 参是对的**）。
      ⇒ ★★ **加厚的总账升到 14 组 · 5 种入口**（`IFeatureManager.FeatureBossThicken` 7 参 · `IModelDoc2.FeatureBossThicken` 3 参 · `IModelDoc2.FeatureBossThicken2` 4 参 · `IModelDoc2.FeatureCutThicken` 3 参 · `IModelDoc2.FeatureCutThicken2` 4 参），**前置每次完美**（`solid=0 · surface=1`）⇒ ★ **「加厚在本机静默不成」这条结论更硬了** ✓
      ★★ **故它不只是一次失败** —— 它把「入口没穷举」这个漏洞堆上了。|真机：`tools/probe_thicken2.py`；证据 `output/thicken2-evidence.json`；对照事实 391 / 396 / 400 |
+| 402 | **★★★ 三个错码**排成一条线、各指一处** —— 它们合起来把一个“参数形态”问题定位到了** —— 2026-10-03（轮 521），新能力候选 **`IFeatureManager.InsertCutSurface`**（★ **曲面切除** —— ★★ 而不是「剪裁曲面」：它是**拿面/基准面切实体**，官方逐字「Inserts a **surface-cut** feature using the **preselected** surface or plane」）。
+     ★ 官方三源给的是 **5 in + 2 out**（`Flip` · `KeepPieceIndex` · `UseFeatScope` · `UseAutoSelect` · `Bodies` · `Error(out)` · `Retval(out)`）。
+     ★ 真机三次调用，**错码逐步变化**（★ 每一步都指出一处）：
+     ```
+     5 参                     ⇒ 非选择性的参数   （= “某个参数没给”）
+     7 参（两个 out_dispatch）  ⇒ 类型不匹配（位置 **6**） （= 第 7 个参数类型错）
+     7 参（out_i4 + out_dispatch） ⇒ 无效的参数数目  （= 类型对了、而**个数**仍不对）
+     ```
+     ★ 三步合起来的信息：① **必须超过 5 个**；② **第 7 个是错误码**（★ 故 `out_i4()` 对、`out_dispatch()` 错）；③ **而 7 个又不对** ⇒ ★★ **剩下最可能：`Bodies` 那个位置该是 `VARIANT`（★ 而我传的是 Python `list`）**，或★ **out 也算进某种计数**。
+     ★ 已写进实现层：`scripts/sw_surface_features.py` 的 `cut_surface_report`（★ 带**两条路的 `attempts`** 记录，★ 而不是只报最后一个错）；证据 `output/cut-surface-evidence.json`；探针 `tools/prove_cut_surface.py`。
+     ★ **按事实 53 停手**（这一处已 3 次）—— ★ 而把这条**错码链留下**。
+     ★★ **方法论：一个“参数形态”问题，它的错码会随参数变化 —— ★ 故**逐步把错码记下来**，比只记最后一个有信息量。**|真机：`tools/prove_cut_surface.py`；证据 `output/cut-surface-evidence.json`；对照事实 390 / 397 / 401 |
