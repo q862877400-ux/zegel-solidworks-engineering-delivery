@@ -2457,3 +2457,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ★ 从本仓 `sw_hole_features.get_fastener_table(sw, standard_name, fastener_id, table_id, hole_type_id)`
          **拿一个真的 `SSize`**（★ 而不是空串）再试。
      ★ 本轮**不登记能力**。|真机：`tools/prove_hole_wizard5_build.py`；证据 `output/hole-wizard5-build-evidence.json`；官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md` × `IHoleStandardsData` 族；对照事实 464 / 465 / 466 |
+| 468 | **★★ 取“真尺寸”那条路被**接口解析**卡住**（★ 而错误信息报的是**错的接口名**） —— 2026-10-03（轮 591）。
+     ★ **事实 467 留的下一步**：从 `get_fastener_table` 拿一个**真的 `SSize`**。
+     ★ 而本轮沿路查出三件事**：
+     ```
+     ① ★ **表类型取到了真值**：`list_fastener_table_types` 回 **[0, 2]**（★ 真数据）
+     ② ★ **它的官方成员在 `IHoleStandardsData` 上**（★ 不是 `ISldWorks`）—— 本仓 `_hole_standards_data(sw, 2)` **确实**回 `CDispatch` ✓
+     ③ ★★ **而调用仍报 `AttributeError: **SldWorks.Application**.GetFastenerTable`** ⚠
+        —— ★ 而 `get_fastener_table` 的函数体**逐字**是
+           `get_com_member(**data**, "GetFastenerTable", …)`（★ **调在标准对象上**）
+     ```
+     ⇒ ★★ **故只能解释为接口解析问题**：那个 dispatch 是从 `ISldWorks` 拿的，
+       ★ 而 **pywin32 把它解析成了 `ISldWorks`**（★ 故找不到那个成员）⚠
+     ★★ **而这与事实 36 / 47 同一族**：★ **错误信息里的接口名可能是错的** —— ★ 故**不能拿它当定位依据** ⚠
+     ★ **按事实 53 停手**（★ 本条已跨 5 轮）；★ **而本轮的收获是把它从“没查到”收敛到“**接口解析**”** ✓
+     ★ **而对 `HoleWizard5` 的影响**：★ 故那一条的“拿真尺寸”前置**暂时拿不到** —— ★ 而另一条路（**从 CHM 或反射里查尺寸名**）尚未试。
+     ★ 本轮**不登记能力**。|真机：本轮探针输出；本仓：`scripts/sw_hole_features.py` 的 `get_fastener_table`（L316）与 `_hole_standards_data`（L466）；对照事实 36 / 47 / 467 |
