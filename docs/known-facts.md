@@ -2078,3 +2078,22 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        （★ 三条里至少两条的失败是**前置错**：一条选法不对、一条根本没给可交的面。）
      ★ **故后续优先序调整**：★ **不拿“桶”当优先级**，★ 而**拿“前置否已明确”当优先级** —— ★ 那一桶里**前置已明确的那条**（复合曲线）才是首选。
      ★ 本轮**不登记能力**（★ 0 / 3）。|真机：`tools/prove_pending_verification_three.py`；证据 `output/pending-verification-three-evidence.json`；对照事实 441（撤销过一个同类归因）· 447 · `docs/milestone-round100.md` |
+| 450 | **★★★ 复合曲线：官方**例子**给了“合法实体”与调用序**（★ 而 swapi 的 Remarks **只说“看 Help”**）** —— 2026-10-03（轮 572）。
+     ★ **起因**：事实 449 把复合曲线留给下一步，★ 而本轮试了**三种实体**（同一草图的两段 / 体的两条边 / 不选）**全败** ⚠
+     ★ 而按**事实 441 的教训**先查了废弃 —— ★ **它未标废弃**；而它的 Remarks 逐字是：
+       > "To use this method, select the entities by calling `SelectByID2` with a mark number of 1. **See the SOLIDWORKS Help for information about which entities are valid for selection.**"
+       ⇒ ★★ **故两套源分工**：**swapi 给签名·CHM 给“哪些实体合法”** ⚠
+     ★★★ **而 CHM 里有现成的例子**：`Insert_a_Composite_Curve_Example_VBNET.htm`（★ 而**它把答案写在 Postconditions 里**）**：
+     ```
+     "This example shows how to insert a composite curve **using two sketches of splines**."
+     "2. Creates a **sketch of a spline**.  3. Creates **another sketch of a spline**.
+       4. Inserts a composite curve **using the sketches** created in steps 2 and 3."
+     ★ 而它的调用序：**CreateSpline2** ×2 → **SelectByID2** ×2 → **InsertCompositeCurve**
+       → 再用 `SelectionMgr.Feature` 取 `ICompositeCurveFeatureData` → `GetEntitiesToJoinCount` 读回
+     ```
+     ⇒ ★★ **故两个关键**：
+       ① ★ **合法实体 = 整条**样条草图****（★ 而不是直线段 / 体的边）⚠
+       ② ★ **`SelectByID2` 能按名字选到那个草图**（★ 草图是**特征**、★ 而事实 32 说**特征有名字**）✓
+     ★★ **方法论**：★ 当 swapi 的 `## Remarks` 说**“看 Help”时**，★ 那就是**它在把你指向第三套源** —— ★ 而**那里往往有一个能直接照拄的例子** ⚠
+     ★ 而例子里那句“**using two sketches of splines**”就是**签名与 Remarks 都给不了的东西**（★ 事实 415 同族）✓
+     ★ 而本轮**不登记能力**（★ 仍未建成）；★ **下一步已具体**：★ 造**两个各含一条样条的草图**、★ 用 `SelectByID2` 按名选它们。|真机：`tools/prove_composite_curve_entities.py`；证据 `output/composite-curve-entities-evidence.json`；官方：`Insert_a_Composite_Curve_Example_VBNET.htm`（CHM）× `IModelDoc2\InsertCompositeCurve.md`（swapi）；对照事实 415 / 441 / 449 |
