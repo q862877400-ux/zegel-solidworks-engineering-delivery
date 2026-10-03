@@ -356,6 +356,26 @@ def delete_render_material(model, index: int, cascade: bool = False) -> bool:
 #   迟到绑定下加括号调用会 TypeError（见 AGENTS.md §六 事实 4）。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+# ★★★★★ 2026-10-04（接手轮）**记档：`AdvancedGraphics` 官方明写**无后继****
+#   处置阶段 2 · T1 · ★（★ **T1 的最后一条**）✓
+#   ★ **官方逐字**（★ `C:\swapi\types\IMaterialVisualPropertiesData\AdvancedGraphics.md`）：
+#     > ★ 「**Obsolete. Not superseded.**」✓
+#     ★ 签名：★ `System.bool AdvancedGraphics {get; set;}` ⇒ ★ **属性**（★ 不是方法）✓
+#     ★★ 而 `## Returns` 逐字：★ 「True if the part is displayed with **shaded textures**,
+#       false if not」✓
+#     ★★★ 而 `## See Also` 逐字点名了 ★ **`IMaterialVisualPropertiesData::RealView Property`** ⇒
+#       ★ **那可能是"该往哪走"的线索**（★ 但**官方没说**它是后继）✓
+#   ★★ **⇒ 处置：★ 记档保留** —— ★ 官方说「**Not superseded**」⇒
+#     ★★★ **没有"新的一代"可换**（★ 与 `AutoDimension2` 那条"有后继但没验出来"**不同类**）✓
+#   ★★★ **⚠ 而本函数整条**未真机验过**（★ 见上方"未在本机实测"）⇒
+#     ★★ **那是一个独立缺口**（★ 与上一轮"阵列基线"**同型**）⇒
+#       ★★★ **下一轮如要动它：★ 先让它真机站住、★ 再谈这处废弃** ✓
+#   ★★★★ **可复用判据**：★★★ **「Not superseded」与「查不到后继」不一样** ——
+#     ★ 前者是**官方明确说"没有替代"**（★ 那就是**终点**）、
+#     ★★ 后者只是**我这次没找到**（★ 要按铁律 5 说清是**哪个源**查不到）✓
+#     （★ 与**事实 518**同族：★ **"表里没有"≠"不存在"** ——
+#      ★★ 而本条是它的**反面**：★ **"官方说没有"才是真的没有"**）✓
+# ────────────────────────────────────────────────────────────────────
 def apply_visual_properties(
     data,
     *,
