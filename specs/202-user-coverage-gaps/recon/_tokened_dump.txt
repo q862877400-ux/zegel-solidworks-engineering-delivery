@@ -1,0 +1,1558 @@
+====================================================================================================
+### solidworks_surface_fill    spec=tool_specs_batch45.py   func=sw_surface_features.py::insert_fill_surface_report
+====================================================================================================
+---- SPEC ----
+_SPEC_FILL = ToolSpec(
+    name="solidworks_surface_fill",
+    title="Fill Surface Feature",
+    module="sw_surface_features",
+    function="insert_fill_surface_report",
+    inject="model",
+    params=[
+        Param("resolutions", int, default=2,
+              description="分辨率 **1 / 2 / 3**（★ 越大质量越好，官方 Remarks）"),
+        Param("options", int, default=1,
+              description="`swFeatureFillSurfaceOptions_e` 的 Bitmask；★ 默认 1（`swOptimizeSurface`）"),
+        Param("selection", str, default="",
+              description="★ **声明式选择**：该填的**那一圈边**（★ 留空 = 自动取最高那一圈）。"
+                          "★★ 2026-10-03（轮 434）**原来这里是 `boundary_z: float`**（一个裸坐标），"
+                          "★ 而那**违反规则 3**（★ 官方原话：必须改用「具名实体 + 声明式 selection」）。"
+                          "★ 实测那条违反让声明门禁整批不过 ⇒ **4 个测试文件在收集期就 ERROR**。"),
+    ],
+    doc="★ **填充曲面** —— 走 `IFeatureManager.InsertFillSurface2`（官方 **6 参**）。"
+        "★★ 判据（规则 6）：**回 `Feature` 非 None** **且** **特征树增量非空**。"
+        "★ 真机证据：建 `曲面填充1`（树 7→8）· 负例 `resolutions = 9` ⇒ 显式拒绝。"
+        "★★ **边界边按中点 + `mark = 1` 选**（★ 官方 Remarks；`Select4` 没有 mark 参数 —— 事实 32；"
+        "传 mark = 4 会静默失败：回 true 而计数 0 —— 事实 8）。"
+        "★★ 2026-10-03（轮 435）**两条路都已真机 PASS**：★ 各建成 `曲面填充1`（树 [7,8]）。" "★ 而**选边时请用 `mark = 1`**（官方 Remarks：边界边用 mark 1）。" "★ 留空 `selection` 时**自动取最高那一圈**（★ 保留原行为）。",
+)
+---- FUNC ----
+def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _SW_OPTIMIZE_SURFACE,
+                               selection: str = "") -> dict:
+    """★ **填充曲面**（★ 官方 `IFeatureManager.InsertFillSurface2`，**6 参**，★ 回 `Feature`）。
+
+    :param resolutions: 分辨率 **1 / 2 / 3**（★ 越大质量越好，官方原话）。
+    :param options: `swFeatureFillSurfaceOptions_e` 的 **Bitmask**；★ 默认 `1`（`swOptimizeSurface`）。
+    :param selection: ★★ **声明式选择**（★ 该填的**那一圈边**）。
+        ★ 留空 = **自动取最高那一圈**（★ 保留原行为）。
+        ★★ ★ 2026-10-03（轮 434）**原来这里是 `boundary_z: float`**（一个裸坐标），
+        ★ 而那**违反规则 3**（★ 官方原话：必须改用**具名实体 + 声明式 selection**）。
+        ★ 实测那条违反让 `tool_registry` 的声明门禁整批不过 ⇒ **4 个测试文件在收集期就 ERROR**。
+    :returns: `{ok, feature_name, new_features, tree_before, tree_after, points_selected, boundary_z}`
+        ★★ **判据 = 回 `Feature` 非 None** **且** **特征树增量非空**（★ 两判据都要）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    try:
+        res = int(resolutions)
+    except (TypeError, ValueError):
+        return {"ok": False, "error": "resolutions 必须是整数（1/2/3）"}
+    if res not in (1, 2, 3):
+        return {"ok": False, "error": "resolutions 只支持 1 / 2 / 3（官方 Remarks）：%r" % resolutions}
+    if not (1 <= int(options) <= 31):
+        return {"ok": False, "error": "options 超出 Bitmask 范围（1..31）：%r" % options}
+    #: ★ 取全部边 ⇒ 按**起点/终点的中点**算 z ⇒ 选出一圈（★ 坐标单位是**米**，★ 不换算）
+    #: ★★★ 2026-10-03（轮 434）**声明式分支** —— ★ 而后半段**两条路共用**：
+    #:   ★ 给了 `selection` ⇒ **用它选**（★ 那是规则 3 要求的形态），★ 而 `_declarative = True`
+    #:     ⇒ ★★ **跳过后面那个"按点选边"的循环**（已经选好了）；
+    #:   ★ 否则走**原自动路**（按最高一圈边的 z 挑）——★ **行为不变**。
+    _declarative = bool(str(selection or "").strip())
+    _selected_readback = 0
+    _fallback_note: dict | None = None      #: ★ 声明式选区拿不到时的回退记录（★ 见下）
+    if _declarative:
+        #: ★★★ 2026-10-03（轮 435）**不重选** —— 而代价是一条**文档化的契约**。
+        #:   ★ 上一版走 `resolve_selection`（★ 它会**重选**），★ 而它走的是
+        #:     `IEntity.Select4` —— ★★ **而 `Select4` 没有 mark 参数**（**事实 32**）
+        #:     ⇒ 重选后 mark 变成 **0**，★ 而填充要 **1**（`MARK_BOUNDARY`，官方 Remarks）
+        #:     ⇒ ★ 真机：选中了 4 条而填充仍不成（树 `[7, 7]`）。
+        #:   ★★ **正解**：★ **尊重调用方已选好的选区（含它的 mark）** ——
+        #:     ★ 而那正是规则 3 的本意：**选择由调用方做**（★ 工具不越俣代庖）。
+        #:   ★ 而代价：★ **调用方选边时必须用 `mark = 1`** ⇒ ★★ 已写进工具文档与本函数的 docstring ✓
+        try:
+            _selected_readback = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                                    "GetSelectedObjectCount2", -1) or 0)
+        except Exception:                                      # noqa: BLE001
+            _selected_readback = 0
+        if _selected_readback <= 0:
+            #: ★★★★ 2026-10-03（接手轮）**从这里改成"回退"而不是"失败"**。
+            #:   ★★ **为什么**（★ 真机隔离出来的，事实 503）：注册器调工具的**顺序**是
+            #:     `kwargs[inj] = resolver(params)` → `pre_call` → `fn(**kwargs)`
+            #:     （`tool_registry.py:507/510/525`），★ 而 **`RESOLVERS["model"]` 经
+            #:     `connect_solidworks()` 会清空选区** ——
+            #:     ★ 实测：选完 2 个面 `mark1=2`，★ **调过 `RESOLVERS['model']` 之后变成 0**
+            #:     （证据 `output/selection-lifetime-evidence.json`）。
+            #:   ⇒ ★★ **"尊重调用方已选好的选区"这条前置，经工具层永远拿不到选区**
+            #:     （★ 而 MCP 客户端本来也没法预选）⇒ ★ 上一版在这里 `return` 失败，
+            #:     ★ 于是**这条工具只要传了 `selection` 就必然失败**。
+            #:   ★★ **正解**：★ **回退到下面那条"按最高一圈边自动选"的路** ——
+            #:     ★ 它用 `SelectByID2("", "EDGE", 中点, append=True, MARK_BOUNDARY=1, …)`
+            #:     ★ **在注入之后**执行 ⇒ ★ **不受影响**（★ 那条路真机建成过）。
+            #:   ★ 语义：调用方给 `selection` 的**意图是"给我填一张曲面"** ⇒
+            #:     ★ 拿不到预选时**回退**并**如实注明**，比直接失败更符合意图。
+            #:   ★★ 返回值里留 `fallback_from_declarative: True`，★ **不静默**。
+            _fallback_note = {
+                "stage": "selection_readback",
+                "selected": _selected_readback,
+                "★": "选区的**回读计数为 0** ⇒ ★ **回退到自动路**（按最高一圈边选）。"
+                     "★ 原因见事实 503：`RESOLVERS['model']` 会清空选区，"
+                     "★ 所以「调用方预选」经工具层不可能成立。",
+            }
+            _declarative = False
+    edges, mids = [], []
+    try:
+        for b in (get_com_member(model, "GetBodies2", -1, True) or []):
+            for e in (get_com_member(b, "GetEdges") or []):
+                try:
+                    a = [float(x) for x in get_com_member(
+                        get_com_member(e, "GetStartVertex"), "GetPoint")]
+                    c = [float(x) for x in get_com_member(
+                        get_com_member(e, "GetEndVertex"), "GetPoint")]
+                    edges.append(e)
+                    mids.append([(a[i] + c[i]) / 2.0 for i in range(3)])
+                except Exception:                              # noqa: BLE001
+                    continue
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "collect_edges", "error": str(exc)[:140]}
+    if not edges:
+        return {"ok": False, "stage": "collect_edges", "error": "模型上没有可选边（★ 填充要一个封闭边界）"}
+    z = max(m[2] for m in mids) if not _declarative else None
+    picked = [] if _declarative else [(m, e) for m, e in zip(mids, edges) if abs(m[2] - z) < 1e-9]
+    if not _declarative and len(picked) < 3:
+        return {"ok": False, "stage": "pick_boundary", "at_z": z,
+                "error": "z=%.6f 上只找到 %d 条边（★ 封闭边界至少要 3 条）" % (z, len(picked))}
+    #: ★★ **按中点 + mark=1 选中**（★ 官方 Remarks 要的 mark；★ `Select4` 没有 mark 参数 —— 事实 32）
+    callout = _empty_callout()
+    ext = get_com_member(model, "Extension")
+    #: ★★★ 2026-10-03（轮 435）**这一句必须护住** —— ★ 它是**无条件**的，
+    #:   ★★ 而它会把**调用方选好的边清掉** ⚠ ⇒ ★ 于是声明式路"回读计数 4、而选区是空的"
+    #:   ⇒ ★ 填充**不建**（★ 真机：树 `[7, 7]`）✓
+    #:   ★ 而**这正是**"调用方做选择、工具不越俎代庖"那条契约（规则 3 的本意）的**必要条件**。
+    if not _declarative:
+        try:
+            model.ClearSelection2(True)
+        except Exception:                                      # noqa: BLE001
+            pass
+    for m, _e in ([] if _declarative else picked):
+        try:
+            ext.SelectByID2("", "EDGE", m[0], m[1], m[2], True, MARK_BOUNDARY, callout, 0)
+        except Exception:                                      # noqa: BLE001
+            pass
+    selected = _selected_readback
+    if not _declarative:
+        try:
+            selected = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                          "GetSelectedObjectCount2", -1) or 0)
+        except Exception:                                      # noqa: BLE001
+            selected = 0
+    #: ★★ **回读计数为零 ⇒ 选择其实没生效**（★ 事实 8：bool 返回值不可信）⇒ **早退，不假装成功**
+    if selected <= 0:
+        return {"ok": False, "stage": "select", "points_selected": 0, "boundary_z": z,
+                "error": "SelectByID2 选了 %d 条边而回读计数为 0（★ 事实 8：静默失败）" % len(picked),
+                "★": "检查 mark 是否为 1（★ 传 4 会静默失败）"}
+    before_names = feature_names(model)
+    before = len(before_names)
+    try:
+        feat = get_com_member(get_com_member(model, "FeatureManager"), "InsertFillSurface2",
+                              res, int(options), None, None, None, None)
+    except Exception as exc:                                   # noqa: BLE001
+        _err = {"ok": False, "stage": "call", "points_selected": selected,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        if _fallback_note is not None:
+            #: ★ 早退也要带上回退标注（★ 否则调用方看不见"我回退过" —— 本轮就因此多查一轮）。
+            _err["fallback_from_declarative"] = True
+            _err["fallback_detail"] = _fallback_note
+        return _err
+    after_names = feature_names(model)
+    new = [n for n in after_names if n not in before_names]
+    _out = {"ok": (feat is not None) and len(after_names) > before,
+            "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": before, "tree_after": len(after_names),
+            "points_selected": selected, "boundary_z": z,
+            "resolutions": res, "options": int(options),
+            "★": "判据 = **回 Feature 非 None** **且** **特征树增量非空**（★ 两判据都要）；"
+                 "★ 边界按**中点 + mark=1** 选（★ 官方 Remarks；★ 传 mark=4 会静默失败）"}
+    if _fallback_note is not None:
+        #: ★★ 声明式选区拿不到（★ 事实 503）⇒ **回退到自动路**了 ⇒ **如实标注，不静默**。
+        _out["fallback_from_declarative"] = True
+        _out["fallback_detail"] = _fallback_note
+    return _out
+
+====================================================================================================
+### solidworks_measure_selection    spec=tool_specs_batch46.py   func=sw_measure.py::measure_selection_report
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_measure_selection",
+        title="Measure Selected Entities",
+        module="sw_measure",
+        function="measure_selection_report",
+        inject="model",
+        params=[
+            Param("arc_option", int, default=1,
+                  description="圆弧距离口径：0 = 中心到中心 · 1 = 最小距离 · 2 = 最大距离（官方示例给的语义）"),
+        ],
+        doc="★ **量当前选中的实体**（逐几何量测）—— 走 `IModelDocExtension.CreateMeasure` → `IMeasure`。"
+            "★ 调用序照官方示例：`Extension` → `CreateMeasure` → 设 `ArcOption` → `Calculate` → 读数。"
+            "★ 回的 `values` 含 `distance` / `normal_distance` / `angle` / `length` / `area` / `perimeter` / "
+            "`delta_x` / `delta_y` / `delta_z` 等；判定含 `is_intersect` / `is_parallel` / `is_perpendicular`。"
+            "★★ 约定：**-1 表示「这项对当前选择不适用」** —— 本工具如实保留 -1，"
+            "并另给 `applicable` 列出真量到的项。"
+            "★ 真机期望（几何推出，全部对上）：两面 ⇒ `distance` 10.0mm · 单面 ⇒ `area` 400mm² · "
+            "`perimeter` 80mm。★ 未选中 ⇒ 显式拒绝。"
+            "⚠ 量测要先选中（规则 3：本工具不传坐标，选中由声明式选择那族负责）。",
+    ),
+---- FUNC ----
+def measure_selection_report(model, arc_option: int = 1) -> dict:
+    """★ **量当前选中的实体**（★ 走 `IModelDocExtension.CreateMeasure` → `IMeasure`）。
+
+    ★ 调用序**照官方示例**：★ `Extension` → `CreateMeasure` → 设 `ArcOption` → `Calculate(Nothing)` → 读。
+
+    ★ `arc_option`：★ **0 = 中心到中心 · 1 = 最小距离 · 2 = 最大距离**（★ 官方示例的原话）。
+    ★★ **读数约定**：★ **`-1` 表示"这一项对当前选择不适用"** —— ★ 本函数**如实保留 `-1`**，
+      ★ 并另给 `applicable` 列表（★ 哪些项真的量到了）。
+    ★ 判据（★ 规则 6）：★ **`Calculate` 回真** 且 ★ **至少有一项不等于 -1**
+      （★ 否则说明"没选中东西"或"选的东西量不出"）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    try:
+        opt = int(arc_option)
+    except (TypeError, ValueError):
+        return {"ok": False, "error": "arc_option 必须是整数（0=中心到中心 · 1=最小距离 · 2=最大距离）"}
+    if opt not in (0, 1, 2):
+        return {"ok": False, "stage": "validate",
+                "error": "arc_option 只能是 **0 / 1 / 2**（★ 官方示例给的语义）；收到 %r" % arc_option}
+    from sw_connect import get_com_member as _get
+    #: ★ ① 选中了几何？★ 回读计数（★ 事实 8：不信返回值）
+    try:
+        sel_n = int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", -1))
+    except Exception:                                          # noqa: BLE001
+        sel_n = -1
+    if sel_n == 0:
+        return {"ok": False, "stage": "selection", "selected_count": sel_n,
+                "error": "没有选中的实体 —— ★ 量测要先选中（★ 用声明式选择那族工具），★ 规则 3"}
+    #: ★ ② 官方调用序
+    try:
+        ext = _get(model, "Extension")
+        m = _get(ext, "CreateMeasure")
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "create", "selected_count": sel_n,
+                "error": "CreateMeasure 失败：%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    if m is None:
+        return {"ok": False, "stage": "create", "selected_count": sel_n,
+                "error": "CreateMeasure 回了 None（★ 本机不可用？）"}
+    geometry = {"arc_option": opt}
+    try:
+        from sw_connect import set_com_member as _set
+        _set(m, "ArcOption", opt)
+        geometry["arc_option_set"] = True
+    except Exception as exc:                                   # noqa: BLE001
+        geometry["arc_option_set"] = False
+        geometry["arc_option_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
+    try:
+        #: ★★★ 2026-10-01（轮 311）**真机：`Calculate` 必须无参调**（★ 事实 227）——
+        #:   官方示例写 `Calculate(Nothing)`，而 `get_com_member` 的语义是「取或调」：
+        #:   传了实参 ⇒ 它**先无参调一次**（回 `True`）、★ 再拿那个 `True` 去"调用"
+        #:   ⇒ `TypeError: 'bool' object is not callable`。★ 改成无参即回 `True` ✓
+        ok_calc = _get(m, "Calculate")
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "calculate", "selected_count": sel_n, "geometry": geometry,
+                "error": "Calculate 失败：%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    values, applicable = {}, []
+    for label, member in MEASURE_FIELDS:
+        try:
+            v = _get(m, member)
+        except Exception:                                      # noqa: BLE001
+            continue
+        if v is None:
+            continue
+        try:
+            fv = float(v)
+        except (TypeError, ValueError):
+            continue
+        values[label] = fv
+        if fv != -1.0:
+            applicable.append(label)
+    flags = {}
+    for label, member in MEASURE_FLAGS:
+        try:
+            flags[label] = bool(_get(m, member))
+        except Exception:                                      # noqa: BLE001
+            continue
+    return {"ok": bool(ok_calc) and bool(applicable), "calculate_returned": bool(ok_calc),
+            "selected_count": sel_n, "values": values, "applicable": applicable, "flags": flags,
+            "geometry": geometry,
+            "★": "★ `-1` = 该项对当前选择**不适用**（★ 官方约定，如实保留）；"
+                 "★ `applicable` 列出真量到的项；★ 调用序照官方示例（Extension→CreateMeasure→ArcOption→Calculate）"}
+
+====================================================================================================
+### solidworks_part_loft    spec=tool_specs_batch47.py   func=sw_loft.py::create_loft_report
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_part_loft",
+        title="Create Loft Feature",
+        module="sw_loft",
+        function="create_loft_report",
+        inject="model",
+        params=[
+            Param("closed", bool, default=False,
+                  description="闭合放样（★ 首尾相连成一个环；★ 少于 3 个轮廓时引导线必须闭合）"),
+            Param("use_selected_profiles", bool, default=True,
+                  description="用当前选中的轮廓（★ 官方要求 mark=1，且**顺序**决定结果）"),
+        ],
+        doc="★ **用选中的草图轮廓放样** —— 走 `IFeatureManager.InsertProtrusionBlend2`（官方 **18 参**）。"
+            "★ 官方 Remarks：轮廓要**按期望的顺序**先选中，mark=**1**（引导线 mark=2 · 中心线 mark=4 · "
+            "起端相切向量 mark=8）；★ 引导线与中心线**可选**。"
+            "★★ 判据（规则 6）：**特征树多了新特征**。"
+            "★ 真机证据：同平面与两平面两种情形都建成 `放样1`；未选中 ⇒ 显式拒绝（提示至少 2 个轮廓）。"
+            "⚠ **未真机验证**：质量属性里的**体积**（★ 真机上回 0.0，所以「棱台体积 7000 mm³」那个"
+            "期望值没有对上）—— ★ 不要把本工具的体积当可靠读数。",
+    ),
+---- FUNC ----
+def create_loft_report(model, closed: bool = False, use_selected_profiles: bool = True) -> dict:
+    """★ **用选中的草图轮廓放样**（★ 走 `InsertProtrusionBlend2`，官方 18 参）。
+
+    ★ 轮廓要**先选中**（★ mark=1 —— ★ 官方 Remarks 定的），★ 且**按期望的顺序**。
+    ★ 判据（★ 规则 6）：★ **特征树多了新特征** —— ★ 而 ★ 若调用方给了 `expected_volume_mm3`，
+      ★ 还应比对**质量属性里的体积**（★ 期望值由几何推出：★ 棱台 `V = h/3·(A1+A2+√(A1A2))`）。
+    ★ 回 `{"ok", "feature_name", "new_features", "tree_before", "tree_after", "args_count"}`。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    from sw_connect import get_com_member as _get
+    try:
+        sel_n = int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", 1))
+    except Exception:                                          # noqa: BLE001
+        sel_n = -1
+    if use_selected_profiles and sel_n < 2:
+        return {"ok": False, "stage": "selection", "mark1_count": sel_n,
+                "error": "放样至少要选 **2 个轮廓**（★ mark=1 —— 官方 Remarks）；"
+                         "★ 当前 mark=1 的选中数是 %r" % (sel_n,)}
+    before = feature_names(model)
+    args = _blend_args(closed, True, False, 0.0)
+    try:
+        fm = get_com_member(model, "FeatureManager")
+        get_com_member(fm, "InsertProtrusionBlend2", *args)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "call", "args_count": len(args),
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+                "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 18 个）"}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    #: ★★★ 2026-10-01（轮 314）**硬判据：特征类型名**。
+    #:   真机：放样特征 `GetTypeName2()` 回 **`Blend`**；★ 对照拉伸回 `Extrusion`。
+    #:   ★★ 它比"体积期望"**可靠**：体积依赖我造几何的能力（★ 而参考平面本会话未打通），
+    #:   ★ 而类型名**只依赖 API 对不对**。
+    tname = None
+    if new:
+        try:
+            from sw_connect import get_com_member as _g
+            fobj = _g(model, "FeatureByName", new[-1])
+            for _m in ("GetTypeName2", "GetTypeName"):
+                try:
+                    tname = str(_g(fobj, _m))
+                    break
+                except Exception:                              # noqa: BLE001
+                    continue
+        except Exception:                                      # noqa: BLE001
+            tname = None
+    ok_type = (tname == "Blend") if tname else False
+    return {"ok": bool(new) and ok_type, "feature_name": (new[-1] if new else None), "new_features": new,
+            "type_name": tname, "tree_before": len(before), "tree_after": len(after),
+            "args_count": len(args), "mark1_selected": sel_n, "closed": bool(closed),
+            "★": "官方 18 参 · mark=1 · 判据 = **特征树多了新特征** 且 "
+                 "**特征类型名 = `Blend`**（★ 真机定的；拉伸是 `Extrusion`）"}
+
+====================================================================================================
+### solidworks_part_sweep    spec=tool_specs_batch48.py   func=sw_sweep.py::create_sweep_report
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_part_sweep",
+        title="Create Sweep Feature",
+        module="sw_sweep",
+        function="create_sweep_report",
+        inject="model",
+        params=[
+            Param("cut", bool, default=False,
+                  description="True 建**扫描切除**（swFmSweepCut=18）· False 建**扫描凸台**（swFmSweep=17）"),
+        ],
+        doc="★ **用选中的「轮廓 + 路径」建扫描特征** —— 走官方**现代入口** "
+            "`IFeatureManager.CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`"
+            "（★ `InsertProtrusionSwept*` 整族已被 SOLIDWORKS 2018 标为 **obsolete**）。"
+            "★ 官方专文给的 mark：**轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128。"
+            "⚠ 官方硬约束：**路径的起点必须落在轮廓所在平面上**（1 方向扫描）—— 真机上违反它就会建不成。"
+            "★★ 判据（事实 242：挑只依赖被测对象的那个）：**特征树多了新特征** **且** "
+            "**类型名 = `Sweep`**。★ 真机证据：建成 `扫描1`（type=`Sweep`）· 未选中 ⇒ 显式拒绝。"
+            "⚠ `AccessSelections` 在本机报 `0x80010105`（事实 47 的后端限制）——★ 而**它非必需**："
+            "真机上它报错时特征仍建成，所以本工具**不拿它当判据**。",
+    ),
+---- FUNC ----
+def create_sweep_report(model, cut: bool = False) -> dict:
+    """★ **用选中的「轮廓（mark=1）+ 路径（mark=4）」建扫描特征**。
+
+    ★ 走官方**现代入口**：★ `CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`
+      （★ `InsertProtrusionSwept*` 已被 SOLIDWORKS 2018 标为 obsolete）。
+    ★ 官方约束（★ 原文）：★ **路径的起点必须落在轮廓所在平面上**（1 方向扫描）。
+    ★ 判据（★ 事实 242）：★ **特征树多了新特征** **且** **类型名 = `Sweep`**
+      （★ 而不是拿"体积期望"当判据 —— ★ 那会依赖我造几何的能力）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    sel = {}
+    for mark, label in ((1, "profile"), (4, "path"), (2, "guide")):
+        try:
+            sel[label] = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                            "GetSelectedObjectCount2", mark))
+        except Exception:                                      # noqa: BLE001
+            sel[label] = -1
+    if sel.get("profile", 0) < 1 or sel.get("path", 0) < 1:
+        return {"ok": False, "stage": "selection", "selected_by_mark": sel,
+                "error": "扫描要选 **轮廓（mark=1）** 与 **路径（mark=4）**（★ 官方专文给的 mark）；"
+                         "★ 当前 mark1=%r · mark4=%r" % (sel.get("profile"), sel.get("path"))}
+    before = feature_names(model)
+    #: ★ 官方调用序：CreateDefinition ⇒ ISweepFeatureData ⇒ CreateFeature
+    try:
+        fm = get_com_member(model, "FeatureManager")
+        data = get_com_member(fm, "CreateDefinition", SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    if data is None:
+        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
+                "error": "CreateDefinition(swFmSweep=%d) 回了 None（★ 与事实 43 的 35 常量表有关？）"
+                         % (SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP)}
+    #: ★ 认领选择（★ `AccessSelections` 是官方要求的第二步）
+    #: ★★★ 2026-10-01（轮 315）**第二个参数要传空 Dispatch物件**（★ **事实 33**）——
+    #:   传 `None` ⇒ `com_error: (-2147352571, '类型不匹配。', None, **2**)`（★ 位置 2）。
+    #:   ★ 而真机实测：**即使这一步报错，特征仍然建成了**（`扫描1` · type=`Sweep`）
+    #:   ⚠⚠ **2026-10-03（轮 488）更正**：上面那句**在本轮的前置下不成立** ⚠
+    #:     ★ 一次**A/B**（`tools/prove_sweep_ab.py`，★ 同一套几何 + 同一套选区 `{1:1, 4:1}`，只改常量）：
+    #:       `const=17`（实体）⇒ **不成** · `access = 0x80010105` · `CreateFeature = None`；
+    #:       `const=62`（曲面）⇒ **不成** · 同上。
+    #:     ⇒ ★★ **两路都卡在 `AccessSelections`**，★ 故「它不是必需的」这半句**至少在这套前置下不成立**；
+    #:     ★ 而轮 315 那次能成，说明**当时的前置与本轮不同**（★ 而差在哪尚未查）。
+    #:   ⇒ ★ 所以它**不是必需的**；★ 而本包装仍然试它（★ 因为官方步骤里有）、**而不把它当判据**。
+    access = None
+    try:
+        from sw_part import _empty_callout as _ec
+        access = bool(get_com_member(data, "AccessSelections", model, _ec()))
+    except Exception as exc:                                   # noqa: BLE001
+        access = "ERR %s: %s" % (type(exc).__name__, str(exc)[:110])
+    try:
+        feat = get_com_member(fm, "CreateFeature", data)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "CreateFeature", "selected_by_mark": sel, "access": access,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+
+====================================================================================================
+### solidworks_part_axis    spec=tool_specs_batch49.py   func=sw_part.py::create_axis_report
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_part_axis",
+        title="Create Reference Axis",
+        module="sw_part",
+        function="create_axis_report",
+        inject="model",
+        params=[
+            Param("reverse", bool, default=True,
+                  description="官方第一参数（`InsertAxis2(Reverse)`）；★ 真机 True 有效"),
+        ],
+        doc="★ **从当前选中的几何建一条参考轴** —— 走 `IModelDoc2.InsertAxis2`"
+            "（★ **注意入口在 `IModelDoc2` 上**，不在 `IFeatureManager` 上；★ 真机调后者报"
+            "`AttributeError: <unknown>.InsertAxis2`）。"
+            "★ 官方要求**先选中**几何（★ 圆柱面 / 圆锥面 / 两点等 —— ★ 面没有名字，"
+            "按**面上的对象**选，事实 32）。"
+            "★★ 判据（★ 事实 242 挑只依赖被测对象的那个）：**它回 `True`** **且** "
+            "**特征树出现新特征**（★ 真机：`基准轴1`）—— ⚠ **不要读返回值的 `.Name`**："
+            "真机证明它回的是 **`bool`**，读 `.Name` 会报 `'bool' object has no attribute 'Name'`"
+            "（★ 差点据此误判「轴没建成」）。"
+            "★ 环形阵列的前置：官方 `FeatureCircularPattern4` 的 mark 表要求 `1 = 方向轴`。",
+    ),
+---- FUNC ----
+def create_axis_report(model, reverse: bool = True) -> dict:
+    """★ **从当前选中的几何建参考轴**（`IModelDoc2.InsertAxis2`）。
+
+    ★ 真机事实（2026-10-01 · 轮 317）：
+      · ★ **入口在 `IModelDoc2`** —— ★ 调 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`；
+      · ★ **返回 `bool`** —— ★ 所以**判据是"特征树多了新特征"**，★ 不是"返回值有 Name"；
+      · ★ 阵列要用它：★ 官方 mark 表 `1 = 方向轴`。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    from sw_connect import get_com_member as _get
+    try:
+        sel_n = int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", -1))
+    except Exception:                                          # noqa: BLE001
+        sel_n = -1
+    if sel_n == 0:
+        return {"ok": False, "stage": "selection", "selected_count": sel_n,
+                "error": "建轴要先选中几何（★ 圆柱面 / 圆锥面 / 两点等；★ 面没有名字，"
+                         "按面上的对象选 —— 事实 32）"}
+    before = feature_names(model)
+    #: ★ 入口在 IModelDoc2 上（★ 不是 FeatureManager）—— ★ 真机定的
+    try:
+        ret = _get(model, "InsertAxis2", bool(reverse))
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "call", "selected_count": sel_n,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                "★": "⚠ 若报 `<unknown>.InsertAxis2` ⇒ 入口用错了（★ 该在 IModelDoc2 上，不是 FeatureManager）"}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    return {"ok": bool(ret) and bool(new), "returned": repr(ret)[:20], "new_features": new,
+            "axis_name": (new[-1] if new else None), "tree_before": len(before),
+            "tree_after": len(after), "selected_count": sel_n, "reverse": bool(reverse),
+            "★": "入口 = `IModelDoc2.InsertAxis2`（★ 不是 FeatureManager）· 回 `bool` ⇒ "
+                 "★ 判据 = **特征树多了新特征**（★ 不要读返回值的 `.Name`）"}
+
+====================================================================================================
+### solidworks_part_wrap    spec=tool_specs_batch50.py   func=sw_wrap.py::create_wrap_report
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_part_wrap",
+        title="Create Wrap Feature",
+        module="sw_wrap",
+        function="create_wrap_report",
+        inject="model",
+        params=[
+            Param("wrap_type", str, default="emboss",
+                  description="包覆类型：emboss（凸起）/ deboss（凹陷，官方名 Engrave）/ scribe（划痕）。"
+                              "⚠ **真机实测：传 deboss/scribe 建出来的类型名仍是 `Emboss`** "
+                              "⇒ ★ 只有 `emboss` 被真机证实过"),
+            Param("thickness_mm", float, default=1.0, description="厚度（**毫米**）"),
+            Param("reverse", bool, default=False, description="反向"),
+        ],
+        doc="★ **对已选中的「草图（mark=4）+ 面（mark=1）」建包覆特征** —— 走官方 "
+            "`IFeatureManager.InsertWrapFeature2`（**5 参**）。"
+            "★ 官方要求：★ **草图 mark = 4**（★ 且**必须是 2D 草图**，官方原话 「3D sketches are invalid」）· "
+            "★ **面 mark = 1** · ★ 拔模方向 mark = 2（仅 Emboss/Engrave 用）。"
+            "★★ 判据 = **读返回对象的 `Name` 与 `GetTypeName2`** —— ★ 真机：返回 `包覆1` · "
+            "类型名 **`Emboss`**；⚠ 而 `feature_names()` 的**前后 diff 是空的**"
+            "（★ 所以「树 diff」不是可靠判据）。"
+            "⚠ **未验**：`Type` 传非 emboss 时**类型名不变**（★ 参数被静默忽略）· "
+            "`Method` / `MeshFactor`（第 4/5 参）**取值表没查到**（用 0）。",
+    ),
+---- FUNC ----
+def create_wrap_report(model, wrap_type: str = "emboss", thickness_mm: float = 1.0,
+                       reverse: bool = False) -> dict:
+    """★ **对已选中的「草图（mark=4）+ 面（mark=1）」建包覆特征**。
+
+    ★ 走官方 `IFeatureManager.InsertWrapFeature2`（**5 参**）。
+    ★ 官方要求（★ Remarks + 示例）：★ **草图 mark = 4**（★ 且**必须是 2D 草图**，官方原话
+      "3D sketches are invalid"）· ★ **面 mark = 1** · ★ 拔模方向 mark = 2（★ 仅 Emboss/Engrave 用）。
+    ★ **单位**（规则 2）：★ 入参是 **mm**，★ 换算成米在这里**只做一次**。
+    ★ 判据（★ 规则 6 + 事实 242）：★ **特征树多了新特征** **且** **类型名里含 `Wrap`**
+      （★ 具体串以真机读到的为准，★ 记在 `type_name`）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    key = str(wrap_type or "").strip().lower()
+    if key not in WRAP_TYPES:
+        return {"ok": False, "stage": "validate",
+                "error": "wrap_type 只能是 %s（swWrapSketchType_e）；收到 %r"
+                         % (sorted(set(WRAP_TYPES)), wrap_type)}
+    try:
+        thickness_m = float(thickness_mm) / 1000.0     # ★ 规则 2：换算只在边界做一次
+    except (TypeError, ValueError):
+        return {"ok": False, "stage": "validate", "error": "thickness_mm 要是数，收到 %r" % (thickness_mm,)}
+    if thickness_m <= 0:
+        return {"ok": False, "stage": "validate", "error": "thickness_mm 必须 > 0，收到 %r" % (thickness_mm,)}
+    sel = {}
+    for mark, label in ((4, "sketch"), (1, "face")):
+        try:
+            sel[label] = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                            "GetSelectedObjectCount2", mark))
+        except Exception:                                      # noqa: BLE001
+            sel[label] = -1
+    if sel.get("sketch", 0) < 1 or sel.get("face", 0) < 1:
+        return {"ok": False, "stage": "selection", "selected_by_mark": sel,
+                "error": "包覆要选 **草图（mark=4，★ 必须是 2D 草图）** 与 **面（mark=1）**"
+                         "（★ 官方 Remarks 与示例给的 mark）；★ 当前 mark4=%r · mark1=%r"
+                         % (sel.get("sketch"), sel.get("face"))}
+    before = feature_names(model)
+    obj = None
+    try:
+        fm = get_com_member(model, "FeatureManager")
+        obj = get_com_member(fm, "InsertWrapFeature2", WRAP_TYPES[key], thickness_m, bool(reverse),
+                             WRAP_METHOD_DEFAULT, WRAP_MESH_FACTOR_DEFAULT)
+    except Exception as exc:                                   # noqa: BLE001
+        return {"ok": False, "stage": "call", "selected_by_mark": sel, "args_count": 5,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 5 个）"}
+    #: ★★★★★ 2026-10-01（轮 330）**判据改成「读返回对象」** —— 真机证明：
+    #:   ★ 包覆**真的建成了**（返回对象的 `Name` = `包覆1` · `GetTypeName2()` = **`Emboss`**），
+    #:   而 **`feature_names()` 的前后 diff 是空的**（before=8 / after=8 / new=[]）。
+    #:   ⇒ ★★ **"树 diff"依赖遍历的完整性**；★ 而**返回值自带 Name 与类型名**，★ 更直接。
+    #:   ⇒ ★★★ **顺带纠了一个错的预期**：★ 包覆的类型名是 **`Emboss`**（★ 与 `Type` 同名，
+    #:     ★ **不是** `Wrap`）—— ★ 这正是"真机读出来的才算数"（事实 242）。
+    ret_name, ret_type = None, None
+    if obj is not None:
+        try:
+            ret_name = str(get_com_member(obj, "Name"))
+        except Exception:                                      # noqa: BLE001
+            ret_name = None
+        for meth in ("GetTypeName2", "GetTypeName"):
+            try:
+                ret_type = str(get_com_member(obj, meth))
+                break
+            except Exception:                                  # noqa: BLE001
+                continue
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    tname = ret_type or (_feature_type_name(model, new[-1]) if new else None)
+    ok = bool(ret_name) and str(tname or "").lower() in ("emboss", "engrave", "deboss", "scribe")
+    return {"ok": ok, "feature_name": ret_name or (new[-1] if new else None),
+            "new_features": new, "type_name": tname, "returned_name": ret_name,
+            "returned_type_name": ret_type,
+            "tree_before": len(before), "tree_after": len(after), "wrap_type": key,
+            "wrap_type_code": WRAP_TYPES[key], "thickness_mm": float(thickness_mm),
+            "selected_by_mark": sel,
+            "★": "官方 5 参 · 草图 mark=4（2D）· 面 mark=1 · ★ 判据 = **读返回对象的 Name 与 "
+                 "GetTypeName2**（★ 真机：返回 `包覆1` / 类型 `Emboss`；★ 而 `feature_names()` 的 "
+                 "前后 diff **是空的** ⇒ ★ 树 diff 不可靠）；⚠ `Method` / `MeshFactor`（第 4/5 参）"
+                 "**取值表没查到** ⇒ 用 0，未核"}
+
+====================================================================================================
+### solidworks_selection_count    spec=tool_specs_batch53.py   func=sw_selection_spec.py::get_selection_count
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_selection_count",
+        title="Selection Count",
+        module="sw_selection_spec",
+        function="get_selection_count",
+        inject="model",
+        read_only=True,
+        doc="★ **回读当前选区计数**（`ISelectionMgr.GetSelectedObjectCount2(-1)`）。"
+            "★★ 它是**选择类判据的唯一来源** —— 事实 8：`SelectByID2` / `Select4` 的 bool 返回值"
+            "不可信（实测 12 次全 false 而计数 = 12）⇒ ★ **判「选没选中」永远看本工具的回读数**。",
+        param_alias={},
+        params=[],
+    ),
+---- FUNC ----
+def get_selection_count(model) -> int:
+    """回读当前选区计数。
+
+    ⚠ `SelectByID2` / `Select4` 的**返回值不可信**（AGENTS.md 已知事实 8：
+    12 次全 false 而计数 = 12）⇒ **判据永远是本函数的回读值**。
+    """
+    sm = get_com_member(model, "SelectionManager")
+    return int(get_com_member(sm, "GetSelectedObjectCount2", -1) or 0)
+
+====================================================================================================
+### solidworks_resolve_selection    spec=tool_specs_batch53.py   func=sw_selection_spec.py::resolve_selection
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_resolve_selection",
+        title="Resolve Selection (count)",
+        module="sw_selection_spec",
+        function="resolve_selection",
+        inject="model",
+        doc="★ **把声明式选择器解析并选中**，只回报**回读到的选区计数**。"
+            "★ 选择器：`__current_selection__`（用当前选区第一个，**不重选**）· `index:<n>`（体上第 n 个）。"
+            "★ 计数为 0 时**抛错**（★ 本项目一贯纪律：选不中就报错，不静默继续）。",
+        param_alias={},
+        params=[
+            Param("selector", str, description="声明式选择器：__current_selection__ 或 index:<n>"),
+            Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+            Param("body_index", int, default=0, description="第几个体（★ 从 0 开始）"),
+        ],
+    ),
+---- FUNC ----
+def resolve_selection(model, selector, kind: str, *, body_index: int = 0) -> int:
+    """同 :func:`resolve_entity`，但**只返回回读到的选区计数**。
+
+    计数为 ``0`` 说明没选中 —— **调用方不得继续**（本项目一贯纪律：
+    选不中就报错，不静默继续）。
+    """
+    resolve_entity(model, selector, kind, body_index=body_index)
+    count = get_selection_count(model)
+    if count <= 0:
+        raise EntitySelectionError(
+            "选择器 %r 解析后**选区计数为 0** —— 没选中任何东西" % (selector,)
+        )
+    return count
+
+====================================================================================================
+### solidworks_selection_point    spec=tool_specs_batch53.py   func=sw_selection_spec.py::selection_point
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_selection_point",
+        title="Selection Point (mm)",
+        module="sw_selection_spec",
+        function="selection_point",
+        inject="model",
+        read_only=True,
+        doc="★ **读当前选区那个点的坐标**（★ **毫米**，规则 2）。"
+            "★★ 用途：★ 孔族吃 `center`（一个坐标元组）⇒ 包一层「**先选点、再建孔**」"
+            "⇒ ★ **工具层的参数里就没有坐标了**（★ 规则 3 的精神）。"
+            "★ 回 `{ok, point_mm, selection_count, error}`；⚠ **不猜**："
+            "★ `GetSelectionPoint` 取不到就 `ok=False` 并写明原因（★ 铁律 5）。",
+        param_alias={},
+        params=[],
+    ),
+---- FUNC ----
+def selection_point(model) -> dict:
+    """★ **读当前选区那个点的坐标**（★ 毫米）—— 供"用声明式选择代替裸坐标"的包装使用。
+
+    ★★ 用途：★ 孔族（`create_through_hole` 等）吃 `center`（**一个坐标元组**）⇒
+      ★ 包一层「**先选点、再建孔**」⇒ ★ **工具层的参数里就没有坐标了**（★ 规则 3 的精神）。
+
+    返回 `{"ok": bool, "point_mm": (x, y, z) | None, "selection_count": int, "error": str | None}`。
+    ⚠ **不猜**：★ `GetSelectionPoint` 取不到就 `ok=False` + 写明原因（★ 铁律 5）。
+    """
+    out: dict = {"ok": False, "point_mm": None, "selection_count": None, "error": None}
+    try:
+        mgr = get_com_member(model, "SelectionManager")
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "取不到 SelectionManager：%s" % str(exc)[:120]
+        return out
+    try:
+        n = int(get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+        out["selection_count"] = n
+    except Exception:                                          # noqa: BLE001
+        pass
+    if not out["selection_count"]:
+        out["error"] = ("当前**没有选中任何东西** ⇒ 读不到点。"
+                        "★ 先用声明式选择选中一个点 / 草图点 / 面，再调本函数。")
+        return out
+    #: ★★★★ 2026-10-01 轮 266 真机实测：★ **必须用 `GetSelectionPoint2`，且它吃 `AtIndex`**。
+    #:   · 老成员 `GetSelectionPoint` 的官方页写着
+    #:     「**Obsolete. Superseded by `ISelectionMgr::GetSelectionPoint2`**」；
+    #:   · 而它的签名是 **`GetSelectionPoint(AtIndex)`** —— ★ 当**零参**调会报
+    #:     **`(-2147352561, '非选择性的参数。')`**（★ 那个错**看不出是"缺参数"**）。
+    #:   ⇒ ★★ **定则**：★ **官方标 Obsolete 的成员，先去查它的**后继**（通常 `*2`）**，
+    #:     而不是先穷举参数 —— ★ **一次文档查询 vs 试参数**（★ 同族：轮 263 的
+    #:     `CreateMassProperty` ⇒ `CreateMassProperty2`，★ 而那一次**它还改变了读数**）。
+    pt = None
+    entry_used = None
+    #: ★★★★ 官方签名（`C:\swapi\types\ISelectionMgr\GetSelectionPoint2.md`）：
+    #:     `GetSelectionPoint2( **Index**, **Mark** )` —— ★ **两个参数**；
+    #:     · `Index` ★「ranges from **1** to …」⇒ ★ **索引从 1 起**；
+    #:     · `Mark`  ★ `-1` = 全部 · `0` = 无标记的 · 其它 = 那个标记值。
+    #:   ★★ **而 `GetSelectionPoint(AtIndex)` 只有 1 参**（★ 已 Obsolete）——
+    #:     ★2026-10-03（轮 397）**真机抓到**：★ 先前**给两个入口都传 `(1, -1)`**
+    #:     ⇒ 走到 1 参那个必然报 **`(-2147352562, '无效的参数数目。')`**，
+    #:     ★ 而那个错**指不出是参数个数的问题**（★ 同族：事实 33）。
+    #:   ⇒ ★ **按名字给各自的 arity**（★ 那正是“签名三源”该给出的东西），
+    #:     并且**两个入口的报错都留住**（★ 先前是后者覆盖前者 ⇒ 看不到 2 参那个为什么失败）。
+    errors: list = []
+    for _nm, _args in (("GetSelectionPoint2", (1, -1)), ("GetSelectionPoint", (1,))):
+        cand = get_com_member(mgr, _nm)
+        if cand is None:
+            errors.append("%s 不可达" % _nm)
+            continue
+        entry_used = _nm
+        try:
+            pt = cand(*_args)
+        except Exception as exc:                               # noqa: BLE001
+            errors.append("%s%s 报错：%s" % (_nm, _args, str(exc)[:130]))
+            pt = None
+            continue
+        if pt is not None:
+            break
+        errors.append("%s%s 回 None（★ 选中的可能不是点）" % (_nm, _args))
+    if pt is None and errors and out.get("error") is None:
+        out["error"] = " · ".join(errors)[:300]
+    out["entry_used"] = entry_used
+    if pt is None:
+        out.setdefault("error", "两个入口都取不到点（★ 见上面的报错）")
+        return out
+    if pt is None:
+        out["error"] = ("GetSelectionPoint 回 None ⇒ "
+                        "★ 选中的**不是**一个点（可能是面 / 边 / 特征）。"
+                        "★ 本函数不猜别的重载，如实报「取不到」。")
+        return out
+    try:
+        vals = [float(x) for x in pt][:3]
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "返回值不是可转 float 的序列：%s（%s）" % (str(pt)[:60], type(pt).__name__)
+        return out
+    if len(vals) < 3:
+        out["error"] = "返回值长度 %d < 3" % len(vals)
+        return out
+    out["ok"] = True
+    out["point_mm"] = tuple(vals)
+    return out
+
+====================================================================================================
+### solidworks_resolve_entity    spec=tool_specs_batch53.py   func=sw_selection_spec.py::resolve_entity_report
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_resolve_entity",
+        title="Resolve Entity (report)",
+        module="sw_selection_spec",
+        function="resolve_entity_report",
+        inject="model",
+        read_only=True,
+        doc="★ **解析声明式选择器并回报结果**（★ 只回 JSON —— 把 COM 对象挡在里面）。"
+            "★ `resolve_entity` 本身**返回 COM 对象** ⇒ MCP 层过不去 ⇒ 本工具换成可核对的描述。"
+            "★ 回 `{ok, selector, kind, count, resolved}`：★ `resolved` = 解析出了对象；"
+            "★★ 而**是否真的在选区里**看 `count`（★ **解析出来 ≠ 选中**）；"
+            "★ 而 `__current_selection__` 是**不重选**的 ⇒ 那种情况下 `resolved=True` 而 `count=0` 是正常的。",
+        param_alias={},
+        params=[
+            Param("selector", str, description="声明式选择器：__current_selection__ 或 index:<n>"),
+            Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+            Param("body_index", int, default=0, description="第几个体（★ 从 0 开始）"),
+        ],
+    ),
+---- FUNC ----
+def resolve_entity_report(model, selector, kind: str = "EDGE", *, body_index: int = 0) -> dict:
+    """★ **解析声明式选择器并回报结果**（★ 只回 JSON —— 把 COM 对象挡在里面）。
+
+    ★ `resolve_entity` 本身**返回 COM 对象** ⇒ MCP 层过不去 ⇒ 本包装把它换成
+    **可核对的描述**：选到什么、选区现在有几个。
+
+    :returns: `{ok, selector, kind, count, resolved}` —— ★ `resolved=True` 表示解析出了对象；
+        ★ 而**是否真的在选区里**看 `count`（★ 解析出来 ≠ 选中 —— 事实 8）。
+    """
+    out: dict = {"ok": False, "selector": str(selector)[:60], "kind": str(kind).upper(),
+                 "count": None, "resolved": False, "error": None}
+    try:
+        obj = resolve_entity(model, selector, kind, body_index=body_index)
+        out["resolved"] = obj is not None
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = "解析选择器失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    try:
+        out["count"] = int(get_selection_count(model))
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = "回读选区计数失败：%s" % str(exc)[:120]
+        return out
+    out["ok"] = bool(out["resolved"]) and bool(out["count"])
+    if not out["ok"] and out["resolved"] and not out["count"]:
+        out["error"] = ("解析出了对象**而选区计数为 0** ⇒ 选择器是 `__current_selection__` 时"
+                        "常见（★ 它不重选）；★ 要真的选中请用 `select_by_selector_report`")
+    return out
+
+====================================================================================================
+### solidworks_drawing_create_auxiliary_view    spec=tool_specs_batch73.py   func=sw_drawing_create_missing.py::create_auxiliary_view
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_drawing_create_auxiliary_view",
+        title="Drawing Auxiliary View",
+        module=_MODULE, function="create_auxiliary_view",
+        inject="model",
+        param_alias={"x_mm": "x_mm", "y_mm": "y_mm", "z_mm": "z_mm",
+                     "label": "label", "not_aligned": "not_aligned",
+                     "show_arrow": "show_arrow", "flip": "flip"},
+        params=[
+            Param("x_mm", float,
+                  description="★ 辅助视图落位 X（**毫米**）。⚠ **官方没给单位** ⇒ 按米收、"
+                              "边界换算一次；★ ⚠ **该假设未由官方示例佐证**，须真机复核。"),
+            Param("y_mm", float, description="★ 落位 Y（**毫米**；★ 单位约定同 `x_mm`）。"),
+            Param("z_mm", float, default=0.0,
+                  description="★ 落位 Z（**毫米**；★ 工程图上通常留 0）。"),
+            Param("label", str, default="",
+                  description="官方 `Label` —— 辅助视图的标签文字。"),
+            Param("not_aligned", bool, default=True,
+                  description="官方形参 `NotAligned`。⚠★ **官方说明与形参名自相矛盾**："
+                              "官方 Parameters 逐字写「True **aligns** the view from its owner」——"
+                              "★ 名字说「不对齐」、说明说「对齐」⇒ ★ **原样透传、不替官方解释**，"
+                              "★ 默认取形参名的读法（True）。"),
+            Param("show_arrow", bool, default=True,
+                  description="官方 `Showarrow` —— True 显示投影箭头。"),
+            Param("flip", bool, default=False,
+                  description="官方 `Flip` —— True 翻转辅助视图所显示的那一侧。"),
+        ],
+        doc="★ **辅助视图**：`IDrawingDoc.CreateAuxiliaryViewAt2(7 参)`。"
+            "★★★ **官方前置（摘要逐字）**："
+            "「Creates an auxiliary view **based on a selected edge in a drawing view**」"
+            "⇒ ★★ **调用前必须先选中视图里的一条边**。"
+            "★ 而**边没有可用的名字**（本仓事实 32）⇒ ★ 本工具**不代选**，"
+            "★ 只**回读当前选区计数**并写进 `preconditions_held` ⇒ 失败时能看见原因。"
+            "★ **判据 = 视图数增量 + 新视图 `Type == 5`（`swDrawingAuxiliaryView`）**，"
+            "★ 不是「返回非 None」。⚠ `NotAligned` 的官方说明与形参名矛盾，见该参数说明。",
+    ),
+---- FUNC ----
+def create_auxiliary_view(model, x_mm: float, y_mm: float, *,
+                          z_mm: float = 0.0,
+                          label: str = "",
+                          not_aligned: bool = True,
+                          show_arrow: bool = True,
+                          flip: bool = False) -> dict:
+    """★ **辅助视图**：`IDrawingDoc.CreateAuxiliaryViewAt2(7 参)` → 新视图对象。
+
+    :param x_mm / y_mm / z_mm: 辅助视图的落位（**毫米**；★ 官方**没给单位**，本模块按米收、
+      边界换算一次 —— ★ 与本仓工程图坐标惯例一致，见返回值里的 `unit_assumption`）。
+    :param label: 官方 `Label` —— 辅助视图的标签文字。
+    :param not_aligned: 官方形参名 `NotAligned`。
+    :param show_arrow: 官方 `Showarrow`。
+    :param flip: 官方 `Flip` —— True 翻转辅助视图所显示的那一侧。
+
+    ★★★ **官方前置（摘要逐字，本模块最硬的那条约束）**：
+      > Creates an auxiliary view **based on a selected edge in a drawing view**.
+
+      ⇒ ★★ **调用前必须先选中一个视图里的一条边**；★ 而实体（边 / 面）**没有可用的名字**
+      （本仓事实 32：`SelectByID2("Edge1","EDGE")` 真机计数为 0）⇒ ★ **本模块不代选**
+      （★ 规则 3：禁裸坐标），★ 只**回读当前选区计数**、并把它写进
+      `preconditions_held` ⇒ ★ 选区没备好时调用者能**看见失败原因**，★ 不会把它
+      误读成"能力坏了"。
+
+    ⚠★ **`NotAligned` 的官方说明与形参名自相矛盾，本模块**原样透传、照抄，不替官方解释**：
+      官方 Parameters 逐字写的是「**NotAligned**: True **aligns** the view from its owner,
+      false does not」—— ★ 名字说"不对齐"、说明说"对齐" ⇒ ★ 本模块**默认传 `True`**（跟形参名），
+      ★ 并把这段矛盾**原样引在返回值里**，★ 由真机去定（★ 铁律 5：查不到就说查不到）。
+
+    ★ **判据 = 当前图纸的视图数增量 + 新视图的 `Type`（应为 5 = `swDrawingAuxiliaryView`）**
+      —— ★ 不是"返回非 None"。
+    """
+    if model is None:
+        return {"ok": False, "op": "create_auxiliary_view", "error": "model 为 None"}
+    before_views = _iter_views(model)
+    before_names = _view_names(model)
+    before_count = None if before_views is None else len(before_views)
+    sel = _selection_count(model)
+
+    aux = get_com_member(
+        model, "CreateAuxiliaryViewAt2",
+        mm(float(x_mm)), mm(float(y_mm)), mm(float(z_mm)),
+        bool(not_aligned), str(label), bool(show_arrow), bool(flip),
+    )
+
+    after_views = _iter_views(model)
+    after_count = None if after_views is None else len(after_views)
+    new_names = ([] if before_names is None or after_views is None
+                 else [_view_name(v) for v in after_views if _view_name(v) not in before_names])
+    new_type = _view_type(aux) if aux is not None else None
+    delta = _delta(before_count, after_count)
+    return {
+        "ok": bool(delta and delta > 0) and new_type == SW_DRAWING_AUXILIARY_VIEW,
+        "op": "create_auxiliary_view",
+        "returned_is_none": aux is None,
+        "returned_name": _view_name(aux),
+        "returned_type": new_type,
+        "expected_type": SW_DRAWING_AUXILIARY_VIEW,
+        "expected_type_name": "swDrawingAuxiliaryView（★ 取自 scripts/sw_drawing_view_types.py 单一真源）",
+        "view_count_before": before_count,
+        "view_count_after": after_count,
+        "view_count_delta": delta,
+        "new_view_names": new_names,
+        "selection_count": sel,
+        "preconditions_held": bool(sel and sel >= 1),
+        "precondition_note": (
+            "★ 官方逐字：'based on a **selected edge in a drawing view**' ⇒ ★ 调用前必须先选中"
+            "视图里的一条边；★ 边没有可用名字（本仓事实 32）⇒ ★ 本模块**不代选**，只回读选区计数"
+        ),
+        "not_aligned_ambiguity": (
+            "★ 官方形参名 NotAligned，★ 而 Parameters 逐字写 'True **aligns** the view from its "
+            "owner' ⇒ ★ 名字与说明矛盾；★ 本模块**原样透传、不替官方解释**"
+        ),
+        "unit_assumption": (
+            "★ 官方对 X/Y/Z **未给单位**；本模块按 SolidWorks API 惯例当**米**、对外收毫米并"
+            "在边界换算一次 —— ★ 该假设**未由官方示例佐证**，须真机复核"
+        ),
+        "verified_by": "view_count_delta + returned_view.Type == 5",
+    }
+
+====================================================================================================
+### solidworks_drawing_insert_surface_finish_symbol    spec=tool_specs_batch73.py   func=sw_drawing_create_missing.py::insert_surface_finish_symbol
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_drawing_insert_surface_finish_symbol",
+        title="Drawing Surface Finish Symbol",
+        module=_MODULE, function="insert_surface_finish_symbol",
+        inject="model",
+        param_alias={"sym_type": "sym_type", "leader_type": "leader_type",
+                     "x_mm": "x_mm", "y_mm": "y_mm", "z_mm": "z_mm",
+                     "lay_symbol": "lay_symbol", "arrow_type": "arrow_type",
+                     "mach_allowance": "mach_allowance", "other_vals": "other_vals",
+                     "prod_method": "prod_method", "sample_len": "sample_len",
+                     "max_roughness": "max_roughness",
+                     "min_roughness": "min_roughness"},
+        #: ★★★★ **`roughness_spacing` 是「故意不暴露」的**（★ 不是手抄漏了 —— ★ 登记在这里
+        #:   就是为了让「省略」与「漏抄」可区分，★ 照 `ToolSpec.omitted_params` 的用法）。
+        #:   ★★ **为什么省略**（★ 一条**门禁实测**逼出来的，★ 不是我的偏好）：
+        #:     `tool_registry.check_spec` 的规则 2 那一半按**子串**扫 `_LEN_WORDS`
+        #:     —— ★ 而 `spacing` **就在那张表里** ⇒ ★ 任何叫 `roughness_spacing` 的参数
+        #:     都会被要求以 `_mm` 结尾（实测报错，见本轮记录）。
+        #:   ★★ **但我不能给它加 `_mm`** —— ★ 官方把它声明成 **`System.string`**，
+        #:     且 `InsertSurfaceFinishSymbol3.md` 的 Parameters 只写「Roughness spacing」、
+        #:     ★ **既没给单位、也没说它是长度** ⇒ ★ 加 `_mm` 就是**替官方断言一个我查不到的事实**
+        #:     （★ 铁律 5：查不到就说查不到；★ 而门禁自己那条豁免通道就是这么写的
+        #:     ——「**加 `_mm` 反而是说错话**」，见 `tool_registry._LEN_SUFFIX_EXEMPT` 的注记）。
+        #:   ⇒ ★ 正规解法是在 `tool_registry._LEN_SUFFIX_EXEMPT` 里登记一行
+        #:     `("solidworks_drawing_insert_surface_finish_symbol", "roughness_spacing")`，
+        #:     ★★ **而那个文件不在本任务的写入范围内** ⇒ ★ 本轮先**显式省略**，
+        #:     ★ 能力层 `insert_surface_finish_symbol` **仍保留该形参**（默认 `""`），
+        #:     ★ 将来补上那一行即可全量暴露（★ 补的时候本行可删）。
+        omitted_params=("roughness_spacing",),
+        params=[
+            Param("sym_type", int, default=0,
+                  description="官方 `swSFSymType_e`（★ 10 个成员）："
+                              "**0=Basic · 1=JIS_Machining_Req · 2=Dont_Machine · "
+                              "3..6=JIS_Surface_Texture_1..4 · 7=JIS_No_Machining · "
+                              "8=JIS_Basic · 9=Machining_Req**（★ 逐字核 `swSFSymType_e.md`）。"),
+            Param("leader_type", int, default=1,
+                  description="★ 官方 `swLeaderStyle_e`：**0=NO_LEADER · 1=STRAIGHT · 2=BENT · "
+                              "3=UNDERLINED · 4=SPLINE · 8=VDA**；★ 256..4100 那几个是"
+                              "**位掩码**、要**与** 1/2/3/4/8 之一**合用**。"
+                              "★★ **它决定那三个位置参数用不用**（见工具说明的官方 Remarks 逐字）。"),
+            Param("x_mm", float, default=0.0,
+                  description="★ 符号位置 X（**毫米**）—— ★★ **仅当 `leader_type != 0` 时被官方使用**；"
+                              "★ 取 0（`swNO_LEADER`）时本工具**主动传 0** 并把原值回在 "
+                              "`ignored_location_mm` 里。"),
+            Param("y_mm", float, default=0.0, description="★ 符号位置 Y（**毫米**；★ 条件同 `x_mm`）。"),
+            Param("z_mm", float, default=0.0, description="★ 符号位置 Z（**毫米**；★ 条件同 `x_mm`）。"),
+            Param("lay_symbol", int, default=0,
+                  description="官方 `swSFLaySym_e`（纹理方向）。★ ★ **本轮没查 `0` 是什么** ⇒ "
+                              "本工具**原样透传、不作断言**（★ 铁律 5：查不到就说查不到）。"),
+            Param("arrow_type", int, default=0,
+                  description="官方 `swArrowStyle_e`（箭头样式）。★ 同 `lay_symbol`："
+                              "**默认值 0 的语义未查**，原样透传。"),
+            Param("mach_allowance", str, default="",
+                  description="官方 `MachAllowance`（材料去除余量）。★ 官方类型是 `System.string` "
+                              "**且没给格式** ⇒ 本工具**原样透传、不解析、不校验**。"),
+            Param("other_vals", str, default="",
+                  description="官方 `OtherVals`（其它粗糙度值）。★ 同上：字符串、原样透传。"),
+            Param("prod_method", str, default="",
+                  description="官方 `ProdMethod`（生产方法与处理）。★ 同上。"),
+            Param("sample_len", str, default="",
+                  description="官方 `SampleLen`（取样长度）。★ 同上。"),
+            Param("max_roughness", str, default="",
+                  description="官方 `MaxRoughness`（最大粗糙度）。★ 同上。"),
+            Param("min_roughness", str, default="",
+                  description="官方 `MinRoughness`（最小粗糙度）。★ 同上。"),
+        ],
+        doc="★ **表面粗糙度符号**：`IModelDocExtension.InsertSurfaceFinishSymbol3(14 参)`。"
+            "★★ **官方 `## Remarks` 逐字**：「The SOLIDWORKS Design software uses the location "
+            "parameters for this method **only if** the surface finish symbol has a leader "
+            "leaderType **!= swNO_LEADER**.」⇒ ★★ `leader_type = 0` 时**三个位置参数被官方无视**"
+            "⇒ ★ 本工具在那一档**主动传 0** 并把原坐标回在 `ignored_location_mm`。"
+            "★ **另一条前置**：官方摘要逐字「based on the **last selection**」⇒ ★ 调用前必须有选区；"
+            "★ 本工具**不代选**（★ 规则 3 禁裸坐标），只回读选区计数写进 `preconditions_held`。"
+            "★ **判据 = 全图纸 `IView.GetSFSymbolCount` 求和的增量**，★ 不是「返回非 None」。",
+    ),
+---- FUNC ----
+def insert_surface_finish_symbol(model, *,
+                                 sym_type: int = SW_SF_BASIC,
+                                 leader_type: int = SW_LEADER_STRAIGHT,
+                                 x_mm: float = 0.0, y_mm: float = 0.0, z_mm: float = 0.0,
+                                 lay_symbol: int = 0,
+                                 arrow_type: int = 0,
+                                 mach_allowance: str = "",
+                                 other_vals: str = "",
+                                 prod_method: str = "",
+                                 sample_len: str = "",
+                                 max_roughness: str = "",
+                                 min_roughness: str = "",
+                                 roughness_spacing: str = "") -> dict:
+    """★ **表面粗糙度符号**：`IModelDocExtension.InsertSurfaceFinishSymbol3(14 参)` → `SFSymbol`。
+
+    :param sym_type: `swSFSymType_e`（**0=Basic · 1=JIS_Machining_Req · 2=Dont_Machine**
+      · 3..6=JIS_Surface_Texture_1..4 · 7=JIS_No_Machining · 8=JIS_Basic · 9=Machining_Req**）。
+    :param leader_type: `swLeaderStyle_e`（**0=NO_LEADER · 1=STRAIGHT · 2=BENT · 3=UNDERLINED**
+      · 4=SPLINE · 8=VDA**；★ 注意 256..4100 那几个是**位掩码**、要**与** 1/2/3/4/8 之一**合用**）。
+    :param x_mm / y_mm / z_mm: 符号位置（**毫米**）—— ★★ **仅当 `leader_type != swNO_LEADER`
+      时才被使用**，见下面逐字的 Remarks。
+    :param lay_symbol: `swSFLaySym_e` —— 纹理方向（★ 本模块**不写死默认值**，官方页给的是 0）。
+    :param arrow_type: `swArrowStyle_e` —— 箭头样式。
+    :param mach_allowance / other_vals / prod_method / sample_len /
+      max_roughness / min_roughness / roughness_spacing: 官方**全是 `System.string`** 且
+      **官方页没给格式** ⇒ ★ 本模块**原样透传**，★ **不解析、不校验**。
+
+    ★★★ **官方 `## Remarks` 逐字（本函数最核心的一条约束）**：
+      > The SOLIDWORKS Design software uses the location parameters for this method
+      > **only if** the surface finish symbol has a leader leaderType **!= swNO_LEADER**.
+
+      ⇒ ★★ `leader_type == 0(swNO_LEADER)` 时，**三个位置参数被官方无视** ⇒ ★ 本模块在
+      ★ 那一档**主动传 `0,0,0`**（而不是把调用者给的坐标白送进去）★★ 并把
+      `location_applied=False` 与 `ignored_location_mm` **回在返回值里** ⇒ ★ 调用者能看见
+      ★「我传的坐标被丢了」，★ 不会以为符号位置错了。
+
+    ★★ **另一条官方前置**：官方摘要逐字「Creates a surface-finish symbol based on the
+      **last selection**」⇒ ★ 调用前必须有选区；★ 本模块**不代选**（★ 规则 3）、
+      只**回读选区计数**写进 `preconditions_held`。
+
+    ★ **判据 = 全图纸 `IView.GetSFSymbolCount` 求和的增量**（★ 官方示例就是这么读的）
+      —— ★ 不是"返回非 None"。
+    """
+    if model is None:
+        return {"ok": False, "op": "insert_surface_finish_symbol", "error": "model 为 None"}
+    #: ★★ 官方 Remarks 的那个判据，在此**落成代码**（★ 只有这一处决定位置参数用不用）
+    location_applied = int(leader_type) != SW_LEADER_NO_LEADER
+    loc_x, loc_y, loc_z = ((mm(float(x_mm)), mm(float(y_mm)), mm(float(z_mm)))
+                           if location_applied else (0.0, 0.0, 0.0))
+
+    sel = _selection_count(model)
+    before = _sum_over_views(model, "GetSFSymbolCount")
+
+    #: ★ 官方这一族挂在 **`IModelDocExtension`** 上（★ 不是 `IModelDoc2`）
+    #:   ⇒ ★ 取法照本仓 15 个模块的同一写法（★ `sw_costing.py` / `sw_ref_geometry.py` 等）
+    ext = _read(model, "Extension")
+    if ext is None:
+        return {"ok": False, "op": "insert_surface_finish_symbol",
+                "error": "取不到 model.Extension —— ★ InsertSurfaceFinishSymbol3 挂在 "
+                         "IModelDocExtension 上，★ 不是 IModelDoc2",
+                "preconditions_held": bool(sel and sel >= 1),
+                "selection_count": sel,
+                "precondition_note": "★ 官方摘要逐字：'based on the **last selection**'",
+                "verified_by": "★ 没跑到调用那一步 ⇒ 无判据"}
+
+    sfs = get_com_member(
+        ext, "InsertSurfaceFinishSymbol3",
+        int(sym_type), int(leader_type),
+        loc_x, loc_y, loc_z,
+        int(lay_symbol), int(arrow_type),
+        str(mach_allowance), str(other_vals), str(prod_method), str(sample_len),
+        str(max_roughness), str(min_roughness), str(roughness_spacing),
+    )
+
+    after = _sum_over_views(model, "GetSFSymbolCount")
+    delta = _delta(before, after)
+    return {
+        "ok": bool(delta and delta > 0),
+        "op": "insert_surface_finish_symbol",
+        "returned_is_none": sfs is None,
+        "sf_symbol_count_before": before,
+        "sf_symbol_count_after": after,
+        "sf_symbol_count_delta": delta,
+        "sym_type": int(sym_type),
+        "leader_type": int(leader_type),
+        "location_applied": location_applied,
+        "ignored_location_mm": None if location_applied else {"x": float(x_mm),
+                                                              "y": float(y_mm),
+                                                              "z": float(z_mm)},
+        "selection_count": sel,
+        "preconditions_held": bool(sel and sel >= 1),
+        "precondition_note": (
+            "★ 官方逐字：'based on the **last selection**' ⇒ ★ 调用前必须有选区；"
+            "★ 且**只有 leaderType != swNO_LEADER 时官方才用那三个位置参数**"
+        ),
+        "official_remark_verbatim": (
+            "The SOLIDWORKS Design software uses the location parameters for this method only "
+            "if the surface finish symbol has a leader leaderType != swNO_LEADER."
+        ),
+        "annotation_type_hint": ("swSFSymbol = 7（C:\\swapi\\enums\\swAnnotationType_e.md）"
+                                 "⇒ 也可用 IView.GetAnnotationsByType(7) 复核"),
+        "string_params_note": "★ 官方那 7 个文本参数**全是 System.string 且官方页没给格式** ⇒ 原样透传、不校验",
+        "verified_by": "sum(IView.GetSFSymbolCount) delta",
+    }
+
+====================================================================================================
+### solidworks_drawing_insert_datum_tag    spec=tool_specs_batch73.py   func=sw_drawing_create_missing.py::insert_datum_tag
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_drawing_insert_datum_tag",
+        title="Drawing Datum Tag",
+        module=_MODULE, function="insert_datum_tag",
+        inject="model",
+        params=[],
+        doc="★ **基准符号**：`IModelDoc2.InsertDatumTag2()` → `DatumTag`（★ **官方零参数**）。"
+            "★★ **官方前置**（摘要逐字）：「Inserts a datum tag symbol **at a selected "
+            "location**.」⇒ ★ 调用前必须先选中一个位置（★ 官方示例用 `SelectByID2` 选 EDGE）。"
+            "★ 因为官方**零参数**，★ 落点**完全由选区决定** ⇒ 本工具**没有坐标入口**"
+            "（★ 这既由官方签名决定，★ 也正好合上规则 3 的「禁裸坐标」）。"
+            "★ 入口是 `IModelDoc2`（**不是** `IModelDocExtension`）—— ★ 与表面粗糙度符号那 14 参"
+            "**不是同一个宿主对象**。"
+            "★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量**，★ 不是「返回非 None」。",
+    ),
+---- FUNC ----
+def insert_datum_tag(model) -> dict:
+    """★ **基准符号（datum tag）**：`IModelDoc2.InsertDatumTag2()` → `DatumTag`（★ **零参**）。
+
+    ★★★ **两条官方约束**：
+      · 官方摘要逐字「Inserts a datum tag symbol **at a selected location**.」
+        ⇒ ★★ **调用前必须先选中一个位置**（官方示例里是 `SelectByID2("", "EDGE", …)`）。
+      · ★ 官方**零参数** ⇒ ★ 落点**完全由选区决定** ⇒ ★ 本模块**没有坐标入口**，
+        ★ 这既是官方签名决定的、★ 也正好合上规则 3（禁裸坐标）。
+
+    ⚠★ **注意入口在 `IModelDoc2` 上**（不是 `IModelDocExtension`）—— ★ 与表面粗糙度符号
+      那个 14 参的入口**不是同一个对象**，★ 两个函数的 `get_com_member` 宿主因此不同
+      （★ 事实 36 一族：**同名不同族要用对接口**，★ 而这里**连名字都不同**）。
+
+    ★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量**（★ 官方示例就是这么读的）
+      —— ★ 不是"返回非 None"。
+    """
+    if model is None:
+        return {"ok": False, "op": "insert_datum_tag", "error": "model 为 None"}
+    sel = _selection_count(model)
+    before = _sum_over_views(model, "GetDatumTagCount")
+    tag = get_com_member(model, "InsertDatumTag2")
+    after = _sum_over_views(model, "GetDatumTagCount")
+    delta = _delta(before, after)
+    return {
+        "ok": bool(delta and delta > 0),
+        "op": "insert_datum_tag",
+        "returned_is_none": tag is None,
+        "datum_tag_count_before": before,
+        "datum_tag_count_after": after,
+        "datum_tag_count_delta": delta,
+        "selection_count": sel,
+        "preconditions_held": bool(sel and sel >= 1),
+        "precondition_note": (
+            "★ 官方逐字：'at a **selected location**' ⇒ ★ 调用前必须先选中一个位置"
+            "（官方示例用 SelectByID2 选 EDGE）；★ 官方**零参数** ⇒ 落点完全由选区决定"
+        ),
+        "entry_point_note": "★ 入口是 IModelDoc2.InsertDatumTag2（零参），**不是** IModelDocExtension",
+        "annotation_type_hint": ("swDatumTag = 2（C:\\swapi\\enums\\swAnnotationType_e.md）"
+                                 "⇒ 也可用 IView.GetAnnotationsByType(2) 复核"),
+        "verified_by": "sum(IView.GetDatumTagCount) delta",
+    }
+
+====================================================================================================
+### solidworks_sheet_metal_insert_miter_flange    spec=tool_specs_batch74.py   func=sw_sheet_metal_weld_entry.py::insert_sheet_metal_miter_flange
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_sheet_metal_insert_miter_flange",
+        title="Sheet Metal Miter Flange",
+        module=_MODULE, function="insert_sheet_metal_miter_flange",
+        inject="model",
+        param_alias={"use_default_radius": "use_default_radius",
+                     "global_radius_mm": "global_radius_mm",
+                     "rip_gap_mm": "rip_gap_mm",
+                     "use_default_relief": "use_default_relief",
+                     "use_relief_ratio": "use_relief_ratio",
+                     "relief_ratio": "relief_ratio",
+                     "relief_width_mm": "relief_width_mm",
+                     "relief_depth_mm": "relief_depth_mm",
+                     "relief_type": "relief_type",
+                     "trim_side_bends": "trim_side_bends",
+                     "flange_pos": "flange_pos",
+                     "offset_dist1_mm": "offset_dist1_mm",
+                     "offset_dist2_mm": "offset_dist2_mm"},
+        params=[
+            Param("use_default_radius", bool, default=True,
+                  description="官方逐字「True to use **default bend radius**, false to use GlobalRadius」。"),
+            Param("global_radius_mm", float, default=0.0,
+                  description="全局折弯半径（**毫米**）—— ★ 仅 `use_default_radius=False` 时有意义。"
+                              "★ 官方**没给单位**；本工具按 SolidWorks 惯例当**米**、边界换算一次。"),
+            Param("rip_gap_mm", float, default=0.0,
+                  description="切口间隙（**毫米**；★ 单位约定同 `global_radius_mm`）。"),
+            Param("use_default_relief", bool, default=True,
+                  description="官方逐字「True to use **parent bend's ratio**」。"),
+            Param("use_relief_ratio", bool, default=False,
+                  description="True 用**自定义让位比**、False 不用（官方 `UseReliefRatio`）。"),
+            Param("relief_ratio", float, default=0.0,
+                  description="让位比 —— ★ **比例量、不换算**（官方逐字「If useReliefRatio is True, "
+                              "then specify relief ratio」⇒ 官方例子是 `0.6` 那类无量纲值）。"),
+            Param("relief_width_mm", float, default=0.0,
+                  description="★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**"
+                              "「…specify relief **depth**」⇒ ★ **官方这两句自相矛盾** ⇒ 本工具"
+                              "**原样透传、不替官方调和**（铁律 5）。★ 仅当 `use_relief_ratio=True` "
+                              "且 `relief_type` ∈ {Rectangular, Obround} 时有意义。"),
+            Param("relief_depth_mm", float, default=0.0,
+                  description="让位深度（**毫米**）—— ★ 与 `relief_width_mm` 同一条官方矛盾。"),
+            Param("relief_type", int, default=1,
+                  description="官方 `swSheetMetalReliefTypes_e`（逐字核官方枚举页）："
+                              "**1=Rectangular · 2=Tear · 3=Obround · 4=None · 5=TearBend**。"),
+            Param("trim_side_bends", bool, default=False,
+                  description="官方 `TrimSideBends` —— True 裁剪侧折弯。"),
+            Param("flange_pos", int, default=1,
+                  description="官方 `swFlangePositionTypes_e`：**1=MaterialInside · 2=MaterialOutside · "
+                              "3=BendOutside · 4=BendCenterLine · 5=BendSharp（\"Bend from virtual sharp\"）"
+                              " · 6=BendTangent**。⚠ 官方注明 **BendTangent** 对 \"Up To Edge And Merge\" "
+                              "长度终止条件**无效**。"),
+            Param("offset_dist1_mm", float, default=0.0,
+                  description="部分法兰的**起始**偏移距离（**毫米**）。"),
+            Param("offset_dist2_mm", float, default=0.0,
+                  description="部分法兰的**结束**偏移距离（**毫米**）。"),
+        ],
+        doc="★ **钣金斜接法兰**：`IFeatureManager.InsertSheetMetalMiterFlange(14 参)` → `Feature`。"
+            "★★★ **同名两份页、★ 参数个数不同**：★ `IModelDoc2` 那份（11 参 · 回 void）官方逐字标 "
+            "`Obsolete. Superseded by [[IFeatureManager::InsertSheetMetalMiterFlange]].` ⇒ ★ **本工具走 "
+            "IFeatureManager 那份**，★ 而用错的后果是**参数个数对不上**、★ 不只是「没反应」。"
+            "⚠ 末位 `PCBA` 是**对象形参**：★ 官方把它写成二选一 —— **non-NULL** ⇒ \"Pointer to "
+            "`ICustomBendAllowance` object **for which required values have been set**\"；"
+            "**NULL** ⇒ \"Parent bend's bend allowance is used\" ⇒ ★ 本工具传**空 Dispatch**"
+            "（＝ NULL 语义）★★ **不伪造一个没设过必需值的 PCBA**，★ 因此**不接受自定义 PCBA**。"
+            "★★ **前置查不到**：★ 该官方页**无 `## Remarks` 段**（逐字段核过）⇒ ★ 本工具**不编前置**"
+            "（铁律 5），★ 只回读选区计数、★ `preconditions_held` 如实报 **None**（★ 不是 False）。"
+            "★ 判据 = **特征树增量** + 返回对象非 None + **实体面数增量**（三个都要）。",
+    ),
+---- FUNC ----
+def insert_sheet_metal_miter_flange(model, *,
+                                    use_default_radius: bool = True,
+                                    global_radius_mm: float = 0.0,
+                                    rip_gap_mm: float = 0.0,
+                                    use_default_relief: bool = True,
+                                    use_relief_ratio: bool = False,
+                                    relief_ratio: float = 0.0,
+                                    relief_width_mm: float = 0.0,
+                                    relief_depth_mm: float = 0.0,
+                                    relief_type: int = SW_RELIEF_RECTANGULAR,
+                                    trim_side_bends: bool = False,
+                                    flange_pos: int = SW_FLANGE_MATERIAL_INSIDE,
+                                    offset_dist1_mm: float = 0.0,
+                                    offset_dist2_mm: float = 0.0) -> dict:
+    """★ **钣金斜接法兰**：`IFeatureManager.InsertSheetMetalMiterFlange(14 参)` → `Feature`。
+
+    :param use_default_radius: 官方逐字「True to use **default bend radius**, false to use GlobalRadius」。
+    :param global_radius_mm: 全局折弯半径（**毫米**；★ 仅 `use_default_radius=False` 时有意义）。
+    :param rip_gap_mm: 切口间隙（**毫米**）。
+    :param use_default_relief: 官方逐字「True to use **parent bend's ratio**」。
+    :param use_relief_ratio: True 用自定义**让位比**、False 不用。
+    :param relief_ratio: 让位比（★ **比例量、不换算**；官方逐字「If useReliefRatio is True …」）。
+    :param relief_width_mm / relief_depth_mm: ★ 官方对这两个形参**写的是同一句**
+      「If UseReliefRatio is True and ReliefType is swSheetMetalReliefRectangular or
+      swSheetMetalReliefObround, then specify relief **depth**」⇒ ★ **官方这两句自相矛盾**
+      （`ReliefWidth` 的说明也写 "relief depth"）⇒ ★ 本模块**原样透传、不替官方调和**（铁律 5）。
+    :param relief_type: `swSheetMetalReliefTypes_e`（**Rectangular=1 · Tear=2 · Obround=3
+      · None=4 · TearBend=5**）。
+    :param trim_side_bends: True 裁剪侧折弯。
+    :param flange_pos: `swFlangePositionTypes_e`（**MaterialInside=1 · MaterialOutside=2
+      · BendOutside=3 · BendCenterLine=4 · BendSharp=5 · BendTangent=6**；★ 官方注明
+      `BendTangent` 对 "Up To Edge And Merge" 终止条件**无效**）。
+    :param offset_dist1_mm / offset_dist2_mm: 部分法兰的起/止偏移（**毫米**）。
+
+    ★★★ **关于末位 `PCBA`**：★ 它是**对象形参**（`CustomBendAllowance`），★ 而官方把它的
+      语义写成了二选一（逐字）：**non-NULL** ⇒ "Pointer to `ICustomBendAllowance` object **for
+      which required values have been set**"；**NULL** ⇒ "Parent bend's bend allowance is used"。
+      ⇒ ★ 本模块**传空 Dispatch**（＝ NULL 语义，★ 本仓事实 12 的
+      `create_empty_dispatch_variant()`）★★ **不伪造一个"没设过必需值"的
+      `ICustomBendAllowance`** —— ★ 那正是官方那句话在防的事。
+      ★⇒ 因此本工具**不接受自定义 PCBA**，★ 将来要支持得另开一条入口。
+
+    ⚠⚠★ **前置：官方页**没有 `## Remarks` 段**（逐字段核过：全文只有 `#` 标题 / `## Parameters`
+      / `## Returns` / `## See Also`）⇒ ★★ **前置查不到** ⇒ ★ 本模块**不编前置**
+      （铁律 5），★ 只**回读选区计数**并如实标 `preconditions_held: None`
+      （★ **不是** `False` —— ★ 官方没说要什么，★ 判"没备好"是本模块自己加的）。
+    """
+    if model is None:
+        return {"ok": False, "op": "insert_sheet_metal_miter_flange", "error": "model 为 None"}
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        return {"ok": False, "op": "insert_sheet_metal_miter_flange",
+                "error": "取不到 FeatureManager"}
+    before = _tree(model)
+    before_faces = _body_face_count(model)
+    #: ★ 空 Dispatch（= 官方 PCBA 那一列的 **NULL** 分支）★ 见上文逐字理由
+    null_dispatch = create_empty_dispatch_variant()
+    feature = get_com_member(
+        fm, "InsertSheetMetalMiterFlange",
+        bool(use_default_radius),
+        mm(float(global_radius_mm)),
+        mm(float(rip_gap_mm)),
+        bool(use_default_relief),
+        bool(use_relief_ratio),
+        float(relief_ratio),                 #: ★ 比例量，不换算
+        mm(float(relief_width_mm)),
+        mm(float(relief_depth_mm)),
+        int(relief_type),
+        bool(trim_side_bends),
+        int(flange_pos),
+        mm(float(offset_dist1_mm)),
+        mm(float(offset_dist2_mm)),
+        null_dispatch,                        #: ← 第 14 位，★ 对象形参（NULL 语义）
+    )
+    after = _tree(model)
+    after_faces = _body_face_count(model)
+    added = _new_features(before, after)
+    return {
+        "ok": bool(added) and feature is not None,
+        "op": "insert_sheet_metal_miter_flange",
+        "entry_point": "IFeatureManager.InsertSheetMetalMiterFlange（★ 14 参 · 非废弃）",
+        "obsolete_note": "★ 同名的 IModelDoc2.InsertSheetMetalMiterFlange（11 参 · 回 void）"
+                         "**已 Obsolete** ⇒ 本模块**不调**它",
+        "returned_is_none": feature is None,
+        "returned_name": _feature_name(feature),
+        "tree_before": before, "tree_after": after, "new_features": added,
+        "face_count_before": before_faces, "face_count_after": after_faces,
+        "face_count_delta": _delta(before_faces, after_faces),
+        "pcba_passed": "★ 空 Dispatch（= 官方 PCBA 那一列的 NULL 分支）⇒ 用父折弯的折弯补偿",
+        "unit_assumption": "★ 官方未给单位；按 SolidWorks 惯例当**米**、对外收毫米、边界换算一次",
+        "selection_marks": _selection_marks(model),
+        "preconditions_held": None,
+        "precondition_note": "★★ **官方页无 `## Remarks` 段 ⇒ 前置查不到** ⇒ 本模块**不编前置**"
+                             "（铁律 5）；★ 只回读选区计数，★ `preconditions_held` 如实报 None",
+        "verified_by": "feature tree delta + IFeature non-None + solid face-count delta",
+    }
+
+====================================================================================================
+### solidworks_sheet_metal_insert_closed_corner    spec=tool_specs_batch74.py   func=sw_sheet_metal_weld_entry.py::insert_sheet_metal_closed_corner
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_sheet_metal_insert_closed_corner",
+        title="Sheet Metal Closed Corner",
+        module=_MODULE, function="insert_sheet_metal_closed_corner",
+        inject="model",
+        params=[],
+        doc="★ **钣金闭合角**：`IModelDoc2.InsertSheetMetalClosedCorner()` → **`void`**（★ **零参**）。"
+            "⚠⚠★ **这是本批判据最紧的一条**，★ 因为官方**同时**给了「零参数」与「回 `void`」："
+            "⇒ ★ **没有返回对象可读** ⇒ ★「返回非 None」这条判据在本工具上**根本不存在** ⇒ ★ 判据**只能**是 "
+            "**特征树增量** + **实体面数增量** + **体积增量**（★ 后两个互相独立、缺一不可）。"
+            "★★ **前置查不到**：★ 官方页**无 `## Remarks` 段** ⇒ ★ 本工具**不编前置**（铁律 5），"
+            "★ 只回读选区计数、★ `preconditions_held` 如实报 **None**。"
+            "⚠ 该族另有 `IClosedCornerFeatureData` 指针路：★ 其 `IAccessSelections` 官方已标 "
+            "`Obsolete` → 后继 `IAccessSelections2`；★ ★ 而该族是**进程内指针接口**，"
+            "★ 本仓 pywin32 后端到不了（已知事实 47）⇒ ★ 本工具**只走直入法**、★ 不碰指针族。",
+    ),
+---- FUNC ----
+def insert_sheet_metal_closed_corner(model) -> dict:
+    """★ **钣金闭合角**：`IModelDoc2.InsertSheetMetalClosedCorner()` → **`void`**（★ 零参）。
+
+    ⚠⚠★ **这是本批判据最紧的一条**，★ 因为官方**同时**给了「**零参数**」与「**回 `void`**」：
+      ⇒ ★ **没有返回对象可读** ⇒ ★ "返回非 None" **这条判据在本函数上根本不存在**
+      ⇒ ★ 判据**只能**是：**特征树增量** + **实体面数增量** + **体积增量**（后两个互相独立）。
+
+    ⚠⚠ **前置**：★ 官方页**无 `## Remarks` 段** ⇒ ★★ **前置查不到**（铁律 5）⇒ 本模块
+      **不编前置**，★ 只回读选区计数并如实标 `preconditions_held: None`。
+      ★ （★ 该族另有 `IClosedCornerFeatureData` 这条指针路，★ 其 `## Remarks` 只讲
+      ★ **事后修改**时怎么进/出回滚态，★ **不是**建模前置 —— ★ 不要把两件事混起来。）
+
+    ⚠ **另一个坑（已知事实 36 一族）**：`IClosedCornerFeatureData` 里
+      `IAccessSelections` 已 Obsolete、后继是 `IAccessSelections2` ⇒ ★ 而 `AccessSelections`
+      那一族是**进程内指针接口**，★ 本仓 pywin32 后端**到不了**（事实 47）
+      ⇒ ★ 本模块**只走直入法**，★ **不碰**那族（★ 这也正好符合本批「直入法」的定位）。
+    """
+    if model is None:
+        return {"ok": False, "op": "insert_sheet_metal_closed_corner", "error": "model 为 None"}
+    before = _tree(model)
+    before_faces = _body_face_count(model)
+    before_vol = _volume_mm3(model)
+    #: ★ 官方**零参** ⇒ 一个实参都不传（★ 官方 Signature 逐字 `void InsertSheetMetalClosedCorner()`）
+    get_com_member(model, "InsertSheetMetalClosedCorner")
+    after = _tree(model)
+    after_faces = _body_face_count(model)
+    after_vol = _volume_mm3(model)
+    added = _new_features(before, after)
+    face_delta = _delta(before_faces, after_faces)
+    vol_delta = _delta(before_vol, after_vol)
+    #: ★★ 官方回 void ⇒ ★ "至少一个可回读的量变了"才是判据（★ 而不是"返回非 None"）
+    changed = any(x is not None for x in (added, face_delta, vol_delta))
+    return {
+        "ok": bool(changed and (bool(added) or (face_delta or 0) != 0 or (vol_delta or 0) != 0)),
+        "op": "insert_sheet_metal_closed_corner",
+        "entry_point": "IModelDoc2.InsertSheetMetalClosedCorner（★ 零参 · **回 void**）",
+        "returns_void": True,
+        "returned_is_none": None,          # ★ 官方回 void ⇒ ★ 这个字段**无意义**，如实置 None
+        "tree_before": before, "tree_after": after, "new_features": added,
+        "face_count_before": before_faces, "face_count_after": after_faces,
+        "face_count_delta": face_delta,
+        "volume_mm3_before": before_vol, "volume_mm3_after": after_vol,
+        "volume_mm3_delta": vol_delta,
+        "selection_marks": _selection_marks(model),
+        "preconditions_held": None,
+        "precondition_note": "★★ **官方页无 `## Remarks` 段 ⇒ 前置查不到** ⇒ 不编前置（铁律 5）",
+        "pointer_family_note": "★ IClosedCornerFeatureData.IAccessSelections 已 Obsolete → IAccessSelections2；"
+                               "★ ★ 而该族是**进程内指针接口**，★ 本仓 pywin32 后端到不了（事实 47）⇒ 本模块不碰",
+        "verified_by": "feature tree delta + solid face-count delta + volume delta"
+                       "（★ 官方回 void ⇒ 三个都是必要的）",
+    }
+
+====================================================================================================
+### solidworks_drawing_create_section_view    spec=tool_specs_batch75.py   func=sw_drawing_expose.py::create_section_view
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_drawing_create_section_view",
+        title="Drawing Section View",
+        module=_EXPOSE, function="create_section_view",
+        inject="drawing_model",
+        params=[
+            Param("x_mm", float, description="剖视图放置位置 X（**毫米**）。"),
+            Param("y_mm", float, description="剖视图放置位置 Y（**毫米**）。"),
+        ],
+        doc="★ **剖面视图**：`CreateSectionViewAt5`。"
+            "★★ **前置（官方 Remarks 逐字）：调用前必须先选好剖面线** ⇒ 本工具**不代选**，"
+            "先回读选区计数并在返回值里给 `preconditions_held`。"
+            "⚠ 真机该格**前置未成立**（选区为空）⇒ ★ **不能**据此判「剖面视图不成」（事实 496）。",
+    ),
+---- FUNC ----
+def create_section_view(drawing_model, *, x_mm: float, y_mm: float) -> dict:
+    """★ 剖面视图（`CreateSectionViewAt5`）—— ★ **调用前必须先选好剖面线**（官方 Remarks 逐字）。
+
+    ★ 本函数**不代选**：先回读选区计数并在返回值里给出 `preconditions_held`。
+    """
+    pre = _selection_count(drawing_model)
+    res = D.add_section_view(drawing_model, _mm(x_mm), _mm(y_mm))
+    return _result("create_section_view", {"ok": res is not None, "view": res},
+                   "视图数增量（★ 前置成立才算）", pre_ok=pre > 0)
+
+====================================================================================================
+### solidworks_drawing_create_hole_table    spec=tool_specs_batch75.py   func=sw_drawing_expose.py::create_hole_table
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_drawing_create_hole_table",
+        title="Drawing Hole Table",
+        module=_EXPOSE, function="create_hole_table",
+        inject="drawing_model",
+        params=[
+            Param("view_name", str, description="承载孔表的视图名（★ 孔表挂在 **`IView`** 上）。"),
+            Param("x_mm", float, description="表放置位置 X（**毫米**；官方该参数单位是**米**，边界换算一次）。"),
+            Param("y_mm", float, description="表放置位置 Y（**毫米**）。"),
+            Param("anchor_type", int, description="★ 锚点类型，取值见 **`swBOMConfigurationAnchorType_e`**"
+                                                 "（官方 Parameters 逐字）。"),
+            Param("start_value", str, description="起始编号（官方例子用 `A`）。"),
+            Param("template", str, description="孔表模板（`.sldholtbt`；官方 Remarks：在 `install_dir\\lang\\<language>`）。"),
+            Param("tag_order", int, description="标签顺序（官方 8 参，例子用 1）。"),
+            Param("tag_type", int, description="标签类型（官方 9 参，例子用 1）。"),
+        ],
+        doc="★ **孔表**：**`IView.InsertHoleTable3`（9 参、未废弃）**。"
+            "★★ **本工具改过实现**（2026-10-03 真机 e2e 实测的教训）：原先把 `InsertTableAnnotation` 当孔表入口 —— "
+            "★ 而官方签名逐字是 `InsertTableAnnotation(X, Y, AnchorType, Rows, Columns)`，"
+            "**它没有任何参数说\"这是孔表\"** ⇒ ★ **它建的是通用表，建不出孔表**（e2e 实测：注解数 72→72）。"
+            "★★★ **前置（官方 Remarks 的 mark 表，逐字）**：基准原点**顶点 mark 1** · 孔**边与面 mark 2** · "
+            "X 向参考 mark 4 · Y 向参考 mark 8 ⇒ ★ 本工具**不代选**，先回读选区里 mark 1/2 各几个，"
+            "`preconditions_held` 如实给出（★ 前置不成立时**不能**判「孔表不成」）。"
+            "★ 真机证据：`output/drawing-batch-evidence.json` 的 A6 格（`GetTableAnnotationCount` 增量、前置成立）。",
+    ),
+---- FUNC ----
+def create_hole_table(drawing_model, *, view_name: str, x_mm: float, y_mm: float,
+                      anchor_type: int, start_value: str = "A", template: str = "",
+                      tag_order: int = 1, tag_type: int = 1) -> dict:
+    """★ 孔表 —— **`IView.InsertHoleTable3`（9 参、未废弃）**。
+
+    ★★ **为什么不用 `InsertTableAnnotation`**（★ 2026-10-03 真机工具层 e2e 实测的教训）：
+      官方签名逐字 `IDrawingDoc.InsertTableAnnotation(X, Y, **AnchorType**, Rows, Columns)`
+      ⇒ ★ 它第 3 个 int 是 **`AnchorType`**、后两个是 **`Rows`/`Columns`**，
+      ★ **没有任何参数说"这是孔表"** ⇒ ★ **它建的是通用表，建不出孔表**。
+      ⇒ ★ 本函数改走**真入口** `IView.InsertHoleTable3`（★ 探针 A6 格**真机建成**过）。
+    ★★★ **前置（官方 Remarks 的 mark 表，逐字）**：基准原点**顶点 mark 1** ·
+      孔**边与面 mark 2** · 原点 X 向参考 mark 4 · Y 向参考 mark 8。
+      ★ 本函数**不代选**：先回读选区里 mark 1/2 各几个，`preconditions_held` 如实给出。
+    ★ `Template` 用 `.sldholtbt`（官方 Remarks：在 `install_dir\\lang\\<language>`）；
+      `ManualTags` 传**空 Dispatch**（★ 事实 12；官方例子里是 `Nothing`）。
+    """
+    view = _view_by_name(drawing_model, view_name)
+    if view is None:
+        return {"ok": False, "op": "create_hole_table", "preconditions_held": False,
+                "err": "★ 前置未成立：按名找不到视图 %r" % view_name,
+                "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）"}
+    marks = _selection_marks(drawing_model)
+    pre = bool(marks.get("1", 0) >= 1 and marks.get("2", 0) >= 1)
+    out = {"op": "create_hole_table", "preconditions_held": pre, "selection_marks": marks,
+           "official_marks": "顶点=1 · 孔边与面=2 · X 向参考=4 · Y 向参考=8（官方 Remarks 逐字）",
+           "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）"}
+    if not pre:
+        #: ★★★ 2026-10-03（接手轮）**从"硬失败"改成"告警后仍然尝试"** —— 与 `surface_fill` 同一形态。
+        #:   ★★ **为什么**（事实 503，真机隔离出来的）：注册器调工具的**顺序**是
+        #:     `kwargs[inj] = resolver(params)` → `pre_call` → `fn(**kwargs)`，
+        #:     ★ 而 **`RESOLVERS["drawing_model"]` 经 `connect_solidworks()` 会清空选区**
+        #:     ⇒ ★ **"调用方预选 mark 1/2"经工具层永远拿不到**
+        #:     （★ 而 MCP 客户端本来也没法在工程图里预选一个顶点与孔边）。
+        #:   ⇒ ★ 上一版在这里 `return` 失败 ⇒ ★ **这条工具经工具层必然失败**。
+        #:   ★★ **现在**：`pre` 不成立 ⇒ **记一条告警，但仍然调** ——
+        #:     ★ 成不成**由 API 说了算**（★ 而硬判据是**表增量**，不是返回值 —— 事实 40）。
+        #:     ★ 若 API 真需要 mark，它会自己失败，★ 我们**如实报** `preconditions_held: False` +
+        #:     `attempted_without_precondition: True` ⇒ ★ **不假装成功，也不提前判死**。
+        out["preconditions_held"] = False
+        out["attempted_without_precondition"] = True
+        out["precondition_warning"] = (
+            "★ 官方 mark 表要求的 **1（顶点）与 2（孔边与面）** 没同时在选区里 —— "
+            "★ 这通常是**事实 503**（`RESOLVERS[inj]` 会清空选区）造成的，"
+            "★ 不一定是调用方没选。★ **仍然尝试调用**，成不成以表增量与返回值为准。")
+    try:
+        tbl = C.get_com_member(view, "InsertHoleTable3", False, _mm(x_mm), _mm(y_mm),
+                               int(anchor_type), str(start_value), str(template),
+                               int(tag_order), int(tag_type),
+                               C.create_empty_dispatch_variant())
+        out["ok"] = tbl is not None
+        out["raw_is_none"] = tbl is None
+    except Exception as exc:                                            # noqa: BLE001
+        out["ok"] = False
+        out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    return out

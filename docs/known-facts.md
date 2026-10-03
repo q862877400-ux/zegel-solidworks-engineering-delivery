@@ -3415,3 +3415,27 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         `C:\swapi\types\IFeatureManager\InsertEndCapFeature2.md` 与 `…Feature3.md` ·
         `C:\swapi\examples\Insert_Weldment_Features_Example_VB.md` ·
         对照 **事实 504**（第一轮排除）· **503**（前置走 `pre_call`）· **33**（Callout）· **53**（≥3 次停下）|
+| 506 | **★ 「0 处问题」必须先问「它到底比了几个」—— 一个读了**不存在字段**的判据会安静地永远绿**（★ 事实 62 的活例，2026-10-03 接手轮自己踩的）。
+      ★ **现象**：我为「`Param` 声明类型 vs 目标函数类型标注」与「`Param` 默认值 vs 声明类型」
+        写了两条静态判据（`output/_scan_param_types.py` / `_scan_default_types.py`），
+        ★ 两条都打印 **「确定矛盾：0 处」** ⇒ ★ **看起来两条都干净**。
+      ★★ **真因**：`tool_registry.Param` 的类型字段叫 **`kind`**（★ 而 dataclass 里**没有** `type` 这个字段）
+        ⇒ 我写的 `getattr(p, "type", None)` **永远是 `None`** ⇒ ★ 判据在第一个 `if got is None: continue`
+        就把**每一个参数**跳过了 ⇒ ★★ **一个都没比，却报 0**。
+      ★★★ **是怎么发现的**：★ 靠**注意到一个不可能的数** —— 另一条判据的同一份输出里写着
+        「**无默认值 0 个**」，★ 而 277 个工具里**不可能人人都显式给了默认值**
+        （★ 真相：`Param.default` 用 **`Ellipsis`** 当"没有默认值"的哨兵，★ 而我把 `Ellipsis` 当成了值）。
+      ★ **修后（`tools/scan_param_kind_consistency.py`，用正确的 `kind`）**：
+        · ⑥ 声明类型 vs 函数标注 ⇒ ★ **0 处矛盾**（真比了；★ 函数无标注的跳过，如实报数）；
+        · ⑦ 默认值 vs 声明类型 ⇒ ★ **0 处矛盾**（★ **349 个无默认值**）。
+        ⇒ ★★ 两条**真的干净** —— ★ 但**只有修好之后这个"干净"才算数**。
+      ★★ **定则（★ 可复用）**：
+        ① ★ **判据必须报"覆盖面"**（比了几个 / 跳过几个 / 为什么跳）——
+           ★ 只报"违规数"的判据**无法自证它在工作**；
+        ② ★ **输出里出现"0"或"全 0"时，先去找那个应该非 0 的数**（本例就是"无默认值"那格）；
+        ③ ★ **摸一个框架的数据类，先看字段名**（★ `dataclasses.fields()` 一打印就清楚）——
+           ★ 凭印象写 `getattr(obj, "type", None)` 是**静默失败**的经典形态。
+      ★ 与**事实 62**（"门禁写了 ≠ 有效，负例是唯一证明"）互补：★ 62 讲**判据要能失败**，
+        ★ 本条讲**判据要先证明它真的在跑**。|
+        痕迹：`tools/scan_param_kind_consistency.py`（修后）· `output/_scan_param_types.py` 与
+        `_scan_default_types.py`（★ **空跑版，留着当反例**）· `mcp-server/tool_registry.py` 的 `Param` |

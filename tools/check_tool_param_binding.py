@@ -102,7 +102,10 @@ def main() -> int:
                 continue
             bad.append((name, "<必填形参未声明>", r, mod_name + "." + fn_name, sorted(actual)[:14]))
 
-    print("核对参数个数：%d" % checked)
+    #: ★★ **2026-10-03（接手轮）：判据必须自报「覆盖面」** —— ★ 只报违规数的判据
+    #:   **无法自证它在工作**（★ 事实 506：我另外两条判据因为**读错字段**
+    #:   而「一个都没比却打印 0 处」）。
+    print("核对参数个数：%d（★ 这就是覆盖面 —— 判据必须自报它比了几个）" % checked)
     print("模块/函数取不到的：%d" % len(missing_mod))
     for m in missing_mod[:10]:
         print("   %-52s %s" % (m[0][:51], m[2][:80]))
