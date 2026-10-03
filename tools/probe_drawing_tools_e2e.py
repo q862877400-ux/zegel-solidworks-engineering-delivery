@@ -61,12 +61,31 @@ TOOL_ARGS: dict[str, dict] = {
                                                  "auto_update_zoom_cells": True},
     "solidworks_drawing_insert_center_marks": {"requirements": [
         {"id": "e2e-cm", "view": "front", "count": 1, "targets": ["holes"]}]},
+    # ★★ **batch73 的四条**（工程图真缺口）—— ★ 它们此前**只有探针级**真机证据，
+    #    ★ **没走过工具层** ⇒ 本轮补上（★ 判据仍是"工具返回 ok + 可回读增量"）。
+    "solidworks_drawing_create_broken_view": {"view_name": "★由前置步骤填入",
+                                              "position1_mm": -10.0, "position2_mm": 10.0,
+                                              "orientation": 2, "style": 5,
+                                              "shape_intensity": 2, "break_sketch_blocks": True},
+    "solidworks_drawing_create_auxiliary_view": {"x_mm": 200.0, "y_mm": 200.0, "z_mm": 0.0,
+                                                 "label": "", "not_aligned": True,
+                                                 "show_arrow": True, "flip": False},
+    "solidworks_drawing_insert_surface_finish_symbol": {"sym_type": 0, "leader_type": 1,
+                                                        "x_mm": 50.0, "y_mm": 50.0, "z_mm": 0.0,
+                                                        "lay_symbol": 0, "arrow_type": 0,
+                                                        "mach_allowance": "", "other_vals": "",
+                                                        "prod_method": "", "sample_len": "",
+                                                        "max_roughness": "", "min_roughness": ""},
+    "solidworks_drawing_insert_datum_tag": {},
 }
 
 #: ★ 需要"同一张图上先有视图"才能测的工具（★ 逐个建一张新工程图 ⇒ 先补一个视图）。
 #: ★ `insert_center_marks` 也在内 —— 它先 `_map_standard_views_from_sheet_views` 找 **front/top/right**，
 #:   ★ 图上没视图时 `mapped_views.get("front")` 是 None ⇒ 直接判 failed（★ 那是**前置**，不是能力）。
-NEEDS_VIEW = {"solidworks_drawing_create_hole_table", "solidworks_drawing_insert_center_marks"}
+#: ★ `create_broken_view` 要**按视图名**解析（官方 Remarks：无选区前置，按名字取 IView）；
+#:   ★ `create_auxiliary_view` 官方要求「based on a **selected edge in a drawing view**」⇒ 先有视图。
+NEEDS_VIEW = {"solidworks_drawing_create_hole_table", "solidworks_drawing_insert_center_marks",
+              "solidworks_drawing_create_broken_view", "solidworks_drawing_create_auxiliary_view"}
 
 
 def _get(o, name, *a):
@@ -261,8 +280,17 @@ def main() -> int:
             row["annotations_after"] = _annotation_total(doc)
             if row["views_before"] is not None and row["views_after"] is not None:
                 row["view_delta"] = row["views_after"] - row["views_before"]
-            row["ok"] = bool(row.get("ret_ok") or (row.get("view_delta") or 0) >= 1)
-            row["verified_by"] = "工具返回值 ok 或 视图数增量（★ 两条都报）"
+            if row["annotations_before"] is not None and row["annotations_after"] is not None:
+                row["annotation_delta"] = row["annotations_after"] - row["annotations_before"]
+            # ★★★ **2026-10-03 修的一处判据缺陷（★ 我自己的探针漏判）**：
+            #   原先只认 `ret_ok` 与 `view_delta` ⇒ ★ **产"注解"的工具全被漏判**
+            #   （实测：`insert_surface_finish_symbol` 明明 `annotations 72 → 73`，
+            #    ★ 却因 `ret_ok=False` 且 `view_delta=0` 被判成 `ok=False`）。
+            #   ★ 现把 **`annotation_delta`** 也纳入判据（★ 三条**都报**，判据取"任一为正"）。
+            row["ok"] = bool(row.get("ret_ok") or (row.get("view_delta") or 0) >= 1
+                             or (row.get("annotation_delta") or 0) >= 1)
+            row["verified_by"] = ("工具返回值 ok **或** 视图数增量 **或** 注解数增量"
+                                  "（★ 三条都报、判据取任一为正）")
         except Exception as exc:                                        # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
             row["ok"] = False

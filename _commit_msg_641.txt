@@ -1,0 +1,44 @@
+test(探针): ★★ 把工具层 e2e 从 8 条扩到 **12 条**（纳入 batch73 四条）＋**修掉我自己探针的一处漏判** ⇒ `passed 5/12 → 6/12`
+
+■ 一 · ★★★ 本轮最关键的是**修掉我自己探针的一处判据缺陷**（★ 又是"我自己的读数不可信"那一族）
+  · **现象**：`insert_surface_finish_symbol` 那格显示 `annotations_before=72 → annotations_after=73`
+    —— ★ **它明明加了一个注解**，★ 而我的判据**只认** `ret_ok` 与 `view_delta`
+    ⇒ ★ **被判成 `ok=False`（漏判）**。
+  · **根因**：本探针的判据是给"**视图类**工具"写的（视图数增量），
+    ★ 而工程图里还有一大类工具产的是**注解**（注释/粗糙度/基准/表/中心符号线）⇒ ★ 判据**覆盖面不全**。
+  · **修法**：判据改成 **`ret_ok` 或 视图数增量 或 注解数增量**（★ **三条都报**，判据取任一为正），
+    ★ 并把 `annotation_delta` 一并写进证据。
+  · **复验**：`passed 5/12 → 6/12`，★ `insert_surface_finish_symbol` **转正**（`ad=1`）✓
+  ⇒ ★ 与 known-facts **500**（前置污染基线）· **496**（前置与能力分开记）**同一族**：
+    **探针的判据本身也会骗人**，且**这一族的错都往"低估"方向偏**（把能用的记成不能用）。
+
+■ 二 · 扩到 12 条（★ 补的是"只验证到探针那一级"的欠账）
+  batch73 的四条（工程图真缺口）此前**只有 `prove_drawing_batch.py` 探针级**的真机证据，
+  ★ **从没走过工具层** ⇒ 本轮纳入：
+  | 工具 | 本轮工具层读数 | 前态 |
+  |---|---|---|
+  | `create_broken_view` | ★ **建成**（`ret_ok`）| 探针级 ✓ |
+  | `insert_surface_finish_symbol` | ★ **建成**（`annotation_delta=1`）| 探针级 ✓ |
+  | `create_auxiliary_view` | ✗ 前置未成立（官方要求先在图里**选一条边**）| 探针级 ✓ |
+  | `insert_datum_tag` | ✗ 前置未成立（官方**零参** · 「at a **selected location**」）| 探针级 ✓ |
+  ★ 它们在 spec 里的 `inject` 是 **`model`**（不是 `drawing_model`）—— ★ 已在探针里按 spec 原样取。
+
+■ 三 · 12 条的完整读数（`output/drawing-tools-e2e-evidence.json`）
+  | # | 工具 | ok | 判据读数 |
+  |---|---|---|---|
+  | 1 | `create_projected_view` | ✅ | `view_delta=1` |
+  | 2 | `create_section_view` | ✗ | 前置未成立（未选剖面线）|
+  | 3 | `create_detail_view` | ✗ | 前置未成立（无局部圆）|
+  | 4 | `set_sheet_format` | ✅ | `ret_ok`（+ `GetTemplateName` 回读）|
+  | 5 | `add_note` | ✅ | `annotation_delta=1` |
+  | 6 | `create_hole_table` | ✗ | 前置未成立（官方 mark 表要 1+2）|
+  | 7 | `create_revision_table` | ✅ | `annotation_delta=1` |
+  | 8 | `insert_center_marks` | ✗ | 母视图已在、`requirements` 已给 ⇒ ★ **仍未插上（待查）** |
+  | 9 | `create_broken_view` | ✅ | `ret_ok` |
+  | 10 | `create_auxiliary_view` | ✗ | 前置未成立（要先选一条边）|
+  | 11 | `insert_surface_finish_symbol` | ✅ | `annotation_delta=1` |
+  | 12 | `insert_datum_tag` | ✗ | 前置未成立（零参、要选位置）|
+  ⇒ ★ **6/12 经工具层建成**；★ 未建成的 5 条是**有据可查的前置**，
+    ★ 只剩 **`insert_center_marks` 一条是开放问题**（★ 如实记为待查，不当"能"、也不当"不能"）。
+
+★ 收尾链：**`release_check 第 1 轮 OK` · 29 passed**。★ 覆盖率不变（**119/145**，本轮只补验证读数）。
