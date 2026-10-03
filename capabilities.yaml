@@ -2856,7 +2856,9 @@
         "python 真机（轮 347）★ **PASS 3/3** —— 整条路通了：`create_study` ⇒ `ok=true` · `get_options` ⇒ **`CDispatch`** · `configure_static_solver_report(study, reference_pressure=1.0)` ⇒ **`ok=true` · `changed=[\"reference_pressure\"]` · `returned={'DefinedReferencePressure': 1.0}`**（★ **设置真的生效**）· 证据 output/solver-options-evidence.json",
         "python 真机（轮 346）★ **工具层修掉一处一行之差**：`resolve_study` 原先 `next(iter(iter_studies(sw)), None)` **没解包**（★ `iter_studies` 产 `(index, study)` 元组）⇒ 把元组当 study 传下去 ⇒ ★ **所有没声明 `study_name` 的工具全中招**。★ 修后 `study` = **`CDispatch`**，三个配置入口的报错**换了层次**（★ 从无意义的 `SldWorks.Application.X` 变成有意义的「该研究类型可能不是这一族」）。",
         "python 真机（轮 345）★ **建研究的两个真实前置查清**：① 第一参必须是 **`ISldWorks`**（★ 传 `doc` ⇒ `AttributeError: <unknown>.GetAddInObject`）· ② 文档里**必须有实体**（★ 否则 `swsStudyError_e = 1`）⇒ `create_study_report` 真机 `ok=true`。",
-        "python 真机（轮 273）★ `list_setter_summary`（零参）**ok=True**（9 个族 / 202 个 setter 名）· 证据 output/batch37-evidence.json"
+        "python 真机（轮 273）★ `list_setter_summary`（零参）**ok=True**（9 个族 / 202 个 setter 名）· ★★ **证据 `output/batch36-evidence.json`** —— ★ 它的顶层逐字是 `passed=6` / `of=6` / `verdict=pass`，★ 且 `steps.list_setter_summary.ok` 是 **`True`** ✓",
+        "⚠⚠ 2026-10-04（接手轮）**修正一条挂错的引证**：★ 本条原来把上面那句挂到 **`output/batch37-evidence.json`** 上 ⇒ ★★ **而那份文件里根本没有 `list_setter_summary` 的结果**，★ 且它的顶层逐字是 **`passed=1` / `of=4` / `verdict=partial`**、★ 四个 step 里 **三个 `ok=False`**（`set_option_ComputeFrequencyModes` · `set_option_ContactPenetrationStiffness` · `set_options`）⇒ ★★★ **把断言挂在它上面，在排期上等同于把「1/4」写成「PASS」** ✓",
+        "★ 上一条里那份 `batch37` 的真实状态**已如实记在这里**（★ 而不是让它沉默）：★ **它是 1/4 partial、★ 三步失败** —— ★ 那三步测的是**另一些求解器选项**（★ `ComputeFrequencyModes` / `ContactPenetrationStiffness`），★ **不属本条**（本条是「9 个族 / 202 个 setter 名」的清单读取），★ 故**不改变本条的 `level`**；★ 但**后续若要攻那两项，★ 起点就是这份 1/4 的证据** ✓"
       ],
       "mcp_tools": [
         "solidworks_simulation_configure_static_solver",
