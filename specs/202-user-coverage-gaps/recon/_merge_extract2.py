@@ -108,9 +108,13 @@ def analyse(path: Path, factories: dict):
             der = _nm(kw.get("derived_args")) if kw.get("derived_args") is not None else None
             inject = _const(kw.get("inject"))
             params = []
-            for c in pos:
-                nm = _nm(c) or ""
-                if nm.endswith("Param") and isinstance(c, ast.Call):
+            plist = []
+            if kw.get("params") is not None and isinstance(kw["params"], (ast.List, ast.Tuple)):
+                plist = list(kw["params"].elts)
+            plist += [c for c in pos if isinstance(c, ast.Call)
+                      and (_nm(c.func) or "").endswith("Param")]
+            for c in plist:
+                if isinstance(c, ast.Call) and (_nm(c.func) or "").endswith("Param"):
                     pkw = {k.arg: _const(k.value) for k in c.keywords if k.arg}
                     pname = _const(c.args[0]) if c.args else None
                     params.append({"name": pname, "default": pkw.get("default"),
@@ -146,7 +150,12 @@ def analyse(path: Path, factories: dict):
             der = fac.fixed["derived_args"]
             inject = fac.fixed["inject"]
             params = []
-            for c in pos:
+            plist = []
+            if kw.get("params") is not None and isinstance(kw["params"], (ast.List, ast.Tuple)):
+                plist = list(kw["params"].elts)
+            plist += [c for c in pos if isinstance(c, ast.Call)
+                      and (_nm(c.func) or "").endswith("Param")]
+            for c in plist:
                 if isinstance(c, ast.Call) and (_nm(c.func) or "").endswith("Param"):
                     pkw = {k.arg: _const(k.value) for k in c.keywords if k.arg}
                     params.append({"name": _const(c.args[0]) if c.args else None,

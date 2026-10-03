@@ -150,7 +150,7 @@
   "func_sel_tokens": [],
   "func_reads_sel": false,
   "doc_mentions_sel": true,
-  "has_selection_param": false
+  "has_selection_param": true
  },
  {
   "tool": "solidworks_helix_insert",
@@ -239,7 +239,7 @@
   ],
   "func_reads_sel": true,
   "doc_mentions_sel": true,
-  "has_selection_param": false
+  "has_selection_param": true
  },
  {
   "tool": "solidworks_measure_selection",

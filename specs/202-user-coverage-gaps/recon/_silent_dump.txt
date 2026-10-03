@@ -1,0 +1,1221 @@
+====================================================================================================
+### solidworks_mold_parting_line    spec=tool_specs_batch1.py   func=sw_mold.py::insert_parting_line
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_mold_parting_line",
+        title="Insert Mold Parting Line",
+        module="sw_mold", function="insert_parting_line",
+        inject="model",
+        params=[
+            Param("draft_analysis", bool, default=True,
+                  description="The official single parameter. Its exact meaning is UNVERIFIED; "
+                              "kept True to match the reference usage."),
+        ],
+        doc=("Insert a mold parting line. Select the draft-direction reference first "
+             "(edge/plane/axis); without it the call inserts nothing."),
+    ),
+---- FUNC ----
+def insert_parting_line(model, *, draft_analysis: bool = True):
+    """插入**分型线**。
+
+    调用前须由调用方选好**拔模方向参考**（边线/基准面/轴）——
+    官方在未选时会返回 None。
+
+    :param draft_analysis: 官方唯一参数（``Boolean``）。**语义未查证**：
+        按方法名推测是「是否同时做拔模分析」，但反射只给类型、CHM 无说明
+        ⇒ 默认 True（与来源示例的调用意图一致：它先设拔模角再建分型线）。
+    :returns: 新建 Feature 的名字。
+    :raises RuntimeError: 返回 None（常见原因：未选拔模方向参考）。
+    """
+    fm = get_com_member(model, "FeatureManager")
+    feat = get_com_member(fm, "InsertMoldPartingLine", bool(draft_analysis))
+    if feat is None:
+        raise RuntimeError(
+            "InsertMoldPartingLine 返回 None —— 常见原因：未选拔模方向参考"
+        )
+    return get_com_member(feat, "Name")
+
+====================================================================================================
+### solidworks_mold_parting_surface    spec=tool_specs_batch9.py   func=sw_mold.py::insert_parting_surface
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_mold_parting_surface",
+        title="Insert Mold Parting Surface",
+        module="sw_mold", function="insert_parting_surface",
+        inject="model",
+        doc="Insert the mold parting surface.",
+        param_alias={},
+        params=[
+            Param("surface_type", int, default=0, description="Official surface type enum value."),
+            Param("flip", bool, default=False, description="Reverse the surface direction."),
+            Param("use_trim", bool, default=False, description="Trim the surface."),
+            Param("distance", float, default=0.0, description="Distance parameter; 0.0 = default."),
+            Param("angle", float, default=0.0, description="Angle parameter; 0.0 = default."),
+            Param("option", int, default=0, description="Official option enum value."),
+            Param("tolerance", float, default=0.0, description="Tolerance; 0.0 = default."),
+            Param("alternate", bool, default=False, description="Use the alternate direction."),
+        ],
+    ),
+---- FUNC ----
+def insert_parting_surface(model, *, surface_type: int = 0, flip: bool = False,
+                           use_trim: bool = False, distance: float = 0.0,
+                           angle: float = 0.0, option: int = 0,
+                           tolerance: float = 0.0, alternate: bool = False):
+    """插入**分型面**（8 参，全部照官方签名位置）。
+
+    ⚠ **8 个参数里只有 3 个的语义可推断**（`distance`/`angle`/`tolerance`
+    按名字是长度与角度），其余 5 个（`surface_type` / `flip` / `use_trim` /
+    `option` / `alternate`）**语义未查证** ⇒ 默认值属待验证，不据此认为正确。
+
+    :returns: 新建 Feature 的名字。
+    :raises RuntimeError: 返回 None（常见原因：未先建分型线，或未选面）。
+    """
+    fm = get_com_member(model, "FeatureManager")
+    # 位置严格照官方：Int32, Boolean, Boolean, Double, Double, Int32, Double, Boolean
+    feat = get_com_member(
+        fm, "InsertMoldPartingSurface",
+        int(surface_type),      # 1 Int32 未查证
+        bool(flip),             # 2 Boolean 未查证
+        bool(use_trim),         # 3 Boolean 未查证
+        float(distance),        # 4 Double
+        float(angle),           # 5 Double
+        int(option),            # 6 Int32 未查证
+        float(tolerance),       # 7 Double
+        bool(alternate),        # 8 Boolean 未查证
+    )
+    if feat is None:
+        raise RuntimeError(
+            "InsertMoldPartingSurface 返回 None —— 常见原因：未先建分型线，或未选面"
+        )
+    return get_com_member(feat, "Name")
+
+====================================================================================================
+### solidworks_topology_create_preserved_region    spec=tool_specs_batch11.py   func=sw_topology.py::create_preserved_region
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_topology_create_preserved_region",
+        title="Create Topology Preserved Region",
+        module="sw_topology", function="create_preserved_region",
+        inject="study",
+        param_alias=dict(_STUDY_ALIAS),
+        doc="Create a preserved region for a topology study (material that must not "
+            "be removed). ⚠ `option` is an official enum value; omit to use the default.",
+        params=[
+            Param("study_name", str, default="",
+                  description="Target study; omit to use the active study. "
+                              "Consumed by the resolver, NOT passed to the function."),
+            Param("option", int, default=0,
+                  description="Official option enum value; 0 means the module default."),
+        ],
+    ),
+---- FUNC ----
+def create_preserved_region(study, *, option: int | None = None):
+    """建保留区控制，返回该控制对象。
+
+    ⚑ 调用方须**先选好要保留的面**再调本函数 —— ``ICWTopologyPreservedRegionControl``
+    的 ``SelectFaces(Object)`` 接受实体数组，但既有模式（``sw_simulation``）是用
+    选区而非数组，本模块沿用该模式，故本函数**不接受面参数**：由调用方选好再调。
+
+    官方 CHM 原话："During optimization, the software always preserves the faces to
+    which you apply fixtures and loads." ⇒ **夹具与载荷所在面自动保留**，
+    保留区是**额外**的。
+    """
+    manager = get_topology_study_manager(study)
+    control = get_com_member(manager, "CreatePreservedRegionControl", out_i4())
+    if control is None:
+        raise RuntimeError("CreatePreservedRegionControl 未返回对象")
+
+    def _configure():
+        if option is not None:
+            get_com_member(control, "SetIncludeRegionDepth2", True)
+        return control
+
+    return _edit(control, _configure)
+
+====================================================================================================
+### solidworks_topology_create_symmetry_control    spec=tool_specs_batch12.py   func=sw_topology.py::create_symmetry_control
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_topology_create_symmetry_control",
+        title="Create Topology Symmetry Control",
+        module="sw_topology", function="create_symmetry_control",
+        inject="study",
+        param_alias=dict(_STUDY_ALIAS),
+        doc="Create a symmetry control for a topology study. The caller must first select the "
+            "symmetry plane(s).",
+        params=[
+            Param("study_name", str, default="",
+                  description="Target study; omit to use the active study. "
+                              "Consumed by the resolver, NOT passed to the function."),
+            Param("symmetry_type", int, default=0,
+                  description="⚠ Values 0/1/2 come from the OFFICIAL VBA example "
+                              "(`Create_Topology_Study_Example_VBA.txt` uses SelectSymmetryType 0/1/2, "
+                              "commented 'Define topology one-half symmetry control'). "
+                              "The enum NAME was NOT found in the local reflection dump — so do not "
+                              "assume per-value semantics beyond that."),
+        ],
+    ),
+---- FUNC ----
+def create_symmetry_control(study, *, symmetry_type: int = 0):
+    """建对称控制（官方教程用 1/4 对称）。调用方须先选好对称平面。"""
+    manager = get_topology_study_manager(study)
+    control = get_com_member(manager, "CreateSymmetryControl", out_i4())
+    if control is None:
+        raise RuntimeError("CreateSymmetryControl 未返回对象")
+
+    def _configure():
+        get_com_member(control, "SelectSymmetryType", int(symmetry_type))
+        return control
+
+    return _edit(control, _configure)
+
+====================================================================================================
+### solidworks_topology_create_demold_control    spec=tool_specs_batch12.py   func=sw_topology.py::create_demold_control
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_topology_create_demold_control",
+        title="Create Topology Demold Control",
+        module="sw_topology", function="create_demold_control",
+        inject="study",
+        param_alias=dict(_STUDY_ALIAS),
+        doc="Create a de-mold (manufacturing) control for a topology study. "
+            "The caller must first select the pull-direction face/edge/plane, "
+            "then choose the direction option.",
+        params=[
+            Param("study_name", str, default="",
+                  description="Target study; omit to use the active study. "
+                              "Consumed by the resolver, NOT passed to the function."),
+            Param("direction", int, default=0,
+                  description="swsTopologyDemoldDirectionOption_e (from the factory reflection dump): "
+                              "0=TwoDirectionMidPlane, 1=PullDirectionOnly, 2=Stamping."),
+        ],
+    ),
+---- FUNC ----
+def create_demold_control(study, *, direction: int = 0):
+    """建脱模控制（制造约束）。调用方须先选好拔模方向的面/边/基准面。"""
+    manager = get_topology_study_manager(study)
+    control = get_com_member(manager, "CreateDemoldControl", out_i4())
+    if control is None:
+        raise RuntimeError("CreateDemoldControl 未返回对象")
+
+    def _configure():
+        get_com_member(control, "SelectDemoldDirection", int(direction))
+        return control
+
+    return _edit(control, _configure)
+
+====================================================================================================
+### solidworks_add_sketch_relation    spec=tool_specs_batch16.py   func=sw_part.py::add_sketch_relation
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_add_sketch_relation",
+        title="Add Sketch Relation",
+        module="sw_part", function="add_sketch_relation",
+        inject="model",
+        doc="Add a sketch geometric relation to the current selection.",
+        params=[
+            Param("relation_type", str,
+                  description="Relation name. Valid values (from the function's own docstring): "
+                              "sgFIXED, sgHORIZONTAL, sgVERTICAL, sgCOLINEAR, sgPARALLEL, "
+                              "sgPERPENDICULAR, sgTANGENT, sgCONCENTRIC, sgEQUAL, sgSYMMETRIC, "
+                              "sgMIDPOINT, sgCOINCIDENT."),
+        ],
+    ),
+---- FUNC ----
+def add_sketch_relation(model, relation_type):
+    """
+    添加草图几何关系
+
+    常用 relation_type:
+        "sgFIXED", "sgHORIZONTAL", "sgVERTICAL", "sgCOLINEAR",
+        "sgPARALLEL", "sgPERPENDICULAR", "sgTANGENT", "sgCONCENTRIC",
+        "sgEQUAL", "sgSYMMETRIC", "sgMIDPOINT", "sgCOINCIDENT"
+    """
+    return model.SketchAddConstraints(relation_type)
+
+====================================================================================================
+### solidworks_part_insert_composite_curve    spec=tool_specs_batch32.py   func=sw_part.py::insert_composite_curve_report
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_part_insert_composite_curve",
+        title="Insert a Composite Curve from the Selection (read-back confirmed)",
+        module="sw_part", function="insert_composite_curve_report",
+        inject="model",
+        params=[
+            Param("feature_name", str, default="", description=_FEAT),
+        ],
+        doc="Join the selected entities into a composite curve and return a READ-BACK report "
+            "(★ rule 6). The capability layer already raises when the official call returns "
+            "False — this adds the tree/rebuild/What's Wrong read-back on top. "
+            "⚠ The official Remarks require the entities to be selected with mark = 1 first. "
+            "⚠ Does NOT save the document.",
+    ),
+---- FUNC ----
+def insert_composite_curve_report(model, feature_name: str = ""):
+    """★ **复合曲线**并回**回读报告**。
+
+    ★ 能力层的 `insert_composite_curve` **本身已经 raise on False**（★ 不是"假通过"），
+      所以这里主要补"**建完之后特征在不在 + 重建 + 查错**"那三条（★ 规则 6）。
+    ⚠ 调用前**必须先用 mark = 1 选好实体**（官方 Remarks；与 `insert_dome` 同一个坑）。
+    """
+    return _feature_report(model, feature_name or "复合曲线1",
+                           lambda: insert_composite_curve(model), "composite_curve")
+
+====================================================================================================
+### solidworks_part_insert_dome    spec=tool_specs_batch32.py   func=sw_part.py::insert_dome_report
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_part_insert_dome",
+        title="Add a Dome to the Selected Face (read-back confirmed)",
+        module="sw_part", function="insert_dome_report",
+        inject="model",
+        param_alias={"height_mm": "height_mm"},
+        params=[
+            Param("height_mm", float, description=_HEIGHT),
+            Param("feature_name", str, default="", description=_FEAT),
+            Param("reverse", bool, default=False, description="Reverse the dome direction."),
+            Param("elliptic", bool, default=False, description="Make the dome elliptical."),
+        ],
+        doc="Add a dome on the selected face and return a READ-BACK report (★ rule 6). "
+            "⚠ The official Remarks require the face to be selected BEFORE the call. "
+            "⚠ Does NOT save the document.",
+    ),
+---- FUNC ----
+def insert_dome_report(model, height_mm: float, feature_name: str = "",
+                       reverse: bool = False, elliptic: bool = False):
+    """★ **圆顶**并回**回读报告**（★ 规则 6）。"""
+    return _feature_report(model, feature_name or "圆顶1",
+                           lambda: insert_dome(model, float(height_mm), reverse, elliptic), "dome")
+
+====================================================================================================
+### solidworks_weldment_create_profile_center_mate    spec=tool_specs_batch35.py   func=sw_weldment.py::create_profile_center_mate
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_weldment_create_profile_center_mate",
+        title="Create a Profile-Center Mate (declarative selection)",
+        module="sw_weldment", function="create_profile_center_mate",
+        inject="model",
+        params=[
+            Param("entities", str, default="__current_selection__", description=_PICK),
+            Param("mate_alignment", int, default=0, description="Mate alignment enum value."),
+            Param("offset_distance_mm", float, default=0.0,
+                  description="Offset distance in MILLIMETRES (★ rule 2)."),
+            Param("flip_dimension", bool, default=False, description="Flip the mate dimensions."),
+        ],
+        #: ★★ 能力层的形参是 `offset_distance`（**不带** `_mm`）⇒ 用 `param_alias` 把
+        #:   工具层的 `offset_distance_mm` 映过去 —— ★ 那正是本项目的统一形态
+        #:   （★ 工具层带 `_mm`、能力层不带；★ 由 `check_param_binding.py` 盯着）。
+        param_alias={"offset_distance_mm": "offset_distance"},
+        doc="Create a profile-center mate between declaratively selected structural members.",
+    ),
+---- FUNC ----
+def create_profile_center_mate(
+    model,
+    entities,
+    *,
+    mate_alignment: int = 0,
+    offset_distance: float = 0.0,
+    flip_dimension: bool = False,
+    lock_rotation: bool = False,
+):
+    """在所选实体间创建型材中心配合。"""
+    if entities is None:
+        raise ValueError("entities 为 None：须先选中要配合的实体")
+
+    def _apply(data):
+        set_com_member(data, "EntitiesToMate", entities)
+        set_com_member(data, "MateAlignment", int(mate_alignment))
+        set_com_member(data, "OffsetDistance", float(offset_distance))
+        set_com_member(data, "FlipDimension", bool(flip_dimension))
+        set_com_member(data, "LockRotation", bool(lock_rotation))
+
+    return _create_from_definition(model, SW_FM_MATE_PROFILE_CENTER, _apply)
+
+====================================================================================================
+### solidworks_helix_insert    spec=tool_specs_batch39.py   func=sw_helix.py::insert_helix
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_helix_insert",
+        title="Insert a Helix / Spiral",
+        module="sw_helix", function="insert_helix",
+        inject="model",
+        params=[
+            Param("height_mm", float, description="Helix height in MILLIMETRES."),
+            Param("pitch_mm", float, default=0.0,
+                  description="Pitch in MILLIMETRES. ⚠ 0.0 = leave it to the document default."),
+            Param("revolution", float, default=0.0,
+                  description="Number of revolutions (★ not a length, not an angle). "
+                              "⚠ 0.0 = leave it to the document default."),
+        ],
+        doc="Insert a helix/spiral. ★ Needs the document state the official API requires "
+            "(a circular sketch to revolve about) — the capability layer reports it if not.",
+    ),
+---- FUNC ----
+def insert_helix(
+    model,
+    *,
+    height_mm: float,
+    pitch_mm: float = 0.0,
+    revolution: float = 0.0,
+    helix_def: int = HELIX_DEFINED_BY["pitch_and_revolution"],
+    reversed: bool = False,
+    clockwise: bool = False,
+    tapered: bool = False,
+    outward: bool = False,
+    taper_angle_deg: float = 0.0,
+    start_angle_deg: float = 0.0,
+):
+    """建**定距螺旋线 / 涡旋**。
+
+    ⚠ **调用前置条件**（与 `sw_mold.insert_parting_line` 同类）：
+    官方示例显示要先**选中一个圆**（`SelectByID2` + `CreateCircle`）——
+    螺旋线以那个圆为直径基准。**未选圆时行为未查证**（本模块不代选，保持"不猜"）。
+
+    :param height_mm: 螺旋线高度，**毫米**（官方 `Height` 单位是米，这里换算）。
+    :param pitch_mm: 螺距，**毫米**。⚠ 官方**未写单位**，本模块按米换算（同类推断）。
+    :param revolution: 圈数（无量纲）。
+    :param helix_def: `swHelixDefinedBy_e` 的**数值**；用 `HELIX_DEFINED_BY` 里的名字。
+    :param reversed: 官方 `Reversed` —— 反向于定义圆的法向。
+    :param clockwise: 官方 `Clockwised` —— 顺时针。
+    :param tapered: 官方 `Tapered` —— 带锥度。
+    :param outward: 官方 `Outward` —— 向外锥。
+    :param taper_angle_deg: 锥角，**度**。⚠ 官方**未写单位**，本模块按度直传。
+    :param start_angle_deg: 起始角，**度**（官方 `Startangle` 单位是**弧度**，这里换算）。
+    :returns: 新建 Feature 的名字。
+    :raises RuntimeError: 返回 `None`（最常见原因：**没有选中定义用的圆**）。
+    """
+    model.InsertHelix(
+        bool(reversed),
+        bool(clockwise),
+        bool(tapered),
+        bool(outward),
+        int(helix_def),
+        mm(float(height_mm)),
+        mm(float(pitch_mm)),
+        float(revolution),
+        float(taper_angle_deg),
+        deg(float(start_angle_deg)),
+    )
+    return _newest_feature_name(model)
+
+====================================================================================================
+### solidworks_sketch_convert_entities    spec=tool_specs_batch41.py   func=sw_sketch_edit.py::convert_entities
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_sketch_convert_entities",
+        title="Convert Entities into the Active Sketch",
+        module="sw_sketch_edit", function="convert_entities",
+        inject="model",
+        params=[
+            Param("chain", bool, default=True, description="Select the whole chain."),
+            Param("inner_loops", bool, default=False, description="Include inner loops."),
+        ],
+        doc="Convert the selected model edges into the active sketch. ★ The criterion is that the "
+            "sketch entity count changes.",
+    ),
+---- FUNC ----
+def convert_entities(model, *, chain: bool = True, inner_loops: bool = False):
+    """把**已选中的边/环/面/曲线/外部草图轮廓**投影成本草图的实体（转换实体引用）。
+
+    ⚠ **调用前置条件**：官方写明「projects **selected** edges, loops, faces, curves,
+    and external sketch contours」⇒ 调用方必须**先选中**要转换的东西并**进入草图**
+    （本模块**不代选**，保持"不猜"）。
+
+    :param chain: 官方 `Chain` —— `True` 连**整条链**一起转（同一草图轮廓/链上
+        相邻的几何）；`False` 只转**选中的那些**。
+    :param inner_loops: 官方 `InnerLoops` —— `True` 把所选面的**内环**也转过来。
+    :returns: `True`（官方成功返回 `True`）。
+    :raises RuntimeError: 不在草图编辑态，或官方返回 `False`（**不静默成功**）。
+    """
+    skm = get_com_member(model, "SketchManager")
+    if skm is None:
+        raise RuntimeError("IModelDoc2.SketchManager 为 None ⇒ 当前不在草图编辑态？")
+    got = get_com_member(skm, "SketchUseEdge3", bool(chain), bool(inner_loops))
+    if not got:
+        raise RuntimeError(
+            "ISketchManager.SketchUseEdge3 返回 False（失败）—— 常见原因："
+            "**没有选中要转换的边/环/面/曲线**，或当前不在草图编辑态。"
+            "官方：它投影的是「**selected** edges, loops, faces, curves, and "
+            "external sketch contours」。"
+        )
+    return True
+
+====================================================================================================
+### solidworks_sketch_create_chamfer    spec=tool_specs_batch41.py   func=sw_sketch_edit.py::create_sketch_chamfer
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_sketch_create_chamfer",
+        title="Create a Sketch Chamfer",
+        module="sw_sketch_edit", function="create_sketch_chamfer",
+        inject="model",
+        params=[
+            Param("chamfer_type", int, default=0, description="Chamfer type enum value."),
+            Param("distance_mm", float, description="Chamfer distance in MILLIMETRES."),
+        ],
+        doc="Create a chamfer on the selected sketch entities. ★ Needs entities selected first "
+            "(★ rule 3: select declaratively, do not pass coordinates). "
+            "⚠ The backend limit in known-facts 47 applies to the *feature* chamfer; this is the "
+            "sketch one — the layer reports what actually happened.",
+    ),
+---- FUNC ----
+def create_sketch_chamfer(model, *, chamfer_type: int = SKETCH_CHAMFER_TYPE["distance_angle"],
+                          distance_mm: float, angle_or_distance: float = 0.0):
+    """在**已选中的两条草图实体**之间做倒角。
+
+    ⚠ **调用前置条件**：官方写明「creates a chamfer **between two selected sketch entities**」
+    ⇒ 调用方必须先选中**两条**草图实体（本模块**不代选**，保持"不猜"）。
+
+    :param chamfer_type: `swSketchChamferType_e` 的数值；用 `SKETCH_CHAMFER_TYPE` 里的名字。
+    :param distance_mm: 倒角距离，**毫米**（官方 `Distance` 是米，这里换算）。
+    :param angle_or_distance: 官方 `AngleORdist` ——
+        按 `chamfer_type` 解释：距离-距离时是**第二个距离（毫米）**、
+        距离-角度时是**角度（度）**、距离-相等时**被忽略**。
+        ⚠ 官方**没写这一参的单位**（取决于类型）⇒ 本模块**不做换算**，按原样传，
+        并在 docstring 里点明这一处含糊。
+    ⚠⚠ **本函数当前「不可用」（2026-10-01 轮 122 真机实测）** ——
+    在**新零件**上画两条相接直线、**已确认选中 2 条**，然后调 `CreateChamfer`：
+    ```
+    type=2(distance_equal)  ⇒ **pywintypes.com_error: (-2147417851, '服务器出现意外情况')**
+    ```
+    ★ `0x80010105` **正是已知事实 47 / 28 那个错误码** ——
+    即「**pywin32 迟到绑定到不了需要真实指针的接口**」这一**架构性限制**。
+    ⚠ **按事实 53 停手**（不再试别的类型/参数组合）；本模块保留该函数作**可复算的证据**。
+
+    :returns: 倒角产生的草图线段（官方返回 `SketchSegment`）。
+    :raises RuntimeError: 返回 `None`（最常见原因：**没有选中两条草图实体**）。
+    """
+    skm = get_com_member(model, "SketchManager")
+    if skm is None:
+        raise RuntimeError("IModelDoc2.SketchManager 为 None ⇒ 当前不在草图编辑态？")
+
+    #: ⚠⚠⚠ **2026-10-01（轮 164）更正上一段那段定性** —— 它是**误判**。
+    #: 上一段说「`0x80010105` ⇒ 架构性限制、到不了」，依据只是**看到异常**。
+    #: ★ 轮 164 用 `tools/probe_chamfer_forms.py` **逐类型试 + 回读线段数**：
+    #: ```
+    #:   type=0（默认 distance_angle）⇒ 段数 2 → 2（**没变**）· 返回 None
+    #:   type=1（distance_distance） ⇒ 段数 2 → 2（**没变**）· 返回 None
+    #:   type=2（distance_equal）     ⇒ 段数 **2 → 3**（**变了 ✚**）· com_error 0x80010105
+    #: ```
+    #: ⇒ ★★★ **`type=2` 的倒角其实建成了** —— 那个 `com_error` 是在**取返回值**
+    #:   （`SketchSegment`）那一步抛的，**不影响倒角本身**。
+    #: ⇒ ★★ 真正的限制是「**拿不到返回对象**」，**不是**「做不了倒角」。
+    #: ★ 根因：上一版**只看异常、没回读副作用** —— 与已知事实 94 那一族
+    #:   （**不信返回值/异常，回读状态**）同源。
+    def _seg_count():
+        """回读活动草图的线段数（判「倒角建成了没有」的**状态量**）。"""
+        try:
+            sk = get_com_member(model, "GetActiveSketch2")
+            if sk is None:
+                sk = get_com_member(get_com_member(model, "SketchManager"), "ActiveSketch")
+            segs = get_com_member(sk, "GetSketchSegments") if sk is not None else None
+            return len(list(segs)) if segs else 0
+        except Exception:      # noqa: BLE001
+            return -1
+
+    before = _seg_count()
+    try:
+        seg = get_com_member(skm, "CreateChamfer",
+                             int(chamfer_type), mm(float(distance_mm)), float(angle_or_distance))
+    except Exception as exc:      # noqa: BLE001
+        #: ★ **建成但拿不到返回对象** ⇒ 不算失败（回读线段数确认）
+        if _seg_count() > before >= 0:
+            return None
+        raise RuntimeError(
+            "ISketchManager.CreateChamfer 失败：%s\n"
+            "⚠ 已**回读线段数**（%s → %s）确认**没有建成**。"
+            "★ 实测：**只有 `distance_equal`(2) 能成**（type=0/1 段数不变）。"
+            "官方前置：**必须选中两条草图实体**。" % (exc, before, _seg_count())
+        ) from exc
+    if seg is None:
+        if _seg_count() > before >= 0:
+            return None      #: 同上：建成了，只是没有返回对象
+        raise RuntimeError(
+            "ISketchManager.CreateChamfer 返回 None 且**线段数没变**（%s → %s）⇒ 没建成。"
+            "★ 实测：**只有 `distance_equal`(2) 能成**；官方前置是**选中两条草图实体**。"
+            % (before, _seg_count())
+        )
+    return seg
+
+====================================================================================================
+### solidworks_sketch_mirror    spec=tool_specs_batch41.py   func=sw_sketch_edit.py::sketch_mirror
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_sketch_mirror",
+        title="Mirror the Selected Sketch Entities",
+        module="sw_sketch_edit", function="sketch_mirror",
+        inject="model",
+        params=[],
+        doc="Mirror the selected sketch entities about the selected centerline. "
+            "★ The criterion is that the sketch entity count changes.",
+    ),
+---- FUNC ----
+def sketch_mirror(model):
+    """把**已选中的草图实体**镜像（生成新的镜像实体）。
+
+    ⚠ **调用前置条件（选中标记，官方写明）**：
+    * 要镜像的是**草图线段** ⇒ 选中时用 **mark = 1**；
+    * 要镜像的是**中心线**   ⇒ 选中时用 **mark = 2**。
+
+    ⇒ 本模块**不代选**；标记是"选中时定的"，不是传参定的（官方签名 **0 参**）。
+
+    :returns: 新建的镜像实体数（回读草图的线段数变化无法可靠判定，故返回 `True`）。
+    :raises RuntimeError: 无法确认草图处于可镜像状态。
+    """
+    skm = get_com_member(model, "SketchManager")
+    if skm is None:
+        raise RuntimeError("IModelDoc2.SketchManager 为 None ⇒ 当前不在草图编辑态？")
+    sketch = get_com_member(skm, "ActiveSketch")
+    if sketch is None:
+        raise RuntimeError(
+            "ISketchManager.ActiveSketch 为 None ⇒ 当前不在草图编辑态。"
+            "官方 SketchMirror 需要先进入草图并选中要镜像的实体"
+            "（线段 mark=1 / 中心线 mark=2）。"
+        )
+    model.SketchMirror()
+    return True
+
+====================================================================================================
+### solidworks_sketch_stretch_entities    spec=tool_specs_batch67.py   func=sw_sketch_modify_ops.py::sketch_stretch
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_sketch_stretch_entities",
+        title="Stretch Sketch Entities",
+        module="sw_sketch_modify_ops", function="sketch_stretch",
+        inject="model",
+        param_alias={"base_x_mm": "base_x_mm", "base_y_mm": "base_y_mm",
+                     "dest_x_mm": "dest_x_mm", "dest_y_mm": "dest_y_mm",
+                     "keep_relations": "keep_relations"},
+        params=[
+            Param("base_x_mm", float, description="基点 X（毫米）。"),
+            Param("base_y_mm", float, description="基点 Y（毫米）。"),
+            Param("dest_x_mm", float, description="拉伸终点 X（毫米）。"),
+            Param("dest_y_mm", float, description="拉伸终点 Y（毫米）。"),
+            Param("keep_relations", bool, description="保留草图几何关系（★ 布尔是**标志**，不是长度）。"),
+        ],
+        doc="★ 伸展实体：**`IModelDocExtension.Stretch`**（★ 入口在 **Extension** 上，不是 `IModelDoc2`）。"
+            "⚠ 官方说明「Stretch the **selected** entities」⇒ ★ **要求先选中实体**。",
+    ),
+---- FUNC ----
+def sketch_stretch(model, base_x_mm: float, base_y_mm: float,
+                   dest_x_mm: float, dest_y_mm: float,
+                   keep_relations: bool = True) -> dict:
+    """★ 伸展实体：`IModelDocExtension.Stretch(KeepRelations, BaseX, BaseY, DestX, DestY)`（回 `void`）。
+
+    ⚠ ★ **入口在 `IModelDocExtension` 上**（不是 `IModelDoc2`）⇒ 先取 `model.Extension` ✓
+    ★ 官方说明逐字 "Stretch the selected entities" ⇒ ★ **要求先选中实体**（★ 见模块头的"选择"说明）。
+    """
+    _require_model(model)
+    ext = get_com_member(model, "Extension")
+    if ext is None:
+        raise RuntimeError("取不到 model.Extension —— 伸展实体在 IModelDocExtension 上")
+    before = _active_sketch_name(model)
+    get_com_member(ext, "Stretch", bool(keep_relations),
+                   float(base_x_mm) / 1000.0, float(base_y_mm) / 1000.0,
+                   float(dest_x_mm) / 1000.0, float(dest_y_mm) / 1000.0)
+    return {"ok": True, "op": "stretch", "verified_by": "no_exception",
+            "sketch_before": before, "sketch_after": _active_sketch_name(model),
+            "keep_relations": bool(keep_relations)}
+
+====================================================================================================
+### solidworks_insert_planar_surface    spec=tool_specs_batch68.py   func=sw_surface_edit_ops.py::insert_planar_surface
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_insert_planar_surface",
+        title="Insert Planar Surface",
+        module="sw_surface_edit_ops", function="insert_planar_surface",
+        inject="model",
+        param_alias={},
+        params=[],
+        doc="★ 平面区域：`IModelDoc2.InsertPlanarRefSurface()`（**零参数**，回 `bool`）。"
+            "★ 官方语义：用**当前选中的封闭边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。"
+            "★ 真机：树 6→7，新增 `曲面-基准面1`。",
+    ),
+---- FUNC ----
+def insert_planar_surface(model) -> dict:
+    """★ **平面区域**：`IModelDoc2.InsertPlanarRefSurface()` —— ★ **零参数**，回 `bool`。
+
+    ★ 官方语义：用**当前选中的封闭边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。
+    ★ 判据 = **返回值非假** **且** **特征树有新特征**（★ 两判据都要 —— 返回值单独不可信，事实 8）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = _tree_names(model)
+    r = get_com_member(model, "InsertPlanarRefSurface")
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": bool(r) and bool(added), "op": "planar_surface",
+            "returned": r, "tree_before": before, "tree_after": after, "new_features": added,
+            "verified_by": "return_value + tree_delta"}
+
+====================================================================================================
+### solidworks_insert_offset_surface    spec=tool_specs_batch68.py   func=sw_surface_edit_ops.py::insert_offset_surface
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_insert_offset_surface",
+        title="Insert Offset Surface",
+        module="sw_surface_edit_ops", function="insert_offset_surface",
+        inject="model",
+        param_alias={"thickness_mm": "thickness_mm", "reverse": "reverse"},
+        params=[
+            Param("thickness_mm", float, description="与参考面的距离（毫米）。"),
+            Param("reverse", bool, description="反向偏移（★ 布尔是标志，不是长度）。",
+                  required=False, default=False),
+        ],
+        doc="★ 等距曲面：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（回 `void`）。"
+            "★ 真机：树 7→8，新增 `曲面-等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。",
+    ),
+---- FUNC ----
+def insert_offset_surface(model, thickness_mm: float, reverse: bool = False) -> dict:
+    """★ **等距曲面**：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)` —— 回 `void`。
+
+    :param thickness_mm: 与参考面的距离（毫米；★ 只在本边界换算成米一次，规则 2）。
+    :param reverse: 反向偏移（官方 `Reverse`：True 就反向）。
+
+    ⚠ ★ 官方回 `void` ⇒ ★ 没有返回值可判 ⇒ 判据**只能**靠**特征树增量**（★ 并如实写 `verified_by`）。
+    ⚠ ★ 官方没写"要不要先选面"，而语义上要（参考面）；★ 调用方负责先选。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    if float(thickness_mm) <= 0:
+        return {"ok": False, "error": "thickness_mm 必须 > 0"}
+    before = _tree_names(model)
+    get_com_member(model, "InsertOffsetSurface", float(thickness_mm) / 1000.0, bool(reverse))
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": bool(added), "op": "offset_surface",
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "asked_mm": thickness_mm, "reverse": bool(reverse),
+            "verified_by": "tree_delta"}
+
+====================================================================================================
+### solidworks_insert_ruled_surface    spec=tool_specs_batch68.py   func=sw_surface_edit_ops.py::insert_ruled_surface
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_insert_ruled_surface",
+        title="Insert Ruled Surface",
+        module="sw_surface_edit_ops", function="insert_ruled_surface",
+        inject="model",
+        param_alias={k: k for k in (
+            "ruled_type", "length_mm", "flip_pull_dir", "flip_dir", "trim_and_sew",
+            "angle_deg", "coord_input", "x_mm", "y_mm", "z_mm", "b_connect_surface")},
+        params=[
+            Param("ruled_type", int, description="官方 `Type`：0=Tangent to Surface · 1=Normal to Surface · "
+                                                "2=Tapered to Vector · 3=Perpendicular to Vector · 4=Sweep。"),
+            Param("length_mm", float, description="距离（毫米；★ 官方说只对 Tangent/Tapered/Perpendicular 有效）。",
+                  required=False, default=0.0),
+            Param("flip_pull_dir", bool, description="翻转拉伸方向（★ 官方说只对 Normal/Tapered 有效）。",
+                  required=False, default=False),
+            Param("flip_dir", bool, description="翻转方向（★ 官方说只对 Perpendicular 有效）。",
+                  required=False, default=False),
+            Param("trim_and_sew", bool, description="裁剪并缝合（★ 布尔是标志）。",
+                  required=False, default=True),
+            Param("angle_deg", float, description="角度（度；★ 官方说只对 Tapered to Vector 有效）。",
+                  required=False, default=0.0),
+            Param("coord_input", bool, description="启用坐标输入（★ 官方说只对 Sweep 有效）。",
+                  required=False, default=False),
+            Param("x_mm", float, description="X 坐标（毫米）。", required=False, default=0.0),
+            Param("y_mm", float, description="Y 坐标（毫米）。", required=False, default=0.0),
+            Param("z_mm", float, description="Z 坐标（毫米）。", required=False, default=0.0),
+            Param("b_connect_surface", bool, description="移除连接曲面（★ 布尔是标志）。",
+                  required=False, default=False),
+        ],
+        doc="★ 直纹曲面：`IFeatureManager.InsertRuledSurfaceFromEdge2(…)`（**11 参**，回 `Feature`）。"
+            "⚠ 官方 Remarks 逐字：「If you select an edge with a **selection mark of 4**, the default "
+            "face is used.」⇒ ★ **调用前先把边按 `mark=4` 选中**。★ 真机：树 7→8，新增 `直纹曲面1`。"
+            "★ 用的是 `…FromEdge2`（★ `…FromEdge` 官方标 **Obsolete**，铁律 4）。",
+    ),
+---- FUNC ----
+def insert_ruled_surface(model, ruled_type: int, length_mm: float = 0.0,
+                         flip_pull_dir: bool = False, flip_dir: bool = False,
+                         trim_and_sew: bool = True, angle_deg: float = 0.0,
+                         coord_input: bool = False, x_mm: float = 0.0,
+                         y_mm: float = 0.0, z_mm: float = 0.0,
+                         b_connect_surface: bool = False) -> dict:
+    """★ **直纹曲面**：`IFeatureManager.InsertRuledSurfaceFromEdge2(…)` —— **11 参**，回 `Feature`。
+
+    ★ 官方 Remarks 逐字：「If you **select an edge with a selection mark of 4**, the default face
+      is used.」⇒ ★★ **调用前先把边按 `mark=4` 选中**（铁律 3 第三句）。
+
+    :param ruled_type: 官方的 `Type`（★ 取值表见 `RULED_TYPE_MEANINGS`，本函数**原样透传**）。
+    :param length_mm: 距离（毫米）；★ 官方说**只对** Tangent / Tapered / Perpendicular 有效。
+    :param angle_deg: 角度（度）；★ 官方说**只对** `Tapered to Vector` 有效。
+
+    ⚠ ★ 用的是 `…FromEdge2`（★ `…FromEdge` 官方标 **Obsolete**，铁律 4：以后继版为准）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    if int(ruled_type) not in RULED_TYPE_MEANINGS:
+        return {"ok": False, "error": "ruled_type 不在官方取值表 0..4 内：%r（表：%s）"
+                % (ruled_type, RULED_TYPE_MEANINGS)}
+    import math
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        return {"ok": False, "error": "取不到 FeatureManager"}
+    before = _tree_names(model)
+    feat = get_com_member(fm, "InsertRuledSurfaceFromEdge2",
+                          int(ruled_type), float(length_mm) / 1000.0,
+                          bool(flip_pull_dir), bool(flip_dir), bool(trim_and_sew),
+                          math.radians(float(angle_deg)), bool(coord_input),
+                          float(x_mm) / 1000.0, float(y_mm) / 1000.0, float(z_mm) / 1000.0,
+                          bool(b_connect_surface))
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": feat is not None and bool(added), "op": "ruled_surface",
+            "returned_is_none": feat is None,
+            "type": int(ruled_type), "type_meaning": RULED_TYPE_MEANINGS[int(ruled_type)],
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "verified_by": "feature_not_none + tree_delta"}
+
+====================================================================================================
+### solidworks_insert_replace_face    spec=tool_specs_batch68.py   func=sw_surface_edit_ops.py::insert_replace_face
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_insert_replace_face",
+        title="Insert Replace Face",
+        module="sw_surface_edit_ops", function="insert_replace_face",
+        inject="model",
+        param_alias={},
+        params=[],
+        doc="★ 替换面：`IModelDoc2.InsertFeatureReplaceFace()`（**零参数**，回 `void`）。"
+            "⚠ 官方 Remarks 逐字：调用前要**选中面** —— 要被替换的面 **mark=1**、替换面 **mark=2**。"
+            "★ 真机：树 7→8，新增 `替换面1`（★ 而前置要用**实体**的面，不是曲面体的面）。",
+    ),
+---- FUNC ----
+def insert_replace_face(model) -> dict:
+    """★ **替换面**：`IModelDoc2.InsertFeatureReplaceFace()` —— **零参数**，回 `void`。
+
+    ★★ 官方 Remarks 逐字：「Before calling this method, **select the faces to replace** by calling
+      `IModelDocExtension::SelectByID2` with **Marks of 1** and 2」
+      ⇒ ★ **调用方必须先把「要替换的面」按 `mark=1`、「替换成哪个面」按 `mark=2` 选好** ✓
+      （★ 铁律 3 第三句：多引用特征读 mark，不读选择顺序。）
+
+    ⚠ 回 `void` ⇒ 判据只能靠**特征树增量**（★ 并如实写 `verified_by`）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = _tree_names(model)
+    get_com_member(model, "InsertFeatureReplaceFace")
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": bool(added), "op": "replace_face",
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "requires_selection": "要被替换的面 mark=1 · 替换面 mark=2（官方 Remarks）",
+            "verified_by": "tree_delta"}
+
+====================================================================================================
+### solidworks_insert_lofted_ref_surface    spec=tool_specs_batch69.py   func=sw_surface_ref_ops.py::insert_lofted_ref_surface
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_insert_lofted_ref_surface",
+        title="Insert Lofted Reference Surface",
+        module="sw_surface_ref_ops", function="insert_lofted_ref_surface",
+        inject="model",
+        param_alias={k: k for k in (
+            "closed", "keep_tangency", "force_non_rational",
+            "tess_tolerance_factor", "start_matching_type", "end_matching_type")},
+        params=[
+            Param("closed", bool, description="闭合放样（★ 官方：True 时**至少要 3 个轮廓**）。",
+                  required=False, default=False),
+            Param("keep_tangency", bool, description="相切时保持相切（★ 布尔是标志）。",
+                  required=False, default=True),
+            Param("force_non_rational", bool, description="强制非有理曲面（★ 布尔是标志）。",
+                  required=False, default=False),
+            Param("tess_tolerance_factor", float, description="带中心线放样时控制中间截面数"
+                                                            "（★ 官方给了默认值 ⇒ 0.0 = 用默认；★ 不是长度）。",
+                  required=False, default=0.0),
+            Param("start_matching_type", int, description="起始轮廓的相切类型"
+                                                         "（★ 官方「see Remarks」，本工具原样透传、不编造取值表）。",
+                  required=False, default=0),
+            Param("end_matching_type", int, description="末端轮廓的相切类型"
+                                                       "（★ 同上，原样透传）。",
+                  required=False, default=0),
+        ],
+        doc="★ 放样曲面：`IModelDoc2.InsertLoftRefSurface2(…)`（6 参，回 `void`）。"
+            "⚠ 官方 Remarks 逐字：「The mark for: **profile selections should be 1**」"
+            "⇒ ★ **调用前把轮廓按 `mark=1` 选好**（★ 且**按期望的顺序**）。"
+            "★ 真机建成：树 7→8，新增 `曲面-放样1`。"
+            "★ 用的是 `…RefSurface2`（★ `…RefSurface` 官方标 **Obsolete**，铁律 4）。",
+    ),
+---- FUNC ----
+def insert_lofted_ref_surface(model, closed: bool = False, keep_tangency: bool = True,
+                              force_non_rational: bool = False, tess_tolerance_factor: float = 0.0,
+                              start_matching_type: int = 0, end_matching_type: int = 0) -> dict:
+    """★ **放样曲面**：`IModelDoc2.InsertLoftRefSurface2(…)`（6 参）→ `void`。
+
+    ★ 官方原话：「Creates a **loft surface** from the **selected profiles**, centerline, and
+      guide curves.」
+
+    :param closed: ★ 官方逐字："if True, then you must have **at least three profiles** selected,
+      and if…"（★ 闭合放样对轮廓数有要求）。
+    :param keep_tangency: 相切时是否保持相切（★ 官方："If the section curves are tangent…"）。
+    :param force_non_rational: 强制非有理曲面。
+    :param tess_tolerance_factor: 带中心线放样时控制中间截面数；★ 官方给了默认值 ⇒ 0.0 表示**用默认**。
+    :param start_matching_type / end_matching_type: 起 / 末轮廓的相切类型（★ 官方"see Remarks"，
+      ★ 而本工具**不编造取值表** ⇒ 原样透传 int）。
+
+    ★★ **调用前要选好轮廓**，且官方 Remarks 逐字：
+      「Use `IModelDocExtension::SelectByID2` to select the profiles and guide curves.
+        The mark for: **profile selections should be 1**」⇒ ★ **轮廓 mark=1** ✓（铁律 3 第三句）。
+
+    ⚠ ★ 官方回 `void` ⇒ 判据**只能**靠**特征树增量**（★ 并如实写 `verified_by`）。
+    ⚠ 用的是 `…RefSurface2`（★ `…RefSurface` 官方标 **Obsolete**，铁律 4）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = _tree_names(model)
+    get_com_member(model, "InsertLoftRefSurface2",
+                   bool(closed), bool(keep_tangency), bool(force_non_rational),
+                   float(tess_tolerance_factor), int(start_matching_type), int(end_matching_type))
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": bool(added), "op": "lofted_ref_surface",
+            "closed": bool(closed), "keep_tangency": bool(keep_tangency),
+            "selection_mark": "profile selections **should be 1**（官方 Remarks 逐字）",
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "verified_by": "tree_delta"}
+
+====================================================================================================
+### solidworks_create_revolved_surface    spec=tool_specs_batch72.py   func=sw_surface_ref_ops.py::insert_revolved_ref_surface
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_create_revolved_surface",
+        title="Create Revolved Surface",
+        module="sw_surface_ref_ops", function="insert_revolved_ref_surface",
+        inject="model",
+        param_alias={"angle_deg": "angle_deg", "rev_type": "rev_type",
+                     "reverse_dir": "reverse_dir", "angle2_deg": "angle2_deg"},
+        params=[
+            Param("angle_deg", float, description="旋**角**（**度**；★ 只在边界换算成弧度一次，规则 2）。"
+                                                "★ `rev_type=1`（MidPlane）时它是**全角**。"),
+            Param("rev_type", int, description="官方 `RevType`：0=One direction · 1=MidPlane · "
+                                               "2=Two direction（取其它值本工具会显式拒绝）。"),
+            Param("reverse_dir", bool, description="反向（官方 `ReverseDir`）。"),
+            Param("angle2_deg", float, description="第二向的角（**度**；★ **只对 `rev_type=2` 有意义**）。"),
+        ],
+        doc="★ **旋转曲面**：`IFeatureManager.InsertRevolvedRefSurface(…)` → `IFeature`。"
+            "★ 官方逐字「Creates a revolved reference surface by revolving a profile around a "
+            "centerline.」——与实体版 `revolve_boss` 同形，★ 只是产出**曲面**。"
+            "⚠ **调用前要选好轮廓**（官方 Remarks 逐字：Make the selections using "
+            "`IModelDocExtension::SelectByID2` before calling）；★ 官方**没给 mark** ⇒ 本工具不假定 mark。"
+            "★ 官方另注「does not support **3D sketches**」。"
+            "★ 真机建成：树新增 `曲面-旋转1` · 曲面体 0→1。",
+    ),
+---- FUNC ----
+def insert_revolved_ref_surface(model, angle_deg: float, rev_type: int = 0,
+                                reverse_dir: bool = False, angle2_deg: float = 0.0) -> dict:
+    """★ **旋转曲面**：`IFeatureManager.InsertRevolvedRefSurface(…)` → **IFeature**。
+
+    ★★★ 官方原话：「Creates a **revolved reference surface** by revolving a profile around a
+      centerline.」⇒ ★ 与实体版 `sw_part.revolve_boss` 同形，★ 只是产出**曲面**。
+
+    :param angle_deg: 旋**角**（度；★ 只在本边界换算成弧度一次 —— 规则 2）。
+      ★ `rev_type=1`（MidPlane）时它是**全角**（★ 官方逐字）。
+    :param rev_type: 官方 `RevType`，取值表见 `REVOLVE_TYPE_MEANINGS`（0/1/2）。
+    :param angle2_deg: 第二向的角（★ 只对 `rev_type=2` 有意义）。
+
+    ⚠ **调用前要选好轮廓**（★ 官方 Remarks 逐字："Make the selections using
+      `IModelDocExtension::SelectByID2` before calling this method"）。
+      ★★ 而官方**没给 mark** ⇒ ★ 本模块**不假定 mark**，把这一点写进返回值 ✓
+    ⚠ 官方另注「does not support **3D sketches**」。
+
+    ★ 判据 = **回 `IFeature` 非 None** **且** **特征树有新特征**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    if int(rev_type) not in REVOLVE_TYPE_MEANINGS:
+        return {"ok": False, "error": "rev_type 不在官方取值表 0..2 内：%r（表：%s）"
+                % (rev_type, REVOLVE_TYPE_MEANINGS)}
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        return {"ok": False, "error": "取不到 FeatureManager"}
+    before = _tree_names(model)
+    feat = get_com_member(fm, "InsertRevolvedRefSurface",
+                          math.radians(float(angle_deg)), bool(reverse_dir),
+                          math.radians(float(angle2_deg)), int(rev_type))
+    after = _tree_names(model)
+    added = _delta(before, after)
+    return {"ok": feat is not None and bool(added), "op": "revolved_ref_surface",
+            "returned_is_none": feat is None,
+            "rev_type": int(rev_type), "rev_type_meaning": REVOLVE_TYPE_MEANINGS[int(rev_type)],
+            "asked_deg": angle_deg, "asked2_deg": angle2_deg, "reverse_dir": bool(reverse_dir),
+            "selection_mark": "★ 官方 Remarks **没给** mark —— 本模块不假定",
+            "tree_before": before, "tree_after": after, "new_features": added,
+            "verified_by": "feature_not_none + tree_delta"}
+
+====================================================================================================
+### solidworks_insert_ref_plane    spec=tool_specs_batch70.py   func=sw_ref_geometry.py::insert_ref_plane
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_insert_ref_plane",
+        title="Insert Reference Plane",
+        module="sw_ref_geometry", function="insert_ref_plane",
+        inject="model",
+        param_alias={k: k for k in (
+            "first_constraint", "first_angle_or_dist", "second_constraint",
+            "second_angle_or_dist", "third_constraint", "third_angle_or_dist")},
+        params=[
+            Param("first_constraint", int, description="`swRefPlaneReferenceConstraints_e`："
+                                                     "1=Parallel · 4=Coincident · 8=Distance · 16=Angle · 128=MidPlane"
+                                                     "（★ 另有 Option* 位：256=OptionFlip · 512=OptionOriginOnCurve …）。"),
+            Param("first_angle_or_dist", float, description="第一约束的角度或距离"
+                                                          "（★ 官方**未给单位** ⇒ 原样透传）。",
+                  required=False, default=0.0),
+            Param("second_constraint", int, description="第二约束（同上表；0 = 不用）。",
+                  required=False, default=0),
+            Param("second_angle_or_dist", float, description="第二约束的角度或距离。",
+                  required=False, default=0.0),
+            Param("third_constraint", int, description="第三约束（0 = 不用）。",
+                  required=False, default=0),
+            Param("third_angle_or_dist", float, description="第三约束的角度或距离。",
+                  required=False, default=0.0),
+        ],
+        doc="★ 基准面：`IFeatureManager.InsertRefPlane`（6 参，回 [[Reference plane]]）。"
+            "⚠⚠ **调用前必须按 mark 选参考实体** —— 官方 Remarks 逐字给了表："
+            "**0 = First reference entity · 1 = Second · 2 = Third**。"
+            "★ 真机：选一个面（**mark=0**）+ `Coincident(4)` ⇒ 树新增 `基准面1`。",
+    ),
+---- FUNC ----
+def insert_ref_plane(model, first_constraint: int, first_angle_or_dist: float = 0.0,
+                     second_constraint: int = 0, second_angle_or_dist: float = 0.0,
+                     third_constraint: int = 0, third_angle_or_dist: float = 0.0) -> dict:
+    """★ **基准面**：`IFeatureManager.InsertRefPlane(6 参)` → object（回 [[Reference plane]]）。
+
+    ★ 官方原话：「Inserts a **constraint-based reference plane** using the **selected reference
+      entities**.」
+
+    :param first_constraint / second_ / third_: 取值见 `REF_PLANE_CONSTRAINTS`
+      （★ 拷自官方 `swRefPlaneReferenceConstraints_e`）。
+    :param *_angle_or_dist: 对应约束的角度**或**距离。⚠ ★ 本模块**不做单位换算** ——
+      ★ 官方只说 "Angle or distance of the … constraint"，★ **没说单位** ⇒
+      ★ 故按**文档原样**透传，并把这一点写进返回值（★ 铁律 5：查不到就不编）。
+
+    ⚠ **调用前要按 mark 选好参考实体**（★ 官方 Remarks 逐字："you must have selected the
+      reference entities using these **marks** with `IModelDocExtension::SelectByID2`"）。
+      ★★ 而官方**没给出 mark 的取值表**（★ 只说"these marks"）⇒ ★ 本模块**不假定 mark**，
+        ★ 如实写进返回值 ✓
+
+    ★ 判据 = **回对象非 None** **且** **特征树有新特征**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        return {"ok": False, "error": "取不到 FeatureManager"}
+    before = _tree_names(model)
+    obj = get_com_member(fm, "InsertRefPlane",
+                         int(first_constraint), float(first_angle_or_dist),
+                         int(second_constraint), float(second_angle_or_dist),
+                         int(third_constraint), float(third_angle_or_dist))
+    return _judge(model, {"_before": before, "returned_is_none": obj is None,
+                          "constraints": [int(first_constraint), int(second_constraint),
+                                          int(third_constraint)],
+                          "angle_or_dist_unit": "★ 官方未给单位 —— 按文档原样透传，本模块不换算",
+                          "selection_mark": "★ 官方 Remarks 只说「these marks」、**未给取值表** ⇒ 不假定"},
+                  "ref_plane")
+
+====================================================================================================
+### solidworks_insert_reference_point    spec=tool_specs_batch70.py   func=sw_ref_geometry.py::insert_reference_point
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_insert_reference_point",
+        title="Insert Reference Point",
+        module="sw_ref_geometry", function="insert_reference_point",
+        inject="model",
+        param_alias={k: k for k in ("ref_point_type", "along_curve_type",
+                                    "distance_or_percent", "number_of_ref_points")},
+        params=[
+            Param("ref_point_type", int, description="`swRefPointType_e`："
+                                                    "0=Invalid · 1=Undefined · 2=AlongCurve · 3=CenterEdge · "
+                                                    "4=FaceCenter · 5=FaceVertexProjection · 6=Intersection · 7=SketchPoint。"),
+            Param("along_curve_type", int, description="`swRefPointAlongCurveType_e`："
+                                                      "0=Distance · 1=Percentage · 2=EvenlyDistributed。",
+                  required=False, default=0),
+            Param("distance_or_percent", float, description="沿曲线的距离或百分比。",
+                  required=False, default=0.0),
+            Param("number_of_ref_points", int, description="★ 官方 Remarks：**必须是 1**（否则拒绝）。",
+                  required=False, default=1),
+        ],
+        doc="★ 点：`IFeatureManager.InsertReferencePoint`（4 参，回 [[IFeature]]）。"
+            "⚠ 官方 Remarks：`NumberOfRefPoints` **必须是 1**。"
+            "★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。"
+            "★★ 而选面**必须紧接着调用** —— 中间隔别的步骤会把选区清掉。",
+    ),
+---- FUNC ----
+def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0,
+                           distance_or_percent: float = 0.0,
+                           number_of_ref_points: int = 1) -> dict:
+    """★ **点**：`IFeatureManager.InsertReferencePoint(4 参)` → object。
+
+    :param ref_point_type: 取值见 `REF_POINT_TYPES`（★ 官方 `swRefPointType_e`）。
+    :param along_curve_type: 取值见 `REF_POINT_ALONG_CURVE_TYPES`（★ 官方 `swRefPointAlongCurveType_e`）。
+    :param distance_or_percent: 沿曲线的距离或百分比（★ 官方原文 "Distance at which … or percentage of…"）。
+    :param number_of_ref_points: ★★ 官方 Remarks 逐字：
+      「The **NumberOfRefPoints** argument **must contain a value of 1** to successfully create
+        one reference point feature.」⇒ ★ 本模块**拒绝非 1**（★ 而不是把它悄悄传下去）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    if int(number_of_ref_points) != 1:
+        return {"ok": False, "error": "官方 Remarks：NumberOfRefPoints **必须是 1**，收到 %r"
+                % number_of_ref_points}
+    if int(ref_point_type) not in set(REF_POINT_TYPES.values()):
+        return {"ok": False, "error": "ref_point_type 不在 swRefPointType_e 的取值表内：%r（表：%s）"
+                % (ref_point_type, REF_POINT_TYPES)}
+    if int(along_curve_type) not in set(REF_POINT_ALONG_CURVE_TYPES.values()):
+        return {"ok": False, "error": "along_curve_type 不在 swRefPointAlongCurveType_e 内：%r（表：%s）"
+                % (along_curve_type, REF_POINT_ALONG_CURVE_TYPES)}
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        return {"ok": False, "error": "取不到 FeatureManager"}
+    before = _tree_names(model)
+    obj = get_com_member(fm, "InsertReferencePoint",
+                         int(ref_point_type), int(along_curve_type),
+                         float(distance_or_percent), 1)
+    return _judge(model, {"_before": before, "returned_is_none": obj is None,
+                          "ref_point_type": int(ref_point_type),
+                          "along_curve_type": int(along_curve_type)},
+                  "reference_point")
+
+====================================================================================================
+### solidworks_insert_global_bounding_box    spec=tool_specs_batch70.py   func=sw_ref_geometry.py::insert_global_bounding_box
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_insert_global_bounding_box",
+        title="Insert Global Bounding Box",
+        module="sw_ref_geometry", function="insert_global_bounding_box",
+        inject="model",
+        param_alias={k: k for k in ("bbox_type", "lwta_direction_type",
+                                    "include_hidden_bodies", "include_surface_bodies")},
+        params=[
+            Param("bbox_type", int, description="`swGlobalBoundingBoxFitOptions_e`："
+                                              "1=BestFit · 2=CustomPlane · 3=CustomCoordSys（默认 1）。"
+                                              "⚠ 只有 **2=CustomPlane** 才要先选面/基准面。",
+                  required=False, default=1),
+            Param("lwta_direction_type", int, description="`swGlobalBBoxLWTADirectionType_e`："
+                                                        "0=Unspecified · 1=LWTDir_XYZ · 2=YXZ · 3=YZX · 6=XZY · "
+                                                        "7/8/9=AxisDir_X/Y/Z（默认 0）。",
+                  required=False, default=0),
+            Param("include_hidden_bodies", bool, description="是否含隐藏体（★ 布尔是标志）。",
+                  required=False, default=False),
+            Param("include_surface_bodies", bool, description="是否含曲面体（★ 布尔是标志）。",
+                  required=False, default=False),
+        ],
+        doc="★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。"
+            "★★ **台账 T701 给的 `Create3DBoundingBox` 是焊件切割清单专用的另一个** ——"
+            "官方的才是这条。"
+            "★ 第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`，**Success=0**）"
+            "⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 `类型不匹配`，位置 5）。"
+            "★ 真机建成：**`Status=0 (Success)`** + 特征树增量。",
+    ),
+---- FUNC ----
+def insert_global_bounding_box(model, bbox_type: int = 1, lwta_direction_type: int = 0,
+                               include_hidden_bodies: bool = False,
+                               include_surface_bodies: bool = False) -> dict:
+    """★ **边界框（普通零件/装配体）**：`IFeatureManager.InsertGlobalBoundingBox2(…)` → `IFeature`。
+
+    ★★ 这才是工具栏「边界框」对应的官方成员（★ 台账 T701 给的 `Create3DBoundingBox`
+      是**焊件切割清单**专用的另一个，★ 见上一个函数的说明）。
+
+    :param bbox_type: 官方 `swGlobalBoundingBoxFitOptions_e`：
+      `BestFit=1 · CustomPlane=2 · CustomCoordSys=3`（★ 默认 1 = BestFit）。
+      ⚠ 官方 Remarks：「If `BBoxType` is `swBoundingBoxType_CustomPlane`, then **select a face
+        or plane** using …」⇒ ★ **只有 `CustomPlane`(2) 才要先选面** ✓
+    :param lwta_direction_type: 官方 `swGlobalBBoxLWTADirectionType_e`
+      （`Unspecified=0 · LWTDir_XYZ=1 · YXZ=2 · YZX=3 · XZY=6 · AxisDir_X=7/8/9`）。
+    :param include_hidden_bodies / include_surface_bodies: 是否含隐藏体 / 曲面体。
+
+    ★ 官方签名第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`，**`Success=0`**）
+      ⇒ ★ 本函数**同时收**返回值与 out（★ 若 pywin32 把它并进返回元组，就取出来一起报）。
+    ★ 判据 = **回 `IFeature` 非 None** **且** **特征树有新特征**；
+      ★ 并**额外报出 `Status`**（★ 那是官方给的成败码，★ 有就以它为准）。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    if int(bbox_type) not in set(GLOBAL_BBOX_FIT_OPTIONS.values()):
+        return {"ok": False, "error": "bbox_type 不在 swGlobalBoundingBoxFitOptions_e 内：%r（表：%s）"
+                % (bbox_type, GLOBAL_BBOX_FIT_OPTIONS)}
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        return {"ok": False, "error": "取不到 FeatureManager"}
+    #: ★★★ 2026-10-03（轮 479）**`Status` 是 out ⇒ 必须包成 BYREF VARIANT** ——
+    #:   ⚠ 我第一版直接传 `0`，真机回：
+    #:     `com_error: (-2147352571, '类型不匹配。', None, **5**)`
+    #:     ★ **位置 5** 就是它 ⇒ ★ **裸 int 传不进 out 形参** ⚠
+    #:   ★★ 而**本仓早有现成的**：`sw_connect.out_i4()` —— 它的 docstring 逐字是
+    #:     「创建 `Int32&` 出参的 VARIANT 包装 —— **唯一被真机验证通过的形态**」
+    #:     （★ 本仓还有一道门禁 `tools/audit_byref_args.py` 专管这件事）✓
+    try:
+        from .sw_connect import out_i4 as _out_i4
+    except ImportError:
+        from sw_connect import out_i4 as _out_i4
+    status_buf = _out_i4(0)
+    before = _tree_names(model)
+    raw = get_com_member(fm, "InsertGlobalBoundingBox2",
+                         int(bbox_type), int(lwta_direction_type),
+                         bool(include_hidden_bodies), bool(include_surface_bodies), status_buf)
+    #: ★ out 值从**那个 VARIANT 里读回来**（★ 不是从返回值）✓
+    status = None
+    try:
+        status = int(getattr(status_buf, "value", status_buf))
+    except Exception:                                                    # noqa: BLE001
+        status = None
+    feat = raw[0] if isinstance(raw, (tuple, list)) and raw else raw
+    r = _judge(model, {"_before": before, "returned_is_none": feat is None,
+                       "bbox_type": int(bbox_type), "raw_type": type(raw).__name__},
+               "global_bounding_box")
+    r["status"] = status
+    #: ★ 反查：字典是 `名 → 值`，而 out 给的是**值** ⇒ 必须反向找名
+    #:   （★ 我第一版写成 `GLOBAL_BBOX_RESULT.get(status)` ⇒ 永远不中、显示"(未知)"）
+    _by_val = {v: k for k, v in GLOBAL_BBOX_RESULT.items()}
+    r["status_meaning"] = _by_val.get(status) if isinstance(status, int) else None
+    if isinstance(status, int):
+        r["ok"] = (status == GLOBAL_BBOX_RESULT["Success"]) and bool(r.get("new_features"))
+        r["verified_by"] = "status_code(Success=0) + tree_delta"
+    return r
+
+====================================================================================================
+### solidworks_drawing_add_note    spec=tool_specs_batch75.py   func=sw_drawing_expose.py::add_drawing_note
+====================================================================================================
+---- SPEC ----
+    ToolSpec(
+        name="solidworks_drawing_add_note",
+        title="Drawing Note / Annotation",
+        module=_EXPOSE, function="add_drawing_note",
+        inject="drawing_model",
+        params=[
+            Param("x_mm", float, description="注释位置 X（**毫米**）。"),
+            Param("y_mm", float, description="注释位置 Y（**毫米**）。"),
+            Param("text", str, description="注释文字。★ 用符号时要写成 `<*库名-符号名*>`（官方 Remarks 逐字）。"),
+        ],
+        doc="★ **注释/文字**：`InsertNote`。"
+            "★ 真机证据：两格（选中 / 不选）都返回非 None，判据是注解读数增量（证据 JSON 的 A4 格）。"
+            "★ 官方 Remarks 逐字：**引线附着点来自调用前做的选择**；**没有选中时**无引线、自由放置、在原点。",
+    ),
+---- FUNC ----
+def add_drawing_note(drawing_model, *, x_mm: float, y_mm: float, text: str) -> dict:
+    """★ 注释/文字（`InsertNote`）—— ★ 引线附着点来自**调用前**的选择（官方 Remarks 逐字）。"""
+    res = D.add_note(drawing_model, _mm(x_mm), _mm(y_mm), text)
+    return _result("add_note", {"ok": res is not None, "note": res}, "注解计数增量")

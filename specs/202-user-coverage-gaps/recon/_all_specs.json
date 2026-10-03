@@ -94,7 +94,18 @@
    "inject": "sw_app",
    "doc": "Create a topology optimization study (analysis type 13) on the ACTIVE part. Topology optimization works on ONE single-body part at a time (official limit). Returns which entry point was used (CreateNewStudy3, or a fallback).",
    "title": "Create SOLIDWORKS Topology Study",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "Topology Study 1",
+     "desc": "Study name; a study with the same name is deleted first."
+    },
+    {
+     "name": "mesh_type",
+     "default": 0,
+     "desc": "swsMeshType: 0=solid, 1=midsurface, 2=surfaces, 3=mixed, 4=beam."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -120,7 +131,28 @@
    "inject": "study",
    "doc": "Mesh and solve the topology study and report whether results exist. A zero RunAnalysis return code does NOT mean success - judge by study results.",
    "title": "Run SOLIDWORKS Topology Study",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "units",
+     "default": 0,
+     "desc": "swsUnit_e: 0=SI, 1=English, 2=Metric. Must be a VALID value (-1 is rejected by the API)."
+    },
+    {
+     "name": "element_size_mm",
+     "default": 0.0,
+     "desc": "Global element size in MILLIMETRES, must be > 0. Use solidworks_simulation_default_mesh_size for the official value."
+    },
+    {
+     "name": "tolerance_mm",
+     "default": 0.0,
+     "desc": "Mesh tolerance in MILLIMETRES, must be > 0. Official default is 5% of the element size."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -133,7 +165,13 @@
    "inject": "model",
    "doc": "Insert a mold parting line. Select the draft-direction reference first (edge/plane/axis); without it the call inserts nothing.",
    "title": "Insert Mold Parting Line",
-   "params": [],
+   "params": [
+    {
+     "name": "draft_analysis",
+     "default": true,
+     "desc": "The official single parameter. Its exact meaning is UNVERIFIED; kept True to match the reference usage."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -159,7 +197,23 @@
    "inject": "model",
    "doc": "Run mold draft analysis. Returns the official return code as-is: that code has NO published enum, so this tool does NOT judge success from it.",
    "title": "Run Mold Draft Analysis",
-   "params": [],
+   "params": [
+    {
+     "name": "draft_angle_deg",
+     "default": null,
+     "desc": "Draft angle in DEGREES."
+    },
+    {
+     "name": "analysis_type",
+     "default": 0,
+     "desc": "Official arg 2 (Int32). Its meaning is UNVERIFIED."
+    },
+    {
+     "name": "option",
+     "default": 0,
+     "desc": "Official arg 4 (Int32). Its meaning is UNVERIFIED."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -185,7 +239,18 @@
    "inject": "model",
    "doc": "Assign a material to the active part and RETURN THE READ-BACK MaterialIdName. An empty string means it did NOT take effect (the API itself returns void).",
    "title": "Set Part Material",
-   "params": [],
+   "params": [
+    {
+     "name": "material_name",
+     "default": null,
+     "desc": "Material name inside the library, e.g. \"AISI 1020\". \"Plain Carbon Steel\" is NOT in that library."
+    },
+    {
+     "name": "database",
+     "default": "SOLIDWORKS Materials",
+     "desc": "Library DISPLAY name (NOT the .sldmat file name)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -198,7 +263,13 @@
    "inject": "model",
    "doc": "Read back the weldment state: structural members, cut-list folders, and their quantity/length/angle/source properties. Read-only when create_missing_cut_list is False.",
    "title": "Collect Weldment Evidence",
-   "params": [],
+   "params": [
+    {
+     "name": "create_missing_cut_list",
+     "default": false,
+     "desc": "Create a missing cut list before reading. Side-effecting: leave False for a pure read-back."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -276,7 +347,48 @@
    "inject": "model",
    "doc": "Create a native base flange (swFmBaseFlange) from an open or closed sketch. An open polyline path produces a profile flange; a closed contour produces a flat plate. Returns the real IFeature; failures raise instead of returning empty. VERIFIED ON A REAL MACHINE: run 2026-10-01 on SW 2026 SP4.1 and it WORKED (the feature tree showed the sheet-metal feature).",
    "title": "Create Sheet Metal Base Flange",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_name",
+     "default": null,
+     "desc": "Sketch NAME. The special value '__current_selection__' reuses the current selection instead of selecting by name."
+    },
+    {
+     "name": "thickness_mm",
+     "default": null,
+     "desc": "Sheet thickness in MILLIMETRES (must be > 0)."
+    },
+    {
+     "name": "bend_radius_mm",
+     "default": null,
+     "desc": "Bend radius in MILLIMETRES (>= 0)."
+    },
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "Base flange depth in MILLIMETRES (must be > 0)."
+    },
+    {
+     "name": "k_factor",
+     "default": 0.42,
+     "desc": "K-factor for the bend allowance (must be strictly between 0 and 1)."
+    },
+    {
+     "name": "relief_ratio",
+     "default": 0.5,
+     "desc": "Relief ratio (must be > 0)."
+    },
+    {
+     "name": "reverse_direction",
+     "default": false,
+     "desc": "Reverse the depth direction."
+    },
+    {
+     "name": "reverse_thickness",
+     "default": false,
+     "desc": "Reverse which side the thickness is added to."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -289,7 +401,33 @@
    "inject": "model",
    "doc": "Create a single sheet-metal bend on the selected sketch. *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: CreateDefinition(33) returned None. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works.",
    "title": "Create Sheet Metal One Bend",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_name",
+     "default": null,
+     "desc": "Sketch NAME; '__current_selection__' reuses the current selection."
+    },
+    {
+     "name": "bend_radius_mm",
+     "default": null,
+     "desc": "Bend radius in MILLIMETRES."
+    },
+    {
+     "name": "angle_deg",
+     "default": null,
+     "desc": "Bend angle in DEGREES (the spec is already in degrees)."
+    },
+    {
+     "name": "reverse_direction",
+     "default": false,
+     "desc": "Reverse the bend direction."
+    },
+    {
+     "name": "use_default_radius",
+     "default": true,
+     "desc": "Use the part default bend radius instead of bend_radius_mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -302,7 +440,38 @@
    "inject": "model",
    "doc": "Create a native edge flange on a SELECTED edge. The edge is selected for you from `selection` BEFORE the call (the implementation requires a pre-existing selection). *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: setting `ReverseDirection` gave `Property ... can not be set`. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works.",
    "title": "Create Sheet Metal Edge Flange",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": "Declarative EDGE selection: '__current_selection__' (use what is already selected) or 'index:<n>'."
+    },
+    {
+     "name": "bend_radius_mm",
+     "default": null,
+     "desc": "Bend radius in MILLIMETRES."
+    },
+    {
+     "name": "flange_length_mm",
+     "default": null,
+     "desc": "Flange length in MILLIMETRES."
+    },
+    {
+     "name": "angle_deg",
+     "default": 90.0,
+     "desc": "Flange angle in DEGREES."
+    },
+    {
+     "name": "use_default_radius",
+     "default": true,
+     "desc": "Use the part default bend radius instead of bend_radius_mm."
+    },
+    {
+     "name": "reverse_direction",
+     "default": false,
+     "desc": "Reverse the flange direction."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -315,7 +484,33 @@
    "inject": "model",
    "doc": "Create a native sheet-metal gusset on a SELECTED supporting face. The face is selected for you from `selection` BEFORE the call. *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: setting `Thickness` gave `Property ... can not be set`. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works.",
    "title": "Create Sheet Metal Gusset",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": "Declarative FACE selection: '__current_selection__' or 'index:<n>'."
+    },
+    {
+     "name": "thickness_mm",
+     "default": null,
+     "desc": "Gusset thickness in MILLIMETRES."
+    },
+    {
+     "name": "profile_distance_1_mm",
+     "default": null,
+     "desc": "Profile distance 1 in MILLIMETRES."
+    },
+    {
+     "name": "profile_distance_2_mm",
+     "default": 0.0,
+     "desc": "Profile distance 2 in MILLIMETRES."
+    },
+    {
+     "name": "profile_angle_deg",
+     "default": 0.0,
+     "desc": "Profile angle in DEGREES."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -328,7 +523,28 @@
    "inject": "model",
    "doc": "Create a native draft on a SELECTED face. NOTE: the implementation's own `face_ref` parameter is accepted but NEVER USED (verified by reading the body); this tool therefore omits it and selects from `selection` instead, matching the docstring ('on the already-selected face'). *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: CreateDefinition(3) returned None. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works.",
    "title": "Create Sheet Metal Draft",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": "Declarative FACE selection: '__current_selection__' or 'index:<n>'."
+    },
+    {
+     "name": "angle_deg",
+     "default": null,
+     "desc": "Draft angle in DEGREES."
+    },
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "Draft depth in MILLIMETRES."
+    },
+    {
+     "name": "reverse_direction",
+     "default": false,
+     "desc": "Reverse the draft direction."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -341,7 +557,83 @@
    "inject": "model",
    "doc": "Create a native swept flange along a path. REQUIRES an existing base flange first (the official example builds one before the swept flange) - otherwise there is no thickness to inherit. NOT YET TESTED ON A REAL MACHINE: it needs both a sweep path and a profile selection, which the 2026-10-01 probe did not build. See scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS before relying on it.",
    "title": "Create Sheet Metal Swept Flange",
-   "params": [],
+   "params": [
+    {
+     "name": "path_selection",
+     "default": null,
+     "desc": "Declarative EDGE selection for the sweep path: '__current_selection__' or 'index:<n>'."
+    },
+    {
+     "name": "profile_selection",
+     "default": null,
+     "desc": "Declarative SKETCH selection for the sweep profile: '__current_selection__' or 'index:<n>'."
+    },
+    {
+     "name": "start_offset_mm",
+     "default": null,
+     "desc": "Start offset in MILLIMETRES."
+    },
+    {
+     "name": "end_offset_mm",
+     "default": 0.0,
+     "desc": "End offset in MILLIMETRES."
+    },
+    {
+     "name": "thickness_mm",
+     "default": null,
+     "desc": "Thickness in MILLIMETRES. Leave UNSET (null) to inherit from the base flange - that reproduces the official example, which does not set Thickness at all."
+    },
+    {
+     "name": "bend_radius_mm",
+     "default": 0.0,
+     "desc": "Bend radius in MILLIMETRES."
+    },
+    {
+     "name": "use_default_radius",
+     "default": true,
+     "desc": "Use the default bend radius; when False, bend_radius_mm applies."
+    },
+    {
+     "name": "flange_position",
+     "default": 1,
+     "desc": "swSweptFlangePositionTypes_e: 1=material inside, 2=material outside, 3=bend outside."
+    },
+    {
+     "name": "flatten_along_path",
+     "default": false,
+     "desc": "Flatten along the path."
+    },
+    {
+     "name": "trim_side_bends",
+     "default": false,
+     "desc": "Trim side bends."
+    },
+    {
+     "name": "use_default_bend_relief",
+     "default": true,
+     "desc": "Use the default bend relief."
+    },
+    {
+     "name": "use_gauge_table",
+     "default": false,
+     "desc": "Use the gauge table."
+    },
+    {
+     "name": "use_material_parameters",
+     "default": false,
+     "desc": "Use material sheet-metal parameters."
+    },
+    {
+     "name": "override_default_sheet_metal_parameters",
+     "default": false,
+     "desc": "Override the default sheet-metal parameters."
+    },
+    {
+     "name": "reverse_direction",
+     "default": false,
+     "desc": "Reverse the direction."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -354,7 +646,13 @@
    "inject": "model",
    "doc": "Read the current selection set (optionally filtered to one selection mark).",
    "title": "Current Selection",
-   "params": [],
+   "params": [
+    {
+     "name": "mark",
+     "default": -1,
+     "desc": "Selection mark to read; -1 = all marks."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -380,7 +678,13 @@
    "inject": "model",
    "doc": "Switch the model to a named standard view (e.g. isometric, front, top).",
    "title": "Set Standard View",
-   "params": [],
+   "params": [
+    {
+     "name": "view_name",
+     "default": "isometric",
+     "desc": "Standard view name; defaults to 'isometric'."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -445,7 +749,13 @@
    "inject": "model",
    "doc": "Read the assembly BOM as structured rows (the CSV-export tool is a different one).",
    "title": "Collect Assembly BOM",
-   "params": [],
+   "params": [
+    {
+     "name": "include_excluded",
+     "default": false,
+     "desc": "Include components excluded from the BOM; default false."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -484,7 +794,13 @@
    "inject": "model",
    "doc": "Refresh the graphics/scene graph, e.g. after an appearance change. ⚠ May mark the document as modified (view/selection state changes count).",
    "title": "Refresh Scene Graph",
-   "params": [],
+   "params": [
+    {
+     "name": "update",
+     "default": true,
+     "desc": "Whether to force a graphics update; default true."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -536,7 +852,28 @@
    "inject": "model",
    "doc": "Split the mold into core and cavity solids (this is the tooling split). ⚠ 0.0 means 'use the document default' for scale/thickness/offset.",
    "title": "Insert Mold Core/Cavity Split",
-   "params": [],
+   "params": [
+    {
+     "name": "scale",
+     "default": 0.0,
+     "desc": "Scale factor; 0.0 = document default."
+    },
+    {
+     "name": "thickness",
+     "default": 0.0,
+     "desc": "Wall thickness; 0.0 = document default."
+    },
+    {
+     "name": "flip",
+     "default": false,
+     "desc": "Reverse the split direction."
+    },
+    {
+     "name": "offset",
+     "default": 0.0,
+     "desc": "Offset; 0.0 = document default."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -549,7 +886,48 @@
    "inject": "model",
    "doc": "Insert the mold parting surface.",
    "title": "Insert Mold Parting Surface",
-   "params": [],
+   "params": [
+    {
+     "name": "surface_type",
+     "default": 0,
+     "desc": "Official surface type enum value."
+    },
+    {
+     "name": "flip",
+     "default": false,
+     "desc": "Reverse the surface direction."
+    },
+    {
+     "name": "use_trim",
+     "default": false,
+     "desc": "Trim the surface."
+    },
+    {
+     "name": "distance",
+     "default": 0.0,
+     "desc": "Distance parameter; 0.0 = default."
+    },
+    {
+     "name": "angle",
+     "default": 0.0,
+     "desc": "Angle parameter; 0.0 = default."
+    },
+    {
+     "name": "option",
+     "default": 0,
+     "desc": "Official option enum value."
+    },
+    {
+     "name": "tolerance",
+     "default": 0.0,
+     "desc": "Tolerance; 0.0 = default."
+    },
+    {
+     "name": "alternate",
+     "default": false,
+     "desc": "Use the alternate direction."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -562,7 +940,38 @@
    "inject": "model",
    "doc": "Detect mold undercuts along a direction. ⚠ The underlying IFeatureManager.MoldUndercutDetect is marked Obsolete by SOLIDWORKS (successor: MoldUndercutDetect2); kept deliberately until the successor shape is verified. See docs/obsolete-member-candidates.md. ★★ Parameter names now follow the official md (ColUndercut/ColBase/BCoordInput/Dx/Dy/Dz); the earlier names (direction/option/include_hidden/a/b/c) did not, so the third argument BCoordInput received False — which drops back to 'use the model's own draft direction' and pops the modal 「此拔模方向尚未定义。」 on a part without one, stalling the session.",
    "title": "Detect Mold Undercuts",
-   "params": [],
+   "params": [
+    {
+     "name": "col_undercut",
+     "default": 0,
+     "desc": "COLORREF for the faces invisible from one direction that form an undercut."
+    },
+    {
+     "name": "col_base",
+     "default": 0,
+     "desc": "COLORREF for the faces that do not form undercuts."
+    },
+    {
+     "name": "b_coord_input",
+     "default": true,
+     "desc": "True to use the coordinate input (Dx/Dy/Dz) as the pull direction; false to use the model's already-defined direction (which pops a modal dialog when the model has none)."
+    },
+    {
+     "name": "dx",
+     "default": 0.0,
+     "desc": "X component of the pull direction."
+    },
+    {
+     "name": "dy",
+     "default": 0.0,
+     "desc": "Y component of the pull direction."
+    },
+    {
+     "name": "dz",
+     "default": 1.0,
+     "desc": "Z component of the pull direction."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -575,7 +984,18 @@
    "inject": "model",
    "doc": "Get the bounding box of the first solid body. ⚠⚠ SOLIDWORKS documents the returned values as APPROXIMATE and says they 'should not be used for comparison or calculation purposes'; the box may also vary after a rebuild. Use this for a rough overview only. ⚠ Units are MILLIMETRES (measured on SW 2026 SP4.1: an 80x60x50 mm box returns 80/60/50, not 0.08/0.06/0.05).",
    "title": "Get Part Bounding Box",
-   "params": [],
+   "params": [
+    {
+     "name": "body_index",
+     "default": 0,
+     "desc": "Zero-based solid body index."
+    },
+    {
+     "name": "include_hidden",
+     "default": false,
+     "desc": "Include hidden bodies."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -588,7 +1008,13 @@
    "inject": "sw",
    "doc": "List the Hole Wizard standards available for a hole type (official ISldWorks.GetHoleStandardsData + IHoleStandardsData.GetHoleStandards). Returns [{id, name}, ...]; the two out parameters are paired positionally. ⚠ Officially returns null when hole_type_id is 5 (swWzdLegacy).",
    "title": "List Hole Wizard Standards",
-   "params": [],
+   "params": [
+    {
+     "name": "hole_type_id",
+     "default": 0,
+     "desc": "swWzdGeneralHoleTypes_e; 5 (swWzdLegacy) yields no data."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -601,7 +1027,18 @@
    "inject": "sw",
    "doc": "List the fastener types under a Hole Wizard standard. Returns [{id, name}, ...]. ⚠ The names follow the SOLIDWORKS UI language (a Chinese UI returns Chinese names); do not assume English. Use an id from this list as fastener_id elsewhere. ⚠ Internally the IHoleStandardsData object must be primed with GetHoleStandards first, otherwise SOLIDWORKS returns False (measured); this function does that.",
    "title": "List Hole Wizard Fastener Types",
-   "params": [],
+   "params": [
+    {
+     "name": "standard_name",
+     "default": "",
+     "desc": "Standard name from solidworks_hole_standards, e.g. 'ANSI Inch'."
+    },
+    {
+     "name": "hole_type_id",
+     "default": 0,
+     "desc": "swWzdGeneralHoleTypes_e; 5 (swWzdLegacy) yields no data."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -614,7 +1051,23 @@
    "inject": "sw",
    "doc": "List the fastener table type ids for one fastener (official IHoleStandardsData.GetFastenerTableTypes). ⚠ The official second parameter is an Int32 FASTENER ID (from solidworks_fastener_types), not a size name - passing a size name raises a type-mismatch error. Returns a list of ints.",
    "title": "List Hole Wizard Fastener Table Types",
-   "params": [],
+   "params": [
+    {
+     "name": "standard_name",
+     "default": "",
+     "desc": "Standard name from solidworks_hole_standards."
+    },
+    {
+     "name": "fastener_id",
+     "default": 0,
+     "desc": "Fastener id from solidworks_fastener_types."
+    },
+    {
+     "name": "hole_type_id",
+     "default": 0,
+     "desc": "swWzdGeneralHoleTypes_e."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -627,7 +1080,18 @@
    "inject": "study",
    "doc": "Create a mass constraint for a topology study (mass-reduction percent semantics). Returns the constraint object.",
    "title": "Create Topology Mass Constraint",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "reduce_percent",
+     "default": null,
+     "desc": "Target mass reduction in percent (e.g. 75 means -75%)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -640,7 +1104,18 @@
    "inject": "study",
    "doc": "Create a factor-of-safety constraint for a topology study (stress must stay below that percentage of yield strength).",
    "title": "Create Topology Factor-of-Safety Constraint",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "specified_factor",
+     "default": null,
+     "desc": "Factor of safety (e.g. 1.5)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -653,7 +1128,18 @@
    "inject": "study",
    "doc": "Create a preserved region for a topology study (material that must not be removed). ⚠ `option` is an official enum value; omit to use the default.",
    "title": "Create Topology Preserved Region",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "option",
+     "default": 0,
+     "desc": "Official option enum value; 0 means the module default."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -666,7 +1152,23 @@
    "inject": "study",
    "doc": "Create a thickness control for a topology study (minimum/maximum thickness). Units are millimetres (rule 2).",
    "title": "Create Topology Thickness Control",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "min_thickness_mm",
+     "default": 0.0,
+     "desc": "Minimum thickness in millimetres; 0 means the module default."
+    },
+    {
+     "name": "max_thickness_mm",
+     "default": 0.0,
+     "desc": "Maximum thickness in millimetres; 0 means the module default."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -679,7 +1181,18 @@
    "inject": "study",
    "doc": "Create a de-mold (manufacturing) control for a topology study. The caller must first select the pull-direction face/edge/plane, then choose the direction option.",
    "title": "Create Topology Demold Control",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "direction",
+     "default": 0,
+     "desc": "swsTopologyDemoldDirectionOption_e (from the factory reflection dump): 0=TwoDirectionMidPlane, 1=PullDirectionOnly, 2=Stamping."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -692,7 +1205,23 @@
    "inject": "study",
    "doc": "Create a stress constraint for a topology study.",
    "title": "Create Topology Stress Constraint",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "value",
+     "default": null,
+     "desc": "Constraint value (stress)."
+    },
+    {
+     "name": "comparator",
+     "default": 0,
+     "desc": "swsTopologyStudyConstraintComparator_e (from the factory reflection dump): 0=IsLessThan, 1=IsGreaterThan, 2=IsInBetween."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -705,7 +1234,18 @@
    "inject": "study",
    "doc": "Create a symmetry control for a topology study. The caller must first select the symmetry plane(s).",
    "title": "Create Topology Symmetry Control",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "symmetry_type",
+     "default": 0,
+     "desc": "⚠ Values 0/1/2 come from the OFFICIAL VBA example (`Create_Topology_Study_Example_VBA.txt` uses SelectSymmetryType 0/1/2, commented 'Define topology one-half symmetry control'). The enum NAME was NOT found in the local reflection dump — so do not assume per-value semantics beyond that."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -718,7 +1258,28 @@
    "inject": "study",
    "doc": "Generate a study report to a file. ⚠ `template` valid values were NOT found in the local sources (see the batch header); pass the template name your SolidWorks installation provides.",
    "title": "Generate Simulation Study Report",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "template",
+     "default": null,
+     "desc": "Report template name. ⚠ Valid values not found in local sources."
+    },
+    {
+     "name": "path",
+     "default": null,
+     "desc": "Output file path for the generated report."
+    },
+    {
+     "name": "append",
+     "default": false,
+     "desc": "Append to an existing report instead of replacing it."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -731,7 +1292,18 @@
    "inject": "study",
    "doc": "Mesh the study using a named mesh control.",
    "title": "Create Simulation Mesh For Mesh Control",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "control_name",
+     "default": null,
+     "desc": "Name of the mesh control to mesh with."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -744,7 +1316,18 @@
    "inject": "study",
    "doc": "Get the suggested element size and tolerance (millimetre-scale when units=-1).",
    "title": "Get Simulation Default Element Size And Tolerance",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": "Target study; omit to use the active study. Consumed by the resolver, NOT passed to the function."
+    },
+    {
+     "name": "units",
+     "default": -1,
+     "desc": "swsUnit_e. ⚠ TWO LOCAL SOURCES DISAGREE: the existing `solidworks_topology_run` tool says \"0=SI, 1=English, 2=Metric; -1 is rejected by the API\", while this function's own docstring records a REAL-MACHINE result that `units=-1` returns millimetre-scale values. This tool keeps the -1 default (per the real-machine note) and does not merge the two statements."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -770,7 +1353,18 @@
    "inject": "model",
    "doc": "List the entities of one body (kind EDGE, FACE, or VERTEX). ⚠ Index order is NOT promised stable by the official API — do not treat body_index as a persistent reference across rebuilds.",
    "title": "List Entities On Body",
-   "params": [],
+   "params": [
+    {
+     "name": "kind",
+     "default": null,
+     "desc": "Entity kind. Valid values (from sw_selection_spec.ENTITY_KINDS): \"EDGE\", \"FACE\", or \"VERTEX\". ★ VERTEX uses the official IBody2.GetVertices() (0 args); ★ a 20×20×10 box returns FACE=6 · EDGE=12 · VERTEX=8, so Euler's V−E+F=2 holds."
+    },
+    {
+     "name": "body_index",
+     "default": 0,
+     "desc": "Zero-based solid-body index. ⚠ Not a persistent reference."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -783,7 +1377,18 @@
    "inject": "model",
    "doc": "Build structured review-report data (exports preview images and writes a report into output_dir). ⚠ The optional `views` / `expected_outputs` list parameters are NOT exposed in this tool — see the batch header for why.",
    "title": "Build Review Report",
-   "params": [],
+   "params": [
+    {
+     "name": "output_dir",
+     "default": null,
+     "desc": "Directory for preview images and the report."
+    },
+    {
+     "name": "basename",
+     "default": "review",
+     "desc": "Output filename prefix."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -796,7 +1401,13 @@
    "inject": "model",
    "doc": "Add a sketch geometric relation to the current selection.",
    "title": "Add Sketch Relation",
-   "params": [],
+   "params": [
+    {
+     "name": "relation_type",
+     "default": null,
+     "desc": "Relation name. Valid values (from the function's own docstring): sgFIXED, sgHORIZONTAL, sgVERTICAL, sgCOLINEAR, sgPARALLEL, sgPERPENDICULAR, sgTANGENT, sgCONCENTRIC, sgEQUAL, sgSYMMETRIC, sgMIDPOINT, sgCOINCIDENT."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -809,7 +1420,18 @@
    "inject": "model",
    "doc": "Mirror an existing feature about a plane.",
    "title": "Mirror Feature",
-   "params": [],
+   "params": [
+    {
+     "name": "feature_name",
+     "default": null,
+     "desc": "Name of the feature to mirror."
+    },
+    {
+     "name": "mirror_plane_name",
+     "default": null,
+     "desc": "Name of the mirror plane (plane names follow the SolidWorks UI language, e.g. 「Front Plane」/「前视基准面」)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -822,7 +1444,33 @@
    "inject": "model",
    "doc": "Create a circular pattern about an axis.",
    "title": "Create Circular Pattern",
-   "params": [],
+   "params": [
+    {
+     "name": "feature_name",
+     "default": null,
+     "desc": "Name of the feature to pattern."
+    },
+    {
+     "name": "axis_name",
+     "default": null,
+     "desc": "Name of the axis to revolve around."
+    },
+    {
+     "name": "angle_deg",
+     "default": null,
+     "desc": "Total pattern angle in DEGREES (rule 2). Converted to radians exactly once at this boundary via sw_connect.deg()."
+    },
+    {
+     "name": "count",
+     "default": null,
+     "desc": "Number of pattern instances."
+    },
+    {
+     "name": "equal_spacing",
+     "default": true,
+     "desc": "Space the instances equally."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -835,7 +1483,23 @@
    "inject": "model",
    "doc": "Revolve a profile sketch into a boss feature. ⚠ This call is routed through a closed-source COM backend — see docs/known-facts.md.",
    "title": "Create Revolve Boss",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_name",
+     "default": null,
+     "desc": "Profile sketch NAME."
+    },
+    {
+     "name": "angle_deg",
+     "default": null,
+     "desc": "Revolve angle in DEGREES (rule 2). Converted to radians exactly once at this boundary via sw_connect.deg()."
+    },
+    {
+     "name": "axis_sketch_name",
+     "default": "",
+     "desc": "Axis sketch name; omit (\"\") to use the function default (None)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -939,7 +1603,18 @@
    "inject": "model",
    "doc": null,
    "title": "Get One Custom Property",
-   "params": [],
+   "params": [
+    {
+     "name": "name",
+     "default": null,
+     "desc": "Custom property name (e.g. \"零件号\" / \"PartNo\"). ⚠ Property names follow the UI language and are case-sensitive as stored."
+    },
+    {
+     "name": "config_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -952,7 +1627,13 @@
    "inject": "model",
    "doc": null,
    "title": "List All Custom Properties",
-   "params": [],
+   "params": [
+    {
+     "name": "config_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -965,7 +1646,13 @@
    "inject": "model",
    "doc": "Enter a new sketch on a reference plane. ★ This is the prerequisite for every sketch-based feature (extrude, revolve, hole, sheet-metal flange).",
    "title": "Start a Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "plane_name",
+     "default": "Front Plane",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -991,7 +1678,28 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Line to the Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "Start point X, mm."
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "Start point Y, mm."
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "End point X, mm."
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "End point Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1004,7 +1712,23 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Circle to the Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "center_x_mm",
+     "default": null,
+     "desc": "Centre X, mm."
+    },
+    {
+     "name": "center_y_mm",
+     "default": null,
+     "desc": "Centre Y, mm."
+    },
+    {
+     "name": "radius_mm",
+     "default": null,
+     "desc": "Radius, mm (must be > 0)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1017,7 +1741,28 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Rectangle to the Sketch (two opposite corners)",
-   "params": [],
+   "params": [
+    {
+     "name": "x1_mm",
+     "default": null,
+     "desc": "First corner X, mm."
+    },
+    {
+     "name": "y1_mm",
+     "default": null,
+     "desc": "First corner Y, mm."
+    },
+    {
+     "name": "x2_mm",
+     "default": null,
+     "desc": "Opposite corner X, mm."
+    },
+    {
+     "name": "y2_mm",
+     "default": null,
+     "desc": "Opposite corner Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1030,7 +1775,28 @@
    "inject": "model",
    "doc": "Extrude a sketch into a solid BOSS (adds material). ★ This is the first tool in the repo that turns a sketch into a solid body.",
    "title": "Extrude a Boss (add material)",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_name",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "Extrusion depth in MILLIMETRES (must be > 0; the capability layer uses mm, so no conversion)."
+    },
+    {
+     "name": "direction",
+     "default": true,
+     "desc": ""
+    },
+    {
+     "name": "merge",
+     "default": true,
+     "desc": "True = merge the result into the body; False = keep it as a new body."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1043,7 +1809,28 @@
    "inject": "model",
    "doc": "Extrude a sketch as a CUT (removes material). ★ depth_mm = 0 means through-all. ⚠ The correct entry point for a cut is FeatureCut4, not FeatureExtrusion3 with flip=True — the capability layer already handles that.",
    "title": "Extrude a Cut (remove material)",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_name",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "Cut depth in MILLIMETRES. ★ 0 means **through all** (完全贯穿)."
+    },
+    {
+     "name": "direction",
+     "default": true,
+     "desc": ""
+    },
+    {
+     "name": "flip",
+     "default": false,
+     "desc": "True = flip the cut direction."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1056,7 +1843,18 @@
    "inject": "model",
    "doc": "Extrude a sketch symmetrically about its plane. ⚠ The parameter is the TOTAL depth, not the per-side depth.",
    "title": "Extrude Symmetrically About the Sketch Plane",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_name",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "total_depth_mm",
+     "default": null,
+     "desc": "TOTAL depth in MILLIMETRES — each side gets half (total_depth_mm / 2)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1069,7 +1867,23 @@
    "inject": "model",
    "doc": "Chamfer the selected edge(s). ★ The edge comes from `selection` (declarative), because the API takes no edge object — it acts on the current selection.",
    "title": "Chamfer the Selected Edge(s)",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "distance_mm",
+     "default": null,
+     "desc": "Chamfer distance in MILLIMETRES."
+    },
+    {
+     "name": "angle_deg",
+     "default": 45.0,
+     "desc": "Chamfer angle in DEGREES (used because the capability layer requests swChamferAngleDistance)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1082,7 +1896,18 @@
    "inject": "model",
    "doc": "Round the selected edge(s) with the given radius. ★ The edge comes from `selection` (declarative) — the capability layer passes edges=None, i.e. it acts on the current selection.",
    "title": "Round (Fillet) the Selected Edge(s)",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "radius_mm",
+     "default": null,
+     "desc": "Fillet radius in MILLIMETRES."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1108,7 +1933,13 @@
    "inject": "asm_model",
    "doc": "List the components of the ACTIVE assembly: for each one its name, file path, whether it is suppressed and whether it is visible. ★ Reading only.",
    "title": "List Assembly Components",
-   "params": [],
+   "params": [
+    {
+     "name": "top_level_only",
+     "default": true,
+     "desc": "True = only top-level components; False = also descend into sub-assemblies."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1147,7 +1978,18 @@
    "inject": "study",
    "doc": "Apply a FIXED restraint (fixture) to the selected face(s) of a static study and return the ICWRestraint. ★ The faces come from `selection` (declarative) because the capability layer assembles them into the official DispArray. ⚠ Requires the Simulation add-in; the first call loads it automatically.",
    "title": "Apply a Fixed Restraint (Fixture) to the Selected Faces",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1160,7 +2002,23 @@
    "inject": "study",
    "doc": "Apply a NORMAL force to the selected face(s) of a static study and return the ICWForce. ★ The faces come from `selection` (declarative). ⚠ The magnitude is in NEWTONS — it is not converted.",
    "title": "Apply a Normal Force to the Selected Faces",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "magnitude_n",
+     "default": null,
+     "desc": "Force magnitude in NEWTONS (the capability layer uses force unit 0 = n_or_nm)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1173,7 +2031,13 @@
    "inject": "sw_app",
    "doc": "Create a STATIC simulation study and return a JSON-able report: `{ok, requested_name, study_name, entry_name, error_code}`. ★★ Read `entry_name`: it names the entry point that actually succeeded (CreateNewStudy3 / 2 / 1), so an EMPTY value means the study was NOT created — this is the only evidence of whether a fallback path was used. ⚠ Only static studies are supported (other study types are not verified). ⚠ Requires the Simulation add-in; it is loaded automatically on first use.",
    "title": "Create a Static Simulation Study",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1199,7 +2063,13 @@
    "inject": "sw_app",
    "doc": "Look up a simulation study by name and return `{found, requested_name, study_name}`. ★★ The capability layer returns None when the name does not exist (it does not raise), so this tool exposes an explicit `found` flag instead — never read a missing study as present.",
    "title": "Find a Simulation Study by Name",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": null,
+     "desc": "Exact study name to look for."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1212,7 +2082,18 @@
    "inject": "study",
    "doc": "Return the suggested mesh `{element_size, tolerance, units}` for a study. ★ The default units = -1 yields MILLIMETRE-scale values (verified in this repo) and nothing is converted — the `units` value is echoed back so the caller can tell.",
    "title": "Get the Suggested Mesh Element Size",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "units",
+     "default": -1,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1225,7 +2106,28 @@
    "inject": "study",
    "doc": "Mesh the study and return a READ-BACK report `{ok, return_code, return_is_trustworthy, element_count}`. ★★ Judge success by `ok`, which is derived from `element_count > 0` — NOT from the return code (this repo's rule: COM return values that cannot prove themselves are never trusted; `return_is_trustworthy` is always false).",
    "title": "Create the Mesh for a Study",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "units",
+     "default": 0,
+     "desc": ""
+    },
+    {
+     "name": "element_size_mm",
+     "default": 0.0,
+     "desc": "Global element size in MILLIMETRES (0.0 = let SolidWorks choose)."
+    },
+    {
+     "name": "tolerance_mm",
+     "default": 0.0,
+     "desc": "Mesh tolerance in MILLIMETRES (0.0 = let SolidWorks choose; the official default is 5% of the element size)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1238,7 +2140,13 @@
    "inject": "study",
    "doc": "Run the study and return a READ-BACK report `{ok, return_code, return_is_trustworthy, results_present, plot_count, plot_names}`. ★★ Judge success by `ok` (= results present AND plot_count > 0), NOT by the return code — this repo has documented four separate cases of a COM return code lying.",
    "title": "Run the Study and Report Read-Back Results",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1394,7 +2302,13 @@
    "inject": "",
    "doc": "Decide whether a global element size is sane for the ACTIVE part BEFORE meshing, and return `{ok, element_size, max_dim, reason}`. ★ Call this before solidworks_simulation_create_mesh: when `ok` is false the element is larger than the part itself, so the mesh would be degenerate and the subsequent solve would raise a modal dialog that hangs the COM session. ★ It does NOT create a mesh and does NOT run the solver.",
    "title": "Check a Mesh Element Size Against the Part Before Meshing",
-   "params": [],
+   "params": [
+    {
+     "name": "element_size_mm",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1407,7 +2321,18 @@
    "inject": "model",
    "doc": "Hollow the part with a wall thickness and return a READ-BACK report: whether the feature is in the tree, whether EditRebuild3 succeeded, and the What's Wrong item count (★ rule 6 — feature creation must not succeed silently). ⚠ Does NOT save the document.",
    "title": "Shell the Part (read-back confirmed)",
-   "params": [],
+   "params": [
+    {
+     "name": "thickness_mm",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "feature_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1420,7 +2345,28 @@
    "inject": "model",
    "doc": "Create a rib from an existing sketch and return a READ-BACK report (feature in tree + rebuild + What's Wrong count). ★ Rule 6. ⚠ Does NOT save the document.",
    "title": "Create a Rib from a Sketch (read-back confirmed)",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_name",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "thickness_mm",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "feature_name",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "direction",
+     "default": true,
+     "desc": "Rib direction flag (official InsertRib arg 4)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1433,7 +2379,28 @@
    "inject": "model",
    "doc": "Add a dome on the selected face and return a READ-BACK report (★ rule 6). ⚠ The official Remarks require the face to be selected BEFORE the call. ⚠ Does NOT save the document.",
    "title": "Add a Dome to the Selected Face (read-back confirmed)",
-   "params": [],
+   "params": [
+    {
+     "name": "height_mm",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "feature_name",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "reverse",
+     "default": false,
+     "desc": "Reverse the dome direction."
+    },
+    {
+     "name": "elliptic",
+     "default": false,
+     "desc": "Make the dome elliptical."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1446,7 +2413,13 @@
    "inject": "model",
    "doc": "Join the selected entities into a composite curve and return a READ-BACK report (★ rule 6). The capability layer already raises when the official call returns False — this adds the tree/rebuild/What's Wrong read-back on top. ⚠ The official Remarks require the entities to be selected with mark = 1 first. ⚠ Does NOT save the document.",
    "title": "Insert a Composite Curve from the Selection (read-back confirmed)",
-   "params": [],
+   "params": [
+    {
+     "name": "feature_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1472,7 +2445,33 @@
    "inject": "model",
    "doc": "Create a configuration, optionally activate and rebuild, then read the result back. ⚠ Does NOT save the document.",
    "title": "Create (and optionally activate) a Configuration",
-   "params": [],
+   "params": [
+    {
+     "name": "configuration_name",
+     "default": null,
+     "desc": "Name of the configuration to create."
+    },
+    {
+     "name": "comment",
+     "default": "",
+     "desc": "Optional comment."
+    },
+    {
+     "name": "alternate_name",
+     "default": "",
+     "desc": "Optional alternate name."
+    },
+    {
+     "name": "activate",
+     "default": true,
+     "desc": "Activate it after creating."
+    },
+    {
+     "name": "rebuild",
+     "default": true,
+     "desc": "Rebuild after creating."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1485,7 +2484,18 @@
    "inject": "model",
    "doc": "Activate a configuration and verify it by read-back. ⚠ Does NOT save the document.",
    "title": "Activate a Configuration (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "configuration_name",
+     "default": null,
+     "desc": "Configuration to activate."
+    },
+    {
+     "name": "rebuild",
+     "default": true,
+     "desc": "Rebuild after activating."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1498,7 +2508,18 @@
    "inject": "model",
    "doc": "Read one custom property as a JSON-able dict. ★ Read-only.",
    "title": "Read a Custom Property (file-level or per-configuration)",
-   "params": [],
+   "params": [
+    {
+     "name": "name",
+     "default": null,
+     "desc": "Custom property name."
+    },
+    {
+     "name": "configuration_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1511,7 +2532,18 @@
    "inject": "model",
    "doc": "Set several custom properties and return the read-back list. ⚠ Does NOT save the document.",
    "title": "Set Custom Properties (and read them back)",
-   "params": [],
+   "params": [
+    {
+     "name": "properties",
+     "default": null,
+     "desc": "Mapping of property name to value. ★ Values are strings."
+    },
+    {
+     "name": "configuration_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1524,7 +2556,33 @@
    "inject": "model",
    "doc": "Update an exact named dimension and return a read-back report (before/after). ⚠ Does NOT save the document.",
    "title": "Update a Named Dimension in mm (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "dimension_name",
+     "default": null,
+     "desc": "Exact dimension name, e.g. D1@草图1 or D1@凸台-拉伸1."
+    },
+    {
+     "name": "value_mm",
+     "default": null,
+     "desc": "New value in MILLIMETRES."
+    },
+    {
+     "name": "configuration_mode",
+     "default": "current",
+     "desc": "'current' (active configuration only) / 'all' / 'specific'."
+    },
+    {
+     "name": "configuration_names",
+     "default": null,
+     "desc": "Only for configuration_mode='specific': the configuration names."
+    },
+    {
+     "name": "rebuild",
+     "default": true,
+     "desc": "Rebuild after the change."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1537,7 +2595,13 @@
    "inject": "model",
    "doc": "Export the active document to STEP and return a READ-BACK report: the file must exist and be non-empty. ★ Rule: the criterion is the FILE, not the return value.",
    "title": "Export the Active Part to STEP (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1550,7 +2614,18 @@
    "inject": "model",
    "doc": "Export to STL and return a READ-BACK report (file exists and is non-empty). ★ The criterion is the FILE.",
    "title": "Export the Active Part to STL (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "quality",
+     "default": "fine",
+     "desc": "STL quality: 'coarse' or 'fine'."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1563,7 +2638,13 @@
    "inject": "model",
    "doc": "Export to IGES and return a READ-BACK report (file exists and is non-empty).",
    "title": "Export the Active Part to IGES (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1576,7 +2657,13 @@
    "inject": "model",
    "doc": "Export to Parasolid and return a READ-BACK report (file exists and is non-empty).",
    "title": "Export the Active Part to Parasolid (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1589,7 +2676,13 @@
    "inject": "model",
    "doc": "Export to DXF and return a READ-BACK report (file exists and is non-empty). ⚠⚠ THIS IS A SHEET-METAL FLAT-PATTERN EXPORT, not a general DXF export: on a non-sheet-metal part the capability layer refuses with 「导出展开 DXF 前必须先保存钣金零件」. ★ That refusal is deliberate — it is a readable, actionable failure rather than a silent one.",
    "title": "Export a SHEET-METAL Flat Pattern to DXF (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1602,7 +2695,23 @@
    "inject": "model",
    "doc": "Export a BMP image of the active document and return a READ-BACK report (file exists and is non-empty). ★ Covered by the existing smoke tools/verify_bmp_smoke.py.",
    "title": "Export a BMP Snapshot of the Active Part (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "pixel_width",
+     "default": 0,
+     "desc": "Image width in PIXELS (★ PIXELS, not a length ⇒ named pixel_width (rule 2: no _mm for a non-length)). ⚠ 0 = use the document default."
+    },
+    {
+     "name": "pixel_height",
+     "default": 0,
+     "desc": "Image height in PIXELS. ★ Named pixel_height because it is NOT a length (rule 2). ⚠ 0 = use the document default."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1615,7 +2724,28 @@
    "inject": "model",
    "doc": "Create a fully-through circular hole whose position comes from a declarative selection (★ rule 3: no coordinates in the tool signature). Returns the read-back evidence plus the point that was actually used.",
    "title": "Create a Through Hole at a Declaratively Selected Point",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "diameter_mm",
+     "default": null,
+     "desc": "Hole diameter in MILLIMETRES."
+    },
+    {
+     "name": "plane_name",
+     "default": "Front Plane",
+     "desc": ""
+    },
+    {
+     "name": "name",
+     "default": "通孔",
+     "desc": "Feature name."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1628,7 +2758,33 @@
    "inject": "model",
    "doc": "Create a blind circular hole at a declaratively selected point (★ rule 3). Returns the read-back evidence plus the point used.",
    "title": "Create a Blind Hole at a Declaratively Selected Point",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "diameter_mm",
+     "default": null,
+     "desc": "Hole diameter in MILLIMETRES."
+    },
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "Blind depth in MILLIMETRES."
+    },
+    {
+     "name": "plane_name",
+     "default": "Front Plane",
+     "desc": ""
+    },
+    {
+     "name": "name",
+     "default": "盲孔",
+     "desc": "Feature name."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1641,7 +2797,38 @@
    "inject": "model",
    "doc": "Create a counterbore hole at a declaratively selected point (★ rule 3).",
    "title": "Create a Counterbore Hole at a Declaratively Selected Point",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "hole_diameter_mm",
+     "default": null,
+     "desc": "Main hole diameter in MILLIMETRES."
+    },
+    {
+     "name": "counterbore_diameter_mm",
+     "default": null,
+     "desc": "Counterbore diameter in MILLIMETRES."
+    },
+    {
+     "name": "counterbore_depth_mm",
+     "default": null,
+     "desc": "Counterbore depth in MILLIMETRES."
+    },
+    {
+     "name": "plane_name",
+     "default": "Front Plane",
+     "desc": ""
+    },
+    {
+     "name": "name",
+     "default": "沉头孔",
+     "desc": "Feature name."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1654,7 +2841,38 @@
    "inject": "model",
    "doc": "Create a countersink hole at a declaratively selected point (★ rule 3).",
    "title": "Create a Countersink Hole at a Declaratively Selected Point",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "hole_diameter_mm",
+     "default": null,
+     "desc": "Main hole diameter in MILLIMETRES."
+    },
+    {
+     "name": "countersink_diameter_mm",
+     "default": null,
+     "desc": "Countersink diameter in MILLIMETRES."
+    },
+    {
+     "name": "included_angle_deg",
+     "default": 90.0,
+     "desc": "Countersink included angle in DEGREES (★ rule 2: _deg)."
+    },
+    {
+     "name": "plane_name",
+     "default": "Front Plane",
+     "desc": ""
+    },
+    {
+     "name": "name",
+     "default": "锥沉孔",
+     "desc": "Feature name."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1667,7 +2885,38 @@
    "inject": "model",
    "doc": "Create a semicircular-end slot spanning two declaratively selected points (★ rule 3: **both** endpoints come from selections, not coordinates).",
    "title": "Create a Semicircular-End Slot Between Two Declaratively Selected Points",
-   "params": [],
+   "params": [
+    {
+     "name": "start_selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "end_selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "width_mm",
+     "default": null,
+     "desc": "Slot width in MILLIMETRES."
+    },
+    {
+     "name": "depth_mm",
+     "default": 0.0,
+     "desc": "Slot depth in MILLIMETRES. ⚠ 0.0 = through."
+    },
+    {
+     "name": "plane_name",
+     "default": "Front Plane",
+     "desc": ""
+    },
+    {
+     "name": "name",
+     "default": "半圆端槽",
+     "desc": "Feature name."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1680,7 +2929,18 @@
    "inject": "model",
    "doc": "Create the weldment cut list and return the cut-list folders as evidence.",
    "title": "Create the Cut List (and read it back)",
-   "params": [],
+   "params": [
+    {
+     "name": "sort_options",
+     "default": null,
+     "desc": "swCutListSortOptions_e value; omit for the document default."
+    },
+    {
+     "name": "collect_identical_bodies",
+     "default": false,
+     "desc": "Collect identical bodies into one cut-list item."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1693,7 +2953,13 @@
    "inject": "model",
    "doc": "Set cut-list properties and return the read-back list. ⚠ Does NOT save the document. ★★ **属性名用中文（本地化）名**：`说明` / `材料`，★ **不是** `Description` / `Material`（真机：后者报「切割清单属性回读失败」，而前者写入并回读得到）。",
    "title": "Set Cut-List Properties (and read them back)",
-   "params": [],
+   "params": [
+    {
+     "name": "properties",
+     "default": null,
+     "desc": "Mapping of property name to value (e.g. {\"Description\": \"tube\"})."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1706,7 +2972,18 @@
    "inject": null,
    "doc": "Write a cut-list evidence dict to CSV and return the path. ★ The criterion is the FILE (exists and non-empty), not the return value.",
    "title": "Export a Cut List to CSV (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "evidence",
+     "default": null,
+     "desc": "The cut-list evidence dict (★ as returned by solidworks_weldment_evidence / create_cut_list)."
+    },
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": "Absolute CSV output path."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1719,7 +2996,13 @@
    "inject": "manager",
    "doc": "Read the active PropertyManager page's controls as a JSON-able dict. ★ Read-only.",
    "title": "Read a Property Manager as a Dict",
-   "params": [],
+   "params": [
+    {
+     "name": "core_only",
+     "default": true,
+     "desc": "Only the core properties (★ False reads everything)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1732,7 +3015,28 @@
    "inject": "model",
    "doc": "Create a profile-center mate between declaratively selected structural members.",
    "title": "Create a Profile-Center Mate (declarative selection)",
-   "params": [],
+   "params": [
+    {
+     "name": "entities",
+     "default": "__current_selection__",
+     "desc": ""
+    },
+    {
+     "name": "mate_alignment",
+     "default": 0,
+     "desc": "Mate alignment enum value."
+    },
+    {
+     "name": "offset_distance_mm",
+     "default": 0.0,
+     "desc": "Offset distance in MILLIMETRES (★ rule 2)."
+    },
+    {
+     "name": "flip_dimension",
+     "default": false,
+     "desc": "Flip the mate dimensions."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1745,7 +3049,23 @@
    "inject": "model",
    "doc": "Create a weldment profile from a declaratively selected sketch and write it to output_path. ★ The criterion is the FILE.",
    "title": "Create a Weldment Profile from a Sketch (declarative selection)",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_ref",
+     "default": "__current_selection__",
+     "desc": ""
+    },
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": "Absolute path for the saved .sldlfp profile."
+    },
+    {
+     "name": "properties",
+     "default": null,
+     "desc": "Optional profile properties (★ omit for none)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1758,7 +3078,13 @@
    "inject": "model",
    "doc": "Return how many custom properties the document (or one configuration) has. ★ Read-only.",
    "title": "Count the Custom Properties",
-   "params": [],
+   "params": [
+    {
+     "name": "config_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1771,7 +3097,13 @@
    "inject": "model",
    "doc": "Return the custom property names as a list. ★ Read-only.",
    "title": "List the Custom Property Names",
-   "params": [],
+   "params": [
+    {
+     "name": "config_name",
+     "default": "",
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1784,7 +3116,13 @@
    "inject": null,
    "doc": "Resolve a named direction selector to its (x, y, z) vector. ★ Pure lookup — no SolidWorks call.",
    "title": "Resolve a Direction Selector to a Vector",
-   "params": [],
+   "params": [
+    {
+     "name": "selector",
+     "default": null,
+     "desc": "A direction selector name (★ see solidworks_available_direction_selectors)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1797,7 +3135,18 @@
    "inject": "model",
    "doc": "Resolve a named point selector to its (x, y, z) coordinates in MILLIMETRES. ★ No coordinates are passed in (rule 3).",
    "title": "Resolve a Point Selector to Coordinates",
-   "params": [],
+   "params": [
+    {
+     "name": "selector",
+     "default": null,
+     "desc": "A point selector name (★ see solidworks_available_point_selectors), or \"__current_selection__\"."
+    },
+    {
+     "name": "body_index",
+     "default": 0,
+     "desc": "Zero-based solid-body index. ⚠ Not a persistent reference."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1849,7 +3198,28 @@
    "inject": null,
    "doc": "Build a traceability record from BOM rows. ★ Pure data — no SolidWorks call.",
    "title": "Build a BOM Traceability Record",
-   "params": [],
+   "params": [
+    {
+     "name": "bom_rows",
+     "default": null,
+     "desc": "The BOM rows (★ as returned by a BOM tool)."
+    },
+    {
+     "name": "model_path",
+     "default": "",
+     "desc": "Optional model path to record."
+    },
+    {
+     "name": "drawing_path",
+     "default": "",
+     "desc": "Optional drawing path to record."
+    },
+    {
+     "name": "review_path",
+     "default": "",
+     "desc": "Optional review report path."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1862,7 +3232,48 @@
    "inject": null,
    "doc": "Build the audit matrix that a Pack-and-Go hand-off is reviewed against. ★ Pure data — no SolidWorks call.",
    "title": "Build a Pack-and-Go Audit Matrix",
-   "params": [],
+   "params": [
+    {
+     "name": "source_path",
+     "default": null,
+     "desc": "The source document path."
+    },
+    {
+     "name": "dependencies",
+     "default": null,
+     "desc": "The dependency paths found."
+    },
+    {
+     "name": "component_records",
+     "default": null,
+     "desc": "Per-component records."
+    },
+    {
+     "name": "associated_drawings",
+     "default": null,
+     "desc": "Associated drawing paths."
+    },
+    {
+     "name": "outputs",
+     "default": null,
+     "desc": "Output artifact paths."
+    },
+    {
+     "name": "include_drawings",
+     "default": null,
+     "desc": "Include drawings in the audit matrix."
+    },
+    {
+     "name": "include_toolbox_components",
+     "default": null,
+     "desc": "Include Toolbox components in the audit matrix."
+    },
+    {
+     "name": "include_suppressed",
+     "default": null,
+     "desc": "Include suppressed components."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1875,7 +3286,23 @@
    "inject": "model",
    "doc": "Export the assembly BOM to CSV. ★ The criterion is the FILE (exists and non-empty). ⚠ Does NOT save the document.",
    "title": "Export an Assembly BOM to CSV (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": "Absolute CSV output path."
+    },
+    {
+     "name": "include_excluded",
+     "default": false,
+     "desc": "Include components excluded from the BOM."
+    },
+    {
+     "name": "overwrite",
+     "default": false,
+     "desc": "Allow replacing an existing file."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1901,7 +3328,28 @@
    "inject": "study",
    "doc": "Configure the static solver options of the injected study and return a report. ⚠ Only the non-None options are applied. Does NOT save the document.",
    "title": "Configure the Static Solver Options",
-   "params": [],
+   "params": [
+    {
+     "name": "family",
+     "default": "ICWStaticStudyOptions",
+     "desc": ""
+    },
+    {
+     "name": "free_body_force",
+     "default": null,
+     "desc": "Use the free-body-force approach (omit = leave unchanged)."
+    },
+    {
+     "name": "contact_penalty",
+     "default": null,
+     "desc": "Contact penalty stiffness (omit = leave unchanged)."
+    },
+    {
+     "name": "reference_pressure",
+     "default": null,
+     "desc": "Reference pressure (omit = leave unchanged)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1914,7 +3362,23 @@
    "inject": "study",
    "doc": "Configure the frequency solver options of the injected study. ⚠ Only the non-None options are applied.",
    "title": "Configure the Frequency Solver Options",
-   "params": [],
+   "params": [
+    {
+     "name": "family",
+     "default": "ICWFrequencyStudyOptions",
+     "desc": ""
+    },
+    {
+     "name": "decouple",
+     "default": null,
+     "desc": "Decouple (omit = unchanged)."
+    },
+    {
+     "name": "reference_pressure",
+     "default": null,
+     "desc": "Reference pressure (omit = unchanged)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1927,7 +3391,23 @@
    "inject": "study",
    "doc": "Configure the buckling solver options of the injected study. ⚠ Only the non-None options are applied.",
    "title": "Configure the Buckling Solver Options",
-   "params": [],
+   "params": [
+    {
+     "name": "family",
+     "default": "ICWBucklingStudyOptions",
+     "desc": ""
+    },
+    {
+     "name": "modes",
+     "default": null,
+     "desc": "Number of modes (omit = unchanged)."
+    },
+    {
+     "name": "positive_only",
+     "default": null,
+     "desc": "Only positive eigenvalues (omit = unchanged)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1940,7 +3420,23 @@
    "inject": "study",
    "doc": "Set one study option by its registered family/name and return a report. ★ Unknown family/name raises instead of being silently ignored.",
    "title": "Set One Registered Study Option",
-   "params": [],
+   "params": [
+    {
+     "name": "family",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "name",
+     "default": null,
+     "desc": "The setter name (★ must exist in the registry)."
+    },
+    {
+     "name": "value",
+     "default": null,
+     "desc": "The value as TEXT (★ the registry decides the type)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -1953,7 +3449,18 @@
    "inject": "study",
    "doc": "Set several study options and return the read-back dict. ★ Unknown family/name raises instead of being silently ignored.",
    "title": "Set Several Registered Study Options at Once",
-   "params": [],
+   "params": [
+    {
+     "name": "family",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "values",
+     "default": null,
+     "desc": "Mapping of setter name → value (★ each must be registered)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2018,7 +3525,13 @@
    "inject": "cost_manager",
    "doc": "Read one body's cost data. ★ An unknown body name fails with the list of valid names. ★ Read-only.",
    "title": "Read One Body's Cost Data",
-   "params": [],
+   "params": [
+    {
+     "name": "body_name",
+     "default": null,
+     "desc": "A body name from solidworks_costing_list_bodies."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2031,7 +3544,13 @@
    "inject": "cost_manager",
    "doc": "Return the Costing template names available for a category. ★ Read-only.",
    "title": "List the Costing Templates for a Category",
-   "params": [],
+   "params": [
+    {
+     "name": "category",
+     "default": 0,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2044,7 +3563,13 @@
    "inject": "cost_manager",
    "doc": "Return the default Costing template name for a category. ★ Read-only.",
    "title": "Get the Default Costing Template of a Category",
-   "params": [],
+   "params": [
+    {
+     "name": "category",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2057,7 +3582,13 @@
    "inject": "cost_manager",
    "doc": "Return the current value of one cost method. ★ Read-only.",
    "title": "Get the Value of One Costing Method",
-   "params": [],
+   "params": [
+    {
+     "name": "method_name",
+     "default": null,
+     "desc": "A cost-method name (★ see solidworks_costing_read_analysis)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2070,7 +3601,23 @@
    "inject": "model",
    "doc": "Add a global equation. ★ Verify by reading the equations back (the criterion the existing smoke uses). ⚠ Does NOT save the document.",
    "title": "Add a Global Equation (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "equation",
+     "default": null,
+     "desc": "The equation text, e.g. '\"D2@Sketch1\" = 2 * \"D1@Sketch1\"'."
+    },
+    {
+     "name": "index",
+     "default": -1,
+     "desc": "-1 = append at the end."
+    },
+    {
+     "name": "solve",
+     "default": true,
+     "desc": "Solve the equations after adding."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2109,7 +3656,13 @@
    "inject": "model",
    "doc": "Delete one global equation by index. ⚠ Does NOT save the document.",
    "title": "Delete a Global Equation by Index",
-   "params": [],
+   "params": [
+    {
+     "name": "index",
+     "default": null,
+     "desc": "Zero-based equation index (★ see the list tool)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2122,7 +3675,23 @@
    "inject": "model",
    "doc": "Insert a helix/spiral. ★ Needs the document state the official API requires (a circular sketch to revolve about) — the capability layer reports it if not.",
    "title": "Insert a Helix / Spiral",
-   "params": [],
+   "params": [
+    {
+     "name": "height_mm",
+     "default": null,
+     "desc": "Helix height in MILLIMETRES."
+    },
+    {
+     "name": "pitch_mm",
+     "default": 0.0,
+     "desc": "Pitch in MILLIMETRES. ⚠ 0.0 = leave it to the document default."
+    },
+    {
+     "name": "revolution",
+     "default": 0.0,
+     "desc": "Number of revolutions (★ not a length, not an angle). ⚠ 0.0 = leave it to the document default."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2148,7 +3717,23 @@
    "inject": "asm_model",
    "doc": "Create a Motion Study on the active assembly and return it. ★ Needs an ASSEMBLY document — the capability layer reports it if the active document is not one. ⚠ Does NOT save the document.",
    "title": "Create a Motion Study on the Active Assembly",
-   "params": [],
+   "params": [
+    {
+     "name": "name",
+     "default": null,
+     "desc": "Study name (omit for the default)."
+    },
+    {
+     "name": "duration",
+     "default": 4.0,
+     "desc": "Study duration in SECONDS (★ not a length)."
+    },
+    {
+     "name": "study_type",
+     "default": null,
+     "desc": "Study type enum value (omit for the default)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2174,7 +3759,33 @@
    "inject": "asm_model",
    "doc": "Validate the motion studies against the given requirements and return the result. ★ Read-only (★ it reports, it does not fix).",
    "title": "Validate the Motion Studies Against Requirements",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": null,
+     "desc": "Only validate this study."
+    },
+    {
+     "name": "expected_study_type",
+     "default": null,
+     "desc": "Require this study type."
+    },
+    {
+     "name": "minimum_duration_seconds",
+     "default": null,
+     "desc": "Require at least this duration in SECONDS."
+    },
+    {
+     "name": "minimum_motor_count",
+     "default": null,
+     "desc": "Require at least this many motors."
+    },
+    {
+     "name": "require_results",
+     "default": null,
+     "desc": "Require computed results."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2187,7 +3798,13 @@
    "inject": "asm_model",
    "doc": "Return the assembly's motion study manager (★ the entry point for the rest). ★ Read-only.",
    "title": "Get the Motion Study Manager",
-   "params": [],
+   "params": [
+    {
+     "name": "load_type_library",
+     "default": true,
+     "desc": "Load the Motion type library first (★ needed on a fresh session)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2200,7 +3817,13 @@
    "inject": null,
    "doc": "Check (and load) the Motion type library. ★ Zero-argument apart from the flag — use it to find out whether Motion is usable BEFORE asking for anything else. ★ 动画导出（AVI）在 known-facts 里记为 stitched —— 缺 Motion 加载项就是那条的原因。",
    "title": "Ensure the Motion Type Library Is Loaded",
-   "params": [],
+   "params": [
+    {
+     "name": "raise_on_error",
+     "default": false,
+     "desc": "Raise instead of reporting a boolean when loading fails."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2213,7 +3836,38 @@
    "inject": null,
    "doc": "Validate a motion-study summary dict (★ pure data — no SolidWorks call). ★ Useful to re-check a summary recorded earlier.",
    "title": "Validate One Motion Study Summary",
-   "params": [],
+   "params": [
+    {
+     "name": "summary",
+     "default": null,
+     "desc": "A summary dict (★ as returned by solidworks_motion_collect_summary)."
+    },
+    {
+     "name": "study_name",
+     "default": null,
+     "desc": "Only validate this study."
+    },
+    {
+     "name": "expected_study_type",
+     "default": null,
+     "desc": "Require this study type."
+    },
+    {
+     "name": "minimum_duration_seconds",
+     "default": null,
+     "desc": "Require at least this duration in SECONDS."
+    },
+    {
+     "name": "minimum_motor_count",
+     "default": null,
+     "desc": "Require at least this many motors."
+    },
+    {
+     "name": "require_results",
+     "default": null,
+     "desc": "Require computed results."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2226,7 +3880,13 @@
    "inject": null,
    "doc": "Compute the external involute spur gear geometry from a spec dict. ★ Pure calculation — no SolidWorks call. ★ Verify against the analytic formulas (pitch diameter = module × teeth, etc.), not by eye.",
    "title": "Calculate an External Spur Gear (pure geometry)",
-   "params": [],
+   "params": [
+    {
+     "name": "spec",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2239,7 +3899,18 @@
    "inject": "model",
    "doc": "Create an external spur gear body. ★ The criterion is that the FEATURE TREE changes (rule 6 — never a silent success). ⚠ Does NOT save the document.",
    "title": "Create an External Spur Gear Body",
-   "params": [],
+   "params": [
+    {
+     "name": "spec",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "plane_name",
+     "default": "Front Plane",
+     "desc": "Sketch plane name (★ the layer tries the UI-language candidates)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2252,7 +3923,13 @@
    "inject": null,
    "doc": "List the Toolbox standards available in the local index. ★ Pure data — no SolidWorks call.",
    "title": "List the Toolbox Standards",
-   "params": [],
+   "params": [
+    {
+     "name": "index",
+     "default": null,
+     "desc": "A pre-loaded index (omit to load the local one)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2265,7 +3942,13 @@
    "inject": null,
    "doc": "Load the Toolbox index as a JSON-able dict. ★ Pure data — no SolidWorks call.",
    "title": "Load the Toolbox Index",
-   "params": [],
+   "params": [
+    {
+     "name": "path",
+     "default": null,
+     "desc": "Index path (omit for the default local index)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2278,7 +3961,23 @@
    "inject": null,
    "doc": "Search the Toolbox index by keyword. ★ Pure data — no SolidWorks call.",
    "title": "Search the Toolbox Index",
-   "params": [],
+   "params": [
+    {
+     "name": "keyword",
+     "default": null,
+     "desc": "Search keyword."
+    },
+    {
+     "name": "standard",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "category",
+     "default": "",
+     "desc": "Optional category filter."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2291,7 +3990,23 @@
    "inject": null,
    "doc": "Resolve a Toolbox part name to its file path. ★ Pure data — no SolidWorks call. ★ An unknown name fails with what is available instead of returning nothing.",
    "title": "Get a Toolbox Part's File Path",
-   "params": [],
+   "params": [
+    {
+     "name": "standard",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "part_name",
+     "default": null,
+     "desc": "Part name inside that standard (★ see the search tool)."
+    },
+    {
+     "name": "index",
+     "default": null,
+     "desc": "A pre-loaded index (optional)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2304,7 +4019,18 @@
    "inject": "model",
    "doc": "Create a chamfer on the selected sketch entities. ★ Needs entities selected first (★ rule 3: select declaratively, do not pass coordinates). ⚠ The backend limit in known-facts 47 applies to the *feature* chamfer; this is the sketch one — the layer reports what actually happened.",
    "title": "Create a Sketch Chamfer",
-   "params": [],
+   "params": [
+    {
+     "name": "chamfer_type",
+     "default": 0,
+     "desc": "Chamfer type enum value."
+    },
+    {
+     "name": "distance_mm",
+     "default": null,
+     "desc": "Chamfer distance in MILLIMETRES."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2330,7 +4056,18 @@
    "inject": "model",
    "doc": "Convert the selected model edges into the active sketch. ★ The criterion is that the sketch entity count changes.",
    "title": "Convert Entities into the Active Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "chain",
+     "default": true,
+     "desc": "Select the whole chain."
+    },
+    {
+     "name": "inner_loops",
+     "default": false,
+     "desc": "Include inner loops."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2369,7 +4106,13 @@
    "inject": "model",
    "doc": "Get one view's scale by name. ★ An unknown name fails with the list of valid names. ★ Read-only.",
    "title": "Get a Drawing View's Scale (by name)",
-   "params": [],
+   "params": [
+    {
+     "name": "view_name",
+     "default": null,
+     "desc": "A view name (★ see solidworks_drawing_list_views)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2382,7 +4125,18 @@
    "inject": "model",
    "doc": "Set one view's scale and return before/after. ★ The criterion is that the READ-BACK scale actually changed (rule 6 — never a silent success). ⚠ Does NOT save the document.",
    "title": "Set a Drawing View's Scale (read-back verified)",
-   "params": [],
+   "params": [
+    {
+     "name": "view_name",
+     "default": null,
+     "desc": "A view name (★ see solidworks_drawing_list_views)."
+    },
+    {
+     "name": "scale",
+     "default": null,
+     "desc": "The new view scale (★ not a length, not an angle)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2408,7 +4162,13 @@
    "inject": "model",
    "doc": "★ **读工程图图纸的比例** —— 走官方 Remarks 指定的 `ISheet.GetProperties`，取其中两个数作为比例的分子/分母 ⇒ 回 `ratio_text`（如 `1:5`）。⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第 5 个是 Numerator。",
    "title": "Read Drawing Sheet Scale",
-   "params": [],
+   "params": [
+    {
+     "name": "sheet_name",
+     "default": "",
+     "desc": "图纸名；留空 = 当前图纸（★ 声明式：不传坐标）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2421,7 +4181,33 @@
    "inject": "model",
    "doc": "★ **设工程图图纸的比例并回读** —— 走 `ISheet.SetScale(numerator, denominator, scale_anno_position, scale_anno_text_height)`（官方 4 参 · 回 bool）。★ 判据：**它回真、且回读的两个数真的变了**（规则 6：不静默成功）。⚠ `numerator != 1` 会被**显式拒绝**（★ 真机三组证据：`(1,5)→1:5` · `(3,7)→1:7` · `(2,1)→1:1`）。",
    "title": "Set Drawing Sheet Scale",
-   "params": [],
+   "params": [
+    {
+     "name": "numerator",
+     "default": null,
+     "desc": "比例前项 —— ★ 真机限制：**只接受 1**（图纸比例只能是 1:n）"
+    },
+    {
+     "name": "denominator",
+     "default": null,
+     "desc": "比例后项，必须 > 0"
+    },
+    {
+     "name": "scale_anno_position",
+     "default": false,
+     "desc": "是否同时缩放注释位置"
+    },
+    {
+     "name": "scale_anno_text_height",
+     "default": false,
+     "desc": "是否同时缩放注释字高"
+    },
+    {
+     "name": "sheet_name",
+     "default": "",
+     "desc": "图纸名；留空 = 当前图纸"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2434,7 +4220,18 @@
    "inject": "model",
    "doc": "★ **把曲面缝成一张** —— 走 `IFeatureManager.InsertSewRefSurface`（官方 **5 参**）。★ 官方 Remarks：选中项要 **selection mark = 1**，而**缝合容差的有效范围是 0.0001 ～ 0.1 mm**。★★ 判据（规则 6）：**特征树多出新特征** **且** **body 数变少**（真机：`曲面-缝合1` · 2→1）。★ 它按**对象**选面（实体没有名字 —— 事实 32），★ 选中数**回读** `GetSelectedObjectCount2(-1)`（★ 不信返回值 —— 事实 8）。",
    "title": "Knit Selected Surfaces",
-   "params": [],
+   "params": [
+    {
+     "name": "knit_tolerance_mm",
+     "default": 0.0001,
+     "desc": "缝合容差（毫米）—— ★ 官方给的范围 **0.0001 ～ 0.1 mm**（规则 2：边界换算一次）"
+    },
+    {
+     "name": "try_to_form_solid",
+     "default": false,
+     "desc": "尝试形成实体（★ 勾上则缝合后直接变实体）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2447,7 +4244,23 @@
    "inject": "model",
    "doc": "★ **延伸曲面** —— 走 `IModelDoc2.InsertExtendSurface`（官方 **3 参** · ★★ **返回 `void`**）。★★ 判据**不是返回值**，而是「**特征树真的多了**」（规则 6）。★ 真机证据：10 mm ⇒ 建成 `曲面-延伸1`（树 7→8）· 负例 `distance_mm = 0` ⇒ 显式拒绝。⚠ **不选面它也能成**（它自己会找面）—— 真机实测，★ 故 `faces_selected = 0` 不构成失败。⚠ `end_condition = 1`（延伸到选定点）**未真机验证**。⚠ 与 `sw_surface.py` 的 `create_revolution_surface` 那族**不是一回事** ——那族是 `IModeler.Create*Surface`（造曲面**体**，事实 40 返回值不可靠），本条造的是**曲面特征**。",
    "title": "Extend Surface Feature",
-   "params": [],
+   "params": [
+    {
+     "name": "distance_mm",
+     "default": null,
+     "desc": "延伸距离（毫米）—— ★ 规则 2：换算只在本工具边界做一次"
+    },
+    {
+     "name": "extend_linear",
+     "default": true,
+     "desc": "True 线性延伸 / False 沿同一曲面延伸（官方第 1 参）"
+    },
+    {
+     "name": "end_condition",
+     "default": 0,
+     "desc": "0 = 按给定距离（默认）· 1 = 延伸到选定点（★ 官方第 2 参）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2460,7 +4273,23 @@
    "inject": "model",
    "doc": "★ **填充曲面** —— 走 `IFeatureManager.InsertFillSurface2`（官方 **6 参**）。★★ 判据（规则 6）：**回 `Feature` 非 None** **且** **特征树增量非空**。★ 真机证据：建 `曲面填充1`（树 7→8）· 负例 `resolutions = 9` ⇒ 显式拒绝。★★ **边界边按中点 + `mark = 1` 选**（★ 官方 Remarks；`Select4` 没有 mark 参数 —— 事实 32；传 mark = 4 会静默失败：回 true 而计数 0 —— 事实 8）。★★ 2026-10-03（轮 435）**两条路都已真机 PASS**：★ 各建成 `曲面填充1`（树 [7,8]）。★ 而**选边时请用 `mark = 1`**（官方 Remarks：边界边用 mark 1）。★ 留空 `selection` 时**自动取最高那一圈**（★ 保留原行为）。",
    "title": "Fill Surface Feature",
-   "params": [],
+   "params": [
+    {
+     "name": "resolutions",
+     "default": 2,
+     "desc": "分辨率 **1 / 2 / 3**（★ 越大质量越好，官方 Remarks）"
+    },
+    {
+     "name": "options",
+     "default": 1,
+     "desc": "`swFeatureFillSurfaceOptions_e` 的 Bitmask；★ 默认 1（`swOptimizeSurface`）"
+    },
+    {
+     "name": "selection",
+     "default": "",
+     "desc": "★ **声明式选择**：该填的**那一圈边**（★ 留空 = 自动取最高那一圈）。★★ 2026-10-03（轮 434）**原来这里是 `boundary_z: float`**（一个裸坐标），★ 而那**违反规则 3**（★ 官方原话：必须改用「具名实体 + 声明式 selection」）。★ 实测那条违反让声明门禁整批不过 ⇒ **4 个测试文件在收集期就 ERROR**。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2473,7 +4302,23 @@
    "inject": "model",
    "doc": "★ **用已有草图建「曲面-拉伸」特征** —— 走 `IFeatureManager.FeatureExtruRefSurface3`（官方 **22 个参数** · ★★ **返回 `void`**）。★★ 判据**不是返回值**，而是「**特征树真的多了**」（规则 6：不静默成功）。★ 真机证据：10 mm 深度 ⇒ 建成 `曲面-拉伸1`（树 6→7）· 负例 `-5.0` ⇒ 显式拒绝。⚠ 与 `sw_surface.py` 的「`IModeler.Create*Surface` 造曲面**体**」是**两条不同的路** ——后者在本机返回值跨次都变（事实 40），本条**不走那条**。",
    "title": "Create Extruded Surface Feature",
-   "params": [],
+   "params": [
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "拉伸深度（毫米）—— ★ 规则 2：换算只在本工具边界做一次"
+    },
+    {
+     "name": "sketch_name",
+     "default": "",
+     "desc": "草图名；留空 = 用当前草图（★ 不传坐标）"
+    },
+    {
+     "name": "through_all",
+     "default": false,
+     "desc": "⚠ **未真机验证**：贯穿（★ 真机上特征树没变，★ 已如实记为未通过）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2486,7 +4331,13 @@
    "inject": "model",
    "doc": "★ **量当前选中的实体**（逐几何量测）—— 走 `IModelDocExtension.CreateMeasure` → `IMeasure`。★ 调用序照官方示例：`Extension` → `CreateMeasure` → 设 `ArcOption` → `Calculate` → 读数。★ 回的 `values` 含 `distance` / `normal_distance` / `angle` / `length` / `area` / `perimeter` / `delta_x` / `delta_y` / `delta_z` 等；判定含 `is_intersect` / `is_parallel` / `is_perpendicular`。★★ 约定：**-1 表示「这项对当前选择不适用」** —— 本工具如实保留 -1，并另给 `applicable` 列出真量到的项。★ 真机期望（几何推出，全部对上）：两面 ⇒ `distance` 10.0mm · 单面 ⇒ `area` 400mm² · `perimeter` 80mm。★ 未选中 ⇒ 显式拒绝。⚠ 量测要先选中（规则 3：本工具不传坐标，选中由声明式选择那族负责）。",
    "title": "Measure Selected Entities",
-   "params": [],
+   "params": [
+    {
+     "name": "arc_option",
+     "default": 1,
+     "desc": "圆弧距离口径：0 = 中心到中心 · 1 = 最小距离 · 2 = 最大距离（官方示例给的语义）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2499,7 +4350,18 @@
    "inject": "model",
    "doc": "★ **用选中的草图轮廓放样** —— 走 `IFeatureManager.InsertProtrusionBlend2`（官方 **18 参**）。★ 官方 Remarks：轮廓要**按期望的顺序**先选中，mark=**1**（引导线 mark=2 · 中心线 mark=4 · 起端相切向量 mark=8）；★ 引导线与中心线**可选**。★★ 判据（规则 6）：**特征树多了新特征**。★ 真机证据：同平面与两平面两种情形都建成 `放样1`；未选中 ⇒ 显式拒绝（提示至少 2 个轮廓）。⚠ **未真机验证**：质量属性里的**体积**（★ 真机上回 0.0，所以「棱台体积 7000 mm³」那个期望值没有对上）—— ★ 不要把本工具的体积当可靠读数。",
    "title": "Create Loft Feature",
-   "params": [],
+   "params": [
+    {
+     "name": "closed",
+     "default": false,
+     "desc": "闭合放样（★ 首尾相连成一个环；★ 少于 3 个轮廓时引导线必须闭合）"
+    },
+    {
+     "name": "use_selected_profiles",
+     "default": true,
+     "desc": "用当前选中的轮廓（★ 官方要求 mark=1，且**顺序**决定结果）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2512,7 +4374,13 @@
    "inject": "model",
    "doc": "★ **用选中的「轮廓 + 路径」建扫描特征** —— 走官方**现代入口** `IFeatureManager.CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`（★ `InsertProtrusionSwept*` 整族已被 SOLIDWORKS 2018 标为 **obsolete**）。★ 官方专文给的 mark：**轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128。⚠ 官方硬约束：**路径的起点必须落在轮廓所在平面上**（1 方向扫描）—— 真机上违反它就会建不成。★★ 判据（事实 242：挑只依赖被测对象的那个）：**特征树多了新特征** **且** **类型名 = `Sweep`**。★ 真机证据：建成 `扫描1`（type=`Sweep`）· 未选中 ⇒ 显式拒绝。⚠ `AccessSelections` 在本机报 `0x80010105`（事实 47 的后端限制）——★ 而**它非必需**：真机上它报错时特征仍建成，所以本工具**不拿它当判据**。",
    "title": "Create Sweep Feature",
-   "params": [],
+   "params": [
+    {
+     "name": "cut",
+     "default": false,
+     "desc": "True 建**扫描切除**（swFmSweepCut=18）· False 建**扫描凸台**（swFmSweep=17）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2525,7 +4393,13 @@
    "inject": "model",
    "doc": "★ **从当前选中的几何建一条参考轴** —— 走 `IModelDoc2.InsertAxis2`（★ **注意入口在 `IModelDoc2` 上**，不在 `IFeatureManager` 上；★ 真机调后者报`AttributeError: <unknown>.InsertAxis2`）。★ 官方要求**先选中**几何（★ 圆柱面 / 圆锥面 / 两点等 —— ★ 面没有名字，按**面上的对象**选，事实 32）。★★ 判据（★ 事实 242 挑只依赖被测对象的那个）：**它回 `True`** **且** **特征树出现新特征**（★ 真机：`基准轴1`）—— ⚠ **不要读返回值的 `.Name`**：真机证明它回的是 **`bool`**，读 `.Name` 会报 `'bool' object has no attribute 'Name'`（★ 差点据此误判「轴没建成」）。★ 环形阵列的前置：官方 `FeatureCircularPattern4` 的 mark 表要求 `1 = 方向轴`。",
    "title": "Create Reference Axis",
-   "params": [],
+   "params": [
+    {
+     "name": "reverse",
+     "default": true,
+     "desc": "官方第一参数（`InsertAxis2(Reverse)`）；★ 真机 True 有效"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2538,7 +4412,23 @@
    "inject": "model",
    "doc": "★ **对已选中的「草图（mark=4）+ 面（mark=1）」建包覆特征** —— 走官方 `IFeatureManager.InsertWrapFeature2`（**5 参**）。★ 官方要求：★ **草图 mark = 4**（★ 且**必须是 2D 草图**，官方原话 「3D sketches are invalid」）· ★ **面 mark = 1** · ★ 拔模方向 mark = 2（仅 Emboss/Engrave 用）。★★ 判据 = **读返回对象的 `Name` 与 `GetTypeName2`** —— ★ 真机：返回 `包覆1` · 类型名 **`Emboss`**；⚠ 而 `feature_names()` 的**前后 diff 是空的**（★ 所以「树 diff」不是可靠判据）。⚠ **未验**：`Type` 传非 emboss 时**类型名不变**（★ 参数被静默忽略）· `Method` / `MeshFactor`（第 4/5 参）**取值表没查到**（用 0）。",
    "title": "Create Wrap Feature",
-   "params": [],
+   "params": [
+    {
+     "name": "wrap_type",
+     "default": "emboss",
+     "desc": "包覆类型：emboss（凸起）/ deboss（凹陷，官方名 Engrave）/ scribe（划痕）。⚠ **真机实测：传 deboss/scribe 建出来的类型名仍是 `Emboss`** ⇒ ★ 只有 `emboss` 被真机证实过"
+    },
+    {
+     "name": "thickness_mm",
+     "default": 1.0,
+     "desc": "厚度（**毫米**）"
+    },
+    {
+     "name": "reverse",
+     "default": false,
+     "desc": "反向"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2564,7 +4454,13 @@
    "inject": "model",
    "doc": "★ **撤销** —— 走 `IModelDoc2.EditUndo2`（官方 **1 参** · ★★ **返回 `void`**）。★★ 判据（规则 6）：**特征树真的退回了**（真机：7 → 6 · 撤掉 `凸台-拉伸1`）。★ 负例 `steps = 0` ⇒ 显式拒绝。⚠ **调用纪律**：★ 它撤的是**会话里的动作**、**不区分是不是我们做的** ⇒ ★ **只在我们自己的改动之后调用**（★ 例如「建完发现参数错 ⇒ 撕掉重来」）。",
    "title": "Undo Actions",
-   "params": [],
+   "params": [
+    {
+     "name": "steps",
+     "default": 1,
+     "desc": "要撤的动作数（★ 必须 ≥ 1；★ 它**不通**单位，只是个数）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2603,7 +4499,28 @@
    "inject": "model",
    "doc": "★ **按序号选中体上的一个实体**（`kind` = `EDGE` / `FACE` / `VERTEX`，`index` 从 0 起）。★ 走 `IEntity.Select4`（★ 事实 32：对边/面**按名字选不中**，按**对象**选才行）。★ 返回**回读到的选区计数**。⚠ 序号顺序官方**未承诺稳定**（★ 见 `entities_on_body`）⇒ 不要把它当跨重建的持久引用。",
    "title": "Select Entity By Index",
-   "params": [],
+   "params": [
+    {
+     "name": "kind",
+     "default": null,
+     "desc": "实体种类：EDGE / FACE / VERTEX"
+    },
+    {
+     "name": "index",
+     "default": null,
+     "desc": "体上的序号（★ 从 0 开始，本模块的约定）"
+    },
+    {
+     "name": "body_index",
+     "default": 0,
+     "desc": "第几个体（★ 从 0 开始）"
+    },
+    {
+     "name": "append",
+     "default": false,
+     "desc": "True = 追加到现有选区"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2616,7 +4533,23 @@
    "inject": "model",
    "doc": "★ **把声明式选择器解析并选中**，只回报**回读到的选区计数**。★ 选择器：`__current_selection__`（用当前选区第一个，**不重选**）· `index:<n>`（体上第 n 个）。★ 计数为 0 时**抛错**（★ 本项目一贯纪律：选不中就报错，不静默继续）。",
    "title": "Resolve Selection (count)",
-   "params": [],
+   "params": [
+    {
+     "name": "selector",
+     "default": null,
+     "desc": "声明式选择器：__current_selection__ 或 index:<n>"
+    },
+    {
+     "name": "kind",
+     "default": "EDGE",
+     "desc": "实体种类：EDGE / FACE / VERTEX"
+    },
+    {
+     "name": "body_index",
+     "default": 0,
+     "desc": "第几个体（★ 从 0 开始）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2642,7 +4575,28 @@
    "inject": "model",
    "doc": "★ **用声明式选择器选中一个实体** —— ★ MCP 可用的形态（★ 只回 JSON，**不回 COM 对象**）。★ 它把 `select_object`（吃 COM 对象）与 `resolve_entity`（吐 COM 对象）**接起来**。★★ 判据是 `count`（★ 事实 8：`Select4` 的返回值不可信，只有回读算数）；★ 计数为 0 时 `ok=False` **并写明原因**。",
    "title": "Select By Selector",
-   "params": [],
+   "params": [
+    {
+     "name": "selector",
+     "default": null,
+     "desc": "声明式选择器：__current_selection__ 或 index:<n>"
+    },
+    {
+     "name": "kind",
+     "default": "EDGE",
+     "desc": "实体种类：EDGE / FACE / VERTEX"
+    },
+    {
+     "name": "body_index",
+     "default": 0,
+     "desc": "第几个体（★ 从 0 开始）"
+    },
+    {
+     "name": "append",
+     "default": false,
+     "desc": "True = 追加到现有选区"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2655,7 +4609,23 @@
    "inject": "model",
    "doc": "★ **解析声明式选择器并回报结果**（★ 只回 JSON —— 把 COM 对象挡在里面）。★ `resolve_entity` 本身**返回 COM 对象** ⇒ MCP 层过不去 ⇒ 本工具换成可核对的描述。★ 回 `{ok, selector, kind, count, resolved}`：★ `resolved` = 解析出了对象；★★ 而**是否真的在选区里**看 `count`（★ **解析出来 ≠ 选中**）；★ 而 `__current_selection__` 是**不重选**的 ⇒ 那种情况下 `resolved=True` 而 `count=0` 是正常的。",
    "title": "Resolve Entity (report)",
-   "params": [],
+   "params": [
+    {
+     "name": "selector",
+     "default": null,
+     "desc": "声明式选择器：__current_selection__ 或 index:<n>"
+    },
+    {
+     "name": "kind",
+     "default": "EDGE",
+     "desc": "实体种类：EDGE / FACE / VERTEX"
+    },
+    {
+     "name": "body_index",
+     "default": 0,
+     "desc": "第几个体（★ 从 0 开始）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2668,7 +4638,43 @@
    "inject": "model",
    "doc": null,
    "title": "Add an Arc to the Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "center_x_mm",
+     "default": null,
+     "desc": "圆心 X，毫米"
+    },
+    {
+     "name": "center_y_mm",
+     "default": null,
+     "desc": "圆心 Y，毫米"
+    },
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "起点 X，毫米"
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "起点 Y，毫米"
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "终点 X，毫米"
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "终点 Y，毫米"
+    },
+    {
+     "name": "direction",
+     "default": 1,
+     "desc": "弧的方向（官方 CreateArc 的参数：顺时针 / 逆时针）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2681,7 +4687,43 @@
    "inject": "model",
    "doc": null,
    "title": "Add an Ellipse to the Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "center_x_mm",
+     "default": null,
+     "desc": "中心 X，毫米"
+    },
+    {
+     "name": "center_y_mm",
+     "default": null,
+     "desc": "中心 Y，毫米"
+    },
+    {
+     "name": "major_x_mm",
+     "default": null,
+     "desc": "主轴端点 X，毫米"
+    },
+    {
+     "name": "major_y_mm",
+     "default": null,
+     "desc": "主轴端点 Y，毫米"
+    },
+    {
+     "name": "minor_x_mm",
+     "default": null,
+     "desc": "副轴端点 X，毫米"
+    },
+    {
+     "name": "minor_y_mm",
+     "default": null,
+     "desc": "副轴端点 Y，毫米"
+    },
+    {
+     "name": "z_mm",
+     "default": 0.0,
+     "desc": "草图平面的 z，毫米（默认 0）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2694,7 +4736,28 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Polygon to the Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "center_x_mm",
+     "default": null,
+     "desc": "中心 X，毫米"
+    },
+    {
+     "name": "center_y_mm",
+     "default": null,
+     "desc": "中心 Y，毫米"
+    },
+    {
+     "name": "radius_mm",
+     "default": null,
+     "desc": "内切圆半径，毫米"
+    },
+    {
+     "name": "sides",
+     "default": 6,
+     "desc": "边数（默认 6；至少 3）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2707,7 +4770,33 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Slot to the Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "槽口起点 X，毫米"
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "槽口起点 Y，毫米"
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "槽口终点 X，毫米"
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "槽口终点 Y，毫米"
+    },
+    {
+     "name": "radius_mm",
+     "default": null,
+     "desc": "槽口半径（即宽度的一半），毫米"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2720,7 +4809,33 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Centerline to the Sketch",
-   "params": [],
+   "params": [
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "起点 X，毫米"
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "起点 Y，毫米"
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "终点 X，毫米"
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "终点 Y，毫米"
+    },
+    {
+     "name": "z_mm",
+     "default": 0.0,
+     "desc": "草图平面的 z，毫米（默认 0）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2733,7 +4848,13 @@
    "inject": "model",
    "doc": "★ **读当前活动草图的特征名**。⚠ 它**在草图已关闭时**会回 `fallback`（★ 默认 `Sketch1`）—— ★ 那**不是**真名（中文 UI 是「草图1」）。★★ 所以：**要按名字去取草图对象时，不要用本工具的返回值** —— ★ 用 `scripts/sw_sketch.resolve_sketch`（中英文候选 + 特征树兜底，语言无关）。",
    "title": "Current Sketch Name",
-   "params": [],
+   "params": [
+    {
+     "name": "fallback",
+     "default": "Sketch1",
+     "desc": "取不到时的回退名（⚠ ★ 中文 UI 下真名是「草图1」而回退是「Sketch1」—— ★ 所以**回退值不等于真名**，用它去找草图会找不到；★ 要**稳健取草图**请用 `solidworks_sketch_*` 那族（它们走中英文候选 + 特征树兜底））"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2759,7 +4880,28 @@
    "inject": "model",
    "doc": "★ **给已选中的实体加一个显示尺寸**（官方 `IModelDoc2.AddDimension2`，**3 参**）。★★ **单位**：官方原话是 “Dimension text location in **meters**” ⇒ ★ 本工具对外收**毫米**并在此换算。★★ **前置**：官方 Remarks 明写「Before calling this method, you must **select the entities**」⇒ ★ 本工具**先用声明式选择器选中**（★ 选不中就**不开工**并说明原因）。★ 真机证据：纯盒体上 **8/8 个边对**都建出了尺寸（`output/dimension-edge-pairs-evidence.json`）。⚠★ **已知限制（未隔离）**：同一个包装在**板 + 凸台**的模型上失败 —— ★ 连试 3 次后按事实 53 停止隔离；★ 官方另注「**only use on visible documents**」且尺寸**按位置**放置（★ 位置不落在可见模型上时可能建不出来）。",
    "title": "Add a Display Dimension",
-   "params": [],
+   "params": [
+    {
+     "name": "x_mm",
+     "default": null,
+     "desc": "尺寸文字的 X（**毫米** —— ★ 官方 API 吃米，换算只在本工具边界做一次）"
+    },
+    {
+     "name": "y_mm",
+     "default": null,
+     "desc": "尺寸文字的 Y（**毫米**）"
+    },
+    {
+     "name": "selector",
+     "default": "__current_selection__",
+     "desc": "先选中要标注的实体：`__current_selection__`（用现有选区）或 `index:<n>`"
+    },
+    {
+     "name": "kind",
+     "default": "EDGE",
+     "desc": "实体种类：EDGE / FACE / VERTEX"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2772,7 +4914,38 @@
    "inject": "model",
    "doc": "★ **按显式孔位一次创建一组孔**（★ 官方走 `HoleWizard5` 那族）。★★ 它把 `create_hole_pattern` 的 **`creator` 可调用对象**换成**具名的 `kind`** ——★ 因为 MCP 层给不出函数对象。★★ 判据**两条都要**：★ 每个孔位都回了证据 **且** **特征树真的长了**（★ 规则 6）——★ 只回证据而树不动 ⇒ `ok=false` 并写明（★ 本会话已见过「回对象而什么都没发生」的空存根）。⚠ 本工具只支持 `through` / `blind`：★ `counterbore` / `countersink` 另有必填参数，未暴露。",
    "title": "Create Holes at Explicit Positions",
-   "params": [],
+   "params": [
+    {
+     "name": "positions",
+     "default": null,
+     "desc": "孔位列表，每项 `[x_mm, y_mm]`（**毫米**，在草图平面内）——★ 坐标是规则 3 的书面例外（草图图元没有可选的具名实体）"
+    },
+    {
+     "name": "kind",
+     "default": "through",
+     "desc": "孔种类：`through`（通孔）/ `blind`（盲孔）"
+    },
+    {
+     "name": "diameter_mm",
+     "default": 8.0,
+     "desc": "孔径（毫米）"
+    },
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "盲孔深度（毫米）—— ★ `kind=\"blind\"` 时**必填**"
+    },
+    {
+     "name": "plane_name",
+     "default": "Front Plane",
+     "desc": "草图平面（中英文皆可：Front Plane / 前视基准面）"
+    },
+    {
+     "name": "name",
+     "default": "孔",
+     "desc": "孔特征名前缀（每个孔会带序号后缀）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2863,7 +5036,13 @@
    "inject": "model",
    "doc": "★ **把当前视图存成图片**（PNG / JPG，走官方 `IModelDocExtension.SaveAs3`）。★★ 判据**不是返回值**而是**文件**：`ok = 无异常 且 文件存在 且 size > 0`。★ 另回 `size_before` / `grew_or_created` —— ★ 免得把「旧文件本来就在」当成导出成功。★ 真机证据：一张 PNG ⇒ `exists=true` · `size_bytes=67997` · `grew_or_created=true`。⚠ 尺寸**不可指定**（`SaveAs3` 没有尺寸入参）⇒ ★ 按**当前视图**。（★ 要指定像素尺寸请用 `solidworks_export_bmp`。）",
    "title": "Export the Current View as an Image",
-   "params": [],
+   "params": [
+    {
+     "name": "output_path",
+     "default": null,
+     "desc": ""
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2915,7 +5094,38 @@
    "inject": "manager",
    "doc": "Add a **RIGID CONNECTOR** between two bodies and return a READ-BACK report. ★★ **本工具不读选区** —— 它自己按**序号**把两组实体装好（`entities_as_array`）。⚠★ **它要在「两个体」上才建得出来**：★ 在**单体零件**上会**成功返回但不建**（计数不涨、也不报错）—— ★ 那是**应然的**（同族形参名写着 `Comp1`/`Comp2` ⇒ **连接件连的是两个东西**）。★ 所以请**两侧体号指向不同的体**（多体零件即用；装配体属另一条链）。★ `ok` 的判据是**回读**：载荷计数**恰好 +1**，★ **不是**返回值。",
    "title": "Apply a Rigid Connector",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "source_indices",
+     "default": null,
+     "desc": "源侧要取的实体**序号**（★ **0 基**，★ 一个列表）"
+    },
+    {
+     "name": "target_indices",
+     "default": null,
+     "desc": "目标侧要取的实体**序号**（★ **0 基**，★ 一个列表）"
+    },
+    {
+     "name": "kind",
+     "default": "FACE",
+     "desc": "实体种类：`FACE` / `EDGE` / `VERTEX`（★ 两侧同一类）"
+    },
+    {
+     "name": "source_body_index",
+     "default": 0,
+     "desc": "源侧取第几个**体**（★ 0 基）—— ★ **要与目标侧不同**"
+    },
+    {
+     "name": "target_body_index",
+     "default": 0,
+     "desc": "目标侧取第几个**体**（★ 0 基）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2928,7 +5138,18 @@
    "inject": "model",
    "doc": "Create a **STRUCTURAL MEMBER** (weldment) along a path sketch with a weldment profile, and return a READ-BACK report. ★★ **判据是特征树**（★ 不是计数）：`new_type_names` 应含 `WeldmentFeature` 与 `WeldMemberFeat`。⚠ 本机需要装「焊件轮廓库」—— ★ 本机**有**（111 个 `.sldlfp`）。",
    "title": "Create a Structural Member",
-   "params": [],
+   "params": [
+    {
+     "name": "sketch_name",
+     "default": null,
+     "desc": "**路径草图**的名字（★ 如 `草图1`）—— ★ 结构构件沿它扫出。"
+    },
+    {
+     "name": "profile_path",
+     "default": null,
+     "desc": "`.sldlfp` **焊件轮廓**的绝对路径。★ 本机在 `C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2026\\weldment profiles\\` 下（★ **111 个**，★ 中文 UI 用 `GB\\` 那一支，★ 如 `GB\\square-rods.sldlfp`）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2941,7 +5162,23 @@
    "inject": "model",
    "doc": "Select ONE face by a **declarative selector** and return a READ-BACK report. ★★ 这是「**按面上的点定位**」那条路（★ 事实 32：`SelectByID2` 对边/面**按名字不可行**，而**按点可行**）—— ★ 而本工具把它包成**声明式**（★ 规则 3）。★ `ok` 的判据是**回读计数 == 1**（★ **不是**返回值 —— 事实 8）。★★ **不接受裸坐标**：★ 坐标在能力层内部算，★ 对外的参数**只有选择器**。",
    "title": "Select a Face by Declarative Selector",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "mark",
+     "default": 0,
+     "desc": "★ 选择标记（★ 多引用特征读 mark 0/1/2 —— 规则 3 的第三句）"
+    },
+    {
+     "name": "append",
+     "default": false,
+     "desc": "★ 传给底层的 `Append`。⚠★ **真机：`append=False` 时它并没清掉上一次的选区**（★ 回读 1 → 2）⇒ ★★ **要换一个面就自己先 `ClearSelection2`**"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2954,7 +5191,33 @@
    "inject": "manager",
    "doc": "Add a **LINK CONNECTOR** between two **vertices** and return a READ-BACK report. ★★ **它要的是「顶点」** —— ★ 官方形参名就是 `VertexPointforFirst/SecondLocation`。⚠★ **不要传面 / 组件**（★ 那一族是 `AddRigidConnector` 收面、`AddPinConnector` 收组件）——★ 传错会**静默不建**（★ 事实 341 那五次就是这么来的）。★ `ok` 的判据是**回读**：载荷与约束计数 **恰好 +1**（★ **不是**返回值 —— 事实 8）。",
    "title": "Apply a Link Connector (between two vertices)",
-   "params": [],
+   "params": [
+    {
+     "name": "study_name",
+     "default": "",
+     "desc": ""
+    },
+    {
+     "name": "first",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "second",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "first_body_index",
+     "default": 0,
+     "desc": "★ 第一个选择器里的 `index:<n>` 落在**第几个体**上（★ 0 基）"
+    },
+    {
+     "name": "second_body_index",
+     "default": 0,
+     "desc": "★ 同上（★ 第二个）—— ★★ 而两个顶点**可以在同一个体上**（★ 真机验过 · 事实 373）"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2967,7 +5230,38 @@
    "inject": "model",
    "doc": null,
    "title": "Add a 3-Point Corner Rectangle (any angle)",
-   "params": [],
+   "params": [
+    {
+     "name": "x1_mm",
+     "default": null,
+     "desc": "Corner 1 X, mm."
+    },
+    {
+     "name": "y1_mm",
+     "default": null,
+     "desc": "Corner 1 Y, mm."
+    },
+    {
+     "name": "x2_mm",
+     "default": null,
+     "desc": "Corner 2 X, mm."
+    },
+    {
+     "name": "y2_mm",
+     "default": null,
+     "desc": "Corner 2 Y, mm."
+    },
+    {
+     "name": "x3_mm",
+     "default": null,
+     "desc": "Third point X (sets the angle/height), mm."
+    },
+    {
+     "name": "y3_mm",
+     "default": null,
+     "desc": "Third point Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2980,7 +5274,38 @@
    "inject": "model",
    "doc": null,
    "title": "Add a 3-Point Center Rectangle (any angle)",
-   "params": [],
+   "params": [
+    {
+     "name": "center_x_mm",
+     "default": null,
+     "desc": "Centre X, mm."
+    },
+    {
+     "name": "center_y_mm",
+     "default": null,
+     "desc": "Centre Y, mm."
+    },
+    {
+     "name": "x2_mm",
+     "default": null,
+     "desc": "A corner X, mm."
+    },
+    {
+     "name": "y2_mm",
+     "default": null,
+     "desc": "A corner Y, mm."
+    },
+    {
+     "name": "x3_mm",
+     "default": null,
+     "desc": "Third point X (sets the height), mm."
+    },
+    {
+     "name": "y3_mm",
+     "default": null,
+     "desc": "Third point Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -2993,7 +5318,38 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Parallelogram",
-   "params": [],
+   "params": [
+    {
+     "name": "x1_mm",
+     "default": null,
+     "desc": "Corner X, mm."
+    },
+    {
+     "name": "y1_mm",
+     "default": null,
+     "desc": "Corner Y, mm."
+    },
+    {
+     "name": "x2_mm",
+     "default": null,
+     "desc": "End of one adjacent edge, X, mm."
+    },
+    {
+     "name": "y2_mm",
+     "default": null,
+     "desc": "End of one adjacent edge, Y, mm."
+    },
+    {
+     "name": "x3_mm",
+     "default": null,
+     "desc": "End of the other adjacent edge, X, mm."
+    },
+    {
+     "name": "y3_mm",
+     "default": null,
+     "desc": "End of the other adjacent edge, Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3006,7 +5362,33 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Tangent Arc",
-   "params": [],
+   "params": [
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "Arc end X, mm."
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "Arc end Y, mm."
+    },
+    {
+     "name": "through_x_mm",
+     "default": null,
+     "desc": "A point the arc passes through, X, mm."
+    },
+    {
+     "name": "through_y_mm",
+     "default": null,
+     "desc": "A point the arc passes through, Y, mm."
+    },
+    {
+     "name": "arc_type",
+     "default": 1,
+     "desc": "Official ArcType (int). ⚠ 取值表未在官方源查到 ⇒ 默认 1，未核实。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3019,7 +5401,38 @@
    "inject": "model",
    "doc": null,
    "title": "Add a 3-Point Arc",
-   "params": [],
+   "params": [
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "Start X, mm."
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "Start Y, mm."
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "End X, mm."
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "End Y, mm."
+    },
+    {
+     "name": "through_x_mm",
+     "default": null,
+     "desc": "A point on the arc, X, mm."
+    },
+    {
+     "name": "through_y_mm",
+     "default": null,
+     "desc": "A point on the arc, Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3032,7 +5445,63 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Partial Ellipse (elliptical arc)",
-   "params": [],
+   "params": [
+    {
+     "name": "center_x_mm",
+     "default": null,
+     "desc": "Ellipse centre X, mm."
+    },
+    {
+     "name": "center_y_mm",
+     "default": null,
+     "desc": "Ellipse centre Y, mm."
+    },
+    {
+     "name": "major_x_mm",
+     "default": null,
+     "desc": "A point on the MAJOR axis, X, mm."
+    },
+    {
+     "name": "major_y_mm",
+     "default": null,
+     "desc": "A point on the MAJOR axis, Y, mm."
+    },
+    {
+     "name": "minor_x_mm",
+     "default": null,
+     "desc": "A point on the MINOR axis, X, mm."
+    },
+    {
+     "name": "minor_y_mm",
+     "default": null,
+     "desc": "A point on the MINOR axis, Y, mm."
+    },
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "Arc start X, mm."
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "Arc start Y, mm."
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "Arc end X, mm."
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "Arc end Y, mm."
+    },
+    {
+     "name": "direction",
+     "default": 1,
+     "desc": "1 = counter-clockwise, -1 = clockwise."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3045,7 +5514,48 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Parabola",
-   "params": [],
+   "params": [
+    {
+     "name": "focus_x_mm",
+     "default": null,
+     "desc": "Focus X, mm."
+    },
+    {
+     "name": "focus_y_mm",
+     "default": null,
+     "desc": "Focus Y, mm."
+    },
+    {
+     "name": "apex_x_mm",
+     "default": null,
+     "desc": "Apex X, mm."
+    },
+    {
+     "name": "apex_y_mm",
+     "default": null,
+     "desc": "Apex Y, mm."
+    },
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "Start X, mm."
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "Start Y, mm."
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "End X, mm."
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "End Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3058,7 +5568,48 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Conic Curve",
-   "params": [],
+   "params": [
+    {
+     "name": "focus_x_mm",
+     "default": null,
+     "desc": "Focus X, mm."
+    },
+    {
+     "name": "focus_y_mm",
+     "default": null,
+     "desc": "Focus Y, mm."
+    },
+    {
+     "name": "apex_x_mm",
+     "default": null,
+     "desc": "Apex X, mm."
+    },
+    {
+     "name": "apex_y_mm",
+     "default": null,
+     "desc": "Apex Y, mm."
+    },
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "Start X, mm."
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "Start Y, mm."
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "End X, mm."
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "End Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3071,7 +5622,38 @@
    "inject": "model",
    "doc": null,
    "title": "Add a Perimeter Circle (3-point circle)",
-   "params": [],
+   "params": [
+    {
+     "name": "x1_mm",
+     "default": null,
+     "desc": "Point 1 X, mm."
+    },
+    {
+     "name": "y1_mm",
+     "default": null,
+     "desc": "Point 1 Y, mm."
+    },
+    {
+     "name": "x2_mm",
+     "default": null,
+     "desc": "Point 2 X, mm."
+    },
+    {
+     "name": "y2_mm",
+     "default": null,
+     "desc": "Point 2 Y, mm."
+    },
+    {
+     "name": "x3_mm",
+     "default": null,
+     "desc": "Point 3 X, mm."
+    },
+    {
+     "name": "y3_mm",
+     "default": null,
+     "desc": "Point 3 Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3084,7 +5666,28 @@
    "inject": "model",
    "doc": "Trim the selected sketch entities. ⚠ How many segments must be selected DEPENDS on the option (official Remarks: closest = exactly one, corner = exactly two).",
    "title": "Trim Sketch Entities",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "option",
+     "default": "closest",
+     "desc": "Trim flavour: closest (1 segment) | corner (2 segments) | two_entities | entity_point | entities | outside | inside."
+    },
+    {
+     "name": "x_mm",
+     "default": 0.0,
+     "desc": "Trim-point X, mm (used by some options)."
+    },
+    {
+     "name": "y_mm",
+     "default": 0.0,
+     "desc": "Trim-point Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3097,7 +5700,23 @@
    "inject": "model",
    "doc": "Extend the selected sketch entity to the nearest entity.",
    "title": "Extend a Sketch Entity",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "x_mm",
+     "default": 0.0,
+     "desc": "Extend-to X, mm."
+    },
+    {
+     "name": "y_mm",
+     "default": 0.0,
+     "desc": "Extend-to Y, mm."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3110,7 +5729,43 @@
    "inject": "model",
    "doc": "Offset the selected sketch entities (official swSkOffsetCapEndType_e / swSkOffsetMakeConstructionType_e values are used verbatim).",
    "title": "Offset Sketch Entities (offset entities)",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "offset_mm",
+     "default": null,
+     "desc": "Offset distance, mm."
+    },
+    {
+     "name": "both_directions",
+     "default": false,
+     "desc": "Offset to both sides."
+    },
+    {
+     "name": "chain",
+     "default": true,
+     "desc": "Select the whole chain."
+    },
+    {
+     "name": "cap_ends",
+     "default": "none",
+     "desc": "Cap ends: none | arc | line."
+    },
+    {
+     "name": "make_construction",
+     "default": "dont",
+     "desc": "Make construction: dont | orig | offs | both."
+    },
+    {
+     "name": "add_dimensions",
+     "default": false,
+     "desc": "Add dimensions to the offset."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3123,7 +5778,23 @@
    "inject": "model",
    "doc": "Create a SKETCH fillet on two selected, intersecting sketch segments.",
    "title": "Draw a Sketch Fillet",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "radius_mm",
+     "default": null,
+     "desc": "Fillet radius, mm."
+    },
+    {
+     "name": "constrained_corners",
+     "default": 0,
+     "desc": "Official ConstrainedCorners (int)."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3136,7 +5807,48 @@
    "inject": "model",
    "doc": "Create a LINEAR sketch pattern of the selected entities (official 12-arg call).",
    "title": "Linear Sketch Pattern",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "x_count",
+     "default": 2,
+     "desc": "Instances along X (★ 份数，不是坐标)."
+    },
+    {
+     "name": "y_count",
+     "default": 1,
+     "desc": "Instances along Y (★ 份数，不是坐标)."
+    },
+    {
+     "name": "spacing_x_mm",
+     "default": 10.0,
+     "desc": "Spacing X, mm."
+    },
+    {
+     "name": "spacing_y_mm",
+     "default": 0.0,
+     "desc": "Spacing Y, mm."
+    },
+    {
+     "name": "angle_x_deg",
+     "default": 0.0,
+     "desc": "Angle X, DEGREES (converted once at the boundary)."
+    },
+    {
+     "name": "angle_y_deg",
+     "default": 0.0,
+     "desc": "Angle Y, DEGREES."
+    },
+    {
+     "name": "delete_instances",
+     "default": "",
+     "desc": "Instance numbers to skip, e.g. '2,3'."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3149,7 +5861,43 @@
    "inject": "model",
    "doc": "Create a CIRCULAR sketch pattern of the selected entities (official 9-arg call).",
    "title": "Circular Sketch Pattern",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": ""
+    },
+    {
+     "name": "arc_radius_mm",
+     "default": 20.0,
+     "desc": "Pattern arc radius, mm."
+    },
+    {
+     "name": "arc_angle_deg",
+     "default": 360.0,
+     "desc": "Pattern arc angle, DEGREES."
+    },
+    {
+     "name": "pattern_num",
+     "default": 4,
+     "desc": "Number of instances."
+    },
+    {
+     "name": "pattern_spacing_deg",
+     "default": 0.0,
+     "desc": "Spacing, DEGREES."
+    },
+    {
+     "name": "pattern_rotate",
+     "default": true,
+     "desc": "Rotate the instances."
+    },
+    {
+     "name": "delete_instances",
+     "default": "",
+     "desc": "Instance numbers to skip."
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3162,7 +5910,28 @@
    "inject": "model",
    "doc": "★ 移动实体：`IModelDoc2.SketchModifyTranslate`（★ 改的是**草图坐标系**）。★ 判据 = `ModelToSketchTransform.ArrayData` 的平移分量变化（★ 真机 5mm 严格对应）。",
    "title": "Move Sketch Entities",
-   "params": [],
+   "params": [
+    {
+     "name": "start_x_mm",
+     "default": null,
+     "desc": "起点的 X（毫米）。"
+    },
+    {
+     "name": "start_y_mm",
+     "default": null,
+     "desc": "起点的 Y（毫米）。"
+    },
+    {
+     "name": "end_x_mm",
+     "default": null,
+     "desc": "终点的 X（毫米）。"
+    },
+    {
+     "name": "end_y_mm",
+     "default": null,
+     "desc": "终点的 Y（毫米）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3175,7 +5944,23 @@
    "inject": "model",
    "doc": "★ 旋转实体：`IModelDoc2.SketchModifyRotate`（★ 改的是**草图坐标系**）。★ 真机验证：30° ⇒ 3×3 旋转矩阵首行变成 `[0.866025, -0.500001, 0]`（cos30°/sin30°）。",
    "title": "Rotate Sketch Entities",
-   "params": [],
+   "params": [
+    {
+     "name": "center_x_mm",
+     "default": null,
+     "desc": "旋转中心的 X（毫米）。"
+    },
+    {
+     "name": "center_y_mm",
+     "default": null,
+     "desc": "旋转中心的 Y（毫米）。"
+    },
+    {
+     "name": "angle_deg",
+     "default": null,
+     "desc": "旋转角（**度**；★ 只在边界换算成弧度一次）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3188,7 +5973,13 @@
    "inject": "model",
    "doc": "★ 缩放实体比例：`IModelDoc2.SketchModifyScale` —— ★ **本批唯一有 bool 返回值**的成员。★ 真机验证：1.5 ⇒ 草图 bbox 从 ±20/±10 变成 ±30/±15（**正好 ×1.5**）。",
    "title": "Scale Sketch Entities",
-   "params": [],
+   "params": [
+    {
+     "name": "factor",
+     "default": null,
+     "desc": "缩放比例（★ 必须 > 0；★ 它**不是长度**，故不带 `_mm`）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3201,7 +5992,33 @@
    "inject": "model",
    "doc": "★ 伸展实体：**`IModelDocExtension.Stretch`**（★ 入口在 **Extension** 上，不是 `IModelDoc2`）。⚠ 官方说明「Stretch the **selected** entities」⇒ ★ **要求先选中实体**。",
    "title": "Stretch Sketch Entities",
-   "params": [],
+   "params": [
+    {
+     "name": "base_x_mm",
+     "default": null,
+     "desc": "基点 X（毫米）。"
+    },
+    {
+     "name": "base_y_mm",
+     "default": null,
+     "desc": "基点 Y（毫米）。"
+    },
+    {
+     "name": "dest_x_mm",
+     "default": null,
+     "desc": "拉伸终点 X（毫米）。"
+    },
+    {
+     "name": "dest_y_mm",
+     "default": null,
+     "desc": "拉伸终点 Y（毫米）。"
+    },
+    {
+     "name": "keep_relations",
+     "default": null,
+     "desc": "保留草图几何关系（★ 布尔是**标志**，不是长度）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3214,7 +6031,13 @@
    "inject": "model",
    "doc": "★ 镜像/翻转：`IModelDoc2.SketchModifyFlip(AxisFlag)`。★ 真机验证：`axis_flag=1` ⇒ 3×3 旋转矩阵首行从 `[1,0,0]` 变成 **`[-1,0,0]`**（X 符号翻转）。⚠ `AxisFlag` 的取值表**官方未给** ⇒ 按铁律 5 原样透传、不猜语义。",
    "title": "Flip Sketch Entities",
-   "params": [],
+   "params": [
+    {
+     "name": "axis_flag",
+     "default": null,
+     "desc": "轴标志（★ 官方 swapi 与 CHM **都未给取值表** ⇒ 原样透传，语义不下断言）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3240,7 +6063,18 @@
    "inject": "model",
    "doc": "★ 等距曲面：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（回 `void`）。★ 真机：树 7→8，新增 `曲面-等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。",
    "title": "Insert Offset Surface",
-   "params": [],
+   "params": [
+    {
+     "name": "thickness_mm",
+     "default": null,
+     "desc": "与参考面的距离（毫米）。"
+    },
+    {
+     "name": "reverse",
+     "default": false,
+     "desc": "反向偏移（★ 布尔是标志，不是长度）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3253,7 +6087,63 @@
    "inject": "model",
    "doc": "★ 直纹曲面：`IFeatureManager.InsertRuledSurfaceFromEdge2(…)`（**11 参**，回 `Feature`）。⚠ 官方 Remarks 逐字：「If you select an edge with a **selection mark of 4**, the default face is used.」⇒ ★ **调用前先把边按 `mark=4` 选中**。★ 真机：树 7→8，新增 `直纹曲面1`。★ 用的是 `…FromEdge2`（★ `…FromEdge` 官方标 **Obsolete**，铁律 4）。",
    "title": "Insert Ruled Surface",
-   "params": [],
+   "params": [
+    {
+     "name": "ruled_type",
+     "default": null,
+     "desc": "官方 `Type`：0=Tangent to Surface · 1=Normal to Surface · 2=Tapered to Vector · 3=Perpendicular to Vector · 4=Sweep。"
+    },
+    {
+     "name": "length_mm",
+     "default": 0.0,
+     "desc": "距离（毫米；★ 官方说只对 Tangent/Tapered/Perpendicular 有效）。"
+    },
+    {
+     "name": "flip_pull_dir",
+     "default": false,
+     "desc": "翻转拉伸方向（★ 官方说只对 Normal/Tapered 有效）。"
+    },
+    {
+     "name": "flip_dir",
+     "default": false,
+     "desc": "翻转方向（★ 官方说只对 Perpendicular 有效）。"
+    },
+    {
+     "name": "trim_and_sew",
+     "default": true,
+     "desc": "裁剪并缝合（★ 布尔是标志）。"
+    },
+    {
+     "name": "angle_deg",
+     "default": 0.0,
+     "desc": "角度（度；★ 官方说只对 Tapered to Vector 有效）。"
+    },
+    {
+     "name": "coord_input",
+     "default": false,
+     "desc": "启用坐标输入（★ 官方说只对 Sweep 有效）。"
+    },
+    {
+     "name": "x_mm",
+     "default": 0.0,
+     "desc": "X 坐标（毫米）。"
+    },
+    {
+     "name": "y_mm",
+     "default": 0.0,
+     "desc": "Y 坐标（毫米）。"
+    },
+    {
+     "name": "z_mm",
+     "default": 0.0,
+     "desc": "Z 坐标（毫米）。"
+    },
+    {
+     "name": "b_connect_surface",
+     "default": false,
+     "desc": "移除连接曲面（★ 布尔是标志）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3266,7 +6156,13 @@
    "inject": "model",
    "doc": "★ 删除面：**`IModelDocExtension.InsertDeleteFace(Option)`**（回 `bool`）。⚠ ★ 入口在 **Extension** 上；★ `IModelDoc2.InsertDeleteFace2` 官方标 **Obsolete**（铁律 4）⇒ 用后继版。★ 真机（`option=0`）：树 7→8，新增 `删除面1`。⚠ 官方 Returns 逐字：True 表示**插入了 DeleteFace 特征**。",
    "title": "Insert Delete Face",
-   "params": [],
+   "params": [
+    {
+     "name": "option",
+     "default": 0,
+     "desc": "`swFaceDeleteOption_e`：0=Default · 1=Patch · 2=Fill · 3=FillWithTangent（★ 默认 0）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3292,7 +6188,38 @@
    "inject": "model",
    "doc": "★ 放样曲面：`IModelDoc2.InsertLoftRefSurface2(…)`（6 参，回 `void`）。⚠ 官方 Remarks 逐字：「The mark for: **profile selections should be 1**」⇒ ★ **调用前把轮廓按 `mark=1` 选好**（★ 且**按期望的顺序**）。★ 真机建成：树 7→8，新增 `曲面-放样1`。★ 用的是 `…RefSurface2`（★ `…RefSurface` 官方标 **Obsolete**，铁律 4）。",
    "title": "Insert Lofted Reference Surface",
-   "params": [],
+   "params": [
+    {
+     "name": "closed",
+     "default": false,
+     "desc": "闭合放样（★ 官方：True 时**至少要 3 个轮廓**）。"
+    },
+    {
+     "name": "keep_tangency",
+     "default": true,
+     "desc": "相切时保持相切（★ 布尔是标志）。"
+    },
+    {
+     "name": "force_non_rational",
+     "default": false,
+     "desc": "强制非有理曲面（★ 布尔是标志）。"
+    },
+    {
+     "name": "tess_tolerance_factor",
+     "default": 0.0,
+     "desc": "带中心线放样时控制中间截面数（★ 官方给了默认值 ⇒ 0.0 = 用默认；★ 不是长度）。"
+    },
+    {
+     "name": "start_matching_type",
+     "default": 0,
+     "desc": "起始轮廓的相切类型（★ 官方「see Remarks」，本工具原样透传、不编造取值表）。"
+    },
+    {
+     "name": "end_matching_type",
+     "default": 0,
+     "desc": "末端轮廓的相切类型（★ 同上，原样透传）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3318,7 +6245,28 @@
    "inject": "model",
    "doc": "★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 `Create3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 `类型不匹配`，位置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。",
    "title": "Insert Global Bounding Box",
-   "params": [],
+   "params": [
+    {
+     "name": "bbox_type",
+     "default": 1,
+     "desc": "`swGlobalBoundingBoxFitOptions_e`：1=BestFit · 2=CustomPlane · 3=CustomCoordSys（默认 1）。⚠ 只有 **2=CustomPlane** 才要先选面/基准面。"
+    },
+    {
+     "name": "lwta_direction_type",
+     "default": 0,
+     "desc": "`swGlobalBBoxLWTADirectionType_e`：0=Unspecified · 1=LWTDir_XYZ · 2=YXZ · 3=YZX · 6=XZY · 7/8/9=AxisDir_X/Y/Z（默认 0）。"
+    },
+    {
+     "name": "include_hidden_bodies",
+     "default": false,
+     "desc": "是否含隐藏体（★ 布尔是标志）。"
+    },
+    {
+     "name": "include_surface_bodies",
+     "default": false,
+     "desc": "是否含曲面体（★ 布尔是标志）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3331,7 +6279,23 @@
    "inject": "model",
    "doc": "★ 坐标系：`IFeatureManager.InsertCoordinateSystem(…)`（3 参，回 `Feature`）。★ 用的是 `IFeatureManager` 那个 —— `IModelDoc2.InsertCoordinateSystem` 官方标 **Obsolete**（铁律 4），★ 且新版回 `Feature`、旧版回 `bool`。★ 真机建成。",
    "title": "Insert Coordinate System",
-   "params": [],
+   "params": [
+    {
+     "name": "x_flipped",
+     "default": false,
+     "desc": "X 轴翻转（★ 官方形参名 `XFlippedIn`）。"
+    },
+    {
+     "name": "y_flipped",
+     "default": false,
+     "desc": "Y 轴翻转。"
+    },
+    {
+     "name": "z_flipped",
+     "default": false,
+     "desc": "Z 轴翻转。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3344,7 +6308,38 @@
    "inject": "model",
    "doc": "★ 基准面：`IFeatureManager.InsertRefPlane`（6 参，回 [[Reference plane]]）。⚠⚠ **调用前必须按 mark 选参考实体** —— 官方 Remarks 逐字给了表：**0 = First reference entity · 1 = Second · 2 = Third**。★ 真机：选一个面（**mark=0**）+ `Coincident(4)` ⇒ 树新增 `基准面1`。",
    "title": "Insert Reference Plane",
-   "params": [],
+   "params": [
+    {
+     "name": "first_constraint",
+     "default": null,
+     "desc": "`swRefPlaneReferenceConstraints_e`：1=Parallel · 4=Coincident · 8=Distance · 16=Angle · 128=MidPlane（★ 另有 Option* 位：256=OptionFlip · 512=OptionOriginOnCurve …）。"
+    },
+    {
+     "name": "first_angle_or_dist",
+     "default": 0.0,
+     "desc": "第一约束的角度或距离（★ 官方**未给单位** ⇒ 原样透传）。"
+    },
+    {
+     "name": "second_constraint",
+     "default": 0,
+     "desc": "第二约束（同上表；0 = 不用）。"
+    },
+    {
+     "name": "second_angle_or_dist",
+     "default": 0.0,
+     "desc": "第二约束的角度或距离。"
+    },
+    {
+     "name": "third_constraint",
+     "default": 0,
+     "desc": "第三约束（0 = 不用）。"
+    },
+    {
+     "name": "third_angle_or_dist",
+     "default": 0.0,
+     "desc": "第三约束的角度或距离。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3357,7 +6352,28 @@
    "inject": "model",
    "doc": "★ 点：`IFeatureManager.InsertReferencePoint`（4 参，回 [[IFeature]]）。⚠ 官方 Remarks：`NumberOfRefPoints` **必须是 1**。★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。★★ 而选面**必须紧接着调用** —— 中间隔别的步骤会把选区清掉。",
    "title": "Insert Reference Point",
-   "params": [],
+   "params": [
+    {
+     "name": "ref_point_type",
+     "default": null,
+     "desc": "`swRefPointType_e`：0=Invalid · 1=Undefined · 2=AlongCurve · 3=CenterEdge · 4=FaceCenter · 5=FaceVertexProjection · 6=Intersection · 7=SketchPoint。"
+    },
+    {
+     "name": "along_curve_type",
+     "default": 0,
+     "desc": "`swRefPointAlongCurveType_e`：0=Distance · 1=Percentage · 2=EvenlyDistributed。"
+    },
+    {
+     "name": "distance_or_percent",
+     "default": 0.0,
+     "desc": "沿曲线的距离或百分比。"
+    },
+    {
+     "name": "number_of_ref_points",
+     "default": 1,
+     "desc": "★ 官方 Remarks：**必须是 1**（否则拒绝）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3370,7 +6386,13 @@
    "inject": "model",
    "doc": "★ 通过参考点的曲线：`InsertCurveFileBegin()` → `InsertCurveFilePoint(X,Y,Z)`×N → `InsertCurveFileEnd()`（★ **三步式**，★ 别只调中间那个）。★ 真机建成：树新增 `曲线1`（★ 顺带验证了「按米换算」这个假设是对的）。★ 判据 = `Point`/`End` 的返回值 **且** 特征树增量。",
    "title": "Insert Curve Through Points",
-   "params": [],
+   "params": [
+    {
+     "name": "points_mm",
+     "default": null,
+     "desc": "点的列表，每项 `[x, y, z]`（**毫米**，至少 2 个）。★ 官方 X/Y/Z 只说 \"value for the point\"、**没给单位** ⇒ 本工具按 SolidWorks API 惯例当作**米**、在边界换算一次（规则 2），★ 并把该假设写进返回值。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3383,7 +6405,28 @@
    "inject": "model",
    "doc": "★ **旋转曲面**：`IFeatureManager.InsertRevolvedRefSurface(…)` → `IFeature`。★ 官方逐字「Creates a revolved reference surface by revolving a profile around a centerline.」——与实体版 `revolve_boss` 同形，★ 只是产出**曲面**。⚠ **调用前要选好轮廓**（官方 Remarks 逐字：Make the selections using `IModelDocExtension::SelectByID2` before calling）；★ 官方**没给 mark** ⇒ 本工具不假定 mark。★ 官方另注「does not support **3D sketches**」。★ 真机建成：树新增 `曲面-旋转1` · 曲面体 0→1。",
    "title": "Create Revolved Surface",
-   "params": [],
+   "params": [
+    {
+     "name": "angle_deg",
+     "default": null,
+     "desc": "旋**角**（**度**；★ 只在边界换算成弧度一次，规则 2）。★ `rev_type=1`（MidPlane）时它是**全角**。"
+    },
+    {
+     "name": "rev_type",
+     "default": null,
+     "desc": "官方 `RevType`：0=One direction · 1=MidPlane · 2=Two direction（取其它值本工具会显式拒绝）。"
+    },
+    {
+     "name": "reverse_dir",
+     "default": null,
+     "desc": "反向（官方 `ReverseDir`）。"
+    },
+    {
+     "name": "angle2_deg",
+     "default": null,
+     "desc": "第二向的角（**度**；★ **只对 `rev_type=2` 有意义**）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3396,7 +6439,18 @@
    "inject": "model",
    "doc": "★ **孔向导 / 异型孔**：`IFeatureManager.HoleWizard5`（★ 官方 24+ 参，本工具已把前置配好）。★ 判据 = **特征树增量**（★ 真机新增 `异型孔向导`）。★ 三个前置缺一不可（已知事实 483）：① 孔位用 `SelectByRay`（`Mark=0`）选出来；② `SSize` 要**规格串**；③ `FastenerTypeIndex` 要与 standard 匹配。",
    "title": "Hole Wizard (Advanced Hole)",
-   "params": [],
+   "params": [
+    {
+     "name": "selection",
+     "default": null,
+     "desc": "**声明式面选择器**（`+x/-x/+y/-y/+z/-z`）——★ 规则 3：**不收裸坐标**。★ 工具内部把它解析成面上一点，再从那里发一条射线取孔位。★ 只对**轴对齐**的实体可靠。"
+    },
+    {
+     "name": "size",
+     "default": null,
+     "desc": "**规格串**（如 `\"M8\"`）—— ★ 真机实测：空串或纯数字**全回 None**。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3422,7 +6476,43 @@
    "inject": "model",
    "doc": "★ **断裂视图**：`IView.InsertBreak3(6 参)` → `BreakLine`。★★ `InsertBreak`（4 参）与 `InsertBreak2`（5 参）**官方都标 Obsolete** ⇒ ★ 只走 3。★ 官方 `## Remarks`：Horizontal ⇒ 位置是 **Y** 值；Vertical ⇒ **X** 值；★ 都相对视图原点。★ **判据 = `GetBreakLines()` 的数组长度 + `IView.IsBroken()`**（★ 两个都要）——★ 官方把这两件事**定义成了两件**：有断裂线**不等于**断开了。⚠ 官方**没给位置参数的单位** ⇒ 本工具按米收、按毫米传、只在边界换算一次。",
    "title": "Drawing Break Lines (Broken View)",
-   "params": [],
+   "params": [
+    {
+     "name": "view_name",
+     "default": null,
+     "desc": "★ **当前图纸上**的视图名（如 `Drawing View1` / `视图1`）。★ 官方示例要先选中视图、★ 那只是为了**拿到 IView 对象** ⇒ ★ 本工具改成**按名字解析**，★ **不要求调用者先备选区**。"
+    },
+    {
+     "name": "position1_mm",
+     "default": null,
+     "desc": "★ 第一条断裂线的位置（**毫米**）。⚠ **官方没给单位**，★ 本工具按 SolidWorks API 惯例当**米**、只在边界换算一次 —— ★ 官方示例 `InsertBreak3(2, -2.91950859897372E-02, …)` = -29.195 mm，**佐证了米制**。★ 落在哪根轴上由 `orientation` 决定。"
+    },
+    {
+     "name": "position2_mm",
+     "default": null,
+     "desc": "★ 第二条断裂线的位置（**毫米**；★ 同 `position1_mm` 的单位约定）—— ★ 官方逐字：一次断裂**由一对线**组成。"
+    },
+    {
+     "name": "orientation",
+     "default": 2,
+     "desc": "官方 `swBreakLineOrientation_e`：**1=Horizontal · 2=Vertical**。★★ 官方 `## Remarks` 逐字：Horizontal 时 Position1/2 是**Y** 值、Vertical 时是**X** 值，★ **两者都相对视图原点**。"
+    },
+    {
+     "name": "style",
+     "default": 5,
+     "desc": "官方 `swBreakLineStyle_e`：**1=Straight · 2=ZigZag · 3=Curve · 4=SmallZigZag · 5=Jagged**（★ 逐字核 `swBreakLineStyle_e.md`）。"
+    },
+    {
+     "name": "shape_intensity",
+     "default": 2,
+     "desc": "★ 官方逐字「valid range is **1 (most) through 5 (least)**」；★ **只对锯齿（jagged）断裂线生效**。"
+    },
+    {
+     "name": "break_sketch_blocks",
+     "default": true,
+     "desc": "官方 `BreakSketchBlocks` —— True 连草图块一起断开。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3435,7 +6525,43 @@
    "inject": "model",
    "doc": "★ **辅助视图**：`IDrawingDoc.CreateAuxiliaryViewAt2(7 参)`。★★★ **官方前置（摘要逐字）**：「Creates an auxiliary view **based on a selected edge in a drawing view**」⇒ ★★ **调用前必须先选中视图里的一条边**。★ 而**边没有可用的名字**（本仓事实 32）⇒ ★ 本工具**不代选**，★ 只**回读当前选区计数**并写进 `preconditions_held` ⇒ 失败时能看见原因。★ **判据 = 视图数增量 + 新视图 `Type == 5`（`swDrawingAuxiliaryView`）**，★ 不是「返回非 None」。⚠ `NotAligned` 的官方说明与形参名矛盾，见该参数说明。",
    "title": "Drawing Auxiliary View",
-   "params": [],
+   "params": [
+    {
+     "name": "x_mm",
+     "default": null,
+     "desc": "★ 辅助视图落位 X（**毫米**）。⚠ **官方没给单位** ⇒ 按米收、边界换算一次；★ ⚠ **该假设未由官方示例佐证**，须真机复核。"
+    },
+    {
+     "name": "y_mm",
+     "default": null,
+     "desc": "★ 落位 Y（**毫米**；★ 单位约定同 `x_mm`）。"
+    },
+    {
+     "name": "z_mm",
+     "default": 0.0,
+     "desc": "★ 落位 Z（**毫米**；★ 工程图上通常留 0）。"
+    },
+    {
+     "name": "label",
+     "default": "",
+     "desc": "官方 `Label` —— 辅助视图的标签文字。"
+    },
+    {
+     "name": "not_aligned",
+     "default": true,
+     "desc": "官方形参 `NotAligned`。⚠★ **官方说明与形参名自相矛盾**：官方 Parameters 逐字写「True **aligns** the view from its owner」——★ 名字说「不对齐」、说明说「对齐」⇒ ★ **原样透传、不替官方解释**，★ 默认取形参名的读法（True）。"
+    },
+    {
+     "name": "show_arrow",
+     "default": true,
+     "desc": "官方 `Showarrow` —— True 显示投影箭头。"
+    },
+    {
+     "name": "flip",
+     "default": false,
+     "desc": "官方 `Flip` —— True 翻转辅助视图所显示的那一侧。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3448,7 +6574,73 @@
    "inject": "model",
    "doc": "★ **表面粗糙度符号**：`IModelDocExtension.InsertSurfaceFinishSymbol3(14 参)`。★★ **官方 `## Remarks` 逐字**：「The SOLIDWORKS Design software uses the location parameters for this method **only if** the surface finish symbol has a leader leaderType **!= swNO_LEADER**.」⇒ ★★ `leader_type = 0` 时**三个位置参数被官方无视**⇒ ★ 本工具在那一档**主动传 0** 并把原坐标回在 `ignored_location_mm`。★ **另一条前置**：官方摘要逐字「based on the **last selection**」⇒ ★ 调用前必须有选区；★ 本工具**不代选**（★ 规则 3 禁裸坐标），只回读选区计数写进 `preconditions_held`。★ **判据 = 全图纸 `IView.GetSFSymbolCount` 求和的增量**，★ 不是「返回非 None」。",
    "title": "Drawing Surface Finish Symbol",
-   "params": [],
+   "params": [
+    {
+     "name": "sym_type",
+     "default": 0,
+     "desc": "官方 `swSFSymType_e`（★ 10 个成员）：**0=Basic · 1=JIS_Machining_Req · 2=Dont_Machine · 3..6=JIS_Surface_Texture_1..4 · 7=JIS_No_Machining · 8=JIS_Basic · 9=Machining_Req**（★ 逐字核 `swSFSymType_e.md`）。"
+    },
+    {
+     "name": "leader_type",
+     "default": 1,
+     "desc": "★ 官方 `swLeaderStyle_e`：**0=NO_LEADER · 1=STRAIGHT · 2=BENT · 3=UNDERLINED · 4=SPLINE · 8=VDA**；★ 256..4100 那几个是**位掩码**、要**与** 1/2/3/4/8 之一**合用**。★★ **它决定那三个位置参数用不用**（见工具说明的官方 Remarks 逐字）。"
+    },
+    {
+     "name": "x_mm",
+     "default": 0.0,
+     "desc": "★ 符号位置 X（**毫米**）—— ★★ **仅当 `leader_type != 0` 时被官方使用**；★ 取 0（`swNO_LEADER`）时本工具**主动传 0** 并把原值回在 `ignored_location_mm` 里。"
+    },
+    {
+     "name": "y_mm",
+     "default": 0.0,
+     "desc": "★ 符号位置 Y（**毫米**；★ 条件同 `x_mm`）。"
+    },
+    {
+     "name": "z_mm",
+     "default": 0.0,
+     "desc": "★ 符号位置 Z（**毫米**；★ 条件同 `x_mm`）。"
+    },
+    {
+     "name": "lay_symbol",
+     "default": 0,
+     "desc": "官方 `swSFLaySym_e`（纹理方向）。★ ★ **本轮没查 `0` 是什么** ⇒ 本工具**原样透传、不作断言**（★ 铁律 5：查不到就说查不到）。"
+    },
+    {
+     "name": "arrow_type",
+     "default": 0,
+     "desc": "官方 `swArrowStyle_e`（箭头样式）。★ 同 `lay_symbol`：**默认值 0 的语义未查**，原样透传。"
+    },
+    {
+     "name": "mach_allowance",
+     "default": "",
+     "desc": "官方 `MachAllowance`（材料去除余量）。★ 官方类型是 `System.string` **且没给格式** ⇒ 本工具**原样透传、不解析、不校验**。"
+    },
+    {
+     "name": "other_vals",
+     "default": "",
+     "desc": "官方 `OtherVals`（其它粗糙度值）。★ 同上：字符串、原样透传。"
+    },
+    {
+     "name": "prod_method",
+     "default": "",
+     "desc": "官方 `ProdMethod`（生产方法与处理）。★ 同上。"
+    },
+    {
+     "name": "sample_len",
+     "default": "",
+     "desc": "官方 `SampleLen`（取样长度）。★ 同上。"
+    },
+    {
+     "name": "max_roughness",
+     "default": "",
+     "desc": "官方 `MaxRoughness`（最大粗糙度）。★ 同上。"
+    },
+    {
+     "name": "min_roughness",
+     "default": "",
+     "desc": "官方 `MinRoughness`（最小粗糙度）。★ 同上。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3474,7 +6666,73 @@
    "inject": "model",
    "doc": "★ **钣金斜接法兰**：`IFeatureManager.InsertSheetMetalMiterFlange(14 参)` → `Feature`。★★★ **同名两份页、★ 参数个数不同**：★ `IModelDoc2` 那份（11 参 · 回 void）官方逐字标 `Obsolete. Superseded by [[IFeatureManager::InsertSheetMetalMiterFlange]].` ⇒ ★ **本工具走 IFeatureManager 那份**，★ 而用错的后果是**参数个数对不上**、★ 不只是「没反应」。⚠ 末位 `PCBA` 是**对象形参**：★ 官方把它写成二选一 —— **non-NULL** ⇒ \"Pointer to `ICustomBendAllowance` object **for which required values have been set**\"；**NULL** ⇒ \"Parent bend's bend allowance is used\" ⇒ ★ 本工具传**空 Dispatch**（＝ NULL 语义）★★ **不伪造一个没设过必需值的 PCBA**，★ 因此**不接受自定义 PCBA**。★★ **前置查不到**：★ 该官方页**无 `## Remarks` 段**（逐字段核过）⇒ ★ 本工具**不编前置**（铁律 5），★ 只回读选区计数、★ `preconditions_held` 如实报 **None**（★ 不是 False）。★ 判据 = **特征树增量** + 返回对象非 None + **实体面数增量**（三个都要）。",
    "title": "Sheet Metal Miter Flange",
-   "params": [],
+   "params": [
+    {
+     "name": "use_default_radius",
+     "default": true,
+     "desc": "官方逐字「True to use **default bend radius**, false to use GlobalRadius」。"
+    },
+    {
+     "name": "global_radius_mm",
+     "default": 0.0,
+     "desc": "全局折弯半径（**毫米**）—— ★ 仅 `use_default_radius=False` 时有意义。★ 官方**没给单位**；本工具按 SolidWorks 惯例当**米**、边界换算一次。"
+    },
+    {
+     "name": "rip_gap_mm",
+     "default": 0.0,
+     "desc": "切口间隙（**毫米**；★ 单位约定同 `global_radius_mm`）。"
+    },
+    {
+     "name": "use_default_relief",
+     "default": true,
+     "desc": "官方逐字「True to use **parent bend's ratio**」。"
+    },
+    {
+     "name": "use_relief_ratio",
+     "default": false,
+     "desc": "True 用**自定义让位比**、False 不用（官方 `UseReliefRatio`）。"
+    },
+    {
+     "name": "relief_ratio",
+     "default": 0.0,
+     "desc": "让位比 —— ★ **比例量、不换算**（官方逐字「If useReliefRatio is True, then specify relief ratio」⇒ 官方例子是 `0.6` 那类无量纲值）。"
+    },
+    {
+     "name": "relief_width_mm",
+     "default": 0.0,
+     "desc": "★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**「…specify relief **depth**」⇒ ★ **官方这两句自相矛盾** ⇒ 本工具**原样透传、不替官方调和**（铁律 5）。★ 仅当 `use_relief_ratio=True` 且 `relief_type` ∈ {Rectangular, Obround} 时有意义。"
+    },
+    {
+     "name": "relief_depth_mm",
+     "default": 0.0,
+     "desc": "让位深度（**毫米**）—— ★ 与 `relief_width_mm` 同一条官方矛盾。"
+    },
+    {
+     "name": "relief_type",
+     "default": 1,
+     "desc": "官方 `swSheetMetalReliefTypes_e`（逐字核官方枚举页）：**1=Rectangular · 2=Tear · 3=Obround · 4=None · 5=TearBend**。"
+    },
+    {
+     "name": "trim_side_bends",
+     "default": false,
+     "desc": "官方 `TrimSideBends` —— True 裁剪侧折弯。"
+    },
+    {
+     "name": "flange_pos",
+     "default": 1,
+     "desc": "官方 `swFlangePositionTypes_e`：**1=MaterialInside · 2=MaterialOutside · 3=BendOutside · 4=BendCenterLine · 5=BendSharp（\"Bend from virtual sharp\"） · 6=BendTangent**。⚠ 官方注明 **BendTangent** 对 \"Up To Edge And Merge\" 长度终止条件**无效**。"
+    },
+    {
+     "name": "offset_dist1_mm",
+     "default": 0.0,
+     "desc": "部分法兰的**起始**偏移距离（**毫米**）。"
+    },
+    {
+     "name": "offset_dist2_mm",
+     "default": 0.0,
+     "desc": "部分法兰的**结束**偏移距离（**毫米**）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3500,7 +6758,58 @@
    "inject": "model",
    "doc": "★ **焊件顶端盖**：`IFeatureManager.InsertEndCapFeature3(10 参)` → `IFeature`。★★★ **官方前置（Remarks 逐字）**：\"Before calling this method, **select one or more end faces** of a structural member in the graphics area.\" ⇒ ★ 调用前必须在图形区选中端面；★ 本工具**不代选**（★ 面没有可用名字 —— 已知事实 32；★ 且规则 3 禁裸坐标），★ 只**回读选区计数**写进 `preconditions_held`。★ ★ 官方**这一句没给 mark**，★ 官方例子用的是 mark=**0** ⇒ ★ **与角撑板的 mark=1 不一样**，★ 两个入口的 mark 不能互相套用。⚠ ★★ `InsertEndCapFeature2`（7 参 · 末位 `System.object Faces`）**不是**废弃成员 —— ★ 官方页无 Obsolete 句、★ 且 Remarks 明写它是「用 Faces 数组」的**并列**入口 ⇒ ★★ **不是** `1 → 2 → 3` 的线性继承；★ 而它末位是**数组形参** ⇒ `Param` 表达不了 ⇒ 本工具不做。★ 判据 = **特征树增量** + 返回对象非 None + **`GetDefinition()` 属性回读**（官方例子读法）。",
    "title": "Weldment End Cap",
-   "params": [],
+   "params": [
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "顶端盖厚度（**毫米**；★ 官方未给单位，按米收、边界换算一次）。"
+    },
+    {
+     "name": "is_given_offset",
+     "default": false,
+     "desc": "官方逐字「True to provide an **offset value**, false to provide a **thickness ratio**」⇒ ★ 它决定下面两个形参**哪一个有效**。"
+    },
+    {
+     "name": "is_chamfer",
+     "default": false,
+     "desc": "官方逐字「True if end cap feature is **chamfered**, false if **filleted**」⇒ ★ 决定 `chamfer_value_mm` 的含义。"
+    },
+    {
+     "name": "offset_value_mm",
+     "default": 0.0,
+     "desc": "边偏移值（**毫米**；★ 官方逐字「valid **only if** `BIsGivenOffset` is true」）。"
+    },
+    {
+     "name": "wall_ratio",
+     "default": 0.0,
+     "desc": "壁厚比 —— ★ 对应官方形参 **`WallThicknessRatio`**，★ 是**比例量**（官方例子 `0.6`）⇒ **不换算**。⚠ ★ 官方形参名含 `Thickness`，★ 而本工具**故意不叫** `wall_thickness_*`：★ 规则 2 的长度词表里有 `thickness`、★ 会要求 `_mm` 后缀，★ 而给一个**比例量**加 `_mm` 是**说错话** ⇒ ★ 故对外叫 `wall_ratio`、★ 由 `param_alias` 指回真形参。"
+    },
+    {
+     "name": "chamfer_value_mm",
+     "default": 0.0,
+     "desc": "倒角距离（`is_chamfer=True`）/ 圆角半径（`False`）（**毫米**）。"
+    },
+    {
+     "name": "is_corner_treatment",
+     "default": false,
+     "desc": "官方逐字「…chamfer or fillet the end cap corners … valid **only if** `BIsGivenOffset` is false」。"
+    },
+    {
+     "name": "depth_offset_mm",
+     "default": 0.0,
+     "desc": "内插距离（**毫米**）—— ★ 官方逐字「valid **only if** `BIsEndCapInward` **= 2**」⇒ ★ 与枚举 `swSpecifyInset = 2` **对得上**（★ 官方例子也确实传 `2`）✓。"
+    },
+    {
+     "name": "is_reverse",
+     "default": false,
+     "desc": "官方 `BIsReverse` —— 反转偏移或厚度比。"
+    },
+    {
+     "name": "is_end_cap_inward",
+     "default": 0,
+     "desc": "官方 `swEndCapThicknessDirection_e`：**0=swExtendOutward · 1=swExtendInward · 2=swSpecifyInset**（★ 逐字核官方枚举页）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3513,7 +6822,108 @@
    "inject": "model",
    "doc": "★ **焊件角撑板**：`IFeatureManager.InsertGussetFeature3(20 参)` → `IFeature`。★★★ **官方前置（Remarks 逐字，本批最硬的一条）**：\"Before calling this method, you must call `SelectByID2` to select **two faces** that are the supporting legs of this gusset **with a Mark of 1**.\" ⇒ ★★ 必须选**两个面**、★ **mark = 1**（★ **不是 0**）；★ ★ 官方例子两次都 **Append=True 且 mark=1** ⇒ ★ 本工具照抄这个组合、★ `preconditions_held` 判的是「**mark 1 上 ≥ 2 个**」⇒ ★ 调用者能一眼看见「mark 1 上只有 1 个面」这种失败。⚠★ **接口别认错**：★ 这是**焊件**角撑板（`IGussetFeatureData`，官方描述 \"Allows access to a **weldment** gusset feature.\"，14 属性 / 4 方法）⇒ ★ **不是**钣金那个 `ISMGussetFeatureData`（\"Allows access to a **sheet metal** gusset feature.\"，28 属性 / 2 方法）⇒ ★★ 两者共有成员**只有 3 个**、★ 用错时**连读都读不到**（已知事实 36）。⚠ ★★ **官方在废弃链上断了一节**：`InsertGussetFeature`（15 参）**Obsolete** → 直接指向 `InsertGussetFeature3`；★ 而中间的 `InsertGussetFeature2` 的页**没有** Obsolete 句 ⇒ ★★ **别写「Gusset 三代线性链」** —— ★ 官方**没写**中间那代的废弃状态。★ 判据 = **特征树增量** + 返回对象非 None + **实体面数增量** + **mark-1 选区计数**。",
    "title": "Weldment Gusset (Corner Gusset)",
-   "params": [],
+   "params": [
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "角撑板厚度（**毫米**）。"
+    },
+    {
+     "name": "dir_type",
+     "default": 1,
+     "desc": "官方 `DirType`（**`System.short`**）—— `swGussetThicknessType_e`：**0=Inner · 1=BothSides · 2=Outer**（★ 官方例子用 1）。"
+    },
+    {
+     "name": "loc_type",
+     "default": 1,
+     "desc": "官方 `LocType`（**`System.short`**）—— `swGussetProfileLocationType_e`：**0=Start · 1=Center · 2=End**（★ 官方例子用 1）。★ 官方逐字：\"Location of the reference plane for the **sketch** of the gusset\"。"
+    },
+    {
+     "name": "is_profile",
+     "default": false,
+     "desc": "官方逐字「True to use a **polygon** profile, false to use a **triangle** profile」。"
+    },
+    {
+     "name": "profile_d1_mm",
+     "default": 0.0,
+     "desc": "轮廓距离 1（**毫米**）。"
+    },
+    {
+     "name": "profile_d2_mm",
+     "default": 0.0,
+     "desc": "轮廓距离 2（**毫米**）。"
+    },
+    {
+     "name": "profile_d3_mm",
+     "default": 0.0,
+     "desc": "轮廓距离 3（**毫米**）。"
+    },
+    {
+     "name": "profile_angle_deg",
+     "default": 45.0,
+     "desc": "轮廓角（**度**）—— ★ 官方吃**弧度**（★ 例子 `0.78539816339745` = π/4 = 45°），★ 本工具**边界换算一次**。★ 官方逐字：valid **only if** `BUseLenDim` is **false**。★ 官方把 `ProfileD1..D4` 的精确语义指向 SOLIDWORKS Help（「See the SOLIDWORKS Help for more information about profile and chamfer distances and angles」）⇒ ★ 本工具**不代官方释义**。"
+    },
+    {
+     "name": "profile_d4_mm",
+     "default": 0.0,
+     "desc": "轮廓距离 4（**毫米**）—— ★ 官方逐字：valid **only if** `BUseLenDim` is **true**。"
+    },
+    {
+     "name": "offset_reference_plane",
+     "default": false,
+     "desc": "官方 `BOffset` —— 偏置角撑板草图的参考平面。"
+    },
+    {
+     "name": "d_profile_offset_mm",
+     "default": 0.0,
+     "desc": "参考平面的偏置值（**毫米**；官方 `DProfileOffset`）。"
+    },
+    {
+     "name": "crv_index",
+     "default": 0,
+     "desc": "官方 `CrvIndex` —— 「Index of the edge to use if **multiple intersecting edges** exist」。"
+    },
+    {
+     "name": "reverse_dir",
+     "default": false,
+     "desc": "官方 `BReverseDir` —— ★ 官方逐字：\"**If `BOffset` set to true**, then true to reverse direction\"。"
+    },
+    {
+     "name": "reverse_face",
+     "default": false,
+     "desc": "官方 `BReverseFace` —— 三角形轮廓时反转 d1/d2；多边形轮廓时还反转 d3/d4。"
+    },
+    {
+     "name": "use_len_dim",
+     "default": false,
+     "desc": "官方 `BUseLenDim` —— True 用 `profile_d4_mm`、False 用 `profile_angle_deg`。"
+    },
+    {
+     "name": "profile_d5_mm",
+     "default": 0.0,
+     "desc": "倒角距离 5（**毫米**）—— ★ 官方逐字：valid **only if** `BNeedChamferInGusset` is **true**。"
+    },
+    {
+     "name": "profile_d6_mm",
+     "default": 0.0,
+     "desc": "倒角距离 6（**毫米**）—— ★ 官方逐字：valid **only if** `BNeedChamferInGusset` **and** `BUseLenDimForChamfer` are **both** true。"
+    },
+    {
+     "name": "profile_chamfer_angle_deg",
+     "default": 45.0,
+     "desc": "倒角角（**度**；★ 官方吃**弧度**，★ 边界换算一次）。★ 官方逐字：valid only if `BUseLenDimForChamfer` is **false** **and** `BNeedChamferInGusset` is **true**。"
+    },
+    {
+     "name": "use_len_dim_for_chamfer",
+     "default": false,
+     "desc": "官方 `BUseLenDimForChamfer` —— True 用 `profile_d6_mm`、False 用 `profile_chamfer_angle_deg`。"
+    },
+    {
+     "name": "need_chamfer_in_gusset",
+     "default": false,
+     "desc": "官方 `BNeedChamferInGusset` —— 逐字「…to allow room for a **weld bead** under the gusset」。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3526,7 +6936,23 @@
    "inject": "model",
    "doc": "★ **曲面中面**：`IFeatureManager.InsertMidSurface(4 参)` → `System.object`。★★ **官方前置（Remarks 逐字）**：`pPartDocIn` 是**该组件的模型文档**、`pBody` 是**该组件的体** ⇒ ★ 本工具**要求活动文档是零件**；★ 取不到体时**如实报** `preconditions_held=False` 并写明原因，★ **不猜**。判据 = **曲面体数增量**（官方逐字：每张参考面都算一个 **`sheet body`**）+ 返回对象非 None + 树增量（★ 后者单独**不足以**当判据）。⚠ 本工具**尚未真机验证**；★ 同批其余 4 条同样只是**已注册**，不是**已验证**。",
    "title": "Surface Mid-Surface (by body index)",
-   "params": [],
+   "params": [
+    {
+     "name": "body_index",
+     "default": null,
+     "desc": "★ **实体体号**（0 基）—— 由 `IPartDoc.GetBodies2(0, False)` 取体表后按序号取（★ 参数里**不收对象**）。"
+    },
+    {
+     "name": "placement",
+     "default": null,
+     "desc": "参考面位置（★ 官方**既没给单位也没给量纲** ⇒ ★ 原样透传、不换算，铁律 5）。"
+    },
+    {
+     "name": "knit",
+     "default": null,
+     "desc": "True = 所有参考面**缝合成一张**（官方逐字 `sewn`）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3539,7 +6965,33 @@
    "inject": "drawing_model",
    "doc": "★ **投影/模型视图**：`CreateDrawViewFromModelView3`（经 `add_view`）。★★ **真机证据**：本工具**经工具层**实测返回真实视图对象（`CDispatch`）、★ 且**正是靠本地化名回退**建成（`*Front` 失败 → `*前视` 成功；known-facts 494）。⚠ **另有一条已知限制与本工具无关**：`create_standard_views_with_projection`（三视图布局那条路）在本机返回 `blocked / CreateFirstAngleViews2 / DRAWING_PROJECTION_API_UNAVAILABLE`（本机 COM 代理没有那个成员）⇒ ★ 该限制**未**挂成工具。",
    "title": "Drawing Projected / Model View",
-   "params": [],
+   "params": [
+    {
+     "name": "part_path",
+     "default": null,
+     "desc": "★ **已存盘模型**的完整路径，且**含 `.sldprt`/`.sldasm`**（官方 Remarks 逐字要求）。"
+    },
+    {
+     "name": "view_name",
+     "default": null,
+     "desc": "视图方向名，★ **传英文名即可**（如 `*Front`/`*Top`/`*Isometric`）—— ★ 底层会**自动改用本机本地化名**（`*前视` 等，事实 494）。"
+    },
+    {
+     "name": "x_mm",
+     "default": null,
+     "desc": "视图中心 X（**毫米**，默认 140）。"
+    },
+    {
+     "name": "y_mm",
+     "default": null,
+     "desc": "视图中心 Y（**毫米**，默认 120）。"
+    },
+    {
+     "name": "scale",
+     "default": null,
+     "desc": "视图比例（`1/scale`）；★ `0` = 不设、用图纸默认。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3552,7 +7004,18 @@
    "inject": "drawing_model",
    "doc": "★ **剖面视图**：`CreateSectionViewAt5`。★★ **前置（官方 Remarks 逐字）：调用前必须先选好剖面线** ⇒ 本工具**不代选**，先回读选区计数并在返回值里给 `preconditions_held`。⚠ 真机该格**前置未成立**（选区为空）⇒ ★ **不能**据此判「剖面视图不成」（事实 496）。",
    "title": "Drawing Section View",
-   "params": [],
+   "params": [
+    {
+     "name": "x_mm",
+     "default": null,
+     "desc": "剖视图放置位置 X（**毫米**）。"
+    },
+    {
+     "name": "y_mm",
+     "default": null,
+     "desc": "剖视图放置位置 Y（**毫米**）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3565,7 +7028,33 @@
    "inject": "drawing_model",
    "doc": "★ **局部视图**：`CreateDetailViewAt4`（官方 **12 参**）。★ 真机证据：视图数 **1→2**、返回非 None（证据 JSON 的 V3 格）。★ 前置：图上要有**局部圆（草图圆）**（官方例子的调用序：`ActivateView` → `CreateCircle` → 才调）。",
    "title": "Drawing Detail View",
-   "params": [],
+   "params": [
+    {
+     "name": "x_mm",
+     "default": null,
+     "desc": "局部视图放置位置 X（**毫米**）。"
+    },
+    {
+     "name": "y_mm",
+     "default": null,
+     "desc": "局部视图放置位置 Y（**毫米**）。"
+    },
+    {
+     "name": "scale",
+     "default": null,
+     "desc": "比例**分子**（分母固定 1.0）⇒ `2.0` 表示 **2:1**。"
+    },
+    {
+     "name": "label",
+     "default": null,
+     "desc": "标签文字（留空用 SolidWorks 默认）。"
+    },
+    {
+     "name": "shape_intensity",
+     "default": null,
+     "desc": "锯齿轮廓强度 1(最强)–5(最弱)；★ 仅当 `jagged_outline=True` 且 `no_outline=False` 时有效。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3578,7 +7067,13 @@
    "inject": "drawing_model",
    "doc": "★ **图纸格式/模板**：**`ISheet.SetTemplateName(String NameIn)`**（官方 **`void`、未废弃**）。★★ **为什么不是 `SetupSheet6`**（★ 本 doc 原先写的是它，2026-10-03 更正）：`ISheet.SetTemplateName` 才是**换图框**的成员；`SetupSheet6` 是用来**新建/重置图纸**的（17 参）—— ★ 两者不是一件事。★★★ **而真机踩过一个坑**：能力层原先是 `sheet = GetCurrentSheet(); sheet.SetTemplateName(p)`（**直接属性访问**）⇒ 经工具层报 **`com_error: 找不到成员`**；★ 定点诊断（`output/_diag_sheetfmt.json`）证明**同一个成员、同一个对象**用 `get_com_member` 就成功（返回 `None` = `void` 成功）⇒ ★ 是**通道**问题、不是名字问题（known-facts 499）。★ 官方 Remarks 逐字：调完要 `ForceRebuild3` 才刷新第一角/第三角投影（★ 现已在能力层里补上）。★ 判据：`SetTemplateName` 回 `None` **且** `GetTemplateName` 回读等于新路径。",
    "title": "Drawing Sheet Format / Template",
-   "params": [],
+   "params": [
+    {
+     "name": "format_path",
+     "default": null,
+     "desc": "图纸格式文件路径（`.slddrt`）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3591,7 +7086,23 @@
    "inject": "drawing_model",
    "doc": "★ **注释/文字**：`InsertNote`。★ 真机证据：两格（选中 / 不选）都返回非 None，判据是注解读数增量（证据 JSON 的 A4 格）。★ 官方 Remarks 逐字：**引线附着点来自调用前做的选择**；**没有选中时**无引线、自由放置、在原点。",
    "title": "Drawing Note / Annotation",
-   "params": [],
+   "params": [
+    {
+     "name": "x_mm",
+     "default": null,
+     "desc": "注释位置 X（**毫米**）。"
+    },
+    {
+     "name": "y_mm",
+     "default": null,
+     "desc": "注释位置 Y（**毫米**）。"
+    },
+    {
+     "name": "text",
+     "default": null,
+     "desc": "注释文字。★ 用符号时要写成 `<*库名-符号名*>`（官方 Remarks 逐字）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3604,7 +7115,48 @@
    "inject": "drawing_model",
    "doc": "★ **孔表**：**`IView.InsertHoleTable3`（9 参、未废弃）**。★★ **本工具改过实现**（2026-10-03 真机 e2e 实测的教训）：原先把 `InsertTableAnnotation` 当孔表入口 —— ★ 而官方签名逐字是 `InsertTableAnnotation(X, Y, AnchorType, Rows, Columns)`，**它没有任何参数说\"这是孔表\"** ⇒ ★ **它建的是通用表，建不出孔表**（e2e 实测：注解数 72→72）。★★★ **前置（官方 Remarks 的 mark 表，逐字）**：基准原点**顶点 mark 1** · 孔**边与面 mark 2** · X 向参考 mark 4 · Y 向参考 mark 8 ⇒ ★ 本工具**不代选**，先回读选区里 mark 1/2 各几个，`preconditions_held` 如实给出（★ 前置不成立时**不能**判「孔表不成」）。★ 真机证据：`output/drawing-batch-evidence.json` 的 A6 格（`GetTableAnnotationCount` 增量、前置成立）。",
    "title": "Drawing Hole Table",
-   "params": [],
+   "params": [
+    {
+     "name": "view_name",
+     "default": null,
+     "desc": "承载孔表的视图名（★ 孔表挂在 **`IView`** 上）。"
+    },
+    {
+     "name": "x_mm",
+     "default": null,
+     "desc": "表放置位置 X（**毫米**；官方该参数单位是**米**，边界换算一次）。"
+    },
+    {
+     "name": "y_mm",
+     "default": null,
+     "desc": "表放置位置 Y（**毫米**）。"
+    },
+    {
+     "name": "anchor_type",
+     "default": null,
+     "desc": "★ 锚点类型，取值见 **`swBOMConfigurationAnchorType_e`**（官方 Parameters 逐字）。"
+    },
+    {
+     "name": "start_value",
+     "default": null,
+     "desc": "起始编号（官方例子用 `A`）。"
+    },
+    {
+     "name": "template",
+     "default": null,
+     "desc": "孔表模板（`.sldholtbt`；官方 Remarks：在 `install_dir\\lang\\<language>`）。"
+    },
+    {
+     "name": "tag_order",
+     "default": null,
+     "desc": "标签顺序（官方 8 参，例子用 1）。"
+    },
+    {
+     "name": "tag_type",
+     "default": null,
+     "desc": "标签类型（官方 9 参，例子用 1）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3617,7 +7169,38 @@
    "inject": "drawing_model",
    "doc": "★ **修订表**：**`ISheet.InsertRevisionTable2`（7 参、未废弃）**。★★ 同孔表：`InsertTableAnnotation` **建不出修订表**（它没有\"表类型\"参数）⇒ 走**真入口**。★★ 官方 Returns 逐字：**已有修订表时回 `null`** ⇒ ★ **第二次调用「回 null」是契约、不是失败**（★ 返回值里有 `raw_is_none` 供按契约解释）。★ 真机证据：`output/drawing-batch-evidence.json` 的 A7 格（两格都返回非 None）。",
    "title": "Drawing Revision Table",
-   "params": [],
+   "params": [
+    {
+     "name": "x_mm",
+     "default": null,
+     "desc": "表放置位置 X（**毫米**）。"
+    },
+    {
+     "name": "y_mm",
+     "default": null,
+     "desc": "表放置位置 Y（**毫米**）。"
+    },
+    {
+     "name": "anchor_type",
+     "default": null,
+     "desc": "★ 锚点类型，取值见 **`swBOMConfigurationAnchorType_e`**。"
+    },
+    {
+     "name": "template",
+     "default": null,
+     "desc": "模板路径（`.sldrevtbt`）；★ 官方 Remarks：模板与表**必须同型**。"
+    },
+    {
+     "name": "shape",
+     "default": null,
+     "desc": "表形状（官方 6 参）。"
+    },
+    {
+     "name": "auto_update_zoom_cells",
+     "default": null,
+     "desc": "是否自动更新缩放单元格（官方 7 参）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3630,7 +7213,13 @@
    "inject": "drawing_model",
    "doc": "★ **中心符号线**（批量）：`AutoInsertCenterMarks2`。⚠⚠ **真机阴性已知**：单点入口 `InsertCenterMark3` 两格都**不成**，且其中**一格前置是成立的**（证据 JSON 的 A8 格）⇒ ★ 本工具走的是**批量**那条路，★ **尚未单独真机验证** ⇒ ★ 如实标注，**不许**当成「已验证」。",
    "title": "Drawing Center Marks (auto, per view)",
-   "params": [],
+   "params": [
+    {
+     "name": "requirements",
+     "default": null,
+     "desc": "要插中心标记的视图/要求列表（**原样透传**给能力层）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3643,7 +7232,43 @@
    "inject": "model",
    "doc": "★ **装饰螺纹线**：`IFeatureManager.InsertCosmeticThread3`（**7 参** · 官方 md **未标 Obsolete**）。★★ **官方前置（台账逐字）：选圆柱面的**一条边**（★ 不是那个面）** ⇒ ★ 本工具**自己找**：先用官方 `ISurface.IsCylinder()` 定位圆柱面、取它的第一条边并按 `mark=0` 选中 ⇒ ★ 调用方**不必**先选；★ 找不到圆柱面时**如实报** `preconditions_held=False` + 原因。★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 真机建成时是 **`CosmeticThread`**、名 `装饰螺纹线1`）。★★ **真机证据**（已建成过，★ 但那是在**探针**里的读数）：`output/cosmetic-thread-evidence.json`（2026-10-03 轮 568，走 `sw_guard`、零弹窗）。⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前**不许**把它写成「经工具层已验证」。",
    "title": "Cosmetic Thread (insert by cylindrical edge)",
-   "params": [],
+   "params": [
+    {
+     "name": "standard",
+     "default": null,
+     "desc": "螺纹标准：**1 = ANSI Metric**（官方 `Standard`，逐字）。"
+    },
+    {
+     "name": "standard_type",
+     "default": null,
+     "desc": "标准细分（官方 `StandardType`；例子传空串）。"
+    },
+    {
+     "name": "size",
+     "default": null,
+     "desc": "规格串（官方 `Size`；例子传空串）。"
+    },
+    {
+     "name": "diameter_mm",
+     "default": null,
+     "desc": "公称直径（**毫米**）—— ★ 官方 `Diameter` 是 `System.double` 且**未写单位** ⇒ ★ 本工具收毫米、**只在边界换算一次**（真机那次传 `0.008` = 8 mm，口径一致）。"
+    },
+    {
+     "name": "end_type",
+     "default": null,
+     "desc": "末端条件（官方 `EndType`）：**0 = Blind**（此时 `depth_mm` 有效）· **2 = Through**。"
+    },
+    {
+     "name": "depth_mm",
+     "default": null,
+     "desc": "深度（**毫米**）—— ★ **仅 Blind 类有效**（官方逐字）。"
+    },
+    {
+     "name": "note",
+     "default": null,
+     "desc": "注释文字（官方 `Note`；例子传空串）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3656,7 +7281,13 @@
    "inject": "model",
    "doc": "★ **草图样条曲线**：`ISketchManager.CreateSpline2(data, False)`。★★★ **本条修掉了一个真 bug（★ 且是一处「被误记成架构限制」的假阴性）**：能力层 `scripts/sw_part.sketch_spline` **此前每次都抛**，其 docstring 断言「**本机实测建不出来**」并把原因归给 **事实 47/68 的 pywin32 架构限制**。★ 而真因是 **数组的包装形态**：✗ `array.array('d')` ⇒ **静默回 `None`**；✓ **`VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** ⇒ **建成**（草图段数 0→1）。★ 证据：`output/spline-with-variant-evidence.json`（四格对照，`form=spline2` ⇒ `ok=true`）。★★ 而**正解早在本仓**：`scripts/sketch_relations.create_spline:272-273` 逐字写着「★★★ 必须包 `VARIANT(VT_ARRAY|VT_R8)` —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」⇒ ★ **同一个仓里两条路，一条修了、另一条从没跟上**。★ 前置（官方 Remarks）：**必须先有活动草图**。⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。",
    "title": "Sketch Spline (CreateSpline2, VARIANT array)",
-   "params": [],
+   "params": [
+    {
+     "name": "points",
+     "default": null,
+     "desc": "控制点列表 `[[x, y], …]`（**毫米**，★ 至少 2 组 —— 官方 Remarks 要求至少两组 X,Y,Z）⇒ ★ 换算只在能力层边界做一次。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3669,7 +7300,23 @@
    "inject": "model",
    "doc": "★ **曲面展平**：`IFeatureManager.InsertFlattenSurface2(AccuracyFactor, ShouldUseTears)`（**2 参**）。★★★ **官方前置（台账逐字）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）**；★ 另可选 2 = 引导边 · 4 = 映射边 · 8 = 撕裂边。★★ 台账还逐字记着那组**四格对照**的结论：「**面-only（mark=1）不够**」⇒ ★ 本工具**自己两个都选**（面按 1、该体第一条边的一个顶点按 16）；★ 锚点没选上时**如实报** `preconditions_held=False` 并**指明**那正是失败原因。★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 真机建成时是 **`FlattenSurface`**、名 `曲面-展平1`）。★★ **真机证据（探针级）**：`output/flatten-with-anchor-evidence.json`（2026-10-03 轮 556，走 `sw_guard`、零弹窗）。⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。",
    "title": "Flatten Surface (face mark=1 + anchor mark=16)",
-   "params": [],
+   "params": [
+    {
+     "name": "accuracy_factor",
+     "default": null,
+     "desc": "精度因子（官方第 1 参）：**10 ≥ 精度 ≥ 1**（1 = 最高）；★ 真机用 **4** 成（台账逐字）。"
+    },
+    {
+     "name": "should_use_tears",
+     "default": null,
+     "desc": "是否使用撕裂（官方第 2 参）—— ★ 台账标注**未查**，★ 本工具原样透传。"
+    },
+    {
+     "name": "body_type",
+     "default": null,
+     "desc": "`surface`（默认，取 `GetBodies2(1, …)` 曲面体）或 `solid`（取 `GetBodies2(0, …)`）。"
+    }
+   ],
    "via": "ToolSpec"
   },
   {
@@ -3682,7 +7329,43 @@
    "inject": "model",
    "doc": "★ **加厚 / 加厚切除**：**`IFeatureManager.FeatureBossThicken`（7 参）** / **`IFeatureManager.FeatureCutThicken`（6 参）** —— ★★ **两个都未废弃**。★★★ **为什么是这两个成员**（★ 本条的来历）：`IModelDoc2` 那份**同名**成员已废弃（`FeatureBossThicken2` 头顶逐字：`Superseded by [[IFeatureManager::FeatureBossThicken]].`），★ 而另一族 `IModeler.ThickenSheet` 造的是**片体、不是特征** ⇒ ★ 入口只有这两个。★★ **官方前置（Remarks 逐字）**：参考面**必须按 `mark=1` 选中**；`FillVolume=true` 时**其余参数被忽略**、且**必须闭合曲面**；切减时 `UseAutoSelect=false` 要**先选实体** ⇒ ★ 本工具**自己把第一张面按 `mark=1` 选上**，选不上就**如实报前置**。★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 两条都报）。⚠ **尚未真机验证**（★ 由 `tools/probe_thicken_tool.py` 单独验）⇒ ★ 在那之前不许把它写成 `verified`。",
    "title": "Thicken / Thicken Cut (FeatureBossThicken | FeatureCutThicken)",
-   "params": [],
+   "params": [
+    {
+     "name": "thickness_mm",
+     "default": null,
+     "desc": "厚度（**毫米**）—— ★ 官方 `Thickness` 是 `System.double`，★ 本工具收毫米、**只在边界换算一次**（COM 吃米）。"
+    },
+    {
+     "name": "cut",
+     "default": null,
+     "desc": "True = **加厚切除**（`FeatureCutThicken`）；False = **加厚凸台**（`FeatureBossThicken`）。"
+    },
+    {
+     "name": "direction",
+     "default": null,
+     "desc": "方向（官方 `Direction`）。"
+    },
+    {
+     "name": "fill_volume",
+     "default": null,
+     "desc": "★ 官方逐字：「If FillVolume is true, **other arguments are ignored**. A **closed surface is required** when FillVolume is true.」"
+    },
+    {
+     "name": "merge",
+     "default": null,
+     "desc": "★ **仅加厚凸台**有此参（官方 `Merge`）。"
+    },
+    {
+     "name": "use_feat_scope",
+     "default": null,
+     "desc": "官方 `UseFeatScope`。"
+    },
+    {
+     "name": "use_auto_select",
+     "default": null,
+     "desc": "★ 官方（切减）逐字：「When `UseAutoSelect` is **false**, the user must **select the bodies** that the feature will affect.」"
+    }
+   ],
    "via": "ToolSpec"
   }
  ]

@@ -236,10 +236,23 @@ def create_hole_table(drawing_model, *, view_name: str, x_mm: float, y_mm: float
            "official_marks": "顶点=1 · 孔边与面=2 · X 向参考=4 · Y 向参考=8（官方 Remarks 逐字）",
            "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）"}
     if not pre:
-        out["ok"] = False
-        out["err"] = ("★ 前置未成立（官方 mark 表要求的 **1 与 2** 没同时在选区里）"
-                      "⇒ ★ 不能据此判「孔表不成」")
-        return out
+        #: ★★★ 2026-10-03（接手轮）**从"硬失败"改成"告警后仍然尝试"** —— 与 `surface_fill` 同一形态。
+        #:   ★★ **为什么**（事实 503，真机隔离出来的）：注册器调工具的**顺序**是
+        #:     `kwargs[inj] = resolver(params)` → `pre_call` → `fn(**kwargs)`，
+        #:     ★ 而 **`RESOLVERS["drawing_model"]` 经 `connect_solidworks()` 会清空选区**
+        #:     ⇒ ★ **"调用方预选 mark 1/2"经工具层永远拿不到**
+        #:     （★ 而 MCP 客户端本来也没法在工程图里预选一个顶点与孔边）。
+        #:   ⇒ ★ 上一版在这里 `return` 失败 ⇒ ★ **这条工具经工具层必然失败**。
+        #:   ★★ **现在**：`pre` 不成立 ⇒ **记一条告警，但仍然调** ——
+        #:     ★ 成不成**由 API 说了算**（★ 而硬判据是**表增量**，不是返回值 —— 事实 40）。
+        #:     ★ 若 API 真需要 mark，它会自己失败，★ 我们**如实报** `preconditions_held: False` +
+        #:     `attempted_without_precondition: True` ⇒ ★ **不假装成功，也不提前判死**。
+        out["preconditions_held"] = False
+        out["attempted_without_precondition"] = True
+        out["precondition_warning"] = (
+            "★ 官方 mark 表要求的 **1（顶点）与 2（孔边与面）** 没同时在选区里 —— "
+            "★ 这通常是**事实 503**（`RESOLVERS[inj]` 会清空选区）造成的，"
+            "★ 不一定是调用方没选。★ **仍然尝试调用**，成不成以表增量与返回值为准。")
     try:
         tbl = C.get_com_member(view, "InsertHoleTable3", False, _mm(x_mm), _mm(y_mm),
                                int(anchor_type), str(start_value), str(template),
