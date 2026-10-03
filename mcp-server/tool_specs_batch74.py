@@ -343,5 +343,33 @@ _BATCH74: list[ToolSpec] = [
 #:   IInsertMidSurface` 那一页官方没写**（`C:\swapi\types\` 全库只有 3 个 `*MidSurface*` 页）
 #:   ⇒ ★ **那条链断在这里、无后继签名可抄** ⇒ ★ **不拿**非 `I` 前缀的 `InsertMidSurface` 顶替它。
 
+#: ★ ★★ **第 5 条：中面**（★ 原先因两个对象形参挂不上，本轮补了**按体号解析**的转接层）
+#:   据 `recon/scan-S2b-ledger-vs-tools.md` 的 A 表：`surface_midsurface` 这类是
+#:   **`level: verified` 却没暴露成工具**的条目 ⇒ ★ 转接层 = `create_midsurface`（同模块，
+#:   ★ **不重写实现**，它转调既有 `insert_mid_surface`）。
+#:   ★ 做法：`body_index` 指体号 ⇒ `IPartDoc.GetBodies2(0, False)` 取体表；`part_doc` 用同一个 `model`。
+#:   ⚠⚠ **未真机验证**（★ 与同批其余条目同一纪律）⇒ ★ **在工具层 e2e 给出读数之前不许写 `verified`**。
+_BATCH74.append(
+    ToolSpec(
+        name="solidworks_surface_midsurface_create",
+        title="Surface Mid-Surface (by body index)",
+        module=_MODULE, function="create_midsurface",
+        inject="model",
+        params=[
+            Param("body_index", int, description="★ **实体体号**（0 基）—— 由 "
+                                                 "`IPartDoc.GetBodies2(0, False)` 取体表后按序号取（★ 参数里**不收对象**）。"),
+            Param("placement", float, description="参考面位置（★ 官方**既没给单位也没给量纲** ⇒ "
+                                                  "★ 原样透传、不换算，铁律 5）。"),
+            Param("knit", bool, description="True = 所有参考面**缝合成一张**（官方逐字 `sewn`）。"),
+        ],
+        doc="★ **曲面中面**：`IFeatureManager.InsertMidSurface(4 参)` → `System.object`。"
+            "★★ **官方前置（Remarks 逐字）**：`pPartDocIn` 是**该组件的模型文档**、`pBody` 是**该组件的体** "
+            "⇒ ★ 本工具**要求活动文档是零件**；★ 取不到体时**如实报** `preconditions_held=False` 并写明原因，"
+            "★ **不猜**。判据 = **曲面体数增量**（官方逐字：每张参考面都算一个 **`sheet body`**）+ "
+            "返回对象非 None + 树增量（★ 后者单独**不足以**当判据）。"
+            "⚠ 本工具**尚未真机验证**；★ 同批其余 4 条同样只是**已注册**，不是**已验证**。",
+    )
+)
+
 #: ★ 注册器按 `SPECS_*` 找
 SPECS_BATCH74 = _BATCH74

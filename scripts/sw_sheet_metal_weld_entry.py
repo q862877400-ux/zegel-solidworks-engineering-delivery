@@ -825,3 +825,58 @@ def insert_mid_surface(model, body, part_doc, *,
 #      `ISplitLineFeatureData` 同样是 `AccessSelections` 族，★ 而它的**直入法真机建成了**
 #      （本仓已知事实 484）⇒ ★★ **"带 AccessSelections" 不等于 "建不出来"**，
 #      ★ 判据永远是**"这条直入路本身能不能走"**，★ 不是"接口上有没有那个指针方法"。
+
+
+def create_midsurface(model, *, body_index: int = 0, placement: float = 0.0,
+                      knit: bool = False) -> dict:
+    """★ **曲面中面（按体号给的入口）** —— 把 `insert_mid_surface` 那两个**对象形参**解析成可声明的入参。"""
+    # ── 来源 ─────────────────────────────────────────────────────────
+    # 仓库:   本项目自身（**转接层** —— 实现仍在同文件的 `insert_mid_surface`，本函数不重写实现）
+    # 文件:   scripts/sw_sheet_metal_weld_entry.py
+    # 定位:   ★★ **为什么要这一层**：`insert_mid_surface(model, body, part_doc, …)` 的 `body` / `part_doc`
+    #   是 `IBody2` / `IModelDoc2` **对象** ⇒ ★ `ToolSpec.Param` 只能表达 str/float/int/bool
+    #   ⇒ ★ 没有这一层，中面**挂不上工具**。★ 而它是 `capabilities.yaml` 里 `level: verified`
+    #   却**没暴露成工具**的一条（见 `specs/202-user-coverage-gaps/recon/scan-S2b-ledger-vs-tools.md` 的 A 表）。
+    #   ★ 做法（★ 与仓内既有"按序号给对象"同一手法）：
+    #     · `body_index` = **实体体号** ⇒ 用 **`IPartDoc.GetBodies2(Int32 Type, Boolean VisibleOnly)`**
+    #       （★ 仓内 `sw_hole_features.py:883` / `sw_curve_and_split.py:138` 用的就是这个形态，
+    #        `Type=0` = `swSolidBody`）
+    #     · `part_doc` = **同一个 `model`** —— ★ 官方 Remarks 逐字：`pPartDocIn` 是**该组件的模型文档**
+    #       ⇒ ★ 在本工具的口径下就是**当前活动文档** ⇒ ★ 本函数**要求活动文档是零件**，并**如实报告**取到几个体。
+    # 官方依据: `C:\swapi\types\IFeatureManager\InsertMidSurface.md`
+    #   ★ 逐字前置：「The **pPartDocIn** parameter is the **component's model document** where you want to
+    #   add the midsurface feature, and the **pBody** parameter is the **body of that component**.」
+    #   ★ 逐字语义：「Each reference surface is considered a **sheet body**」·
+    #     「all the reference surfaces are **sewn** into a single reference surface if `knitFlag` is true」
+    #   ★ `placement` 官方**既没说单位也没说量纲** ⇒ ★ 原样透传（铁律 5）。
+    # 许可:   本仓库 MIT。★ 无第三方代码引入。
+    # 覆盖:   全文件
+    # ─────────────────────────────────────────────────────────────────
+    if model is None:
+        return {"ok": False, "op": "create_midsurface", "error": "model 为 None"}
+    try:
+        bodies = list(get_com_member(model, "GetBodies2", 0, False) or [])
+    except Exception as exc:                                            # noqa: BLE001
+        return {"ok": False, "op": "create_midsurface", "route": "GetBodies2(0, False)",
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    out = {"op": "create_midsurface", "route": "GetBodies2(0, False)",
+           "body_count": len(bodies), "body_index": int(body_index),
+           "verified_by": "曲面体数增量 + 返回对象非 None + 树增量（★ 由 insert_mid_surface 回读）"}
+    if not bodies:
+        out["ok"] = False
+        out["preconditions_held"] = False
+        out["error"] = ("★ 前置未成立：`GetBodies2(0, False)` 回空 ⇒ ★ 活动文档可能**不是零件**，"
+                        "或该零件没有实体体")
+        return out
+    if not (0 <= int(body_index) < len(bodies)):
+        out["ok"] = False
+        out["preconditions_held"] = False
+        out["error"] = ("★ 前置未成立：body_index=%d 越界（该文档有 %d 个体）"
+                        % (body_index, len(bodies)))
+        return out
+    out["preconditions_held"] = True
+    res = insert_mid_surface(model, bodies[int(body_index)], model,
+                             placement=float(placement), knit_flag=bool(knit))
+    out["ok"] = bool(res.get("ok")) if isinstance(res, dict) else bool(res)
+    out["inner"] = res
+    return out
