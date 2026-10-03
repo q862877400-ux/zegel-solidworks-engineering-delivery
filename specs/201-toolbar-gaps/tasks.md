@@ -30,15 +30,15 @@
   → 每条验收: 建一个新零件 → 在草图里画出该图元 → **回读草图实体计数增加**（`sw_sketch.count_segments`）→ 证据落 `output/sketch-primitives-evidence.json`
   → 整批验收: `python tools/sw_guard.py --timeout 600 -- python tools/prove_sketch_primitives.py` 退出 0 且 `pass == total`
 
-## B3 草图编辑（7 条）
+## B3 草图编辑（7 条）✅ 6/7（轮 465；交叉曲线前置 3D 草图未通）
 
-- [ ] **T301** 剪裁实体 `ISketchManager.SketchTrim`
-- [ ] **T302** 延伸实体 `SketchExtend`
-- [ ] **T303** 等距实体 `SketchOffset2`
-- [ ] **T304** 绘制圆角 `CreateFillet`
-- [ ] **T305** 线性草图阵列 `CreateLinearSketchStepAndRepeat`
-- [ ] **T306** 圆周草图阵列 `CreateCircularSketchStepAndRepeat`
-- [ ] **T307** 交叉曲线 `IntersectCurves`
+- [x] **T301** 剪裁实体 `ISketchManager.SketchTrim`
+- [x] **T302** 延伸实体 `SketchExtend`
+- [x] **T303** 等距实体 `SketchOffset2`
+- [x] **T304** 绘制圆角 `CreateFillet`
+- [x] **T305** 线性草图阵列 `CreateLinearSketchStepAndRepeat`
+- [x] **T306** 圆周草图阵列 `CreateCircularSketchStepAndRepeat`
+- [~] **T307** 交叉曲线 `IntersectCurves` —— **包装已写，前置未通**：官方要 3D 草图 + 两个相交面，而 `Insert3DSketch` 在本机回 `None`
   → 验收: 同上模式（数组长度 / 实体计数增量）
 
 ## B4 草图编辑·移动族（5 条）
