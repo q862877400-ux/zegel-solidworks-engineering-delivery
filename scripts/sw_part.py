@@ -1048,6 +1048,82 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
     )
 
 
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   SolidWorks 官方 API（`C:\swapi`，三源之一）+ 本项目既有模式
+# 文件:   C:\swapi\types\IModelDoc2\EditSuppress2.md
+#           → `System.bool EditSuppress2()`（0 参）
+#         C:\swapi\types\IModelDoc2\EditUnsuppress2.md
+#           → `System.bool EditUnsuppress2()`（0 参）
+# 定位:   ★ 阶段 5（按缺口密度补能力）—— ★ **「改 × 特征」格**是本仓密度最低的一格
+#           （★ 官方 **275** 个成员，★ 我们只有 **2** 个工具 ⇒ ★ **0.7%**）。
+#         ★ 而"抑制/解除抑制一个**特征**"正是这一格最基础的能力，★ 本仓**没有**：
+#           · 已有 `sw_assembly.suppress_component`（★ 那是**组件**）
+#           · 已有 `sw_assembly_doc.suppress_mate`（★ 那是**配合**）
+#           · ★★ **缺的是**特征**** ✓
+#         ★★ 出处（铁律 1「缝合不发明」）：★ 官方签名（上面两页）+
+#           ★ 本仓 `sw_assembly.suppress_component` 的**既有模式**
+#           （★ 同一个 API —— ★ `EditSuppress2()` 是**文档级**的，
+#            ★ 它抑制的是**当前选中的东西**，★ 所以选组件还是选特征由选择决定）✓
+#        ★★★ 真机证据（`tools/probe_assembly_family_successors.py` ·
+#          `output/assembly-family-successor-evidence.json`）：
+#          ★ 旧 `EditSuppress` **能调（False）** · ★ 新 `EditSuppress2` **能调（False）**
+#          ⇒ ★★ **后继可用** ✓
+#        ⚠ 选择用 `SelectByID2(名, "BODYFEATURE", …)` —— ★ 本会话实测**特征按名字可选**
+#          （★ 而**边/面按名字选不到**，★ 见事实 32）✓
+# ────────────────────────────────────────────────────────────────────
+def feature_suppress(model, feature_name: str) -> bool:
+    """★ 抑制一个**特征**（★ 走官方后继入口 `IModelDoc2.EditSuppress2()`）。
+
+    ★★★ 2026-10-03（接手轮）**新增能力** —— ★ 补「**改 × 特征**」这一格
+      （★ 判据见上面的来源块：★ 官方 275 个成员、★ 本仓原有 2 个工具 ⇒ **0.7%**）。
+
+    ★ 官方 `types/IModelDoc2/EditSuppress2.md` 逐字：`System.bool EditSuppress2()`（★ 0 参）。
+    ★★ 它是**文档级**的：★ **抑制的是当前选中的东西** ⇒ 所以**先选特征**、★ 再调它 ✓
+
+    :param model: `IModelDoc2` / `IPartDoc`（★ 支持的文档类型由 SolidWorks 定）
+    :param feature_name: 特征名（★ 中文 UI 如「凸台-拉伸1」）
+    :raises RuntimeError: 特征没选中 ⇒ **不静默**（★ 本项目一贯纪律）
+    :returns: 官方返回值
+    """
+    #: ★★★ 2026-10-03 修：★ `ClearSelection2` 在 **`IModelDoc2`（即 `model`）** 上，
+    #:   ★★ **不在 `model.Extension` 上** —— ★ 真机报 `<unknown>.ClearSelection2` ✓
+    get_com_member(model, "ClearSelection2", True)
+    selection = get_com_member(model, "Extension")
+    #: ★ 按**对象**选特征：★ 事实 32 说实体（边/面）按名字选不到，
+    #:   而**特征按名字可以**（`SelectByID2(名, "BODYFEATURE", 0,0,0, False, 0, None, 0)`）✓
+    ok = get_com_member(selection, "SelectByID2", str(feature_name), "BODYFEATURE",
+                        0.0, 0.0, 0.0, False, 0, _empty_callout(), 0)
+    count = int(get_com_member(get_com_member(model, "SelectionManager"),
+                               "GetSelectedObjectCount2", -1) or 0)
+    if not ok or count == 0:
+        raise RuntimeError(
+            "特征 %r 没被选中（★ SelectByID2 回 %r、★ 选区计数 %d）"
+            "⇒ 拒绝调用 EditSuppress2：★ 它作用在**当前选择**上，"
+            "★ 空选区下调用会**静默什么都不做**。" % (feature_name, ok, count))
+    return bool(get_com_member(model, "EditSuppress2"))
+
+
+def feature_unsuppress(model, feature_name: str) -> bool:
+    """★ 解除抑制一个**特征**（★ 走官方后继入口 `IModelDoc2.EditUnsuppress2()`）。
+
+    ★★ 与 `feature_suppress` 同构，★ 只是换 `EditUnsuppress2`；
+    ★ 官方 `types/IModelDoc2/EditUnsuppress2.md` 逐字：`System.bool EditUnsuppress2()`（★ 0 参）。
+    ★★★ 真机证据与它同源（★ 见 `feature_suppress` 的来源块）✓
+    """
+    get_com_member(model, "ClearSelection2", True)         #: ★ `ClearSelection2` 在 model 上
+    selection = get_com_member(model, "Extension")
+    ok = get_com_member(selection, "SelectByID2", str(feature_name), "BODYFEATURE",
+                        0.0, 0.0, 0.0, False, 0, _empty_callout(), 0)
+    count = int(get_com_member(get_com_member(model, "SelectionManager"),
+                               "GetSelectedObjectCount2", -1) or 0)
+    if not ok or count == 0:
+        raise RuntimeError(
+            "特征 %r 没被选中（★ SelectByID2 回 %r、★ 选区计数 %d）"
+            "⇒ 拒绝调用 EditUnsuppress2（★ 同 feature_suppress 的理由）。"
+            % (feature_name, ok, count))
+    return bool(get_com_member(model, "EditUnsuppress2"))
+
+
 def circular_pattern(model, feature_name, axis_name, angle_rad, count, equal_spacing=True):
     """
     圆形阵列

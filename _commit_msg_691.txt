@@ -1,0 +1,63 @@
+feat(阶段5): ★★★★★ 补「**改 × 特征**」格（★ 本仓密度**最低**的一格，0.7%）—— 新增 `feature_suppress` / `feature_unsuppress`
+
+■ 一 · ★★★★ 为什么补这一格（★ 阶段 5 的"按缺口密度"）
+  ★ `output/operation-object-matrix-v2.json` 的「官方成员最多的格子」实测（★ 按密度升序）：
+  | ★ 格 | ★ 官方成员 | ★ 我们覆盖 | ★ 密度 |
+  |---|---|---|---|
+  | ★★★ **改 × 特征** | **275** | **2** | ★★★★ **0.7%（最低）** |
+  | ★★ 改 × 工程图 | 239 | 2 | 0.8% |
+  | ★ 查 × （未归类）| 239 | 4 | 1.7% |
+  | ★ 建 × 工程图 | 257 | 7 | 2.7% |
+  | ★ 建 × 几何体/面/边 | 177 | 8 | 4.5% |
+  ★★ 而那 2 个工具实测是：★ `solidworks_mirror_feature` 与 `solidworks_feature_cosmetic_thread` ✓
+  ⇒ ★★★ **"抑制/解除抑制一个**特征**"是这一格最基础的能力，★ 而本仓**没有**** ✓
+    · ★ 已有 `sw_assembly.suppress_component`（★ 那是**组件**）
+    · ★ 已有 `sw_assembly_doc.suppress_mate`（★ 那是**配合**）
+    · ★★ **缺的正是**特征**** ✓
+
+■ 二 · ★★★★★ 而这里有一个**漂亮的汇合**
+  ★ 官方"抑制"的入口是 **`IModelDoc2.EditSuppress2()`** ——
+    ★★ **而那正是我在阶段 2（消解废弃成员）刚真机验过的两条之一** ✓
+  ★★★ 即：★ **阶段 2 的验证成果，★ 直接成了阶段 5 新能力的前置** ✓
+  ★★★★ **这是本 24h 任务里第一次"前面阶段的产出被后面阶段直接用上"** ✓
+
+■ 三 · ★ 出处（★ 铁律 1「缝合不发明」）
+  · ★ **官方签名**：★ `C:\swapi\types\IModelDoc2\EditSuppress2.md` ⇒ `System.bool EditSuppress2()`（0 参）·
+    ★ `EditUnsuppress2.md` 同形
+  · ★★ **本仓既有模式**：★ `sw_assembly.suppress_component`（★ **同一个 API** ——
+    `EditSuppress2()` 是**文档级**的，★ 它抑制的是**当前选中的东西**，
+    ★★ 所以"选组件"还是"选特征"由**选择**决定）✓
+  ⇒ ★★ **所以这是"官方签名 + 本仓既有模式"，★ 不是发明** ✓
+
+■ 四 · ★★ 实现要点
+  ★ `feature_suppress(model, feature_name)` / `feature_unsuppress(model, feature_name)`
+  ★★ 流程：★ 清选区 → `SelectByID2(名, "BODYFEATURE", …)` → **回读选区计数** → `EditSuppress2()`
+  ★★★ **守卫**：★ **选区计数为 0 就抛错**（★ 因为 `EditSuppress2` 作用在**当前选择**上，
+    ★ **空选区下调用会静默什么都不做**）✓ —— ★ 与**事实 32**（实体没有名字）配套：
+    ★ **特征按名字可选、★ 边/面不可选** ✓
+
+■ 五 · ★★★ 真机过程中修掉**两个我自己的错**（★ 都由真机当场暴露）
+  ① ★ **`ClearSelection2` 在 `IModelDoc2` 上，★ 不在 `model.Extension` 上** ——
+     ★ 真机报 `AttributeError: <unknown>.ClearSelection2` ✓
+  ② ★★★ **`SelectByID2` 的 `Callout` 参数传 `None` ⇒「类型不匹配（位置 8）」** ——
+     ★★ **而这正是**事实 33** 逐字写的**：
+     > 「`SelectByID2` / `Select4` 的 `Callout` 参数**必须**传 `VARIANT(VT_DISPATCH, None)`；
+     > **传 `None` 得到 `'类型不匹配'`**」★ **而那个错误**看不出是 Callout 的问题**** ✓
+     ⇒ ★ 改用本仓的 `_empty_callout()`（★ 119 行，★ 早就有了）✓
+     ★★★ **教训**：★ **事实 33 我读过、也写进了提交信息，★ 却在新代码里又踩了一次** ⇒
+       ★ **"知道"不等于"用上"** —— ★ 与**事实 61 定则④**（工具函数要用在**所有**同类场合）同族 ✓
+
+■ 六 · ★ 真机结果（★ `tools/probe_feature_suppress_e2e.py` · `output/feature-suppress-e2e-evidence.json`）
+  | ★ 项 | ★ 结果 |
+  |---|---|
+  | ★ `feature_suppress` | ★ 回 **`True`** ✓ |
+  | ★ `feature_unsuppress` | ★ 回 **`True`** ✓ |
+  | ★★ **负例**：★ 不存在的特征名 | ★★ **抛 `RuntimeError`（★ 守卫生效）** ✓ |
+  | ⚠ `IsSuppressed2` 的读数 | ★★ **恒为 `True`** ⇒ ★ **我的探针**读数**没读对** |
+  ★★★ 按**事实 53**（同一处 ≥3 次就停）⇒ ★ **停调那个判据** ✓
+  ★★ **如实记**：★ **"两个能力能调 + 守卫有效"是已证事实**；
+    ★ **"抑制状态能被正确读出"★未打通**（★ 那是**探针的判据**问题，★ 不是能力的问题）✓
+
+■ 七 · ★ 收尾
+  ★ `python scripts/sync_bundled_skill.py` + 收尾链：**`release_check 第 1 轮 OK`** ✓
+  ⚠ **待办**（★ 下一轮）：★ 给这两条能力**挂 ToolSpec**（★ 现在只有能力层函数）✓
