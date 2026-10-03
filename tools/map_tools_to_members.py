@@ -27,7 +27,25 @@ SWAPI = Path(r"C:\swapi")
 OUT = REPO / "output" / "tool-to-member-map.json"
 
 #: ★ 取成员的两种调用形态（★ 本仓口径）
-CALL_PAT = re.compile(r'\b(?:get_com_member|call_com_member|set_com_member)\s*\(\s*[^,]+,\s*"([A-Za-z_][A-Za-z0-9_]*)"')
+#: ★★★★ 2026-10-03（接手轮）**从"白名单枚举"改成"按形态认"** ——
+#:   ★ 病灶：★ 原来写 `(?:get_com_member|call_com_member|set_com_member)` ⇒
+#:     ★★ 而本仓**实际有 6 种写法**（★ 实测计数）：
+#:     | ★ 名 | ★ 出现次数 | ★ 旧版认吗 |
+#:     |---|---|---|
+#:     | `get_com_member` | **1011** | ★ 认 |
+#:     | `set_com_member` | 119 | ★ 认 |
+#:     | `call_com_member` | 55 | ★ 认 |
+#:     | ★★ `safe_get_com_member` | **39** | ✗ **不认** |
+#:     | ★★ `_safe_com_member` | 14 | ✗ **不认** |
+#:     | ★★ `_optional_com_member` | 10 | ✗ **不认** |
+#:     ⇒ ★★★ **共 63 处被漏掉** ⇒ 直接后果：
+#:       `sw_assembly.get_components` / `collect_mate_feature_summary` 被算成"抽不到成员"
+#:       ⇒ ★★ 进了"无处可放"清单（★ 见阶段 3 的分类：那 3 个"真问题"里它就占 2 个）✓
+#:   ★★★ 修法（★ 不"再加两个名字"）：★ **按**形态**认** —— ★ **任何以 `_com_member` 结尾的函数名** ✓
+#:     用 `\w*com_member` ⇒ ★ 6 种全覆盖，★ **且将来加第 7 种也不用改** ✓
+#:   ★★ **可复用判据**：★★ **"按白名单枚举写法"必然漏掉新写法** ——
+#:     ★ 凡"认若干种已知写法"的判据，★ 都要问"**有没有一个**形态**能覆盖全部**" ✓
+CALL_PAT = re.compile(r'\b\w*com_member\s*\(\s*[^,]+,\s*"([A-Za-z_][A-Za-z0-9_]*)"')
 #: ★ 取"点调用"形态：obj.Member(
 DOT_PAT = re.compile(r"\.([A-Z][A-Za-z0-9_]{2,})\s*\(")
 
