@@ -1771,14 +1771,45 @@ def _collect_view_professional_annotations(view, view_record):
             frame_count = 0
         frame_count = frame_count if 0 <= frame_count <= 100 else 0
         record["datum_identifier"] = str(_safe_member(owner, "GetDatumIdentifier", default="") or "")
-        record["frames"] = [
-            {
-                "index": index,
-                "symbols": _as_sequence(_safe_member(owner, "GetFrameSymbols3", index, default=[])),
-                "values": _as_sequence(_safe_member(owner, "GetFrameValues", index, default=[])),
-            }
-            for index in range(frame_count)
-        ]
+        #: ★★★★ 2026-10-04（接手轮）**修掉「0 基帧号 + 读法代次不对」** ——
+        #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#8**（★ `C-dw-2 DW2-5`）—— ★ 裁判逐字：
+        #:   「★ 工程图上读 GTol 帧用 **0 基索引 + 2022 之前的读法**」· 判定「**不成立**」✓
+        #:   ★★ **官方逐字（★ 我读了四个 md）** —— ★ **三重错**：
+        #:     · ★ **错 ①（0 基）**：★ `IGtol/GetFrameSymbols3.md` 的 `## Parameters` 逐字 ⇒
+        #:       「**FrameNumber**: Frame number to examine (**1 or 2**)」⇒ ★ **不是 0 基** ✓
+        #:     · ★★ **错 ②（代次）**：★ 同一页与 `IGtol/GetFrameValues.md` 的 `## Remarks` 逐字 ⇒
+        #:       「This method is valid only if this Gtol was created in **a version of SOLIDWORKS
+        #:       earlier than 2022**.」⇒ ★★ **而 2022 及以后的要用 `IGtol.GetFrame`**：
+        #:       · `IGtol/GetFrame.md` 逐字 ⇒ 「valid only if this Gtol was created in
+        #:         **SOLIDWORKS 2022 or later**」· ★ 而 `FrameIndex` ⇒ 「**One-based**」✓
+        #:     · ★★★ **错 ③（帧号不连续）**：★ `IGtol/GetFrameCount.md` 的 `## Remarks` 逐字 ⇒
+        #:       「…the symbol can be displayed with **three** frames, but upon examination, it could
+        #:       be that those are frames **1, 2, and 5**. Frames 3 and 4 are **empty**.」
+        #:       ⇒ ★★ **所以 `range(frame_count)` 即使改成 1 基也不能当帧号序列** ✓
+        #:   ★★★ **修法（★ 三层都改）**：
+        #:     · ★ **优先走 2022+ 的现行入口 `IGtol.GetFrame`**（★ `FrameIndex` **1 基**）✓
+        #:     · ★★ **`range` 改成 `1..frame_count`**（★ 1 基）✓
+        #:     · ★★★ **并对"该帧是空的"如实记账**（★ 空帧不假造内容）✓
+        #:     · ★★★★ **旧读法 `GetFrameSymbols3/GetFrameValues` 保留为兜底**
+        #:       （★ 因为官方说它们**对 2022 之前创建的 Gtol 有效** —— ★ 而那种文档仍可能存在）✓
+        record["frames"] = []
+        for index in range(1, frame_count + 1):        #: ★★ 1 基（★ 官方 `1 or 2` / `One-based`）
+            frame = _safe_member(owner, "GetFrame", index, default=None)
+            sym = _as_sequence(_safe_member(frame, "GetSymbols", default=[])) if frame else []
+            val = _as_sequence(_safe_member(frame, "GetValues", default=[])) if frame else []
+            if not sym and not val:
+                #: ★★★ 兜底：★ 旧读法（★ 官方说**对 2022 之前创建的 Gtol 有效**）✓
+                sym = _as_sequence(_safe_member(owner, "GetFrameSymbols3", index, default=[]))
+                val = _as_sequence(_safe_member(owner, "GetFrameValues", index, default=[]))
+            record["frames"].append({
+                "index": index,                        #: ★ 1 基（★ 与官方同口径）
+                "index_base": "one_based",
+                "symbols": sym,
+                "values": val,
+                "empty": (not sym and not val),        #: ★ 官方：帧可能是空的（★ 如实记账）
+            })
+        record["frame_count"] = frame_count
+        record["frame_index_base"] = "one_based"
         result["geometric_tolerances"].append(record)
     for owner in _as_sequence(_safe_member(view, "GetSFSymbols", default=[])):
         record = _professional_annotation_record(owner, "surface_finish", view_record)

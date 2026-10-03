@@ -277,6 +277,18 @@ def test_inspect_drawing_structure_reads_professional_annotation_entities():
         def GetLabel(self):
             return "A"
 
+    class GtolFrame:
+        """★ `IGtolFrame` 的假对象（★ 2026-10-04 补 —— 配合 `IGtol.GetFrame` 这条**现行**入口）✓
+
+        ★★ `IGtol.GetFrame` 回的就是它；★ 而帧内容由 `GetSymbols` / `GetValues` 读 ✓
+        """
+
+        def GetSymbols(self):
+            return ["POSITION"]
+
+        def GetValues(self):
+            return ["0.1", "A"]
+
     class Gtol(AnnotationEntity):
         def GetFrameCount(self):
             return 1
@@ -284,12 +296,28 @@ def test_inspect_drawing_structure_reads_professional_annotation_entities():
         def GetDatumIdentifier(self):
             return "A"
 
+        #: ★★★★ 2026-10-04（接手轮）**更新这个假对象 —— 它原来按**0 基**编的** ——
+        #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#8**（★ `C-dw-2 DW2-5`）—— ★ 裁判逐字：
+        #:   「★ 工程图上读 GTol 帧用 **0 基索引 + 2022 之前的读法**」· 判定「**不成立**」✓
+        #:   ★★ **官方逐字**：★ `IGtol/GetFrameSymbols3.md` 的 `## Parameters` ⇒
+        #:     「**FrameNumber**: Frame number to examine (**1 or 2**)」⇒ ★ **1 基** ✓
+        #:     ★★ 而 `IGtol/GetFrame.md` ⇒ `FrameIndex` 是「**One-based**」、
+        #:       且是 **2022 或更新**创建时的现行入口 ✓
+        #:   ★★★ **所以本假对象原来那个 `assert index == 0` 本身**就是旧的错假设**** ——
+        #:     ★ 它让"0 基"这个 bug **测不出来**（★ 假对象配合错代码）✓
+        #:   ⇒ ★ 修法：★ **补上现行的 `GetFrame(index)`**（★ 1 基）·
+        #:     ★★ 而 `GetFrameSymbols3/GetFrameValues` **改成 1 基**（★ 并按官方说它们是**旧文档**读法）✓
+        def GetFrame(self, index):
+            #: ★ 官方：`FrameIndex` 是 **1 基**（★ 而 `GetFrameSymbols3` 的合法值是 `1 or 2`）
+            assert index >= 1, "★ `IGtol.GetFrame` 的 FrameIndex 是 1 基（官方逐字 One-based）"
+            return GtolFrame()
+
         def GetFrameSymbols3(self, index):
-            assert index == 0
+            assert index >= 1, "★ 官方：FrameNumber 是 1 or 2（不是 0 基）"
             return ["POSITION"]
 
         def GetFrameValues(self, index):
-            assert index == 0
+            assert index >= 1, "★ 官方：FrameNumber 是 1 or 2（不是 0 基）"
             return ["0.1", "A"]
 
     class SurfaceFinish(AnnotationEntity):
