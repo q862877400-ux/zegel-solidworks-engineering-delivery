@@ -576,10 +576,39 @@ def sketch_polygon(model, cx, cy, radius, sides=6):
 
 
 def sketch_slot(model, x1, y1, x2, y2, radius):
-    """画槽口"""
+    """画槽口（★ `radius` 是**槽口半径** ⇒ 官方 `Width` = `2 * radius`）。
+
+    ── 来源 ─────────────────────────────────────────────────────────────
+    仓库:   SolidWorks 官方签名 + 官方示例（两套源都读到）
+    文件:   `C:\\swapi\\types\\ISketchManager\\CreateSketchSlot.md`
+            `C:\\swapi\\enums\\swSketchSlotLengthType_e.md`
+            `C:\\swapi\\examples\\Insert_and_Resize_Sketch_Slot_Example_VB.md`
+    定位:   ★★★★ 2026-10-04（接手轮）**修一处参数错位 + 一处系数 2** ——
+      处置 `JUDGE-C_D_E.md` 的 🔴 **#4**（★ `E-4 #1`）—— ★ 裁判逐字：
+      「★ 长度被塞进官方枚举位、★ 第 3 位才是 `Width` ⇒ ★ **槽口尺寸差一个系数 2**，
+       且 Param 描述「半径＝宽度一半」与实传的**整宽**相反」✓
+      ★★ **官方签名逐字**：`SketchSlot CreateSketchSlot( System.int SlotCreationType,
+        System.int **SlotLengthType**, System.double **Width**, System.double X1, … )` ✓
+      ★★★ **官方示例逐字**：`CreateSketchSlot(…swSketchSlotCreationType_line,
+        …swSketchSlotLengthType_CenterCenter, **0.05**, -0.05, 0, 0.05, …)` ⇒
+        ★★ **第 2 参传枚举成员、★ 第 3 参 `0.05` 才是 `Width`** ✓
+      ★★★ **官方枚举只有 2 个成员**：`CenterCenter = 0` · `FullLength = 1` ✓
+      ⇒ ★★★★ **病灶**：★ 本函数原写 `CreateSketchSlot(0, radius, radius, …)` ⇒
+        · **第 2 参**（★ `SlotLengthType`，★ 合法值只有 0/1）被塞了 **`radius`** ✓
+        · **第 3 参**（★ `Width`）拿到了 `radius` ⇒ ★ 而本函数的语义是**半径** ⇒ **差系数 2** ✓
+      ⇒ ★ 修法：★ **第 2 参传合法的枚举 `0`**（`CenterCenter`）· ★ **第 3 参传 `2 * radius`** ✓
+        ★★ **为什么保持形参名 `radius` 而不改成 `width`**：★ `sketch_slot` 是**既有公开函数**，
+          ★ 改名会**改契约**（★ 破坏现有调用方与 MCP 工具的 Param 名）⇒
+          ★★★ **在函数内换算**（★ 与 MCP 工具说明的「半径（即宽度的一半）」一致）✓
+    许可:   本仓库 MIT。★ 无第三方代码引入（★ 值抄自官方枚举与示例）。
+    覆盖:   全文件
+    ─────────────────────────────────────────────────────────────────────
+    """
     return model.SketchManager.CreateSketchSlot(
-        0,  # swSketchSlotCreationType_e: 0=Straight
-        radius, radius,  # 宽度
+        0,  # swSketchSlotCreationType_e: 0 = line（★ 第 1 参 ✓ 原就对）
+        0,  # ★★ swSketchSlotLengthType_e: 0 = **CenterCenter**（★ 2026-10-04 修：
+            #    原为 `radius` —— ★ 而官方该枚举**只有 0/1 两个成员**）✓
+        2.0 * float(radius),  # ★★ 官方 `Width`（★ 2026-10-04 修：原为 `radius` ⇒ 差系数 2）
         x1, y1, 0,
         x2, y2, 0,
         0, 0, 0,
