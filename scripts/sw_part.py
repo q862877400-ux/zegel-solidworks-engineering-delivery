@@ -1015,6 +1015,19 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
         feature_name: 要阵列的特征名称
         d1_*: 方向1 的方向向量、间距（**毫米**，⚠ 间距已测；**方向向量是否归一化未测**）和数量
         d2_*: 方向2（可选）
+
+    ⚠⚠⚠ **2026-10-04（接手轮）修正一处**差 1000 倍**的单位错** ——
+      处置 `JUDGE-C_D_E.md` 的 🔴 **#9**（★ `C-sm-3 #3.2`）—— ★ 裁判逐字：
+      「★ `linear_pattern` 毫米 ↔ `in meters`：★ **阵列间距差 1000 倍**；★ 同仓另一条路径
+       已做 `* 0.001` 并注明旧文档串是「错话」」✓
+      ★★ **实测复核**：★ 官方 `FeatureLinearPattern3.md` 的 `Spacing1` 逐字写死 **`in meters`**；
+        ★★★ 而**同文件**的 `linear_pattern_report`（L1815）**逐字**说：
+        「⚠ ★ 这**修正**了 `linear_pattern` 原文档串里「间距（**毫米**）」那句**错话**」，
+        ★★ 并在 L1839 做 `s1 = float(spacing_mm) * 0.001` ⇒ ★★★★
+        **同一个文件里两条路径对同一参数的单位处理**相反**** ✓
+      ⇒ ★ 修法：★ **按官方单位把毫米换成米**（★ 与同文件 `linear_pattern_report` 一致）✓
+      ⚠ **这是行为改动**（★ 调用方传的毫米现在真的被当毫米）—— ★ 而那**正是修 bug**：
+        ★ 此前传 10（本意 10 mm）会被官方读成 **10 米** ⇒ ★ 阵列间距差 **1000 倍** ✓
     """
     _select_by_id(model.Extension, feature_name, "BODYFEATURE", mark=4)
     # ── 来源 ────────────────────────────────────────────────────────────
@@ -1039,8 +1052,8 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
     # ⚠ 本行为静态签名比对后修正，未在本机实测（见 AGENTS.md 铁律 2）
     # ────────────────────────────────────────────────────────────────────
     return model.FeatureManager.FeatureLinearPattern3(
-        int(d1_count), float(d1_spacing),
-        int(d2_count), float(d2_spacing),
+        int(d1_count), float(d1_spacing) * 0.001,      #: ★★ 毫米 ⇒ 米（官方 `Spacing1` 逐字 `in meters`）
+        int(d2_count), float(d2_spacing) * 0.001,      #: ★★ 同上（★ 2026-10-04 修，★ 见 docstring）
         False, False,
         f"{d1_x} {d1_y} {d1_z}",
         f"{d2_x} {d2_y} {d2_z}",
