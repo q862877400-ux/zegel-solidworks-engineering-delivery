@@ -2492,3 +2492,21 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **而它的一组参数**（★ 可照拄）：`swWzdHole=2` · `ANSI_METRIC=1` · `40`（螺钉间隙）· `"M8"` · `swEndCondThroughAll=1` · `Diameter=0.008` · `Depth=0.02` · 其余 0 · `RevDir=False` · `FeatureScope=True` · 后四个 `False`。
      ★ **落地**：`capabilities.yaml` 新增 **`feature_hole_wizard5`**（level = **verified**，共 **108** 条）；台账「高级孔」补 `capability_id` ⇒ **已能 81**。
      ★★ **方法论**：★ **当一个 27 参的方法回 `None` 时，把**字符串参数的形态**拿出来做对照** —— ★ 而**空串与纯数字都不是答案、“规格串”才是** ⚠|真机：`tools/prove_hole_wizard5_build.py`；证据 `output/hole-wizard5-build-evidence.json`；官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md` × `IModelDocExtension\SelectByRay.md`；对照事实 464 / 466 / 467 / 468 |
+| 470 | **★★★ 高级孔的包装：**设计错了——`GetSelectionPoint` 对这条 API 是多余的****（★ 而错误信息**自己指出了**） —— 2026-10-03（轮 592）。
+     ★ **背景**：下午把事实 469 那个**真机建成**的探针落成包装（`sw_hole_features.create_hole_wizard_at_selection_report`，★ 命名仿 `create_*_hole_at_selection_report` 那族）。
+     ★ **而我把它设计成**先读选区的点、再发射线****（`selection_point(model)` → `SelectByRay`）。
+     ★ **真机验包装时它报**（★ 逐字）：
+     ```
+     "读不到当前选区的点（★ 调用方需先选一个点）：
+      `GetSelectionPoint2(1, -1)` 回 None（★ **选中的可能不是点**）·
+      `GetSelectionPoint(1,)` 回 None。"
+     ```
+     ★★ **故真结论是**：★ **`HoleWizard5` 的定位**靠 `SelectByRay`**、**根本不需要 `GetSelectionPoint`** ——
+       ★ 而**我那个“先读点再发线”的设计对这条 API 是多余的** ⚠
+       （★ 而它**只选面**时就拿不到点 —— ★ 因为 `GetSelectionPoint` 要的是**点**（顶点/参考点），不是面）。
+     ★★★ **而这一次值得记的是**：★ **错误信息自己把设计错说出来了**（“选中的可能不是点”）——
+       ★ 而那句是**我自己写进去的**（★ 按本仓“不猜 —— 取不到就写明原因”的惯例）✓
+       ⇒ ★ **故“给错误写一句像人话的原因”是有回报的** —— ★ 它替我做了一半诊断。
+     ★ **下一步就是改设计**：★ 换成**接一个声明式的面选择器**（如 `+z`，★ 走本仓 `select_face_selector`）
+       → 从**面的中点**（★ 本付 `_center` 那类取法）得到点 → 再发射线。
+     ★ 本轮**不降 `feature_hole_wizard5` 的 level**（★ 能力本身真机建成、事实 469）；★ 而**包装尚未真机通过** —— ★ 那一点已写进它的 `limitations`。|真机：`tools/prove_hole_wizard_wrapper.py`；证据 `output/hole-wizard-wrapper-evidence.json`；本仓：`scripts/sw_hole_features.py` 新增那个包装；对照事实 466 / 469 |
