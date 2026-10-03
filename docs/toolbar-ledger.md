@@ -17,7 +17,7 @@
 | 档 | 条数 |
 |---|---|
 | 已能 | 81 |
-| 可攻关 | 7 |
+| 可攻关 | 6 |
 | 待验证 | 6 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -26,7 +26,6 @@
 
 | 工具条 | 条目 | 档 | 官方成员（已核） | 本仓入口 |
 |---|---|---|---|---|
-| 曲面 | 扫描曲面 | **可攻关** | `InsertProtrusionSwept4`, `Surface` | — |
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 特征下拉 | 曲线-投影曲线 | **可攻关** | `InsertProjectedSketch` | — |
@@ -140,6 +139,7 @@
 | 草图编辑 | 等距实体 | **已能** | `SketchOffset2` | `sw_sketch_edit_ops.sketch_offset` |
 | 草图编辑 | 线性草图阵列 | **已能** | `CreateLinearSketchStepAndRepeat` | `sw_sketch_edit_ops.sketch_linear_pattern` |
 | 草图编辑 | 缩放实体比例 | **已能** | `IModelDoc2`, `SketchModifyScale` | — |
+| 曲面 | 扫描曲面 | **后端到不了** | `InsertProtrusionSwept4`, `Surface` | — |
 | 特征 | 线性阵列 | **后端到不了** | `FeatureLinearPattern4` | `sw_part.linear_pattern` |
 | 特征下拉 | 填充阵列 | **后端到不了** | `FeatureFillPattern` | — |
 | 特征下拉 | 曲线驱动的阵列 | **后端到不了** | `FeatureCurvePattern` | — |

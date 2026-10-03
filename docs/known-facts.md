@@ -2608,3 +2608,26 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ① ★ 台账里 `tier == "可攻关"` 而 `api` 提到一个 **带 `AccessSelections` 的 `*FeatureData`** ⇒ ★ 疑似该进名单；
        ② ★ `api` 里的名字**在全接口都查不到**（★ 铁律 5）⇒ ★ **不该算“可攻关”**（★ 那是**另一个桶**的问题）。
      ★★ **方法论**：★ **把四个桶并列列出来看，不一致就自己浮出来了** ** —— ★ 而不是逐条去想“这条对不对” ✓|台账：`docs/toolbar-ledger-verified.json`；名单：`docs/backend-limited-items.json`（★ **10** 条）；文档：`docs/toolbar-gaps-backend-limits.md` §2.3；对照事实 474 |
+| 476 | **★★★ 扫描曲面：三代全标废弃、★ 而代之的新架构**也撞同一道门槛****（★ 与四个阵列同） —— 2026-10-03（轮 603）。
+     ★ **代际**（★ 全库都在，★ 而**三代全标废弃**）：
+     ```
+     InsertSweepSurface   （ **7 参**） ⇒ Obsolete. Superseded by InsertSweepSurface2
+     InsertSweepSurface2  （**11 参**） ⇒ Obsolete. Superseded by InsertSweepSurface3
+     InsertSweepSurface3  （**14 参**） ⇒ **Obsolete. See Remarks**：
+        "**SOLIDWORKS 2018 introduces a new sweep architecture**, making this method obsolete.
+         See **Sweep Features and `SweepFeatureData`** objects"
+     ★ 而 `InsertProtrusionSwept4`（台账写的那个）**也是同一句**。
+     ```
+     ⇒ ★★ **故三代都指向同一个新架构**：`CreateDefinition(swFmSweepSurface)` + `ISweepFeatureData`。
+     ★ 而**而它撞在同一道门槛上**（★ 真机）：
+       `ISweepFeatureData` 共 **53** 成员、**带 `AccessSelections`** 与 `ReleaseSelectionAccess`
+       ⇒ ★ 而那道门槛已证**第 2 参四种形态全到不了**（事实 474）。
+     ★ **故它也该进「后端到不了」** —— ★ 而本轮补上了；台账 ⇒ **后端到不了 5 → 6**、**可攻关 7 → 6** ✓
+     ★★ **而本轮还发现了上一道门禁的一个盲点**：
+       ★ 完整性门禁的判据是「`api` 里有带 `AccessSelections` 的 **`*FeatureData`**」，
+       ★ 而台账那条的 `api` 写的是 **`InsertProtrusionSwept4(Surface)`**（★ **不含那种字样**）⇒ ★ **故它没被怀疑** ⚠
+       ★ 而修法很具体：★ **判据该加一条**——「`api` 里的成员**已标废弃、而它指向的新架构接口带 `AccessSelections`**」。
+     ★★ **方法论**：★ **完整性门禁是“静态判据”，★ 而**静态判据总有盲点** ** —— ★ 故它自己就写着“**不代表名单已经完整**” ✓
+       （★ 而本轮就是靠**逐条读那些剩下的可攻关**发现的）。
+     ★ **而本仓早就记着同族的一句**：`scripts/sw_surface_ref_ops.py` 逐字：
+       「`IModelDoc2.InsertSweepRefSurface` 与 `…RefSurface2` **两个都标 Obsolete**」✓|官方：`C:\swapi\types\IFeatureManager\InsertSweepSurface{{,2,3}}.md` × `ISweepFeatureData\`（53 成员）；名单：`docs/backend-limited-items.json`（★ **11** 条）；对照事实 415 / 474 / 475 |
