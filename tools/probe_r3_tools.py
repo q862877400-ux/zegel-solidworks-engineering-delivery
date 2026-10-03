@@ -111,6 +111,11 @@ def _call(tool: str, args: dict) -> dict:
     try:
         ret = fn(**kwargs)
         if isinstance(ret, dict):
+            #: ★★ 2026-10-03：**记整份返回** —— 上一版只拷白名单键 ⇒
+            #:   ★ 把 `selection_marks`（工具**自己读到的选区**）丢掉了 ⇒
+            #:   前置判 False 时**看不出它读到了几个、什么 mark**（★ 白名单会把诊断字段吃掉）。
+            out["ret_all"] = {k: (str(v)[:200] if not isinstance(v, (int, float, bool, type(None), list, dict))
+                                  else v) for k, v in ret.items()}
             for k in ("ok", "preconditions_held", "ret_name", "ret_type", "ret_is_none",
                       "new_features", "error", "err"):
                 if k in ret:
@@ -188,6 +193,53 @@ def _profile() -> str:
     return ""
 
 
+def _pick_faces(doc, count: int, mark: int) -> dict:
+    """★ 按官方 mark 选 `count` 个面 —— ★ **官方前置就是它**。
+
+    · 顶端盖 `InsertEndCapFeature3` 官方逐字：「select one or more **end faces**」，
+      ★ **没给 mark**（官方例子用 **mark=0**）⇒ 本函数传 `mark=0`。
+    · 角撑板 `InsertGussetFeature3` 官方逐字：「**two faces** … with a **Mark of 1**」
+      ★ 且官方例子**两次都 `Append=True`** ⇒ 本函数照办。
+    ★ 取面顺序不做假设（★ 官方没说哪两个面），只保证「**选上了 N 个、且 mark 对**」，
+      并把实选到的数量如实回报 —— ★ 选不上就报**前置未成立**，不硬调。
+    """
+    import scripts.sw_part as _SP
+    out = {"requested": count, "mark": mark, "selected": 0, "errs": []}
+    try:
+        _g(doc, "ClearSelection2", True)
+    except Exception:                                                     # noqa: BLE001
+        pass
+    def _count(m: int) -> int:
+        #: ★★ **事实 8**：`Select4` / `SelectByID2` 的**布尔返回值不可信**，
+        #:   ★ **只有回读计数算数**（本仓实测：12 次全 false 而计数 12）。
+        try:
+            return int(_g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0)
+        except Exception:                                                 # noqa: BLE001
+            return -1
+
+    picked = 0
+    for body in list(_g(doc, "GetBodies2", 0, True) or []):
+        for face in list(_g(body, "GetFaces") or []):
+            if picked >= count:
+                break
+            try:
+                _SP._select_com_object(face, append=(picked > 0), mark=mark)
+                #: ★★ **不回读就等于没选** —— 上一版信了 bool 返回值 ⇒
+                #:   ★ 报「selected 1」而工具那边读到 **全 0**
+                #:   （★ 工具 `_selection_marks` 回读的是 `GetSelectedObjectCount2(mark)`）。
+                if _count(mark) > picked:
+                    picked = _count(mark)
+            except Exception as exc:                                      # noqa: BLE001
+                out["errs"].append("%s: %s" % (type(exc).__name__, str(exc)[:60]))
+        if picked >= count:
+            break
+    out["selected"] = picked
+    out["readback_mark"] = _count(mark)
+    out["readback_all"] = _count(-1)
+    out["held"] = picked >= count
+    return out
+
+
 def main() -> int:
     started = time.time()
     row: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
@@ -241,6 +293,12 @@ def main() -> int:
                                             {"sketch_name": sk, "profile_path": prof})
                 else:
                     r["setup_call"] = {"ok": False, "err": "★ 找不到 .sldlfp 焊件轮廓"}
+            #: ★★ 2026-10-03（接手轮）：**官方前置是"先选面"** ⇒ 调工具前按 mark 选好
+            #:   （★ 端盖 mark=0 选 1 个端面 · 角撑板 mark=1 选 2 个面），并把实选数如实记下。
+            _need = {"solidworks_weldment_insert_end_cap": (1, 0),
+                     "solidworks_weldment_gusset_create": (2, 1)}.get(tool)
+            if _need:
+                r["face_pick"] = _pick_faces(doc, _need[0], _need[1])
             before = _state(doc)
             r["call"] = _call(tool, args)
             after = _state(doc)
