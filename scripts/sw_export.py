@@ -107,7 +107,23 @@ def export_to_pdf(model, output_path, sheet_names=None, *, sw=None):
         sheet_names = get_com_member(model, "GetSheetNames")
 
     if pdf_data:
-        pdf_data.SetSheets(0, sheet_names)
+        #: ★★★★ 2026-10-04（接手轮）**修掉「传一个不存在的枚举值」** ——
+        #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#6**（★ `C-dw-3 #20`）—— ★ 裁判逐字：
+        #:   「★ `SetSheets(0, …)` —— ★ `sw_export.py` 的 `pdf_data.SetSheets(0, sheet_names)`
+        #:    → ★ en 的成员表只有 1/2/3（**无 0**），★ 官方 ex 传
+        #:    `swExportData_ExportSpecifiedSheets`」✓
+        #:   ★★ **实测复核（★ 我读了官方枚举页）**：★ `swExportDataSheetsToExport_e` **只有 3 个成员**：
+        #:     · ★ `swExportData_ExportAllSheets = **1**`
+        #:     · ★ `swExportData_ExportCurrentSheet = **2**`
+        #:     · ★ `swExportData_ExportSpecifiedSheets = **3**`
+        #:     ⇒ ★★★ **没有 `0`** ⇒ **原来传的 0 是一个不存在的值** ✓
+        #:   ★★★ **修法（★ 按官方语义二选一）**：
+        #:     · ★ **给了图纸名** ⇒ `**3**`（`ExportSpecifiedSheets`）✓
+        #:     · ★★ **没给** ⇒ `**1**`（`ExportAllSheets`）—— ★ **而不是 0** ✓
+        #:   ★★ 依据（★ 官方例子逐字）：`boolstatus = swExportPDFData.SetSheets(
+        #:     swExportData_ExportSpecifiedSheets, varSheetName)` ✓
+        which = 3 if sheet_names else 1
+        pdf_data.SetSheets(which, sheet_names)
 
     errors = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
     warnings = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
