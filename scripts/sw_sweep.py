@@ -118,6 +118,31 @@ def create_sweep_report(model, cut: bool = False) -> dict:
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "stage": "CreateFeature", "selected_by_mark": sel, "access": access,
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    #: ★★★★ 2026-10-03（接手轮）**补上成功路径的 `return`** —— ★★ 由 bunny 的
+    #:   `recon/precall-cand/precall-verdict.md` 报出、★ **我复核确认**（M3）。
+    #:   ★★ **病灶**：原函数**最后一个语句就是上面那个 `except` 的 `return`**
+    #:     ⇒ ★★★ **`CreateFeature` 不抛异常时，函数直接掉出末尾、返回 `None`**
+    #:     ⇒ ★★ 而**调用方看到的是 `ret_type=None`**、★ 于**分不清"没建成"与"没返回值"**。
+    #:   ★ 后果（★ 已发生、如实记）：★ 我第 32 轮据此写下
+    #:     「失败已越过前置、卡在扫描 API 自身」⇒ ★★ **那个结论是错的** ——
+    #:     ★ 真相是**我们根本没拿到返回值**，★ 所以"建成没建成"当时**无从判断**。
+    #:   ★★ 而且本函数 docstring 逐字写着判据：
+    #:     「**特征树多了新特征** **且** **类型名 = `Sweep`**（★ 事实 242：挑只依赖被测对象的那个）」
+    #:     ⇒ ★★★ **那个"类型名"检查从来没实现过** —— ★ 典型的"文档承诺了、代码没做"。
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    tname = ""
+    if feat is not None:
+        try:
+            tname = str(get_com_member(feat, "GetTypeName2") or "")
+        except Exception:                                      # noqa: BLE001
+            tname = ""
+    return {"ok": bool(new) and (tname == "Sweep"), "stage": "done",
+            "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": len(before), "tree_after": len(after),
+            "type_name": tname, "access": access, "selected_by_mark": sel,
+            "cut": bool(cut),
+            "★": "判据 = **特征树多了新特征** **且** **类型名 = `Sweep`**（★ 事实 242：挑只依赖被测对象的那个）"}
 def create_sweep_surface_report(model) -> dict:
     """★ **曲面扫描**：`CreateDefinition(**swFmRefSurface = 62**)` → `ISweepFeatureData` → `CreateFeature`。
 
