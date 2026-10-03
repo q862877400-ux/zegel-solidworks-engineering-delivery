@@ -2099,7 +2099,9 @@
    "api_verified": false,
    "entry_exists": null,
    "entry_why": "",
-   "implemented_hits": [],
+   "implemented_hits": [
+    "InsertTrimSurface"
+   ],
    "tier": "待查"
   },
   {

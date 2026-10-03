@@ -3732,6 +3732,31 @@
         "★ **已否证的假设**：「废弃入口在 pywin32 上反而更顺」（★ 轮 504 专门试了 `IModelDoc2` 那个 3 参版，结果同样全 `None`）。",
         "⚠ **未查**：① 能否先 `knit` 成一张再加厚；② 能否对**实体表面**加厚（而不是曲面体）；③ 能否走 `CreateDefinition` 那新架构。"
       ]
+    },
+    {
+      "id": "surface_offset",
+      "label": "等距曲面（★ **真机建成**）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名**立）：`C:\\swapi\\types\\IModelDoc2\\InsertOffsetSurface.md` 的`void InsertOffsetSurface(double Thickness, bool Reverse)`，参见 `scripts/sw_surface_features.py` 的 `insert_offset_surface_report`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 516）**真机建成**（走 `sw_guard`，`sw_alive: true`、**零弹窗**）：先建一张曲面（`曲面-拉伸1`）⇒ **4 张面选中** ⇒ `InsertOffsetSurface(5.0 mm, False)` ⇒ ★ **`曲面-等距1`（特征树 7→8）**。证据 `output/surface-oldstyle-three-evidence.json` · 探针 `tools/prove_surface_oldstyle_three.py`。",
+        "★ **走的是「旧式方法」那侧**（`IModelDoc2.InsertOffsetSurface` · **2 参 · void**）—— ★★ 而不是新架构（`CreateDefinition` + `CreateFeature`）。★ 依据：**事实 395** 指出「旧式方法那侧是成的」（填充 `InsertFillSurface2` / 延伸 `InsertExtendSurface` / 缝合 `InsertSewRefSurface` / 曲面-拉伸 `FeatureExtruRefSurface3`）。"
+      ],
+      "limitations": [
+        "★ 前置：**先选中一张曲面**（官方 `Remarks` 逐字：「Make the selections using `SelectByID2` **before** calling this method」）。★ 本包装按**对象**选（★ 事实 32：实体没有名字）。",
+        "⚠ **未查**：① 反向`Reverse=True` ；② 多体下只选部分面；③ 对**实体面**做等距。"
+      ]
     }
   ]
 }

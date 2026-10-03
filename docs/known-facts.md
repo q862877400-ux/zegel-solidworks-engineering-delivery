@@ -1239,3 +1239,15 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ```
      ⇒ ★★ **故**：类型库的 arity **含末尾那个 out**；★ 而反射转储给的**11**（直纹）/ **8**（加厚）**正是不含它** ⇒ ★★ **两源其实**一致****，★ 而我当初以为“冲突”是因为**没数末尾那个出参** ⚠
      ★ ★★ **因此得两个结论**：① 直纹的 **11** 与加厚的 **7** **都传对了**（★ 故它们的失败**不是 arity 问题**）；② ★★ **新定则：拿类型库数 arity 时要减 1**（末尾那个 `Retval` / `PDispOut` 是**返回值**，pywin32 侧**不传**）—— ★ 而**对照反射转储的 arity 就不用减**。★ 而反射的 `CreateDefinition` arity是 **4**（★ 反射里 **不含**那个 out）—— ★ 与本仓 `sw_pattern` / `sw_sweep` 实际传的一致。|真机：`comtypes.client.GetModule(r'D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\sldworks.tlb')`（★ 本机存在，2020872 B；`comtypes 1.4.17`）；对照事实 128 / 129 / 396 |
+| 398 | **★★★ 「旧式方法」这条方向得到了**第一批直接成果**** —— 2026-10-03（轮 516）。★ 按**事实 395** 指出的方向（「旧式方法那侧是成的」），本轮把 B6 里剩的几条改走 **`IModelDoc2` 上的旧式入口**：
+     | 能力 | 旧式入口 | 真机 |
+     |---|---|---|
+     | **T606 等距曲面** | `IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（2 参 · void） | ★ **建成 `曲面-等距1`（树 7→8）** ✓ |
+     | T605 平面区域 | `IModelDoc2.InsertPlanarRefSurface()`（0 参 · 回 bool） | ★ 12 条边选上（mark=1）而 **0 增量** ⚠ |
+     | T609 替换面 | `IModelDoc2.InsertFeatureReplaceFace()`（0 参） | ★ 2 面选上而 **0 增量** ⚠ |
+     | T607 剪裁曲面 | `InsertTrimSurface` | ★ **swapi 里查不到** ⇒ 铁律 5 |
+     ★ 三条都与**成过**的 `InsertExtendSurface`（3 参）**同层**（都在 `IModelDoc2` 上）。
+     ★ 同时查到 `IModelDoc2.InsertRadiateSurface(Distance, FlipDir, TangentPropagate)`（3 参）—— ★ 辐射曲面，★ **本轮未做**。
+     ★ 前置（官方 `Remarks` 逐字）：`InsertOffsetSurface` ⇒ 「Make the selections using `SelectByID2` **before** calling」；`InsertPlanarRefSurface` ⇒ 「边界实体用 **Marks of 1**」；`InsertFeatureReplaceFace` ⇒ 「要替换的面 **mark 1**」（★ 而替换面那个 mark **本包装是推断** ⚠）。
+     ★ 落地：`scripts/sw_surface_features.py` 的 `insert_offset_surface_report` / `insert_planar_ref_surface_report` / `insert_replace_face_report`；★ `capabilities.yaml` 新增 **`surface_offset`**（level = **`verified`** —— ★ 有我们自己的运行证据）。
+     ★★ **下一步该试的**：T605 改用**草图边界**（★ 本轮用的是曲面体的边）；T609 把两个 mark 的分工调过来试。|真机：`tools/prove_surface_oldstyle_three.py`；证据 `output/surface-oldstyle-three-evidence.json`；对照事实 395 / 396 |

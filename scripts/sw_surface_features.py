@@ -678,3 +678,182 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
 #
 #   ★ 若要继续攻：★ 该换的是**观测手段**（★ 如查 SW 的"什么错"面板 / 试 `CreateDefinition` 新架构），
 #     ★ **而不是**继续在同一入口上换参数 —— ★ 那已经证明不是参数问题。
+
+
+# ── B6 / T605 · T606 · T609：**旧式方法**那一族（★ 事实 395 指出的方向） ─────────────
+# ★★★★ 2026-10-03（轮 516）★ 走**事实 395 明确指出的那条方向**：
+#
+#   > ★ **旧式方法**那侧是成的（填充 `InsertFillSurface2` / 延伸 `InsertExtendSurface` /
+#   >   缝合 `InsertSewRefSurface` / 曲面-拉伸 `FeatureExtruRefSurface3`）——
+#   >   ★★ 而**新架构**（`CreateDefinition` + `CreateFeature`）那侧对扫描面/加厚/直纹**静默不成**。
+#
+#   ★ 而 B6 里剩的几条**恰好都有 `IModelDoc2` 上的旧式入口**（★ 与**成过**的 `InsertExtendSurface` 同层）：
+#   ```
+#   ✓ IModelDoc2.InsertPlanarRefSurface()                     0 参 · 回 bool  → T605 平面区域
+#   ✓ IModelDoc2.InsertOffsetSurface(Thickness, Reverse)      2 参 · void     → T606 等距曲面
+#   ✓ IModelDoc2.InsertFeatureReplaceFace()                   0 参 · void     → T609 替换面
+#   ✓ IModelDoc2.InsertRadiateSurface(Distance, FlipDir, TangentPropagate)    → 辐射曲面（★ 本轮不做）
+#   ✗ InsertTrimSurface                                       ★ **swapi 里查不到** → T607（★ 铁律 5）
+#   ```
+#
+# 官方前置（★ 三条 md 的 `Remarks` 逐字）：
+#   · `InsertPlanarRefSurface` ⇒ 「select the surface's **boundary entities** using
+#     `IModelDocExtension::SelectByID2` with **Marks of 1**」
+#   · `InsertOffsetSurface` ⇒ 「Make the selections using `IModelDocExtension::SelectByID2`
+#     **before** calling this method」
+#   · `InsertFeatureReplaceFace` ⇒ 「select the faces to **replace** … with **Marks of 1** and
+#     select the re[placement face] …」（★ 两个 mark 分工）
+#
+# ★ 判据统一（★ 规则 6）：**特征树多了新特征**。
+# ★ 单位：`thickness_mm` 按**毫米**收、★ 在边界换算一次（规则 2）。
+
+
+def insert_offset_surface_report(model, thickness_mm: float, *, reverse: bool = False) -> dict:
+    """★ **等距曲面**（`IModelDoc2.InsertOffsetSurface` —— ★ **旧式方法**）。
+
+    ★ 官方：`void InsertOffsetSurface(double Thickness, bool Reverse)`
+      · `Thickness` ⇒ "Offset of surface from reference" · `Reverse` ⇒ 反向
+      · `Remarks` ⇒ 「**Make the selections using `SelectByID2` before calling this method**」
+    ★ 前置：★ **先选中一张曲面**（★ 本包装按对象选该体所有曲面面 —— ★ 与 `knit` 同款）。
+    ★ 判据（规则 6）：★ **特征树多了新特征**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    try:
+        th = float(thickness_mm)
+    except (TypeError, ValueError) as exc:
+        return {"ok": False, "error": "thickness_mm 必须是数字：%s" % str(exc)[:100]}
+    if not (th > 0.0):
+        return {"ok": False, "stage": "validate", "error": "thickness_mm 必须 > 0；收到 %r" % th}
+    before = feature_names(model)
+    selected = _select_all_surface_faces(model, mark=0)
+    if selected <= 0:
+        return {"ok": False, "stage": "select", "faces_selected": 0,
+                "error": "没选中任何曲面面（★ 官方要求**先选择**；★ 文件里要有曲面体）"}
+    try:
+        get_com_member(model, "InsertOffsetSurface", th * 0.001, bool(reverse))
+    except Exception as exc:                                              # noqa: BLE001
+        return {"ok": False, "stage": "call", "faces_selected": selected,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": len(before), "tree_after": len(after),
+            "faces_selected": selected, "thickness_mm": th, "reverse": bool(reverse),
+            "★": "判据 = **特征树多了新特征**（规则 6）；★ 走**旧式** `IModelDoc2.InsertOffsetSurface`"}
+
+
+def insert_planar_ref_surface_report(model) -> dict:
+    """★ **平面区域**（`IModelDoc2.InsertPlanarRefSurface` —— ★ **旧式方法** · **零参**）。
+
+    ★ 官方：`bool InsertPlanarRefSurface()` ⇒ "True if the reference surface is created"
+      · `Remarks` ⇒ 「select the surface's **boundary entities** using `SelectByID2` with
+        **Marks of 1**」⇒ ★ **边界实体要 mark = 1** ✓
+    ★ 前置：★ 先按 mark=1 选**边界**（★ 本包装先试**曲面体的边**；★ 草图边界另说）。
+    ★ 判据（规则 6）：★ **特征树多了新特征**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = feature_names(model)
+    selected = _select_all_surface_edges(model, mark=1)
+    try:
+        ret = get_com_member(model, "InsertPlanarRefSurface")
+    except Exception as exc:                                              # noqa: BLE001
+        return {"ok": False, "stage": "call", "edges_selected": selected,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": len(before), "tree_after": len(after),
+            "edges_selected": selected, "returned": repr(ret)[:40],
+            "★": "判据 = **特征树多了新特征**（规则 6）；★ 官方：边界实体用 **mark = 1**"}
+
+
+def insert_replace_face_report(model) -> dict:
+    """★ **替换面**（`IModelDoc2.InsertFeatureReplaceFace` —— ★ **旧式方法** · **零参**）。
+
+    ★ 官方：`void InsertFeatureReplaceFace()`
+      · `Returns` ⇒ "True if the edges match, false if not"
+      · `Remarks` ⇒ 「select the faces to **replace** … with **Marks of 1** and select the
+        re[placement face] …」⇒ ★★ **两个 mark 分工**（★ 而★ 本包装只收一个 `mark` 形参，
+        ★ 故它把**第一张面**当"要替换的"、★ 第二张当"替换面" —— ★ 那是**推断**，★ 已在
+        ★ 证据里如实标注 ⚠）。
+    ★ 前置：★ 至少**两张面**（★ 一张是实体面、一张是曲面面）。
+    ★ 判据（规则 6）：★ **特征树多了新特征**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    before = feature_names(model)
+    selected = _select_two_faces_for_replace(model)
+    if selected < 2:
+        return {"ok": False, "stage": "select", "faces_selected": selected,
+                "error": "替换面至少要**两张面**（★ 一张实体面 + 一张曲面面）；只选到 %d 张" % selected}
+    try:
+        get_com_member(model, "InsertFeatureReplaceFace")
+    except Exception as exc:                                              # noqa: BLE001
+        return {"ok": False, "stage": "call", "faces_selected": selected,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": len(before), "tree_after": len(after), "faces_selected": selected,
+            "★": "判据 = **特征树多了新特征**（规则 6）；⚠ 两个 mark 的分工是**推断**（官方只写了"
+                 "「要替换的面 mark 1」）—— ★ 故本包装的选法**待真机确认**"}
+
+
+def _select_all_surface_edges(model, mark: int = 1) -> int:
+    """★ 把**曲面体的边**按对象选中（★ 回**选中数** —— 事实 8：只信回读计数）。"""
+    from sw_connect import get_com_member as _get
+    from sw_part import _select_com_object as _sel
+    try:
+        model.ClearSelection2(True)
+    except Exception:                                                     # noqa: BLE001
+        pass
+    n = 0
+    try:
+        bodies = list(_get(model, "GetBodies2", 1, True) or [])
+    except Exception:                                                     # noqa: BLE001
+        bodies = []
+    for b in bodies:
+        try:
+            edges = list(_get(b, "GetEdges") or [])
+        except Exception:                                                 # noqa: BLE001
+            continue
+        for e in edges:
+            try:
+                if _sel(e, append=True, mark=mark):
+                    n += 1
+            except Exception:                                             # noqa: BLE001
+                continue
+    return n
+
+
+def _select_two_faces_for_replace(model) -> int:
+    """★ 给**替换面**选两张面：★ 先实体面（mark=1）、★ 再曲面面（mark=2）。
+
+    ⚠ **这是推断**（★ 官方只写了"要替换的面 mark 1"）⇒ ★ 本函数在 docstring 里如实标注。
+    """
+    from sw_connect import get_com_member as _get
+    from sw_part import _select_com_object as _sel
+    try:
+        model.ClearSelection2(True)
+    except Exception:                                                     # noqa: BLE001
+        pass
+    n = 0
+    for body_type, mark in ((0, 1), (1, 2)):
+        try:
+            bodies = list(_get(model, "GetBodies2", body_type, True) or [])
+        except Exception:                                                 # noqa: BLE001
+            bodies = []
+        for b in bodies[:1]:
+            try:
+                faces = list(_get(b, "GetFaces") or [])
+            except Exception:                                             # noqa: BLE001
+                continue
+            if faces:
+                try:
+                    if _sel(faces[0], append=True, mark=mark):
+                        n += 1
+                except Exception:                                         # noqa: BLE001
+                    pass
+    return n
