@@ -89,9 +89,18 @@ def test_rule2_exemptions_are_explicit_and_reasoned():
         assert isinstance(k, tuple) and len(k) == 2, k
         text = str(reason)
         assert len(text) > 30, "%s 的理由太短" % (k,)
-        #: ★ 两类理由：①「交给 SolidWorks 的文档默认量」②「它不是长度（如像素）」
-        assert ("文档默认" in text) or ("不是长度" in text) or ("像素" in text), (
-            "%s 的理由要点明「文档默认」或「不是长度（如像素）」之一" % (k,))
+        #: ★ 三类理由：①「交给 SolidWorks 的文档默认量」②「它不是长度（如像素）」
+        #:   ③ ★★ **「同一个形参承载两种量纲」**（2026-10-03 轮 493 加）
+        #:   ── ★ 真例：`solidworks_insert_reference_point` 的 `distance_or_percent`
+        #:      （★ 官方形参名就叫 `DDistance_or_Percent`）—— 在 `NRefPointAlongCurveType`
+        #:      取 `Distance(0)` 时它是**距离**、取 `Percentage(1)` 时它是**百分比**。
+        #:   ★★ 故它**不是**第①类（不是"交给文档默认"）、**也不是**第②类
+        #:      （它**真的是长度**，只是有时候不是）⇒ ★ 它需要**自己的**一类。
+        #:   ⚠ 而上面 L84 那句纪律在此适用：**不能为了过门禁而说假话**
+        #:      ⇒ ★ **该扩门禁，不该改理由去凑关键词** ✓
+        assert (("文档默认" in text) or ("不是长度" in text) or ("像素" in text)
+                or ("同一个形参" in text)), (
+            "%s 的理由要点明「文档默认」/「不是长度（如像素）」/「同一个形参（两种量纲）」之一" % (k,))
 
 
 def test_rule2_does_not_flag_boolean_flags():
@@ -191,4 +200,12 @@ def test_angle_exemptions_are_explicit_and_reasoned():
     assert ex, "角度豁免表不该为空"
     for k, reason in ex.items():
         assert isinstance(k, tuple) and len(k) == 2, k
-        assert "文档默认" in str(reason), "%s 的理由要点明「文档默认」" % (k,)
+        #: ★★ 2026-10-03（轮 493）**加「同一个形参」这一类** ——
+        #:   ⚠ 原来只认「文档默认」，而 `first_angle_or_dist` 那类理由说的不是那个。
+        #:   ★ 真例：`solidworks_insert_ref_plane` 的 `FirstConstraintAngleOrDistance`
+        #:     —— 在 `FirstConstraint` 取 `Angle(16)` 时是**角度**、
+        #:     取 `Distance(8)` 时是**长度**。
+        #:   ★★ 故它**不是**"交给文档默认"（那个值是真给的），★ 而是**同一个形参两种量纲**
+        #:     ⇒ ★ **该扩门禁，不该改理由去凑关键词**（同 L84 那句纪律）✓
+        assert ("文档默认" in str(reason)) or ("同一个形参" in str(reason)), (
+            "%s 的理由要点明「文档默认」或「同一个形参（两种量纲）」" % (k,))

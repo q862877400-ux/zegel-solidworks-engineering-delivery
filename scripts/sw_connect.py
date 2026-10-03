@@ -154,6 +154,32 @@ def get_com_member(obj, attr_name, *args):
     """
     member = getattr(obj, attr_name)
     if args:
+        #: ★★★ 2026-10-03（轮 493）**让这一类失败可见**（★ 而**不改**既有语义）——
+        #:
+        #: ⚠ 原来这里直接 `member(*args)`，**不检查它是不是可调用的**。
+        #:   而 pywin32 迟到绑定下，`getattr` **可能回一个不是方法的元组** ——
+        #:   此时报的是 **`TypeError: 'tuple' object is not callable`**，
+        #:   ★★ **那个错误完全看不出是「后端限制」**（★ 会被误当成"参数没传对"）。
+        #:
+        #: ★ 真机实证（轮 492）：`IModelDocExtension.InsertChainDimensions`
+        #:   —— 官方 `kind: method`、`System.object …(System.object Entities)`，
+        #:   而 `type(getattr(ext, "InsertChainDimensions"))` = **`tuple`**、
+        #:   `callable(...)` = **`False`**、`repr(...)` = **`(None, None, None)`**、
+        #:   且 `dir(ext)` 里**没有该名字** ⇒ ★ **pywin32 这层给不出可调用的包装**。
+        #:
+        #: ★ 与**事实 28**（「反射里有」≠「运行期调用得到」）**同族**，
+        #:   已记成**事实 386**。★ 而本仓**事实 40** 的定则在此适用：
+        #:   「★ **修的只能是「让失败可见」**」—— 故这里**只加一个守卫**，
+        #:   ★ **不改**"该返回就返回"的既有语义（★ 无实参那条路 L172 早就检查了）。
+        if not callable(member):
+            raise TypeError(
+                "get_com_member(%s, %r, *%d args)：取回来的成员**不可调用**"
+                "（`getattr` 回了 `%s`，★ 而它通常是 `(None, None, None)`）—— "
+                "★ 这**多半是 pywin32 迟到绑定造不出该方法的调用包装**，"
+                "★ **不是参数没传对**（★ 事实 28 / 386）。"
+                "★ 官方签名里该成员可能是存在的（`kind: method`）⇒ "
+                "★ 请查 `type(getattr(obj, %r))` 与 `callable(...)`，不要改参数重试。"
+                % (type(obj).__name__, attr_name, len(args), type(member).__name__, attr_name))
         return member(*args)
     # ⚠⚠⚠ **2026-10-01（轮 143）发现本函数的一个危险设计**：
     #   下面那句"没有实参就先调一次" —— 对**有副作用**的 COM 成员，

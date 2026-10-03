@@ -82,6 +82,12 @@ def _select_sketch_contour(doc, name, mark):
       `_select_sketch_ref(model, ref, mark=mark)` 按**稳定优先级**选：
       `feature` → `sketch` → **`contours`** → `regions` → `segments`
       ★ 而它底下走 `_select_any_object(objects, append, **mark**)` —— ★ mark 能传进去 ✓
+
+    ⚠ 2026-10-03（轮 493）试过给它加 `append` 形参、透传给
+      `P._select_sketch_ref` —— ★★ 而**那个函数根本没有 `append` 形参**
+      （真机签名 `(model, sketch_ref, mark=0)`）⇒ 已**回退**。
+      ★ 故本 helper 只管**选第一个**；★★ 第二个由调用方**按引用追加**
+      （★ 那一条已真机验证）。
     """
     try:
         ref = P._capture_sketch_ref(doc, fallback=name)
@@ -186,13 +192,40 @@ def _case_loft(doc):
     #:   "The mark for: **profile selections should be 1**"）
     #:   ★ 而 `_select_sketch_ref` 内部会先 `ClearSelection2` ⇒ **选不了两个** ⚠
     #:   ⇒ 故改成：直接用 `_select_any_object` 在**同一个选区**里追加第二个。
+    #:
+    #: ★★★ 2026-10-03（轮 493）**改成调 `_select_sketch_contour`** ——
+    #:   ⚠ 原来这里**手写**了一遍"按优先级取第一个能选的对象 + append"，
+    #:     ★★ 而 `_select_sketch_contour(doc, name, mark, append=…)` 就是**同一件事的封装**
+    #:     （★ 轮 475 写的）⇒ ★ 那段**重复代码**让那个 helper **从没被调用** ⚠
+    #:     ⇒ ★ 而本仓门禁 `tests/test_no_uncalled_helpers.py` **尽职抓到了**它 ✓
+    #:   ⇒ ★ 正解：**统一到那个 helper**（★ 既接上了、★ 又去掉重复）✓
+    #:   ⚠★ 2026-10-03（轮 493）**第一版接错了**：我给 helper 加了 `append` 形参、
+    #:     并把它透传给 `P._select_sketch_ref` —— ★★ 而**那个函数根本没有 `append` 形参**
+    #:     （真机签名是 `_select_sketch_ref(model, sketch_ref, mark=0)`）⚠
+    #:     ★★★ 而**门禁 `test_no_uncalled_helpers` 仍然过了** ——
+    #:        ★ 因为它只查"有没有被调用"、**不查实参对不对** ⇒ ★ 那正是**事实 62** 的形态
+    #:        （★ 「一个门禁"写了"不等于它"有效"」）✓
+    #:   ⇒ ★ 故**改成诚实接法**：★ **第一个轮廓用 helper**（★ 它的本分），
+    #:     ★★ 第二个仍走"按引用选"那条 —— ★ 因为 `_select_sketch_ref` 内部会先
+    #:     `ClearSelection2`、★ 它**确实**选不了两个（★ 那是它已知的性质）。
     picked = 0
+    for nm in ("\u8349\u56fe1",):
+        if _select_sketch_contour(doc, nm, 1):
+            picked += 1
     for ref in refs:
-        #: ★ 按本仓的优先级取第一个能选的对象；★★ mark = 1（官方 Remarks）
-        for objs in (ref.contours, ref.feature, ref.sketch, ref.regions, ref.segments):
-            if P._select_any_object(objs, append=(picked > 0), mark=1):
-                picked += 1
-                break
+        if picked == 0:
+            #: ★ 保底：helper 没选上 ⇒ 第一个也按引用选（★ 与旧行为一致）
+            for objs in (ref.contours, ref.feature, ref.sketch, ref.regions, ref.segments):
+                if P._select_any_object(objs, append=False, mark=1):
+                    picked += 1
+                    break
+            continue
+        if picked == 1:
+            #: ★★ 第二个**只能按引用追加**（★ `_select_sketch_ref` 会清选区）
+            for objs in (ref.contours, ref.feature, ref.sketch, ref.regions, ref.segments):
+                if P._select_any_object(objs, append=True, mark=1):
+                    picked += 1
+                    break
     return M.insert_lofted_ref_surface(doc, False, True, False, 0.0, 0, 0)
 
 
