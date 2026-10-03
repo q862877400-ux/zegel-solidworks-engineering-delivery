@@ -159,7 +159,30 @@ def _active_sketch_segment_count(model):
 
     ★★ 复用本仓既有读法（★ 不发明）：`sw_sketch.get_lines` / `get_arcs` ——
       ★ 它们各自回**坐标数组**（★ 每条线 12 个 float、每个弧 16 个）⇒ 除以宽度即条数 ✓
+
+    ★★★★★ 2026-10-04（接手轮 · 轮 5）**修掉一个真 bug —— ★ 参数传错了对象**：
+      ★ **真机证据**（★ `tools/probe_sketch_edit_pending_evidence.py` ·
+      `output/sketch-edit-pending-evidence.json`）：★ 走这条路径取数时
+      `segments_before` / `segments_after` **都回 `null`** ⇒
+      ★★ 让 `convert_entities` 的**三态判据**保守地判 `ok=false`
+      （★ 它的规则逐字是「取不到时不算通过」）——
+      ★★★ **而几何其实变了**（★ 同一次真机里，另一条路径读到 **段数 0 → 1**）✓
+      ★★★★ **真因**：★ `sw_sketch.get_lines(sketch)` / `get_arcs(sketch)` 的**第一个形参是
+        `ISketch` 对象**（★ 它们内部第一句就是 `_require(sketch)`）——
+        ★★ **而这里原来把 `model`（`IModelDoc2`）直接传了进去** ⇒ **类型不对 ⇒ 取不到** ✓
+      ⇒ **修法**：★ 先从 `ISketchManager.ActiveSketch` 取**活动草图对象**、★ 再传给它 ✓
+      ★★★★★ **可复用判据**：★★★ **「取数为 `None`」与「真的没变」是两件事** ——
+        ★ 而**三态判据**（★ 变了 True · ★ 没变 False · ★ **量不到 None**）的价值就在这里：
+        ★★ **它没把"量不到"骗成 False**，★ 才让这次的真因（**传错对象**）被查出来 ✓
     """
+    #: ★★★ 先取**活动草图对象**（★ 而不是把 model 传下去 —— 见 docstring 的修因）✓
+    sketch = None
+    try:
+        sketch = get_com_member(get_com_member(model, "SketchManager"), "ActiveSketch")
+    except Exception:                                                     # noqa: BLE001
+        sketch = None
+    if sketch is None:
+        return None                                                       #: ★ 取不到 ⇒ None（★ 不许当成 0）✓
     try:
         import sys as _sys
         if str(_REPO_SCRIPTS) not in _sys.path:
@@ -168,11 +191,11 @@ def _active_sketch_segment_count(model):
     except Exception:                                                     # noqa: BLE001
         return None
     try:
-        n_lines = len(get_lines(model) or []) // 12
+        n_lines = len(get_lines(sketch) or []) // 12
     except Exception:                                                     # noqa: BLE001
         n_lines = None
     try:
-        n_arcs = len(get_arcs(model) or []) // 16
+        n_arcs = len(get_arcs(sketch) or []) // 16
     except Exception:                                                     # noqa: BLE001
         n_arcs = None
     if n_lines is None and n_arcs is None:
