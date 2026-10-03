@@ -3468,3 +3468,39 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         痕迹：`tools/census_pre_calls.py`（修后，跟调用图）· `mcp-server/tool_specs_batch4.py` 的
         `_select` / `_model` · `scripts/sw_selection_spec.py::resolve_selection` ·
         对照 **事实 506**（覆盖面自报）· **8**（只信回读计数）· **62**（负例是门禁有效的唯一证明） |
+| 508 | **★★★★★ MCP 层的序列化器没有 `default=` ⇒ **凡是返回原始 COM 对象（或任何不可 JSON 序列化的东西）的工具，成功了也会被报成 error**** —— 2026-10-03（接手轮，真机证出并**一处修好全族**）。
+      ★ **病灶**（`mcp-server/server.py` 的 `_result`，改前逐字）：
+        ```python
+        def _result(payload: Dict[str, Any], response_format) -> str:
+            if response_format == ResponseFormat.JSON:
+                return json.dumps(payload, ensure_ascii=False, indent=2)   # 没有 default=
+            lines = [f"# {payload.get('status', 'result')}"]               # 非 dict 连 .get 都会炸
+        ```
+        ★ 而 `_run_locked`（同文件）把 `_result` 包在 `try/except` 里 ⇒
+        ★★ **`json.dumps` 抛 `TypeError` ⇒ 被吞掉 ⇒ 返回 `_tool_error`**
+        ⇒ ★★★ **"建成了却报错"**（★ 本仓最反对的那类"错误信息指不出真因"）。
+      ★★ **真机证据**（`tools/probe_result_serializer.py` · `output/result-serializer-evidence.json`）：
+        · `sw_part.fillet(doc, 2.0)` 选出 1 条边后调用 ⇒ ★ **特征树里出现 `圆角1`**（**能力建成了**）；
+        · 而它的返回是 **`CDispatch`** ⇒ ★ `json.dumps(ret)` 报
+          **`TypeError: Object of type CDispatch is not JSON serializable`**；
+        · ★ 连 markdown 分支也不行：`ret.get("status", …)` ⇒ **`AttributeError: <unknown>.get`**。
+      ★ **规模**：静态扫（`tools/scan_nondict_returns.py`）报 **111 个工具**的返回里有**裸 return（非 dict）**
+        —— ★ 那是**启发式上界**（有些裸调用其实回 dict），★ 但**病灶同一个**。
+      ★★★ **修法选了"一处"而不是"逐个改 111 个"**（★ 这才是根治）：
+        在 `server.py` 新增 **`_jsonable(value)`** 降级器 + 让 `_result` **不再假定 `payload` 是 dict**：
+        · 非 dict ⇒ **裹成** `{"status":"ok","result":<降级值>,"result_type":<原始类型名>,"note":…}`；
+        · COM 对象 ⇒ 尽量读 `Name` / `GetTypeName2` ⇒ 降级成 **`<CDispatch 圆角1>`**（★ **保住名字**，
+          ★ 调用方看得出"建成了什么"）；读不到就 `<类型名>`；
+        · 两处 `json.dumps` 都补 **`default=_jsonable`** 当兜底。
+      ★ **验证（两条路）**：
+        · **离线**：`tests/test_result_serializer.py` —— **6 passed**，★ 含**正对照**
+          （「本来规范的 dict **一个字节都不许变**」）与**负例**（COM 对象 / 标量 / markdown 分支）；
+        · ★ **真机**：`fillet` 那条路径的返回已能过序列化（★ 特征建成 + 返回可解析）。
+      ★★ **可复用判据**：★ **"成功"与"报错"的分界线在序列化器上，而不在被调函数里** ——
+        ★ 因此**只要有一个工具回非 dict，就要问一句"它过得了 `json.dumps` 吗"**；
+        ★★ 而**修的时候选"容错点"（一处）而不是"逐个改调用方"（111 处）**。
+      ★ 与**事实 40**（`IModeler.Create*Surface` 返回值不可靠）**互补**：★ 40 讲"返回值可能骗人"，
+        ★ 本条讲"**返回值可能根本传不出去**"。|
+        痕迹：`mcp-server/server.py` 的 `_jsonable` / `_result` · `tests/test_result_serializer.py` ·
+        `tools/probe_result_serializer.py` · `tools/scan_nondict_returns.py` ·
+        `output/result-serializer-evidence.json` · 对照 **事实 40** · **36**（报错指不出真因）|

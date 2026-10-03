@@ -998,16 +998,59 @@ def _set_component_fixed(asm_model, component, fixed: bool = True) -> bool:
     return bool(result) if result is not None else True
 
 
-def _result(payload: Dict[str, Any], response_format: ResponseFormat) -> str:
-    """Format a tool response as JSON or Markdown."""
+def _jsonable(value: Any) -> Any:
+    """★ 把**不可 JSON 序列化**的值降级成一个可序列化的说明（★ 不丢信息、不抛异常）。
+
+    ★★★ 2026-10-03（接手轮）**为什么加它**（真机证出来的，证据 `output/result-serializer-evidence.json`）：
+      · `_result` 原先只有一句 `json.dumps(payload, ensure_ascii=False, indent=2)`（**没有 `default=`**）；
+      · 而**有一批能力的返回值是原始 COM 对象** —— 实测 `sw_part.fillet` 回 `CDispatch`，
+        ★★ 而**同一时刻特征树里已经出现 `圆角1`**（★ **能力明明建成了**）
+        ⇒ ★ `json.dumps` 抛 `TypeError: Object of type CDispatch is not JSON serializable`
+        ⇒ ★★ 被 `_run_locked` 的 `except` 吞掉 ⇒ **调用方收到一条 `_tool_error`**
+        ⇒ ★★★ **"建成了却报错"** —— 正是本仓最反对的那种"报错指不出真因"。
+      · ★ 静态扫（`tools/scan_nondict_returns.py`）报出 **111 个工具**的返回里有**裸 return（非 dict）**
+        —— ★ 那个数是**启发式上界**（有些裸调用其实回 dict），★ 但**病灶是同一个**。
+    ★ 修法选**一处**（而不是逐个改 111 个）：★ **序列化器容错** ——
+      COM 对象降级成 `<COMObject Name>` 或 `<TypeName>` 字符串，其它降级成 `str(value)`；
+      ★ **保留类型名**，让调用方至少知道"拿到的是个对象、不是数据"。
+    """
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    if isinstance(value, dict):
+        return {str(k): _jsonable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_jsonable(v) for v in value]
+    #: ★ 原始 COM 对象（`CDispatch` 等）：给**类型名 + 名字（能拿到就给）**
+    tname = type(value).__name__
+    for attr in ("Name", "GetTypeName2"):
+        try:
+            got = getattr(value, attr)
+            got = got() if callable(got) else got
+            if got:
+                return "<%s %s>" % (tname, got)
+        except Exception:                                                 # noqa: BLE001
+            pass
+    return "<%s>" % tname
+
+
+def _result(payload: Any, response_format: ResponseFormat) -> str:
+    """Format a tool response as JSON or Markdown.
+
+    ★ 2026-10-03：`payload` **不再假定是 dict** —— 见 `_jsonable` 的理由。
+    """
+    if not isinstance(payload, dict):
+        #: ★★ 非 dict ⇒ **裹成 dict**（而不是让 `.get` / `json.dumps` 抛），★ 并**标明**原始类型。
+        payload = {"status": "ok", "result": _jsonable(payload),
+                   "result_type": type(payload).__name__,
+                   "note": "★ 该能力返回的不是 dict ⇒ 已按对象/标量降级包装（事实 508）"}
     if response_format == ResponseFormat.JSON:
-        return json.dumps(payload, ensure_ascii=False, indent=2)
+        return json.dumps(payload, ensure_ascii=False, indent=2, default=_jsonable)
     lines = [f"# {payload.get('status', 'result')}"]
     for key, value in payload.items():
         if key == "status":
             continue
         if isinstance(value, (dict, list)):
-            rendered = json.dumps(value, ensure_ascii=False, indent=2)
+            rendered = json.dumps(value, ensure_ascii=False, indent=2, default=_jsonable)
             lines.append(f"- **{key}**:\n```json\n{rendered}\n```")
         else:
             lines.append(f"- **{key}**: {value}")
