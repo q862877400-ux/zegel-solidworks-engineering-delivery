@@ -537,24 +537,28 @@ def current_sketch_name(model, fallback="Sketch1"):
 
 def sketch_line(model, x1, y1, x2, y2):
     """画直线（单位: **毫米**）"""
-    return model.SketchManager.CreateLine(x1, y1, 0, x2, y2, 0)
+    return get_com_member(get_com_member(model, "SketchManager"),
+                          "CreateLine", x1, y1, 0, x2, y2, 0)
 
 
 def sketch_rectangle(model, cx, cy, w, h):
     """以中心点画矩形（单位: **毫米**）"""
-    return model.SketchManager.CreateCenterRectangle(
+    return get_com_member(get_com_member(model, "SketchManager"),
+                          "CreateCenterRectangle",
         cx, cy, 0, cx + w / 2, cy + h / 2, 0
     )
 
 
 def sketch_corner_rectangle(model, x1, y1, x2, y2):
     """以对角线画矩形（单位: **毫米**）"""
-    return model.SketchManager.CreateCornerRectangle(x1, y1, 0, x2, y2, 0)
+    return get_com_member(get_com_member(model, "SketchManager"),
+                          "CreateCornerRectangle", x1, y1, 0, x2, y2, 0)
 
 
 def sketch_circle(model, cx, cy, radius):
     """画圆（单位: **毫米**）"""
-    return model.SketchManager.CreateCircleByRadius(cx, cy, 0, radius)
+    return get_com_member(get_com_member(model, "SketchManager"),
+                          "CreateCircleByRadius", cx, cy, 0, radius)
 
 
 def sketch_arc(model, cx, cy, x1, y1, x2, y2, direction=1):
@@ -567,12 +571,14 @@ def sketch_arc(model, cx, cy, x1, y1, x2, y2, direction=1):
         x2, y2: 终点坐标
         direction: 1=逆时针, -1=顺时针
     """
-    return model.SketchManager.CreateArc(cx, cy, 0, x1, y1, 0, x2, y2, 0, direction)
+    return get_com_member(get_com_member(model, "SketchManager"),
+                          "CreateArc", cx, cy, 0, x1, y1, 0, x2, y2, 0, direction)
 
 
 def sketch_polygon(model, cx, cy, radius, sides=6):
     """画正多边形（内切圆方式）"""
-    return model.SketchManager.CreatePolygon(cx, cy, 0, cx + radius, cy, 0, sides, True)
+    return get_com_member(get_com_member(model, "SketchManager"),
+                          "CreatePolygon", cx, cy, 0, cx + radius, cy, 0, sides, True)
 
 
 def sketch_slot(model, x1, y1, x2, y2, radius):
@@ -604,7 +610,8 @@ def sketch_slot(model, x1, y1, x2, y2, radius):
     覆盖:   全文件
     ─────────────────────────────────────────────────────────────────────
     """
-    return model.SketchManager.CreateSketchSlot(
+    return get_com_member(get_com_member(model, "SketchManager"),
+                          "CreateSketchSlot",
         0,  # swSketchSlotCreationType_e: 0 = line（★ 第 1 参 ✓ 原就对）
         0,  # ★★ swSketchSlotLengthType_e: 0 = **CenterCenter**（★ 2026-10-04 修：
             #    原为 `radius` —— ★ 而官方该枚举**只有 0/1 两个成员**）✓

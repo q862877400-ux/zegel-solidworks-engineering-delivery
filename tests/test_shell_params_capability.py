@@ -105,7 +105,7 @@ def test_negative_case_the_two_count_guards_match_reality() -> None:
     #:     因为新值**每加一个工具就要改**、★ 而旧值**一旦被替换就永远不该回来** ✓
     #:     ★★ （★ 本会话正是这么踩过一次：★ 我把本行自己的判据文本也替换了 ⇒
     #:       ★ 于是它变成查 `33000`、★ **判据形同虚设** —— ★ 已回退）✓
-    stale = ["assert n == 333, (", "assert n == 334, ("]
+    stale = ["assert n == %d, (" % v for v in (332, 333, 334, 335)]
     assert not any(x in t2 for x in stale), (
         "★ 协议层那个钉死数还是旧的（★ 应是 335 以上）：%r"
         % [x for x in stale if x in t2])

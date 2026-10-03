@@ -247,6 +247,6 @@ def test_protocol_tool_count_matches_the_two_paths_sum():
       ★★ **另 3 条是**本会话之前**就有的**（★ **不逐个回溯、★ 不编造来源**）✓
     """
     n = len(_declared_in_server()) + len(_declared_in_batches())
-    assert n == 335, (
-        "两条路径合计 %d 条，而本测试上次实测 **335** 条 ⇒ 数字变了就说明有人加了东西"
+    assert n == 336, (
+        "两条路径合计 %d 条，而本测试上次实测 **336** 条 ⇒ 数字变了就说明有人加了东西"
         "（**本测试是「钉死数量」的守卫，加了就要同时改这里**）" % n)

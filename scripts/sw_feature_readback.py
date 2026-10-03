@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params", "rib_params", "dome_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params", "rib_params", "dome_params", "sweep_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -1021,6 +1021,101 @@ def dome_params(model, feature_name: str = "") -> dict:
         "AccessSelections", "IAccessSelections", "ReleaseSelectionAccess",
         "Faces", "Direction", "ConstraintPointOrSketch"]
     return out
+
+
+def sweep_params(model, feature_name: str = "") -> dict:
+    """★ 读**扫描特征的一组参数**（★ 类型 / 薄壁 / 圆轮廓直径 / 壁厚 / 扭转角 / 引导线数）✓
+
+    ★★★★★★ **单位口径 —— ★ 本族的**两种量分开**（★ 那是本会话第一次遇到"同族里一半有写、一半没写"）**：
+      | ★ 量 | ★ 官方 `## Returns` | ★ 口径 |
+      |---|---|---|
+      | ★★ **`GetTwistAngle()`** | ★「Angle of twist **in radians**」 | ★★ **radians（★ 官方**写了**）⇒ **不用量**** ✓ |
+      | ★★ **`GetD2TwistAngle()`** | ★「Angle of twist **in radians** in Direction 2」 | ★★ 同上 ✓ |
+      | ★ **`CircularProfileDiameter`** | ★「Diameter of the circular profile」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量** ✓ |
+      | ★ **`GetWallThickness(Forward)`** | ★「Wall thickness」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量** ✓ |
+      ★★ **⚠ **已真机跑过一轮、★ 而那两个量**仍未定案****（★ 轮 126 · 如实记）：
+        ★ **真机读数**（★ `output/sweep-params-capability-recheck.json`）：
+          ★ `CircularProfileDiameter = **0.0**` · ★ `GetWallThickness = {forward: 0.0, backward: 0.0}`
+        ★★ **而那两个 `0.0` 是**应然的**** —— ★ 本探针用的是**草图轮廓**（★ `CircularProfile=false`）
+          ⇒ **直径本就该是 0**；★ 而官方逐字说 `GetWallThickness`
+          **「valid only if `ISweepFeatureData::IsThinFeature` is true」** ⇒ ★ **非薄壁时它不适用** ✓
+        ★★★ **⇒ 要量那两个口径，必须**让它们非零****（★ 圆轮廓 / ★ 薄壁）⇒
+          ★★ **⇒ 如实留作待办**、★ **不谎称"量到了"** ✓
+
+      ★★★★★ **而本轮的真机读数**（★ 建成了、★ 读回来了、★ **全部自洽**）：
+        ★ `create_sweep_report` ⇒ ★ **`ok=True · type_name=**Sweep** · 树 9→10`** ✓
+        ★★ **读回**：★ `SweepType = **17**`（★ 官方逐字 `swFmSweep` 是 swept boss）·
+          ★ `IsBossFeature = true` · ★ `IsThinFeature = false` · ★ `ThinFeature = false` ·
+          ★ `CircularProfile = false` · ★ `GetTwistAngle = 0.0` · ★ `GetPathType = 9` ·
+          ★ `GetProfileType = 9` · ★ `GetGuideCurvesCount = 0` ✓
+        ★★★ **⇒ 自洽性**：★ 每个值都能由「★ **草图轮廓** + ★ **非薄壁**」推出 ✓
+      ★★★ **⇒ 可复用判据**：★★★ **同一个族里，"官方写没写单位"会**逐条不同**** ⇒
+        ★ **不能按族一刀切** —— ★ **要一条一条看那一页的 `## Returns`** ✓
+        （★ 而那是**本会话的固定动作**：★ 每加一个量、★ 先读它那一页）✓
+
+    ★★★★★ **⚠ 本函数只读那 22 个**有页且非废弃、非指针**的成员**（★ 逐条查过官方页）✓
+      ★ **类型/枚举**（★ 8 个）：★ `SweepType`（★ **只读** `{get;}`、`swFeatureNameID_e`）·
+        ★ `Direction`(`swSweepDirection_e`) · ★ `StartTangencyType` / ★ `EndTangencyType`
+        (`swTangencyType_e`) · ★ `PathAlignmentType` · ★ `ThinWallType` · ★ `TwistControlType` ·
+        ★ `GetCutSweepOption()` · ★ `GetPathType()` / ★ `GetProfileType()`(`swSelectType_e`) ✓
+      ★ **零参方法**（★ 4 个）：★ `IsBossFeature()` · ★ `IsThinFeature()` ·
+        ★ `GetGuideCurvesCount()` · ★ `GetFeatureScopeBodiesCount()` ✓
+      ★ **bool 量**（★ 11 个）：★ `AdvancedSmoothing` · ★ `AlignWithEndFaces` · ★ `AutoSelect` ·
+        ★ `CircularProfile` · ★ `MaintainTangency` · ★ `Merge` · ★ `MergeSmoothFaces` ·
+        ★ `ThinFeature` · ★ `FeatureScope` · ★ `TangentPropagation` ·
+        ★ `D1ReverseTwistDir` / ★ `D2ReverseTwistDir` ✓
+
+    ★★★★★ **⚠ 不碰**（★ 逐条给了理由）：
+      · ★ **真废弃 6 个**（★ 官方标）：★ `EndDirectionVector` · ★ `IAccessSelections` ·
+        ★ `IGetFeatureScopeBodies` · ★ `IGetGuideCurves` · ★ `IGetGuideCurvesType` ·
+        ★ `ISetFeatureScopeBodies` ✓
+      · ★ **`GetPathAlignmentDirectionVector(out int Type)`** ⇒ ★ **有 `out`** ⇒
+        ★ 本仓既有记录说那族**在 pywin32 上到不了** ✓
+      · ★ **`Path` / ★ `Profile` / ★ `GuideCurves` / ★ `FeatureScopeBodies`** ⇒ **对象数组**、
+        ★ 且官方 `## Remarks` 指向「Accessing Selections that Define Features」✓
+      · ★ **`SetTwistAngle` / ★ `SetWallThickness` / ★ `SetD2TwistAngle` /
+        ★ `SetPathAlignmentDirectionVector`** ⇒ **那是写** ✓
+      · ★ **`AccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ **前置** ✓
+    """
+    out = _read_feature_params(
+        model, feature_name, "Sweep",
+        ("SweepType", "IsBossFeature", "IsThinFeature", "ThinFeature", "ThinWallType",
+         "CircularProfile", "CircularProfileDiameter",
+         "GetTwistAngle", "GetD2TwistAngle", "TwistControlType",
+         "D1ReverseTwistDir", "D2ReverseTwistDir",
+         "Direction", "StartTangencyType", "EndTangencyType", "PathAlignmentType",
+         "GetPathType", "GetProfileType", "GetCutSweepOption",
+         "GetGuideCurvesCount", "GetFeatureScopeBodiesCount",
+         "AdvancedSmoothing", "AlignWithEndFaces", "AutoSelect", "MaintainTangency",
+         "Merge", "MergeSmoothFaces", "FeatureScope", "TangentPropagation"),
+        "找不到扫描特征（★ 类型名含 `Sweep`）",
+        {"CircularProfileDiameter": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+         "GetWallThickness": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+         "GetTwistAngle": "**radians**（★ 官方 `## Returns` 逐字写明 —— ★ **本族唯一写了单位的两条之一**）",
+         "GetD2TwistAngle": "**radians**（★ 官方同款逐字）"})
+
+    #: ★★★★★★ **`GetWallThickness` 要**带实参**调**（★ 轮 126 真机抓到的）——
+    #: ★ 它官方签名是 `System.double GetWallThickness( System.bool Forward )` ⇒
+    #: ★★ **⇒ 无参调不动、★ 而 `get_com_member` **不报错**、★ 把**成员本身**回了回来** ⇒
+    #: ★★★ **⇒ 那个 bound method 会一路流到 `json.dumps` 才炸**
+    #: （★ `TypeError: Object of type method is not JSON serializable`）✓
+    #: ★★★★ **⇒ 所以两个方向都**显式带参**取** ✓
+    if out.get("definition") is not None:
+        try:
+            from sw_connect import get_com_member as _g
+            fd2 = _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition") \
+                if out.get("feature") else None
+            if fd2 is not None:
+                out["GetWallThickness"] = {
+                    "forward": _g(fd2, "GetWallThickness", True),
+                    "backward": _g(fd2, "GetWallThickness", False),
+                    "★_单位口径": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+                }
+        except Exception as exc:                                          # noqa: BLE001
+            out["GetWallThickness"] = "err: %s" % str(exc)[:60]
+    return out
+
+
 
 
 def shell_params(model, feature_name: str = "") -> dict:

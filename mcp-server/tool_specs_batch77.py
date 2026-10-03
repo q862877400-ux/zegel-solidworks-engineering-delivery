@@ -189,4 +189,28 @@ SPECS_BATCH77 = [
             "★ `Faces`/`Direction`/`ConstraintPointOrSketch`（★ 要「Accessing Selections」）·"
             "★ `AccessSelections`/`IAccessSelections`/`ReleaseSelectionAccess`（★ 前置）✓",
     ),
+    ToolSpec(
+        name="solidworks_sweep_params",
+        title="Read Sweep Feature Parameters",
+        module="sw_feature_readback", inject="model", function="sweep_params",
+        params=[_FEAT_NAME],
+        doc="★ **读扫描特征的一组参数**（★ 类型 / 薄壁 / 圆轮廓直径 / 壁厚 / 扭转角 / 引导线数）。"
+            "★★★★★ **单位口径 —— ★ 本族把两种量分开**：★ 官方对 `GetTwistAngle()` 与"
+            "`GetD2TwistAngle()` **逐字写了 radians**（★ 本会话**第二族**官方明说单位的）⇒"
+            "★ **那两条不用量**；★ 而 `CircularProfileDiameter` 与 `GetWallThickness` 的"
+            "`## Returns` **没写单位** ⇒ ★ **要真机量** ✓"
+            "★★★★ **⚠ 而本轮真机跑过、★ 那两个量仍未定案** —— 读数都是 `0.0`、"
+            "★ **而那是应然的**（★ 本探针用**草图轮廓** ⇒ `CircularProfile=false` ⇒ 直径本就该 0；"
+            "★ 官方说 `GetWallThickness` **valid only if `IsThinFeature` is true**）⇒"
+            "★★ **如实留作待办、★ 不谎称量到了** ✓"
+            "★★★★ **而其余读数全部自洽**（★ 建成了 `type_name=Sweep` · 树 9→10）："
+            "★ `SweepType=17`（`swFmSweep`）· ★ `IsBossFeature=true` · ★ `IsThinFeature=false` ·"
+            "★ `CircularProfile=false` · ★ `GetTwistAngle=0.0` · ★ `GetPathType=9` ·"
+            "★ `GetProfileType=9` · ★ `GetGuideCurvesCount=0` ✓"
+            "★★★★ **⚠ 不碰**：★ **真废弃 6 个**（`EndDirectionVector` · `IAccessSelections` ·"
+            "`IGetFeatureScopeBodies` · `IGetGuideCurves` · `IGetGuideCurvesType` ·"
+            "`ISetFeatureScopeBodies`）· ★ `GetPathAlignmentDirectionVector(out int)`（★ 有 `out`）·"
+            "★ `Path`/`Profile`/`GuideCurves`/`FeatureScopeBodies`（★ 对象数组 + 要前置）·"
+            "★ `Set*` 那一族（★ 那是写）· ★ `AccessSelections`/`ReleaseSelectionAccess`（★ 前置）✓",
+    ),
 ]
