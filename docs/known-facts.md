@@ -2393,3 +2393,18 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ⇒ ★ 故两条路：① `HoleWizard5`（27 参 + `SelectByRay` 定位）；② `IWizardHoleFeatureData2`（**简单孔**）。
      ★ **下一步**：先试第 ② 条（★ 参数少得多）；★ 而若走 ①，则**先把 `SelectByRay` 那一步搭出来**。
      ★ 本轮**不登记能力**（★ 只完成了前期调查）。|官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md`；本仓：`scripts/sw_hole_features.py` 的 `_circle_cut` 那一路；反射：`HoleWizard5: 27` |
+| 465 | **★★ 高级孔：路径②（`IWizardHoleFeatureData2`）被**两条独立理由**关掉**⇒ 只剩路径① —— 2026-10-03（轮 588）。
+     ★ **事实 464 留了两条路**（★ 都是 `HoleWizard5` 自己的 Remarks 指的）：
+       ① `HoleWizard5`（27 参 + `SelectByRay` 定位）；② `IWizardHoleFeatureData2`（★ 它说适合“**simple holes and slots**”）。
+     ★ **而本轮查完路径 ② 后，它被两条独立理由关掉**：
+     ```
+     ① ★ **它带 `AccessSelections`**（`IWizardHoleFeatureData2` 共 **75** 个成员，
+        ★ 而 `AccessSelections` 正是**指针族**）—— 事实 47。
+     ② ★ **`IFeatureManager.CreateDefinition` 那张 35 常量表里没有 Hole***
+        （★ 官方查不到）—— 事实 43。
+     ```
+     ⇒ ★★ **故只剩路径 ①**：`HoleWizard5`（27 参）+ **它的前置 `SelectByRay`** ✓
+     ★ 而两条路都是**官方自己指的**（★ `HoleWizard5` 的 Remarks）—— ★ 故这不是我捣的结论。
+     ★ **而本轮的方法论**：★ **当官方给了两条路时，先把“哪条走得通”查完再动手** —— ★ 而**判路的依据可以是静态的**（★ 本例：**成员表里有没有 `AccessSelections`** + **常量表里有没有那个常量**）。
+     ★ 下一步：把 **`SelectByRay`** 那一步搭出来（★ 它是路径 ① 的前置）。
+     ★ 本轮**不登记能力**。|官方：`C:\swapi\types\IWizardHoleFeatureData2\`（**75** 成员，含 `AccessSelections`）· `IFeatureManager\CreateDefinition.md`；对照事实 43 / 47 / 464 |
