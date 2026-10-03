@@ -151,6 +151,7 @@ hole-pattern-evidence.json  ·  flat-pattern-dxf-evidence.json
 | 工具栏 | 官方成员 | 到不了的位置 |
 |---|---|---|
 | 折弯（钣金） | `ISketchedBendFeatureData.SetFixedFace` | `0x80010105` |
+
 | 边线法兰 | `ISketchedBendFeatureData.AccessSelections` | 同族 |
 | 角撑板 | `ISMGussetFeatureData.AccessSelections` | 同族 |
 | 草图倒角 | `ISketchManager.CreateChamfer` | `0x80010105`（★ **绕法**：改成回读线段数判定，★ 建成时回 `None`） |
@@ -162,6 +163,39 @@ hole-pattern-evidence.json  ·  flat-pattern-dxf-evidence.json
   ⇒ ★ **不能断言「永远不行」** ✓
 
 ---
+
+### 3.4 ★★★ 2026-10-03（轮 546）**修正：这一族的边界**比 §三 说的窄****
+
+> ★★ **本节是加法，不改 §三 的原文证据** —— ★ 而**把它的结论收窄**。
+> ★ 触发：**事实 425/426** 的批量真机实验。
+
+★ **§三 讲的是** `IAccessSelections` / `IAccessSelections2` **那对接口本身**
+  （★ I 前缀、无 dispinterface）—— ★ 那条**成立**，★ 本节不推翻它。
+
+★★ **而本轮的实验测的是**另一件事**：★ `*FeatureData.AccessSelections`（★ 即**数据接口上那个方法**）。
+
+| 载体（★ 全是本仓**真机验过建成**的） | 类型名 | `GetDefinition` | `AccessSelections` |
+|---|---|---|---|
+| 等距曲面 | `OffsetRefSurface` | `CDispatch` | ★ **过** ✓ |
+| 延伸曲面 | `ExtendRefSurface` | `CDispatch` | ★ **过** ✓ |
+| 旋转曲面 | `RevolvRefSurf` | `CDispatch` | ★ **过** ✓ |
+| 缝合曲面 | `ExtruRefSurface` | `CDispatch` | ★ **过** ✓ |
+| 替换面 | `Extrusion` | `CDispatch` | ★ **过** ✓ |
+| 曲面切除（★ 轮 545） | `SurfCut` | `CDispatch` | ★ **过** ✓ |
+
+⇒ ★★★ **故：拿到**真特征对象**的**全部过**（**6/6**）** —— ★ 而**不是 1 个样本**。
+  ★★ **⇒ 「`AccessSelections` 到不了」这条**只对 §3.3 表里那几个成员成立****，
+    ★ **不能推广成"这一族都到不了"** ⚠
+
+★★ **而 `Component` 参数有个坑**（★ 事实 425）：★ **必须传空 Dispatch 变体**
+  （`create_empty_dispatch_variant()`），★ **传 `None` 会报 `类型不匹配（位置 2）`** ——
+  ★ 而那个错**看不出是它的错**（★ 事实 12/33 的第三次应验）。
+
+★ 证据：`tools/probe_access_selections_matrix.py` ·
+  `output/access-selections-matrix-evidence.json` · 事实 **425 / 426**。
+
+---
+
 
 ## 四、结构系统（焊件）—— ✅ **成立**（★ 本节已在轮 485 更正）
 

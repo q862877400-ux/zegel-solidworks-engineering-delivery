@@ -1673,3 +1673,20 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而它与**事实 47**（当年记的 `0x80010105`）**并不矛盾**：★ 那年记的是**另一条路**（`ISketchedBendFeatureData.SetFixedFace` 那族），★ 而**这条（`*FeatureData.AccessSelections`）是通的** ✓
      ★ **而这给出一条真正可行的新路**：★ 对那几条“静默 `None`”的能力，★ 正路是「**`GetDefinition` ⇒ `AccessSelections` ⇒ 设属性 ⇒ `CreateFeature`**」—— ★ 而**其前提是“先有一个特征对象”**（★ 而加厚/分割线连那一步都没到）。
      ★★ **方法论**：★ 一个“**成熟的旧结论**”（如“指针族到不了”）**也要用新证据回头验** —— ★ 而**本轮就把它推翻了一半**。|真机：`tools/probe_access_selections_on_featuredata.py`；证据 `output/access-selections-on-featuredata-evidence.json`；静态依据：出厂类型库（事实 424）；对照事实 12 / 33 / 47 / 424 |
+| 426 | **★★★ 批量实验结果：`*FeatureData.AccessSelections` **5 / 5 全过****（★ 而不是单样本）；★ **「指针族结构性到不了」这条旧结论被彻底推翻**** —— 2026-10-03（轮 546）。
+     ★ **手法**：★ **拿「已建成」的特征当载体** —— 它们**都有特征对象** ⇒ 都能 `GetDefinition` ⇒ 都能测 `AccessSelections` ✓
+     ★ 真机（`tools/probe_access_selections_matrix.py`，零弹窗）：
+     ```
+     等距曲面  `OffsetRefSurface`  ⇒ FD=CDispatch · **过=True** ✓
+     延伸曲面  `ExtendRefSurface`  ⇒ FD=CDispatch · **过=True** ✓
+     旋转曲面  `RevolvRefSurf`     ⇒ FD=CDispatch · **过=True** ✓
+     缝合曲面  `ExtruRefSurface`   ⇒ FD=CDispatch · **过=True** ✓
+     替换面    `Extrusion`         ⇒ FD=CDispatch · **过=True** ✓
+     平面区域  ★ 本轮取到的是 `草图2 / ProfileFeature`（★ 探针取到草图了）⇒ FD=None
+     ```
+     ⇒ ★★ **故：拿到**真特征**的**全部过**（**5/5**）** ✓ —— ★ 而**事实 425 只有 1 个样本**。
+     ★★ **而这把目标点名的那一族定了性**：★ **`IAccessSelections` 那一层在 pywin32 后端上**是通的**（★ 以及 `*FeatureData.AccessSelections`）。
+     ★ 而**它与事实 47 并不矛盾**：那年记的是**另一条路**（`ISketchedBendFeatureData.SetFixedFace` 那族）。
+     ★ **而本轮还修了一个自己的错**：第一版我**按猜的类型名过滤**（`OffsetSurface` / `SewSurface` / `ReplaceFace` …）⇒ **六条里五条拿到 `None`**（★ 即**没真试到**）⚠
+       ⇒ ★ **改成「取最后一个真特征」（不猜类型名）** 后才 5/5 ✓ —— ★ **真实类型名是 `OffsetRefSurface` / `ExtendRefSurface`…** （★ **而我猜的那几个都不对**）。
+     ★★ **方法论**：★ **类型名不要猜** —— ★ 与事实 418/422（“能不用猜的名字就不用”）**同族**。|真机：`tools/probe_access_selections_matrix.py`；证据 `output/access-selections-matrix-evidence.json`；对照事实 47 / 424 / 425 |
