@@ -254,7 +254,39 @@ BOM table templates are in the install_dir\**lang**\<language> folder and have a
 
 ★ **本机文件名是小写 `swBom…`，成员名是大写 `swBOM…`** —— 文件名与成员名自身不一致，**照抄，不改**。
 
-**判定：存疑** · 一句话依据：**[md]** `ISheet\InsertRevisionTable2.md` 与 `IDrawingDoc\InsertTableAnnotation2.md` 写 `[[swBOMConfigurationAnchorType_e]]`（大写 BOM），而 **[md]** `IView\InsertBomTable6.md` 与 `IView\InsertHoleTable3.md` 写 `[[swBomConfigurationAnchorType_e]]`（小写 bom）—— **官方在同一套文档里两种拼法都用**，而本机枚举文件只落地了**小写文件名**那一种，无法判定哪种链接才是官方本意。
+> ★★★★ **2026-10-04（接手轮）更正 —— 上面那一句的两处事实错误**（★ 来源：`JUDGE-C_D_E.md` §3.1
+> 「**待回写**」+ ★ **我独立复核**）
+>
+> ★ **错 ①**：★ 原句说「本机文件名是**小写** `swBom…`」⇒ ★★ **实为大写** ✓
+> ★ **错 ②**：★ 原句说「文件名与成员名**自身不一致**」⇒ ★★ **实为一致** ✓
+>
+> ★★ **我怎么核的（★ 两个命令，可复跑）**：
+> · ★ `C:\swapi` **全库递归找 `*omConfigurationAnchor*`** ⇒ ★ **只有一个文件**：
+>   `C:\swapi\enums\sw**BOM**ConfigurationAnchorType_e.md` ⇒ ★ **文件名是**大写 `swBOM`**** ✓
+> · ★★ 读它的 front-matter ⇒ 逐字 `name: sw**BOM**ConfigurationAnchorType_e`
+>   ⇒ ★ **文件名与枚举名**一致**** ✓
+> · ★★★ 而它的四个成员逐字 `sw**BOM**ConfigurationAnchor_BottomLeft / _BottomRight /
+>   _TopLeft / _TopRight` ⇒ ★ **成员名也是大写** ✓
+>
+> ★★★★ **所以「本机落地的是小写那一种」「文件名与成员名自身不一致」两句都要改** ✓
+>
+> ⚠⚠ **而下面那个数我也要更正 —— 这次是**裁判**那句**：★ 裁判写「`swBOM…` 与 `swBom…`
+>   在官方 `types/` 库里**各 18 次、正好对半**」⇒ ★★ **我复现不出来**：
+>   · ★ **文件名**：★ `swBOM*` **7 个** · ★ `swBom*` **3 个**（★ 全 `C:\swapi` 递归）✓
+>   · ★★ **全文出现**：★ `swBOM` **462 次** · ★ `swBom` **395 次**（★ 接近、★ **不相等**）✓
+>   · ★★★ **而"两种拼法并存"这个**结论**是对的**（★ 两个量法都显示两三种拼法都在）✓
+>   ⇒ ★ **按铁律 5：★ 我只写我量到的数**；★ 而"18/18"那个数**我既没复现也没否证**
+>     （★ 它可能量的是**另一个范围** —— ★ 例如只 `types/` 不含 `enums/`）⇒
+>     ★★ **不把它当错，只把我量到的如实并列** ✓
+>
+> ★★★ **核心判定不变**：★ 官方在同一套文档里**两种拼法都用**（★ 上面那句的依据仍成立）✓
+> ★★★★ **但推理方向要翻**：★ 既然本机落地的**就是与文件名一致的大写**，★
+>   那**能落地这一种**本身**就是官方本意的更强证据** ⇒ ★ 「无法判定哪种链接才是官方本意」
+>   **偏保守** ✓
+> ⚠ **按裁判建议：★ 本条降级为「记档」**（★ 不影响任何代码路径）·
+>   ★★ **而它**不能照抄进 `docs/known-facts.md`**（★ 除非把上面这段更正一并带上）✓
+
+**判定：存疑** · 一句话依据：**[md]** `ISheet\InsertRevisionTable2.md` 与 `IDrawingDoc\InsertTableAnnotation2.md` 写 `[[swBOMConfigurationAnchorType_e]]`（大写 BOM），而 **[md]** `IView\InsertBomTable6.md` 与 `IView\InsertHoleTable3.md` 写 `[[swBomConfigurationAnchorType_e]]`（小写 bom）—— **官方在同一套文档里两种拼法都用**，而本机枚举文件只落地了~~**小写文件名**~~那一种 <ins>（★ **2026-10-04 更正：实为**大写** `swBOMConfigurationAnchorType_e.md` —— ★ 见上方更正块）</ins>，无法判定哪种链接才是官方本意 <ins>（★ **2026-10-04 补充：这句偏保守** —— ★ 既然本机落地的**就是与文件名一致的大写**，★ 那**能落地这一种**本身就是官方本意的更强证据）</ins>。
 
 ---
 
