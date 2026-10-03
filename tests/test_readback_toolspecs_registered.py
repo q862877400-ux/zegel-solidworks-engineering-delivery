@@ -80,12 +80,12 @@ def test_negative_case_the_e2e_reading_is_recorded() -> None:
         return                                                            # ★ 证据不在本机 ⇒ 跳过
     d = json.loads(EVID.read_text(encoding="utf-8", errors="replace"))
     assert d.get("总数") == 6, "★ 总数不是 6：%r" % d.get("总数")
-    assert d.get("通过") == 5, (
-        "★ 通过数变成 %r ⇒ ★ 要么修好了、要么退化了 ⇒ 判据要重看" % d.get("通过"))
-    #: ★★ 那条没过的必须**写明是前置没成**（★ 而不是含糊"失败"）✓
+    #: ★★★★★★ **轮 105 更新：★ 从 5/6 变成 **6/6**** ——
+    #:   ★ 真因是**前置的顺序依赖**（★ 两轮实测定的序：★ **板 → 孔 → 阵列 → 圆角**）⇒
+    #:   ★★ 见 `output/why-pattern-none.json` 与 `output/why-hole-none.json` ✓
+    assert d.get("通过") == 6, (
+        "★ 通过数不是 6（★ 现为 %r）⇒ ★ 要么退化了、要么判据要重看" % d.get("通过"))
     bad = [r for r in (d.get("rows") or []) if not r.get("ok")]
-    assert len(bad) == 1, "★ 不过的条数不是 1：%r" % [r.get("tool") for r in bad]
-    assert "找不到" in str(bad[0].get("read")), (
-        "★ 那条不过的**不是**「找不到 X 特征」⇒ 真因变了、要重看：%r" % bad[0].get("read"))
-    #: ★★★ 前置那一栏也要在（★ 它才是"为什么找不到"的答案）✓
+    assert not bad, "★ 还有不过的：%r" % [r.get("tool") for r in bad]
+    #: ★★★ 前置那一栏也要在（★ 它才是"顺序对不对"的答案）✓
     assert any("前置" in k for k in d), "★ 没记前置栏：%r" % sorted(d)
