@@ -137,6 +137,20 @@ SPECS_BATCH36 = [
             Param("source_path", str, description="The source document path."),
             Param("dependencies", list, description="The dependency paths found."),
             Param("component_records", list, description="Per-component records."),
+            #: ★★★ 2026-10-03（接手轮）**补上 5 个必填形参** —— ★ 原先一个都没声明 ⇒
+            #:   ★ 经工具层必 `TypeError`：真机实测
+            #:   `build_pack_and_go_audit_matrix() missing 2 required positional arguments:
+            #:    'associated_drawings' and 'outputs'`
+            #:   （★ 另外 3 个是 `KEYWORD_ONLY`，Python 会在补上位置参数之后**再报**）。
+            #:   ★ 检测它的判据是 `tools/check_tool_param_binding.py` 的**判据 ⑤**
+            #:   （「目标函数的必填形参，spec 必须声明」）—— ★ ①②④ 问的都是"声明了的名字有没有去处"，
+            #:   ★ 只有 ⑤ 反过来问「**函数要的东西，spec 给没给**」。
+            Param("associated_drawings", list, description="Associated drawing paths."),
+            Param("outputs", list, description="Output artifact paths."),
+            Param("include_drawings", bool, description="Include drawings in the audit matrix."),
+            Param("include_toolbox_components", bool,
+                  description="Include Toolbox components in the audit matrix."),
+            Param("include_suppressed", bool, description="Include suppressed components."),
         ],
         doc="Build the audit matrix that a Pack-and-Go hand-off is reviewed against. "
             "★ Pure data — no SolidWorks call.",

@@ -41,20 +41,73 @@ def _g(o, n, *a):
 
 
 def _call(tool: str, args: dict) -> dict:
-    """★ **按 ToolSpec 的契约调**（复刻注册器三步：参数按名取 · 注入走 RESOLVERS · 模块按 `scripts.<名>`）。"""
+    """★ **按 ToolSpec 的契约调** —— ★ **逐字复刻注册器 `tool_registry.make_tool_function._impl`**。"""
     spec = {getattr(s, "name", None): s for s in RC.all_specs()}.get(tool)
     if spec is None:
         return {"ok": False, "err": "★ 工具没注册"}
     mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
     fn = getattr(mod, spec.function)
     want = {getattr(p, "name", None) for p in (spec.params or [])}
-    kwargs = {k: v for k, v in args.items() if k in want}
+    alias = dict(getattr(spec, "param_alias", None) or {})
+    #: ★★★ **2026-10-03（接手轮）修的一处缺陷（★ 我自己的探针）**：
+    #:   上一版写成 `kwargs = {k: v for k, v in args.items() if k in want}` ——
+    #:   ★ **漏了 `param_alias`**。而注册器的真口径逐字是
+    #:   （`tool_registry.py:493-498`）：
+    #:     ```
+    #:     for p in spec.params:
+    #:         if p.name in spec.param_alias and spec.param_alias[p.name] is None: continue
+    #:         target = spec.param_alias.get(p.name, p.name)
+    #:         kwargs[target] = getattr(params, p.name)
+    #:     ```
+    #:   ★★ 后果：`batch74` 用 `param_alias` 把 `wall_ratio` 映射到 `wall_thickness_ratio`
+    #:     ⇒ ★ 我传 `wall_ratio` 时当场 `TypeError: unexpected keyword argument`
+    #:     ⇒ ★ **把一条好工具记成了坏的**（★ 与事实 36/502 同族：**报错指向名字，真因在别处**）。
+    out_note: list = []
+    kwargs = {}
+    for k, v in args.items():
+        if k not in want:
+            continue
+        if k in alias and alias[k] is None:
+            continue                     #: ★ 由解析器消费，不进目标函数
+        kwargs[alias.get(k, k)] = v
     inj = spec.inject
     if inj not in RC.RESOLVERS:
         return {"ok": False, "err": "★ 注入名 %r 不在 RESOLVERS" % inj}
     kwargs[inj] = RC.RESOLVERS[inj](None)
+    #: ★★★ **2026-10-03（接手轮）补的第二处**：注册器在调目标函数前还会跑
+    #:   `pre_call(params)`（副作用）与 **`derived_args(params)`（补实参）**
+    #:   （`tool_registry.py:510-523` 逐字）。★ 我上一版**两样都没跑** ⇒
+    #:   ★ 那些靠 `derived_args` 补「必填形参」的工具会当场
+    #:   `TypeError: … missing 1 required positional argument`
+    #:   ⇒ ★ **又一条好工具被我记成坏的**（★ 实测：`create_base_flange` 等 4 条钣金工具，
+    #:     其 `spec` 形参正是由 `derived_args` 供给的 —— `derived_args` 补 kwargs 的规则还含
+    #:     「**不得覆盖已直传的参数名**」，这里照抄）。
+    class _P:                                    #: ★ 形参对象：注册器的 `derived_args(params)` 收的就是它
+        pass
+
+    _params = _P()
+    for _k, _v in args.items():
+        setattr(_params, _k, _v)
+    _params.response_format = None
+    if getattr(spec, "pre_call", None) is not None:
+        try:
+            spec.pre_call(_params)
+            out_note.append("pre_call 已跑")
+        except Exception as exc:                                      # noqa: BLE001
+            out_note.append("pre_call 抛错 %s: %s" % (type(exc).__name__, str(exc)[:90]))
+    if getattr(spec, "derived_args", None) is not None:
+        try:
+            _extra = spec.derived_args(_params) or {}
+            _clash = set(_extra) & set(kwargs)
+            if _clash:
+                out_note.append("derived_args 想覆盖 %s（★ 契约不允许）" % sorted(_clash))
+            kwargs.update({k: v for k, v in _extra.items() if k not in _clash})
+            out_note.append("derived_args 补了 %s" % sorted(_extra))
+        except Exception as exc:                                      # noqa: BLE001
+            out_note.append("derived_args 抛错 %s: %s" % (type(exc).__name__, str(exc)[:90]))
     out: dict = {"call_path": "module=%s function=%s inject=%s params=%s"
-                              % (spec.module, spec.function, inj, sorted(kwargs))}
+                              % (spec.module, spec.function, inj, sorted(kwargs)),
+                 "notes": list(out_note)}
     try:
         ret = fn(**kwargs)
         if isinstance(ret, dict):
