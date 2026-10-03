@@ -2652,3 +2652,21 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **方法论**：★ **给门禁加一条“提示”，就等于给自己加一个“待办生成器”** ** —— ★ 而它比“逐条去想”可靠得多 ✓
      ★ 而**本轮还让门禁自己说出了它的盲点**：它的判据 ① 只认 `*FeatureData` 字样，
        ★ 故**台账写旧入口名的那些逃过了它**（★ 而新提示正是为此而加）⚠|官方：`C:\swapi\types\IModelDoc2\InsertProjectedSketch{{,2}}.md` · `IFeatureManager\InsertFreeform{{,2}}.md` · `ISweepFeatureData\` · `IProjectionCurveFeatureData\`；名单：`docs/backend-limited-items.json`（★ **12** 条）；对照事实 433 / 474 / 475 / 476 |
+| 478 | **★★ 自由样式：五步链**全调通**、★ 而 `InsertFreeform2` 仍回 `None`**（★ 线索指向**选区里有两个东西**） —— 2026-10-03（轮 606）。
+     ★ **怎么跑的**：`tools/prove_freeform.py`（★ 零弹窗）—— ★ **严格按官方 `## Remarks` 的五步链**：
+     ```
+     ① 射线选面 ⇒ `ray=True`、★ **而 `GetSelectedObjectCount2(-1)` = **2**** ⚠
+     ② `SetFreeformCurveData(0, 0.25, 0,1,0, 0,1,0)`      ⇒ **不报错** ✓（**8 参**）
+     ③ `SetFreeformPointData(0, 0.25, 0.5, 0,0,0)`        ⇒ **不报错** ✓（**6 参**）
+     ④ `SetFreeformBoundaryContinuity(0, -1)`            ⇒ **不报错** ✓（**2 参**）
+     ⑤ `InsertFreeform2(True, False, False, 0.0)`        ⇒ ★ **回 `None`**（★ 特征 7 → 7）⚠
+     ```
+     ★ **而对照组（★ 不加曲线与点）同样回 `None`** —— ★ 故问题**不在第 2–4 步**。
+     ★★★ **而本轮最有价值的是那个线索**：★ `selected = **2**` —— **选区里有两个东西**，
+       ★ 而官方第 1 步写的是“Select the **face**”（★ **单数**）⇒ ★ **故下一步是：让选区里**只有一个面**** ✓
+     ★ **而它与那四个阵列的对比值得记**：
+       ★ 阵列那四条**连第一步都过不去**（`AccessSelections` 第 2 参四种形态全到不了，事实 474）；
+       ★ 而本条**四步全过、只卡在最后一步的一个前提上** —— ★ 故它**仍在可攻关里是对的** ✓
+     ★★ **方法论**：★ **当一条链“前面都不报错、最后一步回 `None`”时，去读**第一步的返回值** ** —— ★ 而不是去调中间那几步。
+       （★ 本例：那个 `2` 就在第一步的证据里，★ 而我一开始只看了 `ray=True`）⚠
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。|真机：`tools/prove_freeform.py`；证据 `output/freeform-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md`（**`## Remarks` 的五步**）× 反射 arity（**4 / 8 / 6 / 2**，★ 四个全一致）；对照事实 474 / 477 |

@@ -1,0 +1,65 @@
+test(探针): 自由样式 —— ★ 五步链**全调通**、★ 而 `InsertFreeform2` 仍回 `None`（事实 478）
+
+★ 攻台账里**唯一一条已知有活路的**可攻关项（★ 事实 477：★ 整条链四个成员**全在、全未标废弃**）。
+
+## 一、★★★ 官方 `## Remarks` 给的是**一条五步链**（★ 签名与参数都给不出）
+
+```
+1. **Select the face to form.**        ★ 而前置里还写着 "**The face must have four sides**"
+2. Add curves on the selected face.    ⇒ `SetFreeformCurveData`（ **8 参**）
+3. Add points on the curves.           ⇒ `SetFreeformPointData`（ **6 参**）
+4. Specify boundary continuity.        ⇒ `SetFreeformBoundaryContinuity`（**2 参**）
+5. Insert the Freeform feature.        ⇒ `InsertFreeform2(Nsided, Symmetric0, Symmetric1, Angle)`
+★ 而 md 还写着：「**Record a macro while interactively creating a Freeform feature**」
+```
+
+## 二、★ 三源互证（★ 铁律 4）
+
+```
+`InsertFreeform2` **4** · `SetFreeformCurveData` **8** · `SetFreeformPointData` **6** ·
+`SetFreeformBoundaryContinuity` **2** ⇒ ★ **md 签名 × 反射 arity 四个全一致** ✓
+★ 而四个**都没标废弃** ✓
+```
+
+## 三、★ 真机结果（★ 零弹窗 · ★ 立方面，★ 每面四边）
+
+```
+① 射线选面 ⇒ `ray=True` · ★ **而 `GetSelectedObjectCount2(-1)` = 2** ⚠
+② `SetFreeformCurveData(0, 0.25, 0,1,0, 0,1,0)` ⇒ **不报错** ✓
+③ `SetFreeformPointData(0, 0.25, 0.5, 0,0,0)`   ⇒ **不报错** ✓
+④ `SetFreeformBoundaryContinuity(0, -1)`        ⇒ **不报错** ✓
+⑤ `InsertFreeform2(True, False, False, 0.0)`    ⇒ ★ **回 `None`**（★ 特征 7 → 7）⚠
+★ 而**对照组（不加曲线与点）同样回 `None`** ⇒ ★ 故问题**不在第 2–4 步**。
+```
+
+## 四、★★★★ 而本轮最有价值的是那个**线索**
+
+```
+★ `selected = **2**` —— **选区里有两个东西** ⚠
+★ 而官方第 1 步写的是「Select the **face**」（★ **单数**）
+⇒ ★★ **故下一步是：让选区里**只有一个面**** ✓
+   （★ 而**这正是"自由样式"仍留在可攻关里的理由** —— ★ 它四步全过、只卡在一个前置上）
+```
+
+## 五、★★ 而它与那四个阵列的**对比**值得记
+
+```
+★ 阵列那四条 **连第一步都过不去**（`AccessSelections` 第 2 参四形态全到不了，事实 474）
+★ 而本条 **四步全过、只卡在最后一步的一个前置上** ✓
+```
+
+## 六、★★ 方法论
+
+> ★ **当一条链"前面都不报错、最后一步回 `None`"时，去读第一步的返回值** ——
+> ★ 而**不是去调中间那几步**。
+> （★ 本例：那个 `2` 就在第一步的证据里，★ **而我一开始只看了 `ray=True`**）⚠
+
+## 七、交付
+
+```
+tools/prove_freeform.py    新（★ 五步链 + 对照组 · ★ 零弹窗）
+output/freeform-evidence.json  ★ 判别 `freeform_0_of_2`
+docs/known-facts.md        **事实 478**（+26 · ★ 五步取证 + 那个线索 + 方法论）
+★ 本轮**不登记能力**（★ 未建成 —— 不假装做到）
+★ 语法门禁 0 处（790 个文件）
+```
