@@ -8,7 +8,7 @@
 #   ====================  ==================================================  ==================
 #   工具栏原文             官方成员                                             判据
 #   ====================  ==================================================  ==================
-#   分割线（投影）          `IModelDoc2.InsertSplitLineProject`（2 参）→ void     **只有树增量**
+#   分割线（投影）          `IModelDoc2.InsertSplitLineProject`（2 参）→ void     **树增量 + 面数 + 环数**
 #   分割线（轮廓）          `IModelDoc2.InsertSplitLineSil()` → void             **只有树增量**
 #   分割线（相交）          `IFeatureManager.InsertSplitLineIntersect`          另见模块尾
 #   通过参考点的曲线        `IModelDoc2.InsertCurveFileBegin/Point/End`（三步）  Begin/Point/End 各自的 bool
@@ -37,6 +37,11 @@
 #
 # 官方依据（三源）:
 #   · `C:\swapi\types\IModelDoc2\InsertSplitLineProject.md`（`void (IsDirectional: bool, FlipDir: bool)`）
+#     ★★ **它的 `## Remarks` 里就有 mark 表**：草图 mark **4** · 面 mark **1**（★ 逐字）。
+#     ★ `## Examples`「Create Projection Split Line Feature」给的**调用序**是四步：
+#       实体特征(mark 0) → 投影草图(**mark 4**) → 面(**mark 1**，按**坐标**) → `InsertSplitLineProject(True, True)`。
+#     ⇒ ★★ 例子的**隐含几何前提**（★ 签名/Remarks 都没写、★ 只有例子给得出）：
+#       投影草图所在面在**实体之外**、与目标面**平行**、沿投影方向隔开。★ 见事实 484。
 #   · `C:\swapi\types\IModelDoc2\InsertSplitLineSil.md`（`void ()`）
 #   · `C:\swapi\types\IFeatureManager\InsertSplitLineIntersect.md`
 #   · `C:\swapi\types\IModelDoc2\InsertCurveFileBegin.md`（`void ()`）
@@ -101,6 +106,55 @@ def _delta(before, after):
     return [x for x in after if x not in before]
 
 
+def _selection_mark_counts(model):
+    """★ 回读**按标记分组**的选区计数（★ 事实 8：`SelectByID2` 的返回值不可信，只有计数算数）。
+
+    :returns: ``{"0": n, "1": n, "4": n}`` 或 ``None``（读不到 ⇒ 判据降级，★ 不猜）。
+    """
+    try:
+        sm = get_com_member(model, "SelectionManager")
+    except Exception:                                                # noqa: BLE001
+        return None
+    out = {}
+    for m in (0, 1, 4):
+        try:
+            out[str(m)] = int(get_com_member(sm, "GetSelectedObjectCount2", m))
+        except Exception:                                            # noqa: BLE001
+            out[str(m)] = -1
+    return out
+
+
+def _face_loop_stats(model):
+    """★ 实体的**面数**与**环数直方图** —— ★ "面被切开"的独立判据（★ 不依赖特征树）。
+
+    ★ 依据：`IBody2.GetFaces()` + `IFace2.GetLoopCount()`（官方 `System.int GetLoopCount()`）。
+    ★ 一个**闭合环**投影到平面上 ⇒ ★ 该面 **1 个环 → 2 个环**（外环 + 新增内环）。
+    ★ 这条判据**不可省**：真机上"特征进了树而一个面也没切开"是**可发生的**
+      （★ 见 `output/split-line-minimal-matrix-evidence.json` 的 M5/M6）。
+
+    :returns: ``{"face_count": int, "loop_histogram": {...}}`` 或 ``None``。
+    """
+    try:
+        bodies = list(get_com_member(model, "GetBodies2", 0, True) or [])
+    except Exception:                                                # noqa: BLE001
+        return None
+    hist = {}
+    count = 0
+    for b in bodies:
+        try:
+            faces = list(get_com_member(b, "GetFaces") or [])
+        except Exception:                                            # noqa: BLE001
+            continue
+        for f in faces:
+            count += 1
+            try:
+                k = int(get_com_member(f, "GetLoopCount"))
+            except Exception:                                        # noqa: BLE001
+                k = -1
+            hist[str(k)] = hist.get(str(k), 0) + 1
+    return {"face_count": count, "loop_histogram": hist}
+
+
 def insert_split_line_project(model, is_directional: bool = False,
                               flip_dir: bool = False) -> dict:
     """★ **分割线（投影）**：`IModelDoc2.InsertSplitLineProject(IsDirectional, FlipDir)` → `void`。
@@ -108,21 +162,61 @@ def insert_split_line_project(model, is_directional: bool = False,
     :param is_directional: 官方逐字「Whether to project in **one direction**」。
     :param flip_dir: 官方逐字「valid **only when isDirectional = 1**」（★ 沿草图面法向投影）。
 
-    ⚠ ★ 调用前要有**可选的分割工具**（草图 / 曲线 / 面）—— ★ 官方**没给 mark 表**，
-      ★ 故本模块**不假定 mark**，如实把这一点写进返回值。
-    ⚠ 官方回 `void` ⇒ 判据**只能**靠**特征树增量**（★ 并如实写 `verified_by`）。
+    ★★★ **官方 `## Remarks` 明写了 mark 表**（★ 逐字，★ 本模块 2026-10-03 更正）：
+      > The sketch to project must be selected using [[IModelDocExtension::SelectByID2]]
+      > with a mark value of **4**.
+      > The faces to split must be selected using IModelDocExtension::SelectByID2
+      > with mark values of **1**.
+    ⚠ **本模块此前写的是「官方未给 mark 表、故不假定 mark」—— 那句是错的**，
+      ★ 而它把真机上的失败**误记成了"能力不成"**。★ 教训见 `docs/known-facts.md` 事实 484。
+
+    ★★ **调用前必须自己选好**：投影**草图** mark=4 · 要切的**面** mark=1。
+      ★ 真机实测**缺任一个都不建**（`output/split-line-minimal-matrix-evidence.json` 的 M3/M4）。
+    ★★ **几何前提**（★ 官方例子 `Create_Projection_Split_Line_Example_VB.htm` 里的隐含条件，
+      ★ 本仓真机验证过）：投影草图所在平面要在**实体之外**、与某个面**平行**、沿投影方向隔开。
+      ★ 否则**特征会建出来、而一个面也切不开**（真机 M5/M6：`分割线1` 进了树、面数 6→6）。
+    ★ **选哪一张面不影响切哪一张**（真机 M2：选垂直侧脸也成，而切开的是**投影落点那张面**）。
+
+    ⚠ ★★ **`None` 返回值不等于失败**：★ 真机上**建成时也回 `None`**
+      ⇒ ★ `ret is None` **不能**当判据（★ 这与 `docs/known-facts.md` 事实 420 的
+      「回 `None` ⇒ 真的没建」**相反** ⇒ 该条已被本轮真机**证伪**）。
+    ⚠ 官方回 `void` ⇒ ★ 判据**三条一起**：**特征树增量** · **实体面数增量** · **有面出现 2 个环**。
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}
-    before = _tree_names(model)
+    marks = _selection_mark_counts(model)
+    before_tree = _tree_names(model)
+    before_faces = _face_loop_stats(model)
     get_com_member(model, "InsertSplitLineProject", bool(is_directional), bool(flip_dir))
-    after = _tree_names(model)
-    added = _delta(before, after)
-    return {"ok": bool(added), "op": "split_line_project",
+    after_tree = _tree_names(model)
+    after_faces = _face_loop_stats(model)
+    added = _delta(before_tree, after_tree)
+    face_delta = None
+    if before_faces is not None and after_faces is not None:
+        face_delta = after_faces["face_count"] - before_faces["face_count"]
+    inner_gained = False
+    if before_faces is not None and after_faces is not None:
+        inner_gained = (int(after_faces["loop_histogram"].get("2", 0))
+                        > int(before_faces["loop_histogram"].get("2", 0)))
+    #: ★ 前置是否成立（★ 回读，★ 不猜）：草图 mark 4 **且** 面 mark 1 都至少一个
+    pre = None
+    if marks is not None:
+        pre = bool(marks.get("4", 0) >= 1 and marks.get("1", 0) >= 1)
+    return {"ok": bool(added) or (face_delta or 0) > 0,
+            "op": "split_line_project",
             "is_directional": bool(is_directional), "flip_dir": bool(flip_dir),
-            "tree_before": before, "tree_after": after, "new_features": added,
-            "selection_mark": "★ 官方 Remarks **未给** mark 表 —— 本模块不假定",
-            "verified_by": "tree_delta"}
+            "tree_before": before_tree, "tree_after": after_tree, "new_features": added,
+            "faces_before": before_faces, "faces_after": after_faces,
+            "face_delta": face_delta, "gained_inner_loop": inner_gained,
+            "selection_marks": marks,
+            "preconditions_held": pre,
+            "selection_mark": ("★ 官方 Remarks 逐字：投影**草图** mark = **4** · 要切的**面** mark = **1**"
+                               "（★ 本模块 2026-10-03 更正：原先写的「官方未给 mark 表」是错的）"),
+            "geometry_requirement": ("投影草图所在平面须在实体**之外**、与某面平行、沿投影方向隔开；"
+                                     "★ 否则特征会建出来而面不被切开"),
+            "returns_none_even_on_success": True,
+            "verified_by": "tree_delta+face_count_delta+inner_loop"}
+
 
 
 def insert_split_line_silhouette(model) -> dict:
