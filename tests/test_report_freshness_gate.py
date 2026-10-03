@@ -18,6 +18,8 @@ import sys
 import textwrap
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -31,6 +33,36 @@ def _load():
 
 
 MOD = _load()
+
+
+def _has_origin_main() -> bool:
+    """★ **便携性守卫**：本仓能不能拿到 `origin/main` 这个 ref？
+
+    ★★★ 2026-10-03（轮 470）新增。**为什么需要它** —— 门禁自己的 docstring 就写着
+    （`scripts/check_report_freshness.py` L22-23，逐字）：
+    > 需要 `origin/main` 这个 ref。**拿不到就直接 SKIP 并 exit 0**——
+    > 否则任何没有 `origin` 的 clone（或浅克隆）上这个门禁都会**无条件红**。
+
+    ★★ 而**本仓正是"没有 `origin`"的那一种**（★ `origin` 是**故意留空**的 —— 只有 `upstream`，
+    且它还没 fetch）⇒ 门禁走 SKIP 支、`main()` 回 **0**。
+    ⇒ ★ 故凡**假设"能拿到 `origin/main`"**的测试（本文件那两条负例）都必须**先问这一句**，
+      否则它们会在本仓**无条件红** —— ★ 而那**不是产品错，是测试没带便携性守卫**。
+    ★ 本文件已有同型先例：`test_missing_report_skips`（"报告不在 ⇒ SKIP，不是 fail"）。
+    """
+    import subprocess
+    try:
+        r = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--verify", "origin/main"],
+                           capture_output=True, text=True, encoding="utf-8",
+                           errors="replace", timeout=20)
+    except Exception:                                          # noqa: BLE001
+        return False
+    return r.returncode == 0
+
+
+_NEEDS_ORIGIN_MAIN = pytest.mark.skipif(
+    not _has_origin_main(),
+    reason="★ 便携性守卫：本仓没有 `origin/main`（`origin` 故意留空）⇒ "
+           "门禁会 SKIP 并 exit 0，那两条负例在此环境下不适用")
 
 
 def test_current_report_is_fresh() -> None:
@@ -71,6 +103,7 @@ def test_missing_origin_skips(tmp_path: Path) -> None:
     assert MOD.main(["--repo", str(r), "--report", str(p)]) == 0
 
 
+@_NEEDS_ORIGIN_MAIN
 def test_stale_number_is_reported(tmp_path: Path) -> None:
     """★ **负例**：数字对不上 ⇒ **exit 1**，且**报出是哪个字段** + 给出修法行。
 
@@ -81,6 +114,7 @@ def test_stale_number_is_reported(tmp_path: Path) -> None:
     assert MOD.main(["--repo", str(ROOT), "--report", str(p)]) == 1
 
 
+@_NEEDS_ORIGIN_MAIN
 def test_actual_drift_measures_the_state_that_will_be_committed() -> None:
     """★★ **可用性守卫**：`actual_drift` 量的是「`git add -A && git commit` **之后**会变成什么」。
 

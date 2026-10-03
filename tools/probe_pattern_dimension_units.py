@@ -37,15 +37,11 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 OUT = Path(r"D:\AI\SW\output\pattern-dimension-units-evidence.json")
-
-
-def _bbox_xmax(doc):
-    import sw_part as P
-    bb = P.get_bounding_box(doc, body_index=0)
-    if not isinstance(bb, dict):
-        return None, bb
-    #: ★ 不同实现可能给 min/max 或 size；都试（★ 不猜结构 —— 直接看键）
-    return bb, bb
+# ⚑ 2026-10-03（轮 470）：这里曾有一个 `_bbox_xmax(doc)` ——
+#   ★★ 而它本身**是坏的**：它最后一行写 `return bb, bb`（★ 两个返回值**都是
+#   同一个字典**，而上一行的注释说明本意是“分别取 x 的 min/max”）
+#   ⇒ 它**从来没被调过**（★ 实测：全仓出现 **1** 次）⇒ 删。
+#   ★ 依据：本仓先例（同上）与门禁 `tests/test_no_uncalled_helpers.py`。
 
 
 def main() -> int:

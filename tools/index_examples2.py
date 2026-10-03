@@ -219,17 +219,12 @@ def build_member_index() -> dict[str, set[str]]:
 
 #: 成员调用抽取：obj.Member(  /  Member(
 _RE_CALL = re.compile(r"[.\s]([A-Z]\w+)\s*\(")
-
-
-def domains_of_members(members: set[str], midx) -> set[str]:
-    """把示例调用到的成员映射到域（取该成员所有宿主接口的域并集）。"""
-    out: set[str] = set()
-    for mem in members:
-        for iface in midx.get(mem, ()):
-            d = TYPE_DOMAIN.get(iface)
-            if d:
-                out.add(d)
-    return out
+# ⚑ 2026-10-03（轮 470）：这里曾有一个 `domains_of_members(members, midx)` ——
+#   它把示例里调用到的成员映射到域（取宜主接口域的并集），
+#   是**建库阶段**统计用的一次性助手。
+#   ★ 实测：全仓出现 **1** 次（就只有这一处定义）⇒ 真死代码。
+#   ★ 依据：本仓先例（`tools/propose_capability_sources.py` L136-137 对 `match_modules` 的处理）
+#   与门禁 `tests/test_no_uncalled_helpers.py`。
 
 
 def domain_of(types: set[str], stem: str) -> str:

@@ -91,7 +91,15 @@ def test_explicit_plumbing_names_are_internals(module: str, name: str) -> None:
     #:   · `sw_weldment.create_structural_member` ⇒ ★ **已由 `create_structural_member_from_sketch` 包装**
     #:     （★ 事实 342/339）⇒ ★ 故这两条**不再是真缺口**，本测试里换成**仍是**真缺口的名字。
     ("sw_simulation_loads", "add_bolt_connector"),  #: ★ B 组载荷，尚未封
-    ("sw_simulation_loads", "add_link_connector"),  #: ★ B 组载荷，尚未封（事实 341）
+    #: ★★ 2026-10-03（轮 470）**样本第三次随事实更新** ——
+    #:   ★ 原样本 `add_link_connector` 的注释写着「★ B 组载荷，尚未封（事实 341）」，
+    #:   ★★ 而它**现在封了**：分诊判为「**已有**」，理由是
+    #:     「功能已由 `add_link_connector_report` 包装暴露」
+    #:     （★ 实测：`T.classify("sw_simulation_loads","add_link_connector")` ⇒ `已有`）。
+    #:   ★ 换成**同类且仍是真缺口**的 `add_pin_connector`
+    #:     （★ 同族连接件、★ 实测 classify ⇒ `该挂`、★ 与它并排的
+    #:       `apply_pin_connector_report` 也仍是「该挂」⇒ 说明那是**另一种**包装形态，不是这一条）。
+    ("sw_simulation_loads", "add_pin_connector"),   #: ★ B 组载荷（连接件），尚未封
     #: ★★ 2026-10-03（轮 436）**batch_export 已移出本名单** ——
     #:   ★ 它是 `batch_export_formats` 的**薄包装**，而后者已是工具
     #:   `solidworks_batch_export_files`（★ 已登记进 `ALIASED_BY_TOOL`）。
@@ -147,9 +155,11 @@ def test_wrapper_rule_does_not_swallow_real_gaps() -> None:
     #:   ⇒ ★ 拿它们当"没包装的真缺口"是**过期的**。★ 换成**确实还没有包装**的三条。
     #: ★★ 2026-10-03（轮 436）**样本再次随事实更新**：★ `batch_export` 已归入「已有」
     #:   （★ 它是 `batch_export_formats` 的薄包装，而后者已是工具）⇒ ★ 换成**确实还没有包装**的名字。
+    #: ★★ 2026-10-03（轮 470）**样本再次随事实更新**（★ 同上面那条 parametrize 的理由）：
+    #:   `add_link_connector` 已被 `add_link_connector_report` 包装暴露 ⇒ 换成 `add_pin_connector`。
     for module, name in (("sw_part", "linear_pattern"),
                          ("sw_export", "export_flat_pattern_dxf"),
-                         ("sw_simulation_loads", "add_link_connector")):
+                         ("sw_simulation_loads", "add_pin_connector")):
         kind, _ = T.classify(module, name)
         assert kind == "该挂", "%s.%s 是真缺口，不能被包装规则吞掉" % (module, name)
 

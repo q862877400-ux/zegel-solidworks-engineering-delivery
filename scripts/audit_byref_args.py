@@ -145,6 +145,20 @@ def byref_variables(path: Path) -> set[str]:
         for tgt in node.targets:
             if isinstance(tgt, ast.Name):
                 names.add(tgt.id)
+            #: ★★★ 2026-10-03（轮 470）**补上"元组/解包赋值"** ——
+            #:   真机代码常写成一次拿**两个**出参：
+            #:     `id1, id2 = out_i4(), out_i4()`
+            #:   ★ 而原先只收 `ast.Name` 目标 ⇒ **`ast.Tuple` 被整条跳过**
+            #:   ⇒ `id1` / `id2` **没被记为合法 by-ref 变量** ⇒ 下一行传它俩时
+            #:     被判「裸传标量出参」⇒ ★★ **工具自己的假阳性**
+            #:     （★ 实测：`tools/prove_render_material_sequence.py:108` 那一处，
+            #:       而它**明明**在上一行构造好了）。
+            #:   ★ 这不是放宽判据：★ **`byref_variables` 的语义就是"先构造后传出"**，
+            #:     元组解包只是同一个语义的**另一种写法** ⇒ ★ 补全它才算完整 ✓
+            elif isinstance(tgt, ast.Tuple):
+                for elt in tgt.elts:
+                    if isinstance(elt, ast.Name):
+                        names.add(elt.id)
     return names
 
 

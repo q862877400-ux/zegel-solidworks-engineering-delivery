@@ -108,7 +108,16 @@ def test_rule1_accepts_cadstudio_headless_names():
 
 
 # ── ② 门禁：规则 3 禁裸坐标 ───────────────────────────────────────
-@pytest.mark.parametrize("bad_param", ["x", "y", "z", "x_mm", "point"])
+#: ★★★ 2026-10-03（轮 470）**把 `x_mm` 从本名单移除** ——
+#:   轮 433 在门禁里**已经判定**过这件事（`mcp-server/tool_registry.py` L120-129，逐字）：
+#:   > ★★★ **"裸"的定义就是「没有单位信息」** —— 而 `_mm` 后缀**恰恰携带着单位信息**
+#:   > （★ 规则 2 **要求**长度参数以 `_mm` 结尾）⇒ ★★ 所以**以 `_mm` 结尾的坐标不是裸坐标** ⇒ 放过。
+#:   > ★★★ 矛盾在**精确黑名单**那三个条目（`x_mm`/`y_mm`/`z_mm`）：**两条规则自相矛盾** ⚠（本轮查明）
+#:   > ⇒ ★ 而**无单位**的（`x` · `boundary_z` · `d1_x` · `major_y`）**照旧拦** ✓
+#:   ⇒ ★★ 即 `x_mm` **本就该放过**（★ 否则"规则 2 要求带 `_mm`"与"规则 3 拦 `_mm`"打架）——
+#:     ★ 本测试只更新在轮 433 **之后**（★ 它从那时起就一直红）。
+#:   ★ 反过来 ★ **改门禁去拦 `x_mm` 是错的** —— 那会**把两条规则的自相矛盾重新引回来** ⚠
+@pytest.mark.parametrize("bad_param", ["x", "y", "z", "point"])
 def test_rule3_bare_coordinates_rejected(bad_param):
     mod = _load()
     s = mod.ToolSpec(

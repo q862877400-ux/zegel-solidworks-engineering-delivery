@@ -104,19 +104,16 @@ def probe_members(obj, names) -> dict:
     return out
 
 
-def diff_against_interface(obj, type_name: str, *, limit: int = 40) -> dict:
-    """★ 拿**程序集里的成员名单**去问真机，★ 回三组。
-
-    :returns: `{on_object, unusable, missing_from_assembly, probed}` ——
-      ★ 其中 `unusable` = **程序集里有、而真机取不到**（★ **本阶段要找的那一类**）。
-    """
-    members = interface_members(type_name)
-    got = probe_members(obj, sorted(members))
-    on = [n for n, v in got.items() if v != "missing"]
-    unusable = [n for n, v in got.items() if v == "missing"]
-    return {"type_name": type_name, "probed": len(members),
-            "on_object": on[:limit], "unusable": unusable[:limit],
-            "counts": {"probed": len(members), "on_object": len(on), "unusable": len(unusable)}}
+# ⚑ 2026-10-03（轮 470）：这里曾有一个 `diff_against_interface(obj, type_name, *, limit)` ——
+#   它把「程序集成员名单」与「真机探测结果」对成三组（`on_object` / `unusable` /
+#   `missing_from_assembly`），是**建库阶段的一次性分析助手**；那一阶段的结论已经写进
+#   `docs/known-facts.md` 与能力条目的 `limitations` ⇒ **它没被取代，而是**任务结束了****，
+#   从此全仓**没有任何调用点**（★ 实测：全仓出现 **1** 次 = 就只有这一处定义）。
+#   ★ 删掉它、留这段墓碑 —— 依据是本仓自己的先例（`tools/propose_capability_sources.py`
+#   L136-137 对 `match_modules` 的处理）★ 以及门禁 `tests/test_no_uncalled_helpers.py`
+#   的判据：「门禁/工具里**不该有**定义了却全仓库没人调的函数」。
+#   ⚠ 若将来又要做"程序集 vs 真机"对账：★ **别凭记忆重写** —— 上面那三组的语义
+#   （尤其 `unusable` = 程序集里有而真机取不到）在 `docs/known-facts.md` 里有更详的记载。
 
 
 def main(argv: list) -> int:
