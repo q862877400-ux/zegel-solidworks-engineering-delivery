@@ -3807,6 +3807,31 @@
         "★ 前置：**两张面**（曲面面 mark=1 · 实体面 mark=2）。",
         "⚠ **未查**：① 选具体哪一张面（★ 本包装取各体**第一张**）；② 多对面；③ 两个曲面之间替换。"
       ]
+    },
+    {
+      "id": "surface_revolve",
+      "label": "旋转曲面（★ **真机建成**·★★ 根因是“必须有中心线”）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名**立）：`C:\\swapi\\types\\IFeatureManager\\InsertRevolvedRefSurface.md` 的`Feature InsertRevolvedRefSurface(double Angle, bool ReverseDir, double Angle2, int RevType)`；另 `IModelDoc2` 上有同名 4 参版。代码：`scripts/sw_surface_ref_ops.py::insert_revolved_ref_surface`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 529）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：前视面上画**轮廓 + 中心线**（`CreateCenterLine`），选那个草图（回读 `sel=1`）⇒ **建成 `曲面-旋转1`**（类型名 **`RevolvRefSurf`**）。★ **两条入口都成**：`IModelDoc2.InsertRevolvedRefSurface`（旧式）与 `IFeatureManager.InsertRevolvedRefSurface`（本仓现路）。证据 `output/revolve-oldstyle-evidence.json`。",
+        "★★★ **而根因是一组对照定下的：「无中心线」那组**不成**（树 0 增量）** —— ★ 而官方原话逐字是「by revolving a profile around a **centerline**」。\n       ⇒ ★★ **故：本仓此前对它的「不成」（轮 501，5 组全试过）真因是**前置缺中心线**，而**不是**架构问题** ✓\n       ★ 而它**修正了一个归因**：「新架构那侧不成」在**旋转曲面上不成立**。"
+      ],
+      "limitations": [
+        "★★ **前置：蓝图里必须有一条中心线**（官方原话的 centerline）—— ★ 本包装的 docstring 已明写这一点。★ 另官方给的 mark **没写** ⇒ ★ 本模块**不假定 mark**（真机用 mark=0 成）。",
+        "⚠ **未查**：★ 非 360° 角；★ `rev_type=1/2`（MidPlane / 双向）；★ 官方另注「does not support **3D sketches**」。"
+      ]
     }
   ]
 }

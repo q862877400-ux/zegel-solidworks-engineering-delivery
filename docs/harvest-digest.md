@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **90** 条能力。
+共 **91** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 77 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 78 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 60 | **本项目自研**（护城河域等） |
+| `original` | 61 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -140,6 +140,9 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `surface_offset` | · `★★ 2026-10-03（轮 516）**真机建成**（走 `sw_guard`，`sw_alive: true`、**零弹窗**）：先建一张曲面（`曲面-拉伸1`）⇒ **4 张面选中** ⇒ `InsertOffsetSurface(5.0 mm, False)` ⇒ ★ **`曲面-等距1`（特征树 7→8）**。证据 `output/surface-oldstyle-three-evidence.json` · 探针 `tools/prove_surface_oldstyle_three.py`。`<br>· `★ **走的是「旧式方法」那侧**（`IModelDoc2.InsertOffsetSurface` · **2 参 · void**）—— ★★ 而不是新架构（`CreateDefinition` + `CreateFeature`）。★ 依据：**事实 395** 指出「旧式方法那侧是成的」（填充 `InsertFillSurface2` / 延伸 `InsertExtendSurface` / 缝合 `InsertSewRefSurface` / 曲面-拉伸 `FeatureExtruRefSurface3`）。` |
 | `surface_planar_region` | · `★★ 2026-10-03（轮 517）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：先建一张曲面，再建**一个闭合草图**，按 **mark=1 选**那个草图（回读 `sel_count = 1`）⇒ `InsertPlanarRefSurface()` ★ **回 `True`** · **建成 `曲面-基准面1`**。证据 `output/planar-replace-variants-evidence.json`。`<br>· `★★★ **而「boundary entities」到底是什么，是真机定的**：★ 轮 516 先试**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、返回值 `False`；★ 轮 517 改试**草图**（闭合轮廓 · mark=1）⇒ **返回 `True` · 建成** ✓ ⇒ ★★ **故它指的是草图**（★ 而官方那句 `Remarks` **两种读法都通**）。` |
 | `replace_face` | · `★★ 2026-10-03（轮 517）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：先建一个**实体盒** + 一张**曲面**，按 **曲面面 mark=1 · 实体面 mark=2** 选两张面（回读 2）⇒ `InsertFeatureReplaceFace()` ⇒ **建成 `替换面1`**。证据 `output/planar-replace-variants-evidence.json`。`<br>· `★★★ **两个 mark 的分工是真机定的**（★ 官方那句 `Remarks` **被截断了**）：★ 轮 516 按「实体面=1 · 曲面面=2」⇒ **0 增量**；★ 轮 517 调过来（实体面=2 · 曲面面=1）⇒ **建成 `替换面1`** ✓ ⇒ ★★ **曲面面 = mark 1（要替换掉的）· 实体面 = mark 2（替换成它）**，★ 而它与官方「要替换的面 mark 1」**一致**。` |
+| `surface_revolve` | · `★★ 2026-10-03（轮 529）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：前视面上画**轮廓 + 中心线**（`CreateCenterLine`），选那个草图（回读 `sel=1`）⇒ **建成 `曲面-旋转1`**（类型名 **`RevolvRefSurf`**）。★ **两条入口都成**：`IModelDoc2.InsertRevolvedRefSurface`（旧式）与 `IFeatureManager.InsertRevolvedRefSurface`（本仓现路）。证据 `output/revolve-oldstyle-evidence.json`。`<br>· `★★★ **而根因是一组对照定下的：「无中心线」那组**不成**（树 0 增量）** —— ★ 而官方原话逐字是「by revolving a profile around a **centerline**」。
+       ⇒ ★★ **故：本仓此前对它的「不成」（轮 501，5 组全试过）真因是**前置缺中心线**，而**不是**架构问题** ✓
+       ★ 而它**修正了一个归因**：「新架构那侧不成」在**旋转曲面上不成立**。` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

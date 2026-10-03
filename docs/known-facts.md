@@ -1401,3 +1401,17 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而一个副产：★ **传空数组反而是目前最好的形态**（★ 回对象、且对象带名字）。
      ★ **按事实 53 停手**（这一处已 7 轮：521-528）。
      ★ **累计已排除的解释**：① 子特征（事实 407）· ② 未提交（同）· ③ 报错（同，`whats_wrong = 0`）· ④ `Bodies` 传体（本轮）。|真机：`tools/probe_cut_surface_real_bodies.py`；证据 `output/cut-surface-real-bodies-evidence.json`；对照事实 403 / 405 / 406 / 407 |
+| 410 | **★★★ 「旋转曲面不成」的真因是**前置缺中心线**（★ 而不是架构）—— 它被真机建成了** —— 2026-10-03（轮 529），B6/T601。
+     ★ 官方原话逐字：「Creates a **revolved reference surface** by revolving a profile around a **centerline**」。
+     ★ 而本仓先前对它的记录是「入口已核、真机未成」（轮 501，`RevType`×`angle` **5 组全试过**）—— ★ 而那 5 组**都没带中心线** ⚠
+     ★ 真机对照（`tools/probe_revolve_oldstyle.py`，走 `sw_guard`、零弹窗）：
+     ```
+     `IModelDoc2`（旧式） + 中心线      ⇒ **建成 `曲面-旋转1`**（类型 `RevolvRefSurf`） ✓
+     `IModelDoc2`（旧式） · **无中心线**  ⇒ **树 0 增量** ✗
+     `IFeatureManager`（本仓现路）+ 中心线 ⇒ **建成 `曲面-旋转1`** ✓
+     ```
+     ⇒ ★★ **故：１　真因是前置缺中心线；２　本仓的实现本来就对** （★ 只是前置没给全）。
+     ★★ **而它修正了一个归因**：「**新架构那侧不成**」在**旋转曲面上不成立** —— ★ 两条入口都成。
+     ★ 而它与事实 398 / 399 放在一起看：「旧式 vs 新架构」**不是分界线**（事实 399 已立），★ 而**前置是不是给全了」才是**。
+     ★★ **教训固化**：★ **官方原话里的每个名词都要落实** —— ★ 本例里就是那个 **centerline**；★ 而它就在那句话里。
+     ★ **落地**：`capabilities.yaml` 新增 **`surface_revolve`**（level = **`verified`**）—— ★ 而 limitations 里明写“**蓝图里必须有中心线**”与三项未查。|真机：`tools/probe_revolve_oldstyle.py`；证据 `output/revolve-oldstyle-evidence.json`；对照事实 398 / 399 |
