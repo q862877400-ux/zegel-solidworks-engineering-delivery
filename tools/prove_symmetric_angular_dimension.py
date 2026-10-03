@@ -145,6 +145,35 @@ def _one(sw, tag, do_select):
             ret = C.get_com_member(ext, "AddSymmetricDimension",
                                    8.32913738352659e-02, 0.112403597688285, 0.0)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
+            #: ★★ 2026-10-03（轮 586）**换判据**：
+            #:   ★ 上一轮两格都回 `CDispatch` ⇒ 那个判据**不能区分**。
+            #:   ★ 故本轮去读**返回对象自己的名字**（★ 真建成的话
+            #:   它应该有 `D1@草图1` 那种名字）。
+            probe = {}
+            if ret is not None:
+                for nm in ("Name", "GetName", "FullName", "GetTypeName2"):
+                    try:
+                        v = C.get_com_member(ret, nm)
+                        probe[nm] = str(v)[:60] if v is not None else "None"
+                    except Exception as exc:                              # noqa: BLE001
+                        probe[nm] = "%s: %s" % (type(exc).__name__, str(exc)[:48])
+                #: ★ 而它还应能回答“属于哪个草图”
+                for nm in ("GetSketch", "GetOwner", "GetFeature"):
+                    try:
+                        o = C.get_com_member(ret, nm)
+                        if o is not None:
+                            probe[nm] = type(o).__name__
+                    except Exception as exc:                              # noqa: BLE001
+                        probe[nm] = "%s: %s" % (type(exc).__name__, str(exc)[:40])
+            row["probe"] = probe
+            #: ★ 而**文档级**的尺寸计数（★ 上一轮没试这个入口）
+            doc_dims = {}
+            for nm in ("GetDimensionCount", "GetDimensionCount2"):
+                try:
+                    doc_dims[nm] = int(C.get_com_member(doc, nm))
+                except Exception as exc:                                  # noqa: BLE001
+                    doc_dims[nm] = "%s" % type(exc).__name__
+            row["doc_dims"] = doc_dims
         except Exception as exc:                                          # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after_dims = _dims(doc)

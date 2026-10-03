@@ -2345,3 +2345,28 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ★ 试 **文档级**的尺寸计数（`IModelDoc2` 上那个）或 **从特征树看 `DisplayDimension`**。
      ★★ **而这一条的教训值得单独记**：★ **当两栿都回同一个对象时，“回了对象”就不是判据** —— ★ 必须找**可分的量**（★ 与事实 436 同族）。
      ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；例子：`…\SWhelp\sldworksapi\Create_Full_Symmetrical_Angular_Dimension_Example_VB.htm`；对照事实 436 / 461 |
+| 463 | **★★★ 判据终于可分了：`AddSymmetricDimension` 回的那个 `CDispatch` **是个空壳****（★ 故它**没建成**） —— 2026-10-03（轮 586）。
+     ★ **事实 462 留的下一步就是“换判据”** ⇒ 本轮试了**两类新判据**：
+     ```
+     ★ ① **读返回对象自己的名字/主人**（★ 真建成的 `DisplayDimension`
+            应该有 `D1@草图1` 那种名字）；
+        ★ ② **文档级**的尺寸计数。
+     ```
+     ★ 真机（零弹窗）—— ★ **结果比较干脆**：
+     ```
+     ★ **两格的返回对象上、七个成员全不可达**：
+        Name · GetName · FullName · GetTypeName2 · GetSketch · GetOwner · GetFeature
+        ★ 全是 `AttributeError: <unknown>.X` ⚠
+     ★ 而 `IModelDoc2.GetDimensionCount` / `GetDimensionCount2`
+        ★ **两个名字都不存在**（`AttributeError`）⚠
+     ```
+     ⇒ ★★ **故两条**：
+       ① ★ **它回的不是真的 `DisplayDimension`**（★ 官方说该回它）—— ★ 而是**一个空壳 Dispatch**；
+       ② ★ **故它在这条路上没建成**。
+     ★★ **而关键区分**：★ 这一次**不是“我前置错”** —— ★ 因为：
+       ★ **选择已回 `True`**（`SelectByID2(Line1)=True` · `(Line3)=True`）；
+       ★ **前置链条照官方例子全做了**（★ `SKETCHSEGMENT` 按名选 + `swInputDimValOnCreate=10` 抑制对话框）。
+     ★ **按事实 53 收尾**（★ 已四轮）；★ 并记为**边界候选**（★ 而**不继续试参数**）。
+     ★★ **方法论：★ “回了对象”在两格相同时不是判据** —— ★ 而**去读那个对象自己的成员**，就能分出“**真对象**”与“**空壳**”** ✓
+       （★ 与事实 36 同族：名字对不上时，报的错**看不出真因**）。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；对照事实 36 / 53 / 461 / 462 |
