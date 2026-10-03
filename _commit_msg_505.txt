@@ -1,0 +1,32 @@
+feat(B6/T608): 直纹曲面 —— **arity 修对了**（`非选择性的参数` 消失、调用开始回对象）· 真机树仍未动
+
+★ 补 `specs/201-toolbar-gaps` 里一直空着的 **T608**（直纹曲面 `InsertRuledSurfaceFromEdge2`）。
+
+★ 官方三源（铁律 4）—— ★★ **而本轮在两处各逮到一件该记的事**：
+
+① **一处两源冲突**（★ 铁律 4 的活教材）：
+   · md 的**参数表**：`Type` ⇒ 0 = Tangent to Surface · 1 = Normal · 2 = Tapered to Vector ·
+     3 = Perpendicular to Vector · 4 = Sweep（★ 看着 0-based）
+   · **反射转储** `swRuledSurfaceType_e`：`TangentToSurface = 1` … `Sweep = 5`（★ 1-based，**整体差 1**）
+   ⇒ ★★ **按铁律 4 以出厂类型库为准** ⇒ 本包装**收 1..5**，并把**对照表写进 docstring**；
+   ★ 并加了一道守卫：传 0 时**直接拒绝**（★ 免得后人照 md 填）
+
+② ★★ **`**Signature**` 行一个字都别省** ⚠（★ 这是本轮最值钱的一条）：
+   · 我第一版只传了**前 7 个**参数 ⇒ 真机回 **`非选择性的参数`**（`DISP_E_PARAMNOTOPTIONAL`，
+     ★ 它的意思正是"某个参数没给"）
+   · 真因：**官方 md 的 `**Signature**` 行是 11 个** —— 我读的时候**只看了它前半**：
+     `InsertRuledSurfaceFromEdge2(Type, Length, FlipPullDir, FlipDir, TrimAndSew, Angle,
+      CoordInput, **X, Y, Z, BConnectSurface**)`
+   · 而**反射也是 11**（`Int32, Double, Boolean, Boolean, Boolean, Double, Boolean,
+     Double, Double, Double, Boolean`）⇒ ★ 两源一致，**是我读少了**
+   ⇒ ★ **定则：反射核 arity（快、无歧义）· md 核每个参数的名字与语义（两源分工）**
+
+★ 真机（`tools/prove_ruled_surface.py`，走 `sw_guard`、`sw_alive: true`、零弹窗）：
+  · 补全 11 参之后 ⇒ ★★ **`非选择性的参数` 消失了**，且 `type=1` 那组 **`returned_none=False`
+    （回了对象）** —— ★ **那是实打实的进展** ✓
+  · ⚠ 而★ **特征树仍没动**（`new = []`）；★ 负例（不选边）也回对象 ⇒ ★ 说明**选边**不是这个错的原因
+  · ⚠ 按**事实 53**（这一处已 3 次）**停手** —— ★ 下一步该换的是**边的选法**
+    （我选的是 `GetEdges()[0]` —— ★ 而"从边长出曲面"该选**一条真的在面上的边**）
+
+★ ⚠ **按 A4 不登记成工具、不写 `verified`** —— 不假装做到。
+★ 语法门禁 0 处 · `git diff --numstat` = **added=113 · deleted=0**（★ 纯新增）。

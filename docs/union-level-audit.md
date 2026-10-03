@@ -87,15 +87,16 @@
 | 77 | `surface_features` | `verified` | `mixed` | ✓ | — |
 | 78 | `surface_modeling` | `stitched` | `mixed` | — | — |
 | 79 | `surface_ref_ops` | `verified` | `original` | ✓ | — |
-| 80 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
-| 81 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
-| 82 | `topology_optimization` | `verified` | `original` | ✓ | — |
-| 83 | `topology_readback` | `stitched` | `original` | ✓ | — |
-| 84 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
-| 85 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
-| 86 | `weldments` | `verified` | `upstream` | ✓ | — |
+| 80 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
+| 81 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
+| 82 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
+| 83 | `topology_optimization` | `verified` | `original` | ✓ | — |
+| 84 | `topology_readback` | `stitched` | `original` | ✓ | — |
+| 85 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
+| 86 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
+| 87 | `weldments` | `verified` | `upstream` | ✓ | — |
 
-**合计 86 条**。
+**合计 87 条**。
 
 ## 二、`level` 分布
 
@@ -104,7 +105,7 @@
 | `indexed` | 0 |
 | `not_implemented` | 1 |
 | `source_verified` | 0 |
-| `stitched` | 11 |
+| `stitched` | 12 |
 | `verified` | 74 |
 
 ## 三、`source` 分布
@@ -113,7 +114,7 @@
 |---|---|
 | `merged` | 0 |
 | `mixed` | 11 |
-| `original` | 56 |
+| `original` | 57 |
 | `undetermined` | 1 |
 | `upstream` | 18 |
 
@@ -124,7 +125,7 @@
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
 | `not_implemented` | 0 | 0 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
-| `stitched` | 0 | 3 | 8 | 0 | 0 |
+| `stitched` | 0 | 3 | 9 | 0 | 0 |
 | `verified` | 0 | 8 | 48 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，

@@ -541,3 +541,116 @@ def _empty_callout():
     """★ 空 `Callout`（`VARIANT(VT_DISPATCH, None)`）—— ★ 事实 33：传 `None` 会报"类型不匹配"。"""
     from sw_connect import create_empty_dispatch_variant
     return create_empty_dispatch_variant()
+
+
+# ── B6 / T608：**直纹曲面** ─────────────────────────────────────────────────────
+# ★★★★ 2026-10-03（轮 505）★ 补 `specs/201-toolbar-gaps` 的 **T608**。
+#
+# 官方三源（★ 铁律 4）—— ★★ **而本轮逮到一处两源冲突，正是铁律 4 的活教材** ⚠：
+#   · `C:\swapi\types\IFeatureManager\InsertRuledSurfaceFromEdge2.md` 的**参数表**写：
+#     `Type` ⇒ **0 = Tangent to Surface · 1 = Normal · 2 = Tapered to Vector ·
+#     3 = Perpendicular to Vector · 4 = Sweep**（★ 看起来是 **0-based**）
+#   · 而**反射转储** `_raw/enum_values_sldworks.txt` 的 `swRuledSurfaceType_e` 写：
+#     `swRuledSurfaceType_TangentToSurface = **1**` · `NormalToSurface = **2**` ·
+#     `TaperedToVector = **3**` · `PerpendicularToVector = **4**` · `Sweep = **5**`
+#     （★ **1-based** ⇒ ★ 与上面**整体差 1**）⚠
+#   · ★ `IModelDoc2.InsertRuledSurfaceFromEdge` ⇒ **Obsolete**，继任者是 `IFeatureManager` 的 `…2`
+#
+#   ⇒ ★★ **铁律 4 说：冲突以出厂类型库为准** ⇒ ★ 本包装**收枚举值 1..5**，
+#     ★ 并把**这张对照表**写进 docstring（★ 免得后人在同一处再撞一次）✓
+#
+# 官方其余参数（逐字）：
+#   · `Length` ⇒ "Distance at which to create the surface; valid for **Tangent to Surface,
+#     Tapered to Vector, Perpendicular to Vector, and Sweep** types only"
+#   · `FlipPullDir` ⇒ valid for **Normal to Surface / Tapered to Vector** only
+#   · `FlipDir` ⇒ valid for **Perpendicular to Vector** only
+#   · `TrimAndSew` ⇒ "True to trim and knit the surface"
+#   · `Angle` ⇒ "Angle for **Tapered to Vector** type only"
+#   · `CoordInput` ⇒ "True to enable coordinate input; for **Sweep** type only"
+#   ⇒ ★★ **前置**：★ 官方第一句是「from the **selected edge**」⇒ ★ **要先选一条边** ✓
+#
+# ★ 判据（★ 规则 6）：★ **特征树多了新特征**。
+
+
+def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: float = 10.0,
+                                flip_pull_dir: bool = False, flip_dir: bool = False,
+                                trim_and_sew: bool = False, angle_deg: float = 0.0,
+                                coord_input: bool = False) -> dict:
+    """★ **直纹曲面**（`IFeatureManager.InsertRuledSurfaceFromEdge2`）。
+
+    ★★ `surface_type` 取值 —— ★ **以出厂类型库为准**（★ 铁律 4；★ 而 md 的参数表与它差 1）：
+    ```
+    1 = TangentToSurface          0 = Tangent to Surface      ← md 那一栏**别用**
+    2 = NormalToSurface           1 = Normal to Surface          （★ 整体 0-based，差 1）
+    3 = TaperedToVector           2 = Tapered to Vector
+    4 = PerpendicularToVector     3 = Perpendicular to Vector
+    5 = Sweep                     4 = Sweep
+    ```
+
+    ★ 前置：★ 官方第一句「Inserts a ruled surface from the **selected edge**」
+      ⇒ ★ **要先选中一条边**（★ 而边**没有名字** ⇒ ★ 按对象选 —— **事实 32**）。
+
+    ★ 参数的有效性**按类型而变**（★ 官方逐字给了三种限制，★ 本包装**照实转录**而**不替调用方判断**）：
+      · `length_mm` 只对 **1 / 3 / 4 / 5** 型有效
+      · `flip_pull_dir` 只对 **2 / 3** 型有效
+      · `flip_dir` 只对 **4** 型有效
+      · `angle_deg` 只对 **3** 型有效
+      · `coord_input` 只对 **5** 型有效
+
+    ★ 单位：★ `length_mm` / `angle_deg` 按**毫米 / 度**收，★ 在边界各换算一次（规则 2）。
+    ★ 判据（规则 6）：★ **特征树多了新特征**。
+    """
+    if model is None:
+        return {"ok": False, "error": "model 为 None"}
+    try:
+        t = int(surface_type)
+    except (TypeError, ValueError):
+        return {"ok": False, "stage": "validate", "error": "surface_type 必须是整数（1..5）"}
+    if not (1 <= t <= 5):
+        return {"ok": False, "stage": "validate",
+                "error": "surface_type 必须 **1..5**（★ 出厂类型库口径：1=TangentToSurface … 5=Sweep）；"
+                         "★ 而官方 md 的参数表是 0-based ⇒ ★ 别照它填" }
+    try:
+        ln = float(length_mm)
+    except (TypeError, ValueError) as exc:
+        return {"ok": False, "error": "length_mm 必须是数字：%s" % str(exc)[:100]}
+    before = feature_names(model)
+    try:
+        #: ★ 回读选中数（★ 事实 8：不信返回值，只信回读计数）
+        try:
+            sel = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                     "GetSelectedObjectCount2", -1) or 0)
+        except Exception:                                                 # noqa: BLE001
+            sel = -1
+        fm = get_com_member(model, "FeatureManager")
+        #: ★ 调用序照官方签名：Type ⇒ Length(米) ⇒ FlipPullDir ⇒ FlipDir ⇒ TrimAndSew
+        #:   ⇒ Angle(弧度) ⇒ CoordInput ⇒ **X ⇒ Y ⇒ Z ⇒ BConnectSurface**
+        #:
+        #: ★★★★ 2026-10-03（轮 505）**真机第一次栽在这里 —— ★ 而它是本仓的一条可复用教训** ⚠
+        #:   我第一版只传了**前 7 个** ⇒ 真机回 **`非选择性的参数`**（`DISP_E_PARAMNOTOPTIONAL`，
+        #:   ★ 它的意思就是"某个参数没给"）⚠
+        #:   ★★ 真因：**官方 md 的 `**Signature**` 行是 11 个**（★ 我读的时候只看了它前半），
+        #:     而**反射也是 11**：
+        #:     ```
+        #:     Feature InsertRuledSurfaceFromEdge2(Int32, Double, Boolean, Boolean, Boolean, Double,
+        #:                                         Boolean, Double, Double, Double, Boolean)
+        #:     ```
+        #:   ⇒ ★★ **教训：`**Signature**` 行一个字都别省** ——
+        #:     ★ **反射核 arity**（★ 快、无歧义）、★ **md 核每个参数的名字与语义**（★ 两源分工）✓
+        feat = get_com_member(fm, "InsertRuledSurfaceFromEdge2",
+                              t, ln * 0.001, bool(flip_pull_dir), bool(flip_dir),
+                              bool(trim_and_sew),
+                              float(angle_deg) * 3.141592653589793 / 180.0,
+                              bool(coord_input),
+                              0.0, 0.0, 0.0,          # ★ X / Y / Z（★ 只在 CoordInput 为真时才用）
+                              False)                  # ★ BConnectSurface
+    except Exception as exc:                                              # noqa: BLE001
+        return {"ok": False, "stage": "call", "surface_type": t,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    after = feature_names(model)
+    new = [n for n in after if n not in before]
+    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
+            "tree_before": len(before), "tree_after": len(after),
+            "surface_type": t, "length_mm": ln, "selected": sel, "returned_none": feat is None,
+            "★": "判据 = **特征树多了新特征**（规则 6）；"
+                 "★ `surface_type` 用**出厂类型库**口径 1..5（★ md 参数表是 0-based，差 1 —— 铁律 4）"}
