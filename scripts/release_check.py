@@ -681,9 +681,37 @@ def _run_member_name_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（把「工作区根遮蔽依赖包」接进发布前检查）+ Python 标准库 `subprocess`
-# 文件:   `scripts/check_workspace_shadowing.py`（本门禁的实现）
-# 定位:   新增 `_run_workspace_shadowing_gate`：**硬门禁**。
+# 仓库:   本项目自身（把「**别去调已证到不了的成员**」接进发布前检查）
+# 文件:   `scripts/check_unreachable_members.py`（本门禁的实现）
+# 定位:   新增 `_run_unreachable_members_gate`：**硬门禁**。
+#   ★ 2026-10-03（轮 579）★ 它与既有两道**分工不同**（★ 三道互补）：
+#     · `check_member_names.py`              —— 判「名字在**某个**接口里存在」
+#     · `check_interface_member_ownership.py` —— 判「成员属于**这个**接口」
+#     · **本道**                              —— 判「这个名字在本机**调不调得动**」
+#       ★ 依据：一份**每条带真机证据**的 deny 名单（事实 456 · 428 等）
+#   ★★ **为什么接进硬门禁**（★ 事实 40 的教训）：★ **一个存在但没人用的守卫，
+#     与没有守卫等价 —— 且更糟**（让人以为防住了）。
+#   ★ 而它**第一次跑就逼出了自己的契约**：命中了 3 处，★ 而那 3 处是**事实 428 的取证代码**
+#     ⇒ ★ 故补了**带理由的取证豁免**（`ALLOWED`），★ **而新增的命中会被拦**。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def _run_unreachable_members_gate() -> dict[str, object]:
+    """跑可达性门禁（scripts/check_unreachable_members.py）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_unreachable_members.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "reason": f"检查**无法启动**（超时/OSError）: {exc}"}
+    return {
+        "status": "pass" if proc.returncode == 0 else "fail",
+        "output": (proc.stdout or "").strip()[-1500:],
+    }
 # ⚠⚠ **为什么现在才接**（2026-10-01 轮 70）：该门禁**早就存在**，却**不在硬门禁列表里**
 #   ⇒ 它**红着也没人知道**。实测时它报：
 #   ```
@@ -959,6 +987,16 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "成员名门禁未通过（代码里用了官方不存在的成员名）：\n"
             + str(member_names.get("output", "")))
+    # ⚑ **可达性门禁**（硬门禁，2026-10-03 轮 579 接进）：前三道「名字」门禁判的是
+    #   「**存在 / 属于哪个接口**」，而**本道判「在本机调不调得动」** ——
+    #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
+    #   事实 428 的 `InsertWeldmentCutList2` …）。
+    #   ★ 接进来的理由（事实 40）：**存在但没人用的守卫，与没有守卫等价、且更糟**。
+    unreachable = _run_unreachable_members_gate()
+    if unreachable.get("status") == "fail":
+        raise AssertionError(
+            "可达性门禁未通过（代码里调了**已证到不了**的成员）：\n"
+            + str(unreachable.get("output", "")))
     # ⚑ **工作区遮蔽门禁**（硬门禁）：工作区根若有与 `server.py` 依赖包同名的 `.py`/目录，
     #   以该工作区为 CWD 的 Python 进程就会 `import` 到**那个本地文件**而不是真包
     #   （实测：`D:\AI\SW\mcp.py` 遮蔽 `mcp` ⇒ `No module named 'mcp.server'`）。
