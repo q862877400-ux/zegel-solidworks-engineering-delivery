@@ -1,0 +1,274 @@
+====================================================================================================
+ID: sketch_edit_ops   LEVEL: stitched
+LABEL: 草图编辑（倒角 / 镜像 / 转换实体引用）
+EVIDENCE FIELD: [
+ "python tools/verify_sketch_edit_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画两条相接直线 → 选中两条 → 调 `create_sketch_chamfer`，**8/10** —— 选中前置成立，但倒角报错）",
+ "pytest tests/test_sw_sketch_edit_contract.py（**16 条契约测试，无 COM**）"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建；依据为出厂类型库反射与官方结构化文档（见 `scripts/sw_sketch_edit.py` 的来源块）。补的是 `docs/union-gap-triage.md`「真缺」档里的 `sketch_chamfer` 与 `sketch_mirror` 两条。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★★ **2026-10-01（轮 164）更正轮 122 的定性**：轮 122 看到 `type=2` 报`com_error 0x80010105` 就判它「**架构性限制、到不了**」并停手 —— **那是误判**。★ 轮 164 用 `tools/probe_chamfer_forms.py` **逐类型试 + 回读线段数**（`tools/probe_chamfer_forms.py`）：`type=0`（默认）/ `type=1` ⇒ 段数 **2 → 2**（没变）且返回 `None`；**`type=2`（`distance_equal`）⇒ 段数 `2 → 3`（倒角真的建出来了）**，只是**返回对象拿不到**（`com_error 0x80010105`）。⇒ ★★ 真正的限制是「**拿不到返回对象**」，**不是**「做不了倒角」。★ 根因：轮 122 **只看异常、没回读副作用** —— 与事实 94 那一族（**不信返回值，回读状态**）同源。⇒ ★ 已把倒角拆成独立条目 `sketch_chamfer`（`level: verified`，真机 **10/10**）；本条目**仍为 `stitched`**：`sketch_mirror` 与 `convert_entities` **本轮未单独取证**。",
+ "★★ **2026-10-01（轮 122）真机实测：本能力**三条里只有前置能成立**：",
+ "　 ✅ **「同时选中两条草图实体」这个前置能成立** —— 造两条相接直线后 选区计数 = **2**（用 `sw_selection_spec.select_object` 带 `append`）。",
+ "　 ❌ **`create_sketch_chamfer` 到不了** —— 选中 2 条后调 `CreateChamfer` 报 `pywintypes.com_error: (-2147417851, '服务器出现意外情况')`。★ `0x80010105` **正是已知事实 47 / 28 那个错误码** ⇒ 属「pywintypes 迟到绑定到不了需要真实指针的接口」这一**架构性限制**，**不是参数没调对**。⚠ 按**事实 53** 停手。",
+ "　 ⚠ `convert_entities` / `sketch_mirror` **未实测**（前者要选中的边/环/面，后者要中心线 mark=2 的选中标记）—— **不得当成「验过了」**。",
+ "⚠ **无本机运行证据**（等级 `stitched`，不得标 `verified`）：签名经两源互核，但本机从未做过草图倒角/镜像。",
+ "★★ **枚举两源冲突，按铁律 4 取出厂反射**：`swSketchChamfer_DistanceDistance` 在 `C:\\swapi\\enums\\swSketchChamferType_e.md` 里写 **-1**、在出厂反射里写 **1**。本模块取 **1**。★ 这是铁律 4「冲突以出厂类型库为准」的**活例**。",
+ "倒角走**非废弃**入口：官方明写 `IModelDoc2.SketchChamfer` 是 `Obsolete`，被 `ISketchManager::CreateChamfer` 取代 ⇒ 本模块用后继。",
+ "⚠ **前置条件**（两处都要求「先选中」，本模块**不代选**）：倒角需选中**两条**草图实体；镜像需按官方标记选中（**线段 mark=1** / **中心线 mark=2**）—— 标记是选中时定的，不是传参定的（官方签名 0 参）。",
+ "⚠ `CreateChamfer` 的第三参 `AngleORdist` **单位随类型变**（距离-距离=第二距离 / 距离-角度=角度 / 距离-相等=忽略），**官方未写单位** ⇒ 本模块**不做换算**、按原样传。",
+ "⚑ 2026-10-01（轮 115）**扩了一条**：`convert_entities` —— 走 `ISketchManager.SketchUseEdge3(Boolean Chain, Boolean InnerLoops)`（**当前入口**；官方明写 `IModelDoc2.SketchUseEdge2` 是 Obsolete）。⚠ 官方写明它投影的是「**selected** edges/loops/faces/curves/external contours」⇒ 调用前必须**先选中**并**进入草图**（本模块不代选）。⚠ 另有零参的 `ISketchManager.ConvertEntities()`（未废弃）也能用，本模块未采用 —— 选 `SketchUseEdge3` 是因为它**两个参数都有官方说明**，语义更明确。",
+ "轮 281 填实（空壳）：sw_sketch_edit 的 sketch_mirror 与 convert_entities。证据 tools/verify_sketch_edit_smoke.py（真机）"
+]
+====================================================================================================
+ID: sketch_query   LEVEL: verified
+LABEL: 草图读回（ISketch 按类型取几何）
+EVIDENCE FIELD: [
+ "python 真机（轮 399）★ **PASS** —— 24h 计划 v2 段 3：`solidworks_current_sketch_name`（读当前活动草图名）。真机（走 `sw_guard`）：草图打开时回 **「草图1」**（**真名**，不是 English fallback）；草图**关闭后** + 自定义回退值 ⇒ 回**那个回退值**（★ 验证的是**已文档化的局限**：★ 回退值 ≠ 真名 ⇒ 别拿它去按名取草图）。证据 output/part-read-dimension-evidence.json（`verdict: pass` 4/4）。★ 同轮分诊补了**第四/五层证据**：`*_report` 包装已暴露⇒不是缺口（此前把 `sw_selection_spec` 的 2 条误判为缺口）；**空存根**（`pass`-only）⇒不做。",
+ "python tools/verify_sketch_getters_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画 1 条线 + 1 段弧 → 逐个调取法 → 退草图 → 关件不保存，**17/17 通过**，证据落 output/sketch-getters-smoke-evidence.json）",
+ "pytest tests/test_sw_sketch_contract.py（**12 条契约测试，无 COM**）",
+ "python tools/probe_sketch_getter_shapes.py + probe_spline_creation.py + probe_spline_redraw.py（**真机**，SW 2026 SP4.1 / 34.4.1）：**按类型取法全是数值数组** （line/arc/ellipse = **12 / 16 / 22** 个 `float` 每实体，画 1/2 个 ⇒ 12/24 · 16/32 · 22/44）；★★ 并查出 **`sketch_spline` 是静默空操作** —— `CreateSpline2` 返回 `None`、段数 **0**，**重绘后仍是 0**（排除了官方 Remark 的「必须重绘」解释）⇒ 已改成**失败即抛**",
+ "python tools/probe_slot_and_point_shapes.py（**真机**，SW 2026 SP4.1 / 34.4.1）：★ **推翻轮 141 的一概而论** —— `get_sketch_slots` 画 1/2 个 ⇒ **1/2** 个 `CDispatch`；`get_sketch_points` 画 1/2 条直线 ⇒ **2/4** 个（**每条线两个端点**）⇒ **这两条返回对象列表**，而 `get_lines`/`get_arcs`/`get_ellipses` 返回数值数组",
+ "python tools/capture_sketch_evidence.py（**真机**，2026-10-01 轮 222 / 砌墙 W1：新零件 → 画 1 条线 + 1 个圆 → **退草图** → 按名取草图对象 → 4 个读数 + 2 个负例，**verdict: pass**，证据落 output/sketch-evidence.json）—— ★ 这一步是**挂成 MCP 工具之后**的验证：走的是工具真实路径（import tool_specs_batch18._sketch_args），不是只调底层函数。★ 它当场抓到一个只有真机能暴露的 bug：草图关闭时 sw_part.current_sketch_name 回**英文 fallback**「Sketch1」，而中文 UI 下真名是「草图1」⇒ 新加 sw_sketch.resolve_sketch （中英文候选名 → 特征树兜底 → 抛错）修掉。"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建；依据为出厂类型库反射的 `ISketch` 段与官方结构化文档（见 `scripts/sw_sketch.py` 的来源块）。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **2026-10-01（轮 141）查出：`get_*` 系列按类型取法全部返回「数值数组」而不是「对象列表」** —— 实测每个实体占 **line 12 / arc 16 / ellipse 22** 个 `float`，元素类型是 `float`（画 1/2 个 ⇒ 12/24 · 16/32 · 22/44）⇒ ★ **轮 140 在 `get_lines` 上发现的是通例，不是孤例**。⚠ 官方文档**没写**返回结构；⚠ 既有冒烟的判据只有「非空」⇒ 这个语义长期没被写下。⇒ 已把三个取法的 docstring 写明形状 + 契约测试 3 条钉住。 ⚠⚠ **2026-10-01（轮 142）更正**：轮 141 曾写「`get_*` 系列**全都**返回数值数组」——**那是错的**。实测（`tools/probe_slot_and_point_shapes.py`，真机 SW 2026 SP4.1）：① 返回**数值数组**的（**曲线类**）：`get_lines` **12** · `get_arcs` **16** · `get_ellipses` **22**；② 返回**对象列表**的（**点/实体类**）：`get_sketch_slots`（**1**/个，元素 `CDispatch`）·`get_sketch_points`（**2**/线 —— 一条直线的两个端点）。⇒ ★ **两种形状都有**，不能一概而论。★ 规律**候选**（⚠ n=5，**当假设不当定则**）：**曲线类 ⇒ 数值数组；点/实体类 ⇒ 对象列表**。",
+ "⚑ 2026-10-01（轮 117）**新建条目并直接标 `verified`** —— ★ 起因是**发现覆盖缺口**：`sw_sketch.py`（草图读回）此前**没有能力条目**（`sketch_edit_ops` 只管编辑）⇒ A1「每域都有来源」在这一处其实**是空的**。",
+ "⚑ 真机证据：画 **1 条线 + 1 段弧** ⇒ `get_sketch_segments` 返回 **2**（线+弧，**交叉验证**）、`get_lines` 返回 **12** 个浮点、`get_arcs` 返回 **16**、`get_sketch_points` 返回 **5**、`get_ellipses`/`get_parabolas`/`get_user_points` 各 **0**（画的就是这些，合理）。⚠ **收尾无残留模态框**，临时件已关且未保存。",
+ "★ **6 个取法在轮 111（`030`）刚从废弃入口换到后继** —— 本冒烟正是为**验那一次替换**而做的：`GetLines2(swCrossHatchFilter_e)`（**唯一带参的后继**）/ `GetArcs2` / `GetEllipses3` / `GetParabolas2` / `GetSketchPoints2` / `GetUserPoints2` **全部真机可调**。",
+ "⚠ **只证「没抛异常 + 元素数合理」**，**不证元素内容正确** —— 例如返回的浮点数组里坐标的排列顺序**未核**（官方 Remarks 说明过顺序，但本模块只做 `as_sequence` 转换）。",
+ "⚠ 只测了**线 + 弧**两种几何；**椭圆 / 抛物线 / 样条 / 多段线 / 用户点**的真机取法**未测**（本次它们都返回 0 —— 因为没画）。",
+ "⚠ `collect_sketch_evidence` / 变换类（`get_model_to_sketch_transform` 等）**未纳入本次冒烟**。",
+ "`as_sequence` 只保证**拿到元素**，**不保证顺序**（官方未定义 SAFEARRAY 的顺序保证）。",
+ "★ 2026-10-01 轮 222（挂成工具时）补记：**草图已关闭**时 `IModelDoc2.GetActiveSketch2` 与 `ISketchManager.ActiveSketch` **都返回 None** （真机探针 tools/probe_sketch_object_routes.py）⇒ 取草图对象**只能按名取**；而按名取要先解决**名字随 UI 语言变**的问题（中文 UI 是「草图1」）⇒ 工具层统一走 `sw_sketch.resolve_sketch`。"
+]
+====================================================================================================
+ID: sketch_chamfer   LEVEL: verified
+LABEL: 草图倒角（CreateChamfer）
+EVIDENCE FIELD: [
+ "python tools/verify_sketch_edit_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 两条相接直线 → 选中两条（选区计数 **2**）→ `create_sketch_chamfer(chamfer_type=2, distance_mm=5)` ⇒ **线段数 2 → 3**）—— **10/10** `verdict: pass`",
+ "python tools/probe_chamfer_forms.py（**真机**，逐类型试：type0/type1 段数不变 · **type2 段数 2 → 3**）"
+]
+SOURCE_EVIDENCE FIELD: "scripts/sw_sketch_edit.py 的 create_sketch_chamfer（照官方 `ISketchManager.CreateChamfer(Int32, Double, Double)` 签名自建）"
+SOURCE: "original"
+LIMITATIONS: [
+ "⚠ **只有 `swSketchChamfer_DistanceEqual`(2) 能成** —— `type=0`（默认 `distance_angle`）/ `type=1`（`distance_distance`）实测**都不做事**（段数不变、返回 `None`）",
+ "⚠ **拿不到返回对象**：`type=2` 建成后，取 `SketchSegment` 返回值会抛 `com_error 0x80010105`（pywin32 迟到绑定）⇒ `create_sketch_chamfer` 改为**回读线段数**判定成功，建成时返回 `None`",
+ "官方前置**必须选中两条草图实体**；⚠ 判「选上没有」一律**回读**选区计数（事实 94）",
+ "⚠ 只证「线段数 2 → 3」（**倒角建出来了**），**不证倒角距离 5mm 的数值对不对**",
+ "轮 281 填实（空壳）：sw_sketch_edit.create_sketch_chamfer。★ 注意与特征倒角(solidworks_chamfer)不是一回事；★ 而事实 47 的后端限制说的是**特征**倒角，草图倒角另算。证据 tools/verify_sketch_edit_smoke.py（真机）"
+]
+====================================================================================================
+ID: sketch_build   LEVEL: verified
+LABEL: 建草图与画基本几何（线 / 圆 / 矩形）
+EVIDENCE FIELD: [
+ "python 真机（轮 399）★ **PASS** —— 24h 计划 v2 段 3：`solidworks_auto_dimension_sketch`（按官方 `ISketch.AutoDimension2` 给当前草图建**真实模型尺寸**）。真机：有活动草图时 ⇒ **status=pass · status_code=0 · selected=2**；负例（**没有活动草图**）⇒ **status=blocked · error_code=SKETCH_NOT_ACTIVE**。证据 output/part-read-dimension-evidence.json。★ 它建的是**真实的 `DisplayDimension`**（★ 可被工程图导入复核），不是草图里画几条线。",
+ "python 真机（轮 398）★ **PASS** —— 24h 计划 v2 段 2「草图图元」5 个工具（`mcp-server/tool_specs_batch54.py`）：`solidworks_sketch_add_arc` · `solidworks_sketch_add_ellipse` · `solidworks_sketch_add_polygon` · `solidworks_sketch_add_slot` · `solidworks_sketch_add_centerline`。真机（走 `sw_guard`）判据是**段数**（独立于返回值 —— `CreateArc` 那些回 COM 对象而“回对象”≠“图形在”）：arc [0→1] · ellipse [0→1] · polygon [0→7] · slot [0→5] · centerline [0→1]；负例（**不存在的草图名**）⇒ **抛 RuntimeError**。证据 output/sketch-primitives-evidence.json。★★ 同轮抓到两个真 bug：① `sw_sketch.resolve_sketch` 对**非空但找不到**的名字**静默回退**到「特征树里最后一个草图」（会让调用方在**另一个草图**上读/写）—— 已修（兜底只对空名字成立）；② 本批 5 条 ToolSpec **漏了 `inject=\\\"model\\\"`**（会让工具拿不到文档对象、一调就 TypeError）—— **契约测试当场抓到**，已补。",
+ "python tools/capture_sketch_build_evidence.py（真机，2026-10-01 轮 229 / 砌墙 W4：新建零件 → start（前视）→ 画线 → 画圆 → 画矩形 → end，★ **并用 W1 的只读工具回读断言**：线后 count_lines=1 · 圆后 count_arcs=1 · 矩形后 count_lines=5（1 线 + 4 边）· **关掉草图后仍读到 5**；另记两条：不 start 就画线 = 静默 · 坏基准面名 = ValueError。verdict: pass，证据落 output/sketch-build-evidence.json）",
+ "python tools/capture_sketch_evidence.py（W1，只读批；与本批构成**读写配对**）",
+ "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 72 / 协议层 117）"
+]
+SOURCE_EVIDENCE FIELD: "scripts/sw_part.py 的 start_sketch / end_sketch / sketch_line / sketch_circle / sketch_corner_rectangle（照官方 ISketchManager.Create* 一族）"
+SOURCE: "original"
+LIMITATIONS: [
+ "⚠ 2026-10-03（轮 398）★ `sketch_spline` **不做**（未挂成工具）：依据是轮 141 真机结论 —— `CreateSpline2` 返回 None、重绘后仍 0 段、旧版 `CreateSpline` 在迟到绑定里不存在；而后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ 事实 47/68 架构限制。★ 另：`polygon` 实测给 **7** 段、`slot` 给 **5** 段（★ 比几何直觉多，多出的那几段**未查**）；边数 < 3 时实测仍会建出 4 段（★ 官方下限未查到，不臆断）。",
+ "★ 本批只覆盖 5 个：进入/退出草图 + 线/圆/矩形（对角两点）。多边形 / 槽 / 弧 / 椭圆 / 样条 / 自动尺寸**未挂**（能力层已有，留后续批次）",
+ "★★ **已知静默行为**：不先调用 `solidworks_sketch_start` 就画几何 ⇒ **不抛错（静默）** ——真机实测（output/sketch-build-evidence.json 的 `record_draw_without_start`）。⇒ 调用方必须先 start；★ 目前**没有机器守卫**，靠工具说明约束",
+ "★ 画几何**必须给草图平面内的坐标**（规则 3 的豁免路径）⇒ 参数用语义名 + `_mm`",
+ "★ 只在**前视基准面**上真机验证过；上视/右视基准面与中文面名**未逐项验证**"
+]
+====================================================================================================
+ID: sketch_primitives_b1   LEVEL: verified
+LABEL: 草图图元 B1 批（3 点矩形 / 平行四边形 / 切线弧 / 3 点圆弧 / 部分椭圆 / 抛物线 / 圆锥 / 周边圆）
+EVIDENCE FIELD: [
+ "output/b1-sketch-primitives-evidence.json"
+]
+SOURCE_EVIDENCE FIELD: "★ **本仓自建**（不是从外部项目搬来的）。依据：9 个成员的**精确签名**逐条取自本机官方离线源 `C:\\swapi\\types\\ISketchManager\\<member>.md`（铁律 4 的第一源）；包装在 `scripts/sw_sketch_primitives.py`（六字段来源块里逐条列了签名）；真机证据 `output/b1-sketch-primitives-evidence.json`（**9/9 pass**，判据是草图实体段数增量）。★ 与四家外部项目无交集（它们那几个草图图元我们没搬）。"
+SOURCE: "original"
+LIMITATIONS: [
+ "2026-10-03（轮 464）新增：9 个图元全部**真机建成**（★ 判据 = 草图实体段数增量，不是返回值）。★ 签名逐条取自 `C:\\swapi\\types\\ISketchManager\\<member>.md`（铁律 4）。⚠ **未核实**：`CreateTangentArc` 的 `ArcType` 取值表在两套离线源里都没查到 ⇒ 默认 1，标注为未核实（铁律 5）。⚠ `PerimeterCircle` 的官方签名**没有 Z**（6 个 double）—— 与同族不同，已照抄。⚠ 本批都需“当前在草图编辑态”的前置（先 `sketch_start`）。"
+]
+====================================================================================================
+ID: sketch_edit_ops_b3   LEVEL: verified
+LABEL: 草图编辑 B3 批（剪裁 / 延伸 / 等距 / 草图圆角 / 线性与圆周草图阵列）
+EVIDENCE FIELD: [
+ "output/b3-sketch-edit-evidence.json"
+]
+SOURCE_EVIDENCE FIELD: "★ 本仓自建（按官方签名）。签名与枚举逐条取自 `C:\\swapi\\types\\ISketchManager\\`（6 个成员）与 `C:\\swapi\\enums\\`（swSketchTrimChoice_e / swSkOffsetCapEndType_e / swSkOffsetMakeConstructionType_e）；真机证据 output/b3-sketch-edit-evidence.json（6/7，判据**按操作分**）。"
+SOURCE: "original"
+LIMITATIONS: [
+ "2026-10-03（轮 465）：6/7 真机建成。★ 判据**按操作分**：剪裁会让段数**下降**（2→1）、延伸**不改段数**而改几何（35→60）⇒ 一个判据套不住 7 个操作。",
+ "⚠ **交叉曲线未验成**：官方前置是 3D 草图 + 两个相交面，而 `Insert3DSketch` 在本机回 `None` ⇒ 包装留在模块里但**不挂工具**。",
+ "⚠ `SketchTrim` 的**每个选项对“该选几条段”有硬要求**（closest=1、corner=2），选错官方会失败 ⇒ 本包装如实抛，不静默。"
+]
+====================================================================================================
+ID: sketch_modify_ops   LEVEL: verified
+LABEL: 草图编辑·移动族（移动 / 旋转 / 缩放 / 伸展 / 镜像）
+EVIDENCE FIELD: [
+ "★ 2026-10-03（轮 472）**真机 5/5**（走 `tools/sw_guard.py`，全程 `sw_alive: true`、**零弹窗**）：`python tools/sw_guard.py --timeout 500 -- python tools/prove_b4_sketch_modify.py`。证据 output/b4-sketch-modify-evidence.json。★★ **判据按操作分**（★ 本批最要紧的经验）：改**坐标系**的（移动/旋转/镜像）看 `Sketch.ModelToSketchTransform.ArrayData`；改**几何**的（缩放/伸展）看草图线段端点的 bbox。★ 具体数值：移动 5mm ⇒ 平移 [0,0,0]→**[-0.005,-0.005,0]**（严格对应）；旋转 30° ⇒ 3×3 首行 **[0.866025,-0.500001,0]**（cos30°/sin30°）；镜像 ⇒ 首行 **[1,0,0]→[-1,0,0]**；缩放 1.5 ⇒ bbox ±20/±10→**±30/±15**（×1.5）。",
+ "★ 2026-10-03（轮 472）**走 MCP 契约的真机调用 5/5**（★ 不手调内部实现，而按 `ToolSpec` 声明的 `inject` + `params` 装配）：`python tools/sw_guard.py --timeout 600 -- python tools/prove_tools_by_contract.py solidworks_sketch_`。证据 output/tools-by-contract-evidence.json。",
+ "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**（★ 每个声明都覆盖了包装的必需对象形参）；五统一门禁（`ToolSpec` 声明时）通过；`tests/test_tool_registry.py` **20 passed**。",
+ "★ 三源互证（swapi + CHM + 出厂反射，**成员名三方一致**）：`IModelDoc2.SketchModify{Translate,Rotate,Scale,Flip}`、`IModelDocExtension.Stretch`。★ **不用 `Tools*` 族**（`ToolsSketchTranslate()` 零参数、交互式弹框，与无人值守红线冲突）。"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建；依据为**官方三源**（`C:\\swapi\\types\\` **结构化文档** + CHM 官方文档 + `_raw/reflect_sldworks/` **出厂类型库反射**，★ **成员名三方一致**），见 `scripts/sw_sketch_modify_ops.py` 的来源块（逐成员列了三源路径）。★ 补的是 `specs/201-toolbar-gaps` 的 **B4** 批（用户工具栏：移动 / 伸展 / 旋转 / 缩放实体比例，另加同族的镜像）。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★ **2D 草图的「复制实体」本条不解** —— 三源里都**没有** `SketchModifyCopy`；官方确有 `ISketchManager.RotateOrCopy3D*`，而它逐字写着 「the selected **3D sketch** entities」⇒ **2D 用不了**。★ 这是**三源都指不出入口**，不是漏了（铁律 5）。",
+ "`SketchModifyFlip` 的 `AxisFlag` 取值表**官方两个源都未给** ⇒ 原样透传、不下语义断言。（真机已知：`axis_flag=1` ⇒ X 轴符号翻转。）",
+ "★ 「伸展实体」官方说明是 「Stretch the **selected** entities」 ⇒ **要求先选中实体**；本次真机测到的变化很小（±20 → -19.997/20.003），★ 与「没选中时只有极小效应」一致。"
+]
+====================================================================================================
+ID: sketch_dimension_horizontal   LEVEL: verified
+LABEL: 水平尺寸（`AddHorizontalDimension2`）—— ★ **真机建成**
+EVIDENCE FIELD: [
+ "★★ 2026-10-03（轮 542）**真机建成**（走 `sw_guard`，`sw_alive: true`、`dialogs: []` 零弹窗）：在前视面画**一条水平线段**，★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）。证据 `output/hv-dimension-with-selection-evidence.json`。",
+ "★★★ **而根因是一组对照定下的：「**不选**」那组 `尺寸 0 → H:0 → V:0`（**不成**）** —— ★ 故**前置就是“**必须先选中实体**”**。",
+ "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方签名**立）：`IModelDoc2.AddHorizontalDimension2(double X, double Y, double Z)` 与 `IModelDoc2.AddVerticalDimension2(double X, double Y, double Z)` —— ★ 三个参数都是**尺寸文字的放置点**。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **前置：必须先选中实体**（★ 一条线段**或**两个端点都行）—— ★ 而**不选时**它会弹「修改」框等人填数（★ 而那会**看起来像挂死**）。",
+ "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
+ "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
+]
+====================================================================================================
+ID: sketch_dimension_vertical   LEVEL: verified
+LABEL: 竖直尺寸（`AddVerticalDimension2`）—— ★ **真机建成**
+EVIDENCE FIELD: [
+ "★★ 2026-10-03（轮 542）**真机建成**（走 `sw_guard`，`sw_alive: true`、`dialogs: []` 零弹窗）：在前视面画**一条水平线段**，★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）。证据 `output/hv-dimension-with-selection-evidence.json`。",
+ "★★★ **而根因是一组对照定下的：「**不选**」那组 `尺寸 0 → H:0 → V:0`（**不成**）** —— ★ 故**前置就是“**必须先选中实体**”**。",
+ "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方签名**立）：`IModelDoc2.AddHorizontalDimension2(double X, double Y, double Z)` 与 `IModelDoc2.AddVerticalDimension2(double X, double Y, double Z)` —— ★ 三个参数都是**尺寸文字的放置点**。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **前置：必须先选中实体**（★ 一条线段**或**两个端点都行）—— ★ 而**不选时**它会弹「修改」框等人填数（★ 而那会**看起来像挂死**）。",
+ "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
+ "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
+]
+====================================================================================================
+ID: sketch_slot_types   LEVEL: verified
+LABEL: 槽口四种（`CreateSketchSlot` + `swSketchSlotCreationType_e`）—— ★ **四个全真机建成**
+EVIDENCE FIELD: [
+ "★★ 2026-10-03（轮 553）**四个值全真机建成**（走 `sw_guard`，零弹窗）：`CreateSketchSlot(type, 0, 0.004, -0.02,0,0, 0.02,0,0, 0,0.012,0, 1, True)` ⇒ **四个 type 均令草图段数 0 → 5**（★ 每个槽口 5 段）· 返回 `CDispatch`。证据 `output/sketch-slot-four-types-evidence.json`。",
+ "★ 对应台账四条（★ 而**它们是同一个方法的四个枚举值**）：直槽口 / 中心点直槽口 / 中心点圆弧槽口 / 三点圆弧槽口。"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方签名与反射**立）：`C:\\swapi\\types\\ISketchManager\\CreateSketchSlot.md`（**14 参**）；枚举值取自**反射**（`_raw/**/enum_values_sldworks.txt`）：**line=0 · center_line=1 · arc=2 · 3pointarc=3**。代码：`tools/prove_sketch_slot_four_types.py`。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★ **建议传的参数**：`SlotLengthType = 0`（CenterCenter）、`CenterArcDirection = 1`（CCW，★ 官方给的取值是 **-1 = CW / 1 = CCW**）、`AddDimension = True`（★ 真机用 True 成）。",
+ "⚠ **未查**：★ `SlotLengthType = 1`（FullLength）；★ `CenterArcDirection = -1`；★ 三点圆弧的 **P3** 实际起作用的方式。",
+ "⚠ **本包装未接进 MCP 工具层**（★ 现为探针可调用）。"
+]
+====================================================================================================
+ID: sketch_line2   LEVEL: verified
+LABEL: 中点线 / 直线（`IModelDoc2.CreateLine2`）—— ★ **真机建成**
+EVIDENCE FIELD: [
+ "★★ 2026-10-03（轮 565）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateLine2(-0.02,-0.01,0, 0.02,0.01,0)` ⇒ **草图段数 0 → 1**（★ 增 1）· 返回 `CDispatch`。证据 `output/createline2-and-createspline-evidence.json`。",
+ "★★ **而负例与官方 Remarks 逐字对上**：★ **无活动草图**时调它 ⇒ **回 `None`**、草图段数**不可读（-1）** —— ★ 官方：\"If a sketch is **not active**, then the line is **not created and NULL is returned**\" ✓"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\IModelDoc2\\CreateLine2.md`（**6 参**）。★ 第一代 `CreateLine` 的 md 逐字写着 \"**Obsolete. Superseded by `IModelDoc2::CreateLine2`.**\"。代码：`tools/prove_createline2_and_createspline.py`。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★ **必须先有活动草图**（否则不建、回 `None`）。",
+ "★ 2D 草图里 **Z 被忽略**（官方）。",
+ "⚠ 本包装未接进 MCP 工具层；⚠ 工具层原本用的是 `ISketchManager.CreateLine`（★ **未废弃**）—— ★ **本条不替换它**，只记下继任者的真机证据。"
+]
+====================================================================================================
+ID: sketch_spline   LEVEL: verified
+LABEL: 样条曲线（`ISketchManager.CreateSpline2`）—— ★ **真机建成**·★★ **三个条件缺一不可**
+EVIDENCE FIELD: [
+ "★★ 2026-10-03（轮 574）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateSpline2(VARIANT(VT_ARRAY|VT_R8, [x,y,z,…]), False)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/spline-with-variant-evidence.json`。",
+ "★★★ **而三个条件是四格对照定下的**：\n       ① ★ **成员名 = `CreateSpline2`**。★ **`CreateSpline`（不带 2）在**迟到绑定**下根本取不到**（`成员不可调用`，★ 第四类形态）⚠\n       ② ★ **数组形态 = `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** （★ 而**扁平 list / list of tuples 都回 `None`**）\n       ③ ★ **第二个参数 = `False`**（`SimulateNaturalEnds`）\n       ⇒ ★★ **四格里只有一格成** ✓",
+ "★★ **而本轮还证明了一件事**：★ `call_com_member` **就是 `get_com_member` 的别名**（实现只有一行；★ 只是**名字即意图**）⇒ ★ **换名字不会改行为** ⚠"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方签名与 Remarks** + **本仓旧探针**立）：`C:\\swapi\\types\\ISketchManager\\CreateSpline.md`（`PointData` = **扁平的 X,Y,Z 序列**）；★ 而真机可达的是 **`CreateSpline2(data, SimulateNaturalEnds)`**（★ 与 `tools/probe_spline_forms.py` 的结论一致）。代码：`tools/prove_spline_with_variant.py`。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **三个条件**：成员名 `CreateSpline2`、数组形态 `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`、第二参 `False`。",
+ "★ **必须先有活动草图**；★ **2D 草图里 Z 被忽略**（官方）；★ 官方说它**不配合 `AddToDB`**。",
+ "⚠ 本包装未接进 MCP 工具层；⚠ 未查：`SimulateNaturalEnds = True` 的行为。"
+]
+====================================================================================================
+ID: sketch_spline3_2d   LEVEL: verified
+LABEL: 样条曲线（`CreateSpline3` 的 **2D** 用法）—— ★ **真机建成**·★★ 它是 `CreateSpline2` 的**继任者**
+EVIDENCE FIELD: [
+ "★★ 2026-10-03（轮 576）**真机建成**（走 `sw_guard`，零弹窗）：`CreateSpline3(PointData=[至少 6 个坐标], Surfs=None, Direction=None, SimulateNaturalEnds=False, Status=byref)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/createspline3-evidence.json`。",
+ "★★ **而两格对照把参数说清了**：\n       ★ **2D**（至少 6 坐标 + 其余 `null`） ⇒ **成** ✓\n       ★ 只给**一个点**（不足 6 坐标）          ⇒ 不成 ✗\n       ★ 而官方 Remarks 逐字：**2D 要至少 6 个坐标；其余参数全给 `null`/`Nothing`** ✓"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\ISketchManager\\CreateSpline3.md`（**5 参**，★ md **未标 `Obsolete`**）；★ 而 `CreateSpline2.md` 逐字写着\"**Obsolete. Superseded by `ISketchManager::CreateSpline3`**\"。代码：`tools/prove_createspline3.py`。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **2D 用法**：`PointData` **至少 6 个坐标**；`Surfs`/`Direction` 给 **`None`**；`Status` 是 **out**（byref）。",
+ "⚠ **本包装未接进 MCP 工具层**；⚠ **曲面上的样条（on-surface）本轮未成** —— ★ 原因是我在 `IModelDoc2` 上取 `GetMathUtility`（★ **它不在那里**）；★ **下一步**：换到**正确的入口**取 `IMathUtility`。"
+]
+====================================================================================================
+ID: sketch_rotate_or_copy_3d   LEVEL: verified
+LABEL: 复制实体（`ISketchManager.RotateOrCopy3DAboutXYZ` 的 **`Copy=True`**）—— ★ **真机建成**
+EVIDENCE FIELD: [
+ "★★ 2026-10-03（轮 580）**真机建成**（走 `sw_guard`，零弹窗）：`Insert3DSketch(True)` 开一个 **3D 草图** · 里面 `CreateLine` 画一条线 · 再 `RotateOrCopy3DAboutXYZ(Copy=True, 1, True, 0,0,0, 0.785, 0, 0)` ⇒ **草图段数 1 → 2**（★ 增 1 = 复制了一份）· 返回 `True`。证据 `output/rotate-or-copy-3d-evidence.json`。",
+ "★★ **而对照组把那个布尔钉死了**：",
+ "`Copy=False` ⇒ **段 1 → 1**（★ 只旋转、不复制）· 而也回 `True` ✓",
+ "★★★ **而本轮又纠了一个自己的错**：我第一版传了 **8 个参数**（★ **漏了 `AngleAboutZDir`**）⇒ `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）；\n       ★ 而**那个错看不出是哪个参数漏了** ⚠ —— ★ 故又靠**反射的 arity**把它钉出来（铁律 4）。"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方签名与反射**立）：`C:\\swapi\\types\\ISketchManager\\RotateOrCopy3DAboutXYZ.md`（**9 参**）× 反射 arity（`'RotateOrCopy3DAboutXYZ': 9`，★ 两源一致）。★ 而**台账原写的 `SketchModifyCopy` 全接口查不到**（铁律 5）。代码：`tools/prove_rotate_or_copy_3d.py`。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **前置**：一个 **3D 草图**（`Insert3DSketch`）+ 里面有要复制的图元。",
+ "★ **9 参**：`Copy` · `NumCopies` · `KeepRelations` · `BaseX/Y/Z` · `AngleAboutXDir/YDir/ZDir`。",
+ "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：**2D 草图**的复制（★ 那一条可能走 `EditCopy`/`EditPaste`）。"
+]
+====================================================================================================
+ID: sketch_equation_curve   LEVEL: verified
+LABEL: 方程式驱动的曲线（`ISketchManager.CreateEquationSpline2` 的 **显式用法**）—— ★ **真机建成**
+EVIDENCE FIELD: [
+ "★★ 2026-10-03（轮 581）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateEquationSpline2(\"\", \"exp(x)\", \"\", \"-1\", \"1\", False, 0.0, 0.0, 0.0, True, True)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/equation-driven-curve-evidence.json`。",
+ "★★ **而三格把两套用法的边界钉死了**：\n       ★ **显式** `y=exp(x)`（**X 给 `\"\"`**） ⇒ **段 0 → 1** ✓\n       ★ 参数 `x=sin(t)`/`y=cos(t)`           ⇒ 段 0 → 0（★ 而**回了 `CDispatch`**）⚠\n       ★ 坏表达式 `y=zzz(x)`                  ⇒ 段 0 → 0 · 回 `None`（★ 合理）"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\ISketchManager\\CreateEquationSpline2.md`（**11 参**，★ md **未标 `Obsolete`**）；★ 而 `CreateEquationSpline.md` 逐字写着\"Obsolete. Superseded by `ISketchManager::CreateEquationSpline2`\"。代码：`tools/prove_equation_driven_curve.py`。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **显式用法**：`XExpression` 给 **`\"\"`**；`YExpression` = 以 **x** 表达的函数（★ 官方例 `y=exp(x)`）；`RangeStart`/`RangeEnd` = **x** 的范围。",
+ "★ **11 参**：`XExpression` · `YExpression` · `ZExpression` · `RangeStart` · `RangeEnd` · `IsAngleRange` · `RotationAngle`(rad) · `XOffset` · `YOffset` · `LockStart` · `LockEnd`。",
+ "⚠ **参数曲线（给 t 的表达式）本轮未成** —— ★ 而**它返回了 `CDispatch`**（★ 第**五**种形态的候选：**对象给了而没进树**）；★ **下一步**：先查参数用法的 `RangeStart`/`RangeEnd` 是否要换口径。",
+ "⚠ 本包装未接进 MCP 工具层。"
+]
+====================================================================================================
+ID: sketch_offset_on_surface   LEVEL: verified
+LABEL: 曲面上偏移（`IModelDocExtension.SketchOffsetOnSurface`）—— ★ **真机建成**·★★ **三步缺一不可**
+EVIDENCE FIELD: [
+ "★★★ 2026-10-03（轮 612）**真机建成**（走 `sw_guard`，零弹窗）—— **三格对照**：\n       `按对象选 4 条边（补设 mark=1）` → `SketchOffsetOnSurface(0.01, False, True, False)` → `ClearSelection2` → **`SketchManager.InsertSketch(True)`**\n       ⇒ **特征 7 → 9**，新增 **`基准面1`** + **`草图2`** ✓\n       ★ **而对照组（★ 不做 `InsertSketch`）⇒ 特征 7 → 7、新增 []** —— ★ **故那一步是必需的**（★ 与官方 Remarks 第 ③ 条完全对应）✓\n       证据 `output/offset-on-surface-per-example-evidence.json`。",
+ "★★ **而本轮修了两个真因**（★ 全靠真机逼出来）：\n       ① ★ **`SelectByID2(\"\", \"EDGE\", x,y,z, …)` 一条边都选不中**（★ 角点与中点两种坐标都 `selected = 0`）⚠\n         ★ 而**事实 32 早写着**：选实体要用 **`IEntity.Select4`（按对象）**；★ 本仓封装：`sw_selection_spec.entities_on_body` + `select_object`\n       ② ★ **`Select4` 没有 mark 参数** ⇒ 用 **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** 补设 ✓"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建（按**官方 Remarks + 官方例子**立）：`C:\\swapi\\types\\IModelDocExtension\\SketchOffsetOnSurface.md`（**`## Remarks` 三条** + **`## Examples` 三个**）× `C:\\swapi\\examples\\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`。代码：`tools/prove_offset_on_surface_per_example.py`。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **三步缺一不可**：① **按对象选边**（★ `Select4`，**不是** `SelectByID2`）；② 补设 **`Mark`**；③ 收尾 **`ISketchManager.InsertSketch(True)`**。",
+ "★ **它回 `False` 是正常的**（★ 它只“创建了 3D 草图”）—— ★ **故不能拿那个 `False` 当失败判据**（★ 而 2026-10-01 那次正是这么误判的，事实 460）。",
+ "★ `UseFront` 必须 `True`（★ 官方：\"Although not currently used, must be set to true\"）。",
+ "⚠ **本包装未接进 MCP 工具层**；⚠ **未查**：`GetActiveSketch2` 回的 `is_3d=False` / `segments=0`（★ 可能拿错了草图对象）。",
+ "⚠ **未查**：`GeodesicSketchOffset`（★ 官方提的**测地线**那个）。"
+]
+====================================================================================================
+ID: coverage_gap_batch1   LEVEL: verified
+LABEL: 覆盖面缺口批 1：旋转曲面 · 孔向导 · 完全定义检查（★ 规格 `202-user-coverage-gaps`）
+EVIDENCE FIELD: [
+ "★★★ 2026-10-03（接手轮）**真机 3/3**（走 `tools/sw_guard.py`，零弹窗、`sw_alive: true`）：`python tools/prove_coverage_gap_batch1.py`。① **旋转曲面** ⇒ 树新增 **`曲面-旋转1`** · **曲面体 0→1** · 选中轮廓 1；② **孔向导** ⇒ 树新增 **`异型孔向导`**（`M8`）；③ **完全定义检查** ⇒ `GetConstrainedStatus` 回 **int**。证据 `output/coverage-gap-batch1-evidence.json`。",
+ "★★ **完全定义那个读数**证明**有区分度**（不是常量）：欠定义的矩形（4 段）回 **2**；对 4 段全加 `sgFIXED` 后回 **3** ⇒ ★ 两次读数**不同**。",
+ "★★ **覆盖率回读（生成器现算，★ 不是我算的）**：`docs/user-feature-coverage.md` §三 本仓库 **96/145 (66%) → 99/145 (68%)**；§八「只有四家有」**35 → 32 项** ⇒ ★ **+3 与接出去的工具数完全对上**（★ 这不是刷分：那 3 个工具**确实就是那些功能**，且都有真机证据）。",
+ "★ 三个工具名**有意含覆盖率脚本要的关键词**（`revolved_surface` / `hole_wizard` / `fully_defined`）—— ★ 该脚本按「功能关键词**子串**命中工具名」计分 ⇒ **让名字与能力对上**是应有之义。"
+]
+SOURCE_EVIDENCE FIELD: "本项目自建；★ 规格 `specs/202-user-coverage-gaps`（T201/T401）。判据来自 `tools/audit_gap_implementations.py`（★ **AST**，不用 grep —— grep 会把来源块里引用的官方成员名算成「有实现」）。官方依据：`C:\\swapi\\types\\IFeatureManager\\InsertRevolvedRefSurface.md` · `…\\HoleWizard5.md` · `C:\\swapi\\types\\ISketch\\GetConstrainedStatus.md`。"
+SOURCE: "original"
+LIMITATIONS: [
+ "★★ **本批故意不收「样条曲线」** —— ★ `audit_gap_implementations.py` 也报它「有实现」，★ 而读那个函数自己的文档串才发现：它**2026-10-01 轮 141 已真机实测不达**（`CreateSpline2` 回 `None`、重绘后段数仍 0；旧版 `CreateSpline` 在迟到绑定里不存在；后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ pywin32 到不了，事实 47/68）。⇒ ★ 它已登记进 `docs/backend-limited-items.json`。**教训：「有实现」≠「能用」。**",
+ "⚠ **完全定义状态：官方没给取值表** ⇒ 本工具**如实回原始 int**，★ **不把它解释成「欠定义 / 完全定义」**（铁律 5）。★ 本轮只实测到两个取值（2 与 3）。",
+ "⚠ **孔向导的孔位靠声明式面选择器**（`+x/-x/…`）⇒ ★ `resolve_face_selector` **只对轴对齐的实体可靠**；★ 非轴对齐零件上会解析失败（本工具会显式报错，不静默）。",
+ "⚠ **审计工具只判「本仓有没有引用该成员」**，★ **不判「该不该暴露成工具」** —— ★ 很多函数是同一流程的内部步骤（事实 53：不为它调启发式）。",
+ "⚠ **本批未跑全量 pytest**（按 AGENTS.md：全量只在发布前或改了 `sw_connect.py`/门禁本体时跑）。"
+]
+### MISSING ID: auto_dimension_sketch

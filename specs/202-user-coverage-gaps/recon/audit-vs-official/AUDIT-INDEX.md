@@ -196,13 +196,13 @@
 
 #### 中置信里**未列入上表**的 4 条（已在总表里以高置信行承载，此处只补它们的低置信同源说法）
 
-- **M24**｜04-C #8 + 10-C #4 + 10-C #7（**多路都报**，3 处调用点）—— `sw_assembly.py` `_activate_model_document()` except 分支、`sw_export.py` `_activate_source_document()` except 分支 + DumbDispatch 分支、`sw_review.py` `activate_model_for_preview()` except 分支：**四处**都是 `sw.ActivateDoc2(title, False, errors)`。
+- **M25**｜04-C #8 + 10-C #4 + 10-C #7（**多路都报**，3 处调用点）—— `sw_assembly.py` `_activate_model_document()` except 分支、`sw_export.py` `_activate_source_document()` except 分支 + DumbDispatch 分支、`sw_review.py` `activate_model_for_preview()` except 分支：**四处**都是 `sw.ActivateDoc2(title, False, errors)`。
   官方 `ISldWorks\ActivateDoc2.md`：`Obsolete. Superseded by [[ISldWorks::ActivateDoc3]].`（同函数第一分支已在用 `ActivateDoc3`）。
   ★ **两路对本条的置信度不一致**：04-C 判「**中**（仅一源，CHM 里该成员页缺失，按铁律 5 不用相似页面顶替）」，10-C 判「**高**」。⇒ 合并后按**低**者取「中」，级 **需先查**。
-- **M25**｜09-B #5 —— `sw_simulation.py` `get_cosmosworks`：`cosmos = get_com_member(addin, "CosmosWorks")`（驼峰）；官方两个例子都写**全大写** `COSMOSWORKS`（`Analyze_Part_Example_VB.htm`、`Create_Topology_Study_Example_VBA.txt`）。我们来源块自述「本反射清单里该成员的 getter 名为 `get_CosmosWorks`」。
+- **M26**｜09-B #5 —— `sw_simulation.py` `get_cosmosworks`：`cosmos = get_com_member(addin, "CosmosWorks")`（驼峰）；官方两个例子都写**全大写** `COSMOSWORKS`（`Analyze_Part_Example_VB.htm`、`Create_Topology_Study_Example_VBA.txt`）。我们来源块自述「本反射清单里该成员的 getter 名为 `get_CosmosWorks`」。
   ⇒ 级 **存疑**：COM 属性名分派大小写不敏感，**官方例子的写法不构成 API 约束**；反射（铁律 4 的裁决者）站我们这边。
-- **M26**｜10-B #4 —— `sw_review.py` `set_standard_view()`：`model.ShowNamedView2(str(view_name), -1)` / `model.ShowNamedView2("", view_id)`（函数内无任何选择步骤，也不区分文档类型）；官方 `IModelDoc2\ShowNamedView2.md`：`To set a named view to the active view in a drawing, the **drawing view that contains the named view must be selected**.` ⇒ 级 **可改**（加工程图分支 + 选择）。
-- **M27**｜10-B #5 —— `sw_helix.py`：docstring「官方示例显示要先**选中一个圆**（`SelectByID2` + `CreateCircle`）——螺旋线以那个圆为直径基准」；报错文案「**没有选中定义直径的圆**（官方示例先 SelectByID2 选圆再调）」。
+- **M27**｜10-B #4 —— `sw_review.py` `set_standard_view()`：`model.ShowNamedView2(str(view_name), -1)` / `model.ShowNamedView2("", view_id)`（函数内无任何选择步骤，也不区分文档类型）；官方 `IModelDoc2\ShowNamedView2.md`：`To set a named view to the active view in a drawing, the **drawing view that contains the named view must be selected**.` ⇒ 级 **可改**（加工程图分支 + 选择）。
+- **M28**｜10-B #5 —— `sw_helix.py`：docstring「官方示例显示要先**选中一个圆**（`SelectByID2` + `CreateCircle`）——螺旋线以那个圆为直径基准」；报错文案「**没有选中定义直径的圆**（官方示例先 SelectByID2 选圆再调）」。
   官方例子 `Create_Spiral_Example_VB.md` 实际是：`SelectByID2("**Front Plane**", "**PLANE**", …, False, **0**, Nothing, 0)` → `ClearSelection2 True` → `swSketchMgr.CreateCircle(...)` → `InsertHelix(...)` ⇒ ★ **`SelectByID2` 选的是基准面（mark 0）**，圆是之后**画**出来的。⇒ 级 **可改**（改文案与实际次序对上）。
 
 ---
@@ -425,12 +425,12 @@
 | 04-assembly | 8 | H21 H22 H23 H24 H25 H26 H27 H28 · M11 M12 |
 | 05-drawing | 9 | H29 H30 H31 H33 H34 H35 H36 · M13 M14 M15 |
 | 06-features | 12 | H37 H38 H39 H40 H41 H42 H43 H44 H45 H46 H47 H48 |
-| 07-sketch | 7 | H50 H51 H52 H53 H54 H56 · M20（`SetPickMode` 那条 M20 判需先查 ⇒ 实际 6 条：H50 H51 H52 H53 H54 H56） |
+| 07-sketch | 6 | H50 H51 H52 H53 H54 H56 |
 | 08-mold-costing | 5 | H57 H58 H59 H60 H61 |
 | 09-simulation | 8 | H62 H63 H64 H65 H66 H67 H68 H69 |
-| 10-misc | 10 | H70 H71 H72 H73 H74 H75 H76 H77 H78 H79 H80 · M26 M27（实际 12 条，见下） |
-| 02-sheetmetal 补 | M24 | `InsertMoldPartingSurface` mark（M24 可改） |
-| 小计核对 | **90** | |
+| 10-misc | 12 | H70 H71 H72 H73 H74 H75 H76 H77 H78 H79 H80 · M27 M28 |
+| 08-mold-costing（补） | 1 | M21（`InsertMoldPartingSurface` mark 只落一半） |
+| **小计** | **91** | ⚠ 与 90 差 1：H32（H05 那类）已在 05 行、H05 判需先查故不在此 —— ★ 实际以逐行 `级` 栏为准：可改 **90** |
 
 ★ **「可改」里最省事的一批（只改调用名 / 常量，不动逻辑）**：
 H22–H28 + H41–H48 + H69 + H71 H72 H73 H75 H76（共 **21 条** Obsolete 链）
@@ -440,15 +440,15 @@ H22–H28 + H41–H48 + H69 + H71 H72 H73 H75 H76（共 **21 条** Obsolete 链�
 
 | 类别 | 行 | 为什么不能直接改 |
 |---|---|---|
-| **★ 官方两源互相矛盾** | H08（枚举 1..5 vs 成员页 0..4 —— 抽查已判**不成立**，故同时列在 §4.3）、M06（枚举 5/6 个 vs 成员页 `valid selections` 只列 3 个）、M08（`CreateDefinition` 的 35 项 vs `swFeatureNameID_e` 成员表）、M22（`IModelDoc2.MaterialIdName` 标 Obsolete 而 `IPartDoc.MaterialIdName` 不标）、M23（`ExportToDWG2` 的 Remarks 要预选、官方例子同 Action 不预选） | 改哪边都是猜 ⇒ 必须先定口径 |
-| **官方页缺段** | H32（`SetTemplateName.md` 无 `ForceRebuild3` 字样、CHM 无该成员页）、H49（CHM 无 `ISketch~GetContourEdges` 页 ⇒ 只有 swapi 单源）、M24（CHM 无 `ISldWorks~ActivateDoc2` 成员页）、M20（`SetPickMode` 只在官方例子里）、M10（`ToolsCheckInterference` 只在官方例子里） | 单源/例证不足 ⇒ 先补查 |
+| **★ 官方两源互相矛盾** | H08（枚举 1..5 vs 成员页 0..4 —— 抽查已判**不成立**，故同时列在 §4.3）、M06（枚举 5/6 个 vs 成员页 `valid selections` 只列 3 个）、M08（`CreateDefinition` 的 35 项 vs `swFeatureNameID_e` 成员表）、M23（`IModelDoc2.MaterialIdName` 标 Obsolete 而 `IPartDoc.MaterialIdName` 不标）、M24（`ExportToDWG2` 的 Remarks 要预选、官方例子同 Action 不预选） | 改哪边都是猜 ⇒ 必须先定口径 |
+| **官方页缺段** | H32（`SetTemplateName.md` 无 `ForceRebuild3` 字样、CHM 无该成员页）、H49（CHM 无 `ISketch~GetContourEdges` 页 ⇒ 只有 swapi 单源）、M25（CHM 无 `ISldWorks~ActivateDoc2` 成员页）、M20（`SetPickMode` 只在官方例子里）、M10（`ToolsCheckInterference` 只在官方例子里） | 单源/例证不足 ⇒ 先补查 |
 | **量纲依据取自配方实参而非形参表** | H81（`SketchOffset2.Offset`）、H82（`CreateLinearSketchStepAndRepeat.SpacingX/Y`）、H83（`CreateCircularSketchStepAndRepeat.ArcRadius`） | ★ 形参表**本身没写单位**，靠「官方例子传了 0.00254」反推 ⇒ 补查官方是否存在写明单位的第二页 |
 | **形参声明类型只在 md 里** | M01（`CreateSheetFromSurface.UvRange` 是数组，但形参类型两侧都写 `System.object`）、M02（`InsertLoftRefSurface2` 的 `short` vs 我们 `int`） | 类型宽度/容器类型要靠反射（铁律 4 裁决者）定 |
-| **枚举归属未证** | M21（`units=-1`；★ 官方 `NUnits` 形参**没写**它属于哪个枚举，「`units` 就是 `swsUnit_e`」是我们自己写的） | 连归属都没坐实 ⇒ 别动 |
+| **枚举归属未证** | M22（`units=-1`；★ 官方 `NUnits` 形参**没写**它属于哪个枚举，「`units` 就是 `swsUnit_e`」是我们自己写的） | 连归属都没坐实 ⇒ 别动 |
 | **两路结论相反** | H05（01-B 说 `FeatureBossThicken` 缺 mark=1，06-B 把 `thicken_surface` 判为一致 ⇒ 可能是两个不同模块的实现） | 先确认是不是同一份代码 |
 | **完整性断言口径** | M09（「焊件相关的只有这 3 个」vs 同页另有 6 条 Structure system） | 是口径问题，不是代码问题 |
 
-★ **17 条合计**：5（两源矛盾，含 H08）+ 5（缺段）+ 3（量纲）+ 2（类型）+ 1（枚举归属）+ 1（两路相反）+ 1（口径）= **18**
+★ **分档合计**：5（两源矛盾，含 H08）+ 5（缺段）+ 3（量纲）+ 2（类型）+ 1（枚举归属）+ 1（两路相反）+ 1（口径）= **18**
 ⇒ H08 同时出现在 §4.2 与 §4.3，**去重后 = 17 条**（本表把它列在第一行只为展示它「两源矛盾」的性质）。
 
 ### §4.3 「存疑」—— 4 条
@@ -458,7 +458,7 @@ H22–H28 + H41–H48 + H69 + H71 H72 H73 H75 H76（共 **21 条** Obsolete 链�
 | **H08** | ★ **抽查判「不成立」**（§2 S6）：治理该形参的成员页 `InsertRuledSurfaceFromEdge2.md` 写的就是 0..4、且**未引用** `swRuledSurfaceType_e` ⇒ 拿枚举页判它错，证据链不成立。★ 但它顺手暴露的**同仓自相矛盾**（`sw_surface_features.py:640` 用 1..5 vs `sw_surface_edit_ops.py:68` 用 0..4）是**真问题**，应独立立项 |
 | **H20** | ★ **两路结论相反**：04-A 按「三源一致缺席 `IMate2.Name`」报高置信分歧，04-C 按铁律 5 记「查不到」不报。⇒ 先定「缺席」算不算分歧 |
 | **M19** | 官方例子没预选，但官方也**没禁止**预选 ⇒ 只凭例子判不了「我们无条件先选」是错 |
-| **M25** | COM 属性名分派**大小写不敏感**；官方例子写 `COSMOSWORKS` 不构成 API 约束，而反射（铁律 4 裁决者）站我们这边（`get_CosmosWorks`） |
+| **M26** | COM 属性名分派**大小写不敏感**；官方例子写 `COSMOSWORKS` 不构成 API 约束，而反射（铁律 4 裁决者）站我们这边（`get_CosmosWorks`） |
 
 ---
 
@@ -495,7 +495,7 @@ H22–H28 + H41–H48 + H69 + H71 H72 H73 H75 H76（共 **21 条** Obsolete 链�
 
 | 行 | 一句话 |
 |---|---|
-| **25 条零风险批**（H22–H28 · H41–H48 · H69 · H71–H73 · H75 · H76 · H74 · H35 · H61 · H77） | 只改调用名 / 常量、不动逻辑 ⇒ ★ **建议一次性批量做完**，先把「还在调官方 Obsolete 成员」这个面清零。注意 `GetErrorCode`→`GetErrorCode2`（H14/H18）与 `MaterialIdName`（M22）**另有两源理由**，别混进这批 |
+| **25 条零风险批**（H22–H28 · H41–H48 · H69 · H71–H73 · H75 · H76 · H74 · H35 · H61 · H77） | 只改调用名 / 常量、不动逻辑 ⇒ ★ **建议一次性批量做完**，先把「还在调官方 Obsolete 成员」这个面清零。注意 `GetErrorCode`→`GetErrorCode2`（H14/H18）与 `MaterialIdName`（M23）**另有两源理由**，别混进这批 |
 | **H79** | `sw_loft.py` 把 `UseAutoSelect` **硬编码 False** 却不选 body ⇒ 按官方两页逐字要求，放样/放样切除两个入口**建不出受影响体** |
 | **H57** | `sw_measure.py` `IMeasure.Calculate` 传 0 实参而官方形参是 1 个。⚠ 官方说明「NULL 就量选区」**语义上支持不传**、且本仓事实 227 记的是「真机必须无参调」⇒ ★ **这条要在真机上先复现一次**再动，否则会把现在能用的量测改坏 |
 | **H30 / H34 / H59** | 三个「前置 gate 太松」的：`GetSelectedObjectType3` 当 mark 用、局部视图缺两步前置、芯模型腔缺三条官方前置 ⇒ 都属「不报错但结果不对」类，**改了会明显提升成功率** |
