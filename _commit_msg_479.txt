@@ -1,0 +1,52 @@
+feat(B8): 参考几何体 **真机 3/5**（质心 / 边界框 / 坐标系）+ 3 条 ToolSpec + 能力条目
+
+★ 承 `specs/201-toolbar-gaps` 的 **B8**（参考几何体 4 条）与 **T701**（边界框）。
+
+## ① 真机 3/5（`sw_guard` 全程 `sw_alive: true` · 零弹窗）
+
+```
+✅ 质心      InsertCenterOfMass()          returned_object + tree_delta
+✅ 边界框    InsertGlobalBoundingBox2(…)   **status_code(Success=0) + tree_delta**
+✅ 坐标系    InsertCoordinateSystem(…)     returned_object + tree_delta
+❌ 基准面    InsertRefPlane(6 参)           回对象非 None 而**树无增量**
+❌ 点        InsertReferencePoint(4 参)     同上
+```
+★ 判据 = **回对象非 None** + **特征树叶子名增量**（`sw_part.feature_names`）；
+  ★ 边界框那条**另加官方的 `Status`**。
+
+## ② ★★ 台账 T701 给的成员是**错的**
+
+★ 台账写 **`Create3DBoundingBox`** ⇒ 官方原话逐字是：
+> Creates a 3D bounding box for a **cut list item in a weldment part**.
+
+⇒ **焊件切割清单专用** ⇒ ★ 普通零件上**不成是应然的**（★ 真机确认：树无增量）。
+★ 工具栏那个的真名是 **`IFeatureManager.InsertGlobalBoundingBox2`** ✓
+
+## ③ ★★ `out` 参数的正确传法（★ 本轮踩到并修好）
+
+`InsertGlobalBoundingBox2` 的第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`）。
+★ 裸传 `0` 真机回：
+```
+com_error: (-2147352571, '类型不匹配。', None, 5)
+                                    ↑ **位置 5 就是它**
+```
+★ **本仓早有现成的**：`sw_connect.out_i4()` —— 其 docstring 逐字：
+> 创建 `Int32&` 出参的 VARIANT 包装 —— **唯一被真机验证通过的形态**
+
+⇒ ★ 换过去就成，★★ **而且判据因此更强**：`Status == Success(0)` 是**官方给的成败码**，
+  比"特征树有没有多东西"更直接。
+
+## ④ 两条不登记（★ 按 A4：verified 必须有我们自己的运行证据）
+
+★ **基准面**：试过 `Parallel(1)`（不选）与 `Coincident(4)`（先建实体）⇒ 都"回对象非 None 而树无增量"。
+  官方 Remarks 说要先按 **marks** 选参考实体，★ **而官方没给那张 mark 表**（只说 "these marks"）
+  ⇒ 本模块**不假定 mark**。★ 下一轮线索：查 CHM 的 `Create_Ref_Plane_Example_*` 看实际用哪些 mark。
+★ **点**：★★ 有意思的是 **同一句调用在诊断脚本里成了**（`new_features: ['点1']` —— 那次是在同一个文档里
+  先建实体、再选一个面），★ 而在探针里未成。★ 差别待查（★ 候选：探针里 `solid_built=True` 而
+  **`tree_before=0`** —— ★ 那个 0 本身就不对）。
+
+## ⑤ 工具层与门禁
+
+`ToolSpec` **247 → 250** · `check_inject_binding` **PASS 0 条** · 五统一门禁通过 ·
+`capabilities` **84 → 85**（新增 `ref_geometry`，`verified`）· 聚焦测试 **36 passed**。
+★ 另：顺手修掉 `status_meaning` 的**正查/反查写反**（字典是「名→值」，而 out 给的是「值」）。

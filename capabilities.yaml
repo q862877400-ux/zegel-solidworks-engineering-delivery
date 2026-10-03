@@ -3648,6 +3648,33 @@
         "★ **扫描曲面**：两个曲面版（`InsertSweepRefSurface` 与 `…RefSurface2`）**都标 Obsolete**，继任者写的是**实体**那族的 `IFeatureManager::InsertProtrusionSwept3` ⇒ 曲面版在新架构里走哪条，**两个源都没给出**。（线索：2018 起扫描改走 `ISweepFeatureData`，★ 本仓 `sw_sweep` 用的就是它）",
         "★ **边界曲面**：全 `C:\\swapi\\types` 搜 `*Boundary*`，**没有任何** Boss/Surface/Feature 成员；`InsertBoundaryBoss` **也不在**。★ 可能并入放样，★ **但那是推断、不是查到的** ⇒ 不假装做到。"
       ]
+    },
+    {
+      "id": "ref_geometry",
+      "label": "参考几何体（质心 / 边界框 / 坐标系；★ 基准面与点**未登记**）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建；依据为**官方三源**（`C:\\swapi\\types\\` + `C:\\swapi\\enums\\` **枚举表** + `_raw/reflect_sldworks/` **反射**），见 `scripts/sw_ref_geometry.py` 的来源块。★ 补的是 `specs/201-toolbar-gaps` 的 **B8** 与 **T701**。",
+      "evidence": [
+        "★ 2026-10-03（轮 479）**真机 3/5 建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b8_ref_geometry.py`。★ **质心**（`InsertCenterOfMass()`）· **边界框**（`InsertGlobalBoundingBox2`，**`Status=0 (Success)`**）· **坐标系**（`InsertCoordinateSystem`）。证据 output/b8-ref-geometry-evidence.json。",
+        "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **247 → 250**。",
+        "★★ **`out` 参数的正确传法**（本轮踩到并修好）：`InsertGlobalBoundingBox2` 的第 5 个形参 `Status` 是 **out**，★ 裸传 `0` 真机回 `com_error: (-2147352571, '类型不匹配。', None, **5**)`（**位置 5 就是它**）；★ 必须用 **`sw_connect.out_i4()`**（其 docstring：「创建 `Int32&` 出参的 VARIANT 包装 —— **唯一被真机验证通过的形态**」）。★ 而判据也因此**更强**：`Status == Success(0)` 是**官方给的成败码**。",
+        "★★ **台账 T701 给的成员是错的**：它写 `Create3DBoundingBox`，而官方原话是「for a **cut list item in a weldment part**」⇒ **焊件切割清单专用**，普通零件上不成是**应然的**；★ 工具栏那个的真名是 **`InsertGlobalBoundingBox2`**。"
+      ],
+      "limitations": [
+        "★ **基准面（`InsertRefPlane`）本条不登记**：真机试过 `Parallel(1)`（不选）与 `Coincident(4)`（先建实体），**回对象非 None 而特征树无增量**。★ 官方 Remarks 说要先用 `SelectByID2` 按 **marks** 选参考实体，★★ **而官方没给那张 mark 表**（只说 \"these marks\"）⇒ 本模块**不假定 mark**。★ 下一轮线索：查 CHM 的示例（`Create_Ref_Plane_Example_*`）看它实际用哪些 mark。",
+        "★ **点（`InsertReferencePoint`）本条不登记**：★★ 而有意思的是 **同一句调用在诊断脚本里成了**（`new_features: ['点1']`，★ 那时是**在同一个文档里先建实体、再选一个面**），★ 而在探针里未成。★ 差别待查（★ 候选：探针里 `solid_built=True` 而 `tree_before=0` —— ★ **那个 0 本身就不对**）。"
+      ]
     }
   ]
 }
