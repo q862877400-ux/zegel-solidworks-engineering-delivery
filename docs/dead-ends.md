@@ -129,7 +129,7 @@
 
 ### `sheet_metal_creation`（stitched）
 
-- ⚠⚠ **三条达不到**（★ 都在 known-facts 47/43 里记着）：`create_one_bend`（`0x80010105` 后端限制）· `create_edge_flange`（同族）· `create_gusset`（同族）· `create_draft`（`CreateDefinition(3)` 回 None）
+- ⚠⚠ **四条达不到（★ 分两类，★ 成因不同）**：★ **第一类 · pywin32 后端到不了** —— `create_one_bend`（`0x80010105` 后端限制）· `create_edge_flange`（同族）· `create_gusset`（同族）⇒ ★ **三条同一根因**（★ 事实 47：进程内指针接口）；★ **第二类 · 常量不在白名单** —— `create_draft`（`CreateDefinition(3)` 回 None）⇒ ★ **一条另一根因**（★ 事实 43：`swFmDraft(3)` 不是 `CreateDefinition` 接受的 35 个常量之一）✓
 
 ### `simulation_and_fea`（verified）
 

@@ -3056,7 +3056,8 @@
       ],
       "limitations": [
         "★★ 从 `sheet_metal` **拆出**（轮 275）：★ 那一条覆盖「钣金建模与展开」（含读数与展开），★ 而本族是**建的六个**",
-        "⚠⚠ **三条达不到**（★ 都在 known-facts 47/43 里记着）：`create_one_bend`（`0x80010105` 后端限制）· `create_edge_flange`（同族）· `create_gusset`（同族）· `create_draft`（`CreateDefinition(3)` 回 None）",
+        "⚠⚠ **四条达不到（★ 分两类，★ 成因不同）**：★ **第一类 · pywin32 后端到不了** —— `create_one_bend`（`0x80010105` 后端限制）· `create_edge_flange`（同族）· `create_gusset`（同族）⇒ ★ **三条同一根因**（★ 事实 47：进程内指针接口）；★ **第二类 · 常量不在白名单** —— `create_draft`（`CreateDefinition(3)` 回 None）⇒ ★ **一条另一根因**（★ 事实 43：`swFmDraft(3)` 不是 `CreateDefinition` 接受的 35 个常量之一）✓",
+        "🕓 **2026-10-04（接手轮）上文标题已改（★ 「三条」→「四条」，★ 并分了两类）**（★ 处置 `JUDGE-F_G_H_I_J.md` 的 🔴 **#4**）—— ★ 裁判逐字：「★ `sheet_metal_creation` 说『**三条**达不到』，下面列了**四个**」· ★ 并注明「★ 纯文案错，**零风险**」✓ ★★ **实测复核**：★ 原文`⚠⚠ **三条达不到**` 后面确实列了四个（`create_one_bend` / `create_edge_flange` / `create_gusset` / `create_draft`）✓ ★★★ **我没选「只把三改成四」**，★ 而是按**同域 `sheet_metal` 的两类分法**说明成因 —— ★★ 因为**前三项与第四项的根因不同**（★ 详情见上一条）✓",
         "★ `create_base_flange` **真机验过并 WORKED**（★ 见工具说明里的实测记录）",
         "⚠ **未真机验证**：`create_swept_flange`（★ 需要 sweep 路径 + profile 两个选择，尚未试）"
       ],
