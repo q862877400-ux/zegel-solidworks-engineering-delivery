@@ -11,10 +11,14 @@ sw_hole_features.list_fastener_table_types    （轮 125，真机 11/11）
 ★ 与 `014`/`015` 的「孤立函数从没跑过」相对：这几个**跑过了**，
 但**还没接出去** —— 不接出去，**外部使用者拿不到**。
 
-## ⚑ 一个需要说清的点：`inject="sw_app"`
-`list_*` 三个要的是 **`ISldWorks`**（不是活动文档）——
-`tool_registry` 的 `inject` **本来就支持 `"sw_app"`**（`register_capabilities.RESOLVERS` 里有解析器）
-⇒ **不需要为此新造机制**（「不要为了修房子创建公司」）。
+## ⚑ 一个需要说清的点：这三个要的是 **`ISldWorks`**（不是活动文档）
+`list_*` 三个要的是 **`ISldWorks`** —— 而 `tool_registry` 的**注入键字面上等于 `inject` 的值**
+（`register()` **不传 `inject_as`**）⇒ ★★ **`inject` 必须等于目标函数的首参名**。
+★ 本文件这三条的 `inject` 原先是 **"sw_app"**，而函数首参叫 **`sw`** ⇒ ★ **真机报
+`TypeError: … unexpected keyword argument 'sw_app'`**（2026-10-03 接手轮实测）。
+⇒ ★ 已改为 **`inject="sw"`**，并在 `register_capabilities.RESOLVERS` 里加了 **`"sw"`** 一行
+（复用同一个 `resolve_sw_app`）——★ **加一行正是那张表的设计用途**。
+★ 修后真机复验：返回真实的孔标准表（`ANSI Inch` / `ANSI Metric` / `BSI` / `DIN` …）✓
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植）
@@ -60,7 +64,7 @@ SPECS_BATCH10 = [
         title="List Hole Wizard Standards",
         module="sw_hole_features", function="list_hole_standards",
         read_only=True,      # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
-        inject="sw_app",
+        inject="sw",
         doc="List the Hole Wizard standards available for a hole type "
             "(official ISldWorks.GetHoleStandardsData + IHoleStandardsData.GetHoleStandards). "
             "Returns [{id, name}, ...]; the two out parameters are paired positionally. "
@@ -76,7 +80,7 @@ SPECS_BATCH10 = [
         title="List Hole Wizard Fastener Types",
         module="sw_hole_features", function="list_fastener_types",
         read_only=True,      # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
-        inject="sw_app",
+        inject="sw",
         doc="List the fastener types under a Hole Wizard standard. "
             "Returns [{id, name}, ...]. "
             "⚠ The names follow the SOLIDWORKS UI language (a Chinese UI returns Chinese names); "
@@ -96,7 +100,7 @@ SPECS_BATCH10 = [
         title="List Hole Wizard Fastener Table Types",
         module="sw_hole_features", function="list_fastener_table_types",
         read_only=True,      # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
-        inject="sw_app",
+        inject="sw",
         doc="List the fastener table type ids for one fastener "
             "(official IHoleStandardsData.GetFastenerTableTypes). "
             "⚠ The official second parameter is an Int32 FASTENER ID (from "

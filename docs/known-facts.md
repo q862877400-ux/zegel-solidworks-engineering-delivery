@@ -3277,3 +3277,38 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         `tools/probe_spline_fix.py` · 对照事实 **40**（让失败可见）· **47 / 68**（指针族/pywin32 限制）|
 
 
+| 502 | **★★★★★ 11 条工具因「注入键 ≠ 目标函数首参名」而**经工具层完全调不通**，而**仓内自己的门禁结构性抓不到** —— 2026-10-03（接手轮，★ 已修并真机复验）。
+      ★ **机制**（逐字核过源码）：`tool_registry.py:507` 是 `kwargs[inject_as or inj] = resolver(params)`，
+        而 **`register()`（同文件 `:559`）不往下传 `inject_as`** ⇒ ★★ **注入键字面上等于 `inject` 的值**
+        ⇒ ★★ **`inject` 必须等于目标函数的首参名**（★ 这正是 `RESOLVERS` 那张表存在的理由 ——
+        表内注释逐字：「这张表**就是**为"注入名各不相同"而设计的」）。
+      ★ **病灶**：**11 条**违反了它 ——
+        · `tool_specs_batch10.py` 的 **3 条**（孔标准 / 紧固件类型 / 紧固件表类型）声明 `inject="sw_app"`，
+          而函数首参叫 **`sw`** ⇒ ★ 真机报 **`TypeError: list_hole_standards() got an unexpected
+          keyword argument 'sw_app'`**；
+        · `tool_specs_batch38.py` 的 **8 条 Costing 工具**声明 `inject="manager"`，而首参叫 **`cost_manager`**
+          ⇒ ★★ **而且更糟**：`RESOLVERS["manager"] = resolve_manager` 的 docstring 逐字写着它解析的是
+          **`ICWStudy.LoadsAndRestraintsManager`**（★ **Simulation 的**载荷与夹具管理器）
+          ⇒ ★ **即便键名对上也会注错对象**（真机报的是「没找到研究」）。
+      ★★★ **为什么仓内门禁抓不到（本条最值钱的部分）**：`scripts/check_param_binding.py` 的判据逐字是
+        「声明名 属于 形参 **或** 属于 `param_alias`」＋「**注入名是解析器的键**」
+        ⇒ ★ **它只查"注入名是不是解析器的键"，从不查"它等不等于目标函数的形参名"**
+        ⇒ ★ 这 11 条**全部 PASS**（真机实测前的最后一次跑：`[PASS] 0 处`）。
+        ⇒ ★★ **教训：门禁的判据是"某个名字在某处存在"，而 bug 是"两个名字之间没有关系"** ——
+          ★ **存在性判据看不见"配对"错误**（与已知事实 **36**「同名接口分属不同族」同族，但 36 是
+          "名字对而对象错"，本条是"**键名对不上，所以连对象都到不了**"）。
+      ★ **修法**（★ 加一行正是那张表的设计用途，**不动 `tool_registry`**）：
+        · 加 `resolve_sw`（复用 `resolve_sw_app`）⇒ `RESOLVERS["sw"]`，`batch10` 那 3 条改 `inject="sw"`；
+        · 加 **`resolve_cost_manager`**（`get_costing_manager(resolve_model(...))`）⇒ `RESOLVERS["cost_manager"]`，
+          `batch38` 那 8 条改 `inject="cost_manager"`。
+      ★★ **真机复验（两条都通）**：`solidworks_hole_standards` ⇒ 返回真实孔标准表
+        （`ANSI Inch` / `ANSI Metric` / `AS` / `BSI` / `DIN` …）· `solidworks_costing_evidence` ⇒
+        `{'ok': True, 'readback': {'body_count': 1, 'has_cost_analysis': True}}`
+        （证据 `output/inject-key-evidence.json`）。
+      ★★ **可复用的判据（★ 建议接进 `check_param_binding.py`）**：
+        ★ 门禁应加一条 —— **`inject` 的值必须属于目标函数的形参名集合**（★ 不是"是解析器的键"），
+        ★ 且 `param_alias` 的**每个目标**必须属于形参名集合。
+        ★ 工具：`tools/check_tool_param_binding.py`（★ 本轮新增，**判据就是这个**；★ 修前报 11、修后报 **0**）。|
+        痕迹：`tools/check_tool_param_binding.py`（新）· `tools/probe_inject_key.py`（新）·
+        `output/inject-key-evidence.json` · `mcp-server/register_capabilities.py`（两个新解析器）·
+        `tool_specs_batch10.py` / `tool_specs_batch38.py` · 对照事实 **36** · **169** |

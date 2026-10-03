@@ -109,6 +109,33 @@ def resolve_manager(params: Any):
     return _loads_and_restraints_manager(resolve_study(params))
 
 
+#: ★★ 2026-10-03（接手轮）· **修一批「注入键 ≠ 函数首参名」的工具（共 11 条）** ——
+#:   ★ 规范（本表的设计意图，逐字见下面 `manager` 那条注释）是：**`inject` 必须等于目标函数的首参名**。
+#:   ★ 依据（逐字核过源码）：`tool_registry.py:507` 是 `kwargs[inject_as or inj] = resolver(params)`，
+#:     而 `register()`（同文件 `:559`）**不往下传 `inject_as`** ⇒ ★ **注入键字面上等于 `inject` 的值**。
+#:   ★★ **而仓内门禁 `scripts/check_param_binding.py` 抓不到这一类**：它的判据是
+#:     「声明名 ∈ 形参 **或** ∈ `param_alias`」＋「**注入名是解析器的键**」
+#:     ⇒ ★ **它从不检查「注入键等不等于目标函数的形参名」** ⇒ 这 11 条**全部漏过**。
+#:   ★★★ **真机实测证据**：`solidworks_hole_standards` 按注册器真路径调 ⇒
+#:     `TypeError: list_hole_standards() got an unexpected keyword argument 'sw_app'`
+#:     （`output/inject-key-evidence.json`）。
+def resolve_sw(_params: Any):
+    """注入 `ISldWorks` —— ★ 供**首参名叫 `sw`** 的那批函数（★ 与 `sw_app` 是同一个对象）。"""
+    return resolve_sw_app(_params)
+
+
+def resolve_cost_manager(_params: Any):
+    """注入 **Costing 管理器** —— ★ 供**首参名叫 `cost_manager`** 的那批函数。
+
+    ★★ **为什么不复用 `manager`**：`resolve_manager` 的 docstring 逐字写着它解析的是
+      **`ICWStudy.LoadsAndRestraintsManager`**（★ **Simulation 的**载荷与夹具管理器）
+      ⇒ ★ **与 Costing 毫无关系** —— 那 8 条 Costing 工具**即便键名对上，也会注错对象**
+      （★ 真机实测：报的是「没找到研究」）。
+    """
+    from scripts.sw_costing import get_costing_manager
+    return get_costing_manager(resolve_model(_params))
+
+
 RESOLVERS: dict[str, Any] = {
     "model": resolve_model,
     "sw_app": resolve_sw_app,
@@ -134,6 +161,12 @@ RESOLVERS: dict[str, Any] = {
     #:   ★ 本条由 space-bunny 的 L3 档实测发现、Lead 逐条核源码确认
     #:     （见 `specs/202-user-coverage-gaps/recon/bunny-L3-toolspec-draft.py.txt`）。
     "drawing_model": resolve_model,
+    #: ★★ 2026-10-03（接手轮）：修「注入键 ≠ 函数首参名」那 11 条 —— 见上面两个新函数前的长注释。
+    #:   `sw`：`batch10` 的 3 条（孔标准/紧固件类型/紧固件表类型）函数首参叫 **`sw`**；
+    #:   `cost_manager`：`batch38` 的 8 条 Costing 工具首参叫 **`cost_manager`**
+    #:     （★ 它们原先声明 `inject="manager"` —— 而那是 **Simulation** 的解析器）。
+    "sw": resolve_sw,
+    "cost_manager": resolve_cost_manager,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。
