@@ -1365,3 +1365,12 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★★ **影响面（★ 这才是它的分量）**：本仓有**大量**判据写着「**特征树增量**」（规则 6 的落地）⇒ ★ 故**它们都可能在同一个盲区上误判** ⚠
      ★ 而**本轮修正的是**：事实 402/403/404/405 里「`InsertCutSurface` 静默不干活」那半**不成立**（★ 它**干了**）；★ 而**arity = 6** 那条**仍然对**（★ 它是有用的）✓
      ★ **下一步**：用 `iter_features_recursive` 重读一次，看 `SurfCut` 在**子特征**里或不在。|真机：`tools/probe_cut_surface_returned.py` · `tools/probe_feature_names_blindspot.py`；证据 `output/cut-surface-returned-evidence.json` · `output/feature-names-blindspot-evidence.json`；对照事实 391 / 402-405 |
+| 407 | **★★★ `InsertCutSurface` 回的特征**浮在树外**：递归看不见、重建也不进树、而 `whats_wrong` 为 0** —— 2026-10-03（轮 526）。★ 把上一轮（事实 406）留的两个解释**逐个排除**了：
+     ★ ① **“藏在子特征里”** —— 用 `iter_features_recursive`（★ **走 `GetFirstSubFeature`**）重读：**递归链 前 = 33 节点 · 后 = 33 节点**，★ **`SurfCut` 在递归链里 = `False`** ⇒ ★ **不在子链里** ✗
+     ★ ② **“未提交态（重建就进）”** —— 调用后跑 `EditRebuild3`（★ 回 `True`）：**树仍 9 个**、链尾仍是 `曲面-拉伸1`；★ 再 `ClearSelection2` 后仍 9 个 ✗
+     ★ 而 `whats_wrong` 读到 **`count = 0`**（★ SW 认为**没出错**）。
+     ★ **保留的结论**：★ `arity = 6`（事实 403）· ★ “**只选一张**时回一个对象”（事实 405）· ★ 返回值确实是 `Name = 使用曲面切除1` · `GetTypeName2 = SurfCut`。
+     ★ **剩下的可能**：它要么是**预览态**、要么这条 API 的对象与树是**两套**。
+     ★ **按 A4 不登记成工具、不写 `verified`** —— ★ 证据不足以说“建成”。
+     ★ **按事实 53 停手**（这一处已 6 轮：521 · 522 · 523 · 524 · 525 · 526）。
+     ★★ **方法论**：**一个“特征没进树”的现象，要**逐个排除**“子链 / 未提交 / 报错”三个解释—— ★ 本轮排了两个、而 `whats_wrong = 0` 把第三个（报错）也排了。**|真机：`tools/probe_surfcut_recursive.py`；证据 `output/surfcut-recursive-evidence.json`；对照事实 391 / 403 / 405 / 406 |
