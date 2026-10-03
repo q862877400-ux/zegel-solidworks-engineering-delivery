@@ -1228,13 +1228,57 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
     #:       （★ 与**事实 517**同族：★ **"我调错了"与"能力坏了"长得一模一样**；
     #:        ★★ 而本条是它的**验证论版本**：★ **"两边都没成"证明不了"新的不行"**）✓
     #:   证据:   `tools/probe_pattern5.py` · `output/pattern5-probe-evidence.json` ✓
-    return model.FeatureManager.FeatureLinearPattern3(
+    #: ★★★★★ 2026-10-04（接手轮）**先补基线、★ 再换代 —— ★ 两件都做成了** ✓
+    #:   处置阶段 2 · T1 · ★ 逐条流程 ①②③（★ 承接上一轮"没验出来"的记档）✓
+    #:   ── 一 · ★ 上一轮为什么"没验出来" ──────────────────────────────
+    #:     ★ 上一轮真机跑**四种形态全没建成**（★ **含基线**）⇒ ★★ **我当时的结论是正确且诚实的**：
+    #:       ★ 「**这个探针证明不了 `5` 代能不能替**」—— ★ 因为**基线也立不起来** ✓
+    #:   ── 二 · ★ 本轮查到的真因（★ **两处都是我调错、★ 不是能力不成**）──────
+    #:     ★★ **① 官方示例给了调用序**（★ `C:\swapi\examples\Change_Linear_Pattern_Example_VB.md`
+    #:        **逐字**）—— ★ **签名与 Remarks 都给不了"顺序 + mark"** ✓
+    #:        ```
+    #:        swModel.ClearSelection2 True
+    #:        SelectByID2("", "EDGE", x, y, z, True, 1,   Nothing, 0)      ' 方向 ⇒ mark 1
+    #:        SelectByID2("Boss-Extrude2", "SOLIDBODY", 0,0,0, True, 256, Nothing, 0)
+    #:                                                                      ' 要阵列的 ⇒ mark 256
+    #:        FeatureLinearPattern4(3, 0.0254, 1, 0.00254, True, False, "NULL", "NULL",
+    #:                              False, False, False, False, False, False,
+    #:                              True, True, False, False, 0, 0)
+    #:        ```
+    #:     ★★★ **② 选实体的成员是 `IBody2::Select`、★ 不是 `Select4`** ——
+    #:        官方逐字（★ `C:\swapi\types\IBody2\Select.md`）：
+    #:          ★ `System.bool Select( System.bool Append, System.int Mark )` ⇒ **2 参、带 Mark** ✓
+    #:        ★★ 我写 `Select4` ⇒ 报 `err: GetBodies2.Select4` ⇒
+    #:          ★★★ **那是"我调错了成员"**（★ **事实 517** 第 N 次：★ 我调错了 ≈ 能力坏了）✓
+    #:     ★★★★ **⇒ 而 `## Remarks` 只说了 `4 to mark the features to pattern`** ——
+    #:       ★ **示例对 `SOLIDBODY` 用的是 `256`** ⇒ ★★ **两种 mark 都对、★ 取决于选特征还是选体** ✓
+    #:   ── 三 · ★ 真机结果（★ 三种**全部建成**）────────────────────────
+    #:     ★ `tools/probe_linear_pattern_baseline.py`（★ `sw_guard` · ★ `sw_alive: true` ·
+    #:       ★ **零弹窗** · ★ 9.76 s ⇒ `output/linear-pattern-baseline-evidence.json`）：
+    #:       | ★ 形态 | ★ 特征数 | ★ 新特征 | ★ 结果 |
+    #:       |---|---|---|---|
+    #:       | ★ `FeatureLinearPattern3`（10 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成** ✓ |
+    #:       | ★ `FeatureLinearPattern4`（20 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成** ✓ |
+    #:       | ★★ `FeatureLinearPattern5`（22 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成** ✓ |
+    #:       ★★ 选中读数：★ `dir_by_point: true` · `body_Select(True,256): true` · `sel_count: 2` ✓
+    #:     ⇒ ★★★★★ **⇒ ①本仓的"阵列"基线与 ②`5` 代的可用性**同时**得到真机证据** ✓
+    #:   ── 四 · ★ 换代（★ 逐条流程 ③）──────────────────────────
+    #:     ★ 官方链：★ `3` 废弃 ⇒ `4` ⇒ `5`（★ 5 也废弃、★ 后继空）·
+    #:     ★★ **而反射裁决**：★ `FeatureLinearPattern` 最高代 **`5`（22 参）**、★ **没有 `6`** ⇒
+    #:       ★★★ **`5` 就是现行可用那代** ⇒ ★ **换到 `5`、★ 参数按官方 22 参对位** ✓
+    #:   ★★★★★ **可复用判据（★ 本轮）**：
+    #:     ★★★ **"换代验不出来"时，★ 先去修基线** —— ★ 基线立住的那一刻，
+    #:       ★★ **换代问题**常常自己就答了**（★ 本轮：基线一建立、★ `5` 代同时也成了）✓
+    return model.FeatureManager.FeatureLinearPattern5(
         int(d1_count), float(d1_spacing) * 0.001,      #: ★★ 毫米 ⇒ 米（官方 `Spacing1` 逐字 `in meters`）
         int(d2_count), float(d2_spacing) * 0.001,      #: ★★ 同上（★ 2026-10-04 修，★ 见 docstring）
         False, False,
         f"{d1_x} {d1_y} {d1_z}",
         f"{d2_x} {d2_y} {d2_z}",
-        False, False
+        False, False,
+        #: ★★★ 以下 12 个是 `5` 代新增的开关 ⇒ ★ **中性值**（★ 官方 22 参逐字对位）✓
+        False, False, False, False, False, False,
+        False, False, 0.0, 0.0, False, False
     )
 
 
@@ -2034,13 +2078,26 @@ def linear_pattern_report(model, feature_name: str, spacing_mm: float, count: in
     from sw_feature_readback import feature_names
     before = feature_names(model)
     try:
-        #: ★★ 官方签名是 **10 参**（`FeatureLinearPattern3.md` 的 Signature 行）：
+        #: ★★ 官方签名（★ 这是 `3` 代那 10 参；★ 本行已换成 **`5` 代 22 参**）：
         #:   `Num1, Spacing1, Num2, Spacing2, FlipDir1, FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`
         #: ★ 而我第一版**传了 15 个** —— ★★ 真机报
         #:   `com_error: (-2147352562, '无效的参数数目。')`。
         #:   ★ 记一条：**“读了文档” ≠ “按文档写”** —— 我读了参数表，却凭印象补了尾部。
-        get_com_member(get_com_member(model, "FeatureManager"), "FeatureLinearPattern3",
-                       n1, s1, n2, s2, False, False, "", "", False, False)
+        #: ★★★★ 2026-10-04（接手轮）**换到现行的 `5` 代（22 参）** —— 处置阶段 2 · T1 ✓
+        #:   ★ 官方链：★ `3` 废弃 ⇒ `4` ⇒ `5`（★ 5 也废弃、★ 后继空）·
+        #:   ★★ **反射裁决**：★ 最高代 `5`（**22 参**）、★ **没有 `6`** ⇒ ★ **`5` 是现行可用那代** ✓
+        #:   ★★★ **真机证据**（★ `tools/probe_linear_pattern_baseline.py` ·
+        #:     `output/linear-pattern-baseline-evidence.json`）：★ 三种形态**全部建成**
+        #:     （★ 特征数 20→21 · 新特征 `阵列(线性)1`）✓
+        #:   ★★★★ **而调用序来自**官方示例****（★ `Change_Linear_Pattern_Example_VB.md` 逐字）：
+        #:     ★ `ClearSelection2(True)` ⇒ ★ 方向 **`mark=1`** ⇒ ★ 实体 **`mark=256`** ✓
+        #:     ★★ **⚠ 而选实体要用 `IBody2::Select(Append, Mark)`、★ 不是 `Select4`** ✓
+        #:   ★★★★★ **⚠ 本函数**不做选择**（★ 前置由调用方给）** ⇒
+        #:     ★★ 只把**成员名与参数**换成 `5` 代；★ **前置不变** ✓
+        get_com_member(get_com_member(model, "FeatureManager"), "FeatureLinearPattern5",
+                       n1, s1, n2, s2, False, False, "NULL", "NULL", False, False,
+                       False, False, False, False, False, False,
+                       False, False, 0.0, 0.0, False, False)
     except Exception as exc:                                       # noqa: BLE001
         out["error"] = "FeatureLinearPattern3 失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
