@@ -3057,5 +3057,28 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         ★ 而**全程没有卡住我**（我同时在跑真机探针与写代码）。
       |trace：`workflow-1`（★ 被我 kill 的 6 路本地并发）· `workflow-2`（★ bunny 8 路，成功）；
       配置：`~/.dsh/team-roles.yaml` · `~/.dsh/配置索引.md` §1/§3；对照事实 483 · `docs/SUBAGENT-USAGE.md` |
+| 490 | **★★★★ 本机模型（`ninfer-sm89` / `qwen3.8-27b`）会**幻觉工具名** —— ★ 不写契约就**整轮空转、零产出**** —— 2026-10-03（接手轮），业主当场发现。
+      ★ **症状**：写代码的那个本机模型任务**一直不出东西**，反复报
+        ```
+        Error: unknown tool "read_file"      ← 而本会话真实的工具名是 `read`
+        ```
+      ★★ **根因**：★ 本机模型**不是**这个 harness 的原生工具调用格式 —— 它按另一套习惯（`read_file`/`write_file`/
+        `str_replace_editor`/`bash`/`cat`/`ls`，常见于别的 agent 框架的语料）**编出工具名**，
+        ★ 而 harness 只认真实注册名 ⇒ 每次都 `unknown tool` ⇒ ★ **模型重试、整轮烧完、什么都没写**。
+      ★★★ **修法（实测有效）**：★ 在给它的提示词（或角色 `persona`）里放一份**逐字工具名契约**：
+        ```
+        真实存在的工具名只有：read / write / edit / grep / glob / pwsh / skill
+        ★ 不存在：read_file / write_file / str_replace_editor / bash / cat / ls
+        ★ 想用的名字不在清单里 ⇒ 立刻停手、改用等价工具，不要重试
+        ```
+      ★ **复验（不靠它自述）**：★ 给了契约后，它用 `read` 读了 `spec.md` 前 3 行、用 `write` 写进
+        `output/_qwen_tooltest.txt`（**112 B、内容逐字正确**）⇒ ★ **读写都正常、`unknown tool` 消失**。
+      ★★ **落地**：★ 契约已写进 `~/.dsh/team-roles.yaml` 的 **`worker`** 与 **`researcher`** 的 `persona`
+        （★ 那两个角色走本机模型）⇒ ★ 以后**每次 spawn 自动带上**，不靠我记得写。
+        ★ 坑本身也记进 `~/.dsh/配置索引.md` §6「反复踩过的坑」。
+      ★★ **可复用的一条**：★ **换模型 = 换工具调用习俗** —— ★ 派活前先问一句「这个模型的工具名和我们一致吗」，
+        ★ 而**判据是它真写出文件**（★ 不是它说"我读到了"）。| 痕迹：`output/_qwen_tooltest.txt`；
+        配置：`~/.dsh/team-roles.yaml`（worker/researcher 的 persona）· `~/.dsh/配置索引.md` §6；
+        对照事实 489（并发纪律）· 483（通道限制） |
 
 
