@@ -46,7 +46,8 @@ try:
 except ImportError:                                            # pragma: no cover
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
-__all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback"]
+__all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
+           "extrude_depth"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -182,3 +183,86 @@ def feature_readback(model, feature_name: str, *, do_rebuild: bool = True) -> di
                                                                     str(exc)[:160])
         res["ok"] = False
     return res
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`）
+# 文件:   `scripts/sw_feature_readback.py::extrude_depth`（★ 新增）
+# 定位:   ★ 阶段 3（T2 缺口地图）⇒ ★★ 密度图算出 **查 × 特征 = 官方 451 · 我们 0** ⇒
+#   ★★★ 而那一格实际有 **1008 个成员 / 174 个族**（★ 现算）⇒ ★ 本函数是**第一个** ✓
+#   ★★★★ **官方逐字**（★ `IExtrudeFeatureData2/GetDepth.md`）：
+#     ★ `System.double GetDepth( System.bool Forward )` ·
+#     ★★ `## Parameters`：★ `Forward` = True for forward / false for reverse ·
+#     ★★★ `## Returns`：★ 「**Depth of the extrusion**」——
+#       ★★ **⚠ 官方**没写单位**** ⇒ ★ 铁律 5：★ **不许替它假定** ✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def extrude_depth(model, feature_name: str = "", *, forward: bool = True) -> dict:
+    """★ 读**拉伸特征的深度**（★ `IExtrudeFeatureData2::GetDepth`）✓
+
+    ★★★★★ **单位读数（★ 真机实测、★ 与"官方吃米"的假设**相反**）** ——
+      ★ `tools/probe_extrudefeaturedata_getdepth.py`（★ `sw_guard` · ★ `sw_alive: true` ·
+      ★ **零弹窗** ⇒ `output/extrudefeaturedata-getdepth-evidence.json`）：
+      ★ **本仓用 `extrude_boss(depth=20)`（★ 本模块长度单位 = 毫米）建一个凸台** ⇒
+        ★ 特征名 **`凸台-拉伸1`** · ★ 型 **`Extrusion`** ✓
+      ★★ **`GetDepth(True)` 回 `20.0`** —— ★ **不是 0.02** ⇒
+        ★★★ **⇒ 它随**文档单位**（★ 本机 `GetUnits() = [0, …]` ⇒ `LengthUnit = 0` = **毫米**）** ✓
+      ★★★ **⚠ 而"独立锚点"那一步**失败得很有价值**：★ 我本想用 `IBody2::GetBodyBox` 锚定单位 ⇒
+        ★★ **而它自己**混口径**** —— ★ 实测回 `[-0.05, -0.03, -20.0, 0.05, 0.03, 0.0]`：
+        ★ **X 是 ±0.05（**米** = 100mm）· ★ Z 是 -20.0…0.0（**毫米** = 20mm）** ✓
+        ⇒ ★★★ **⇒ 同一个成员的六个分量里混了两套口径** ⇒ **它不可当锚点** ✓
+        ⇒ ★★★★ **可复用判据**：★★★ **"找一个独立的量来锚定单位"这条判据，
+          要先证明**那个量自己是干净的**** ——
+          ★ 否则**你会拿一个混口径的东西去校准另一个** ✓
+          （★ 与**事实 40**同族：★ **一个读数如果看起来像正常值，比没有读数更糟**）✓
+    ★★★★★ **⚠ 返回值带 `unit_source`** —— ★ **不许让调用方猜单位**：
+      ★ `"document"` = 随文档单位（★ **本函数的实测结论**）；
+      ★ 而**本函数不替调用方换算** ⇒ ★ 要毫米就自己按 `GetUnits()` 判 ✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    out = {"feature": feature_name, "forward": bool(forward),
+           "depth": None, "unit_source": "document", "definition": None,
+           "end_condition": None, "error": None}
+    try:
+        feat = None
+        if feature_name:
+            #: ★★★★ **名字是 `FeatureByName`、★ 不带 `Get`** ——
+            #:   我第一版写了 `GetFeatureByName` ⇒ ★★ **被成员名门禁抓到**
+            #:   （★ `scripts/check_member_names.py`：★ 「1 个成员名在官方反射里查不到：
+            #:     sw_feature_readback.py:230  GetFeatureByName」）✓
+            #:   ★★★ **而本仓**27 处**用的都是 `FeatureByName`** ⇒
+            #:     逐字见 `sw_assembly.py` L267 与 `sw_sweep.py` L165
+            #:     （★ 后者还写明了「★ `IModelDoc2.FeatureByName(name)`（**方法**）」）✓
+            #:   ★★★★ **可复用判据**：★★★ **"一个存在但没人用的守卫与没有守卫等价"**
+            #:     （★ 事实 40 那一族）—— ★★ **而这里反过来：★ 门禁**确实抓到了一个真错**** ✓
+            #:     ⇒ ★ **写新 COM 调用前，先在仓里搜**同名成员怎么用的**（★ 本仓 27 处现成例子）✓
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★ 兜底：★ 找**第一个**「凸台-拉伸」特征（★ 中文 UI 名含「凸台」、★ 也认 `Extrusion` 型）
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if "Extrusion" in tn:
+                        feat, out["feature"] = f, str(safe_get_com_member(f, "Name") or "")
+                        break
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = "找不到拉伸特征（★ 给了名字就按名字、★ 否则找第一个 `Extrusion`）"
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        out["depth"] = get_com_member(fd, "GetDepth", bool(forward))
+        try:
+            out["end_condition"] = get_com_member(fd, "GetEndCondition", bool(forward))
+        except Exception:                                                 # noqa: BLE001
+            out["end_condition"] = None
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
