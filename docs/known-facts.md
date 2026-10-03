@@ -1386,3 +1386,18 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ★ 「以『树增量』作判据时，对**某些特征类型**要留意」（★ 而**不是**「全仓判据都危险」）✓
      ★ 而它与事实 407 合起来：`SurfCut` 那个对象**浮在树外**（递归与重建都不让它进），★ 而**常规曲面特征正常进树** ⇒ ★ 两者并不矛盾。
      ★★ **方法论**：一条「影响面很宽」的结论，若证据只有**一个样本**，★ **就该拿反例去界定它** —— ★ 本轮拿两条已验成的特征当反例，结果把它从「全仓」收到「特定类型」。|真机：`tools/probe_readback_blindspot_bounds.py`；证据 `output/readback-blindspot-bounds-evidence.json`；对照事实 406 / 407 |
+| 409 | **★★ 「`SurfCut` 浮在树外」与 `Bodies` **无关**（★ 又一个干净的否定）** —— 2026-10-03（轮 528）。
+     ★ 官方对 `Bodies` 的说法（逐字）：「Array of specific **bodies** that intersect with the cut」，★ 且分两种：`UseFeatScope=true` / `UseAutoSelect=false` 时用传进去的体；「**Empty array indicating to cut all bodies**」。
+     ★ 故**本仓一直传的 `[]` 是“切所有”那条路**，★ 而**从没试过传真的体** ⚠
+     ★ 而事实 407 留下了一个**未排除的解释**：“它没**认领到体**”。
+     ★ 真机（四组，走 `sw_guard`、零弹窗）：
+     ```
+     `[]`        + scope=F + auto=T  ⇒ 回 **CDispatch** · 名 = 使用曲面切除1   （★ 对照）
+     `[实体]`    + scope=**T** + auto=F  ⇒ 回 **None**      ⚠
+     `[曲面+实体]` + scope=**T** + auto=F  ⇒ 回 **None**      ⚠
+     `[实体]`    + scope=F + auto=F  ⇒ 回 **CDispatch** · 名 = 使用曲面切除1
+     ```
+     ⇒ ★★ **故：传真的体不改善**（★ 而在 `scope=T` 时**反而回 `None`**）；★★★ **故“没认领到体”这个解释也被排除** ✓
+     ★ 而一个副产：★ **传空数组反而是目前最好的形态**（★ 回对象、且对象带名字）。
+     ★ **按事实 53 停手**（这一处已 7 轮：521-528）。
+     ★ **累计已排除的解释**：① 子特征（事实 407）· ② 未提交（同）· ③ 报错（同，`whats_wrong = 0`）· ④ `Bodies` 传体（本轮）。|真机：`tools/probe_cut_surface_real_bodies.py`；证据 `output/cut-surface-real-bodies-evidence.json`；对照事实 403 / 405 / 406 / 407 |
