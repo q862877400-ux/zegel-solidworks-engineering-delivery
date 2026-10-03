@@ -3504,3 +3504,35 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         痕迹：`mcp-server/server.py` 的 `_jsonable` / `_result` · `tests/test_result_serializer.py` ·
         `tools/probe_result_serializer.py` · `tools/scan_nondict_returns.py` ·
         `output/result-serializer-evidence.json` · 对照 **事实 40** · **36**（报错指不出真因）|
+| 509 | **★★★ 纠正事实 503 的**机制**：`RESOLVERS["model"]` **不会**清空选区** —— ★ **结论（"前置要写成 `pre_call`"）仍然成立，但我给的机制是错的**（2026-10-03 接手轮，**自证伪**）。
+      ★★ **怎么发现的**：★ 第 28 轮我先按 503 的机制写了「诊断型工具（`selection_count` 等）
+        经工具层**永远报 0**」的探针 ⇒ ★★ **实测反了**：`count_after_select=1` · 调过解析器后
+        **仍是 1** · 而 `solidworks_selection_count` **正确回了 1**（证据 `output/selection-count-e2e-evidence.json`）。
+      ★★★ **两轮受控实验（都不是推理）**：
+        · **重复实验**（`output/resolver-selection-repeat-evidence.json`）：同一个件、
+          **6 次**「选边 → 调解析器 → 再调一次解析器 → 重选」⇒ ★ **6/6 全部 `1 → 1`，一次没掉**；
+        · **mark 矩阵**（`tools/probe_resolver_mark_matrix.py`，`output/resolver-mark-matrix-evidence.json`）：
+          **`FACE` / `EDGE` × `mark` 0/1/2/4 × 选 1 个 / 2 个 = 16 组** ⇒ ★★ **0/16 掉**
+          （每一组都是 `picked == before == after_resolver`）。
+      ⇒ ★★★ **结论：`RESOLVERS["model"]`（经 `connect_solidworks()`）**不清空选区**。**
+      ★ **那第 17 轮那个 `2 → 0` 是什么？** ★ 那次的 `diag_selection_lifetime.py` 用的是
+        **焊件件（结构构件）+ `mark=1` 选面**，而本轮两组实验用的是**普通拉伸件**。
+        ★ 两次都是真读数 ⇒ ★★ **差异落在"何种零件/何种调用序"上，而我没能复现它**
+        ⇒ ★ 按事实 53 **停止追**，★ 但**必须把 503 的机制断言改掉**（★ 不能再拿一个复现不出的机制去推理）。
+      ★★ **503 里哪部分仍然成立**（★ 这才是重要的）：
+        · ✅ **结论**：★ 凡「要求调用方**先选好**某个东西」的工具，**必须把选择写进 `pre_call`**；
+        · ✅ **理由（改后的）**：★ **工具层没有"调用方预选"这条通路** ——
+          ★ MCP 客户端**根本没机会**在工具调用之前操作 SolidWorks 的选区
+          （★ 这不需要"解析器清选区"这个机制，**它本身就足以推翻预选式前置**）；
+        · ✅ **已做的两处修复仍然正确**（★ 焊件对的 `_select_faces_for` 让 `pre=True` ✓ ·
+          `surface_fill` 的回退让它在工具层建成 ✓）—— ★ **它们治的是"前置拿不到"，与机制无关**。
+      ★★★ **可复用判据（★ 本条最重要的产出）**：
+        ★ **一个"机制性"结论，必须用**多种零件 / 多种调用序**重复验证，才能写进事实表**；
+        ★ 只在一处观测到的机制，★ 很可能只是**那一个状态的巧合** ——
+        ★★ 而**基于错误机制做的推理会整片出错**（★ 本轮就差点把 5 条诊断型工具误判成"永远报 0"）。
+      ★ 与**事实 417–419**（"判据在这条路上间歇性不稳"）同族：★ 本仓已有过"间歇性"的先例，
+        ★ 本条再次说明**单次观测不足以立机制**。|
+        痕迹：`tools/probe_selection_count_e2e.py` · `tools/probe_resolver_mark_matrix.py` ·
+        `output/selection-count-e2e-evidence.json` · `output/resolver-selection-repeat-evidence.json` ·
+        `output/resolver-mark-matrix-evidence.json` · ★ 原证据 `output/selection-lifetime-evidence.json`
+        （第 17 轮那次 `2 → 0`，★ **保留不动当反例**）· 对照 **事实 503**（★ 机制部分据此条更正）|
