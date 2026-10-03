@@ -41,13 +41,13 @@
 - [~] **T307** 交叉曲线 `IntersectCurves` —— **包装已写，前置未通**：官方要 3D 草图 + 两个相交面，而 `Insert3DSketch` 在本机回 `None`
   → 验收: 同上模式（数组长度 / 实体计数增量）
 
-## B4 草图编辑·移动族（5 条）
+## B4 草图编辑·移动族（5 条）✅ 已完成（轮 471-472；★ 真机 **5/5**，判据按操作分）
 
-- [ ] **T401** 移动实体 `IModelDoc2.SketchModifyTranslate`
-- [ ] **T402** 复制实体 `SketchModifyCopy`
-- [ ] **T403** 旋转实体 `SketchModifyRotate`
-- [ ] **T404** 缩放实体比例 `SketchModifyScale`
-- [ ] **T405** 伸展实体 `SketchModifyStretch`
+- [x] **T401** 移动实体 `IModelDoc2.SketchModifyTranslate` ★ 判据：`ModelToSketchTransform.ArrayData` 平移分量
+- [~] **T402** 复制实体 —— ★★ **三源都查不到 2D 入口**（swapi/CHM/反射含 `SketchModify` 的都只有 4 个；官方 `RotateOrCopy3D*` 逐字写「selected **3D sketch** entities」）⇒ 铁律 5，不假装做到
+- [x] **T403** 旋转实体 `SketchModifyRotate` ★ 真机：30° ⇒ 3×3 首行 `[0.866025,-0.500001,0]`
+- [x] **T404** 缩放实体比例 `SketchModifyScale` ★ 真机：1.5 ⇒ bbox ±20/±10 → **±30/±15**
+- [x] **T405** 伸展实体 —— ★**真名是 `IModelDocExtension.Stretch`**（不在 `IModelDoc2` 上）★ 真机已跑
   → 验收: ★ 判据是**几何变了**（草图实体坐标 / 计数）—— ★ 移动不改计数，故要读坐标
 
 ## B5 草图尺寸与关系（8 条）
