@@ -3621,6 +3621,33 @@
         "★ **替换面要先选好两组面**（官方 Remarks：被替换的面 **mark=1**、替换面 **mark=2**）；直纹曲面要先把边按 **mark=4** 选中。★ 本模块**不代替调用方选择**（★ 那是声明式 selection 层的事）。",
         "★ **前置很具体**：删除面 / 替换面 要的是**实体的面**——实测拿“拉伸**曲面**的面”去调两条**都不成**，改成**实体**后**两条都成**。"
       ]
+    },
+    {
+      "id": "surface_ref_ops",
+      "label": "曲面特征·参考曲面（放样曲面；★ 旋转曲面**未登记**）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建；依据为**官方三源**（`C:\\swapi\\types\\` **结构化文档** + CHM + `_raw/reflect_sldworks/` **反射**），见 `scripts/sw_surface_ref_ops.py` 的来源块。★ 补的是 `specs/201-toolbar-gaps` 的 **B6-b**。",
+      "evidence": [
+        "★ 2026-10-03（轮 476）**真机建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b6b_surface_ref.py`。★ **放样曲面**：树 **7→8**，新增 **`曲面-放样1`**。证据 output/b6b-surface-ref-evidence.json。★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`）—— 本条官方回 `void`。",
+        "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **246 → 247**。",
+        "★ 三源互证里**台账给的两个名字都不对**：`FeatureRevolveRefSurface` ⇒ swapi 里**根本没有**（真名 `IFeatureManager.InsertRevolvedRefSurface`）；`InsertProtrusionBlend2(Surface)` ⇒ 真名 **`IModelDoc2.InsertLoftRefSurface2`**。★ 同族 `FeatureExtruRefSurface{,2,3}` 命名不同 ⇒ **不能按前缀猜**。"
+      ],
+      "limitations": [
+        "★★ **旋转曲面本条不登记**（★ 按 A4：`verified` 必须有**我们自己的运行证据**）。真机试过 **4 种前置**（选草图特征 / 轮廓 mark=0 / 轮廓 mark=1+中心线 mark=4 / 用本仓 `_select_revolve_axis` + `_ensure_sketch_selected`）—— **都未建成**（树 6→6）。★ 最后那次量到 **`轴选中数 = 5`** ⇒ `_select_revolve_axis` 把该草图里**所有段**都按 `mark=4` 选了（矩形 4 边 + 中心线）⇒ **轴不唯一**；★ 而实体版 `revolve_boss` 用同一句却**是成的**（它走 `FeatureRevolve2`，**另一条特征路**）⇒ 差别在哪**还没查清**。★ 按**事实 53**（同一处连续 ≥3 次没稳就停）**停下**。",
+        "★ **扫描曲面**：两个曲面版（`InsertSweepRefSurface` 与 `…RefSurface2`）**都标 Obsolete**，继任者写的是**实体**那族的 `IFeatureManager::InsertProtrusionSwept3` ⇒ 曲面版在新架构里走哪条，**两个源都没给出**。（线索：2018 起扫描改走 `ISweepFeatureData`，★ 本仓 `sw_sweep` 用的就是它）",
+        "★ **边界曲面**：全 `C:\\swapi\\types` 搜 `*Boundary*`，**没有任何** Boss/Surface/Feature 成员；`InsertBoundaryBoss` **也不在**。★ 可能并入放样，★ **但那是推断、不是查到的** ⇒ 不假装做到。"
+      ]
     }
   ]
 }

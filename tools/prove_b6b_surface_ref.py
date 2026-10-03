@@ -123,12 +123,23 @@ def _case_revolve(doc):
     C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCenterLine",
                      0.0, 0.0, 0.0, 30.0, 0.0, 0.0)
     P.end_sketch(doc)
-    #: ★ 选轮廓草图（★ 官方 Remarks 未给 mark ⇒ 先按 mark=0 试）
-    #: ★ 用本仓机制选**轮廓**（★ 官方 Remarks 没给 mark ⇒ 先试 mark=0）
-    for cand in ("草图1", "Sketch1"):
-        if _select_sketch_contour(doc, cand, 0):
-            break
-    return M.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
+
+    #: ★★★★★ 2026-10-03（轮 476）**改用本仓现成的、真机验证过的两步** ——
+    #:   ★ 我上一轮自己拼过 3 版（选草图特征 / 轮廓 mark=0 / 轮廓 mark=1 + 中心线 mark=4），
+    #:     而第 4 版"先轴后轮廓"的编辑**锚点没命中、根本没生效** ⇒ ★ 那一版其实**没真跑**。
+    #:   ★★ 而**本仓早有现成的**（★ 我又一次没先看）：
+    #:     · `sw_part._select_revolve_axis(model, 草图名)` —— ★ 真机 **4/4** 定的判据：
+    #:         轴的类型名是 **`EXTSKETCHSEGMENT`**（★ 不是 `SKETCHSEGMENT`）· mark **4** ·
+    #:         取线段走 `IEntity.Select4`（按对象选）· 且用 `append=True`。
+    #:     · `sw_part.revolve_boss` 的注释（★ 轮 360 真机定的）：
+    #:         > **轴必须在轮廓之前进选择集**（`FeatureRevolve2` 靠"选择集里谁是轴"来解析）
+    #:         > 证据 `output/revolve-axis-geometric-evidence.json`（改序前两次都 `feature_created=false`）
+    #:   ⇒ ★ **① 先轴 ⇒ ② 后轮廓**，两步都走本仓的包装 ✓
+    axis_n = P._select_revolve_axis(doc, "草图1")
+    P._ensure_sketch_selected(doc, "草图1")
+    r = M.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
+    r["axis_selected"] = axis_n
+    return r
 
 
 def _case_loft(doc):

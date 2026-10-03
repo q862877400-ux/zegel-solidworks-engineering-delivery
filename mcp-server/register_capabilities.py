@@ -317,6 +317,9 @@ BATCH_MODULES = (
     #:   （平面区域 / 等距曲面 / 直纹曲面 / 删除面 / 替换面）。
     #:   ★ 真机 **5/5**（`output/b6a-surface-edit-evidence.json`）。
     "tool_specs_batch68",
+    #: ★ 2026-10-03（轮 476）：B6-b 曲面特征——**只登记真机建成的那一条**（放样曲面）。
+    #:   ★ 旋转曲面前置试了 4 种未成（★ 最后量到 `轴选中数=5`）⇒ 按 A4 不进 `verified`、**不登记成工具**。
+    "tool_specs_batch69",
 )
 
 def all_specs() -> list:
