@@ -1280,3 +1280,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ```
      ⇒ ★★ **形态：两段都“成功”而结果没有** —— ★ 与**事实 391**（静默不干活）同族，★ 而这次**连 `pre` 都回了 `True`**（★ 比之前那几条**多一个正面信号**）。
      ★ **下一步该试的**：`BRemovePickedIn=True`（★ CHM 说它“**移除**选中面”，★ 可能才会触发产出）· `BSplitLinearIn=True` · 以及**只选部分面**（★ 本轮是全选 8 张）。|真机：`tools/prove_trim_surface.py`；证据 `output/trim-surface-evidence.json`；对照事实 391 / 399 |
+| 401 | **★★★ 可复用手法：「拿后缀去类型库里**加通配筛一遍**」—— 它当场抓到一个**没试过的入口**；而加厚的总账升到 **14 组 / 5 种入口**** —— 2026-10-03（轮 519-520）。
+     ★★ **手法怎么来的**：轮 519 我在「剪裁曲面」上裁了一次 —— 我按**猜的名字** `InsertTrimSurface` 查，查不到就按铁律 5 记了「查不到」；★ 而**真名**（`PreTrimSurface`/`PostTrimSurface`）是从**类型库 dump** 里翻出来的。
+     ⇒ ★★ **教训：铁律 5 的「查不到」**应当限定在查过的名字上**。
+     ★ **具体做法**（★ 可直接重现）：用 `comtypes.client.GetModule('<sldworks.tlb>')`，对 `IModelDoc2` / `IModelDoc` / `IFeatureManager` 的 `_methods_` **按关键词子串过一遍**（★ 例：`Surface` / `Trim` / `Radiate` / `Offset` / `Knit` / `Thicken` / `Ruled` / `Planar`），★ 并**同时打印 in/out 个数**（★ flag 1=in、10=out）⇒ 一屏看完。
+     ★ **它当场的收获**：
+     ```
+     FeatureBossThicken   IModelDoc2       in=3   ← 轮 504 试过
+     FeatureBossThicken   IFeatureManager in=7   ← 轮 502-503 试过
+     FeatureBossThicken2  IModelDoc2       in=4   ← ★★ **没试过**（本轮补上）
+     FeatureCutThicken2   IModelDoc2       in=4   ← ★★ **没试过**（本轮补上）
+     InsertCutSurface      IModelDoc2/IFM    in=2/in=5  ← ★ 剪裁的**另一个候选**
+     GetPreTrimmedBodies   IFeatureManager in=1   ← ★ 说明剪裁**中间可查**
+     ```
+     ★ 真机（`output/thicken2-evidence.json`）：`FeatureBossThicken2`（4 参）⇒ **回 `None` · 树不动**；`FeatureCutThicken2`（4 参）⇒ **同**；而只传 3 参 ⇒ **`非选择性的参数`**（★ 反过来**确认了 4 参是对的**）。
+     ⇒ ★★ **加厚的总账升到 14 组 · 5 种入口**（`IFeatureManager.FeatureBossThicken` 7 参 · `IModelDoc2.FeatureBossThicken` 3 参 · `IModelDoc2.FeatureBossThicken2` 4 参 · `IModelDoc2.FeatureCutThicken` 3 参 · `IModelDoc2.FeatureCutThicken2` 4 参），**前置每次完美**（`solid=0 · surface=1`）⇒ ★ **「加厚在本机静默不成」这条结论更硬了** ✓
+     ★★ **故它不只是一次失败** —— 它把「入口没穷举」这个漏洞堆上了。|真机：`tools/probe_thicken2.py`；证据 `output/thicken2-evidence.json`；对照事实 391 / 396 / 400 |
