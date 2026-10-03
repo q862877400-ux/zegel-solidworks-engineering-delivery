@@ -1554,3 +1554,25 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ ★★ **可复用的教训（值得记）**：★ **不要手搓本仓已有的 COM 调用包装**。★ 本例里我手搓了 `SelectByID2`，★ 而**两种写法都报同一个错**；★ 而本仓的 `_select_by_id` **一次就成** ⚠
      ★ **按事实 53 停手**（分割线已 2 轮：537 · 538，★ 而这轮是“**前置修正后的一次干净复核**”）。
      ★ **下一步若还动**：★ 读**官方例子**（★ 第六种源 —— 事实 415）—— 它对剔裁曲面**给出了调用序**，★ 而分割线可能也有例子。|真机：`tools/probe_split_line.py`；证据 `output/split-line-evidence.json`；对照事实 33 / 415 / 417 |
+| 419 | **★★★ 一类现象单列：「**照官方例子把前置完全对上**」而**特征仍不建**** —— 两个案例（剔裁曲面 + 投影型分割线）—— 2026-10-03（轮 534-539）。
+     ★ 事实 415 立了「**第六种源：官方例子**」（★ 它给的是**调用序**）—— ★ 而**它在剔裁曲面上真的纠正了一个错**（顺序反了）。
+     ★ 故本轮（轮 539）用它攻**投影型分割线** —— 在 CHM 里找到 `Create_Projection_Split_Line_Example_VBNET.htm`，★ 而它的**关键四行**逐字是：
+     ```
+     ① SelectByID2("Boss-Extrude1", "BODYFEATURE", 0,0,0, False, 0, Nothing, 0)
+     ② SelectByID2("Sketch1",       "SKETCH",      x,y,0, True,  **4**, Nothing, 0)
+     ③ SelectByID2("",              "FACE",        x,y,z, True,  **1**, Nothing, 0)
+     ④ Part.InsertSplitLineProject(True, True)
+     ```
+     ⇒ ★★ **故两个 mark 是：草图 = 4 · 面 = 1** ⚠ —— ★ 而本仓轮 537/538 **只选了一个基准面、mark = 0**。
+     ★ 真机（`tools/probe_split_line_projection_per_example.py`，零弹窗）：
+     ```
+     picked = {"特征": "凸台-拉伸1", "草图": "草图2", "面": true}   ★ 三样都选上了 ✓
+     sel_by_mark = {**'0': 1, '1': 1, '4': 1**}                    ★ mark 分工**完全照例子** ✓
+     而 `(True,True)` / `(True,False)` / `(False,True)` 三组 ⇒ **全部 `new=[]` · 无错** ⚠
+     ```
+     ⇒ ★★ **故：前置已照官方例子完全对上、而特征仍不建** ✓
+     ★ 而它与**剪裁曲面**（事实 415，★ 顺序已纠正后仍不成）**同一个形态** ⚠
+     ⇒ ★★★ **故把它们并成一类：★ 「官方例子给出的调用序已完整执行、而这条后端上特征仍不建」** —— ★ 与事实 391 那一族同源。
+     ★ **按事实 53 停手**（分割线已 3 轮：537 · 538 · 539）。
+     ★★ **而它的净收获不是“成”**：★ **它把两条能力的「前置没对」这个可能性彻底排除掉了** —— ★ 以后不必再围着前置转。
+     ★ 而那两个例子页名（★ 可直接重现）：`Create_Trimmed_Surface_Feature_Example_VBNET.htm` · `Create_Projection_Split_Line_Example_VBNET.htm`。|真机：`tools/probe_split_line_projection_per_example.py`；证据 `output/split-line-projection-per-example-evidence.json`；对照事实 391 / 415 / 417 / 418 |
