@@ -1061,7 +1061,30 @@ def sweep_params(model, feature_name: str = "") -> dict:
 
       ★★★★★ **⚠ 而 `GetWallThickness` 的口径**仍未定案**** —— ★ 官方逐字说它
         **「valid only if `ISweepFeatureData::IsThinFeature` is true」** ⇒
-        ★★ **⇒ 要量它必须先建一个**薄壁扫描** ⇒ ★ **如实留作待办、★ 不谎称** ✓
+        ★★ **⇒ 要量它必须先有一个**薄壁**扫描** ✓
+
+      ★★★★★★★ **✅ 而"薄壁扫描"这条路**已经查清（★ 2026-10-04 轮 128）** ——
+        ★★ **结论：★ **不能"先建后改"****（★ 官方 `## Remarks` 逐字、★ **三条互相印证**）：
+          ★ `ISweepFeatureData::ThinFeature` 的 `## Remarks`：
+            「To make a thin sweep, you must set this property **before calling
+             `IFeatureManager::CreateFeature`**. ★★ **You cannot make a thin-walled
+             sweep feature after the sweep has been created**, and ★★ **you cannot edit
+             a sweep feature to make it thin walled**.」✓
+          ★ `ISweepFeatureData::IsThinFeature` 的 `## Remarks`：
+            「you can make a sweep feature thin-walled **only by setting `ThinFeature`
+             at the time of creation**」✓
+        ★★★ **真机验证**（★ `output/sweep-wall-units-capability-recheck.json`）：
+          ★ 建扫描后设 `ThinFeature = True` · ★ `ThinWallType = 0` ·
+            ★ `SetWallThickness(True, 0.002)` ⇒ ★ `ModifyDefinition` 回 **`true`** ⇒
+            ★★ **而体积**一点没变****：★ `before = **1130.973**` · ★ `after = **1130.973**` ⇒
+            ★★★ 与「实体圆柱」的解析值 **1130.97** **距离 0.0**（★ 次近候选 125.664）⇒
+              ★ **⇒ 判定**毫无歧义**：★ 薄壁**没被采纳**** ✓
+        ★★★★ **⇒ 所以它是**能力层的形态问题**、★ 不是"读不读得到"的问题** ⇒
+          ★ **要量那个口径，得改成"创建时就带薄壁"**（★ 即 `CreateFeature` 之前设）⇒
+          ★★ **那要改 `sw_sweep` 的创建路径** ⇒ ★ **如实留作待办、★ 不谎称** ✓
+        ★★★★★ **⚠ 而这一条是**我漏读 `## Remarks` 造成的**** —— ★ 我当时只读了
+          `## Returns`（★ 「Wall thickness」）⇒ ★★ 而**前置条件全在 `## Remarks` 里** ✓
+          ★★★ **⇒ 本仓 AGENTS.md 明写**「官方是第 0 步：★ **签名 + `## Remarks` + 例子**」✓
 
       ★★★★★ **而本轮的真机读数**（★ 建成了、★ 读回来了、★ **全部自洽**）：
         ★ `create_sweep_report` ⇒ ★ **`ok=True · type_name=**Sweep** · 树 9→10`** ✓
