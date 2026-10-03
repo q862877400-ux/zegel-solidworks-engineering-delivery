@@ -3832,6 +3832,60 @@
         "★★ **前置：蓝图里必须有一条中心线**（官方原话的 centerline）—— ★ 本包装的 docstring 已明写这一点。★ 另官方给的 mark **没写** ⇒ ★ 本模块**不假定 mark**（真机用 mark=0 成）。",
         "⚠ **未查**：★ 非 360° 角；★ `rev_type=1/2`（MidPlane / 双向）；★ 官方另注「does not support **3D sketches**」。"
       ]
+    },
+    {
+      "id": "sketch_dimension_horizontal",
+      "label": "水平尺寸（`AddHorizontalDimension2`）—— ★ **真机建成**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名**立）：`IModelDoc2.AddHorizontalDimension2(double X, double Y, double Z)` 与 `IModelDoc2.AddVerticalDimension2(double X, double Y, double Z)` —— ★ 三个参数都是**尺寸文字的放置点**。",
+      "evidence": [
+        "★★ 2026-10-03（轮 542）**真机建成**（走 `sw_guard`，`sw_alive: true`、`dialogs: []` 零弹窗）：在前视面画**一条水平线段**，★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）。证据 `output/hv-dimension-with-selection-evidence.json`。",
+        "★★★ **而根因是一组对照定下的：「**不选**」那组 `尺寸 0 → H:0 → V:0`（**不成**）** —— ★ 故**前置就是“**必须先选中实体**”**。",
+        "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
+      ],
+      "limitations": [
+        "★★ **前置：必须先选中实体**（★ 一条线段**或**两个端点都行）—— ★ 而**不选时**它会弹「修改」框等人填数（★ 而那会**看起来像挂死**）。",
+        "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
+        "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
+      ]
+    },
+    {
+      "id": "sketch_dimension_vertical",
+      "label": "竖直尺寸（`AddVerticalDimension2`）—— ★ **真机建成**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名**立）：`IModelDoc2.AddHorizontalDimension2(double X, double Y, double Z)` 与 `IModelDoc2.AddVerticalDimension2(double X, double Y, double Z)` —— ★ 三个参数都是**尺寸文字的放置点**。",
+      "evidence": [
+        "★★ 2026-10-03（轮 542）**真机建成**（走 `sw_guard`，`sw_alive: true`、`dialogs: []` 零弹窗）：在前视面画**一条水平线段**，★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）。证据 `output/hv-dimension-with-selection-evidence.json`。",
+        "★★★ **而根因是一组对照定下的：「**不选**」那组 `尺寸 0 → H:0 → V:0`（**不成**）** —— ★ 故**前置就是“**必须先选中实体**”**。",
+        "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
+      ],
+      "limitations": [
+        "★★ **前置：必须先选中实体**（★ 一条线段**或**两个端点都行）—— ★ 而**不选时**它会弹「修改」框等人填数（★ 而那会**看起来像挂死**）。",
+        "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
+        "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
+      ]
     }
   ]
 }
