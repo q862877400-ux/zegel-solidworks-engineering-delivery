@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 70 |
-| 可攻关 | 22 |
+| 已能 | 72 |
+| 可攻关 | 20 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -29,8 +29,6 @@
 | 曲面 | 删除孔 | **可攻关** | `InsertDeleteHole` | — |
 | 曲面 | 扫描曲面 | **可攻关** | `InsertProtrusionSwept4`, `Surface` | — |
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
-| 特征 | 放样切除 | **可攻关** | `InsertCutBlend` | — |
-| 特征 | 边界切除 | **可攻关** | `InsertCutBlend` | — |
 | 特征下拉 | 填充阵列 | **可攻关** | `FeatureFillPattern` | — |
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 特征下拉 | 曲线-投影曲线 | **可攻关** | `InsertProjectedSketch` | — |
@@ -96,10 +94,12 @@
 | 特征 | 拉伸凸台/基体 | **已能** | `FeatureExtrusion3` | `sw_part.extrude_boss` |
 | 特征 | 拉伸切除 | **已能** | `FeatureCut4` | `sw_part.extrude_cut` |
 | 特征 | 放样凸台/基体 | **已能** | `InsertProtrusionBlend2` | `sw_loft.create_loft_report` |
+| 特征 | 放样切除 | **已能** | `InsertCutBlend` | — |
 | 特征 | 旋转凸台/基体 | **已能** | `FeatureRevolve2` | `sw_part.revolve_boss` |
 | 特征 | 旋转切除 | **已能** | `FeatureRevolveCut2` | — |
 | 特征 | 曲线-螺旋线/涡状线 | **已能** | `InsertHelix` | `sw_helix.insert_helix` |
 | 特征 | 边界凸台/基体 | **已能** | `InsertProtrusionBlend2` | — |
+| 特征 | 边界切除 | **已能** | `InsertCutBlend` | — |
 | 特征 | 镜向 | **已能** | `InsertMirrorFeature2` | `sw_part.mirror_feature` |
 | 特征下拉 | 参考几何体-坐标系 | **已能** | `InsertCoordinateSystem` | — |
 | 特征下拉 | 参考几何体-基准面 | **已能** | `InsertRefPlane` | — |

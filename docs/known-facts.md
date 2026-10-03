@@ -1912,3 +1912,16 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **按事实 53 停手**：★ 两轮 / 六种前置零效果 ⇒ ★ **不再换参数试**；台账该条**留在可攻关** —— ★ **不假装做到**。
      ★ ★ **而可复用的定则**：★ **凡“成员是 0 参且回 `void`”的，判据必须是**几何量的前后差**** —— ★ 因为**返回值里没有任何东西能证明它做过什么**，★ 而**树增量也常常看不见**（★ 事实 436）。
      ★ **单列**：`docs/toolbar-gaps-backend-limits.md` §五之二。|真机：`tools/prove_delete_hole.py` · `tools/prove_delete_hole_on_surface.py`；证据 `output/delete-hole-evidence.json` · `output/delete-hole-on-surface-evidence.json`；对照事实 420 / 428 / 436 / 53 |
+| 440 | **★★★ 放样 / 边界切除 = `InsertCutBlend`（**12 参**）；而**切与不切的类型名不同**：`Blend` vs **`BlendCut`**** —— 2026-10-03（轮 561）。
+     ★ **官方签名逐字**（`InsertCutBlend.md`）：12 参，★ **md 头上未标 `Obsolete`**（★ 对照事实 433 的地图：另外四条都标了）；
+       ★ 而它的 `## Remarks` 与 `InsertProtrusionBlend2` **逐字同一套**（剖面按顺序 · 强烈建议引导线 · **mark 1/2/4**）。
+     ★ 真机（`tools/prove_loft_cut.py`，零弹窗）—— ★ **两组同时跑**：
+     ```
+     放样**切除**（InsertCutBlend · **12 参**）   ⇒ **切除-放样1** · 型 **`BlendCut`** · 体积 **0.9714**（变小）
+     对照：放样**凸台**（InsertProtrusionBlend2 · **18 参**）⇒ 放样1   · 型 **`Blend`**    · 体积 **1.0286**（变大）
+     ```
+     ⇒ ★★ **故两者的分界就是**类型名****：`Blend` = 凸台 · **`BlendCut` = 切除** ✓
+     ★★★ **而本轮又是一次“失败在判据”**：我第一版照**凸台**抄成 `type_name == "Blend"` ⇒ ★ **对已建成的 `切除-放样1` 判了 `ok=False`** ⚠；
+       ★ 而与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **“切”会换类型名** 。
+     ★ **落地**：`capabilities.yaml` 新增 **`feature_loft_cut`**（level = **verified**，共 **98** 条）；台账「放样切除」「边界切除」**两条均补** ⇒ **已能 72**。
+     ★★ **方法论**：★ **照“已成的那条”抄判据时，必须把**“切”与“不切”的类型名差异一并考虑** —— ★ 否则**会把已建成的特征判成失败** ⚠ （★ 本会话已第 **三次** 踩这个：事实 420 · 431 · 本条）。|真机：`tools/prove_loft_cut.py`；证据 `output/loft-cut-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertCutBlend.md` |

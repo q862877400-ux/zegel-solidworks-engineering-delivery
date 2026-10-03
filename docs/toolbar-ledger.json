@@ -73,14 +73,16 @@
    "zh": "放样切除",
    "api": "InsertCutBlend",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "feature_loft_cut"
   },
   {
    "tb": "特征",
    "zh": "边界切除",
    "api": "InsertCutBlend(Boundary)",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "feature_loft_cut"
   },
   {
    "tb": "特征",

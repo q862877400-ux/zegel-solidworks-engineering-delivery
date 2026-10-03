@@ -3990,6 +3990,33 @@
         "⚠ **官方 Remarks 说 “face **or edges**”** —— ★ 而本机上**面那条路五个组合全败**（Face=0/1/2 与 BTrimOppositeSide=True）⚠ —— ★ 不碰它。",
         "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：`Distance` 的有效范围。"
       ]
+    },
+    {
+      "id": "feature_loft_cut",
+      "label": "放样 / 边界**切除**（`InsertCutBlend`）—— ★ **真机建成**·★★ 类型名是 **`BlendCut`**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\IFeatureManager\\InsertCutBlend.md`（**12 参**；★ md **头上未标 `Obsolete`**）。代码：`scripts/sw_loft.py::create_loft_cut_report`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 561）**真机建成**（走 `sw_guard`，零弹窗）：一个实体 + 两个平行剖面（**按顺序**选中 · **mark=1**）⇒ `InsertCutBlend(…)` ⇒ **建成 `切除-放样1`**·**类型名 `BlendCut`**·★ **体积 0.9714 倍**（变小 = 真切除）。证据 `output/loft-cut-evidence.json`。",
+        "★★ **而对照组同时跑**：放样**凸台**（`InsertProtrusionBlend2`·**18 参**）⇒ `放样1`·**类型名 `Blend`**·**体积 1.0286 倍**（变大）。\n       ⇒ ★★ **故两者的分界就是**类型名**：`Blend` = 凸台 · **`BlendCut` = 切除**** ✓",
+        "★★★ **而本轮又是一次“失败在判据”**：我第一版照**凸台**抄成 `type_name == \"Blend\"` ⇒ ★ **对已建成的 `切除-放样1` 判了 `ok=False`** ⚠ （★ 与事实 420 / 431 同族）。\n       ★ 而与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **“切”会换类型名** 。"
+      ],
+      "limitations": [
+        "★★ **前置（官方 Remarks 逐字，与 `InsertProtrusionBlend2` 同一套）**：剖面要**按期望的顺序**选、**mark = 1**；引导线 mark = 2 · 中心线 mark = 4。",
+        "★ **`TessToleranceFactor` 官方默认 1.0**；匹配类型 **0 = none · 1 = 法向相切 · 2 = 相切于选定向量**。",
+        "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：`Closed=True`（封闭）· 薄壁（`IsThinBody`）· 引导线。"
+      ]
     }
   ]
 }
