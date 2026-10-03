@@ -216,7 +216,7 @@ def _surface_body_count(model) -> int | None:
     """★ **曲面体**数 —— ★ 中面（midsurface）的专属判据。
 
     ★ 官方 `InsertMidSurface` 的 Remarks 逐字：「Each reference surface is considered a
-      **sheet body**.」⇒ ★ 它产出的是**曲面体**，★ 而���实体**面数**对它没有意义。
+      **sheet body**.」⇒ ★ 它产出的是**曲面体**，★ 而**实体面数**对它没有意义。
     """
     for member in ("GetSurfaceBodies", "GetSurfaceBodyCount"):
         try:
@@ -654,7 +654,7 @@ def insert_weldment_gusset(model, depth_mm: float, *,
         return {"ok": False, "op": "insert_weldment_gusset", "error": "model 为 None"}
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
-        return {"ok": False, "op": "insert_weldment_gusset", "error": "取得到不到 FeatureManager"}
+        return {"ok": False, "op": "insert_weldment_gusset", "error": "取不到 FeatureManager"}
     before = _tree(model)
     before_faces = _body_face_count(model)
     marks = _selection_marks(model)

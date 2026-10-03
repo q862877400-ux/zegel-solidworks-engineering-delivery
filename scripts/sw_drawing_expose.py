@@ -129,13 +129,45 @@ def create_detail_view(drawing_model, *, x_mm: float, y_mm: float, scale: float 
 
 
 def set_sheet_format(drawing_model, format_path: str) -> dict:
-    """★ 图纸格式/模板（`SetupSheet6`）—— 换图纸格式。
+    """★ 图纸格式/模板（`ISheet.SetTemplateName`）—— 换图纸格式（图框）。
 
-    ★ 官方 Remarks 逐字：调完要 `ForceRebuild3` 才刷新第一角/第三角投影；★ 底层已处理。
+    ★★ **为什么不调 subskill 的 `set_sheet_format`**（★ 2026-10-03 真机定点诊断的结论）：
+      · 官方逐字：`ISheet.SetTemplateName(System.string NameIn)` ⇒ `void`，**未废弃**。
+      · subskill 那个函数是 `sheet = drawing_model.GetCurrentSheet(); return sheet.SetTemplateName(path)`
+        —— ★ 用的是**直接属性访问**；★ 而经**工具层**调它时真机报
+        **`com_error: (-2147352573, '找不到成员。')`**。
+      · ★★ 定点诊断（`output/_diag_sheetfmt.json`）证明：**同一张图上**用 `get_com_member` 两次取/调
+        ⇒ `sheet` 是 `ISheet`（`GetName` → `图纸1`）、`SetTemplateName` **返回 `None`（= void 成功）**。
+      ⇒ ★ 结论：**问题在"直接属性访问"这条通道**（与 known-facts 78/79 的"直接成员访问盲点"同族），
+        ★ 不在官方成员名、也不在图框路径。
+    ★ 官方 Remarks 逐字：调完要 `ForceRebuild3` 才刷新第一角/第三角投影；★ 这里顺带做掉。
     """
-    res = D.set_sheet_format(drawing_model, format_path)
-    return _result("set_sheet_format", {"ok": res is not None, "value": res},
-                   "返回非 None + 图纸信息回读变化")
+    sheet = C.get_com_member(drawing_model, "GetCurrentSheet")
+    if sheet is None:
+        return {"ok": False, "op": "set_sheet_format", "preconditions_held": False,
+                "err": "★ 前置未成立：取不到当前图纸（GetCurrentSheet 回 None）"}
+    out = {"op": "set_sheet_format", "preconditions_held": True, "format_path": str(format_path),
+           "verified_by": "返回 None（= void 成功）且 `GetTemplateName` 回读等于新路径"}
+    if not format_path:
+        out["ok"] = False
+        out["err"] = "★ 前置未成立：format_path 为空"
+        return out
+    try:
+        ret = C.get_com_member(sheet, "SetTemplateName", str(format_path))
+        out["ret_repr"] = repr(ret)
+        try:
+            out["template_name_readback"] = str(C.get_com_member(sheet, "GetTemplateName") or "")
+        except Exception:                                               # noqa: BLE001
+            out["template_name_readback"] = None
+        try:
+            C.get_com_member(drawing_model, "ForceRebuild3", False)
+        except Exception:                                               # noqa: BLE001
+            pass
+        out["ok"] = True
+    except Exception as exc:                                            # noqa: BLE001
+        out["ok"] = False
+        out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    return out
 
 
 def add_drawing_note(drawing_model, *, x_mm: float, y_mm: float, text: str) -> dict:

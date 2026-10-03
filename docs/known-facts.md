@@ -3211,5 +3211,24 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         （★ 与事实 **36**「用错接口 = 对任何成员都没反应」是同一族，★ 但更隐蔽：**这次连报错都没有**）。|
         痕迹：`scripts/sw_drawing_expose.py`（改走真入口）· `tools/probe_drawing_tools_e2e.py` ·
         `output/drawing-tools-e2e-evidence.json`（改前 1/8、改后 **3/8**）· 对照事实 **36**（接口用错）· **493**（已实现≠已暴露） |
+| 499 | **★★★ 又一处「直接属性访问 vs `get_com_member`」的真机差异 —— 同一张图、同一个成员，一个报"找不到成员"、另一个成功** —— 2026-10-03（接手轮）。
+      ★ **现象（经工具层）**：`set_sheet_format` 报 **`com_error: (-2147352573, '找不到成员。')`**。
+      ★ **官方**：`ISheet.SetTemplateName(System.string NameIn)` ⇒ **`void`、未废弃**（★ 成员名没问题）。
+      ★ **定点诊断（`output/_diag_sheetfmt.json`，同一张 `工程图64`）**：用 **`get_com_member`** 走两步 ——
+        · `get_com_member(drw,"GetCurrentSheet")` ⇒ `CDispatch`，`GetName` → `图纸1`（★ 确实是 `ISheet`）
+        · `get_com_member(sheet,"SetTemplateName", <slddrt>)` ⇒ **返回 `None`（= `void` 成功）**
+        ⇒ ★★ **同一个成员在同一个对象上，用 `get_com_member` 成功**。
+      ★ **差别在哪**：subskill 那个函数写的是**直接属性访问** ——
+        `sheet = drawing_model.GetCurrentSheet(); return sheet.SetTemplateName(path)`
+        ⇒ ★ 经工具层调用时失败；★ 而诊断脚本用 `get_com_member` 就成。
+      ⇒ ★★ **与本仓既有事实 78/79「直接成员访问盲点」同一族** —— ★ 本轮给出的是一个**新的、具体的实例**：
+        **同一个成员、同一个对象、同一张文档，两条通道结果不同**。
+      ★ 改法：`scripts/sw_drawing_expose.set_sheet_format` **不再调 subskill 那个函数**，
+        改为自己两步 `get_com_member`（并在之后补 `ForceRebuild3`，官方 Remarks 要求）。
+      ★ **判据（可复用）**：★ 碰到 `找不到成员` / `Property ... can not be set` 这类**看似"成员不存在"**的错时，
+        ★ **先别改成员名** —— ★ 先用 `get_com_member` 在**同一个对象**上试同一个成员；
+        ★ 两条通道结果不同 ⇒ ★ 是**通道**问题，不是**名字**问题。|
+        痕迹：`scripts/sw_drawing_expose.py` · `output/_diag_sheetfmt.json` ·
+        `output/drawing-tools-e2e-evidence.json`（`passed` **3/8 → 4/8**）· 对照事实 **78 / 79**（直接访问盲点）· **498**（形参名 ≠ 官方语义） |
 
 

@@ -1,8 +1,8 @@
 # S2-a 扫描：已挂工具 → 台账（正向差集）
 
 > 只查不改：本次未修改任何已有文件，未运行 SolidWorks，未运行 pytest。
-> 方法：纯静态解析（Python `ast` 读 `ToolSpec` / `json` 读台账）。
-> 快照时间（本机时区）：**2026-10-03 20:52:39**；参与扫描的 `tool_specs_*.py` 共 **74** 个。
+> 方法：纯静态解析（Python `ast` 读 `ToolSpec` / `json` 读台账），未做任何推断性替换。
+> 落盘快照（本机时区）：**2026-10-03 21:00:46**；参与扫描的 `mcp-server\tool_specs_*.py` 共 **74** 个。
 
 ---
 
@@ -10,54 +10,66 @@
 
 ### 0.1 台账字段名 —— 实读确认，未猜
 
-`D:\AI\SW\capabilities.yaml` **内容其实是 JSON**（扩展名是 `.yaml`，语法是 JSON 对象）。
+`D:\AI\SW\capabilities.yaml` **内容其实是 JSON**（扩展名 `.yaml`，语法为 JSON 对象）。
 顶层键：`backend_catalog`, `backend_schema_version`, `capabilities`, `operation_routes`, `schema_version`, `verified_versions`。
 
 - 条目数组在 `capabilities` 键下，共 **110** 条。
-- **台账里没有 `name` 字段**。对应的两个字段是 **`id`（英文 snake_case）** 与 **`label`（中文名）**。
-- 全部 110 条出现过的键（并集）：`allowed_modes`, `backends`, `dependencies`, `evidence`, `id`, `label`, `level`, `limitations`, `mcp_tools`, `provenance`, `skills`, `source`, `source_evidence`, `title`, `verified_versions`。
-- **`mcp_tools`**：70 / 110 条有该字段，合计 **300** 个工具引用、去重后 **226** 个工具名。
-  它是台账里**唯一**声明「哪个 MCP 工具属于哪条能力」的字段（`requirements_planning` 这类纯流程条目没有该字段）。
+- **台账里没有 `name` 字段**。与之对应的两个字段是 **`id`（英文 snake_case）** 与 **`label`（中文名）** —— 本报告的「id/name」即指这一对。
+- 110 条出现过的全部键（并集）：`allowed_modes`, `backends`, `dependencies`, `evidence`, `id`, `label`, `level`, `limitations`, `mcp_tools`, `provenance`, `skills`, `source`, `source_evidence`, `title`, `verified_versions`。
+- **`mcp_tools`**：70 / 110 条含该字段，合计 **300** 个引用、去重后 **226** 个工具名。
+  它是台账里**唯一**结构化声明「哪个 MCP 工具属于哪条能力」的字段（`requirements_planning` 这类纯流程条目没有该字段）。
   实例（实读）：`id=solidworks_addin_host` → `mcp_tools=["solidworks_addin_host_status"]`；
-  `id=part_and_features` → `mcp_tools` 含 8 个工具名。
+  `id=part_and_features` → `mcp_tools` 含 8 个工具名；`id=holes_and_finishing` → 含 10 个。
 
 ### 0.2 工具侧口径
 
-对每个 `tool_specs_batch*.py` 按**语句顺序**求值顶层赋值，取出所有 `SPECS_*` 列表的元素，
-再从每个元素取工具名。三种形态都要处理，否则会漏：
+对每个 `tool_specs_batch*.py` **按语句顺序**求值顶层赋值，取出所有 `SPECS_*` 列表的元素，再逐元素取工具名。
+三种形态都必须处理，否则会漏（都已处理，见各批文件实测）：
 
 1. `ToolSpec(name="…", …)` —— 字面量 `name=`；
-2. `ToolSpec(` **首个关键字不是字面量** —— 共 **2** 处，是 `_spec(...)` 工厂的模板（`tool_specs_batch29.py:103`、`tool_specs_batch30.py:70`），
-   它们本身**不是**工具，取名要走 `_spec(...)` 的**第 1 个位置参数**；
-3. 列表经过**别名或自引用拼接** —— `tool_specs_batch45.py`、`tool_specs_batch52.py` 用 `SPECS_BATCHnn = SPECS_BATCHnn + [...]`；
-   `tool_specs_batch67.py` 起多个批次写成私有 `_BATCHnn` 再 `SPECS_BATCHnn = _BATCHnn`。
+2. `ToolSpec(` 的 `name=` **不是字面量** —— 共 **2** 处，是 `_spec(...)` 工厂的**模板**（`tool_specs_batch29.py:103`、`tool_specs_batch30.py:70`），
+   它们本身**不是**工具；这些批次的工具名要改从 `_spec(...)` 的**第 1 个位置参数**取；
+3. 列表经过**别名或自引用拼接** —— `tool_specs_batch45.py` / `tool_specs_batch52.py` 用 `SPECS_BATCHnn = SPECS_BATCHnn + [...]`；
+   `tool_specs_batch67.py` 起有批次写成私有 `_BATCHnn` 再 `SPECS_BATCHnn = _BATCHnn`。
 
 ### 0.3 「台账里没有」的判据
 
-该工具名**不出现在任何一条 `capabilities[].mcp_tools`** 中。除此之外的台账字段（`limitations` 散文里偶尔提到某个工具名）**不算数**，
-因为散文不是结构化归属声明。
+该工具名**不出现在任何一条 `capabilities[].mcp_tools`** 中。台账其它字段（`limitations` 散文偶尔提到某工具名）**不算数** ——
+散文不是结构化归属声明，且措辞随人变。
 
-### 0.4 「台账最接近条目」的判据（⚠ 不是归属判定）
+### 0.4 「台账最接近条目」的判据（⚠ 是最近邻，**不是归属判定**）
 
 在**已被台账引用的**工具名里，找与该差集工具名**词元重合最多**的一个（去掉 `solidworks` / `cadstudio` 前缀后按 `_` 切词；
-并列时取并集词元少的、再取名字字典序小的），然后报出**拥有该近邻工具的台账条目**。
+并列时依次取「并集词元更少」「名字字典序更小」），再报出**拥有该近邻工具的台账条目**。
 
 - 重合 ≥ 2 个词元 ⇒ 标「近邻匹配强」；
-- 只重合 **1** 个词元 ⇒ 标「近邻匹配弱」，并在「判断」列写明**不作归属判定**（这种重合多半只是 `insert` / `surface` 这类泛词的巧合）；
+- 只重合 **1** 个词元 ⇒ 标「近邻匹配弱」，并在「判断」列写明**不作归属判定**（这类重合往往只是 `insert` / `surface` 之类泛词的巧合）；
 - 完全没有重合 ⇒ 写「**查不到**」。
 
-### 0.5 未验证声明
+### 0.5 ⚠ 扫描期间工作树在变动（本节是本次扫描最重要的限定）
+
+本仓库是多人共享工作树，`mcp-server\` 正在被**并发新增批次**。本次扫描窗口内实测到的漂移：
+
+- `tool_specs_*.py` 文件数：**72 → 73 → 74**；
+- 按 §0.2 同一口径解析出的工具名数：**256 → %d**。
+
+落盘前做了两次间隔探测（20:55:59 与 20:58:19），两次均为 **74 个文件 / 264 个名字**，判定为当时的稳定点。
+**下表全部以 2026-10-03 21:00:46 这一刻的磁盘内容为准**；任何后续复核都可能得到不同数字，那是工作树变了，不是本报告错。
+
+落盘时最后写入的 3 个批次（证据）：`tool_specs_batch72.py`（10-03 18:56:59）、`tool_specs_batch73.py`（10-03 20:48:16）、`tool_specs_batch75.py`（10-03 20:58:04）。
+
+### 0.6 未验证声明
 
 - 「已挂工具」= **静态**读到的 `ToolSpec` 声明，**不等于**运行时一定注册成功（本次**未连 COM、未启动 SolidWorks**）。
 - 「台账没有」= `mcp_tools` 未引用，**不等于**该能力没被实现。
-- ⚠ 本仓库是多人共享的工作树，扫描期间 `mcp-server/tool_specs_batch73.py` 处于**被改动**状态
-  （本次快照时它最后写入时间 **20:50:50**，是全部 74 个批次里最新的一个）。上表以 **2026-10-03 20:52:39** 这一刻的磁盘内容为准。
+- 「台账最接近条目」是词元最近邻，**不是**归属结论。
 
 ---
 
 ## 一、① 已挂工具清单（`ToolSpec` 名字，逐字去重）
 
 共 **74** 个文件、**264** 个工具名；**逐字去重后仍是 264** 个（重复名：无）。
+「台账引用它的条目数」= 0 即落在 §三 的正向差集里。
 
 | # | 工具名 | batch 文件 | 台账引用它的条目数 |
 |---:|---|---|---:|
@@ -326,9 +338,9 @@
 | 263 | `solidworks_drawing_insert_center_marks` | `tool_specs_batch75.py` | 0 |
 | 264 | `solidworks_drawing_set_sheet_format` | `tool_specs_batch75.py` | 0 |
 
-## 二、② 台账条目 id / name（`capabilities.yaml` 的 `capabilities` 数组）
+## 二、② 台账条目 id / name（`capabilities.yaml` → `capabilities` 数组）
 
-共 **110** 条。`name` 字段在台账里**不存在**，此处「name」= `label`。`mcp_tools` 列为该条目声明的工具数。
+共 **110** 条。台账无 `name` 字段，此处「name」= `label`；`mcp_tools 条数` = 该条目声明的工具个数。
 
 | # | id | label（= name） | level | mcp_tools 条数 |
 |---:|---|---|---|---:|
@@ -499,19 +511,19 @@
 | `solidworks_drawing_create_revision_table` | `tool_specs_batch75.py` | 近邻工具 `['config_and_export', 'configurations_and_design_tables']` → `config_and_export`（配置与设计表）、`configurations_and_design_tables`（配置族 + 导出族（★ 真机 10/12：配置 5/6 · 导出 5/6）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「create」重合，**不作归属判定**） |
 | `solidworks_drawing_insert_center_marks` | `tool_specs_batch75.py` | 近邻工具 `['gtol_insert']` → `gtol_insert`（形位公差：新建 GTol（InsertGtol）） | 已挂工具、台账 `mcp_tools` 未引用；近邻匹配弱（仅 1 个词元「insert」重合，**不作归属判定**） |
 
-## 四、附带事实：反向差集（不在本题范围，仅记录）
+## 四、附带事实：反向差集（不在 S2-a 判据内，仅记录）
 
 台账 `mcp_tools` 引用了 **11** 个**不在** `tool_specs_*.py` 里的工具名：`cadstudio_build_dxf_preview_scene`、`cadstudio_check_dfm`、`cadstudio_check_routing`、`cadstudio_routing_preflight`、`cadstudio_write_open_format`、`solidworks_addin_host_status`、`solidworks_pack_and_go`、`solidworks_surface_extend`、`solidworks_surface_fill`、`solidworks_surface_knit`、`solidworks_undo`。
 
-⇒ 它们注册在别处（本次**未查**，不做任何断言）。反向存在 ⇒ 「台账有」**不**等于「在 `tool_specs_*.py` 里」，
-两向差集要分开看。
+⇒ 它们注册在别处（本次**未查**，不做任何断言）。反向存在即说明「台账有」**不**等于「写在 `tool_specs_*.py` 里」，两向差集要分开看。
 
-## 五、可复核口径
+## 五、可复核口径（落盘瞬间的数字）
 
 ```
-工具名唯一数        = 264
-台账条目数          = 110
-台账工具引用(去重)  = 226
-正向差集(工具-台账) = 49
-反向差集(台账-工具) = 11   （不在 S2-a 判据内，仅记录）
+tool_specs_*.py 文件数  = 74
+工具名（去重）          = 264
+台账条目数              = 110
+台账工具引用（去重）    = 226
+正向差集（工具 - 台账） = 49
+反向差集（台账 - 工具） = 11   （仅记录，非本题判据）
 ```
