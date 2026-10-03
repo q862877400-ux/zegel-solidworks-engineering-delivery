@@ -543,17 +543,44 @@ def _build_part(sw, row: dict):
     return doc if row.get("saved") else None
 
 
-def _drawing_with_view(sw, part_doc, row: dict, view_name="*Front"):
+def _resolve_model_view_name(part_doc, info: dict | None = None):
+    """★ **问模型自己**要一个合法视图名（★ 不硬编码 —— 名字会被 UI 本地化）。
+
+    ★★ 依据（2026-10-03 真机发现，事实 494）：官方 `CreateDrawViewFromModelView3` 的 Remarks 要求
+      `ViewName` "**exactly match**" 模型视图名，而它给的例子 `"*Front"` 是**英文界面**的取值
+      ⇒ ★ 本机是**中文界面** ⇒ 名字是 `*前视` / `*正视于` … ⇒ **用 `*Front` 必回 `None` 且无任何报错**。
+    ★ 正解：用 **`IModelDoc2.GetModelViewNames()`**（零参、**未废弃**）拿真实名单。
+      ⚠ 同族的 `GetModelViewCount()` 官方标 **Obsolete** ⇒ **不用它**（用名单长度代替）。
+    """
+    try:
+        names = [str(x) for x in (C.get_com_member(part_doc, "GetModelViewNames") or [])]
+    except Exception as exc:                                            # noqa: BLE001
+        names = []
+        if info is not None:
+            info["view_names_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    if info is not None:
+        info["model_view_names"] = names
+    return (names[0] if names else None)
+
+
+def _drawing_with_view(sw, part_doc, row: dict, view_name=None):
     """★ 建工程图 + 插一个模型视图 ⇒ `(drawing, 视图名 | None, 信息)`。
 
     ★ 前置（官方 Remarks）：`ViewName` 必须与**模型视图名完全一致**，★ 标准视图名**带星号**。
+    ★★ `view_name=None` ⇒ **向模型要名字**（★ 不硬编码 —— 见 `_resolve_model_view_name` 的本地化坑）。
     """
     info: dict = {}
     if part_doc is None:
         return None, None, {"err": "★ 前置未成立：零件文档不在（没建成/没存盘）"}
+    if view_name is None:
+        view_name = _resolve_model_view_name(part_doc, info)
+    info["view_name_used"] = view_name
+    if not view_name:
+        return None, None, {"err": "★ 前置未成立：问不到模型视图名（GetModelViewNames 回空）",
+                            **info}
     doc = _new_drawing(sw, row)
     if doc is None:
-        return None, None, {"err": "新建工程图失败（★ 见 row 里的模板原因）"}
+        return None, None, {"err": "新建工程图失败（★ 见 row 里的模板原因）", **info}
     info["views_before"] = _view_count(doc)
     try:
         ret = _get(doc, "CreateDrawViewFromModelView3", str(PART_PATH), str(view_name),
@@ -572,12 +599,15 @@ def case_v1_draw_view_from_model_view(sw):
     """★ V1 投影视图：`IDrawingDoc.CreateDrawViewFromModelView3(ModelName, ViewName, LocX, LocY, LocZ)`。
 
     ★ 前置（官方 Remarks 逐字）：① `ModelName` = **完整路径 + `.sldprt`**；
-      ② `ViewName` 与模型视图名**完全一致**，标准视图名**带星号**（如 `"*Front"`）；
+      ② `ViewName` 与模型视图名**完全一致**，标准视图名**带星号**
+        —— ★★ **不要照抄官方举例的 `"*Front"`**：那是**英文界面**的取值；
+        ★ 本机中文界面是 `*前视` / `*正视于` ⇒ ★ 本格**向模型要名字**（`GetModelViewNames`，
+        事实 494 真机 6/7 建成）；
       ③ Loc* 单位是**米**。
     ★ 判据：**视图数 +1** 且**返回值非 None**。
     """
     row = {"tag": "★ V1 投影视图（CreateDrawViewFromModelView3）", "ok": False,
-           "preconditions": {"model_saved_with_extension": None, "view_name": "*Front"}}
+           "preconditions": {"model_saved_with_extension": None, "view_name": None}}
     part = None
     doc = None
     try:
@@ -588,12 +618,18 @@ def case_v1_draw_view_from_model_view(sw):
         if part is None:
             row["note"] = "★ 前置未成立：零件没建/没存盘 ⇒ 本格不作判据"
             return row
+        # ★★ 问模型要合法视图名（★ 不硬编码 —— 名字会被 UI 本地化，事实 494）
+        vname = _resolve_model_view_name(part, row)
+        row["preconditions"]["view_name"] = vname
+        if not vname:
+            row["note"] = "★ 前置未成立：问不到模型视图名 ⇒ 本格不作判据"
+            return row
         doc = _new_drawing(sw, row)
         if doc is None:
             row["note"] = "★ 前置未成立：新建工程图失败 ⇒ 本格不作判据"
             return row
         before = _view_count(doc)
-        ret = _get(doc, "CreateDrawViewFromModelView3", str(PART_PATH), "*Front",
+        ret = _get(doc, "CreateDrawViewFromModelView3", str(PART_PATH), str(vname),
                    float(VIEW_LOC_M[0]), float(VIEW_LOC_M[1]), 0.0)
         after = _view_count(doc)
         row.update({"views_before": before, "views_after": after,
