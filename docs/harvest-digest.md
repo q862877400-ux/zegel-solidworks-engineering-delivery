@@ -45,8 +45,8 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 97 | **有我们自己的运行证据**（`evidence` 非空） |
-| `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
+| `verified` | 96 | **有我们自己的运行证据**（`evidence` 非空） |
+| `stitched` | 13 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
@@ -71,7 +71,6 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `parameter_updates` | · `pytest tests/test_cad_reliability.py（参数更新回读）` |
 | `custom_properties_and_bom` | · `pytest tests/test_cad_reliability.py（自定义属性与 BOM）` |
 | `pack_and_go` | · `pytest tests/test_sw_delivery.py`<br>· `pytest tests/solidworks_week3_delivery_regression.py（Pack and Go 交付）` |
-| `assembly_and_mates` | · `pytest tests/test_sw_assembly_doc_contract.py`<br>· `pytest tests/test_sw_assembly_aliases.py（装配与配合）`<br>· `python tools/verify_in_context_reference_smoke.py（**真机**，轮 161，2 零件 + 1 装配）：★ `edit_part_in_context` **已验证生效** —— `EditPart2` 返回 `-1` 且 `GetEditTarget` **非空**；`exit_edit_part_in_context` 调通；`list_external_file_references_count` 基线读回 **0**。⚠ **判据①②（关系数 N→N+1 · 外部参考 0→≥1）还没绿**（`add_relation` 调用形态未解决）⇒ **外部参考还没真的建立，未取证**（8/11）。` |
 | `motion_study` | · `pytest tests/test_sw_motion_audit.py（旋转马达创建与结果审计）` |
 | `drawing_dimension_insertion` | · `pytest tests/test_cad_reliability.py（工程图尺寸插入回读）` |
 | `drawings_and_bom` | · `pytest tests/test_delivery_compare.py`<br>· `pytest tests/test_drawing_subskill.py（工程图与 BOM）` |
@@ -212,10 +211,11 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 
-### 4.1 未达 `verified` 的能力（13 条）
+### 4.1 未达 `verified` 的能力（14 条）
 
 | 能力 | `level` | `source` | 为什么还没到 `verified`（取 `limitations` 首条）|
 |---|---|---|---|
+| `assembly_and_mates` | `stitched` | `mixed` | ★★ **2026-10-01（轮 161）补了「在上下文编辑」与「外部参考计数」两个封装**（来源：`D:\AI\SW-transfer\in-context-reference-proposal.md`）：`sw_assembly_doc.edit_part_in_context` · `exit_edit_part_in_context` · `list_external_file_refe |
 | `autocad_basic_drafting` | `not_implemented` | `upstream` | AutoCAD 2024 ActiveX 当前真机回归被阻塞：Documents、Layers、SelectionSets 代理不稳定；不得宣称原生 DWG 绘图已完成 |
 | `surface_modeling` | `stitched` | `mixed` | headless-occt 已真实生成并重开受限封闭直纹/平滑 Loft、直线/单圆弧 Sweep、闭壳 Knit 和开放面 Thicken；操作均要求版本化 B-Rep 证据 |
 | `mold_tools` | `stitched` | `mixed` | ⚑ 2026-10-01 并入「生成」侧：新增 scripts/sw_mold.py（InsertMoldPartingLine / InsertMoldPartingSurface / InsertMoldShutOffSurface / InsertMoldCoreCavitySolids / MoldDraftAnalysis / MoldUndercutDetect + mold_evid |

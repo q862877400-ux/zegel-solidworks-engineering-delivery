@@ -10,7 +10,7 @@
 |---|---|---|---|---|---|
 | 1 | `analysis_run_readback` | `stitched` | `original` | ✓ | — |
 | 2 | `animation_export` | `stitched` | `original` | ✓ | — |
-| 3 | `assembly_and_mates` | `verified` | `mixed` | ✓ | — |
+| 3 | `assembly_and_mates` | `stitched` | `mixed` | ✓ | — |
 | 4 | `assembly_read` | `verified` | `original` | ✓ | — |
 | 5 | `autocad_basic_drafting` | `not_implemented` | `upstream` | — | — |
 | 6 | `autocad_dotnet_backend` | `verified` | `upstream` | ✓ | — |
@@ -128,8 +128,8 @@
 | `indexed` | 0 |
 | `not_implemented` | 1 |
 | `source_verified` | 0 |
-| `stitched` | 12 |
-| `verified` | 97 |
+| `stitched` | 13 |
+| `verified` | 96 |
 
 ## 三、`source` 分布
 
@@ -148,8 +148,8 @@
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
 | `not_implemented` | 0 | 0 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
-| `stitched` | 0 | 3 | 9 | 0 | 0 |
-| `verified` | 0 | 8 | 71 | 1 | 17 |
+| `stitched` | 0 | 4 | 9 | 0 | 0 |
+| `verified` | 0 | 7 | 71 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

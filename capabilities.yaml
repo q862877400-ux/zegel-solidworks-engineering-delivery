@@ -735,8 +735,8 @@
     },
     {
       "id": "assembly_and_mates",
-      "label": "装配体与配合",
-      "level": "verified",
+      "label": "装配体（★ 只读查询）—— ★★ 注意：本条**不含「建配合」**，见 limitations 的 2026-10-04 条",
+      "level": "stitched",
       "backends": [
         "solidworks-com"
       ],
@@ -751,12 +751,14 @@
       "limitations": [
         "★★ **2026-10-01（轮 161）补了「在上下文编辑」与「外部参考计数」两个封装**（来源：`D:\\AI\\SW-transfer\\in-context-reference-proposal.md`）：`sw_assembly_doc.edit_part_in_context` · `exit_edit_part_in_context` · `list_external_file_references_count`。**真机**：`EditPart2` 返回 `-1` 且 `GetEditTarget` **非空** ⇒ **进入在上下文编辑态确实生效**。⚠⚠ **未取证**：外部参考**还没真的建立** —— 判据①②（`GetRelationsCount` N→N+1 · `ListExternalFileReferencesCount` 0→≥1）**还没绿**（`add_relation` 的调用形态未解决）。★ 顺带查实两个调用形态的坑：**`IComponent2.Select4` 的第二参是 `SelectData` 不是 `Callout`**（传空 Dispatch 报 `DISP_E_PARAMNOTOPTIONAL`）⇒ 改用 **`Select2(Boolean, Int32)`**；**`ListExternalFileReferencesCount` 在 pywin32 下表现为属性**（按 1 参调会 `'int' object is not callable`）。⚠ 官方取内容的 `ListExternalFileReferences2` 有 **7 个 `Object&` 出参** ⇒ **本轮没去啃**（事实 47/68）。",
         "必须回读配合特征和自由度；不等于完整干涉或受力分析",
-        "★ 轮 280 填实：★ 三个装配工具**本来就在**（list_components / list_mates / check_interference），★ 只是条目没认领。★ 证据 pytest tests/test_sw_assembly_doc_contract.py"
+        "★ 轮 280 填实：★ 三个装配工具**本来就在**（list_components / list_mates / check_interference），★ 只是条目没认领。★ 证据 pytest tests/test_sw_assembly_doc_contract.py",
+        "⚠⚠⚠ **2026-10-04（接手轮）降级 · 处置 `JUDGE-A_B.md` 的 A-assembly F1（🔴 立刻要改）** —— ★ 裁判逐字：「★ 唯一真机证据顶层 `\"verdict\": \"fail\"`，★ 条目仍 `verified` 且 label 含「配合」；★ **三个挂的工具全是只读**，★ **全仓建配合函数 grep 0 命中**」✓。★★ **我实测复核**：★ `output/in-context-reference-smoke.json` **真实存在**、★ 顶层逐字 `verdict: fail` · `passed: 9` · `total: 12` ⇒ ★★ **本条目的唯一真机证据整体是**失败**的** ✓。★★★ 而本条 evidence 第 3 条**自己就写着**「判据①②…还没绿 ⇒ 外部参考还没真的建立，未取证（8/11）」⇒ ★★★★ **矛盾在条目内部**（★ 证据说没全绿、★ 而 `level` 写 `verified`）✓",
+        "⇒ ★ **处置**：① `level` **`verified` → `stitched`**（★ 本仓枚举：`verified` 必须有**我们自己的运行证据**；★ 本条那份证据顶层失败 ⇒ 不满足）；② ★★ `label` 去掉「与配合」（★ **`mcp_tools` 那三个全是只读**：`assembly_check_interference` / `assembly_list_components` / `assembly_list_mates`）；③ ★★★ **补证据或补说明** —— ★ 本条目现在如实写明它**不含建配合** ✓",
+        "★★ **要恢复 `verified` 需要什么**（★ 留给出后人）：★ 一条**顶层 `verdict: pass`** 的真机证据，★ 且其中「`GetRelationsCount` N→N+1」或「`ListExternalFileReferencesCount` 0→≥1」**至少一项为真**（★ 即真的建出一个配合或外部参考）✓。"
       ],
       "allowed_modes": [
         "interactive",
-        "reviewed",
-        "unattended"
+        "reviewed"
       ],
       "evidence": [
         "pytest tests/test_sw_assembly_doc_contract.py",

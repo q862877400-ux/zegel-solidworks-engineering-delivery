@@ -28,8 +28,8 @@
 | 20 | 四家工具数（原始相加） | 四家各自工具数直接相加（有重名，会虚高） | **510** | `union-sources.json 的 sources[].tools 长度相加` |
 | 21 | ★ 四家工具数（去重＝并集） | 去掉重名后的总数（★ 与上一行不是同一个东西） | **349** | `union-sources.json 的 union_operations 长度` |
 | 22 | 能力清单条目 | capabilities.yaml 的条目数 | **110** | `capabilities.yaml 里 level 字段出现次数` |
-| 23 |   其中 verified | 有我们自己的运行证据 | **97** | `同上，按取值分组` |
-| 24 |   其中 stitched | 代码写好但没真机跑过 | **12** | `同上` |
+| 23 |   其中 verified | 有我们自己的运行证据 | **96** | `同上，按取值分组` |
+| 24 |   其中 stitched | 代码写好但没真机跑过 | **13** | `同上` |
 | 25 |   其中 not_implemented | 没做 | **1** | `同上` |
 | 26 | 门禁 | scripts/check_*.py 的自动检查程序 | **26** | `scripts/check_*.py` |
 | 27 | 已知事实条数 | docs/known-facts.md 里编号的条目 | **512** | `known-facts.md 里 ^| N | 的行数` |
