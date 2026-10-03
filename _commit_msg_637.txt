@@ -1,0 +1,44 @@
+feat(覆盖): ★★ 把「**已真机证明、代码却只在探针里**」的装饰螺纹线抬进 `scripts/` 并挂成工具 ⇒ **116/145（80%）**，特征/螺纹 转 ✅
+
+■ 一 · 本轮挑活的依据（★ 仍是 bunny 的扫描产出）
+  `recon/scan-S2b-ledger-vs-tools.md` 的 **A 表**：**台账有、但 `mcp_tools` 无挂 = 41 条**
+  ★ 而本轮这三条的 `limitations` 里**自己写着**「⚠ **本包装未接进 MCP 工具层**」
+  ⇒ ★ **挂出来就是台账写明的下一步**。
+
+■ 二 · ★★★ 一条**新形态**的"已实现但没暴露"（值得单独记）
+  前几批分别是：batch72「AST 量出已有实现」· batch73「本仓一个都没有」· batch75「早实现了、只是没挂」。
+  ★ **本批**：**已经真机建成过、代码却只留在 `tools/prove_*.py` 探针里、从没抬进 `scripts/`**。
+  实测三条都是这一形态（`capabilities.yaml` 里 `level: verified`）：
+  | id | 真机证据 | 代码在哪 | 现状 |
+  |---|---|---|---|
+  | `feature_cosmetic_thread` | 轮 568 建成 `装饰螺纹线1`（型 `CosmeticThread`）| `tools/prove_cosmetic_thread.py` | ★ 本轮**已抬** |
+  | `surface_flatten` | 轮 556 建成 `曲面-展平1`（型 `FlattenSurface`）| `tools/prove_flatten_with_anchor.py` | 待抬 |
+  | `sketch_spline` | 轮 574 建成（草图段数 0→1）| `tools/probe_spline_forms.py` | 待抬 |
+
+■ 三 · 本轮做的（★ **不发明任何调用**）
+  新增 `scripts/sw_feature_entry_ops.py`：`insert_cosmetic_thread(model, …)`
+  · ★ 调用序**照抄那次建成的真机探针**（`tools/prove_cosmetic_thread.py`）：
+    先找**圆柱面** ⇒ 取它的**第一条边** ⇒ `mark=0` 选中 ⇒
+    `InsertCosmeticThread3(1, "", "", 0.008, 2, 0.0, "")`
+  · ★★ **判形用官方的 `ISurface.IsCylinder()`** —— ★ 探针里逐字记着：
+    「★ 而**不是猜** `Surface.Identity` 的字符串 ⚠（★ 我第一版就是那么猜的 ⇒ ★ **三组全 `cyl=False`**）」
+    ⇒ ★ 这个坑我**照抄过来了**（本函数用官方判形方法）
+  · ★ 工具名 **`solidworks_feature_cosmetic_thread`**（含覆盖率关键词 `thread`）
+  · 新增 `mcp-server/tool_specs_batch76.py` + `BATCH_MODULES` 加一行
+
+■ 四 · 读数
+  | 指标 | 本批前 | 本批后 |
+  |---|---|---|
+  | **本仓库** | 115/145 (79%) | ★ **116/145 (80%)** |
+  ★ 逐项确认：**特征/螺纹 ⇒ ✅**（改前 ❌）。
+  ★ `check_specs` ⇒ **problems: NONE**；两文件 `ast.parse` 均过。
+
+■ 五 · ★★ 如实标注（★ 三处都写了）
+  ★ **本工具经工具层的端到端读数尚未跑** —— ★ 真机证据目前**只在探针那一级**。
+  ★ 判据设计照官方与探针：**特征树新增 + 返回对象 `GetTypeName2`（真机建成时为 `CosmeticThread`）**。
+  ★ `diameter` 官方是 `double` 且**未写单位** ⇒ ★ 对外收 `diameter_mm`、**只在边界换算一次**，
+    并与真机那次的 `0.008`（= 8 mm）对齐口径。
+
+★ 收尾链：**`release_check 第 1 轮 OK` · 29 passed**。
+★ 下一步：同形态的 `surface_flatten`（曲面/曲面展平）与 `sketch_spline`（草图/样条曲线）
+  —— ★ **各自的调用序已在探针里、且都建成过**，抬进 `scripts/` 即可。

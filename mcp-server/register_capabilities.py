@@ -381,6 +381,14 @@ BATCH_MODULES = (
     #:   ⚠⚠ **本批的 4 条工具尚未真机验证**（★ 与 batch72/73 一样，★ 注册 ≠ 能跑）——
     #:     ★ 待下一轮用工具层 e2e 探针补读数，★ **在那之前不许把它们的 level 写成 verified**。
     "tool_specs_batch74",
+    #: ★ 2026-10-03（接手轮）· **R6+**：把「**已真机证明、代码却只在 `tools/prove_*.py` 里**」的直入法挂成工具。
+    #:   ★ 判据逐字来自 `recon/scan-S2b-ledger-vs-tools.md` 的 **A 表**（台账有、`mcp_tools` 无挂 —— 41 条），
+    #:     ★ 而它的 `limitations` **自己写着**「⚠ 本包装未接进 MCP 工具层」⇒ ★ 挂出来就是**台账写明的下一步**。
+    #:   ★★ **不发明**：`scripts/sw_feature_entry_ops.py` 的调用序**照抄那次建成的真机探针**。
+    #:   本批 1 条：**特征/螺纹**（`InsertCosmeticThread3`，7 参 · 未废弃）。
+    #:   ⚠ **尚未经工具层端到端验证**（★ 真机证据目前只在**探针**那一级）——
+    #:     ★ 在 e2e 读数出来之前，★ **不许**写成「经工具层已验证」。
+    "tool_specs_batch76",
 )
 
 def all_specs() -> list:
