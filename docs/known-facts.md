@@ -1251,3 +1251,21 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 前置（官方 `Remarks` 逐字）：`InsertOffsetSurface` ⇒ 「Make the selections using `SelectByID2` **before** calling」；`InsertPlanarRefSurface` ⇒ 「边界实体用 **Marks of 1**」；`InsertFeatureReplaceFace` ⇒ 「要替换的面 **mark 1**」（★ 而替换面那个 mark **本包装是推断** ⚠）。
      ★ 落地：`scripts/sw_surface_features.py` 的 `insert_offset_surface_report` / `insert_planar_ref_surface_report` / `insert_replace_face_report`；★ `capabilities.yaml` 新增 **`surface_offset`**（level = **`verified`** —— ★ 有我们自己的运行证据）。
      ★★ **下一步该试的**：T605 改用**草图边界**（★ 本轮用的是曲面体的边）；T609 把两个 mark 的分工调过来试。|真机：`tools/prove_surface_oldstyle_three.py`；证据 `output/surface-oldstyle-three-evidence.json`；对照事实 395 / 396 |
+| 399 | **★★★ 「旧式 vs 新架构」**不是分界线** —— 扫描曲面**两条路都不成**，故真正的分界是「那个特征本身」** —— 2026-10-03（轮 518）。
+     ★ 缘起：事实 398 把「旧式方法那侧是成的」当成了**方向**，★ 而本轮从类型库 dump 里发现 `IModelDoc2` 上**有一整族旧式曲面入口**：
+     ```
+     InsertSweepRefSurface2    arity=6  (Propagate, TwistCtrlOption, KeepTangency, ForceNonRational,
+                                          StartMatchingType, EndMatchingType)   ← 扫描曲面
+     InsertRevolvedRefSurface  arity=4  (Angle, ReverseDir, Angle2, RevType)    ← 旋转曲面
+     PreTrimSurface            arity=1  (BMutualTrimIn)                         ← 剪裁（两段式）
+     PostTrimSurface           arity=1  (BSewSurfaceIn)
+     InsertRadiateSurface      arity=3  (Distance, FlipDir, TangentPropagate)   ← 辐射面
+     ```
+     ★ 故本轮问：**扫描曲面的旧式入口成不成？**（★ 本仓此前对它下过「到不了」，而依据只有**新架构**那条路）
+     ★ 真机（`output/sweep-oldstyle-evidence.json`）：选区 `{1:1, 4:1}`（★ **对**），而
+       `InsertSweepRefSurface2`（6 参）⇒ **回 `None` · 树不动**；`InsertSweepRefSurface`（4 参）⇒ **同**；新架构 62 ⇒ **同** ⇒ ★★ **判别 = `oldstyle_sweep_also_fails`（0/3）**
+     ★★★ **故图景要收窄**：
+       ✓ **旧式侧成的**（★ 逐条验过）：等距 `InsertOffsetSurface` · 平面区域 `InsertPlanarRefSurface` · 替换面 `InsertFeatureReplaceFace` · 延伸 `InsertExtendSurface` · 填充 `InsertFillSurface2` · 缝合 `InsertSewRefSurface` · 曲面-拉伸 `FeatureExtruRefSurface3`；
+       ✗ **两条路都不成的**：**扫描曲面**（旧式 6 参 + 4 参 + 新架构 62）· 加厚 · 直纹曲面。
+       ⇒ ★★ **故「旧式 vs 新架构」不是分界线** —— 真正的分界是**那个特征本身**。
+     ★ **方法论收获**：★ 「旧式侧是成的」作为**方向**是好的（★ 它已经带出 3 条新能力），★ 而不能当成**定律**（★ 一遇到反例就该收窄）。|真机：`tools/probe_sweep_oldstyle.py`；证据 `output/sweep-oldstyle-evidence.json`；对照事实 391 / 393 / 395 / 396 / 398 |
