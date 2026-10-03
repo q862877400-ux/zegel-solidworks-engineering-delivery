@@ -61,6 +61,10 @@ def _property_value(model, configuration_name: str, names: tuple[str, ...]) -> s
     return ""
 
 
+#: ★ 官方枚举 swInConfigurationOpts_e 的「所有配置」（src: C:\\swapi\\enums\\swInConfigurationOpts_e.md）
+SW_ALL_CONFIG = 2
+
+
 def collect_assembly_bom(model, *, include_excluded: bool = False) -> list[dict[str, Any]]:
     """收集装配体顶层组件并按文件路径和配置汇总数量。"""
     if int(get_com_member(model, "GetType")) != 2:
@@ -68,7 +72,24 @@ def collect_assembly_bom(model, *, include_excluded: bool = False) -> list[dict[
     components = get_com_member(model, "GetComponents", False) or []
     grouped: dict[tuple[str, str], dict[str, Any]] = {}
     for component in components:
-        excluded = bool(get_com_member(component, "ExcludeFromBOM"))
+        #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是
+        #:   `bool(get_com_member(component, "ExcludeFromBOM"))`。
+        #:   ★ 官方 `types/IComponent2/ExcludeFromBOM.md` 逐字：
+        #:     「**Obsolete. Superseded by [[IComponent2::GetExcludeFromBOM2]] and [[…**」
+        #:     ★ 旧的是**属性**（`System.bool ExcludeFromBOM {get; set;}`）
+        #:     ★★ 后继 `GetExcludeFromBOM2(Config_opt, Config_names)` 是**方法**（2 参）
+        #:        —— ★ `## Parameters` 逐字：「**Config_opt**: Configuration option as defined in
+        #:        [[swInConfigurationOpts_e]]」
+        #:   ⇒ ★ 传 `swAllConfiguration = 2`（★ 枚举值本会话已核）· `Config_names` 传 `None`
+        #:   ★★★ 真机证据（`tools/probe_deps_bom_undercut.py` ·
+        #:     `output/deps-bom-undercut-evidence.json`）：
+        #:     ★ 旧 `ExcludeFromBOM` ⇒ **False** · ★ 新 `GetExcludeFromBOM2(2, None)` ⇒ **`(False,)`**
+        #:     ⇒ ★★ **语义一致（新的是单元素元组）⇒ 可换** ✓
+        _excluded = get_com_member(component, "GetExcludeFromBOM2", SW_ALL_CONFIG, None)
+        if isinstance(_excluded, (list, tuple)):
+            excluded = bool(_excluded[0]) if _excluded else False
+        else:
+            excluded = bool(_excluded)
         if excluded and not include_excluded:
             continue
         path = str(get_com_member(component, "GetPathName") or "")

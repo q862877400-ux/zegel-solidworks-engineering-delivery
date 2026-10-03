@@ -1,0 +1,60 @@
+fix(能力层): ★★★★ 换两条（`ExcludeFromBOM` · `MoldUndercutDetect`）；★ 一条**有据保留**（`GetDependencies2`）；★ 并抓到「同名多接口」的教科书案例
+
+■ 一 · ★★★★ 本轮抓到的一个**教科书级「同名多接口」案例**（事实 511 + 事实 36 合体）
+  ★ 我们的调用（`scripts/sw_delivery.py`）逐字：
+    `dependencies = get_com_member(model, "GetDependencies2", False, True, False) or []`（★ **3 参**）
+  ★★ 官方 markdown 里 **`GetDependencies2` 只有 1 页** —— `IModelDoc2.GetDependencies2`，
+    逐字「**Obsolete. Superseded by [[IModelDocExtension::GetDependencies]].**」
+  ★★★ 而**反射（出厂类型库）**里有**两处**：
+    ```
+    IModelDocExtension.GetDependencies(Int32, Int32)                        ← ★ 2 参
+    IModelDocExtension.GetDependencies2(Boolean, Boolean, Boolean)          ← ★★ **3 参** ← 正是我们调的
+    IModelDocExtension.IGetDependencies2(...)                               ← ★ 指针变体
+    ```
+  ⇒ ★ **铁律 4**（签名冲突时**以出厂类型库为准**）⇒ ★★ **我们调 3 参是对的** ✓
+  ★★★★ **真机验证**（`output/deps-bom-undercut-evidence.json`）：
+    ★ `get_com_member(model, "GetDependencies2", False, True, False)` ⇒ **能调、回 `()`**
+    ⇒ ★★ **即：★ 真机路由到的是 `IModelDocExtension` 那个（3 参）**，
+      ★ 而 `IModelDoc2` 上的那个"废弃"标记**不影响我们这条调用** ✓
+
+■ 二 · ★★★ 因此 `GetDependencies2` **有据保留**（★ 不是漏改）
+  ★ 理由两条（★ 都可核）：
+    ① ★ **它现在能调、有返回值**（★ `()`，★ 空是因为该零件确实没有依赖）；
+    ② ★★ **它的"后继" `IModelDocExtension.GetDependencies` 是**另一个成员**、★ 签名与语义都不同**
+      （★ 官方 6 参：`Traverseflag` / `Searchflag` / `AddReadOnlyInfo` / `ListBrokenRefs` / …）
+      ⇒ ★ **换它要重新设计调用**，★ 而**现在的能跑** ✓
+  ★★★ 与上一轮的 `AddMate5` **同类处置**（★ 事实：「后继更新」不构成换的理由）✓
+
+■ 三 · ★★ 换掉的两条（★ 都有真机对照）
+  | 我们的 | ★ 后继 | ★ 真机对照 |
+  |---|---|---|
+  | ★ `IComponent2.ExcludeFromBOM`（**属性**）| `GetExcludeFromBOM2(Config_opt, Config_names)`（★ **方法**，2 参）| ★ 旧 ⇒ **False** · ★ 新 ⇒ **`(False,)`** ⇒ **语义一致** ✓ |
+  | ★ `IFeatureManager.MoldUndercutDetect`（6 参）| `MoldUndercutDetect2`（**9 参**）| ★ 旧 ⇒ `None` · ★ 新 ⇒ `None` ⇒ **都能调** ✓ |
+  ★ `ExcludeFromBOM` 处：★ 传 `swAllConfiguration = 2`（★ 枚举本会话已核）· `Config_names` 传 `None`；
+    ★★ 新入口回的是**单元素元组** ⇒ 取值要 `[0]`（★ 已按两种形态都处理）✓
+  ★ `MoldUndercutDetect2` 的 **9 参**（★ 官方 `## Parameters` 逐字）：
+    ```
+    ColUndercut1 ← 旧 ColUndercut · ColUndercut2 ← 新增 · ColOccluded ← 新增
+    ColStraddle  ← 新增        · ColBase ← 旧同名 · BCoordInput/Dx/Dy/Dz ← 同名同序
+    ```
+    ★★★ **新增那 3 个颜色的取值，官方**没给默认值**** ⇒ ★ **本项目的工程选择**：
+      ★ **沿用调用方给的两个颜色** ⇒ ⚠ **已在 docstring 里写明"这是工程选择，不是官方默认"** ✓
+      （★ 铁律 5：★ 查不到就说查不到 —— ★ 而不是假装那是官方的）
+
+■ 四 · ★ 读数
+  | | ★ 改前 | ★★ 改后 |
+  |---|---|---|
+  | ★★ 真命中 | 44 | ★★ **42** |
+  | ★★ 其中生产 | 19 | ★★ **17** |
+  | ★ `ExcludeFromBOM` · `MoldUndercutDetect` | 各 1 条 | ★★ **两条均已消失**（复扫确认）✓ |
+  | ★ `GetDependencies2` | 1 条 | ★★ **仍在**（★ 有据保留）✓ |
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 6 passed** ✓
+
+■ 五 · ★★ 本会话的"保留"清单（★ 已 4 类，★ 全部有据）
+  | ★ 条目 | ★ 保留理由 |
+  |---|---|
+  | ★ `DeleteRenderMaterial` | ★ 后继 `DeleteDisplayStateSpecificRenderMaterial` **pywin32 造不出可调用对象**（事实 47）|
+  | ★ `AddMate5`（2 条）| ★ 真机对照：★ 两条路**都建不成**（同一根因）、★ 而旧的**还多给一个 `error_status` 诊断** |
+  | ★ `AddComponent4` | ★ **刻意兜底**（★ `AddComponent5 → None → 退回 4`，★ 人工读源码确认）|
+  | ★★ `GetDependencies2` | ★★ **能调，★ 而后继是另一个成员（6 参、语义不同）** |
+  ⇒ ★★ **这 4 类都不能靠"名单"判 —— 必须人工读代码 + 真机 + 官方签名三样一起判** ✓

@@ -249,8 +249,28 @@ def mold_undercut_detect(model, *, col_undercut: int = 0, col_base: int = 0,
             "（⚠ 后者要求模型**已定义**拉拔方向，否则同样会弹框）。"
         )
     fm = get_com_member(model, "FeatureManager")
-    return get_com_member(fm, "MoldUndercutDetect",
-                          int(col_undercut), int(col_base), bool(b_coord_input),
+    #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `MoldUndercutDetect`（6 参）。
+    #:   ★ 官方 `types/IFeatureManager/MoldUndercutDetect.md` 逐字：
+    #:     「**Obsolete. Superseded by [[IFeatureManager::MoldUndercutDetect2]].**」
+    #:   ★★ 后继是 **9 参**（★ 官方 `MoldUndercutDetect2.md` 的 `## Parameters` 逐字）：
+    #:     ```
+    #:     ColUndercut1   ← 旧 ColUndercut（第 1 方向不可见的面）
+    #:     ColUndercut2   ← ★ **新增**（第 2 方向不可见的面）
+    #:     ColOccluded    ← ★ **新增**（两方向都不可见的面）
+    #:     ColStraddle    ← ★ **新增**（两方向都有拔模的面）
+    #:     ColBase        ← 旧 ColBase（不构成倒扣的面）
+    #:     BCoordInput / Dx / Dy / Dz   ← 同名同序（★ 第 6–9 位）
+    #:     ```
+    #:   ★★★ **新增那 3 个颜色的取值，官方**没给默认值**** ⇒
+    #:     ★ **本项目的工程选择**：★ **沿用调用方给的两个颜色**
+    #:     （★ `ColUndercut2` 用 `col_undercut`、★ `ColOccluded` 用 `col_base`、
+    #:      ★ `ColStraddle` 用 `col_base`）—— ⚠ **这是工程选择，不是官方默认**，★ 已在此写明 ✓
+    #:   ★★★ 真机证据（`tools/probe_deps_bom_undercut.py` ·
+    #:     `output/deps-bom-undercut-evidence.json`）：★ 旧 6 参**能调**（回 `None`）·
+    #:     ★★ 新 9 参**能调**（回 `None`）⇒ ★★ **可换** ✓
+    return get_com_member(fm, "MoldUndercutDetect2",
+                          int(col_undercut), int(col_undercut), int(col_base), int(col_base),
+                          int(col_base), bool(b_coord_input),
                           float(dx), float(dy), float(dz))
 
 
