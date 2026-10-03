@@ -19,8 +19,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 35,
-    "used_pct": 12,
+    "used": 36,
+    "used_pct": 13,
     "gated": 268,
     "gated_pct": 94,
     "used_members": [
@@ -63,21 +63,21 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 71,
-    "used_pct": 12,
+    "used": 108,
+    "used_pct": 18,
     "gated": 583,
     "gated_pct": 96,
     "used_members": [
       "ActiveView",
       "AddConfiguration3",
       "AddDimension2",
+      "AddHorizontalDimension2",
       "AddRelation",
+      "AddVerticalDimension2",
       "AlignDimensions",
       "BlankSketch",
       "ClearSelection2",
-      "Close",
-      "ConfigurationManager",
-      "Create3PointArc"
+      "Close"
     ],
     "files": [
       "examples/02_complex_part.py",
@@ -107,26 +107,26 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 32,
-    "used_pct": 10,
+    "used": 43,
+    "used_pct": 14,
     "gated": 282,
     "gated_pct": 91,
     "used_members": [
       "AddDefaultRenderMaterial",
       "AddDisplayStateSpecificRenderMaterial",
+      "AddPathLengthDim",
       "AddRenderMaterial",
       "AlignDimensions",
+      "Create3DBoundingBox",
       "CreateRenderMaterial",
       "CustomPropertyManager",
       "DeleteRenderMaterial",
-      "DisplayMode",
-      "GetAnnotationCount",
-      "GetAnnotations"
+      "DisplayMode"
     ],
     "files": [
       "examples/02_complex_part.py",
       "examples/08_mini_fan_motion_assembly.py",
-      "scripts/sw_api_sldworks.py"
+      "scripts/check_official_md_claims.py"
     ],
     "note": "",
     "official_category": "Application Interfaces"
@@ -151,8 +151,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 7,
-    "used_pct": 14,
+    "used": 8,
+    "used_pct": 16,
     "gated": 47,
     "gated_pct": 94,
     "used_members": [
@@ -160,6 +160,7 @@
       "EnableSelection",
       "GetSelectedObject6",
       "GetSelectedObjectCount2",
+      "GetSelectedObjectType3",
       "ResumeSelectionList",
       "ResumeSelectionList2",
       "SelectionColor"
@@ -239,8 +240,8 @@
     ],
     "files": [
       "examples/02_complex_part.py",
-      "scripts/sketch_relations.py",
-      "scripts/sw_api_sldworks.py"
+      "scripts/check_unreachable_members.py",
+      "scripts/sketch_relations.py"
     ],
     "note": "",
     "official_category": "Sketch"
@@ -265,21 +266,21 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 25,
-    "used_pct": 34,
+    "used": 26,
+    "used_pct": 35,
     "gated": 71,
     "gated_pct": 96,
     "used_members": [
       "AutoDimension2",
       "GetArcs2",
       "GetAutomaticSolve",
+      "GetConstrainedStatus",
       "GetContourEdges",
       "GetDetachSegmentOnDrag",
       "GetEllipses3",
       "GetLines2",
       "GetParabolas2",
-      "GetPolylines",
-      "GetSketchBlockInstances"
+      "GetPolylines"
     ],
     "files": [
       "scripts/sketch_relations.py",
@@ -309,10 +310,10 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 12,
-    "used_pct": 39,
-    "gated": 26,
-    "gated_pct": 84,
+    "used": 11,
+    "used_pct": 35,
+    "gated": 27,
+    "gated_pct": 87,
     "used_members": [
       "GetCurve",
       "GetName",
@@ -351,12 +352,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 38,
+    "used": 2,
+    "used_pct": 25,
     "gated": 6,
     "gated_pct": 75,
     "used_members": [
-      "Angle",
       "GetEndPoint2",
       "GetStartPoint2"
     ],
@@ -423,15 +423,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 38,
+    "used": 0,
+    "used_pct": 0,
     "gated": 3,
     "gated_pct": 38,
-    "used_members": [
-      "Length",
-      "LengthType",
-      "Width"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sketch_relations.py",
       "scripts/sw_api_sldcostingapi.py",
@@ -577,12 +573,13 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 67,
+    "used": 5,
+    "used_pct": 83,
     "gated": 6,
     "gated_pct": 100,
     "used_members": [
       "AddRelation",
+      "DeleteRelation",
       "GetAllowedRelations",
       "GetRelations",
       "GetRelationsCount"
@@ -590,7 +587,7 @@
     "files": [
       "scripts/sketch_relations.py",
       "scripts/sw_api_sldworks.py",
-      "tests/test_extended_modules_contract.py"
+      "scripts/sw_sketch_dimensions.py"
     ],
     "note": "",
     "official_category": "Sketch"
@@ -652,14 +649,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 7,
-    "used_pct": 39,
+    "used": 4,
+    "used_pct": 22,
     "gated": 11,
     "gated_pct": 61,
     "used_members": [
-      "Angle",
-      "Scale",
-      "Scale2",
       "Select",
       "Select2",
       "Select3",
@@ -703,8 +697,8 @@
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_hole_features.py",
-      "scripts/sw_jlcfa_fill.py"
+      "scripts/sw_feature_entry_ops.py",
+      "scripts/sw_hole_features.py"
     ],
     "note": "",
     "official_category": "Sketch"
@@ -745,7 +739,7 @@
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_part.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Patterns and Mirroring"
@@ -770,21 +764,21 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 23,
-    "used_pct": 8,
+    "used": 40,
+    "used_pct": 15,
     "gated": 252,
     "gated_pct": 92,
     "used_members": [
       "CreateDefinition",
       "CreateFeature",
+      "FeatureBossThicken",
       "FeatureCircularPattern4",
       "FeatureCut4",
+      "FeatureExtruRefSurface3",
       "FeatureExtrusion3",
       "FeatureFillet",
       "FeatureFillet3",
-      "FeatureLinearPattern3",
-      "FeatureRevolve2",
-      "GetSelectionSetFolder"
+      "FeatureLinearPattern5"
     ],
     "files": [
       "examples/09_sheet_metal.py",
@@ -858,8 +852,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 10,
-    "used_pct": 20,
+    "used": 11,
+    "used_pct": 22,
     "gated": 26,
     "gated_pct": 52,
     "used_members": [
@@ -867,12 +861,12 @@
       "GetEdgeCount",
       "GetFaceCount",
       "GetFaces",
+      "GetFeatureCount",
       "GetHoldLineCount",
       "GetLoopCount",
       "Initialize",
       "ReleaseSelectionAccess",
-      "SetFaces",
-      "Type"
+      "SetFaces"
     ],
     "files": [
       "scripts/check_interface_member_ownership.py",
@@ -942,26 +936,24 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 25,
-    "used_pct": 50,
-    "gated": 13,
-    "gated_pct": 26,
+    "used": 8,
+    "used_pct": 16,
+    "gated": 17,
+    "gated_pct": 34,
     "used_members": [
       "AccessSelections",
       "BodyPattern",
-      "D1Axis",
-      "D1EndCondition",
-      "D1EndRefOffset",
-      "D1EndRefReverseOffset",
-      "D1EndSeedReference",
-      "D1EndUseSeedReference",
-      "D1EndUseSpacing",
-      "D1ReverseDirection"
+      "FeatureScope",
+      "GeometryPattern",
+      "PatternElement",
+      "PropagateVisualProperty",
+      "ReleaseSelectionAccess",
+      "VarySketch"
     ],
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Patterns and Mirroring"
@@ -986,16 +978,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 9,
-    "used_pct": 26,
-    "gated": 12,
-    "gated_pct": 34,
+    "used": 8,
+    "used_pct": 23,
+    "gated": 13,
+    "gated_pct": 37,
     "used_members": [
       "AccessSelections",
       "BodyPattern",
       "FeatureScope",
       "GeometryPattern",
-      "InstancesToVary",
       "PatternElement",
       "PropagateVisualProperty",
       "ReleaseSelectionAccess",
@@ -1043,7 +1034,7 @@
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Patterns and Mirroring"
@@ -1105,13 +1096,14 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 17,
-    "gated": 12,
-    "gated_pct": 52,
+    "used": 5,
+    "used_pct": 22,
+    "gated": 13,
+    "gated_pct": 57,
     "used_members": [
       "AccessSelections",
       "FeatureScope",
+      "GetContoursCount",
       "ReleaseSelectionAccess",
       "Type"
     ],
@@ -1259,8 +1251,8 @@
     "pct": 100,
     "used": 3,
     "used_pct": 12,
-    "gated": 5,
-    "gated_pct": 21,
+    "gated": 6,
+    "gated_pct": 25,
     "used_members": [
       "AccessSelections",
       "Path",
@@ -1294,26 +1286,24 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 18,
-    "used_pct": 51,
-    "gated": 8,
-    "gated_pct": 23,
+    "used": 8,
+    "used_pct": 23,
+    "gated": 10,
+    "gated_pct": 29,
     "used_members": [
       "AccessSelections",
       "BodyPattern",
-      "D1Direction",
-      "D1FaceNormal",
-      "D1IsEqualSpaced",
-      "D1ReverseDirection",
-      "D1Spacing",
-      "D2Direction",
-      "D2IsEqualSpaced",
-      "D2PatternSeedOnly"
+      "FeatureScope",
+      "GeometryPattern",
+      "PatternElement",
+      "PropagateVisualProperty",
+      "ReleaseSelectionAccess",
+      "VarySketch"
     ],
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Patterns and Mirroring"
@@ -1338,19 +1328,17 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 9,
-    "used_pct": 13,
-    "gated": 10,
-    "gated_pct": 14,
+    "used": 7,
+    "used_pct": 10,
+    "gated": 11,
+    "gated_pct": 16,
     "used_members": [
       "AccessSelections",
       "Diameter",
       "Face",
       "FeatureScope",
-      "Length",
-      "OffsetDistance",
+      "GetSketchPointCount",
       "ReleaseSelectionAccess",
-      "ThreadClass",
       "Type"
     ],
     "files": [
@@ -1419,8 +1407,8 @@
     "pct": 100,
     "used": 6,
     "used_pct": 24,
-    "gated": 7,
-    "gated_pct": 28,
+    "gated": 8,
+    "gated_pct": 32,
     "used_members": [
       "AccessSelections",
       "Diameter",
@@ -1459,8 +1447,8 @@
     "pct": 100,
     "used": 5,
     "used_pct": 23,
-    "gated": 8,
-    "gated_pct": 36,
+    "gated": 9,
+    "gated_pct": 41,
     "used_members": [
       "AccessSelections",
       "GetComponents",
@@ -1502,8 +1490,8 @@
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_hole_features.py",
-      "tests/test_extended_modules_contract.py"
+      "scripts/sw_connect.py",
+      "scripts/sw_hole_features.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -1564,19 +1552,18 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 23,
-    "gated": 0,
-    "gated_pct": 0,
+    "used": 2,
+    "used_pct": 15,
+    "gated": 1,
+    "gated_pct": 8,
     "used_members": [
       "Diameter",
-      "OffsetDistance",
       "Size"
     ],
     "files": [
       "scripts/sw_api_SWRoutingLib.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_routing.py"
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Holes"
@@ -1598,18 +1585,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 7,
-    "used_pct": 100,
+    "used": 1,
+    "used_pct": 14,
     "gated": 0,
     "gated_pct": 0,
     "used_members": [
-      "CustomSizing",
-      "DrillPointAngle",
-      "DrillPointAngleOverride",
-      "EndShape",
-      "Equation",
-      "ThreadClass",
-      "ThreadClassOverride"
+      "Equation"
     ],
     "files": [
       "scripts/sw_api_cosworks.py",
@@ -1634,21 +1615,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 100,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "CustomSizing",
-      "EndConditionOverride",
-      "ThreadClass",
-      "ThreadClassOverride",
-      "UseStandardDepth"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_hole_features.py",
-      "tests/test_extended_modules_contract.py"
+      "scripts/sw_feature_readback.py",
+      "scripts/sw_hole_features.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Holes"
@@ -1673,17 +1648,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 9,
-    "used_pct": 26,
-    "gated": 5,
-    "gated_pct": 14,
+    "used": 7,
+    "used_pct": 20,
+    "gated": 7,
+    "gated_pct": 20,
     "used_members": [
       "AccessSelections",
       "Diameter",
       "Edge",
       "InitializeThreadData",
-      "MirrorProfile",
-      "OffsetDistance",
       "ReleaseSelectionAccess",
       "Size",
       "Type"
@@ -1718,8 +1691,8 @@
     "pct": 100,
     "used": 5,
     "used_pct": 29,
-    "gated": 3,
-    "gated_pct": 18,
+    "gated": 4,
+    "gated_pct": 24,
     "used_members": [
       "AccessSelections",
       "Diameter",
@@ -1824,8 +1797,8 @@
     "pct": 100,
     "used": 7,
     "used_pct": 14,
-    "gated": 10,
-    "gated_pct": 20,
+    "gated": 11,
+    "gated_pct": 22,
     "used_members": [
       "AccessSelections",
       "BendRadius",
@@ -1863,8 +1836,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 6,
-    "used_pct": 16,
+    "used": 5,
+    "used_pct": 13,
     "gated": 8,
     "gated_pct": 21,
     "used_members": [
@@ -1872,7 +1845,6 @@
       "BendRadius",
       "Edge",
       "GetEdgeCount",
-      "OffsetDistance",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -1944,8 +1916,8 @@
     "pct": 100,
     "used": 3,
     "used_pct": 21,
-    "gated": 6,
-    "gated_pct": 43,
+    "gated": 7,
+    "gated_pct": 50,
     "used_members": [
       "AccessSelections",
       "BendRadius",
@@ -1979,14 +1951,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 33,
-    "gated": 5,
-    "gated_pct": 33,
+    "used": 3,
+    "used_pct": 20,
+    "gated": 6,
+    "gated_pct": 40,
     "used_members": [
       "AccessSelections",
-      "Angle",
-      "Length",
       "ReleaseSelectionAccess",
       "Type"
     ],
@@ -2057,8 +2027,8 @@
     "pct": 100,
     "used": 5,
     "used_pct": 16,
-    "gated": 8,
-    "gated_pct": 26,
+    "gated": 9,
+    "gated_pct": 29,
     "used_members": [
       "AccessSelections",
       "BendRadius",
@@ -2094,13 +2064,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 22,
+    "used": 3,
+    "used_pct": 17,
     "gated": 4,
     "gated_pct": 22,
     "used_members": [
       "AccessSelections",
-      "ProfileType",
       "ReleaseSelectionAccess",
       "Thickness"
     ],
@@ -2132,14 +2101,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 13,
+    "used": 2,
+    "used_pct": 7,
     "gated": 2,
     "gated_pct": 7,
     "used_members": [
       "AccessSelections",
-      "OffsetDistance",
-      "ProfileType",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -2170,13 +2137,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 22,
-    "gated": 8,
-    "gated_pct": 44,
+    "used": 3,
+    "used_pct": 17,
+    "gated": 9,
+    "gated_pct": 50,
     "used_members": [
       "AccessSelections",
-      "Angle",
       "ReleaseSelectionAccess",
       "Type"
     ],
@@ -2312,22 +2278,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 10,
-    "used_pct": 59,
+    "used": 0,
+    "used_pct": 0,
     "gated": 1,
     "gated_pct": 6,
-    "used_members": [
-      "MirrorProfile",
-      "OffsetPiercePoint",
-      "OffsetPiercePointHorizontalAxis",
-      "OffsetPiercePointVerticalAxis",
-      "ProfileAlignmentAngle",
-      "ProfileAlignmentType",
-      "ProfileMirrorType",
-      "ProfileSize",
-      "ProfileStandard",
-      "ProfileType"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_drawing_view.py",
@@ -2354,17 +2309,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 6,
-    "used_pct": 75,
+    "used": 1,
+    "used_pct": 12,
     "gated": 3,
     "gated_pct": 38,
     "used_members": [
-      "DimensionType",
-      "MemberType",
-      "NumberofSplitInstances",
-      "SetSplitReferences",
-      "SplitLength",
-      "SplitLengthRevDirection"
+      "SetSplitReferences"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
@@ -2389,21 +2339,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 100,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "FlipDimension",
-      "LockRotation",
-      "MateAlignment",
-      "OffsetDistance"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_weldment.py",
-      "tests/test_extended_modules_contract.py"
+      "scripts/sw_sheet_metal_weld_entry.py",
+      "scripts/sw_weldment.py"
     ],
     "note": "",
     "official_category": "Assembly Interfaces/Mates"
@@ -2465,8 +2409,8 @@
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_document_data.py",
-      "scripts/sw_weldment.py"
+      "scripts/sw_custom_property.py",
+      "scripts/sw_document_data.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -2484,13 +2428,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 33,
+    "used": 0,
+    "used_pct": 0,
     "gated": 2,
     "gated_pct": 67,
-    "used_members": [
-      "CollectIdenticalBodies"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py"
@@ -2692,15 +2634,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 50,
+    "used": 1,
+    "used_pct": 12,
     "gated": 5,
     "gated_pct": 62,
     "used_members": [
-      "GetFeature",
-      "ProfileSize",
-      "ProfileStandard",
-      "ProfileType"
+      "GetFeature"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
@@ -2741,8 +2680,8 @@
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_review.py",
-      "subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py"
+      "scripts/sw_feature_entry_ops.py",
+      "scripts/sw_review.py"
     ],
     "note": "",
     "official_category": "Model Interfaces"
@@ -2983,8 +2922,8 @@
     "pct": 100,
     "used": 2,
     "used_pct": 11,
-    "gated": 13,
-    "gated_pct": 72,
+    "gated": 14,
+    "gated_pct": 78,
     "used_members": [
       "AccessSelections",
       "ReleaseSelectionAccess"
@@ -3045,8 +2984,8 @@
     "pct": 100,
     "used": 3,
     "used_pct": 50,
-    "gated": 4,
-    "gated_pct": 67,
+    "gated": 5,
+    "gated_pct": 83,
     "used_members": [
       "AccessSelections",
       "ReleaseSelectionAccess",
@@ -3093,7 +3032,7 @@
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_curve_and_split.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Mold Tools"
@@ -3162,13 +3101,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 28,
-    "used_pct": 21,
+    "used": 29,
+    "used_pct": 22,
     "gated": 116,
     "gated_pct": 87,
     "used_members": [
       "CustomPropertyManager",
-      "ExcludeFromBOM",
       "FeatureByName",
       "FirstFeature",
       "GetBodies",
@@ -3176,6 +3114,7 @@
       "GetBox",
       "GetChildren",
       "GetConfigurationNames",
+      "GetConstrainedStatus",
       "GetCorresponding"
     ],
     "files": [
@@ -3497,14 +3436,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 67,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -3527,15 +3463,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 75,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "LockRotation",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -3561,19 +3493,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 43,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "FlipDimension",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_weldment.py",
-      "tests/test_extended_modules_contract.py"
+      "scripts/sw_ref_geometry.py",
+      "scripts/sw_weldment.py"
     ],
     "note": "",
     "official_category": ""
@@ -3598,21 +3526,21 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 17,
-    "used_pct": 7,
+    "used": 21,
+    "used_pct": 9,
     "gated": 224,
     "gated_pct": 98,
     "used_members": [
       "ActivateView",
+      "AutoBalloon5",
       "CenterMark",
       "Create3rdAngleViews2",
+      "CreateAutoBalloonOptions",
       "CreateDetailViewAt4",
       "CreateDrawViewFromModelView3",
       "CreateSectionView",
       "CreateSectionViewAt5",
-      "FeatureByName",
-      "GetCurrentSheet",
-      "GetFirstView"
+      "FeatureByName"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
@@ -3642,15 +3570,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 40,
-    "used_pct": 12,
+    "used": 45,
+    "used_pct": 14,
     "gated": 295,
     "gated_pct": 90,
     "used_members": [
-      "Angle",
       "AutoInsertCenterMarks2",
       "GetAnnotationCount",
       "GetAnnotations",
+      "GetAnnotationsByType",
       "GetArcs2",
       "GetBaseView",
       "GetCenterLines",
@@ -3686,8 +3614,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 6,
-    "used_pct": 46,
+    "used": 5,
+    "used_pct": 38,
     "gated": 4,
     "gated_pct": 31,
     "used_members": [
@@ -3695,8 +3623,7 @@
       "ConfigurationName",
       "DisplayMode",
       "Name",
-      "Rotation",
-      "Scale"
+      "Rotation"
     ],
     "files": [
       "scripts/sw_api_SWRoutingLib.py",
@@ -3726,14 +3653,17 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 9,
+    "used": 7,
+    "used_pct": 15,
     "gated": 39,
     "gated_pct": 85,
     "used_members": [
       "GetName",
+      "GetProperties2",
+      "GetSheetFormatName",
       "GetTemplateName",
       "GetViews",
+      "InsertRevisionTable2",
       "SetTemplateName"
     ],
     "files": [
@@ -3764,14 +3694,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 8,
-    "used_pct": 21,
+    "used": 9,
+    "used_pct": 23,
     "gated": 30,
     "gated_pct": 77,
     "used_members": [
       "FullName",
       "GetNameForSelection",
       "GetSystemValue2",
+      "GetSystemValue3",
       "GetType",
       "Name",
       "SetSystemValue3",
@@ -3819,8 +3750,8 @@
       "GetText",
       "GetTextFormat",
       "GetType",
-      "IsHoleCallout",
-      "Scale2"
+      "GetUnits",
+      "IsHoleCallout"
     ],
     "files": [
       "scripts/advanced_surface_ocp.py",
@@ -3850,10 +3781,10 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 11,
-    "used_pct": 13,
-    "gated": 70,
-    "gated_pct": 80,
+    "used": 10,
+    "used_pct": 11,
+    "gated": 71,
+    "gated_pct": 82,
     "used_members": [
       "GetName",
       "GetNext",
@@ -3979,8 +3910,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 25,
-    "used_pct": 39,
+    "used": 23,
+    "used_pct": 36,
     "gated": 39,
     "gated_pct": 61,
     "used_members": [
@@ -4330,18 +4261,17 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 7,
-    "used_pct": 39,
-    "gated": 9,
-    "gated_pct": 50,
+    "used": 6,
+    "used_pct": 33,
+    "gated": 10,
+    "gated_pct": 56,
     "used_members": [
       "Component",
       "GetChildren",
       "Name",
       "Select",
       "Style",
-      "View",
-      "Width"
+      "View"
     ],
     "files": [
       "scripts/sketch_relations.py",
@@ -4371,8 +4301,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 12,
-    "used_pct": 8,
+    "used": 14,
+    "used_pct": 10,
     "gated": 136,
     "gated_pct": 94,
     "used_members": [
@@ -4381,11 +4311,11 @@
       "GetEdges",
       "GetFaceCount",
       "GetFaces",
+      "GetFeatureCount",
       "GetMassProperties",
       "GetType",
-      "IsSheetMetal",
-      "Name",
-      "Save"
+      "GetVertices",
+      "IsSheetMetal"
     ],
     "files": [
       "scripts/advanced_surface_ocp.py",
@@ -4470,7 +4400,7 @@
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdocumentmgr.py",
-      "scripts/sw_hole_features.py"
+      "scripts/sw_feature_entry_ops.py"
     ],
     "note": "",
     "official_category": "Model Interfaces"
@@ -4505,8 +4435,8 @@
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_hole_features.py",
-      "subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py"
+      "scripts/sw_feature_entry_ops.py",
+      "scripts/sw_hole_features.py"
     ],
     "note": "",
     "official_category": "Model Interfaces"
@@ -4568,20 +4498,21 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 20,
+    "used": 5,
+    "used_pct": 25,
     "gated": 20,
     "gated_pct": 100,
     "used_members": [
       "GetEdgeCount",
       "GetEdges",
       "GetNext",
+      "GetVertices",
       "Select"
     ],
     "files": [
       "scripts/sw_api_SWRoutingLib.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_hole_features.py"
+      "scripts/sw_feature_entry_ops.py"
     ],
     "note": "",
     "official_category": "Model Interfaces"
@@ -4841,14 +4772,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 31,
+    "used": 1,
+    "used_pct": 8,
     "gated": 10,
     "gated_pct": 77,
     "used_members": [
-      "OverrideCenterOfMass",
-      "OverrideMass",
-      "OverrideMomentsOfInertia",
       "SetOverrideMassValue"
     ],
     "files": [
@@ -4992,8 +4920,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 9,
-    "used_pct": 38,
+    "used": 11,
+    "used_pct": 46,
     "gated": 21,
     "gated_pct": 88,
     "used_members": [
@@ -5005,7 +4933,8 @@
       "Get",
       "Get6",
       "GetNames",
-      "GetType"
+      "GetType",
+      "GetType2"
     ],
     "files": [
       "scripts/advanced_geometry_ocp.py",
@@ -5070,20 +4999,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 8,
-    "used_pct": 100,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "AdvancedGraphics",
-      "Angle",
-      "ApplyAppearance",
-      "ApplyMaterialColorToPart",
-      "ApplyMaterialHatchToSection",
-      "BlendColor",
-      "RealView",
-      "Scale2"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -5121,10 +5041,10 @@
       "Diffuse",
       "Emission",
       "GetEntitiesCount",
+      "GetMaterialIds",
       "Roughness",
       "Specular",
-      "Transparency",
-      "Width"
+      "Transparency"
     ],
     "files": [
       "scripts/sketch_relations.py",
@@ -5186,13 +5106,14 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 11,
+    "used": 6,
+    "used_pct": 14,
     "gated": 43,
     "gated_pct": 98,
     "used_members": [
       "AddForce",
       "AddInitialConditionForDynamicStudy",
+      "AddPressure",
       "AddRestraint",
       "Count",
       "GetLoadsAndRestraints"
@@ -5200,7 +5121,7 @@
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_simulation.py"
+      "scripts/sw_custom_property.py"
     ],
     "note": "",
     "official_category": ""
@@ -5332,7 +5253,7 @@
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_swmotionstudy.py",
-      "scripts/sw_simulation_results.py"
+      "scripts/sw_simulation.py"
     ],
     "note": "",
     "official_category": ""
@@ -5447,8 +5368,8 @@
     "pct": 100,
     "used": 14,
     "used_pct": 54,
-    "gated": 13,
-    "gated_pct": 50,
+    "gated": 14,
+    "gated_pct": 54,
     "used_members": [
       "CoordSystemType",
       "DirectionType",
@@ -5491,8 +5412,8 @@
     "pct": 100,
     "used": 7,
     "used_pct": 26,
-    "gated": 14,
-    "gated_pct": 52,
+    "gated": 15,
+    "gated_pct": 56,
     "used_members": [
       "GetTimeCurve",
       "HFValue",
@@ -5505,7 +5426,7 @@
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_simulation.py"
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": ""
@@ -6409,11 +6330,13 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 0,
-    "used_pct": 0,
+    "used": 1,
+    "used_pct": 7,
     "gated": 13,
     "gated_pct": 87,
-    "used_members": [],
+    "used_members": [
+      "GetValues"
+    ],
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_sldworks.py",
@@ -6619,8 +6542,8 @@
     "pct": 100,
     "used": 5,
     "used_pct": 20,
-    "gated": 14,
-    "gated_pct": 56,
+    "gated": 15,
+    "gated_pct": 60,
     "used_members": [
       "GetTimeCurve",
       "ReverseDirection2",
@@ -6631,7 +6554,7 @@
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_simulation.py"
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": ""
@@ -8322,8 +8245,8 @@
     "pct": 100,
     "used": 3,
     "used_pct": 60,
-    "gated": 1,
-    "gated_pct": 20,
+    "gated": 2,
+    "gated_pct": 40,
     "used_members": [
       "Diameter",
       "Name",
@@ -8542,8 +8465,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 23,
-    "used_pct": 23,
+    "used": 25,
+    "used_pct": 25,
     "gated": 83,
     "gated_pct": 83,
     "used_members": [
@@ -8586,8 +8509,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 10,
-    "used_pct": 18,
+    "used": 11,
+    "used_pct": 20,
     "gated": 37,
     "gated_pct": 67,
     "used_members": [
@@ -8599,8 +8522,8 @@
       "GetComponents",
       "GetCutListItems",
       "GetMassProperties",
-      "Name",
-      "Name2"
+      "IsCustomPropertyEditable",
+      "Name"
     ],
     "files": [
       "examples/08_mini_fan_motion_assembly.py",
@@ -8987,13 +8910,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 22,
+    "used": 3,
+    "used_pct": 17,
     "gated": 7,
     "gated_pct": 39,
     "used_members": [
       "ConfigurationName",
-      "ExcludeFromBOM",
       "Name",
       "Name2"
     ],
@@ -9025,13 +8947,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 20,
+    "used": 3,
+    "used_pct": 15,
     "gated": 7,
     "gated_pct": 35,
     "used_members": [
       "ConfigurationName",
-      "ExcludeFromBOM",
       "Name",
       "Name2"
     ],
@@ -9063,13 +8984,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 19,
+    "used": 3,
+    "used_pct": 14,
     "gated": 8,
     "gated_pct": 38,
     "used_members": [
       "ConfigurationName",
-      "ExcludeFromBOM",
       "Name",
       "Name2"
     ],
@@ -9202,13 +9122,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 27,
+    "used": 2,
+    "used_pct": 18,
     "gated": 5,
     "gated_pct": 45,
     "used_members": [
       "ConfigurationName",
-      "ExcludeFromBOM",
       "Name"
     ],
     "files": [
@@ -9239,13 +9158,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 23,
+    "used": 2,
+    "used_pct": 15,
     "gated": 6,
     "gated_pct": 46,
     "used_members": [
       "ConfigurationName",
-      "ExcludeFromBOM",
       "Name"
     ],
     "files": [
@@ -9276,13 +9194,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 27,
+    "used": 3,
+    "used_pct": 20,
     "gated": 6,
     "gated_pct": 40,
     "used_members": [
       "ConfigurationName",
-      "ExcludeFromBOM",
       "Name",
       "Name2"
     ],
@@ -9314,13 +9231,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 25,
+    "used": 3,
+    "used_pct": 19,
     "gated": 6,
     "gated_pct": 38,
     "used_members": [
       "ConfigurationName",
-      "ExcludeFromBOM",
       "Name",
       "Name2"
     ],
@@ -9352,13 +9268,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 24,
+    "used": 3,
+    "used_pct": 18,
     "gated": 7,
     "gated_pct": 41,
     "used_members": [
       "ConfigurationName",
-      "ExcludeFromBOM",
       "Name",
       "Name2"
     ],
@@ -9639,8 +9554,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 8,
-    "used_pct": 16,
+    "used": 9,
+    "used_pct": 18,
     "gated": 33,
     "gated_pct": 65,
     "used_members": [
@@ -9650,6 +9565,7 @@
       "Description",
       "GetComponents",
       "GetMassProperties",
+      "IsCustomPropertyEditable",
       "Name",
       "Name2"
     ],
@@ -9681,8 +9597,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 9,
-    "used_pct": 17,
+    "used": 10,
+    "used_pct": 19,
     "gated": 34,
     "gated_pct": 65,
     "used_members": [
@@ -9693,6 +9609,7 @@
       "GetComponents",
       "GetCutListItems",
       "GetMassProperties",
+      "IsCustomPropertyEditable",
       "Name",
       "Name2"
     ],
@@ -9724,8 +9641,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 10,
-    "used_pct": 19,
+    "used": 11,
+    "used_pct": 20,
     "gated": 36,
     "gated_pct": 67,
     "used_members": [
@@ -9737,8 +9654,8 @@
       "GetComponents",
       "GetCutListItems",
       "GetMassProperties",
-      "Name",
-      "Name2"
+      "IsCustomPropertyEditable",
+      "Name"
     ],
     "files": [
       "examples/08_mini_fan_motion_assembly.py",
@@ -10225,13 +10142,14 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 27,
+    "used": 4,
+    "used_pct": 36,
     "gated": 7,
     "gated_pct": 64,
     "used_members": [
       "AddCustomProperty",
       "DeleteCustomProperty",
+      "IsCustomPropertyEditable",
       "Name"
     ],
     "files": [
@@ -10262,13 +10180,14 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 23,
+    "used": 4,
+    "used_pct": 31,
     "gated": 7,
     "gated_pct": 54,
     "used_members": [
       "AddCustomProperty",
       "DeleteCustomProperty",
+      "IsCustomPropertyEditable",
       "Name"
     ],
     "files": [
@@ -10428,13 +10347,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 20,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "Angle"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -10911,13 +10828,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 17,
+    "used": 0,
+    "used_pct": 0,
     "gated": 3,
     "gated_pct": 50,
-    "used_members": [
-      "DimensionType"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -11262,13 +11177,14 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 40,
+    "used": 3,
+    "used_pct": 60,
     "gated": 5,
     "gated_pct": 100,
     "used_members": [
       "GetAnnotationCount",
-      "GetAnnotations"
+      "GetAnnotations",
+      "GetFeatureCount"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
@@ -11561,8 +11477,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 36,
+    "used": 22,
+    "used_pct": 37,
     "gated": 45,
     "gated_pct": 76,
     "used_members": [
@@ -11628,8 +11544,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 35,
+    "used": 22,
+    "used_pct": 37,
     "gated": 46,
     "gated_pct": 77,
     "used_members": [
@@ -11672,8 +11588,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 32,
+    "used": 22,
+    "used_pct": 33,
     "gated": 52,
     "gated_pct": 79,
     "used_members": [
@@ -11716,8 +11632,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 31,
+    "used": 22,
+    "used_pct": 32,
     "gated": 54,
     "gated_pct": 79,
     "used_members": [
@@ -11760,8 +11676,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 30,
+    "used": 22,
+    "used_pct": 31,
     "gated": 56,
     "gated_pct": 80,
     "used_members": [
@@ -11804,8 +11720,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 30,
+    "used": 22,
+    "used_pct": 31,
     "gated": 57,
     "gated_pct": 80,
     "used_members": [
@@ -11848,8 +11764,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 29,
+    "used": 22,
+    "used_pct": 31,
     "gated": 58,
     "gated_pct": 81,
     "used_members": [
@@ -11892,8 +11808,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 29,
+    "used": 22,
+    "used_pct": 30,
     "gated": 59,
     "gated_pct": 81,
     "used_members": [
@@ -11936,8 +11852,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 26,
+    "used": 22,
+    "used_pct": 27,
     "gated": 65,
     "gated_pct": 80,
     "used_members": [
@@ -12024,8 +11940,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 25,
+    "used": 22,
+    "used_pct": 27,
     "gated": 67,
     "gated_pct": 81,
     "used_members": [
@@ -12068,8 +11984,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 25,
+    "used": 22,
+    "used_pct": 26,
     "gated": 68,
     "gated_pct": 81,
     "used_members": [
@@ -12112,8 +12028,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 24,
+    "used": 23,
+    "used_pct": 27,
     "gated": 70,
     "gated_pct": 81,
     "used_members": [
@@ -12156,8 +12072,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 24,
+    "used": 23,
+    "used_pct": 26,
     "gated": 71,
     "gated_pct": 82,
     "used_members": [
@@ -12200,8 +12116,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 24,
+    "used": 23,
+    "used_pct": 26,
     "gated": 72,
     "gated_pct": 82,
     "used_members": [
@@ -12244,8 +12160,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 21,
-    "used_pct": 24,
+    "used": 23,
+    "used_pct": 26,
     "gated": 73,
     "gated_pct": 82,
     "used_members": [
@@ -12288,8 +12204,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 22,
-    "used_pct": 24,
+    "used": 24,
+    "used_pct": 27,
     "gated": 74,
     "gated_pct": 82,
     "used_members": [
@@ -12332,8 +12248,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 22,
-    "used_pct": 24,
+    "used": 24,
+    "used_pct": 26,
     "gated": 75,
     "gated_pct": 82,
     "used_members": [
@@ -12376,8 +12292,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 22,
-    "used_pct": 23,
+    "used": 24,
+    "used_pct": 26,
     "gated": 78,
     "gated_pct": 83,
     "used_members": [
@@ -12420,8 +12336,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 23,
-    "used_pct": 24,
+    "used": 25,
+    "used_pct": 26,
     "gated": 79,
     "gated_pct": 82,
     "used_members": [
@@ -12508,8 +12424,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 23,
-    "used_pct": 24,
+    "used": 25,
+    "used_pct": 26,
     "gated": 80,
     "gated_pct": 82,
     "used_members": [
@@ -12552,8 +12468,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 17,
-    "used_pct": 41,
+    "used": 18,
+    "used_pct": 44,
     "gated": 29,
     "gated_pct": 71,
     "used_members": [
@@ -12596,8 +12512,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 17,
-    "used_pct": 39,
+    "used": 18,
+    "used_pct": 41,
     "gated": 32,
     "gated_pct": 73,
     "used_members": [
@@ -12640,8 +12556,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 18,
-    "used_pct": 40,
+    "used": 19,
+    "used_pct": 42,
     "gated": 33,
     "gated_pct": 73,
     "used_members": [
@@ -12684,8 +12600,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 18,
-    "used_pct": 39,
+    "used": 19,
+    "used_pct": 41,
     "gated": 34,
     "gated_pct": 74,
     "used_members": [
@@ -12728,8 +12644,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 19,
-    "used_pct": 39,
+    "used": 20,
+    "used_pct": 41,
     "gated": 37,
     "gated_pct": 76,
     "used_members": [
@@ -12772,8 +12688,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 19,
-    "used_pct": 38,
+    "used": 20,
+    "used_pct": 40,
     "gated": 38,
     "gated_pct": 76,
     "used_members": [
@@ -13724,14 +13640,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 100,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "Length",
-      "Width"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sketch_relations.py",
       "scripts/sw_api_sldcostingapi.py",
@@ -14273,16 +14186,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 50,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "Angle",
-      "EntitiesToMate",
-      "FlipDimension",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -14431,8 +14339,8 @@
     "pct": 100,
     "used": 2,
     "used_pct": 11,
-    "gated": 1,
-    "gated_pct": 5,
+    "gated": 15,
+    "gated_pct": 79,
     "used_members": [
       "Size",
       "Style"
@@ -14498,8 +14406,8 @@
     "pct": 100,
     "used": 2,
     "used_pct": 12,
-    "gated": 0,
-    "gated_pct": 0,
+    "gated": 8,
+    "gated_pct": 50,
     "used_members": [
       "Size",
       "Style"
@@ -14507,7 +14415,7 @@
     "files": [
       "scripts/sw_api_SWRoutingLib.py",
       "scripts/sw_api_sldworks.py",
-      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "Annotation Interfaces"
@@ -14528,13 +14436,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 33,
+    "used": 1,
+    "used_pct": 17,
     "gated": 1,
     "gated_pct": 17,
     "used_members": [
-      "Count",
-      "Length"
+      "Count"
     ],
     "files": [
       "scripts/sketch_relations.py",
@@ -14899,8 +14806,8 @@
     "pct": 100,
     "used": 3,
     "used_pct": 33,
-    "gated": 4,
-    "gated_pct": 44,
+    "gated": 5,
+    "gated_pct": 56,
     "used_members": [
       "GetPosition",
       "Select",
@@ -14909,7 +14816,7 @@
     "files": [
       "scripts/sw_api_SWRoutingLib.py",
       "scripts/sw_api_sldworks.py",
-      "subskills/autocad-automation/scripts/acad_review.py"
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "Drawing Interfaces"
@@ -15028,13 +14935,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 50,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "Angle"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -15056,13 +14961,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 33,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "Length"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sketch_relations.py",
       "scripts/sw_api_sldcostingapi.py",
@@ -15141,14 +15044,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 100,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -15223,7 +15123,7 @@
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_drawing_query.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Mold Tools"
@@ -15278,8 +15178,8 @@
     "pct": 100,
     "used": 7,
     "used_pct": 33,
-    "gated": 11,
-    "gated_pct": 52,
+    "gated": 13,
+    "gated_pct": 62,
     "used_members": [
       "GetAnnotation",
       "GetNext",
@@ -16021,8 +15921,8 @@
     "pct": 100,
     "used": 2,
     "used_pct": 15,
-    "gated": 4,
-    "gated_pct": 31,
+    "gated": 5,
+    "gated_pct": 38,
     "used_members": [
       "AccessSelections",
       "ReleaseSelectionAccess"
@@ -16233,14 +16133,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 100,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EndConditionOverride",
-      "UseStandardDepth"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_hole_features.py",
@@ -16263,15 +16160,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 75,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "Angle",
-      "EndConditionOverride",
-      "UseStandardDepth"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -16298,8 +16191,8 @@
     "pct": 100,
     "used": 3,
     "used_pct": 50,
-    "gated": 2,
-    "gated_pct": 33,
+    "gated": 3,
+    "gated_pct": 50,
     "used_members": [
       "AccessSelections",
       "Face",
@@ -16704,7 +16597,7 @@
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Patterns and Mirroring"
@@ -17083,14 +16976,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 7,
+    "used": 4,
+    "used_pct": 10,
     "gated": 32,
     "gated_pct": 78,
     "used_members": [
       "GetLabel",
       "GetName",
-      "GetTextFormat"
+      "GetTextFormat",
+      "SetLabel2"
     ],
     "files": [
       "scripts/sw_api_cosworks.py",
@@ -17137,13 +17031,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 11,
+    "used": 0,
+    "used_pct": 0,
     "gated": 2,
     "gated_pct": 22,
-    "used_members": [
-      "Length"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sketch_relations.py",
       "scripts/sw_api_cosworks.py",
@@ -17203,14 +17095,13 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 38,
+    "used": 4,
+    "used_pct": 31,
     "gated": 2,
     "gated_pct": 15,
     "used_members": [
       "AccessSelections",
       "Face",
-      "OffsetDistance",
       "ReleaseSelectionAccess",
       "Thickness"
     ],
@@ -17799,13 +17690,16 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 5,
-    "gated": 38,
-    "gated_pct": 67,
+    "used": 6,
+    "used_pct": 11,
+    "gated": 39,
+    "gated_pct": 68,
     "used_members": [
       "AccessSelections",
       "FeatureScope",
+      "GetContoursCount",
+      "GetDepth",
+      "GetEndCondition",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -17885,15 +17779,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 31,
+    "used": 1,
+    "used_pct": 8,
     "gated": 2,
     "gated_pct": 15,
     "used_members": [
-      "Angle",
-      "Face",
-      "Scale",
-      "Scale2"
+      "Face"
     ],
     "files": [
       "scripts/advanced_surface_ocp.py",
@@ -18015,7 +17906,7 @@
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_simulation.py"
+      "scripts/sw_custom_property.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -18063,11 +17954,13 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 0,
-    "used_pct": 0,
+    "used": 1,
+    "used_pct": 50,
     "gated": 2,
     "gated_pct": 100,
-    "used_members": [],
+    "used_members": [
+      "GetFeatureCount"
+    ],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -18350,13 +18243,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 25,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -18486,8 +18377,8 @@
     "pct": 100,
     "used": 2,
     "used_pct": 50,
-    "gated": 2,
-    "gated_pct": 50,
+    "gated": 3,
+    "gated_pct": 75,
     "used_members": [
       "AccessSelections",
       "ReleaseSelectionAccess"
@@ -18520,13 +18411,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 14,
-    "used_pct": 15,
+    "used": 13,
+    "used_pct": 14,
     "gated": 92,
     "gated_pct": 98,
     "used_members": [
       "AddFrame",
-      "Angle",
       "CanConvertFormat",
       "ConvertFormat",
       "GetAnnotation",
@@ -18534,7 +18424,8 @@
       "GetFrame",
       "GetFrameCount",
       "GetFrameSymbols3",
-      "GetFrameValues"
+      "GetFrameValues",
+      "GetText"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
@@ -18634,13 +18525,13 @@
     "pct": 100,
     "used": 0,
     "used_pct": 0,
-    "gated": 5,
-    "gated_pct": 29,
+    "gated": 6,
+    "gated_pct": 35,
     "used_members": [],
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_sldworks.py",
-      "subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py"
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Reference Geometry"
@@ -18661,15 +18552,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 50,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "Angle",
-      "EntitiesToMate",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -18753,7 +18640,7 @@
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_delivery.py",
-      "tests/solidworks_week3_delivery_regression.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -19060,14 +18947,13 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 21,
-    "gated": 5,
-    "gated_pct": 26,
+    "used": 3,
+    "used_pct": 16,
+    "gated": 6,
+    "gated_pct": 32,
     "used_members": [
       "AccessSelections",
       "BendRadius",
-      "OffsetDistance",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -19147,15 +19033,14 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 44,
-    "gated": 3,
-    "gated_pct": 33,
+    "used": 3,
+    "used_pct": 33,
+    "gated": 4,
+    "gated_pct": 44,
     "used_members": [
       "Description",
       "Name",
-      "Style",
-      "Width"
+      "Style"
     ],
     "files": [
       "scripts/sketch_relations.py",
@@ -19368,8 +19253,8 @@
     "pct": 100,
     "used": 2,
     "used_pct": 9,
-    "gated": 10,
-    "gated_pct": 43,
+    "gated": 11,
+    "gated_pct": 48,
     "used_members": [
       "AccessSelections",
       "ReleaseSelectionAccess"
@@ -19402,26 +19287,18 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 12,
-    "used_pct": 48,
-    "gated": 5,
-    "gated_pct": 20,
+    "used": 2,
+    "used_pct": 8,
+    "gated": 7,
+    "gated_pct": 28,
     "used_members": [
       "AccessSelections",
-      "D1Direction",
-      "D1FaceNormal",
-      "D1IsEqualSpaced",
-      "D1ReverseDirection",
-      "D1Spacing",
-      "D2Direction",
-      "D2IsEqualSpaced",
-      "D2PatternSeedOnly",
-      "D2ReverseDirection"
+      "ReleaseSelectionAccess"
     ],
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Patterns and Mirroring"
@@ -19446,26 +19323,18 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 18,
-    "used_pct": 38,
-    "gated": 10,
-    "gated_pct": 21,
+    "used": 2,
+    "used_pct": 4,
+    "gated": 14,
+    "gated_pct": 29,
     "used_members": [
       "AccessSelections",
-      "D1Axis",
-      "D1EndCondition",
-      "D1EndRefOffset",
-      "D1EndRefReverseOffset",
-      "D1EndSeedReference",
-      "D1EndUseSeedReference",
-      "D1EndUseSpacing",
-      "D1ReverseDirection",
-      "D1Spacing"
+      "ReleaseSelectionAccess"
     ],
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Patterns and Mirroring"
@@ -19501,7 +19370,7 @@
     "files": [
       "scripts/check_interface_member_ownership.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_part.py"
+      "scripts/sw_feature_readback.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Patterns and Mirroring"
@@ -19517,13 +19386,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 100,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -19665,14 +19532,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 33,
+    "used": 1,
+    "used_pct": 11,
     "gated": 4,
     "gated_pct": 44,
     "used_members": [
-      "Angle",
-      "GetNotes",
-      "Length"
+      "GetNotes"
     ],
     "files": [
       "scripts/sketch_relations.py",
@@ -19772,12 +19637,13 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 27,
+    "used": 4,
+    "used_pct": 36,
     "gated": 10,
     "gated_pct": 91,
     "used_members": [
       "AccessSelections",
+      "GetValues",
       "Initialize",
       "ReleaseSelectionAccess"
     ],
@@ -19858,17 +19724,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 14,
+    "used": 0,
+    "used_pct": 0,
     "gated": 6,
     "gated_pct": 86,
-    "used_members": [
-      "Scale"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_drawing_view.py",
-      "scripts/sw_view.py"
+      "scripts/sw_view.py",
+      "tests/test_sw_view_contract.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -19915,12 +19779,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 0,
-    "used_pct": 0,
+    "used": 1,
+    "used_pct": 20,
     "gated": 5,
     "gated_pct": 100,
-    "used_members": [],
+    "used_members": [
+      "CreateVector"
+    ],
     "files": [
+      "scripts/check_unreachable_members.py",
       "scripts/sw_api_sldworks.py",
       "scripts/sw_surface.py"
     ],
@@ -19947,13 +19814,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 20,
+    "used": 1,
+    "used_pct": 10,
     "gated": 9,
     "gated_pct": 90,
     "used_members": [
-      "Add",
-      "Scale"
+      "Add"
     ],
     "files": [
       "scripts/advanced_geometry_ocp.py",
@@ -19983,14 +19849,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 9,
+    "used": 1,
+    "used_pct": 3,
     "gated": 2,
     "gated_pct": 6,
     "used_members": [
-      "Angle",
-      "Diameter",
-      "Length"
+      "Diameter"
     ],
     "files": [
       "scripts/generate_star_history.py",
@@ -20411,14 +20275,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 22,
-    "gated": 9,
-    "gated_pct": 50,
+    "used": 2,
+    "used_pct": 11,
+    "gated": 10,
+    "gated_pct": 56,
     "used_members": [
       "AccessSelections",
-      "Angle",
-      "OffsetDistance",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -20449,13 +20311,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 10,
-    "used_pct": 10,
+    "used": 9,
+    "used_pct": 9,
     "gated": 86,
     "gated_pct": 83,
     "used_members": [
       "AddText",
-      "Angle",
       "GetAnnotation",
       "GetExtent",
       "GetName",
@@ -20568,14 +20429,13 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 38,
+    "used": 2,
+    "used_pct": 25,
     "gated": 1,
     "gated_pct": 12,
     "used_members": [
       "Diameter",
-      "Unit",
-      "Width"
+      "Unit"
     ],
     "files": [
       "scripts/sketch_relations.py",
@@ -20796,18 +20656,19 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 11,
+    "used": 3,
+    "used_pct": 17,
     "gated": 10,
     "gated_pct": 56,
     "used_members": [
       "GetDocumentNamesCount",
-      "SetSaveToName"
+      "SetSaveToName",
+      "SetSaveToName2"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_delivery.py",
-      "tests/test_sw_delivery.py"
+      "tests/test_obsolete_setsavetoname.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces"
@@ -20832,13 +20693,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 4,
+    "used": 0,
+    "used_pct": 0,
     "gated": 6,
     "gated_pct": 24,
-    "used_members": [
-      "Scale2"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_render_material.py",
@@ -20878,7 +20737,7 @@
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_simulation.py"
+      "scripts/sw_custom_property.py"
     ],
     "note": "",
     "official_category": "Annotation Interfaces"
@@ -20896,14 +20755,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 67,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -21019,6 +20875,7 @@
     "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
+      "scripts/sw_feature_readback.py",
       "subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py"
     ],
     "note": "",
@@ -21044,13 +20901,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 17,
+    "used": 2,
+    "used_pct": 11,
     "gated": 10,
     "gated_pct": 56,
     "used_members": [
       "AccessSelections",
-      "Angle",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -21081,13 +20937,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 20,
+    "used": 2,
+    "used_pct": 13,
     "gated": 4,
     "gated_pct": 27,
     "used_members": [
       "AccessSelections",
-      "OffsetDistance",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -21110,13 +20965,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 50,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -21144,13 +20997,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 11,
+    "used": 0,
+    "used_pct": 0,
     "gated": 3,
     "gated_pct": 33,
-    "used_members": [
-      "Width"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sketch_relations.py",
       "scripts/sw_api_SWRoutingLib.py",
@@ -21231,13 +21082,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 20,
-    "gated": 3,
-    "gated_pct": 30,
+    "used": 1,
+    "used_pct": 10,
+    "gated": 4,
+    "gated_pct": 40,
     "used_members": [
-      "GetPoints",
-      "Length"
+      "GetPoints"
     ],
     "files": [
       "scripts/sketch_relations.py",
@@ -21622,15 +21472,15 @@
     "pct": 100,
     "used": 1,
     "used_pct": 11,
-    "gated": 4,
-    "gated_pct": 44,
+    "gated": 5,
+    "gated_pct": 56,
     "used_members": [
       "Style"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py",
-      "tests/test_drawing_signature_contract.py"
+      "scripts/sw_drawing_create_missing.py",
+      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces/PropertyManager"
@@ -21655,13 +21505,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 8,
+    "used": 0,
+    "used_pct": 0,
     "gated": 4,
     "gated_pct": 31,
-    "used_members": [
-      "Width"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sketch_relations.py",
       "scripts/sw_api_sldcostingapi.py",
@@ -21722,15 +21570,15 @@
     "pct": 100,
     "used": 1,
     "used_pct": 9,
-    "gated": 0,
-    "gated_pct": 0,
+    "gated": 1,
+    "gated_pct": 9,
     "used_members": [
       "Style"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "subskills/autocad-automation/scripts/acad_preflight.py",
-      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
+      "scripts/sw_drawing_create_missing.py",
+      "subskills/autocad-automation/scripts/acad_preflight.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces/PropertyManager"
@@ -21757,15 +21605,15 @@
     "pct": 100,
     "used": 1,
     "used_pct": 8,
-    "gated": 7,
-    "gated_pct": 58,
+    "gated": 8,
+    "gated_pct": 67,
     "used_members": [
       "Style"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py",
-      "tests/test_drawing_signature_contract.py"
+      "scripts/sw_drawing_create_missing.py",
+      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces/PropertyManager"
@@ -21792,8 +21640,8 @@
     "pct": 100,
     "used": 3,
     "used_pct": 21,
-    "gated": 8,
-    "gated_pct": 57,
+    "gated": 9,
+    "gated_pct": 64,
     "used_members": [
       "Style",
       "Text",
@@ -21822,15 +21670,15 @@
     "pct": 100,
     "used": 1,
     "used_pct": 33,
-    "gated": 0,
-    "gated_pct": 0,
+    "gated": 1,
+    "gated_pct": 33,
     "used_members": [
       "Style"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "subskills/autocad-automation/scripts/acad_preflight.py",
-      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
+      "scripts/sw_drawing_create_missing.py",
+      "subskills/autocad-automation/scripts/acad_preflight.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces/PropertyManager"
@@ -21857,15 +21705,15 @@
     "pct": 100,
     "used": 1,
     "used_pct": 5,
-    "gated": 9,
-    "gated_pct": 43,
+    "gated": 10,
+    "gated_pct": 48,
     "used_members": [
       "Style"
     ],
     "files": [
       "scripts/sw_api_SWRoutingLib.py",
       "scripts/sw_api_sldworks.py",
-      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces/PropertyManager"
@@ -21890,16 +21738,16 @@
     "pct": 100,
     "used": 2,
     "used_pct": 25,
-    "gated": 2,
-    "gated_pct": 25,
+    "gated": 3,
+    "gated_pct": 38,
     "used_members": [
       "Position",
       "Style"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_drawing_view.py",
-      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
+      "scripts/sw_drawing_create_missing.py",
+      "scripts/sw_drawing_view.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces/PropertyManager"
@@ -21949,16 +21797,16 @@
     "pct": 100,
     "used": 2,
     "used_pct": 67,
-    "gated": 0,
-    "gated_pct": 0,
+    "gated": 1,
+    "gated_pct": 33,
     "used_members": [
       "Style",
       "Text"
     ],
     "files": [
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_jlcfa_fill.py",
-      "scripts/sw_jlcfa_locate.py"
+      "scripts/sw_drawing_create_missing.py",
+      "scripts/sw_jlcfa_fill.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces/PropertyManager"
@@ -22076,13 +21924,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 25,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -22254,13 +22100,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 26,
-    "gated": 3,
-    "gated_pct": 16,
+    "used": 4,
+    "used_pct": 21,
+    "gated": 4,
+    "gated_pct": 21,
     "used_members": [
       "AccessSelections",
-      "Angle",
       "Reference",
       "ReleaseSelectionAccess",
       "Type"
@@ -22470,12 +22315,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 4,
-    "used_pct": 44,
+    "used": 3,
+    "used_pct": 33,
     "gated": 6,
     "gated_pct": 67,
     "used_members": [
-      "Angle",
       "GetAnnotation",
       "GetNext",
       "Shape"
@@ -22637,13 +22481,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 36,
+    "used": 4,
+    "used_pct": 29,
     "gated": 8,
     "gated_pct": 57,
     "used_members": [
       "AccessSelections",
-      "Angle",
       "GetEdges",
       "ReleaseSelectionAccess",
       "Type"
@@ -22728,7 +22571,7 @@
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
-      "scripts/sw_hole_features.py"
+      "scripts/sw_curve_and_split.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Sheet Metal"
@@ -22924,7 +22767,9 @@
     "gated_pct": 50,
     "used_members": [],
     "files": [
-      "scripts/sw_api_sldworks.py"
+      "scripts/sw_api_sldworks.py",
+      "scripts/sw_render_material.py",
+      "tests/test_extended_modules_contract.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -22981,14 +22826,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 40,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -23136,7 +22978,7 @@
     "files": [
       "scripts/generate_star_history.py",
       "scripts/sw_api_sldworks.py",
-      "subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py"
+      "scripts/sw_part.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -23237,13 +23079,17 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 0,
-    "used_pct": 0,
+    "used": 2,
+    "used_pct": 22,
     "gated": 3,
     "gated_pct": 33,
-    "used_members": [],
+    "used_members": [
+      "GetSensorValue",
+      "SensorType"
+    ],
     "files": [
-      "scripts/sw_api_sldworks.py"
+      "scripts/sw_api_sldworks.py",
+      "scripts/sw_sensor.py"
     ],
     "note": "",
     "official_category": "User-interface Interfaces/Sensors"
@@ -23270,12 +23116,13 @@
     "pct": 100,
     "used": 0,
     "used_pct": 0,
-    "gated": 12,
-    "gated_pct": 75,
+    "gated": 13,
+    "gated_pct": 81,
     "used_members": [],
     "files": [
       "scripts/sw_api_cosworks.py",
-      "scripts/sw_api_sldworks.py"
+      "scripts/sw_api_sldworks.py",
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Sheet Metal"
@@ -23479,8 +23326,8 @@
     "pct": 100,
     "used": 2,
     "used_pct": 9,
-    "gated": 8,
-    "gated_pct": 36,
+    "gated": 9,
+    "gated_pct": 41,
     "used_members": [
       "ForceType",
       "ReferenceComponent"
@@ -23509,12 +23356,13 @@
     "pct": 100,
     "used": 0,
     "used_pct": 0,
-    "gated": 0,
-    "gated_pct": 0,
+    "gated": 1,
+    "gated_pct": 25,
     "used_members": [],
     "files": [
       "scripts/sw_api_cosworks.py",
-      "scripts/sw_api_sldworks.py"
+      "scripts/sw_api_sldworks.py",
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "Motion Studies"
@@ -23559,8 +23407,8 @@
     "pct": 100,
     "used": 0,
     "used_pct": 0,
-    "gated": 6,
-    "gated_pct": 30,
+    "gated": 7,
+    "gated_pct": 35,
     "used_members": [],
     "files": [
       "scripts/cad_installation.py",
@@ -23592,8 +23440,8 @@
     "pct": 100,
     "used": 1,
     "used_pct": 6,
-    "gated": 2,
-    "gated_pct": 12,
+    "gated": 3,
+    "gated_pct": 18,
     "used_members": [
       "Type"
     ],
@@ -23664,15 +23512,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 20,
+    "used": 2,
+    "used_pct": 8,
     "gated": 14,
     "gated_pct": 56,
     "used_members": [
-      "Angle",
       "Name",
-      "Scale",
-      "Scale2",
       "Select"
     ],
     "files": [
@@ -23809,12 +23654,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 15,
+    "used": 1,
+    "used_pct": 8,
     "gated": 11,
     "gated_pct": 85,
     "used_members": [
-      "Angle",
       "GetFeature"
     ],
     "files": [
@@ -23899,12 +23743,13 @@
     "pct": 100,
     "used": 0,
     "used_pct": 0,
-    "gated": 8,
-    "gated_pct": 57,
+    "gated": 9,
+    "gated_pct": 64,
     "used_members": [],
     "files": [
       "scripts/sw_api_cosworks.py",
-      "scripts/sw_api_sldworks.py"
+      "scripts/sw_api_sldworks.py",
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -23925,18 +23770,15 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 33,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldcostingapi.py",
       "scripts/sw_api_sldworks.py",
-      "scripts/sw_weldment.py"
+      "scripts/sw_ref_geometry.py"
     ],
     "note": "",
     "official_category": "Assembly Interfaces/Mates"
@@ -24128,11 +23970,11 @@
     "pct": 100,
     "used": 4,
     "used_pct": 21,
-    "gated": 8,
-    "gated_pct": 42,
+    "gated": 9,
+    "gated_pct": 47,
     "used_members": [
       "AccessSelections",
-      "Angle",
+      "GetContoursCount",
       "GetType",
       "ReleaseSelectionAccess"
     ],
@@ -24164,13 +24006,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 4,
-    "gated": 2,
-    "gated_pct": 8,
-    "used_members": [
-      "ProfileType"
-    ],
+    "used": 0,
+    "used_pct": 0,
+    "gated": 3,
+    "gated_pct": 12,
+    "used_members": [],
     "files": [
       "scripts/sw_api_cosworks.py",
       "scripts/sw_api_sldworks.py",
@@ -24201,8 +24041,8 @@
     "pct": 100,
     "used": 2,
     "used_pct": 11,
-    "gated": 0,
-    "gated_pct": 0,
+    "gated": 8,
+    "gated_pct": 44,
     "used_members": [
       "Size",
       "Style"
@@ -24210,7 +24050,7 @@
     "files": [
       "scripts/sw_api_SWRoutingLib.py",
       "scripts/sw_api_sldworks.py",
-      "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
+      "scripts/sw_drawing_create_missing.py"
     ],
     "note": "",
     "official_category": "Annotation Interfaces"
@@ -24260,15 +24100,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 38,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "DrillPointAngle",
-      "DrillPointAngleOverride",
-      "EndShape"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_hole_features.py",
@@ -24335,14 +24171,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 14,
+    "used": 0,
+    "used_pct": 0,
     "gated": 1,
     "gated_pct": 7,
-    "used_members": [
-      "Angle",
-      "MirrorProfile"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -24371,12 +24204,14 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 8,
-    "gated": 14,
-    "gated_pct": 54,
+    "used": 4,
+    "used_pct": 15,
+    "gated": 15,
+    "gated_pct": 58,
     "used_members": [
       "AccessSelections",
+      "GetDepth",
+      "GetEndCondition",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -24484,7 +24319,7 @@
     "files": [
       "scripts/sw_api_SWRoutingLib.py",
       "scripts/sw_api_sldworks.py",
-      "subskills/autocad-automation/scripts/acad_session.py"
+      "scripts/sw_render_material.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -24557,14 +24392,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 67,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -24716,14 +24548,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 2,
-    "used_pct": 67,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate",
-      "MateAlignment"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -24851,13 +24680,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 25,
+    "used": 1,
+    "used_pct": 8,
     "gated": 1,
     "gated_pct": 8,
     "used_members": [
-      "Angle",
-      "BlendColor",
       "MaterialName"
     ],
     "files": [
@@ -24899,9 +24726,9 @@
       "Thickness"
     ],
     "files": [
+      "scripts/check_backend_limited_completeness.py",
       "scripts/check_interface_member_ownership.py",
-      "scripts/sw_api_sldworks.py",
-      "scripts/sw_pattern.py"
+      "scripts/sw_api_sldworks.py"
     ],
     "note": "",
     "official_category": "Feature Interfaces/Surfaces"
@@ -25008,13 +24835,12 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 3,
-    "used_pct": 27,
+    "used": 2,
+    "used_pct": 18,
     "gated": 5,
     "gated_pct": 45,
     "used_members": [
       "AccessSelections",
-      "Angle",
       "ReleaseSelectionAccess"
     ],
     "files": [
@@ -25133,13 +24959,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 33,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "EntitiesToMate"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -25236,7 +25060,8 @@
     "used_members": [],
     "files": [
       "scripts/sw_api_cosworks.py",
-      "scripts/sw_api_sldworks.py"
+      "scripts/sw_api_sldworks.py",
+      "scripts/sw_units.py"
     ],
     "note": "",
     "official_category": "Utility Interfaces"
@@ -25339,13 +25164,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 17,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "FlipDimension"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_weldment.py",
@@ -25392,8 +25215,8 @@
     "pct": 100,
     "used": 5,
     "used_pct": 62,
-    "gated": 2,
-    "gated_pct": 25,
+    "gated": 3,
+    "gated_pct": 38,
     "used_members": [
       "AccessSelections",
       "Face",
@@ -25617,13 +25440,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 20,
+    "used": 0,
+    "used_pct": 0,
     "gated": 0,
     "gated_pct": 0,
-    "used_members": [
-      "Angle"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -26129,13 +25950,11 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 17,
+    "used": 0,
+    "used_pct": 0,
     "gated": 3,
     "gated_pct": 50,
-    "used_members": [
-      "DimensionType"
-    ],
+    "used_members": [],
     "files": [
       "scripts/sw_api_sldworks.py",
       "scripts/sw_api_swdimxpert.py",
@@ -26486,8 +26305,8 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 5,
-    "used_pct": 25,
+    "used": 6,
+    "used_pct": 30,
     "gated": 19,
     "gated_pct": 95,
     "used_members": [
@@ -26495,6 +26314,7 @@
       "GetAnnotationCount",
       "GetAnnotations",
       "GetFeature",
+      "GetFeatureCount",
       "InsertGtol"
     ],
     "files": [
@@ -26899,12 +26719,13 @@
     ],
     "missing_members": [],
     "pct": 100,
-    "used": 1,
-    "used_pct": 12,
+    "used": 2,
+    "used_pct": 25,
     "gated": 8,
     "gated_pct": 100,
     "used_members": [
-      "GetPlotCount"
+      "GetPlotCount",
+      "GetValues"
     ],
     "files": [
       "scripts/sw_api_cosworks.py",
