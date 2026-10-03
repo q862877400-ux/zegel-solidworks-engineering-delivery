@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 64 |
-| 可攻关 | 28 |
+| 已能 | 65 |
+| 可攻关 | 27 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -32,7 +32,6 @@
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
 | 曲面 | 解除剪裁曲面 | **可攻关** | `InsertUntrimSurface` | — |
 | 特征 | 放样切除 | **可攻关** | `InsertCutBlend` | — |
-| 特征 | 边界凸台/基体 | **可攻关** | `InsertProtrusionBlend2` | — |
 | 特征 | 边界切除 | **可攻关** | `InsertCutBlend` | — |
 | 特征下拉 | 填充阵列 | **可攻关** | `FeatureFillPattern` | — |
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
@@ -103,6 +102,7 @@
 | 特征 | 旋转凸台/基体 | **已能** | `FeatureRevolve2` | `sw_part.revolve_boss` |
 | 特征 | 旋转切除 | **已能** | `FeatureRevolveCut2` | — |
 | 特征 | 曲线-螺旋线/涡状线 | **已能** | `InsertHelix` | `sw_helix.insert_helix` |
+| 特征 | 边界凸台/基体 | **已能** | `InsertProtrusionBlend2` | — |
 | 特征 | 镜向 | **已能** | `InsertMirrorFeature2` | `sw_part.mirror_feature` |
 | 特征下拉 | 参考几何体-坐标系 | **已能** | `InsertCoordinateSystem` | — |
 | 特征下拉 | 参考几何体-基准面 | **已能** | `InsertRefPlane` | — |

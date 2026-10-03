@@ -1,13 +1,13 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 64,
-  "可攻关": 28,
+  "已能": 65,
   "待查": 20,
+  "可攻关": 27,
   "待验证": 7
  },
  "by_toolbar_gap": {
-  "特征": 3,
+  "特征": 2,
   "特征下拉": 9,
   "草图绘制": 7,
   "草图尺寸": 1,
@@ -94,6 +94,7 @@
    "api": "InsertProtrusionBlend2(Boundary)",
    "entry": "",
    "level": "不能",
+   "capability_id": "loft_and_sweep",
    "api_iface_hits": [],
    "api_member_hits": [
     "InsertProtrusionBlend2"
@@ -105,7 +106,7 @@
     "Boundary",
     "InsertProtrusionBlend2"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "特征",

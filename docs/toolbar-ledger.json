@@ -36,7 +36,8 @@
    "zh": "边界凸台/基体",
    "api": "InsertProtrusionBlend2(Boundary)",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "loft_and_sweep"
   },
   {
    "tb": "特征",

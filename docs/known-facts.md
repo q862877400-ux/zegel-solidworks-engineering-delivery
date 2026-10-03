@@ -1747,3 +1747,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **而本轮的意义在方法**：★ **一次文档阅读 = 一条能力 + 一个对照实验，而避开了一条废弃入口的弯路** ⚠ —— ★ 这正是上一轮立那条纪律时想要的效果。
      ★ **落地**：`capabilities.yaml` 新增 **`feature_revolve_cut`**（level = **verified**，共 **94** 条）；台账的「旋转切除」补 `capability_id` ⇒ **已能**。
      ★★ **而它还顺手记下一条本仓未用过的东西**：★ **`Mark = 32`**（上至面 / 上至顶点 / 等距面）。|真机：`tools/prove_revolve_cut.py`；证据 `output/revolve-cut-evidence.json`；官方：`C:\swapi\types\IFeatureManager\FeatureRevolveCut2.md` · `FeatureRevolve2.md` |
+| 430 | **★★★ 「边界凸台/基体」与「放样凸台/基体」在 API 上是**同一个**（都是 `InsertProtrusionBlend2`）** —— ★ 差别在 **UI 层**（界面上是两个按钮）—— 2026-10-03（轮 551）。
+     ★ **推论怎么来的**：读官方 `InsertProtrusionBlend2.md` 的 `## Remarks`，它给了 mark 分工（**1 = profile · 2 = guide curve · 4 = centerline**）与两条硬约束（★ **剖面要按顺序选**；★ **强烈建议带引导线**）；★ 而**本仓 `scripts/sw_loft.py::create_loft_report` 走的就是那个入口** ✓
+     ★ 真机（`tools/prove_boundary_boss_same_api_as_loft.py`，零弹窗）：
+     ```
+     两个剖面（`草图1`、`草图2`，★ 按顺序选中）⇒ `create_loft_report`
+     ⇒ **建成 `放样1`**（★ 而**类型名 = `Blend`**）· mark1 = **2** · report_ok = **True** ✓
+     ```
+     ⇒ ★★ **故假说成立**：★ **「边界凸台」这条**不需要新代码**（★ 它的能力已存在）** ✓
+     ★ **而它还顺手回答了一个 UI 问题**：★ **界面上的「边界」与「放样」两个按钮，在 API 上落到同一个方法** —— ★ 而**差异体现在参数用法**（引导线 / 中心线），★ **不是另一个入口** ⚠
+     ★★ **方法论**：★ **台账里一条叫「某某」的能力，先查**它的 API 是不是已经被别的能力用着了** —— ★ 而**不是默认它需要新代码**。
+     ⚠ **而本轮我自己还犯了一个**过度映射****（★ 已撤回）：★ 我一开始把「**边界切除**」也映射到 `loft_and_sweep`
+       —— ★ 而**它走的是另一个入口**（`InsertCutBlend`）、★ **我只验了凸台** ⚠
+       ⇒ ★★ **故撤回**（★ **不假装做到**）⇒ 台账 已能 65（★ 而非 66）✓
+       ★ 而它留下一条可复用的警示：★ **一个 UI 名字相似并不等于同一个 API** ——
+       ★ **"UI 上两个按钮"可能是同一个方法，也可能是两个方法，只有真机能定**。
+     ★ **落地**：台账的「边界凸台/基体」补 `capability_id`（★ 「边界切除」**未补** —— 尚未真机验）。|真机：`tools/prove_boundary_boss_same_api_as_loft.py`；证据 `output/boundary-boss-same-api-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md` |
