@@ -3857,3 +3857,62 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
   `vd50-C-sm-1.md` §3 · ★ 本轮的 `tests/test_verified_level_has_runtime_evidence.py` ·
   ★ 实跑：`python -m pytest tests/test_sw_sheet_metal.py -q`（6 passed）·
   `python -m pytest tests/solidworks_sheet_metal_regression.py -q`（no tests ran）✓
+
+---
+
+## 517 · ★★★★★ 「官方 API 吃米」这个假设**不普遍成立** —— 它随**文档单位**变；★ 而它对 `GetSystemValue3` **明确不成立**
+
+**发现时间**：2026-10-04（接手轮 · 轮 56–57）
+
+### 一 · 真机定案（★ 两个独立证据交叉，★ 不靠推理）
+| ★ 证据 | ★ 内容 |
+|---|---|
+| ★ **①** `tools/probe_dimension_unit.py` | ★ 新建文档 `GetUnits() = [**0**, 1, 8, 2, 0]` ⇒ ★★ **`swLengthUnit_e = 0 = `swMM`**；★ 而一个**厚 20 mm** 的板上，`GetSystemValue3` 原始回 **`(20.0,)`**（★ **不是 `0.02`**）✓ |
+| ★★ **②** `tools/probe_extrude_depth_unit.py` | ★ `extrude_boss(model, "Sketch1", **20.0**)` 建出的实体 **`size = [100, 60, **20**]`** ⇒ ★★ **实体真的是 20 mm 厚** ✓ |
+⇒ ★★★★ **两条合起来**：★ `GetSystemValue3` **回的就是文档单位** ⇒ ★ **不是米** ✓
+★★★ 而 **②** 还顺带说明：★ **`FeatureExtrusion3` 的 `D1` 传给 20.0 就得到 20 mm**
+  ⇒ ★ **它**也**按文档单位解释** ✓
+
+### 二 · 由此定案的那个真 bug（★ 已修）
+| ★ 位置 | ★ 旧代码 | ★ 后果 |
+|---|---|---|
+| ★ `sw_document_data._dimension_value_mm` | ★ `float(raw) * **1000.0**` | ★★ 毫米文档下读数**大 1000 倍**（★ 20 → 20000）✓ |
+| ★★ `sw_document_data.update_dimension_mm` | ★ `SetSystemValue3(float(value_mm) / **1000.0**, …)` | ★★ **实际写进去的值小 1000 倍** ✓ |
+⇒ ★★★ **两个相反方向的错**、★ **互相掩盖** ⇒ ★★★★ **读回来的值**看起来是对**的**（★ `after_mm = 35.0`）✓
+★ 修法：★ 新增 `_document_length_unit_scale(model)`（★ 读 `GetUnits()`、★ 按 `swLengthUnit_e` 取倍数）✓
+★★ **真机复核**：★ `before_mm.current` **`20000.0` → `20.0`** ✓
+★ 依据：`tests/test_document_unit_scale.py`（★ 5 条）+ `docs/known-facts.md` 本条 ✓
+
+### 三 · ★★★★ 而扫全仓发现**同一假设可能还散在别处**（★ 待核，★ **未改**）
+★ 新增 `tools/scan_mm_meter_conversions.py`（★ 只报不动）⇒ ★ **命中 81 处换算、★ 49 处"同行无单位依据"**；
+★★ 而其中**多数是假阳性**（★ `time.sleep(poll_ms / 1000.0)` 是 ms→s · ★ `* 1000000.0` 不是 1000 ·
+  ★ `print('…%.1f 万字')` 不是换算）✓
+★★★ **真候选集中在**：★ `scripts/sw_surface_features.py` 的 **5 处 `* 0.001`**（★ L87 / L218 / L318 / L379 /
+  L672 / L765），★ 以及 `sw_part.py` L310 · `sw_drawing_expose.py` L15 · `sw_connect.py` L523 ✓
+
+**⚠ 那 5 处的现状**：★ **每一处都写了依据**（★ 逐字如
+  `#: ★ 毫米 ⇒ 米（★ 唯一的换算处）` · ★ `#: ★ 毫米 ⇒ 米（★ 与同模块 FeatureExtruRefSurface3 的做法一致；
+  ★ 真机复验这一点）`）⇒ ★★ **所以它们**不是**我这次修的那种"无依据硬编码"** ✓
+**⚠⚠ 但按本条 §一**：★ **`FeatureExtrusion3` 的 `D1` 是按**文档单位**解释的**
+  ⇒ ★★★ **那么 `* 0.001` 在**毫米文档**下会把 10 mm 传成 `0.01`** ⇒ ★ **可能小 1000 倍** ✓
+**⇒ 待核**：★ **逐条真机**（★ 建一个毫米文档 + 一个已知尺寸的板 ⇒ 看 `thicken` / `offset` / `ruled` /
+  `extend` 的实际结果）⇒ ★★ **按铁律 5：未核不写成缺陷** ✓
+
+### 四 · ★★★ 可复用判据（★ 三条）
+> ① ★★★★ **「官方吃米」是**逐成员**的事，★ 不是**整族**的事** ——
+>    ★ 同一族的两个成员可以一个吃米、★ 一个吃文档单位（★ 本轮就是）✓
+> ② ★★★★ **判「换算对不对」必须找一个**独立的量**来锚定** ——
+>    ★ 本条用的是 **`bounding_box` 的 `size`**（★ 它与尺寸值走**完全不同的 COM 路径**）✓
+>    ★★ 只靠"读回来等于所要求的"会**被两个相反方向的错骗过** ✓
+> ③ ★★★ **扫"某个假设有没有扩散"是本会话的高产动作** ——
+>    ★ 已用同一手法找到：★ `add_dimension` 的旧断言 · ★ 4 个钣金 doc · ★ `Spacing1` 的单位 ·
+>    ★★ **本条** ✓
+
+### 五 · ★ 与已有序号的关系
+★ **事实 8 / 47 / 511 / 513** 都是"某成员的行为要逐条实测"这一族；★ **本条补的是**
+  ★★ **「单位口径」这一具体维度**：★ **同一个换算常量（`1000`）在两个成员上**一个对一个错** ✓
+★ 与**事实 516**（★ A4 存量账）**同日** —— ★ 两条都是"把'已完成'核真"的产物 ✓
+★ **依据**：`tools/probe_dimension_unit.py` · `tools/probe_extrude_depth_unit.py` ·
+  `output/dimension-unit-probe-evidence.json` · `output/extrude-depth-unit-evidence.json` ·
+  `tools/scan_mm_meter_conversions.py` · `output/mm-meter-scan.json` ·
+  ★ 修在 `scripts/sw_document_data.py`（★ 提交 `25dbdada`）✓
