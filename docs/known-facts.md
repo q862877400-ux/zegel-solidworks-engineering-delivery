@@ -2528,3 +2528,21 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ② ★（轮 593）**改法用的是本仓现成的函数**（`resolve_face_selector`）—— ★ **而不是自己再写一个**。
      ★ **落地**：`feature_hole_wizard5` 的 **evidence +1**（★ 包装真机通过）· **limitations 更新**（★ 包装已通过、而尚未接 MCP 工具层）。
      ★★ **方法论**：★ **当一个包装回 `None` 时，先问“**这条 API 真的需要我读的东西吗**”** —— ★ 而不是去修那个读取。|真机：`tools/prove_hole_wizard_wrapper.py`；证据 `output/hole-wizard-wrapper-evidence.json`；本仓：`scripts/sw_hole_features.py` · `scripts/sw_simulation.py` 的 `resolve_face_selector`；对照事实 464 / 466 / 469 / 470 |
+| 472 | **★★★ 我把四个阵列归进了边界，★ 而**自己的文档早就否了它****（★ 第**十**次“失败在我这边”） —— 2026-10-03（轮 596）。
+     ★ **我做了什么**：查到 `ITablePatternFeatureData` / `ICurveDrivenPatternFeatureData` / `IFillPatternFeatureData` / `ILinearPatternFeatureData`
+       **四者全带 `AccessSelections`** ⇒ ★ 我当场判定“**四个阵列同一条边界**”，并准备写进边界文档。
+     ★ **而真相在 `docs/toolbar-gaps-backend-limits.md` §2.2**（★ **标题就是**：“**本仓早已按新架构实现，并有真机证据**”）：
+     ```
+     scripts/sw_pattern.py  **428 行**：
+        configure_linear_pattern      ← CreateDefinition(swFmLinearPattern) → 设属性 → CreateFeature
+        configure_curve_driven_pattern ← CreateDefinition(swFmCurveDrivenPattern)
+        **edit_selection**              ← ★ **选区事务**（★ 而那正是绕过指针族的做法）
+     ★ **真机证据 11 份**：`output/linear-pattern-*.json` · `pattern-*.json` · …
+     ★ 而**结论逐字**："⇒ **线性阵列族不能记成「后端到不了」**；它属于**“旧入口废弃、新架构已做”**那一类。"
+     ```
+     ⇒ ★★ **故我那条判定是错的** —— ★ 而**错因正是本仓那条纪律**：★ **先读自己的文档**（★ 事实 55 / §2.2 就是**第一现场**）⚠
+     ★★ **而更值钱的是**：★ 差点让我把“**四个阵列”又写进一遍**边界**”** —— ★ 而那会是**一次痛苦的误判**（★ 与轮 359–362 同族）。
+       ★ 它们真正该做的是：★ **读 §2.2 那条新架构、照它写**（★ 而**不是归入边界**）。
+     ★★ **方法论**：★ **当一个结论指向“边界”时，先去**那份边界文档里找一遍** ** —— ★ 它很可能**早就记录了例外** ⚠
+       （★ 本例：边界文档自己的 §2.2 就是那个例外，★ 而标题里就写着“不能记成到不了”）✓
+     ★ 本轮**不改台账**（★ 因为改判要按 W2 判据逐条走）；★ 而**把这个纠正记下来** ✓|本仓：`docs/toolbar-gaps-backend-limits.md` §2.2（★ 第一现场）· `scripts/sw_pattern.py`；对照事实 47 / 55 |
