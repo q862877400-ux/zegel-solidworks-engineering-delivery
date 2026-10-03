@@ -347,6 +347,16 @@ BATCH_MODULES = (
     #:   ⚠ 判据来自 `tools/audit_gap_implementations.py`（**AST**，★ 不用 grep ——
     #:     grep 会把来源块里引用的官方成员名算成"有实现"）。
     "tool_specs_batch72",
+    #: ★ 2026-10-03（接手轮）· 规格 `specs/202-user-coverage-gaps` 的 R2：**工程图真缺口** 4 个 ——
+    #:   断裂视图 · 辅助视图 · 表面粗糙度符号 · 基准符号。
+    #:   ★★ 与 batch72 **性质不同**：batch72 接的是"AST 量出**已有实现**"的，
+    #:     ★ 而这 4 项**本仓一个都没有** ⇒ ★ 先写能力层 `scripts/sw_drawing_create_missing.py`，
+    #:     ★ 再在这里声明成工具（`module="sw_drawing_create_missing"`、`inject="model"`）。
+    #:   ★ 第 5 项「气泡序号」**故意不在这里**：它的形参是 `AutoBalloonOptions` **COM 对象**，
+    #:     `Param` 表达不了 ⇒ ★ 能力层已实现、待将来走 `extra_op`。
+    #:   ★★ **真机前置已逐条写进能力层**（`InsertBreak3` 非废弃那一代 / 辅助视图要**先选一条边** /
+    #:     粗糙度"位置参数**仅当** leaderType != swNO_LEADER" / 基准符号 `InsertDatumTag2` **零参**）。
+    "tool_specs_batch73",
 )
 
 def all_specs() -> list:

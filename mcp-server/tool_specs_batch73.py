@@ -60,7 +60,7 @@ _MODULE = "sw_drawing_create_missing"
 
 _BATCH73: list[ToolSpec] = [
     ToolSpec(
-        name="solidworks_drawing_insert_break",
+        name="solidworks_drawing_create_broken_view",
         title="Drawing Break Lines (Broken View)",
         module=_MODULE, function="insert_break_lines",
         inject="model",

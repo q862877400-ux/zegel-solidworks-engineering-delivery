@@ -169,10 +169,10 @@
 - `distance_mate`（⑩ 装配）
 - `drawing_collect_view_evidence`（⑪ 工程图）
 - `drawing_create_auxiliary_view`（⑪ 工程图）
+- `drawing_create_broken_view`（⑪ 工程图）
 - `drawing_current_sheet_info`（⑪ 工程图）
 - `drawing_current_sheet_name`（⑪ 工程图）
 - `drawing_get_current_sheet`（⑪ 工程图）
-- `drawing_insert_break`（⑪ 工程图）
 - `drawing_insert_datum_tag`（⑯ 高级 / 专项（含护城河候选））
 - `drawing_insert_surface_finish_symbol`（⑯ 高级 / 专项（含护城河候选））
 - `drawing_list_sheets`（⑪ 工程图）
