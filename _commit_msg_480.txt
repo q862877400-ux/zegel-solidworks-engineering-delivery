@@ -1,0 +1,57 @@
+feat(B8): 参考几何体 **补齐到 5/5** —— 缺的是同一件事：**调用前按 mark 选一个参考实体**
+
+★ 承上一轮（3/5）。**那两条也成了**，★ 而根因**只有一句话**。
+
+## ① 真机 5/5（`sw_guard` 全程 `sw_alive: true` · 零弹窗）
+
+```
+✅ 质心      新增 ['质心 (COM)']
+✅ 边界框    status_code(Success=0) + 新增 ['边界框']
+✅ 基准面    预选 ok=True {face_index:0, mark:0, sel_count:1} → 新增 **['基准面1']**
+✅ 坐标系    新增 ['坐标系1']
+✅ 点        预选 ok=True {face_index:0, mark:0, sel_count:1} → 新增 **['点1']**
+```
+
+## ② ★★ 根因：**调用前按 `mark=0` 选一个参考实体**
+
+★ **而那张 mark 表就在官方 Remarks 里**（★ 逐字）：
+```
+- 0 = First reference entity
+- 1 = Second reference entity
+- 2 = Third reference entity
+```
+⇒ ★ 我上一轮**根本没选任何参考实体**就调了 `InsertRefPlane` ⇒ 它回 `None`（★ 没对象可回）。
+
+## ③ ★ 更正我上一轮写错的一句话（★ 铁律 5 的正确用法）
+
+★ 我上一轮把它写进了 `limitations`：
+> 官方 Remarks 说要先按 marks 选参考实体，★ **而官方没给那张 mark 表**（只说 "these marks"）
+
+⇒ ★★ **那句是错的** —— 表**就在同一条 Remarks 的紧下一段**，★ **是我当时没读到**。
+★ 本轮已用真机证据**改写**该条，并把「官方未给」改成「官方**给了**，是 0/1/2」。
+
+## ④ 「点」为什么"诊断里成、探针里不成" —— 答案也在这
+
+★ 诊断脚本里是「建实体 → 选面 → **紧接着**调」；★ 探针里中间隔了别的步骤 ⇒ **选区被清掉了**。
+⇒ ★ 故实现层与探针都改成 **`_after_pick(...)`：选完立刻调** ✓
+  （★ 这条已写进 `solidworks_insert_reference_point` 的工具 doc）
+
+## ⑤ ★ 规则 2 门禁拦下了两条参数名 —— 而它是对的
+
+我原本把 `first_angle_or_dist` / `distance_or_percent` 原样透传（★ 因为官方没给单位）。
+★ 门禁**精确指出**：像角度却没 `_deg`、像长度却没 `_mm`。★ 而**真因更值得记**：
+
+> 官方**同一个形参承载两种量纲** —— `FirstConstraintAngleOrDist` 在 `Angle(16)` 时是**角度**、
+> 在 `Distance(8)` 时是**长度**；`DDistance_or_Percent` 在 `Distance(0)` 时是**距离**、
+> 在 `Percentage(1)` 时是**百分比**。
+
+⇒ ★★ **一个名字带不了两种单位后缀**（★ 加哪个都会在另一档说错话）
+⇒ ★ 走门禁**自己给的第二条路**：进 `_LEN_SUFFIX_EXEMPT` / `_ANGLE_SUFFIX_EXEMPT`
+  **并写明这个真理由**（★ 不是敷衍）
+
+## ⑥ 交付
+
+`ToolSpec` **250 → 252**（B8 五条齐）· `check_inject_binding` **PASS 0 条** · 五统一门禁通过 ·
+`capabilities` 里 `ref_geometry` 升到 **5/5** · 聚焦测试 **36 passed**。
+★ 另：我自己在两处又踩了**内嵌 ASCII 双引号**（事实 48）—— ★ 一次在能力更新脚本、一次在 ToolSpec ——
+  都用「先写成独立文件再搬运」和 `edit` 修掉了。

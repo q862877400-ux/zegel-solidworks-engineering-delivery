@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 276 | 276 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 278 | 278 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -38,7 +38,7 @@
 | 域 | Eduardof0nt | andrewbartels1 | vespo92 | Slacker-LLC | 本仓库(MCP) | 本仓库能力面 | 并集 | 缺口(MCP) |
 |---|---|---|---|---|---|---|---|---|
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 16 | 59⚠ | 49 | **33** |
-| ② 参考几何 | 3 | 3 | · | 3 | 1 | 35⚠ | 5 | **4** |
+| ② 参考几何 | 3 | 3 | · | 3 | 3 | 35⚠ | 5 | **2** |
 | ③ 草图 | 26 | 15 | 16 | 20 | 40 | 99⚠ | 74 | **34** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 18⚠ | 16 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 22 | 82⚠ | 47 | **25** |
@@ -55,7 +55,7 @@
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 27 | 14 | 27 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 47 | 473⚠ | 89 | **42** |
 
-**合计**：并集 592 个操作；**MCP 暴露面**缺 **316** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 592 个操作；**MCP 暴露面**缺 **314** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -74,9 +74,9 @@
 | ⑭ 外观 / 材质 / 配置 | 10 |
 | ⑥ 曲面 | 9 |
 | ⑧ 焊件 | 5 |
-| ② 参考几何 | 4 |
 | ⑬ 仿真 / Motion | 4 |
 | ⑨ 模具 | 3 |
+| ② 参考几何 | 2 |
 
 ### 不做 + 原因（A1 的另一半）
 
@@ -379,7 +379,7 @@
 缺口操作：`activate_document`、`active_document_info`、`apply_template`、`close_all`、`close_document`、`close_model`、`compare_templates`、`convert_file_format`、`export_document`、`export_dwg`、`export_file`、`export_pdf`、`export_with_options`、`extract_template`、`manage_file_properties`、`open_documents`、`open_model`、`part`、`rebuild_document`、`rebuild_model`、`referenced_documents`、`save_active_document`、`save_all`、`save_as`
 （还有 9 个，见 `tools/union-sources.json`）
 
-### ② 参考几何（缺 4）
+### ② 参考几何（缺 2）
 
 | 来源 | 该域有 | 许可 | 来源验证 |
 |---|---|---|---|
@@ -387,7 +387,7 @@
 | `andrewbartels1/SolidworksMCP-python` | 3 | MIT | **未声明** |
 | `Slacker-LLC/solidworks-mcp` | 3 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
 
-缺口操作：`ref_axis`、`ref_plane`、`reference_planes`、`reference_point`
+缺口操作：`ref_axis`、`reference_planes`
 
 ### ③ 草图（缺 34）
 

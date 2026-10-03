@@ -110,6 +110,59 @@ _BATCH70: list[ToolSpec] = [
             "★ 用的是 `IFeatureManager` 那个 —— `IModelDoc2.InsertCoordinateSystem` 官方标 **Obsolete**"
             "（铁律 4），★ 且新版回 `Feature`、旧版回 `bool`。★ 真机建成。",
     ),
+    ToolSpec(
+        name="solidworks_insert_ref_plane",
+        title="Insert Reference Plane",
+        module="sw_ref_geometry", function="insert_ref_plane",
+        inject="model",
+        param_alias={k: k for k in (
+            "first_constraint", "first_angle_or_dist", "second_constraint",
+            "second_angle_or_dist", "third_constraint", "third_angle_or_dist")},
+        params=[
+            Param("first_constraint", int, description="`swRefPlaneReferenceConstraints_e`："
+                                                     "1=Parallel · 4=Coincident · 8=Distance · 16=Angle · 128=MidPlane"
+                                                     "（★ 另有 Option* 位：256=OptionFlip · 512=OptionOriginOnCurve …）。"),
+            Param("first_angle_or_dist", float, description="第一约束的角度或距离"
+                                                          "（★ 官方**未给单位** ⇒ 原样透传）。",
+                  required=False, default=0.0),
+            Param("second_constraint", int, description="第二约束（同上表；0 = 不用）。",
+                  required=False, default=0),
+            Param("second_angle_or_dist", float, description="第二约束的角度或距离。",
+                  required=False, default=0.0),
+            Param("third_constraint", int, description="第三约束（0 = 不用）。",
+                  required=False, default=0),
+            Param("third_angle_or_dist", float, description="第三约束的角度或距离。",
+                  required=False, default=0.0),
+        ],
+        doc="★ 基准面：`IFeatureManager.InsertRefPlane`（6 参，回 [[Reference plane]]）。"
+            "⚠⚠ **调用前必须按 mark 选参考实体** —— 官方 Remarks 逐字给了表："
+            "**0 = First reference entity · 1 = Second · 2 = Third**。"
+            "★ 真机：选一个面（**mark=0**）+ `Coincident(4)` ⇒ 树新增 `基准面1`。",
+    ),
+    ToolSpec(
+        name="solidworks_insert_reference_point",
+        title="Insert Reference Point",
+        module="sw_ref_geometry", function="insert_reference_point",
+        inject="model",
+        param_alias={k: k for k in ("ref_point_type", "along_curve_type",
+                                    "distance_or_percent", "number_of_ref_points")},
+        params=[
+            Param("ref_point_type", int, description="`swRefPointType_e`："
+                                                    "0=Invalid · 1=Undefined · 2=AlongCurve · 3=CenterEdge · "
+                                                    "4=FaceCenter · 5=FaceVertexProjection · 6=Intersection · 7=SketchPoint。"),
+            Param("along_curve_type", int, description="`swRefPointAlongCurveType_e`："
+                                                      "0=Distance · 1=Percentage · 2=EvenlyDistributed。",
+                  required=False, default=0),
+            Param("distance_or_percent", float, description="沿曲线的距离或百分比。",
+                  required=False, default=0.0),
+            Param("number_of_ref_points", int, description="★ 官方 Remarks：**必须是 1**（否则拒绝）。",
+                  required=False, default=1),
+        ],
+        doc="★ 点：`IFeatureManager.InsertReferencePoint`（4 参，回 [[IFeature]]）。"
+            "⚠ 官方 Remarks：`NumberOfRefPoints` **必须是 1**。"
+            "★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。"
+            "★★ 而选面**必须紧接着调用** —— 中间隔别的步骤会把选区清掉。",
+    ),
 ]
 
 #: ★★ 注册器按 `SPECS_*` 找

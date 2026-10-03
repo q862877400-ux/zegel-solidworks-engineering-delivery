@@ -163,9 +163,27 @@ _ANGLE_SUFFIX_EXEMPT: dict = {
     ("solidworks_mold_parting_surface", "angle"):
         "官方参数 `Angle`；本工具的文档写明「**0.0 = 用文档默认**」⇒ "
         "是**交给 SolidWorks 的文档默认量** ⇒ 加 `_deg` 反而**说错话**。",
+    #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_deg` 会**说错一半**。
+    ("solidworks_insert_ref_plane", "first_angle_or_dist"):
+        "官方参数 `FirstConstraintAngleOrDistance` —— ★ **同一个形参**在 `FirstConstraint` 取 "
+        "`Angle(16)` 时是**角度**、取 `Distance(8)` 时是**长度**（官方 Parameters："
+        "\"Angle **or** distance of the first constraint\"）⇒ ★★ **一个名字带不了两种单位后缀**，"
+        "加 `_deg` 会在 Distance 那一档说错话、加 `_mm` 会在 Angle 那一档说错话 ⇒ "
+        "**两边都不加，并在返回值里显式声明「官方未给单位、本工具不换算」**。",
+    ("solidworks_insert_ref_plane", "second_angle_or_dist"):
+        "同上（`SecondConstraintAngleOrDistance`）—— ★ 官方同一个形参承载角度或长度两种量纲。",
+    ("solidworks_insert_ref_plane", "third_angle_or_dist"):
+        "同上（`ThirdConstraintAngleOrDistance`）—— ★ 官方同一个形参承载角度或长度两种量纲。",
 }
 
 _LEN_SUFFIX_EXEMPT: dict = {
+    #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_mm` 会**说错一半**。
+    ("solidworks_insert_reference_point", "distance_or_percent"):
+        "官方参数 `DDistance_or_Percent` —— ★ **同一个形参**在 "
+        "`NRefPointAlongCurveType` 取 `Distance(0)` 时是**距离**、取 `Percentage(1)` 时是**百分比**"
+        "（官方 Parameters：\"Distance at which … **or** percentage of…\"）⇒ "
+        "★★ **一个名字带不了两种单位后缀**：加 `_mm` 会在 Percentage 那一档说错话 ⇒ "
+        "**不加，并在返回值里显式声明「官方未给单位、本工具不换算」**。",
     ("solidworks_mold_core_cavity_split", "thickness"):
         "官方参数 `Thickness`；本工具的文档写明「0.0 = 用文档默认」⇒ "
         "它是**交给 SolidWorks 的文档默认量**，不是我们换算出的毫米 ⇒ "
