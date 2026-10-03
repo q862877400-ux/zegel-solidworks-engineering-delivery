@@ -2240,3 +2240,29 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **落地**：`capabilities.yaml` 新增 **`sketch_equation_curve`**（level = **verified**，共 **105** 条）；台账「方程式驱动的曲线」补 `capability_id` ⇒ **已能 79**。
      ★★ **方法论**：★ **当官方 Remarks 把一个成员分成“两套用法”时，要**分开立桁** ** —— ★ 本例两套用法的**第一个参数就不同**；
        ★ 而把它们合在一个结论里，就会把**一半成功说成失败**（或反之）。|真机：`tools/prove_equation_driven_curve.py`；证据 `output/equation-driven-curve-evidence.json`；官方：`C:\swapi\types\ISketchManager\CreateEquationSpline2.md` |
+| 459 | **★★★ 通过 XYZ 点的曲线：两套用法均真机建成**（三步式 + 从文件） —— 2026-10-03（轮 582）。
+     ★ **官方四页（★ 四者均**未标 `Obsolete`**）**：
+     ```
+     void InsertCurveFileBegin()
+        "**is the first method called that create a curve**. This method **must precede** all
+         calls to `InsertCurveFilePoint`; ★ **and `InsertCurveFileEnd` must enclose all of the
+         calls to `InsertCurveFilePoint`**."
+     bool InsertCurveFilePoint(double X, double Y, double Z)
+        "sets a point for a curve；★ **called multiple times** after Begin and before End"
+     bool InsertCurveFileEnd()
+        "**is the last method called to create a curve**"
+     bool InsertCurveFile(string FileName)
+        "The curve goes through the points in the specified **file**."
+     ```
+     ★★ **而判据取的是特征树增量**（★ 事实 436）：`InsertCurveFileBegin` **官方回 `void`** ⇒ 不能看返回值。
+     ★ 真机（`tools/prove_curve_through_xyz.py`，零弹窗）—— **两格**：
+     ```
+     ★ **三步式**：`Begin()` → `Point(x,y,z)` × **4** → `End()`
+        ⇒ **特征 5 → 6**，新增 **`曲线1`**；而每一步都回了：`Begin=ok` · `Point=[True,True,True,True]` · `End=True` ✓
+     ★ **从文件**：`InsertCurveFile(path)` ⇒ **特征 5 → 6**，新增 **`曲线1`**，返回 `True` ✓
+     ```
+     ★ **坐标是米**（★ 本探针在边界除了 1000）。
+     ★ **落地**：`capabilities.yaml` 新增 **`curve_through_xyz`**（level = **verified**，共 **106** 条）；台账「曲线-通过XYZ点的曲线」补 `capability_id` ⇒ **已能 80**。
+     ★★ **而本轮先纠了自己一个错记忆**：我以为本仓早就有 `insert_curve_through_points`
+       ⇒ ★ 而**grep 下来只有签名表里有那些名字**（**无包装、无能力、无证据**）⚠
+       ⇒ ★ **故“我记得有”不算——要 grep。**|真机：`tools/prove_curve_through_xyz.py`；证据 `output/curve-through-xyz-evidence.json`；官方：`C:\swapi\types\IModelDoc2\InsertCurveFile{{Begin,Point,End}}.md` × `InsertCurveFile.md` |

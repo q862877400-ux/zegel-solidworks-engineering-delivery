@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 79 |
-| 可攻关 | 13 |
+| 已能 | 80 |
+| 可攻关 | 12 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -31,7 +31,6 @@
 | 特征下拉 | 填充阵列 | **可攻关** | `FeatureFillPattern` | — |
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 特征下拉 | 曲线-投影曲线 | **可攻关** | `InsertProjectedSketch` | — |
-| 特征下拉 | 曲线-通过XYZ点的曲线 | **可攻关** | `InsertCurveFile` | — |
 | 特征下拉 | 曲线驱动的阵列 | **可攻关** | `FeatureCurvePattern` | — |
 | 特征下拉 | 草图驱动的阵列 | **可攻关** | `FeatureSketchDrivenPattern` | — |
 | 特征下拉 | 表格驱动的阵列 | **可攻关** | `InsertTableDrivenPattern` | — |
@@ -100,6 +99,7 @@
 | 特征下拉 | 参考几何体-点 | **已能** | `InsertReferencePoint` | — |
 | 特征下拉 | 参考几何体-质心 | **已能** | `InsertCenterOfMass` | — |
 | 特征下拉 | 圆周阵列 | **已能** | `FeatureCircularPattern4` | `sw_part.circular_pattern` |
+| 特征下拉 | 曲线-通过XYZ点的曲线 | **已能** | `InsertCurveFile` | — |
 | 特征下拉 | 螺纹线 | **已能** | `InsertCosmeticThread3` | — |
 | 草图关系 | 完全定义草图 | **已能** | `FullyDefineSketch` | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 智能尺寸 | **已能** | `AutoDimension2` | `sw_part.auto_dimension_sketch` |

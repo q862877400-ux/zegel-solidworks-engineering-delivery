@@ -290,7 +290,8 @@
    "zh": "曲线-通过XYZ点的曲线",
    "api": "InsertCurveFile",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "curve_through_xyz"
   },
   {
    "tb": "特征下拉",

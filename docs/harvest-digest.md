@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **105** 条能力。
+共 **106** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 92 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 93 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 75 | **本项目自研**（护城河域等） |
+| `original` | 76 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -186,6 +186,11 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ★ **显式** `y=exp(x)`（**X 给 `""`**） ⇒ **段 0 → 1** ✓
        ★ 参数 `x=sin(t)`/`y=cos(t)`           ⇒ 段 0 → 0（★ 而**回了 `CDispatch`**）⚠
        ★ 坏表达式 `y=zzz(x)`                  ⇒ 段 0 → 0 · 回 `None`（★ 合理）` |
+| `curve_through_xyz` | · `★★ 2026-10-03（轮 582）**两套用法均真机建成**（走 `sw_guard`，零弹窗），判据 = **特征树增量**：
+       ★ **三步式**：`Begin()` → `Point(x,y,z)` × **4** → `End()` ⇒ **特征 5 → 6**，新增 **`曲线1`**；
+         ★ 而每一步都回了：`Begin=ok`（★ **它官方回 `void`**）· `Point=[True,True,True,True]` · `End=True` ✓
+       ★ **从文件**：`InsertCurveFile(path)` ⇒ **特征 5 → 6**，新增 **`曲线1`**，返回 `True` ✓
+证据 `output/curve-through-xyz-evidence.json`。`<br>· `★★ **而判据是按事实 436 取的**：`InsertCurveFileBegin` 官方回 **`void`** ⇒ ★ **不能看返回值**，改看 **`feature_names()` 的增量**。` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

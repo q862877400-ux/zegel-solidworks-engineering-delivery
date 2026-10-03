@@ -4201,6 +4201,32 @@
         "⚠ **参数曲线（给 t 的表达式）本轮未成** —— ★ 而**它返回了 `CDispatch`**（★ 第**五**种形态的候选：**对象给了而没进树**）；★ **下一步**：先查参数用法的 `RangeStart`/`RangeEnd` 是否要换口径。",
         "⚠ 本包装未接进 MCP 工具层。"
       ]
+    },
+    {
+      "id": "curve_through_xyz",
+      "label": "通过 XYZ 点的曲线（`InsertCurveFileBegin/Point/End` 三步式，★ 以及 **`InsertCurveFile`** 从文件）—— ★ **两套用法均真机建成**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方四页签名与 Remarks**立）：`C:\\swapi\\types\\IModelDoc2\\InsertCurveFileBegin.md` · `...Point.md` · `...End.md` · `InsertCurveFile.md`（★ **四者均未标 `Obsolete`**）。代码：`tools/prove_curve_through_xyz.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 582）**两套用法均真机建成**（走 `sw_guard`，零弹窗），判据 = **特征树增量**：\n       ★ **三步式**：`Begin()` → `Point(x,y,z)` × **4** → `End()` ⇒ **特征 5 → 6**，新增 **`曲线1`**；\n         ★ 而每一步都回了：`Begin=ok`（★ **它官方回 `void`**）· `Point=[True,True,True,True]` · `End=True` ✓\n       ★ **从文件**：`InsertCurveFile(path)` ⇒ **特征 5 → 6**，新增 **`曲线1`**，返回 `True` ✓\n证据 `output/curve-through-xyz-evidence.json`。",
+        "★★ **而判据是按事实 436 取的**：`InsertCurveFileBegin` 官方回 **`void`** ⇒ ★ **不能看返回值**，改看 **`feature_names()` 的增量**。"
+      ],
+      "limitations": [
+        "★★ **三步式的顺序是必须的**（官方 Remarks 逐字）：`Begin` **must precede** 所有 `Point`；★ 而 **`End` must enclose** 所有 `Point` —— 即两者**夹住**中间那一段。",
+        "★ **坐标是米**（★ 本探针在边界除了 1000）",
+        "⚠ 本包装未接进 MCP 工具层；⚠ 未查：**文件的字体格式要求**（★ 官方只说点可以有 X/Y/Z）。"
+      ]
     }
   ]
 }
