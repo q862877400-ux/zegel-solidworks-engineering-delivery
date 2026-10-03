@@ -1657,3 +1657,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而它与**事实 47**（`IAccessSelections` 指针族 ⇒ `0x80010105`）**正好相接**：★ **那对接口不出现在出厂类型库里** —— ★ 而它们**正是 `*FeatureData.AccessSelections` 底下要走的那层** ✓
      ★ **而这给出一条可试的新路**：★ 对那六条中任一条，**先 `GetDefinition` 拿到数据对象、试 `AccessSelections`**——★ 而它**能不能过**就是那一族的**直接实验** ✓
      ★ 而**本轮的方法论**：★ 一个“**入口 md 不提**”的本领，**不等于它的数据接口也不提** —— ★ 而**类型库才是裁决者**（铁律 4）。|静态：`C:\swapi\types\IFeatureManager\*.md` × 出厂类型库（`comtypes` 反射）；对照事实 47 / 420 / 423 |
+| 425 | **★★★ `*FeatureData.AccessSelections` 在本后端上**是通的****（★ 而 `Component` **必须传空 Dispatch 变体**）** —— 2026-10-03（轮 545）。★ 而这是**目标点名要的那条依据**。
+     ★ 起因：事实 424 给出一条可试的新路：★ **先 `GetDefinition` 拿到数据对象、再试 `AccessSelections`**。
+     ★ 真机（`tools/probe_access_selections_on_featuredata.py`，零弹窗）：
+     ```
+     ★ 曲面切除（★ 它回对象） ⇒ `GetDefinition` = **CDispatch**（拿到 `ISurfaceCutFeatureData`）✓
+        传 `None`        ⇒ **类型不匹配（位置 2）**  ⚠（★ 位置 2 = `Component`）
+        传 **空 Dispatch**  ⇒ **`access_ok = True`**（**过了！**）  ✓✓
+     ★ 加厚 / 分割线              ⇒ 特征本身就是 `None` ⇒ **无法 `GetDefinition`**
+     ```
+     ⇒ ★★ **故两条结论**：
+       ① ★★★ **`*FeatureData.AccessSelections` 在 pywin32 后端上是通的** —— ★ 而那**推翻了“指针族结构性到不了”**（★ 至少对 `ISurfaceCutFeatureData`）；
+       ② ★ **而它的前提是**传空 Dispatch 变体**（`create_empty_dispatch_variant()`）—— ★ **而不是 `None`** ⚠ —— ★ 这是**事实 12/33 的第三次应验**
+         （`SelectByID2` 的 `Callout` 也是同一个坑）。
+     ★ 而它与**事实 47**（当年记的 `0x80010105`）**并不矛盾**：★ 那年记的是**另一条路**（`ISketchedBendFeatureData.SetFixedFace` 那族），★ 而**这条（`*FeatureData.AccessSelections`）是通的** ✓
+     ★ **而这给出一条真正可行的新路**：★ 对那几条“静默 `None`”的能力，★ 正路是「**`GetDefinition` ⇒ `AccessSelections` ⇒ 设属性 ⇒ `CreateFeature`**」—— ★ 而**其前提是“先有一个特征对象”**（★ 而加厚/分割线连那一步都没到）。
+     ★★ **方法论**：★ 一个“**成熟的旧结论**”（如“指针族到不了”）**也要用新证据回头验** —— ★ 而**本轮就把它推翻了一半**。|真机：`tools/probe_access_selections_on_featuredata.py`；证据 `output/access-selections-on-featuredata-evidence.json`；静态依据：出厂类型库（事实 424）；对照事实 12 / 33 / 47 / 424 |
