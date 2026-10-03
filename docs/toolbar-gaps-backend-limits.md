@@ -155,6 +155,32 @@ hole-pattern-evidence.json  ·  flat-pattern-dxf-evidence.json
 
 ---
 
+### 2.3 ★★★ 2026-10-03（轮 600）**该族的另三个成员** —— ★ 四个阵列同一条边界
+
+★ 台账「特征下拉」里有**四个阵列**：★ **曲线驱动的阵列** · **草图驱动的阵列** · **填充阵列** ·
+  **表格驱动的阵列**。★ 本轮把它们的 `*FeatureData` 一起查了 —— ★ 而结论是**同一条边界**：
+
+| 接口 | 成员数 | `AccessSelections` | 判定 |
+|---|---|---|---|
+| `ILinearPatternFeatureData` | 60 | ★ **有** | ★ 见 §2.2.1 |
+| `ITablePatternFeatureData` | 35 | ★ **有** | ★ **同一条边界** |
+| `ICurveDrivenPatternFeatureData` | 44 | ★ **有** | ★ **同一条边界** |
+| `IFillPatternFeatureData` | 35 | ★ **有** | ★ **同一条边界** |
+| `ISketchDrivenPatternFeatureData` | — | — | ★★ **接口根本不存在**（★ 台账那个 api 名是手填的 —— 铁律 5） |
+
+★ **而它们的创建入口也指向同一条路**：★ 官方的 md 逐字写着
+  「**Obsolete. See `IFeatureManager::CreateFeature`** and the Remarks in `I*PatternFeatureData`」
+  —— ★ **即：`CreateFeature` + 那个 FeatureData** ⇒ ★ **而后者正是带 `AccessSelections` 的那个** ⚠
+
+★ **而 `AccessSelections` 的第 2 参四种形态**（★ §2.2.1 那张表：`None` / 空 Dispatch / 空变体 /
+  byref 空 Dispatch）**全到不了** —— ★ 故这四个阵列在 pywin32 这条后端上**目前到不了**。
+
+★ 证据：`C:\swapi\types\<接口>\` 的成员表（★ 静态、可复核）·
+  `tools/probe_access_selections_param2.py` · 事实 47 / 474。
+
+---
+
+
 ## 三、`IAccessSelections` 指针族 —— ✅ **这一族是真的到不了**
 
 ### 3.1 官方的语义（★ 为什么它天然到不了）

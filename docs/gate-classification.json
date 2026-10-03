@@ -180,6 +180,12 @@
       "runner": "_run_verified_evidence_gate",
       "kind": "hard",
       "reason": "**硬门禁**：**A4** —— `level: verified` 必须带**我们自己的运行证据**（★ `AGENTS.md` 逐字）。★ 判据：每条 `verified` 的 `evidence` 必须是**非空列表**且**至少有一条非空字符串**（★ 空串不算证据）。★ 而**可核性**（证据里有没有文件名）**只提示、不拦** —— ★ 口述证据也可能是证据。★ 实测（轮 594）：95 条 verified、**0 条无 evidence**（★ 数据干净）—— ★ 而**之前没有门禁在守它**；★ 而它第一次跑就**给出 2 条可核性提示**（★ 而不拦）。★ 它**自己有负例自证**：`tests/test_verified_evidence_gate.py`（**6 passed**）。"
+    },
+    {
+      "gate": "check_backend_limited_evidence.py",
+      "runner": "_run_backend_limited_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：任务书逐字——那三族要「**写明依据并单列**」。★ 判据：`docs/backend-limited-items.json` 的**每一条**必须\n       ① `toolbar`/`member`/`where`/`section` **四个字段非空**；② **至少一个 `facts` 编号**；③ **`section` 引的小节真存在于 `docs/toolbar-gaps-backend-limits.md`**。\n★ 而**名单不能是空的**（★ 空名单 = 什么都没单列，与任务书矛盾）。\n★★ **而它第一次跑就找出 6 处**：两条缺 `facts`、四条的 `section` 指不到真小节\n       ⇒ ★ 而修的时候**发现 `### 2.3` 从没建过**（★ 轮 130 那次 edit 失败了）⇒ **把它建了出来** ✓\n★ 它**自己有负例自证**：`tests/test_backend_limited_evidence_gate.py`（**6 passed**）。⚠ **覆盖边界**：只查**名单里那几条**的字段与指向 —— ★ 过了它**不等于依据本身成立**。"
     }
   ]
 }
