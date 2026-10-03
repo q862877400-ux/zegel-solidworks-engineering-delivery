@@ -10,7 +10,7 @@
 
 | 口径 | 数 |
 |---|---|
-| 「死路」条目 | **64** |
+| 「死路」条目 | **66** |
 | 涉及能力 | **38** |
 
 ## 逐条（★ 按能力分组；等级 = 该能力当前等级）
@@ -139,6 +139,7 @@
 ### `simulation_load_family_breadth`（verified）
 
 - ⚠ 2026-10-03（轮 419）**B 组（多面 / 多顶点连接件）的判据在这条路上**间歇性不稳**：**同一段代码、同一台机、同一天** 出现过 「成 / 不成 / 成」。★ 具体形态：`_report` 的回读（`ICWLoadsAndRestraintsManager.Count`）在涉及**顶点选择**的场景里有时返 **-1**（取不到），有时报 `0x80010105`（服务器出现意外情况）或 `0x800706BA`（远程过程调用失败）。★ 已否掉五条假设（累积 / 判据选择 / 陈旧引用 / 会话状态 / 「第一个载荷」）⇒ ★ **意味着这两条能力并未被证伪，只是判据不可用**；★ 故**未注册**（硬约束⑥）。★ 下一步：换一个**不依赖 `Count`**的回读（如数 `GetLoadsAndRestraints(i, out_i4())`，★ 而它同样不稳 ⇒ 先在**已知成功**场景上验它）。
+- 🕓 **2026-10-04（接手轮）本段有两处「仍未注册 / 仍不注册」已被后续轮次推翻 —— 不删上文、在此补正**（★ 处置 `JUDGE-F_G_H_I_J.md` 的 🔴 **#3** · `I2-4`）—— ★ 裁判逐字：「★ `simulation_load_family_breadth` 10 条 limitations 零条入册，★ 且 `temperature` 说法**条目内相反**」✓ ★★ **实测复核（★ 同一条目里三处对不上）**：<br>· ★ 上文与 evidence 里两处说「`temperature` **仍未注册**」（★ 轮 402 / 408）<br>· ★★ 而**轮 415 的 evidence 逐字**：「◆ 热载荷组：… ★ **temperature 3→4** …」⇒ ★★★ **已注册且真机 PASS**（★ 载荷计数 2→3→4 逐条 +1）✓<br>· ★★★ 且本条目自己的 `mcp_tools` 里**就列着** `solidworks_simulation_apply_temperature` ✓<br>★★★ ⇒ **现在的状态 = 已注册、已真机验证**；★ 而上文那两处「未注册」是**轮 402/408 时的状态**（★ 轮 415 已修）—— ★★ **不删它们**（★ 那是历史），★ 只在此说明「以哪一条为准」 ✓
 
 ### `simulation_study_create`（verified）
 
@@ -188,6 +189,7 @@
 ### `weldment_cut_list`（verified）
 
 - ⚠ **真机 1/3**：`export_cut_list_csv` ✅（文件 26 B）· `create_cut_list` ⚠ **接口不可达** —— 报「`IFeatureManager.InsertWeldmentCutList2` 在当前后端（pywin32 迟到绑定）上**取不到**」（★ 与**事实 47** 同族）· `set_cut_list_properties` ⚠ **正确的失败**（「没有可写入切割清单的结构构件实体」= 前置不满足）
+- 🕓 **2026-10-04（接手轮）上一条已被**同条目的 evidence**推翻 —— 不删上文、在此补正**（★ 处置 `JUDGE-F_G_H_I_J.md` 的 🔴 **#3** · `I1-1`）—— ★ 裁判逐字：「★ `weldment_cut_list` limitation 第 3 条**已被同能力 evidence 推翻**」✓ ★★ **实测复核**：★ 本条 `evidence` 里逐字有「★★★ 2026-10-03（轮 496-498）**更正上面那条（轮 270）的「create_cut_list 后端限制」定性** —— ★ 它**不是后端限制**：★ 回筛 `GetIDsOfNames("InsertWeldmentCutList2")` ⇒ **`dispid = 174`**（★ 不是 1）；`Invoke(174, 0, DISPATCH_METHOD, True, VARIANT(VT_ARRAY|VT_DISPATCH, bodies))` ⇒ **4/4 全调通**、★ 两条**树真的新增 `切割清单项目1`**」✓ ⇒ ★★★★ **所以上文那句「接口不可达」已不成立**（★ 它是**轮 270 的误判**，★ 轮 496-498 已更正）✓ ★★★ 而**上文不删**（★ 它是历史），★ 只在此说明「以哪一条为准」 ✓
 
 ### `weldment_profile_and_curve`（verified）
 
