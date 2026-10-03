@@ -1,0 +1,59 @@
+fix(阶段2): ★★★★★ **T1 第 7 条 —— ★ `DeleteRenderMaterial` 三源互证后判定**记档保留 2.0****；★ 并**指出证据里的 `verdict` 过于乐观**
+
+■ 一 · ★ 逐条流程 ①：三源互证（★ 铁律 4 的现场）
+  | ★ 源 | ★ 说法 |
+  |---|---|
+  | ★ **官方页** `IModelDocExtension/DeleteRenderMaterial.md` | ★★ **没有** `Obsolete` 行 ✓ |
+  | ★★ **名单** `official-members-index.json` 的 `obsolete_line` **逐字** | ★★★ 「**Not supported in SOLIDWORKS 2011 and later. Superseded by…**」⇒ ★ **那比 `Obsolete` **更强**（★ "不支持"）** ✓ |
+  | ★★★ **反射**（★ 裁决者）`_raw/reflect_sldworks/iface_sldworks.txt` L10899 | ★ `Boolean DeleteRenderMaterial(Int32, Boolean)` ⇒ ★ **成员在、★ 参数对** ✓ |
+  ⇒ ★★★★ **两处"措辞不同"的真因**：★ 官方页**不写 `Obsolete`**、★ 而**写"Not supported in …"** ✓
+  ★★ **⚠ 而反射**只有签名、★ 没有"废弃位"** ⇒ ★★★ **它裁不了"废没废"、★ 只能裁"在不在"** ✓
+    （★ 这是本轮对**铁律 4** 的一个**边界补充**）✓
+
+■ 二 · ★★★★ 逐条流程 ②：读那份真机证据（★ 我读了逐条 `ok`）
+  | ★ 入口 | ★ `ok` | ★ 读数 |
+  |---|---|---|
+  | ★ 旧 `DeleteRenderMaterial` | ★★ **true** | ★ `ret: True` ✓ |
+  | ★★ 新 `DeleteDisplayStateSpecificRenderMaterial` | ★★★ **false** | ★ **`TypeError: …不可调用（`getattr` 回了 `bool`）`** ✓ |
+  ⇒ ★★★★ **⇒ 要换的那个**恰好调不了**** ⇒ ★ **保留是对的** ✓
+
+■ 三 · ★★★★★ 而那份证据里的 `verdict` **逐字是**「★ 新旧都能调 ⇒ **可以换**」****
+  ★ **那句**过于乐观**** —— ★ 它把 `★_新入口能调数: 3/4` 读成了"都能调" ✓
+  ★★ **⇒ 本函数按**分项读数**判、★ 不按 `verdict` 判** ✓
+  ★★★ **可复用判据**：★★★ **证据文件里的 `verdict` 是**结论**、★ 而逐条 `ok` 才是**事实** ——
+    两者打架时**以逐条为准**** ✓
+    （★ 与**事实 519**同族：★ **"表里有"≠"它做到了"**；★ ★ 而本轮是**同一个文件里的两处打架**）✓
+
+■ 四 · ★ 修法
+  ★ **代码不动**（★ 旧的能调、★ 新的调不了）✓
+  ★★ **docstring 补**三源互证表 + 逐条读数表 + 对 `verdict` 的更正**** ✓
+  ★★★ **并写明**：「反射只有签名、★ 没有废弃位」这条**边界** ✓
+
+■ 五 · ★★ 新增测试（★ `tests/test_obsolete_render_material_kept_on_purpose.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **读官方页**确认它**没有** `Obsolete` 行（★ 判据的锚点）✓ |
+  | ★★★ **核心断言** | ★ 证据里**新入口 `ok: false`**、★ 旧入口 `ok: true` ✓ |
+  | ★★ **核心断言** | ★ 记档期间**仍要调旧的**、★ **不许**调调不了的那个 ✓ |
+  | ★★★ **负例 · 逐条优先** | ★ docstring 必须指出那句 `verdict` **过于乐观** + 写「以逐条为准」✓ |
+
+■ 六 · ★★★★★ 本轮**最值记的一件事**：★ 判据取法连续踩了三次（★ **事实 53 的现场**）
+  ★ 我要判「代码里调的是哪个成员」⇒ ★ 而**本仓库的 docstring 里会引旧名**（★ "补正而不删除"的产物）⇒
+    ★★ **必须剥掉 docstring** ✓
+  ★★ **我连续试了三种 AST 剥法**（★ 每种都"看起来对"）⇒ ★★★ **而每次都有残留** ——
+    ★ **真因**：★ 本仓有**模块级 docstring**，★ 而 `ast.walk` **边走边改**时，
+      「谁是 `body[0]`」在**不同节点上语义不同** ⇒ ★★ **剥法是**不稳的** ✓
+  ★★★ **⇒ 按事实 53 停下换做法**：★ **不再剥**、★ 而是
+    ★★★ **精确到「那一行」**：★ 找 `get_com_member(<obj>, "<名字>"` 的**调用形态**、
+      ★ 且**范围限定在 `delete_render_material` 那一段** ✓
+  ★★★★ **可复用判据**：★★★ **判「调的是哪个成员」时，不要去剥注释/docstring** ——
+    ★ **要**正向匹配调用形态****（★ `get_com_member(x, "名字"` 那种）✓
+    ★★ 因为**反向剥离**要求你**穷举所有"文字出现的形态"**、★ 而**正向匹配只要认一种** ✓
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **⚠ 存量失败 1 个**（★ `test_extended_modules_contract.py::test_add_render_material_passes_two_arguments`
+    ⇒ ★ **`git stash` 判明是存量**）✓
+  ★★★ **T1 进度：★ 7 条已处置**（★ **4 条判定保留** · ★ **2 条换掉** · ★ **1 条核实已完成**）✓
+  ★★★★ **剩余：★ 5 条**（★ `AutoDimension2` · `FeatureFillet` · `FeatureLinearPattern3` ·
+    `FeatureCircularPattern4` · `AdvancedGraphics`）✓

@@ -316,6 +316,27 @@ def delete_render_material(model, index: int, cascade: bool = False) -> bool:
       · ★ 而**旧的 `DeleteRenderMaterial` 真机实测**能调**（回 `True`）✓
       ⇒ ★★ **换过去 = 从"废弃但能调"变成"新但调不了"** ⇒ ★ 故**保留** ✓
     ★ 证据：`tools/probe_render_material_family.py` · `output/render-material-family-evidence.json`
+
+    ★★★★★ **2026-10-04（接手轮）补正 —— ★ 三源互证 + ★ 逐条读数**（★ 处置阶段 2 · T1）✓
+      ★ **官方那页的措辞不是 `Obsolete`**：★ `IModelDocExtension/DeleteRenderMaterial.md`
+        **没有** `Obsolete` 行 —— ★★ 而是 `official-members-index.json` 记的
+        `obsolete_line` 逐字：★ 「**Not supported in SOLIDWORKS 2011 and later.
+        Superseded by…**」⇒ ★★★ **那比 `Obsolete` **更强**（★ "不支持"）** ✓
+      ★★ **反射**（★ 铁律 4 的裁决者）⇒ `_raw/reflect_sldworks/iface_sldworks.txt` L10899
+        逐字 `Boolean DeleteRenderMaterial(Int32, Boolean)` ⇒ ★ **成员在、★ 参数对** ✓
+        ★★★ **⚠ 而反射**只有签名、★ 没有"废弃位"** ⇒ ★ **它裁不了"废没废"、★ 只能裁"在不在"** ✓
+      ★★★ **逐条读数**（★ 我读了那份证据文件）：
+        | ★ 入口 | ★ `ok` | ★ 读数 |
+        |---|---|---|
+        | ★ 旧 `DeleteRenderMaterial` | ★★ **true** | ★ `ret: True` |
+        | ★★ 新 `DeleteDisplayStateSpecificRenderMaterial` | ★★★ **false** | ★ **`TypeError: …不可调用（`getattr` 回了 `bool`）`** |
+        ⇒ ★★★★ **⇒ 要换的那个**恰好调不了**** ✓
+      ★★★★ **而那份证据里的 `verdict` 逐字是**「★ 新旧都能调 ⇒ **可以换**」**** ——
+        ★ **那句**过于乐观****（★ 它把 `3/4` 读成了"都能调"）⇒ ★★ **本函数按**分项读数**判、★ 不按 verdict 判** ✓
+        ⇒ ★★★ **可复用判据**：★★★ **证据文件里的 `verdict` 是**结论**、★ 而逐条 `ok` 才是**事实** ——
+          两者打架时**以逐条为准**** ✓（★ 与**事实 519** 同族：★ "表里有"≠"它做到了"）✓
+    ★ **⇒ 本条**记档保留 2.0**（★ 与前一轮的 `CreateSpline2` **同型**：★ 后继到不了）** ✓
+      ★★ **而判据也同型**：★★★ **「不可换」要有**真机证据**、★ 证据要能复跑** ✓
     """
     extension = get_extension(model)
     return bool(get_com_member(extension, "DeleteRenderMaterial",
