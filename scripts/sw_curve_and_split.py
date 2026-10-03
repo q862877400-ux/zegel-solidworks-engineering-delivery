@@ -202,7 +202,19 @@ def insert_split_line_project(model, is_directional: bool = False,
     pre = None
     if marks is not None:
         pre = bool(marks.get("4", 0) >= 1 and marks.get("1", 0) >= 1)
-    return {"ok": bool(added) or (face_delta or 0) > 0,
+    #: ★★★★ 2026-10-04（接手轮）**修掉一个"跨种类用 `or`"的判据**（★ 与 E5-3 / E5-4 **同一个错**）——
+    #:   ★ 病灶原文：`"ok": bool(added) **or** (face_delta or 0) > 0` ✓
+    #:   ★★ **本文件头 L57 承诺的判据是**：「★ 判据 = **回对象非 None** + **特征树增量**」
+    #:     ⇒ ★★★ **两个量：★ 对象类 + ★ 结构类**（★ **面数增量根本不在承诺里**）✓
+    #:   ★★★ **而这条入口回 `void`**（★ 官方 `InsertSplitLineProject` 无返回值）⇒
+    #:     所以"回对象非 None"这一项**在本函数上不适用**（★ 没有对象可读）⇒
+    #:     ★★★★ **那就**只剩**「特征树增量」这一个判据** —— ★ **而它必须是 `and` 的唯一项**，
+    #:        ★ **不能拿"面数变了"去顶**（★ 那会把"只改了面没建特征"也算成功）✓
+    #:   ★★ 依据：★★★ **跨种类用 `and` · 同种类用 `or`**（★ 本会话 E5-3 那条规则）——
+    #:     而"树增量"与"面数增量"是**两个种类** ⇒ ★ **用 `or` 就是把"缺一不可"写成"有一个就行"** ✓
+    return {"ok": bool(added),
+            "ok_note": "★ 官方此入口回 `void` ⇒ 没有「回对象非 None」可判 ⇒ "
+                       "★ 判据只剩「特征树增量」（★ 面数增量只作旁证，★ 不顶替）",
             "op": "split_line_project",
             "is_directional": bool(is_directional), "flip_dir": bool(flip_dir),
             "tree_before": before_tree, "tree_after": after_tree, "new_features": added,
@@ -263,7 +275,11 @@ def insert_split_line_silhouette(model) -> dict:
     pre = None
     if marks is not None:
         pre = bool(marks.get("2", 0) >= 1 and marks.get("1", 0) >= 1)
-    return {"ok": bool(added) or (face_delta or 0) > 0,
+    #: ★★★★ 2026-10-04（接手轮）**同上一处**（★ `split_line_project`）—— ★ 跨种类不许用 `or` ✓
+    #:   ★ 官方 `InsertSplitLineSil` 同样**回 `void`** ⇒ ★ 判据只剩「特征树增量」✓
+    return {"ok": bool(added),
+            "ok_note": "★ 官方此入口回 `void` ⇒ 没有「回对象非 None」可判 ⇒ "
+                       "★ 判据只剩「特征树增量」（★ 面数增量只作旁证，★ 不顶替）",
             "op": "split_line_silhouette",
             "tree_before": before_tree, "tree_after": after_tree, "new_features": added,
             "faces_before": before_faces, "faces_after": after_faces,
@@ -313,7 +329,23 @@ def insert_curve_through_points(model, points_mm, ) -> dict:
     end_ret = bool(get_com_member(model, "InsertCurveFileEnd"))
     after = _tree_names(model)
     added = _delta(before, after)
-    return {"ok": end_ret and bool(added), "op": "curve_through_points",
+    #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的 `Point` 返回值也纳入 `ok`** ——
+    #:   处置 `JUDGE-C_D_E.md` 的 🔴 #1 · **E5-6**（★ 裁判逐字：「★ 仓内 doc：
+    #:   `★ 判据 = Point/End 的返回值 **且** 特征树增量。` ★ 而目标：
+    #:   `point_rets.append(bool(get_com_member(model, "InsertCurveFilePoint", …)))` ／
+    #:   `return {"ok": end_ret and bool(added), … "point_re…`」· ★ 判定「**确认**」）✓
+    #:   ★★★ **病灶**：★ `point_rets` **算了、也报出来了**，★ **但 `ok` 里只有 `end_ret` 与 `added`**
+    #:     ⇒ ★★ **doc 说的"Point 的返回值"那一项漏了** ✓
+    #:   ★★ 而本函数的 docstring **L310-311 逐字**又重申了一次：
+    #:     「★ 判据 = **三个方法各自的返回值**（`Point` / `End` 回 `bool`；`Begin` 回 `void`）
+    #:       **且** **特征树有新特征**」⇒ ★★★★ **四个量、一路 `and`** ✓
+    #:   ★ 修法：★ **把已算好的 `point_rets` 用 `all()` 纳入**（★ 不新算）✓
+    all_points_ok = bool(point_rets) and all(point_rets)
+    return {"ok": bool(all_points_ok and end_ret and bool(added)),
+            "verified_by": "★ 每个 `InsertCurveFilePoint` 回 True **and** `InsertCurveFileEnd` 回 True "
+                           "**and** 特征树有新特征（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
+            "all_point_returns_true": all_points_ok,
+            "op": "curve_through_points",
             "n_points": len(pts), "point_returns": point_rets, "end_return": end_ret,
             "unit_assumption": "★ 官方未给单位；按 SolidWorks API 惯例当作**米** ⇒ 入参毫米已换算",
             "tree_before": before, "tree_after": after, "new_features": added,
