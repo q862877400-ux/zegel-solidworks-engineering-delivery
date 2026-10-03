@@ -752,7 +752,49 @@ def auto_dimension_sketch(model, sketch=None, sketch_segments=None):
 
     status_code = None
     try:
-        # swAutodimEntitiesAll=1, Baseline=1, Below=-1, Left=-1。
+        #: ★★★★★ 2026-10-04（接手轮）**记档保留 + 后继已验证可调** —— 处置阶段 2 · T1 ✓
+        #:   ★ **官方逐字**（★ `ISketch/AutoDimension2.md`）：
+        #:     「**Obsolete. Superseded by `ISketchManager::FullyDefineSketch`**.」✓
+        #:     ★ 旧签名 ⇒ `(int EntitiesToDimension, int HorizontalScheme, int HorizontalPlacement,
+        #:       int VerticalScheme, int VerticalPlacement)` ⇒ **5 参** ✓
+        #:   ★★ **后继逐字**（★ `ISketchManager/FullyDefineSketch.md`）：★ **现行** ·
+        #:     ★ 签名 ⇒ **10 参** ✓
+        #:     ★★ **⚠ 而它的 `## Returns` 逐字是**「Not currently defined」**** ⇒
+        #:       ★★★ **官方没给返回码语义** ⇒ ★★ **我们**不许**解释那个返回码**（★ 铁律 5）✓
+        #:   ★★★ **调用序必须读**官方示例****（★ AGENTS.md 第 0 步：★ 签名与 Remarks 都给不了）——
+        #:     ★ 逐字（★ `C:\swapi\examples\Fully_Define_Underdefined_Sketch_Example_VB.md`）：
+        #:     ```
+        #:     swModel.ClearSelection2 True
+        #:     lMarkHorizontal = 2   ' These are the marks expected for the dimension datums
+        #:     lMarkVertical = 4
+        #:     SelectByID2("Point1@Origin", "EXTSKETCHPOINT", 0,0,0, False,
+        #:                 lMarkHorizontal Or lMarkVertical, Nothing, 0)
+        #:     FullyDefineSketch(True, True, <Vertical Or Horizontal>, True, 1, Nothing, 1, Nothing, 1, 1)
+        #:     ```
+        #:     ★★ **⇒ 它印证**：★ `mark 2` / ★ `mark 4` **正是上面 740 行用的那两个** ✓
+        #:     ★★★ 而**枚举逐字**（★ `swSketchFullyDefineRelationType_e.md`）：★ `Horizontal = 2` ·
+        #:       ★ `Vertical = 4` ⇒ ★ **Or 起来 = 6** ✓
+        #:   ★★★★ **真机两轮**（★ `probe_fullydefinesketch{,2}.py` · ★ `sw_guard` ·
+        #:     ★ `sw_alive: true` · ★ **零弹窗**）：
+        #:     | ★ 形态 | ★ 结果 |
+        #:     |---|---|
+        #:     | ★ `FullyDefineSketch(…, **None**, …, **None**, …)` | ★★ **`类型不匹配`（位置 6）** |
+        #:     | ★★ 同上但两个 `DatumDisp` 传**空 Dispatch** | ★★★ **回 `4` · 零错误** ✓ |
+        #:     | ★★ 官方调用序（★ 选 `Point1@Origin` + `mark 6`） | ★★★ **回 `4` · 零错误** ✓ |
+        #:     | ★ 不选原点（★ 对照） | ★★ **也回 `4`** ⇒ ★ **那个返回码分不出"选了没选"** ✓ |
+        #:     ⇒ ★★★★ **⇒ 官方说的 "if Nothing or null" 在 pywin32 上要落成**空 `Dispatch`****
+        #:       （★ `VARIANT(VT_DISPATCH, None)` —— ★ 与**事实 12**同族）✓
+        #:   ★★★★★ **⇒ 而本处**暂不换**，★ 理由是判据（★ 不跳步）**：
+        #:     ★ **① 判据立不起来**：★ 我试了 `GetDimensionCount` 与 `GetSketchDimensions` **两种读法**、
+        #:       ★★ **都量不到**（★ 回 `-1`）⇒ ★★★ **"它有没有真建出尺寸"这件事，我这次**没有可核读数**** ✓
+        #:       ★★★ **⇒ 按三态判据**：★ **量不到 ⇒ `None`** —— ★ **既不许报成功、★ 也不许报失败** ✓
+        #:     ★★ **② 返回码不可解释**：★ 官方的 `## Returns` 是「**Not currently defined**」⇒
+        #:       ★★★ **我不能拿 `4` 当"成功"**（★ 铁律 5 · ★ 且实测它**分不出**选了没选）✓
+        #:     ★★★ **⇒ 记档**：★ 后继**已验证**可调**（★ 前置与调用序都摸清了）、★ 而**替换要等一个
+        #:       能证明"尺寸真的建出来了"的判据** ⇒ ★ **下一轮补那个判据、★ 再换** ✓
+        #:     ★★★★ **可复用判据**：★★★ **"后继能调"与"后继能替"是两件事** ——
+        #:       ★ 前者只要**不报错**、★ 后者要**一个能证明产出存在的读数** ✓
+        #:       （★ 与**事实 40**同族：★ **一个失败如果看起来像正常值，比没有守卫更糟**）✓
         status_code = int(get_com_member(active, "AutoDimension2", 1, 1, -1, 1, -1))
     except Exception as exc:
         model.ClearSelection2(True)
