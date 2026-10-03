@@ -534,6 +534,38 @@ def out_i4(value: int = 0):
     return VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, int(value))
 
 
+def out_dispatch(value=None):
+    """★ 创建 `IDispatch&`（**对象出参**）的 VARIANT 包装 —— ★ `out_i4` 的对偶。
+
+    ★ 官方接口里另有一族方法以 **对象** 作 [out] 参数，例如
+    `IHoleStandardsData.GetFastenerTable(String, Int32, Int32, **IHoleDataTable&**)`
+    —— ★ 而 `out_i4()` 只解决 `Int32&`，**这一族一直没有包装** ⚠
+    （★ 本仓 `docs/dead-ends.md` 里 `get_fastener_table` 那条就卡在这里。）
+
+    ⚠★ **本函数是「照对偶推出来的」，★ 而真机验证在调用方** ——
+      ★ 本仓的纪律是**不凭类推**：`out_i4` 那条是**逐形态实测**出来的
+      （五种只有 `VT_BYREF|VT_I4` 通），★ 故 `IDispatch&` 这条也**必须在真机上试过才算**。
+      ★ 试过之后要**回来把结论写进这里**（★ 通过 / 各形态的错误码）。
+
+    ✅★ **2026-10-03（轮 499）真机已验证通过** —— ★ 测的是
+      `IHoleStandardsData.GetFastenerTable(String, Int32, Int32, **IHoleDataTable&**)`，
+      在 SolidWorks 2026 SP4.1 上**逐形态实测**，结论**与 `out_i4` 完全对偶**：
+
+          VARIANT(VT_BYREF | VT_DISPATCH, None)   ✓ 通过（返回 `False` = "没查到该表"）
+          VARIANT(VT_BYREF | VT_VARIANT, None)    ✗ 类型不匹配（第 4 参）
+          VARIANT(VT_DISPATCH, None)              ✗ 类型不匹配（第 4 参）
+          裸 `None`                                ✗ 类型不匹配（第 4 参）
+
+      ⇒ ★★ **定则：`out` 参数一律「`VT_BYREF | VT_<该出参的类型>`」** ——
+        ★ 而**不是** `VT_VARIANT`、★ 也**不是**省掉 `BYREF` ✓
+
+    ★★ 顺带更正：`docs/dead-ends.md` 里 `get_fastener_table` 那条原写「**到不了**」——
+      ★ 而真机证明它**能调**（★ 只是那次回了 `False`，★ 那是**参数/前置**问题、
+      ★ **不是后端限制**）✓
+    """
+    return VARIANT(pythoncom.VT_BYREF | pythoncom.VT_DISPATCH, value)
+
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本机实测结论的固化）
 # 文件:   scripts/sw_connect.py 的 set_com_member
