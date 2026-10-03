@@ -1576,3 +1576,20 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **按事实 53 停手**（分割线已 3 轮：537 · 538 · 539）。
      ★★ **而它的净收获不是“成”**：★ **它把两条能力的「前置没对」这个可能性彻底排除掉了** —— ★ 以后不必再围着前置转。
      ★ 而那两个例子页名（★ 可直接重现）：`Create_Trimmed_Surface_Feature_Example_VBNET.htm` · `Create_Projection_Split_Line_Example_VBNET.htm`。|真机：`tools/probe_split_line_projection_per_example.py`；证据 `output/split-line-projection-per-example-evidence.json`；对照事实 391 / 415 / 417 / 418 |
+| 420 | **★★★ 一条**分类判据**：看**返回值**——「回对象」= 特征其实建了（树外）；「回 `None`」= 真的没建**** —— 2026-10-03（轮 540）。
+     ★ **缺口是我自己的**：轮 537-539 我对分割线只记了 **`new = []`**（树增量），★ **而没记返回值** ⚠ —— 而**事实 406 的教训正相反**：`InsertCutSurface` 当时**回了对象**（`Name` = 「使用曲面切除1」·`GetTypeName2` = `SurfCut`）—— ★ **特征其实建了、只是树回读看不见**。
+     ★ 真机（`tools/probe_split_line_returns.py`，零弹窗）：
+     ```
+     轮廓型 ⇒ 回 **None** · 前置 picked={"基准面": "前视基准面"}
+     投影型 ⇒ 回 **None** · 前置 picked={"特征":"凸台-拉伸1","草图":"草图2","面":true}
+     交叉型 ⇒ 回 **None** · 前置 picked={"面": 6}
+     而递归链里**没有任何 `Split*` 类型**（`split_types = []`）
+     ```
+     ⇒ ★★ **故：分割线的“不建”是**真的****（**不是**回读盲区）✓
+     ★ 而那**把缺口补上了**：★ 在事实 406 那条教训下，**分割线与 `surfcut` 不同类** ✓
+     ★★ **故立一条分类判据（★ 以后遇到“树不动”先看它）**：
+     ```
+     回**对象**（带 `Name` / `GetTypeName2`）  ⇒ 特征**其实建了**（★ 只是在树外）：`InsertCutSurface`
+     回 **`None`**                        ⇒ **真的没建**：分割线（三条）· 加厚 · 直纹曲面 · 剪裁曲面 · 扫描曲面
+     ```
+     ★ 而它与**事实 391**（静默不干活）与**事实 406**（回读盲区）合起来才是完整的图景。|真机：`tools/probe_split_line_returns.py`；证据 `output/split-line-returns-evidence.json`；对照事实 391 / 406 / 417-419 |
