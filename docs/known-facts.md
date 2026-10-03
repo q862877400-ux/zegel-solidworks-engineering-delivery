@@ -2546,3 +2546,28 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **方法论**：★ **当一个结论指向“边界”时，先去**那份边界文档里找一遍** ** —— ★ 它很可能**早就记录了例外** ⚠
        （★ 本例：边界文档自己的 §2.2 就是那个例外，★ 而标题里就写着“不能记成到不了”）✓
      ★ 本轮**不改台账**（★ 因为改判要按 W2 判据逐条走）；★ 而**把这个纠正记下来** ✓|本仓：`docs/toolbar-gaps-backend-limits.md` §2.2（★ 第一现场）· `scripts/sw_pattern.py`；对照事实 47 / 55 |
+| 473 | **★★★ §2.2 那条“新架构”的**机理**：它**没有绕过指针族**、★ 而是**第 2 参传 `None`**** —— 2026-10-03（轮 597）。
+     ★ **怎么读出来的**：读 `scripts/sw_pattern.py` 的 `_SelectionAccess`：
+     ```
+     class _SelectionAccess:                    ← ★ “选区事务”（★ 26 行）
+         def __enter__(self):
+             _checked(self._data, "AccessSelections", self._model, **None**)  ← ★ **第 2 参是 `None`**
+             return self._data
+         def __exit__(self, ...):
+             _checked(self._data, "ReleaseSelectionAccess")               ← ★ 异常路径也释放
+     ```
+     ⇒ ★★ **故所谓“新架构”**照调 `AccessSelections`**** —— ★ 而差别在**第 2 参**：
+       ★ 事实 47 试的是 **空 Dispatch**（`VARIANT(VT_DISPATCH, None)`）⇒ 报 `类型不匹配`；
+       ★ 而 `sw_pattern.py` 传的是 **`None`** ⇒ ★ **那可能正是差别** （★ **本轮未真机对比过两者**）⚠
+     ★★ **而本轮另一个实在发现是常量真值**（★ 取自**本机反射 dump**，铁律 4）：
+     ```
+     swFmFillPattern  = **105**
+     swFmTablePattern = **106**
+     ★ 而 **`swFmLinearPattern` / `swFmCurveDrivenPattern`**
+        ★ **在反射 dump 里按这两个名字找不到** ⚠
+        （★ 而 swapi 的 `swFeatureNameID_e` 页**只列了 Fill/Table 两条** —— ★ 事实 43 记过“那个页装的是**描述不是数值**”）
+     ```
+     ★ **下一步很具体**：
+       ① ★ 真机对比 `AccessSelections(model, None)` 与 `AccessSelections(model, 空 Dispatch)` —— ★ 那直接决定“指针族能不能留条活路”；
+       ② ★ 把 `swFmLinearPattern` / `swFmCurveDrivenPattern` 的**真值**查出来**（★ 而**不是猜**）。
+     ★ **而本轮把一个空壳探针删了**（★ 它的循环体没真测）—— ★ **不留假东西** ✓|本仓：`scripts/sw_pattern.py`（`_SelectionAccess` L160）· `_raw/enum_values_sldworks.txt`；对照事实 43 / 47 / 472 |
