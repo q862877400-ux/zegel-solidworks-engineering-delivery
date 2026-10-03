@@ -52,14 +52,15 @@
 
 | 来源 | license | 能做什么 | 义务 |
 |---|---|---|---|
-| **官方 API 文档**（`C:\swapi` + CHM 解包） | 官方文档（非开源许可） | ★ **只作签名与语义依据** | ★ **不抄其代码文本**；引用时标页名 |
-| `Eduardof0nt/Solidworks-MCP-Server` | **MIT** | 读、抄、改、商用 | 保留版权声明 |
-| `andrewbartels1/SolidworksMCP-python` | **MIT** | 读、抄、改、商用 | 保留版权声明 |
-| `vespo92/SolidworksMCP-TS` | **MIT** | 读、抄、改、商用 | 保留版权声明 |
-| `Slacker-LLC/solidworks-mcp` | **Apache-2.0** | 读、抄、改、商用 | ★ 保留 `NOTICE`（`Copyright 2026 JIALE LIU`）+ **声明改动了哪些文件** |
-| **本项目自身既有模式** | 本仓 MIT | 沿用 `sw_part.py` / `sw_surface.py` 的写法与命名 | — |
+| **官方 API 文档**（`C:\swapi` + CHM 解包） | `license`: 官方文档（**非开源许可**） | ★ **只作签名与语义依据** | ★ **不抄其代码文本**；引用时标页名 |
+| `Eduardof0nt/Solidworks-MCP-Server` | `license`: **MIT** | 读、抄、改、商用 | 保留版权声明 |
+| `andrewbartels1/SolidworksMCP-python` | `license`: **MIT** | 读、抄、改、商用 | 保留版权声明 |
+| `vespo92/SolidworksMCP-TS` | `license`: **MIT** | 读、抄、改、商用 | 保留版权声明 |
+| `Slacker-LLC/solidworks-mcp` | `license`: **Apache-2.0** | 读、抄、改、商用 | ★ 保留 `NOTICE`（`Copyright 2026 JIALE LIU`）+ **声明改动了哪些文件** |
+| **本项目自身既有模式** | `license`: 本仓 **MIT** | 沿用 `sw_part.py` / `sw_surface.py` 的写法与命名 | — |
 
-⛔ **AGPL / GPL / 无许可 / 全版权保留**：★ **只读思想，不抄代码不抄文本**（本规格不引这类来源）。
+⛔ **AGPL / GPL / 无许可 / 全版权保留**（这几种 **license** 一律）：★ **只读思想，不抄代码不抄文本** ——
+★ 本规格**不引**这类来源。
 
 ## Project Structure
 

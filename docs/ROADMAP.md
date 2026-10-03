@@ -46,10 +46,22 @@
 ## 一 · 游标（**唯一必须维护的字段**）
 
 ```
-当前阶段:  **A1–A10 全部达成**（22/31 能力 verified，含护城河 topology_optimization）；
-           **P8 已按用户决定推迟**；当前主线是 **T-011（把已有能力暴露成 MCP 工具）**
-状态:      ✅ P0 · ✅ P1 · ✅ P2（含求解）· ✅ P3 · ✅ P7 · ✅ **A1–A10 全部达成** · 🟢 T-011 进行中
-下一步:    ① ✅ ~~拓扑优化闭环~~ **已完成**（许可解除后闭环跑通，拿到 Material Mass，升 verified）
+当前阶段:  ★ **P9 · 用户视角覆盖面缺口**（规格 `specs/202-user-coverage-gaps`，2026-10-03 立）；
+           A1–A10 仍全部达成；P8 仍按用户决定推迟；T-011 的「暴露」线并入 P9 一起走
+状态:      ✅ P0–P3 · ✅ P7 · ✅ A1–A10 · 🟢 **P9 进行中**（缺口批 1 已交付：3 项真机建成，
+           覆盖率 §三 **96/145 (66%) → 99/145 (68%)**，§八缺口 **35 → 32**）
+下一步:    ⓪ ★★ **P9 下一批 = C 类「候选直入法」19 项**（顺序见 `specs/202-user-coverage-gaps/research.md` §七）：
+             ① 先 **工程图视图族 5 项 + 标注族 8 项**（★ 侦察已确认官方入口 **13/13 命中**：
+                `recon/drawing_views.md` · `recon/drawing_anno.md`）
+             ② 再 **钣金/焊件 5 项** —— ★ **先试直入法**，真名已回查到：
+                `InsertSheetMetalMiterFlange` · `InsertSheetMetalClosedCorner` · `InsertEndCapFeature3` ·
+                `InsertGussetFeature` · `InsertMidSurface`
+                ★★ **不许**因为那些 `*FeatureData` 带 `AccessSelections` 就先判死 ——
+                反例就在本仓：分割线也有 `ISplitLineFeatureData`，而**它的直入法真机建成了**（事实 484）
+             ③ **E 类 2 项换名重查**（加厚 · 曲线驱动阵列；★ 后者预期属指针族，但**要先查真名**）
+             验收: `python tools\audit_gap_implementations.py` 且
+                   `docs/user-feature-coverage.md` §三 本仓库 **≥ 110/145**（★ 现 **99**，未达标）
+          ① ✅ ~~拓扑优化闭环~~ **已完成**（许可解除后闭环跑通，拿到 Material Mass，升 verified）
              ② ✅ **T-011 接线完成**：注册器 + 接线层 + **四批 20 条已注册可用**
                 ⇒ **server 工具数 45 → 65**（含护城河拓扑 3 条）
                 · ★ **接线端到端已验证**（`probe_wired_tools_e2e.py`，只读工具 **3/3 通过**）
@@ -8380,22 +8392,29 @@
              我读回参数，★ 那是"三源互证"的第三源）· ★ `through_all` 的 `swEndConditions_e` 取值要查了再改。
 阻塞:      **无阻塞**。T-002 求解步已闭合；**P8 已按用户决定推迟**（开发完再上传）
 
-最近三次交接（**2026-10-01 轮 49 更新**；此前停留在 `3df8670`，已过期多轮）:
-  2026-10-01  e26baea        **Spec Kit `converge` 步跑通 002**：6 条 FR 全成立；
-                            5 条 SC 里 4 条成立、1 条（SC-004）是**时点判据**。
-                            🔴 抓到 1 处真实不符合项并修掉：矩阵能力面列的 **`⚠` 标记**
-                            含义原先**只在生成器代码注释里** ⇒ 图例补自解释。
-                            ⚠ 遗留：T-005 的验收命令 `capability_gap.py` **不在仓库里**。
-  2026-10-01  eadbd3a        **`CONST→接口` 映射表全清 35/0/0**：最后 1 条 `swFmRefSurface`
-                            的依据是官方 **Returns 段逐字列出**（`ISweepFeatureData.SweepType`：
-                            `swFmSweep` / `swFmSweepCut` / `swRefSurface`(swept surface)）
-                            ⇒ 三条独立佐证（官方示例名 / 括注 / 无 `ISurfaceSweep*` 接口）。
-                            同轮对 **003 跑 converge** ⇒ 抓到「无许可路径未验」与
-                            「`limitations[15]/[16]` 写『维持 stitched』而 `level` 已是 verified」两处。
+最近三次交接（**2026-10-03 接手轮更新**；此前停留在 2026-10-01 轮 49）:
+  2026-10-03  af0bd99        **P9 立规格 + 缺口批 1 交付**：按 `docs/user-feature-coverage.md` §八 的
+                             **35 项缺口**立 `specs/202-user-coverage-gaps`；真机建成 **3 项**
+                             （旋转曲面 / 孔向导 / 完全定义检查）⇒ 工具 **253→256**、
+                             覆盖率 **96/145 → 99/145**、缺口 **35→32**、
+                             `capabilities.yaml` **109→110**（verified 96→97）。
+                             ⚠ **本轮的错（已记事实 488/489）**：① **并发 6 路本地模型把它卡死**
+                             （业主当场纠正 ⇒ 本地模型**串行**、bunny 可高并发但只派机械活）；
+                             ② **「有实现」≠「能用」** —— AST 报样条曲线有实现，读其文档串才知
+                             轮 141 已判死不达（后继 `CreateSpline3` 末参 BYREF）⇒ 不接成工具；
+                             ③ **「侦察说官方没写」≠「官方没有」** —— 钣金/焊件 6 处「未命中」是
+                             **我给的候选名写错了**，换真名全部存在。
+  2026-10-03  6acba72        **两条分割线真机建成**（台账 `特征下拉 · 曲线-分割线` → 已能）：
+                             投影型（草图 mark 4 + 面 mark 1 + **草图须在实体之外**）·
+                             轮廓型（方向项 mark 2 + 面 mark 1 + **视线不能顺着回转轴**）。
+                             ★★ **真因是记录里的假断言**「官方没给 mark 表」——官方两页**都给了**
+                             ⇒ 并**更正事实 419/420**（「回 None ⇒ 没建」被证伪；「树增量」也不足：
+                             草图被夹住时树涨而面数 6→6）。附**新门禁** `check_official_md_claims.py`
+                             —— ★ 它一接上就抓出**第二处同形真错**。
   2026-10-01  924407b        **AGENTS.md 超指令预算被截断**（66746 > 65536）：
-                            截断保留前缀 ⇒ **被截掉的正是末尾最新的事实**（静默退化）。
-                            ⇒ 62 条事实**原样**抽到 `docs/known-facts.md`（**零信息损失**），
-                            §六 留 21 条速查 + 指针 ⇒ AGENTS.md **40529 字节**，余量 ~25 KB。
+                             截断保留前缀 ⇒ **被截掉的正是末尾最新的事实**（静默退化）。
+                             ⇒ 62 条事实**原样**抽到 `docs/known-facts.md`（**零信息损失**），
+                             §六 留 21 条速查 + 指针 ⇒ AGENTS.md **40529 字节**，余量 ~25 KB。
 ━━━━━━━━━━━━━━━━━━ **A 级判据：全部达成** ━━━━━━━━━━━━━━━━━━
 
 | 判据 | 状态 |
@@ -8472,6 +8491,7 @@
 | **P6** | ~~并入：余下大域 205~~ | 同上 | A1 · A2 · A10 | P4 | ⛔ 见调整记录 |
 | **P7** | 收口：审计与报告刷新 | `signature-audit.md` · `harvest-report.md` | A5 · A8 | P2 · P6 | ✅ |
 | **P8** | 发布准备 | 自建仓库远端 + 推送 | A6 §七 | P7 + **用户批准** | ⛔ **只等用户输入** |
+| **P9** | **用户视角覆盖面缺口** | `specs/202-user-coverage-gaps/` · 缺口项工具化 | A1 · A4 · A10 | — | 🟢 **批 1 已交付**（真机 3 项 · 覆盖率 **99/145**） |
 
 **━━━━━━━━━ 调整记录（§二 同步，2026-10-01）━━━━━━━━━**
 
@@ -8751,6 +8771,41 @@ python -m pytest tests -q                                     # → 与基线逐
 **做**：等用户给远端地址 → `git remote add` → 推送（**必须先获批准**）
 **验收**：`git remote -v` 有目标远端；`THIRD-PARTY-NOTICES.md` 在仓库根
 **产出**：自建仓库
+
+---
+
+### P9 · 用户视角覆盖面缺口（规格 `specs/202-user-coverage-gaps`）
+
+**读数**（开工前先跑，确认起点是**真的**，不是记忆里的"应该做完了"）
+
+```powershell
+python tools\audit_gap_implementations.py     # 35 个缺口项里，本仓**已有真实现**的有几条（AST 判，不用 grep）
+python -c "import io,re;t=io.open('docs/user-feature-coverage.md',encoding='utf-8').read();print(re.search(r'本仓库\*\* \| (\d+/145)',t).group(1))"
+```
+
+**做**：按 `specs/202-user-coverage-gaps/research.md` §五 的分诊五类
+（A 已建成 · B 有实现未暴露 · C 候选直入法 · D 到不了 · E 待查）逐批推进：
+① **C 类先做工程图 13 项**（视图族 5 + 标注族 8；侦察已确认官方入口 13/13 命中）；
+② **钣金/焊件 5 项先试直入法**（真名已回查到）；
+③ **E 类 2 项换名重查**（加厚 · 曲线驱动阵列）。
+
+**验收**（可跑；跑不出绿就不算完成）
+
+```powershell
+python tools\audit_gap_implementations.py                                    # 重扫实现状态
+python -c "import io,re;t=io.open('docs/user-feature-coverage.md',encoding='utf-8').read();print(int(re.search(r'本仓库\*\* \| (\d+)/145',t).group(1))>=110)"   # SC-001（★ 现 99，未达标）
+pwsh -File tools\round_chain.ps1 -Tests tests\test_official_md_claims_gate.py  # release_check 第 1 轮 OK
+```
+
+**产出**：`specs/202-user-coverage-gaps/`（spec / plan / tasks / research / recon）·
+新工具（`mcp-server/tool_specs_batch*.py` + `scripts/`）· `capabilities.yaml` 条目 ·
+`docs/backend-limited-items.json` 追加项。
+
+⚠ **本阶段明令不许**（★ 三条都是本轮**用真金白银换来的**）：
+1. ★ 把**未真机验证**的标 `verified`（铁律 2）；
+2. ★ 因为 `*FeatureData` 带 `AccessSelections` 就**先判「到不了」** ——
+   反例就在本仓：分割线也有 `ISplitLineFeatureData`，而**它的直入法真机建成了**（事实 484）；
+3. ★ 拿**「有实现」当「能用」** —— 反例：样条曲线（AST 说有实现，实为轮 141 已判死不达，事实 488）。
 
 ---
 
