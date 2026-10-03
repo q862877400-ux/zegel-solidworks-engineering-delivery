@@ -24,6 +24,7 @@
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 import sys
@@ -66,14 +67,107 @@ def verify(api: str, ifaces: set, members: set) -> dict:
             "api_verified": bool(hit_iface or hit_member)}
 
 
+def repo_index() -> dict:
+    """★ **建「本仓源码索引」**：模块 → 该模块里定义的名字集 + 全仓源码拼成的文本。
+
+    ★★★ 2026-10-03（轮 483）**为什么加这一层** ——
+      上一轮（轮 482）核实 X 段时发现台账的**系统性盲点**（★ 已记进 **事实 379**）：
+      · 台账那三条 `level` / `entry` **都是 2026-10-03 五轮问答时手填的**，★ **之后从不自动更新**；
+      · 而★ `entry` 里填的名字**有的根本不存在** ⚠ ——
+        ★ 实例：`"线性阵列"` 的 `entry` 写的是 **`sw_part.linear_pattern`**，
+        而★ 本仓的真名是 **`sw_pattern.configure_linear_pattern`**（★ 模块都不一样）；
+      · ★★ **而没有任何门禁查 `entry` 是否真存在** ⇒ ★ 那是个**假入口**，
+        它让那条**显示成"待验证"而不是"可攻关"** ⇒ ★ **于是永远轮不到被攻关** ⚠
+
+    ★ 本函数给两层**自动核实**依据：
+      ① **`entry_exists`**：把 `entry`（`模块.函数`）拿去 `scripts/<模块>.py` 的 AST 里**真查**
+         —— ★ 查不到就是**假入口**（★ 该降到"可攻关"，★ 而不是"待验证"）；
+      ② **`implemented_hits`**：把 `api` 文本里的标识符拿去**全仓源码文本**里搜
+         —— ★ 搜到就说明**本仓引用过那个官方成员**（★ 是"可能已实现"的强线索，
+           ★ 而**不等于**"已能" —— ★ 那要真机证据，★ 见 `tier()`）。
+    """
+    mods: dict = {}
+    srcs: list = []
+    for d in (R / "scripts", R / "mcp-server", R / "tools"):
+        if not d.is_dir():
+            continue
+        for f in sorted(d.glob("*.py")):
+            try:
+                txt = f.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            srcs.append(txt)
+            names = set()
+            if d.name == "scripts":
+                try:
+                    for n in ast.walk(ast.parse(txt)):
+                        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                            names.add(n.name)
+                except SyntaxError:
+                    pass
+            mods.setdefault(f.stem, set()).update(names)
+    return {"modules": mods, "all_source": "\n".join(srcs)}
+
+
+def check_repo(it: dict, idx: dict, official_ids: set) -> dict:
+    """★ 对**一条台账**做两层本仓核实（★ 见 `repo_index` 的说明）。"""
+    out = {"entry_exists": None, "entry_why": "", "implemented_hits": []}
+
+    #: ① entry 真的存在吗（★ 只在 `scripts/` 里查 —— 台账的 entry 按约定指 `模块.函数`）
+    #:
+    #: ★★★ 2026-10-03（轮 483）**收紧判据 —— 第一版把通配当成了“不存在”** ⚠
+    #:   ★ 第一版把 `sw_sketch_dimensions.*`、`sw_hole_features.*_report`、
+    #:     `sw_sweep.create_sweep_report(cut=True)` **全判成“假入口”**（★ 共 10 条）
+    #:     —— ★★ 而它们只是**模糊声明**（通配符 / 带参数的调用形式）。
+    #:   ★★ 这正是**事实 62**：「一个门禁写了不等于它有效 —— **负例测试是唯一的证明**」。
+    #:   ⇒ ★ 现在：**通配 / 带参 ⇒ 只核模块在不在**；★ 只有**具体函数名**才核函数在不在 ✓
+    raw = str(it.get("entry") or "").strip()
+    if raw:
+        if ("*" in raw) or ("(" in raw):
+            mod_only = raw.split(".")[0].strip()
+            out["entry_exists"] = mod_only in idx["modules"]
+            out["entry_why"] = "模糊声明（通配/带参）：只核模块 `%s`" % mod_only
+        else:
+            mod, _, fn = raw.partition(".")
+            names = idx["modules"].get(mod)
+            if names is None:
+                out["entry_exists"] = False
+                out["entry_why"] = "模块 `%s` 不在 scripts/ 里" % mod
+            elif fn and fn not in names:
+                out["entry_exists"] = False
+                out["entry_why"] = "模块 `%s` 里没有 `%s`" % (mod, fn)
+            else:
+                out["entry_exists"] = True
+                out["entry_why"] = "查到了"
+
+    #: ② 本仓源码里出现没出现过那些官方标识符
+    hits = sorted({i for i in official_ids
+                   if i not in ("Entry", "Ref", "None") and i in idx["all_source"]})
+    out["implemented_hits"] = hits
+    return out
+
+
+#: ★ 本仓索引（★ 由 `main()` 填）—— 两层本仓核实用（轮 483）
+_IDX: dict = {}
+
+
 def main() -> int:
     data = json.loads(LEDGER.read_text(encoding="utf-8"))
     items = data["items"]
     ifaces, members = index_swapi()
     print("  官方源索引：接口 %d · 成员 %d" % (len(ifaces), len(members)))
 
+    #: ★★ 两层本仓核实（轮 483）—— 见 `repo_index` 的说明
+    _IDX.clear()
+    _IDX.update(repo_index())
+    print("  本仓索引：模块 %d 个 · 源码 %.1f 万字" % (len(_IDX["modules"]),
+                                              len(_IDX["all_source"]) / 10000.0))
+
     for it in items:
         it.update(verify(it.get("api", ""), ifaces, members))
+        #: ★★ 两层本仓核实（轮 483 加）—— ★ 见 `repo_index` 的说明
+        ids = re.findall(r"[A-Za-z_][A-Za-z0-9_]{3,}", it.get("api", "") or "")
+        it.update(check_repo(it, _IDX, set(ids)))
 
     #: \u2605 \u5206\u6863\uff1a\u53ef\u505a = \u5f53\u524d"\u4e0d\u80fd/\u6ca1\u9a8c\u8fc7" \u4e14 api \u6838\u5b9e\u547d\u4e2d \u4e14 \u672c\u4ed3\u65e0\u5165\u53e3
     def tier(it: dict) -> str:
@@ -81,7 +175,13 @@ def main() -> int:
             return "\u5df2\u80fd"
         if not it.get("api_verified"):
             return "\u5f85\u67e5"
-        return "\u53ef\u653b\u5173" if not it.get("entry") else "\u5f85\u9a8c\u8bc1"
+        #: ★★★ 轮 483 修掉那个盲点（★ 事实 379）：★ 原判据是 `not it.get("entry")`，
+        #:   而 `entry` 是**手填的**、且**没人查它真不真** ⇒ ★ **假入口**
+        #:   （如 `sw_part.linear_pattern`，真名其实在 `sw_pattern`）会让那条卡在“待验证”，
+        #:   ★★ **永远轮不到被攻关** ⚠
+        #:   ⇒ ★ 现在：**entry 不存在 ⇒ 按“无入口”算**（降为“可攻关”）✓
+        real_entry = bool(it.get("entry")) and it.get("entry_exists") is not False
+        return "\u53ef\u653b\u5173" if not real_entry else "\u5f85\u9a8c\u8bc1"
 
     for it in items:
         it["tier"] = tier(it)

@@ -26,6 +26,11 @@
     "FeatureExtrusion3"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "FeatureExtrusion3"
+   ],
    "tier": "已能"
   },
   {
@@ -39,6 +44,11 @@
     "FeatureRevolve2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "FeatureRevolve2"
+   ],
    "tier": "已能"
   },
   {
@@ -52,6 +62,12 @@
    ],
    "api_member_hits": [],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "ISweepFeatureData",
+    "swFmSweep"
+   ],
    "tier": "已能"
   },
   {
@@ -65,6 +81,11 @@
     "InsertProtrusionBlend2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertProtrusionBlend2"
+   ],
    "tier": "已能"
   },
   {
@@ -78,6 +99,12 @@
     "InsertProtrusionBlend2"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "Boundary",
+    "InsertProtrusionBlend2"
+   ],
    "tier": "可攻关"
   },
   {
@@ -91,6 +118,11 @@
     "FeatureCut4"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "FeatureCut4"
+   ],
    "tier": "已能"
   },
   {
@@ -104,6 +136,11 @@
     "HoleWizard5"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_hole_features`",
+   "implemented_hits": [
+    "HoleWizard5"
+   ],
    "tier": "已能"
   },
   {
@@ -117,6 +154,11 @@
     "FeatureRevolveCut2"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "FeatureRevolveCut2"
+   ],
    "tier": "可攻关"
   },
   {
@@ -128,6 +170,11 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sweep`",
+   "implemented_hits": [
+    "swFmSweepCut"
+   ],
    "tier": "待查"
   },
   {
@@ -141,6 +188,11 @@
     "InsertCutBlend"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertCutBlend"
+   ],
    "tier": "可攻关"
   },
   {
@@ -154,6 +206,12 @@
     "InsertCutBlend"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "Boundary",
+    "InsertCutBlend"
+   ],
    "tier": "可攻关"
   },
   {
@@ -167,6 +225,11 @@
     "FeatureFillet"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "FeatureFillet"
+   ],
    "tier": "已能"
   },
   {
@@ -180,6 +243,11 @@
     "FeatureLinearPattern4"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "FeatureLinearPattern4"
+   ],
    "tier": "待验证"
   },
   {
@@ -193,6 +261,11 @@
     "InsertRib"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertRib"
+   ],
    "tier": "待验证"
   },
   {
@@ -204,6 +277,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -217,6 +293,11 @@
     "InsertFeatureShell"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertFeatureShell"
+   ],
    "tier": "已能"
   },
   {
@@ -230,6 +311,11 @@
     "InsertWrapFeature2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertWrapFeature2"
+   ],
    "tier": "已能"
   },
   {
@@ -241,6 +327,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -254,6 +343,11 @@
     "InsertMirrorFeature2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertMirrorFeature2"
+   ],
    "tier": "已能"
   },
   {
@@ -267,6 +361,11 @@
     "InsertAxis2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertAxis2"
+   ],
    "tier": "已能"
   },
   {
@@ -280,6 +379,11 @@
     "InsertHelix"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertHelix"
+   ],
    "tier": "已能"
   },
   {
@@ -293,6 +397,12 @@
     "HoleWizard5"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "HoleSeries",
+    "HoleWizard5"
+   ],
    "tier": "可攻关"
   },
   {
@@ -306,6 +416,11 @@
     "InsertCosmeticThread3"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertCosmeticThread3"
+   ],
    "tier": "可攻关"
   },
   {
@@ -317,6 +432,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -330,6 +448,11 @@
     "FeatureCircularPattern4"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "FeatureCircularPattern4"
+   ],
    "tier": "已能"
   },
   {
@@ -343,6 +466,11 @@
     "FeatureCurvePattern"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "FeatureCurvePattern"
+   ],
    "tier": "可攻关"
   },
   {
@@ -356,6 +484,11 @@
     "FeatureSketchDrivenPattern"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "FeatureSketchDrivenPattern"
+   ],
    "tier": "可攻关"
   },
   {
@@ -369,6 +502,11 @@
     "InsertTableDrivenPattern"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertTableDrivenPattern"
+   ],
    "tier": "可攻关"
   },
   {
@@ -382,6 +520,11 @@
     "FeatureFillPattern"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "FeatureFillPattern"
+   ],
    "tier": "可攻关"
   },
   {
@@ -393,6 +536,11 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertVaryInstance"
+   ],
    "tier": "待查"
   },
   {
@@ -406,6 +554,11 @@
     "InsertRefPlane"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertRefPlane"
+   ],
    "tier": "可攻关"
   },
   {
@@ -419,6 +572,11 @@
     "InsertCoordinateSystem"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertCoordinateSystem"
+   ],
    "tier": "可攻关"
   },
   {
@@ -432,6 +590,11 @@
     "InsertReferencePoint"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertReferencePoint"
+   ],
    "tier": "可攻关"
   },
   {
@@ -445,6 +608,11 @@
     "InsertCenterOfMass"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertCenterOfMass"
+   ],
    "tier": "可攻关"
   },
   {
@@ -456,6 +624,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -467,6 +638,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -480,6 +654,12 @@
     "InsertSplitLineProject"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertSplitLineProject",
+    "Silhouette"
+   ],
    "tier": "可攻关"
   },
   {
@@ -493,6 +673,11 @@
     "InsertProjectedSketch"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertProjectedSketch"
+   ],
    "tier": "可攻关"
   },
   {
@@ -506,6 +691,11 @@
     "InsertCompositeCurve"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertCompositeCurve"
+   ],
    "tier": "待验证"
   },
   {
@@ -519,6 +709,11 @@
     "InsertCurveFile"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertCurveFile"
+   ],
    "tier": "可攻关"
   },
   {
@@ -530,6 +725,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -543,6 +741,11 @@
     "CreateLine"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateLine"
+   ],
    "tier": "已能"
   },
   {
@@ -556,6 +759,11 @@
     "CreateCenterLine"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateCenterLine"
+   ],
    "tier": "已能"
   },
   {
@@ -569,6 +777,12 @@
     "CreateLine"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "CreateLine",
+    "Midpoint"
+   ],
    "tier": "可攻关"
   },
   {
@@ -582,6 +796,11 @@
     "CreateCircle"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateCircle"
+   ],
    "tier": "已能"
   },
   {
@@ -598,6 +817,11 @@
     "PerimeterCircle"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "PerimeterCircle"
+   ],
    "tier": "已能"
   },
   {
@@ -612,6 +836,12 @@
     "CreateSpline3"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateSpline2",
+    "CreateSpline3"
+   ],
    "tier": "已能"
   },
   {
@@ -625,6 +855,11 @@
     "CreateSpline3"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "CreateSpline3"
+   ],
    "tier": "可攻关"
   },
   {
@@ -638,6 +873,11 @@
     "CreateSpline"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "CreateSpline"
+   ],
    "tier": "可攻关"
   },
   {
@@ -652,6 +892,12 @@
     "CreateSplinesByEqnParams2"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "CreateEquationSpline2",
+    "CreateSplinesByEqnParams2"
+   ],
    "tier": "可攻关"
   },
   {
@@ -665,6 +911,11 @@
     "CreateCornerRectangle"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateCornerRectangle"
+   ],
    "tier": "已能"
   },
   {
@@ -678,6 +929,11 @@
     "CreateCenterRectangle"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateCenterRectangle"
+   ],
    "tier": "已能"
   },
   {
@@ -694,6 +950,11 @@
     "Create3PointCornerRectangle"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "Create3PointCornerRectangle"
+   ],
    "tier": "已能"
   },
   {
@@ -710,6 +971,11 @@
     "Create3PointCenterRectangle"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "Create3PointCenterRectangle"
+   ],
    "tier": "已能"
   },
   {
@@ -726,6 +992,11 @@
     "CreateParallelogram"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateParallelogram"
+   ],
    "tier": "已能"
   },
   {
@@ -739,6 +1010,11 @@
     "CreateArc"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateArc"
+   ],
    "tier": "已能"
   },
   {
@@ -755,6 +1031,11 @@
     "CreateTangentArc"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateTangentArc"
+   ],
    "tier": "已能"
   },
   {
@@ -771,6 +1052,11 @@
     "Create3PointArc"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "Create3PointArc"
+   ],
    "tier": "已能"
   },
   {
@@ -784,6 +1070,11 @@
     "CreateEllipse"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateEllipse"
+   ],
    "tier": "已能"
   },
   {
@@ -800,6 +1091,11 @@
     "CreateEllipticalArc"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateEllipticalArc"
+   ],
    "tier": "已能"
   },
   {
@@ -816,6 +1112,11 @@
     "CreateParabola"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateParabola"
+   ],
    "tier": "已能"
   },
   {
@@ -832,6 +1133,11 @@
     "CreateConic"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateConic"
+   ],
    "tier": "已能"
   },
   {
@@ -845,6 +1151,11 @@
     "CreateSketchSlot"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateSketchSlot"
+   ],
    "tier": "已能"
   },
   {
@@ -858,6 +1169,12 @@
     "CreateSketchSlot"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "CreateSketchSlot",
+    "center"
+   ],
    "tier": "可攻关"
   },
   {
@@ -871,6 +1188,11 @@
     "CreateSketchSlot"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "CreateSketchSlot"
+   ],
    "tier": "可攻关"
   },
   {
@@ -884,6 +1206,12 @@
     "CreateSketchSlot"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "CreateSketchSlot",
+    "center"
+   ],
    "tier": "可攻关"
   },
   {
@@ -900,6 +1228,11 @@
     "CreateFillet"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateFillet"
+   ],
    "tier": "已能"
   },
   {
@@ -913,6 +1246,11 @@
     "CreateChamfer"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateChamfer"
+   ],
    "tier": "已能"
   },
   {
@@ -926,6 +1264,12 @@
     "InsertSketch"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "False",
+    "InsertSketch"
+   ],
    "tier": "已能"
   },
   {
@@ -939,6 +1283,11 @@
     "SketchUseEdge3"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "SketchUseEdge3"
+   ],
    "tier": "已能"
   },
   {
@@ -953,6 +1302,12 @@
     "SetDynamicMirror"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "GetDynamicMirror",
+    "SetDynamicMirror"
+   ],
    "tier": "已能"
   },
   {
@@ -966,6 +1321,11 @@
     "AutoDimension2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "AutoDimension2"
+   ],
    "tier": "已能"
   },
   {
@@ -981,6 +1341,11 @@
     "AddHorizontalDimension2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sketch_dimensions`",
+   "implemented_hits": [
+    "AddHorizontalDimension2"
+   ],
    "tier": "待验证"
   },
   {
@@ -996,6 +1361,11 @@
     "AddVerticalDimension2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sketch_dimensions`",
+   "implemented_hits": [
+    "AddVerticalDimension2"
+   ],
    "tier": "待验证"
   },
   {
@@ -1009,6 +1379,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sketch_dimensions`",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1022,6 +1395,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sketch_dimensions`",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1035,6 +1411,11 @@
     "AddSymmetricDimension"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "AddSymmetricDimension"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1048,6 +1429,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sketch_dimensions`",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1059,6 +1443,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1070,6 +1457,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1083,6 +1473,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sketch_dimensions`",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1099,6 +1492,11 @@
     "SketchTrim"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "SketchTrim"
+   ],
    "tier": "已能"
   },
   {
@@ -1115,6 +1513,11 @@
     "SketchExtend"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "SketchExtend"
+   ],
    "tier": "已能"
   },
   {
@@ -1128,6 +1531,12 @@
     "SketchUseEdge3"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "Silhouette",
+    "SketchUseEdge3"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1144,6 +1553,11 @@
     "IntersectCurves"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "IntersectCurves"
+   ],
    "tier": "待验证"
   },
   {
@@ -1160,6 +1574,11 @@
     "CreateLinearSketchStepAndRepeat"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateLinearSketchStepAndRepeat"
+   ],
    "tier": "已能"
   },
   {
@@ -1176,6 +1595,11 @@
     "CreateCircularSketchStepAndRepeat"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "CreateCircularSketchStepAndRepeat"
+   ],
    "tier": "已能"
   },
   {
@@ -1191,6 +1615,12 @@
     "SketchModifyTranslate"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "IModelDoc2",
+    "SketchModifyTranslate"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1204,6 +1634,12 @@
    ],
    "api_member_hits": [],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "IModelDoc2",
+    "SketchModifyCopy"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1219,6 +1655,12 @@
     "SketchModifyRotate"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "IModelDoc2",
+    "SketchModifyRotate"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1234,6 +1676,12 @@
     "SketchModifyScale"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "IModelDoc2",
+    "SketchModifyScale"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1247,6 +1695,11 @@
    ],
    "api_member_hits": [],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "IModelDoc2"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1263,6 +1716,11 @@
     "SketchOffset2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "SketchOffset2"
+   ],
    "tier": "已能"
   },
   {
@@ -1276,6 +1734,11 @@
     "SketchOffsetOnSurface"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "SketchOffsetOnSurface"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1293,6 +1756,13 @@
     "DeleteRelation"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sketch_dimensions`",
+   "implemented_hits": [
+    "DeleteRelation",
+    "GetSketchRelations",
+    "ISketch"
+   ],
    "tier": "待验证"
   },
   {
@@ -1306,6 +1776,11 @@
     "SketchAddConstraints"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "SketchAddConstraints"
+   ],
    "tier": "已能"
   },
   {
@@ -1321,6 +1796,11 @@
     "FullyDefineSketch"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "模糊声明（通配/带参）：只核模块 `sw_sketch_dimensions`",
+   "implemented_hits": [
+    "FullyDefineSketch"
+   ],
    "tier": "待验证"
   },
   {
@@ -1334,6 +1814,11 @@
     "FeatureExtruRefSurface3"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "FeatureExtruRefSurface3"
+   ],
    "tier": "已能"
   },
   {
@@ -1345,6 +1830,11 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "FeatureRevolveRefSurface"
+   ],
    "tier": "待查"
   },
   {
@@ -1359,6 +1849,12 @@
     "Surface"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertProtrusionSwept4",
+    "Surface"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1373,6 +1869,12 @@
     "Surface"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertProtrusionBlend2",
+    "Surface"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1384,6 +1886,11 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertBoundaryBoss"
+   ],
    "tier": "待查"
   },
   {
@@ -1397,6 +1904,11 @@
     "InsertFillSurface2"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertFillSurface2"
+   ],
    "tier": "已能"
   },
   {
@@ -1410,6 +1922,11 @@
     "InsertFreeform"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertFreeform"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1423,6 +1940,11 @@
     "InsertPlanarRefSurface"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertPlanarRefSurface"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1436,6 +1958,11 @@
     "InsertOffsetSurface"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertOffsetSurface"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1449,6 +1976,11 @@
     "InsertFlattenSurface"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertFlattenSurface"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1462,6 +1994,11 @@
     "FeatureFillet"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "FeatureFillet"
+   ],
    "tier": "待验证"
   },
   {
@@ -1473,6 +2010,11 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertRuledSurface"
+   ],
    "tier": "待查"
   },
   {
@@ -1486,6 +2028,11 @@
     "InsertDeleteFace2"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertDeleteFace2"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1497,6 +2044,11 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertReplaceFace"
+   ],
    "tier": "待查"
   },
   {
@@ -1510,6 +2062,11 @@
     "InsertDeleteHole"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertDeleteHole"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1523,6 +2080,11 @@
     "InsertExtendSurface"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertExtendSurface"
+   ],
    "tier": "已能"
   },
   {
@@ -1534,6 +2096,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1547,6 +2112,11 @@
     "InsertUntrimSurface"
    ],
    "api_verified": true,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [
+    "InsertUntrimSurface"
+   ],
    "tier": "可攻关"
   },
   {
@@ -1560,6 +2130,11 @@
     "InsertSewRefSurface"
    ],
    "api_verified": true,
+   "entry_exists": true,
+   "entry_why": "查到了",
+   "implemented_hits": [
+    "InsertSewRefSurface"
+   ],
    "tier": "已能"
   },
   {
@@ -1571,6 +2146,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1582,6 +2160,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   },
   {
@@ -1593,6 +2174,9 @@
    "api_iface_hits": [],
    "api_member_hits": [],
    "api_verified": false,
+   "entry_exists": null,
+   "entry_why": "",
+   "implemented_hits": [],
    "tier": "待查"
   }
  ]
