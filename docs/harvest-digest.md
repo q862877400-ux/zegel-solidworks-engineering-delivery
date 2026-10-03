@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **101** 条能力。
+共 **102** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 88 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 89 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 71 | **本项目自研**（护城河域等） |
+| `original` | 72 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -171,6 +171,11 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ★ 选**圆柱面本身**   ⇒ 不成 ✗
        ★ **什么都不选**     ⇒ 不成 ✗`<br>· `★★★ **而本轮又一次证明“失败在我这边”**：第一版我用 `str(Surface.Identity)` 里含 `"Cylinder"` 来**猜**哪个面是圆柱面 ⇒ ★ **三组全 `cyl=False`**（★ 根本没找到面）⚠；
        ★ 而官方有现成的 **`ISurface.IsCylinder()`** ⇒ ★ 换成它之后**一次就成** ✓` |
+| `sketch_spline` | · `★★ 2026-10-03（轮 574）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateSpline2(VARIANT(VT_ARRAY|VT_R8, [x,y,z,…]), False)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/spline-with-variant-evidence.json`。`<br>· `★★★ **而三个条件是四格对照定下的**：
+       ① ★ **成员名 = `CreateSpline2`**。★ **`CreateSpline`（不带 2）在**迟到绑定**下根本取不到**（`成员不可调用`，★ 第四类形态）⚠
+       ② ★ **数组形态 = `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** （★ 而**扁平 list / list of tuples 都回 `None`**）
+       ③ ★ **第二个参数 = `False`**（`SimulateNaturalEnds`）
+       ⇒ ★★ **四格里只有一格成** ✓`<br>· `★★ **而本轮还证明了一件事**：★ `call_com_member` **就是 `get_com_member` 的别名**（实现只有一行；★ 只是**名字即意图**）⇒ ★ **换名字不会改行为** ⚠` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

@@ -4094,6 +4094,33 @@
         "★ **7 参**：`Standard`（**1 = ANSI Metric**）· `StandardType` · `Size` · `Diameter` · `EndType`（**2 = Through**）· `Depth`（仅 Blind 类有效）· `Note`。",
         "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：Blind（`EndType=0`）与 `Depth` 的配合。"
       ]
+    },
+    {
+      "id": "sketch_spline",
+      "label": "样条曲线（`ISketchManager.CreateSpline2`）—— ★ **真机建成**·★★ **三个条件缺一不可**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与 Remarks** + **本仓旧探针**立）：`C:\\swapi\\types\\ISketchManager\\CreateSpline.md`（`PointData` = **扁平的 X,Y,Z 序列**）；★ 而真机可达的是 **`CreateSpline2(data, SimulateNaturalEnds)`**（★ 与 `tools/probe_spline_forms.py` 的结论一致）。代码：`tools/prove_spline_with_variant.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 574）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateSpline2(VARIANT(VT_ARRAY|VT_R8, [x,y,z,…]), False)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/spline-with-variant-evidence.json`。",
+        "★★★ **而三个条件是四格对照定下的**：\n       ① ★ **成员名 = `CreateSpline2`**。★ **`CreateSpline`（不带 2）在**迟到绑定**下根本取不到**（`成员不可调用`，★ 第四类形态）⚠\n       ② ★ **数组形态 = `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** （★ 而**扁平 list / list of tuples 都回 `None`**）\n       ③ ★ **第二个参数 = `False`**（`SimulateNaturalEnds`）\n       ⇒ ★★ **四格里只有一格成** ✓",
+        "★★ **而本轮还证明了一件事**：★ `call_com_member` **就是 `get_com_member` 的别名**（实现只有一行；★ 只是**名字即意图**）⇒ ★ **换名字不会改行为** ⚠"
+      ],
+      "limitations": [
+        "★★ **三个条件**：成员名 `CreateSpline2`、数组形态 `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`、第二参 `False`。",
+        "★ **必须先有活动草图**；★ **2D 草图里 Z 被忽略**（官方）；★ 官方说它**不配合 `AddToDB`**。",
+        "⚠ 本包装未接进 MCP 工具层；⚠ 未查：`SimulateNaturalEnds = True` 的行为。"
+      ]
     }
   ]
 }

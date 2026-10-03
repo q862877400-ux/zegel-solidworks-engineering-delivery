@@ -357,7 +357,8 @@
    "zh": "曲面上的样条曲线",
    "api": "CreateSpline(3D)",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_spline"
   },
   {
    "tb": "草图绘制",

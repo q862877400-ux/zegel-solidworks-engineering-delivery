@@ -2112,3 +2112,26 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **故本轮按事实 53 停手**（★ 三轮同一处），★ 并把它**单列**进 `docs/toolbar-gaps-backend-limits.md` —— ★ 而**标注清楚“尚未证实”**（★ 而不是“到不了”）。
      ★ **而给后面留的一步**：★ 先把 **`CreateSpline` 的点数组传对**（★ 那本身是一条**草图图元**能力），★ 再回来试复合曲线。
      ★★ **方法论**：★ **“我试过了”与“我试到了那一步了”不是一回事** —— ★ 一组因为**前置没搭成**而没跑到目标调用的，★ **不能计入“试过了”** ⚠|真机：`tools/prove_composite_curve_per_example.py`；证据 `output/composite-curve-per-example-evidence.json`；对照事实 449 / 450（例子）· 事实 53（停手） |
+| 452 | **★★★ 样条曲线：**三个条件缺一不可****（成员名 `CreateSpline2` · `VARIANT(VT_ARRAY|VT_R8)` · 第二参 `False`）；★ 而**`CreateSpline`（不带 2）在迟到绑定下取不到** —— 2026-10-03（轮 574）。
+     ★ **而答案本仓早就有** —— 本轮按「**先扫已走死的路**」查到了 `tools/probe_spline_forms.py` 与 **`output/spline-forms.json`**：
+     ```
+     ① 扁平 list                 ⇒ ret=None · 段 0→0   ✗
+     ② 扁平 tuple                ⇒ ret=None · 段 0→0   ✗
+     ③ **`VARIANT(VT_ARRAY|VT_R8)`**  ⇒ ret=**`CDispatch`** · **段 0→1** ✓
+     ④ list of tuples（对照）     ⇒ ret=None            ✗
+     ```
+     ★★ **而本轮真机又补上了第三个条件**：★ **成员名必须是 `CreateSpline2`** ——
+       `CreateSpline`（不带 2）在本机四格里**全报“成员不可调用”**（★ **第四类形态**）⚠
+     ★ 真机（`tools/prove_spline_with_variant.py`，零弹窗）：四格里**只有一格成**：
+     ```
+     ★★ **前人原样** `CreateSpline2(data, False)` ⇒ **段 0 → 1** · 回 `CDispatch` ✓
+     `CreateSpline(data)`（不带 2）                    ⇒ **成员不可调用** ✗
+     扁平 list · list of tuples                        ⇒ 回 `None` ✗
+     ```
+     ⇒ ★★ **故三个条件**：① 成员名 **`CreateSpline2`**；② 数组形态 **`VARIANT(VT_ARRAY|VT_R8, 扁平 list)`**；③ 第二参 **`False`**。
+     ★★★ **而本轮还证明了一件容易误会的事**：★ **`call_com_member` 就是 `get_com_member` 的别名**
+       （实现只有一行 `return get_com_member(obj, attr_name, *args)`；★ docstring 自己写着“行为完全相同，差别在**名字**”）⚠
+       ⇒ ★ **故“把它换成 `call_com_member`”不会改行为** —— ★ 真正管用的是**成员名与参数形态**。
+     ★★ **方法论**：★ **一个失败的探针与一个成功的探针之间，差异可能只在一个成员名的后缀上** —— ★ 而**先读旧探针的原文**比重写一个快得多** ⚠
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_spline`**（level = **verified**，共 **102** 条）；台账「曲面上的样条曲线」补 `capability_id` ⇒ **已能 76**。
+     ★ **而它顺手解开了另一条**：事实 451 里复合曲线卡在“造样条”上 ⇒ ★ **现在那一步可以跑了** ✓|真机：`tools/prove_spline_with_variant.py`；证据 `output/spline-with-variant-evidence.json`；旧探针与证据：`tools/probe_spline_forms.py` · `output/spline-forms.json` |

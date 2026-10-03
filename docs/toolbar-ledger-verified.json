@@ -1,14 +1,14 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 75,
+  "已能": 76,
   "待查": 20,
   "待验证": 7,
-  "可攻关": 17
+  "可攻关": 16
  },
  "by_toolbar_gap": {
   "特征下拉": 8,
-  "草图绘制": 3,
+  "草图绘制": 2,
   "草图尺寸": 1,
   "草图编辑": 3,
   "曲面": 2
@@ -877,6 +877,7 @@
    "api": "CreateSpline(3D)",
    "entry": "",
    "level": "不能",
+   "capability_id": "sketch_spline",
    "api_iface_hits": [],
    "api_member_hits": [
     "CreateSpline"
@@ -887,7 +888,7 @@
    "implemented_hits": [
     "CreateSpline"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "草图绘制",
