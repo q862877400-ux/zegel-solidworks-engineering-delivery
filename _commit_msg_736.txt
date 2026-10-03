@@ -1,0 +1,55 @@
+fix(阶段1): ★★★★★ 处置 **`JUDGE-C_D_E` 🔴 #5**（★ `E-6 #1`）—— ★ 一处**假引用**：★ 把 `CreateLine` 的前置安到了 `CreateSpline2` 上、★ 还冠以「官方 Remarks」
+
+■ 一 · ★ 裁判逐字（★ 🔴 #5）
+  > ★ 「把 `CreateLine2` 的前置（「无活动草图就不建、回 NULL」）**搬到 `CreateSpline2` 上**
+  >   并冠以「官方 Remarks」—— ★ 官方逐字写的是**反面**（没有草图会**新建**）」✓
+
+■ 二 · ★★★★ 实测复核（★ 我读了**两个** md 逐字比对）
+  | ★ 官方页 | ★ `## Remarks` 逐字 |
+  |---|---|
+  | ★ `ISketchManager/CreateSpline2.md` | ★ 「This method creates a spline in the active 2D sketch. ★★ **If a sketch is not active, then a new sketch is created.**」✓ |
+  | ★★ `ISketchManager/CreateLine.md` | ★ 「If a sketch is not active, then the line is **not created and NULL is returned**.」✓ |
+  ⇒ ★★★★ **两页**正好相反**** ✓ · ★★ 而 `CreateLine2.md` **不存在**（★ 只有 `CreateLine`）✓
+  ⇒ ★★★ **所以那句是 `CreateLine` 的、★ 被搬到了 `CreateSpline2` 的 doc 上** ✓
+
+■ 三 · ★★★★★ 病灶（★ 而它的**危害等级比"没写依据"更高**）
+  ★ `mcp-server/tool_specs_batch76.py` 的 `solidworks_sketch_spline` 的 `doc` 逐字原来是：
+    > ★ 「★ 前置（官方 Remarks）：**必须先有活动草图**。」✓
+  ★★ 而**官方写的是反面** ⇒ ★★★ **这是一处**假引用**** ——
+    ★★ 它比「没写依据」更坏：★ **后人照它排查会**停在死路上**** ✓
+    （★ 而且那一句**正好是一段复杂的排查史**的结论段 —— ★ 所以它格外像真的）
+  ★★★ **而能力层 `scripts/sw_part.sketch_spline` 的 docstring**没有**这句**
+    （★ 它记的是"数组包装形态"那条真因）⇒ ★ **所以假引用只在 ToolSpec 的 doc 里** ✓
+
+■ 四 · ★ 修法
+  ★ **换成官方原话**（★ `CreateSpline2` 的 Remarks 逐字）·
+  ★★ **并写明这里原来是一处假引用**（★ 点出**真出处是 `CreateLine`**、★ 并说明为什么更坏）✓
+  ★★★ **旧句保留在更正文字里**（★ 「自我否定必须补正而不是删除」）—— ★ 但**与「假引用」标注同框** ✓
+
+■ 五 · ★★★★ 新增测试（★ `tests/test_spline_doc_no_fake_citation.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **读官方两页**确认它们**相反**、★ 且 `CreateLine2.md` **不存在** ✓ |
+  | ★★★ **核心断言** | ★ 旧句**要么不在**、★ **要么与「假引用」+`CreateLine` 标注**同框（★ **二选一**）✓ |
+  | ★★ **核心断言** | ★ 必须引**真**的官方 Remarks（★ `a new sketch is created`）✓ |
+  | ★★ **负例** | ★ 更正里**必须点明那句的真出处**（★ 否则后人只知道"错了"、★ 不知道**错在哪**）✓ |
+
+  ★★★★ **而"二选一"这个形状本身是本轮的一条判据**：
+    ★ 本仓纪律是**「自我否定必须补正而不是删除」** ⇒ ★★ 所以**"旧句必须消失"是错的判据**
+    （★ 它会把**合格的补正**判成不合格 —— ★ 我第一版就是这么写的）✓
+    ★★★ **正确形状**：★ **旧句在 + 标注在 = 合格**；★ **旧句在 + 没标注 = 不合格** ✓
+
+■ 六 · ★★ 本轮踩到的两处"老坑"（★ 都如实记）
+  ★ ⚠ **坑 ①**：★ 我**改 doc 时漏了行尾逗号** ⇒ ★ `SyntaxError: positional argument follows
+    keyword argument`（★ 那个错**指向不了真因**）✓
+  ★★ ⚠ **坑 ②**：★ **事实 513 第 13 次** —— ★ 我的更正文字里**逐字引了旧句** ⇒
+    ★★ 于是「旧句还在不在」的检查**假阳性** ⇒ ★★★ **修法是改用 AST 的字符串字面量**
+    （★ 注释天然不在 AST 里）✓
+  ★★★ ⚠ **附**：★ 而 `tests/test_sw_sketch_contract.py::test_sketch_spline_fails_loudly_instead_of_
+    returning_none` 报 `ModuleNotFoundError: No module named 'sw_feature_readback'`
+    （★ `scripts/sw_part.py:28`）⇒ ★ **我用 `git stash` 判明它是**存量失败****
+    （★ 撤掉本轮改动后**同样失败**）⇒ ★★ **与本轮无关、如实记档** ✓
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **`C_D_E` 的 🔴 16 条**：★ **完成 10 条** ⇒ **剩 6 条** ✓

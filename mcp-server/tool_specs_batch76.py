@@ -83,7 +83,19 @@ _BATCH76.append(
             "★★ 而**正解早在本仓**：`scripts/sketch_relations.create_spline:272-273` 逐字写着"
             "「★★★ 必须包 `VARIANT(VT_ARRAY|VT_R8)` —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」"
             "⇒ ★ **同一个仓里两条路，一条修了、另一条从没跟上**。"
-            "★ 前置（官方 Remarks）：**必须先有活动草图**。"
+            "★ 前置（**官方 `## Remarks` 逐字**）："
+            "「This method creates a spline in the active 2D sketch. "
+            "★★ If a sketch is not active, then a new sketch is created.」"
+            "⇒ ★★★ **即：★ 没有活动草图时它**会新建一个**、★ 不会失败** ✓"
+            "⚠⚠ **2026-10-04（接手轮）更正 —— 这里原来写的是**假引用****"
+            "（★ 处置 `JUDGE-C_D_E.md` 🔴 **#5** · `E-6 #1`）："
+            "★ 原句逐字「★ 前置（官方 Remarks）：**必须先有活动草图**」· "
+            "★★ 而**官方 `CreateSpline2` 写的是**反面**** —— ★ 那一句其实是 "
+            "**`ISketchManager.CreateLine` 的 Remarks**，逐字「If a sketch is not active, then the line "
+            "is **not created and NULL is returned**.」（★ 我读了两个 md 逐字比对；"
+            "★ 另注：`CreateLine2` **不存在**，★ 只有 `CreateLine`）⇒ "
+            "★★★ **把 `CreateLine` 的前置搬到 `CreateSpline2` 上、还冠以「官方 Remarks」，"
+            "是一处**假引用** —— ★ 它比「没写依据」更坏：★ 后人照它排查会**停在死路上** ✓"
             "⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。",
     )
 )
