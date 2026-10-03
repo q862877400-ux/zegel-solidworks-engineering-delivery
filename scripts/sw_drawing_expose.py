@@ -24,6 +24,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -163,7 +164,30 @@ def set_sheet_format(drawing_model, format_path: str) -> dict:
             C.get_com_member(drawing_model, "ForceRebuild3", False)
         except Exception:                                               # noqa: BLE001
             pass
-        out["ok"] = True
+        #: ★★★★ 2026-10-04（接手轮）**把承诺的两个条件真的算出来**（★ 处置 `JUDGE-C_D_E.md`
+        #:   的 🔴 #1 · **E5-5**）—— 裁判逐字：「★ 仓内 doc：`★ 判据：SetTemplateName 回 None
+        #:   **且** GetTemplateName 回读等于新路径。` ★ 而目标：`out["ret_repr"] = repr(ret)` ／
+        #:   `out["template_name_readback"] = …` ／ ★★ **`out["ok"] = True`（无条件）**」✓
+        #:   ★★★ **病灶（★ 实测）**：★ `ret` 与回读值都只**存进返回值**、★ **从没与承诺条件比**；
+        #:     ★★ 连**回读抛异常**（★ `template_name_readback = None`）时，★ `ok` **仍是 `True`** ✓
+        #:   ⇒ 修法：★ **按 `verified_by` 那句逐字实现两个条件** ✓
+        #:     · ★ 条件 ①：★ `SetTemplateName` **回 `None`**（★ 官方回 `void` ⇒ 成功即 `None`）✓
+        #:     · ★★ 条件 ②：★ `GetTemplateName` **回读等于新路径** —— ★ 比较用 `normcase` +
+        #:       `normpath`（★ Windows 路径大小写与分隔符都可能不同，★ 而那是**同一个路径**）✓
+        #:   ★★★ 而"回读取不到"（★ 抛异常）⇒ ★ **条件 ② 判为不成立**（★ 因为承诺要求"等于"）✓
+        ret_is_none = ret is None
+        readback = out.get("template_name_readback")
+        want = os.path.normcase(os.path.normpath(str(format_path)))
+        got = os.path.normcase(os.path.normpath(str(readback))) if readback else None
+        readback_matches = bool(got) and got == want
+        out["condition_ret_is_none"] = ret_is_none
+        out["condition_readback_matches"] = readback_matches
+        out["ok"] = bool(ret_is_none and readback_matches)
+        if not out["ok"]:
+            out["err"] = ("★ 承诺的两个条件没都满足："
+                          "① `SetTemplateName` 回 None = %s；"
+                          "② 回读等于新路径 = %s（want=%r got=%r）"
+                          % (ret_is_none, readback_matches, want, got))
     except Exception as exc:                                            # noqa: BLE001
         out["ok"] = False
         out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
