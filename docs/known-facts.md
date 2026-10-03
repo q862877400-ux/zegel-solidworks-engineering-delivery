@@ -1518,3 +1518,21 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而 `PreTrimSurface` **每次都回 `True`**（★ 事实 400 起就是），★ **而第二段总是 `None`** 。
      ★ **按事实 53 停手**（剪裁已 3 轮：519 · 534 · 535）。
      ★ **累计已排除**：① 参数不全（md vs CHM vs 类型库 三源合一）· ② `Pre` 的四个开关组合（轮 519）· ③ **顺序反了**（事实 415，已正）· ④ **按对象选体**（本轮，而它**本来就选不中**）。|真机：`tools/probe_trim_surface_by_object.py`；证据 `output/trim-surface-by-object-evidence.json`；对照事实 32 / 400 / 415 |
+| 417 | **★★ 分割线有**三条入口**（轮廓/投影/交叉）；而交叉型真机不成、另两条因事实 33 而**没真试到**** —— 2026-10-03（轮 537），B7/T705。
+     ★ **三条入口**（取自类型库·第 3 源）：
+     | 类型 | 入口 | 签名 |
+     |---|---|---|
+     | **轮廓** | `IModelDoc2.InsertSplitLineSil()` | **0 参** |
+     | **投影** | `IModelDoc2.InsertSplitLineProject(IsDirectional, FlipDir)` | **2 参** |
+     | **交叉** | `IFeatureManager.InsertSplitLineIntersect(CompleteOption)` | **1 in** |
+     ★ 而本仓此前的记录只有一句“**分割线两条真机树无增量（前置还不够）**”—— ★ **没写清是哪个入口与什么前置** ⚠
+     ★ 真机（`tools/probe_split_line.py`，零弹窗）：
+     ```
+     轮廓型   ⇒ picked={"plane": **null**} · 回 None · 树不动   ← ★ **没真试到** ⚠
+     投影型   ⇒ picked={"plane": **null**} · 回 None · 树不动   ← ★ **没真试到** ⚠
+     交叉型   ⇒ picked={"faces": **10**} · 回 None · 树不动   ← ★ **真试到了**
+     ```
+     ★★ **而前两条为什么没真试到**：★★ **事实 33 又一次应验** —— ★ 我在 `_pick_plane` 里把 `Callout` 传了 **`None`**（而本仓要 `_empty_callout()`）⇒ 报 `类型不匹配`，★ 而**我的 `except: continue` 把它吞了**（★ 于是**静默失败**）。
+     ★ 故：★ **确定结论只有一条** —— **交叉型（10 张面选中）不成** ✓
+     ★ **下一步**：★ 用本仓的 `sw_part._empty_callout()` 重试轮廓/投影两型（★ 而那两条**尚未真试**）。
+     ★★ **可复用的记误**：★ **`except: continue` 会把“参数类型错”变成“选不中”**，★ 而“选中不”又会被读成“前置不够” ⚠ —— ★ 这正是计划里那句没写清的话的来历。|真机：`tools/probe_split_line.py`；证据 `output/split-line-evidence.json`；对照事实 32 / 33 / 416 |
