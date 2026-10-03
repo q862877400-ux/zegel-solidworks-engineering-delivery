@@ -3536,3 +3536,33 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         `output/selection-count-e2e-evidence.json` · `output/resolver-selection-repeat-evidence.json` ·
         `output/resolver-mark-matrix-evidence.json` · ★ 原证据 `output/selection-lifetime-evidence.json`
         （第 17 轮那次 `2 → 0`，★ **保留不动当反例**）· 对照 **事实 503**（★ 机制部分据此条更正）|
+| 510 | **★ 一条"看起来很好"的静态门禁，**实测标定后**发现它会把"清空选区"和"只读报告"也抓进来** —— 2026-10-03（接手轮，★ 我**没有**按原样接线）。
+      ★ **提案出处**：bunny 的 `recon/preselect-family-merged.md` §四 建议 3，判据逐字：
+        「当 spec 的 doc（或目标函数 docstring）含**「调用前 / 先选 / caller must first select /
+         the selected entities / selected profiles / last selection」**且
+         `pre_call is None and derived_args is None` ⇒ 报」，★ 它**估**「一次抓住本表 **30 条**」。
+      ★★ **我先标定再接线**（★ 事实 506/507 的教训：判据要能自证、要跟调用图）——
+        标定件 `output/_calibrate_preselect_gate.py`（★ 带**覆盖面自报** + **跟一层调用图**）：
+        · ★ **覆盖面**：扫 **277** 条 spec · 文档里出现「先选/预选」类信号的 **63** 条；
+        · ★★ **按原判据会被报：52 条**（★ 不是它估的 30）；
+        · ★★★ **含**已文档化的假阳性**（它自己那句"不代选"就写在同一份函数文档里）：
+          `clear_selection` / `clear_selection_for_preview`（★ 它们是**清空**选区，不是前置）·
+          `current_selection`（★ 它**报告**选区）·
+          `drawing_create_auxiliary_view` / `drawing_create_section_view` /
+          `drawing_insert_surface_finish_symbol`（★ 这三条的文档里**逐字写着「不代选」「只回读」**）。
+      ★ **可用的修正**（★ 我实测定下来的）：
+        · ★ 加**反向信号**排除：文档含「**不代选 / 不预选 / 自己选 / 只回读 / 报告选区**」⇒ **不报**；
+        · ★★ 真信号仍是**"前置由选区算出"**（★ 即本仓已实现的
+          `tools/scan_preselect_requiring_tools.py`：函数**据此早退失败**，或
+          `preconditions_held` 由选区读得出）⇒ ★ 那版报 **2 条**，★ 且两条与真机「前置未成立」**独立吻合**。
+      ★ **一个有价值的副产品**：★ 标定里「**报出的 52 条中，有 `selection` 参数的 0 条**」
+        ⇒ ★★ 说明**凡声明了 `selection` 参数的工具，都已经配了 `pre_call`**（★ 仓内卫生是好的）⇒
+        ★ 真正缺的是**没写 `selection` 参数、却在函数里读选区**的那批。
+      ★★★ **可复用判据**：★ **别人（或另一个模型）给的判据，也要先标定再接线** ——
+        ★ 标定的三样是：**① 覆盖面（扫了几条）· ② 报几条 · ③ 抽 5 条看是不是假阳性**；
+        ★★ 而"判据的作者估了几条"**不能替代实测**（★ 本例估 30、实测 52，★ 且错的那 22 条里有它自己文档化的豁免）。
+      ★ 与**事实 62**（负例是门禁有效的唯一证明）与**506/507**（自报覆盖面 · 跟调用图）构成一组：
+        ★ 62 讲**判据要能失败** · 506 讲**判据要证明自己在跑** · 507 讲**判据要跟调用图** ·
+        ★★ 510 讲**判据要标定过才准接线**。|
+        痕迹：`output/_calibrate_preselect_gate.py`（标定件）· `tools/scan_preselect_requiring_tools.py`
+        （★ 实测定下来的那版，报 2 条）· `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §四 |
