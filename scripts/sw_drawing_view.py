@@ -761,7 +761,15 @@ def set_view_scale_verified(view, scale: float) -> dict:
       ③ ★ **回读**并判"两个数真的变了"。
     ★ 回 `{"ok", "before", "after", "asked", "use_sheet_scale_before"}`；★ **任一步失败都如实写 stage**。
     """
-    from sw_connect import set_com_member as _set
+    #: ★★★ 2026-10-03（轮 470）**删掉这一行"函数内 import"** ——
+    #:   它写的是 `from sw_connect import set_com_member as _set`，★ 那会**直接绑到真模块**，
+    #:   ⇒ ★★ **契约测试对 `模块.set_com_member` 的猴补丁就补不到它**（★ 于是测试记录不到那次写，
+    #:      断言 `seen == [("ScaleRatio", ((2.0, 1.0),))]` 失败）。
+    #:   ★ 而**模块顶部早就 import 了 `set_com_member`**（★ 就是那对 try/except）⇒
+    #:     ★ 直接用**模块级名字**即可 —— ★ 这样猴补丁可补、测试可记录 ✓
+    #:   ⚠ 与本仓 `sw_simulation_study_options.py` L631 记的教训**同源**（★ 那里逐字写着
+    #:     "`set_com_member` **必须在模块顶部 import** —— 我第一版写在函数体内 ⇒ 测试当场失败"）。
+    #:   ★ 故下面把 `set_com_member(` 全部改成模块级的 `set_com_member(`。
     if view is None:
         return {"ok": False, "stage": "view", "error": "view 为 None"}
     #: ★ ① 读前置
@@ -776,7 +784,7 @@ def set_view_scale_verified(view, scale: float) -> dict:
     uss_cleared = None
     if uss:
         try:
-            _set(view, "UseSheetScale", False)
+            set_com_member(view, "UseSheetScale", False)
             uss_cleared = True
         except Exception as exc:                               # noqa: BLE001
             uss_cleared = False
@@ -791,7 +799,7 @@ def set_view_scale_verified(view, scale: float) -> dict:
         before = None
     #: ★ ④ 赋值（★ 真机验证过的形态）
     try:
-        _set(view, "ScaleRatio", (float(scale), 1.0))
+        set_com_member(view, "ScaleRatio", (float(scale), 1.0))
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "stage": "set", "asked": float(scale),
                 "before": before, "use_sheet_scale_before": uss,

@@ -242,7 +242,12 @@ def test_set_option_coerces_by_registered_type():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 1
-    m.set_com_member = lambda o, n, v, **k: sink.append((n, (v,))) or result
+    #: ★★ 2026-10-03（轮 470）**修正硬搓的变量名**：原先我批量补这行时写死了
+    #:   `sink.append((n, (v,))) or result`，★ 而本测试这里用的是 **`seen`**、也**没有 `result`**
+    #:   ⇒ `NameError: name 'sink' is not defined`。
+    #:   ★ 正解不是"改个名字"，而是**复刻上面那一行**（★ 同一次调用要记进同一个 sink、
+    #:     回同一个值）—— 只把实参形态从 `(n, a)` 换成 `(n, (v,))`：
+    m.set_com_member = lambda o, n, v, **k: seen.append((n, (v,))) or 1
     m.set_option(object(), "ICWStaticStudyOptions", "DefinedReferencePressure", "1.5")
     m.set_option(object(), "ICWStaticStudyOptions", "ComputeFreeBodyForce2", 1)
     # BucklingModes 属**屈曲**族，不是静态族 —— 放错族必须被拒（本测试初版放错了）
@@ -268,11 +273,14 @@ def test_set_option_prefers_set_com_member_for_properties():
     """
     m = _load()
     set_calls, get_calls = [], []
+    #: ★★★ 2026-10-03（轮 470）**撤回我加坏的一行** ——
+    #:   本测试在轮 344 就**已经**把 `set_com_member` 补好了（写在下面第一行），
+    #:   ★ 而我同轮的批量脚本**只看"下一行有没有"** ⇒ 没看见它 ⇒ **又加了一行**，
+    #:   而那行把 sink 从 `set_calls` 改成了 `get_calls` ⇒
+    #:   ★★ **把本测试的意图整个反转**（它要断言"走 set、不走 get"）⇒ 于是 `set_calls == []` 失败。
+    #:   ★ 教训：**批量脚本必须"先看整个作用域"，不能只看相邻一行**。
     m.set_com_member = lambda o, n, v: set_calls.append((n, v)) or True
     m.get_com_member = lambda o, n, *a, **k: get_calls.append(n) or 1
-    #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
-    #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
-    m.set_com_member = lambda o, n, *a, **k: get_calls.append(n) or 1
     target = types.SimpleNamespace()
     m.set_option(target, "ICWStaticStudyOptions", "DefinedReferencePressure", "1.5")
     assert [n for n, _ in set_calls] == ["DefinedReferencePressure"], set_calls
@@ -343,7 +351,7 @@ def test_study_options_of_uses_property_form():
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "OPTS"
     #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
     #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
-    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "OPTS"
+    m.set_com_member = lambda o, n, v: (seen.append((n, (v,))) or "OPTS")
     m.study_options_of(object(), "ICWStaticStudyOptions")
     assert seen == [("StaticStudyOptions", ())]
 

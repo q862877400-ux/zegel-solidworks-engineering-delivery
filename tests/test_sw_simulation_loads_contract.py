@@ -348,7 +348,9 @@ def test_reference_geometry_restraint_is_index_five():
     assert m.SWS_RESTRAINT_TYPES["reference_geometry"] == 5
     seen = []
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "RESTRAINT"
-    m.set_com_member = lambda o, n, v, **k: sink.append((n, (v,))) or result
+    #: ★★ 2026-10-03（轮 470）**修正硬搓的变量名**：原先写死了 `sink…or result`，
+    #:   而本处用的是上一行那个 sink与回返值 ⇒ 现改为**复刻上一行**。
+    m.set_com_member = lambda o, n, v, **k: seen.append((n, (v,))) or "RESTRAINT"
     m.add_reference_geometry_restraint(object(), "ENTS", "REFGEOM")
     _assert_call(seen, "AddRestraint", 5, "ENTS", "REFGEOM")
 
@@ -372,7 +374,7 @@ def test_plain_restraint_passes_none_for_ref_geom():
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "RESTRAINT"
     #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
     #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
-    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "RESTRAINT"
+    m.set_com_member = lambda o, n, v: (seen.append((n, (v,))) or "RESTRAINT")
     m.add_fixed_restraint(object(), "ENTS")
     _assert_call(seen, "AddRestraint", 0, "ENTS", None)
     #: ★ 第 3 参（RefGeom）必须是**换过**的空 Dispatch，而不是裸 None
@@ -398,7 +400,7 @@ def test_torque_uses_official_force_type_two():
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "FORCE"
     #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
     #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
-    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "FORCE"
+    m.set_com_member = lambda o, n, v: (seen.append((n, (v,))) or "FORCE")
     m.add_torque(object(), "ENTS")
     member, args = seen[0]
     assert member == "AddForce"
@@ -417,7 +419,7 @@ def test_gravity_takes_single_entity_not_array():
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "GRAV"
     #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
     #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
-    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or "GRAV"
+    m.set_com_member = lambda o, n, v: (seen.append((n, (v,))) or "GRAV")
     m.add_gravity(object(), "ONE_FACE")
     _assert_call(seen, "AddGravity", "ONE_FACE")
 

@@ -99,7 +99,7 @@ def test_configure_force_wraps_everything_in_edit_transaction():
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 0
     #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
     #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
-    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 0
+    m.set_com_member = lambda o, n, v: (seen.append((n, (v,))) or 0)
     m.configure_force(object(), magnitude=100.0, force_type=1, unit=0)
     names = [n for n, _ in seen]
     assert names[0] == "ForceBeginEdit", "属性设置前必须先开编辑事务"
@@ -154,7 +154,7 @@ def test_non_uniform_uses_boolean_variant_only():
     m.get_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 0
     #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
     #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
-    m.set_com_member = lambda o, n, *a, **k: seen.append((n, a)) or 0
+    m.set_com_member = lambda o, n, v: (seen.append((n, (v,))) or 0)
     m.configure_force(object(), include_non_uniform=True)
     names = [n for n, _ in seen]
     assert "IncludeNonUniformDistribution2" in names

@@ -214,7 +214,9 @@ def test_entrypoint_delegates_to_upstream_get_com_member():
         assert m.ASSEMBLY == asm
         seen = []
         m.get_com_member = lambda o, n, *a, **k: seen.append((n, a))
-        m.set_com_member = lambda o, n, v, **k: sink.append((n, (v,))) or result
+        #: ★★ 2026-10-03（轮 470）**修正硬搓的变量名**：原先写死了 `sink…or result`，
+        #:   而本处用的是上一行那个 sink与回返值 ⇒ 现改为**复刻上一行**。
+        m.set_com_member = lambda o, n, v, **k: seen.append((n, (v,)))
         m.call_com_member = lambda o, n, *a, **k: seen.append((n, a))
         # ⚑ 取**任意一个**有零参成员的族 —— 早先固定取 FAMILIES[0]，
         #   而 SWRoutingLib 的第一个族没有零参成员，样本取不到（断言本身的毛病）。

@@ -295,7 +295,9 @@ def test_evidence_passes_configuration_to_component_count():
     m = _load()
     seen = []
     m.get_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or 3)
-    m.set_com_member = lambda o, n, v, **k: sink.append((n, (v,))) or result
+    #: ★★ 2026-10-03（轮 470）**修正硬搓的变量名**：原先写死了 `sink…or result`，
+    #:   而本处用的是上一行那个 sink与回返值 ⇒ 现改为**复刻上一行**。
+    m.set_com_member = lambda o, n, v, **k: (seen.append((n, (v,))) or 3)
     m.call_com_member = lambda o, n, *a, **k: (seen.append((n, a)) or 3)
     m.collect_assembly_doc_evidence(object(), "Default")
     assert ("GetComponentCount", ("Default",)) in seen
