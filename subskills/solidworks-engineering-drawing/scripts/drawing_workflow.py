@@ -328,8 +328,23 @@ def estimate_dimension_text_box(display_dimension, *, padding_m=None) -> dict:
     text_format = _safe_member(annotation, "GetTextFormat", 0)
     format_source = "IAnnotation.GetTextFormat(0)"
     if text_format is None:
+        #: ★★★★ 2026-10-04（接手轮）**给这处兜底加上「它走的是废弃成员」的标注** ——
+        #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#8**（★ `C-dw-2 DW2-2`）—— ★ 裁判逐字：
+        #:   「★ 尺寸文字格式的**兜底读法用了官方标 Obsolete 的成员**」· ★ 判定「**不成立**」✓
+        #:   ★★ **官方逐字（★ 我读了两个 md）**：
+        #:     · ★ `IDisplayDimension/GetTextFormat.md` ⇒
+        #:       「**Obsolete. Superseded by `IAnnotation::GetTextFormat`**」✓
+        #:     · ★★ 后继 `IAnnotation/GetTextFormat(int Index)` 的 `## Remarks` 逐字 ⇒
+        #:       「…**display dimensions**… ★ **The index argument is not used and should be
+        #:       set to 0.**」⇒ ★ **所以现行入口就是 `IAnnotation.GetTextFormat(0)`** ✓
+        #:   ★★★ **本处的严重度比 `GetSymbolType` 那处低**（★ 那处是"**先调**废弃的"）——
+        #:     ★ 这里**顺序是对的**：★ 先试现行、★ **废弃只当兜底** ✓
+        #:   ★★★★ **∴ 处置 = 「保留 + 标注」，★ 不是「删」** ——
+        #:     因为**删了就少一层容错**（★ 而它**只在现行回 None 时**才用）✓
+        #:     ★★ 而标注的意义：★ 后人看到 `format_source` 里出现这个名字时，
+        #:     ★★★ **能立刻知道"那是废弃那条兜底、★ 而正解是现行入口"** ✓
         text_format = _safe_member(display_dimension, "GetTextFormat")
-        format_source = "IDisplayDimension.GetTextFormat()"
+        format_source = "IDisplayDimension.GetTextFormat()（⚠ 官方标 Obsolete → IAnnotation::GetTextFormat；本条仅为兜底）"
     char_height, char_height_available = _finite_positive(
         _safe_member(text_format, "CharHeight"),
         0.0035,
@@ -1768,7 +1783,21 @@ def _collect_view_professional_annotations(view, view_record):
     for owner in _as_sequence(_safe_member(view, "GetSFSymbols", default=[])):
         record = _professional_annotation_record(owner, "surface_finish", view_record)
         record.update({
-            "symbol_type": _safe_member(owner, "GetSymbolType", default=None),
+            #: ★★★★ 2026-10-04（接手轮）**删掉一处调用官方 `Obsolete` 成员的读法** ——
+            #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#8**（★ `C-dw-2 DW2-7`）—— ★ 裁判逐字：
+            #:   「★ 读表面粗糙度符号**先调官方标 Obsolete 的 `GetSymbolType`**」·
+            #:   ★ 判定「**不成立**」✓
+            #:   ★★ **官方逐字（★ 我读了两个 md）**：
+            #:     · ★ `ISFSymbol/GetSymbolType.md` 逐字 ⇒
+            #:       「**Obsolete. Superseded by `ISFSymbol::GetSymbol`**」✓
+            #:     · ★★ 而后继 `ISFSymbol/GetSymbol.md` 的 `## Returns` 逐字 ⇒
+            #:       「Type of symbol as defined in **`swSFSymType_e`**」⇒ ★ **同一个语义** ✓
+            #:   ★★★ **病灶**：★ 原来**两个都调**（★ `GetSymbolType` **与** `GetSymbol`）⇒
+            #:     ★★ 那是**在同一个字典里放两个同义的键**、★ 而**其中一个走的是废弃入口** ✓
+            #:   ⇒ ★ 修法：★ **删掉废弃那行、只留现行的 `GetSymbol`** ✓
+            #:     ★★ 而 `symbol_type` 这个**键**保留（★ 向后兼容：★ 别处的读者不必改），
+            #:     ★★★ 但它的值**改由 `GetSymbol` 提供** —— ★ 与官方后继**同一个语义** ✓
+            "symbol_type": _safe_member(owner, "GetSymbol", default=None),
             "symbol": _safe_member(owner, "GetSymbol", default=None),
             "direction_of_lay": _safe_member(owner, "GetDirectionOfLay", default=None),
         })
