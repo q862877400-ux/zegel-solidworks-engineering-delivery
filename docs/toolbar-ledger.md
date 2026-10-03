@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 77 |
-| 可攻关 | 15 |
+| 已能 | 78 |
+| 可攻关 | 14 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -39,7 +39,6 @@
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
 | 草图绘制 | 方程式驱动的曲线 | **可攻关** | `CreateEquationSpline2`, `CreateSplinesByEqnParams2` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
-| 草图编辑 | 复制实体 | **可攻关** | `IModelDoc2` | — |
 | 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
 | 曲面 | 圆角(曲面) | **待验证** | `FeatureFillet` | `sw_part.fillet` |
 | 特征 | 筋 | **待验证** | `InsertRib` | `sw_part.rib_report` |
@@ -139,6 +138,7 @@
 | 草图编辑 | 伸展实体 | **已能** | `IModelDoc2` | — |
 | 草图编辑 | 剪裁实体 | **已能** | `SketchTrim` | `sw_sketch_edit_ops.sketch_trim` |
 | 草图编辑 | 圆周草图阵列 | **已能** | `CreateCircularSketchStepAndRepeat` | `sw_sketch_edit_ops.sketch_circular_pattern` |
+| 草图编辑 | 复制实体 | **已能** | `IModelDoc2` | — |
 | 草图编辑 | 延伸实体 | **已能** | `SketchExtend` | `sw_sketch_edit_ops.sketch_extend` |
 | 草图编辑 | 旋转实体 | **已能** | `IModelDoc2`, `SketchModifyRotate` | — |
 | 草图编辑 | 移动实体 | **已能** | `IModelDoc2`, `SketchModifyTranslate` | — |

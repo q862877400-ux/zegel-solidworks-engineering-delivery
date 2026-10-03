@@ -4146,6 +4146,34 @@
         "★★ **2D 用法**：`PointData` **至少 6 个坐标**；`Surfs`/`Direction` 给 **`None`**；`Status` 是 **out**（byref）。",
         "⚠ **本包装未接进 MCP 工具层**；⚠ **曲面上的样条（on-surface）本轮未成** —— ★ 原因是我在 `IModelDoc2` 上取 `GetMathUtility`（★ **它不在那里**）；★ **下一步**：换到**正确的入口**取 `IMathUtility`。"
       ]
+    },
+    {
+      "id": "sketch_rotate_or_copy_3d",
+      "label": "复制实体（`ISketchManager.RotateOrCopy3DAboutXYZ` 的 **`Copy=True`**）—— ★ **真机建成**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与反射**立）：`C:\\swapi\\types\\ISketchManager\\RotateOrCopy3DAboutXYZ.md`（**9 参**）× 反射 arity（`'RotateOrCopy3DAboutXYZ': 9`，★ 两源一致）。★ 而**台账原写的 `SketchModifyCopy` 全接口查不到**（铁律 5）。代码：`tools/prove_rotate_or_copy_3d.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 580）**真机建成**（走 `sw_guard`，零弹窗）：`Insert3DSketch(True)` 开一个 **3D 草图** · 里面 `CreateLine` 画一条线 · 再 `RotateOrCopy3DAboutXYZ(Copy=True, 1, True, 0,0,0, 0.785, 0, 0)` ⇒ **草图段数 1 → 2**（★ 增 1 = 复制了一份）· 返回 `True`。证据 `output/rotate-or-copy-3d-evidence.json`。",
+        "★★ **而对照组把那个布尔钉死了**：",
+        "`Copy=False` ⇒ **段 1 → 1**（★ 只旋转、不复制）· 而也回 `True` ✓",
+        "★★★ **而本轮又纠了一个自己的错**：我第一版传了 **8 个参数**（★ **漏了 `AngleAboutZDir`**）⇒ `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）；\n       ★ 而**那个错看不出是哪个参数漏了** ⚠ —— ★ 故又靠**反射的 arity**把它钉出来（铁律 4）。"
+      ],
+      "limitations": [
+        "★★ **前置**：一个 **3D 草图**（`Insert3DSketch`）+ 里面有要复制的图元。",
+        "★ **9 参**：`Copy` · `NumCopies` · `KeepRelations` · `BaseX/Y/Z` · `AngleAboutXDir/YDir/ZDir`。",
+        "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：**2D 草图**的复制（★ 那一条可能走 `EditCopy`/`EditPaste`）。"
+      ]
     }
   ]
 }

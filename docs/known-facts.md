@@ -2201,3 +2201,22 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **而本轮又一次先踩了自己的坑**：第一版用 `**vars_` 传关键字参 ⇒ `call_com_member` **不收关键字**（★ 它是 `*args`）⇒ ★ **全五格都报“我自己的错”** ⚠
        ⇒ ★ 改成位置参数后才看到**真的错码**。
      ★★ **方法论**：★ **一个探针全面失败时，先看**错误信息写的是谁的名字** ** —— ★ 写着我自己函数名的，就是**我的错** ⚠|真机：`tools/probe_imathutility_family.py`；证据 `output/imathutility-family-evidence.json`；对照事实 36 / 47 / 455 |
+| 457 | **★★★ 「复制实体」的入口是 `ISketchManager.RotateOrCopy3DAboutXYZ` 的 **`Copy=True`****（★ 而台账原写的 `SketchModifyCopy` **全接口查不到**） —— 2026-10-03（轮 580）。
+     ★ **怎么找到的**（★ 两步，★ 都是本仓常用的查法）：
+       ① ★ **铁律 5**：台账写的 `IModelDoc2.SketchModifyCopy` 在 `IModelDoc2` 下查不到
+          ⇒ ★ **换到全接口再查** —— ★ 而 `SketchModify` 全族**只有四个**（`Flip`/`Rotate`/`Scale`/`Translate`）⚠
+       ② ★ 而**围绕“复制”那个词再查**：`ISketchManager` 全 **92** 个成员里含 `Copy` 的**只有两条** —— `RotateOrCopy3DAboutXYZ` · `RotateOrCopy3DAboutVector` ✓
+     ★ **而官方对 `Copy` 那个参数的逐字**："**True to copy 3D sketch entities, false to not**" ✓
+     ★ 真机（`tools/prove_rotate_or_copy_3d.py`，零弹窗）：
+     ```
+     `Insert3DSketch(True)` 开 3D 草图 · `CreateLine` 画一条线 ⇒ 段 = 1
+     ★ **`Copy=True`**  ⇒ **段 1 → 2**（★ 增 1 = 复制了一份）· 回 `True` ✓
+     对照 `Copy=False` ⇒ **段 1 → 1**（★ 只旋转、不复制）· 也回 `True` ✓
+     ```
+     ⇒ ★★ **故那一个布尔就是“复制”与“只转”的分界** ✓
+     ★★ **而本轮又只能靠反射救回来**：我第一版传了 **8 个参数**（★ **漏 `AngleAboutZDir`**）
+       ⇒ `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）；★ **而那个错看不出是哪个参数漏了** ⚠
+       ⇒ ★ 去查**反射的 arity**：`'RotateOrCopy3DAboutXYZ': 9`（★ 与 swapi 签名**两源一致**）✓
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_rotate_or_copy_3d`**（level = **verified**，共 **104** 条）；台账「复制实体」补 `capability_id` ⇒ **已能 78**。
+     ★★ **方法论**：★ **当一个 UI 名称在 API 里查不到时，围绕那个**动作的词**（这里是 `Copy`）在**合适的接口**上搜** —— ★ **而不是放弃** ⚠
+       （★ 本例：名字里的 `OrCopy` 就是答案）。|真机：`tools/prove_rotate_or_copy_3d.py`；证据 `output/rotate-or-copy-3d-evidence.json`；官方：`C:\swapi\types\ISketchManager\RotateOrCopy3DAboutXYZ.md` × 反射 arity |

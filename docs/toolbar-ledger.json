@@ -700,7 +700,8 @@
    "zh": "复制实体",
    "api": "IModelDoc2.SketchModifyCopy",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_rotate_or_copy_3d"
   },
   {
    "tb": "草图编辑",

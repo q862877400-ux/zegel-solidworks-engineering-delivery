@@ -1,16 +1,16 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 77,
+  "已能": 78,
   "待查": 20,
   "待验证": 7,
-  "可攻关": 15
+  "可攻关": 14
  },
  "by_toolbar_gap": {
   "特征下拉": 8,
   "草图绘制": 1,
   "草图尺寸": 1,
-  "草图编辑": 3,
+  "草图编辑": 2,
   "曲面": 2
  },
  "items": [
@@ -1647,6 +1647,7 @@
    "api": "IModelDoc2.SketchModifyCopy",
    "entry": "",
    "level": "不能",
+   "capability_id": "sketch_rotate_or_copy_3d",
    "api_iface_hits": [
     "IModelDoc2"
    ],
@@ -1658,7 +1659,7 @@
     "IModelDoc2",
     "SketchModifyCopy"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "草图编辑",
