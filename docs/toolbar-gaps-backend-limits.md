@@ -244,6 +244,31 @@ IProjectionCurveFeatureData.AccessSelections(doc, 空Dispatch)
 ---
 
 
+### 3.6 ★★★ 2026-10-03（轮 578）**新实例：`IMathUtility` 整族**（★ 而两类错码有规律）
+
+★ 上一节说“那一族的可达性要**逐接口看**”—— ★ 而本节给出**整族**的一个例子**：
+
+```
+ISldWorks.GetMathUtility              ⇒ **ok**（★ 对象**拿得到**）✓
+CreatePoint / CreateVector / CreateTransform（**不带 I**）
+                                      ⇒ **`找不到成员`**（`0x80020003`）
+ICreatePoint / ICreateVector（**带 I**）
+                                      ⇒ **`无法读只写属性`**（`61836`）
+```
+
+⇒ ★★ **规律很整齐**：★ **不带 `I` 的名字取不到；带 `I` 的名字取得到、而**形态不对****。
+★ **而它与事实 36 / 47 同一族**：★ **`I` 前缀是“进程内 C++ 指针变体”**（★ 事实 47 逐字），
+★ 而迟到绑定下它**被当成属性** ⚠
+
+★ **上下文**：它是为了办**曲面上的样条**（★ 需 `IMathVector` 数组作方向）而查的
+  —— ★ **故那一条的思路在这里断了**。
+
+★ 证据：`tools/probe_imathutility_family.py` · `output/imathutility-family-evidence.json` · 事实 **456**。
+
+---
+
+---
+
 ## 四、结构系统（焊件）—— ✅ **成立**（★ 本节已在轮 485 更正）
 
 > ★★★ **2026-10-03（轮 485）更正** —— ★ 本节**原文**判它「不成立」，★ 而**理由是"本仓有 `sw_weldment.py` 与证据"**

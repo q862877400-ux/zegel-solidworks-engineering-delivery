@@ -2186,3 +2186,18 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **下一步**（★ 给后面）：★ 试 **`IMathVector`** 的另一条来源（★ 例如从已有的方向对象取）或 **`IMathUtility.CreatePoint`** 那一族看看是不是同样取不到。
      ★★ **方法论**：★ **把多步骤包在同一个 `try` 里，就分不清是哪一步报的** —— ★ 而**逐步记账**之后，一眼就看到是 `CreateVector` 那一步** ✓
      ★ 本轮**不登记 on-surface**（★ 仍未建成）。|真机：`tools/prove_createspline3.py`；证据 `output/createspline3-evidence.json`；官方：`ISldWorks\GetMathUtility.md` · `IMathUtility\CreateVector.md` · 反射；对照事实 36 / 53 / 454 |
+| 456 | **★★★ `IMathUtility` **整族到不了****（★ 而两类错码的**规律很整齐**）** —— 2026-10-03（轮 578）。
+     ★ **怎么查的**：事实 455 只知道 `CreateVector` 不行 ⇒ ★ 本轮问了一个更大的问题：**“只有 `CreateVector` 不行”还是“整族不行”**？
+     ★ 真机（`tools/probe_imathutility_family.py`，零弹窗）：
+     ```
+     `ISldWorks.GetMathUtility`            ⇒ **ok**（★ 对象**拿得到**）✓
+     `CreatePoint` / `CreateVector` / `CreateTransform`（**不带 I**）⇒ **`找不到成员`**（`0x80020003`）⚠
+     `ICreatePoint` / `ICreateVector`（**带 I**）          ⇒ **`无法读只写属性`**（`61836`）⚠
+     ```
+     ⇒ ★★ **故规律是**：**不带 `I` 的名字取不到；带 `I` 的名字取得到、而形态不对** ✓
+     ★★★ **而它与事实 36 / 47 同一族**：★ **`I` 前缀是“进程内 C++ 指针变体”**（★ 事实 47 逐字），★ 而迟到绑定下它**被当成属性** ⚠
+     ★ **上下文**：它是为了办**曲面上的样条**（★ 需 `IMathVector` 数组作方向）而查的 —— ★ **故那一条的思路在这里断了** ✓
+     ★★ **故单列**：`docs/toolbar-gaps-backend-limits.md` §三之六。
+     ★ **而本轮又一次先踩了自己的坑**：第一版用 `**vars_` 传关键字参 ⇒ `call_com_member` **不收关键字**（★ 它是 `*args`）⇒ ★ **全五格都报“我自己的错”** ⚠
+       ⇒ ★ 改成位置参数后才看到**真的错码**。
+     ★★ **方法论**：★ **一个探针全面失败时，先看**错误信息写的是谁的名字** ** —— ★ 写着我自己函数名的，就是**我的错** ⚠|真机：`tools/probe_imathutility_family.py`；证据 `output/imathutility-family-evidence.json`；对照事实 36 / 47 / 455 |
