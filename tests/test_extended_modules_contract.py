@@ -403,10 +403,17 @@ def test_tap_configure_sets_expected_properties():
         seen: list[str] = []
 
         class _El:
-            def __getattr__(self, name):
-                def _set(value):
-                    seen.append(name)
-                return _set
+            #: ★★★ 2026-10-03（轮 470）**mock 随实现形态更新**（★ 本仓模板见
+            #:   `test_create_render_material_sets_exactly_seven_properties` 的 docstring）：
+            #:   ★ 本类原来是 `__getattr__` 返回一个**可调用**（`def _set(value)`）——
+            #:     即假设 `CustomSizing` 这类成员是**方法**、旧实现
+            #:     `get_com_member(el, "CustomSizing", 值)` 会走到 `el.CustomSizing(值)`。
+            #:   ★★ 而**实现已改为 `set_com_member`（属性赋值 ⇒ `setattr`）** ⇒
+            #:     `__getattr__` **根本不会被调用** ⇒ 记录恒为空 ⇒ 断言 `[] == [...]` 失败。
+            #:   ★ 故改为记录 **`__setattr__`**（★ 与真实写入路径一致）✓
+            def __setattr__(self, name, value):
+                seen.append(name)
+
         return seen, _El()
 
     straight, straight_el = _recorder()
@@ -454,10 +461,14 @@ def test_create_profile_center_mate_uses_fm_101_and_five_properties():
             used.append(kind)
 
             class _Data:
-                def __getattr__(self, name):
-                    def _set(value):
-                        props.append(name)
-                    return _set
+                #: ★★★ 2026-10-03（轮 470）**mock 随实现形态更新**（★ 同本文件
+                #:   `test_tap_configure_sets_expected_properties` 那处）：
+                #:   原来是 `__getattr__` 返回可调用（假设成员是**方法**），
+                #:   ★★ 而实现已改为 `set_com_member`（属性赋值 ⇒ `setattr`）⇒
+                #:     `__getattr__` 不会被调用 ⇒ 记录恒空 ⇒ 改记 **`__setattr__`** ✓
+                def __setattr__(self, name, value):
+                    props.append(name)
+
             return _Data()
 
         def CreateFeature(self, data):

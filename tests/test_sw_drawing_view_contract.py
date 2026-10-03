@@ -288,7 +288,18 @@ def test_scale_and_name_are_properties_not_methods():
     #:   ★★ 官方真名是 **`ScaleRatio`**（`C:\swapi\types\IView\ScaleRatio.md`：
     #:   "Gets or sets the scale of the drawing view, returning the results in ratio format (n:n)"，
     #:   Returns: **Array of 2 doubles**）⇒ ★ 按 `n:1` 写两个数。
-    assert seen == [("ScaleRatio", ((2.0, 1.0),))]
+    #:
+    #: ★★★ 2026-10-03（轮 470）**契约再次随证据更新**（★ 这次更新的是"调用次数"这一维）：
+    #:   ★ 轮 467 给 `set_view_scale` **加了回读**（★ 规则 6：不静默成功）⇒ 它现在会
+    #:     ① 读 `UseSheetScale` ② 写下它 ③ 读 `ScaleRatio`(before) ④ **写它** ⑤ 读它(after)
+    #:   ⇒ ★★ `seen` 里**混了读与写** —— ★ 而那是**更好的实现**，不该为了测试把它退回去。
+    #:   ★ 故断言从"**全部**调用等于…"改成"**那次写**在里面"，★ **保留原意图**
+    #:     （真名 `ScaleRatio` + 两个数），★ 并且**把"读"的那几次也实名核到** ——
+    #:     ★ 这不是放松判据，是把判据拆成"读"与"写"两栏各自核 ✓
+    _writes = [(n, a) for n, a in seen if a]                    # ★ 带实参的才是"写"
+    assert ("ScaleRatio", ((2.0, 1.0),)) in _writes, _writes
+    assert [n for n, _ in _writes] == ["UseSheetScale", "ScaleRatio"], _writes
+    assert [n for n, a in seen if not a] == ["UseSheetScale", "ScaleRatio", "ScaleRatio"], seen
     seen2 = []
     m.get_com_member = lambda o, n, *a, **k: (seen2.append((n, a)) or "V1")
     #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
