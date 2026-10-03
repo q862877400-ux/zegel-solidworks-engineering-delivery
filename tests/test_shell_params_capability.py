@@ -100,5 +100,12 @@ def test_negative_case_the_two_count_guards_match_reality() -> None:
         "★ `test_server_wiring` 的钉死数（★ 应是 %d）没跟上" % n)
     t2 = (TESTS / "test_mcp_protocol_layer.py").read_text(encoding="utf-8", errors="replace")
     #: ★★ 协议层那个数**不是** ToolSpec 数（★ 它还含 server.py 那一路）⇒
-    #:   ★ 这里只核**它跟上了**（★ 比 ToolSpec 数大、★ 且不是旧的 333）✓
-    assert "assert n == 333, (" not in t2, "★ 协议层那个钉死数还是旧的 333"
+    #:   ★ 这里只核**它跟上了** —— ★ 判据是「**那些旧值已经不在了**」✓
+    #:   ★★★ **⚠ 本判据的写法值记**：★ 查的是**旧值**、★ 而不是写死新值 ⇒
+    #:     因为新值**每加一个工具就要改**、★ 而旧值**一旦被替换就永远不该回来** ✓
+    #:     ★★ （★ 本会话正是这么踩过一次：★ 我把本行自己的判据文本也替换了 ⇒
+    #:       ★ 于是它变成查 `33000`、★ **判据形同虚设** —— ★ 已回退）✓
+    stale = ["assert n == 333, (", "assert n == 334, ("]
+    assert not any(x in t2 for x in stale), (
+        "★ 协议层那个钉死数还是旧的（★ 应是 335 以上）：%r"
+        % [x for x in stale if x in t2])

@@ -1,0 +1,77 @@
+feat(阶段5): ★★★★★★★ **同族第 2 批** —— ★ `dome_params`（★ 真机量出**第十族**）；★ 并**如实记**筋**没量到**；★ 另修一次**我自己的事故**
+
+■ 一 · ★ 上一轮的**一次误判**（★ 先纠正它）
+  ★ 上一轮我写「★ `IRevolveFeatureData` **查不到**」⇒ ★★ **本轮查清：★ 那是**我搜错了名****：
+    ★ `C:\swapi\types\` 下**有 `IRevolveFeatureData2`**（★ **多一个 `2`**）✓
+  ★★ **⇒ 教训**：★★★ **「查不到」与「我搜的名不对」要分开** ——
+    ★ 报"查不到"之前先按**词根**搜一遍目录（★ 而不是按我以为的全名）✓
+  ★★★ **⇒ 而本轮实测**：★ 按词根搜 `Rib`/`Dome`/`Loft`/`Sweep`/`Revolve` ⇒
+    ★★ **五族全都有页**：★ `IRibFeatureData2` · ★ `IDomeFeatureData2` · ★ `ILoftFeatureData` ·
+    ★ `ISweepFeatureData` · ★ **`IRevolveFeatureData2`** ✓
+
+■ 二 · ★ 第 0 步：★ 逐条读官方页（★ `output/_read_three_feature_members.py`）
+  ★ **`IRibFeatureData2`（16）** 可读 12 个：★ `Thickness`(double) · ★ `DraftAngle`(double) ·
+    ★ `Type`/`ExtrusionDirection`(int) · ★ `RefSketchIndex` · ★ `NextReference()` · ★ 六个 bool ✓
+    ★★ **避开**：★ `Body`（Accessing Selections）· ★ `IAccessSelections`/`AccessSelections`/`ReleaseSelectionAccess` ✓
+  ★ **`IDomeFeatureData2`（14）** 可读 4 个：★ `Height`(double) · ★ `Elliptical`/`ReverseDir`(bool) ·
+    ★ `GetFaceCount()` ✓
+    ★★ **`ReverseDir` 官方语义逐字**：★「**True for concave domes, false for convex domes**」⇒
+      ★★★ **那是**语义**、★ 不是"反向开关"那种字面意思** ⇒ **已一并带回来** ✓
+    ★★ **避开**：★ `Face`/`IFace`（**真废弃**）· ★ `IGetFaces`（**指针**）· ★ `ISetFaces`（`ref Face2`）·
+      ★ `Faces`/`Direction`/`ConstraintPointOrSketch`（Accessing Selections）✓
+
+■ 三 · ★★★★★★ 真机：★ **圆顶成了、★ 筋没成**（★ 两条**独立**、★ 不互相默认）
+  ★ 证据：★ `output/rib-dome-params-capability-recheck.json` ✓
+  | ★ 族 | ★ 前置 | ★ `*_report` | ★ 读回 | ★ 口径 |
+  |---|---|---|---|---|
+  | ★★ **圆顶** | ★ 板 40×40×10 + ★ **三步选面序** | ★ `ok=true` | ★ **`Height = 5.0`** | ★★ **随文档单位（★ 第十族）** ✓ |
+  | ★ **筋** | ★ 板 60×40×10 + ★ 板内一条线 | ★ **`ok=false` · `error=""`** | ★ **找不到** | ★ **未定案**（★ 如实标）✓ |
+  ★★ **⚠ 圆顶那次成功靠的是**三步选面序**** —— ★ 而那序**只在**
+    `tools/verify_dome_smoke.py` 里：★ ① `SelectByID2(…, True, **0**, …)` ⇒
+    ★ ② `ClearSelection2(True)` ⇒ ★ ③ **再按 `mark=1` 选** ✓
+    ★★★ 官方 `InsertDome` 的 Remarks **只写**「must select the face … using a
+      **selection mark of 1**」⇒ ★★ **⇒ 那三步序是官方 C# **示例**给的** ⇒
+      ★★★★ **⇒ 又一次验证「官方示例给的是**调用序**」那条纪律** ✓
+  ★★★ **⚠ 筋为什么不成**：★ 两种轮廓都试了（★ 悬空线 · ★ 板内线）⇒ 都不成 ⇒
+    ★★ **那怕是写侧的问题**（★ 轮廓要**「板的一条边 + 一条外伸线」那种 L 形**）⇒
+    ★★★ **⇒ 如实留给后人**、★ **不谎称** ✓
+
+■ 四 · ★★★★★★★ 而**本轮出过一次我自己的事故**（★ 值记）
+  ★ 我给那个文件加三个函数时，`edit` 的 `old_string` **结尾是**
+    `def shell_params(model, feature_name: str = "") -> dict:`、
+    ★★ **而 `new_string` 里没有它** ⇒ **那一行被删了** ⇒
+    ★★★ **`shell_params` 的 docstring 与函数体整个**并进了 `dome_params`****（★ `dome_params` 变成 143 行）✓
+  ★★★★ **⚠ 而 `ast.parse` **通过了**** —— ★ 因为多出来的 docstring 与语句在
+    `dome_params` 里**语法合法** ⇒ ★★★★★ **⇒ **「语法通过」不等于「结构没坏」**** ✓
+  ★★ **⇒ 发现路径**：★ 三条测试红了 ⇒ ★ 它们都走 `func_source(src, "shell_params")` ⇒
+    ★★ **`AssertionError: 没有函数 shell_params`** —— ★ **而语法门禁什么都没说** ✓
+  ★★★ **⇒ 修**：★ 把 `def shell_params(...)` 那行**补回** ⇒ ★ 四个函数各就各位
+    （★ `_read_feature_params` 52 行 · ★ `rib_params` 47 · ★ `dome_params` 46 · ★ `shell_params` 98）✓
+  ★★★★ **⇒ 并补一道判据**（★ `tests/test_readback_all_exports_exist.py` · **4 条**）：
+    ★ **`__all__` 里每个名字都必须是**真的顶格函数**** ✓
+  ★★★★★ **可复用判据（★ 第十类）**：★★★ **「语法通过」≠「结构没坏」** ——
+    ★ **`edit` 时若 `old_string` 的结尾是一行 `def`、★ 而 `new_string` 里没有它、
+    ★★ 那行就会被**静默删掉**、★ 而 `ast.parse` 与语法门禁**都不会响** ✓
+    ★★★ **⇒ 写法**：★ **`old_string` 的结尾**不要停在 `def` 那一行** ——
+      ★ 要么**带上它、★ 要么停在它之前** ✓
+
+■ 五 · ★★ 而写这条判据时**又踩一个假阳性、★ 当场证伪**
+  ★ 我第一版还加了「docstring 不许以另一个函数的标题开头」⇒
+    ★★ **它**误伤了 `shell_params` 自己****（★ 它的 docstring 本来就该以那句开头）✓
+  ★★★ **⇒ 去掉它** —— ★ 因为**上一条**（★ `__all__` 名字必须是真函数）**已经能抓那个事故** ✓
+  ★★★★ **可复用判据**：★★★ **"多加一条判据"之前，先问它能不能被**已有的**那条覆盖** ——
+    ★ **能覆盖就别加**（★ 加了只会多一个假阳性来源）✓
+
+■ 六 · ★★ 挂 ToolSpec + 同步两处钉死数
+  ★ 只挂**真机验证过的**：★ `solidworks_dome_params` ⇒ **ToolSpec 289 → 290** ✓
+  ★★ **★ `rib_params` **不挂****（★ 没量到 ⇒ 按纪律**不谎称**）—— ★ 它的 docstring 已如实标 ✓
+  ★★★ **两处钉死数同步**（★ 290 · ★ 335）⇒ **主动改**、★ 不等它红 ✓
+  ★★★★ **⚠ 而那一步我**也出过一次错****：★ 替换脚本把**那条测试自己的判据文本**
+    也换了（★ 于是它变成查 `33000`、★ **判据形同虚设**）⇒ ★ **已回退**、
+    ★★ **并改成查**旧值集合****（★ 旧值一旦被替换就**永远不该回来**）✓
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK`** ✓ · ★ 相关测试 **21 + 4 passed** ✓
+  ★★ **⚠ 如实记**：★ `查 × 特征` 那一格 **9 → 10**（★ 官方 451）⇒ **离收敛仍远** ✓
+  ★★★ **⇒ 下一轮**：★ ① 攻**筋的轮廓形态**（★ 那要查官方示例）·
+    ★ ② 或 `sweep`（★ 54 个成员）· ★ ③ 或 `revolve`（★ `IRevolveFeatureData2`）✓

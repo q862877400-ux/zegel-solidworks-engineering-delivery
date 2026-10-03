@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params", "rib_params", "dome_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -869,6 +869,157 @@ def base_flange_params(model, feature_name: str = "") -> dict:
                 out[name] = "err: %s" % str(exc)[:50]
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+def _read_feature_params(model, feature_name: str, type_substring: str,
+                         readable: tuple, container_label: str,
+                         unit_note: dict | None = None) -> dict:
+    """★ 共用帮手：★ 按**类型名子串**找特征 ⇒ ★ 取 `GetDefinition` ⇒ ★ 读给定成员 ✓
+
+    ★★★★ **为什么抽出来**（★ 事实 60 定则④：★ 好用的函数要在**所有**同类场合用它）：
+      ★ 本会话已写了 `csys_params` / `base_flange_params` / `shell_params` 三个
+      **结构完全相同**的函数（★ 找特征 → 取定义 → 逐个读），★ 而每个都重抄了一遍
+      "两层过滤兜底" ⇒ ★★★ **⇒ 本帮手把那一遍收成一处** ✓
+      ★★ **⚠ 而既有那三个函数**本轮不动**（★ 它们已在多处被引用、
+        ★ 重构的风险大于收益）—— ★ **只让**新写的**走本帮手** ✓
+
+    ★ 参数：
+      · `type_substring`：★ 类型名里含它即算（★ 如 `"Rib"` / `"Dome"`）✓
+      · `container_label`：★ 找不到时报错的那句话 ✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    out: dict = {"feature": feature_name, "definition": None, "error": None}
+    if unit_note:
+        out["★_单位口径"] = unit_note
+    try:
+        feat = None
+        if feature_name:
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★★ 兜底：★ 找**最后一个**该类特征 —— ★★★ **两层过滤**（★ 容器也有类型名）✓
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    nm = str(safe_get_com_member(f, "Name") or "")
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if nm not in _CONTAINER_NODES and type_substring in tn:
+                        feat, out["feature"] = f, nm
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = container_label
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        for name in readable:
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+def rib_params(model, feature_name: str = "") -> dict:
+    """★ 读**筋特征的一组参数**（★ 厚度 / 类型 / 拉伸方向 / 拔模角 / 若干开关）✓
+
+    ★★★★★ **单位口径（★ 第九族）**：★ 官方 `IRibFeatureData2::Thickness` 的
+      `## Returns` **只写 `Thickness of the rib`、★ 没写单位** ⇒
+      ★★ **本函数如实标 `unknown`、★ 不猜** ✓
+
+    ★★★★★★★ **⚠⚠ 本函数**至今没有真机读数** —— ★ 如实标、★ **不谎称** ✓
+      ★ **真机读数**（★ `output/rib-dome-params-capability-recheck.json`）：
+        ★ `rib_report ok=false` · ★ `created=null` · ★ **`error=""`** ⇒
+        ★★ **⇒ **写侧**就没建成**（★ 那正是它自己 docstring 写的
+          「真机表现是 **"不抛异常、也不建出特征"的静默失败**」）⇒
+        ★★★ **⇒ 没有特征 ⇒ 本函数**量不到** ⇒ 口径**仍未定案**** ✓
+      ★★ **⚠ 而那是**写侧**的问题**（★ 轮廓形态）—— 试过**两种**轮廓都不成：
+        ① ★ 一条**悬空**的线（★ 没建板）⇒ `ok=false` ✓
+        ② ★ 一条**板内**的线（★ 建了 60×40×10 的板）⇒ `ok=false` ✓
+        ★★★ **⇒ 如实留给后人**：★ 筋的轮廓恐怕要**「板的一条边 + 一条外伸线」那种 L 形**
+          ⇒ ★ **那要单独一轮去查官方示例** ✓
+      ★★★ **⚠ 而同轮 `dome_params` **量到了**（★ `Height = 5.0` ⇒ 随文档单位）⇒
+        ★★ **⇒ 两条**独立**、★ 不能因为圆顶成了就默认筋也成** ✓
+      ★★★★ **⚠ `DraftAngle` 是**角度**⇒ ★ 官方只写 `Angle for the draft`、
+        ★ **没写度还是弧度** ⇒ ★★ 本函数如实标 `unknown`** ✓
+        （★ 本会话已有先例：★ `GetDraftAngle` 实测是 **radians** ⇒ **不套用**）✓
+
+    ★★★★★ **⚠ 本函数只读那 12 个**有页且非指针**的成员**（★ 逐条查过官方页）✓
+      | ★ 成员 | ★ 官方 `## Returns` |
+      |---|---|
+      | ★ `Thickness` | ★ `Thickness of the rib`（★ **无单位**）|
+      | ★ `DraftAngle` | ★ `Angle for the draft`（★ **没写度/弧度**）|
+      | ★ `Type` | ★ `Type as defined by swRibType_e` |
+      | ★ `ExtrusionDirection` | ★ `Direction as defined in swRibExtrusionDirection_e` |
+      | ★ `RefSketchIndex` | ★ `Index of the sketch segment that defines the draft direction` |
+      | ★ `NextReference()` | ★ `Index of the entity that is used`（★ 零参方法）|
+      | ★ 六个 bool | ★ `EnableDraft` · `DraftOutward` · `DraftFromWall` · `FlipSide` · `IsTwoSided` · `ReverseThicknessDir` |
+
+    ★★★★★ **⚠ 不碰**：★ `Body`（★ `## Remarks` 指向「Accessing Selections」）·
+      ★ `IAccessSelections` / ★ `AccessSelections` / ★ `ReleaseSelectionAccess`（★ 前置）✓
+    """
+    return _read_feature_params(
+        model, feature_name, "Rib",
+        ("Thickness", "DraftAngle", "Type", "ExtrusionDirection", "RefSketchIndex",
+         "NextReference", "EnableDraft", "DraftOutward", "DraftFromWall", "FlipSide",
+         "IsTwoSided", "ReverseThicknessDir"),
+        "找不到筋特征（★ 类型名含 `Rib`）",
+        {"Thickness": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+         "DraftAngle": "unknown（★ 官方只说 `Angle for the draft`、未写度/弧度；"
+                       "★ 真机实测见证据 —— ★ 本会话已有 `GetDraftAngle` 是 **radians** 的先例）"})
+
+
+def dome_params(model, feature_name: str = "") -> dict:
+    """★ 读**圆顶特征的一组参数**（★ 高度 / 是否椭圆 / 方向 / 面数）✓
+
+    ★★★★★ **单位口径（★ 第十族）**：★ 官方 `IDomeFeatureData2::Height` 的
+      `## Returns` **只写 `Height of the dome`、★ 没写单位** ⇒
+      ★★ **本函数如实标 `unknown`、★ 不猜** ✓
+      ★★★ **真机量过 · ★ 已定案**（★ `tools/probe_rib_dome_params_recheck.py` ·
+        ★ `output/rib-dome-params-capability-recheck.json`）⇒
+        ★ **管 40×40×10（毫米）⇒ 圆顶 `5 mm` ⇒ 读回 `Height = 5.0`** ⇒
+        ★★★★ **⇒ 口径 = **随文档单位**（★ 毫米文档 ⇒ 毫米值）** ✓
+      ★★★★★ **⚠ 而那次成功**靠的是三步选面序****（★ 那序**只在**
+        `tools/verify_dome_smoke.py` 里、★ **签名与 Remarks 的散文都给不出**）：
+        ① `SelectByID2("", "FACE", x,y,z, True, **0**, callout, 0)` ⇒
+        ② `ClearSelection2(True)` ⇒ ③ **再按 `mark=1` 选一次** ✓
+        （★ 官方 `InsertDome` 的 Remarks 只写「must select the face … using a
+          **selection mark of 1**」—— ★ **那三步序是官方 C# 示例给的**）✓
+
+    ★★★★★ **⚠ `ReverseDir` 的官方语义逐字**：★「**True for concave domes,
+      false for convex domes**」⇒ ★★ **那是**语义**、★ 不是"反向开关"那种字面意思** ⇒
+      ★★★ **⇒ 本函数把语义一并带回来**（★ 免得下一个人按名字猜）✓
+
+    ★★★★★ **⚠ 不碰**：
+      · ★ **`Face` / ★ `IFace`** ⇒ ★ **官方标**真废弃**** ✓
+      · ★ **`IGetFaces`** ⇒ 官方 `## Returns` 逐字「**in-process, unmanaged C++:
+        Pointer to an array** of …」⇒ ★★ **事实 47 那一族** ✓
+      · ★ **`ISetFaces`** ⇒ ★ 含 `ref Face2` ⇒ 同上 ✓
+      · ★ **`AccessSelections` / ★ `IAccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ ★ 前置 ✓
+      · ★ **`Faces` / ★ `Direction` / ★ `ConstraintPointOrSketch`** ⇒
+        ★ 官方 `## Remarks` 指向「Accessing Selections that Define Features」✓
+    """
+    out = _read_feature_params(
+        model, feature_name, "Dome",
+        ("Height", "Elliptical", "ReverseDir", "GetFaceCount"),
+        "找不到圆顶特征（★ 类型名含 `Dome`）",
+        {"Height": "unknown（★ 官方未写单位；★ 真机实测见证据）"})
+    #: ★★★ 把 `ReverseDir` 的**官方语义**一并带回来（★ 免得下一个人按名字猜）✓
+    out["★_ReverseDir_语义"] = {
+        "True": "concave dome（★ 凹的圆顶）",
+        "False": "convex dome（★ 凸的圆顶）",
+        "★_出处": "官方 `IDomeFeatureData2/ReverseDir.md` 的 `## Returns` 逐字",
+    }
+    out["★_不读（★ 真废弃 / ★ 指针 / ★ 前置）"] = [
+        "Face", "IFace", "IGetFaces", "ISetFaces",
+        "AccessSelections", "IAccessSelections", "ReleaseSelectionAccess",
+        "Faces", "Direction", "ConstraintPointOrSketch"]
     return out
 
 

@@ -162,4 +162,31 @@ SPECS_BATCH77 = [
             "（★ `AccessSelections` / ★ `ReleaseSelectionAccess` / ★ `FacesRemoved` /"
             "★ `MultipleThicknessFaces`）—— ★ 那是**前置**、★ 不是「读参数」 ✓",
     ),
+    #: ★★★★★★ 2026-10-04（轮 123）**第 10 条** —— ★ 同族继续 ✓
+    #:   ★ **真机量到了**（★ `output/rib-dome-params-capability-recheck.json`）：
+    #:     ★ 管 40×40×10（毫米）⇒ 圆顶 **5 mm** ⇒ 读回 **`Height = 5.0`** ⇒
+    #:     ★★ **⇒ 单位口径 = **随文档单位**（★ 第十族）** ✓
+    #:   ★★★ **⚠ 而那次成功靠的是**三步选面序****（★ 先 `mark=0` ⇒ ★ `ClearSelection2(True)`
+    #:     ⇒ ★★ **再按 `mark=1` 选**）—— ★ 那序**只在** `tools/verify_dome_smoke.py` 里、
+    #:     ★ **签名与 Remarks 的散文都给不出** ⇒
+    #:     ★★★★ **⇒ 又一次验证**「官方示例给的是**调用序**」那条纪律** ✓
+    ToolSpec(
+        name="solidworks_dome_params",
+        title="Read Dome Feature Parameters",
+        module="sw_feature_readback", inject="model", function="dome_params",
+        params=[_FEAT_NAME],
+        doc="★ **读圆顶特征的一组参数**（★ 高度 / 是否椭圆 / 方向 / 面数）。"
+            "★★★★★ **单位口径（★ 第十族）**：★ 官方 `IDomeFeatureData2::Height` 的"
+            "`## Returns` **只写 `Height of the dome`、★ 没写单位** ⇒"
+            "★★ **而真机量了**：★ 管 40×40×10（毫米）⇒ 圆顶 `5 mm` ⇒"
+            "**读回 `Height = 5.0`** ⇒ ★★★ **口径 = **随文档单位**** ✓"
+            "★★★★ **⚠ `ReverseDir` 的官方语义逐字**：★「**True for concave domes,"
+            "false for convex domes**」⇒ ★★ **那是**语义**、★ 不是「反向开关」那种字面意思** ⇒"
+            "★★★ **本工具把语义一并带回来**（★ 免得下一个人按名字猜）✓"
+            "★★★★ **⚠ 不碰**：★ `Face`/`IFace`（★ 官方标**真废弃**）·"
+            "★ `IGetFaces`（★ 官方逐字「**in-process, unmanaged C++: Pointer to an array**」⇒"
+            "**事实 47 那一族**）· ★ `ISetFaces`（★ 含 `ref Face2`）·"
+            "★ `Faces`/`Direction`/`ConstraintPointOrSketch`（★ 要「Accessing Selections」）·"
+            "★ `AccessSelections`/`IAccessSelections`/`ReleaseSelectionAccess`（★ 前置）✓",
+    ),
 ]
