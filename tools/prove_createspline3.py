@@ -121,14 +121,39 @@ def _one(sw, tag, mode):
         try:
             if mode == "on_surface":
                 #: \u2605 **on-surface**\uff1aPointData(3D \u70b9) + Surfs + Direction + Status
-                from sw_connect import get_com_member as _g
-                mv = _g(doc, "GetMathUtility")
-                v = _g(mv, "CreateVector", _arr([0, 0, -1]))
-                ret = C.get_com_member(sm, "CreateSpline3",
-                                       _arr([0.0, 0.0, 0.02, 0.02, 0.0, 0.02]),
-                                       _arr([surf], pythoncom.VT_DISPATCH),
-                                       _arr([v, v], pythoncom.VT_DISPATCH),
-                                       False, _byref())
+                #: ★★ 2026-10-03\uff08\u8f6e 577\uff09**\u4fee\u6b63\u5165\u53e3**\uff1a
+                #:   `GetMathUtility` \u5728 **`ISldWorks`** \u4e0a\uff08\u2605 **0 \u53c2**\uff09\u3001
+                #:   \u2605 **\u800c\u4e0d\u5728 `IModelDoc2` \u4e0a** \u2014\u2014
+                #:   \u2605 \u4e0a\u4e00\u8f6e\u6211\u5728 doc \u4e0a\u53d6\u5b83 \u21d2 `AttributeError`\uff08**\u7b2c\u56db\u7c7b\u5f62\u6001**\uff09\u3002
+                #: \u2605\u2605 **\u800c\u672c\u8f6e\u53c8\u628a\u6bcf\u4e00\u6b65\u5206\u5f00\u8bb0\u8d26** \u2014\u2014
+                #:   \u2605 \u4e0a\u4e00\u7248\u628a\u5b83\u4eec\u5305\u5728\u540c\u4e00\u4e2a `try` \u91cc \u21d2 **\u5206\u4e0d\u6e05\u662f\u54ea\u4e00\u6b65\u62a5\u7684** \u26a0
+                steps = {}
+                mv = None
+                try:
+                    mv = C.get_com_member(sw, "GetMathUtility")
+                    steps["GetMathUtility"] = "ok" if mv is not None else "None"
+                except Exception as exc:                                  # noqa: BLE001
+                    steps["GetMathUtility"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
+                v = None
+                if mv is not None:
+                    #: \u2605\u2605 2026-10-03\uff08\u8f6e 577\uff09\uff1a`CreateVector(object)` \u62a5**\u627e\u4e0d\u5230\u6210\u5458**
+                    #:   \uff08\u2605 **\u7b2c\u56db\u7c7b\u5f62\u6001**\uff09\u21d2 \u2605 \u6539\u8bd5\u53cd\u5c04\u91cc\u90a3\u4e2a **`ICreateVector`**
+                    #:   \uff08\u2605 `MathVector ICreateVector(ref double ArrayDataIn)` \u2014\u2014 \u2605 \u4e0e `out_i4` \u90a3\u65cf**\u540c\u7406**\uff09
+                    for nm in ("CreateVector", "ICreateVector"):
+                        try:
+                            v = C.call_com_member(mv, nm, _arr([0.0, 0.0, -1.0]))
+                            steps["CreateVector(%s)" % nm] = type(v).__name__ if v is not None else "None"
+                            if v is not None:
+                                break
+                        except Exception as exc:                          # noqa: BLE001
+                            steps["CreateVector(%s)" % nm] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
+                row["steps"] = steps
+                if v is not None:
+                    ret = C.get_com_member(sm, "CreateSpline3",
+                                           _arr([0.0, 0.0, 0.02, 0.02, 0.0, 0.02]),
+                                           _arr([surf], pythoncom.VT_DISPATCH),
+                                           _arr([v, v], pythoncom.VT_DISPATCH),
+                                           False, _byref())
             elif mode == "2d":
                 #: \u2605 **2D**\uff1a\u81f3\u5c11 6 \u4e2a\u5750\u6807\uff1b\u2605 \u5176\u4f59\u53c2\u6570 **null**
                 ret = C.get_com_member(sm, "CreateSpline3",

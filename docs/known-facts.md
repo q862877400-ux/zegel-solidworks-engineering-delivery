@@ -2170,3 +2170,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ⇒ ★★ **故两条**：① **2D 已登记为 verified**；② ★ **on-surface 未成的原因是我在 `IModelDoc2` 上取 `GetMathUtility`**—— ★ **它不在那里**（★ **第四类形态**）；★ **下一步**：换到**正确的入口**取 `IMathUtility`。
      ★ **落地**：`capabilities.yaml` 新增 **`sketch_spline3_2d`**（level = **verified**，共 **103** 条）；台账「样式样条曲线」补 `capability_id` ⇒ **已能 77**。
      ★★ **方法论**：★ **证一个方法之前，先看 md 头顶有没有 `Obsolete`** —— ★ 否则可能证的是**已废弃的那一代** ⚠|真机：`tools/prove_createspline3.py`；证据 `output/createspline3-evidence.json`；对照事实 433（废弃地图）· 452 |
+| 455 | **★★ 曲面上的样条：入口已找到（`ISldWorks.GetMathUtility`），而**取向量那一步两条路都不通**** —— 2026-10-03（轮 577）。
+     ★ **入口是查出来的**（★ 铁律 4 那种查法）：`GetMathUtility` 在 **`ISldWorks`** 上（**0 参**）——
+       ★ 而**不在 `IModelDoc2` 上**（★ 上一轮我在 doc 上取 ⇒ `AttributeError`，**第四类形态**）⚠
+     ★ 真机（`tools/prove_createspline3.py`，零弹窗）—— ★ **每一步分开记账**：
+     ```
+     step GetMathUtility            ⇒ **ok** ✓（★ 入口对了）
+     step CreateVector              ⇒ **`找不到成员`**（`0x80020003`）⚠
+     step ICreateVector             ⇒ **`无法读只写属性`**（`61836`）⚠
+     ```
+     ⇒ ★★ **故两条路各有一个具体的原因**：
+       ① ★ **`CreateVector(object)`**：名字在**迟到绑定里取不到**（★ **第四类形态**）；
+       ② ★★ **`ICreateVector(ref double ArrayDataIn)`**：那个 **`ref` 参数在迟到绑定下被当成了“**只写属性**”** —— ★ **与事实 36 同族**（名字/形态对不上时报的错看不出真因）。
+     ★ **按事实 53 停手**（★ 已四轮）；★ **而 2D 那条已登记**（★ 事实 454）—— ★ 故**本轮的实际产出是 2D 那条** ✓
+     ★ **下一步**（★ 给后面）：★ 试 **`IMathVector`** 的另一条来源（★ 例如从已有的方向对象取）或 **`IMathUtility.CreatePoint`** 那一族看看是不是同样取不到。
+     ★★ **方法论**：★ **把多步骤包在同一个 `try` 里，就分不清是哪一步报的** —— ★ 而**逐步记账**之后，一眼就看到是 `CreateVector` 那一步** ✓
+     ★ 本轮**不登记 on-surface**（★ 仍未建成）。|真机：`tools/prove_createspline3.py`；证据 `output/createspline3-evidence.json`；官方：`ISldWorks\GetMathUtility.md` · `IMathUtility\CreateVector.md` · 反射；对照事实 36 / 53 / 454 |
