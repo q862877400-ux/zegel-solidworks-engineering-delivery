@@ -3517,6 +3517,29 @@
       "evidence": [
         "python 真机（轮 317）★ `model.InsertAxis2(True)` 回 **True** 且出现 **`基准轴1`**；★ 而 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`（★ 入口层级错）· 证据 output/pattern-axis-evidence.json"
       ]
+    },
+    {
+      "id": "sketch_primitives_b1",
+      "label": "草图图元 B1 批（3 点矩形 / 平行四边形 / 切线弧 / 3 点圆弧 / 部分椭圆 / 抛物线 / 圆锥 / 周边圆）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "evidence": [
+        "output/b1-sketch-primitives-evidence.json"
+      ],
+      "limitations": [
+        "2026-10-03（轮 464）新增：9 个图元全部**真机建成**（★ 判据 = 草图实体段数增量，不是返回值）。★ 签名逐条取自 `C:\\swapi\\types\\ISketchManager\\<member>.md`（铁律 4）。⚠ **未核实**：`CreateTangentArc` 的 `ArcType` 取值表在两套离线源里都没查到 ⇒ 默认 1，标注为未核实（铁律 5）。⚠ `PerimeterCircle` 的官方签名**没有 Z**（6 个 double）—— 与同族不同，已照抄。⚠ 本批都需“当前在草图编辑态”的前置（先 `sketch_start`）。"
+      ],
+      "source": "original",
+      "source_evidence": "★ **本仓自建**（不是从外部项目搬来的）。依据：9 个成员的**精确签名**逐条取自本机官方离线源 `C:\\swapi\\types\\ISketchManager\\<member>.md`（铁律 4 的第一源）；包装在 `scripts/sw_sketch_primitives.py`（六字段来源块里逐条列了签名）；真机证据 `output/b1-sketch-primitives-evidence.json`（**9/9 pass**，判据是草图实体段数增量）。★ 与四家外部项目无交集（它们那几个草图图元我们没搬）。"
     }
   ]
 }

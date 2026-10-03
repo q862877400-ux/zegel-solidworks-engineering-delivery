@@ -75,20 +75,21 @@
 | 65 | `sketch_build` | `verified` | `original` | ✓ | — |
 | 66 | `sketch_chamfer` | `verified` | `original` | ✓ | — |
 | 67 | `sketch_edit_ops` | `stitched` | `original` | ✓ | — |
-| 68 | `sketch_query` | `verified` | `original` | ✓ | — |
-| 69 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
-| 70 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
-| 71 | `surface_features` | `verified` | `mixed` | ✓ | — |
-| 72 | `surface_modeling` | `stitched` | `mixed` | — | — |
-| 73 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
-| 74 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
-| 75 | `topology_optimization` | `verified` | `original` | ✓ | — |
-| 76 | `topology_readback` | `stitched` | `original` | ✓ | — |
-| 77 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
-| 78 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
-| 79 | `weldments` | `verified` | `upstream` | ✓ | — |
+| 68 | `sketch_primitives_b1` | `verified` | `original` | ✓ | — |
+| 69 | `sketch_query` | `verified` | `original` | ✓ | — |
+| 70 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
+| 71 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
+| 72 | `surface_features` | `verified` | `mixed` | ✓ | — |
+| 73 | `surface_modeling` | `stitched` | `mixed` | — | — |
+| 74 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
+| 75 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
+| 76 | `topology_optimization` | `verified` | `original` | ✓ | — |
+| 77 | `topology_readback` | `stitched` | `original` | ✓ | — |
+| 78 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
+| 79 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
+| 80 | `weldments` | `verified` | `upstream` | ✓ | — |
 
-**合计 79 条**。
+**合计 80 条**。
 
 ## 二、`level` 分布
 
@@ -98,7 +99,7 @@
 | `not_implemented` | 1 |
 | `source_verified` | 0 |
 | `stitched` | 11 |
-| `verified` | 67 |
+| `verified` | 68 |
 
 ## 三、`source` 分布
 
@@ -106,7 +107,7 @@
 |---|---|
 | `merged` | 0 |
 | `mixed` | 11 |
-| `original` | 49 |
+| `original` | 50 |
 | `undetermined` | 1 |
 | `upstream` | 18 |
 
@@ -118,7 +119,7 @@
 | `not_implemented` | 0 | 0 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
 | `stitched` | 0 | 3 | 8 | 0 | 0 |
-| `verified` | 0 | 8 | 41 | 1 | 17 |
+| `verified` | 0 | 8 | 42 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

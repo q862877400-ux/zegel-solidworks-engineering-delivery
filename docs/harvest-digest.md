@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **79** 条能力。
+共 **80** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 67 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 68 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 11 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 49 | **本项目自研**（护城河域等） |
+| `original` | 50 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -130,6 +130,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `geometry_measurement` | · `python 真机（轮 382）★ **绝对 mm 判据第一次真机使用 · PASS** —— `tools/prove_absolute_criteria.py`（走 `sw_guard` 护栏）建 100×60×20 mm 板，**数据取自真机几何**（顶点坐标差实测 `delta_mm = [0.0, 0.0, -20.0]` = 板厚；`volume = 120000.0` mm³ · `area = 18400.0` mm² 与手算精确一致），三条判据各带**正例与负例**：`check_axis_alignment` / `check_radii` / `check_same_level` **全部「正例 ok=True 且负例 ok=False」** ⇒ `verdict: pass`。证据 output/absolute-criteria-evidence.json。★ 依据调研 v2 发现①：**定位用绝对、等价用相对** —— 两条互补，只留一条会各瞎一半；**现在两条都真机 PASS 过**（相对判据见 compare_geometry 的既有 evidence）。`<br>· `python 真机（轮 311）★ **PASS 3/3** —— ★ 期望值全部由几何推出且全部对上：两平行面 ⇒ `distance` **10.0 mm**（板厚 10）· 单面 ⇒ `area` **400 mm²**（20×20）与 `perimeter` **80 mm**（4×20）· 未选中 ⇒ 显式拒绝 · 证据 output/measure-evidence.json` |
 | `loft_and_sweep` | · `python 真机（轮 315）★ **扫描建成 `扫描1`** · **type=`Sweep`**（★ 走 CreateDefinition(swFmSweep=17)）· 未选中 ⇒ 显式拒绝 · 证据 output/sweep-evidence.json`<br>· `python 真机（轮 314）★ **PASS 3/3** —— 同平面与两平面都建成 **`放样1`** 且 **类型名 = `Blend`**（★ 对照拉伸 = `Extrusion`）· 未选中 ⇒ 显式拒绝 · 证据 output/loft-evidence.json · loom-type-evidence.json` |
 | `reference_axis` | · `python 真机（轮 317）★ `model.InsertAxis2(True)` 回 **True** 且出现 **`基准轴1`**；★ 而 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`（★ 入口层级错）· 证据 output/pattern-axis-evidence.json` |
+| `sketch_primitives_b1` | · `output/b1-sketch-primitives-evidence.json` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

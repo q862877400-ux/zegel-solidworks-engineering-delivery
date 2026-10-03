@@ -1,0 +1,867 @@
+{
+  "_": "★ 台账数据：五轮截图问过的全部工具栏条目（★ 人工读图得来，是本项目的**需求原文**）。",
+  "_source": "用户 2026-10-03 会话里贴的 5 组 SolidWorks 工具栏截图（特征 / 特征下拉 / 草图绘制 / 草图尺寸与关系 / 曲面）。",
+  "_schema": "每条: {tb: 工具条, zh: 名称, api: 我们查到的官方成员(可空), entry: 本仓入口(可空), level: 我方等级(能/不能/没验过)}",
+  "items": [
+    {
+      "tb": "特征",
+      "zh": "拉伸凸台/基体",
+      "api": "FeatureExtrusion3",
+      "entry": "sw_part.extrude_boss",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "旋转凸台/基体",
+      "api": "FeatureRevolve2",
+      "entry": "sw_part.revolve_boss",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "扫描",
+      "api": "swFmSweep + ISweepFeatureData",
+      "entry": "sw_sweep.create_sweep_report",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "放样凸台/基体",
+      "api": "InsertProtrusionBlend2",
+      "entry": "sw_loft.create_loft_report",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "边界凸台/基体",
+      "api": "InsertProtrusionBlend2(Boundary)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征",
+      "zh": "拉伸切除",
+      "api": "FeatureCut4",
+      "entry": "sw_part.extrude_cut",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "异型孔向导",
+      "api": "HoleWizard5",
+      "entry": "sw_hole_features.*_report",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "旋转切除",
+      "api": "FeatureRevolveCut2",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征",
+      "zh": "扫描切除",
+      "api": "swFmSweepCut",
+      "entry": "sw_sweep.create_sweep_report(cut=True)",
+      "level": "没验过"
+    },
+    {
+      "tb": "特征",
+      "zh": "放样切除",
+      "api": "InsertCutBlend",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征",
+      "zh": "边界切除",
+      "api": "InsertCutBlend(Boundary)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征",
+      "zh": "圆角",
+      "api": "FeatureFillet",
+      "entry": "sw_part.fillet",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "线性阵列",
+      "api": "FeatureLinearPattern4/5",
+      "entry": "sw_part.linear_pattern",
+      "level": "不能"
+    },
+    {
+      "tb": "特征",
+      "zh": "筋",
+      "api": "InsertRib",
+      "entry": "sw_part.rib_report",
+      "level": "没验过"
+    },
+    {
+      "tb": "特征",
+      "zh": "拔模",
+      "api": "InsertDraft",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征",
+      "zh": "抽壳",
+      "api": "InsertFeatureShell",
+      "entry": "sw_part.shell_report",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "包覆",
+      "api": "InsertWrapFeature2",
+      "entry": "sw_wrap.create_wrap_report",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "相交",
+      "api": "InsertIntersect",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征",
+      "zh": "镜向",
+      "api": "InsertMirrorFeature2",
+      "entry": "sw_part.mirror_feature",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "参考几何体-基准轴",
+      "api": "InsertAxis2",
+      "entry": "sw_part.create_axis_report",
+      "level": "能"
+    },
+    {
+      "tb": "特征",
+      "zh": "曲线-螺旋线/涡状线",
+      "api": "InsertHelix",
+      "entry": "sw_helix.insert_helix",
+      "level": "能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "高级孔",
+      "api": "HoleWizard5(HoleSeries)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "螺纹线",
+      "api": "InsertCosmeticThread3",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "螺柱向导",
+      "api": "InsertStudWizard",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "圆周阵列",
+      "api": "FeatureCircularPattern4",
+      "entry": "sw_part.circular_pattern",
+      "level": "能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "曲线驱动的阵列",
+      "api": "FeatureCurvePattern",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "草图驱动的阵列",
+      "api": "FeatureSketchDrivenPattern",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "表格驱动的阵列",
+      "api": "InsertTableDrivenPattern",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "填充阵列",
+      "api": "FeatureFillPattern",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "变量阵列",
+      "api": "InsertVaryInstance",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "参考几何体-基准面",
+      "api": "InsertRefPlane",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "参考几何体-坐标系",
+      "api": "InsertCoordinateSystem",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "参考几何体-点",
+      "api": "InsertReferencePoint",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "参考几何体-质心",
+      "api": "InsertCenterOfMass",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "参考几何体-边界框",
+      "api": "InsertBoundingBox",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "参考几何体-配合参考",
+      "api": "AddMateReference",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "曲线-分割线",
+      "api": "InsertSplitLineProject/Silhouette",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "曲线-投影曲线",
+      "api": "InsertProjectedSketch",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "曲线-组合曲线",
+      "api": "InsertCompositeCurve",
+      "entry": "sw_part.insert_composite_curve_report",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "曲线-通过XYZ点的曲线",
+      "api": "InsertCurveFile",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "特征下拉",
+      "zh": "曲线-通过参考点的曲线",
+      "api": "InsertCurveThroughRefPoints",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "直线",
+      "api": "CreateLine",
+      "entry": "sw_part.sketch_line",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "中心线",
+      "api": "CreateCenterLine",
+      "entry": "sw_part.sketch_centerline",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "中点线",
+      "api": "CreateLine(Midpoint)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "圆",
+      "api": "CreateCircle",
+      "entry": "sw_part.sketch_circle",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "周边圆",
+      "api": "PerimeterCircle",
+      "entry": "sw_sketch_primitives.sketch_perimeter_circle",
+      "level": "能",
+      "tool": "solidworks_sketch_add_perimeter_circle",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "样条曲线",
+      "api": "CreateSpline2/CreateSpline3",
+      "entry": "sw_part.sketch_spline",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "样式样条曲线",
+      "api": "CreateSpline3",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "曲面上的样条曲线",
+      "api": "CreateSpline(3D)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "方程式驱动的曲线",
+      "api": "CreateEquationSpline2/CreateSplinesByEqnParams2",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "边角矩形",
+      "api": "CreateCornerRectangle",
+      "entry": "sw_part.sketch_corner_rectangle",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "中心矩形",
+      "api": "CreateCenterRectangle",
+      "entry": "sw_part.sketch_rectangle",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "3点边角矩形",
+      "api": "Create3PointCornerRectangle",
+      "entry": "sw_sketch_primitives.sketch_3point_corner_rectangle",
+      "level": "能",
+      "tool": "solidworks_sketch_add_3point_rectangle",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "3点中心矩形",
+      "api": "Create3PointCenterRectangle",
+      "entry": "sw_sketch_primitives.sketch_3point_center_rectangle",
+      "level": "能",
+      "tool": "solidworks_sketch_add_3point_center_rectangle",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "平行四边形",
+      "api": "CreateParallelogram",
+      "entry": "sw_sketch_primitives.sketch_parallelogram",
+      "level": "能",
+      "tool": "solidworks_sketch_add_parallelogram",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "圆心/起/终点画弧",
+      "api": "CreateArc",
+      "entry": "sw_part.sketch_arc",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "切线弧",
+      "api": "CreateTangentArc",
+      "entry": "sw_sketch_primitives.sketch_tangent_arc",
+      "level": "能",
+      "tool": "solidworks_sketch_add_tangent_arc",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "3点圆弧",
+      "api": "Create3PointArc",
+      "entry": "sw_sketch_primitives.sketch_3point_arc",
+      "level": "能",
+      "tool": "solidworks_sketch_add_3point_arc",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "椭圆",
+      "api": "CreateEllipse",
+      "entry": "sw_part.sketch_ellipse",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "部分椭圆",
+      "api": "CreateEllipticalArc",
+      "entry": "sw_sketch_primitives.sketch_elliptical_arc",
+      "level": "能",
+      "tool": "solidworks_sketch_add_partial_ellipse",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "抛物线",
+      "api": "CreateParabola",
+      "entry": "sw_sketch_primitives.sketch_parabola",
+      "level": "能",
+      "tool": "solidworks_sketch_add_parabola",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "圆锥",
+      "api": "CreateConic",
+      "entry": "sw_sketch_primitives.sketch_conic",
+      "level": "能",
+      "tool": "solidworks_sketch_add_conic",
+      "evidence": "output/b1-sketch-primitives-evidence.json",
+      "batch": "B1"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "直槽口",
+      "api": "CreateSketchSlot",
+      "entry": "sw_part.sketch_slot",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "中心点直槽口",
+      "api": "CreateSketchSlot(center)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "三点圆弧槽口",
+      "api": "CreateSketchSlot(3pt arc)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "中心点圆弧槽口",
+      "api": "CreateSketchSlot(center arc)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "绘制圆角",
+      "api": "CreateFillet",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "绘制倒角",
+      "api": "CreateChamfer",
+      "entry": "sw_sketch_edit.create_sketch_chamfer",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "退出草图",
+      "api": "InsertSketch(False)",
+      "entry": "sw_part.end_sketch",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "转换实体引用",
+      "api": "SketchUseEdge3",
+      "entry": "sw_sketch_edit.convert_entities",
+      "level": "能"
+    },
+    {
+      "tb": "草图绘制",
+      "zh": "镜向实体",
+      "api": "GetDynamicMirror/SetDynamicMirror",
+      "entry": "sw_sketch_edit.sketch_mirror",
+      "level": "能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "智能尺寸",
+      "api": "AutoDimension2",
+      "entry": "sw_part.auto_dimension_sketch",
+      "level": "能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "水平尺寸",
+      "api": "AddHorizontalDimension2",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "竖直尺寸",
+      "api": "AddVerticalDimension2",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "基准尺寸",
+      "api": "AddBaselineDimension",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "链尺寸",
+      "api": "AddChainDimension",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "对称线性直径尺寸",
+      "api": "AddSymmetricDimension",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "尺寸链",
+      "api": "AddDimensionChain",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "水平尺寸链",
+      "api": "AddHorizontalDimensionChain",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "竖直尺寸链",
+      "api": "AddVerticalDimensionChain",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图尺寸",
+      "zh": "路径长度尺寸",
+      "api": "AddPathLengthDimension",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "剪裁实体",
+      "api": "SketchTrim",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "延伸实体",
+      "api": "SketchExtend",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "侧影实体",
+      "api": "SketchUseEdge3(Silhouette)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "交叉曲线",
+      "api": "IntersectCurves",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "线性草图阵列",
+      "api": "CreateLinearSketchStepAndRepeat",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "圆周草图阵列",
+      "api": "CreateCircularSketchStepAndRepeat",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "移动实体",
+      "api": "IModelDoc2.SketchModifyTranslate",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "复制实体",
+      "api": "IModelDoc2.SketchModifyCopy",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "旋转实体",
+      "api": "IModelDoc2.SketchModifyRotate",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "缩放实体比例",
+      "api": "IModelDoc2.SketchModifyScale",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "伸展实体",
+      "api": "IModelDoc2.SketchModifyStretch",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "等距实体",
+      "api": "SketchOffset2",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图编辑",
+      "zh": "曲面上偏移",
+      "api": "SketchOffsetOnSurface",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图关系",
+      "zh": "显示/删除几何关系",
+      "api": "ISketch.GetSketchRelations / DeleteRelation",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "草图关系",
+      "zh": "添加几何关系",
+      "api": "SketchAddConstraints",
+      "entry": "sw_part.add_sketch_relation",
+      "level": "能"
+    },
+    {
+      "tb": "草图关系",
+      "zh": "完全定义草图",
+      "api": "FullyDefineSketch",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "拉伸曲面",
+      "api": "FeatureExtruRefSurface3",
+      "entry": "sw_surface_features.create_extruded_surface_report",
+      "level": "能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "旋转曲面",
+      "api": "FeatureRevolveRefSurface",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "扫描曲面",
+      "api": "InsertProtrusionSwept4(Surface)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "放样曲面",
+      "api": "InsertProtrusionBlend2(Surface)",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "边界曲面",
+      "api": "InsertBoundaryBoss",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "填充曲面",
+      "api": "InsertFillSurface2",
+      "entry": "sw_surface_features.insert_fill_surface_report",
+      "level": "能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "自由样式",
+      "api": "InsertFreeform",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "平面区域",
+      "api": "InsertPlanarRefSurface",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "等距曲面",
+      "api": "InsertOffsetSurface",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "曲面展平",
+      "api": "InsertFlattenSurface",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "圆角(曲面)",
+      "api": "FeatureFillet",
+      "entry": "sw_part.fillet",
+      "level": "没验过"
+    },
+    {
+      "tb": "曲面",
+      "zh": "直纹曲面",
+      "api": "InsertRuledSurface",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "删除面",
+      "api": "InsertDeleteFace2",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "替换面",
+      "api": "InsertReplaceFace",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "删除孔",
+      "api": "InsertDeleteHole",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "延伸曲面",
+      "api": "InsertExtendSurface",
+      "entry": "sw_surface_features.insert_extend_surface_report",
+      "level": "能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "剪裁曲面",
+      "api": "InsertTrimSurface",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "解除剪裁曲面",
+      "api": "InsertUntrimSurface",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "缝合曲面",
+      "api": "InsertSewRefSurface",
+      "entry": "sw_surface_features.knit_surfaces_report",
+      "level": "能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "加厚",
+      "api": "InsertThickenFeature",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "加厚切除",
+      "api": "InsertThickenCut",
+      "entry": "",
+      "level": "不能"
+    },
+    {
+      "tb": "曲面",
+      "zh": "使用曲面切除",
+      "api": "InsertCutWithSurface",
+      "entry": "",
+      "level": "不能"
+    }
+  ]
+}
