@@ -104,4 +104,18 @@ SPECS_BATCH77 = [
             "（★ `GetRadius` / `GetDistance` / `GetConicRhoOrRadius`）——"
             "★ 它们要先 `IGetFilletEdgeAtIndex` ⇒ ★ **硬写会得到一个每次都不一样的结果**。",
     ),
+    ToolSpec(
+        name="solidworks_csys_params",
+        title="Read Coordinate System Feature Parameters",
+        module="sw_feature_readback", inject="model", function="csys_params",
+        params=[_FEAT_NAME],
+        doc="★ **读坐标系特征的一组参数**（★ 原点实体类型 / 三轴实体数 / 变换对象）。"
+            "★★★ **读数自洽**：★ 建**默认三轴**的坐标系 ⇒ ★ `GetOriginEntityType = -1` ·"
+            "★ 三轴实体数 `0/0/0` · ★ `Transform.ArrayData` **16 个数 = 单位阵** ✓"
+            "★★★★ **⚠ 本族的官方页**只有四个****（★ `output/_read_csys_members.py`）⇒"
+            "★ `Flipped` / ★ `Reverse*Direction` / ★ `Get*AxisEntities` 等 **11 个「页不在」** ⇒"
+            "★★ **按铁律 5：★ 本工具**不调**它们、★ 也不猜**（★ 返回值里列了那份清单）✓"
+            "★★★ **⚠ 本族**没有长度量****（★ 三是计数、★ 一是枚举、★ 一是变换对象）⇒"
+            "**不涉及单位口径** —— ★ 那是本会话**唯一**一个这样的一族 ✓",
+    ),
 ]

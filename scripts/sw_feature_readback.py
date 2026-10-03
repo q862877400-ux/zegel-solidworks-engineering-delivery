@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -700,6 +700,90 @@ def fillet_params(model, feature_name: str = "") -> dict:
                 out[name] = get_com_member(fd, name)
             except Exception as exc:                                      # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\ICoordinateSystemFeatureData\\`）
+# 文件:   `scripts/sw_feature_readback.py::csys_params`（★ 新增）
+# 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第七个**、★ **第六个族** ✓
+#   ★★ **本族先逐个读官方页**（★ `output/_read_csys_members.py`）⇒
+#     ★ **只有四个成员有页**、★ **其余一律「页不在」** ⇒
+#     ★★★ **按铁律 5：★ 查不到就写「查不到」、★ 不许用相似名字蒙混** ✓
+#   ★★★ **官方逐字**：★ `GetOriginEntityType()` ⇒ `swSelectType_e` ·
+#     ★ 三个 `Get{X,Y,Z}AxisEntitiesCount()` ⇒ 「Number of entities for the x/y/z axis」·
+#     ★ `Transform {get;}` ⇒ 回 `Math transform` ·
+#     ★★ `AccessSelections(TopDoc, Component)` ⇒ 要两个入参 ⇒ **本函数不碰** ✓
+#   ★★★★ **⚠ 本族**没有长度量****（★ 三是计数、★ 一是枚举、★ 一是变换对象）⇒
+#     **不涉及单位口径** —— ★ **那本身是一条读数** ✓
+#     （★ 对照本会话已见的六层：★ 随文档 · ★ radians · ★ meters · ★ 官方没写 ·
+#       ★ 接口内部分裂 · ★ 随文档）✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def csys_params(model, feature_name: str = "") -> dict:
+    """★ 读**坐标系特征的一组参数**（★ 原点实体类型 / 三轴实体数 / 变换对象）✓
+
+    ★★★★★ **⚠ 本族的"页不在"是**查不到**、★ 不是"没有"**：
+      ★ `Flipped` / ★ `ReverseXDirection` / ★ `ReverseYDirection` / ★ `ReverseZDirection` /
+      ★ `GetXAxisEntities` / ★ `GetYAxisEntities` / ★ `GetZAxisEntities` /
+      ★ `GetXAxisEntitiesType` / ★ `GetYAxisEntitiesType` / ★ `GetZAxisEntitiesType` /
+      ★ `GetOriginEntity` ⇒ ★★ **在 `C:\\swapi\\types\\ICoordinateSystemFeatureData\\`
+        下**没有页** ⇒ ★★★ **按铁律 5：★ 本函数**不调**它们、★ 也不猜** ✓
+      （★ 它们**可能存在**于别的源 —— ★ 那要另查；★ **不等于"不存在"**）✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    out: dict = {"feature": feature_name, "definition": None, "error": None,
+                 "★_单位口径": "★ 本族**没有长度量**（★ 三是计数、★ 一是枚举、★ 一是变换对象）",
+                 "★_页不在（★ 不调、★ 不猜）": [
+                     "Flipped", "ReverseXDirection", "ReverseYDirection", "ReverseZDirection",
+                     "GetXAxisEntities", "GetYAxisEntities", "GetZAxisEntities",
+                     "GetXAxisEntitiesType", "GetYAxisEntitiesType", "GetZAxisEntitiesType",
+                     "GetOriginEntity"]}
+    try:
+        feat = None
+        if feature_name:
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★★ 兜底：★ 找**最后一个**坐标系特征（★ 类型名含 `CoordSys`）——
+            #:   ★★★ **两层过滤**（★ 前几轮的教训：★ 容器也可能有类型名）✓
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    nm = str(safe_get_com_member(f, "Name") or "")
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if nm not in _CONTAINER_NODES and "CoordSys" in tn:
+                        feat, out["feature"] = f, nm
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = "找不到坐标系特征"
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        #: ★★ 零参方法（★ 官方逐字有页的那四个）⇒ ★ 直接取 ✓
+        for name in ("GetOriginEntityType", "GetXAxisEntitiesCount",
+                     "GetYAxisEntitiesCount", "GetZAxisEntitiesCount"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+        #: ★★★ `Transform` 是**属性**、★ 回一个**对象** ⇒ ★ 取它的 `ArrayData`（★ 16 个数）✓
+        try:
+            tr = get_com_member(fd, "Transform")
+            out["Transform"] = type(tr).__name__ if tr is not None else None
+            if tr is not None:
+                arr = list(get_com_member(tr, "ArrayData") or [])
+                out["Transform.ArrayData_len"] = len(arr)
+                out["Transform.ArrayData_head"] = [round(float(x), 6) for x in arr[:4]]
+        except Exception as exc:                                          # noqa: BLE001
+            out["Transform"] = "err: %s" % str(exc)[:60]
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out

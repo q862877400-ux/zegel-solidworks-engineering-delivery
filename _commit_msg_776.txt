@@ -1,0 +1,67 @@
+fix(阶段3): ★★★★★★ **补能力第 7 个 —— `csys_params`**（★ `ICoordinateSystemFeatureData`）；★ 并记下本会话**唯一**不涉及单位口径的一族
+
+■ 一 · ★ 挑族 + **先把官方页逐个读完**
+  ★ `ICoordinateSystemFeatureData`（★ 那格里 ×18）⇒ ★ **第六个族** ✓
+  ★★ **逐个读**（★ `output/_read_csys_members.py`、★ **并用上一轮修的精确废弃判据**）⇒ 结论：
+    ★ **只有**四个**成员有页****：
+      · ★ `GetOriginEntityType()` ⇒ `swSelectType_e` ✓
+      · ★ 三个 `Get{X,Y,Z}AxisEntitiesCount()` ⇒ 「Number of entities for the x/y/z axis」✓
+      · ★ `Transform {get;}` ⇒ ★ **回 `Math transform`**（★ 对象、★ 可读 `ArrayData`）✓
+      · ★★ `AccessSelections(TopDoc, Component)` ⇒ ★ **要两个入参** ⇒ **本函数不碰** ✓
+    ★★★ **其余一律「页不在」**（★ 11 个：★ `Flipped` · ★ `Reverse*Direction` ·
+      ★ `Get*AxisEntities` · ★ `Get*AxisEntitiesType` · ★ `GetOriginEntity`）⇒
+      ★★★★ **⇒ 按铁律 5：★ 查不到就写「查不到」、★ 不许用相似名字蒙混** ✓
+
+■ 二 · ★ 真机 **8/8 全过**（★ `output/csys-params-capability-recheck.json`）
+  | ★ 判据 | ★ 读数 |
+  |---|---|
+  | ★ 找到坐标系特征 | ★ **`坐标系1`** ✓ |
+  | ★ `GetOriginEntityType` 是 int | ★ **`-1`** ✓ |
+  | ★ `Get{X,Y,Z}AxisEntitiesCount` 是 int | ★ **`0` / `0` / `0`** ✓ |
+  | ★ `Transform` 非 None | ★ **`CDispatch`** ✓ |
+  | ★★ `Transform.ArrayData` 是 16 个数 | ★★ **`16`**（★ 头 4 位 `[1.0, 0.0, 0.0, 0.0]`）✓ |
+
+■ 三 · ★★★★★★ **三个读数**互相印证****（★ 那份读数很干净）
+  ★ `GetOriginEntityType = **-1**` ⇒ ★ **未指定原点实体** ✓
+  ★★ **三轴实体数 = `0/0/0`** ⇒ ★ **`insert_coordinate_system` 建的是**默认三轴**** ✓
+  ★★★ **`Transform` = 16 个数、★ 头是 `[1.0, 0.0, 0.0, 0.0]`** ⇒ ★★ ****单位阵** ⇒
+    坐标系与默认坐标系**重合**** ✓
+  ⇒ ★★★★ **⇒ 三个读数指向同一个事实：★ 这是一个**未取任何参考的默认坐标系**** ✓
+  ★★★★★ **⇒ 而那正是本仓那个能力的语义** ⇒ **读数与语义自洽** ✓
+
+■ 四 · ★★★★★★ 而本族是**唯一不涉及单位口径**的一族
+  ★ 三是**计数**（★ 无量纲）· ★ 一是**枚举** · ★ 一是**变换对象** ⇒ ★ **没有一个长度量** ✓
+  ★★ **对照本会话已见的六层**：★ ① 随文档 · ★② radians · ★③ meters · ★④ 官方没写 ·
+    ★⑤ 接口内部分裂 · ★⑥ 随文档 ✓
+  ★★★ **⇒ 补了第七族之后，"单位口径"这件事**第一次出现"不适用"**** ⇒
+    ★★★★ **⇒ 那本身是一条读数**（★ 说明"每族都要查"这条判据是**对的** ——
+      ★ **查了才知道它不适用**）✓
+
+■ 五 · ★★★★★ 而本轮那条判据**第 5 次**生效（★ 值记）
+  ★ 我第一版猜前置是 `sw_part.insert_coordinate_system` ⇒ ★★ 真机报
+    `AttributeError: module 'sw_part' has no attribute 'insert_coordinate_system'` ✓
+  ★★★ **真位置是**另一个模块****：★ `scripts/sw_ref_geometry.py::insert_coordinate_system`
+    （★ **而且是它**主动记档**了 `IModelDoc2` 那个已废弃版** ⇒ ★ 它自己就是对的）✓
+  ★★★★ **⇒ 前 4 次**：★ `hole_wizard` · ★ `GetFeatureByName` · ★ `fillet` 的**参序** · ★ 本次**跨模块** ✓
+  > ★★★★★ **可复用判据**：★★★ **"在仓里搜"要搜**够**（★ 按**功能词**搜全部 `scripts/`、**
+  >   ★ **而不是只猜某个模块）** —— ★ 我这次猜了模块就停手了 ✓
+
+■ 六 · ★★ 交付
+  ★ `scripts/sw_feature_readback.py::csys_params` ⇒ ★ **`__all__` 11 项** ✓
+  ★★ **挂 ToolSpec**：★ `tool_specs_batch77.py` 加第 7 条 ⇒
+    ★★★ **`ToolSpec 总数 286 → **287**** ✓ · ★ 成员名门禁 **[PASS]** ✓
+
+■ 七 · ★★ 新增测试（★ `tests/test_csys_params_capability.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★★ **前提断言** | ★ 那 11 个**确实没有页**（★ 「查不到」的依据**可核**）✓ |
+  | ★★★ **核心断言** | ★ 函数体里**一个都不调**那 11 个（★ 按**调用形态**查、★ 不按名字出现）✓ |
+  | ★★★ **核心断言** | ★ 兜底过**两层**（★ `_CONTAINER_NODES` + ★ `CoordSys`）✓ |
+  | ★★★★ **负例 · 三个读数互相印证** | ★ `-1` + `0/0/0` + **16 个数的单位阵** ✓ |
+  ★★ **⚠ 判据精度**（★ 值记）：★ 我第一版查「名字出现」⇒ ★ **红了** ——
+    ★ 因为那份清单**本身就在函数体里**（★ 它是**返回值**）⇒ ★ **改用调用形态** ✓
+
+■ 八 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **阶段 3 的第七个补能力落地** —— ★ **`查 × 特征` 从 6 → 7**（★ 那一格官方 451）·
+    ★★ **覆盖面 6 个族** ✓
