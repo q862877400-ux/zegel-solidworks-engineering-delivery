@@ -107,13 +107,25 @@ def _pick_plane(doc, names=("\u524d\u89c6\u57fa\u51c6\u9762", "Front Plane")):
     except Exception:                                                     # noqa: BLE001
         pass
     ext = _get(doc, "Extension")
+    #: ★★★★ 2026-10-03（轮 538）**修**：`Callout` **不能传 `None`** —— ★ 本仓要 `_empty_callout()`
+    #:   （★ **事实 33**：传 `None` 报 `类型不匹配`、★ 而那个错**看不出是 Callout 的问题**）。
+    #:   ⚠ **轮 537 第一版就是踩在这**：★ 报错被 `except: continue` 吞掉 ⇒
+    #:     `picked={"plane": null}` ⇒ ★ 两条**根本没真试到**，★ 而读起来像"前置不够"。
+    from sw_part import _empty_callout as _ec
+    from sw_part import _select_by_id as _sel_id
+    errs = []
     for nm in names:
         try:
-            if _get(ext, "SelectByID2", nm, "PLANE", False, 0, 0.0, 0.0, 0.0, False, 0, None, 0):
+            #: ★★★★ 2026-10-03（轮 538）**第二次修** —— ★ 手搓的 `get_com_member(ext, "SelectByID2", …)`
+            #:   即使传了 `_empty_callout()` **仍报 `类型不匹配`（位置 8）** ⚠
+            #:   ⇒ ★★ **改用本仓现成的 `sw_part._select_by_id`**（★ 它内部处理的形态才是对的）✓
+            if _sel_id(ext, nm, "PLANE", append=False, mark=0):
                 return nm
-        except Exception:                                                 # noqa: BLE001
+        except Exception as exc:                                          # noqa: BLE001
+            errs.append("%s: %s" % (nm, str(exc)[:50]))
             continue
-    return None
+    #: ★ 不再静默：把错带回去（事实 417 的教训）
+    return {"ERR": errs} if errs else None
 
 
 def _one(sw, tag, kind):
