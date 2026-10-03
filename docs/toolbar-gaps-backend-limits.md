@@ -12,7 +12,7 @@
 
 | 被点名的族 | ★ 核实后的结论 | 依据 |
 |---|---|---|
-| **线性阵列族** | ❌ **不成立** —— ★ **不是后端到不了**，★ 是**旧入口废弃了** | 见 §二 |
+| **线性阵列族** | ✅ **成立** —— ★★ **而理由与最初的猜测不同**：不是“旧入口废弃”，而是 **新旧两条路都要 `AccessSelections`** | 见 §二 |
 | **`IAccessSelections` 指针族** | ✅ **成立** | 见 §三 |
 | **结构系统** | ❌ **不成立** | 见 §四 |
 
@@ -26,7 +26,30 @@
 
 ---
 
-## 二、线性阵列族 —— ★ **不是后端到不了，本仓早已攻克**
+## 二、线性阵列族 —— ✅ **确实到不了，而理由是「指针族」（★ 本节已在轮 484 更正）**
+
+> ★★★ **2026-10-03（轮 484）更正** —— ★ 本节**原文**判它「不成立」。★ 而**真机试过之后**，
+> 结论**反过来了**，只是**理由与最初的目标原话不同**：
+>
+> | 路径 | 真机结果 |
+> |---|---|
+> | **旧入口** `FeatureLinearPattern3/4/5` | ★ **fail** —— 3 代逐个试，★ 3/4 回 `None`、★ 5 报 `非选择性的参数`；三判据（树名增量 / 特征数 / **几何：体数+包围盒**）**全没变**（`output/linear-pattern-*-evidence.json`，`verdict: fail`） |
+> | **新架构** `CreateDefinition(swFmLPattern=6)` + `ILinearPatternFeatureData` | ★ `CreateDefinition` **成功**（拿到 `data`）；★★ 而 **`AccessSelections` 到不了** ⚠ |
+>
+> ★★ `AccessSelections` 的**三种传法**（真机，`output/linear-pattern-newarch-evidence.json`）：
+> ```
+> (model, None)        ⇒ com_error 类型不匹配，位置 2      ← 与事实 47 逐字一致
+> (model, 空Dispatch)  ⇒ com_error 0x80010105（服务器出现意外情况）  ← 指针族的签名错误码
+> (None, None)         ⇒ com_error 类型不匹配，位置 1
+> ```
+> ⇒ ★★★ **故**：★ 新旧两条路**都**要 `AccessSelections`，★ 而它在 **pywin32 迟到绑定**下到不了
+> ⇒ ★ **归因成立，理由改写成「指针族」** ✓
+>
+> ★★ **另外更正两处小的**：
+> · `scripts/sw_pattern.py` 的模块头引用的常量名 **`swFmLinearPattern` / `swFmCurveDrivenPattern`
+>   在反射转储里都不存在** ⚠ —— ★ 真名是 **`swFmLPattern = 6`** / **`swFmCurvePattern = 103`**
+>   （`_raw/enum_values_sldworks.txt`）。
+> · ★ 故「本仓早已实现」这个说法要**降级**为「**本仓写了新架构的装配层，而它的入口到不了**」。
 
 ### 2.1 官方现状（三源：`C:\swapi\types\IFeatureManager\`）
 
