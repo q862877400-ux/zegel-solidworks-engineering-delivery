@@ -2370,3 +2370,26 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **方法论：★ “回了对象”在两格相同时不是判据** —— ★ 而**去读那个对象自己的成员**，就能分出“**真对象**”与“**空壳**”** ✓
        （★ 与事实 36 同族：名字对不上时，报的错**看不出真因**）。
      ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；对照事实 36 / 53 / 461 / 462 |
+| 464 | **★★★ 本仓的“孔”**根本不是异型孔向导特征****（★ 而是**画圆 + 剪切**）；★ 而 `HoleWizard5` 的**真前置是 `SelectByRay`** —— 2026-10-03（轮 587）。
+     ★ **怎么发现的**：查台账「高级孔」（api 写 `HoleWizard5(HoleSeries)`）时先看本仓怎么打孔：
+     ```
+     `sw_hole_features.create_through_hole(model, center, diameter, plane_name, name)`
+        ⇒ 它调的是 **`_circle_cut(model, plane_name, center, diameter, depth, name)`**
+        —— ★ 那是**画一个圆再拉伸切除**，★ **不是 `HoleWizard5`** ⚠
+     （★ `create_blind_hole` / `create_counterbore_hole` / `create_countersink_hole` 同理）
+     ```
+     ⇒ ★★ **故本仓的“孔”在**几何上等价**，★ 而在**特征层不等价**：**没有孔标注、没有螺纹标准、特征树里是「切除-拉伸」** ⚠
+       ⇒ ★ 故台账「高级孔」这条**确实缺**，★ 而**缺的原因比“没做”更具体**：★ 本仓走了一条**更简单但不等价**的路。
+     ★★ **而 `HoleWizard5`（27 参，★ 反射与 swapi **两源一致**）的 Remarks 给了三个关键**：
+     ```
+     ★ **孔位是选出来的**："To add a hole or slot at one or more locations,
+        call **`IModelDocExtension::SelectByRay` with Mark = 0** for each location."
+        —— ★ **不是坐标** ⚠
+     ★ **`RevDir`**："If the material is on one side of the reference plane, then **RevDir is false**"
+     ★ 两个**必须匹配否则报错**的参数：`FastenerTypeIndex`（必须与 standard 匹配、
+        且对该孔型有效）· `SSize`（必须是该紧固件类型的合法尺寸）
+     ```
+     ★★ **而它自己指出了第二条路**："To create **simple holes and slots**, read … **`WizardHoleFeatureData2` Objects"
+       ⇒ ★ 故两条路：① `HoleWizard5`（27 参 + `SelectByRay` 定位）；② `IWizardHoleFeatureData2`（**简单孔**）。
+     ★ **下一步**：先试第 ② 条（★ 参数少得多）；★ 而若走 ①，则**先把 `SelectByRay` 那一步搭出来**。
+     ★ 本轮**不登记能力**（★ 只完成了前期调查）。|官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md`；本仓：`scripts/sw_hole_features.py` 的 `_circle_cut` 那一路；反射：`HoleWizard5: 27` |
