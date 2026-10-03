@@ -560,8 +560,21 @@ def apply_component_transform_x(component, tx, ty, tz, angle_rad=0.0):
     if transform is None:
         raise RuntimeError("组件没有可用 Transform2")
     transform.ArrayData = build_transform_data_x(tx, ty, tz, angle_rad)
+    #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `component.SetTransformAndSolve2(transform)`。
+    #:   ★ 官方 `types/IComponent2/SetTransformAndSolve2.md` 逐字：
+    #:     「**Obsolete. Superseded by [[IComponent2::SetTransformAndSolve3]].**」
+    #:   ★★ 后继多一个参数：`SetTransformAndSolve3(Xform, **ThisConfiguration**)`（★ 1 → 2 参）
+    #:   ★ 官方 `## Parameters` 逐字：★「**ThisConfiguration**: True to transform **this configuration**,
+    #:     false to transform **all configurations**」
+    #:   ⇒ ★ 本函数的意图是"改**这个组件**的位姿"（★ 见函数名与 docstring）⇒ ★ **传 True** ✓
+    #:   ★★★ 真机证据（`tools/probe_add_component_three_paths.py` ·
+    #:     `output/add-component-three-paths-evidence.json`）：
+    #:     ★ 旧 `SetTransformAndSolve2(xf)` **能调（True）** ·
+    #:     ★ 新 `SetTransformAndSolve3(xf, True)` **能调（True）** ·
+    #:     ★ 新 `SetTransformAndSolve3(xf, False)` **能调（True）**
+    #:     ⇒ ★★ **可换** ✓
     try:
-        if component.SetTransformAndSolve2(transform):
+        if component.SetTransformAndSolve3(transform, True):
             return True
     except Exception:
         pass
