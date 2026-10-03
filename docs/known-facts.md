@@ -1639,3 +1639,21 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ② ★★ **而近 40 轮零弹窗** ⇒ **加厚 / 直纹 / 剪裁 / 扫描曲面 / 分割线 的失败不是“在等弹窗”** —— ★ **它们是**真的静默回 `None`**。
      ★ **故方法论加一句边界**：★ 「先翻落盘」**只对弹框型有效**；★ 而**「近 N 轮零弹窗」本身就是判据** ⚠ —— ★ 而那**省掉了未来的无用功**（★ 不必再去翻那几条）。
      ★ 而它与事实 420（分类判据：看返回值）合起来就是**一张完整的分类图**：★ 弹框型（缺前置，**可修**）vs 静默 `None` 型（真不建）vs 回对象型（建了但在树外）。|证据：`output/dialog-events/`（63 个 JSON）全扫；对照事实 420 / 421 / 422 |
+| 424 | **★★★ 那六条“静默 `None`”能力的**接口本身都带 `AccessSelections`**（而入口 md **不提它**）；而 `IAccessSelections` **不在出厂类型库里**** —— 2026-10-03（轮 544）。★ 而**这正是目标点名要的那条依据**。
+     ★ 起因：事实 423 把那六条座实为“**真的静默回 `None`**”（★ 近 40 轮零弹窗）⇒ ★ 那就该问**为什么静默**。
+     ★ 而**第一层查证**（`C:\swapi\types\IFeatureManager\*.md`）：六个**入口**的 md **都不提 `AccessSelections`** ⇒ ★ 看上去**不属指针族**。
+     ★★ **而第二层（出厂类型库 · 第 3 源 · 冲突裁决者）推翻了它**：
+     ```
+     ISurfaceTrimFeatureData    14 成员 · AccessSelections=**YES** · Release=YES
+     IRuledSurfaceFeatureData   23      · AccessSelections=**YES** · Release=YES
+     ISweepFeatureData          **81**  · AccessSelections=**YES** · Release=YES
+     IThickenFeatureData        23      · AccessSelections=**YES** · Release=YES
+     ISplitLineFeatureData      38      · AccessSelections=**YES** · Release=YES
+     ISurfaceCutFeatureData     17      · AccessSelections=**YES** · Release=YES
+     ★ 签名均为 `AccessSelections(TopDoc, Component)`
+     ★★ 而 **`IAccessSelections` / `IAccessSelections2` 在类型库里查不到** ⚠
+     ```
+     ⇒ ★★ **故：那些特征的**正规用法**是「`GetDefinition` 拿 `*FeatureData` ⇒ `AccessSelections` 选 ⇒ 设属性 ⇒ `CreateFeature`」**，★ 而本仓一直是**直接调入口方法**（传空选区 / 空数组） ⚠
+     ★ 而它与**事实 47**（`IAccessSelections` 指针族 ⇒ `0x80010105`）**正好相接**：★ **那对接口不出现在出厂类型库里** —— ★ 而它们**正是 `*FeatureData.AccessSelections` 底下要走的那层** ✓
+     ★ **而这给出一条可试的新路**：★ 对那六条中任一条，**先 `GetDefinition` 拿到数据对象、试 `AccessSelections`**——★ 而它**能不能过**就是那一族的**直接实验** ✓
+     ★ 而**本轮的方法论**：★ 一个“**入口 md 不提**”的本领，**不等于它的数据接口也不提** —— ★ 而**类型库才是裁决者**（铁律 4）。|静态：`C:\swapi\types\IFeatureManager\*.md` × 出厂类型库（`comtypes` 反射）；对照事实 47 / 420 / 423 |
