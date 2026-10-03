@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -624,6 +624,82 @@ def feature_info(model, feature_name: str = "") -> dict:
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★ **⚠ 读 `GetTypeName2` 是**对的**** —— ★ 上一轮修的判据证明它**没废弃** ✓
         #:   （★ 旧判据 `"Obsolete" in t` 会把它误报成废弃 ⇒ ★ **而本函数按新判据**）
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\ISimpleFilletFeatureData2\\`）
+# 文件:   `scripts/sw_feature_readback.py::fillet_params`（★ 新增）
+# 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第六个**、★ **第五个族** ✓
+#   ★★ **官方逐字（★ 逐个成员的 `## Returns`）**：
+#     · ★ `DefaultRadius {get;set}` ⇒ 「Default radius of the **symmetric** fillet」✓
+#     · ★ `Type {get;}` ⇒ `swSimpleFilletType_e` · ★ `OverflowType` ⇒ `swFilletOverFlowType_e` ✓
+#     · ★ `GetEdgeCount()` ⇒ 「Number of edges」✓
+#     · ★ `GetSetbackVerticesCount()` ⇒ 「Number of setback vertices」✓
+#     · ★ `RoundCorners` / ★ `KeepFeatures` / ★ `ConstantWidth` /
+#       ★ `PropagateToTangentFaces` ⇒ bool ✓
+#     · ★★ `GetRadius(PFilletItem)` / ★ `GetDistance` / ★ `GetConicRhoOrRadius` ⇒
+#       ★ **要一个 item 对象**（★ 得先 `IGetFilletEdgeAtIndex`）⇒ **本函数不碰**（★ 多一步）✓
+#   ★★★ **单位口径（★ 第六层）**：★ `DefaultRadius` 的 `## Returns` **没写单位** ⇒
+#     ★★ **按铁律 5：★ 如实标 `unknown`、★ 并真机测**（★ 见 `tools/probe_fillet_params_recheck.py`）✓
+#   ★★★★ **⚠ 前置**：★ 本仓 `fillet(model, selection, radius_mm)` 需要**先选中一条边**
+#     （★ 而边没有名字 ⇒ ★ 按 `index:<n>` 选 · ★ 见已知事实 32）✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+def fillet_params(model, feature_name: str = "") -> dict:
+    """★ 读**简单圆角特征的一组参数**（★ 默认半径 / 类型 / 边数 / 若干开关）✓
+
+    ★★★★★ **单位口径（★ 官方 `## Returns` **没写单位**）**：
+      ★ `DefaultRadius` ⇒ ★ **本函数如实标 `unknown（★ 官方未写）`**、★ **不猜** ✓
+      ★★ **真机测出来的口径写在 docstring 的历史里**（★ 见 `output/fillet-params-capability-recheck.json`）✓
+    ★★★ **⚠ 本函数不碰那三个"要 item 对象"的成员**
+      （★ `GetRadius` / ★ `GetDistance` / ★ `GetConicRhoOrRadius`）—— ★ 它们要先拿到 item ⇒
+      ★★ **那是下一步的事**、★ **硬写会得到一个每次都不一样的结果** ✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    out: dict = {"feature": feature_name, "definition": None, "error": None,
+                 "★_单位口径": {"DefaultRadius": "unknown（★ 官方 ## Returns 未写；★ 真机实测见证据）"}}
+    try:
+        feat = None
+        if feature_name:
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★★ 兜底：★ 找**最后一个**圆角特征（★ 类型名含 `Fillet`）——
+            #:   ★★★ **⚠ 用两层过滤**（★ 上一轮的教训：★ 容器也可能有类型名）✓
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    nm = str(safe_get_com_member(f, "Name") or "")
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if nm not in _CONTAINER_NODES and "Fillet" in tn:
+                        feat, out["feature"] = f, nm
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = "找不到圆角特征"
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        #: ★★ 属性（★ `{get;}` / ★ `{get;set}`）⇒ ★ 直接取 ✓
+        for name in ("DefaultRadius", "Type", "OverflowType", "RoundCorners", "KeepFeatures",
+                     "ConstantWidth", "PropagateToTangentFaces"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+        #: ★★★ 零参方法 ⇒ ★ 也取 ✓
+        for name in ("GetEdgeCount", "GetSetbackVerticesCount"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
