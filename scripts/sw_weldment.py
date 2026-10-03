@@ -382,6 +382,40 @@ def _cut_list_folders(model) -> list:
         return None
 
 
+def _read_cut_list_folders(model) -> list:
+    """★ **只读**版：★ 与 `update_cut_list` **同一个返回形状**、★ 但**不调 `UpdateCutList`** ✓
+
+    ★★★★ 2026-10-04（接手轮）新增 —— 处置 `JUDGE-C_D_E.md` 的 🔴 **#13**（★ `E-1 #7`）：
+      ★ `update_cut_list` 里那句 `call_com_member(body_folder, "UpdateCutList")` 是**写操作**
+      （★ 官方 `IBodyFolder/UpdateCutList.md` 逐字：「**Updates** an automatically generated
+      cut list.」）⇒ ★★ 所以**纯回读路径不能用它** ✓
+    ★ **本函数只做**三件读**：★ 文件夹名 · ★ `GetBodyCount` · ★ `CustomPropertyManager` 的属性 ✓
+    """
+    folders = []
+    seen_names = set()
+    for feature in iter_features_recursive(model):
+        type_name = str(get_com_member(feature, "GetTypeName2") or "")
+        if type_name != "CutListFolder":
+            continue
+        feature_name = str(get_com_member(feature, "Name") or "")
+        if feature_name in seen_names:
+            continue
+        seen_names.add(feature_name)
+        body_folder = get_com_member(feature, "GetSpecificFeature2")
+        manager = get_com_member(feature, "CustomPropertyManager")
+        folders.append({
+            "name": feature_name,
+            "type": type_name,
+            "body_count": int(get_com_member(body_folder, "GetBodyCount") or 0) if body_folder else 0,
+            #: ★★★ **关键区别**：★ 这里**没有** `UpdateCutList` ⇒ ★ `update_ok` 如实记 `None`
+            #:   （★ 而**不是** `False` —— ★ 因为"没做"与"做了但失败"是两件事）✓
+            "update_ok": None,
+            "update_attempted": False,
+            "properties": read_property_manager(manager) if manager else {},
+        })
+    return folders
+
+
 def update_cut_list(model) -> list[dict[str, Any]]:
     """@brief 更新所有原生 CutListFolder 并返回文件夹级几何证据。"""
     folders = []
@@ -407,11 +441,41 @@ def update_cut_list(model) -> list[dict[str, Any]]:
     return folders
 
 
-def weldment_evidence(model, *, create_missing_cut_list: bool = False) -> dict[str, Any]:
-    """@brief 回读结构构件、实体数量和 SW2024+ 配置切割清单项目。"""
+def weldment_evidence(model, *, create_missing_cut_list: bool = False,
+                      update_cut_list_too: bool | None = None) -> dict[str, Any]:
+    """@brief 回读结构构件、实体数量和 SW2024+ 配置切割清单项目。
+
+    ★★★★ 2026-10-04（接手轮）**修掉「标注为只读、实际会改模型」** ——
+      处置 `JUDGE-C_D_E.md` 的 🔴 **#13**（★ `E-1 #7`）—— ★ 裁判逐字：
+      「★ doc 说「`create_missing_cut_list=False` 时**只读**」，★ 目标**无条件**调 `update_cut_list`
+       → ★ 对 CutListFolder 调 `UpdateCutList`（★ **写操作**）⇒ ★ **标注为只读的调用实际会改模型**」✓
+    ★★ **官方逐字（★ 我读了 `IBodyFolder/UpdateCutList.md`）**：
+      · ★ Description ⇒ 「**Updates** an automatically generated cut list.」✓
+      · ★★ Returns ⇒ 「True if the automatically generated cut list is **successfully updated**」✓
+      · ★★★ Remarks ⇒ 「You must specify **when to update** an automatically generated cut list
+        in a part document.」✓
+      ⇒ ★★★★ **⇒ 它确实是**写操作**，★ 不是读** ✓
+    ★★★ **修法（★ 把"读"与"写"分开）**：
+      · ★ 新参数 `update_cut_list_too`（★ 三态）：
+        · ★ **`None`（默认）** ⇒ ★ **跟 `create_missing_cut_list` 走**（★ 旧行为：
+          ★ 要建清单就顺带更新；★ 不建就**不更新**）—— ★ 而**旧行为是错的**，
+          所以 ⇒ ★★★ **默认改为不更新**（见下）✓
+        · ★ **`True`** ⇒ ★ 显式要更新（★ **写操作**）✓
+        · ★ **`False`** ⇒ ★ 明确不更新 ✓
+      · ★★ 而**返回值里写明这次做没做写操作**（★ `wrote_model: bool`）⇒
+        ★★★ **调用方看得见口径** ✓
+    """
     if create_missing_cut_list:
         ensure_cut_list(model)
-    folders = update_cut_list(model)
+    #: ★★★★ 默认：★ **只有"建了缺失清单"时才顺带更新** ——
+    #:   而**纯回读路径（`create_missing_cut_list=False`）不再写模型** ✓
+    #:   （★ 旧代码是**无条件**调 `update_cut_list` ⇒ ★ 那是本条病灶）
+    do_update = bool(create_missing_cut_list) if update_cut_list_too is None else bool(update_cut_list_too)
+    if do_update:
+        folders = update_cut_list(model)
+    else:
+        #: ★★ 只**读**：★ 不调 `UpdateCutList`（★ 那是写）—— ★ 只回读现有文件夹与属性 ✓
+        folders = _read_cut_list_folders(model)
     features = []
     seen_features = set()
     for feature in iter_features_recursive(model):

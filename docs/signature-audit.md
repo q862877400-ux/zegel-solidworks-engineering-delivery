@@ -506,7 +506,7 @@ SW 2026 SP4.1 / 34.4.1）：
 | `sw_mold.py` | 16 | **16** | 0 | 0 |
 | `sw_topology.py` | 52 | **52** | 0 | 0 |
 | `sw_simulation.py` | 55 | **55** | 0 | 0 |
-| `sw_weldment.py` | 60 | **60** | 0 | 0 |
+| `sw_weldment.py` | 65 | **65** | 0 | 0 |
 | `sw_connect.py` | 23 | **23** | 0 | 0 |
 
 > ⚠ **本表已按 2026-10-01（轮 55）实跑刷新**（原写 `sw_topology` **45**、`sw_simulation` **34**）。
