@@ -22,6 +22,17 @@
      · `Get2..Get6(name, …, out Val, out ResolvedVal)`         ⇒ ★ **实测报 `类型不匹配`**
        （`com_error: (-2147352571, '类型不匹配。')`）—— ★ 与**已知事实 8 / 33** 同一族：
        **pywin32 迟到绑定下 by-ref 出参不通**。⇒ 本模块**一律不用 `Get2+`**。
+    ★★★★ **2026-10-04（接手轮）更正上面这条结论的一半**（★ 处置阶段 2 · T1）——
+      ★ **哪一半仍成立**：★ **不包 `VARIANT(VT_BYREF | …)` 的出参，确实报 `类型不匹配`** ✓
+      ★★ **哪一半被推翻**：★ **`Get2+` 不是"不通"** —— ★ 包对了就能用 ✓
+      ★ **而官方那半也变了**：★ `Get` / `Get2` / `Get3` / `Get4` / `Get5` **现在全标 `Obsolete`**、
+        ★★ **只有 `Get6` 是现行的** ⇒ ★ **继续用 `Get` 就是用一个废弃成员** ✓
+      ★★ **现成的反例就在同一个仓**：★ `scripts/sw_document_data.py::read_custom_property`
+        用 `VARIANT(VT_BYREF | VT_BSTR, "")` 包四个出参、★ 再调 `Get6` ⇒
+        ★★★ **而它**工作**（★ 轮 78 真机验过：`raw` 逐条读回 `alpha` / `beta` / `gamma`）** ✓
+      ★★★ **⇒ 本模块现在也走 `_read_value_via_get6`**（★ 包法与那条一致）✓
+      ★★★★ **可复用判据**：★★★ **「by-ref 出参不通」这个结论**要带包法才有意义** ——
+        ★ 不包 `VT_BYREF` 必然报错、★ **包了就能用**；★ 而**「废弃」是另一件事**（★ 不因包法改变）✓
 
 ③ `Count {get;}` · `GetNames()` · `GetType2(name)` 都实测可用；
    `GetType2` 回 `swCustomInfoType_e`（实测 30 = `swCustomInfoText` = `VT_LPSTR`）。
@@ -113,16 +124,45 @@ def custom_property_names(model, config_name: str = "") -> list[str]:
         return [str(raw)]
 
 
+def _read_value_via_get6(mgr, name: str) -> str:
+    """★ 用**现行的** `ICustomPropertyManager.Get6` 读一个属性值（★ 处置阶段 2 · T1）✓
+
+    ★★★★ 2026-10-04（接手轮）**换掉 `Get`（官方标 Obsolete）** ——
+      ★ **官方逐字**（★ `C:\\swapi\\types\\ICustomPropertyManager\\Get.md`）：
+        ★ `System.string Get(System.string FieldName)` ⇒ ★ 而它**在**废弃名单里 ✓
+      ★★ **整族只有 `Get6` 未废弃**：★ `Get` / `Get2` / `Get3` / `Get4` / `Get5` **全标 Obsolete**；
+        ★★★ `Get6` 逐字 ⇒ `int Get6(string FieldName, bool UseCached, out string ValOut,
+          out string ResolvedValOut, out bool WasResolved, out bool IsLinked)` ✓
+    ★★★★ **而本模块那段"不能用 `Get2+`"的结论**要**更正**（★ 补正而不删除）——
+      ★ 它当时实测报 `类型不匹配`（`com_error: -2147352571`）⇒ ★★ **真因不是"by-ref 不通"**、
+      ★★★ **而是**出参没有用 `VARIANT(VT_BYREF | …)` 包**** ✓
+      ★ **现成的反例就在同一个仓**：`scripts/sw_document_data.py::read_custom_property`
+        （★ L410-414）**用 `VARIANT(VT_BYREF | VT_BSTR, "")` 包了四个出参、
+        再调 `Get6`** ⇒ ★★ **而它**工作**（★ 轮 78 真机验过：`raw` 逐条读回）** ✓
+      ★★★ **⇒ 可复用判据**：★★★ **"by-ref 出参不通"这个结论要**带包法**才有意义** ——
+        ★ **不包 `VT_BYREF` 必然报"类型不匹配"**、★ 而**包了就能用** ✓
+    """
+    import pythoncom                                                      # noqa: PLC0415
+    from win32com.client import VARIANT                                   # noqa: PLC0415
+    val = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
+    resolved = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
+    was_resolved = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BOOL, False)
+    is_linked = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BOOL, False)
+    #: ★ 官方：`Get6` 回 `swCustomInfoGetResult_e`（★ **`status != 1` ⇒ 存在**）
+    mgr.Get6(str(name), False, val, resolved, was_resolved, is_linked)
+    return str(val.value or "")
+
+
 def custom_property(model, name: str, config_name: str = "") -> dict[str, Any]:
     """读**一个**属性的值 + 类型 + 是否可编辑。
 
-    ★★ 值走 `Get(name)`（**单返回值**）；**不用** `Get2..Get6` ——
-      它们带 by-ref out，实测在 pywin32 下报 `类型不匹配`（见模块头 ②）。
+    ★★ 值走 `Get6(name, False, …)`（★ **现行的那个** —— 官方已把 `Get`~`Get5` 全标废弃）✓
+      ★★★ **而出参必须用 `VARIANT(VT_BYREF | …)` 包** —— ★ 不包就报 `类型不匹配`（见下）✓
     """
     if not str(name or "").strip():
         raise ValueError("name 不能为空")
     mgr = custom_property_manager(model, config_name)
-    value = get_com_member(mgr, "Get", str(name))
+    value = _read_value_via_get6(mgr, name)
     try:
         tcode = int(get_com_member(mgr, "GetType2", str(name)))
     except Exception:                                          # noqa: BLE001
@@ -156,7 +196,8 @@ def custom_properties(model, config_name: str = "") -> dict[str, Any]:
             names = [str(raw)]
     items = []
     for n in names:
-        value = get_com_member(mgr, "Get", n)
+        #: ★★ 同上：★ 换现行的 `Get6`（★ 出参用 `VT_BYREF` 包）✓
+        value = _read_value_via_get6(mgr, n)
         try:
             tcode = int(get_com_member(mgr, "GetType2", n))
         except Exception:                                      # noqa: BLE001
