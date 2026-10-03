@@ -1896,3 +1896,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **而本轮还读到一条值得记的**：「自由样式」`InsertFreeform2(Nsided, Symmetric0, Symmetric1, Angle)` **不是一条调用** ——
        它的 `## Remarks` 逐字给了**五步交互序列**：① 选面 · ② 加曲线（`SetFreeformCurveData`）· ③ 加点（`SetFreeformPointData`）· ④ 定边界连续性（`SetFreeformBoundaryContinuity`）· ⑤ **本方法**；
        ★ 而它开头就写着：“**intended to journal the actions performed by an interactive user**” ⚠ —— ★ **journal 类 API 往往要求先有一整套交互状态** 。|真机：`tools/prove_delete_hole.py`；证据 `output/delete-hole-evidence.json`；官方：`C:\swapi\types\IModelDoc2\InsertDeleteHole.md` × `IFeatureManager\InsertFreeform2.md` |
+| 439 | **★★★ 第**五种**失败形态：静默 no-op**（★ 调用**不报错** · 树不动 · **几何量也不动**）—— ★ **最容易被误记成“做成了”的那一种**** —— 2026-10-03（轮 560）。
+     ★ **事实 420 / 428 记了四种**（① 回对象 · ② 回 `None` · ③ 报错 · ④ 成员不在对象上）—— ★ **本条补第五种**。
+     ★ **实证：`IModelDoc2.InsertDeleteHole()`**（★ 0 参 · 回 `void`）—— ★ **两轮、六种前置全零效果**：
+     ```
+     轮 559  原生实体（带孔）     ⇒ 面 7→7 · 体积无变 · 树不动
+     轮 559  对照：原生实体（无孔） ⇒ 面 6→6 · 同上
+     轮 560  带内环的曲面 · 只选面     ⇒ 面 5→5 · 环 6→6 · **面积Δ = 0**
+     轮 560  同上 · 选孔的边             ⇒ 同上
+     轮 560  同上 · 面 + 边都选          ⇒ 同上
+     轮 560  同上 · 什么都不选          ⇒ 同上
+     ```
+     ⇒ ★★ **故：它在这六种前置下不产生任何可观测变化**（★ 而**它不报错**）✓
+     ★ **最可能的解释**（★ 标为**解释**、不是结论）：界面的「删除孔」是**曲面 / 导入体的修补**命令 —— 处理的是**导入几何里的缺口**，★ **而不是“删掉某个钻孻特征”** ⚠
+     ★ **按事实 53 停手**：★ 两轮 / 六种前置零效果 ⇒ ★ **不再换参数试**；台账该条**留在可攻关** —— ★ **不假装做到**。
+     ★ ★ **而可复用的定则**：★ **凡“成员是 0 参且回 `void`”的，判据必须是**几何量的前后差**** —— ★ 因为**返回值里没有任何东西能证明它做过什么**，★ 而**树增量也常常看不见**（★ 事实 436）。
+     ★ **单列**：`docs/toolbar-gaps-backend-limits.md` §五之二。|真机：`tools/prove_delete_hole.py` · `tools/prove_delete_hole_on_surface.py`；证据 `output/delete-hole-evidence.json` · `output/delete-hole-on-surface-evidence.json`；对照事实 420 / 428 / 436 / 53 |
