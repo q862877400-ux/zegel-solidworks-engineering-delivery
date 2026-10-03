@@ -297,7 +297,32 @@ def call_assembly_doc(doc, member: str, *args):
 # ⚠ 本组为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 def add_mate(doc, *args):
-    """加配合（封装的是 **AddMate5**，最新变体）。"""
+    """加配合（封装的是 **AddMate5**，最新变体）。
+
+    ★★★★ 2026-10-04（接手轮）**记档保留（★ 有意不换）** —— 处置阶段 2 · T1 的逐条流程 ✓
+      ★ **官方逐字**（★ `C:\\swapi\\types\\IAssemblyDoc\\AddMate5.md`）：
+        ★ 「**Obsolete. Superseded by `IAssemblyDoc::CreateMate`**.」✓
+      ★★ **而它的 `## Remarks` 逐字给了**三条分流****（★ 这很关键）：
+        · ★ 「Standard, advanced, and mechanical mates, use **`IAssemblyDoc::CreateMate`**」✓
+        · ★★ 「**Misaligned concentric** mates, use `IAssemblyDoc::AddConcentricMateWithTolerance`」✓
+        · ★★★ 「**Cylindrical distance** mates, use `IAssemblyDoc::AddDistanceMate`」✓
+      ★★★ **为什么本处**不能**直接换**：★ 后继 `CreateMate(object MateData)` **要的
+        是一个 `IMateFeatureData`**（★ 官方 Remarks 逐字：「`IMateFeatureData` is the base
+        interface for the following mate-specific interfaces」）⇒ ★★ **即：★ 得先按配合种类
+        造**对应的** `I*MateFeatureData`、★ 设好它的属性、★ 再 `CreateMate`** ✓
+        ★★★ **而本函数是个**通用包装**（★ `*args` 15 个直传）** ⇒
+        ★★ **要换就得**先按 `mate_type` 分流**（★ 而本函数**拿不到**那个语义）✓
+      ★★★★ **⇒ 所以本处**记档保留**、★ 不在没把握时硬换** —— ★ 因为 `AddMate5` **当前仍可调**
+        （★ 「废弃 ≠ 不可达」—— ★ 事实 12 那族），★★ 而**硬换成错的分流会**直接坏掉装配功能**** ✓
+      ★ **该怎么换（★ 留给下一轮的具体动作）**：★ 在**调用方**（`scripts/sw_assembly.py` 的
+        `add_mate`）那里 ★ 已有 `mate_type` ⇒ ★★ **按它分流**：
+        · ★ 同心 ⇒ `AddConcentricMateWithTolerance` ✓
+        · ★★ 距离 ⇒ `AddDistanceMate` ✓
+        · ★★★ 其余 ⇒ 造 `I*MateFeatureData` + `CreateMate` ✓
+      ★★ **前置条件**：★ **上面每一步都要先**真机验证**（★ 逐条流程第 ② 步）——
+        ★ 而装配域当前 `level` 是 `stitched`（★ 本会话早先降过级）⇒ ★★★ **不满足"有真机证据"** ⇒
+        **本轮不换** ✓
+    """
     _require(doc)
     if len(args) != 15:
         raise ValueError(

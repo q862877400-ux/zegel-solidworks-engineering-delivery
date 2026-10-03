@@ -381,6 +381,24 @@ def add_mate5_checked(
 ):
     """
     @brief 用 SolidWorks 2015+ 的 15 参数 AddMate5 创建 Mate，并检查错误码。
+
+    ★★★★ 2026-10-04（接手轮）**记档保留（★ 有意不换）** —— 处置阶段 2 · T1 ✓
+      ★ **官方逐字**（★ `C:\\swapi\\types\\IAssemblyDoc\\AddMate5.md`）：
+        ★ 「**Obsolete. Superseded by `IAssemblyDoc::CreateMate`**.」✓
+      ★★ **而它的 Remarks 逐字给了三条分流**：★ 标准/高级/机械 ⇒ `CreateMate` ·
+        ★★ **偏心的同心配合** ⇒ `AddConcentricMateWithTolerance` ·
+        ★★★ **圆柱面距离配合** ⇒ `AddDistanceMate` ✓
+      ★★★ **为什么不能直接换**：★ `CreateMate` 要**先造一个 `I*MateFeatureData`**
+        （★ 官方 Remarks 逐字：「`IMateFeatureData` is the base interface for the following
+        mate-specific interfaces」）⇒ ★★ **而本函数的 `mate_type` 是**运行时参数**、
+        ★★★ 换它要**按类型分流**（★ 不是一处替换）✓
+      ★★★★ **⇒ 记档保留**：★ `AddMate5` **当前仍可调**（★ 废弃 ≠ 不可达，★ 事实 12 那族）·
+        ★★ **而硬换成错的分流会直接坏掉装配功能** ✓
+      ★ **该怎么换**：★ 就用本函数的 `mate_type` 分流 —— ★ 同心 ⇒ `AddConcentricMateWithTolerance` ·
+        ★★ 距离 ⇒ `AddDistanceMate` · ★★★ 其余 ⇒ `I*MateFeatureData` + `CreateMate` ✓
+      ★★ **前置**：★ 每条分流都要**先真机验证**（★ 逐条流程第 ② 步）——
+        ★ 而**装配域当前 `level` 是 `stitched`** ⇒ ★★★ **不满足"有真机证据"** ⇒ **本轮不换** ✓
+
     @param asm_model IAssemblyDoc/IModelDoc2 装配体对象。
     @param mate_type swMateType_e 枚举值。
     @param gear_num 齿轮比分子，仅 Gear Mate 使用。
