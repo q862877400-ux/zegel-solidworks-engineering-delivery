@@ -3635,3 +3635,45 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         510 要先标定 · 511 按名字对必误配 · ★★ **512 说"抽查是唯一能识破假象的手段"**。|
         痕迹：`tools/map_tools_to_members.py`（★ 四版都在文件头有说明）· `tools/build_capability_matrix_v2.py` ·
         `output/tool-to-member-map.json` · `output/operation-object-matrix-v2.json` |
+| 513 | **★★★★ 「剥注释」这四个字里藏着一个更隐蔽的源：**docstring** —— 同一个根因在本会话的**两个工具**里各犯一次**（2026-10-03 接手轮）。
+      ★ **实例一（事实 512）**：★ `tools/map_tools_to_members.py` 从**原始源码**抽 COM 成员名 ⇒
+        ★★ `sw_connect.get_com_member` **被每个模块 import**，★ 而**它的 docstring 里有示例**
+        （`InsertDome` / `InsertMoldShutOffSurface` / `RunAnalysis` / `Activate`）⇒
+        ★★★ **于是那批示例出现在了**每一个工具**上** ⇒ ★ 覆盖率虚高到 91.3%、判据① 降到假 8.66% ✓
+      ★★ **实例二（本条）**：★ `tools/scan_obsolete_safe.py` 要"剥注释但留字符串"（★ 因为
+        `get_com_member(x, "M")` 的**成员名是字符串字面量**）⇒ ★★★ **而 docstring 也是字符串**
+        ⇒ ★ 于是 `sw_sketch_modify_ops.py` / `sw_delivery.py` / `sw_custom_property.py` 的
+        **docstring 里写的示例**（如「原来是 `get_com_member(model, "GetActiveSketch2")`」）
+        **被当成了真调用** ⇒ ★ 扫描器报"注释型命中" ✓
+      ★★★ **"剥注释"这件事在本会话改了五版，前四版全错**（★ 完整链条）：
+      ```
+      v1 ★ strip_comments_and_strings（既剥注释又剥字符串）
+         ⇒ ★★ 字符串也没了 ⇒ 成员名一起丢 ⇒ 漏掉全部 get_com_member 形态（★ 真命中 17，假阴性）
+      v2 ★ tokenize 丢 COMMENT 再 untokenize(out)
+         ⇒ ★★ 实测**注释被原样还原**（★ 负例：某文件 2 处 → 剥后仍 2 处）
+      v3 ★ 自己写逐行引号状态机
+         ⇒ ★★ **三引号状态没正确关闭** ⇒ docstring 之后的行一律不裁 `#`
+      v4 ★ tokenize 拿 COMMENT 的位置、按位置挖（★ 不重建 token 流）
+         ⇒ ★ 注释剥掉了，★★ **但"剥后"那些行仍带 `#`/`★`** ⇒ 负例自检回 **(False, True)**
+      v5 ★★ **发现真根因：那些不是注释，是 docstring 的正文**
+         ⇒ ★ 加 **AST 剥 docstring**（找"模块/类/函数体的第一条字符串表达式"，按位置挖）
+         ⇒ ★★ 负例自检回 **(True, True)** ✓
+      + ★ **一条兜底**：★ 剥完**仍以 `#` 开头**的行**一律跳过**（★ 合法 Python 代码行不以 `#` 开头）
+        —— ★ 为什么加它：★ v5 修好主因后**仍有 17 条残留**，★ 按**事实 53**（同一处 ≥3 次就该停）
+        ★ **加一道判据无歧义、开销为零的兜底，比继续追真因划算** ✓
+      ```
+      ★★★★ **可复用判据（本条最重要的产出）**：
+        ★ **① "剥注释"必须同时想清楚三样**：★ **`#` 注释** · ★★ **docstring** ·
+          ★ **普通字符串字面量**。★ 前两者**都该剥**，★ 第三者**必须留** ——
+          ★★ 而"留字符串"这条规则**天然把 docstring 也留下了** ⇒ **这就是坑的来源** ✓
+        ★★ **② 负例自检是唯一能识破它的手段** —— ★ `_strip_selftest()` 回 `(False, True)` 那一刻，
+          ★ 我才从"注释没剥掉"这个**错误假设**转到"那是 docstring" ✓（★ 与**事实 62**同族）
+        ★★★ **③ 判据的数字，在"修判据"的过程中会一直动** —— ★ 本会话 `scan_obsolete_safe.py`
+          的真命中读数动了 **8 次**：★ 17 → 70 → 68 → 66 → 63 → 59 → 65 → **55**。
+          ⇒ ★★ **所以"读数是 X"这句话必须带上"用哪一版判据"** ✓
+      ★ 与**事实 506/507/510/511/512** 构成一组：★ 506 判据自报覆盖面 · 507 跟调用图 ·
+        511 按名字对必误配 · 512 抽查是唯一能识破假象的手段 ·
+        ★★ **513 说"剥注释"这件事本身就有三个层，而 documentation 层最容易被漏**。|
+        痕迹：`tools/scan_obsolete_safe.py`（`strip_comments_only` + `_strip_selftest`）·
+        `tools/map_tools_to_members.py`（`_strip_comments_and_docstrings`）·
+        `output/_test_strip2.py` · `output/obsolete-dotcall-scan.json` |

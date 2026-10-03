@@ -707,15 +707,34 @@ def find_component_by_name(asm_model, keyword, top_level_only=True, case_sensiti
 
 
 def suppress_component(asm_model, component_name):
-    """压缩（隐藏）组件"""
+    """压缩（隐藏）组件
+
+    ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `asm_model.EditSuppress()`。
+      ★ 官方 `types/IModelDoc2/EditSuppress.md` 逐字：
+        「**Obsolete. Superseded [[IModelDoc2::EditSuppress2]].**」
+      ★★ 两页签名**逐字相同**（都 0 参）⇒ ★ 但"签名相同"**不等于**能调
+        （★ 本会话已有反例：`DeleteDisplayStateSpecificRenderMaterial` 签名没问题、
+         ★ 而 pywin32 造不出可调用对象）⇒ ★★ **仍做了真机验证** ✓
+      ★★★ 真机证据（`tools/probe_assembly_family_successors.py` ·
+        `output/assembly-family-successor-evidence.json`）：
+        ★ 旧 `EditSuppress` **能调（False）** · ★ 新 `EditSuppress2` **能调（False）**
+        ⇒ ★★ **返回值一致 ⇒ 纯改名确认** ✓
+    """
     _select_by_id(asm_model.Extension, component_name, "COMPONENT")
-    asm_model.EditSuppress()
+    asm_model.EditSuppress2()
 
 
 def unsuppress_component(asm_model, component_name):
-    """解压缩（显示）组件"""
+    """解压缩（显示）组件
+
+    ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `asm_model.EditUnsuppress()`。
+      ★ 官方 `types/IModelDoc2/EditUnsuppress.md` 逐字：
+        「**Obsolete. Superseded by [[IModelDoc2::EditUnsuppress2]].**」
+      ★★ 两页签名逐字相同（0 参）⇒ ★ **仍做了真机验证**（★ 理由同上）✓
+      ★★★ 真机证据（同上文件）：★ 旧 **能调（False）** · 新 **能调（False）** ⇒ **纯改名确认** ✓
+    """
     _select_by_id(asm_model.Extension, component_name, "COMPONENT")
-    asm_model.EditUnsuppress()
+    asm_model.EditUnsuppress2()
 
 
 def replace_component(asm_model, old_component_name, new_part_path):

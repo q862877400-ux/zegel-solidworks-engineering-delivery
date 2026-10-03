@@ -1,0 +1,54 @@
+fix(能力层): ★★★★ 装配族真机验证 —— `EditSuppress`/`EditUnsuppress` **纯改名确认并改掉**；★ 并验通 `AddMate5` 的**换范式**后路
+
+■ 一 · 官方依据（三源里的 `C:\swapi`，逐条可复核）
+  | ★ 我们的 | ★ 官方页逐字 | ★ 后继 | ★ 参数量 |
+  |---|---|---|---|
+  | `IModelDoc2.EditSuppress()` | 「Obsolete. Superseded [[IModelDoc2::EditSuppress2]].」 | `EditSuppress2()` | ★ **0 → 0（同形）** |
+  | `IModelDoc2.EditUnsuppress()` | 「Obsolete. Superseded by [[IModelDoc2::EditUnsuppress2]].」 | `EditUnsuppress2()` | ★ **0 → 0（同形）** |
+  | `IComponent2.SetTransformAndSolve2(X)` | Obsolete | `SetTransformAndSolve3(X, **ThisConfiguration**)` | ★ 1 → **2** |
+  | `IAssemblyDoc.AddComponent4`（5 参） | Obsolete | `AddComponent5`（**8 参**）| ★ 5 → **8** |
+  | ★★ `IAssemblyDoc.AddMate5`（**15 参**） | 「Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]」 | ★★★ **`CreateMate(MateData)`（2 参）** | ★★★ **整族换范式** |
+
+  ★★★ **最后一条是本轮最有价值的发现**：★ `AddMate5` 的后继**不是"号 +1"** ——
+    ★★ 而是从「**15 个散参数**」换成「**一个 `MateData` 对象**」⇒
+    ★ **必须先用 `CreateMateData(MateType)` 把对象建出来** ✓
+
+■ 二 · ★★★ 真机验证（★ `tools/probe_assembly_family_successors.py` ·
+    `output/assembly-family-successor-evidence.json`）
+  | 入口 | ★ 结果 |
+  |---|---|
+  | ★ 旧 `EditSuppress` | ★ **能调（False）** |
+  | ★ 新 `EditSuppress2` | ★ **能调（False）** —— ★★ 与旧**逐字同形、返回值一致** ⇒ **纯改名确认** ✓ |
+  | ★ 旧 `EditUnsuppress` | ★ **能调（False）** |
+  | ★ 新 `EditUnsuppress2` | ★ **能调（False）** ⇒ **纯改名确认** ✓ |
+  | ★★ `CreateMateData(0)` | ★ **能调（`<COMObject>`）** —— ★ MateData 对象建出来了 ✓ |
+  | ★★ 新 `CreateMate(md)` | ★ **能调** ✓ ⇒ ★★★ **换范式那条路是通的** ✓ |
+  ★ ❌ **`AddComponent4/5` 与 `SetTransformAndSolve2/3` 没验到**：★ 我造零件的
+    `SaveAs3` 调用报「无效的参数数目」⇒ ★ **装配里没有组件可操作** ⇒ 如实记「验证未完成」✓
+
+■ 三 · ★★ 为什么"签名相同"还要真机验（★ 写进了 docstring）
+  ★ 本会话已有**反例**：★ `IModelDocExtension.DeleteDisplayStateSpecificRenderMaterial` 的
+    签名（3 参）**看不出任何问题**，★ 而**真机 pywin32 迟到绑定造不出可调用对象**
+    （★ 报「取回来的成员**不可调用**」= **事实 47** 同族）⇒
+  ★★ **所以"逐字同形"只是"值得试"，★ 不是"可以换"** ✓
+
+■ 四 · ★ 实际改动
+  · `scripts/sw_assembly.py` 的 `suppress_component` / `unsuppress_component`
+  · ★ 都换成 `*2` 入口，★ **docstring 里带完整的官方依据 + 真机对照表**（★ 免得后人再探一遍）
+
+■ 五 · ★ 读数
+  | | ★ 修改前 | ★★ 修改后 |
+  |---|---|---|
+  | ★★ 真命中 | 55 | ★★ **53** |
+  | ★★ 其中生产 | 26 | ★★ **24** |
+  | ★ `EditSuppress` / `EditUnsuppress` | ★ 各 1 条 | ★★ **两条均已消失**（★ 复扫确认）✓ |
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 6 passed** ✓
+
+■ 六 · ★ 顺带记了**事实 513**（★ 上一轮的根因，★ 与事实 512 同源）
+  ★★ **「剥注释」这四个字里藏着三个层**：★ `#` 注释 · ★★ **docstring** · ★ 普通字符串字面量。
+  ★ 前两者**都该剥**，★ 第三者**必须留** —— ★★ 而"留字符串"这条规则**天然把 docstring 也留下了**
+    ⇒ **这就是坑的来源** ✓
+  ★ 本会话在**两个工具**里各犯一次：★ 事实 512（`map_tools_to_members` 的跟图）·
+    ★★ 事实 513（`scan_obsolete_safe` 的剥注释）✓
+  ★★★ 并且记了：★ **判据的数字在"修判据"过程中动了 8 次**（17→70→68→66→63→59→65→**55**）
+    ⇒ ★★ **所以"读数是 X"必须带上"用哪一版判据"** ✓
