@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params", "rib_params", "dome_params", "sweep_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params", "rib_params", "dome_params", "sweep_params", "revolve_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -1188,6 +1188,91 @@ def sweep_params(model, feature_name: str = "") -> dict:
     return out
 
 
+
+
+def revolve_params(model, feature_name: str = "") -> dict:
+    """★ 读**旋转特征的一组参数**（★ 角度 / 轴类型 / 方向 / 薄壁 / 轮廓数）✓
+
+    ★★★★★★ **单位口径 —— ★ 本族有两个**待量的量**（★ 第十三四族）**：
+      | ★ 量 | ★ 官方 `## Returns` | ★ 口径 |
+      |---|---|---|
+      | ★★ **`GetRevolutionAngle(Forward)`** | ★「Angle of revolution」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量**（★ 度 vs 弧度）✓ |
+      | ★★ **`GetWallThickness(Forward)`** | ★「Wall thickness」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量** ✓ |
+      ★★★ **⚠ 而两者都**带一个 `bool Forward` 实参**** ⇒ ★ 本函数**单独带参调**它们 ——
+        ★ **因为 `get_com_member` 对"必须带实参"的成员会**静默回 bound method****
+        （★ 轮 126 真机抓到的：★ 那个 bound method 一路流到 `json.dumps` 才炸）✓
+      ★★★★ **⚠ 而 `GetWallThickness` 的官方 `## Remarks` 说**
+        「**This method only affects thin features**」⇒ ★ **非薄壁时它不适用** ✓
+      ★★★★★ **⚠ 而 `GetRevolutionAngle` 是**度还是弧度**必须量** ——
+        ★ 本会话已有**先例**：★ `ISimpleFilletFeatureData2::GetDraftAngle` 官方写了 radians、
+        ★★ 而**同族的 `GetRevolutionAngle` 官方**没写**** ⇒ ★ **不能套用** ✓
+
+    ★★★★★ **⚠ 本函数只读那 14 个**有页且非废弃、非指针**的成员**（★ 逐条查过官方页）✓
+      ★ **零参/属性**：★ `GetAxisType()`（`swSelectType_e`）· ★ `IsBossFeature()` ·
+        ★ `IsThinFeature()` · ★ `GetContoursCount()` · ★ `GetFeatureScopeBodiesCount()` ·
+        ★ `ThinWallType`（★ `int`）✓
+      ★ **bool 量**：★ `ReverseDirection` · ★ `Merge` · ★ `FeatureScope` · ★ `AutoSelect` ·
+        ★ `AutoSelectComponents` · ★ `AssemblyFeatureScope` · ★ `PropagateFeatureToParts` ✓
+      ★ **带参量**：★ `GetRevolutionAngle(Forward)` · ★ `GetWallThickness(Forward)` ✓
+
+    ★★★★★ **⚠ 不碰**（★ 逐条给了理由）：
+      · ★ **`Axis` / ★ `Contours` / ★ `FeatureScopeBodies`** ⇒ **对象数组**、
+        ★ 且官方 `## Remarks` 指向「Accessing Selections that Define Features」✓
+      · ★ **`ISetContours` / ★ `ISetFeatureScopeBodies`** ⇒ ★ 含 `ref System.object` /
+        `ref Body2` ⇒ ★ 指针变体那一族** ✓
+      · ★ **`SetRevolutionAngle` / ★ `SetWallThickness`** ⇒ **那是写** ✓
+      · ★ **`AccessSelections` / ★ `IAccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ **前置** ✓
+    """
+    out = _read_feature_params(
+        #: ★★★★★★★ 2026-10-04（轮 130）**真机打出来的是 `Revolution`、★ 不是 `Revolve`** ——
+        #:   ★ 真机读数：★ `["旋转1", "Revolution", **false**]` ⇒
+        #:     ★★ **⇒ 那个 `false` 是 `("Revolve" in "Revolution")` 的结果** ⇒
+        #:       ★★★ **⇒ 它竟然是 `False`**（★ `Revol`+`ution` vs ★ `Revol`+`ve` ⇒ 在 `Revol` 后分岔）✓
+        #:   ★★★★ **⇒ 而我先前**把它写成"本该是 True"**** ⇒ ★ **那正是"我以为"** ✗
+        #:   ★★★★★ **⇒ 教训**：★★★ **"我以为一个子串在里面"不可靠 ⇒ 让机器判** ✓
+        model, feature_name, "Revolution",
+        ("GetAxisType", "IsBossFeature", "IsThinFeature", "GetContoursCount",
+         "GetFeatureScopeBodiesCount", "ThinWallType",
+         "ReverseDirection", "Merge", "FeatureScope", "AutoSelect",
+         "AutoSelectComponents", "AssemblyFeatureScope", "PropagateFeatureToParts"),
+        #: ★ 标签里那个旧名也一并改掉 —— ★ 真机打出来的真名是 `Revolution` ✓
+        "找不到旋转特征（★ 类型名含 `Revolution`）",
+        #: ★★★★★★★ 2026-10-04（轮 130）**已量出：★ radians**（★ 第十三族）——
+        #:   ★ **三条独立证据**（★ `output/revolve-params-capability-recheck.json`）：
+        #:     ★ ① 传 `math.radians(30)` ⇒ 读回 `forward = **0.5235987755982988**`
+        #:       ⇒ ★★ **那正是 **π/6 的精确值****（★ 若它回**度**、★ 该是 `30.0`）⇒
+        #:       最近候选 π/6 · ★ **距离 0.000000** · ★ 次近 **29.476** ⇒ **毫无歧义** ✓
+        #:     ★★ ② **几何独立验证**：★ 体积 `**785.398**` ⇒ 与「30° 扇形环」的解析值
+        #:       `(30/360)·π·(20²−10²)·10 = **785.398**` **完全一致** ✓
+        #:     ★★★ ③ **反面对照**：★ 我先前**误传度**（`30.0`）⇒ 读回
+        #:       `**4.867259 rad = 278.8734°**`、★ 而 `30 rad mod 360° = **278.8734°**`
+        #:       （★ 差 `0.000000°`）⇒ ★ **也印证同一件事** ✓
+        {"GetRevolutionAngle": "**radians**（★ 官方**没写**；★ 三条独立证据定案 —— "
+                               "★ 反面对照：误传**度**时读回 4.867259 rad = 278.8734°、"
+                               "而 30 rad mod 360° 也正是 278.8734°）",
+         "GetWallThickness": "unknown（★ 官方未写单位；★ 而官方 Remarks 说它"
+                             "「**only affects thin features**」）"})
+
+    #: ★★★★ **两个带实参的：★ 单独带参调**（★ 不能走那张"逐名读取"表）✓
+    if out.get("definition") is not None:
+        try:
+            from sw_connect import get_com_member as _g
+            fd2 = _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition") \
+                if out.get("feature") else None
+            if fd2 is not None:
+                out["GetRevolutionAngle"] = {
+                    "forward": _g(fd2, "GetRevolutionAngle", True),
+                    "backward": _g(fd2, "GetRevolutionAngle", False),
+                    "★_单位口径": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+                }
+                out["GetWallThickness"] = {
+                    "forward": _g(fd2, "GetWallThickness", True),
+                    "backward": _g(fd2, "GetWallThickness", False),
+                    "★_单位口径": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+                }
+        except Exception as exc:                                          # noqa: BLE001
+            out["★_带参量错误"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
+    return out
 
 
 def shell_params(model, feature_name: str = "") -> dict:

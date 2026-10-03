@@ -114,7 +114,7 @@
 | 104 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
 | 105 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
 | 106 | `topology_optimization` | `verified` | `original` | ✓ | — |
-| 107 | `topology_readback` | `stitched` | `original` | ✓ | — |
+| 107 | `topology_readback` | `verified` | `original` | ✓ | — |
 | 108 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
 | 109 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
 | 110 | `weldments` | `verified` | `upstream` | ✓ | — |
@@ -128,8 +128,8 @@
 | `indexed` | 0 |
 | `not_implemented` | 2 |
 | `source_verified` | 0 |
-| `stitched` | 13 |
-| `verified` | 95 |
+| `stitched` | 12 |
+| `verified` | 96 |
 
 ## 三、`source` 分布
 
@@ -148,8 +148,8 @@
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
 | `not_implemented` | 0 | 1 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
-| `stitched` | 0 | 4 | 9 | 0 | 0 |
-| `verified` | 0 | 6 | 71 | 1 | 17 |
+| `stitched` | 0 | 4 | 8 | 0 | 0 |
+| `verified` | 0 | 6 | 72 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

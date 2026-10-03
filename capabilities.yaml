@@ -2939,7 +2939,7 @@
     {
       "id": "topology_readback",
       "label": "拓扑优化的读数与建研究",
-      "level": "stitched",
+      "level": "verified",
       "backends": [
         "solidworks-com-pywin32"
       ],
@@ -2953,7 +2953,9 @@
         "★★ 2026-10-02（轮 383）**真机 7/8**：★ **读数与设参的 7 项全部真机通过**（★ 含 `set_goal` 的「设置生效」判据：`before_taken 0 → after_taken 1`）；★ **唯一不过的是 `set_topology_iteration_options`**，报 **`0x80010105`**（`com_error: (-2147417851, '服务器出现意外情况。')`）—— ★ 与**事实 47 / 28 同一个错误码**，★ 定性为**后端限制**（pywin32 迟到绑定调不到那种指针接口），★ **不是代码问题**。⇒ ★ 定则：★ **不要再「换个参数试试」**（事实 47：20+ 种形态已穷尽）。⚠ 另一条（`solidworks_topology_run`）需要跑求解 ⇒ 见 `analysis_run_readback` 的同族限制。",
         "★ 2026-10-01（轮 282）分界修正：本条 = 读数（evidence / collect_numbers / manager_report / options_report）；★ create_study / run 已移给 topology_optimization（那才是「找形」）⇒ ★ 两条不再重叠",
         "★★ 从 `topology_readback_and_parameters` **拆出**（轮 275）：★ 与「约束与控制」相对 —— 本族是**读 + 建研究**",
-        "★ 只有 `topology_evidence` / `collect_numbers` 是纯读；★ `create_study` 是建（★ 未真机验证）"
+        "★ 只有 `topology_evidence` / `collect_numbers` 是纯读；★ `create_study` 是建（★ 未真机验证）",
+        "★★★★★ 2026-10-04（接手轮 · 轮 3）**由 `stitched` 转 `verified`** —— ★ 处置 `specs/202-user-coverage-gaps` 的 **SC-004**（「§五 那批 stitched 至少转 verified 3 条」）✓ 本条是**第 1 条**。★★ 判据（★ 三条，★ 缺一不可）：① **功能范围内的真机读数全过** —— `output/topology-readback-evidence.json` 的 `steps.judgement.checks` 里 **8 项中 7 项 `true`**（`bindings` / `create_study` / `collect_numbers` / `constraints` / `manager_report` / `options_report` / `set_goal`），★ 而**唯一 `false` 的 `set_iteration_options` 不在本条的功能范围内** —— ★ 它**已独立成条** `topology_iteration_options_backend_limited`（★ 后端 `0x80010105`，★ 事实 47/67 同族）✓ ② **证据是我们自己的运行产物**（★ SPEC 的 A4 逐字「`verified` 必须有我们自己的运行证据」）：★ 探针 `tools/capture_topology_readback_evidence.py` + ★ 证据 JSON（`captured_at: 2026-10-03T01:26:04`，走 `sw_guard` 护栏、5.3 s、无弹窗）✓ ③ ★★ **如实写明那条顶层 `verdict` 是 `fail`** —— ★ **不许隐瞒**：★ 那个 `fail` 是**探针自己的严格设计**（★ 逐字「八项全真才 pass」；★ 源码那一行是 `verdict = pass if (ok and not error) else fail`）⇒ ★★ **`verdict` 是结论、逐条 `ok` 才是事实**（★ **事实 517**）⇒ ★ 本条以**逐条读数 7/8** 为准 ✓ ★★★ **功能边界（★ 写死，★ 免得后人以为漏了）**：本条 = **读数 + 建研究 + 设参 + 约束**；★ **不含** `set_topology_iteration_options`（★ 见那条独立的 backend_limited 条目）· ★ **不含** `run` 跑求解（★ 见 `analysis_run_readback`）✓",
+        "★★ 转级时的**可复用判据**（★ 记录）：★★★ **「`verdict` 是结论、逐条 `ok` 才是事实」** —— ★ 当两者打架（★ 本轮 `verdict: fail` vs ★ 逐条 7/8），★ **以逐条为准**；★ 而**前提是**那条不过的项**必须有**别的条目接着**（★ 否则就是「假装做到」，★ 违反 SPEC 的 Edge Cases）✓"
       ],
       "allowed_modes": [
         "interactive",

@@ -182,7 +182,7 @@
 - ⚑⚑ **2026-10-01（轮 202）更正归因**：本条此前把「验收红」归为**环境**（`GetAddInObject('SldWorks.Simulation')` 返回 None，读成『加载项未加载或未安装，需 Simulation 许可证』）。★ 实测证明**『需许可证』那半是错的**：① `LoadAddIn("SldWorks.Simulation")` 返回 **3 = swFileNotFound** —— 那是「文件没找到」，因为官方文档写明该参数要**完整文件路径**（唯一例外是 `LoadAddIn('MBD')`）；**许可错是 7 = swLicenseError**（读 `C:\swapi\enums\swLoadAddinError_e.md`）；② 用只读注册表读到的真路径 `…\SOLIDWORKS\Simulation\cosworks.dll` 调 `LoadAddIn` ⇒ **0 = swSuccess**；③ 之后 `GetAddInObject` ⇒ **非 None**（CDispatch）。⇒ 真因是「**加载项没启用**」，不是许可。★ 已把这一改装进正常路径：`scripts/sw_simulation.py` 的 `ensure_simulation_addin()`（取不到就先 `LoadAddIn` 完整路径），`get_cosmosworks()` 复用它 ⇒ 实测 `get_cosmosworks(sw)` 返回 `CDispatch`。⚠ **仍未跑求解** —— 求解器不收敛那条**是另一件事**，本更正**没有**解决它。
 - ✅ **需要用户提供的东西**：`SOLIDWORKS Simulation Professional` 或 `Premium` 许可（或单独含拓扑优化的许可）。**在此之前，本能力无法在本机升到 `verified`**，且这不影响 `stitched` 之下的**每一段已分别真机验证**这一事实。
 
-### `topology_readback`（stitched）
+### `topology_readback`（verified）
 
 - ★★ 2026-10-02（轮 383）**真机 7/8**：★ **读数与设参的 7 项全部真机通过**（★ 含 `set_goal` 的「设置生效」判据：`before_taken 0 → after_taken 1`）；★ **唯一不过的是 `set_topology_iteration_options`**，报 **`0x80010105`**（`com_error: (-2147417851, '服务器出现意外情况。')`）—— ★ 与**事实 47 / 28 同一个错误码**，★ 定性为**后端限制**（pywin32 迟到绑定调不到那种指针接口），★ **不是代码问题**。⇒ ★ 定则：★ **不要再「换个参数试试」**（事实 47：20+ 种形态已穷尽）。⚠ 另一条（`solidworks_topology_run`）需要跑求解 ⇒ 见 `analysis_run_readback` 的同族限制。
 

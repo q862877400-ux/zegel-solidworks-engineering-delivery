@@ -213,4 +213,27 @@ SPECS_BATCH77 = [
             "★ `Path`/`Profile`/`GuideCurves`/`FeatureScopeBodies`（★ 对象数组 + 要前置）·"
             "★ `Set*` 那一族（★ 那是写）· ★ `AccessSelections`/`ReleaseSelectionAccess`（★ 前置）✓",
     ),
+    ToolSpec(
+        name="solidworks_revolve_params",
+        title="Read Revolve Feature Parameters",
+        module="sw_feature_readback", inject="model", function="revolve_params",
+        params=[_FEAT_NAME],
+        doc="★ **读旋转特征的一组参数**（★ 角度 / 轴类型 / 方向 / 薄壁 / 轮廓数）。"
+            "★★★★★ **单位口径（★ 第十三族）**：★ 官方 `ISweepFeatureData` 那一族没写单位 ——"
+            "★ 而本族的 `GetRevolutionAngle` 官方也**没写** ⇒ ★★ **真机量出来了：★ **radians**** ✓"
+            "★★ **三条独立证据**：★ ① 传 `math.radians(30)` ⇒ 读回 `0.5235987755982988`"
+            "（★ **正是 π/6 的精确值**；★ 若回度该是 `30.0`）⇒ 距离 `0.000000` · 次近 `29.476`；"
+            "★ ② **几何**：体积 `785.398` = 「30° 扇形环」的解析值 `785.398`；"
+            "★ ③ **反面对照**：误传**度**时读回 `4.867259 rad = 278.8734°`、"
+            "而 `30 rad mod 360°` 也正是 `278.8734°`（★ 差 `0.000000°`）✓"
+            "★★★★ **⚠ 其余真机读数**：★ `GetAxisType=10` · ★ `IsBossFeature=true` ·"
+            "★ `IsThinFeature=false` · ★ `GetContoursCount=0` · ★ `ReverseDirection=false` ✓"
+            "★★★ **⚠ `GetWallThickness` 仍 `unknown`** —— 官方 `## Remarks` 说它"
+            "「**only affects thin features**」⇒ ★ 本探针建的是**非薄壁** ⇒ ★ **如实标、★ 不谎称** ✓"
+            "★★★★ **⚠ 不碰**：★ `Axis`/`Contours`/`FeatureScopeBodies`（★ 对象数组 + 要前置）·"
+            "★ `ISetContours`/`ISetFeatureScopeBodies`（★ `ref`）· ★ `Set*`（★ 写）·"
+            "★ `AccessSelections`/`IAccessSelections`/`ReleaseSelectionAccess`（★ 前置）✓"
+            "★★★★★ **⚠ 而两个带参量**（`GetRevolutionAngle` / `GetWallThickness`）**单独带参调** ——"
+            "★ 因为 `get_com_member` 对「必须带实参」的成员会**静默回 bound method** ✓",
+    ),
 ]
