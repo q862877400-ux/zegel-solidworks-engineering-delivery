@@ -387,10 +387,43 @@ def test_sketch_spline_fails_loudly_instead_of_returning_none():
     #: ★★ 2026-10-03（轮 470）实现已改走 `set_com_member` 写属性
     #:   ⇒ 猴补丁只补 `get_com_member` **补不到**（★ 那正是本测试曾失败的根因）。
     stub.set_com_member = lambda obj, name: getattr(obj, name)
+    #: ★★★★ 2026-10-04（轮 112）**stub 再补两个名字** —— ★ 处置这条**存量失败** ✓
+    #:   ★ **真机报错逐字**：★
+    #:     `ImportError: cannot import name 'call_com_member' from 'sw_connect'
+    #:      (unknown location). Did you mean: 'get_com_member'?` ✓
+    #:   ★★ **真因**：★ 被测模块 `sw_feature_readback.py` **现在要三个名字**
+    #:     （★ `call_com_member` / ★ `get_com_member` / ★ `safe_get_com_member`）⇒
+    #:     ★★★ **而本 stub 只装了 `get_com_member`** ⇒ ★ **落后了** ✓
+    #:   ★★★★ **⇒ 那条一直是**红**的**（★ 轮 87 `git stash` 判过：★ **与我的改动无关**）——
+    #:     ★ 而**我这几轮给那个模块加能力时，正好触发了它** ✓
+    #:   ★★★★★ **可复用判据**：★★★ **"stub 落后"与"代码坏了"看起来一样** ——
+    #:     ★ 报的是 `ImportError`、★ 而**真因是测试的假模块少装了名字** ⇒
+    #:     ★★ **看到"cannot import name X … Did you mean Y?"时，先数**被测模块需要几个名字**** ✓
+    stub.call_com_member = lambda obj, name, *a, **k: getattr(obj, name)(*a, **k)
+    stub.safe_get_com_member = lambda obj, name, *a, **k: getattr(obj, name)
     sys.modules.setdefault("sw_connect", stub)
     spec.loader.exec_module(mod)
 
     class _Mgr:
+        #: ★★★★ 2026-10-04（轮 112）**再补后继入口** —— ★ 处置这条**存量失败** ✓
+        #:   ★ **真机报错逐字**（★ 修完 stub 之后暴露出来的**下一层**）：
+        #:     `RuntimeError: sketch_spline() 被调用时**没有活动草图** ⇒ 画几何会**静默无效**` ✓
+        #:   ★★ **真因**：★ 那个守卫**后来从"内联读 `GetActiveSketch2`"
+        #:     改成"调共用帮手 `sw_sketch.active_sketch`"**（★ 事实 60 定则④：
+        #:     同一个工具函数要在**所有**同类场合用它）⇒
+        #:     ★★★ **而那个帮手走的是**后继入口** `ISketchManager::ActiveSketch`**
+        #:       （★ 官方逐字：`GetActiveSketch2` 「Obsolete. Superseded by
+        #:        [[SketchManager::ActiveSketch]]」）⇒
+        #:       ★★★★ **⇒ 本 fake 只装了**已废弃的** `GetActiveSketch2` ⇒ 帮手读不到它** ✓
+        #:   ★★★★★ **⇒ 修法照 L415-424 那条先例**（★ **让 fake 更真实、★ 不放宽断言**）：
+        #:     ★ **给 `SketchManager` 补上 `ActiveSketch` 属性** ✓
+        #:   ★★★★★ **可复用判据**：★★★ **"mock 替废弃成员打桩、★ 而代码已换代"
+        #:     会表现成"守卫先抛错"** —— ★ 看到"守卫拦住了"时，
+        #:     ★★ **先核 fake 还在替哪个**年代的**接口打桩** ✓
+
+        #: ★ 后继入口（★ 属性、★ 非 None ⇒ 守卫放行）✓
+        ActiveSketch = object()
+
         @staticmethod
         def CreateSpline2(_arr, _flag):      # noqa: N802
             return None

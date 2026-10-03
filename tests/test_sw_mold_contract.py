@@ -243,14 +243,31 @@ def test_mold_undercut_detect_passes_six_args_and_returns_none():
     在**未定义方向**的零件上**弹模态框并卡住会话**（轮 167 的根因）。
     """
     m = _load_module()
-    fm = _Recorder().set("MoldUndercutDetect", None)
+    #: ★★★★ 2026-10-04（轮 112）**mock 跟上换代** —— ★ 处置这条**存量失败** ✓
+    #:   ★ **真机报错逐字**：
+    #:     `AttributeError: '_Recorder' object has no attribute 'MoldUndercutDetect2'.
+    #:      Did you mean: 'MoldUndercutDetect'?` ✓
+    #:   ★★ **真因**：★ `sw_mold.py` 的 L252-255 **已经换代**（★ 官方逐字
+    #:     「**Obsolete. Superseded by [[IFeatureManager::MoldUndercutDetect2]]**」⇒
+    #:     ★ **9 参**）⇒ ★★★ **而本测试还在给**废弃的那个**打桩** ✓
+    #:   ★★★★ **⇒ 与 `test_sw_sketch_contract.py` **同一个病****
+    #:     （★ mock 替旧接口打桩、★ 而代码已换代）✓
+    #:   ★★★★★ **可复用判据**：★★★ **"mock 替废弃成员打桩"会表现成
+    #:     `AttributeError: … has no attribute <新名>`** —— ★ 看到它就直接查**换代** ✓
+    fm = _Recorder().set("MoldUndercutDetect2", None)
     got = m.mold_undercut_detect(_Model(fm), col_undercut=1, col_base=2,
                                  b_coord_input=True, dx=1.0, dy=2.0, dz=3.0)
     name, args = fm.calls[0]
-    assert name == "MoldUndercutDetect"
-    assert len(args) == len(UNDERCUT_PARAMS) == 6
-    assert args[0] == 1 and args[1] == 2 and args[2] is True
-    assert (args[3], args[4], args[5]) == (1.0, 2.0, 3.0)
+    assert name == "MoldUndercutDetect2", (
+        "★ 实现在调后继 `MoldUndercutDetect2`（★ 官方：`MoldUndercutDetect` 已废弃）")
+    #: ★★ 后继是 **9 参**（★ 官方 `MoldUndercutDetect2.md` 的 `## Parameters` 逐字）✓
+    assert len(args) == 9, "★ 后继 9 参、★ 实为 %d：%r" % (len(args), args)
+    #: ★ 新增那 3 个颜色在前（★ `ColUndercut2` / `ColOccluded` / `ColStraddle`）、
+    #:   ★★ 而 `ColBase` 退到第 **5** 位、★ `BCoordInput`/`Dx`/`Dy`/`Dz` 在**第 6–9 位** ✓
+    assert args[0] == 1, "★ 第 1 位是 `ColUndercut1`（★ 沿用 col_undercut）：%r" % (args,)
+    assert args[4] == 2, "★ 第 5 位是 `ColBase`（★ 沿用 col_base）：%r" % (args,)
+    assert args[5] is True, "★ 第 6 位是 `BCoordInput`：%r" % (args,)
+    assert (args[6], args[7], args[8]) == (1.0, 2.0, 3.0), "★ 第 7–9 位是 Dx/Dy/Dz：%r" % (args,)
     assert got is None, "官方是 Void ⇒ 不得假装能拿到检测结果"
 
 
@@ -263,7 +280,8 @@ def test_mold_undercut_detect_rejects_zero_direction():
     """
     import pytest
     m = _load_module()
-    fm = _Recorder().set("MoldUndercutDetect", None)
+    #: ★★★★ 2026-10-04（轮 112）**同上：mock 跟上换代**（★ `MoldUndercutDetect2`）✓
+    fm = _Recorder().set("MoldUndercutDetect2", None)
     with pytest.raises(ValueError):
         m.mold_undercut_detect(_Model(fm), b_coord_input=True, dx=0.0, dy=0.0, dz=0.0)
     assert not fm.calls, "零向量时**不许**发出调用（要在发之前拒）"
