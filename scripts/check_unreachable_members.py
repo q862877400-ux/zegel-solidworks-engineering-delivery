@@ -37,6 +37,13 @@ import re
 import sys
 from pathlib import Path
 
+#: 2026-10-03（接手轮）强制 stdout 为 UTF-8 —— 本门禁会 print 中文与箭头/勾这类符号，
+#:   而 stdout 是管道时（测试正是用管道抓输出）默认按 locale（本机 GBK）编码
+#:   ⇒ UnicodeEncodeError: 'gbk' codec can't encode character … ⇒ 门禁自己崩掉。
+#:   known-facts 58 那一族（中文 Windows 上两侧默认编码不一致 —— 病灶在输出侧）；
+#:   而测试那侧的 subprocess.run 已经带了 encoding='utf-8'。
+sys.stdout.reconfigure(encoding="utf-8")
+
 R = Path(__file__).resolve().parent.parent
 
 #: \u2605\u2605 **已证到不了** \u2014\u2014 \u10e1\u6bcf\u6761\u5e26\u8bc1\u636e\uff08\u2605 \u4e0d\u8bb8\u51ed\u5370\u8c61\u52a0\uff09

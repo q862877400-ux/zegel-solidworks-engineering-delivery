@@ -9,6 +9,13 @@ import sys
 from filecmp import cmp
 from pathlib import Path
 
+#: 2026-10-03（接手轮）强制 stdout 为 UTF-8 —— 本脚本末尾会 `print(json.dumps(...))`，
+#:   而报告里含中文与 `⇒` 这类符号；stdout 是**管道/文件**时默认按 locale（本机 GBK）编码
+#:   ⇒ `UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2'` ⇒ **整个门禁链崩在最后一步**。
+#:   ★ known-facts 58 那一族（中文 Windows 上两侧默认编码不一致 —— 病灶在输出侧）。
+#:   ★★ 实测：修了 30 道被引用门禁的编码之后，**这一处**才露出来（★ 它自己是调用方、不在那份名单里）。
+sys.stdout.reconfigure(encoding="utf-8")
+
 try:
     from .sync_bundled_skill import collect_runtime_files
 except ImportError:

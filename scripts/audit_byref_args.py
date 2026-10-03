@@ -122,6 +122,28 @@ def counted_positions(plist: list[str]) -> list[tuple[int, str]]:
     return out
 
 
+def byref_alias_names(path: Path) -> set[str]:
+    """★ 收集**本文件里 by-ref 构造器的别名**（`from sw_connect import out_i4 as _oi4` ⇒ `{"_oi4"}`）。
+
+    ★★★ 2026-10-03（接手轮）**为什么必须补这一条**：`byref_variables` 的正则只认
+      `out_\\w*` 或 `VARIANT` ⇒ ★ **别名 `_oi4` 两边都不匹配** ⇒ 真机代码里
+      `err_out = _oi4()` 之后把 `err_out` 传出去时，被判「**裸传标量出参**」
+      ⇒ ★★ **工具自己的假阳性**（★ 实测 **7 处**，全在 `InsertCutSurface` 第 5 位；
+        ★ 而它们**都**在上一行用 `out_i4` 的别名构造好了 —— `err_out = _oi4()`）。
+    ★ 口径（★ 不放宽、不猜）：**只认「从别处 `import` 进来的、名字形如 `_?out_*` 或 `VARIANT` 的构造器」**；
+      ★ 与本文件既有的那条"**元组解包**"补法**同一性质** —— ★ **把同一个语义的另一种写法补齐**，
+      而不是把判据放松。
+    """
+    tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
+    names: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            for a in node.names:
+                if re.fullmatch(r"_?out_\w*", a.name) or a.name == "VARIANT":
+                    names.add(a.asname or a.name)
+    return names
+
+
 def byref_variables(path: Path) -> set[str]:
     """收集**先构造 by-ref、后传出去**的局部变量名。
 
@@ -136,11 +158,16 @@ def byref_variables(path: Path) -> set[str]:
     src = path.read_text(encoding="utf-8", errors="replace")
     tree = ast.parse(src)
     names: set[str] = set()
+    #: ★★ 2026-10-03（接手轮）：把**本文件里构造器的别名**（`import out_i4 as _oi4`）也算进去 ——
+    #:   ★ 否则 `err_out = _oi4()` 这种"先构造后传出"会被漏记 ⇒ **假阳性**（实测 7 处）。
+    _aliases = sorted(byref_alias_names(path))
+    _alias_alt = ("|" + "|".join(re.escape(a) for a in _aliases)) if _aliases else ""
+    _ctor = re.compile(r"(^|[^\w])(_?(out_\w*|VARIANT)%s)\s*\(" % _alias_alt)
     for node in ast.walk(tree):
         if not isinstance(node, ast.Assign):
             continue
         rhs = ast.get_source_segment(src, node.value) or ""
-        if not re.search(r"(^|[^\w])_?(out_\w*|VARIANT)\s*\(", rhs):
+        if not _ctor.search(rhs):
             continue
         for tgt in node.targets:
             if isinstance(tgt, ast.Name):
@@ -195,6 +222,10 @@ def scan(path: Path, table) -> tuple[list[dict], int]:
     bad: list[dict] = []
     checked = 0
     byref_vars = byref_variables(path)          # 先构造后传出的合法 by-ref 变量
+    #: ★★ 2026-10-03（接手轮）：**内联**用别名构造的也算合法（如 `_oi4()` 直接写进实参）。
+    _aliases = byref_alias_names(path)
+    _alias_inline = ([re.compile(r"^\s*%s\s*\(" % re.escape(a)) for a in _aliases]
+                     if _aliases else [])
     for lineno, wrapper, member, args in own_call_sites(path):
         if wrapper not in WRAPPERS:
             continue
@@ -218,6 +249,8 @@ def scan(path: Path, table) -> tuple[list[dict], int]:
                 actual = args[pos]
                 if BYREF_OK.match(actual):
                     continue
+                if any(rx.match(actual) for rx in _alias_inline):
+                    continue                        # ★ 内联的**别名**构造（如 `_oi4()`）
                 if actual in byref_vars:            # 该变量是从 by-ref 构造赋来的
                     continue
                 bad.append({

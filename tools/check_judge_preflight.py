@@ -33,6 +33,15 @@ import os
 import sys
 from pathlib import Path
 
+#: ★★★ 2026-10-03（接手轮）**必须强制 stdout 为 UTF-8** —— ★ 本工具会 `print` 中文，
+#:   而默认走 `locale.getpreferredencoding()`（★ 本机是 **GBK**）⇒ ★ 被父进程按 UTF-8 解时**全是乱码**。
+#:   ★★ 实测后果：`tests/test_judge_preflight_gate.py` 的 **5 条**全失败 ——
+#:     `assert "缺字段" in proc.stdout` 拿到的是 `'\ufffd\u043e\u0775\u01fc…'`
+#:     （★ 而那个测试**自己的** `subprocess.run` **是**带 `encoding="utf-8"` 的 ⇒ 错不在它）。
+#:   ★ 这正是 **known-facts 58** 那一族的**第三个实例**（前两个：测试里的 subprocess、
+#:     以及本仓 11 处缺 `encoding=`），★ 而这次的病灶在**子进程的输出侧**，不是解码侧。
+sys.stdout.reconfigure(encoding="utf-8")
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 #: ★ 登记表路径可覆盖（`DSL_JUDGE_REGISTRY`）—— ★ 那是**负例自证**的前提：
 #:   ★ 测试要能拿一张“**故意坏的**”表去跑（事实 62：一个门禁“写了”不等于它“有效”，

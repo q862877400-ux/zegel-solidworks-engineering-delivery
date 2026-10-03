@@ -48,6 +48,19 @@ import sys
 import tokenize
 from pathlib import Path
 
+#: ★★★ 2026-10-03（接手轮）**必须强制 stdout 为 UTF-8** —— ★ 本门禁会 `print` 中文与 `⇒`/`→` 这类符号，
+#:   而默认走 `locale.getpreferredencoding()`（★ 本机 **GBK**）⇒ ★ 一旦 stdout 是**管道**，
+#:   `print("… ⇒ …")` 直接 **`UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2'`**
+#:   ⇒ ★★ **门禁自己崩掉**（★ 实测：`scripts/check_env_pitfalls.py:366` 那行；
+#:     连带 `scripts/release_check.py:1192` 报「环境陷阱门禁未通过」；
+#:     再连带 `tests/test_gate_negative_cases.py::test_gate_details_exposed_for_every_gate` 失败）。
+#:   ★ 这是 **known-facts 58** 那一族的**第四个实例** —— 前三个分别在：
+#:     ① 测试里的 `subprocess.run` 缺 `encoding=`；② 本仓 11 处同类；
+#:     ③ `tools/check_judge_preflight.py`（**子进程输出侧**）。
+#:   ★★ 病灶的共同点：★ **中文 Windows 上，"默认编码"在两个进程之间不一致** ——
+#:     ★ 而 `print` 与 `subprocess` **两侧都可能出错**，★ 只修一侧修不干净。
+sys.stdout.reconfigure(encoding="utf-8")
+
 ROOT = Path(__file__).resolve().parents[1]
 
 #: 扫哪些目录（**只扫真正会被执行的代码**）
