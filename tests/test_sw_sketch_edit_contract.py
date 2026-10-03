@@ -153,9 +153,26 @@ def test_mirror_calls_the_official_zero_arg_member():
     r = sw_sketch_edit.sketch_mirror(m)
     assert isinstance(r, dict), "★ 实现现在回结果 dict ⇒ 契约要跟上：%r" % (r,)
     assert r["op"] == "sketch_mirror"
-    #: ★★ `ok` 三态：★ 取不到计数时为 `None`（★ **不报成功** —— 那正是本仓的纪律）✓
-    assert r["ok"] is None, (
-        "★ 本 fake 下取不到草图实体计数 ⇒ `ok` 应为 `None`（★ 不报成功）、★ 实得 %r" % (r["ok"],))
+    #: ★★★★★★★ 2026-10-04（轮 119）**不许钉死"取决于环境"的值** —— ★ 修掉我自己引入的顺序依赖 ✓
+    #:   ★ **真机读数（★ 两次对照）**：
+    #:     · ★ **单跑本文件**：★ `ok = None` · ★ `segments_before/after = None`（★ 取不到计数）✓
+    #:     · ★ **与 `test_extended_modules_contract.py` 一起跑**：★ `ok = False` ·
+    #:       ★ `segments_before/after = **0**`（★ **拿到了数字 0**）✓
+    #:   ★★ **真因**：★ 那个文件往 `sys.modules` 里装了 `sw_connect` 的**桩**
+    #:     （★ 它的 `_load` 里有 `sys.modules.setdefault("sw_connect", module)`、
+    #:     ★ 且桩的 `safe_get_com_member = lambda obj, name, *a, **k: None`）⇒
+    #:     ★★★ **⇒ 本文件走的是那个桩 ⇒ 计数的**形态**跟着变** ⇒
+    #:       **`ok` 在 `None` 与 `False` 之间变** ✓
+    #:   ★★★★ **⇒ 根因**：★ 我轮 118 写的是 `assert r["ok"] is None` ——
+    #:     ★ **那**把一个取决于环境的值钉死了**** ⇒ **单独绿、全量红** ✗
+    #:   ★★★★★ **⇒ 修法**：★ **断言只查**语义**、★ 不查那个值本身** ——
+    #:     ★ 语义是「★ **取不到计数时**不报成功**」⇒ ★ 写成 **`is not True`** ✓
+    #:     ★★ **⇒ 而它在两种环境下都成立**（★ `None` 与 `False` 都不是 `True`）✓
+    #:   ★★★★★★ **可复用判据**：★★★ **"单独绿、全量红"的一个常见根因是
+    #:     **断言钉死了环境相关的值**** —— ★ 而**修法不是加 skip、★ 是把断言降到**语义层**** ✓
+    #:     ★★ （★ 与**事实 57**同族：★ "一直是绿的、只是环境恰好满足"）✓
+    assert r["ok"] is not True, (
+        "★ 取不到计数时**不许**报成功 ⇒ `ok` 应为 `None` 或 `False`、★ 实得 %r" % (r["ok"],))
     assert "不报成功" in r["verified_by"], "★ 判据来源要写明三态语义"
     assert m.mirror_calls == 1
 
