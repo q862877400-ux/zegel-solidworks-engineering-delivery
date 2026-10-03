@@ -195,7 +195,11 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ★★ **故孔位是“射线选出来的”、**而不是裸坐标** —— ★ **命中什么由几何决定**。`<br>· `★ 而坐标/枚举均有**可核的来源**：`swSelFACES = 2` 取自本机反射 dump（★ 铁律 4 的裁决者）。` |
 | `feature_hole_wizard5` | · `★★ 2026-10-03（轮 591）**真机建成**（走 `sw_guard`，零弹窗）：`<br>· ``SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` 定孔位`<br>· `⇒ `HoleWizard5(**swWzdHole=2**, **ANSI_METRIC=1**, **40**螺钉间隙, **"M8"**, **swEndCondThroughAll=1**, 0.008, 0.02, 0, 0×12, "", False, True, False, False, False, False)`<br>· `⇒ **特征 7 → 8**，新增 **`M8 间隙孔1`**（★ **真的异型孔向导特征**）· 返回 `CDispatch` ✓`<br>· `证据 `output/hole-wizard5-build-evidence.json`。`<br>· `★★★ **而关键是一个参数的形态**（★ #3211的五格对照）：
        `SSize=''` · `'8'` · `'0.008'` · `'M8x1.25'` ⇒ **全 `None`**；★ **而 `SSize='M8'` ⇒ 成** ✓
-       ⇒ ★ 故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。` |
+       ⇒ ★ 故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。`<br>· `★★ 2026-10-03（轮 593）**包装真机通过**（走 `sw_guard`，零弹窗）：`scripts/sw_hole_features.create_hole_wizard_at_selection_report(model, "+z", "M8")`
+       ⇒ **特征 7 → 8**，新增 **`异型孔向导`**。证据 `output/hole-wizard-wrapper-evidence.json`。
+       ★ **而对照组**（`size=""`）⇒ **回 `None`**，★ 而错误信息逐字给出三个常见原因（★ 事实 469）✓
+     ★★ **而它在设计上走过一次弯**（★ 事实 470）：我第一版设计成**先读选区的点**（`selection_point`）⇒ ★ 而真机否掉了它（★ `GetSelectionPoint` **要的是点、不是面**）；
+       ★ 改成接**声明式的面选择器**（★ 走本仓 `sw_simulation.resolve_face_selector`，★ 它从 `GetBodyBox()` 取**那个面的中心点**）⇒ ★ **通了** ✓` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

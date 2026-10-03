@@ -1076,6 +1076,7 @@ WZD_FASTENER_ANSI_METRIC_SIMPLE = {
 
 def create_hole_wizard_at_selection_report(
     model,
+    selection: str,
     size: str,
     *,
     diameter_mm: float = 8.0,
@@ -1090,10 +1091,10 @@ def create_hole_wizard_at_selection_report(
 ) -> dict:
     """高级孔 / 异型孔向导（`HoleWizard5`）并回回读报告（规则 6）。
 
-    孔位是声明式的（规则 3）：**调用方先选好一个点**，
-    本函数从**当前选区**读出它（`selection_point(model)`），
+    孔位是声明式的（规则 3）：传**面选择器**（如 `"+z"`），
+    本函数先把它解析成**那个面的中心点**（`resolve_face_selector`），
     再从那个点沿 `ray_dir` 发一条射线打到面上 —— 命中什么由几何决定。
-    ★ 与本模块 `create_*_hole_at_selection_report` 那族**同一形态**。
+    ⚠ `resolve_face_selector` **只对轴对齐的实体可靠**；★ 故本函数**检查射线选中数**（★ 为 0 就报错）。
 
     :param size: **规格串**（如 "M8"）—— 而不是空串 / 纯数字（真机：那些全 None）。
     :param fastener_index: 必须与 `standard_index` 匹配（见模块常量）。
@@ -1101,13 +1102,13 @@ def create_hole_wizard_at_selection_report(
     """
     ext = get_com_member(model, "Extension")
     #: 前置 ①：从声明式选择里读出一个点（毫米）
-    from sw_selection_spec import selection_point
-    _sp = selection_point(model)
-    if not _sp.get("ok"):
-        raise RuntimeError("读不到当前选区的点（★ 调用方需先选一个点）：%s"
-                           % str(_sp.get("error"))[:140])
-    pt = _sp["point_mm"]
-    x, y, z = (float(pt[0]) / 1000.0, float(pt[1]) / 1000.0, float(pt[2]) / 1000.0)
+    from sw_simulation import resolve_face_selector
+    pt = resolve_face_selector(model, selection)
+    if pt is None:
+        raise RuntimeError(
+            "面选择器 %r 解析不了（★ 合法值：+x/-x/+y/-y/+z/-z；"
+            "★ 而它**只对轴对齐的实体可靠**）" % selection)
+    x, y, z = (float(pt[0]), float(pt[1]), float(pt[2]))   #: ★ 已是**米**
     #: 从那个点沿反方向抬起，再向下打 —— 保证射线从体外进来
     sx = x - ray_dir[0] * (plane_offset_mm / 1000.0)
     sy = y - ray_dir[1] * (plane_offset_mm / 1000.0)

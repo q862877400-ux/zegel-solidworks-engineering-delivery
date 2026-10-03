@@ -2510,3 +2510,21 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **下一步就是改设计**：★ 换成**接一个声明式的面选择器**（如 `+z`，★ 走本仓 `select_face_selector`）
        → 从**面的中点**（★ 本付 `_center` 那类取法）得到点 → 再发射线。
      ★ 本轮**不降 `feature_hole_wizard5` 的 level**（★ 能力本身真机建成、事实 469）；★ 而**包装尚未真机通过** —— ★ 那一点已写进它的 `limitations`。|真机：`tools/prove_hole_wizard_wrapper.py`；证据 `output/hole-wizard-wrapper-evidence.json`；本仓：`scripts/sw_hole_features.py` 新增那个包装；对照事实 466 / 469 |
+| 471 | **★★★ 高级孔的包装真机通过**（★ 而它在设计上**走过一次弯**） —— 2026-10-03（轮 593）。
+     ★ **设计的弯**（★ 事实 470）：第一版写成**先读选区的点**（`selection_point`）⇒ 真机否掉；
+       ★ 真因：**`GetSelectionPoint` 要的是“点”、不是“面”**（★ 而 `HoleWizard5` 的定位**靠 `SelectByRay`、本来就不需要它**）。
+     ★ **而改法是用本仓现成的那个**：
+       `sw_simulation.resolve_face_selector(model, selector)` —— ★ 它把 `+x/-x/+y/-y/+z/-z` 解析成**那个面的中心点**（米），
+       ★ 实现是取 `GetBodyBox()` 再按外法向取中心 ✓（★ **声明式**）
+       ⚠ 而它 docstring 写着边界：**只对轴对齐的实体可靠**⇒ ★ 故调用方**必须检查选中数**（★ 而我的包装本来就检查了）。
+     ★ 新签名：`create_hole_wizard_at_selection_report(model, selection, size, *, diameter_mm, depth_mm, through, fastener_index, standard_index, generic_type, ray_dir, plane_offset_mm, name)`
+     ★ 真机（`tools/prove_hole_wizard_wrapper.py`，零弹窗）—— **两格**：
+     ```
+     ★ **包装 + `"+z"` + `"M8"`** ⇒ **特征 7 → 8** · 新增 **`异型孔向导`** ✓
+     对照 + `size=""`          ⇒ **回 `None`**（★ 而报错逐字给出三个常见原因）
+     ```
+     ★ **两个阶段各有一条教训**：
+       ① ★（轮 592）**错误信息自己把设计错说出来了**（“选中的可能不是点”）—— ★ 而那句是我**按本仓惯例自己写的**；
+       ② ★（轮 593）**改法用的是本仓现成的函数**（`resolve_face_selector`）—— ★ **而不是自己再写一个**。
+     ★ **落地**：`feature_hole_wizard5` 的 **evidence +1**（★ 包装真机通过）· **limitations 更新**（★ 包装已通过、而尚未接 MCP 工具层）。
+     ★★ **方法论**：★ **当一个包装回 `None` 时，先问“**这条 API 真的需要我读的东西吗**”** —— ★ 而不是去修那个读取。|真机：`tools/prove_hole_wizard_wrapper.py`；证据 `output/hole-wizard-wrapper-evidence.json`；本仓：`scripts/sw_hole_features.py` · `scripts/sw_simulation.py` 的 `resolve_face_selector`；对照事实 464 / 466 / 469 / 470 |

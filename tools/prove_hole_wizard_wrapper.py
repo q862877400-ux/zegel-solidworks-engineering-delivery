@@ -77,7 +77,7 @@ def main() -> int:
             before = list(FR.feature_names(doc) or [])
             row["before"] = len(before)
             try:
-                rep = HF.create_hole_wizard_at_selection_report(doc, size)
+                rep = HF.create_hole_wizard_at_selection_report(doc, "+z", size)
                 row["report"] = rep
                 row["ok"] = True
             except Exception as exc:                                      # noqa: BLE001

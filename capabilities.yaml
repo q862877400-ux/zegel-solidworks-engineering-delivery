@@ -4279,12 +4279,14 @@
         "⇒ `HoleWizard5(**swWzdHole=2**, **ANSI_METRIC=1**, **40**螺钉间隙, **\"M8\"**, **swEndCondThroughAll=1**, 0.008, 0.02, 0, 0×12, \"\", False, True, False, False, False, False)",
         "⇒ **特征 7 → 8**，新增 **`M8 间隙孔1`**（★ **真的异型孔向导特征**）· 返回 `CDispatch` ✓",
         "证据 `output/hole-wizard5-build-evidence.json`。",
-        "★★★ **而关键是一个参数的形态**（★ #3211的五格对照）：\n       `SSize=''` · `'8'` · `'0.008'` · `'M8x1.25'` ⇒ **全 `None`**；★ **而 `SSize='M8'` ⇒ 成** ✓\n       ⇒ ★ 故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。"
+        "★★★ **而关键是一个参数的形态**（★ #3211的五格对照）：\n       `SSize=''` · `'8'` · `'0.008'` · `'M8x1.25'` ⇒ **全 `None`**；★ **而 `SSize='M8'` ⇒ 成** ✓\n       ⇒ ★ 故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。",
+        "★★ 2026-10-03（轮 593）**包装真机通过**（走 `sw_guard`，零弹窗）：`scripts/sw_hole_features.create_hole_wizard_at_selection_report(model, \"+z\", \"M8\")`\n       ⇒ **特征 7 → 8**，新增 **`异型孔向导`**。证据 `output/hole-wizard-wrapper-evidence.json`。\n       ★ **而对照组**（`size=\"\"`）⇒ **回 `None`**，★ 而错误信息逐字给出三个常见原因（★ 事实 469）✓\n     ★★ **而它在设计上走过一次弯**（★ 事实 470）：我第一版设计成**先读选区的点**（`selection_point`）⇒ ★ 而真机否掉了它（★ `GetSelectionPoint` **要的是点、不是面**）；\n       ★ 改成接**声明式的面选择器**（★ 走本仓 `sw_simulation.resolve_face_selector`，★ 它从 `GetBodyBox()` 取**那个面的中心点**）⇒ ★ **通了** ✓"
       ],
       "limitations": [
         "★★ **三个前置缺一不可**：① **孔位要用 `SelectByRay`（`Mark=0`）选出来**；② **`SSize` 要规格串**（如 `M8`）；③ `FastenerTypeIndex` **要与 standard 匹配**（ANSI Metric + `swWzdHole` 下合法值：40/41/704/38）。",
         "★ **27 参**；`RevDir` 在**材料在参考面一侧时为 `False`**（官方）。",
-        "⚠ **本包装未接进 MCP 工具层**；⚠ 本轮只验了 **`swWzdHole`(2) + ANSI Metric + 40 + M8 + ThroughAll** 一组；⚠ 未查：其余孔型（柱形沉孔 0 / 锥形沉孔 1 / 螺纹孔 4 / 槽 6–8）。"
+        "★ **包装已真机通过**：`sw_hole_features.create_hole_wizard_at_selection_report(model, selection, size, …)`（★ 而**尚未接进 MCP 工具层**）。",
+        "★ 孔位接**面选择器**（`+x/-x/+y/-y/+z/-z`）；⚠ 而 `resolve_face_selector` **只对轴对齐的实体可靠**。"
       ]
     }
   ]
