@@ -16,9 +16,11 @@ from pathlib import Path
 try:
     from .sw_connect import connect_solidworks, get_com_member, open_document
     from .sw_preflight import import_com_dependencies
+    from .sw_drawing_view_types import LABELLED_VIEW_TYPES
 except ImportError:
     from sw_connect import connect_solidworks, get_com_member, open_document
     from sw_preflight import import_com_dependencies
+    from sw_drawing_view_types import LABELLED_VIEW_TYPES
 
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
@@ -171,7 +173,10 @@ def review_drawing_layout(structure, *, padding_m=0.001, preview_evidence=None) 
             return False
         overlapping_special_views = [
             item for item in views
-            if item.get("type") in {2, 3}
+            # ★ 2026-10-03：原为魔数 `in {2, 3}`，改引单一真源（官方 `swDrawingViewTypes_e`：
+            #   2 = swDrawingSectionView · 3 = swDrawingDetailView ⇒ **带标签的视图**）。
+            #   ⇒ ★ 同一份知识不再两个家（另一处是 subskills/.../drawing_workflow.py）。
+            if item.get("type") in LABELLED_VIEW_TYPES
             and same_sheet(note, item)
             and _drawing_boxes_overlap(note.get("box"), item.get("box"), padding_m)
         ]

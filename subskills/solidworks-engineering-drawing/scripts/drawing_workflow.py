@@ -9,9 +9,11 @@ from pathlib import Path
 try:
     from scripts.sw_preflight import import_com_dependencies
     from scripts.sw_connect import create_empty_dispatch_variant, get_com_member
+    from scripts.sw_drawing_view_types import LABELLED_VIEW_TYPES
 except ImportError:
     from sw_preflight import import_com_dependencies
     from sw_connect import create_empty_dispatch_variant, get_com_member
+    from sw_drawing_view_types import LABELLED_VIEW_TYPES
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 
@@ -1795,7 +1797,10 @@ def inspect_drawing_structure(drawing_model, *, paper_size_hint=None, title_bloc
                     "sheet": str(sheet_name),
                     "owner_view": view_record["name"],
                     "owner_view_type": owner_view_type,
-                    "note_kind": "view_label" if owner_view_type in {2, 3} and not note_text else "note",
+                    # ★ 2026-10-03：原为魔数 `in {2, 3}`，改引单一真源 `scripts/sw_drawing_view_types.py`
+                    #   （官方 `swDrawingViewTypes_e`：2 = swDrawingSectionView · 3 = swDrawingDetailView
+                    #    ⇒ **带标签的视图**）。⇒ 同一份知识不再两个家（另一处是 scripts/sw_review.py）。
+                    "note_kind": "view_label" if owner_view_type in LABELLED_VIEW_TYPES and not note_text else "note",
                     **note_evidence,
                 })
             for table in _as_sequence(_safe_member(view, "GetTableAnnotations", default=[])):
