@@ -102,14 +102,29 @@ def create_three_standard_views(drawing_model, part_path: str, *,
     return out
 
 
-def create_section_view(drawing_model, *, x_mm: float, y_mm: float) -> dict:
+def create_section_view(drawing_model, *, x_mm: float, y_mm: float, label: str = "A") -> dict:
     """★ 剖面视图（`CreateSectionViewAt5`）—— ★ **调用前必须先选好剖面线**（官方 Remarks 逐字）。
 
     ★ 本函数**不代选**：先回读选区计数并在返回值里给出 `preconditions_held`。
+
+    ★★★★ 2026-10-04（接手轮）**补上标签字母** —— 处置 `JUDGE-C_D_E.md` 的 🔴 **#12**
+      （★ `C-dw-1 #3`）：★ 原来传空 `SectionLabel` 且**从不 `SetLabel2`**
+      ⇒ ★★ **建出来的剖视图没有标签字母** ✓
+      ★ 而官方链路逐字：★ `IDrSection.SetLabel2(string Label)`（★ 回 `swSetSectionLabelStatus_e`：
+        ★ `< 0` 失败 · ★ `= 0` 成功 · ★ `> 0` 成功但有情况）· ★ `IView.GetSection()` 拿 `IDrSection` ✓
+      ★★ 现 `label` 做成参数（★ 默认 `"A"`）⇒ ★ 多个剖视图可依次给 `A` / `B` / `C` ✓
     """
     pre = _selection_count(drawing_model)
-    res = D.add_section_view(drawing_model, _mm(x_mm), _mm(y_mm))
-    return _result("create_section_view", {"ok": res is not None, "view": res},
+    res = D.add_section_view(drawing_model, _mm(x_mm), _mm(y_mm), label=label)
+    #: ★★ `add_section_view` 现在回 **dict**（★ 含 `view` / `label_status` / `label_ok`）
+    view = res.get("view") if isinstance(res, dict) else res
+    extra = {}
+    if isinstance(res, dict):
+        extra = {"label_requested": res.get("label_requested"),
+                 "label_status": res.get("label_status"),
+                 "label_ok": res.get("label_ok"),
+                 "label_note": res.get("label_note")}
+    return _result("create_section_view", {"ok": view is not None, "view": view, **extra},
                    "视图数增量（★ 前置成立才算）", pre_ok=pre > 0)
 
 

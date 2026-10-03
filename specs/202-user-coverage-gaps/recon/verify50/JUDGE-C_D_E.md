@@ -268,6 +268,26 @@
 | 15 | **D-2 C8** | 这条自称「**唯一常驻硬门禁**」，而它**唯一判据**要读的 `docs/refuted-patterns.json` **在仓里不存在** ⇒ 闸跑不起来，`E9_LEDGER_DIVERGED` 永远产生不出来 |
 | 16 | **E-4 #3** | 文件头写「`temperature` 仍不注册」、同文件却已注册且 arity 仍停在被怀疑过时的 CHM 声明上 |
 
+> ★★★★★ **2026-10-04（接手轮）处置进度 —— 上面 🔴 16 条的**逐条回执****
+> （★ 目的：★ **避免下一轮把已处置的当成「没做」重做一遍** —— ★ 正如本表 🟡 第 5 条自己说的）
+>
+> | ★ 序 | ★ 处置 | ★ 证据（可复核） |
+> |---|---|---|
+> | ★ 1 | ★ **已改** | ★ 6 类判据进 `ok`（`sw_hole_features` / `sw_sheet_metal_weld_entry` / `sw_drawing_expose` / `sw_sketch_modify_ops` / `sw_curve_and_split` / `sw_part.linear_pattern`）✓ |
+> | ★ 2 | ★ **已改** | ★ 4 个钣金工具 doc 改三段式（`tool_specs_batch3.py` / `batch4.py`）✓ |
+> | ★ 3 | ★ **已改** | ★ 去掉裸 `return True`（`sketch_mirror` / `convert_entities` / `insert_gtol` / `create_cut_list`）· ★ `_feature_names_snapshot` / `_cut_list_folders` ✓ |
+> | ★ 4 | ★ **已改** | ★ `sketch_slot` 第 2 参 → **`0`**、第 3 参 → **`2.0 * radius`** ✓ |
+> | ★ 5 | ★ **已改** | ★ `solidworks_sketch_spline` doc 的**假引用**已换成官方原话；★ 测试 `test_spline_doc_no_fake_citation.py` **4 条** ✓ |
+> | ★ 6 | ★ **已改** | ★ `SetSheets(0,…)` → `3 if sheet_names else 1` · ★ 三处保存路由统一到 `SaveAs3` · ★ `SaveAs4` 加接口限定；★ 测试 `test_export_sheets_enum.py`(4) + `test_export_saveas3.py`(4) ✓ |
+> | ★ 7 | ★ **已改** | ★ `TABLE_ANNOTATION_KINDS` **7 → 11 键**（`6: "weld_table"` · `9: "general_tolerance"` …）；★ 测试 `test_table_annotation_kinds.py`(4) ✓ |
+> | ★ 8 | ★ **已改（四处全做）** | ★ `DW2-7` 删 `GetSymbolType` ⇒ 改调 `GetSymbol` · ★ `DW2-2` 给废弃兜底**加标注** · ★ `DW2-4` **本来就对** · ★ `DW2-5` **三重错**（0 基 / 代次 / 帧号不连续 ⇒ 改走 `IGtol.GetFrame` 1 基 + 空帧记账）；★ 测试 `test_drawing_obsolete_members.py`(4) + `test_gtol_frame_index_base.py`(4) ✓ |
+> | ★ 9 | ★ **已改** | ★ `linear_pattern` 的 `d1_spacing` / `d2_spacing` → **`* 0.001`**；★ 测试 `test_linear_pattern_units.py`(5) ✓ |
+> | ★ 10 | ★ **已改** | ★ `sheet_metal` 的 evidence 补真机指针（`SHEET_METAL_RUNTIME_STATUS`，含闭轮廓真机建成的树增量）✓ |
+> | ★ 11 · 12 · 13 · 14 · 16 | ★ **未做** | ★ —— |
+> | ★ **15** | ★ **已完成**（★ 接手轮更早的 A-3 做掉） | ★★ `docs/refuted-patterns.json` **已在仓**（schema `refuted-patterns/1` · ★ **10 条 patterns**）· ★ `scripts/release_check.py` 的 `_run_refuted_patterns_gate` **已接线** ⇒ ★ **C8 有可读对象了** ✓ · ★ 同文件 `why` 逐字记着本条来历（★ 与**事实 40**「存在但没人用的守卫」同族）✓ |
+>
+> ★★★ **而 §3.1「待回写」也已在 2026-10-04 回写完成**（★ 见 `vd50-C-dw-3.md` §1.7 的更正块）✓
+
 ## 🟡 要记档（★ 不改代码，但必须写进 `docs/known-facts.md` / 缺口地图 / 台账）
 
 | 序 | 条目 | 记什么 |

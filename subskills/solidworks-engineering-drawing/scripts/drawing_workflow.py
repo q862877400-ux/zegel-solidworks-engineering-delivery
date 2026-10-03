@@ -1057,9 +1057,53 @@ def add_view(drawing_model, part_path, view_name, x, y, scale=None):
     return view
 
 
-def add_section_view(drawing_model, x, y):
-    """在当前选择的剖切线位置创建剖视图"""
-    return drawing_model.CreateSectionViewAt5(x, y, 0, "", 0, None, 0)
+def add_section_view(drawing_model, x, y, *, label="A"):
+    """在当前选择的剖切线位置创建剖视图，**并给它一个标签字母**。
+
+    ★★★★ 2026-10-04（接手轮）**补上「剖视图的标签字母」** ——
+      处置 `JUDGE-C_D_E.md` 的 🔴 **#12**（★ `C-dw-1 #3`）—— ★ 裁判逐字：
+      「★ 剖面视图传空 `SectionLabel` 且**从不 `SetLabel2`** ⇒ ★ **建出来的剖视图没有标签字母**」✓
+    ★★ **病灶（★ 逐字）**：★ 本函数原来是
+      `return drawing_model.CreateSectionViewAt5(x, y, 0, "", 0, None, 0)` ⇒
+      ★★ **第 4 参 `SectionLabel` 是空串**，★ 而**全仓 `SetLabel2` 零调用点** ✓
+    ★★★ **官方逐字（★ 我读了两个 md）**：
+      · ★ `IDrSection/SetLabel2.md` ⇒ `int SetLabel2(string Label)` ⇒
+        ★ 回 `swSetSectionLabelStatus_e`：★ **`< 0` = Failed** · ★ **`= 0` = Succeeded** ·
+        ★ **`> 0` = Succeeded（但有情况 —— 如同名标签）** ✓
+      · ★★ `IView/GetSection.md` ⇒ ★ **从视图对象拿 `IDrSection`** ✓
+        ⇒ ★ 链路：★ `CreateSectionViewAt5(...)` → `IView` → `GetSection()` → `IDrSection`
+          → `SetLabel2(label)` ✓
+    ★★ **判据（★ 规则 6：不静默成功）**：★ **回值 `>= 0` 才算成**；
+      ★★ **`< 0` 要如实报出来**（★ 而 **`> 0` 也回报"成了但有名堂"**）✓
+    ★★★ **而 `label` 做成参数**（★ 默认 `"A"`）—— ★ 因为一个工程图里通常有多个剖视图，
+      ★ 调用方要能依次给 `A` / `B` / `C` ✓
+    """
+    view = drawing_model.CreateSectionViewAt5(x, y, 0, str(label), 0, None, 0)
+    result = {"view": view, "label_requested": str(label), "label_status": None,
+              "label_ok": None, "label_note": None}
+    if view is None:
+        result["label_note"] = "★ 剖视图没建出来 ⇒ 不设标签（★ 不静默成功）"
+        return result
+    try:
+        section = _safe_member(view, "GetSection", default=None)
+        if section is None:
+            result["label_note"] = "★ 拿到视图但 `GetSection()` 回 None ⇒ 无法设标签（★ 如实记）"
+            return result
+        status = _safe_member(section, "SetLabel2", str(label), default=None)
+        result["label_status"] = status
+        #: ★ 官方：`< 0` 失败 · `= 0` 成功 · `> 0` 成功但有情况（★ 如同名）
+        if status is None:
+            result["label_ok"] = None
+            result["label_note"] = "★ `SetLabel2` 取不到返回值 ⇒ **量不到**（★ 不许报成功）"
+        else:
+            result["label_ok"] = int(status) >= 0
+            result["label_note"] = ("★ `SetLabel2` 回 %s ⇒ %s"
+                                    % (status, "成功" if int(status) >= 0 else "失败")
+                                    + ("（★ `> 0`：成了、但官方说有名堂，★ 如同名标签）"
+                                       if int(status) > 0 else ""))
+    except Exception as exc:                                              # noqa: BLE001
+        result["label_note"] = "★ 设标签抛 %s: %s" % (type(exc).__name__, str(exc)[:150])
+    return result
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
