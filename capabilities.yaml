@@ -841,7 +841,8 @@
         "unattended"
       ],
       "evidence": [
-        "pytest tests/test_cad_reliability.py（工程图尺寸插入回读）"
+        "pytest tests/test_cad_reliability.py（工程图尺寸插入回读）",
+        "⚠⚠ ★★★★ **2026-10-04（接手轮）如实标注：上面那条**不是运行证据**** —— 处置 `JUDGE-A_B.md` 的 🔴 **A-drawing 一**，★ 裁判逐字：「★ `drawing_dimension_insertion` 的 evidence 唯一相关行是 `assert index[...][\"level\"] == \"verified\"` —— ★ **循环自证**，★ 测试文件**自己写「未在本机实测」**」✓ ★★ **我复核了那个文件**：★ 逐字 L8「⚠ **未在本机实测 SolidWorks**（见 AGENTS.md 铁律 2）」· ★ L53 `assert index[\"drawing_dimension_insertion\"][\"level\"] == \"verified\"` ⇒ ★★★ **即：★ 它的证据是「一个断言自己是 verified 的形状检查」** ✓ ⇒ ★★★★ **本条的 `level: verified` 因此**缺我们自己的运行证据****（★ 验收标准 **A4** 的原话）⇒ ★ **待补**：★ 真机跑一次「插尺寸 + 回读」（★ 需要**一个打开着的工程图**）✓ ★ **在那之前不许再把它当「已跑过」引用** ✓"
       ],
       "source": "mixed",
       "source_evidence": "`tools/propose_capability_sources.py` 的关键词提案（命中模块的上游/新增归属已由该工具用 `git cat-file -e origin/main:<path>` 判定）"
