@@ -1,0 +1,55 @@
+docs(阶段2): ★★★★★ `FeatureFillet` **决定不换** —— ★ 旧的**真机建成了倒角**，★ 而新的连调都调不通
+
+■ 一 · 为什么这一条**必须先判该不该换**（★ 三条理由）
+  ① ★ `types/IFeatureManager/FeatureFillet.md` 逐字
+     「**Obsolete. Superseded by [[IFeatureManager::FeatureFillet2]].**」
+     ⇒ ★ 但它**只是"废弃"**，★ 而**本会话已多次见到废弃的真能用**
+       （★ 官方例子自己在 40+ 处用 `GraphicsRedraw2`；★ `AddRenderMaterial` 真机回 `True`；
+        ★ **上一轮的 `GetDependencies2`** 也是这样）；
+  ② ★★ **后继的参数多出一倍** —— 我们的 **7 个实参** ⇒ 后继 `FeatureFillet3` 官方 **15 参**
+     ⇒ ★ **换 = 重填 8 个新参数，★ 而官方没给那些的默认值**（★ 得本项目自己定）；
+  ③ ★★★ **这一族的参数个数在本机**有三个答案****（★ 铁律 4 的裁决场）：
+     ```
+     ★ 官方 markdown : FeatureFillet(8) → FeatureFillet2(12) → FeatureFillet3(**15**)
+     ★★ 反射组 A    : FeatureFillet(Int32, Double, Int32, Int32, Object×3)               ← **7 参**
+                       FeatureFillet3(…15 个…)                                            ← **15 参**
+     ★★ 反射组 B    : FeatureFillet(Double, Boolean, Boolean, Boolean, Int32)             ← 5 参
+                       FeatureFillet2(…7) · FeatureFillet3(…**9**) · FeatureFillet4(…13)
+     ```
+     ★ **铁律 4 那条注记本身就是讲这件事的**：
+       「`FeatureFillet3` 在本机类型库里有 14 个参数，官方文档写 7 个」✓
+
+■ 二 · ★★★★ 决定性对照（★ `tools/probe_fillet_generations.py` ·
+    `output/fillet-generations-evidence.json`）
+  ★ 判据先写死：★ **特征树出现新特征**才算"建成"（★ 只回对象不算 —— 事实 40 那一族）✓
+  | 调用 | ★ 结果 |
+  |---|---|
+  | ★ 基线特征数 | ★ **7** |
+  | ★★ 旧 `FeatureFillet(195, r, 0, 0, None, None, None)`（★ **与生产代码逐字相同**）| ★ 回 **`<COMObject>`** |
+  | ★★★ **特征数** | ★★ **7 → 8** ⇒ ★★★★ **旧入口真的建成了倒角** ✓ |
+  | ★★★ 新 `FeatureFillet3(15 参)` | ★ **`com_error: '无效的参数数目'`** |
+  | ★ 特征数 | ★ **仍 8** ⇒ ★★ **新入口没建成** |
+  ⇒ ★★★★ **结论：★ 旧的能建成、★ 新的连调都调不通** ✓
+
+■ 三 · ★★★★ 决策：**不换**（★ 理由比上一轮更强）
+  ★ 上一轮（`AddMate5`）的"不换"理由是「**两条路都建不成**、★ 而旧的还多给诊断」；
+  ★★ 本轮的"不换"理由是**更强的一条**：★ **旧的**做到了**、★ 新的**做不到**** ✓
+  ⇒ ★★ 这与**事实 40** 的教训完全一致：★ **"更新"不等于"更好"** ✓
+  ★ 读数的处置：★ `FeatureFillet` **留在名单里**（★ 有据保留，★ 第 5 类）✓
+
+■ 四 · ★★ 顺带修掉我自己探针的一个错（★ **本会话第 3 次撞同一族**）
+  ★ 上一版探针里我写 `resolve_selection(doc, spec, "EDGE", **append=True**)` ——
+    ★★ 而它的**真签名**是 `(model, selector, kind, *, body_index=0)` ⇒ **没有 `append`**
+    ⇒ ★★★ 抛 `TypeError`、★ **又被我的 `except Exception: pass` 吞掉**
+    ⇒ ★★ 结果回读"选中数 = 0"，★ **看起来像"选不上"，★ 实际是我的调用姿势错了** ✓
+  ★ 修法：★ **照本仓已验证的路**（`tool_specs_batch23._select_edge` 同款：
+    `resolve_selection(model, selector, "EDGE")`），★ **并把异常记下来不再静默** ✓
+  ★★★ **与事实 48 定则②同族**：★ **`except: pass` 会把真因吞掉** ——
+    ★ 本会话它在**三个不同的地方**各吞过一次（★ 三处都让我先怀疑 API，★ 后才发现是自己）✓
+
+■ 五 · ★★ 可复用判据（★ 本轮最重要的产出）
+  ★★★★ **当一个 API 有"多代 + 多接口"时，参数个数会有**多个互相矛盾的答案**** ——
+    ★ 本条里就有**三个**（官方 15 · 反射组 A 15 · 反射组 B 9）⇒
+    ★★ **而"该用哪个"不是查出来的，★ 是**试出来的**（★ 真机）** ✓
+  ★★ 配合**铁律 4**：★ 三源互证、★ **冲突时以出厂类型库为准** ——
+    ★ 而**当反射自身也有两组时**，★ **"以反射为准"还不够，★ 必须真机定** ✓

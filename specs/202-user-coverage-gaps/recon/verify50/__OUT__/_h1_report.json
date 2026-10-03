@@ -1,0 +1,2145 @@
+[
+ {
+  "cmd": "swCommands_3DSketch",
+  "desc": "89; **Sketch toolbar > 3D Sketch**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_3DSketchOnPlane",
+  "desc": "567; valid only for pre-selected planes; **Sketch toolbar  > 3D Sketch On Plane**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_3dTexturizeSolidSurface",
+  "desc": "3333; converts solid and surface bodies to texturized graphics bodies; **Features toolbar > Texturize Bodies**",
+  "cands": [
+   "InsertTexturize",
+   "ITexturizeFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertTexturize",
+   "ITexturizeFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_3PointArc",
+  "desc": "80; **Sketch toolbar > 3 Point Arc**",
+  "cands": [
+   "CreateArc"
+  ],
+  "api_hit": [
+   "CreateArc"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_arc",
+   "solidworks_sketch_add_3point_arc"
+  ]
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Alongx",
+  "desc": "2204; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Along X**; when the Line Properties PropertyManager page is open for a selected line in the graphics area, *sel_line* **RMB context menu > Make AlongX**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Alongy",
+  "desc": "2205; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Along Y**; when the Line Properties PropertyManager page is open for a selected line in the graphics area, *sel_line* **RMB context menu > Make AlongY**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Alongz",
+  "desc": "2206; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Along Z**; when the Line Properties PropertyManager page is open for a selected line in the graphics area, *sel_line* **RMB context menu > Make AlongZ**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Atinter",
+  "desc": "1719; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Intersection**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Atmid",
+  "desc": "1718; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Midpoint**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Atpierce",
+  "desc": "1724; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Pierce**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Coinc",
+  "desc": "1720; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Coincident**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Colinear",
+  "desc": "1712; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Colinear**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Concent",
+  "desc": "1717; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Concentric**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Coradial",
+  "desc": "1713; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Coradial**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Equalcurvature",
+  "desc": "1729; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Equal Curvature**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Equaltangent",
+  "desc": "1730; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Equal tangent**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Fix",
+  "desc": "1723; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Fix**; when the Line Properties PropertyManager page is open for a selected line in the graphics area, *sel_line* **RMB context menu > Make Fixed**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Horiz",
+  "desc": "1710; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Horizontal**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Merge",
+  "desc": "1725; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Merge**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Normal",
+  "desc": "1726; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Normal**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Onsurface",
+  "desc": "2217; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > On Surface**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Parallel",
+  "desc": "1715; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Parallel**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Parallelyz",
+  "desc": "1727; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Parallel YZ**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Parallelzx",
+  "desc": "1728; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Parallel ZX**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Perp",
+  "desc": "1714; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Perpendicular**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Planar_Offset",
+  "desc": "3003; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Offset**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_SameCurvelen",
+  "desc": "3153; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Equal Arc/Spline**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Samelen",
+  "desc": "1721; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Equal**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Sym",
+  "desc": "1722; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Symmetric**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Tanface",
+  "desc": "1731; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Tangent to Face**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Tang",
+  "desc": "1716; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Tangent**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Traction",
+  "desc": "1732; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Traction**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Add_Constraint_Vert",
+  "desc": "1711; accessible only for part sketches in edit mode where this relation is possible; click **Sketch toolbar >** **Relations > Add Relation** or **Tools menu > Relations > Add**; select a sketch segment in the graphics area; in the Add Relations PropertyManager page click **Add Relations > Vertical**",
+  "cands": [
+   "AddConstraint"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "AddConstraint"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_AdvancedHoleWizard",
+  "desc": "3172; opens the Hole Specification PropertyManager page; **Features toolbar > Advanced Hole Wizard**",
+  "cands": [
+   "HoleWizard5"
+  ],
+  "api_hit": [
+   "HoleWizard5"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_hole_wizard"
+  ]
+ },
+ {
+  "cmd": "swCommands_AlignSketch",
+  "desc": "379; valid for parts; **2D To 3D toolbar > Align Sketch** or **Tools > Sketch Tools > Align > Sketch**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Auto_Dimension_Toggle",
+  "desc": "3026; valid for an open sketch with an active sketch tool; **Sketch toolbar > Add Dimension**",
+  "cands": [
+   "AutoDimension"
+  ],
+  "api_hit": [
+   "AutoDimension"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_auto_dimension_sketch"
+  ]
+ },
+ {
+  "cmd": "swCommands_Axis",
+  "desc": "22; valid for parts; **Reference Geometry toolbar > Axis** or **Features toolbar > Reference Geometry > Axis**",
+  "cands": [
+   "InsertAxis2"
+  ],
+  "api_hit": [
+   "InsertAxis2"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_part_axis"
+  ]
+ },
+ {
+  "cmd": "swCommands_Centerline",
+  "desc": "49; valid for parts with a selected sketch; **Sketch toolbar > Centerline**",
+  "cands": [
+   "CreateCenterLine"
+  ],
+  "api_hit": [
+   "CreateCenterLine"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_centerline"
+  ]
+ },
+ {
+  "cmd": "swCommands_CenterpointArc",
+  "desc": "44; valid for parts and drawings; **Layout Tools toolbar > Arcs > Centerpoint Arc** or **Sketch toolbar > Arcs > Centerpoint Arc**",
+  "cands": [
+   "CreateArc"
+  ],
+  "api_hit": [
+   "CreateArc"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_arc"
+  ]
+ },
+ {
+  "cmd": "swCommands_CentreRectangle",
+  "desc": "2794; valid for parts with a selected sketch; **Layout Tools toolbar > Rectangles > Center Rectangle** or **Sketch toolbar > Rectangles > Center Rectangle**",
+  "cands": [
+   "CreateCenterRectangle"
+  ],
+  "api_hit": [
+   "CreateCenterRectangle"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_rectangle",
+   "solidworks_sketch_add_3point_center_rectangle"
+  ]
+ },
+ {
+  "cmd": "swCommands_CentreRectangleAtAngle",
+  "desc": "2795; valid for parts with a selected sketch; **Layout Tools toolbar > Rectangles >3 Point Center Rectangle** or **Sketch toolbar > Rectangles > 3 Point Center Rectangle**",
+  "cands": [
+   "CreateRectangle",
+   "CreateCornerRectangle"
+  ],
+  "api_hit": [
+   "CreateCornerRectangle"
+  ],
+  "api_miss": [
+   "CreateRectangle"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_add_3point_rectangle",
+   "solidworks_sketch_add_3point_center_rectangle"
+  ]
+ },
+ {
+  "cmd": "swCommands_Chamfer",
+  "desc": "11; valid for parts; **Features toolbar > Chamfer**",
+  "cands": [
+   "FeatureChamfer4"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "FeatureChamfer4"
+  ],
+  "tool_hit": [
+   "solidworks_chamfer",
+   "solidworks_sketch_create_chamfer"
+  ]
+ },
+ {
+  "cmd": "swCommands_Check_Sketch_For_Feature",
+  "desc": "1138; valid for a part and an open sketch, opens the Check Sketch For Feature Usage dialog; **Tools menu > Sketch Tools > Check Sketch for Feature**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Circle",
+  "desc": "46; for drawings, **Layout Tools toolbar > Circle**; for parts with a selected sketch or assemblies with a selected planar face, **Sketch toolbar > Circle**",
+  "cands": [
+   "CreateCircleByRadius",
+   "CreateCircle"
+  ],
+  "api_hit": [
+   "CreateCircleByRadius",
+   "CreateCircle"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_circle"
+  ]
+ },
+ {
+  "cmd": "swCommands_CircularPattern",
+  "desc": "73; valid for parts; **Features toolbar > Circular Pattern**",
+  "cands": [
+   "InsertCircularPattern5",
+   "FeatureCircularPattern4",
+   "ICircularPatternFeatureData2"
+  ],
+  "api_hit": [
+   "FeatureCircularPattern4"
+  ],
+  "api_miss": [
+   "InsertCircularPattern5",
+   "ICircularPatternFeatureData2"
+  ],
+  "tool_hit": [
+   "solidworks_circular_pattern",
+   "solidworks_sketch_circular_pattern"
+  ]
+ },
+ {
+  "cmd": "swCommands_CircularSketchPattern",
+  "desc": "173; valid for parts with a sketch in edit mode; **Sketch toolbar > Circular Sketch Pattern**",
+  "cands": [
+   "CreateCircularPatternSketch",
+   "CircularPatternSketch"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateCircularPatternSketch",
+   "CircularPatternSketch"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_circular_pattern"
+  ]
+ },
+ {
+  "cmd": "swCommands_CompositeCurve",
+  "desc": "158; valid for parts; **Features toolbar > Curves > Composite Curve** or **Curves toolbar > Composite Curve**",
+  "cands": [
+   "InsertCompositeCurve"
+  ],
+  "api_hit": [
+   "InsertCompositeCurve"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_part_insert_composite_curve"
+  ]
+ },
+ {
+  "cmd": "swCommands_Conic",
+  "desc": "3049; valid for parts with a selected sketch; **Sketch toolbar > Conic**",
+  "cands": [
+   "CreateConic"
+  ],
+  "api_hit": [
+   "CreateConic"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_conic"
+  ]
+ },
+ {
+  "cmd": "swCommands_ConstructionGeometry",
+  "desc": "102; valid for parts with an open sketch and selected sketch entity; **Sketch toolbar > Construction Geometry**",
+  "cands": [
+   "SetConstructionGeometry",
+   "SketchConstructionGeometry"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "SetConstructionGeometry",
+   "SketchConstructionGeometry"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_ConvertEntities",
+  "desc": "57; valid for parts with an open sketch; **Sketch toolbar > Convert Entities**",
+  "cands": [
+   "CreateConvertEntities"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateConvertEntities"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_convert_entities"
+  ]
+ },
+ {
+  "cmd": "swCommands_CoordinateSystem",
+  "desc": "154; valid for parts with a selected sketch; **Features toolbar > Reference Geometry > Coordinate System**",
+  "cands": [
+   "InsertCoordinateSystem"
+  ],
+  "api_hit": [
+   "InsertCoordinateSystem"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_insert_coordinate_system"
+  ]
+ },
+ {
+  "cmd": "swCommands_CopyEntities",
+  "desc": "559; vald for parts with a sketch in edit mode; **Sketch toolbar > Copy Entities**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_CurveDrivenPattern",
+  "desc": "362; valid for parts with a selected sketch; **Features toolbar > Curve Driven Pattern**",
+  "cands": [
+   "InsertCurveDrivenPattern",
+   "ICurveDrivenPatternFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertCurveDrivenPattern",
+   "ICurveDrivenPatternFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_CurveThroughReferencePoints",
+  "desc": "123; valid for parts with a selected sketch; **Features toolbar > Curves > Curve Through Reference Points**",
+  "cands": [
+   "InsertCurveFileBegin",
+   "InsertCurveFilePoint",
+   "InsertCurveFileEnd"
+  ],
+  "api_hit": [
+   "InsertCurveFileBegin",
+   "InsertCurveFilePoint",
+   "InsertCurveFileEnd"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_insert_curve_through_points"
+  ]
+ },
+ {
+  "cmd": "swCommands_CurveThroughXYZPoints",
+  "desc": "128; valid for parts with a selected sketch; **Features toolbar > Curves > Curve Through XYZ Points**",
+  "cands": [
+   "InsertCurveFileBegin",
+   "InsertCurveFilePoint",
+   "InsertCurveFileEnd"
+  ],
+  "api_hit": [
+   "InsertCurveFileBegin",
+   "InsertCurveFilePoint",
+   "InsertCurveFileEnd"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_insert_curve_through_points"
+  ]
+ },
+ {
+  "cmd": "swCommands_CutWithSurface",
+  "desc": "101; **Features toolbar > Cut With Surface**",
+  "cands": [
+   "InsertSurfaceCut4",
+   "ISurfaceCutFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertSurfaceCut4",
+   "ISurfaceCutFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_CVSpline",
+  "desc": "3099; **Sketch toolbar > Style Spline**",
+  "cands": [
+   "CreateSpline",
+   "CreateStyleSpline"
+  ],
+  "api_hit": [
+   "CreateSpline"
+  ],
+  "api_miss": [
+   "CreateStyleSpline"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_spline"
+  ]
+ },
+ {
+  "cmd": "swCommands_DecimateMesh",
+  "desc": "3429; simplifies facet counts for graphics and mesh BRP bodies; **Features toolbar > Decimate Mesh Body**",
+  "cands": [
+   "InsertDecimateMesh",
+   "IDecimateMeshFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertDecimateMesh",
+   "IDecimateMeshFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Deform",
+  "desc": "454; valid for parts; **Features toolbar > Deform**",
+  "cands": [
+   "InsertDeformFeature",
+   "IDeformFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertDeformFeature",
+   "IDeformFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Dimension_Driven_Toggle",
+  "desc": "3025; valid for an open sketch with an active sketch tool; **Sketch toolbar > Sketch Dimension Driven**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_DimensionPattern",
+  "desc": "3101; valid for parts with a selected sketch; **Features toolbar > Dimension Pattern**",
+  "cands": [
+   "InsertDimensionPattern",
+   "IDimensionPatternFeatureData2"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertDimensionPattern",
+   "IDimensionPatternFeatureData2"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_DissolveEntities",
+  "desc": "3306; dissolves selected autoexplode lines so they can be edited as regular entities; **Sketch toolbar > Dissolve Entities**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Dome",
+  "desc": "137; valid for parts with a selected face; **Features toolbar > Dome**",
+  "cands": [
+   "InsertDome"
+  ],
+  "api_hit": [
+   "InsertDome"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_part_insert_dome"
+  ]
+ },
+ {
+  "cmd": "swCommands_DynamicMirrorEntities",
+  "desc": "529; valid for parts with an open sketch and selected sketch segment about which to mirror; **Sketch toolbar > Dynamic Mirror Entities**",
+  "cands": [
+   "SketchModifyMirror"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "SketchModifyMirror"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_mirror"
+  ]
+ },
+ {
+  "cmd": "swCommands_Ellipse",
+  "desc": "87; valid in an open sketch; **Sketch toolbar > Ellipse**",
+  "cands": [
+   "CreateEllipse"
+  ],
+  "api_hit": [
+   "CreateEllipse"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_ellipse"
+  ]
+ },
+ {
+  "cmd": "swCommands_ExtendEntities",
+  "desc": "63; valid for open sketches; **Sketch toolbar > Extend Entities**",
+  "cands": [
+   "CreateExtend"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateExtend"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_extend"
+  ]
+ },
+ {
+  "cmd": "swCommands_ExtrudedBossBase",
+  "desc": "8; valid for parts with a selected sketch; **Features toolbar > Extruded Boss/Base**",
+  "cands": [
+   "FeatureExtrusion3"
+  ],
+  "api_hit": [
+   "FeatureExtrusion3"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_extrude_boss"
+  ]
+ },
+ {
+  "cmd": "swCommands_ExtrudedCut",
+  "desc": "10; valid for parts; **Sheet Metal toolbar > Extruded Cut** or **Features toolbar > Extruded Cut**",
+  "cands": [
+   "FeatureCut4"
+  ],
+  "api_hit": [
+   "FeatureCut4"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_extrude_cut"
+  ]
+ },
+ {
+  "cmd": "swCommands_FaceCurves",
+  "desc": "321; valid for parts with a selected face; **Sketch toolbar > Face Curves**",
+  "cands": [
+   "CreateFaceCurves",
+   "InsertFaceSketch"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateFaceCurves",
+   "InsertFaceSketch"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Fillet",
+  "desc": "9; valid for parts; **Features toolbar > Fillet**",
+  "cands": [
+   "FeatureFillet3"
+  ],
+  "api_hit": [
+   "FeatureFillet3"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_fillet",
+   "solidworks_sketch_fillet"
+  ]
+ },
+ {
+  "cmd": "swCommands_FillPattern",
+  "desc": "558; valid for parts with a selected sketch; **Features toolbar > Fill Pattern**",
+  "cands": [
+   "InsertFillPattern2",
+   "IFillPatternFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertFillPattern2",
+   "IFillPatternFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Flex",
+  "desc": "409; valid for parts; **Features toolbar > Flex**",
+  "cands": [
+   "InsertFlexFeature",
+   "IFlexFeatureData"
+  ],
+  "api_hit": [
+   "InsertFlexFeature"
+  ],
+  "api_miss": [
+   "IFlexFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Flip_Endpoint_Tangency",
+  "desc": "3535; **Sketch toolbar > Flip Endpoint Tangent**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_GridFeature",
+  "desc": "2982; valid for parts or assemblies; **Features toolbar** **> Grid System** or **Insert > Reference Geometry > Grid System**",
+  "cands": [
+   "InsertGridFeature"
+  ],
+  "api_hit": [
+   "InsertGridFeature"
+  ],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_HandsketchPen",
+  "desc": "3235; valid only on supporting pen/stylus hardware, uses pen for sketch ink; **Tools menu > Sketch Tools > Pen Tools > Pen**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_HealEdges",
+  "desc": "518; valid for parts for selected faces; **Features toolbar > Heal Edges**",
+  "cands": [
+   "InsertHealEdges"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertHealEdges"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_HelixAndSpiral",
+  "desc": "94; valid for parts with a selected sketch of a single circle; **Features toolbar > Curves > Helix and Spiral**",
+  "cands": [
+   "InsertHelix2",
+   "FeatureHelix"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertHelix2",
+   "FeatureHelix"
+  ],
+  "tool_hit": [
+   "solidworks_helix_insert"
+  ]
+ },
+ {
+  "cmd": "swCommands_HoleSeries",
+  "desc": "556; valid for assemblies with multi-selected part locations for a series of holes; **Features toolbar** or **Insert menu > Assembly Feature > Hole > Hole Series**",
+  "cands": [
+   "InsertHoleSeries4",
+   "IHoleSeriesFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertHoleSeries4",
+   "IHoleSeriesFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_HoleWizard",
+  "desc": "39; valid for parts with a selected sketch, opens the Hole Specification PropertyManager page; **Features toolbar > Hole Wizard**; also valid for assemblies; **Insert menu > Assembly Feature > Hole > Wizard**",
+  "cands": [
+   "HoleWizard5"
+  ],
+  "api_hit": [
+   "HoleWizard5"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_hole_wizard"
+  ]
+ },
+ {
+  "cmd": "swCommands_ImportedGeometry",
+  "desc": "96; valid for parts; **Features toolbar > Imported Geometry**",
+  "cands": [
+   "InsertImportedGeometry",
+   "IImportedGeometryFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertImportedGeometry",
+   "IImportedGeometryFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Indent",
+  "desc": "571; valid for multi-body parts with selected target and tool bodies; **Features toolbar > Indent**",
+  "cands": [
+   "InsertIndentFeature",
+   "IIndentFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertIndentFeature",
+   "IIndentFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Insert_Cut_Net",
+  "desc": "2175; valid for parts with a selected sketch; **Features toolbar > Boundary Cut**",
+  "cands": [
+   "InsertNetFeature",
+   "IInsertNetFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertNetFeature",
+   "IInsertNetFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Insert_Geometry_Import",
+  "desc": "1878; alternative to swCommands_ImportedGeometry; **Features toolbar > Imported Geometry**",
+  "cands": [],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Insert_Sculpt",
+  "desc": "3051; valid for parts with two or more selected solid bodies; **Features toolbar >** **Intersect**",
+  "cands": [
+   "InsertSculptFeature",
+   "ISculptFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertSculptFeature",
+   "ISculptFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Insert_Stock_Net",
+  "desc": "2176; valid for parts with a selected sketch; **Features toolbar > Boundary Boss/Base**",
+  "cands": [
+   "InsertNetFeature",
+   "IInsertNetFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertNetFeature",
+   "IInsertNetFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_InsertCenterOfMass",
+  "desc": "3057; valid for parts with a selected sketch; **Features toolbar > Reference Geometry > Center of Mass** or **Reference Geometry toolbar > Center of Mass**",
+  "cands": [
+   "InsertCenterOfMass"
+  ],
+  "api_hit": [
+   "InsertCenterOfMass"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_insert_center_of_mass"
+  ]
+ },
+ {
+  "cmd": "swCommands_InsertFaceDraft",
+  "desc": "40; valid for parts with a selected sketch; **Features toolbar > Draft**",
+  "cands": [
+   "InsertDraftFeature",
+   "IDraftFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertDraftFeature",
+   "IDraftFeatureData"
+  ],
+  "tool_hit": [
+   "solidworks_mold_draft_analysis",
+   "solidworks_sheet_metal_create_draft"
+  ]
+ },
+ {
+  "cmd": "swCommands_InsertFeatureMoveFace",
+  "desc": "538; valid for parts, opens the Move Face ProeprtyManager page; **Features toolbar > Move Face**",
+  "cands": [
+   "InsertMoveFace2",
+   "IMoveFaceFeatureData"
+  ],
+  "api_hit": [
+   "InsertMoveFace2"
+  ],
+  "api_miss": [
+   "IMoveFaceFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_InsertHandSketch",
+  "desc": "3243; valid for systems supporting stylus/pen hardware, inserts a pen sketch; **Sketch toolbar > Pen Sketch**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_InsertLiveSection",
+  "desc": "2843; valid for parts and a selected face; **Features toolbar > Live Section Plane**",
+  "cands": [
+   "InsertLiveSectionPlane"
+  ],
+  "api_hit": [
+   "InsertLiveSectionPlane"
+  ],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_InsertPart",
+  "desc": "26; valid for parts, opens the Open dialog; **Features toolbar > Insert Part**",
+  "cands": [
+   "InsertPart"
+  ],
+  "api_hit": [
+   "InsertPart"
+  ],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_InsertPlane",
+  "desc": "23; valid for parts with a selected sketch; **Features toolbar > Reference Geometry > Plane**",
+  "cands": [
+   "InsertRefPlane"
+  ],
+  "api_hit": [
+   "InsertRefPlane"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_insert_ref_plane"
+  ]
+ },
+ {
+  "cmd": "swCommands_InsertRefpoint",
+  "desc": "455; valid for parts with a selected sketch; **Features toolbar > Reference Geometry > Point** or **Reference Geometry toolbar > Point**",
+  "cands": [
+   "InsertReferencePoint"
+  ],
+  "api_hit": [
+   "InsertReferencePoint"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_insert_reference_point"
+  ]
+ },
+ {
+  "cmd": "swCommands_InsertSketchEQCurve",
+  "desc": "2881; valid for open sketches; **Sketch toolbar > Equation Driven Curve**",
+  "cands": [
+   "CreateEquation",
+   "InsertSketchEquation"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateEquation",
+   "InsertSketchEquation"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_InsertSplitFeat",
+  "desc": "397; valid for a selected solid body in a part; **Features toolbar > Split**",
+  "cands": [
+   "InsertSplit",
+   "ISplitFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertSplit",
+   "ISplitFeatureData"
+  ],
+  "tool_hit": [
+   "solidworks_mold_core_cavity_split"
+  ]
+ },
+ {
+  "cmd": "swCommands_InsertThreadWiz",
+  "desc": "3181; valid for parts with a selected sketch; **Features toolbar > Thread**",
+  "cands": [
+   "InsertCosmeticThread3"
+  ],
+  "api_hit": [
+   "InsertCosmeticThread3"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_feature_cosmetic_thread"
+  ]
+ },
+ {
+  "cmd": "swCommands_IntersectionCurve",
+  "desc": "306; valid for sketches; **Sketch toolbar > Intersection Curve**",
+  "cands": [
+   "CreateIntersectionCurve"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateIntersectionCurve"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_JogLine",
+  "desc": "398; valid for a part with an open sketch and a selected segment; also valid for SOLIDWORKS Routing Add-in and an open route; **Explode Sketch toolbar > Jog Line**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Join",
+  "desc": "116; valid for an assembly to which a new join part is being added; **Features toolbar > Join** (see the SOLIDWORKS help)",
+  "cands": [
+   "InsertJoinFeature",
+   "IJoinFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertJoinFeature",
+   "IJoinFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Line",
+  "desc": "43; valid for an open sketch; **Layout Tools** or **Sketch toolbar > Line**",
+  "cands": [
+   "CreateLine"
+  ],
+  "api_hit": [
+   "CreateLine"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_line"
+  ]
+ },
+ {
+  "cmd": "swCommands_LinearPattern",
+  "desc": "18; valid for parts with a selected sketch; **Features toolbar > Linear Pattern**",
+  "cands": [
+   "InsertLinearPattern5",
+   "FeatureLinearPattern",
+   "ILinearPatternFeatureData2"
+  ],
+  "api_hit": [
+   "FeatureLinearPattern"
+  ],
+  "api_miss": [
+   "InsertLinearPattern5",
+   "ILinearPatternFeatureData2"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_linear_pattern"
+  ]
+ },
+ {
+  "cmd": "swCommands_LinearSketchPattern",
+  "desc": "172; valid for an open sketch; **Sketch toolbar > Linear Sketch Pattern**",
+  "cands": [
+   "CreateLinearPatternSketch",
+   "LinearPatternSketch"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateLinearPatternSketch",
+   "LinearPatternSketch"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_linear_pattern"
+  ]
+ },
+ {
+  "cmd": "swCommands_LoftedBossBase",
+  "desc": "25; valid for parts with a selected sketch; **Features toolbar > Lofted Boss/Base**",
+  "cands": [
+   "InsertProtrusionBlend2",
+   "InsertBossBlend2"
+  ],
+  "api_hit": [
+   "InsertProtrusionBlend2"
+  ],
+  "api_miss": [
+   "InsertBossBlend2"
+  ],
+  "tool_hit": [
+   "solidworks_part_loft",
+   "solidworks_insert_lofted_ref_surface"
+  ]
+ },
+ {
+  "cmd": "swCommands_LoftedCut",
+  "desc": "82; valid for parts with a selected sketch; **Features toolbar > Lofted Cut**",
+  "cands": [
+   "InsertCutBlend2"
+  ],
+  "api_hit": [
+   "InsertCutBlend2"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_part_loft",
+   "solidworks_insert_lofted_ref_surface"
+  ]
+ },
+ {
+  "cmd": "swCommands_MateReference",
+  "desc": "160; valid for parts with a selected sketch; **Features toolbar > Reference Geometry > Mate Reference** or **Reference Geometry toolbar > Mate Reference**",
+  "cands": [
+   "InsertMateEntity"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertMateEntity"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Midpointline",
+  "desc": "3118; **Sketch toolbar > Midpoint Line**",
+  "cands": [
+   "CreateLine"
+  ],
+  "api_hit": [
+   "CreateLine"
+  ],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Mirror",
+  "desc": "83; valid for parts with a selected sketch; **Features toolbar > Mirror** or for assemblies with a selected assembly feature, opens the Mirror PropertyManager page**; Insert > Assembly Feature > Mirror**",
+  "cands": [
+   "InsertMirrorFeature2"
+  ],
+  "api_hit": [
+   "InsertMirrorFeature2"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_mirror_feature",
+   "solidworks_sketch_mirror"
+  ]
+ },
+ {
+  "cmd": "swCommands_ModifySketch",
+  "desc": "100; valid for selected sketches, opens the Modify Sketch dialog; **Sketch toolbar > Modify Sketch**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_MoveCopyBodies",
+  "desc": "408; valid for multibody parts; **Features toolbar >** **Move/Copy Bodies**",
+  "cands": [
+   "InsertMoveCopyBody2",
+   "IMoveCopyBodyFeatureData"
+  ],
+  "api_hit": [
+   "InsertMoveCopyBody2"
+  ],
+  "api_miss": [
+   "IMoveCopyBodyFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_MoveEntities",
+  "desc": "502; valid for an open sketch, opens the Move PropertyManager page; **Sketch toolbar > Move Entities**",
+  "cands": [
+   "SketchModifyTranslate"
+  ],
+  "api_hit": [
+   "SketchModifyTranslate"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_move_entities"
+  ]
+ },
+ {
+  "cmd": "swCommands_MoveSizeFeatures",
+  "desc": "386; valid for parts; **Features toolbar > Instant3D**",
+  "cands": [
+   "InsertMoveFace2"
+  ],
+  "api_hit": [
+   "InsertMoveFace2"
+  ],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_NoSolveMove",
+  "desc": "171; valid for parts; **Sketch toolbar > No Solve Move**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Numeric_Input_Toggle",
+  "desc": "3029; **Sketch toolbar > Sketch Numeric Input**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_OffsetEntities",
+  "desc": "76; valid for a selected face, edge, curve, or sketch entity in a part or assembly; **Layout Tools** or **Sketch toolbar > Offset Entities**",
+  "cands": [
+   "CreateOffset"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateOffset"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_offset"
+  ]
+ },
+ {
+  "cmd": "swCommands_OffsetOnSurface",
+  "desc": "3190; opens the Offset On Surface PropertyManager page; **Sketch toolbar > Offset On Surface**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Parabola",
+  "desc": "151; **Sketch toolbar > Parabola**",
+  "cands": [
+   "CreateParabola"
+  ],
+  "api_hit": [
+   "CreateParabola"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_parabola"
+  ]
+ },
+ {
+  "cmd": "swCommands_PartialEllipse",
+  "desc": "86; valid for a selected plane, planar face, or edge on which to create a partial elliptical sketch: **Sketch toolbar > Partial Ellipse**",
+  "cands": [
+   "CreateEllipticalArc"
+  ],
+  "api_hit": [
+   "CreateEllipticalArc"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_partial_ellipse"
+  ]
+ },
+ {
+  "cmd": "swCommands_Plane",
+  "desc": "554; valid for a selected reference in a part, opens the Sketch Plane PropertyManager page; **Sketch toolbar > Plane**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Point",
+  "desc": "72; valid for a selected plane, planar face, or edge; **Sketch toolbar > Point**",
+  "cands": [
+   "CreatePoint"
+  ],
+  "api_hit": [
+   "CreatePoint"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_circle"
+  ]
+ },
+ {
+  "cmd": "swCommands_Preview_Sketch_Dimension_Toggle",
+  "desc": "3518; Toggles preview of selected sketch dimension; **Sketch toolbar > Preview Sketch Dimension**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_ProjectCurve",
+  "desc": "74; valid for parts with a selected sketch; **Features toolbar > Curves > Project Curve**",
+  "cands": [
+   "InsertProjectedSketch",
+   "IProjectedSketchFeatureData"
+  ],
+  "api_hit": [
+   "InsertProjectedSketch"
+  ],
+  "api_miss": [
+   "IProjectedSketchFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_PushPull",
+  "desc": "609; valid for parts, opens the Freeform PropertyManager page; **Features toolbar > Freeform**",
+  "cands": [
+   "InsertFreeformFeature",
+   "IFreeformFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertFreeformFeature",
+   "IFreeformFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_RapidSketch",
+  "desc": "2835; **Sketch toolbar > Rapid Sketch**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_RepairSketch",
+  "desc": "380; valid only for sketches in edit mode; **Sketch toolbar > Repair Sketch**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_ReplaceEntity",
+  "desc": "3104; valid for a selected sketch entity in an open sketch, opens the Replace Entity PropertyManager page; **Sketch toolbar > Replace Entity**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Resolve_Conflict",
+  "desc": "2192; valid for an open, over-defined sketch, opens the SketchXpert PropertyManager page; **Tools menu > Sketch Tools > SketchXPert**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Reverse_Endpoint_Tangency",
+  "desc": "3304; **Sketch toolbar > Reverse Endpoint Tangent**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_RevolvedBossBase",
+  "desc": "24; valid for parts with a selected sketch; **Features toolbar > Revolved Boss/Base**",
+  "cands": [
+   "FeatureRevolve2"
+  ],
+  "api_hit": [
+   "FeatureRevolve2"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_revolve_boss"
+  ]
+ },
+ {
+  "cmd": "swCommands_RevolvedCut",
+  "desc": "48; valid for parts with a selected sketch; **Features toolbar > Revolved Cut**",
+  "cands": [
+   "FeatureRevolveCut"
+  ],
+  "api_hit": [
+   "FeatureRevolveCut"
+  ],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Rib",
+  "desc": "125; valid for parts with a selected sketch, opens the Rib1 PropertyManager page; **Features toolbar > Rib**",
+  "cands": [
+   "InsertRib"
+  ],
+  "api_hit": [
+   "InsertRib"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_part_rib"
+  ]
+ },
+ {
+  "cmd": "swCommands_RotateEntities",
+  "desc": "503; valid for a sketch with a selected entity or annotation; **Sketch toolbar > Rotate Entities**",
+  "cands": [
+   "SketchModifyRotate"
+  ],
+  "api_hit": [
+   "SketchModifyRotate"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_rotate_entities"
+  ]
+ },
+ {
+  "cmd": "swCommands_RouteLine",
+  "desc": "396; valid for the SOLDWORKS Routing add-in and an open route; **Explode Sketch toolbar > Route Line**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_ScaleEntities",
+  "desc": "504; valid for an open sketch, opens the Scale PropertyManager page; **Sketch toolbar > Scale Entities**",
+  "cands": [
+   "SketchModifyScale"
+  ],
+  "api_hit": [
+   "SketchModifyScale"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_scale_entities"
+  ]
+ },
+ {
+  "cmd": "swCommands_Segment",
+  "desc": "3129; valid for an open sketch, opens the Segment PropertyManager page; **Sketch toolbar > Segment**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_SegmentImportedMeshBody",
+  "desc": "3357; segments imported solid and surface mesh bodies; **Features toolbar > Segment Imported Mesh Body**",
+  "cands": [
+   "InsertMeshBody",
+   "IMeshBodyFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertMeshBody",
+   "IMeshBodyFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_ShadedSketchContours",
+  "desc": "3189; **Sketch toolbar > Shaded Sketch Contours**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Shell",
+  "desc": "32; valid for parts with a selected sketch; **Features toolbar > Shell**",
+  "cands": [
+   "InsertShellFeature",
+   "IShellFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertShellFeature",
+   "IShellFeatureData"
+  ],
+  "tool_hit": [
+   "solidworks_part_shell"
+  ]
+ },
+ {
+  "cmd": "swCommands_Sk_Close_Contour",
+  "desc": "1048; valid for a selected open profile in an open sketch; **Tools menu > Sketch Tools > Close Sketch to Model**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Sketch",
+  "desc": "45; valid for a selected plane or sketch; **Sketch toolbar > Sketch**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Sketch_Align_Grid_Origin",
+  "desc": "2727; valid for an open sketch, opens the Align Grid/Origin PropertyManager page; **Tools > Sketch Tools > Align > Align Grid/Origin**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Sketch_Detach",
+  "desc": "1547; valid for an open sketch; **Sketch toolbar > Detach Segment On Drag**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_SketchChamfer",
+  "desc": "358; valid for an open sketch, opens the Sketch Chamfer PropertyManager page; **Sketch toolbar > Sketch Chamfer**",
+  "cands": [
+   "CreateChamfer"
+  ],
+  "api_hit": [
+   "CreateChamfer"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_create_chamfer"
+  ]
+ },
+ {
+  "cmd": "swCommands_SketchDrivenPattern",
+  "desc": "304; valid for parts with a selected sketch; **Features toolbar > Sketch Driven Pattern**",
+  "cands": [
+   "InsertSketchDrivenPattern",
+   "ISketchDrivenPatternFeatureData"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertSketchDrivenPattern",
+   "ISketchDrivenPatternFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_SketchFillet",
+  "desc": "62; valid for an open sketch, opens the Sketch Fillet PropertyManager page; **Sketch toolbar > Sketch Fillet**",
+  "cands": [
+   "CreateFillet"
+  ],
+  "api_hit": [
+   "CreateFillet"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_fillet"
+  ]
+ },
+ {
+  "cmd": "swCommands_SketchPicture",
+  "desc": "368; opens the Open dialog; **Sketch toolbar > Sketch Picture**",
+  "cands": [
+   "CreateSketchPicture",
+   "InsertSketchPicture"
+  ],
+  "api_hit": [
+   "InsertSketchPicture"
+  ],
+  "api_miss": [
+   "CreateSketchPicture"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_SketchSlicing",
+  "desc": "3399; opens the Slicing PropertyManager; **Insert menu > Slicing** or **Sketch toolbar > Slicing**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_SketchSlot_Arc_Center",
+  "desc": "2867; valid for a selected plane, planar face, or edge, opens the Slot PropertyManager page; **Sketch toolbar > Centerpoint Arc Slot**",
+  "cands": [
+   "CreateArcSlot"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateArcSlot"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_add_slot"
+  ]
+ },
+ {
+  "cmd": "swCommands_SketchSlot_Arc3P",
+  "desc": "2866; valid for a selected plane, planar face, or edge, opens the Slot PropertyManager page; **Sketch toolbar > 3 Point Arc Slot**",
+  "cands": [
+   "CreateArcSlot"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateArcSlot"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_add_slot"
+  ]
+ },
+ {
+  "cmd": "swCommands_SketchSlot_Line",
+  "desc": "2864; valid for a selected plane, planar face, or edge, opens the Slot PropertyManager page; **Sketch toolbar > Straight Slot**",
+  "cands": [
+   "CreateSlot"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateSlot"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_add_slot"
+  ]
+ },
+ {
+  "cmd": "swCommands_SketchSlot_Line_Center",
+  "desc": "2865; valid for a selected plane, planar face, or edge, opens the Slot PropertyManager page; **Sketch toolbar > Centerpoint Straight Slot**",
+  "cands": [
+   "CreateSlot"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "CreateSlot"
+  ],
+  "tool_hit": [
+   "solidworks_sketch_add_slot"
+  ]
+ },
+ {
+  "cmd": "swCommands_SkSilhouetteEnts",
+  "desc": "3414; converts silhouette outlines of bodies and components into sketch segments; **Sketch toolbar > Silhouette Entities**",
+  "cands": [
+   "InsertSilhouetteSketch",
+   "CreateSilhouetteEntities"
+  ],
+  "api_hit": [],
+  "api_miss": [
+   "InsertSilhouetteSketch",
+   "CreateSilhouetteEntities"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Spline",
+  "desc": "47; valid for a selected plane or planar face; **Sketch toolbar > Spline**",
+  "cands": [
+   "CreateSpline2",
+   "CreateSpline3",
+   "CreateSpline"
+  ],
+  "api_hit": [
+   "CreateSpline2",
+   "CreateSpline3",
+   "CreateSpline"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_spline"
+  ]
+ },
+ {
+  "cmd": "swCommands_SplineOnSurface",
+  "desc": "542; valid for a selected face or surface; **Sketch toolbar > Spline on Surface**",
+  "cands": [],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_SplitEntities",
+  "desc": "293; valid for an open sketch and a selected sketch entity; **Sketch toolbar > Split Entities**",
+  "cands": [
+   "Split"
+  ],
+  "api_hit": [
+   "Split"
+  ],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_StretchEntities",
+  "desc": "2851; valid for an open sketch, opens the Stretch PropertyManager page; **Sketch toolbar > Stretch Entities**",
+  "cands": [
+   "Stretch"
+  ],
+  "api_hit": [
+   "Stretch"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_stretch_entities"
+  ]
+ },
+ {
+  "cmd": "swCommands_SweptBossBase",
+  "desc": "64; valid for parts with a selected sketch; **Features toolbar > Swept Boss/Base**",
+  "cands": [
+   "InsertProtrusionSwept4",
+   "ISweepFeatureData"
+  ],
+  "api_hit": [
+   "InsertProtrusionSwept4"
+  ],
+  "api_miss": [
+   "ISweepFeatureData"
+  ],
+  "tool_hit": [
+   "solidworks_part_sweep"
+  ]
+ },
+ {
+  "cmd": "swCommands_SweptCut",
+  "desc": "65; valid for parts with a selected sketch; **Features toolbar > Swept Cut**",
+  "cands": [
+   "InsertCutSwept4",
+   "ISweepFeatureData"
+  ],
+  "api_hit": [
+   "InsertCutSwept4"
+  ],
+  "api_miss": [
+   "ISweepFeatureData"
+  ],
+  "tool_hit": [
+   "solidworks_part_sweep"
+  ]
+ },
+ {
+  "cmd": "swCommands_TableDrivenPattern",
+  "desc": "300; valid for parts with a selected sketch; **Features toolbar > Table Driven Pattern**",
+  "cands": [
+   "InsertTableDrivenPattern",
+   "ITableDrivenPatternFeatureData"
+  ],
+  "api_hit": [
+   "InsertTableDrivenPattern"
+  ],
+  "api_miss": [
+   "ITableDrivenPatternFeatureData"
+  ],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_TangentArc",
+  "desc": "69; **Layout Tools** or **Sketch toolbar > Tangent Arc**",
+  "cands": [
+   "CreateTangentArc"
+  ],
+  "api_hit": [
+   "CreateTangentArc"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_sketch_add_tangent_arc"
+  ]
+ },
+ {
+  "cmd": "swCommands_Text",
+  "desc": "109; **Sketch toolbar > Text**",
+  "cands": [
+   "CreateText"
+  ],
+  "api_hit": [
+   "CreateText"
+  ],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_Thicken",
+  "desc": "97; valid for a part with two or more knit surfaces, opens the Thicken PropertyManager page; **Features toolbar > Thicken**",
+  "cands": [
+   "FeatureBossThicken"
+  ],
+  "api_hit": [
+   "FeatureBossThicken"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_thicken"
+  ]
+ },
+ {
+  "cmd": "swCommands_ThickenedCut",
+  "desc": "98; valid for a part with two or more knit surfaces, opens the Cut-Thicken PropertyManager page; **Features toolbar > Thickened Cut**",
+  "cands": [
+   "FeatureCutThicken"
+  ],
+  "api_hit": [
+   "FeatureCutThicken"
+  ],
+  "api_miss": [],
+  "tool_hit": [
+   "solidworks_thicken"
+  ]
+ },
+ {
+  "cmd": "swCommands_ToggleInstant2D",
+  "desc": "3188; **Sketch toolbar > Instant2D**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ },
+ {
+  "cmd": "swCommands_ToolsGrid",
+  "desc": "2791; opens the Document Properties - Grid/Snap dialog; **Sketch toolbar > Grid/Snap**",
+  "cands": [
+   "UI_ONLY"
+  ],
+  "api_hit": [],
+  "api_miss": [],
+  "tool_hit": []
+ }
+]
