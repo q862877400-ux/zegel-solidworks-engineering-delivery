@@ -115,30 +115,62 @@ def _one(sw, zh, fn):
 
 
 def _case_revolve(doc):
-    """★ 旋转曲面：草图轮廓 + 一条**中心线** ⇒ 选轮廓 ⇒ 调（★ 官方没给 mark）。"""
+    """★ 旋转曲面：**捕获 `CreateCenterLine` 的返回值当轴**，只选那一条（mark=4）⇒ 再选轮廓。"""
     P.start_sketch(doc, plane_name="Front Plane")
     #: ★ 轮廓：矩形（避开中心线所在轴）
     SP.sketch_3point_corner_rectangle(doc, 5, -10, 25, -10, 25, 10)
-    #: ★ 中心线：过原点、X 方向（★ 旋转轴）
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCenterLine",
-                     0.0, 0.0, 0.0, 30.0, 0.0, 0.0)
+    #: ★★★★★ 2026-10-03（轮 477）**轴 = `CreateCenterLine` 的返回值** ——
+    #:   ★ 上一轮量到 **`轴选中数 = 5`**：`sw_part._select_revolve_axis(doc, "草图1")`
+    #:     是**按草图名取该草图里所有段**再全按 `mark=4` 选 ⇒ ★ 矩形 4 边也被选成"轴"了
+    #:     ⇒ ★ **轴不唯一** ⇒ 这才是没建成的直接原因。
+    #:   ★★ 而官方签名给了更准的路（`C:\swapi\types\ISketchManager\CreateCenterLine.md`）：
+    #:     > **Signature**: `SketchSegment CreateCenterLine(X1, Y1, Z1, …)`
+    #:     ⇒ ★ **它回的就是那条中心线的 `SketchSegment`** ⇒ 捕获它 ⇒ **只选它** ✓
+    #:   ★ 而顺序照 `sw_part.revolve_boss` 那条真机判据（★ 轮 360）：**先轴、后轮廓**。
+    axis_seg = C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCenterLine",
+                                0.0, 0.0, 0.0, 30.0, 0.0, 0.0)
+    #: ★★★ **轮廓 ref 也在草图还开着时捕获**（★ 轮 475 的教训：
+    #:   `_capture_sketch_ref` 只从"活动草图"取，★ 退草图后再拿就是 `None`）
+    prof_ref = None
+    try:
+        prof_ref = P._capture_sketch_ref(doc, source="b6b-revolve")
+    except Exception:                                                    # noqa: BLE001
+        prof_ref = None
     P.end_sketch(doc)
 
-    #: ★★★★★ 2026-10-03（轮 476）**改用本仓现成的、真机验证过的两步** ——
-    #:   ★ 我上一轮自己拼过 3 版（选草图特征 / 轮廓 mark=0 / 轮廓 mark=1 + 中心线 mark=4），
-    #:     而第 4 版"先轴后轮廓"的编辑**锚点没命中、根本没生效** ⇒ ★ 那一版其实**没真跑**。
-    #:   ★★ 而**本仓早有现成的**（★ 我又一次没先看）：
-    #:     · `sw_part._select_revolve_axis(model, 草图名)` —— ★ 真机 **4/4** 定的判据：
-    #:         轴的类型名是 **`EXTSKETCHSEGMENT`**（★ 不是 `SKETCHSEGMENT`）· mark **4** ·
-    #:         取线段走 `IEntity.Select4`（按对象选）· 且用 `append=True`。
-    #:     · `sw_part.revolve_boss` 的注释（★ 轮 360 真机定的）：
-    #:         > **轴必须在轮廓之前进选择集**（`FeatureRevolve2` 靠"选择集里谁是轴"来解析）
-    #:         > 证据 `output/revolve-axis-geometric-evidence.json`（改序前两次都 `feature_created=false`）
-    #:   ⇒ ★ **① 先轴 ⇒ ② 后轮廓**，两步都走本仓的包装 ✓
-    axis_n = P._select_revolve_axis(doc, "草图1")
-    P._ensure_sketch_selected(doc, "草图1")
+    #: ★ **① 先轴**：只选捕获到的那**一条**中心线（mark=4）
+    axis_ok = False
+    try:
+        if axis_seg is not None:
+            axis_ok = bool(P._select_any_object((axis_seg,), append=False, mark=4))
+    except Exception:                                                    # noqa: BLE001
+        axis_ok = False
+
+    #: ★ **② 后轮廓**：优先用捕到的 `contours`（★ 判据：`轮廓 = ref.contours`），
+    #:   拿不到才回落到草图特征（★ 并如实标出走的哪一路）。
+    prof_route = None
+    prof_ok = False
+    if prof_ref is not None:
+        for objs, tag in ((prof_ref.contours, "contours"), (prof_ref.sketch, "sketch"),
+                          (prof_ref.feature, "feature")):
+            if objs and P._select_any_object(objs, append=True, mark=1):
+                prof_route, prof_ok = tag, True
+                break
+    if not prof_ok:
+        P._ensure_sketch_selected(doc, "草图1")
+        prof_route, prof_ok = "ensure_sketch_selected(草图特征)", True
+
+    try:
+        sel_n = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
+                                     "GetSelectedObjectCount2", -1) or 0)
+    except Exception:                                                    # noqa: BLE001
+        sel_n = -1
     r = M.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
-    r["axis_selected"] = axis_n
+    r["axis_captured"] = axis_seg is not None
+    r["axis_selected_ok"] = axis_ok
+    r["profile_route"] = prof_route
+    r["n_contours_in_ref"] = len(getattr(prof_ref, "contours", ()) or ()) if prof_ref else -1
+    r["selection_count_before_call"] = sel_n
     return r
 
 

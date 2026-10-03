@@ -3644,7 +3644,7 @@
         "★ 三源互证里**台账给的两个名字都不对**：`FeatureRevolveRefSurface` ⇒ swapi 里**根本没有**（真名 `IFeatureManager.InsertRevolvedRefSurface`）；`InsertProtrusionBlend2(Surface)` ⇒ 真名 **`IModelDoc2.InsertLoftRefSurface2`**。★ 同族 `FeatureExtruRefSurface{,2,3}` 命名不同 ⇒ **不能按前缀猜**。"
       ],
       "limitations": [
-        "★★ **旋转曲面本条不登记**（★ 按 A4：`verified` 必须有**我们自己的运行证据**）。真机试过 **4 种前置**（选草图特征 / 轮廓 mark=0 / 轮廓 mark=1+中心线 mark=4 / 用本仓 `_select_revolve_axis` + `_ensure_sketch_selected`）—— **都未建成**（树 6→6）。★ 最后那次量到 **`轴选中数 = 5`** ⇒ `_select_revolve_axis` 把该草图里**所有段**都按 `mark=4` 选了（矩形 4 边 + 中心线）⇒ **轴不唯一**；★ 而实体版 `revolve_boss` 用同一句却**是成的**（它走 `FeatureRevolve2`，**另一条特征路**）⇒ 差别在哪**还没查清**。★ 按**事实 53**（同一处连续 ≥3 次没稳就停）**停下**。",
+        "★★ **旋转曲面本条不登记**（★ 按 A4：`verified` 必须有**我们自己的运行证据**）。真机推进到了**一个明确的层次**：① 前 4 种前置都不成 ⇒ 量到 **`轴选中数=5`**（`_select_revolve_axis` 把该草图**所有段**都按 `mark=4` 选了）；② 改成**捕获 `CreateCenterLine` 的返回值当轴**（官方签名：`SketchSegment CreateCenterLine(…)`）+ 轮廓用 `ref.contours` ⇒ **选中总数=2**（★ 即“1 轴 + 1 轮廓”，**形态已对**）；③ 在形态已对的前提下扫 `RevType`×角度 **5 组** ⇒ **全部 `回None=False`**（★ 返了 `Feature` 对象）**而 `新增=[]`** ⇒ ★★ **API 接受了调用、而特征树没变** —— 这是本仓记过的「返回值不可信」的**镜像**形态（★ 返回值说成了、而模型没变）。★ 按**事实 53**（同一处连续 ≥3 次没稳就停）**停下**。★ 下一轮的线索：官方 Remarks 点名要用 **`SelectByID2`**（而本探针用的是 `Select4`）—— ★ 而本仓**无名字可用**那条（**事实 32**）是针对**实体**的，草图段是否也如此**尚未量过**。",
         "★ **扫描曲面**：两个曲面版（`InsertSweepRefSurface` 与 `…RefSurface2`）**都标 Obsolete**，继任者写的是**实体**那族的 `IFeatureManager::InsertProtrusionSwept3` ⇒ 曲面版在新架构里走哪条，**两个源都没给出**。（线索：2018 起扫描改走 `ISweepFeatureData`，★ 本仓 `sw_sweep` 用的就是它）",
         "★ **边界曲面**：全 `C:\\swapi\\types` 搜 `*Boundary*`，**没有任何** Boss/Surface/Feature 成员；`InsertBoundaryBoss` **也不在**。★ 可能并入放样，★ **但那是推断、不是查到的** ⇒ 不假装做到。"
       ]
