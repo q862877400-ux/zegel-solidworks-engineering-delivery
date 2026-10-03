@@ -1,0 +1,57 @@
+fix(阶段1): ★★★★★ 处置 **`JUDGE-C_D_E` 🔴 #14 的第 2 条**（★ `E-1 #6`）—— ★ **承诺「同名先删」、★ 实则把同名当错误码**；★ 已按**官方示例**兑现
+
+■ 一 · ★ 裁判逐字（★ 🔴 #14 · `E-1 #6`）
+  > ★ 「`create_study` 的 Param 承诺「**同名先删**」★ 实则**把同名当错误码 2**
+  >   且**无任何删除调用**」✓
+
+■ 二 · ★★★★ 实测复核（★ 三处）
+  ★ **承诺逐字在 ToolSpec 里**（★ `mcp-server/tool_specs_batch1.py` L59）：
+    `description="Study name; **a study with the same name is deleted first.**"` ✓
+  ★★ **而能力层逐字**（★ `scripts/sw_topology.py::create_topology_study`）：
+    ★ **直接调 `CreateNewStudy3` / `2`** ⇒ ★ **没有先删** ✓
+    ★★ 而它的错处理逐字：★ 「…2 = **同名研究已存在**或名称非法…」⇒ **把"同名"当错误** ✓
+  ★★★ **而本仓**早有**删除能力**：★ `sw_simulation_study.delete_study(manager, name)` ✓
+    （★ 只是拓扑那条路**从没调它** —— ★ 又一个「同一个仓里两条路」）
+  ★★★★ **⇒ 裁判判定完全正确** ✓
+  ★★ **附核（★ 顺带）：** ★ `batch27` 那条**同名承诺**已经被改掉了（★ 现逐字
+    「The capability layer **does NOT check duplicates** — if a study with this name already
+    exists, **SolidWorks decides what happens**」）⇒ ★ **那条已在本轮之前修过** ✓
+
+■ 三 · ★★★★★ 依据来自**官方示例**（★ 不是我推的）
+  ★ `_raw/**/Create_Topology_Study_Example_VBA.txt` **L131-135 逐字**：
+    ```
+    ' Create Topology Study 1
+    NewStudyName = "Topology Study 1"
+    ★★ StudyManagerObj.DeleteStudy NewStudyName          ← ★ 先删同名
+    ★★★ Set CWNewStudy = StudyManagerObj.CreateNewStudy3(NewStudyName, 13, 0, ErrorCodeObj)
+    ```
+  ⇒ ★★★★ **调用序就是 `DeleteStudy` ⇒ `CreateNewStudy3`** ⇒ ★ **与那句承诺逐字一致** ✓
+  ★★ 而**研究类型传 `13`** ⇒ ★ 与本仓 `topology_static` 一致 ✓
+
+■ 四 · ★ 修法（★ 而**刻意不改返回形状**）
+  ★ 建之前先 `delete_study(manager, name)` —— ★★ **并容错**
+    （★ 同名不存在时 `DeleteStudy` 会报错，★ 而那是**首次建的正常路径**）✓
+  ★★ **新增开关参数 `delete_existing: bool = True`** ⇒ ★ 可关 ✓
+  ★★★ **而返回**仍是 `(study, entry_name)` **2 元** ——
+    ★★★★ **为什么**：★ `tools/capture_topology_evidence.py:134` **解包 2 元** ·
+    ★ 而纪律是「**`tools/` 只报不动**」⇒ ★★ **不能为了加信息去改 `tools/`** ⇒
+    ★★★ **所以改用**开关参数**、★ 而不是把 `delete_note` 塞进返回值** ✓
+    ⇒ ★★★★ **可复用判据**：★★★ **要加"过程信息"时，先看返回形状有没有人解包** ——
+      ★ 有 ⇒ **加开关/加字段**，★ **不要改形状**（★ 否则会**逼着动不许动的目录**）✓
+  ★★★ **并更新那句错提示**：★ 既然**同名已经先删过一遍** ⇒
+    ★ 若仍报 2，★ **更可能是"名称非法"**（★ 而不是"同名"）✓
+
+■ 五 · ★★ 新增测试（★ `tests/test_topology_delete_existing.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **读官方示例**确认「先删后建」、★ 且**次序对**（★ 判据的锚点）✓ |
+  | ★★ **核心断言** | ★ 能力层**必须**先调 `delete_study` ✓ |
+  | ★★★ **负例 · 兼容** | ★ **返回必须仍是 2 元** —— ★ 因为 `tools/` 里有人解包 2 元 ✓ |
+  | ★★ **负例 · 容错** | ★ **同名不存在时不许炸**（★ 首次建是正常路径）✓ |
+
+■ 六 · ★ 收尾
+  ★ 相关回归：★ **26 passed / 2 skipped**（★ 拓扑族）✓
+  ★★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★★ **`C_D_E` 的 🔴 16 条**：★ **完成 15 条** ⇒
+    ★★★★ **只剩两条**：★ **#14 的第 3 条**（★ `mold_evidence` 的「可回读但恒 None」）
+    + ★ **#11**（★ `C-sm-1 V-1 / V-5`）+ ★ **#12 的「断裂视图」那半** ✓

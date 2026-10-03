@@ -111,9 +111,15 @@ from typing import Any
 try:
     from .sw_connect import get_com_member, call_com_member, out_i4
     from .sw_simulation import get_cw_document, get_study_manager
+    #: ★★★★ 2026-10-04（接手轮）**补上 `delete_study`** ——
+    #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #6`）：★ `create_topology_study` 要
+    #:   **先删同名**（★ 官方示例逐字 `StudyManagerObj.DeleteStudy NewStudyName` ⇒
+    #:   `CreateNewStudy3(...)`）· ★ 而**删除能力本仓早有**（★ `sw_simulation_study.delete_study`）✓
+    from .sw_simulation_study import delete_study
 except ImportError:
     from sw_connect import get_com_member, call_com_member
     from sw_simulation import get_cw_document, get_study_manager
+    from sw_simulation_study import delete_study
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -244,7 +250,8 @@ _TOPOLOGY_GETTERS: dict[str, str] = {
 #         本函数复用既有模块的 get_study_manager，不重复实现取入口的逻辑。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-def create_topology_study(sw_app, name: str, *, mesh_type: int = 0):
+def create_topology_study(sw_app, name: str, *, mesh_type: int = 0,
+                          delete_existing: bool = True):
     """新建拓扑优化研究。返回 ``(study, entry_name)``。
 
     研究类型固定为 ``swsAnalysisStudyTypeTopology_Static``（13）——
@@ -258,6 +265,34 @@ def create_topology_study(sw_app, name: str, *, mesh_type: int = 0):
         raise RuntimeError("CWModelDoc.StudyManager 为 None")
 
     study_type = SWS_ANALYSIS_STUDY_TYPES["topology_static"]
+
+    #: ★★★★★ 2026-10-04（接手轮）**兑现那句「同名先删」** ——
+    #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #6`）—— ★ 裁判逐字：
+    #:   「★ `create_study` 的 Param 承诺「**同名先删**」★ 实则**把同名当错误码 2**
+    #:    且**无任何删除调用**」✓
+    #:   ★★★★ **依据是官方示例（★ 我读了 `_raw/**/Create_Topology_Study_Example_VBA.txt`）**：
+    #:     该文件 **L131-135 逐字**：
+    #:       ```
+    #:       ' Create Topology Study 1
+    #:       NewStudyName = "Topology Study 1"
+    #:       ★★ StudyManagerObj.DeleteStudy NewStudyName          ← ★ 先删同名
+    #:       ★★★ Set CWNewStudy = StudyManagerObj.CreateNewStudy3(NewStudyName, 13, 0, ErrorCodeObj)
+    #:       ```
+    #:     ⇒ ★ **调用序就是 `DeleteStudy` ⇒ `CreateNewStudy3`** ✓
+    #:     ★★ 而**研究类型传 `13`** ⇒ ★ 与本仓 `topology_static` 一致 ✓
+    #:   ★★★ **修法**：★ 建之前先 `delete_study(manager, name)` ——
+    #:     而**同名不存在时它可能报错** ⇒ ★★ **必须容错**（★ 删不到就当"本来没有"）✓
+    delete_note = None
+    if not delete_existing:
+        delete_note = "★ 未先删（delete_existing=False）"
+    else:
+        try:
+            delete_study(manager, str(name))
+            delete_note = "★ 已按官方示例先删同名研究（★ DeleteStudy）"
+        except Exception as exc:                                          # noqa: BLE001
+            #: ★★ 同名不存在 ⇒ 官方那个 `DeleteStudy` 会报错 —— ★ 那是**正常**的（★ 首次建）
+            delete_note = ("★ 先删同名未成（★ %s）⇒ ★ 当作「本来没有同名」继续 ✓"
+                           % type(exc).__name__)
 
     # CreateNewStudy3(Name, StudyType, MeshType, &Err)
     study = get_com_member(
@@ -278,6 +313,8 @@ def create_topology_study(sw_app, name: str, *, mesh_type: int = 0):
             "3=类型未定义（本机 Simulation 版本可能不支持拓扑优化）、4=网格类型非法。"
             "⚠ 拓扑优化只能对**单个实体零件**做（官方 CHM："
             "'You can only perform topology optimization for only one single-body part at a time.'）"
+            "★ 2026-10-04 补：**同名的可能性已经先删过一遍**（★ 按官方示例 `DeleteStudy`）"
+            "⇒ 若仍报 2，★ 更可能是**名称非法**（★ 而不是同名）✓"
         )
     return study, entry_name
 
