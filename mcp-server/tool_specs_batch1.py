@@ -155,8 +155,24 @@ SPECS_BATCH1: list[ToolSpec] = [
         inject="model",
         params=[],
         read_only=True,
-        doc=("Read back the mold state of the active part: parting-line/surface and "
-             "cavity/core surface counts, parting type, core-cavity split. Read-only."),
+        doc=("★ **当前这条在真机上**读不到东西**、★ 如实说明** —— "
+             "处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）："
+             "★ 原 doc 逐字写「Read back the mold state of the active part: parting-line/surface "
+             "and cavity/core surface counts, parting type, core-cavity split. **Read-only.**」"
+             "⇒ ★★ 而**能力层自己的 docstring 逐字**写着"
+             "「⚠ **本函数当前仍从旧位置读** ⇒ ★ **它在真机上只会返回全 `None`**」"
+             "（★ `scripts/sw_mold.py::mold_evidence`）⇒ ★★★ **两处说法相反** ✓ "
+             "★★ **真因（★ 轮 172 真机 + 反射复核）**：★ 那些计数**不在 `IFeatureManager` / "
+             "`IModelDoc2` 上**（★ 实测全 `AttributeError: <unknown>.X`），★ 而在 "
+             "**`I*FeatureData`** 上（★ `GetPartingLinesCount` ⇒ `IPartingLineFeatureData` · "
+             "`PartingType` ⇒ `IPartingSurfaceFeatureData` · `CoreCavitySplit` ⇒ "
+             "`IPartingLineFeatureData` —— ★ 事实 36 那一族：**成员在别的接口上**）✓ "
+             "★★★ **⇒ 要真读到，必须先拿到对应的 `I*FeatureData`**（★ 从**已存在的**分型线/分型面"
+             "特征上取）⇒ ★ **前提是零件上**已经有那些特征**；★ 空零件上**本来就取不到**"
+             "（★ **两者表象相同、别混**）✓ "
+             "★★★★ **∴ 现在**：★ `read_only=True` 仍然成立（★ 它确实不改模型）· "
+             "★★ 但**读到的计数会全是 `None`** ⇒ ★ 请按返回值里的 **`readable`** 字段判"
+             "（★ `false` = 本机读不到、★ **不是**「没有分型」）✓"),
     ),
 
     # ── 仿真：材料（真机修好的那条路）───────────────────────────────

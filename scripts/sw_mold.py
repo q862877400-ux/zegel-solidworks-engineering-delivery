@@ -338,14 +338,37 @@ def mold_evidence(model) -> dict:
         except Exception:
             return None
 
+    _counts = {
+        "parting_lines": _count("GetPartingLinesCount"),
+        "parting_surfaces": _count("GetPartingSurfacesCount"),
+        "cavity_surfaces": _count("GetCavitySurfacesCount"),
+        "core_surfaces": _count("GetCoreSurfacesCount"),
+    }
+    _pt = _prop("PartingType")
+    _ccs = _prop("CoreCavitySplit")
+    #: ★★★★ 2026-10-04（接手轮）**加一个可判字段 `readable`** ——
+    #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）：★ ToolSpec 的 doc 说「可回读」、
+    #:   ★★ 而本函数自我标注「真机上只会返回全 `None`」⇒ ★★★ **两处说法相反** ✓
+    #:   ★ **为什么不能只改 doc**：★ 因为**调用方无法从返回值区分**两种情况：
+    #:     · ★ 「**读不到**」（★ 读错了对象 —— 本函数的现状）
+    #:     · ★★ 「**真的没有分型**」（★ 空零件）✓
+    #:   ⇒ ★★★ **两者表象相同（都是全 `None`）** ⇒ 所以必须有**一个显式的位**来分开 ✓
+    #:   ★★ 判据（★ 可核、★ 不看返回值里的自然语言）：★ **四项计数全 `None` 且两个属性全 `None`**
+    #:     ⇒ ★ `readable: False` ✓
+    #:   ★★★ **注意它说的是什么**：★ `False` = 「**按当前读法在这台机器上读不到**」·
+    #:     ★★ **不是**「这个零件没有分型」（★ 后者要靠 `I*FeatureData` 那条未实现的路）✓
+    _all_none = all(v is None for v in _counts.values()) and _pt is None and _ccs is None
     return {
-        "counts": {
-            "parting_lines": _count("GetPartingLinesCount"),
-            "parting_surfaces": _count("GetPartingSurfacesCount"),
-            "cavity_surfaces": _count("GetCavitySurfacesCount"),
-            "core_surfaces": _count("GetCoreSurfacesCount"),
-        },
+        "counts": _counts,
         # 这两个是零件级属性；用 set_com_member 的读侧配对是 get_com_member（已知事实 4）
-        "parting_type": _prop("PartingType"),
-        "core_cavity_split": _prop("CoreCavitySplit"),
+        "parting_type": _pt,
+        "core_cavity_split": _ccs,
+        #: ★ **真相在这**：★ `False` ⇒ **本次读数不作数**（★ 别当成"没有分型"）✓
+        "readable": (not _all_none),
+        "readable_note": ("★ 全部为 `None` ⇒ ★ **本机按当前读法读不到**"
+                          "（★ 真因：那些计数**不在 `IFeatureManager`/`IModelDoc2` 上**，"
+                          "★ 而在 `I*FeatureData` 上 —— ★ 见本函数 docstring）· "
+                          "★★ **这不等于「该零件没有分型」** ✓"
+                          if _all_none else
+                          "★ 至少读到一项 ⇒ 本次读数可用 ✓"),
     }
