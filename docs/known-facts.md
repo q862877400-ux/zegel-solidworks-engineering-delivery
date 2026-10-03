@@ -2287,3 +2287,38 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ★ 先把**取边中点**那一步换对（★ `GetCurveParams2` 不行 —— ★ 可能是 `GetCurve().GetCurveParams2()` 的**另一个名字**，或直接用 **`IEdge.GetStartVertex`/`GetEndVertex`** 取两端再取中点）。
      ★ **而本轮的价值在于**：★ **把“回 `False`”与“前置没满足”分开了**（★ 前者是它的行为，后者是我的错）—— ★ 而**这一次不是我的错**。
      ★ 本轮**不登记能力**。|真机：`tools/prove_sketch_offset_on_surface.py`；证据 `output/sketch-offset-on-surface-evidence.json`；官方：`C:\swapi\types\IModelDocExtension\SketchOffsetOnSurface.md`；对照事实 32（边按名选不中）· 53 |
+| 461 | **★★★ 对称线性直径尺寸：前置链条**全在官方例子里**（★ 而本轮探针还有两处没搭对） —— 2026-10-03（轮 584）。
+     ★ **而本轮把「第 ③ 样」用到了极致** —— 答案全在**官方那个例子**里：
+       `…\SWhelp\sldworksapi\Create_Full_Symmetrical_Angular_Dimension_Example_VB.htm`
+     ```
+     "This example shows how to create a full symmetrical angular dimension between
+      **a centerline and a line**."
+     Postconditions 逐字：3. Creates a **centerline and three lines**…
+       4. **Selects the centerline and one of the lines.**
+       5. **Suppresses the dimension dialog.**   6. Creates the dimension…
+     调用序：InsertSketch(True) → CreateCenterLine → CreateLine×3
+       → SelectByID2("Line1", "**SKETCHSEGMENT**", x,y,z, False, 0, Nothing, 0)
+       → SelectByID2("Line3", "SKETCHSEGMENT", x,y,z, **True**, 0, Nothing, 0)
+       → ClearSelection2(True) → 再选一次
+       → **SetUserPreferenceToggle(swInputDimValOnCreate, False)**
+       → **AddSymmetricDimension(x, y, z)** → 回 **`DisplayDimension`**
+     ```
+     ★★ **两件事是从例子里才能知道的**：
+       ① ★ **草图段有名字**（`"Line1"`/`"Line3"`）、**而按名能选中**（★ 与事实 32 **不矛盾**：32 说的是**边/面**）；
+       ② ★★ **必须先抑制尺寸对话框** —— 它正是 swapi 那句**被截断的前置**（★ 只写到 `swUserPreferenceToggle_e`）⚠
+     ★ **而本轮两个真机发现**：
+     ```
+     ★ **对照（什么都不选）⇒ ok=True · 回 `CDispatch`** ⚠
+        ⇒ ★ **它在没选东西时也回对象**（★ 第五种形态的味道）
+        ⇒ ★ **故判据必须看「草图尺寸计数」**。
+     ★ 而正根那一格报：**`_select_by_id() got multiple values for argument 'append'`**
+        ⇒ ★ **那是我传参的形态错**（`append` 是**位置参数**）—— ★ **第九次“失败在我这边”**。
+     ```
+     ★★ **而护栏本轮尽职了**：第一版我凭空写了 `A.enum_value(...)`（★ **本仓没有那个函数**）
+       ⇒ **toggle 从未设过** ⇒ 弹出「**修改**」对话框 ⇒ ★ 护栏 `aborted_for_llm: true` 把会话**救回来了** ✓
+     ★★ **而那个值本仓早就有**：`scripts/sw_automation_knowledge.DIALOG_SUPPRESSORS["swInputDimValOnCreate"] = **10**`
+       （★ 注释写着“值来自对 `swconst` 的反射”）。
+     ★ **按事实 53**：本轮同一处已试多次 ⇒ **停手、记下两个具体的下一步**：
+       ① 把 `_select_by_id` 的**形参传对**（★ 按它的真签名）；
+       ② 把**草图尺寸计数**那个取法换对（★ 本轮回 `-1`）。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；例子：`…\SWhelp\sldworksapi\Create_Full_Symmetrical_Angular_Dimension_Example_VB.htm`；对照事实 32 / 53 |
