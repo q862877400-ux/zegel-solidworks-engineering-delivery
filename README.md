@@ -118,7 +118,7 @@ python scripts/cad_studio.py create-ocp-surface --input .\smooth-loft.json --out
 - 🎨 **外观材质** - 文档、特征、组件级颜色设置，支持装配体分色建模
 - 🎬 **Motion Study** - 自动创建运动算例、匀速旋转马达并计算/播放动画
 - 🔌 **MCP Server** - 将 SolidWorks COM 自动化封装成 Codex / Claude / Cursor 可调用的本地 MCP 工具，覆盖基础建模、装配、Mate、外观、导出、审查和旋转马达
-- 🔨 **钣金设计（试点）** - SW2026 已验证开放 U 型轮廓双折弯、板厚/半径/K 因子重开回读及含折弯线 DXF；复杂钣金仍需人工复核
+- 🔨 **钣金设计（试点）** - SW2026 已验证**闭轮廓**的 BaseFlange FeatureData + 板厚/半径/K 因子重开回读；⚠ **开放折线（轮廓法兰）实测失败**、**含折弯线 DXF 实测 `ok:false`**（前置是「已保存的钣金件」，红线内不满足）⇒ 复杂钣金仍需人工复核
 - ⚡ **焊件设计（试点）** - SW2026 已验证自定义 `.sldlfp`、四根 HSS 斜接框架、按长度/数量分组的原生切割清单及 CSV；回归数据来自 MIT 许可的 [Coremark Weldment Profiles](https://github.com/someoneskater/Coremark-Weldment-Profiles)
 - 📊 **FEA 仿真（试点）** - CalculiX 2.23 已真实求解线性静力、NLGEOM、受限塑性和双实体面接触样件，可解析最终步穿透/压力/滑移并执行线性或非线性网格收敛序列；结果统一保留人工复核，不等于安全认证
 - 📝 **配置与属性** - SW2026 已真机验证三配置创建/切换、配置尺寸/属性和保存重开；设计表仍按能力清单限制使用

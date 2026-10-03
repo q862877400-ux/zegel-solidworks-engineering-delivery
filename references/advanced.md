@@ -115,8 +115,10 @@ feature = create_base_flange(
 ```
 
 该封装使用 `CreateDefinition(swFmBaseFlange)`、`IBaseFlangeFeatureData.Initialize`
-和 `CreateFeature`，不会猜测已废弃长参数接口。SW2026 SP01.1 已验证开放 U 型轮廓、
-两道真实折弯及保存重开；边线法兰、斜接法兰和放样折弯仍按 `pilot` 门禁处理。
+和 `CreateFeature`，不会猜测已废弃长参数接口。SW2026 SP01.1 已验证**闭轮廓**的 BaseFlange
+与保存重开；⚠ **开放折线（轮廓法兰）实测失败**（`CreateFeature(IBaseFlangeFeatureData) 创建失败`，
+见 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS`）⇒ 边线法兰、斜接法兰、放样折弯
+与开放折线仍按 `pilot` 门禁处理。
 
 ### 展开图导出
 

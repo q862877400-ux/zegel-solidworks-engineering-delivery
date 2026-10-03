@@ -1122,7 +1122,11 @@
         "pywin32"
       ],
       "limitations": [
-        "SW2026 SP01.1 已真机验证现代 BaseFlange FeatureData、开放 U 型轮廓双折弯、板厚/半径/K 因子参数重开回读和含折弯线 DXF；边线法兰、放样折弯、转钣金、折弯表及多版本矩阵仍需后续真机回归",
+        "SW2026 SP01.1 已真机验证现代 BaseFlange FeatureData（★ **仅闭轮廓**）、板厚/半径/K 因子参数重开回读；★ **开放 U 型轮廓双折弯**与**含折弯线 DXF** 仍需后续真机回归（★ **见下一条与本条的 2026-10-04 更正**）；边线法兰、放样折弯、转钣金、折弯表及多版本矩阵仍需后续真机回归",
+        "⚠⚠⚠ **2026-10-04（接手轮）更正本条目第一行里的两处**（★ 处置 `JUDGE-A_B.md` 的 A-sheetmetal **V-3 + V-4**，★ 两条**同源同错、一起改**）—— ★ 裁判逐字：「★『**开放 U 型轮廓双折弯已真机验证**』与 `SHEET_METAL_RUNTIME_STATUS` 的『**开放折线真机失败** / `True` 仅对闭轮廓成立』**逐字相反**；★ 且**同一条目两条 limitations 互相打架**，★ **README 也跟着写了同一句**」✓",
+        "★★ **V-3 的权威源逐字**（★ `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS`）：「★ **闭轮廓**真机建成：特征树出现「钣金6 / 基体-法兰1 / 平展型式6」。★ ⚠ **开放折线（轮廓法兰）真机失败**：`CreateFeature(IBaseFlangeFeatureData) 创建失败`（2026-10-01 补测，见 `probe_gusset_with_bend.py`）⇒ ★★ **`True` 仅对闭轮廓成立**」⇒ ★★★★ **所以「开放 U 型轮廓双折弯已真机验证」是**错的** —— ★ 它**明确失败过** ✓",
+        "★★ **V-4 的证据逐字**（★ `output/flat-pattern-dxf-evidence.json`）：★ `export_flat_pattern_dxf: {ok: **false**, … exists: **false**, size_bytes: **0**, error: 「ValueError: 导出展开 DXF 前必须先保存钣金零件」}` · ★ `verdict: **partial**` ⇒ ★★★★ **所以「含折弯线 DXF 已真机验证」也是**错的**** ✓。★★ 而**知识库第 322 条**已定性：★ **这个前置（「已保存」）在红线内验不了 ⇒ 保持不注册** ✓",
+        "⇒ ★★ **两条改后的准确说法**：★ **已验证的只有「闭轮廓的 BaseFlange FeatureData + 板厚/半径/K 因子参数重开回读」**；★ **「开放折线轮廓法兰」实测失败**、★ **「含折弯线 DXF」实测 `ok:false`（前置是「已保存的钣金件」，★ 红线内不满足）** ✓",
         "**真机实测状态（2026-10-01，SW 2026 SP4.1）：6 个创建入口里 2 个可跑** —— ✓ `create_base_flange`（但**只对闭轮廓成立**，开放折线的轮廓法兰实测失败）· ✓ `sheet_metal_evidence`；✗ `create_one_bend` / `create_edge_flange` / `create_gusset` **受 pywin32 指针接口限制到不了**（见 `backend_catalog.solidworks-com-pywin32` 的相应条目）· ✗ `create_draft` 用的 `swFmDraft(3)` **不在 `CreateDefinition` 接受的 35 个常量里**。**已修掉的缺陷**：`create_one_bend` 的常量（`swFmOneBend(33)` → `swFmSketchBend(35)`，报错前推到 `CreateFeature(35)`）；`create_gusset` **整步缺失的官方步骤 3**（`ProfileDimensionScheme` / `UseOffset` / `UseAngleDimForProfile`，真机**属性层 8/8 读回成功**）；`create_edge_flange` 的 `ReverseDirection` 跨接口泄漏。**⇒ 「属性设对了」与「特征建成了」是两件事，必须分开取证。**"
       ],
       "allowed_modes": [
