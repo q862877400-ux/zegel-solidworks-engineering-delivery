@@ -138,4 +138,46 @@ SPECS_BATCH23 = [
             "(declarative) — the capability layer passes edges=None, i.e. it acts on the "
             "current selection.",
     ),
+    #: ★★★★★ 2026-10-03（接手轮，★ 阶段 5）**补「改 × 特征」格** ——
+    #:   ★ 那一格是本仓**密度最低**的：★ 官方 **275** 个成员、★ 我们原有 **2** 个工具（**0.7%**）。
+    #:   ★★ 而"抑制/解除抑制一个**特征**"是它最基础的能力，★ 本仓**没有**
+    #:     （★ 已有的是**组件**的 `suppress_component` · **配合**的 `suppress_mate`）✓
+    #:   ★★★ 出处：★ 官方 `IModelDoc2/EditSuppress2.md`（`bool EditSuppress2()`，0 参）+
+    #:     本仓既有模式（★ `EditSuppress2` 是**文档级**的、★ 作用在**当前选择**上）✓
+    #:   ★★★★ 真机：★ 两条都**回 `True`**、★ **负例（不存在的特征名）抛 `RuntimeError`** ✓
+    #:     （★ `tools/probe_feature_suppress_e2e.py` · `output/feature-suppress-e2e-evidence.json`）
+    #:   ★ 参数是**特征名**（★ 不是声明式选择器）—— ★ 因为**特征按名字可选**（★ 事实 32：
+    #:     边/面没有名字，★ 而特征有）⇒ ★ 能力层内部做 `SelectByID2(名, "BODYFEATURE", …)` ✓
+    ToolSpec(
+        name="solidworks_feature_suppress",
+        title="Suppress a Feature",
+        module="sw_part", function="feature_suppress",
+        inject="model",
+        param_alias={"feature_name": "feature_name"},
+        params=[
+            Param("feature_name", str,
+                  description="Feature name as it appears in the FeatureManager tree "
+                              "(Chinese UI: e.g. 「凸台-拉伸1」). ★ Features CAN be selected by "
+                              "name (unlike edges/faces — known fact 32)."),
+        ],
+        doc="Suppress one FEATURE via the successor entry point `IModelDoc2.EditSuppress2()` "
+            "(0 params). ★ It acts on the CURRENT SELECTION, so the capability layer selects "
+            "the named feature first and REFUSES to call when the selection read-back is 0 "
+            "(an empty selection would silently do nothing).",
+    ),
+    ToolSpec(
+        name="solidworks_feature_unsuppress",
+        title="Unsuppress a Feature",
+        module="sw_part", function="feature_unsuppress",
+        inject="model",
+        param_alias={"feature_name": "feature_name"},
+        params=[
+            Param("feature_name", str,
+                  description="Feature name as it appears in the FeatureManager tree "
+                              "(Chinese UI: e.g. 「凸台-拉伸1」)."),
+        ],
+        doc="Unsuppress one FEATURE via the successor entry point `IModelDoc2.EditUnsuppress2()` "
+            "(0 params). ★ Same selection contract and same refusal guard as "
+            "`solidworks_feature_suppress`.",
+    ),
 ]
