@@ -52,31 +52,50 @@
 
 ## B5 草图尺寸与关系（8 条）
 
-- [ ] **T501** 水平尺寸 `AddHorizontalDimension2`
-- [ ] **T502** 竖直尺寸 `AddVerticalDimension2`
-- [ ] **T503** 尺寸链 `InsertChainDimensions`（★ 真名已核）
-- [ ] **T504** 路径长度尺寸 `AddPathLengthDim`（★ 真名已核）
-- [ ] **T505** 完全定义草图 `FullyDefineSketch`
-- [ ] **T506** 显示/删除几何关系
+- [ ] **T501** 水平尺寸 `AddHorizontalDimension2` —— ⚠ **会挂**（★ 单跑 4.41s 后 `sw_alive: null`）⇒ 已单列
+- [ ] **T502** 竖直尺寸 `AddVerticalDimension2` —— ⚠ **会挂**（★ 单跑 **120.42s** 后 `sw_alive: null`）⇒ 已单列
+- [x] **T503** 尺寸链 `InsertChainDimensions` ✅ 轮 492 —— ★★ **真因查清**：`getattr` 回 `(None, None, None)`
+  （★ **事实 386/387**）；★ 而用 `dispid` 直调（轮 494：`dispid=319`、三种包装全 `ok=True`）**特征树仍不动**
+  ⇒ ★ **按事实 53 停下**；状态 =「**包装层现象已定性，几何前置未通**」（★ 不是后端到不了）
+- [x] **T504** 路径长度尺寸 `AddPathLengthDim` ✅ 轮 490 —— 真机 **`dim=[0,0]` ⇒ 不能**（★ 判据 = `DisplayDimension` 计数）
+- [x] **T505** 完全定义草图 `FullyDefineSketch` ✅ 轮 490 —— 真机 **`dim=[0,1]` ⇒ 能**（★ 而枚举取值表两套源都没查到 ⇒ 只记它回了什么数）
+- [x] **T506** 显示/删除几何关系 ✅ 轮 490 —— 真机：**关系计数 能** · **删除全部关系 不能** · **添加几何关系 不能**
+  （★ 而台账里「添加几何关系」**原标「能」** ⇒ ★ **已按证据回填为「不能」** —— ★ W2 判据反向也管用）
   → 验收: 回读 `DisplayDimension` 计数 / 关系计数
+  → 证据: `output/b5-sketch-dimensions-evidence.json`（`verdict: partial` · **6 条**）· 探针 `tools/prove_b5_sketch_dimensions.py`
+  → ⚠ **收口说明**：★ 本批**按序号逐条单跑**（★ 整批连跑会挂住 —— ★ 探针 `run()` 的注释早写着）；★ 6/8 有证据、2 条会挂已单列
 
 ## B6 曲面特征（9 条）
 
-- [ ] **T601** 旋转曲面 · **T602** 扫描曲面 · **T603** 放样曲面 · **T604** 边界曲面
-- [ ] **T605** 平面区域 · **T606** 等距曲面 · **T607** 剪裁曲面
-- [ ] **T608** 直纹曲面 `InsertRuledSurfaceFromEdge`（★ 真名已核）
-- [ ] **T609** 替换面 `InsertFeatureReplaceFace`（★ 真名已核）
-- [ ] **T610** 加厚 `FeatureBossThicken` / 加厚切除 `FeatureCutThicken`（★ 真名已核）
+- [ ] **T601** 旋转曲面 —— ⚠ **入口已核、真机未成**：`InsertRevolvedRefSurface` 回 `Feature` 而**树不动**
+  （★ 5 组 `RevType`×`angle` 全试过 ⇒ **按事实 53 停下**）；旋转轴走**捕获 `CreateCenterLine` 返回值**（选中数 2 = 对）
+- [ ] **T602** 扫描曲面 —— ★★ **入口找到并实现**（轮 486-488）：**`CreateDefinition(swFmRefSurface = 62)`**
+  ⇒ `ISweepFeatureData` ⇒ `CreateFeature`（★ 官方 `CreateDefinition.md` 的合法常量表逐字有 `swFmRefSurface (surface sweep)`；
+  反射 `_raw/enum_values_sldworks.txt` 给 **62**；★ 而台账给的 `InsertProtrusionSwept4(Surface)` **不是真路**）
+  ⚠ **真机未成**：选区已修对（★ `{1:1, 4:1}`，用 `SelectByID2` 带 mark —— ★ **事实 384**），
+  而 **A/B 证明实体(17)与曲面(62)在这套前置下**都**卡在 `AccessSelections`**（★ **事实 385**）
+- [x] **T603** 放样曲面 ✅ 轮 479 —— 真机 **建成**（★ 关键：`_capture_sketch_ref` **要在草图开着时**取）
+- [ ] **T604** 边界曲面 —— ★ **查不到**（`swapi` 里 `IFeatureManager` 无 `Boundary` 成员）⇒ 按铁律 5 记「查不到」
+- [ ] **T605** 平面区域 · **T606** 等距曲面 · **T607** 剪裁曲面 —— ★ 未动
+- [ ] **T608** 直纹曲面 `InsertRuledSurfaceFromEdge`（★ 真名已核）—— ★ 未动
+- [ ] **T609** 替换面 `InsertFeatureReplaceFace`（★ 真名已核）—— ★ 未动
+- [ ] **T610** 加厚 `FeatureBossThicken` / 加厚切除 `FeatureCutThicken`（★ 真名已核）—— ★ 未动
   → 验收: 特征树增量 + `sw_surface.collect_surface_evidence` 的曲面体计数
+  → 证据: `output/b6b-surface-ref-evidence.json`（1/2 + 旋转子探针 5 组）· `output/sweep-surface-evidence.json` · `output/sweep-ab-evidence.json`
 
 ## B7 特征下拉（6 条）
 
-- [ ] **T701** 边界框 `Create3DBoundingBox`（★ 真名已核）
-- [ ] **T702** 配合参考 `InsertMateReference2`（★ 真名已核）
-- [ ] **T703** 通过参考点的曲线 `InsertCurveFile*`（★ 真名已核）
-- [ ] **T704** 变量阵列 `InsertVaryInstanceIncrement/Override`（★ 真名已核）
-- [ ] **T705** 分割线 · **T706** 投影曲线
+- [x] **T701** 边界框 `Create3DBoundingBox`（★ 真名已核）—— ★ **更正**：官方写明 `Create3DBoundingBox`
+  是「**for a cut list item in a weldment part**」⇒ 工具栏那个该用 **`InsertGlobalBoundingBox2`**（★ 与 B8 同批验过）
+- [x] **T702** 配合参考 `InsertMateReference2` ✅ 轮 481 —— 真机 **建成**（★ 树新增 `['配合参考', 'MCP_MateRef-<1>', '配合参考___EndTag___']`）
+  ⇒ ★ 而**未登记成工具**：第 2 形参是 **`IEntity`（COM 对象）**，`ToolSpec` 的 `Param` 只表达基本类型 ⇒ 留待接声明式选择器
+- [x] **T703** 通过参考点的曲线 `InsertCurveFile*` ✅ 轮 481 —— 真机 **建成**（★ 树新增 `曲线1`）· 已是工具 `solidworks_insert_curve_through_points`
+- [ ] **T704** 变量阵列 `InsertVaryInstanceIncrement/Override` —— ★ **标 Obsolete** ⇒ 继任者是
+  `IInstanceToVaryOptions` + `CreateDefinition`（★ 新架构）⇒ 另列
+- [ ] **T705** 分割线 · **T706** 投影曲线 —— ⚠ 分割线两条真机**树无增量**（★ 前置还不够）；
+  投影曲线 `InsertProjectedSketch2` **标 Obsolete** ⇒ 继任者 `IProjectionCurveFeatureData` ⇒ 另列
   → 验收: 特征树增量
+  → 证据: `output/b7a-curve-split-evidence.json`（★ 真机 2/4）
 
 ## B8 参考几何体（4 条）
 
