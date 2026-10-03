@@ -1,0 +1,90 @@
+feat(阶段5): ★★★★★★★ **按缺口密度补能力的第 1 格** —— ★ `shell_params`（★ 抽壳参数回读）；★ 并量出**单位口径的第八族**
+
+■ 一 · ★ 为什么挑这一格（★ 按**数据**、★ 不凭猜）
+  ★ 读 `output/density-gap-map.json` ⇒ ★★ **最大的**真·零覆盖**格**：
+    | ★ 格子 | ★ 官方成员数 | ★ 我们 |
+    |---|---|---|
+    | ★★ **`查 × 特征`** | ★★ **451** | ★ **8** |
+    | ★ `改 × 特征` | ★ 275 | ★ 0 |
+    | ★ `查 × 文档/文件` | ★ 219 | ★ 0 |
+    | ★ `建 × 文档/文件` | ★ 138 | ★ 0 |
+    | ★ `改 × 文档/文件` | ★ 138 | ★ 0 |
+  ★★ **⇒ 而挑 `查 × 特征` 里**哪一族**，★ 用的是**本仓自己的形状**：
+    ★ 本仓有 **6 个"能写"的特征工具** —— ★ `revolve_boss` · ★ `shell_report` ·
+    ★ `rib_report` · ★ `insert_dome_report` · ★ `create_loft_report` · ★ `create_sweep_report`
+    ⇒ ★★★ **而**一个读都没有**** ⇒ ★★★★ **⇒ 那正是本仓最典型的**「能写不能读」**** ✓
+
+■ 二 · ★ **铁律 5 的一次实际应用**（★ 值记）
+  ★ 我本想做 `revolve` ⇒ ★★ **而 `C:\swapi\types\IRevolveFeatureData\` **不存在**** ✓
+  ★★ **⇒ 按铁律 5：★ 停下、★ 不用相似名字蒙混** ⇒ **改做 `shell`** ✓
+  ★★★ **⇒ 选 `shell` 而不是 `sweep` 的理由也有据**：★ `IShellFeatureData` **16** 个成员 ·
+    ★ `ISweepFeatureData` **54** 个 ⇒ **小的先出成果** ✓
+
+■ 三 · ★★★★★★ 第 0 步：★ 逐条读官方页（★ 才定得下「读哪几个」）
+  ★ 用 `output/_read_shell_members.py` 把 **16** 个成员的**签名 + 废弃位 + `## Returns`** 全打出来 ⇒
+    ★★ **可读的只有 5 个**：
+    | ★ 成员 | ★ 官方签名 | ★ 官方 `## Returns` |
+    |---|---|---|
+    | ★ `Thickness` | ★ `System.double {get;set;}` | ★ `Shell thickness`（★ **无单位**）|
+    | ★ `Direction` | ★ `System.int {get;set;}` | ★「**0 for inward shell, 1 for outward shell**」|
+    | ★ `FacesRemovedCount` | ★ `System.int {get;}` | ★ `Number of removed faces` |
+    | ★ `GetMultipleThicknessFacesCount()` | ★ `System.int` | ★ `Number of faces with multiple thickness` |
+    | ★ `GetMultipleThicknessAtIndex(int)` | ★ `System.double` | ★ `Shell thickness`（★ **无单位**）|
+  ★★★ **必须避开的，逐条给了理由**（★ 写进 docstring，★ 免得下一个人再试一遍）：
+    · ★ **`IGetFacesRemoved` / ★ `IGetMultipleThicknessFaces`** ⇒ 官方 `## Returns` 逐字
+      「**in-process, unmanaged C++: Pointer to an array** of …」⇒
+      ★★ **那正是**事实 47 那一族**（★ 指针接口、★ pywin32 到达不了）** ✓
+    · ★ **`IAccessSelections` / ★ `ISetFacesRemoved` / ★ `ISetMultipleThicknessFaces`** ⇒ 同上 ✓
+    · ★ **`FacesRemoved` / ★ `MultipleThicknessFaces`** ⇒ 官方 `## Remarks` 指向
+      「**Accessing Selections that Define Features**」⇒ ★ **那是**前置**、★ 不是"读参数"** ✓
+    · ★ **`AccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ ★ 同上（★ 成对的前置）✓
+
+■ 四 · ★★★★★★ 真机量出**单位口径的第八族**
+  ★ 探针：★ `tools/probe_shell_params_recheck.py`（★ 只报不动）⇒
+    ★★ 证据：★ `output/shell-params-capability-recheck.json` ✓
+  ★★ **真机步骤**（★ 全通）：★ `connect ok` ⇒ ★ `new_part 零件26` ⇒
+    ★ `sketch 草图1（CreateLine ×4）` ⇒ ★ `extrude_boss 10mm ok` ⇒
+    ★★ `shell_report ok=true`（★ 回读三条全真：★ 特征在树里 + `EditRebuild3` 真 + 查错数 0）⇒
+    ★★★ `shell_params` **读回来了** ✓
+  ★★★ **判据（★ 可核）**：★ 板 60×40×10（毫米）⇒ ★ **抽壳 `2 mm`** ⇒
+    ★★ **读回 `Thickness = 2.0`** ⇒ ★★★ **⇒ 口径 = **随文档单位**** ✓
+  ★★★★ **⚠ 而写侧 `shell_report` 也有同口径的记录**（★「单位随文档单位」）——
+    ★ **但我没有把写侧口径套到读侧**：★ **那是**量**出来的** ⇒
+    ★★ 本会话已见过**同一接口内部就分裂**的先例（★ `IWizardHoleFeatureData2`：
+    ★ **直径是米、★ 深度是毫米**）⇒ **每一个量都要单独量** ✓
+
+■ 五 · ★★★ 而写这个探针时**踩了三个坑、★ 每个都留下了记号**
+  ★★ **① 起会话猜错**：★ 我写 `sw_connect.connect()` / ★ `new_part(sw)` ⇒
+    ★ `AttributeError: module 'sw_connect' has no attribute 'connect'` ⇒
+    ★★ **正解**（★ 搜出来的、★ `tools/probe_base_flange_params_recheck.py` L49 逐字）：
+      ★ `app, _ = connect_solidworks(visible=True)` · ★ `model = new_document(app, "part")` ✓
+    ★★★ **⇒ 又验证那条判据**：★ **"在仓里搜"要搜够 —— 搜一行 grep 的成本 < 猜错的成本** ✓
+  ★★ **② `CreateCornerRectangle` 报「非选择性的参数」** ⇒
+    ★ **真机读数**：★ `com_error: (-2147352561, '非选择性的参数。', None, None)` ⇒
+    ★★ **而那正是**本会话已记录过的那个**** ⇒ **正解：★ 四条 `CreateLine` 围成矩形** ✓
+    ★★★ **⚠ 而我第一版**在注释里写了"要兜底"、★ 却**没写兜底代码**** ⇒
+      ★★ **⇒ "写在注释里的打算"不等于"做了"**（★ 与**事实 62**同族）✓
+  ★★ **③ `step(name, **kw)` 与 `step("sketch", name=…)` 撞名** ⇒ `TypeError` ⇒ ★ 改 `sketch_name` ✓
+
+■ 六 · ★★★★★★★ 「那一族判据」的**第一次主动应用**
+  ★ 挂上第 9 条 ToolSpec ⇒ **ToolSpec 288 → 289** ⇒ ★★ **两个「钉死数量」守卫要同步**：
+    · ★ `tests/test_server_wiring.py`：★ `== 288` ⇒ **289** ✓
+    · ★ `tests/test_mcp_protocol_layer.py`：★ `== 333` ⇒ **334** ✓
+  ★★★ **⇒ 前几轮是"等它红了才改"、★ 本轮是**主动**改** ——
+    ★★ **而那两条自己就写着**「★ **加了就要同时改这里**」✓
+  ★★★★ **⇒ 真机读数**：★ 两处 **16 passed** ✓
+
+■ 七 · ★★ 新增测试（★ `tests/test_shell_params_capability.py` · **5 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★★ **核心断言** | ★ 它读那**五个可读**的成员 ✓ |
+  | ★★★★ **核心断言** | ★ **不碰**指针/前置（★ 用**调用形态**判、★ **不是名字出现**）✓ |
+  | ★★★ **负例 · ToolSpec 形状** | ★ `inject="model"` + ★ `function="shell_params"`（★ 用 `ast` 解）✓ |
+  | ★★★★ **负例 · 单位读数要记进去** | ★ `2.0` + ★「随文档单位」+ ★ 证据脚本名 ✓ |
+  | ★★★★ **负例 · 两个钉死数要与实际相符** | ★ 直接现算 `len(all_specs())` 去比 ✓ |
+
+■ 八 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 5 passed** ✓
+  ★★ **⚠ 如实记**：★ **`查 × 特征` 那一格仍是 8 → 9**（★ 官方 451）⇒
+    ★ **离收敛还很远** —— ★ 本轮的贡献是**开了那一格、★ 并留下了可复用的形态** ✓
+  ★★★ **⇒ 下一轮**：★ 同族继续（★ `sweep` 54 个成员 · ★ 以及 `改 × 特征` 275 那一格）✓

@@ -47,7 +47,7 @@ except ImportError:                                            # pragma: no cove
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
 __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params"]
+           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params"]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
@@ -867,6 +867,106 @@ def base_flange_params(model, feature_name: str = "") -> dict:
                 out[name] = get_com_member(fd, name)
             except Exception as exc:                                      # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
+    except Exception as exc:                                              # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    return out
+
+
+def shell_params(model, feature_name: str = "") -> dict:
+    """★ 读**抽壳特征的一组参数**（★ 厚度 / 方向 / 移除面数 / 多厚度面数与逐面厚度）✓
+
+    ★★★★★ **单位口径（★ 第八个族）**：★ 官方 `IShellFeatureData::Thickness` 的
+      `## Returns` **只写 `Shell thickness`、★ 没写单位** ⇒
+      ★★ **本函数如实标 `unknown`、★ 不猜** ✓
+      ★★★ **而真机量了**（★ 2026-10-04 轮 122 · ★ `tools/probe_shell_params_recheck.py`
+        · ★ `output/shell-params-capability-recheck.json`）：
+        ★ **板 60×40×10（毫米）⇒ 抽壳 `2 mm` ⇒ 读回 `Thickness = 2.0`** ⇒
+        ★★★★ **⇒ 口径 = **随文档单位**（★ 毫米文档 ⇒ 毫米值）** ✓
+      ★★★★★ **⚠ 而**写侧**也有同一口径的记录**（★ `scripts/sw_part.py::shell_report` 逐字：
+        「★ `thickness` 在能力层的单位**随文档单位**（本项目零件按毫米 ⇒ 传毫米值）」）⇒
+        ★★ **⇒ 两侧**实测一致** —— ★ **而那是量出来的、★ 不是把写侧口径套到读侧** ✓
+        ★★★ 本会话已见过**同一接口内部就分裂**的先例（★ `IWizardHoleFeatureData2`：
+          直径是**米**、深度是**毫米**）⇒ **⇒ 每一个量都要单独量** ✓
+
+    ★★★★★ **⚠ 本函数只读那五个**有页且非指针**的成员**（★ 逐条查过官方页）：
+      | ★ 成员 | ★ 官方签名 | ★ 官方 `## Returns` |
+      |---|---|---|
+      | ★ `Thickness` | ★ `System.double {get;set;}` | ★ `Shell thickness`（★ **无单位**）|
+      | ★ `Direction` | ★ `System.int {get;set;}` | ★「**0 for inward shell, 1 for outward shell**」|
+      | ★ `FacesRemovedCount` | ★ `System.int {get;}` | ★ `Number of removed faces` |
+      | ★ `GetMultipleThicknessFacesCount()` | ★ `System.int` | ★ `Number of faces with multiple thickness` |
+      | ★ `GetMultipleThicknessAtIndex(int)` | ★ `System.double` | ★ `Shell thickness`（★ **无单位**）|
+
+    ★★★★★ **⚠ 本函数**不碰**下面这些**（★ 逐条给了理由，★ 免得下一个人再试一遍）：
+      · ★ **`IGetFacesRemoved` / ★ `IGetMultipleThicknessFaces`** ⇒ 官方 `## Returns` 逐字
+        「**in-process, unmanaged C++: Pointer to an array** of …」⇒
+        ★★ **那正是**事实 47** 那一族（★ 指针接口、★ pywin32 到达不了）** ✓
+      · ★ **`IAccessSelections` / ★ `ISetFacesRemoved` / ★ `ISetMultipleThicknessFaces`** ⇒
+        ★ 同上（★ 含 `ref System.object` 或 `ModelDoc2`/**指针变体**）✓
+      · ★ **`FacesRemoved` / ★ `MultipleThicknessFaces`** ⇒ 官方 `## Remarks` 指向
+        「**Accessing Selections that Define Features**」⇒ ★ **那是**前置**、★ 不是"读参数"** ✓
+      · ★ **`AccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ ★ 同上（★ 成对的前置）✓
+    """
+    from sw_connect import get_com_member, safe_get_com_member
+    UNK = "unknown（★ 官方 ## Returns 未写单位；★ 真机实测见证据）"
+    out: dict = {
+        "feature": feature_name, "definition": None, "error": None,
+        "★_单位口径": {"Thickness": UNK, "GetMultipleThicknessAtIndex": UNK},
+        "★_无量纲": ["Direction", "FacesRemovedCount",
+                     "GetMultipleThicknessFacesCount"],
+        "★_方向语义": {"0": "inward shell（★ 向内的抽壳）",
+                       "1": "outward shell（★ 向外的抽壳）"},
+        "★_不读（★ 要前置 / ★ 指针接口 / ★ 事实 47）": [
+            "IGetFacesRemoved", "IGetMultipleThicknessFaces", "IAccessSelections",
+            "ISetFacesRemoved", "ISetMultipleThicknessFaces",
+            "FacesRemoved", "MultipleThicknessFaces",
+            "AccessSelections", "ReleaseSelectionAccess"],
+    }
+    try:
+        feat = None
+        if feature_name:
+            feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
+        if feat is None:
+            #: ★★ 兜底：★ 找**最后一个**抽壳特征（★ 类型名含 `Shell`）——
+            #:   ★★★ **两层过滤**（★ 前几轮的教训：★ 容器也有类型名）✓
+            f = safe_get_com_member(model, "FirstFeature")
+            while f is not None:
+                try:
+                    nm = str(safe_get_com_member(f, "Name") or "")
+                    tn = str(safe_get_com_member(f, "GetTypeName2") or "")
+                    if nm not in _CONTAINER_NODES and "Shell" in tn:
+                        feat, out["feature"] = f, nm
+                except Exception:                                         # noqa: BLE001
+                    pass
+                f = safe_get_com_member(f, "GetNextFeature")
+        if feat is None:
+            out["error"] = "找不到抽壳特征（★ 类型名含 `Shell`）"
+            return out
+        fd = get_com_member(feat, "GetDefinition")
+        out["definition"] = type(fd).__name__ if fd is not None else None
+        if fd is None:
+            out["error"] = "`IFeature::GetDefinition` 回 None"
+            return out
+        #: ★★ **那五个可读的**（★ 逐条查过官方页）⇒ ★ 直接取 ✓
+        for name in ("Thickness", "Direction", "FacesRemovedCount",
+                     "GetMultipleThicknessFacesCount"):
+            try:
+                out[name] = get_com_member(fd, name)
+            except Exception as exc:                                      # noqa: BLE001
+                out[name] = "err: %s" % str(exc)[:50]
+        #: ★★★ **逐面厚度**：★ 先数、★ 再按索引取（★ 官方 Remarks 说"先调计数"）✓
+        #:   ★★ 设**上限**，★ 免得异常时死循环 ✓
+        try:
+            n = int(out.get("GetMultipleThicknessFacesCount") or 0)
+        except Exception:                                                 # noqa: BLE001
+            n = 0
+        out["multiple_thickness"] = []
+        for i in range(min(max(n, 0), 32)):
+            try:
+                out["multiple_thickness"].append(
+                    get_com_member(fd, "GetMultipleThicknessAtIndex", i))
+            except Exception as exc:                                      # noqa: BLE001
+                out["multiple_thickness"].append("err: %s" % str(exc)[:50])
     except Exception as exc:                                              # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out

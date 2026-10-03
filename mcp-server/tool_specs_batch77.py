@@ -131,4 +131,35 @@ SPECS_BATCH77 = [
             "在不用 gauge table 时**必然是 `0.0`** ⇒ **与 `UseGaugeTable` 互相印证** ✓"
             "★★★★ **⚠ 本工具**不读 `D1OffsetDistance`****（★ 官方标**真废弃**）✓",
     ),
+    #: ★★★★★★ 2026-10-04（轮 122）**第 9 条** —— ★ 阶段 5「按缺口密度补能力」的第一格 ✓
+    #:   ★ **本批补的是一个**零覆盖的格****：★ 密度图（`output/density-gap-map.json`）里
+    #:     ★★ **`查 × 特征` = 官方 451 成员、★ 我们 8** ⇒ **那是最大的一格** ✓
+    #:   ★★★ **而挑它的理由**：★ 本仓有 **6 个"能写"的特征工具**
+    #:     （★ `revolve_boss` / ★ `shell_report` / ★ `rib_report` / ★ `insert_dome_report` /
+    #:      ★ `create_loft_report` / ★ `create_sweep_report`）、★ **却一个读都没有** ⇒
+    #:     ★★★★ **⇒ 那正是本仓最典型的**「能写不能读」**** ✓
+    #:   ★★★★★ **⚠ 而 `IRevolveFeatureData` **查不到****（★ `C:\swapi\types\` 下没有那个目录）⇒
+    #:     按**铁律 5**：★ **停下、★ 不用相似名字蒙混** ⇒ **改做 `shell`**（★ 16 个成员里
+    #:     5 个可读、★ 比 `sweep` 的 54 小）✓
+    ToolSpec(
+        name="solidworks_shell_params",
+        title="Read Shell Feature Parameters",
+        module="sw_feature_readback", inject="model", function="shell_params",
+        params=[_FEAT_NAME],
+        doc="★ **读抽壳特征的一组参数**（★ 厚度 / 方向 / 移除面数 / 多厚度面数与逐面厚度）。"
+            "★★★★★ **单位口径（★ 第八族）**：★ 官方 `IShellFeatureData::Thickness` 的"
+            "`## Returns` **只写 `Shell thickness`、★ 没写单位** ⇒"
+            "★★ **而真机量了**（★ `tools/probe_shell_params_recheck.py`）："
+            "★ **板 60×40×10（毫米）⇒ 抽壳 `2 mm` ⇒ 读回 `Thickness = 2.0`** ⇒"
+            "★★★ **口径 = **随文档单位**** ✓"
+            "★★★★ **⚠ 而这是**量**出来的** —— ★ 写侧 `shell_report` 也有同口径的记录、"
+            "★ **但不能把写侧口径套到读侧**（★ 本会话见过**同一接口内部就分裂**的先例："
+            "`IWizardHoleFeatureData2` 直径是**米**、深度是**毫米**）✓"
+            "★★★★ **⚠ 本工具**不碰**指针接口**：★ `IGetFacesRemoved` / `IGetMultipleThicknessFaces`"
+            "的官方 `## Returns` 逐字写「**in-process, unmanaged C++: Pointer to an array** of …」⇒"
+            "★ 那正是**事实 47 那一族**（★ pywin32 到达不了）✓"
+            "★★★ **也不碰**要「Accessing Selections」前置的那几个"
+            "（★ `AccessSelections` / ★ `ReleaseSelectionAccess` / ★ `FacesRemoved` /"
+            "★ `MultipleThicknessFaces`）—— ★ 那是**前置**、★ 不是「读参数」 ✓",
+    ),
 ]
