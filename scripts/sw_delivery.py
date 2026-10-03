@@ -702,12 +702,35 @@ def _coerce_dispatch(value):
 
 
 def _get_pack_and_go(extension):
-    """@brief 获取 IPackAndGo，优先遵循当前类型库的无参数返回值签名。"""
+    """@brief 获取 IPackAndGo，优先遵循当前类型库的无参数返回值签名。
+
+    ★★★ 2026-10-03（接手轮）**修一处"把方法当对象返回"**（★ 由真机探针暴露）：
+      ★ `get_com_member` 的语义是「**取或调**」—— ★ **无实参时先无参调一次**，
+        ★ 成功了回**调用的结果**；★ **失败了才回成员本身**（★ 即一个 **bound method**）。
+      ★★ 而本函数原来只判 `package is not None` ⇒ ★★★ **于是把那个 bound method 当成
+        `IPackAndGo` 对象返回了** ⇒ 调用方随后调 `package.SetSaveToName(...)` 时报
+        `AttributeError: 'function' object has no attribute 'SetSaveToName'` ✓
+      ★ 真机证据（`tools/probe_setsavetoname_successor.py` ·
+        `output/setsavetoname-successor-evidence.json`）：★ `package = <bound method GetPackAndGo of …>` ✓
+      ★ 修法：★ **加一道"是不是真的 dispatch 对象"的检查** —— 用 `_coerce_dispatch`（★ 本文件已有）
+        过一道，★ 过不了就当这条路失败，★ 继续往下试其它取法 ✓
+      ⚠ 本函数原来那句注释「未在本机实测」的**同类问题**：★ 它假设了"无参返回值签名"，
+        ★★ 而**没验证返回的到底是不是对象** ✓
+    """
     errors: list[str] = []
     try:
         package = get_com_member(extension, "GetPackAndGo")
-        if package is not None:
+        #: ★★★ **必须验证它真的是 COM dispatch 对象** —— 见上面那段说明。
+        #: ★★ **不能用 `_coerce_dispatch` 来验**：★ 实测它**除 `None` 外什么都放行**
+        #:   （★ 对 bound method 会走 `Dispatch(value)` → 失败 → **`return value` 原样返回**）
+        #:   ⇒ ★★ 与**事实 40**那句同族：★「**一个存在但没人用的守卫与没有守卫等价**」✓
+        #: ★ 真判据：★ **COM 对象有 `_oleobj_`**（★ 本文件 `_coerce_dispatch` 自己也用了这一条）✓
+        if package is not None and hasattr(package, "_oleobj_"):
             return package
+        errors.append(
+            "zero-arg: 返回的不是 COM 对象（★ 类型 %s）—— ★ 多半是 bound method，"
+            "即 `get_com_member` 的无参调用失败了，★ 它把**成员本身**回了回来"
+            % (type(package).__name__,))
     except Exception as exc:
         errors.append(f"zero-arg: {exc}")
 
