@@ -215,10 +215,49 @@ def create_configuration(
 
 
 def _dimension_value_mm(dimension, configuration_name: str | None = None) -> float:
-    """读取尺寸系统值并转为毫米。"""
+    """读取尺寸系统值并转为毫米。
+
+    ★★★★ 2026-10-03（接手轮）**换走后继入口 + 处理"返回值是数组"** ——
+      ★ 原来是 `dimension.GetSystemValue2(名)` 与 `get_com_member(dimension, "SystemValue")`，
+        ★★ 两条都废弃（★ 官方逐字见下）。
+      ★ `types/IDimension/GetSystemValue2.md` 逐字：
+        「**Obsolete. See [[IDimension::GetSystemValue3]] and [[IDimension::IGetSystemValue3]].**」
+      ★ `types/IDimension/SystemValue.md` 逐字：
+        「**Obsolete. Superseded by [[IDimension::GetSystemValue3]], [[IDimension::IGetSystemValue3]], …**」
+      ★★ 后继 `GetSystemValue3(WhichConfigurations, Config_names)`（2 参）；
+        ★ `enums/swInConfigurationOpts_e.md` ⇒ **`swThisConfiguration = 1`** · `swAllConfiguration = 2`
+        · **`swSpecifyConfiguration = 3`**。
+      ★★★ **`Config_names` 传**空 VARIANT**** —— ★ 官方例子逐字
+        （`examples/Change_Dimensions_of_Gear_Mate_Example_VB.md`）：
+        ```vbnet
+        dimValue_1 = swDim_1.GetSystemValue3(swInConfigurationOpts_e.swThisConfiguration, Empty)
+        errors = swDim_1.SetSystemValue3(dimValue_1(0), …)   ' ★★★ 注意它取 (0)
+        ```
+      ★★★★ **最关键的一条**：★ **新入口回的是**数组/元组**，★ 不是标量** ⇒
+        ★ 本函数原来是 `float(…)` 直接吃 ⇒ ★★ **换过去会 `TypeError`** ⇒
+        ★ **必须多取一层 `[0]`** ✓（★ 本会话在 `GetExcludeFromBOM2` 上也见到同一形态）
+      ★★★★★ 真机证据（`tools/probe_getsystemvalue_on_existing.py` ·
+        `output/getsystemvalue-on-existing-evidence.json`，★ 用**仓里现成**的
+        `output/_probe_drawing_part.SLDPRT` 上的真实尺寸 `D1@凸台-拉伸1`）：
+        | ★ 调用 | ★ 读数 |
+        |---|---|
+        | 旧 `GetSystemValue2(名)` | ★ **0.01** |
+        | 旧 `SystemValue` | ★ **0.01** |
+        | ★★ 新 `GetSystemValue3(1, 空VARIANT)` | ★ **`(0.01,)`** |
+        | ★★ 新 `GetSystemValue3(2, 空VARIANT)` | ★ **`(0.01,)`** |
+        ⇒ ★★ **三者数值一致、且新的是元组 ⇒ 可换** ✓
+    """
+    from sw_connect import create_empty_dispatch_variant as _empty
+    from sw_connect import get_com_member as _g
+
     if configuration_name:
-        return float(dimension.GetSystemValue2(configuration_name)) * 1000.0
-    return float(get_com_member(dimension, "SystemValue")) * 1000.0
+        raw = _g(dimension, "GetSystemValue3", 3, [configuration_name])   #: ★ swSpecifyConfiguration
+    else:
+        raw = _g(dimension, "GetSystemValue3", 1, _empty())               #: ★ swThisConfiguration
+    #: ★★ 新入口回**数组** ⇒ 取第一个（★ 官方例子也是这么取的：`dimValue_1(0)`）
+    if isinstance(raw, (list, tuple)):
+        raw = raw[0] if raw else 0.0
+    return float(raw) * 1000.0
 
 
 def update_dimension_mm(
