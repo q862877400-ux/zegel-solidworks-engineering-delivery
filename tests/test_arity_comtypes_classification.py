@@ -30,10 +30,23 @@ def _refs():
 
 
 def test_the_two_sites_are_classified_as_comtypes_with_a_reason():
-    """@brief ★ 两条必须在 `COMTYPES_CALL_SITES` 里，且**各带理由**。"""
+    """@brief ★ 两条必须在 `COMTYPES_CALL_SITES` 里，且**各带理由**。
+
+    ★★★★★★ 2026-10-04（轮 116）**行号随实现更正** —— ★ 处置这条**存量失败** ✓
+      ★ **真机读数**：★ 断言的 `("sw_delivery.py", 635)` 在表里**找不到**
+        （★ 表里现在是 `671` 与 `965`）✓
+      ★★ **真因**：★ 那张表**按行号登记**、★ 而**我在轮 87 与 115 改过
+        `sw_delivery.py`**（★ 加注释 · ★ 换成员 · ★ 修 fake）⇒
+        ★★★ **⇒ 行号从 `635`/`884` 漂到 `671`/`965`** ⇒ **两边对不上** ✓
+      ★★★★ **⇒ 本处按新行号更正** —— ★ 而**同一个漂移要在**两处**改**
+        （★ `scripts/audit_call_arity.py` 与**本文件**）⇒
+        ★★★ **⇒ 那正是「改了实现、★ 配套的定位就失配」的第 N 次** ✓
+      ★★★★★ **⚠ 更稳的做法是改成**按成员名**登记**（★ 行号会一直漂）——
+        ★ 那要改 `audit` 的接口 ⇒ **本轮不动、★ 如实留作待办** ✓
+    """
     keys = set(ac.COMTYPES_CALL_SITES)
-    assert ("sw_delivery.py", 635) in keys
-    assert ("sw_delivery.py", 884) in keys
+    assert ("sw_delivery.py", 671) in keys
+    assert ("sw_delivery.py", 965) in keys
     for k, reason in ac.COMTYPES_CALL_SITES.items():
         assert len(reason) > 60, "%s 的理由太短: %r" % (k, reason)
         assert "comtypes" in reason, "%s 的理由要点明 comtypes" % (k,)

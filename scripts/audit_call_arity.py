@@ -192,14 +192,25 @@ def direct_call_sites(path, table):
 #
 # ## 表的结构
 # `(文件名后缀, 行号)` → 理由
+#
+# ★★★★★★ 2026-10-04（轮 116）**⚠ 这张表按**行号**登记 ⇒ 它会**漂**** ——
+#   ★ **真机读数**：★ `tests/test_arity_comtypes_classification.py` 报
+#     「★ 应当恰好 **2** 条 comtypes，★ 实际 **0**」⇒
+#   ★★ **真因**：★ 我在轮 87 与 115 改过 `sw_delivery.py`（★ 加注释 · ★ 换成员 · ★ 修 fake）⇒
+#     ★★★ **⇒ 那两条的行号从 `635` / `884` 漂到 `671` / `965`** ⇒ **登记失配** ✓
+#   ★★★★ **⇒ 已按新行号更正**；★ **而这个"按行号"的脆弱性是本表固有的** ——
+#     ★ 它与「钉死数量」「mock 落后」是**同一族**：★ **改了实现、★ 配套的定位就失配**、
+#     ★★ **而它**不会自己报错**（★ 只在跑那条测试时才现形）✓
+#   ★★★★★ **⇒ 下次改这个文件时，★ 记得同步这两行**；★ 更稳的做法是改成**按成员名**登记
+#     （★ 那要改 `audit` 的接口 —— ★ **本轮不动**、★ 如实留给后人）✓
 COMTYPES_CALL_SITES: dict[tuple[str, int], str] = {
-    ("sw_delivery.py", 635):
+    ("sw_delivery.py", 671):
         "`package.IGetDocumentNames(document_count)` —— 走 **comtypes 早绑定**"
         "（`_comtypes_document_names()`，由 `comtypes.client.GetModule` 得到）。"
         "注释写明：「comtypes 会自动分配 [out] 数组，只需传入 Count」。"
         "官方 arity = 2（`Int32&` + `Object&`）⇒ 在 **pywin32** 上要传 2，"
         "在 **comtypes** 上只传入参即正确。**不是缺陷。**",
-    ("sw_delivery.py", 884):
+    ("sw_delivery.py", 965):
         "`sw.OpenDoc6(path, type, options, empty)` —— 同样是 **comtypes 早绑定**"
         "（`sw` 由 `comtypes` 创建）。官方 arity = 6（含两个 `[out] long`）⇒ "
         "comtypes 代理自行分配出参。**不是缺陷。**"

@@ -68,7 +68,18 @@ OBSOLETE = ("SaveAs", "SaveAs2")
 #: ★ 改这两处**必须真机验**（★ 导出是最容易被"看着成功"骗到的路径）⇒
 #:   按硬约束⑥，★ 它们**以登记形式显式存在**，★ **而不是被掩盖或被跳过**。
 _REGISTERED_OBSOLETE = {
-    "sw_export.py": {(118, "SaveAs"), (416, "SaveAs")},
+    #: ★★★★★★ 2026-10-04（轮 116）**`sw_export.py` 的两条已删** —— ★ 那正是本测试要求的 ✓
+    #:   ★ **真机读数**：★ 实得 `{'sw_connect.py': 1}` · ★ 而原登记
+    #:     `{'sw_export.py': 2, 'sw_connect.py': 1}` ⇒
+    #:   ★★ **本测试自己逐字写着**：★「★ **变少是**修好了**（★ 请把 `_REGISTERED_OBSOLETE`
+    #:     里对应的条目删掉 —— ★ 那条会提醒你）**」✓
+    #:   ★★★ **真因**：★ `sw_export.py` 那两处**已经被修好了** ——
+    #:     提交 `2656c26c`（★ 阶段 1 · 处置 `JUDGE-C_D_E` 🔴 #6 · #21）逐字：
+    #:     「★ **PDF 走两级废弃的 `SaveAs`**；★ **三处保存路由统一到现行的 `SaveAs3`**」✓
+    #:   ★★★★ **⇒ 而我当时**没同步删这张表里的两条**** ⇒ ★ **它红了 55 轮** ✓
+    #:   ★★★★★ **可复用判据**：★★★ **这与"mock 落后于换代"是**同一个病**** ——
+    #:     ★ **"改了实现"之后，一切**与它配套的东西**都要跟着改**：
+    #:     ★★ mock · ★ 登记表 · ★ 钉死数量 · ★ 契约测试 ⇒ ★ 而它们**都不会自己报错** ✓
     "sw_connect.py": {(916, "SaveAs")},
 }
 
@@ -182,7 +193,8 @@ def test_known_existing_deviations_are_registered_not_hidden():
         if n:
             deviations[name] = n
     #: ★ 2026-10-01 实测：`sw_export.py` 2 处（PDF + 通用导出）· `sw_connect.py` 1 处
-    registered = {"sw_export.py": 2, "sw_connect.py": 1}
+    #: ★★★★★★ 2026-10-04（轮 116）**登记数调小** —— ★ 同上（★ `sw_export.py` 已修好）✓
+    registered = {"sw_connect.py": 1}
     assert deviations == registered, (
         "★ 废弃路由的分布变了：★ 实得 %s · 登记 %s\n"
         "★ 变多是**新增偏差**（不允许）；★ 变少是**修好了**（请把 `registered` 调小）。"
