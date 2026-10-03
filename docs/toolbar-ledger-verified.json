@@ -1,15 +1,15 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 65,
+  "已能": 68,
   "待查": 20,
-  "可攻关": 27,
+  "可攻关": 24,
   "待验证": 7
  },
  "by_toolbar_gap": {
   "特征": 2,
   "特征下拉": 9,
-  "草图绘制": 7,
+  "草图绘制": 4,
   "草图尺寸": 1,
   "草图编辑": 3,
   "曲面": 5
@@ -1152,6 +1152,7 @@
    "api": "CreateSketchSlot",
    "entry": "sw_part.sketch_slot",
    "level": "能",
+   "capability_id": "sketch_slot_types",
    "api_iface_hits": [],
    "api_member_hits": [
     "CreateSketchSlot"
@@ -1170,6 +1171,7 @@
    "api": "CreateSketchSlot(center)",
    "entry": "",
    "level": "不能",
+   "capability_id": "sketch_slot_types",
    "api_iface_hits": [],
    "api_member_hits": [
     "CreateSketchSlot"
@@ -1181,7 +1183,7 @@
     "CreateSketchSlot",
     "center"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "草图绘制",
@@ -1189,6 +1191,7 @@
    "api": "CreateSketchSlot(3pt arc)",
    "entry": "",
    "level": "不能",
+   "capability_id": "sketch_slot_types",
    "api_iface_hits": [],
    "api_member_hits": [
     "CreateSketchSlot"
@@ -1199,7 +1202,7 @@
    "implemented_hits": [
     "CreateSketchSlot"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "草图绘制",
@@ -1207,6 +1210,7 @@
    "api": "CreateSketchSlot(center arc)",
    "entry": "",
    "level": "不能",
+   "capability_id": "sketch_slot_types",
    "api_iface_hits": [],
    "api_member_hits": [
     "CreateSketchSlot"
@@ -1218,7 +1222,7 @@
     "CreateSketchSlot",
     "center"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "草图绘制",

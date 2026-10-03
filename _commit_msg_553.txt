@@ -1,0 +1,40 @@
+feat(草图绘制): **槽口四种全真机建成** —— 一条方法 + 一个枚举（事实 432）
+
+★ 照新纪律（**官方文档是第 0 步**）攻台账的**槽口**那几条。
+
+## 一、官方 + 反射一次给全
+
+★ `C:\swapi\types\ISketchManager\CreateSketchSlot.md` 的**签名（14 参）**逐字给了
+  `SlotCreationType` / `SlotLengthType` / `Width` / 三组点 / `CenterArcDirection`（官方给了 **-1=CW · 1=CCW**）
+  / `AddDimension`。
+
+★★ **而两个枚举的**数值**来自反射**（★ 铁律 4：swapi 的 enums 页**只给成员名、不给数值**）：
+  ```
+  swSketchSlotCreationType_e :  **0 = line · 1 = center_line · 2 = arc · 3 = 3pointarc**
+  swSketchSlotLengthType_e   :  0 = CenterCenter · 1 = FullLength
+  ```
+  ⇒ ★★ **故台账那四条正好对上 0/1/2/3** —— ★ **而它们是同一个方法的四个枚举值** ✓
+
+## 二、真机（`tools/prove_sketch_slot_four_types.py`，走 `sw_guard`、零弹窗）
+
+```
+line(0) · center_line(1) · arc(2) · 3pointarc(3)
+  ⇒ 四个 type **全部**令草图段数 **0 → 5**（★ 每个槽口 5 段）· 返回 `CDispatch`
+⇒ **判别：`slot_all_four_work`（4 / 4）** ✓
+```
+
+## 三、交付
+
+- `capabilities.yaml` 新增 **`sketch_slot_types`**（`level = verified`）⇒ 共 **95** 条
+- 台账**四条均补** `capability_id`（直槽口 / 中心点直槽口 / 中心点圆弧槽口 / 三点圆弧槽口）
+  ⇒ **已能 68**（★ 原始"能"只有 47）
+- 记成 **事实 432**
+
+## 四、★ 方法论
+
+★ 一组 **UI 上看着相似**的条目，先查**它们是不是同一个 API 的不同枚举值** ——
+  ★ 而**不是逐条写代码** ⚠
+★ 与**事实 430**（边界凸台 vs 放样）**同族**：★ **UI 分不分开，只有 API 能定**
+  （★ 那次是**同一个方法**、本次是**同一个方法的四个值**）。
+
+★ 语法门禁 0 处（752 个文件）。

@@ -3912,6 +3912,32 @@
         "⚠ **未查**：★ `mark = 32`（**上至面 / 上至顶点 / 等距面**）—— ★ 本仓**从未用过**；★ 非 360°；★ `RevType` 的两向与中面。",
         "⚠ **本包装未接进 MCP 工具层**（★ 现为 `scripts/` 层可调用）。"
       ]
+    },
+    {
+      "id": "sketch_slot_types",
+      "label": "槽口四种（`CreateSketchSlot` + `swSketchSlotCreationType_e`）—— ★ **四个全真机建成**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与反射**立）：`C:\\swapi\\types\\ISketchManager\\CreateSketchSlot.md`（**14 参**）；枚举值取自**反射**（`_raw/**/enum_values_sldworks.txt`）：**line=0 · center_line=1 · arc=2 · 3pointarc=3**。代码：`tools/prove_sketch_slot_four_types.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 553）**四个值全真机建成**（走 `sw_guard`，零弹窗）：`CreateSketchSlot(type, 0, 0.004, -0.02,0,0, 0.02,0,0, 0,0.012,0, 1, True)` ⇒ **四个 type 均令草图段数 0 → 5**（★ 每个槽口 5 段）· 返回 `CDispatch`。证据 `output/sketch-slot-four-types-evidence.json`。",
+        "★ 对应台账四条（★ 而**它们是同一个方法的四个枚举值**）：直槽口 / 中心点直槽口 / 中心点圆弧槽口 / 三点圆弧槽口。"
+      ],
+      "limitations": [
+        "★ **建议传的参数**：`SlotLengthType = 0`（CenterCenter）、`CenterArcDirection = 1`（CCW，★ 官方给的取值是 **-1 = CW / 1 = CCW**）、`AddDimension = True`（★ 真机用 True 成）。",
+        "⚠ **未查**：★ `SlotLengthType = 1`（FullLength）；★ `CenterArcDirection = -1`；★ 三点圆弧的 **P3** 实际起作用的方式。",
+        "⚠ **本包装未接进 MCP 工具层**（★ 现为探针可调用）。"
+      ]
     }
   ]
 }

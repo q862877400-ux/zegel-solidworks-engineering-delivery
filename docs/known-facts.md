@@ -1780,3 +1780,19 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ 而这是**同一教训的第三次**：事实 414（“提到过”≠“查过”）· 事实 430（★ 它自己那个“边界切除”过度映射）· 本轮（“调过”≠“做成”）。
      ★★ **方法论**：★ **用一个静态线索去减少工作量是对的**，★ 而**不能把线索当结论** —— ★ 每一条都要**真机核一次**才能改台账** ⚠
      ★ **故本轮不改台账**（★ 那 2 条**仍在可攻关**）—— ★ **不假装做到**。|真机：`tools/prove_splitline_and_silhouette.py`；证据 `output/splitline-and-silhouette-evidence.json`；本仓包装：`scripts/sw_curve_and_split.py:118` · `scripts/sw_sketch_edit.py:210`；对照事实 414 / 430 |
+| 432 | **★★★ 槽口四种 = **一条方法 + 一个枚举****（`ISketchManager.CreateSketchSlot`）—— ★ **一次文档阅读 = 4 条能力**** —— 2026-10-03（轮 553）。
+     ★ **官方签名（14 参）**：`CreateSketchSlot(SlotCreationType, SlotLengthType, Width, X1,Y1,Z1, X2,Y2,Z2, X3,Y3,Z3, CenterArcDirection, AddDimension)`；★ `CenterArcDirection` 官方给了取值：**-1 = CW · 1 = CCW**。
+     ★★ **而两个枚举的**值来自反射**（★ 铁律 4：swapi 的 enums 页**只给成员名列表、不给数值**）**：
+     ```
+     swSketchSlotCreationType_e :  **0 = line · 1 = center_line · 2 = arc · 3 = 3pointarc**
+     swSketchSlotLengthType_e   :  0 = CenterCenter · 1 = FullLength
+     ```
+     ⇒ ★★ **故台账那四条（直槽口 / 中心点直槽口 / 中心点圆弧槽口 / 三点圆弧槽口）正好对上 0/1/2/3** ✓
+     ★ 真机（`tools/prove_sketch_slot_four_types.py`，零弹窗）：★ **四个 type 全成**：
+     ```
+     line(0) · center_line(1) · arc(2) · 3pointarc(3)  ⇒ 均令草图段数 **0 → 5** · 回 `CDispatch`
+     ```
+     ⇒ ★★ **故：一次文档阅读 = 4 条能力** ✓ —— ★ 而这正是**新纪律的最大回报**：★ **UI 上四个按钮，API 上是一个方法 + 一个枚举** 。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_slot_types`**（level = **verified**，共 **95** 条）；台账**四条均补** `capability_id` ⇒ 已能 **68**。
+     ★★ **方法论**：★ 一组 UI 上看着相似的条目，先查**它们是不是同一个 API 的不同枚举值** —— ★ 而**不是逐条写代码** ⚠
+     ★ 而它与事实 430（边界凸台 vs 放样）同族：★ **UI 分不分开，只有 API 能定**（★ 那次是**同一个方法**、本次是**同一个方法的四个值**）。|真机：`tools/prove_sketch_slot_four_types.py`；证据 `output/sketch-slot-four-types-evidence.json`；官方：`C:\swapi\types\ISketchManager\CreateSketchSlot.md` × 反射 `enum_values_sldworks.txt` |

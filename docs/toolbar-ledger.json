@@ -475,28 +475,32 @@
    "zh": "直槽口",
    "api": "CreateSketchSlot",
    "entry": "sw_part.sketch_slot",
-   "level": "能"
+   "level": "能",
+   "capability_id": "sketch_slot_types"
   },
   {
    "tb": "草图绘制",
    "zh": "中心点直槽口",
    "api": "CreateSketchSlot(center)",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_slot_types"
   },
   {
    "tb": "草图绘制",
    "zh": "三点圆弧槽口",
    "api": "CreateSketchSlot(3pt arc)",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_slot_types"
   },
   {
    "tb": "草图绘制",
    "zh": "中心点圆弧槽口",
    "api": "CreateSketchSlot(center arc)",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_slot_types"
   },
   {
    "tb": "草图绘制",

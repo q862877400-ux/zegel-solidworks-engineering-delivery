@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 65 |
-| 可攻关 | 27 |
+| 已能 | 68 |
+| 可攻关 | 24 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -43,9 +43,6 @@
 | 特征下拉 | 表格驱动的阵列 | **可攻关** | `InsertTableDrivenPattern` | — |
 | 特征下拉 | 高级孔 | **可攻关** | `HoleWizard5` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
-| 草图绘制 | 三点圆弧槽口 | **可攻关** | `CreateSketchSlot` | — |
-| 草图绘制 | 中心点圆弧槽口 | **可攻关** | `CreateSketchSlot` | — |
-| 草图绘制 | 中心点直槽口 | **可攻关** | `CreateSketchSlot` | — |
 | 草图绘制 | 中点线 | **可攻关** | `CreateLine` | — |
 | 草图绘制 | 方程式驱动的曲线 | **可攻关** | `CreateEquationSpline2`, `CreateSplinesByEqnParams2` | — |
 | 草图绘制 | 曲面上的样条曲线 | **可攻关** | `CreateSpline` | — |
@@ -116,6 +113,9 @@
 | 草图绘制 | 3点中心矩形 | **已能** | `Create3PointCenterRectangle` | `sw_sketch_primitives.sketch_3point_center_rectangle` |
 | 草图绘制 | 3点圆弧 | **已能** | `Create3PointArc` | `sw_sketch_primitives.sketch_3point_arc` |
 | 草图绘制 | 3点边角矩形 | **已能** | `Create3PointCornerRectangle` | `sw_sketch_primitives.sketch_3point_corner_rectangle` |
+| 草图绘制 | 三点圆弧槽口 | **已能** | `CreateSketchSlot` | — |
+| 草图绘制 | 中心点圆弧槽口 | **已能** | `CreateSketchSlot` | — |
+| 草图绘制 | 中心点直槽口 | **已能** | `CreateSketchSlot` | — |
 | 草图绘制 | 中心矩形 | **已能** | `CreateCenterRectangle` | `sw_part.sketch_rectangle` |
 | 草图绘制 | 中心线 | **已能** | `CreateCenterLine` | `sw_part.sketch_centerline` |
 | 草图绘制 | 切线弧 | **已能** | `CreateTangentArc` | `sw_sketch_primitives.sketch_tangent_arc` |
