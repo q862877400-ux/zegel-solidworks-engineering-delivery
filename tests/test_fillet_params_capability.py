@@ -31,6 +31,9 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _funcbody import func_source  # noqa: E402
+
 REPO = Path(__file__).resolve().parents[1]
 SRC = REPO / "scripts" / "sw_feature_readback.py"
 EVID = REPO / "output" / "fillet-params-capability-recheck.json"
@@ -58,9 +61,22 @@ def test_code_does_not_touch_the_item_taking_members() -> None:
     src = SRC.read_text(encoding="utf-8", errors="replace")
     i = src.find("def fillet_params(")
     assert i != -1, "★ 找不到 `fillet_params`"
-    body = src[i:].split('"""')[-1]                       #: ★ 函数体（★ 跳过 docstring）
+    #: ★★★★ 2026-10-04（轮 113）**改用 `ast` 取那一个函数**（★ 事实 51）——
+    #:   ★ **真因**：★ `src[i:].split('"""')[-1]` **看着像"函数体"**、
+    #:     ★★ **而它实际是"从那个 `def` 到**文件末尾**"** ⇒
+    #:     ★★★ **文件末尾后来多了一个函数 ⇒ 范围**悄悄变宽**、判据**误报**** ✓
+    #:   ★★★★ **⇒ 用 `tests/_funcbody.py::func_source`**（★ 按 `ast` 的 `end_lineno`）✓
+    body = func_source(src, "fillet_params")
+    #: ★★★★ **判据要精确**（★ 事实 51 · 本会话第 N 次）：★ 那三个名字**本身就在**函数体里** ——
+    #:   ★ 它们是**注释**里「★ 本函数**不碰**它们」那句话的内容、★ **不是调用**** ⇒
+    #:   ★★ **所以要查**调用形态** `get_com_member(fd, "<name>"`、★ 而不是查名字出现** ✓
+    #:   （★ 与 `test_csys_params_capability.py` 那条**同一个修法**）✓
     for bad in ("GetRadius", "GetDistance", "GetConicRhoOrRadius"):
-        assert bad not in body, "★ 函数体里调了 `%s`（★ 那要 item 对象）" % bad
+        for shape in ('get_com_member(fd, "%s"' % bad, "get_com_member(fd, '%s'" % bad,
+                      'safe_get_com_member(fd, "%s"' % bad):
+            assert shape not in body, "★ 函数体里**调了** `%s`（★ 那要 item 对象）" % bad
+    #: ★★ 而那句"不碰"的**记录**必须还在 ✓
+    assert "不碰" in body, "★ 那句「本函数不碰它们」的记录不见了"
 
 
 def test_code_uses_the_two_layer_filter() -> None:

@@ -30,7 +30,11 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _funcbody import func_source  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 SRC = REPO / "scripts" / "sw_feature_readback.py"
@@ -56,7 +60,12 @@ def test_code_does_not_read_the_obsolete_member() -> None:
     src = SRC.read_text(encoding="utf-8", errors="replace")
     i = src.find("def base_flange_params(")
     assert i != -1, "★ 找不到 `base_flange_params`"
-    body = src[i:].split('"""')[-1]
+    #: ★★★★ 2026-10-04（轮 113）**改用 `ast` 取那一个函数**（★ 事实 51）——
+    #:   ★ **真因**：★ `src[i:].split('"""')[-1]` **看着像"函数体"**、
+    #:     ★★ **而它实际是"从那个 `def` 到**文件末尾**"** ⇒
+    #:     ★★★ **文件末尾后来多了一个函数 ⇒ 范围**悄悄变宽**、判据**误报**** ✓
+    #:   ★★★★ **⇒ 用 `tests/_funcbody.py::func_source`**（★ 按 `ast` 的 `end_lineno`）✓
+    body = func_source(src, "base_flange_params")
     assert 'get_com_member(fd, "D1OffsetDistance"' not in body, (
         "★ 函数体里读了 `D1OffsetDistance`（★ 官方标真废弃）")
     #: ★★ 而那份"不读"的清单**必须在**（★ 那是记录）✓

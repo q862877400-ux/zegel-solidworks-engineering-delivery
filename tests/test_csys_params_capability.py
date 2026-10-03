@@ -29,7 +29,11 @@ from __future__ import annotations
 
 import ast
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _funcbody import func_source  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 SRC = REPO / "scripts" / "sw_feature_readback.py"
@@ -67,7 +71,12 @@ def test_code_does_not_call_the_no_page_members() -> None:
     src = SRC.read_text(encoding="utf-8", errors="replace")
     i = src.find("def csys_params(")
     assert i != -1, "★ 找不到 `csys_params`"
-    body = src[i:].split('"""')[-1]                       #: ★ 函数体（★ 跳过 docstring）
+    #: ★★★★ 2026-10-04（轮 113）**改用 `ast` 取那一个函数**（★ 事实 51）——
+    #:   ★ **真因**：★ `src[i:].split('"""')[-1]` **看着像"函数体"**、
+    #:     ★★ **而它实际是"从那个 `def` 到**文件末尾**"** ⇒
+    #:     ★★★ **文件末尾后来多了一个函数 ⇒ 范围**悄悄变宽**、判据**误报**** ✓
+    #:   ★★★★ **⇒ 用 `tests/_funcbody.py::func_source`**（★ 按 `ast` 的 `end_lineno`）✓
+    body = func_source(src, "csys_params")
     for n in NO_PAGE:
         for shape in ('get_com_member(fd, "%s"' % n, "get_com_member(fd, '%s'" % n,
                       'safe_get_com_member(fd, "%s"' % n):

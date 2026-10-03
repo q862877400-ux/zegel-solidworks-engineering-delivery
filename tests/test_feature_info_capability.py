@@ -35,6 +35,9 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _funcbody import func_source  # noqa: E402
+
 REPO = Path(__file__).resolve().parents[1]
 SRC = REPO / "scripts" / "sw_feature_readback.py"
 EVID = REPO / "output" / "feature-info-capability-recheck.json"
@@ -46,9 +49,21 @@ def test_code_excludes_getbox_with_the_official_reason() -> None:
     i = src.find("def feature_info(")
     assert i != -1, "★ 找不到 `feature_info`"
     seg = src[i:i + 5200]
-    assert "GetBox" not in seg.split('"""')[-1], "★ 函数体里调了 `GetBox`（★ 官方说不可核）"
-    assert "approximate" in seg, "★ 没引官方那句 `approximate`"
-    assert "should not be used for comparison" in seg, "★ 没引官方的「不可用于比较或计算」"
+    #: ★★★★ 2026-10-04（轮 113）**改用 `ast` 取那一个函数**（★ 事实 51 · 第 4 处同病）——
+    #:   ★ 见 `tests/_funcbody.py` 的说明：★ `src[i:].split('"""')[-1]`
+    #:   **看着像"函数体"**、★ 而它实际是"到**文件末尾**" ⇒ **范围会悄悄变宽** ✓
+    body = func_source(src, "feature_info")
+    #: ★★★★ **判据要精确**（★ 事实 51 · 本会话第 N 次）：★ `GetBox` **本身就在**函数体里** ——
+    #:   ★ 它是 docstring 里那句「★ **⚠ 本工具**不读 `GetBox`****」的内容、★ **不是调用**** ⇒
+    #:   ★★ **所以要查**调用形态**** ✓（★ 与 `fillet` 那条同一个修法）
+    for shape in ('get_com_member(fd, "GetBox"', "get_com_member(fd, 'GetBox'",
+                  'safe_get_com_member(fd, "GetBox"'):
+        assert shape not in body, "★ 函数体里**调了** `GetBox`（★ 官方说不可核）"
+    #: ★ 而那句「不读 `GetBox`」的**记录**必须还在 ✓
+    assert "GetBox" in body, "★ 那句「本工具不读 GetBox」的记录不见了"
+    #: ★★ 官方那两句理由也要在（★ 用**精确的函数体**，★ 不用 5200 字切片）✓
+    assert "approximate" in body, "★ 没引官方那句 `approximate`"
+    assert "should not be used for comparison" in body, "★ 没引官方的「不可用于比较或计算」"
 
 
 def test_code_uses_the_two_layer_filter_in_the_fallback() -> None:
