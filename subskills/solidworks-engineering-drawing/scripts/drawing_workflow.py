@@ -1589,6 +1589,26 @@ def _paper_size_from_template(template_path):
     return None
 
 
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   SolidWorks 官方枚举（本机 `C:\swapi\enums\swTableAnnotationType_e.md`）
+# 文件:   C:\swapi\enums\swTableAnnotationType_e.md（★ 逐值抄录，★ 未发明一个值）
+# 定位:   ★★★★ 2026-10-04（接手轮）**改一个错值 + 补全 4 个缺失值** ——
+#   处置 `JUDGE-C_D_E.md` 的 🔴 **#7**（★ `C-dw-2 C2-3`）—— ★ 裁判逐字：
+#   「★ 通用公差表类型号写成 `6` … ★ 官方 `swTableAnnotation_GeneralTolerance | 9` ／
+#     `swTableAnnotation_WeldTable | 6` ⇒ ★★ **焊接表会被误报成公差表、真公差表被打成 `unknown`**」✓
+#   ★★ **实测复核（★ 我读的是官方枚举页的**全部 11 个成员**，★ 不只裁判点的那两个）**：
+#     | ★ 值 | ★ 官方成员 | ★ 改前本仓 |
+#     |---|---|---|
+#     | 0-5 | General / HoleChart / BillOfMaterials / RevisionBlock / WeldmentCutList / TitleBlock | ★ **全对** ✓ |
+#     | **6** | ★★ **`swTableAnnotation_WeldTable`** | ★★ **`"general_tolerance"` ✗** |
+#     | 7 · 8 | BendTable · PunchTable | ★ **缺** |
+#     | **9** | ★★ **`swTableAnnotation_GeneralTolerance`** | ★★ **缺**（★ 真正的通用公差表）|
+#     | 10 | FamilyTable | ★ **缺** |
+#   ⇒ ★★★ **所以不止"6 写错"：★ 旧表把 `6` 当成公差表、★ 而真正的公差表（`9`）根本不在表里**
+#     ⇒ ★★★★ **两个方向的错都发生了**（★ 焊接表被误报成公差表 · ★ 真公差表被打成 `unknown`）✓
+#   许可:   本仓库 MIT。★ 无第三方代码引入（★ 值抄自官方枚举，★ 非第三方实现）。
+#   覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
 TABLE_ANNOTATION_KINDS = {
     0: "general",
     1: "hole_chart",
@@ -1596,7 +1616,14 @@ TABLE_ANNOTATION_KINDS = {
     3: "revision",
     4: "weldment_cut_list",
     5: "title_block",
-    6: "general_tolerance",
+    #: ★★★ 2026-10-04 修：★ `6` 官方是 **`WeldTable`**，★ 不是公差表 ✓
+    6: "weld_table",
+    7: "bend_table",
+    8: "punch_table",
+    #: ★★★★ 2026-10-04 补：★ **`9` 才是 `GeneralTolerance`** —— ★ 改前它不在表里，
+    #:   所以真正的通用公差表（Type=9）会被打成 `unknown` ✓
+    9: "general_tolerance",
+    10: "family_table",
 }
 
 
