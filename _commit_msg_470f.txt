@@ -1,0 +1,58 @@
+fix(gate): `check_com_write_form` 的判据补上"读/写的真实区别" + 修掉最后一个顶层口径缺口
+
+★ 承用户问「那你解决好了吗」—— ★ **不满足于"测试绿了"**，回头验最初那件事：
+  「那 98 处**写属性会说谎**的问题，真的解决了吗」。★ 结果**又抓出一个真缺口**。
+
+## ① 最后一个"顶层口径下取不到 `set_com_member`"的模块
+
+★ 验法（★ 不问推理，直接问运行时）：把 16 个用 `set_com_member` 的模块，**分别以两种口径导入**
+  （`scripts.X` 包内 / `X` 顶层），看 `hasattr(mod, "set_com_member")`：
+```
+★ 两种口径下都拿得到：15 / 16
+★★ 而 `sw_drawing_view`：**包内=True · 顶层=False** ⚠
+```
+★ 真因（★ 就是本轮最开始那个形态）：
+```python
+except ImportError:
+    from sw_connect import get_com_member, call_com_member# ── 来源 ──────────
+                                                          ↑ ★ 我最初批量补名字时**追加到了注释之后**
+```
+⇒ ★ **名字掉进注释里、从未生效**；★ 而它是**顶层载入**时（脚本 / 探针 / pytest prepend）才走到的那一支。
+★ 修法：插在注释**之前** ⇒ 复验 **16 / 16** ✓
+
+## ② 门禁的判据过宽 —— 它把**合法的"读"**也报了（4 处假阳性）
+
+★ 实测它报的 4 处**全是我上一轮特意改回 `get_com_member` 的"读"**：
+```
+sw_equation.py:108       get_com_member(mgr, "Equation", i)                  ← **索引属性**，i 是下标
+sw_assembly.py:868/870   get_com_member(x, "MateEntityType"/"MateComponentName", index)  ← 同
+sw_custom_property.py:88 get_com_member(ext, "CustomPropertyManager", 配置名)  ← **官方那是方法**
+```
+★ 漏掉的判据，**本仓 `sw_connect.set_com_member` 的 docstring 写着**（逐字）：
+> 与已知事实 4（读用 `get_com_member`）成对：**读走 `get_com_member`，写走本函数。**
+
+⇒ ★★ **而"读"与"写"在代码里的区别就是：★ 返回值用不用** ⇒ 补第二条判据：
+  ★ **返回值被使用 ⇒ 读 ⇒ 放过**；★ **返回值被丢掉（`ast.Expr`）⇒ 写 ⇒ 报** ✓
+★ 这条判据与我轮 470 找"过度替换"时用的**是同一条** —— ★ 现在它**进了门禁**，
+  不再只活在临时脚本里（★ **事实 61 定则④**："写了一个好用的工具函数，就要在**所有**同类场合用它"）。
+
+## ③ **负例证明**（★ 这条才是"门禁有效"的证据）
+
+★ 拿**修复前的原文**当输入（`git show <ref>:<path>`）：
+```
+46f9424^   修复前   命中 = [(698, 'ScaleRatio')]   ← ★ 抓到那处真 bug
+4083d78^   修复前   命中 = [(698, 'ScaleRatio')]
+46f9424    修复后   命中 = 0
+HEAD       修复后   命中 = 0
+```
+★ 第一次我拿 `c320b8d^` 当负例、命中 0 —— ★ **那是我选错了 ref**（`set_view_scale` 的修复就在 `46f9424`，
+  而它在 `c320b8d` 之前）⇒ ★ **不是门禁失效**。★ 换到更早的 ref 就命中了 ✓
+
+## 数字
+
+```
+全量 pytest   **1407 passed / 0 failed / 19 skipped**
+release_check  exit 0
+check_com_write_form   PASS（0 处）
+16 个用 set_com_member 的模块   **两种口径下 16/16 都拿得到**
+```

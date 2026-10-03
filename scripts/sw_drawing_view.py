@@ -68,7 +68,16 @@ from typing import Any
 try:
     from .sw_connect import get_com_member, call_com_member, set_com_member
 except ImportError:
-    from sw_connect import get_com_member, call_com_member# ── 来源 ─────────────────────────────────────────────────────────────
+    #: ★★★ 2026-10-03（轮 470）**这一支原先缺 `set_com_member`** ——
+    #:   ★ 它那一行是 `from sw_connect import get_com_member, call_com_member`，
+    #:     **紧接着**就是 `# ── 来源 ──` 那条注释 ⇒ ★★ 我最初批量补名字时把它**追加到了注释之后**
+    #:     （`…call_com_member# ── 来源 ──, set_com_member`）⇒ **名字掉进注释里、从未生效** ⚠
+    #:   ★★ 而那意味着：★ 本模块被**顶层载入**时（脚本 / 探针 / pytest 的 prepend 模式），
+    #:     `set_view_scale_verified` 里那几处写会 `NameError` —— ★ **只在包内口径下才正常**。
+    #:   ★ 实测（轮 470）：16 个用 `set_com_member` 的模块里，**只有这一个**在顶层口径下取不到它。
+    #:   ★ 修法：把它**插在注释之前**（★ 与另外 15 个一致）✓
+    from sw_connect import get_com_member, call_com_member, set_com_member
+# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_drawing_view.py —— 本文件自身
 # 定位:   模块导出清单与成员登记表。

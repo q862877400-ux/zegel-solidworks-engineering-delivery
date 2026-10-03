@@ -93,26 +93,51 @@ def main() -> int:
             except Exception:                                     # noqa: BLE001
                 continue
             scanned += 1
+            #: ★★★ 2026-10-03（轮 470）**判据要与"读 / 写的真实区别"对齐** ——
+            #:   ★ 本门禁原判据只有一条：「名字在官方源里是 `kind: property`，且传了实参」
+            #:   ⇒ ★★ **过宽**：它把**合法的「读」也报了**（★ 实测 4 处假阳性：
+            #:     `sw_equation.py` 的 `get_com_member(mgr, "Equation", i)`（**索引属性**，
+            #:     `i` 是**下标**）· `sw_assembly.py` 的 `MateEntityType` / `MateComponentName`（同）·
+            #:     `sw_custom_property.py` 的 `CustomPropertyManager`（★ 官方那是**方法**，收配置名））。
+            #:   ★★ 而"读"与"写"在代码里的区别**就是**：**返回值用不用** ——
+            #:     依据是本仓 `sw_connect.set_com_member` 的 docstring（逐字）：
+            #:     > 与已知事实 4（读用 `get_com_member`）成对：**读走 `get_com_member`，写走本函数。**
+            #:   ⇒ ★ 故加第二条判据：★ **返回值被使用 ⇒ 那是读 ⇒ 放过**；
+            #:     ★ **返回值被丢掉（`ast.Expr`）⇒ 那是写 ⇒ 报** ✓
+            #:   ⚠ 这与我在轮 470 找"过度替换"时用的判据**是同一条** —— ★ 现在它进了门禁，
+            #:     不再只活在我的临时脚本里（★ 事实 61 定则④："写了一个好用的工具函数，
+            #:     就要在**所有**同类场合用它"）。
+            ret_used = set()
+            for x in ast.walk(tree):
+                if isinstance(x, ast.Call):
+                    ret_used.add(id(x))
+            for x in ast.walk(tree):
+                if isinstance(x, ast.Expr) and isinstance(x.value, ast.Call):
+                    ret_used.discard(id(x.value))
             for n in ast.walk(tree):
                 if not isinstance(n, ast.Call):
                     continue
                 nm = getattr(n.func, "id", None) or getattr(n.func, "attr", None)
                 if nm != "get_com_member":
                     continue
-                #: \u2605 \u7b2c 2 \u4e2a\u5b9e\u53c2 = \u6210\u5458\u540d\uff1b\u2605 **\u6709\u7b2c 3 \u4e2a\u5b9e\u53c2**\uff1d\u5728\u5199
+                #: ★ 第 2 个实参 = 成员名；★ **有第 3 个实参** ⇒ 进了"取或调"那条路
                 if len(n.args) < 3:
                     continue
                 a1 = n.args[1]
                 if not (isinstance(a1, ast.Constant) and isinstance(a1.value, str)):
                     continue
                 name = a1.value
-                if name.lower() in props:
-                    res["hits"].append({
-                        "file": str(p.relative_to(R)).replace("\\", "/"),
-                        "line": n.lineno, "member": name,
-                        "why": "**%s** 在官方源里是 `kind: property` ⇒ 这里在**写**它，"
-                               "而 `get_com_member` 有实参就**调用** ⇒ `TypeError: '...' object is not callable`"
-                               "（★ 且调用方常 `return True` ⇒ 失败被报成成功）" % name})
+                if name.lower() not in props:
+                    continue
+                #: ★★ 第二条判据：**返回值被使用 ⇒ 那是"读"（或带参的调用）⇒ 不是"写"** ⇒ 放过
+                if id(n) in ret_used:
+                    continue
+                res["hits"].append({
+                    "file": str(p.relative_to(R)).replace("\\", "/"),
+                    "line": n.lineno, "member": name,
+                    "why": "**%s** 在官方源里是 `kind: property` ⇒ 这里在**写**它（★ 返回值被丢掉），"
+                           "而 `get_com_member` 有实参就**调用** ⇒ `TypeError: '...' object is not callable`"
+                           "（★ 且调用方常 `return True` ⇒ 失败被报成成功）" % name})
     res["files_scanned"] = scanned
     res["count"] = len(res["hits"])
     res["hits"].sort(key=lambda x: (x["file"], x["line"]))
