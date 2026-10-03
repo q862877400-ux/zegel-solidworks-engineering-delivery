@@ -3347,3 +3347,33 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
         痕迹：`tools/diag_selection_lifetime.py`（新）· `output/selection-lifetime-evidence.json` ·
         `mcp-server/tool_specs_batch74.py` 的 `_select_faces_for` · `tools/probe_r3_tools.py` ·
         对照事实 **8**（bool 不可信、回读计数）· **491**（注入解析器机制） |
+| 504 | **`InsertEndCapFeature3` 在本仓的焊件 setup 上**静默回 `None`** —— ★ **四类原因已逐一排除**，★ 按事实 53 停止猜测、留证据。
+      ★ **现象**：返回值 `None` · 特征树增量 **0** · **不抛异常**（★ 静默失败）。
+      ★★ **金标准**：判据是**特征树增量**（不是返回值 —— 它本来就是 `None`）。
+      ★ **排除一 · 选面**：`tools/probe_endcap_face_matrix.py` 逐张面试过**全部 6 张面**
+        （每个案例都重新造件、只换选中的面）⇒ ★ **全部回 `None`** ⇒ 与选哪张面无关。
+      ★ **排除二 · 体不是焊件**：`tools/diag_weldment_feature_kind.py` 用正确的遍历
+        （`IModelDoc2.**FirstFeature**`（**属性**，不是 `GetFirstFeature`）+ `IFeature.GetNextFeature`，
+        ★ 这条逐字来自 `scripts/sw_feature_readback.py` 的来源块）读出树里有
+        **`WeldmentFeature`（焊接件）+ `WeldMemberFeat`** ⇒ ★ **是真焊件**。
+      ★ **排除三 · 实参**：★ 读了官方页才发现 —— `C:\swapi\examples\Insert_Weldment_End_Cap_Example_VB.md`
+        逐字给出 `InsertEndCapFeature3(0.005, False, False, 0.003, 0.6, 0.003, True, 0.002, False, 2)`，
+        ★ 而**我们（工具与探针）一直传** `(0.005, False, False, 0, 0, 0, False, 0, False, 0)` ——
+        ★★ 两处实质差异：`BIsGivenOffset=False` 时生效的是 **`WallThicknessRatio`**（官方 **0.6**，我们 **0.0**）·
+        `BIsEndCapInward` 官方 **2**（`swSpecifyInset`，见 `C:\swapi\enums\swEndCapThicknessDirection_e.md`）而我们是 **0**。
+        ⇒ ★ **照官方配方逐字重测（`tools/probe_endcap_official_args.py`）仍回 `None`** ⇒ 不是实参。
+      ★ **排除四 · 实心/空心型材**：官方 Remarks 逐字「pre-selected **open ends** of a structural member」
+        ⇒ ★ 猜想"实心型材没有开口端"（`al cs`）⇒ ★ 换**空心管**（`ansi\al pipe structural.sldlfp`）
+        ★ **仍回 `None`** ⇒ 也不是这个。
+      ★★ **结论（如实）**：★ **工具层是对的**（注入 · 形参 · `pre_call` 选面全对，工具回读 `{'0':1,'all':1}`）·
+        ★ **前置已成立** · ★ **API 静默回 `None` 且原因未定** ⇒ ★ **R3 焊件两条仍算"未验证"**。
+      ★★★ **纪律记录**：★ 这已是**第四轮**在同一处追（选面 → 体类型 → 实参 → 型材）⇒
+        按**事实 53**（同一处连续修补 ≥3 次就停下回退）**停止追**，★ 把四条排除项**留在证据里**而不是继续猜。
+        ★ 下一步若要再动，应先**换一条路**（例如读 CHM 那页的 `See Also` / `IEndCapFeatureData`，
+        或对照 `InsertEndCapFeature2`（官方说它收 `Faces` 数组、★ **不需要预选**））。
+      ★★ **可复用判据**：★ **"返回值是 `None` 且不抛异常"这一类静默失败，必须用"特征树增量"当判据**；
+        ★ 而**排除法要一次只换一个变量、并把每次的读数留档**（本次四轮各留一份 evidence）。|
+        痕迹：`tools/probe_endcap_face_matrix.py` · `tools/diag_weldment_feature_kind.py` ·
+        `tools/probe_endcap_official_args.py` · `output/endcap-face-matrix-evidence.json` ·
+        `output/weldment-feature-kind-evidence.json` · `output/endcap-official-args-evidence.json` ·
+        对照 **事实 503**（前置必须走 `pre_call`）· **53**（≥3 次就停下）· **40**（返回值不可靠） |
