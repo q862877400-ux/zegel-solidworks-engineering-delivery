@@ -2696,3 +2696,35 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 证据 `output/select-by-ray-count-evidence.json` · `output/freeform-evidence.json`；
 官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md`（**`## Remarks`**）；
 对照事实 474 / 477 / 478 |
+| 480 | **★★★ 自由样式的官方材料**已穷尽**：ProgGuide 那页**是一张图**·2839 个官方示例里** 0 个 Freeform**** —— 2026-10-03（轮 608）。
+     ★ **怎么找到那页的**：★ `SetFreeformCurveData.md` 的 **`CurveParameter`** 参数挂着一条链接，
+       链接文字是「**Where on the face to add the curve**」、目标是
+       `docs/sldworksapiprogguide/Miscellaneous/**FreeFormCurves.md**` ✓
+       ★ **而它全文只有 24 个字符**：`![](FREEFORMCURVES.BMP)` —— ★ **就是一张示意图** ⚠
+     ★ **而同类的两个数据点**：
+     ```
+     C:\swapi\examples\  共 **2839** 个官方示例文件
+        ★ 其中提到 Freeform / FreeForm 的：**0** 个          ⚠
+        ★ 名字带 "Free" 的只有 `Insert_Free_Point_Curve_Feature_Example_*`
+          —— ★ 那是「**自由点曲线**」、★ **不是「自由样式」**
+             （★ 名字像而东西不同 —— ★ 铁律 5 的典型陷阱）⚠
+     ★ 全 swapi 库里提到 `InsertFreeform2` 的文件：**6 个** —— 全是 API 参考页 + 索引页
+     ```
+     ⇒ ★★ **故官方给的 Freeform 材料**只有两样****：
+       ★ ① `InsertFreeform2.md` 的 **`## Remarks` 五步链**（★ 事实 478 已用）
+       ★ ② 一张 BMP 示意图
+     ★ **而 md 里"去看宏"那句在本机**走不通**：
+       ★ 它要「Record a macro while **interactively** creating a Freeform feature」——
+       ★ 而**本会话只能调 API、不能交互式拖点** ⚠
+     ⇒ ★★★ **故"官方文档是第 0 步"这条路**走到了尽头** —— ★ **而尽头是"官方没有"**。
+       ★★ **⇒ ★ 故剩下的路只有**逐参数试****（★ 而那**正是本仓说的"最后手段"**）✓
+     ★ **而本仓里已有那两个族的引用**（★ 不是全新领域）：
+       `scripts/sw_api_sldworks.py`（★ 反射表）· `scripts/sw_loft.py`
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。
+     ★★ **方法论**：★ **"没找到例子"要和"找到了例子"一样记下来** ——
+       ★ 因为**下一次有人查同一个成员时，就不必再花 2839 个文件去搜一遍** ✓
+       （★ 而它同时把结论从「还没试」推进到「**官方没有、只能试**」）
+|真机/静态：`C:\swapi\examples`（**2839** 个文件 · **0** 命中）·
+`C:\swapi\docs\sldworksapiprogguide\Miscellaneous\FreeFormCurves.md`（**24 字符**）；
+官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md` · `SetFreeformCurveData.md`；
+对照事实 477 / 478 / 479 |
