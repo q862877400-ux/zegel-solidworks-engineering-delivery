@@ -409,9 +409,27 @@ def call_view_no_args(view, member: str):
 # ⚠ 本组为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 def get_view_name(view) -> str:
-    """取视图名。⚑ 官方是**属性**（get_Name）。"""
+    """取视图名（★ **先试现行的 `GetName2`、★ 再兜底废弃的 `Name`**）。
+
+    ★★★★ 2026-10-04（轮 110）**换到现行成员** —— 处置阶段 2 · T1 ✓
+      ★ **官方逐字**（★ `C:\\swapi\\types\\IView\\Name.md`）：
+        > ★ 「Obsolete. **Superseded by `IView::GetName2` and `IView::SetName2`**」✓
+      ★★ **而本仓**已有两处**在用「先试 `GetName2`、★ 再兜底 `Name`」的写法** ——
+        ★ 逐字见 `sw_drawing_create_missing.py` L193-195 与 `sw_drawing_query.py` L191-193 ⇒
+        ★★★ **⇒ 本处与 `sw_drawing_expose.py::_view_by_name` 是仅有的两处**没跟上**的** ✓
+      ★★★★ **⇒ 统一成同一个写法** —— ★ **兜底不能删**：★ 老成员**可能仍可调**、
+        ★★ 而「两代都试」**最稳** ✓
+      ★★★★★ **可复用判据**：★★★ **「仓里多数处对、★ 少数处没跟上」时，
+        要改的是**那少数处**、★ 而写法**直接抄多数处**** ✓
+    """
     if view is None:
         raise ValueError("view 为 None")
+    try:
+        got = get_com_member(view, "GetName2")
+        if got:
+            return str(got)
+    except Exception:                                          # noqa: BLE001
+        pass
     return str(get_com_member(view, "Name") or "")
 
 

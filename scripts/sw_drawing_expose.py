@@ -236,11 +236,28 @@ def _selection_marks(model) -> dict:
 
 
 def _view_by_name(drawing_model, view_name: str):
-    """★ 按名取 `IView`（★ 沿 `GetFirstView`/`GetNextView` 链；取不到回 None）。"""
+    """★ 按名取 `IView`（★ 沿 `GetFirstView`/`GetNextView` 链；取不到回 None）。
+
+    ★★★★ 2026-10-04（轮 110）**视图名换到现行成员 `GetName2`** —— 处置阶段 2 · T1 ✓
+      ★ **官方逐字**（★ `C:\\swapi\\types\\IView\\Name.md`）：
+        > ★ 「Obsolete. **Superseded by `IView::GetName2` and `IView::SetName2`**」✓
+      ★★ **本仓已有两处**在用「先试 `GetName2`、★ 再兜底 `Name`」——
+        ★ 见 `sw_drawing_create_missing.py` L193-195 与 `sw_drawing_query.py` L191-193 ⇒
+        ★★★ **⇒ 本处与 `sw_drawing_view.py::get_view_name` 是仅有的两处**没跟上**的** ✓
+      ★★★★ **⇒ 本处**必须两代都试**** —— ★ 因为它是**按名字找视图**的入口，
+        ★★ 若只试一代而名字恰好来自另一代 ⇒ **会静默找不到**（★ 回 `None`）✓
+    """
     try:
         view = C.get_com_member(drawing_model, "GetFirstView")
         while view is not None:
-            if str(C.get_com_member(view, "Name") or "") == str(view_name):
+            vn = None
+            try:
+                vn = C.get_com_member(view, "GetName2")
+            except Exception:                                           # noqa: BLE001
+                vn = None
+            if not vn:
+                vn = C.get_com_member(view, "Name")
+            if str(vn or "") == str(view_name):
                 return view
             view = C.get_com_member(view, "GetNextView")
     except Exception:                                                   # noqa: BLE001

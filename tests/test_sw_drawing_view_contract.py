@@ -307,7 +307,24 @@ def test_scale_and_name_are_properties_not_methods():
     m.set_com_member = lambda o, n, v: (seen2.append((n, (v,))) or "V1")
     m.call_com_member = lambda o, n, *a, **k: (seen2.append((n, a)) or "V1")
     assert m.get_view_name(object()) == "V1"
-    assert seen2 == [("Name", ())]
+    #: ★★★★ 2026-10-04（轮 110）**契约再次随证据更新** —— 处置阶段 2 · T1 ✓
+    #:   ★ **官方逐字**（★ `C:\swapi\types\IView\Name.md`）：
+    #:     > ★ 「Obsolete. **Superseded by `IView::GetName2` and `IView::SetName2`**」✓
+    #:   ★★ **`get_view_name` 现在也走**仓里那两处**的写法**（★
+    #:     `sw_drawing_create_missing.py` L193-195 · ★ `sw_drawing_query.py` L191-193）✓
+    #:   ★★★ **⚠ 而"两代都试"≠"都调"** —— ★ 实测：★ `GetName2` 回真值 ⇒ **早退**、
+    #:     不试 `Name` ⇒ ★★ **`seen2` 只有一条**（★ 我第一版期望两条 ⇒ **红了**）✓
+    #:   ★★★★ **⇒ 断言："先试 `GetName2`；★ 它给了值就**只调它一个**"** ——
+    #:     那不是放松判据：★ 它守的是**顺序**（★ 后继在前）+ ★ **早退语义** ✓
+    assert seen2 == [("GetName2", ())], seen2
+    #: ★★★★ **并补一条负例**：★ 当 `GetName2` **给不出值**时，
+    #:   ★ **必须**回落到老成员 `Name`（★ 兜底不能丢）✓
+    seen3 = []
+    m.get_com_member = lambda o, n, *a, **k: (seen3.append((n, a)) or ("" if n == "GetName2" else "V2"))
+    m.set_com_member = lambda o, n, v: (seen3.append((n, (v,))) or "V2")
+    m.call_com_member = lambda o, n, *a, **k: (seen3.append((n, a)) or "V2")
+    assert m.get_view_name(object()) == "V2"
+    assert seen3 == [("GetName2", ()), ("Name", ())], seen3
 
 
 
