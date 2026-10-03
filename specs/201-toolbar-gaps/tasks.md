@@ -86,9 +86,9 @@
 
 ## X 单列（**判不做，写明依据**）
 
-- [ ] **TX01** 写 `docs/toolbar-gaps-backend-limits.md`：线性阵列族 / `IAccessSelections` 指针族 / 结构系统
+- [x] **TX01** 写 [`docs/toolbar-gaps-backend-limits.md`](../docs/toolbar-gaps-backend-limits.md) ✅ 轮 482 —— ★★ **而核实结果推翻了两条归因**：线性阵列族与结构系统**不是**后端到不了（旧入口 Obsolete、新架构本仓已实现且有 11+3 份真机证据）；只有 `IAccessSelections` 指针族**成立**
   → 验收: 该文件存在，每条带**事实号**与**真机证据路径**，且**不含**「其实可以」的含糊话
-- [ ] **TX02** 螺柱向导：官方源**查不到**入口 ⇒ 记「查不到」（铁律 5）
+- [x] **TX02** 螺柱向导 ✅ 轮 482 —— `InsertStudWizard` 在 `C:\swapi\types\` 的 `IModelDoc2` 与 `IFeatureManager` **两处都查不到** ⇒ ★ 已记「查不到」（铁律 5）
   → 验收: 台账里该条 `tier=待查` 且 `note` 写「官方源查不到」
 
 ## W 最终验收（对应 `spec.md` §四）
