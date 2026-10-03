@@ -810,7 +810,9 @@ def create_adaptive_standard_views(drawing_model, part_path, layout) -> dict:
     numerator, denominator = layout.get("scale_ratio") or _scale_ratio(layout["scale"])
     for item in layout.get("views", []):
         center = item["center"]
-        view = drawing_model.CreateDrawViewFromModelView3(part_path, item["name"], center[0], center[1], 0)
+        # ★★ 走 `_create_model_view`（不是直调）—— 它会在直调失败时按**本地化别名**重试
+        #   （事实 494：中文界面的标准视图名是 `*前视`/`*上视`/`*右视`，照抄英文 `*Front` 必回 None）
+        view = _create_model_view(drawing_model, part_path, item["name"], center[0], center[1])
         if view is None:
             if not created:
                 projection = str(layout.get("projection", "third_angle")).lower()
@@ -975,6 +977,51 @@ def create_standard_views_with_projection(drawing_model, part_path, projection="
     }
 
 
+#: ★★ 标准视图名的**本地化别名表**（2026-10-03 真机实测，`docs/known-facts.md` **事实 494**）：
+#:   · 官方 `IDrawingDoc.CreateDrawViewFromModelView3` 的 Remarks 逐字要求 `ViewName`
+#:     "**exactly match** the name of the model view"，而它给的例子 **`"*Front"` 是英文界面**的取值
+#:     ⇒ ★ **中文界面**下真名是 `*前视` / `*上视` / `*右视` … ⇒ ★ **照抄英文名必回 `None`**，
+#:     且**无异常、无错误码**（从返回值完全看不出原因）。
+#:   · ★ 真机单变量矩阵（同一零件 / 模板 / 位置，只变名字）：`*前视` 等 **6/7 建成**，`*Front` **回 None**。
+#:   · ★ 顺序即优先级：**英文名在前** ⇒ ★ 英文界面下第一次就命中，**行为与改动前完全一致**。
+_VIEW_NAME_ALIASES = {
+    "front": ("*Front", "*前视", "*正视于"),
+    "back": ("*Back", "*后视"),
+    "left": ("*Left", "*左视"),
+    "right": ("*Right", "*右视"),
+    "top": ("*Top", "*上视"),
+    "bottom": ("*Bottom", "*下视"),
+    "isometric": ("*Isometric", "*等轴测"),
+    "trimetric": ("*Trimetric", "*上下二等角轴测"),
+    "dimetric": ("*Dimetric", "*左右二等角轴测"),
+}
+
+
+def _view_name_candidates(view_name):
+    """★ 给一个视图名，回**候选序列**（原样排第一，随后是它的本地化/英文别名）。"""
+    out = [view_name]
+    for aliases in _VIEW_NAME_ALIASES.values():
+        if view_name in aliases:
+            out.extend(a for a in aliases if a not in out)
+            break
+    return out
+
+
+def _create_model_view(drawing_model, part_path, view_name, x, y):
+    """★ 建模型视图：**直调失败就按本地化别名重试，命中即止**（事实 494 的正解）。
+
+    ★ 为什么用"别名重试"而不是"先问模型要名字"：★ 建视图时 `part_path` 指向的零件
+      **未必是打开着的**，而 `IModelDoc2.GetModelViewNames()` 需要一个**模型文档对象**
+      ⇒ ★ 别名重试**不依赖任何文档状态**，且英文界面下第一次就命中（行为不变）。
+    ★ 判据：返回**非 None** 即成功；★ 所有候选都失败 ⇒ 返回 `None`（★ 不抛异常，交调用方处理）。
+    """
+    for candidate in _view_name_candidates(view_name):
+        view = drawing_model.CreateDrawViewFromModelView3(part_path, candidate, x, y, 0)
+        if view is not None:
+            return view
+    return None
+
+
 def add_view(drawing_model, part_path, view_name, x, y, scale=None):
     """
     添加单个视图
@@ -984,12 +1031,12 @@ def add_view(drawing_model, part_path, view_name, x, y, scale=None):
             "*Front", "*Back", "*Top", "*Bottom",
             "*Left", "*Right", "*Isometric",
             "*Trimetric", "*Dimetric"
+            ★★ **传英文名即可（推荐）** —— 中文界面下本函数会**自动改用本地化名**
+            （`*前视` / `*上视` / `*右视` …）。★ 依据：`docs/known-facts.md` 事实 494。
         x, y: 视图放置位置（米）
         scale: 视图比例（如 0.5 表示 1:2），None 使用图纸默认
     """
-    view = drawing_model.CreateDrawViewFromModelView3(
-        part_path, view_name, x, y, 0
-    )
+    view = _create_model_view(drawing_model, part_path, view_name, x, y)
     if view and scale:
         view.ScaleRatio = (1.0, 1.0 / scale)
     return view

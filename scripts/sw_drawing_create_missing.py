@@ -83,8 +83,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 try:                                                                # 包内载入（mcp-server 走这条）
     from .sw_connect import get_com_member, mm, set_com_member
     from .sw_drawing_view_types import SW_DRAWING_AUXILIARY_VIEW
@@ -566,8 +564,20 @@ def insert_surface_finish_symbol(model, *,
     sel = _selection_count(model)
     before = _sum_over_views(model, "GetSFSymbolCount")
 
+    #: ★ 官方这一族挂在 **`IModelDocExtension`** 上（★ 不是 `IModelDoc2`）
+    #:   ⇒ ★ 取法照本仓 15 个模块的同一写法（★ `sw_costing.py` / `sw_ref_geometry.py` 等）
+    ext = _read(model, "Extension")
+    if ext is None:
+        return {"ok": False, "op": "insert_surface_finish_symbol",
+                "error": "取不到 model.Extension —— ★ InsertSurfaceFinishSymbol3 挂在 "
+                         "IModelDocExtension 上，★ 不是 IModelDoc2",
+                "preconditions_held": bool(sel and sel >= 1),
+                "selection_count": sel,
+                "precondition_note": "★ 官方摘要逐字：'based on the **last selection**'",
+                "verified_by": "★ 没跑到调用那一步 ⇒ 无判据"}
+
     sfs = get_com_member(
-        model.Extension, "InsertSurfaceFinishSymbol3",
+        ext, "InsertSurfaceFinishSymbol3",
         int(sym_type), int(leader_type),
         loc_x, loc_y, loc_z,
         int(lay_symbol), int(arrow_type),
