@@ -2820,3 +2820,44 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 `C:\swapi\examples\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`；
 本仓：`scripts/sw_selection_spec.py` 的 `entities_on_body` / `select_object`；
 对照事实 32 / 460 / 479 / 480 |
+| 483 | **★★★ 测试批 T1：一名 subagent 的产出**经我逐条对照官方原文核过 —— ★ 四项全对、零编造**** —— 2026-10-03（轮 613）。
+     ★ **背景**：用户要求「派一个团队成员干活，然后**严格检查质量**」。★ 我先试了
+       `spawn_teammate` ⇒ ★ **报 `Team member limit 8 reached`**（★ 名额被本会话早先的
+       6 个 `failed` + 2 个 `inactive` 成员占满，★ **而我没有"移除成员"的工具**）⚠；
+       ★ 又试 `verify_rollout` ⇒ ★ **报 `no adapter registered for provider "stepfun"`**（★ 判优器的模型不可用）⚠
+       ⇒ ★ 故改用 **`subagent`**（★ 普通子智能体、★ 不占团队成员名额）✓
+     ★ **派给它的活（T1）**：★ 读 `ISketchManager\SketchUseEdge3.md` 的签名/参数/Remarks
+       **+** 它 `## Examples` 段那个官方例子，★ 产出**调用序清单**（★ 纯静态、不许写文件、不许跑命令）。
+     ★★★ **而我核了什么（逐条对照官方原文）**：
+     ```
+     \u2460 \u2605 \u7b7e\u540d\u4e0e\u53c2\u6570\u4e2a\u6570\uff1a\u4ed6\u8bf4 **2 \u4e2a**
+        \u2605 \u6211\u6838\uff1a`SketchUseEdge3( Chain, InnerLoops )` \u21d2 \u9017\u53f7\u6570 **1** \u21d2 **2** \u2713 **\u5bf9**
+     \u2461 \u2605 \u4f8b\u5b50\u90a3\u51e0\u884c\uff1a\u6211 grep \u51fa L40/41/44/45/47/49/52\uff0c**\u4e0e\u4ed6\u8868\u683c\u9010\u5b57\u4e00\u81f4** \u2713
+     \u2462 \u2605 **mark \u6570\u503c**\uff1a\u4ed6\u8bf4\u201c\u4f8b\u5b50\u91cc\u5168\u662f `0`\u201d
+        \u2605 \u6211\u626b\uff1a**3 \u5904** `SelectByID2`\u3001**mark \u5168 `0`** \u2713\uff1b
+        \u2605 \u800c\u4ed6\u8fde **`Append` \u7684\u4e24\u79cd\u503c\uff08`True`/`False`\uff09\u4e5f\u5199\u4e86**\uff08\u2605 \u7ec6\uff09\u2713
+     \u2463 \u2605 **\u201c\u5b98\u65b9\u6ca1\u5199\u201d\u7684\u8fb9\u754c**\uff1a\u4ed6\u8bf4 `swViewSketchRelations` \u7684**\u6570\u503c\u8fd9\u4e09\u9875\u91cc\u6ca1\u5199**
+        \u2605 \u6211\u6838\uff1a`SketchUseEdge3.md` **\u6709**\u90a3\u4e2a\u540d\u5b57\u3001\u2605 \u800c `SetUserPreferenceToggle.md` **\u6ca1\u6709** \u2713 **\u51c6**
+     ```
+     ⇒ ★★★ **验收结论：合格** —— ★ **零编造 · 零臆测 · 出处逐条齐 · 连"官方没写"都标得准** ✓
+     ★ **而它**答出了我台账上那条待办****：★ 我写的「待重查第 2 参（侧影开关）与选区前置」
+       ⇒ ★ **答案**：★ `SketchUseEdge3(Chain=False, InnerLoops=True)` ·
+         ★ **面用 `SelectByID2("", "FACE", <坐标>, …, mark=0)` 选** ·
+         ★ **且在**草图已打开**的状态下调用**（★ `InsertSketch True` 在前、★ 之后再用它收尾）✓
+     ★★ **而真机验证时又踩了同一个坑**（★ 这是本轮的另一条事实）：
+       ★ 照官方例子用 `SelectByID2("", "FACE", x,y,z, …)` 选面 ⇒ ★ **四格全 `selected = 0`** ⚠
+       ★ 而**事实 32 / 482 都写着**：选实体要用 **`IEntity.Select4`（按对象）**
+       ⇒ ★ 改用 `entities_on_body` + `select_object` ⇒ ★ **`selected = 1`** ✓
+       ★★ **而即使选上了（1 个面），四格仍全回 `False`、段数 0→0** ⚠
+         ——— ★ 与**事实 481**（自由样式十格）**同一形态**：★ 参数合法、无报错、不产出。
+     ⚠ **仍未查**：★ 官方例子开的那个草图是在**新建的基准面**上（★ 而我在**实体的顶面**上开草图）；
+       ★ 而 `InnerLoops=True` 要"face 有内环"（★ 而我的立方体面没有内环）⇒ ★ **下一轮该造一个带孔的板**。
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。
+     ★★ **方法论（本轮最有价值的）**：★ **"派活 + 逐条核"这个流程本身是可用且有效的** ——
+       ★ 而**核的方式必须是"拿官方原文逐条比"**（★ 而不是"读一遍觉得对"）；
+       ★★ 而★ 那名 subagent **还答出了我台账上挂着的一条待办** —— ★ 那是**净收益** ✓
+|真机：`tools/prove_sketch_use_edge3.py`（★ **四格** · 零弹窗）；
+证据 `output/sketch-use-edge3-evidence.json`；
+官方：`C:\swapi\types\ISketchManager\SketchUseEdge3.md` ·
+`C:\swapi\examples\Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md`；
+对照事实 32 / 481 / 482 |
