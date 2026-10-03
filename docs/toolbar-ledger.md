@@ -26,7 +26,7 @@
 
 | 工具条 | 条目 | 档 | 官方成员（已核） | 本仓入口 |
 |---|---|---|---|---|
-| 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
+| 曲面 | 自由样式 | **可攻关** | `InsertFreeform2` | — |
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
