@@ -2266,3 +2266,24 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★★ **而本轮先纠了自己一个错记忆**：我以为本仓早就有 `insert_curve_through_points`
        ⇒ ★ 而**grep 下来只有签名表里有那些名字**（**无包装、无能力、无证据**）⚠
        ⇒ ★ **故“我记得有”不算——要 grep。**|真机：`tools/prove_curve_through_xyz.py`；证据 `output/curve-through-xyz-evidence.json`；官方：`C:\swapi\types\IModelDoc2\InsertCurveFile{{Begin,Point,End}}.md` × `InsertCurveFile.md` |
+| 460 | **★ 曲面上偏移：前置全满足、而它回 `False`**（★ 而两种选边法都试了） —— 2026-10-03（轮 583）。
+     ★ **官方那页（★ 未标废弃）给了三个前置**：
+     ```
+     bool SketchOffsetOnSurface(double Offset, bool Reverse, bool UseFront, bool MakeConstruct)
+     ★ UseFront："**Although not currently used, must be set to true**"
+     ★ Remarks："Before … call **`IModelDocExtension::SelectByID2` for each edge** to offset"
+     ★ Remarks："**After … call `ISketchManager::InsertSketch`** to rebuild the model with the **3D sketch**"
+     ```
+     ★ 真机（`tools/prove_sketch_offset_on_surface.py`，零弹窗）—— ★ **前置逐项都满足了**：
+     ```
+     实体（方盒）        ⇒ **True** ✓
+     3D 草图（Insert3DSketch）⇒ **ok** ✓
+     UseFront=True / False   ⇒ ★ **两格都回 `False`**（★ 而日志里 `InsertSketch=ok`）⚠
+     ```
+     ★★ **而选边那一步试了两种**：
+       ① **`by_object`**（`IEntity.Select4`）⇒ **选上 2 条**，★ 而仍回 `False`；
+       ② **`by_point`**（★ 官方说的 `SelectByID2`，★ 取边的中点）⇒ ★ **卡在 `GetCurveParams2`**（`AttributeError`：它不在那个对象上）⇒ 选上 0 条 ⚠
+     ⇒ ★★ **故按事实 53 停手**（★ 本轮同一处已试两次）；★ **下一步很具体**：
+       ★ 先把**取边中点**那一步换对（★ `GetCurveParams2` 不行 —— ★ 可能是 `GetCurve().GetCurveParams2()` 的**另一个名字**，或直接用 **`IEdge.GetStartVertex`/`GetEndVertex`** 取两端再取中点）。
+     ★ **而本轮的价值在于**：★ **把“回 `False`”与“前置没满足”分开了**（★ 前者是它的行为，后者是我的错）—— ★ 而**这一次不是我的错**。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_sketch_offset_on_surface.py`；证据 `output/sketch-offset-on-surface-evidence.json`；官方：`C:\swapi\types\IModelDocExtension\SketchOffsetOnSurface.md`；对照事实 32（边按名选不中）· 53 |

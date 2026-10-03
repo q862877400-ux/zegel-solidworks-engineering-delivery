@@ -1,0 +1,47 @@
+test(boundary): 曲面上偏移 —— ★ **前置全满足、而它回 `False`**（事实 460）
+
+★ 照新纪律（**官方文档是第 0 步**）攻台账「曲面上偏移」。
+
+## 一、★ 官方那页给了**三个前置**（★ 未标废弃）
+
+```
+bool SketchOffsetOnSurface(double Offset, bool Reverse, bool UseFront, bool MakeConstruct)
+★ UseFront：「**Although not currently used, must be set to true**」⚠
+★ Remarks：「Before … call **`IModelDocExtension::SelectByID2` for each edge** to offset」
+★ Remarks：「**After … call `ISketchManager::InsertSketch`** to rebuild the model with the **3D sketch**」
+```
+
+## 二、★ 真机 —— ★ **前置逐项都满足了**
+
+```
+实体（方盒）        ⇒ **True** ✓
+3D 草图（Insert3DSketch）⇒ **ok** ✓
+UseFront=True / False   ⇒ ★ **两格都回 `False`**（★ 而日志里 `InsertSketch=ok`）⚠
+```
+
+## 三、★★ 而选边那一步试了**两种**
+
+```
+① **`by_object`**（`IEntity.Select4`）⇒ **选上 2 条** · ★ 而仍回 `False`
+② **`by_point`**（★ 官方说的 `SelectByID2`，★ 取边的中点）⇒
+   ★ **卡在 `GetCurveParams2`**（`AttributeError`：它不在那个对象上）⇒ 选上 0 条 ⚠
+```
+
+⇒ ★★ **故按事实 53 停手**（★ 本轮同一处已试两次）；★ **下一步很具体**：
+  ★ 先把**取边中点**那一步换对 —— ★ `GetCurveParams2` 不行，
+  ★ 可能是 **`IEdge.GetStartVertex`/`GetEndVertex`** 取两端再取中点。
+
+## 四、★ 而本轮的价值
+
+★ **把"回 `False`"与"前置没满足"分开了** —— ★ 前者是它的行为、后者是我的错
+  ⇒ ★ **而这一次不是我的错** ✓
+
+## 五、交付
+
+```
+docs/known-facts.md   **事实 460**（+18 · 含三前置 + 逐项验证 + 两种选边法 + 下一步）
+tools/prove_sketch_offset_on_surface.py（新 · ★ 逐步记账 + 两种选边）
+output/sketch-offset-on-surface-evidence.json
+★ 本轮**不登记能力**（★ 未建成 —— 不假装做到）
+★ 语法门禁 0 处（778 个文件）
+```
