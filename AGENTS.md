@@ -348,7 +348,7 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 
 ## 八、智能体团队分工
 
-角色定义、工具限制、派活维度与 `write_scopes` 登记要求见 [docs/team-roles.md](docs/team-roles.md)。
+**多用 space-bunny**（免费，实测能干机械穷举 / 全面阅读 / 逐条对账）：核心工作派三路独立做 + 第四路裁判。角色、工具限制与派活纪律见 [docs/team-roles.md](docs/team-roles.md)。
 
 ## 九、停止条件（遇到就停，不要自行拍板）
 
