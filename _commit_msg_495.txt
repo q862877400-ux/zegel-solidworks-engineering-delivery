@@ -1,0 +1,24 @@
+test(facts): 用 `dispid` 手法回筛「指针族到不了」—— 结论**站住了**（记成事实 388）
+
+★ 承上轮：事实 387 给了一个可复用的排查手法 ——
+  「见到 `(None, None, None)` 不要就定性为「到不了」；先走
+   `_oleobj_.GetIDsOfNames(名)` + `Invoke(dispid, 0, DISPATCH_METHOD, True, 参)` 试一次，
+   ★ 能调通 ⇒ 不是后端限制」。
+
+★ 本轮的**正当用法是把它反过来回筛旧结论** —— 而目标点名的三族里最该筛的就是
+  **`IAccessSelections` 指针族**（事实 47 是「两轮 20+ 种形态」换来的，值得再确认一次）。
+
+★ 真机（`CreateDefinition(6)` 取 `ILinearPatternFeatureData`）：
+  · `GetIDsOfNames("AccessSelections")` ⇒ **`dispid = 1`**（`DISPID_VALUE`）
+    —— ★★ 而真正的具名方法该有更大的 dispid ⇒ ★ **这个 1 说明该路径也没真正拿到那个方法** ⚠
+  · `Invoke(1, 0, DISPATCH_METHOD, True, …)` 的三种包装**全部报错**，而错误码与**事实 47 逐字相同**：
+    `None` ⇒ `类型不匹配`（位置 1）· `空Dispatch` ⇒ `非选择性的参数` ·
+    `(model, None)` ⇒ `类型不匹配`（位置 1）
+
+★ ⇒ 两条结论：
+  ① ★★ **「指针族到不了」在这次回筛下站住了** —— ★ 不是"因为没试过 dispid 路径"
+     （★ 而是试过了，仍然是同一个失败）
+  ② ★ 而 **`dispid = 1` 本身是一个红旗**，可作为**回筛时的前置判据**：
+     ★ **回筛先看 dispid 是否为 1** —— 为 1 则该次回筛**不算数**（路径本身就没走对）。
+
+★ 已记成**事实 388**。语法门禁 0 处。
