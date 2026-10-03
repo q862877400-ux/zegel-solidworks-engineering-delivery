@@ -357,6 +357,16 @@ BATCH_MODULES = (
     #:   ★★ **真机前置已逐条写进能力层**（`InsertBreak3` 非废弃那一代 / 辅助视图要**先选一条边** /
     #:     粗糙度"位置参数**仅当** leaderType != swNO_LEADER" / 基准符号 `InsertDatumTag2` **零参**）。
     "tool_specs_batch73",
+    #: ★ 2026-10-03（接手轮）· 规格 `specs/202-user-coverage-gaps` 的 **R1**：**工程图「已实现却没挂」的 8 项** ——
+    #:   投影视图 · 剖面视图 · 局部视图 · 图纸格式/模板 · 注释/文字 · 孔表 · 修订表 · 中心符号线。
+    #:   ★★ **本批一行实现逻辑都不新写**（"缝合优先不发明"）—— 依据
+    #:     `recon/drawing-existing-coverage.md`：那 13 项里**已实现 8 项、挂出的只有 4 项**
+    #:     （且全靠同一个 `solidworks_drawing`）⇒ ★ 本批只做**转接 + 单位边界**。
+    #:   ★ 转接层 `scripts/sw_drawing_expose.py`：对外收**毫米**（规则 2 的换算**只在那里发生一次**），
+    #:     并把**前置回读**带回来（事实 496：前置与能力必须分开记）。
+    #:   ★★ `inject="drawing_model"` —— 该键已在 `RESOLVERS` 里（事实 491）。
+    #:   ⚠ 其中「中心符号线」那条走**批量**入口，★ **尚未单独真机验证**（单点入口已实测为阴性）。
+    "tool_specs_batch75",
 )
 
 def all_specs() -> list:

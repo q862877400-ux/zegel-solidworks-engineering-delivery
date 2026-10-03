@@ -1,3 +1,41 @@
+# 扫描 S4 · 废弃（`Obsolete`）成员使用情况 —— 第 1 段（`IDrawingDoc` / `IView` / `ISheet`）
+
+> 只读扫描：★ 本轮未修改任何已有文件，只新建本文件；未运行 SolidWorks、未运行 pytest、未调用任何 SolidWorks MCP 工具。
+
+---
+
+## 〇、口径（先说清怎么判的，免得下表被误读）
+
+| 项 | 取值 / 依据 |
+|---|---|
+| 官方源 | `C:\swapi\types\<接口>\<成员>.md`；「页头」= H1 标题行 + 空行 + 以 `Obsolete` 开头的第一行 |
+| 页头判定实测 | 三个接口里「文件任意位置含 Obsolete」= **285 页**，「Obsolete 在页头」= **274 页**；差的 11 页全部是后继页在 Remarks 里写「本方法取代了已废弃的 X」（如 `IView.GetFirstNote2.md`、`IView.GetVisibleEntities2.md`），不是废弃页 ⇒ 页头口径取 274 |
+| 逐字抄录 | 「废弃链」列第二行是官方页头原句，保留 `[[接口::成员]]` 原始写法，未改写 |
+| 追链规则 | 从页头 `[[Iface::Member]]` 解析后继 → 打开后继页 → 后继页也有页头 `Obsolete` 就继续追 → 直到某一环页头不再是 `Obsolete`，标「终点」。每环若自己也带页头 `Obsolete` 再标「(仍废弃)」 |
+| 本仓搜索范围 | `D:\AI\SW\scripts\` 与 `D:\AI\SW\mcp-server\` 递归，文本类文件 `.py/.ps1/.json/.js/.md/.txt`，排除 `.pyc` 编译产物，共 **250 个文件** |
+| 匹配规则 | 正则 `(?<![A-Za-z0-9_])NAME(?![A-Za-z0-9_])` ⇒ `GetArcs` 不会误命中 `GetArcs4` / `IGetArcs` |
+| 命中分类 | `code` = 该行去掉 `#` 注释后仍含 `.NAME` 或 `NAME(`；`text` = 注释 / 文档串 / Markdown 行（按行首 `#`、`*`、`|` 启发式排除）|
+| 判定 | **用了废弃入口** = 链第 1 环（废弃成员本身）有 `code` 命中；**用了后继** = 第 1 环无 `code`、但后面某一环有 `code`；**本仓未使用** = 整条链没有任何 `code` 命中 |
+| ★ 未做的事 | 没跑 SolidWorks ⇒「有 `code` 命中」只等于「本仓写了这个名字」，不等于运行时真的调到了它；注释 / docstring 里写 `xx.GetArcs()` 也会记成 `code`。这类点需要人眼复核 |
+| 名字过于常见的处理 | 命中 > 20 处时在「本仓调用点」列打 ★ 提示，此时 code 里很可能混进同名局部符号 / 属性，该行判定不可单独采信 |
+
+---
+
+## 一、汇总
+
+| 项 | 数量 |
+|---|---|
+| 本轮扫的接口 | 3（`IDrawingDoc` / `IView` / `ISheet`）|
+| ★ 本轮扫到的页头带 `Obsolete` 的成员页 | **274** |
+| ├ `IDrawingDoc` | 112 |
+| ├ `IView` | 149 |
+| └ `ISheet` | 13 |
+| 链上出现过的不重复成员名（废弃名 + 后继名） | 399 |
+| 被引用、但本机查不到页的后继 | 6，见第三节 |
+| 全库 `C:\swapi\types\` 接口目录总数 | 566 |
+| 全库页头带 `Obsolete` 的成员页总数 | 1668 |
+| ★ 覆盖率 | 本轮 274 / 1668 = **16.43%**；还剩 1394 个废弃成员页、563 个接口目录没扫，见第四节 |
+
 ---
 
 ## 二、明细表（274 行，每行一个页头带 `Obsolete` 的成员）
@@ -57,7 +95,7 @@
 | `IDrawingDoc.EditSheet` | `IDrawingDoc.EditSheet`[废弃] → `IDrawingDoc.EditSheet2`(终点)<br>逐字：`Obsolete. Superseded by [[IDrawingDoc::EditSheet2]].` | scripts\sw_api_sldworks.py:3578 [仅文本] · scripts\sw_api_sldworks.py:20455 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `IDrawingDoc.EditSheet2` 起，不要用 `IDrawingDoc.EditSheet`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IDrawingDoc.ExplodeBlockInstance` | `IDrawingDoc.ExplodeBlockInstance`[废弃] → `ISketchManager.ExplodeSketchBlockInstance`(终点)<br>逐字：`Obsolete. Superseded by [[ISketchManager::ExplodeSketchBlockInstance]].` | scripts\sw_api_sldworks.py:3583 [仅文本] · scripts\sw_api_sldworks.py:20460 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `ISketchManager.ExplodeSketchBlockInstance` 起，不要用 `IDrawingDoc.ExplodeBlockInstance`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IDrawingDoc.ExplodeCustomSymbol` | `IDrawingDoc.ExplodeCustomSymbol`[废弃] → `ISketchManager.ExplodeSketchBlockInstance`(终点)<br>逐字：`Obsolete. Superseded by [[ISketchManager::ExplodeSketchBlockInstance]].` | scripts\sw_api_sldworks.py:3584 [仅文本] · scripts\sw_api_sldworks.py:20461 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `ISketchManager.ExplodeSketchBlockInstance` 起，不要用 `IDrawingDoc.ExplodeCustomSymbol`（链上名字只在注释 / 文档文本里出现过，非调用点） |
-| `IDrawingDoc.ForceRebuild` | `IDrawingDoc.ForceRebuild`[废弃] → `IModel2.ForceRebuild3`(终点)<br>逐字：`Obsolete. Superseded by [[IModel2::ForceRebuild3]].` | scripts\sw_delivery.py:893 [code] · scripts\sw_gear.py:291 [code] · scripts\sw_import_mesh_reference.py:210 [code]<br>命中合计 15（code 9 / text 6） | **用了后继** | 保持现状；本仓落在链第 2 环 `IModel2.ForceRebuild3` |
+| `IDrawingDoc.ForceRebuild` | `IDrawingDoc.ForceRebuild`[废弃] → `IModel2.ForceRebuild3`(终点)<br>逐字：`Obsolete. Superseded by [[IModel2::ForceRebuild3]].` | scripts\sw_delivery.py:893 [code] · scripts\sw_gear.py:291 [code] · scripts\sw_import_mesh_reference.py:210 [code]<br>命中合计 16（code 9 / text 7） | **用了后继** | 保持现状；本仓落在链第 2 环 `IModel2.ForceRebuild3` |
 | `IDrawingDoc.GetBlockDefinition` | `IDrawingDoc.GetBlockDefinition`[废弃] → `SketchManager.GetSketchBlockDefinitions`(终点)<br>逐字：`Obsolete. Superseded by [[SketchManager::GetSketchBlockDefinitions]].` | scripts\sw_api_sldworks.py:3589 [仅文本] · scripts\sw_api_sldworks.py:20466 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `SketchManager.GetSketchBlockDefinitions` 起，不要用 `IDrawingDoc.GetBlockDefinition`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IDrawingDoc.GetBlockDefinitionCount` | `IDrawingDoc.GetBlockDefinitionCount`[废弃] → `ISketchManager.GetSketchBlockDefinitionCount`(终点)<br>逐字：`Obsolete. Superseded by [[ISketchManager::GetSketchBlockDefinitionCount]].` | scripts\sw_api_sldworks.py:3590 [仅文本] · scripts\sw_api_sldworks.py:20467 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `ISketchManager.GetSketchBlockDefinitionCount` 起，不要用 `IDrawingDoc.GetBlockDefinitionCount`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IDrawingDoc.GetBlockDefinitions` | `IDrawingDoc.GetBlockDefinitions`[废弃] → `ISketchManager.GetSketchBlockDefinitions`(终点)<br>逐字：`Obsolete. Superseded by [[ISketchManager::GetSketchBlockDefinitions]].` | scripts\sw_api_sldworks.py:3591 [仅文本] · scripts\sw_api_sldworks.py:20468 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `ISketchManager.GetSketchBlockDefinitions` 起，不要用 `IDrawingDoc.GetBlockDefinitions`（链上名字只在注释 / 文档文本里出现过，非调用点） |
@@ -176,7 +214,7 @@
 | `IView.GetFirstNote` | `IView.GetFirstNote`[废弃] → `IView.GetFirstNote2`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetFirstNote2]].` | scripts\sw_api_sldworks.py:9586 [仅文本] · scripts\sw_api_sldworks.py:26253 [仅文本] · scripts\sw_drawing_view.py:194 [仅文本]<br>命中合计 3（code 0 / text 3） | **本仓未使用** | 无需改动；后续若要用请从 `IView.GetFirstNote2` 起，不要用 `IView.GetFirstNote`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IView.GetFirstRevisionCloud` | `IView.GetFirstRevisionCloud`[废弃] → `IView.GetFirstRevisionCloud2`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetFirstRevisionCloud2]].` | scripts\sw_api_sldworks.py:9588 [仅文本] · scripts\sw_api_sldworks.py:26255 [仅文本] · scripts\sw_drawing_view.py:195 [仅文本]<br>命中合计 3（code 0 / text 3） | **本仓未使用** | 无需改动；后续若要用请从 `IView.GetFirstRevisionCloud2` 起，不要用 `IView.GetFirstRevisionCloud`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IView.GetFirstTableAnnotation` | `IView.GetFirstTableAnnotation`[废弃] → `IView.GetFirstTableAnnotation2`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetFirstTableAnnotation2]].` | scripts\sw_api_sldworks.py:9591 [仅文本] · scripts\sw_api_sldworks.py:26258 [仅文本] · scripts\sw_drawing_view.py:197 [仅文本]<br>命中合计 3（code 0 / text 3） | **本仓未使用** | 无需改动；后续若要用请从 `IView.GetFirstTableAnnotation2` 起，不要用 `IView.GetFirstTableAnnotation`（链上名字只在注释 / 文档文本里出现过，非调用点） |
-| `IView.GetLineCount` | `IView.GetLineCount`[废弃] → `IView.GetLineCount2`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetLineCount2]].` | scripts\sw_api_sldworks.py:2972 [仅文本] · scripts\sw_api_sldworks.py:3020 [仅文本] · scripts\sw_api_sldworks.py:3047 [仅文本]<br>命中合计 28（code 0 / text 28）<br>★ 该名字在本仓过于常见（>20 命中），`code` 里可能混进同名局部符号 / 属性，★ **本行判定不可单独采信** | **本仓未使用** | 无需改动；后续若要用请从 `IView.GetLineCount2` 起，不要用 `IView.GetLineCount`（链上名字只在注释 / 文档文本里出现过，非调用点） |
+| `IView.GetLineCount` | `IView.GetLineCount`[废弃] → `IView.GetLineCount2`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetLineCount2]].` | scripts\sw_api_sldworks.py:2972 [仅文本] · scripts\sw_api_sldworks.py:3020 [仅文本] · scripts\sw_api_sldworks.py:3047 [仅文本]<br>命中合计 28（code 0 / text 28）<br>★ 该名字在本仓过于常见（>20 命中），code 里可能混进同名局部符号 / 属性，★ 本行判定不可单独采信 | **本仓未使用** | 无需改动；后续若要用请从 `IView.GetLineCount2` 起，不要用 `IView.GetLineCount`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IView.GetLines` | `IView.GetLines`[废弃] → `IView.GetLines4`(终点) → `IView.IGetLines4`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetLines4]] and [[IView::IGetLines4]].` | scripts\sw_sketch.py:229 [code] · scripts\sw_api_sldworks.py:5608 [仅文本] · scripts\sw_api_sldworks.py:6220 [仅文本]<br>命中合计 14（code 1 / text 13） | **用了废弃入口** | 改用后继 `IView.GetLines4` |
 | `IView.GetLines2` | `IView.GetLines2`[废弃] → `IView.GetLines4`(终点) → `IView.IGetLines4`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetLines4]] and [[IView::IGetLines4]].` | scripts\sw_sketch.py:226 [code] · scripts\sw_api_sldworks.py:8251 [仅文本] · scripts\sw_api_sldworks.py:9604 [仅文本]<br>命中合计 7（code 1 / text 6） | **用了废弃入口** | 改用后继 `IView.GetLines4` |
 | `IView.GetLines3` | `IView.GetLines3`[废弃] → `IView.GetLines4`(终点) → `IView.IGetLines4`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetLines4]] and [[IView::IGetLines4]].` | scripts\sw_api_sldworks.py:9605 [仅文本] · scripts\sw_api_sldworks.py:26272 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `IView.GetLines4` 起，不要用 `IView.GetLines3`（链上名字只在注释 / 文档文本里出现过，非调用点） |
@@ -259,7 +297,7 @@
 | `IView.InsertBreak2` | `IView.InsertBreak2`[废弃] → `IView.InsertBreak3`(终点)<br>逐字：`Obsolete. Superseded by [[IView::InsertBreak3]].` | scripts\sw_drawing_create_missing.py:160 [code] · scripts\sw_drawing_create_missing.py:247 [code] · scripts\sw_drawing_create_missing.py:339 [code]<br>命中合计 15（code 6 / text 9） | **用了后继** | 保持现状；本仓落在链第 2 环 `IView.InsertBreak3` |
 | `IView.InsertHoleTable` | `IView.InsertHoleTable`[废弃] → `IView.InsertHoleTable2`(仍废弃) → `IView.InsertHoleTable3`(终点)<br>逐字：`Obsolete. Superseded by [[IView::InsertHoleTable2]].` | scripts\sw_api_sldworks.py:9700 [仅文本] · scripts\sw_api_sldworks.py:26367 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `IView.InsertHoleTable2` 起，不要用 `IView.InsertHoleTable`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IView.InsertHoleTable2` | `IView.InsertHoleTable2`[废弃] → `IView.InsertHoleTable3`(终点)<br>逐字：`Obsolete. Superseded by [[IView::InsertHoleTable3]].` | scripts\sw_api_sldworks.py:9701 [仅文本] · scripts\sw_api_sldworks.py:26368 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `IView.InsertHoleTable3` 起，不要用 `IView.InsertHoleTable2`（链上名字只在注释 / 文档文本里出现过，非调用点） |
-| `IView.Name` | `IView.Name`[废弃] → `IView.GetName2`(终点) → `IView.SetName2`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]].` | scripts\audit_byref_args.py:146 [code] · scripts\audit_byref_args.py:160 [code] · scripts\check_env_pitfalls.py:290 [code]<br>命中合计 252（code 34 / text 218）<br>★ 该名字在本仓过于常见（>20 命中），`code` 里可能混进同名局部符号 / 属性，★ **本行判定不可单独采信** | **用了废弃入口** | 改用后继 `IView.GetName2` |
+| `IView.Name` | `IView.Name`[废弃] → `IView.GetName2`(终点) → `IView.SetName2`(终点)<br>逐字：`Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]].` | scripts\audit_byref_args.py:146 [code] · scripts\audit_byref_args.py:160 [code] · scripts\check_env_pitfalls.py:290 [code]<br>命中合计 252（code 34 / text 218）<br>★ 该名字在本仓过于常见（>20 命中），code 里可能混进同名局部符号 / 属性，★ 本行判定不可单独采信 | **用了废弃入口** | 改用后继 `IView.GetName2` |
 | `IView.RootDrawingComponent` | `IView.RootDrawingComponent`[废弃] → `IView.RootDrawingComponent2`(终点)<br>逐字：`Obsolete. Superseded by [[IView::RootDrawingComponent2]].` | scripts\sw_api_sldworks.py:17148 [仅文本] · scripts\sw_api_sldworks.py:18421 [仅文本] · scripts\sw_drawing_view.py:341 [仅文本]<br>命中合计 3（code 0 / text 3） | **本仓未使用** | 无需改动；后续若要用请从 `IView.RootDrawingComponent2` 起，不要用 `IView.RootDrawingComponent`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IView.SetDisplayMode` | `IView.SetDisplayMode`[废弃] → `IView.SetDisplayMode3`(仍废弃) → `IView.SetDisplayMode4`(终点)<br>逐字：`Obsolete. Superseded by [[IView::SetDisplayMode3]].` | scripts\sw_api_sldworks.py:9726 [仅文本] · scripts\sw_api_sldworks.py:26393 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `IView.SetDisplayMode3` 起，不要用 `IView.SetDisplayMode`（链上名字只在注释 / 文档文本里出现过，非调用点） |
 | `IView.SetDisplayMode2` | `IView.SetDisplayMode2`[废弃] → `IView.SetDisplayMode3`(仍废弃) → `IView.SetDisplayMode4`(终点)<br>逐字：`Obsolete. Superseded by [[IView::SetDisplayMode3]].` | scripts\sw_api_sldworks.py:9727 [仅文本] · scripts\sw_api_sldworks.py:26394 [仅文本]<br>命中合计 2（code 0 / text 2） | **本仓未使用** | 无需改动；后续若要用请从 `IView.SetDisplayMode3` 起，不要用 `IView.SetDisplayMode2`（链上名字只在注释 / 文档文本里出现过，非调用点） |
@@ -281,9 +319,9 @@
 
 ### 本表判定小计
 
-| 判定 | 条数 |
-|---|---|
-| 用了废弃入口 | 6 |
-| 用了后继 | 17 |
-| 本仓未使用 | 251 |
-| 合计 | 274（= 本轮扫到的废弃成员页数 274）|
+| 判定 | 条数 | 成员 |
+|---|---|---|
+| 用了废弃入口 | 6 | `IView.GetArcs2`、`IView.GetEllipses3`、`IView.GetLines`、`IView.GetLines2`、`IView.Name`、`ISheet.GetProperties` |
+| 用了后继 | 17 | `IDrawingDoc.AutoBalloon`、`IDrawingDoc.AutoBalloon2`、`IDrawingDoc.AutoBalloon3`、`IDrawingDoc.AutoBalloon4`、`IDrawingDoc.CreateAuxiliaryViewAt`、`IDrawingDoc.ForceRebuild`、`IDrawingDoc.InsertChainDim`、`IDrawingDoc.InsertDatumTag`、`IDrawingDoc.InsertSurfaceFinishSymbol`、`IDrawingDoc.ToggleGrid`、`IView.GetParabolas`、`IView.GetUserPoints`、`IView.IGetParabolas`、`IView.IGetUserPoints`、`IView.InsertBreak`、`IView.InsertBreak2`、`ISheet.IGetProperties` |
+| 本仓未使用 | 251 | 见上表各行 |
+| 合计 | 274 | 等于本轮扫到的废弃成员页数 274 |
