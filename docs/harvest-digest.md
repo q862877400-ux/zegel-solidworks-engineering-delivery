@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **108** 条能力。
+共 **109** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 95 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 96 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 78 | **本项目自研**（护城河域等） |
+| `original` | 79 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -200,6 +200,14 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ★ **而对照组**（`size=""`）⇒ **回 `None`**，★ 而错误信息逐字给出三个常见原因（★ 事实 469）✓
      ★★ **而它在设计上走过一次弯**（★ 事实 470）：我第一版设计成**先读选区的点**（`selection_point`）⇒ ★ 而真机否掉了它（★ `GetSelectionPoint` **要的是点、不是面**）；
        ★ 改成接**声明式的面选择器**（★ 走本仓 `sw_simulation.resolve_face_selector`，★ 它从 `GetBodyBox()` 取**那个面的中心点**）⇒ ★ **通了** ✓` |
+| `sketch_offset_on_surface` | · `★★★ 2026-10-03（轮 612）**真机建成**（走 `sw_guard`，零弹窗）—— **三格对照**：
+       `按对象选 4 条边（补设 mark=1）` → `SketchOffsetOnSurface(0.01, False, True, False)` → `ClearSelection2` → **`SketchManager.InsertSketch(True)`**
+       ⇒ **特征 7 → 9**，新增 **`基准面1`** + **`草图2`** ✓
+       ★ **而对照组（★ 不做 `InsertSketch`）⇒ 特征 7 → 7、新增 []** —— ★ **故那一步是必需的**（★ 与官方 Remarks 第 ③ 条完全对应）✓
+       证据 `output/offset-on-surface-per-example-evidence.json`。`<br>· `★★ **而本轮修了两个真因**（★ 全靠真机逼出来）：
+       ① ★ **`SelectByID2("", "EDGE", x,y,z, …)` 一条边都选不中**（★ 角点与中点两种坐标都 `selected = 0`）⚠
+         ★ 而**事实 32 早写着**：选实体要用 **`IEntity.Select4`（按对象）**；★ 本仓封装：`sw_selection_spec.entities_on_body` + `select_object`
+       ② ★ **`Select4` 没有 mark 参数** ⇒ 用 **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** 补设 ✓` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

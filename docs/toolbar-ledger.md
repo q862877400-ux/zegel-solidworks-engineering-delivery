@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 81 |
-| 可攻关 | 5 |
+| 已能 | 82 |
+| 可攻关 | 4 |
 | 待验证 | 6 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -30,7 +30,6 @@
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
-| 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
 | 曲面 | 圆角(曲面) | **待验证** | `FeatureFillet` | `sw_part.fillet` |
 | 特征 | 筋 | **待验证** | `InsertRib` | `sw_part.rib_report` |
 | 特征下拉 | 曲线-组合曲线 | **待验证** | `InsertCompositeCurve` | `sw_part.insert_composite_curve_report` |
@@ -134,6 +133,7 @@
 | 草图编辑 | 复制实体 | **已能** | `IModelDoc2` | — |
 | 草图编辑 | 延伸实体 | **已能** | `SketchExtend` | `sw_sketch_edit_ops.sketch_extend` |
 | 草图编辑 | 旋转实体 | **已能** | `IModelDoc2`, `SketchModifyRotate` | — |
+| 草图编辑 | 曲面上偏移 | **已能** | `SketchOffsetOnSurface` | — |
 | 草图编辑 | 移动实体 | **已能** | `IModelDoc2`, `SketchModifyTranslate` | — |
 | 草图编辑 | 等距实体 | **已能** | `SketchOffset2` | `sw_sketch_edit_ops.sketch_offset` |
 | 草图编辑 | 线性草图阵列 | **已能** | `CreateLinearSketchStepAndRepeat` | `sw_sketch_edit_ops.sketch_linear_pattern` |

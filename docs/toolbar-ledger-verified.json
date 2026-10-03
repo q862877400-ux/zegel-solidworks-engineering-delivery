@@ -1,16 +1,16 @@
 {
  "_": "台账 + 官方源核实结果",
  "summary": {
-  "已能": 81,
+  "已能": 82,
   "待查": 20,
   "后端到不了": 7,
   "待验证": 6,
-  "可攻关": 5
+  "可攻关": 4
  },
  "by_toolbar_gap": {
   "特征下拉": 1,
   "草图尺寸": 1,
-  "草图编辑": 2,
+  "草图编辑": 1,
   "曲面": 1
  },
  "items": [
@@ -1757,7 +1757,8 @@
    "api": "SketchOffsetOnSurface",
    "entry": "",
    "level": "不能",
-   "note": "★★ 2026-10-03（轮 460 那一批）**真机试过**：前置全满足（★ 实体 / 3D 草图 / `UseFront=True`）★ 而**仍回 `False`** ⚠；★ 而 `by_point` 选边卡在 `GetCurveParams2`（`AttributeError`）。★ **下一步**：读它的 `## Remarks` 看**选区与面的要求**。",
+   "note": "★★★ 2026-10-03（轮 612）**真机建成**（★ 事实 482）：★ **三步缺一不可** —— ① **按对象选边**（`Select4`，**不是** `SelectByID2`）· ② 补设 **`Mark`**· ③ 收尾 **`InsertSketch(True)`**。★ 而它回 `False` **是正常的**（★ 只“创建了 3D 草图”）—— ★ 而旧结论（事实 460）**已更正**。",
+   "capability_id": "sketch_offset_on_surface",
    "api_iface_hits": [],
    "api_member_hits": [
     "SketchOffsetOnSurface"
@@ -1768,7 +1769,7 @@
    "implemented_hits": [
     "SketchOffsetOnSurface"
    ],
-   "tier": "可攻关"
+   "tier": "已能"
   },
   {
    "tb": "草图关系",

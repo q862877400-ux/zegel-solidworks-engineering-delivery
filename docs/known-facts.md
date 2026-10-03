@@ -2764,3 +2764,59 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 证据 `output/freeform-matrix-evidence.json`；
 官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md` · `SetFreeformBoundaryContinuity.md`；
 对照事实 474 / 477 / 478 / 479 / 480 |
+| 482 | **★★★★ 曲面上偏移 —— ★ **按对象选边 + 补设 mark + 收尾 `InsertSketch`** ⇒ **真机建成**** —— 2026-10-03（轮 612）。
+     ★ **承台账那条的待办**（★ 我自己写的："读它的 `## Remarks` 看**选区与面的要求**"）。
+     ★★★ **官方三样齐**：
+     ```
+     ① `SketchOffsetOnSurface.md` 的签名 `(Offset, Reverse, UseFront, MakeConstruct)`
+        ★ `UseFront` 逐字："**Although not currently used, must be set to true**"
+     ② **`## Remarks` 三条**（★ 而那三条**我一条都没做全**）：
+        a) 要**测地线**偏移请用 `GeodesicSketchOffset`（★ 另一个方法）
+        b) ★★ "Before…call **`SelectByID2`** for **each edge** to offset and set
+              **Append to true** and **Mark …**"
+        c) ★★ "After…call **`ISketchManager::InsertSketch`** to rebuild the model with the 3D sketch"
+     ③ ★★★ **`## Examples` 给了三个**（C# / VB.NET / VBA）—— ★ **而例子给出了"两遍选边"**，
+          ★ 那是**签名与 Remarks 都给不出**的：
+        ```
+        SelectByID2("", "EDGE", x,y,z, **True**, **0**, Nothing, 0)   \u00d74  \u2190 \u7b2c\u4e00\u904d mark=0
+        ClearSelection2 True
+        SelectByID2("", "EDGE", x,y,z, **True**, **1**, Nothing, 0)   \u00d74  \u2190 \u7b2c\u4e8c\u904d mark=1
+        SketchOffsetOnSurface(0.01, False, True, False)
+        ClearSelection2 True
+        swSketchManager.InsertSketch True                            \u2190 \u2605 \u6536\u5c3e
+        ```
+     ```
+     ★★ **而本轮修了**两个真因**（★ 都靠真机逼出来）：
+     ```
+     \u2460 \u2605 **`SelectByID2("", "EDGE", x,y,z, \u2026)` \u4e00\u6761\u8fb9\u90fd\u9009\u4e0d\u4e2d**\uff08\u2605 \u771f\u673a\uff1a
+        \u2605 \u89d2\u70b9\u4e0e\u4e2d\u70b9\u4e24\u79cd\u5750\u6807\u90fd `selected = **0**`\uff09\u26a0
+        \u2605 \u800c**\u4e8b\u5b9e 32 \u65e9\u5c31\u5199\u7740**\uff1a\u9009\u5b9e\u4f53\u7684\u53ef\u884c\u8def\u5f84\u662f
+          **`IEntity.Select4(Append, Callout)`\uff08\u6309**\u5bf9\u8c61**\u9009\uff09**\u3002
+        \u2605 \u6545\u6539\u7528 `entities_on_body(EDGE)` + `select_object(\u2026, append=)` \u21d2 **\u9009\u4e2d 4 \u2713**
+     \u2461 \u2605 **`Select4` \u6ca1\u6709 mark \u53c2\u6570** \u21d2 \u2605 \u6545\u7528
+        **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** \u8865\u8bbe \u2713
+        \uff08\u2605 \u800c\u771f\u673a\u56de `marked = [False, False, False, False]` \u2014\u2014
+         \u2605 **\u800c\u9009\u4e2d\u6570\u4ecd\u662f 4\u3001\u800c\u7279\u5f81\u7167\u6837\u5efa\u6210**\uff0c
+         \u2605 \u6545\u90a3\u4e2a `False` **\u5e76\u4e0d\u963b\u6b62**\uff09
+     ```
+     ★★★★ **而结果（★ 三格对照）**：
+     ```
+     \u2605 \u5b98\u65b9\u53c2\u6570 + **\u6536\u5c3e `InsertSketch`**  \u21d2 ok=True  \u00b7 \u7279\u5f81 7 \u2192 **9** \u00b7 \u65b0\u589e **`\u57fa\u51c6\u97621`** + **`\u8349\u56fe2`** \u2713
+     \u5bf9\u7167\uff1a\u5b98\u65b9\u53c2\u6570 \u00b7 **\u4e0d\u6536\u5c3e**            \u21d2 ok=False \u00b7 \u7279\u5f81 **7 \u2192 7** \u00b7 \u65b0\u589e **[]**        \u26a0
+     \u5bf9\u7167\uff1a**`Reverse=True`**                  \u21d2 ok=True  \u00b7 \u7279\u5f81 7 \u2192 9\uff08\u2605 \u65b9\u5411\u53d8\u4e86\u800c\u7279\u5f81\u7167\u5efa\uff09
+     ```
+     ⇒ ★★ **故对照那格**证明**了官方 Remarks 第 ③ 条**：
+       ★ **`InsertSketch` 就是"把它重建出来"的那一步** —— ★ 不做它，**一条特征都不长** ✓
+     ⇒ ★★★ **故 `SketchOffsetOnSurface` 的工作流是**：
+       ★ **它回 `False` 是**正常的****（★ 它只"创建了 3D 草图"），★ **而 `InsertSketch` 之后才成形** ✓
+     ⇒ ★★ **故 2026-10-01 那次"前置全满足仍回 False"的结论要**更正****：
+       ★ 那个 `False` **不是失败** —— ★ 而是**缺了收尾那一步** ⚠
+     ⚠ **仍未查**：`GetActiveSketch2` 回的 `is_3d=False` / `segments=0`
+       —— ★ 可能是**拿错了草图对象**或**读数时机不对**（★ 而**特征树那两条硬判据已足够**）。
+     ⚠ **仍未查**：`GeodesicSketchOffset`（★ 官方提的测地线那个）。
+|真机：`tools/prove_offset_on_surface_per_example.py`（★ **三格** · 零弹窗）；
+证据 `output/offset-on-surface-per-example-evidence.json`；
+官方：`C:\swapi\types\IModelDocExtension\SketchOffsetOnSurface.md`（**Remarks + Examples**）·
+`C:\swapi\examples\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`；
+本仓：`scripts/sw_selection_spec.py` 的 `entities_on_body` / `select_object`；
+对照事实 32 / 460 / 479 / 480 |

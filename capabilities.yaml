@@ -4290,6 +4290,34 @@
         "★ **包装已真机通过**：`sw_hole_features.create_hole_wizard_at_selection_report(model, selection, size, …)`（★ 而**尚未接进 MCP 工具层**）。",
         "★ 孔位接**面选择器**（`+x/-x/+y/-y/+z/-z`）；⚠ 而 `resolve_face_selector` **只对轴对齐的实体可靠**。"
       ]
+    },
+    {
+      "id": "sketch_offset_on_surface",
+      "label": "曲面上偏移（`IModelDocExtension.SketchOffsetOnSurface`）—— ★ **真机建成**·★★ **三步缺一不可**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方 Remarks + 官方例子**立）：`C:\\swapi\\types\\IModelDocExtension\\SketchOffsetOnSurface.md`（**`## Remarks` 三条** + **`## Examples` 三个**）× `C:\\swapi\\examples\\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`。代码：`tools/prove_offset_on_surface_per_example.py`。",
+      "evidence": [
+        "★★★ 2026-10-03（轮 612）**真机建成**（走 `sw_guard`，零弹窗）—— **三格对照**：\n       `按对象选 4 条边（补设 mark=1）` → `SketchOffsetOnSurface(0.01, False, True, False)` → `ClearSelection2` → **`SketchManager.InsertSketch(True)`**\n       ⇒ **特征 7 → 9**，新增 **`基准面1`** + **`草图2`** ✓\n       ★ **而对照组（★ 不做 `InsertSketch`）⇒ 特征 7 → 7、新增 []** —— ★ **故那一步是必需的**（★ 与官方 Remarks 第 ③ 条完全对应）✓\n       证据 `output/offset-on-surface-per-example-evidence.json`。",
+        "★★ **而本轮修了两个真因**（★ 全靠真机逼出来）：\n       ① ★ **`SelectByID2(\"\", \"EDGE\", x,y,z, …)` 一条边都选不中**（★ 角点与中点两种坐标都 `selected = 0`）⚠\n         ★ 而**事实 32 早写着**：选实体要用 **`IEntity.Select4`（按对象）**；★ 本仓封装：`sw_selection_spec.entities_on_body` + `select_object`\n       ② ★ **`Select4` 没有 mark 参数** ⇒ 用 **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** 补设 ✓"
+      ],
+      "limitations": [
+        "★★ **三步缺一不可**：① **按对象选边**（★ `Select4`，**不是** `SelectByID2`）；② 补设 **`Mark`**；③ 收尾 **`ISketchManager.InsertSketch(True)`**。",
+        "★ **它回 `False` 是正常的**（★ 它只“创建了 3D 草图”）—— ★ **故不能拿那个 `False` 当失败判据**（★ 而 2026-10-01 那次正是这么误判的，事实 460）。",
+        "★ `UseFront` 必须 `True`（★ 官方：\"Although not currently used, must be set to true\"）。",
+        "⚠ **本包装未接进 MCP 工具层**；⚠ **未查**：`GetActiveSketch2` 回的 `is_3d=False` / `segments=0`（★ 可能拿错了草图对象）。",
+        "⚠ **未查**：`GeodesicSketchOffset`（★ 官方提的**测地线**那个）。"
+      ]
     }
   ]
 }
