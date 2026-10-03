@@ -75,6 +75,11 @@
 
 from __future__ import annotations
 
+from pathlib import Path as _Path
+
+#: ★★ 本仓库 `scripts/` 的绝对路径（★ 供 `_feature_names_snapshot` 按顶层路径 import `sw_part`）
+_REPO_SCRIPTS = _Path(__file__).resolve().parent
+
 try:
     from .sw_connect import get_com_member, call_com_member
 except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
@@ -131,16 +136,55 @@ def insert_gtol(model):
     ⚠ 官方 Remarks：**引线连接点来自调用前选中的东西**；
     若**没有选中**，则符号无引线、独立存在，并**初始位于模型/工程图的原点**。
 
-    :returns: 新建的 `IGtol` 对象（`InsertGtol` 返回的指针）。
+    :returns: ★★ **2026-10-04 起改为回 dict**（★ 见下）—— 原来是裸的 `IGtol` 对象。
     :raises RuntimeError: 返回 `None`。
+
+    ★★★★ **2026-10-04（接手轮）补上 doc 承诺的第二个判据** ——
+      处置 `JUDGE-C_D_E.md` 的 🔴 **#3**（★ `E-3 #3`）—— ★ 裁判逐字：
+      「★ doc 承诺『回对象 **且** **特征树变化**』两件事，★ 代码**只做了前一件**」✓
+      ★★ **对外契约逐字**（`mcp-server/tool_specs_batch39.py`，★ 两处）：
+        · 工具 doc：「★ The criterion is that it **returns an object and the feature tree changes**.」
+        · 模块头判据段：「★ `insert_helix` / `insert_gtol` ⇒ 判『不抛异常 **且** 特征树有变化』」✓
+      ★★★ 而原实现：★ 只判 `gtol is None` 后 **`return gtol`** ⇒ **没有任何特征树回读**；
+        ★★ 而**同批的 `insert_helix` 反而有** `return _newest_feature_name(model)` ⇒ **两批不一致** ✓
+      ⇒ ★ 修法：★ **调用前后各取一次特征树**，★ 把「新增了什么特征」当**第二个判据** ✓
     """
+    before = _feature_names_snapshot(model)
     gtol = call_com_member(model, "InsertGtol")
     if gtol is None:
         raise RuntimeError(
             "IModelDoc2.InsertGtol() 返回 None ⇒ 形位公差没有建出来"
             "（常见原因：当前文档类型不支持标注）"
         )
-    return gtol
+    after = _feature_names_snapshot(model)
+    added = None
+    if before is not None and after is not None:
+        added = [n for n in after if n not in before]
+    return {
+        #: ★★ 跨种类 ⇒ `and`：★ **回对象**（对象类）**且** **特征树有变化**（结构类）✓
+        #:   ★ 而"树取不到"（★ `added is None`）⇒ **不算通过**（★ 不静默成功）
+        "ok": bool(added) if added is not None else False,
+        "op": "insert_gtol",
+        "gtol_returned": gtol is not None,
+        "new_features": added,
+        "tree_readable": added is not None,
+        "verified_by": "★ 回对象 **and** 特征树有变化（★ doc 承诺的两个判据；★ 树取不到时不算通过）",
+    }
+
+
+def _feature_names_snapshot(model):
+    """★ 当前文档的特征名列表；★ 取不到 ⇒ `None`（★ 不许当成空列表 —— ★ 那会把"读不到"当"没建"）。"""
+    try:
+        import sys as _sys
+        if str(_REPO_SCRIPTS) not in _sys.path:
+            _sys.path.insert(0, str(_REPO_SCRIPTS))
+        from sw_part import feature_names                                # noqa: PLC0415
+    except Exception:                                                     # noqa: BLE001
+        return None
+    try:
+        return [str(x) for x in (feature_names(model) or [])]
+    except Exception:                                                     # noqa: BLE001
+        return None
 
 
 def add_gtol_frame(gtol):

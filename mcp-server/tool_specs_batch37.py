@@ -101,7 +101,13 @@ SPECS_BATCH37 = [
             Param("value", str, description="The value as TEXT (★ the registry decides the type)."),
         ],
         doc="Set one study option by its registered family/name and return a report. "
-            "★ Unknown family/name raises instead of being silently ignored.",
+            "★★ **未知的 family/name 会返回 `{\"ok\": false, \"error\": …}` —— 不抛异常**"
+            "（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #3 · E-3 #6）。"
+            "★ 旧描述（已作废）：「Unknown family/name **raises** instead of being silently ignored.」——"
+            "★ 那半句「**不静默忽略**」成立、「**raises**」不成立：包装层用 `except Exception` 把 "
+            "`KeyError` 捕获并回成结构化失败（★ 那是**更好**的行为 —— 失败可见且带原因，"
+            "而 MCP 层不该把异常当正常返回）。"
+            "⇒ ★ 判据：★ **`ok` 为假且有 `error` 字段** ⇒ 未登记的名字**一定看得见**，只是**以返回值而非异常的形式**。",
     ),
     ToolSpec(
         name="solidworks_simulation_set_study_options",
@@ -114,6 +120,9 @@ SPECS_BATCH37 = [
                   description="Mapping of setter name → value (★ each must be registered)."),
         ],
         doc="Set several study options and return the read-back dict. "
-            "★ Unknown family/name raises instead of being silently ignored.",
+            "★★ **未知的 family/name 会返回 `{\"ok\": false, \"error\": …}` —— 不抛异常**"
+            "（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #3 · E-3 #6）。"
+            "★ 旧描述（已作废）：「Unknown family/name **raises** instead of being silently ignored.」——"
+            "★ 同上：★「**不静默忽略**」成立、「**raises**」不成立（★ 异常被包装成结构化失败）✓",
     ),
 ]
