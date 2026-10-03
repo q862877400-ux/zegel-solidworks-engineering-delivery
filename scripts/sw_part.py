@@ -641,6 +641,27 @@ def sketch_spline(model, points):
       · `CreateSpline2` 官方已标 **Obsolete**（后继 `CreateSpline3` 末参是 **BYREF `Object&`**，
         pywin32 到不了）⇒ ★ **能用的是这个已废弃的 `CreateSpline2`**（★ 已知事实 12 那族：废弃 ≠ 不可达）。
 
+    ★★★★★ **2026-10-04（接手轮）★ 把上面那句从"断言"升级为"真机否证"** ——
+      处置阶段 2 · T1 的**逐条流程第 ② 步**（★ **真机验证后继可不可调**）✓
+      ★ **官方逐字**（★ `C:\swapi\types\ISketchManager\CreateSpline3.md`）：
+        ★ `CreateSpline3(object PointData, object Surfs, object Direction, bool SimulateNaturalEnds,
+          **out object Status**)` ⇒ **5 参** ✓
+        ★★ 而它的 `## Remarks` 逐字：★ 「To create a **2D spline**… ★ **All other parameters with
+          null or Nothing.**」⇒ ★ **2D 情形下 `Surfs` / `Direction` 都传 null** ✓
+      ★★★ **真机证据**（★ `tools/probe_createspline3.py` · ★ 走 `sw_guard` · ★ `sw_alive: true` ·
+        ★ **零弹窗** · ★ 2.14 s ⇒ `output/createspline3-probe-evidence.json`）：
+        | ★ 形态（★ 2D 样条、三个点） | ★ 结果 |
+        |---|---|
+        | ★ `CreateSpline3(data, None, None, False, **out_dispatch()**)` | ★★ **`类型不匹配`（位置 5）** |
+        | ★ `CreateSpline3(data, None, None, False, **空 Dispatch**)` | ★★ **`类型不匹配`（位置 5）** |
+        | ★ `CreateSpline3(data, None, None, False, **None**)` | ★★ **`类型不匹配`（位置 5）** |
+        | ★★ **基线：`CreateSpline2(data, False)`** | ★★★ **`built=True` · 段数 0→1**（★ 建成）✓ |
+        ⇒ ★★★★ **三种出参包装全败、★ 而基线建成** ⇒ **那才叫"后继到不了"** ✓
+        ★ **位置 5 = 末参 `Status`** —— ★ 与 docstring 的断言**逐字对上** ✓
+      ★★★★ **⇒ 本条**记档保留**（★ 判据：★ **"不可换"要有真机证据**、★ 而不是"看起来复杂"）** ✓
+        ★★ 而**证据文件**在 `output/createspline3-probe-evidence.json`、★
+          **探针**在 `tools/probe_createspline3.py`（★ 按「`tools/` 只报不动」保留）✓
+
     ★ **单位（2026-10-03 顺手修的一处不一致）**：`points` 的声明单位是**毫米**，★ 而**旧实现把值原样**
     送进了 COM（★ COM 吃的是**米**）⇒ ★ 声明与实际不符。★ 本函数此前**每次都抛**（见下）
     ⇒ **没有可用的调用方会被这次修正破坏** ⇒ 现按规则 2 **在边界换算一次**（`/1000.0`）。
