@@ -71,3 +71,29 @@ def test_real_tree_runs_and_skips_or_passes():
     """★ 真实仓库：★ **要么 SKIP（★ 接口目录不在）、要么没有违规**。"""
     bad, _w, ran = GATE.check()
     assert not bad, "真实仓库有违规：%r" % (bad[:3],)
+
+
+def test_obsolete_detected():
+    """★★ 2026-10-03（轮 605）★ 新增的那条**提示**：`api` 点名的成员**已标废弃**。
+
+    ★ 为什么它值得测（★ 事实 477）：★ 那正是**事实 433** 那条纪律的机器版
+      ——「先读 md 头顶那句 `Obsolete`，继任者名字就在那句里」。
+      ★ 而它一加上**立刻找出 2 条**（`InsertProjectedSketch` / `InsertFreeform`）✓
+    """
+    if not GATE.SWAPI_TYPES.exists():
+        return                    #: ★ 便携性：接口目录不在 ⇒ 无从判定
+    assert GATE.is_obsolete("InsertFreeform"), (
+        "`InsertFreeform` 明明标了废弃（`Superseded by InsertFreeform2`）却判成未废弃")
+    assert not GATE.is_obsolete("InsertFreeform2"), (
+        "`InsertFreeform2` **未标废弃**却被判成废弃 ⇒ 判据读错了")
+
+
+def test_obsolete_is_warn_not_blocking():
+    """★ 负例：★ **废弃只该提示、不该拦**（★ 事实 379：废弃入口也可能有活路）。"""
+    fake_items = [{"tier": "可攻关", "zh": "自由样式", "api": "InsertFreeform"}]
+    bad, warn, ran = GATE.check(idx=FAKE_IDX, has_acc=lambda i: False,
+                                items=fake_items, limited=set())
+    assert ran
+    assert not bad, "废弃被当成违规拦下了 ⇒ 太严（★ 应只提示）：%r" % (bad[:2],)
+    if GATE.SWAPI_TYPES.exists():
+        assert warn, "废弃没进提示 ⇒ 那条新判据没生效"

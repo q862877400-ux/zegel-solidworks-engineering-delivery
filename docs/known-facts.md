@@ -2631,3 +2631,24 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        （★ 而本轮就是靠**逐条读那些剩下的可攻关**发现的）。
      ★ **而本仓早就记着同族的一句**：`scripts/sw_surface_ref_ops.py` 逐字：
        「`IModelDoc2.InsertSweepRefSurface` 与 `…RefSurface2` **两个都标 Obsolete**」✓|官方：`C:\swapi\types\IFeatureManager\InsertSweepSurface{{,2,3}}.md` × `ISweepFeatureData\`（53 成员）；名单：`docs/backend-limited-items.json`（★ **11** 条）；对照事实 415 / 474 / 475 |
+| 477 | **★★★ 三条路一起查：两条撞门槛、★ 而**一条真有活路****（`InsertFreeform2` **未标废弃**） —— 2026-10-03（轮 605）。
+     ★ **起因**：上一轮给完整性门禁加了一条**新提示**（★ 即
+       「`api` 里点名的成员**已标废弃**」—— ★ 而那正是**事实 433** 那条纪律的机器版）
+       ⇒ ★ **它立刻找出 2 条**：「曲线-投影曲线」与「自由样式」✓
+     ★★ **而顺着查下去，三条代际全查清了**：
+     ```
+     ① `InsertProjectedSketch`  ⇒ 弃 ⇒ `InsertProjectedSketch2` ⇒ **也弃**
+        逐字："Obsolete. See **`IProjectionCurveFeatureData`** and `IFeatureManager::CreateDefinition`"
+        ★ 而那接口（**11 成员**）**带 `AccessSelections`** ⇒ ★ **同一道门槛**
+     ② `InsertFreeform`           ⇒ 弃 ⇒ **`InsertFreeform2`** ⇒ ★★ **未标废弃**
+        签名：`InsertFreeform2(Nsided, Symmetric0, Symmetric1, Angle)` ⇒ **4 参**
+        ★ 而 **`IFreeformFeatureData` 接口不存在** ⇒ ★ **它不走 FeatureData 那条路**
+     ③ `InsertSweepSurface{{,2,3}}`   ⇒ 三代**全弃** ⇒ `ISweepFeatureData`（**53 成员**）**带 `AccessSelections`**
+     ```
+     ⇒ ★★ **故两条进了「后端到不了」**（投影曲线 · 扫描曲面）；
+       ★★★ **而「自由样式」是本轮最重要的发现**：**`InsertFreeform2` 未标废弃、且不走 `FeatureData`**
+       ⇒ ★ **故它可能**真的能做****（★ 而它正在台账的“可攻关”里）—— ★ **而那是下一轮的靶心** ✓
+     ★ 台账：**后端到不了 6 → 7**、**可攻关 6 → 5**。
+     ★★ **方法论**：★ **给门禁加一条“提示”，就等于给自己加一个“待办生成器”** ** —— ★ 而它比“逐条去想”可靠得多 ✓
+     ★ 而**本轮还让门禁自己说出了它的盲点**：它的判据 ① 只认 `*FeatureData` 字样，
+       ★ 故**台账写旧入口名的那些逃过了它**（★ 而新提示正是为此而加）⚠|官方：`C:\swapi\types\IModelDoc2\InsertProjectedSketch{{,2}}.md` · `IFeatureManager\InsertFreeform{{,2}}.md` · `ISweepFeatureData\` · `IProjectionCurveFeatureData\`；名单：`docs/backend-limited-items.json`（★ **12** 条）；对照事实 433 / 474 / 475 / 476 |

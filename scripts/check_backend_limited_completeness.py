@@ -62,6 +62,33 @@ def has_access_selections(iface: str) -> bool:
     return any(f.stem == "AccessSelections" for f in d.glob("*.md"))
 
 
+def is_obsolete(member: str) -> bool:
+    """★ 那个成员**标了 `Obsolete` 吗**（★ 读它 md 的头顶）。
+
+    ★★ 判据来源（★ 事实 433 那条纪律的**机器版**）：
+      「凡台账 `api` 带 `2`/不带后缀的，**先读 md 头顶那句 `Obsolete`** —— 继任者名字就在那句里」。
+    ★ 而轮 603 实测：★ 台账那条写 `InsertProtrusionSwept4`（**已废弃**）⇒
+      ★ 而它的"继任者" `InsertSweepSurface` **三代也全废弃**、★ 最终指向
+      `ISweepFeatureData`（★ **带 `AccessSelections`**）
+      ⇒ ★ **而那一条恰恰逃过了当时那道门禁**（★ 判据只认 `*FeatureData` 字样）⚠
+    """
+    if not SWAPI_TYPES.exists():
+        return False
+    for d in SWAPI_TYPES.iterdir():
+        if not d.is_dir():
+            continue
+        f = d / (member + ".md")
+        if not f.exists():
+            continue
+        try:
+            head = f.read_text(encoding="utf-8", errors="replace")[:2000]
+        except OSError:
+            continue
+        if re.search(r"^Obsolete\.", head, re.M):
+            return True
+    return False
+
+
 def check(idx: dict | None = None, has_acc=None,
           items: list | None = None, limited: set | None = None) -> tuple[list[str], list[str], bool]:
     """★ 返回 ``(违规, 提示, 是否跑得动)``。"""
@@ -96,6 +123,19 @@ def check(idx: dict | None = None, has_acc=None,
         #: \u2605 \u5224\u636e \u2461\uff1aapi \u91cc\u7684\u6210\u5458\u540d**\u5168\u63a5\u53e3\u90fd\u6ca1\u6709**
         missing = [m for m in set(MEMBER_RE.findall(api))
                    if m not in idx and not m.endswith("FeatureData") and m not in ("Surface", "Silhouette")]
+        #: ★★ 2026-10-03（轮 604）**补上一个盲点**（★ 事实 476）：
+        #:   判据 ① 只认 `api` 里的 **`*FeatureData` 字样**，
+        #:   ★ 而**台账有些条写的是已废弃的旧入口**（如 `InsertProtrusionSwept4`）
+        #:   ⇒ ★ 而它的新架构**可能也带 `AccessSelections`**（如 `ISweepFeatureData`）⚠
+        #: ★ 故：**`api` 里点名的成员已标废弃** ⇒ ★ **提示**
+        #:   （★ 而不拦 —— ★ 废弃本身不等于到不了，★ 事实 379 那类也有活路）
+        for m in sorted(set(MEMBER_RE.findall(api))):
+            if m in idx and is_obsolete(m):
+                warn.append("「%s」的 `api` 点名的 **`%s` 已标废弃**"
+                            "（★ 事实 433：**先读 md 头顶那句 `Obsolete`**，"
+                            "继任者名字就在那句里）"
+                            "—— ★ 而新架构**可能也带 `AccessSelections`**" % (zh, m))
+                break
         if missing and len(missing) == len(set(MEMBER_RE.findall(api))):
             warn.append("\u300c%s\u300d\u7684 `api` \u5728\u5168\u63a5\u53e3\u90fd\u67e5\u4e0d\u5230\uff1a%s"
                         "\uff08\u2605 \u94c1\u5f8b 5 \u2014\u2014 \u2605 \u53ef\u80fd\u8be5\u6539\u5224\u201c\u67e5\u4e0d\u5230\u201d\u800c\u975e\u201c\u53ef\u653b\u5173\u201d\uff09"

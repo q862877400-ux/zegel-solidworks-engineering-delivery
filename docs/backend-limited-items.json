@@ -124,6 +124,16 @@
         474
       ],
       "note": "★ `InsertSweepSurface` / `...2` / `...3` **三代全标废弃**，★ 而三代都指向**同一个新架构**（`SweepFeatureData`）⇒ ★ 而 `ISweepFeatureData`（**53 成员**）**带 `AccessSelections`**。★ 而本仓 `sw_surface_ref_ops.py` 早就记着「`InsertSweepRefSurface` 与 `…RefSurface2` 两个都标 Obsolete」。"
+    },
+    {
+      "toolbar": "曲线-投影曲线",
+      "member": "IProjectionCurveFeatureData.AccessSelections",
+      "where": "0x80010105（★ 与四个阵列 / 扫描曲面同一道门槛）",
+      "section": "### 2.3",
+      "facts": [
+        474
+      ],
+      "note": "★ 代际：`InsertProjectedSketch` ⇒ 弃 ⇒ `InsertProjectedSketch2` ⇒ **也弃**，\n                ★ 而它逐字指向「`IProjectionCurveFeatureData` 与 `CreateDefinition`」（**11 成员、带 `AccessSelections`**）。"
     }
   ]
 }
