@@ -459,6 +459,40 @@ def _run_inject_binding_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_inout_array_audit_gate() -> dict[str, object]:
+    """@brief 跑**`in,out` 数组形参审计的契约测试**。
+
+    ★★ 为什么有这一道：★ 2026-10-03（轮 514-515）—— 那份审计
+    （`tools/audit_inout_array_params.py` ⇒ `output/inout-array-params.json`）
+    是**事实 128/129 的落地产物**：它用**第 4 套签名源**（类型库方法表）查出
+    **62 条 `in,out` 数组形参**（涉及本仓调用过的 **496** 个成员名）。
+
+    ⚠★ **而本轮查明：它自己没有被任何门禁引用** —— 只有 `scripts/audit_byref_args.py`
+    的**注释**提到了它（★ 当年把结论写回了口径段）。
+    ⇒ ★★ **故它"跑过一次"之后就再也不会被跑** ⇒ ★ 产物会**悄悄过期** ⚠
+
+    ★ 本道门禁把它从「跑过一次」变成「**发布时必查**」：
+    跑 `tests/test_inout_array_audit_contract.py`（★ 5 条 · 纯静态 · ~0.1s），
+    断言**产物结构在**、**扫了多个库**、**记录字段齐**、
+    ★ **审计自己那句「不做结论」还在**（★ 那是它的安全边界）、**产物内部自洽**。
+
+    ★ 它**自己有负例自证**：★ 把 `output/inout-array-params.json` 挪走再跑本道 ⇒ 必然 fail
+    （★ 事实 62：一个门禁「写了」不等于它「有效」）。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"), "-m", "pytest", "-q",
+             str(ROOT / "tests" / "test_inout_array_audit_contract.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "in,out 数组审计契约无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_typelib_tables_gate() -> dict[str, object]:
     """@brief 跑**出厂类型库对照门禁**（`tools/check_typelib_tables.py`）。
 
@@ -1074,6 +1108,17 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "出厂类型库对照门禁未通过（手抄的成员表与出厂类型库不一致）：\n"
             + str(tl_tables.get("output", "")))
+    #: ★★ 2026-10-03（轮 515）**新增**：`in,out` 数组形参审计的**契约门禁** ——
+    #:   ⚠ 为什么加：那份审计（`tools/audit_inout_array_params.py` ⇒
+    #:   `output/inout-array-params.json`）是事实 128/129 的落地产物，
+    #:   ★★ **而它自己没有被任何门禁引用**（只有 `audit_byref_args.py` 的**注释**提到它）
+    #:   ⇒ ★ 它**"跑过一次"之后就再也不会被跑**、产物会**悄悄过期** ⚠
+    #:   ★ 本道把它变成「**发布时必查**」：跑它那 5 条契约测试（纯静态 · ~0.1s）。
+    inout = _run_inout_array_audit_gate()
+    if inout.get("status") == "fail":
+        raise AssertionError(
+            "in,out 数组形参审计的契约未通过（产物缺失/过期，或审计的安全边界被删）：\n"
+            + str(inout.get("output", "")))
     # ⚑ **签名审计表新鲜度门禁**（硬门禁）：`docs/signature-audit.md` 的**逐模块调用点数**
     #   必须与实跑 `scripts/audit_call_arity.py` 的结果相符（A5 的制品）。
     #   触发它的是 2026-10-01（轮 55）实测的 **3/6 模块失真** ——
@@ -1165,6 +1210,12 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-03（轮 416）：出厂类型库对照也必须进返回体
         #:   —— ★元门禁已两次抓到同一类疏漏（「跳过与没跑等价」）。
         "typelib_tables": tl_tables,
+        #: ★★ 2026-10-03（轮 515）：**`in,out` 数组审计契约**也必须进返回体 ——
+        #:   ⚠ 而这一条**又是元门禁当场抓到的**（第三次同一类）：
+        #:   我只加了 gate 与 fail 判据，却没汇总进 `_gate_results`
+        #:   ⇒ 元门禁报「`inout` 的结果没有进返回体 ⇒ 『它跳过了/它没跑』在外面看不见」。
+        #:   ★★ 那已是元门禁**第三次**抓到它（轮 356 `py_syntax` · 轮 404 `undef` · 本轮 `inout`）。
+        "inout_array_audit": inout,
         #: ★ 2026-10-03（轮 420）：判据前置也必须进返回体（元门禁的第三条）
         "judge_preflight": jp,
         "inject_binding": ib,

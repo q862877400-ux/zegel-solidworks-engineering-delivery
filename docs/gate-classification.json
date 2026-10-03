@@ -1,167 +1,173 @@
 {
- "_comment": [
-  "**门禁分类登记表** —— 每个 `scripts/check_*.py` 声明自己接进 `release_check.py` 后是",
-  "「**硬门禁**」（拦发布）还是「**诊断**」（只报不拦）。",
-  "⚠ 为什么需要（2026-10-01 轮 72）：轮 71 的元门禁只解决了「门禁**接线了没**」，",
-  "  但**接线的方式**没管 —— 实测 `release_check.py` 里有两种形态：",
-  "  ```",
-  "  provenance = _run_provenance_gate()          ← 硬门禁",
-  "  if provenance.get(\"status\") == \"fail\":",
-  "      raise AssertionError(...)                ← 拦发布",
-  "  ownership = _run_interface_ownership_probe()  ← 诊断：**不 raise**",
-  "  ```",
-  "  一个**本该拦的门禁**若写成诊断，就会**静默放行**（「守卫存在但没人用」的第三种面孔）。",
-  "⚠ 判据（**精确到兄弟语句**，不用行窗口）：对每个 `x = _run_yyy()` 赋值节点，",
-  "  看它**同一函数体里的下一个兄弟语句**是不是 `if x.get(status)==fail: … raise …`。",
-  "  ★ 用行窗口会**误判**（实测：18 行窗口把 `_run_interface_ownership_probe` 也算成 raise，",
-  "    因为它后面紧跟的是**另一件事**（bundled_drift）的 raise）。",
-  "⚠ 每条必须给 `kind`（`hard`/`diagnostic`）+ `runner`（`_run_*` 函数名）+ `reason`。",
-  "  校验由 `scripts/check_gate_wiring.py` 承担；**实际分类与登记不符即报**。"
- ],
- "classification": [
-  {
-   "gate": "check_provenance.py",
-   "runner": "_run_provenance_gate",
-   "kind": "hard",
-   "reason": "来源可追溯性（铁律 1 的机器判据）：新增代码行没有可追溯出处即拦发布。"
-  },
-  {
-   "gate": "check_diff_markers.py",
-   "runner": "_run_marker_gate",
-   "kind": "hard",
-   "reason": "diff 记号残留（`<<<<<<<` / `=======`）会让文件语法都坏掉，必须拦。"
-  },
-  {
-   "gate": "check_member_names.py",
-   "runner": "_run_member_name_gate",
-   "kind": "hard",
-   "reason": "代码里写了官方不存在的成员名 ⇒ **必然在运行时炸**，必须拦。"
-  },
-  {
-   "gate": "check_workspace_shadowing.py",
-   "runner": "_run_workspace_shadowing_gate",
-   "kind": "hard",
-   "reason": "工作区根的遮蔽物会让以该工作区为 CWD 的 Python 进程 import 到错的东西 ⇒ 拦。"
-  },
-  {
-   "gate": "check_gate_wiring.py",
-   "runner": "_run_gate_wiring_gate",
-   "kind": "hard",
-   "reason": "元门禁：有门禁没接线也没豁免 ⇒ 拦（轮 70 实测漏接一个门禁的直接后果）。"
-  },
-  {
-   "gate": "check_union_conventions.py",
-   "runner": "_run_union_conventions_gate",
-   "kind": "hard",
-   "reason": "五统一 + R1–R14 的并入规范（A3/A10 的判据），必须拦。"
-  },
-  {
-   "gate": "check_param_binding.py",
-   "runner": "_run_param_binding_gate",
-   "kind": "hard",
-   "reason": "工具声明的参数必须『有归属』（∈ 形参 或 ∈ param_alias）—— ★ 两次真实事故（magnitude_n / study_name 漏写别名 ⇒ 真机 TypeError）⇒ 拦。"
-  },
-  {
-   "gate": "check_env_pitfalls.py",
-   "runner": "_run_env_pitfalls_gate",
-   "kind": "hard",
-   "reason": "已知环境坑（缺 encoding= / Path 盘符 / falsy-zero / keybd_event 未配对抬起）⇒ 拦。"
-  },
-  {
-   "gate": "check_spec_acceptance_paths.py",
-   "runner": "_run_spec_acceptance_paths_gate",
-   "kind": "hard",
-   "reason": "Spec Kit 制品里的验收命令必须**可跑**（路径可达）⇒ 拦。"
-  },
-  {
-   "gate": "check_report_freshness.py",
-   "runner": "_run_report_freshness_gate",
-   "kind": "hard",
-   "reason": "A8：交付报告的偏离数字必须与 git 相符（**只查存在不查数字**是已知缺口）⇒ 拦。"
-  },
-  {
-   "gate": "check_signature_audit_freshness.py",
-   "runner": "_run_signature_audit_freshness_gate",
-   "kind": "hard",
-   "reason": "A5：审计表的逐模块数字 + 合计行算术自洽 ⇒ 拦。"
-  },
-  {
-   "gate": "check_license_redlines.py",
-   "runner": "_run_license_redlines_gate",
-   "kind": "hard",
-   "reason": "A6：来源块声明的许可必须在白名单内（许可红线一次都不能越）⇒ 拦。"
-  },
-  {
-   "gate": "check_digest_freshness.py",
-   "runner": "_run_digest_freshness_gate",
-   "kind": "hard",
-   "reason": "A8：`docs/harvest-digest.md` 是生成物，与真源分叉时报告在说假话 ⇒ 拦。"
-  },
-  {
-   "gate": "check_interface_member_ownership.py",
-   "runner": "_run_interface_ownership_probe",
-   "kind": "diagnostic",
-   "reason": "**诊断，刻意不拦**：它判「成员在**这个**接口上存在」，而 `CONST → 接口` 映射表来自官方文本匹配、**仍有 4 条未映射**（第 41/43 轮现状）⇒ 一个覆盖不全的门禁会让人以为防住了（第 40 轮教训）⇒ 报 `[HIT]` 时值得看，但**不拦发布**。⚠ 它的「检查量为 0」会在返回体里标成 `checked_nothing`（**不 raise，但绝不静默**）。"
-  },
-  {
-   "gate": "check_report_criteria_alignment.py",
-   "runner": "_run_report_criteria_alignment_gate",
-   "kind": "hard",
-   "reason": "**硬门禁**：`harvest-report.md §四` 的逐条自评必须与 `AGENTS.md §一` 的 A1–A10 **逐条对齐**（编号 / 条数 / 含义三样）。⚠ 2026-10-01 轮 82 实测：该节此前用的是**另一套编号**（**同名不同事**）—— 旧表「A3」实为 A5、「A5」实为 A6、「A7」实为 A8，还混入「官方 API 覆盖」这条**非 A 判据**的行，**并缺 A1/A9/A10** ⇒ 读者拿 §四 去对 §一**对不上**，而那正是 **A8**（「报告写明…」）**自己没做到**。同类问题此前已犯过一次（旧 §一 的「A1」指官方 API 覆盖）⇒ **靠人记必然再漂**。⚠ **便携性**：`AGENTS.md` 在工作区（不在本仓库）⇒ 拿不到时它**自己 SKIP 并 exit 0**。"
-  },
-  {
-   "gate": "check_negative_input_selfproof.py",
-   "runner": "_run_negative_input_selfproof_gate",
-   "kind": "hard",
-   "reason": "**硬门禁**：`tools/` 下探针里「用变换（`re.sub`/`replace`）造负例输入」的地方，必须**自证变换生效**（比对不等 / 打印前后字节数 / 断言）。⚠ 触发它的是 2026-10-01 轮 84 撞见的**假用例**：删逐模块表的正则**没匹配上** ⇒ \"坏文档\"仍带完整的表 ⇒ 门禁照常 `[PASS]`，**而它被当成了\"修好了\"的证据**。★ **一个假用例比没有用例更糟** —— 它给出一份看起来验过的证据（与已知事实 62 同族，只是发生在**测试**而非门禁上）。⚠ **覆盖面**：只判「变换没生效」这一类；类型 2/3/4 需要语义判断，**未判**（门禁自己在 `[PASS]` 时也会打出这条声明，不夸大覆盖面）。"
-  },
-  {
-   "gate": "check_enum_values_vs_reflection.py",
-   "runner": "_run_enum_values_gate",
-   "kind": "hard",
-   "reason": "**硬门禁**：代码里写的**官方枚举值**必须与**出厂反射**一致（补「**值级**」覆盖缺口）。⚠ 触发它的是 2026-10-01 连着两轮、**都从旧门禁漏过去**的错：023 螺旋线枚举**凭记忆写反**（`height_and_pitch` 1↔2）；024 `swSketchChamfer_DistanceDistance` **两源冲突**（`C:\\swapi` 的 md 写 −1 / 出厂反射写 1）。★ 旧门禁（`check_member_names` / `interface_member_ownership` / `audit_call_arity`）查的都是「**名字**在不在官方清单里」，**没有一个查「值对不对」** —— 这是本项目一个已知的覆盖缺口。⚠ 它**顺带报出两源冲突**，而冲突**不判失败**（铁律 4 已定：冲突取反射）；转储里查不到的成员归「查不到」（铁律 5），**也不判失败**。⚠ **覆盖范围（轮 107 修正）**：转储**不止一份** —— `enum_values_sldworks.txt`（sldworks 程序集）与 `reflect/enum_cosworks.txt`（cosworks 程序集，含 `sws*` 的 Simulation 枚举）。第一版只读前者 ⇒ **75 条 `sws*` 全归「查不到」**；合并后变 **0 条查不到**。⚠ **便携性**：转储在工作区 ⇒ 全拿不到时它**自己 SKIP 并 exit 0**。"
-  },
-  {
-   "gate": "check_python_syntax.py",
-   "runner": "_run_python_syntax_gate",
-   "kind": "hard",
-   "reason": "**硬门禁**：`scripts/` `tools/` `tests/` `mcp-server/` `subskills/` 下**每个** `.py` 必须能 `ast.parse`。⚠ 触发它的是 2026-10-01 **本会话同一处踩了五次**：新建文件时把**来源块写进了头部三引号里**（忘了闭合）⇒ Python 报的是 `SyntaxError: invalid character '★'`（**错误信息指向那个星号、不是真因**），而 `ast.parse` 报的是真因的名字（`unterminated triple-quoted string literal`）。★ 第五条正是在**写这道门禁的脚本本身**上踩的 ⇒ **连踩五次 = 该机械化的强信号**（与事实 62 同族）。⚠ **覆盖面**：只判**语法**；语义/类型错不在内。"
-  },
-  {
-   "gate": "check_member_owner_interface.py",
-   "runner": null,
-   "kind": "diagnostic",
-   "reason": "⚠ **判据未证到能当门禁的程度**（轮 173，事实 113）：一是它**抓不到形参 owner**（`mold_evidence` 那种，**正是写它的动机**）；二是 20 处命中里仍有需**逐条真机核**的（如 `model` 到底是不是 `IModelDoc2`）。★ 与事实 53 同族：**证据进文档，不进工具**。"
-  },
-  {
-   "gate": "check_undefined_names.py",
-   "runner": "_run_undefined_names_gate",
-   "kind": "hard",
-   "reason": "**硬门禁**：判「一个名字在**整个文件里从未被绑定**」而它**在这里被读取** ⇒ **NameError 隐患**。★★ 与语法门禁**互补**：后者只判“能不能 `ast.parse`”，本道判“读到的名字有没有被绑定过”。★ 触发它的是**轮 403 真机抓到的真 bug**：`export_to_image` 里用了 `out_i4()` 而 `sw_export.py` **漏了导入** ⇒ 一调就 `NameError: name 'out_i4' is not defined`（★ 而**当时 19 道门禁全绿**）。★★ 本道**第一次跑就抓到 31 处**（7 个名字 / 23 个文件），其中 `dismiss_residual_dialogs` **21 处**（8 个 tools 文件没导入就用）· `time` 3 处 · `SW_PID` 1 处 —— ★ 全是同一种形态：**改名之后没跟着改**。⚠ 它用**保守判据**（判“整个文件都没绑定过”）⇒ 宁可漏、不要噪音；“运行期动态注入全局”（`globals().update(...)`）与 `import *` 的文件**整份跳过**（真例：`mcp-server/server.py` 的 `globals().update(exports)` —— 不跳过会在那一个文件上假阳性 **300+ 处**）。★ 已登记损坏（★ WARN 不拦）：`scripts/sw_selection_tx.py`。"
-  },
-  {
-   "gate": "check_typelib_tables.py",
-   "runner": "_run_typelib_tables_gate",
-   "kind": "hard",
-   "reason": "**硬门禁**：能力层里**手抄的成员表**（`_ERRORCODE_MEMBERS` / `_REFGEOM_MEMBERS` / `OFFICIAL_LOAD_SIGNATURES`）必须与**出厂类型库**（`SolidWorks.Interop.cosworks.dll`）的元数据**逐条一致**。★ 触发它的是**轮 415 的真 bug**：`_ERRORCODE_MEMBERS` **手抄 CHM**时**漏了 `AddTemperature` 与 `AddRemoteLoad`** ⇒ 这两个成员**从不补末尾 `ByRef ErrorCode`** ⇒ `com_error(-2147352561, 非选择性的参数)` ⇒ ★★ **两条好能力看起来调不通**。★ 而定位用的是**出厂类型库**（铁律 4 的最高裁决者）——它是**托管程序集**，可以用 **PowerShell 的 .NET 元数据反射****离线读**（零 Python 依赖、不需要 SW 在跑）。★ 它第一次跑就抓到 **3 处**（★ 1 处真发现：`AddPrescribedDisplacement` 的 `RefGeom` 在**第 4**个实参、而旧代码写死了位置 2；2 处是检查器自己太粗已修）。⚠ **便携性**：拿不到那个 DLL ⇒ 脚本自己报 `[SKIP]` 并 exit 0。"
-  },
-  {
-   "gate": "check_judge_preflight.py",
-   "runner": "_run_judge_preflight_gate",
-   "kind": "hard",
-   "reason": "**硬门禁**：凡「**用某个回读去判某条能力**」的判据，必须**先在已知成功场景上被验过** —— 登记在 `docs/judge-registry.json`。★ 触发它的是**上一轮的五次事故**：能力好好的、而它看起来坏了 ——而**每一次的错都在判据**（选区不干净 / 算例类型错 / 算例名错 / 名单不全 / 间歇性不稳）。⇒ ★★ **判据本身也是被测对象**，它必须先被验过。★ 判据两类：**`judge`**（它的 `evidence` 必须 `verdict: pass`）与 **`refuted`**（**被否掉的假设**，它的 evidence **不能**是 pass）。★ **它自己有负例自证**：`tests/test_judge_preflight_gate.py`（**6 passed**，★ 五个故意坏的情形全被红 —— 事实 62：门禁「写了」不等于它「有效」）。⚠ **便携性**：工作区不可达 ⇒ 脚本自己报 `[SKIP]` 并 exit 0。"
-  },
-  {
-   "gate": "check_server_side_tools.py",
-   "runner": "_run_server_side_tools_gate",
-   "kind": "hard",
-   "reason": "★ **硬门禁**：本仓的工具声明**有两条路** —— **ToolSpec 路**（过五统一门禁）与 **`server.py` 装饰器路**（`@mcp.tool`，**而它不过那套门禁**）。★ 故把**静态可判**的那一条看住：**两条路上的 `solidworks_*` 工具名不许重名**（重名会让后注册的**遮掉**先注册的）。★ 而它**自己写明了诚实话**：过了参数名**不等于**过了门禁 ⇒ **不下合规的结论**。（来源：事实 364；而它是 `plan-200r-v3` §五 ① 的兑现）"
-  },
-  {
-   "gate": "check_inject_binding.py",
-   "runner": "_run_inject_binding_gate",
-   "kind": "hard",
-   "reason": "**硬门禁**：每个 ToolSpec 声明的 **`inject`** 必须**覆盖包装的必需对象形参**。★ 触发它的是 **2026-10-03（轮 461）真机撞出来的真缺陷**：走 MCP 工具调 `solidworks_part_mass_properties` 报 `TypeError: mass_properties() missing 1 required positional argument: 'model'` —— 那条 spec **漏了 `inject=\"model\"`** ⇒ 调用时不注入文档 ⇒ 包装拿到 0 个实参 ⇒ **必炸**。★★ 而**既有的 `check_param_binding.py` 抓不到它**：那道判「**声明了的**参数名 ∈ 形参」，**不判「注入的对象覆盖了包装的必需形参」**。⇒ 全扫 **221 个 ToolSpec 里 16 个漏**（★ 含草图 / 拉伸 / 圆角 / 倒角 / 工程图读 / 属性读 —— **都是基本功能**）⇒ 已修（提交 `2fb0e1b`）。★ **它自己有负例自证**：`tests/test_inject_binding_gate.py`（**4 passed**，★ 含「漏 inject 必须被抓到」与「有 derived_args 的不该报」两个负例 —— 事实 62）。⚠ **覆盖边界**：只判**第一个**必需形参（更靠后的可能由转换层喂进来）⇒ **过了它不等于那条工具一定跑得通**。"
-  }
- ]
+  "_comment": [
+    "**门禁分类登记表** —— 每个 `scripts/check_*.py` 声明自己接进 `release_check.py` 后是",
+    "「**硬门禁**」（拦发布）还是「**诊断**」（只报不拦）。",
+    "⚠ 为什么需要（2026-10-01 轮 72）：轮 71 的元门禁只解决了「门禁**接线了没**」，",
+    "  但**接线的方式**没管 —— 实测 `release_check.py` 里有两种形态：",
+    "  ```",
+    "  provenance = _run_provenance_gate()          ← 硬门禁",
+    "  if provenance.get(\"status\") == \"fail\":",
+    "      raise AssertionError(...)                ← 拦发布",
+    "  ownership = _run_interface_ownership_probe()  ← 诊断：**不 raise**",
+    "  ```",
+    "  一个**本该拦的门禁**若写成诊断，就会**静默放行**（「守卫存在但没人用」的第三种面孔）。",
+    "⚠ 判据（**精确到兄弟语句**，不用行窗口）：对每个 `x = _run_yyy()` 赋值节点，",
+    "  看它**同一函数体里的下一个兄弟语句**是不是 `if x.get(status)==fail: … raise …`。",
+    "  ★ 用行窗口会**误判**（实测：18 行窗口把 `_run_interface_ownership_probe` 也算成 raise，",
+    "    因为它后面紧跟的是**另一件事**（bundled_drift）的 raise）。",
+    "⚠ 每条必须给 `kind`（`hard`/`diagnostic`）+ `runner`（`_run_*` 函数名）+ `reason`。",
+    "  校验由 `scripts/check_gate_wiring.py` 承担；**实际分类与登记不符即报**。"
+  ],
+  "classification": [
+    {
+      "gate": "check_provenance.py",
+      "runner": "_run_provenance_gate",
+      "kind": "hard",
+      "reason": "来源可追溯性（铁律 1 的机器判据）：新增代码行没有可追溯出处即拦发布。"
+    },
+    {
+      "gate": "check_diff_markers.py",
+      "runner": "_run_marker_gate",
+      "kind": "hard",
+      "reason": "diff 记号残留（`<<<<<<<` / `=======`）会让文件语法都坏掉，必须拦。"
+    },
+    {
+      "gate": "check_member_names.py",
+      "runner": "_run_member_name_gate",
+      "kind": "hard",
+      "reason": "代码里写了官方不存在的成员名 ⇒ **必然在运行时炸**，必须拦。"
+    },
+    {
+      "gate": "check_workspace_shadowing.py",
+      "runner": "_run_workspace_shadowing_gate",
+      "kind": "hard",
+      "reason": "工作区根的遮蔽物会让以该工作区为 CWD 的 Python 进程 import 到错的东西 ⇒ 拦。"
+    },
+    {
+      "gate": "check_gate_wiring.py",
+      "runner": "_run_gate_wiring_gate",
+      "kind": "hard",
+      "reason": "元门禁：有门禁没接线也没豁免 ⇒ 拦（轮 70 实测漏接一个门禁的直接后果）。"
+    },
+    {
+      "gate": "check_union_conventions.py",
+      "runner": "_run_union_conventions_gate",
+      "kind": "hard",
+      "reason": "五统一 + R1–R14 的并入规范（A3/A10 的判据），必须拦。"
+    },
+    {
+      "gate": "check_param_binding.py",
+      "runner": "_run_param_binding_gate",
+      "kind": "hard",
+      "reason": "工具声明的参数必须『有归属』（∈ 形参 或 ∈ param_alias）—— ★ 两次真实事故（magnitude_n / study_name 漏写别名 ⇒ 真机 TypeError）⇒ 拦。"
+    },
+    {
+      "gate": "check_env_pitfalls.py",
+      "runner": "_run_env_pitfalls_gate",
+      "kind": "hard",
+      "reason": "已知环境坑（缺 encoding= / Path 盘符 / falsy-zero / keybd_event 未配对抬起）⇒ 拦。"
+    },
+    {
+      "gate": "check_spec_acceptance_paths.py",
+      "runner": "_run_spec_acceptance_paths_gate",
+      "kind": "hard",
+      "reason": "Spec Kit 制品里的验收命令必须**可跑**（路径可达）⇒ 拦。"
+    },
+    {
+      "gate": "check_report_freshness.py",
+      "runner": "_run_report_freshness_gate",
+      "kind": "hard",
+      "reason": "A8：交付报告的偏离数字必须与 git 相符（**只查存在不查数字**是已知缺口）⇒ 拦。"
+    },
+    {
+      "gate": "check_signature_audit_freshness.py",
+      "runner": "_run_signature_audit_freshness_gate",
+      "kind": "hard",
+      "reason": "A5：审计表的逐模块数字 + 合计行算术自洽 ⇒ 拦。"
+    },
+    {
+      "gate": "check_license_redlines.py",
+      "runner": "_run_license_redlines_gate",
+      "kind": "hard",
+      "reason": "A6：来源块声明的许可必须在白名单内（许可红线一次都不能越）⇒ 拦。"
+    },
+    {
+      "gate": "check_digest_freshness.py",
+      "runner": "_run_digest_freshness_gate",
+      "kind": "hard",
+      "reason": "A8：`docs/harvest-digest.md` 是生成物，与真源分叉时报告在说假话 ⇒ 拦。"
+    },
+    {
+      "gate": "check_interface_member_ownership.py",
+      "runner": "_run_interface_ownership_probe",
+      "kind": "diagnostic",
+      "reason": "**诊断，刻意不拦**：它判「成员在**这个**接口上存在」，而 `CONST → 接口` 映射表来自官方文本匹配、**仍有 4 条未映射**（第 41/43 轮现状）⇒ 一个覆盖不全的门禁会让人以为防住了（第 40 轮教训）⇒ 报 `[HIT]` 时值得看，但**不拦发布**。⚠ 它的「检查量为 0」会在返回体里标成 `checked_nothing`（**不 raise，但绝不静默**）。"
+    },
+    {
+      "gate": "check_report_criteria_alignment.py",
+      "runner": "_run_report_criteria_alignment_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：`harvest-report.md §四` 的逐条自评必须与 `AGENTS.md §一` 的 A1–A10 **逐条对齐**（编号 / 条数 / 含义三样）。⚠ 2026-10-01 轮 82 实测：该节此前用的是**另一套编号**（**同名不同事**）—— 旧表「A3」实为 A5、「A5」实为 A6、「A7」实为 A8，还混入「官方 API 覆盖」这条**非 A 判据**的行，**并缺 A1/A9/A10** ⇒ 读者拿 §四 去对 §一**对不上**，而那正是 **A8**（「报告写明…」）**自己没做到**。同类问题此前已犯过一次（旧 §一 的「A1」指官方 API 覆盖）⇒ **靠人记必然再漂**。⚠ **便携性**：`AGENTS.md` 在工作区（不在本仓库）⇒ 拿不到时它**自己 SKIP 并 exit 0**。"
+    },
+    {
+      "gate": "check_negative_input_selfproof.py",
+      "runner": "_run_negative_input_selfproof_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：`tools/` 下探针里「用变换（`re.sub`/`replace`）造负例输入」的地方，必须**自证变换生效**（比对不等 / 打印前后字节数 / 断言）。⚠ 触发它的是 2026-10-01 轮 84 撞见的**假用例**：删逐模块表的正则**没匹配上** ⇒ \"坏文档\"仍带完整的表 ⇒ 门禁照常 `[PASS]`，**而它被当成了\"修好了\"的证据**。★ **一个假用例比没有用例更糟** —— 它给出一份看起来验过的证据（与已知事实 62 同族，只是发生在**测试**而非门禁上）。⚠ **覆盖面**：只判「变换没生效」这一类；类型 2/3/4 需要语义判断，**未判**（门禁自己在 `[PASS]` 时也会打出这条声明，不夸大覆盖面）。"
+    },
+    {
+      "gate": "check_enum_values_vs_reflection.py",
+      "runner": "_run_enum_values_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：代码里写的**官方枚举值**必须与**出厂反射**一致（补「**值级**」覆盖缺口）。⚠ 触发它的是 2026-10-01 连着两轮、**都从旧门禁漏过去**的错：023 螺旋线枚举**凭记忆写反**（`height_and_pitch` 1↔2）；024 `swSketchChamfer_DistanceDistance` **两源冲突**（`C:\\swapi` 的 md 写 −1 / 出厂反射写 1）。★ 旧门禁（`check_member_names` / `interface_member_ownership` / `audit_call_arity`）查的都是「**名字**在不在官方清单里」，**没有一个查「值对不对」** —— 这是本项目一个已知的覆盖缺口。⚠ 它**顺带报出两源冲突**，而冲突**不判失败**（铁律 4 已定：冲突取反射）；转储里查不到的成员归「查不到」（铁律 5），**也不判失败**。⚠ **覆盖范围（轮 107 修正）**：转储**不止一份** —— `enum_values_sldworks.txt`（sldworks 程序集）与 `reflect/enum_cosworks.txt`（cosworks 程序集，含 `sws*` 的 Simulation 枚举）。第一版只读前者 ⇒ **75 条 `sws*` 全归「查不到」**；合并后变 **0 条查不到**。⚠ **便携性**：转储在工作区 ⇒ 全拿不到时它**自己 SKIP 并 exit 0**。"
+    },
+    {
+      "gate": "check_python_syntax.py",
+      "runner": "_run_python_syntax_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：`scripts/` `tools/` `tests/` `mcp-server/` `subskills/` 下**每个** `.py` 必须能 `ast.parse`。⚠ 触发它的是 2026-10-01 **本会话同一处踩了五次**：新建文件时把**来源块写进了头部三引号里**（忘了闭合）⇒ Python 报的是 `SyntaxError: invalid character '★'`（**错误信息指向那个星号、不是真因**），而 `ast.parse` 报的是真因的名字（`unterminated triple-quoted string literal`）。★ 第五条正是在**写这道门禁的脚本本身**上踩的 ⇒ **连踩五次 = 该机械化的强信号**（与事实 62 同族）。⚠ **覆盖面**：只判**语法**；语义/类型错不在内。"
+    },
+    {
+      "gate": "check_member_owner_interface.py",
+      "runner": null,
+      "kind": "diagnostic",
+      "reason": "⚠ **判据未证到能当门禁的程度**（轮 173，事实 113）：一是它**抓不到形参 owner**（`mold_evidence` 那种，**正是写它的动机**）；二是 20 处命中里仍有需**逐条真机核**的（如 `model` 到底是不是 `IModelDoc2`）。★ 与事实 53 同族：**证据进文档，不进工具**。"
+    },
+    {
+      "gate": "check_undefined_names.py",
+      "runner": "_run_undefined_names_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：判「一个名字在**整个文件里从未被绑定**」而它**在这里被读取** ⇒ **NameError 隐患**。★★ 与语法门禁**互补**：后者只判“能不能 `ast.parse`”，本道判“读到的名字有没有被绑定过”。★ 触发它的是**轮 403 真机抓到的真 bug**：`export_to_image` 里用了 `out_i4()` 而 `sw_export.py` **漏了导入** ⇒ 一调就 `NameError: name 'out_i4' is not defined`（★ 而**当时 19 道门禁全绿**）。★★ 本道**第一次跑就抓到 31 处**（7 个名字 / 23 个文件），其中 `dismiss_residual_dialogs` **21 处**（8 个 tools 文件没导入就用）· `time` 3 处 · `SW_PID` 1 处 —— ★ 全是同一种形态：**改名之后没跟着改**。⚠ 它用**保守判据**（判“整个文件都没绑定过”）⇒ 宁可漏、不要噪音；“运行期动态注入全局”（`globals().update(...)`）与 `import *` 的文件**整份跳过**（真例：`mcp-server/server.py` 的 `globals().update(exports)` —— 不跳过会在那一个文件上假阳性 **300+ 处**）。★ 已登记损坏（★ WARN 不拦）：`scripts/sw_selection_tx.py`。"
+    },
+    {
+      "gate": "check_typelib_tables.py",
+      "runner": "_run_typelib_tables_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：能力层里**手抄的成员表**（`_ERRORCODE_MEMBERS` / `_REFGEOM_MEMBERS` / `OFFICIAL_LOAD_SIGNATURES`）必须与**出厂类型库**（`SolidWorks.Interop.cosworks.dll`）的元数据**逐条一致**。★ 触发它的是**轮 415 的真 bug**：`_ERRORCODE_MEMBERS` **手抄 CHM**时**漏了 `AddTemperature` 与 `AddRemoteLoad`** ⇒ 这两个成员**从不补末尾 `ByRef ErrorCode`** ⇒ `com_error(-2147352561, 非选择性的参数)` ⇒ ★★ **两条好能力看起来调不通**。★ 而定位用的是**出厂类型库**（铁律 4 的最高裁决者）——它是**托管程序集**，可以用 **PowerShell 的 .NET 元数据反射****离线读**（零 Python 依赖、不需要 SW 在跑）。★ 它第一次跑就抓到 **3 处**（★ 1 处真发现：`AddPrescribedDisplacement` 的 `RefGeom` 在**第 4**个实参、而旧代码写死了位置 2；2 处是检查器自己太粗已修）。⚠ **便携性**：拿不到那个 DLL ⇒ 脚本自己报 `[SKIP]` 并 exit 0。"
+    },
+    {
+      "gate": "check_judge_preflight.py",
+      "runner": "_run_judge_preflight_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：凡「**用某个回读去判某条能力**」的判据，必须**先在已知成功场景上被验过** —— 登记在 `docs/judge-registry.json`。★ 触发它的是**上一轮的五次事故**：能力好好的、而它看起来坏了 ——而**每一次的错都在判据**（选区不干净 / 算例类型错 / 算例名错 / 名单不全 / 间歇性不稳）。⇒ ★★ **判据本身也是被测对象**，它必须先被验过。★ 判据两类：**`judge`**（它的 `evidence` 必须 `verdict: pass`）与 **`refuted`**（**被否掉的假设**，它的 evidence **不能**是 pass）。★ **它自己有负例自证**：`tests/test_judge_preflight_gate.py`（**6 passed**，★ 五个故意坏的情形全被红 —— 事实 62：门禁「写了」不等于它「有效」）。⚠ **便携性**：工作区不可达 ⇒ 脚本自己报 `[SKIP]` 并 exit 0。"
+    },
+    {
+      "gate": "check_server_side_tools.py",
+      "runner": "_run_server_side_tools_gate",
+      "kind": "hard",
+      "reason": "★ **硬门禁**：本仓的工具声明**有两条路** —— **ToolSpec 路**（过五统一门禁）与 **`server.py` 装饰器路**（`@mcp.tool`，**而它不过那套门禁**）。★ 故把**静态可判**的那一条看住：**两条路上的 `solidworks_*` 工具名不许重名**（重名会让后注册的**遮掉**先注册的）。★ 而它**自己写明了诚实话**：过了参数名**不等于**过了门禁 ⇒ **不下合规的结论**。（来源：事实 364；而它是 `plan-200r-v3` §五 ① 的兑现）"
+    },
+    {
+      "gate": "check_inject_binding.py",
+      "runner": "_run_inject_binding_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：每个 ToolSpec 声明的 **`inject`** 必须**覆盖包装的必需对象形参**。★ 触发它的是 **2026-10-03（轮 461）真机撞出来的真缺陷**：走 MCP 工具调 `solidworks_part_mass_properties` 报 `TypeError: mass_properties() missing 1 required positional argument: 'model'` —— 那条 spec **漏了 `inject=\"model\"`** ⇒ 调用时不注入文档 ⇒ 包装拿到 0 个实参 ⇒ **必炸**。★★ 而**既有的 `check_param_binding.py` 抓不到它**：那道判「**声明了的**参数名 ∈ 形参」，**不判「注入的对象覆盖了包装的必需形参」**。⇒ 全扫 **221 个 ToolSpec 里 16 个漏**（★ 含草图 / 拉伸 / 圆角 / 倒角 / 工程图读 / 属性读 —— **都是基本功能**）⇒ 已修（提交 `2fb0e1b`）。★ **它自己有负例自证**：`tests/test_inject_binding_gate.py`（**4 passed**，★ 含「漏 inject 必须被抓到」与「有 derived_args 的不该报」两个负例 —— 事实 62）。⚠ **覆盖边界**：只判**第一个**必需形参（更靠后的可能由转换层喂进来）⇒ **过了它不等于那条工具一定跑得通**。"
+    },
+    {
+      "gate": "tests/test_inout_array_audit_contract.py",
+      "runner": "_run_inout_array_audit_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：`tools/audit_inout_array_params.py` 的产物（`output/inout-array-params.json`）是事实 128/129 的落地物 —— 它用**第 4 套签名源**（类型库方法表）查出 **62 条 `in,out` 数组形参**（涉及本仓调用过的 496 个成员名）。★★ 而本轮（轮 514-515）查明**它自己没有被任何门禁引用**（只有 `scripts/audit_byref_args.py` 的**注释**提到它）⇒ ★ **它“跑过一次”之后就再也不会被跑**、产物会**悄悄过期** ⚠\n本道把它变成「**发布时必查**」：跑那 5 条契约测试（纯静态 · ~0.1s），断言产物**结构在**、**扫了多个库**、**记录字段齐**、★ **审计自己那句「不做结论」还在**（★ 那是它的安全边界）、**产物内部自洽**。★ 它**自己有负例自证**：把 `output/inout-array-params.json` 挪走再跑 ⇒ 必然 fail（事实 62）。"
+    }
+  ]
 }
