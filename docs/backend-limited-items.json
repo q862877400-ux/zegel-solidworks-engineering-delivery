@@ -86,6 +86,16 @@
       "note": "★ 接口带 AccessSelections（35/44 成员那批）"
     },
     {
+      "toolbar": "草图驱动的阵列",
+      "member": "ISketchDrivenPatternFeatureData（★ **接口根本不存在**）",
+      "where": "★ 台账那个 api 名是**手填的**（铁律 5）",
+      "section": "### 2.3",
+      "facts": [
+        474
+      ],
+      "note": "★ **与那四个阵列同一条边界**：★ 而它连**接口都不存在** —— ★ 故连“试第 2 参”都无从试起。"
+    },
+    {
       "toolbar": "填充阵列",
       "member": "IFillPatternFeatureData.AccessSelections",
       "where": "同族",

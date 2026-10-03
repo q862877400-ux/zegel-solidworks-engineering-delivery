@@ -17,7 +17,7 @@
 | 档 | 条数 |
 |---|---|
 | 已能 | 81 |
-| 可攻关 | 8 |
+| 可攻关 | 7 |
 | 待验证 | 6 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -30,7 +30,6 @@
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 特征下拉 | 曲线-投影曲线 | **可攻关** | `InsertProjectedSketch` | — |
-| 特征下拉 | 草图驱动的阵列 | **可攻关** | `FeatureSketchDrivenPattern` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
 | 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
@@ -144,4 +143,5 @@
 | 特征 | 线性阵列 | **后端到不了** | `FeatureLinearPattern4` | `sw_part.linear_pattern` |
 | 特征下拉 | 填充阵列 | **后端到不了** | `FeatureFillPattern` | — |
 | 特征下拉 | 曲线驱动的阵列 | **后端到不了** | `FeatureCurvePattern` | — |
+| 特征下拉 | 草图驱动的阵列 | **后端到不了** | `FeatureSketchDrivenPattern` | — |
 | 特征下拉 | 表格驱动的阵列 | **后端到不了** | `InsertTableDrivenPattern` | — |
