@@ -17,8 +17,8 @@
 | 档 | 条数 |
 |---|---|
 | 已能 | 81 |
-| 可攻关 | 11 |
-| 待验证 | 7 |
+| 可攻关 | 8 |
+| 待验证 | 6 |
 | 待查 | 20 |
 | **合计** | **119** |
 
@@ -28,18 +28,14 @@
 |---|---|---|---|---|
 | 曲面 | 扫描曲面 | **可攻关** | `InsertProtrusionSwept4`, `Surface` | — |
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
-| 特征下拉 | 填充阵列 | **可攻关** | `FeatureFillPattern` | — |
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 特征下拉 | 曲线-投影曲线 | **可攻关** | `InsertProjectedSketch` | — |
-| 特征下拉 | 曲线驱动的阵列 | **可攻关** | `FeatureCurvePattern` | — |
 | 特征下拉 | 草图驱动的阵列 | **可攻关** | `FeatureSketchDrivenPattern` | — |
-| 特征下拉 | 表格驱动的阵列 | **可攻关** | `InsertTableDrivenPattern` | — |
 | 草图尺寸 | 对称线性直径尺寸 | **可攻关** | `AddSymmetricDimension` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
 | 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
 | 曲面 | 圆角(曲面) | **待验证** | `FeatureFillet` | `sw_part.fillet` |
 | 特征 | 筋 | **待验证** | `InsertRib` | `sw_part.rib_report` |
-| 特征 | 线性阵列 | **待验证** | `FeatureLinearPattern4` | `sw_part.linear_pattern` |
 | 特征下拉 | 曲线-组合曲线 | **待验证** | `InsertCompositeCurve` | `sw_part.insert_composite_curve_report` |
 | 草图关系 | 显示/删除几何关系 | **待验证** | `ISketch`, `DeleteRelation` | `sw_sketch_dimensions.*` |
 | 草图关系 | 添加几何关系 | **待验证** | `SketchAddConstraints` | `sw_part.add_sketch_relation` |
@@ -145,3 +141,7 @@
 | 草图编辑 | 等距实体 | **已能** | `SketchOffset2` | `sw_sketch_edit_ops.sketch_offset` |
 | 草图编辑 | 线性草图阵列 | **已能** | `CreateLinearSketchStepAndRepeat` | `sw_sketch_edit_ops.sketch_linear_pattern` |
 | 草图编辑 | 缩放实体比例 | **已能** | `IModelDoc2`, `SketchModifyScale` | — |
+| 特征 | 线性阵列 | **后端到不了** | `FeatureLinearPattern4` | `sw_part.linear_pattern` |
+| 特征下拉 | 填充阵列 | **后端到不了** | `FeatureFillPattern` | — |
+| 特征下拉 | 曲线驱动的阵列 | **后端到不了** | `FeatureCurvePattern` | — |
+| 特征下拉 | 表格驱动的阵列 | **后端到不了** | `InsertTableDrivenPattern` | — |

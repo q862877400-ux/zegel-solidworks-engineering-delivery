@@ -41,6 +41,30 @@ CAPABILITIES = R / "capabilities.yaml"
 #: ★ 模块级缓存（★ 供 promoted_by_capability 的默认参数）
 VERIFIED_IDS: set = set()
 
+#: ★★ 2026-10-03（轮 599）**新增第五桶「后端到不了」**：
+#:   任务书明说那三族要「**写明依据并单列**」，而台账原先**没有那一桶**
+#:   ⇒ 它们只能挤在「可攻关」里 ⚠
+#:   ★ 名单在 `docs/backend-limited-items.json`（★ **每条带依据**）。
+#:   ★ 做成**模块级**（★ 不靠闭包 —— 事实 549 那教训）
+BACKEND_LIMITED_FILE = R / "docs" / "backend-limited-items.json"
+
+
+def _load_backend_limited() -> tuple[set, dict]:
+    """★ 读「已知后端到不了」名单（返回 ``(工具栏名集合, 名→条目)``）。"""
+    try:
+        d = json.loads(BACKEND_LIMITED_FILE.read_text(encoding="utf-8"))
+    except Exception:                                                     # noqa: BLE001
+        return set(), {}
+    m = {}
+    for it in (d.get("items") or []):
+        tb = str(it.get("toolbar") or "").strip()
+        if tb:
+            m[tb] = it
+    return set(m), m
+
+
+_BACKEND_LIMITED_TOOLBARS, _BACKEND_LIMITED_MAP = _load_backend_limited()
+
 
 def promoted_by_capability(item: dict, verified_ids: set | None = None) -> bool:
     """⇒ 这条台账条目是否该因 `capabilities.yaml` 而判「已能」。
@@ -222,6 +246,10 @@ def main() -> int:
             return "\u5df2\u80fd"
         if not it.get("api_verified"):
             return "\u5f85\u67e5"
+        #: \u2605\u2605 2026-10-03\uff08\u8f6e 599\uff09**\u7b2c\u4e94\u6876**\uff1a\u547d\u4e2d\u300c\u5df2\u77e5\u540e\u7aef\u5230\u4e0d\u4e86\u300d\u540d\u5355
+        #:   \u2014\u2014 \u2605 \u4efb\u52a1\u4e66\uff1a\u90a3\u4e09\u65cf\u8981\u300c\u5199\u660e\u4f9d\u636e\u5e76**\u5355\u5217**\u300d\uff08\u2605 \u800c\u539f\u5148\u65e0\u5904\u53ef\u5355\u5217\uff09
+        if it.get("zh") in _BACKEND_LIMITED_TOOLBARS:
+            return "\u540e\u7aef\u5230\u4e0d\u4e86"
         #: ★★★ 轮 483 修掉那个盲点（★ 事实 379）：★ 原判据是 `not it.get("entry")`，
         #:   而 `entry` 是**手填的**、且**没人查它真不真** ⇒ ★ **假入口**
         #:   （如 `sw_part.linear_pattern`，真名其实在 `sw_pattern`）会让那条卡在“待验证”，

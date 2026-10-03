@@ -3,11 +3,12 @@
  "summary": {
   "已能": 81,
   "待查": 20,
-  "待验证": 7,
-  "可攻关": 11
+  "后端到不了": 4,
+  "待验证": 6,
+  "可攻关": 8
  },
  "by_toolbar_gap": {
-  "特征下拉": 6,
+  "特征下拉": 3,
   "草图尺寸": 1,
   "草图编辑": 2,
   "曲面": 2
@@ -250,7 +251,7 @@
    "implemented_hits": [
     "FeatureLinearPattern4"
    ],
-   "tier": "待验证"
+   "tier": "后端到不了"
   },
   {
    "tb": "特征",
@@ -475,7 +476,7 @@
    "implemented_hits": [
     "FeatureCurvePattern"
    ],
-   "tier": "可攻关"
+   "tier": "后端到不了"
   },
   {
    "tb": "特征下拉",
@@ -511,7 +512,7 @@
    "implemented_hits": [
     "InsertTableDrivenPattern"
    ],
-   "tier": "可攻关"
+   "tier": "后端到不了"
   },
   {
    "tb": "特征下拉",
@@ -529,7 +530,7 @@
    "implemented_hits": [
     "FeatureFillPattern"
    ],
-   "tier": "可攻关"
+   "tier": "后端到不了"
   },
   {
    "tb": "特征下拉",

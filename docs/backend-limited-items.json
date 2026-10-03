@@ -1,0 +1,91 @@
+{
+  "_comment": [
+    "★ 已知后端到不了的工具栏项（★ 机器可读）—— ★ 供 tools/build_toolbar_ledger.py 判「后端到不了」那一桶。",
+    "",
+    "★★ 为什么要有这个文件（2026-10-03 轮 599）：",
+    "  · 台账原先**没有「后端到不了」这一桶** ⇒ 那三族只能挤在「可攻关」里 ⚠",
+    "  · 而任务书明说：**凡属 pywin32 后端结构性到不了的（线性阵列族 / IAccessSelections 指针族 /",
+    "    结构系统），写明依据并单列，不假装做到** —— ★ 故「单列」必须**机器可读**，否则台账读不到。",
+    "",
+    "★ 每条**必须有依据**（★ 铁律 1：不能凭印象加）。依据指向：",
+    "  · `docs/toolbar-gaps-backend-limits.md` 的对应小节（★ 含真机错误码）",
+    "  · `docs/known-facts.md` 的事实编号",
+    "",
+    "⚠ 诚实边界（★ 与 §3.3 末那句一致）：**「到不了」说的是 pywin32 迟到绑定这条后端**；",
+    "   换 comtypes 早绑定 / 进程内 C++ 后端**未在本机实测** ⇒ ★ 不能断言「永远不行」。"
+  ],
+  "items": [
+    {
+      "toolbar": "折弯（钣金）",
+      "member": "ISketchedBendFeatureData.SetFixedFace",
+      "where": "0x80010105",
+      "section": "§3.3",
+      "facts": [47],
+      "note": "★ 七种数组包装 × 两个重载全报「类型不匹配」（位置 1 或 4）"
+    },
+    {
+      "toolbar": "边线法兰",
+      "member": "ISketchedBendFeatureData.AccessSelections",
+      "where": "同族",
+      "section": "§3.3",
+      "facts": [47],
+      "note": "★ 第 2 参四种形态**全到不了**（事实 474）"
+    },
+    {
+      "toolbar": "角撑板",
+      "member": "ISMGussetFeatureData.AccessSelections",
+      "where": "同族",
+      "section": "§3.3",
+      "facts": [47],
+      "note": ""
+    },
+    {
+      "toolbar": "草图倒角",
+      "member": "ISketchManager.CreateChamfer",
+      "where": "0x80010105",
+      "section": "§3.3",
+      "facts": [],
+      "note": "★ **绕法**：改成回读线段数判定（★ 建成时回 None）⇒ ★ 那条已能"
+    },
+    {
+      "toolbar": "拓扑迭代选项",
+      "member": "（Options 接口）",
+      "where": "同族",
+      "section": "§3.3",
+      "facts": [],
+      "note": ""
+    },
+    {
+      "toolbar": "线性阵列",
+      "member": "ILinearPatternFeatureData.AccessSelections",
+      "where": "0x80010105",
+      "section": "§2.2.1",
+      "facts": [474],
+      "note": "★ 第 2 参四种形态全到不了；★ 而 §2.2 引的 11 份证据**记的是 no-op**"
+    },
+    {
+      "toolbar": "曲线驱动的阵列",
+      "member": "ICurveDrivenPatternFeatureData.AccessSelections",
+      "where": "同族",
+      "section": "§2.3",
+      "facts": [474],
+      "note": "★ 接口带 AccessSelections（35/44 成员那批）"
+    },
+    {
+      "toolbar": "填充阵列",
+      "member": "IFillPatternFeatureData.AccessSelections",
+      "where": "同族",
+      "section": "§2.3",
+      "facts": [474],
+      "note": "★ `swFmFillPattern = 105`（★ 真机测过第 2 参四形态）"
+    },
+    {
+      "toolbar": "表格驱动的阵列",
+      "member": "ITablePatternFeatureData.AccessSelections",
+      "where": "同族",
+      "section": "§2.3",
+      "facts": [474],
+      "note": "★ `swFmTablePattern = 106`"
+    }
+  ]
+}
