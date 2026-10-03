@@ -81,6 +81,92 @@ def _select(params, kind: str):
     return resolve_selection(_model(), params.selection, kind)
 
 
+#: ★★★ 2026-10-03（接手轮）**"按名选草图、并给 mark"的共用帮手** —— 放在这里（★ 本模块就是选择帮手之家）。
+#:   ★★ **为什么必须共用**（事实 60 的定则④：「写了一个好用的工具函数，就要在**所有**同类场合用它」）：
+#:     「显式拒」那一族（`part_sweep` / `part_loft` / `part_axis` / `part_wrap`）**都要**在 `pre_call` 里
+#:     按官方 mark 把**草图**选上 ⇒ ★ 帮手只写一份，★ 免得四条各写一遍、各错一遍。
+#:   ★ 官方 mark 依据逐条见各 spec 自己的 doc（本仓已回查过）。
+def _select_sketch_by_name(model, name: str, mark: int, append: bool) -> bool:
+    """★ 按**名字**选一个草图，并给指定 `mark`（★ 选完以**回读计数**为准）。
+
+    ★ **事实 32** 逐字：**「按名字选」只对特征成立**（`sw_part._ensure_sketch_selected` 走的就是那一路），
+      ★ 对**实体（边/面）不成立** ⇒ ★ **草图是特征** ⇒ ★ 所以**按名字可以选**。
+    ★ **事实 33** 逐字：`SelectByID2` 的 `Callout` **必须**传 `VARIANT(VT_DISPATCH, None)`
+      （传 `None` 报「类型不匹配」，★ 而那个错误**看不出是 Callout 的问题**）。
+    ★ **事实 8** 逐字：`SelectByID2` 的**布尔返回值不可信** ⇒ ★ 本函数**只把回读计数当判据**。
+    """
+    from scripts.sw_connect import create_empty_dispatch_variant, get_com_member
+
+    return bool(get_com_member(
+        get_com_member(model, "Extension"), "SelectByID2",
+        str(name), "SKETCH", 0.0, 0.0, 0.0,
+        bool(append), int(mark), create_empty_dispatch_variant(), 0))
+
+
+def _mark_count(model, mark: int) -> int:
+    """★ 回读某一档 `mark` 的选中数（★ 事实 8：只有计数算数）。"""
+    from scripts.sw_connect import get_com_member
+
+    try:
+        return int(get_com_member(get_com_member(model, "SelectionManager"),
+                                  "GetSelectedObjectCount2", int(mark)) or 0)
+    except Exception:                                                     # noqa: BLE001
+        return -1
+
+
+def _select_sketches_in_order(model, names, mark: int, at_least: int, what: str):
+    """★ **按给定顺序**把多个草图选上（同一个 `mark`），并**回读计数** ⇒ 不够就**抛**。
+
+    ★★ 「**顺序**」在放样/扫描里是**语义的一部分**（官方 Remarks：轮廓要**按期望的顺序**选中）
+      ⇒ ★ 所以这里**按传入列表的次序**逐个 `append`，★ 不排序、不去重。
+    ★ 不够就抛（★ 不静默地把"前置未成立"当成"能力不成"）。
+    """
+    from scripts.sw_connect import get_com_member
+
+    try:
+        get_com_member(model, "ClearSelection2", True)
+    except Exception:                                                     # noqa: BLE001
+        pass
+    picked = 0
+    for i, nm in enumerate([n for n in (names or []) if str(n).strip()]):
+        _select_sketch_by_name(model, nm, mark, append=(i > 0))
+        got = _mark_count(model, mark)
+        if got > picked:
+            picked = got
+    if picked < at_least:
+        raise RuntimeError(
+            "★ 前置未成立：%s 需要 **mark=%d 至少 %d 个**，选完回读只有 **%d**。"
+            "★ 检查草图名是否与特征树里**逐字**一致（事实 32：草图是特征、按名字可以选）；"
+            "★ 名字按**顺序**给（顺序在放样/扫描里是语义的一部分）。传入=%r"
+            % (what, mark, at_least, picked, list(names or [])))
+    return {"mark": mark, "picked": picked}
+
+
+def _pre_sweep_sketches(params):
+    """★ `pre_call`：轮廓 **mark=1** · 路径 **mark=4**（官方专文给的 mark）。"""
+    model = _model()
+    prof = str(getattr(params, "profile_sketch", "") or "").strip()
+    path = str(getattr(params, "path_sketch", "") or "").strip()
+    if not prof or not path:
+        raise RuntimeError(
+            "★ 前置未成立：`profile_sketch` 与 `path_sketch` 都必填"
+            "（官方 mark：轮廓=1 · 路径=4）—— 扫描**不预选任何东西**，两个草图必须由这两个参数点名")
+    _select_sketches_in_order(model, [prof], 1, 1, "扫描的轮廓")
+    _select_sketch_by_name(model, path, 4, True)          #: ★ 路径在轮廓之后 append 上去
+    n4 = _mark_count(model, 4)
+    if n4 < 1:
+        raise RuntimeError(
+            "★ 前置未成立：路径草图 %r 没选上（mark=4 回读 %d）—— "
+            "检查名字是否与特征树里逐字一致" % (path, n4))
+    return {"mark1": _mark_count(model, 1), "mark4": n4}
+
+
+def _pre_loft_profiles(params):
+    """★ `pre_call`：放样轮廓**全部 mark=1、按给定顺序**（官方 Remarks：轮廓 mark 1、且按期望顺序）。"""
+    names = getattr(params, "profile_sketches", None) or []
+    return _select_sketches_in_order(_model(), names, 1, 2, "放样的轮廓")
+
+
 # ── C2 三条：调用**前**先选好（`pre_call`）─────────────────────────
 def _pre_edge_flange(params):
     _select(params, "EDGE")

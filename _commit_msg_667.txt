@@ -1,0 +1,52 @@
+fix(工具层): ★★★★★ `part_loft` **从"必然失败"变成"建成 `放样1`"** —— 「显式拒」四件套**第一条完整修好** ＋ 帮手归位到 `batch4`
+
+■ 一 · 病灶（上一轮真机证出）
+  `solidworks_part_loft`（`tool_specs_batch47.py`）**没有 `pre_call`、也没有"给选区"的参数**，
+  而 `create_loft_report` 是**硬前置**：
+  `sel_n = GetSelectedObjectCount2(1)`；`if sel_n < 2: return {"ok": False, "stage": "selection"}`
+  ⇒ ★★ **调用方无从提供选区** ⇒ **经工具层必然失败**
+  （真机报「放样至少要选 **2 个轮廓**；★ 当前 **mark=1 的选中数是 0**」）。
+
+■ 二 · ★ 先把帮手**归位**（★ 事实 60 定则④：「写了一个好用的工具函数，就要在**所有**同类场合用它」）
+  ★ 上一轮我在 `tool_specs_batch48.py` 里**就地写**了「按名选草图 + 回读计数」那两个帮手
+  ⇒ ★ 而这一族**四条都要**同一件事 ⇒ ★ 把那两个（连新加的批量选择）**挪到 `tool_specs_batch4.py`**
+    （★ 本仓**选择帮手之家**：`_select` / `_model` / `_pre_edge_flange` 都在那），★ 并让 `batch48` **改用它**：
+    · `_select_sketch_by_name(model, name, mark, append)` —— ★ 事实 32（草图是特征、**按名字可以选**）+
+      事实 33（`Callout` **必须**传空 `VARIANT`，★ 否则报"类型不匹配"且**看不出是 Callout 的问题**）；
+    · `_mark_count(model, mark)` —— ★ 事实 8（**只信回读计数**）；
+    · `_select_sketches_in_order(model, names, mark, at_least, what)` —— ★★ **按给定顺序** `append` 选多个，
+      ★ **不够就抛**（★ 不静默地把"前置未成立"当成"能力不成"）；
+    · `_pre_sweep_sketches(params)`（轮廓 1 · 路径 4）· `_pre_loft_profiles(params)`（轮廓全 1、按顺序）。
+  ⇒ ★ 四条共用**一份**实现，★ 免得各写一遍、各错一遍。
+
+■ 三 · 修 `part_loft`（`batch47`）
+  · ★ 加参数 **`profile_sketches: list`** —— ★★ **顺序即语义**（官方 Remarks 逐字：轮廓要**按期望的顺序**选中）
+    ⇒ ★ 所以 `pre_call` 按**传入列表的次序**逐个 `append`，★ **不排序、不去重**；
+  · ★ 加 **`pre_call=_pre_loft_profiles`**；
+  · ★ 加 **`param_alias={"profile_sketches": None}`**（★ 标明由 `pre_call` 消费、不进目标函数）。
+
+■ 四 · ★★★★★ 真机验证（`tools/probe_loft_fixed_e2e.py`，走 `sw_guard`、零弹窗）
+  造「前视面一个圆 + 上视面一个圆」的件、清空选区、★ 按契约调：
+  | 读数 | 值 |
+  |---|---|
+  | `pre_call_ret` | ★ **`{'mark': 1, 'picked': 2}`** |
+  | `marks_after_precall` | ★ **`{'1': 2, '2': 0, '4': 0}`**（★ 存活到目标函数）|
+  | ★★ `ret_ok` | ★★ **`True`** |
+  | ★★ `new_features` | ★★ **`['放样1']`** |
+  | ★ 细节 | `type_name=Blend` · `args_count=18` · `mark1_selected=2` |
+  ⇒ ★★★ **从"必然失败"变成"建成 `放样1`"** —— ★ **「显式拒」四件套里第一条完整修好的** ✓
+
+■ 五 · 门禁（★ 两道都过）
+  · `tools/check_tool_param_binding.py` ⇒ ★ **绑定不上的 0**；
+  · `scripts/check_param_binding.py`（仓内）⇒ ★ **`[PASS] 0 处`**。
+  ★ 上一轮（`part_sweep`）**判据 ① 当场抓到过我漏写 `param_alias`** ⇒ ★ 这一轮两处都先标好了。
+
+■ 六 · 「显式拒」四件套的进度
+  | 工具 | 前置 | 建成 |
+  |---|---|---|
+  | `part_sweep` | ★ **✓ 通了**（`mark1=1 · mark4=1`）| ✗ 未建成（★ 卡在**扫描 API 自身**，另案）|
+  | ★ `part_loft` | ★ **✓ 通了**（`mark1=2`）| ★★ **✓ 建成 `放样1`** |
+  | `part_axis` | ✗ 待修（★ 要"选中几何"：圆柱面/圆锥面/两点）| — |
+  | `part_wrap` | ✗ 待修（★ 草图 mark=4 + 面 mark=1）| — |
+
+★ 覆盖率不变（**119/145**）· 收尾链见提交后。

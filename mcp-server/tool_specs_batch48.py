@@ -37,67 +37,9 @@ from tool_registry import Param, ToolSpec
 #:   ★ 修法：★ 加**两个声明式参数**（`profile_sketch` / `path_sketch`，★ 只收**名字**、不收坐标 —— 规则 3），
 #:     并用 **`pre_call`**（★ 它跑在注入**之后**）按官方 mark 把它们选上。
 #:   ★ 官方 mark 依据：本 spec 自己的 doc 逐字「**轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128」。
-def _select_sketch_by_name(model, name: str, mark: int, append: bool) -> bool:
-    """★ 按**名字**选一个草图，并给指定 `mark`（★ 选完**回读计数**）。
-
-    ★ 事实 32 逐字：**「按名字选」只对特征成立**（`sw_part._ensure_sketch_selected` 走的就是那一路），
-      ★ 对**实体（边/面）不成立** ⇒ ★ 草图是**特征**，★ 所以**按名字可以选**。
-    ★ 事实 33 逐字：`SelectByID2` 的 `Callout` **必须**传 `VARIANT(VT_DISPATCH, None)`
-      （传 `None` 会报「类型不匹配」，★ 而那个错误**看不出是 Callout 的问题**）。
-    ★ 事实 8 逐字：★ `SelectByID2` 的**布尔返回值不可信** ⇒ ★ 本函数**回读计数**为准。
-    """
-    from scripts.sw_connect import create_empty_dispatch_variant, get_com_member
-
-    return bool(get_com_member(
-        get_com_member(model, "Extension"), "SelectByID2",
-        str(name), "SKETCH", 0.0, 0.0, 0.0,
-        bool(append), int(mark), create_empty_dispatch_variant(), 0))
-
-
-def _sketch_mark_count(model, mark: int) -> int:
-    """★ 回读某一档 mark 的选中数（★ 事实 8：只有计数算数）。"""
-    from scripts.sw_connect import get_com_member
-
-    try:
-        return int(get_com_member(get_com_member(model, "SelectionManager"),
-                                  "GetSelectedObjectCount2", int(mark)) or 0)
-    except Exception:                                                     # noqa: BLE001
-        return -1
-
-
-def _pre_sweep(params):
-    """★ **调目标函数之前**：把 `profile_sketch`（mark 1）与 `path_sketch`（mark 4）选上。
-
-    ★★ 为什么必须走 `pre_call`（而不是"让调用方先选"）：★ 注册器的顺序是
-      `kwargs[inject] = resolver(params)` → **`pre_call(params)`** → `target(**kwargs)`
-      ⇒ ★ **只有 `pre_call` 跑在注入之后**，★ 而 **MCP 客户端根本没有"在调用工具之前去选"这条通路**。
-    ★ 选不够就**抛**（★ 不静默地把"前置未成立"当成"能力不成"）。
-    """
-    import register_capabilities as _rc
-    from scripts.sw_connect import get_com_member
-
-    model = _rc.RESOLVERS["model"](None)              #: ★ 与注册器取同一个对象
-    try:
-        get_com_member(model, "ClearSelection2", True)
-    except Exception:                                                     # noqa: BLE001
-        pass
-    prof = str(getattr(params, "profile_sketch", "") or "").strip()
-    path = str(getattr(params, "path_sketch", "") or "").strip()
-    if not prof or not path:
-        raise RuntimeError(
-            "★ 前置未成立：`profile_sketch` 与 `path_sketch` 都必填（官方 mark：轮廓=1 · 路径=4）"
-            "—— 扫描**不预选任何东西**，两个草图必须由这两个参数点名")
-    #: ★ 先选轮廓（mark 1，append=False 起头），再选路径（mark 4，append=True）
-    _select_sketch_by_name(model, prof, 1, False)
-    _select_sketch_by_name(model, path, 4, True)
-    n1, n4 = _sketch_mark_count(model, 1), _sketch_mark_count(model, 4)
-    if n1 < 1 or n4 < 1:
-        raise RuntimeError(
-            "★ 前置未成立：选完回读 **mark1=%d · mark4=%d**（要各 ≥1）。"
-            "★ 检查两个草图名是否与特征树里的**逐字**一致（事实 32：草图是特征，按名字可以选）"
-            "—— 轮廓=%r · 路径=%r" % (n1, n4, prof, path))
-    return {"mark1": n1, "mark4": n4}
-
+#: ★★ 2026-10-03（接手轮）：**这两件事的帮手已挪到 `tool_specs_batch4`** —— ★ 因为「显式拒」那一族**四条都要**在 `pre_call` 里按官方 mark 选草图，
+#:   ★ 帮手只留**一份**（★ 事实 60 定则④：写了好的工具函数，就要在**所有**同类场合用它）。
+from tool_specs_batch4 import _pre_sweep_sketches  # noqa: E402
 
 SPECS_BATCH48 = [
     ToolSpec(
@@ -106,7 +48,7 @@ SPECS_BATCH48 = [
         module="sw_sweep",
         function="create_sweep_report",
         inject="model",
-        pre_call=_pre_sweep,
+        pre_call=_pre_sweep_sketches,
         #: ★★ `param_alias` 把这两个参数标成 **`None`** = 「**由解析器/`pre_call` 消费、不进目标函数**」
         #:   （★ 仓内既有口径，见 `tool_registry.py` 的注册器：`alias[k] is None` ⇒ `continue`）。
         #:   ★ 不标的话，本仓**判据 ①**（声明名 ∈ 形参）会如实报
