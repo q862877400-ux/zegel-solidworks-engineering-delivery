@@ -16,8 +16,8 @@
 
 | 档 | 条数 |
 |---|---|
-| 已能 | 54 |
-| 可攻关 | 38 |
+| 已能 | 64 |
+| 可攻关 | 28 |
 | 待验证 | 7 |
 | 待查 | 20 |
 | **合计** | **119** |
@@ -27,19 +27,13 @@
 | 工具条 | 条目 | 档 | 官方成员（已核） | 本仓入口 |
 |---|---|---|---|---|
 | 曲面 | 删除孔 | **可攻关** | `InsertDeleteHole` | — |
-| 曲面 | 删除面 | **可攻关** | `InsertDeleteFace2` | — |
 | 曲面 | 扫描曲面 | **可攻关** | `InsertProtrusionSwept4`, `Surface` | — |
 | 曲面 | 曲面展平 | **可攻关** | `InsertFlattenSurface` | — |
 | 曲面 | 自由样式 | **可攻关** | `InsertFreeform` | — |
 | 曲面 | 解除剪裁曲面 | **可攻关** | `InsertUntrimSurface` | — |
 | 特征 | 放样切除 | **可攻关** | `InsertCutBlend` | — |
-| 特征 | 旋转切除 | **可攻关** | `FeatureRevolveCut2` | — |
 | 特征 | 边界凸台/基体 | **可攻关** | `InsertProtrusionBlend2` | — |
 | 特征 | 边界切除 | **可攻关** | `InsertCutBlend` | — |
-| 特征下拉 | 参考几何体-坐标系 | **可攻关** | `InsertCoordinateSystem` | — |
-| 特征下拉 | 参考几何体-基准面 | **可攻关** | `InsertRefPlane` | — |
-| 特征下拉 | 参考几何体-点 | **可攻关** | `InsertReferencePoint` | — |
-| 特征下拉 | 参考几何体-质心 | **可攻关** | `InsertCenterOfMass` | — |
 | 特征下拉 | 填充阵列 | **可攻关** | `FeatureFillPattern` | — |
 | 特征下拉 | 曲线-分割线 | **可攻关** | `InsertSplitLineProject` | — |
 | 特征下拉 | 曲线-投影曲线 | **可攻关** | `InsertProjectedSketch` | — |
@@ -57,13 +51,9 @@
 | 草图绘制 | 方程式驱动的曲线 | **可攻关** | `CreateEquationSpline2`, `CreateSplinesByEqnParams2` | — |
 | 草图绘制 | 曲面上的样条曲线 | **可攻关** | `CreateSpline` | — |
 | 草图绘制 | 样式样条曲线 | **可攻关** | `CreateSpline3` | — |
-| 草图编辑 | 伸展实体 | **可攻关** | `IModelDoc2` | — |
 | 草图编辑 | 侧影实体 | **可攻关** | `SketchUseEdge3` | — |
 | 草图编辑 | 复制实体 | **可攻关** | `IModelDoc2` | — |
-| 草图编辑 | 旋转实体 | **可攻关** | `IModelDoc2`, `SketchModifyRotate` | — |
 | 草图编辑 | 曲面上偏移 | **可攻关** | `SketchOffsetOnSurface` | — |
-| 草图编辑 | 移动实体 | **可攻关** | `IModelDoc2`, `SketchModifyTranslate` | — |
-| 草图编辑 | 缩放实体比例 | **可攻关** | `IModelDoc2`, `SketchModifyScale` | — |
 | 曲面 | 圆角(曲面) | **待验证** | `FeatureFillet` | `sw_part.fillet` |
 | 特征 | 筋 | **待验证** | `InsertRib` | `sw_part.rib_report` |
 | 特征 | 线性阵列 | **待验证** | `FeatureLinearPattern4` | `sw_part.linear_pattern` |
@@ -91,6 +81,7 @@
 | 草图尺寸 | 竖直尺寸链 | **待查** | — | — |
 | 草图尺寸 | 路径长度尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 链尺寸 | **待查** | — | `sw_sketch_dimensions.*` |
+| 曲面 | 删除面 | **已能** | `InsertDeleteFace2` | — |
 | 曲面 | 填充曲面 | **已能** | `InsertFillSurface2` | `sw_surface_features.insert_fill_surface_report` |
 | 曲面 | 平面区域 | **已能** | `InsertPlanarRefSurface` | — |
 | 曲面 | 延伸曲面 | **已能** | `InsertExtendSurface` | `sw_surface_features.insert_extend_surface_report` |
@@ -110,8 +101,13 @@
 | 特征 | 拉伸切除 | **已能** | `FeatureCut4` | `sw_part.extrude_cut` |
 | 特征 | 放样凸台/基体 | **已能** | `InsertProtrusionBlend2` | `sw_loft.create_loft_report` |
 | 特征 | 旋转凸台/基体 | **已能** | `FeatureRevolve2` | `sw_part.revolve_boss` |
+| 特征 | 旋转切除 | **已能** | `FeatureRevolveCut2` | — |
 | 特征 | 曲线-螺旋线/涡状线 | **已能** | `InsertHelix` | `sw_helix.insert_helix` |
 | 特征 | 镜向 | **已能** | `InsertMirrorFeature2` | `sw_part.mirror_feature` |
+| 特征下拉 | 参考几何体-坐标系 | **已能** | `InsertCoordinateSystem` | — |
+| 特征下拉 | 参考几何体-基准面 | **已能** | `InsertRefPlane` | — |
+| 特征下拉 | 参考几何体-点 | **已能** | `InsertReferencePoint` | — |
+| 特征下拉 | 参考几何体-质心 | **已能** | `InsertCenterOfMass` | — |
 | 特征下拉 | 圆周阵列 | **已能** | `FeatureCircularPattern4` | `sw_part.circular_pattern` |
 | 草图关系 | 完全定义草图 | **已能** | `FullyDefineSketch` | `sw_sketch_dimensions.*` |
 | 草图尺寸 | 智能尺寸 | **已能** | `AutoDimension2` | `sw_part.auto_dimension_sketch` |
@@ -140,8 +136,12 @@
 | 草图绘制 | 退出草图 | **已能** | `InsertSketch` | `sw_part.end_sketch` |
 | 草图绘制 | 部分椭圆 | **已能** | `CreateEllipticalArc` | `sw_sketch_primitives.sketch_elliptical_arc` |
 | 草图绘制 | 镜向实体 | **已能** | `GetDynamicMirror`, `SetDynamicMirror` | `sw_sketch_edit.sketch_mirror` |
+| 草图编辑 | 伸展实体 | **已能** | `IModelDoc2` | — |
 | 草图编辑 | 剪裁实体 | **已能** | `SketchTrim` | `sw_sketch_edit_ops.sketch_trim` |
 | 草图编辑 | 圆周草图阵列 | **已能** | `CreateCircularSketchStepAndRepeat` | `sw_sketch_edit_ops.sketch_circular_pattern` |
 | 草图编辑 | 延伸实体 | **已能** | `SketchExtend` | `sw_sketch_edit_ops.sketch_extend` |
+| 草图编辑 | 旋转实体 | **已能** | `IModelDoc2`, `SketchModifyRotate` | — |
+| 草图编辑 | 移动实体 | **已能** | `IModelDoc2`, `SketchModifyTranslate` | — |
 | 草图编辑 | 等距实体 | **已能** | `SketchOffset2` | `sw_sketch_edit_ops.sketch_offset` |
 | 草图编辑 | 线性草图阵列 | **已能** | `CreateLinearSketchStepAndRepeat` | `sw_sketch_edit_ops.sketch_linear_pattern` |
+| 草图编辑 | 缩放实体比例 | **已能** | `IModelDoc2`, `SketchModifyScale` | — |

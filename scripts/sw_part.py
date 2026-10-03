@@ -880,6 +880,48 @@ def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None):
     )
 
 
+def revolve_cut(model, sketch_name, angle_rad, axis_sketch_name=None):
+    """★ **旋转切除** —— `IFeatureManager.FeatureRevolve2(..., IsCut=True, ...)`。
+
+    ★★★★ 2026-10-03（轮 550）★ **官方文档直接给出的答案**（★ 按「官方文档是第 0 步」那条新纪律）：
+
+      · 台账里这一条的 `api` 写的是 **`FeatureRevolveCut2`** —— ★ 而官方那个成员的 md **逐字**写着：
+        > "**Obsolete. Superseded by `IFeatureManager::FeatureRevolve2`.**"
+        ⇒ ★★ **故根本不用攻那个废弃入口** ⚠
+      · 而 `FeatureRevolve2` 的 **20 参签名**里第 4 个就是 **`IsCut`**
+        （官方逐字："**IsCut**: True if this is a **cut** revolve feature, false if not"）✓
+      · 它的 **Remarks** 还给了**完整的 mark 分工**（★ 其中 **`mark = 32` 那条本仓从没用过**）：
+        ```
+        剖面草图                ⇒ Mark = 0
+        旋转轴                  ⇒ Mark = 4 或 16
+        上至面 / 上至顶点 / 等距面 ⇒ Mark = 32     ← ★ 本仓未用过
+        受影响体（仅 UseFeatScope=true 且 UseAutoSel=false）
+        ```
+      ⇒ ★★ **故本函数与 `revolve_boss` **只差一个布尔** —— ★ 而★ 那正是"读文档"省下的弯路** ✓
+      ★ 证据：`C:\swapi\types\IFeatureManager\FeatureRevolveCut2.md`（Obsolete 那句）
+        · `...\FeatureRevolve2.md`（签名 + Remarks）
+        · 真机：`output/revolve-cut-evidence.json`
+
+    :param sketch_name: 轮廓草图名（★ 官方 mark = 0）
+    :param angle_rad: 旋转角（**弧度**）
+    :param axis_sketch_name: 旋转轴（★ 官方 mark = 4 或 16；★ 且**必须先于轮廓进选择集**）
+    """
+    #: ★ **先轴、后轮廓**（★ 顺序照官方示例 —— 反了会建不成，见 `revolve_boss` 的 docstring）
+    if axis_sketch_name:
+        _select_revolve_axis(model, str(axis_sketch_name))
+    _ensure_sketch_selected(model, sketch_name)
+    return model.FeatureManager.FeatureRevolve2(
+        True, True, False,
+        #: ★★★ **这一行就是"切除"** —— `IsCut=True`（★ 其余与 `revolve_boss` 逐字相同）
+        True, False, False,
+        0, 0,
+        angle_rad, 0,
+        False, False,
+        0.0, 0.0,
+        0, 0, 0, True, True, True
+    )
+
+
 def fillet(model, radius, edges=None):
     """
     倒圆角

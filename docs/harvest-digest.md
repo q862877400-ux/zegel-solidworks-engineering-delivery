@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **93** 条能力。
+共 **94** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 80 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 81 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 63 | **本项目自研**（护城河域等） |
+| `original` | 64 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -145,6 +145,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
        ★ 而它**修正了一个归因**：「新架构那侧不成」在**旋转曲面上不成立**。` |
 | `sketch_dimension_horizontal` | · `★★ 2026-10-03（轮 542）**真机建成**（走 `sw_guard`，`sw_alive: true`、`dialogs: []` 零弹窗）：在前视面画**一条水平线段**，★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）。证据 `output/hv-dimension-with-selection-evidence.json`。`<br>· `★★★ **而根因是一组对照定下的：「**不选**」那组 `尺寸 0 → H:0 → V:0`（**不成**）** —— ★ 故**前置就是“**必须先选中实体**”**。`<br>· `★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓` |
 | `sketch_dimension_vertical` | · `★★ 2026-10-03（轮 542）**真机建成**（走 `sw_guard`，`sw_alive: true`、`dialogs: []` 零弹窗）：在前视面画**一条水平线段**，★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）。证据 `output/hv-dimension-with-selection-evidence.json`。`<br>· `★★★ **而根因是一组对照定下的：「**不选**」那组 `尺寸 0 → H:0 → V:0`（**不成**）** —— ★ 故**前置就是“**必须先选中实体**”**。`<br>· `★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓` |
+| `feature_revolve_cut` | · `★★ 2026-10-03（轮 550）**真机建成**（走 `sw_guard`，零弹窗）：实体盒 + 前视面上的**中心线 + 剖面**，调 `FeatureRevolve2(..., IsCut=True, ...)` ⇒ **树新增 `切除-旋转1`**，★ **体积 0.8255 倍**（**变小 = 真切除**）。证据 `output/revolve-cut-evidence.json`。`<br>· `★★ **而对照组同时跑**：`IsCut=False` ⇒ 树新增 `旋转1`、★ **体积 1.1745 倍**（**变大）** —— ★ 故**那一个布尔就是“切除”与“加料”的分界** ✓` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

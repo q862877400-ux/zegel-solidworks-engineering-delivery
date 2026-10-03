@@ -57,7 +57,8 @@
    "zh": "旋转切除",
    "api": "FeatureRevolveCut2",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "feature_revolve_cut"
   },
   {
    "tb": "特征",
@@ -218,28 +219,32 @@
    "zh": "参考几何体-基准面",
    "api": "InsertRefPlane",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "ref_geometry"
   },
   {
    "tb": "特征下拉",
    "zh": "参考几何体-坐标系",
    "api": "InsertCoordinateSystem",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "ref_geometry"
   },
   {
    "tb": "特征下拉",
    "zh": "参考几何体-点",
    "api": "InsertReferencePoint",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "ref_geometry"
   },
   {
    "tb": "特征下拉",
    "zh": "参考几何体-质心",
    "api": "InsertCenterOfMass",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "ref_geometry"
   },
   {
    "tb": "特征下拉",
@@ -676,7 +681,8 @@
    "zh": "移动实体",
    "api": "IModelDoc2.SketchModifyTranslate",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_modify_ops"
   },
   {
    "tb": "草图编辑",
@@ -690,21 +696,24 @@
    "zh": "旋转实体",
    "api": "IModelDoc2.SketchModifyRotate",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_modify_ops"
   },
   {
    "tb": "草图编辑",
    "zh": "缩放实体比例",
    "api": "IModelDoc2.SketchModifyScale",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_modify_ops"
   },
   {
    "tb": "草图编辑",
    "zh": "伸展实体",
    "api": "IModelDoc2.SketchModifyStretch",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "sketch_modify_ops"
   },
   {
    "tb": "草图编辑",
@@ -842,7 +851,8 @@
    "zh": "删除面",
    "api": "InsertDeleteFace2",
    "entry": "",
-   "level": "不能"
+   "level": "不能",
+   "capability_id": "surface_edit_ops"
   },
   {
    "tb": "曲面",

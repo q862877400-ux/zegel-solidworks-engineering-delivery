@@ -3886,6 +3886,32 @@
         "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
         "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
       ]
+    },
+    {
+      "id": "feature_revolve_cut",
+      "label": "旋转切除（`FeatureRevolve2` 的 `IsCut=True`）—— ★ **真机建成**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名**立）：`C:\\swapi\\types\\IFeatureManager\\FeatureRevolve2.md` 的 20 参签名（第 4 个是 **`IsCut`**）与它的 `## Remarks`（**mark 分工**）。代码：`scripts/sw_part.py::revolve_cut`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 550）**真机建成**（走 `sw_guard`，零弹窗）：实体盒 + 前视面上的**中心线 + 剖面**，调 `FeatureRevolve2(..., IsCut=True, ...)` ⇒ **树新增 `切除-旋转1`**，★ **体积 0.8255 倍**（**变小 = 真切除**）。证据 `output/revolve-cut-evidence.json`。",
+        "★★ **而对照组同时跑**：`IsCut=False` ⇒ 树新增 `旋转1`、★ **体积 1.1745 倍**（**变大）** —— ★ 故**那一个布尔就是“切除”与“加料”的分界** ✓"
+      ],
+      "limitations": [
+        "★★ **前置（官方 `## Remarks` 逐字）**：剖面草图 **mark = 0**、旋转轴 **mark = 4 或 16**；★ 而**轴必须先于轮廓进选择集**（★ 本仓轮 360 已定）。",
+        "⚠ **未查**：★ `mark = 32`（**上至面 / 上至顶点 / 等距面**）—— ★ 本仓**从未用过**；★ 非 360°；★ `RevType` 的两向与中面。",
+        "⚠ **本包装未接进 MCP 工具层**（★ 现为 `scripts/` 层可调用）。"
+      ]
     }
   ]
 }

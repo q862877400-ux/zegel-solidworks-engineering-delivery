@@ -1728,3 +1728,22 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
        ③ ★ 故到不了的是**「切割清单」这一条能力**，★ 而**不是“整个结构系统”** ⚠
      ★ **故 §四 的结论要收窄**：★ **到不了的是 `InsertWeldmentCutList2`**（成员不在对象上）**，★ 而焊件特征**能建**。
      ★★ **方法论**：★ 一个“**取不到**”的描述**是不够的** —— ★ 要问到**具体形态**（回什么、报什么、还是成员不在）。|真机：`tools/probe_weldment_cutlist_recheck.py`；证据 `output/weldment-cutlist-recheck-evidence.json`；静态：`C:\swapi\types\IFeatureManager\InsertWeldmentCutList2.md` × 出厂类型库；对照事实 420 / 425 / 426 / 427 |
+| 429 | **★★★ 旋转切除 = `FeatureRevolve2(IsCut=True)`（★ 官方明说 `FeatureRevolveCut2` **已废弃**）**；★ 而这是**按新纪律「官方文档是第 0 步」走出的第一条能力**** —— 2026-10-03（轮 550）。
+     ★ **台账原本指的入口是** `FeatureRevolveCut2`** —— 而它的 md **逐字**写着：
+       > "**Obsolete. Superseded by `IFeatureManager::FeatureRevolve2`.**"
+       ⇒ ★★ **故若按台账去攻，会走一条官方明说不要走的路** ⚠
+     ★ 而 `FeatureRevolve2` 的 **20 参签名**里第 4 个就是 **`IsCut`**；它的 `## Remarks` 还给了**完整 mark 分工**：
+     ```
+     剖面草图                 ⇒ Mark = 0
+     旋转轴                   ⇒ Mark = 4 或 16
+     上至面 / 上至顶点 / 等距面  ⇒ Mark = 32   ← ★ 本仓**从未用过**
+     ```
+     ★ 真机（`tools/prove_revolve_cut.py`，零弹窗）：
+     ```
+     ★ 旋转**切除**（IsCut=**True**）  ⇒ 树新增 `切除-旋转1` · **体积 0.8255 倍**（变小）✓
+     对照：旋转**凸台**（IsCut=False） ⇒ 树新增 `旋转1`   · **体积 1.1745 倍**（变大）
+     ```
+     ⇒ ★★ **故：那一个布尔就是“切除”与“加料”的分界** —— ★ 而**两组同时跑的对照实验**它自己就把结论钉死了 ✓
+     ★★ **而本轮的意义在方法**：★ **一次文档阅读 = 一条能力 + 一个对照实验，而避开了一条废弃入口的弯路** ⚠ —— ★ 这正是上一轮立那条纪律时想要的效果。
+     ★ **落地**：`capabilities.yaml` 新增 **`feature_revolve_cut`**（level = **verified**，共 **94** 条）；台账的「旋转切除」补 `capability_id` ⇒ **已能**。
+     ★★ **而它还顺手记下一条本仓未用过的东西**：★ **`Mark = 32`**（上至面 / 上至顶点 / 等距面）。|真机：`tools/prove_revolve_cut.py`；证据 `output/revolve-cut-evidence.json`；官方：`C:\swapi\types\IFeatureManager\FeatureRevolveCut2.md` · `FeatureRevolve2.md` |
