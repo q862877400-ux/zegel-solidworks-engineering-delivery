@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **88** 条能力。
+共 **90** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 75 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 77 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 1 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 58 | **本项目自研**（护城河域等） |
+| `original` | 60 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -138,6 +138,8 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `ref_geometry` | · `★ 2026-10-03（轮 479）**真机 3/5 建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b8_ref_geometry.py`。★ **质心**（`InsertCenterOfMass()`）· **边界框**（`InsertGlobalBoundingBox2`，**`Status=0 (Success)`**）· **坐标系**（`InsertCoordinateSystem`）。证据 output/b8-ref-geometry-evidence.json。`<br>· `★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **247 → 250**。`<br>· `★★ **`out` 参数的正确传法**（本轮踩到并修好）：`InsertGlobalBoundingBox2` 的第 5 个形参 `Status` 是 **out**，★ 裸传 `0` 真机回 `com_error: (-2147352571, '类型不匹配。', None, **5**)`（**位置 5 就是它**）；★ 必须用 **`sw_connect.out_i4()`**（其 docstring：「创建 `Int32&` 出参的 VARIANT 包装 —— **唯一被真机验证通过的形态**」）。★ 而判据也因此**更强**：`Status == Success(0)` 是**官方给的成败码**。`<br>· `★★ **台账 T701 给的成员是错的**：它写 `Create3DBoundingBox`，而官方原话是「for a **cut list item in a weldment part**」⇒ **焊件切割清单专用**，普通零件上不成是**应然的**；★ 工具栏那个的真名是 **`InsertGlobalBoundingBox2`**。`<br>· `★★ 2026-10-03（轮 480）**补齐到 5/5** —— 上一轮那两条（基准面 / 点）**缺的是同一件事**：★ **调用前按 `mark` 选一个参考实体**。★ 真机：基准面 `预选 ok=True {face_index:0, mark:0, sel_count:1}` ⇒ 树新增 **`基准面1`**；点同样 `mark=0` ⇒ 树新增 **`点1`**。★ 而 **mark 表就在官方 Remarks 里**：`0 = First reference entity · 1 = Second reference entity · 2 = Third reference entity`。★★ 另正上一轮的一句错话：我上轮写的「官方**未给**那张 mark 表」—— **那是错的**，表就在**同一条** Remarks 的紧下一段，我当时没读到。` |
 | `curve_and_split` | · `★ 2026-10-03（轮 481）**真机 2/4**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b7a_curve_split.py`。★ **通过参考点的曲线**：树新增 **`曲线1`**（`InsertCurveFileBegin/Point/End` 三步式）；★ **配合参考**：树新增 **`['配合参考', 'MCP_MateRef-<1>', '配合参考___EndTag___']`**。证据 output/b7a-curve-split-evidence.json。`<br>· `★★ **`类型不匹配` 位置 6 ⇒ 未用的 entity 槽要传「空 Dispatch」**：`InsertMateReference2` 的 `Secondary/TertiaryReferenceEntity` 类型是 `Entity`，★ 裸传 `None` 不行；★ 用本仓 `sw_connect.create_empty_dispatch_variant()`（★ 它就是**事实 12**那条）。`<br>· `★★ **`无效的参数数目` ⇒ 官方第三组少一个形参**：完整签名是 **12** 个（`… TertiaryReferenceType, TertiaryReferenceAlignment )``<br>· `—— **没有 `TertiaryReferenceAlignAxes`**）；★ 我按“三组同形”推成 13 个 ⇒ 报错。★ **别按同形推，要逐数完整签名**。` |
 | `surface_offset` | · `★★ 2026-10-03（轮 516）**真机建成**（走 `sw_guard`，`sw_alive: true`、**零弹窗**）：先建一张曲面（`曲面-拉伸1`）⇒ **4 张面选中** ⇒ `InsertOffsetSurface(5.0 mm, False)` ⇒ ★ **`曲面-等距1`（特征树 7→8）**。证据 `output/surface-oldstyle-three-evidence.json` · 探针 `tools/prove_surface_oldstyle_three.py`。`<br>· `★ **走的是「旧式方法」那侧**（`IModelDoc2.InsertOffsetSurface` · **2 参 · void**）—— ★★ 而不是新架构（`CreateDefinition` + `CreateFeature`）。★ 依据：**事实 395** 指出「旧式方法那侧是成的」（填充 `InsertFillSurface2` / 延伸 `InsertExtendSurface` / 缝合 `InsertSewRefSurface` / 曲面-拉伸 `FeatureExtruRefSurface3`）。` |
+| `surface_planar_region` | · `★★ 2026-10-03（轮 517）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：先建一张曲面，再建**一个闭合草图**，按 **mark=1 选**那个草图（回读 `sel_count = 1`）⇒ `InsertPlanarRefSurface()` ★ **回 `True`** · **建成 `曲面-基准面1`**。证据 `output/planar-replace-variants-evidence.json`。`<br>· `★★★ **而「boundary entities」到底是什么，是真机定的**：★ 轮 516 先试**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、返回值 `False`；★ 轮 517 改试**草图**（闭合轮廓 · mark=1）⇒ **返回 `True` · 建成** ✓ ⇒ ★★ **故它指的是草图**（★ 而官方那句 `Remarks` **两种读法都通**）。` |
+| `replace_face` | · `★★ 2026-10-03（轮 517）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：先建一个**实体盒** + 一张**曲面**，按 **曲面面 mark=1 · 实体面 mark=2** 选两张面（回读 2）⇒ `InsertFeatureReplaceFace()` ⇒ **建成 `替换面1`**。证据 `output/planar-replace-variants-evidence.json`。`<br>· `★★★ **两个 mark 的分工是真机定的**（★ 官方那句 `Remarks` **被截断了**）：★ 轮 516 按「实体面=1 · 曲面面=2」⇒ **0 增量**；★ 轮 517 调过来（实体面=2 · 曲面面=1）⇒ **建成 `替换面1`** ✓ ⇒ ★★ **曲面面 = mark 1（要替换掉的）· 实体面 = mark 2（替换成它）**，★ 而它与官方「要替换的面 mark 1」**一致**。` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

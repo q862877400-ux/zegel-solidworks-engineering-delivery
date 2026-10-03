@@ -743,30 +743,71 @@ def insert_offset_surface_report(model, thickness_mm: float, *, reverse: bool = 
             "★": "判据 = **特征树多了新特征**（规则 6）；★ 走**旧式** `IModelDoc2.InsertOffsetSurface`"}
 
 
-def insert_planar_ref_surface_report(model) -> dict:
+def insert_planar_ref_surface_report(model, *, sketch_name: str = "") -> dict:
     """★ **平面区域**（`IModelDoc2.InsertPlanarRefSurface` —— ★ **旧式方法** · **零参**）。
 
     ★ 官方：`bool InsertPlanarRefSurface()` ⇒ "True if the reference surface is created"
       · `Remarks` ⇒ 「select the surface's **boundary entities** using `SelectByID2` with
-        **Marks of 1**」⇒ ★ **边界实体要 mark = 1** ✓
-    ★ 前置：★ 先按 mark=1 选**边界**（★ 本包装先试**曲面体的边**；★ 草图边界另说）。
+        **Marks of 1**」
+
+    ★★★★ 2026-10-03（轮 517）**真机定下了「boundary entities」到底是什么** ✓
+      · ⚠ 轮 516 我先试了**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、`返回值 False`
+      · ★ 轮 517 改试**草图**（一个闭合轮廓草图 · mark=1）⇒
+        **`返回值 True` · 建成 `曲面-基准面1`** ✓
+      ⇒ ★★ **故「boundary entities」在这条方法上指的是**草图**，不是曲面体的边** ——
+        ★ 而官方那句 `Remarks` **两种读法都通**，★ 只能靠真机定 ⚠
+
+    ★ 前置：★ **先按 mark=1 选一个闭合草图**（★ 特征按**名字**选是可行的 ——
+      ★ 事实 32 的「没有名字」只对**实体**成立）。
+    ★ 参数：`sketch_name` 留空 ⇒ ★ 用**最后一个**草图。
     ★ 判据（规则 6）：★ **特征树多了新特征**。
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}
     before = feature_names(model)
-    selected = _select_all_surface_edges(model, mark=1)
+    try:
+        from sw_part import _get_sketch_name_candidates as _cands
+    except Exception:                                                     # noqa: BLE001
+        _cands = None
+    names = [n for n in (feature_names(model) or [])
+             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    want = sketch_name or (names[-1] if names else "")
+    try:
+        model.ClearSelection2(True)
+    except Exception:                                                     # noqa: BLE001
+        pass
+    picked = False
+    if want:
+        ext = get_com_member(model, "Extension")
+        cands = _cands(want) if _cands else (want,)
+        for cand in cands:
+            try:
+                if get_com_member(ext, "SelectByID2", cand, "SKETCH", False, 0, 0.0, 0.0, 0.0,
+                                  False, 1, None, 0):
+                    picked = True
+                    break
+            except Exception:                                             # noqa: BLE001
+                continue
+    try:
+        sel = int(get_com_member(get_com_member(model, "SelectionManager"),
+                                 "GetSelectedObjectCount2", -1) or 0)
+    except Exception:                                                     # noqa: BLE001
+        sel = -1
+    if not picked and sel <= 0:
+        return {"ok": False, "stage": "select", "sketch": want, "selected": sel,
+                "error": "没选中草图（★ 真机：这条方法的 boundary entities 指**草图**，"
+                         "★ 不是曲面体的边 —— 见本函数 docstring）"}
     try:
         ret = get_com_member(model, "InsertPlanarRefSurface")
     except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "stage": "call", "edges_selected": selected,
+        return {"ok": False, "stage": "call", "sketch": want, "selected": sel,
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
     after = feature_names(model)
     new = [n for n in after if n not in before]
     return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
             "tree_before": len(before), "tree_after": len(after),
-            "edges_selected": selected, "returned": repr(ret)[:40],
-            "★": "判据 = **特征树多了新特征**（规则 6）；★ 官方：边界实体用 **mark = 1**"}
+            "sketch": want, "selected": sel, "returned": repr(ret)[:30],
+            "★": "判据 = **特征树多了新特征**（规则 6）；★ **真机：边界实体 = 草图**（轮 517）"}
 
 
 def insert_replace_face_report(model) -> dict:
@@ -775,10 +816,17 @@ def insert_replace_face_report(model) -> dict:
     ★ 官方：`void InsertFeatureReplaceFace()`
       · `Returns` ⇒ "True if the edges match, false if not"
       · `Remarks` ⇒ 「select the faces to **replace** … with **Marks of 1** and select the
-        re[placement face] …」⇒ ★★ **两个 mark 分工**（★ 而★ 本包装只收一个 `mark` 形参，
-        ★ 故它把**第一张面**当"要替换的"、★ 第二张当"替换面" —— ★ 那是**推断**，★ 已在
-        ★ 证据里如实标注 ⚠）。
-    ★ 前置：★ 至少**两张面**（★ 一张是实体面、一张是曲面面）。
+        re[placement face] …」⇒ ★★ **两个 mark 分工**
+
+    ★★★★ 2026-10-03（轮 517）**真机把那个被截断的 mark 定了** ✓
+      · ⚠ 轮 516 我先按「**实体面 mark=1 · 曲面面 mark=2**」试 ⇒ **0 增量**
+      · ★ 轮 517 把两个 mark **调过来**（**曲面面 mark=1 · 实体面 mark=2**）⇒
+        **建成 `替换面1`** ✓
+      ⇒ ★★ **故分工是：★ 曲面面 = mark 1（**要替换掉的那个**）· 实体面 = mark 2（**替换成它**）** ——
+        ★ 而这**与官方那句「要替换的面 mark 1」一致**：★ 要替换掉的正是**曲面**、★ 替换成的是**实体的面** ⚠
+        （★ 我轮 516 的推断**把方向搞反了** —— ★ 而那是**推断**、★ 不是官方明文，故本轮才有必要试第二种）
+
+    ★ 前置：★ **两张面**（★ 一张曲面面 = mark 1 · ★ 一张实体面 = mark 2）。
     ★ 判据（规则 6）：★ **特征树多了新特征**。
     """
     if model is None:
@@ -829,9 +877,12 @@ def _select_all_surface_edges(model, mark: int = 1) -> int:
 
 
 def _select_two_faces_for_replace(model) -> int:
-    """★ 给**替换面**选两张面：★ 先实体面（mark=1）、★ 再曲面面（mark=2）。
+    """★ 给**替换面**选两张面：★ **曲面面 mark=1**（要替换掉的）· ★ **实体面 mark=2**（替换成它）。
 
-    ⚠ **这是推断**（★ 官方只写了"要替换的面 mark 1"）⇒ ★ 本函数在 docstring 里如实标注。
+    ★★ 这个分工是**真机定的**（★ 轮 517）：把两个 mark **调过来**才建成 `替换面1` ✓
+      ⚠ 而轮 516 我按「实体=1 / 曲面=2」试 ⇒ **0 增量** —— ★ 那是**推断反了**。
+    ★ 它与官方那句「select the faces to **replace** … with **Marks of 1**」一致：
+      ★ **要替换掉的**是那张**曲面**（★ 而实体面是"替换成"的目标）。
     """
     from sw_connect import get_com_member as _get
     from sw_part import _select_com_object as _sel
@@ -840,7 +891,8 @@ def _select_two_faces_for_replace(model) -> int:
     except Exception:                                                     # noqa: BLE001
         pass
     n = 0
-    for body_type, mark in ((0, 1), (1, 2)):
+    #: ★ **顺序与 mark 都以真机为准**（轮 517）：曲面体(1) ⇒ mark 1；实体(0) ⇒ mark 2
+    for body_type, mark in ((1, 1), (0, 2)):
         try:
             bodies = list(_get(model, "GetBodies2", body_type, True) or [])
         except Exception:                                                 # noqa: BLE001

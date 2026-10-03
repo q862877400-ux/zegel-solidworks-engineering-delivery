@@ -3757,6 +3757,56 @@
         "★ 前置：**先选中一张曲面**（官方 `Remarks` 逐字：「Make the selections using `SelectByID2` **before** calling this method」）。★ 本包装按**对象**选（★ 事实 32：实体没有名字）。",
         "⚠ **未查**：① 反向`Reverse=True` ；② 多体下只选部分面；③ 对**实体面**做等距。"
       ]
+    },
+    {
+      "id": "surface_planar_region",
+      "label": "平面区域（★ **真机建成**）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名**立）：`C:\\swapi\\types\\IModelDoc2\\InsertPlanarRefSurface.md` 的`bool InsertPlanarRefSurface()`，参见 `scripts/sw_surface_features.py` 的 `insert_planar_ref_surface_report`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 517）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：先建一张曲面，再建**一个闭合草图**，按 **mark=1 选**那个草图（回读 `sel_count = 1`）⇒ `InsertPlanarRefSurface()` ★ **回 `True`** · **建成 `曲面-基准面1`**。证据 `output/planar-replace-variants-evidence.json`。",
+        "★★★ **而「boundary entities」到底是什么，是真机定的**：★ 轮 516 先试**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、返回值 `False`；★ 轮 517 改试**草图**（闭合轮廓 · mark=1）⇒ **返回 `True` · 建成** ✓ ⇒ ★★ **故它指的是草图**（★ 而官方那句 `Remarks` **两种读法都通**）。"
+      ],
+      "limitations": [
+        "★ 前置：**先按 mark=1 选一个闭合草图**（★ 特征按**名字**选可行 —— 事实 32 的「没有名字」只对**实体**成立）。★ 本包装的 `sketch_name` 留空 ⇒ 用**最后一个**草图。",
+        "⚠ **未查**：① 多个草图同时选；② 非矩形轮廓（圆 / 任意闭合）；③ 对**实体边**而非草图。"
+      ]
+    },
+    {
+      "id": "replace_face",
+      "label": "替换面（★ **真机建成**）",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名**立）：`C:\\swapi\\types\\IModelDoc2\\InsertFeatureReplaceFace.md` 的`void InsertFeatureReplaceFace()`，参见 `scripts/sw_surface_features.py` 的 `insert_replace_face_report`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 517）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：先建一个**实体盒** + 一张**曲面**，按 **曲面面 mark=1 · 实体面 mark=2** 选两张面（回读 2）⇒ `InsertFeatureReplaceFace()` ⇒ **建成 `替换面1`**。证据 `output/planar-replace-variants-evidence.json`。",
+        "★★★ **两个 mark 的分工是真机定的**（★ 官方那句 `Remarks` **被截断了**）：★ 轮 516 按「实体面=1 · 曲面面=2」⇒ **0 增量**；★ 轮 517 调过来（实体面=2 · 曲面面=1）⇒ **建成 `替换面1`** ✓ ⇒ ★★ **曲面面 = mark 1（要替换掉的）· 实体面 = mark 2（替换成它）**，★ 而它与官方「要替换的面 mark 1」**一致**。"
+      ],
+      "limitations": [
+        "★ 前置：**两张面**（曲面面 mark=1 · 实体面 mark=2）。",
+        "⚠ **未查**：① 选具体哪一张面（★ 本包装取各体**第一张**）；② 多对面；③ 两个曲面之间替换。"
+      ]
     }
   ]
 }
