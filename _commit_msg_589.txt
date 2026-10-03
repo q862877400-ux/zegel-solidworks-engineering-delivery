@@ -1,0 +1,44 @@
+feat(选择): **`SelectByRay` 真机选中** —— ★ 它是 `HoleWizard5` 定孔位的前置（事实 466）
+
+★ 执行**事实 465 留的下一步**（★ 搭 `SelectByRay`）。
+
+## 一、★ 官方那页（★ 未标废弃，**11 参**）
+
+```
+bool SelectByRay(double WorldX, WorldY, WorldZ, double RayVecX, RayVecY, RayVecZ,
+                 double RayRadius, int TypeWanted, bool Append, int Mark, int Option)
+★ 语义：「Defines a **cylindrical region of infinite length** that starts at the
+   specified point and runs parallel to the ray direction」
+★ **只选** faces/edges/vertices；★ **不支持** 草图实体/轴/中心线等
+★ RayRadius **<= 2.9 m**；★ TypeWanted 取 `swSelectType_e`
+```
+
+## 二、★ 真机（`tools/prove_hole_wizard5.py`，走 `sw_guard`、零弹窗）
+
+```
+先造一块板，再 `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)`
+  ⇒ **选中计数 1 → 2**（增 1）· 返回 `True` ✓
+★ 而 `swSelFACES = 2` 取自**本机反射 dump**（★ 铁律 4）：
+  `swSelEDGES = 1` · `swSelFACES = 2` · `swSelVERTICES = 3`
+```
+
+## 三、★★ 故孔位是"射线选出来的"、**而不是裸坐标**
+
+★ **命中什么由几何决定**（★ 与**规则 3** 的精神一致）✓
+
+## 四、★ 而本轮还拿到了**真的孔标准表**（★ 本仓 `list_hole_standards`）
+
+```
+{0: ANSI Inch, 1: ANSI Metric, 16: AS, 2: BSI, 4: DIN, 13: GB, …}
+```
+  —— ★ **故 `HoleWizard5` 的 `StandardIndex` 有了可核的取值来源** ✓
+
+## 五、交付
+
+```
+capabilities.yaml   + **`select_by_ray`**（verified）⇒ **107 条**
+  ★ 它**本身就是一条能力**（一个真的选择原语），★ 而不只是"某条能力的前置"
+docs/known-facts.md   **事实 466**（+22）
+tools/prove_hole_wizard5.py（新 · ★ 射线选择 + 孔标准查表）
+HEAD ? · 语法门禁 0 处（781 个文件）
+```

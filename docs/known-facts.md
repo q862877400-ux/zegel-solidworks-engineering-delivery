@@ -2408,3 +2408,23 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
      ★ **而本轮的方法论**：★ **当官方给了两条路时，先把“哪条走得通”查完再动手** —— ★ 而**判路的依据可以是静态的**（★ 本例：**成员表里有没有 `AccessSelections`** + **常量表里有没有那个常量**）。
      ★ 下一步：把 **`SelectByRay`** 那一步搭出来（★ 它是路径 ① 的前置）。
      ★ 本轮**不登记能力**。|官方：`C:\swapi\types\IWizardHoleFeatureData2\`（**75** 成员，含 `AccessSelections`）· `IFeatureManager\CreateDefinition.md`；对照事实 43 / 47 / 464 |
+| 466 | **★★ `SelectByRay` 真机选中**（★ 11 参；★ 而它是 `HoleWizard5` 定孔位的**前置**） —— 2026-10-03（轮 589）。
+     ★ **官方那页（★ 未标废弃，**11 参**）**：
+     ```
+     bool SelectByRay(double WorldX, WorldY, WorldZ, double RayVecX, RayVecY, RayVecZ,
+                      double RayRadius, int TypeWanted, bool Append, int Mark, int Option)
+     ★ 语义："Defines a **cylindrical region of infinite length** that starts at the
+        specified point and runs parallel to the ray direction"
+     ★ **只选** faces/edges/vertices；★ **不支持** 草图实体/轴/中心线等
+     ★ RayRadius **<= 2.9 m**；★ TypeWanted 取 `swSelectType_e`
+     ```
+     ★ 真机（`tools/prove_hole_wizard5.py`，零弹窗）：先造一块板，再
+       `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)`
+       ⇒ **选中计数 1 → 2**（增 1）· 返回 `True` ✓
+     ★ **而 `swSelFACES = 2` 取自本机反射 dump**（★ 铁律 4：`swSelEDGES = 1` · `swSelFACES = 2` · `swSelVERTICES = 3`）✓
+     ★★ **故孔位是“射线选出来的”、**而不是裸坐标** —— ★ **命中什么由几何决定**（★ 与规则 3 的精神一致）。
+     ★ **而本轮还拿到了真的孔标准表**（★ 本仓 `list_hole_standards`）：
+       `{0: ANSI Inch, 1: ANSI Metric, 16: AS, 2: BSI, 4: DIN, 13: GB, …}`
+       —— ★ **故 `HoleWizard5` 的 `StandardIndex` 有了可核的取值来源**。
+     ★ **落地**：`capabilities.yaml` 新增 **`select_by_ray`**（level = **verified**，共 **107** 条）—— ★ 它**本身就是一条能力**（一个真的选择原语）。
+     ★ 下一步：用它定位 + `HoleWizard5`（27 参）建孔。|真机：`tools/prove_hole_wizard5.py`；证据 `output/hole-wizard5-evidence.json`；官方：`C:\swapi\types\IModelDocExtension\SelectByRay.md` × 反射 arity |

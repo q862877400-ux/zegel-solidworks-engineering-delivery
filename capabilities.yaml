@@ -4228,6 +4228,34 @@
         "★ **坐标是米**（★ 本探针在边界除了 1000）",
         "⚠ 本包装未接进 MCP 工具层；⚠ 未查：**文件的字体格式要求**（★ 官方只说点可以有 X/Y/Z）。"
       ]
+    },
+    {
+      "id": "select_by_ray",
+      "label": "射线选择（`IModelDocExtension.SelectByRay`，**11 参**）—— ★ **真机选中**·★★ **它是 `HoleWizard5` 定孔位的前置**",
+      "level": "verified",
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "verified_versions": [
+        "2026"
+      ],
+      "dependencies": [
+        "SolidWorks",
+        "pywin32"
+      ],
+      "source": "original",
+      "source_evidence": "本项目自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\IModelDocExtension\\SelectByRay.md`（**11 参**，★ md **未标 `Obsolete`**）× 反射 arity（`'SelectByRay': 11`，★ 两源一致）。代码：`tools/prove_hole_wizard5.py`。",
+      "evidence": [
+        "★★ 2026-10-03（轮 589）**真机选中**（走 `sw_guard`，零弹窗）：先造一块板，再 `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` ⇒ **选中计数 1 → 2**（增 1）· 返回 `True`。证据 `output/hole-wizard5-evidence.json`。",
+        "★ 它的**语义**（官方逐字）：\"Defines a **cylindrical region of infinite length** that starts at the specified point and runs parallel to the ray direction\"。",
+        "★★ **而它是 `HoleWizard5` 定孔位的**前置****（事实 464 的 Remarks）：\"…call **`SelectByRay` with Mark = 0** for each location.\"。\n       ★★ **故孔位是“射线选出来的”、**而不是裸坐标** —— ★ **命中什么由几何决定**。",
+        "★ 而坐标/枚举均有**可核的来源**：`swSelFACES = 2` 取自本机反射 dump（★ 铁律 4 的裁决者）。"
+      ],
+      "limitations": [
+        "★ **只选** faces / edges / vertices（官方）；★ **不支持** 草图实体 / 轴 / 中心标记 / 中心线 / 剖面线。",
+        "★ `RayRadius` **<= 2.9 m**；★ 而 `TypeWanted` 取 `swSelectType_e`。",
+        "⚠ 本包装未接进 MCP 工具层；⚠ 本轮只验了 **命中面**（faces）一种。"
+      ]
     }
   ]
 }
