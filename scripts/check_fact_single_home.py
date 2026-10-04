@@ -22,6 +22,11 @@ HOME = ROOT / "docs" / "known-facts.md"
 #: ★ 允许**自己**复述自己的地方（★ 家与全局指令层；后者已由 AGENTS.md 自己声明只留速查）
 ALLOW = {"known-facts.md", "AGENTS.md"}
 MIN_LEN = 80                     #: ★ 逐字片段的最短长度（★ 太短会撞常见短语）
+#: ★★ 短正文的**参与下限** —— ★ 修 recall 的关键（第 26 轮实测出来的）：
+#:   判据原先只用 `MIN_LEN` 一道门槛 ⇒ ★★ **归一后短于 80 字符的事实正文被直接放过**
+#:   （实测漏报 2/10，且那 2 例的子串**其实匹配上了**，只是被守卫拒了）✓
+#:   ⇒ ★ 现在：正文本身短于 `20+MIN_LEN` 时，**用它全部**，只要 ≥ 本下限就参与匹配 ✓
+MIN_ANY = 40
 
 
 def fact_bodies() -> list:
@@ -53,9 +58,13 @@ def offenders() -> list:
             continue
         t = _norm(f.read_text(encoding="utf-8", errors="replace"))
         for n, b in bodies:
-            #: ★ 取事实正文的一段（跳过它的开头 —— 开头常是通用词）
-            probe = b[20:20 + MIN_LEN] if len(b) > 20 + MIN_LEN else b[:MIN_LEN]
-            if len(probe) >= MIN_LEN and probe in t:
+            #: ★★ 摘要要短于 MIN_LEN（★ 见文件头）；★ 短正文的判据见下 ——
+            #:   正文本身短于 `20+MIN_LEN` 时**用它全部**（★ 只要 ≥ `MIN_ANY`）✓
+            if len(b) > 20 + MIN_LEN:
+                probe = b[20:20 + MIN_LEN]
+            else:
+                probe = b
+            if len(probe) >= MIN_ANY and probe in t:
                 hits.append((str(f.relative_to(ROOT)), n))
     return hits
 
