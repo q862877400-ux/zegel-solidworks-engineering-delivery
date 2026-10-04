@@ -257,7 +257,13 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 399
+    assert len(all_specs()) == 401
+    #: ★★★★★★★ 2026-10-04（接手轮 · **规格 205 的批 87**）：**399 → 401**
+    #:   ⇒ ★★ **跨过 SC-001 的 400** ✓（★ 那 2 个：清选择集颜色 · 设 Costing 默认模板）
+    #:   ★ 第六坡头 8 份里其余 12 行 Bunny 判"不做"、**理由都成立**（我逐条复核、不推翻）：
+    #:     既有工具已覆盖（`sketch_count_*`）· 官方逐字标 Obsolete · 返回值是 COM 对象 ·
+    #:     官方写该属性**只读** · 与既有工具重复（FR-006）· 且 `tool_specs_batch2.py` 的分类表里
+    #:     早把其中几个列进 **`D_不该暴露`**（★ 仓库自己的既有裁决）✓
     #: ★★★★★★ 2026-10-04（接手轮 · **规格 205 的批 86**）：**369 → 399** —— ★ **我加的 30 条**
     #:   ★★ 这是**第四坡"解锁 C 类"**的产出，也是"**加解析器换工具**"这条路走通的证明：
     #:     加了 `view`/`results`/`mesh`/`options` 四个**语义无歧义**的解析器之后，

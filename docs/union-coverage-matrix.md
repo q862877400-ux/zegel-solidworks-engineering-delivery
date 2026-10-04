@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 425 | 425 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 427 | 427 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -50,12 +50,12 @@
 | ⑪ 工程图 | 18 | 18 | 15 | 17 | 36 | 74⚠ | 85 | **49** |
 | ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 15 | 28⚠ | 31 | **16** |
 | ⑬ 仿真 / Motion | 3 | · | 1 | · | 47 | 124⚠ | 51 | **4** |
-| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 15 | 49⚠ | 25 | **10** |
+| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 16 | 49⚠ | 26 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
-| ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 30 | 14 | 30 | ✓ |
+| ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 31 | 14 | 31 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 93 | 517⚠ | 135 | **42** |
 
-**合计**：并集 736 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 738 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 387 个操作只有本仓库有：
+共 389 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -183,6 +183,7 @@
 - `costing_method_value`（⑯ 高级 / 专项（含护城河候选））
 - `costing_read_analysis`（⑯ 高级 / 专项（含护城河候选））
 - `costing_read_body`（⑯ 高级 / 专项（含护城河候选））
+- `costing_set_default_template`（⑯ 高级 / 专项（含护城河候选））
 - `csys_params`（⑰ 未归类）
 - `current_selection`（⑰ 未归类）
 - `current_sketch_name`（③ 草图）
@@ -349,6 +350,7 @@
 - `select_by_selector`（⑰ 未归类）
 - `select_entity_by_index`（⑰ 未归类）
 - `select_face_selector`（⑰ 未归类）
+- `selection_clear_colors`（⑭ 外观 / 材质 / 配置）
 - `selection_count`（⑰ 未归类）
 - `selection_point`（⑰ 未归类）
 - `selector_resolve_direction`（⑰ 未归类）

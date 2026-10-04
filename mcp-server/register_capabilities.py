@@ -193,6 +193,38 @@ def resolve_view(params: Any):
     return get_active_view(resolve_model(params))
 
 
+def resolve_active_sketch(params: Any):
+    """注入**活动草图**（`ISketch`，来自 `IModelDoc2.GetActiveSketch2`）—— ★ 供首参叫 `sketch` 的那批。
+
+    ⚠ ★ **没有活动草图就没有** ⇒ ★ 响亮报错并说清怎么办（★ 先 `solidworks_sketch_start` 或
+      让某张草图处于编辑态）—— ★ **绝不猜"用哪张草图"** ✓
+    """
+    from scripts.sw_connect import get_com_member
+    model = resolve_model(params)
+    sk = None
+    try:
+        sk = get_com_member(model, "GetActiveSketch2")
+    except Exception:                                                # noqa: BLE001
+        sk = None
+    if sk is None:
+        raise RuntimeError("当前**没有活动草图** ⇒ `sketch` 注入键无法解析。"
+                           "★ 请先 `solidworks_sketch_start` 开一张草图（或双击某张草图进入编辑）")
+    return sk
+
+
+def resolve_selection_manager(params: Any):
+    """注入**活动文档的 `SelectionManager`** —— ★ 供首参叫 `selection` 的那批。
+
+    ★ `IModelDoc2.SelectionManager` 是**文档自己的**选择管理器 ⇒ ★ **语义唯一**（不需要猜）✓
+    """
+    from scripts.sw_connect import get_com_member
+    model = resolve_model(params)
+    mgr = get_com_member(model, "SelectionManager")
+    if mgr is None:
+        raise RuntimeError("文档上取不到 `SelectionManager` ⇒ `selection` 注入键无法解析")
+    return mgr
+
+
 def resolve_costing_defaults(params: Any):
     """注入 **Costing 的默认值对象** —— ★ 供首参名叫 `defaults` 的 `sw_costing` 族函数。
 
@@ -319,6 +351,16 @@ RESOLVERS: dict[str, Any] = {
     #:     ⇒ ★ 已把 `sw_api_*` 加进选域黑名单（它们**不该**出现在候选里）✓
     "defaults": resolve_costing_defaults,
     "component": resolve_selected_component,
+    #: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」第三批）：**`sketch` / `selection`** ——
+    #:   ★★ 这两组是 C 类里**剩下的最大两块**，而它们的语义**同样唯一**（不是"取哪一个"的猜测）：
+    #:     · `sketch`    ⇒ **活动草图**（`IModelDoc2.GetActiveSketch2`）—— ★ 解锁 `sw_sketch.py`
+    #:       那 **~20 个只读内省函数**（取线/弧/椭圆/样条/点/轮廓/区域/块实例/关系管理器/
+    #:       是否 3D 草图/模型到草图变换…）✓
+    #:     · `selection` ⇒ **活动文档的 `SelectionManager`**（`IModelDoc2.SelectionManager`）——
+    #:       ★ 解锁 `sw_selection.py` 那批（选择集读数 / 按对象选 / 清选 …）✓
+    #:   ⚠ 两者**没有**就先**响亮报错**（★ 不猜、不静默失败）✓
+    "sketch": resolve_active_sketch,
+    "selection": resolve_selection_manager,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。
@@ -686,6 +728,21 @@ BATCH_MODULES = (
     #:   · `sw_simulation_study_options` **1 个** —— 按注册名设研究选项（★ 走 `options` 键）✓
     #:   ★★ 计数：369 → **399**（★ **差 1 个**到 SC-001 的 400 ⇒ 第五坡/余量里补）✓
     "tool_specs_batch86",
+    #: ★★★★★★★ 轮 113：**规格 205 的批 87 —— 跨过 SC-001 的 400！**（2 个）：
+    #:   ★ 第六坡（`sketch`/`selection` 两组 C 类，29 路）头 8 份里只有 **2 行真新** ——
+    #:     ★★ 其余 12 行 Bunny 判"不做"且**理由都成立**（★ 我逐条复核过、**不推翻**）：
+    #:       · `sketch_get_lines` / `get_arcs` / `get_polylines` / `get_splines` /
+    #:         `contour_edges` / `contours` / `set_automatic_solve` —— **既有工具已做同一件事**
+    #:         （`solidworks_sketch_count_*`），★ 且 `tool_specs_batch2.py` 的分类表里
+    #:         早把它们列进 **`D_不该暴露`**（★ 仓库自己的既有裁决）✓
+    #:       · `selection_get_component` —— ★ 官方**逐字标 Obsolete**（铁律 4）✓
+    #:       · `selection_get_view` —— 返回值是 **COM 对象**，过不了 MCP 的 JSON 边界 ✓
+    #:       · `sketch_set_model_to_sketch_transform` —— ★ 官方页逐字写该属性**只读**（get-only）✓
+    #:       · `selection_point_*` —— 与既有 `solidworks_selection_point` **重复**（FR-006）✓
+    #:   · 本批 2 个：`solidworks_selection_clear_colors`（清选择集颜色）·
+    #:     `solidworks_costing_set_default_template`（设 Costing 默认模板 —— ★ 护城河域之一）✓
+    #:   ★★ 计数：399 → **401** ⇒ ★ **SC-001（≥400）达成** ✓
+    "tool_specs_batch87",
 )
 
 def all_specs() -> list:
