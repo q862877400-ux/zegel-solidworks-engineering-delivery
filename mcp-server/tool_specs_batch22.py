@@ -71,12 +71,34 @@ _SKETCH = ("Name of an EXISTING sketch (e.g. \"Sketch1\" / \"草图1\"). ★ Cre
 
 _DIR = "True = extrude along the sketch normal; False = reverse."
 
-#: ★★ 2026-10-04（接手轮）**这里曾经有两个助手 `_consumed()` / `_meters_of_mm()`** ——
-#:   我加了它们做「`total_depth_mm` → 米」的换算，**随后又连同换算一起回退** ✓
-#:   ⇒ ★ 回退理由见下面 `solidworks_extrude_midplane` 那段注释（真机三条读数一致指向"按毫米"，
-#:     而用户截图显示 `84300.00mm` ⇒ **两者互斥、我未复现成功**）✓
-#:   ★ 教训（值得留）：**不用的助手要删掉** —— 留着会让下一个人以为"换算是这么做的"，
-#:     而它其实没接上（★ 与事实 40「存在但没人用的守卫比没有更糟」同族）✓
+
+def _consumed(*names: str) -> dict:
+    """★ `param_alias`：这些入参由 `derived_args` 消费，**不传给目标函数**（先例：batch17/batch3）。"""
+    return {n: None for n in names}
+
+
+def _m_of_mm(p, declared: str) -> dict:
+    """★★★ 把声明的 `*_mm` 换算成 `IFeatureManager.FeatureExtrusion3` 要的**米**（换算只做一次）。
+
+    ★★★★ **这是本轮真机实测定案的一处真缺陷的修复**（用户两次点破，逐字：
+      「你看到的是一根线，是因为你拉伸长度太长了，离远了看着就是一根线」·
+       并附 SolidWorks 深度框截图 **`84300.00mm`**）✓
+
+    ★ 证据链（**四条独立读数，全部一致**）：
+      · ★ `create_basic_part`（`server.py:1551-1556`）**每一处都调 `mm()`** ⇒ 它建的 40×40×10 盒
+        质量属性回 **16000 mm³**、包围盒回 `[0.04, 0.04, 0.01]` ⇒ ★ **该盒是真 40 mm** ✓
+      · ★★ ⇒ 同一个 `extrude_boss` 被喂**米**（0.01）时正确、被喂**毫米**（10）时得 10 米 ✓
+      · ★ 俯视草图我按毫米给（±62）⇒ 包围盒 X = **0.131 米 = 131 mm** ⇒ ★ **草图吃毫米** ✓
+      · ★★ 而拉伸高度读回 **40.0 米** ⇒ ★ **D1 吃米、而我们传的是毫米值** ✓✗
+      · ★ 分辨性序列（`SetSystemValue3` 写 0.0843 / 84.3 / 84300）⇒ 只有 **0.0843** m 让包围盒
+        变成 0.0843 m（= 84.3 mm）⇒ ★ **再次确认 D1 的口径是米** ✓
+    ⇒ ★★ 修法：与 `batch17` 的角度那条**同形**（`_consumed` + `derived_args`），
+      用 `sw_connect.mm()`（规则 2 点名的既有助手，与 `deg()` 同族）—— **不手写 /1000** ✓
+    """
+    from scripts.sw_connect import mm
+
+    return {"depth": mm(float(getattr(p, declared)))} if declared == "depth_mm" else \
+           {"total_depth": mm(float(getattr(p, declared)))}
 
 
 SPECS_BATCH22 = [
@@ -87,30 +109,40 @@ SPECS_BATCH22 = [
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
         #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
-        param_alias={"depth_mm": "depth"},
+        #: ★★★★ 2026-10-04（接手轮）**换算修正（真机定案）** —— 原为 `{"depth_mm": "depth"}`，
+        #:   那是**只改名、不换算**，而 `FeatureExtrusion3` 的 D1 吃**米** ⇒ 传 40（意图 40 mm）
+        #:   会建出 **40 米**高的柱子（★ 真机：俯视图里就是"一根细柱"）✓✗
+        #:   ★ 对照组：`create_basic_part` 每处都调 `mm()` ⇒ 它建的 40×40×10 盒是对的 ✓
+        param_alias=dict(_consumed("depth_mm")),
+        derived_args=lambda p: _m_of_mm(p, "depth_mm"),
         params=[
             Param("sketch_name", str, description=_SKETCH),
-            Param("depth_mm", float, description="Extrusion depth in MILLIMETRES (must be > 0; "
-                                                 "the capability layer uses mm, so no conversion)."),
+            Param("depth_mm", float, description="Extrusion depth in MILLIMETRES (must be > 0). "
+                                                 "★ Converted to the metres that "
+                                                 "IFeatureManager.FeatureExtrusion3 expects — the "
+                                                 "conversion happens here, exactly once."),
             Param("direction", bool, default=True, description=_DIR),
             Param("merge", bool, default=True,
                   description="True = merge the result into the body; False = keep it as a new body."),
         ],
         doc="Extrude a sketch into a solid BOSS (adds material). ★ This is the first tool in the "
-            "repo that turns a sketch into a solid body.",
+            "repo that turns a sketch into a solid body. ★ depth_mm is in MILLIMETRES and is "
+            "converted to metres at this boundary.",
     ),
     ToolSpec(
         name="solidworks_extrude_cut",
         title="Extrude a Cut (remove material)",
         module="sw_part", function="extrude_cut",
         inject="model",
-        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
-        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
-        param_alias={"depth_mm": "depth"},
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** ✓
+        #: ★★★★ 2026-10-04（接手轮）**同样补换算**（与 boss / midplane 同一处根因、同一修法）✓
+        param_alias=dict(_consumed("depth_mm")),
+        derived_args=lambda p: _m_of_mm(p, "depth_mm"),
         params=[
             Param("sketch_name", str, description=_SKETCH),
             Param("depth_mm", float, description="Cut depth in MILLIMETRES. ★ 0 means "
-                                                 "**through all** (完全贯穿)."),
+                                                 "**through all** (完全贯穿). ★ Converted to metres "
+                                                 "at this boundary."),
             Param("direction", bool, default=True, description=_DIR),
             Param("flip", bool, default=False, description="True = flip the cut direction."),
         ],
@@ -123,27 +155,29 @@ SPECS_BATCH22 = [
         title="Extrude Symmetrically About the Sketch Plane",
         module="sw_part", function="extrude_midplane",
         inject="model",
-        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
-        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
-        #: ★★★ 2026-10-04（接手轮）**这一处我试过改成 `_consumed` + `derived_args` 做 /1000 换算，
-        #:   然后又回退了** —— ★★ 理由（★ 证据互斥，我不敢动）：真机读数**一致指向"按毫米"**：
-        #:     · `solidworks_part_bounding_box`：传 **84.3** ⇒ 盒 X = **84.3** ✓
-        #:     · `IModelDoc2.Parameter("D1@凸台-拉伸1")` 的 `GetSystemValue3` ⇒ **84.3** ✓
-        #:     · **分辨性测试**：把 D1 改成 **50** ⇒ 盒 X 跟着变 **50** ⇒ ★ **该参数确实在驱动深度** ✓
-        #:   ⇒ ★★ 若在这里再除以 1000，宽度会变成 **0.0843 mm** —— ★ **把已经对的东西改坏** ✓✗
-        #:   ★★★ **而未解的矛盾**：用户在 SolidWorks 里截图显示深度框是 **`84300.00mm`**，
-        #:     与上面三条读数**互斥**，★ **我解释不了它** ⇒ 按本仓纪律「解释必须能被一条独立证据
-        #:     区分」，**在我能复现并区分之前不动这个换算** ✓
-        #:   ⇒ ★ 留给下一手：**先复现那个 84300 的对话框**（它只在 UI 里出现，API 侧读不到），
-        #:     再决定换算。★ 相关证据：`output/dim-list-evidence.json` · `output/units-verdict-evidence.json`
-        param_alias={"total_depth_mm": "total_depth"},
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** ✓
+        #: ★★★★★ 2026-10-04（接手轮）**换算修正 + 记下我一度回退它的原因**：
+        #:   ★ 原本是 `{"total_depth_mm": "total_depth"}`（**只改名、不换算**）⇒
+        #:     真机：传 84.3 ⇒ **`84300.00mm`**（= 84.3 米）⇒ ★ 视图里"**就是一根线**" ✓✗
+        #:   ★★ **我一度回退过这个修法** —— 依据是当时三条读数"一致指向按毫米"
+        #:     （包围盒 X 回 84.3 / `GetSystemValue3` 回 84.3 / 改 50 后盒变 50）。
+        #:   ★★★ **回退是错的，根因是我读错了单位**：`part_bounding_box` 返回的是**米** ——
+        #:     由**标定实验**定死（建 40×40×10 的盒 ⇒ 该工具回 `[0.04, 0.04, 0.01]`）⇒
+        #:     ★ 所以"盒 X = 84.3"意味着 **84.3 米**，不是 84.3 mm ✓
+        #:   ★★★★ **分辨性序列**（`SetSystemValue3` 依次写 0.0843 / 84.3 / 84300，每次读回包围盒）：
+        #:     只有 **0.0843** 让盒变成 0.0843 m（= 84.3 mm）⇒ ★★ **D1 的口径是米，定案** ✓
+        #:   ⇒ ★ 教训：**"两个读数一致"不等于"读对了单位"** —— 必须先做一个**已知尺寸的标定实验**，
+        #:     再拿别的数去比（★ 与事实 517 同族：口径不清时先量、别推理）✓
+        param_alias=dict(_consumed("total_depth_mm")),
+        derived_args=lambda p: _m_of_mm(p, "total_depth_mm"),
         params=[
             Param("sketch_name", str, description=_SKETCH),
             Param("total_depth_mm", float,
                   description="TOTAL depth in MILLIMETRES — each side gets half "
-                              "(total_depth_mm / 2)."),
+                              "(total_depth_mm / 2). ★ Converted to metres at this boundary."),
         ],
         doc="Extrude a sketch symmetrically about its plane. ⚠ The parameter is the TOTAL depth, "
-            "not the per-side depth.",
+            "not the per-side depth. ★ The value is in MILLIMETRES and is converted to the metres "
+            "that IFeatureManager.FeatureExtrusion3 expects — the conversion happens here, once.",
     ),
 ]
