@@ -231,9 +231,24 @@ def get_selected_face(selection, index: int, secondary: int = 0):
 
 
 def get_selected_component(selection, index: int, secondary: int = 0):
-    """取选中项作为组件（Component2）。"""
-    return _checked(selection, "GetSelectedObjectsComponent3",
-                    int(index), int(secondary))
+    """取选中项作为组件（`Component2`）。
+
+    ★★★ 2026-10-04（接手轮 · **真机探针**发现并修）：原实现调 **`GetSelectedObjectsComponent3`**
+      —— ★ 而本机（SW 2026 SP4.1）**迟到绑定下报 `<unknown>.GetSelectedObjectsComponent3`**
+      （★ 对象上没有这个成员）；官方页 `GetSelectedObjectsComponent4.md:31` 逐字写着
+      「the **now obsolete** `GetSelectedObjectsComponent3`」⇒ ★ 按**铁律 4** 改用**后继** ✓
+    ★ 后继的官方签名逐字（`GetSelectedObjectsComponent4.md:14`）：
+      ``System.object GetSelectedObjectsComponent4( System.int Index, System.int Mark )``
+      —— ★ 第 2 参官方叫 `Mark`（本函数沿用本模块既有的 `secondary` 命名）✓
+    ★ 保留一次**回退**到 3：★ 老版本 SolidWorks 上 4 可能不存在；★ 但**先试后继**（铁律 4 的顺序）✓
+    """
+    try:
+        return _checked(selection, "GetSelectedObjectsComponent4",
+                        int(index), int(secondary))
+    except Exception:                                                 # noqa: BLE001
+        #: ★ 回退路径：★ 只在"后继不可用"时走（老版本）⇒ ★ 拿到的对象语义相同 ✓
+        return _checked(selection, "GetSelectedObjectsComponent3",
+                        int(index), int(secondary))
 
 
 def get_selected_view(selection, index: int, secondary: int = 0):

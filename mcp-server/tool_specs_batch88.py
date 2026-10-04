@@ -93,46 +93,6 @@ SPECS_BATCH88 = [
         doc="★ 官方签名（逐字，来自 sw_selection.py）：`查不到（本函数不是 SolidWorks API 成员，无签名可抄）。★ 它编排的**四个**底层成员，官方 `**Signature**:` 逐字抄如下：① `System.int GetSelectedObjectCount2( System.int Mark )`（C:\\swapi\\types\\ISelectionMgr\\GetSelectedObjectCount2.md:14）② `Sy`。★ 真源是**本仓** `scripts/sw_selection.py` 的 `collect_selection_evidence`（★ 它不是 SolidWorks API 成员，故无官方页）—— ★ 本函数**自身**无官方页（不是 API 成员）。底层四个成员的官方原文要点： ① `GetSelectedObjectCount2` —— 摘要逐字『Gets the number of selected objects.』；Parameters 的 Mark 三档逐字『-1 = All selections regardless of marks / 0 = only the sele",
     ),
     ToolSpec(
-        name="solidworks_sketch_relation_manager",
-        title="Get Sketch Relation Manager",
-        module="sw_sketch", function="get_relation_manager",
-        inject="sketch",
-        params=[
-        ],
-        doc="★ 官方签名（逐字，来自 RelationManager.md）：`**Signature**: `SketchRelationManager RelationManager {get;}``。官方 `ISketch.RelationManager` 是**只读属性**，正文 NOTE 逐字：「**NOTE:** **This property is a get-only property.** **Set is not implemented**」；Returns = [[Sketch relation manager]]；Examples 列 3 篇（Get Sketch Relations VBA / VB.NET / C#）⇒ 官方页本身**没有 ## Remarks 段**（只有 NOTE + Returns + Examples）。★ 调用序：docs\\recon\\mem",
-    ),
-    ToolSpec(
-        name="solidworks_sketch_model_to_sketch_transform",
-        title="Get Model-To-Sketch Transform",
-        module="sw_sketch", function="get_model_to_sketch_transform",
-        inject="sketch",
-        params=[
-        ],
-        doc="★ 官方签名（逐字，来自 ModelToSketchTransform.md）：`**Signature**: `MathTransform ModelToSketchTransform {get; set;}``。官方 `ISketch.ModelToSketchTransform` 取「模型坐标 → 草图坐标」变换，Returns = [[Math transform]]。⚠★ **官方同一页自相矛盾**（铁律 5：原样记、不替官方调和）：正文 NOTE 逐字「**NOTE:** **This property is a get-only property.** **Set is not implemented**」，而紧邻的 `**Signature**:` 却写成 `{get; set;}` ⇒ ★ 本行**只覆盖取侧**；写侧（`sw_sketch.set_model_to_sketch_tra",
-    ),
-    ToolSpec(
-        name="solidworks_assembly_get_component_feature",
-        title="Find a Named Feature Inside the Selected Component (alias-tolerant)",
-        module="sw_assembly", function="get_component_feature",
-        inject="component",
-        params=[
-            Param("aliases", str, default="", description="特征**候选名列表**（按优先级），例如 `['前视基准面', 'Front Plane']`。★ **字符串名、不是坐标** ⇒ 与规则 3 相容。★ 源码经 `_as_alias_list`（sw_assembly.py:94-101）：传字符串会被包成单元素列表；**空列表抛 `ValueError('aliases 不能为空')`**。★ 每个 alias 会先过模块级 `PLANE_NAME_ALIASES`（:49-56）展开中英文候选 ⇒ ★ **这是「基准面名随 UI 语言变」那条已知事实的落地**（前视/上视/右视基准面 ↔ Front/Top/Right Plane），★ "),
-            Param("resolve", bool, default=True, description="是否先解析组件再取文档（透传给 `get_component_model(component, resolve=resolve)`，源码 :260）。★ **布尔量、无量纲** ⇒ 不加 `_mm` / `_deg`。"),
-        ],
-        doc="★ 官方签名（逐字，来自 sw_assembly.py）：`查不到（IModelDoc2 上**没有这一页** ⇒ 本仓调用对象上的该成员无官方签名可抄，铁律 5）。★ **可引用的同名官方签名**（来自**别的接口**，逐字）：`System.object FeatureByName( System.string Name )`（C:\\swapi\\types\\IPartDoc\\FeatureByName.md:14）、`Feature FeatureBy`。★ 真源是**本仓** `scripts/sw_assembly.py` 的 `get_component_feature`（★ 它不是 SolidWorks API 成员，故无官方页）—— ★ IModelDoc2 上**无官方页 ⇒ 无 `## Remarks` 可摘**（铁律 5）。★ 只能引同名接口的 Remarks：**IPartDoc\\FeatureByName** 逐字只有一句摘要「Gets the named feature in the part.」+ 参数「**Name**: Name of feature」+ Returns `[[Feature]]`，★ **无 `##",
-    ),
-    ToolSpec(
-        name="solidworks_assembly_get_feature_entity",
-        title="Get Component Feature Entity",
-        module="sw_assembly", function="get_component_feature_entity",
-        inject="component",
-        params=[
-            Param("aliases", str, default="", description="组件内部的特征候选名（★ 源码经 `_as_alias_list`（sw_assembly.py:83-90）**同时接受字符串与序列**，★ 此处声明 str 以贴合 ToolSpec 只收 str/float/int/bool 的现状（tool_registry.py:239 逐字「Python 类型注解（`str` / `float` / `int` / `bool`）」，★ tool_specs_batch* 里没有 list 型 Param 的先例））。★ 例：`'Front Plane'` / `'前视基准面'`；★ 命中 `PLANE_NAME_ALIASES`（:49-56，*"),
-            Param("resolve", bool, default=True, description="是否先用 `SetSuppression2(2=FullyResolved)` 解析组件；★ **无量纲布尔开关**（不是长度也不是角度 ⇒ 规则 2 的 `_mm`/`_deg` 都不适用，★ 名字也不改名）。★ 轻化/压缩组件不解析就拿不到 `GetModelDoc2` ⇒ 通常保持 true。"),
-        ],
-        doc="★ 官方签名（逐字，来自 sw_assembly.py）：`查不到（本仓自研编排函数，官方没有同名成员）—— ★ 它编排的两个官方成员逐字签名：`IPartDoc.FeatureByName` = `System.object FeatureByName( System.string Name )`（页 `C:\\swapi\\types\\IPartDoc\\FeatureByName.md`）；`IComponent2.GetCorresponding` = `。★ source_kind=repo_original：**真源是本仓 `scripts/sw_assembly.py:288-297`** —— 函数体只有两行：`get_component_feature(component, aliases, resolve=resolve)`（:252-271，走 `safe_get_com_member(model, 'FeatureByName', name)` 按候选名找特征）→ `get_assembly_entity(component, feature)`（:274-285）。★ 官方 `IPartDoc.FeatureByName` 逐字",
-    ),
-    ToolSpec(
         name="solidworks_assembly_apply_component_transform_x",
         title="按绕局部 X 轴旋转 + XYZ 平移修改选中组件的位姿并触发装配求解",
         module="sw_assembly", function="apply_component_transform_x",

@@ -25,11 +25,15 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 import register_capabilities as rc                            # noqa: E402
 import tool_specs_batch88 as b88                              # noqa: E402
 
-#: ★★ 静态查不到"返回是不是 COM 对象" ⇒ ★ 这 4 个**显式列为待真机复核**（★ 不假装没问题）
-RETURN_RISK = ("solidworks_assembly_get_component_feature",
-               "solidworks_assembly_get_feature_entity",
-               "solidworks_sketch_relation_manager",
-               "solidworks_sketch_model_to_sketch_transform")
+#: ★★★★ 2026-10-04（真机探针的后裁决）：这 4 个**必须不在**本批里 ——
+#:   · 两个 `sw_sketch` 的：★ **机测证明返回裸 COM 对象**（`CDispatch`）⇒ 过不了 JSON 边界；
+#:   · 两个 `sw_assembly` 的：★ **没验成**（建立不起该成员认得的组件选择）⇒ 未实测不发货 ✓
+#:   ★ 证据：`output/batch88-return-types-evidence.json`（`tools/probe_batch88_return_types.py`）
+#:   ★ 原因逐条写在 `tools/bunny_toolspec_pipeline.py` 的 `REFUSED` 里 ✓
+RETRACTED = ("solidworks_sketch_relation_manager",
+             "solidworks_sketch_model_to_sketch_transform",
+             "solidworks_assembly_get_component_feature",
+             "solidworks_assembly_get_feature_entity")
 
 
 def test_batch88_registered():
@@ -37,8 +41,9 @@ def test_batch88_registered():
     assert '"tool_specs_batch88"' in t
 
 
-def test_seventeen_specs_declared():
-    assert len(b88.SPECS_BATCH88) == 17, len(b88.SPECS_BATCH88)
+def test_thirteen_specs_declared():
+    """★ 原 17 个，**真机探针后撤下 4 个** ⇒ **13** ✓"""
+    assert len(b88.SPECS_BATCH88) == 13, len(b88.SPECS_BATCH88)
 
 
 def test_every_spec_resolves_and_inject_matches_first_param():
@@ -59,9 +64,8 @@ def test_no_bare_coordinates():
                 (s.name, p.name)
 
 
-def test_return_risk_tools_are_still_declared():
-    """★★ 把"返回可能是 COM 对象"的那几个**显式钉住** —— ★ 它们仍在本批里，
-    但**名字记在这里** ⇒ 若将来改法（报告式包装），这条测试会提醒要同步改 ✓"""
-    names = {s.name for s in b88.SPECS_BATCH88}
-    missing = [n for n in RETURN_RISK if n not in names]
-    assert not missing, "★ 待复核的那几个不在本批里了（改了实现就要同步改这条测试）: %r" % (missing,)
+def test_the_four_retracted_tools_are_absent():
+    """★★★ 撤回的那 4 个**不许在注册表里** —— ★ 未实测不发货，撤了就要真的撤 ✓"""
+    names = {getattr(s, "name", "") for s in rc.all_specs()}
+    leaked = [n for n in RETRACTED if n in names]
+    assert not leaked, "★ 又把撤回的挂回来了: %r" % (leaked,)

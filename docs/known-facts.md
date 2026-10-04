@@ -5012,3 +5012,55 @@ sim.apply_normal_force(study, 100.0, model=doc)   # ⇒ ★ 空 DispArray ⇒ �
 ★ **依据**：`specs/205-tool-ramp/` · `mcp-server/tool_specs_batch80..87.py` ·
 `mcp-server/register_capabilities.py`（RESOLVERS 18 键）· `tools/check_bunny_toolspec_rows.py`（11 条判据）·
 `tools/build_toolspec_batch_from_rows.py` · `output/goal-evidence.json`（达标证据）
+
+---
+
+## 533 · ★★★★★ 真机探针的**后裁决**：`SelectionMgr` 的 Index 是 **1 基**，而"裸 COM 返回"过不了 MCP 边界
+
+**触发**：批 88 的提交信息里我自己标过「这 4 个的**返回可能是 COM 对象**、★ 门禁**只看入参**、
+静态查不到 ⇒ **未做真机验证**」⇒ 业主说"按你的建议来" ⇒ ★ 补那一刀 ✓
+
+### 一 · ★★★ 机测结论：4 个撤下（**2 个证明坏 + 2 个没验成**）
+
+```
+★ 探针 `tools/probe_batch88_return_types.py`（跑两次同读数，证据 `output/batch88-return-types-evidence.json`）：
+  · `sw_sketch.get_relation_manager`          ⇒ type=**CDispatch** · json_ok=**false**
+  · `sw_sketch.get_model_to_sketch_transform`  ⇒ type=**CDispatch** · json_ok=**false**
+       ★ `TypeError: Object of type CDispatch is not JSON serializable`
+       ⇒ ★★ **过不了 MCP 的 JSON 边界**（★ 我的预判成立，现在是**测出来的**）✓
+  · `sw_assembly.get_component_feature` / `get_component_feature_entity` ⇒ ★ **没验成**：
+       `GetSelectedObjectCount2(-1)` 回 **1**、而 `GetSelectedObjectsComponent4(1, 0)` 仍回 `None`
+       ⇒ ★ **建立不起该成员认得的组件选择** ⇒ 判不了返回类型 ✓
+⇒ ★ 一律撤下（★ **未实测不发货**）⇒ 工具数 **418 → 414**（★ 仍 ≥400）✓
+   ★ 4 条原因逐条写进 `tools/bunny_toolspec_pipeline.py` 的 `REFUSED` ✓
+   ★ 并由测试 `test_the_four_retracted_tools_are_absent` **钉住"撤了就要真的撤"** ✓
+```
+
+### 二 · ★★★★★ 途中查出的**两个真 bug**（都在本仓代码里）
+
+```
+① `scripts/sw_selection.get_selected_component` 调的是 **`GetSelectedObjectsComponent3`**
+   —— ★ 官方页 `GetSelectedObjectsComponent4.md:31` 逐字写着「the **now obsolete**
+   `GetSelectedObjectsComponent3`」⇒ ★ 按铁律 4 改用**后继 `…4`**（签名逐字
+   `System.object GetSelectedObjectsComponent4( System.int Index, System.int Mark )`），
+   ★ 并保留一次**回退到 3**（老版本）✓
+② ★★★ **我自己新写的 `component` 注入键是"出生即死"**：`resolve_selected_component` 把
+   **`model`（文档）** 当 `selection` 传给了助手 —— 而该成员在 **`ISelectionMgr`** 上 ⇒
+   ★★ 真机报 `<unknown>.GetSelectedObjectsComponent3/4`（★ 事实 36 那一族的形态：
+   **对象错了，表现是"这个成员不存在"**）⇒ ★ 已改为先取 `model.SelectionManager` 再传 ✓
+```
+
+### 三 · ★★★★★ 新事实：**`ISelectionMgr` 的 Index 是 1 基**
+
+```
+★ 实测（`output/selectionmgr-member-probe.json`）：`GetSelectedObjectCount2(-1)` 回 **1**，
+  而 `GetSelectedObjectsComponent4(**0**, 0)` 回 `None`、`GetSelectedObject6(**1**, -1)` 回得到对象 ✓
+⇒ ★★ 取"第一个选中的东西"要用 **1** 而不是 0 —— ★ 我原先传 0 ⇒ **静默拿到 `None`**
+  （★ 不报错、只是"没有选中" ⇒ 最难查的那种）✓
+★ 另：`GetSelectedObjectsComponent4` / `…3` / `GetSelectedObjectsComponent` 在本机**都可达**，
+  `…2` 报「无效的参数数目」（★ arity 不同）⇒ ★ 别再按"名字看着像"猜哪一代可用 ✓
+```
+
+★ **依据**：`tools/probe_batch88_return_types.py` · `tools/probe_selectionmgr_component_members.py` ·
+`output/batch88-return-types-evidence.json` · `output/selectionmgr-member-probe.json` ·
+`scripts/sw_selection.py` · `mcp-server/register_capabilities.py` · `tools/bunny_toolspec_pipeline.py`

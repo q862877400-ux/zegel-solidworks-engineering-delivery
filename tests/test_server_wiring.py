@@ -257,7 +257,11 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 418
+    assert len(all_specs()) == 414
+    #: ★★★ 2026-10-04（接手轮 · **批 88 的真机后裁决**）：**418 → 414**
+    #:   ★ 真机探针（	ools/probe_batch88_return_types.py）测出：批 88 里那 4 个
+    #:     「返回可能是 COM 对象、未验证」的工具 —— **2 个证明返回裸 CDispatch（过不了 JSON 边界）**、
+    #:     **2 个没验成**（建立不起该成员认得的组件选择）⇒ ★ **一律撤下**（未实测不发货）✓
     #: ★★★★★★ 2026-10-04（接手轮 · **规格 205 的批 88**）：**401 → 418** —— ★ **我加的 17 条**
     #:   （第六坡 `sketch`/`selection` 两组 C 类：选择族 8 · Costing 3 · 草图 2 · 装配 4）
     #:   ★★ 目标（SC-001 ≥400）已在批 87 达成（401）；★ 本批是**同一套工序下的增量** ✓

@@ -241,8 +241,21 @@ def resolve_selected_component(params: Any):
       语义不同 —— 事实 36 那一族）✓
     """
     from scripts.sw_selection import get_selected_component
+    from scripts.sw_connect import get_com_member
     model = resolve_model(params)
-    comp = get_selected_component(model, 0)
+    #: ★★★ 2026-10-04（接手轮 · **真机探针**发现并修）：这里原先把 **`model`** 当 `selection` 传进去
+    #:   —— ★ 而 `get_selected_component` 的首参要的是 **`ISelectionMgr`**（选区管理器），
+    #:   不是文档 ⇒ ★★ 真机上报 `<unknown>.GetSelectedObjectsComponent3/4`
+    #:   （★ 事实 36 那一族的形态：**对象错了，表现是"这个成员不存在"**）✓
+    #:   ⇒ 正解：先取 `model.SelectionManager`，再交给它 ✓（与 `resolve_selection_manager` 同一步）
+    sel = get_com_member(model, "SelectionManager")
+    if sel is None:
+        raise RuntimeError("文档上取不到 `SelectionManager` ⇒ `component` 注入键无法解析")
+    #: ★★★ 2026-10-04（真机探针）：`ISelectionMgr` 的 **Index 是 1 基** ——
+    #:   实测（`output/selectionmgr-member-probe.json`）：`GetSelectedObjectCount2(-1)` 回 **1**、
+    #:   而 `GetSelectedObjectsComponent4(**0**, 0)` 回 `None`、`GetSelectedObject6(**1**, -1)` 回得到对象
+    #:   ⇒ ★★ 取"第一个选中的东西"要用 **1** 而不是 0（★ 我原先传 0 ⇒ 静默拿到 `None`）✓
+    comp = get_selected_component(sel, 1)
     if comp is None:
         raise RuntimeError("当前**没有选中的组件** ⇒ `component` 注入键无法解析。"
                            "★ 请先在装配里选中一个组件（★ 本键**不替你猜**该用哪一个）")

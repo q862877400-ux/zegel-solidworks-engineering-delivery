@@ -53,6 +53,22 @@ REFUSED: dict[str, str] = {
         "批 78 已定「安全入口 = `create_mesh_safely`」（自动设安全档 + 事后还原）⇒ **不单独发旋钮** ✓",
     "solidworks_simulation_mesh_safety_apply":
         "同 `configure_mesh_settings`：**会改研究设置**的原始旋钮（事实 526）⇒ 不发 ✓",
+    #: ★★★★ 2026-10-04（真机探针 `tools/probe_batch88_return_types.py` 的结论）——
+    #:   ★★ 这 4 个是**批 88 里我自己标过"返回可能是 COM 对象、未做真机验证"**的那一批 ⇒
+    #:   ★ 探针跑完，**两个测出来是坏的、两个没验成** ⇒ 一律撤下（★ 未实测不发货）✓
+    "solidworks_sketch_relation_manager":
+        "★★ **机测证明坏**：`get_relation_manager(sketch)` 返回 **`CDispatch`（裸 COM 对象）** ⇒ "
+        "`json.dumps` 报 `TypeError: Object of type CDispatch is not JSON serializable` ⇒ "
+        "**过不了 MCP 的 JSON 边界**（★ 证据 `output/batch88-return-types-evidence.json`，跑了两次同读数）✓ "
+        "★ 若要挂，得改成**报告式**（返回管理器里可 JSON 化的那几项），不是原样转发 ✓",
+    "solidworks_sketch_model_to_sketch_transform":
+        "★★ 同上：返回 **`CDispatch`** ⇒ 过不了 JSON 边界（★ 同一份机测证据）✓",
+    "solidworks_assembly_get_component_feature":
+        "⚠ **未验证**：真机上**没能建立起该成员认得的组件选择** —— "
+        "`GetSelectedObjectCount2(-1)` 回 **1**、而 `GetSelectedObjectsComponent4(1, 0)` 仍回 `None` ⇒ "
+        "★ **没法判它的返回类型**（★ 未实测不发货；★ 要挂得先有一条能落上的组件选择路径）✓",
+    "solidworks_assembly_get_feature_entity":
+        "⚠ **未验证**：同 `get_component_feature`（前置没建立起来）✓",
 }
 
 
