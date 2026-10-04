@@ -518,12 +518,15 @@ def GetSheet(self, _name):     # ← 官方 API 里没有这个成员
 | 想知道 | 看哪 |
 |---|---|
 | **并入了什么 / 能力现状**（31 条 / level / source） | [harvest-digest.md](harvest-digest.md) §二 |
-| **erified 的逐条运行证据**（A4 的硬证据） | 同上 §三 |
+| **
+erified 的逐条运行证据**（A4 的硬证据） | 同上 §三 |
 | **仍空缺什么、为什么**（A8 的正面回答） | 同上 §四 |
 | **明确「不做」的 + 原因**（A1 的另一半） | 同上 §四之二 |
 | **门禁栈**（11 道 + 接进 
 elease_check 的） | 同上 §五 |
-| **提交构成**（eat/ix/docs 分布） | 同上 §一 |
+| **提交构成**（
+eat/
+ix/docs 分布） | 同上 §一 |
 
 **怎么保持不腐坏**：	ools/gen_harvest_digest.py 从真源（capabilities.yaml · git log ·
 scripts/check_*.py · docs/union-not-doing.json）生成；
