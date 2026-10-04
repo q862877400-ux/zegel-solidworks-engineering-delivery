@@ -998,7 +998,8 @@ def _select_revolve_axis(model, axis_sketch_name):
     return selected
 
 
-def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None):
+def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None,
+                  thin=None):
     """
     旋转凸台
 
@@ -1006,6 +1007,9 @@ def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None):
         sketch_name: 轮廓草图名称
         angle_rad: 旋转角度（弧度），2*pi 表示 360 度
         axis_sketch_name: 旋转轴草图名称（None 则需预先选择轴线）
+        thin: ★ **可选薄壁** —— `None`（默认）⇒ **非薄壁**（★ 实参与从前逐字相同）·
+              或 `{"type": swThinWallType_e 值, "thickness": mm, "thickness2": mm}`
+              ⇒ ★ 建**薄壁旋转**（★ 那样 `IRevolveFeatureData2::GetWallThickness` 才有意义）✓
 
     ★★ 2026-10-01（轮 323）：**`axis_sketch_name` 原来声明了却从未被使用**（静默忽略）——
     现按真机判据接上（见 `_select_revolve_axis`）。
@@ -1023,14 +1027,31 @@ def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None):
     if axis_sketch_name:
         _select_revolve_axis(model, str(axis_sketch_name))
     _ensure_sketch_selected(model, sketch_name)
+    #: ★★★★★★★ 2026-10-04（轮 138）**可选薄壁** —— ★ 官方逐字：★ `FeatureRevolve2` 的签名
+    #:   **自带薄壁 4 个形参**（★ `IsThin` · `ThinType` · `ThinThickness1` · `ThinThickness2`）⇒
+    #:   ★★ **⇒ 不必走 `CreateDefinition` 那条远路**（★ 与 `sweep` **不同**）✓
+    #:   ★★★ **为什么加它**：★ 上一轮把旋转族 `GetWallThickness` 标成 `unknown` ⇒
+    #:     ★ **而真因是**本仓一直建的是**非薄壁**（★ 旧实参第 3 位就是 `False`）⇒
+    #:     ★★ **⇒ 于是 `IsThinFeature = false`、★ 而官方 Remarks 说 `GetWallThickness`
+    #:       「only affects thin features」⇒ **口径量不出来** ✓
+    #:   ★★★★ **⚠ 默认 `None` ⇒ 实参与从前**逐字相同**** ⇒ **不改变既有调用方语义** ✓
+    #:     ★ 与 `sw_sweep.create_sweep_report(mutate=None)` 那个钩子**同一套设计** ✓
+    #:   ★★★★★ **枚举逐字**（★ `swThinWallType_e.md`）：★ `OneDirection = **0**` ·
+    #:     ★ `OppDirection = 1` · ★ `MidPlane = **2**` · ★ `TwoDirection = 3` ✓
+    #:     ★★ 而官方对 `MidPlane` 有一句**逐字限定**：★「(if `ThinType` is
+    #:       `swThinWallMidPlane`, **(ThinThickness1)/2 is used for each direction**)」✓
+    is_thin = thin is not None
+    thin_type = int(thin.get("type", 0)) if is_thin else 0
+    tt1 = float(thin.get("thickness", 0.0)) if is_thin else 0.0
+    tt2 = float(thin.get("thickness2", tt1)) if is_thin else 0.0
     return model.FeatureManager.FeatureRevolve2(
-        True, True, False,
+        True, True, is_thin,
         False, False, False,
         0, 0,
         angle_rad, 0,
         False, False,
         0.0, 0.0,
-        0, 0, 0, True, True, True
+        thin_type, tt1, tt2, True, True, True
     )
 
 
