@@ -257,7 +257,10 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 401
+    assert len(all_specs()) == 418
+    #: ★★★★★★ 2026-10-04（接手轮 · **规格 205 的批 88**）：**401 → 418** —— ★ **我加的 17 条**
+    #:   （第六坡 `sketch`/`selection` 两组 C 类：选择族 8 · Costing 3 · 草图 2 · 装配 4）
+    #:   ★★ 目标（SC-001 ≥400）已在批 87 达成（401）；★ 本批是**同一套工序下的增量** ✓
     #: ★★★★★★★ 2026-10-04（接手轮 · **规格 205 的批 87**）：**399 → 401**
     #:   ⇒ ★★ **跨过 SC-001 的 400** ✓（★ 那 2 个：清选择集颜色 · 设 Costing 默认模板）
     #:   ★ 第六坡头 8 份里其余 12 行 Bunny 判"不做"、**理由都成立**（我逐条复核、不推翻）：

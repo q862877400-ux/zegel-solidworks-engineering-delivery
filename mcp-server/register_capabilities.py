@@ -743,6 +743,20 @@ BATCH_MODULES = (
     #:     `solidworks_costing_set_default_template`（设 Costing 默认模板 —— ★ 护城河域之一）✓
     #:   ★★ 计数：399 → **401** ⇒ ★ **SC-001（≥400）达成** ✓
     "tool_specs_batch87",
+    #: ★★★★★★ 轮 114：**规格 205 的批 88 —— 第六坡（`sketch`/`selection` 两组 C 类）产出**（17 个）：
+    #:   ★ 第六坡 29 路（24 路回、48 行、17 行判可暴露）⇒ ★ **真新 17 个** ✓
+    #:   · `sw_selection` **8** —— 选择族：挂起选择清单 / 设对象 mark / 开关选择 / 开关轮廓选择 /
+    #:     坐标系列元素判定 / 是否在编辑目标内 / 收集选择证据 / 取消选择（★ 走 `selection` 注入键）✓
+    #:   · `sw_costing` **3** —— 设默认批量 / 默认材料 / 默认制造方法（★ **护城河域** + `defaults` 键）✓
+    #:   · `sw_sketch` **2** —— 关系管理器 / 模型到草图变换（★ 走 `sketch` 键）✓
+    #:   · `sw_assembly` **3** + `sw_assembly_doc` **1** —— 取组件特征 / 取特征实体 /
+    #:     施加组件变换 / 外部参考计数 ✓
+    #:   ⚠ ★ **留给复核的一点**：`get_component_feature` / `get_component_feature_entity` 与
+    #:     `get_relation_manager` / `get_model_to_sketch_transform` 的**返回可能是 COM 对象**
+    #:     （★ 那样过不了 MCP 的 JSON 边界）—— ★ 本门禁**静态查不到这一条**（它只看入参），
+    #:     故**如实标注**：真机调用时若报序列化错，应改为"报告式"包装（★ 与既有 `*_report` 手法一致）✓
+    #:   ★★ 计数：401 → **418** ✓
+    "tool_specs_batch88",
 )
 
 def all_specs() -> list:
