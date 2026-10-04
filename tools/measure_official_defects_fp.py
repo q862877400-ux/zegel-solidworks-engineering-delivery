@@ -47,12 +47,24 @@ for i, ok in enumerate(real_ifaces):
     tn += 0 if got else 1
     rows.append(("正当引用", ok, "不该报", got))
 
+#: ★★★ ③ 10 例「**只带 `#:` 注释、不带文字标记**的真断链」⇒ ★★ 盲区测量（第 30 轮）：
+#:   ★ 第 29 轮的 `CITATION` 里含泛化的 `^\s*#:` ⇒ ★★ 实测盲区 **10/10**（全放过）✓✗
+#:   ⇒ ★ 本组样本**只带 `#:`**（★ 不带 `逐字`/`Superseded by`）⇒
+#:     ★★ 收窄 `CITATION` 之后本组**应当被报** ⇒ ★ 这就是"收窄有没有效"的判据 ✓
+blind = 0
+for i, fk in enumerate(fake_ifaces):
+    got = judge({"c%d.py" % i: '#: ★ 见 [[%s::SomeMember]]\n' % fk}) > 0
+    blind += 0 if got else 1                    #: ★ 没报 ⇒ 落在盲区里
+    rows.append(("只带 #: 的真断链", fk, "应当报（收窄后）", got))
+
 print()
 print("★ 结果（20 例）:")
 print("   · ★ 真阳性（真断链被报）: **%d / 10**" % tp)
 print("   · ★★ 假阳性（正当引用被报）: **%d / 10**" % fp)
 print("   · ★ 漏报: **%d / 10**" % fn)
 print("   · ⇒ D-1（假阳性 ≤1）: **%s**" % ("达标 ✓" if fp <= 1 else "**未达标**"))
+print("   · ★★★ 盲区（带引文标记的真断链被放过）: **%d / 10**"
+      " ← ★ 这就是引文判据（第 29 轮加的）的代价" % blind)
 
 L = [
     "# D-1 合规实测（第 2 道门禁）：`check_official_source_defects`",

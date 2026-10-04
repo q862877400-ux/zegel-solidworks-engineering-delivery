@@ -83,8 +83,20 @@ SUFFIX = re.compile(r"(Method|Property|Function)$", re.I)
 #: ★★★ 引文语境判据（第 29 轮加；**事实 544** 判出来的第 ③ 类）：
 #:   若该行是**引用官方原文**，则**不报** —— ★ 那时坏的链接是【官方的】，
 #:   而我们**正是在登记那条官方缺陷**（铁律 5）⇒ 报它等于把"记录官方缺陷"判成我们的错 ✓
-#:   ★ 标记取三种：行内含「逐字」/「Superseded by」/ 行是 `#:` 官方引文块 ✓
-CITATION = re.compile(r"逐字|Superseded by|^\s*#:")
+#: ★★★★ **第 30 轮收窄（★ 实测逼出来的）**：原判据含泛化的 `^\s*#:` ⇒
+#:   实测盲区 **10/10**（★ **带 `#:` 的真断链全被放过**）✓✗
+#:   ★★ 而 `#:` 正是**我们引用官方页的标准写法**（来源块 / docstring）⇒
+#:   ★★★ **那个泛化等于把门禁的主要用途关掉了** ✓
+#:   ⇒ ★ 现在**只认具体文字标记**（`逐字` / `Superseded by`）——
+#:     它们才是"我在引用官方原文"的**明确**信号 ✓
+CITATION = re.compile(r"逐字|Superseded by")
+#: ★★ 占位名（★ 第 30 轮加）：这些是**文档模板里的通用占位**，不是真接口名
+#:   （★ 实测：`tools/build_obsolete_index.py:25` 的 `[[Iface::Member]]` ·
+#:     `tools/t3_2_spelling_pairs.py:111` 的 `[[Attribute::X]]`）⇒ ★ **不报** ✓
+#:   ★★ **为什么用显式名单而不是"像不像真名"的启发式**：
+#:     启发式会引入新的误报面（★ 本会话已 7 次栽在判据写宽上）⇒
+#:     ★ **宁可列 4 个明确的名字** —— 它可核对、且不会突然多报 ✓
+PLACEHOLDER = {"Iface", "Member", "Attribute", "X", "Interface", "MemberName"}
 
 
 def _real() -> tuple:
@@ -116,6 +128,9 @@ def scan(_bad=None) -> list:
                 #: ★★★ 引文语境 ⇒ **不报**（事实 544 判出的第 ③ 类）：
                 #:   那时坏的链接是【官方的】，我们**正是在登记那条官方缺陷**（铁律 5）✓
                 if ln - 1 < len(_lines) and CITATION.search(_lines[ln - 1]):
+                    continue
+                #: ★★ 占位名 ⇒ 不报（★ 见 `PLACEHOLDER` 的注释）
+                if iface in PLACEHOLDER or member in PLACEHOLDER:
                     continue
                 if iface.lower() not in ifaces:
                     hits.append((str(f.relative_to(ROOT)), ln, "[[%s::%s]]" % (iface, member),
