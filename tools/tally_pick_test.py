@@ -19,6 +19,8 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 D = Path(r"D:\AI\SW\output\pick-test")
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+import metric_scope as ms   # ★ 口径注册表（事实 517：口径必须落成代码）
 
 idx = json.loads((D / "_judge_index.json").read_text(encoding="utf-8"))
 by_i = {p["index"]: p for p in idx}
@@ -35,6 +37,8 @@ for f in sorted(D.glob("judge-out-*.json")):
         verdicts[i][jt] = {v["tool"]: v.get("verdict", "?") for v in (row.get("verdicts") or [])}
 
 print("★ 挑工具结果 %d 组 · 收到裁判结论的 %d 组" % (len(by_i), len(verdicts)))
+print()
+print(ms.block_for('model_pick_correct'))
 print()
 
 rows = []

@@ -23,6 +23,8 @@ ROOT = Path(r"D:\AI\SW")
 for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+import metric_scope as ms   # ★ 口径注册表（★ 事实 517：口径必须落成代码）
 import register_capabilities as rc                                    # noqa: E402
 
 WORD = re.compile(r"[A-Za-z][A-Za-z0-9]{2,}")
@@ -84,6 +86,8 @@ aligned = [r for r in api if r["n_ovl"] > 0]
 zero = [r for r in api if r["n_ovl"] == 0]
 
 print("★ 共 %d 个 ToolSpec" % len(rows))
+print()
+print(ms.block_for('official_term_alignment'))
 print("★ 其中**取不到 COM 成员名**的 %d 个（★ 多是纯计算/本仓自研层）" % len(none_mem))
 print("★ 能取到成员名的 **%d** 个 ⇒ 用它们量「词面对应」:" % len(api))
 print()

@@ -27,6 +27,8 @@ ROOT = Path(r"D:\AI\SW")
 for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+import metric_scope as ms   # ★ 口径注册表（★ 事实 517：口径必须落成代码）
 import register_capabilities as rc                                    # noqa: E402
 
 W = {"name": 3.2, "title": 2.4, "server": 1.9, "schema": 1.15, "description": 0.9}
@@ -134,6 +136,8 @@ def main() -> int:
               "en": (qs.get(a["expected_tool"]) or {}).get("en_query")}
              for i, a in answers.items()]
     print("★ 复刻 dsh-mcp-lens 的检索器 · 目录 **%d** 个工具 · 任务 %d 个" % (N, len(tasks)))
+    print()
+    print(ms.block_for('lens_replica_topk'))
     print()
     ks = (1, 3, 5, 10)
     for label, key in (("CN（中文用户说法）", "cn"), ("EN-nat（自然英文）", "en")):

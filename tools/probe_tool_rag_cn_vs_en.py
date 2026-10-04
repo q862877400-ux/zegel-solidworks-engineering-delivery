@@ -25,6 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+import metric_scope as ms   # ★ 口径注册表（★ 事实 517：口径必须落成代码）
 import register_capabilities as rc                                    # noqa: E402
 
 CJK = re.compile(r"[\u4e00-\u9fff]")
@@ -142,6 +144,8 @@ def main() -> int:
         res[fam] = {"hit": hit, "rows": rows}
     n = len(TASKS)
     print("★ 中/英检索对照（BM25，433 个工具，%d 个任务）" % n)
+    print()
+    print(ms.block_for('bm25_topk'))
     print()
     print("| 查询族 | top-1 | top-3 | top-5 | top-10 |")
     print("|---|---:|---:|---:|---:|")

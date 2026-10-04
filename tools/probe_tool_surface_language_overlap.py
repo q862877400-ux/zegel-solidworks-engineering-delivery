@@ -10,6 +10,8 @@ ROOT = Path(r"D:\AI\SW")
 for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+import metric_scope as ms   # ★ 口径注册表（★ 事实 517：口径必须落成代码）
 import register_capabilities as rc                                    # noqa: E402
 
 CJK = re.compile(r"[\u4e00-\u9fff]")
@@ -22,6 +24,8 @@ PAIRS = [("看零件的质心和体积", "solidworks_part_mass_properties"),
 
 by = {s.name: s for s in rc.all_specs()}
 print("★ 逐条：中文查询 vs 该工具**模型可见的全部文本**")
+print()
+print(ms.block_for('zero_han_surface'))
 print()
 zero_han = 0
 for q, name in PAIRS:
