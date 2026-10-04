@@ -5888,3 +5888,37 @@ Component2 → IComponent2 · CommandGroup → ICommandGroup · …
 ★ **依据**：`docs/recon-206/competitor-crosscheck-archival.md` · `docs/recon/competitor-signature-crosscheck.md`（只读）✓
 ★ **本批的产出方式是"搬运 + 携带口径"，不是重跑**（★ 原则②：不重跑已跑过的扫描）✓
 ★ **至此 T5 三件全部完成**（T5-1 未做 → 见下）：★ T5-2 ✅ · T5-3 ✅（事实 532）· T5-1 仍待做 ✓
+
+---
+
+| 534 | **★★★★ T4-1 机械判读 `mark_diff`：8 个成员 ⇒ **我们真调用的只 4 个** ⇒ 而逐个判下来 **无已确认缺陷**** —— 2026-10-04（接手轮 T4-1，规格 `specs/206-c1c6-harvest/`）。
+
+**做法（★ 机械化）**：`mark_diff` 的 8 个成员 ⇒ 找**真调用点**（`ast` 判，事实 528）⇒
+判「调用点前后 **12 行**内有没有**能带 mark 的选择 API**」
+（`mark=` / `SelectByID2(` / `_select_by_id(` ⇒ 带；★ **只有** `Select4(` ⇒ 不带 ——
+★ `Select4` **没有 mark 形参**，已知事实 32）✓
+
+**★ 结果**：
+```
+★ 8 个成员里 **我们真调用的只有 4 个**:
+    AutoDimension2(2 处) · FeatureLinearPattern4(2) · InsertProtrusionBlend2(1) · InsertWeldmentTrimFeature2(1)
+★★ **一次都没调用的 4 个**: EditMate3 · FeatureExtruRefSurface2 · InsertCutSwept5 · InsertMoveCopyBody2
+    ⇒ ★ 那几条冲突对我们**当前无直接影响** ✓
+★ 4 个的 7 个调用点逐个判:
+    ★ **2 处「窗口内有带 mark 的选择」**: `tools/prove_linear_pattern_generations.py:94` · `scripts/sw_loft.py:87`
+    ★★ **5 处 `unknown`**（12 行窗口内看不出选择 API）—— ★ 含**产品代码** `scripts/sw_part.py:805`
+```
+
+**★★★ 结论：无已确认缺陷（★ 这句是重点，不许省略）**：
+```
+★ `unknown` **不等于**缺陷 —— 选择可能发生在**窗口之外**（★ 12 行是启发式）
+⇒ ★★ 我**不能**据本表说「我们的实现错了」；★ 要定罪得读那段代码全文或上真机 ✓
+★ 本表的价值在**收窄**：25 条冲突 → 8 个 mark 成员 → **4 个我们真调用** → **2 处有带 mark 的选择**
+```
+
+**★ 交付物**：`docs/recon-206/mark-audit.md`（90 行 · 逐成员 + 逐调用点判定 + 口径 + 「不算什么」）
+★ **本表的「不算什么」**（已写进文件）：① 不等于「我们写错了」；★ 官方那侧是 **Remarks 与示例互相矛盾**
+⇒ **两类各自都可能对**，结论要逐条读官方页；② **窗口 12 行是启发式** ⇒ 离得远会误判；③ 只覆盖真调用过的 ✓
+
+★ **依据**：`tools/t4_mark_audit.py` · `docs/recon-206/mark-audit.md` · `c4-merged.json`（只读）✓
+★ **本批的下限**：★ 5 处 `unknown` **未继续查**（★ 要读全函数或真机）⇒ ★ 如实留作下一步 ✓
