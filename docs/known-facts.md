@@ -4267,3 +4267,62 @@ r = run_guarded(args.command)          # ✗ 没传 timeout ⇒ 永远走 run_gu
 ### 五 · ★ 依据
 ★ `tools/sw_guard.py` 的 `main()`（修前后各一行）· ★ 真机实录 `seconds: 120.43` ✓
 ★ 回归：`tests/test_sw_guard_dialog_tiers.py`（**7 passed**，★ 改动后仍绿）✓
+
+---
+
+## 523 · ★★★★★ `mesh_size` 三个单位口径的**真机读数** —— ★ 而 `create_mesh` 回 `8` 的语义**未定案**
+
+**发现时间**：2026-10-04（接手轮 · 在事实 521 的修法之后重跑同一条链）
+
+### 一 · ★★★★ 单位口径**实测定案**（★ 同一研究、同一次运行、三个 `units` 各读一次）
+
+```
+units=-1  element_size=4930.501659457233      tolerance=246.52508297286164
+units= 0  element_size=4930.501659457233      tolerance=246.52508297286164   ← ★ 与 -1 完全相同
+units= 2  element_size=   4.930501659457232   tolerance=  0.24652508297286163 ← ★ Metric = **毫米**
+★★ 两个数**恰好差 1000 倍**（4930.5017 / 4.9305 = 1000.0）—— ★ 而零件是 100×60×20 mm
+★ 官方建议单元尺寸 ≈ 零件最大边的 **1/20**（100/20 = 5 mm）⇒ ★★ **只有 `units=2` 的 4.9305 合理** ✓
+```
+⇒ ★★★ **正解：要"毫米"就用 `units=2`（Metric）** —— ★ 而 `units=-1` / `units=0` 回的是**大 1000 倍的那个数**
+⚠ ★ **本仓旧注释与它冲突**：`sw_simulation.py` 的 `mesh_size_report` docstring 逐字写
+「★ `units = -1`（默认）回**毫米级**的值 —— 这是既有事实」 ⇒ ★★ **该句与本次真机读数相反**
+（★ 本轮**未改那句**：改它要连同调用方一起核，★ 记在此处待收口 —— ★ 不许"看着像"就改）✓
+
+### 二 · ★★★ 而它解释了**上游那场 40 GB 事故**的另一半（★ 与事实 521 合看）
+
+★ 521 记的是"探针把米级值当毫米喂"；★★ **本条给出那个米级值是从哪来的**：
+`units=0`（探针当时以为它是 SI/毫米）回的 **4930.5** ⇒ ★ 它同时又**大于零件最大边 100**
+⇒ ★ 被**第一道闸**判"网格退化"、被**第二道闸**的目标值判"内存爆炸" —— ★ **两道闸都指向同一个错** ✓
+
+### 三 · ★★★ `create_mesh` 回 **8**：★ 语义**查不到**（★ 按铁律 5 如实记，★ 不猜）
+
+```
+★ 真机读数：`create_mesh` ⇒ {"ok": false, "return_code": **8**, "element_count": **0**}
+            墙钟 **27.3 s**（★ 说明真在算，不是立刻回错）；★ `dialogs: []`（无弹窗）
+★★ 官方类型库里**唯一**与网格错误有关的枚举是 `swsStudyMeshError_e` ——
+   ★ 而它**只有 0..7**：0 Successful · 1 NoValidShells · 2 NoSolidBody · 3 ElementSizeTooSmall ·
+   4 ElementSizeTooBig · 5 SpecifyPositiveValue · 6 SpecifyElementSizeScaleFactor ·
+   7 SpecifyToleranceScaleFactor ⇒ ★★ **没有 8**
+⇒ ★★★ **所以 `CreateMesh` 的返回码**不是**取自这个枚举**（★ 或该枚举在本版本上有增补而文档未更新）
+   ⇒ ★ **按铁律 5：查不到就说查不到** —— ★ 本条**不解释 8 是什么意思** ✓
+★ 可继续的正路（★ 未做）：① 查 `CWStudy` 的 `CreateMesh` 在**用户文档**里的错误码表；
+   ② 单变量对照：`element_size` 用**已知能成的 4.9339** 再跑一次，看返回码是否变 0
+   （★ 若变 0 ⇒ 说明 8 与**参数值**有关；★ 若仍非 0 ⇒ 说明另有前置缺失）✓
+```
+
+### 四 · ★★ 顺带：本轮**两道内存闸都按设计工作**（★ 这是修法的现场验证）
+
+```
+★ 第二道闸（`solve_memory_preflight`）逐字拦住：
+   {"element_count": 0, "ok": false, "reason": "element_count 不是正整数（0）⇒ 网格没建成"}
+★ 探针因此 **在"跑求解"之前停下** ⇒ ★★ 全程整机剩余内存 **45.6 GB 起、未跌破 45 GB**
+  （★ 看门狗日志 `output/solver-memory-watch.jsonl` 逐条可查：`over: []` 无一次越线）✓
+⇒ ★★★ **对照事实 521 那次（求解器 38.5 GB / 剩 5.7 GB / 整机卡死）**：★ 同一台机器、同一条链、
+   ★ **这次一步都没让求解器起来** ✓
+```
+
+### 五 · ★ 依据
+★ 真机读数：`output/analysis-run-long-timeout-evidence.json`（三个 `units` 的三行读数 + `create_mesh` 的 `return_code`）✓
+★ 官方：`C:\cworks_vb6\CosmosWorksLib~swsStudyMeshError_e.html`（★ 0..7，无 8）·
+`CosmosWorksLib~CWStudy~CreateMesh.html`（★ 只有签名、**没有错误码表**）✓
+★ 内存闸现场：`output/solver-memory-watch.jsonl` ✓
