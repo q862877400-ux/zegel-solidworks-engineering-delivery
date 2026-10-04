@@ -257,7 +257,11 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 419
+    assert len(all_specs()) == 422
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 90**）：**419 → 422** —— ★ **我加的 3 条**
+    #:   （Costing **写侧收尾**：批量 / 加价 / 自定义成本）⇒ ★ 选域依据是 **SC-009 要求的预筛**：
+    #:   C 类未覆盖 281 个里 **97 个属「取哪一个」的歧义组**（一律不碰），
+    #:   只有 `cost_analysis`(3) + `cost_body`(2) 可加键 ⇒ **组内真新 3 个** ⇒ 达门槛才开工 ✓
     #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 89**）：**414 → 419** —— ★ **我加的 5 条**
     #:   ★ C 类里**最后两组语义无歧义**的：Costing 写侧 3（纳入实体/设成本方法/全部重算）·
     #:   运动算例 2（计算可选播放 · ★★ **导出 AVI** = **护城河域**）✓

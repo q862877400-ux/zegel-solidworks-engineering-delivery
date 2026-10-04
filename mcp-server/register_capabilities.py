@@ -238,6 +238,58 @@ def resolve_cost_part(params: Any):
     return get_costing_model(resolve_cost_manager(params))
 
 
+def resolve_cost_analysis(params: Any):
+    """注入 **Costing 的"成本分析"对象**（`ICostAnalysis`）—— ★ 供首参名叫 `cost_analysis` 的那批。
+
+    ★ 取法：`cost_part`（成本模型）→ `GetCostAnalysis` ✓（★ 与 `cost_part` 同一条链，不是猜的）
+    ⚠ ★ **零件上还没有成本分析就没有** ⇒ **响亮报错**并说清先做什么 ✓
+    """
+    from scripts.sw_costing import get_cost_analysis
+    analysis = get_cost_analysis(resolve_cost_part(params))
+    if analysis is None:
+        raise RuntimeError("该零件上**还没有成本分析** ⇒ `cost_analysis` 注入键无法解析。"
+                           "★ 请先建一个成本分析（`sw_costing.create_cost_analysis`）")
+    return analysis
+
+
+def resolve_cost_body(params: Any):
+    """注入**成本实体**（`ICostBody`）—— ★ 供首参名叫 `cost_body` 的那批函数。
+
+    ★ 定位规则（★ 与 `motion_study` 同一手法：**能唯一确定才给，否则响亮报错**）：
+      ① 传了 `body_name` ⇒ 按名在 `get_bodies(cost_part)` 的清单里找 ✓
+      ② 没传：清单长度 **== 1** ⇒ 就那一个；**0** 或 **>1** ⇒ ★ 报错并列出可用的名字 ✓
+    """
+    from scripts.sw_costing import get_bodies
+    name = str(getattr(params, "body_name", "") or "").strip()
+    bodies = list(get_bodies(resolve_cost_part(params)) or [])
+    if not bodies:
+        raise RuntimeError("该零件的成本模型上**没有成本实体** ⇒ `cost_body` 注入键无法解析")
+    if name:
+        for b in bodies:
+            try:
+                got = str(sw_get_member_name(b))
+            except Exception:                                        # noqa: BLE001
+                got = ""
+            if got == name:
+                return b
+        raise RuntimeError("没有名为 %r 的成本实体；现有：%r"
+                           % (name, [sw_get_member_name(b) for b in bodies][:10]))
+    if len(bodies) > 1:
+        raise RuntimeError("该零件有 **%d 个**成本实体 ⇒ ★ **本解析器不替你猜**，"
+                           "请显式传 `body_name`（现有：%r）"
+                           % (len(bodies), [sw_get_member_name(b) for b in bodies][:10]))
+    return bodies[0]
+
+
+def sw_get_member_name(obj: Any) -> str:
+    """★ 小助手：取成本实体的名字（官方 `GetName`）—— ★ 取不到就回空串（不抛）。"""
+    from scripts.sw_connect import get_com_member
+    try:
+        return str(get_com_member(obj, "GetName") or "")
+    except Exception:                                                # noqa: BLE001
+        return ""
+
+
 def resolve_motion_study(params: Any):
     """注入**运动算例**（`IMotionStudy`）—— ★ 供首参名叫 `motion_study` 的那批函数。
 
@@ -446,6 +498,14 @@ RESOLVERS: dict[str, Any] = {
     #:     **一律不碰** —— ★ 它们是"取哪一个？"的问题（事实 36 那一族）✓
     "cost_part": resolve_cost_part,
     "motion_study": resolve_motion_study,
+    #: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」第五批）：**`cost_analysis` / `cost_body`** ——
+    #:   ★ 勘探（`output` 的 C 类普查）显示：C 类里**剩下 97 个是"取哪一个"的歧义组**（一律不碰）；
+    #:     而 `cost_analysis`(3) + `cost_body`(2) 这 **5 个**仍可加键 ⇒ 组内**真新 3 个** ✓
+    #:     · `cost_analysis` ⇒ `cost_part` → `GetCostAnalysis`（★ 同一条链，不是猜的）✓
+    #:     · `cost_body` ⇒ 按 `body_name` 在 `get_bodies(cost_part)` 清单里找；
+    #:       **没传名时只在清单长度 == 1** 才给，0 或 >1 都**响亮报错**（★ 与 `motion_study` 同手法）✓
+    "cost_analysis": resolve_cost_analysis,
+    "cost_body": resolve_cost_body,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。
@@ -857,6 +917,18 @@ BATCH_MODULES = (
     #:     被**上游遗留工具** `solidworks_add_rotary_motor` 覆盖 ✓
     #:   ★ 计数：414 → **419**
     "tool_specs_batch89",
+    #: ★★★★★ 轮 116：**规格 205 的批 90 —— Costing 写侧收尾**（3 个）：
+    #:   ★ 选域依据是 **SC-009 要求的预筛**（C 类普查）：未覆盖候选 281 个里
+    #:     **97 个属"取哪一个"的歧义组**（一律不碰）；`cost_analysis`(3)+`cost_body`(2) 可加键
+    #:     ⇒ ★ **组内真新 3 个** ⇒ 达 SC-009 的门槛 ⇒ 开工 ✓
+    #:   · `solidworks_costing_set_lot_size`（批量）· `set_markup`（加价类型+百分比）·
+    #:     `assign_custom_cost`（给一个成本实体指定自定义成本）✓
+    #:   ★ 同笔加两个注入键 `"cost_analysis"`（`cost_part`→`GetCostAnalysis`）·
+    #:     `"cost_body"`（按 `body_name` 找；**没传名时只在清单长度 == 1** 才给、否则报错）✓
+    #:   ★★ 本批**不做**：`read_cost_analysis` / `read_cost_body` —— ★ 早已挂成
+    #:     `solidworks_costing_read_analysis` / `…_read_body`（只读侧一早就建好了）⇒ 只取写侧 ✓
+    #:   ★ 计数：419 → **422**
+    "tool_specs_batch90",
 )
 
 def all_specs() -> list:
