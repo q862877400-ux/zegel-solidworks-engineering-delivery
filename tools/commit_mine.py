@@ -1,0 +1,131 @@
+"""★ 提交纪律护栏：**只提交自己这一线的文件**，并在提交前拦住「误带删除」。"""
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   tools/commit_mine.py
+# 定位:   规格 206 —— 处置一个**本轮实测踩到的**地雷（事实 555）：
+#         `tools/round_chain.ps1` 在 **3 处**跑 `git add -A`（★ L84 / L117 / L142），
+#         ★★ 而它的用途是「把重生成的产物加进索引，好让 release_check 看到一致的树」——
+#         ★★★ 副作用是：**跑完链之后，整个工作树都在索引里** ⇒
+#         ★★★★ 此时一次普通的 `git commit` 会把**别人未提交的文件（914 个）一起提交** ✓✗
+#         ★ 本仓 25 个未跟踪文件与 4 个未暂存改动**都不属于本线**（交接件逐字：「未提交的只有别人的文件」）✓
+# 官方依据: 不适用（本仓 git 纪律，非 SolidWorks API）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────────
+from __future__ import annotations
+
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+
+#: ★★ 为什么把 stderr 折进 stdout（★ 本轮实测的教训）：`git add` 在**每个** CRLF 文件上
+#:   打一行 `LF will be replaced by CRLF` 警告 ⇒ ★ 909 个文件的那次测试**吐了 1.4 万字节**，
+#:   ★★ 把真正要看的那 6 行结果**冲出了可见范围** ⇒ ★ 判据被噪音淹没（★ 与事实 51 同族）✓
+#:   ⇒ ★ 本工具**只关心 stdout**；stderr 仍被捕获在 `CompletedProcess` 上，出错时再取 ✓
+
+
+def _git(*args: str) -> subprocess.CompletedProcess:
+    """★ 跑一条 git（★ `encoding=` 必给 —— 事实 58：中文 Windows 上不给会 `UnicodeDecodeError`）。"""
+    return subprocess.run(("git",) + args, cwd=ROOT,
+                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                          text=True, encoding="utf-8", errors="replace")
+
+
+def staged() -> list[tuple[str, int, int]]:
+    """★ 列出索引里的文件及 `(新增行, 删除行)`（★ 二进制给 `-` ⇒ 记 0）。"""
+    out = _git("diff", "--cached", "--numstat")
+    rows = []
+    for line in (out.stdout or "").splitlines():
+        parts = line.split("\t")
+        if len(parts) < 3:
+            continue
+        add = int(parts[0]) if parts[0].isdigit() else 0
+        dele = int(parts[1]) if parts[1].isdigit() else 0
+        rows.append((parts[2], add, dele))
+    return rows
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="★ 只提交自己这一线的文件（★ 先 reset 再只 add 点名的）")
+    ap.add_argument("paths", nargs="*", help="★ 本线改动的文件（相对仓库根）")
+    ap.add_argument("--allow-deletions", action="store_true",
+                    help="★ 确实要删文件时才开（★ 默认拦：与事实 61 同族）")
+    ap.add_argument("--dry-run", action="store_true", help="★ 只看会提交什么，不提交")
+    ap.add_argument("-m", "--message-file", default=None, help="★ 提交信息文件（★ 用 -F ⇒ 避开引号坑）")
+    a = ap.parse_args(argv)
+
+    if not a.paths:
+        print("★ 必须点名本线的文件 —— ★ 本工具的**存在理由**就是不许 `git add -A` ✓")
+        return 2
+
+    # ★★★ 第 0 步（★ 本轮补的，理由是一条实测踩到的顺序问题）：**先看删除、再看存在性** ——
+    # ★ 真 git 的 `add -- <被删的路径>` **是合法的**（那是"记录删除"）⇒
+    #   ★★ 所以不能拿"路径不存在"去拦删除，否则**唯一的删除拦路石会排在存在性后面而永不生效** ✓
+    pre = staged()
+    pre_del = sum(d for _n, _a, d in pre)
+    if pre_del and not a.allow_deletions:
+        print("★★ 索引里**已经**有 **%d** 行删除 ⇒ 按事实 61 的定则**停下核查**：" % pre_del)
+        for name, add_n, del_n in pre:
+            if del_n:
+                print("   %+5d %+5d  %s" % (add_n, del_n, name))
+        print("   ★ 批量改动**必须先证明只做加法**；★ 确实要删就加 `--allow-deletions` ✓")
+        return 6
+
+    # ★★★ 第 1 步（★ 关键）：把 `round_chain.ps1` 那三次 `git add -A` 清掉
+    _git("reset", "-q")
+    left = staged()
+    if left:
+        print("★ `git reset` 之后索引仍非空（%d 个）⇒ 停下，别提交" % len(left))
+        return 3
+
+    # ★★ 第 2 步：只加**点名的**文件（★ 加不存在的路径会被 git 报错 ⇒ 不静默）
+    bad = [p for p in a.paths if not (ROOT / p).exists()]
+    if bad:
+        print("★ 这些路径不存在，拒绝提交：%s" % bad)
+        return 4
+    add = _git("add", "--", *a.paths)
+    if add.returncode != 0:
+        print("★ git add 失败：%s" % (add.stderr or "").strip())
+        return 5
+
+    rows = staged()
+    print("★ 索引里 **%d** 个文件：" % len(rows))
+    for name, add_n, del_n in rows:
+        print("   %+5d %+5d  %s" % (add_n, del_n, name))
+
+    total_del = sum(d for _n, _a, d in rows)
+    if total_del and not a.allow_deletions:
+        print()
+        print("★★ 索引里有 **%d** 行删除 ⇒ 按事实 61 的定则**停下核查**：" % total_del)
+        print("   ★ 批量改动**必须先证明只做加法**；★ 确实要删就加 `--allow-deletions` ✓")
+        return 6
+
+    if a.dry_run or not a.message_file:
+        print()
+        print("★ 未提交（★ 没给 `-m <信息文件>`）—— ★ 索引已备好，可自行 `git commit -F <文件>` ✓")
+        return 0
+
+    msg = Path(a.message_file)
+    if not msg.is_file():
+        print("★ 找不到提交信息文件：%s" % msg)
+        return 7
+    commit = _git("commit", "-F", str(msg))
+    print()
+    if commit.returncode != 0:
+        print("★ 提交失败：%s" % (commit.stderr or "").strip())
+        return 8
+    print("★ 提交成功：%s" % (commit.stdout or "").strip().splitlines()[0])
+    print("★ 本次提交的文件：")
+    for name in (_git("show", "--name-only", "--pretty=format:", "HEAD").stdout or "").splitlines():
+        if name.strip():
+            print("   %s" % name.strip())
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
