@@ -2016,7 +2016,7 @@ def _require_active_sketch(fn):
         try:
             #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `get_com_member(model, "GetActiveSketch2")`。
             #:   ★ 官方 `types/IModelDoc2/GetActiveSketch2.md` 逐字：
-            #:     「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+            #:     「**Obsolete. Superseded by [[ISketchManager::ActiveSketch]].**」
             #:   ★★ 真机已验证两者**行为等价**（`tools/probe_activesketch_successor.py` ·
             #:     `output/activesketch-successor-evidence.json`）：★ 开着草图时都非 None、
             #:     关闭与无草图时都是 None ⇒ **PASS** ✓

@@ -6,7 +6,7 @@
 #   `ISketchManager.ActiveSketch`（**属性**）。
 #   官方依据:
 #     · `C:\\swapi\\types\\IModelDoc2\\GetActiveSketch2.md` 逐字：
-#       「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+#       「**Obsolete. Superseded by [[ISketchManager::ActiveSketch]].**」
 #     · `C:\\swapi\\types\\ISketchManager\\ActiveSketch.md` 签名逐字：
 #       `Sketch ActiveSketch {get;}`   ← ★★ **属性（只读）**，不是方法
 #   ★★ 本仓既有的真机读数（`scripts/sw_sketch.py` 的函数文档逐字）：

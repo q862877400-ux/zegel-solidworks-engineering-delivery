@@ -8,6 +8,16 @@
         "D:/AI/SW/output/member-owner-interface.json",
         "D:/AI/SW/specs/093-member-owner-interface-checker/spec.md"
       ]
+    },
+    {
+      "gate": "check_official_source_defects.py",
+      "reason": "★ **暂只报告、不拦（exit 0）** —— 按规格 206 的 **D-1**（新建门禁误报率 ≤5%，未达标者留待复核桶）：判据边界还有 **2 处待人判**（`[[IFeatureManager::IInsertMidSurface]]` 的 `I` 前缀是官方**进程内指针变体**命名法，本判据未归一该前缀 ⇒ 疑误报；`tools/build_obsolete_index.py` 的 `[[Iface::Member]]` 是 docstring **模板占位**）。★ 判据本身已验证有效（`tests/test_official_source_defects_gate.py` 4 passed，含「构造故意不存在的接口 ⇒ 必须报出来」的负例），且已据此**修掉 5 处真断链**（4 个 `scripts/sw_*.py` + 1 个 `tools/`，均把 `[[SketchManager::` 正名为 `[[ISketchManager::`）。接闸前置：把余下 hits 逐条判完（真断链则修、边界则进例外表）。",
+      "evidence": [
+        "D:/AI/SW/scripts/check_official_source_defects.py",
+        "D:/AI/SW/tests/test_official_source_defects_gate.py",
+        "D:/AI/SW/specs/206-c1c6-harvest/spec.md",
+        "D:/AI/SW/specs/203-bunny-sideline-batches/recon/b2-defects.json"
+      ]
     }
   ]
 }

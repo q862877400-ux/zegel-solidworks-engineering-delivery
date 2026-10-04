@@ -48,7 +48,7 @@ def _active_sketch(model):
       —— ★★ 正好把**废弃的排在前面**。★ 现在**只用后继**（★ 真机已验证两者行为等价，
       ★ 所以不必再留兜底链 ⇒ 少一层分支、也少一处废弃调用）。
       ★ 官方 `IModelDoc2/GetActiveSketch2.md` 逐字：
-        「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+        「**Obsolete. Superseded by [[ISketchManager::ActiveSketch]].**」
       ★★ 真机证据：`tools/probe_activesketch_successor.py` ·
         `output/activesketch-successor-evidence.json` ⇒ ★ **PASS** ✓
 

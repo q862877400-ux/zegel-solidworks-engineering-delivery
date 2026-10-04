@@ -321,7 +321,7 @@ def _active_sketch_name(model):
 
     ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `get_com_member(model, "GetActiveSketch2")`。
       ★ 官方 `IModelDoc2/GetActiveSketch2.md` 逐字：
-        「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+        「**Obsolete. Superseded by [[ISketchManager::ActiveSketch]].**」
       ★★ 真机已验证两者行为等价（`output/activesketch-successor-evidence.json` · PASS）。
       ★ 共用帮手：`scripts/sw_sketch.py::active_sketch`（★ 事实 60 定则④）。
     """

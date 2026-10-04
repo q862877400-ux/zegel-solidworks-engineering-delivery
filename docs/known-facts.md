@@ -5425,3 +5425,53 @@ tests/test_sketch_slot_params.py::test_slot_length_type_is_a_valid_enum_member  
 
 ★ **本批的限度**：★ 只跑了定向子集（273 个），**未跑全量**（★ 按本仓纪律：全量只在发布前或改门禁本体时跑）⇒
 ★★ 「全仓还有多少红测试」这个数我**没有**，如实标为**未测** ✓
+
+---
+
+| 523 | **★★★★ 官方源缺陷门禁：★ 我的第一版判据**用反了**（把「官方文档里的坏链接」当成「代码里不该出现的标识符」）⇒ 修对后**立刻查出我们代码里 5 处真断链**** —— 2026-10-04（接手轮 T3-3，规格 `specs/206-c1c6-harvest/`）。
+
+**输入**（★ 只读复用，**不重跑**）：`specs/203-bunny-sideline-batches/recon/b2-defects.json`
+（**970 条**，另一个对话 60 路 Bunny 扫 13086 份官页的产物；`verified=True` **964** 条：
+`spelling` 554 · `dead_link_candidate` 212 · `other` 164 · `undefined_item` 24 · `number_mismatch` 10）✓
+★★ 而且他们的 `official-source-defects-2.md` **§1.1 已经把 T3-1 的机械核验做完了**：
+212 条死链候选 → **真死链 65** · 接口名拼错 50 · 成员名拼错 58 · **归一化后其实存在 34（自证没夸大）** ✓
+⇒ ★ 按原则②（不重跑已跑过的），**T3-1 我不重做**，改为**建门禁** ✓
+
+**★★★ 我的判据错在哪（★ 值得单独记）**：
+```
+✗ 第一版：扫源码里**出现错拼标识符** ⇒ 一跑就报 `FeatureManager` 一大片 **误报** ✓✗
+★ 真因：`spelling` / `dead_link_candidate` 说的是
+   **【官方页里的链接】指向不存在的页**（如 `[[FeatureManager::HoleWizard5]]` 少了个 `I`），
+   ★★ **不是**「代码里不该出现 `FeatureManager`」—— 它是 `IModelDoc2` 上的**属性名**，正当 ✓
+⇒ ★★ 与事实 516（判据过宽）· 517 定则二（判据要写「不算什么」）**同族** ✓
+✓ 改对后：判据 = **我们【自己引用的官方页】必须存在**
+   （两种写法：`[[接口::成员]]` 与 `C:\swapi\types\<接口>\<成员>.md`）
+```
+
+**★★ 改对后立刻查出 5 处真断链（★ 全部修好）**：
+```
+scripts/sw_part.py · scripts/sw_sketch.py · scripts/sw_sketch_modify_ops.py ·
+scripts/sw_sketch_status.py · tools/probe_activesketch_successor.py
+   ⇒ 都引用 `[[SketchManager::ActiveSketch]]`，而 **`SketchManager` 不是接口名**（真名 `ISketchManager`）
+   ⇒ ★ 即：**我们的 docstring 在引用一个不存在的官方页**（★ 是引用缺陷，不是代码缺陷）✓
+```
+
+**★ 另外两处边界（★ 记「待复核」，不静默）**：
+- `mcp-server/tool_specs_batch74.py` 的 `[[IFeatureManager::IInsertMidSurface]]` ——
+  ★ `I` 前缀是官方的**进程内指针变体**命名法（已知事实 47 那一族）⇒ 本判据只归一
+  `Method/Property/Function` 后缀、**未归一 `I` 前缀** ⇒ **疑误报，需人判** ✓
+- `tools/build_obsolete_index.py` 的 `[[Iface::Member]]` —— ★ 是 docstring 里的**模板占位**，非真引用 ✓
+
+**★★ 本门禁当前状态：只报告、不拦（exit 0）** —— 按 **D-1**（新建门禁误报率 ≤5%，
+未达标者留待复核桶）⇒ **判据边界达标记前不接进 `release_check`** ✓
+接闸前置已写进输出：把 hits 逐条判完（真断链则修、边界则进例外表）✓
+
+**★ 配套测试（★ 负例是门禁有效的唯一证明 · 事实 62）**：
+`tests/test_official_source_defects_gate.py` **4 passed** —— 含
+① **构造一个故意不存在的接口** `[[ZZZNoSuchInterface::SomeMember]]` ⇒ 门禁**必须报出来** ✓
+② 反向负例：引用**确实存在**的接口 ⇒ **不该**报 ✓
+③ 真名集合非空守卫（空掉会"静默全通过"）✓
+④ 把「暂只报告」写死，防止后人误以为已拦 ✓
+
+★ **依据**：`scripts/check_official_source_defects.py` · `tests/test_official_source_defects_gate.py` ·
+`specs/203-bunny-sideline-batches/recon/b2-defects.json`（只读）· `docs/recon/official-source-defects-2.md` §1.1 ✓

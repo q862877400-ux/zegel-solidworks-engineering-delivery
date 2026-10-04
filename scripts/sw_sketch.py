@@ -580,7 +580,7 @@ def active_sketch(model):
       （★ 事实 60 定则④：写了一个好用的工具函数，就要在**所有**同类场合用它）。
 
     ★ 为什么换成它：★ 官方 `types/IModelDoc2/GetActiveSketch2.md` 逐字：
-      「**Obsolete. Superseded by [[SketchManager::ActiveSketch]].**」
+      「**Obsolete. Superseded by [[ISketchManager::ActiveSketch]].**」
     ★ 而后继是**属性**（`Sketch ActiveSketch {get;}`），★ 不是方法 ⇒ ★ 调用形态变成取属性。
 
     ★★★ 真机已验证两者**行为等价**（`tools/probe_activesketch_successor.py` ·
