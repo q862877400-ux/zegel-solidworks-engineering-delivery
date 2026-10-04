@@ -649,6 +649,7 @@
         "pywin32"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/a4-runtime-evidence.json` 顶层逐字 `verdict='partial'` · `passed=None/None`（采集于 None）⇒ ★ **只过了 None 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "必须提供准确尺寸名；配置族批量修改仍需人工复核"
       ],
       "allowed_modes": [
@@ -3508,6 +3509,7 @@
         "可选 SolidWorks"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/sweep-evidence.json` 顶层逐字 `verdict='partial'` · `passed=2/None`（采集于 None）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★★★ 2026-10-01（轮 313）**本条是「四家有我们没有」里**核实的真缺****：\n  ★ 全仓 grep `loft` ⇒ **工具 0 · 函数 0**（`sw_api_sldworks` 反射表除外），`sweep` 同样 0。\n  ★ 而**放样与扫描是 SolidWorks 最基本的两种特征**（★ 与拉伸 / 旋转并列）——\n    ★ 我们有拉伸、旋转、肋、抽壳、圆顶，**就是没有这两种**。\n  ★ 四家并集（349）里正有 **`loft`**（★ Slacker-LLC 提供）与 `sweep`。\n★★ **判据已换成硬的**（2026-10-01 轮 314）：真机定出\n  **放样特征 `GetTypeName2()` 回 `Blend`**（★ 对照拉伸回 `Extrusion`），\n  ★ 本包装现在**要求类型名 = `Blend`**（★ 它比\"体积期望\"可靠：\n  体积依赖我造几何的能力，★ 而类型名只依赖 API 对不对）。\n⚠ **而体积仍未验**：\n\n★★ **扫描（轮 315）**：★ 入口是 `CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`\n  （★ `InsertProtrusionSwept*` 整族已被 SOLIDWORKS 2018 标为 **obsolete** —— 官方 Remarks 原文）。\n  ★ mark：**轮廓=1 · 路径=4** · 引导线=2 · 方向向量=128（官方专文）。\n  ⚠ **官方硬约束**：路径的**起点必须落在轮廓所在平面上** —— 真机上违反它就建不成（★ 本次 `Right Plane` 那一例就是）。\n  ⚠ `AccessSelections(model, 空Dispatch)` 在本机报 **`0x80010105`**（★ 事实 47 的后端限制）\n    —— ★★ **而它非必需**：真机上它报错时**特征仍然建成**。"
       ],
       "allowed_modes": [
@@ -3688,6 +3690,7 @@
         "★ 三源互证里**台账给的两个名字都不对**：`FeatureRevolveRefSurface` ⇒ swapi 里**根本没有**（真名 `IFeatureManager.InsertRevolvedRefSurface`）；`InsertProtrusionBlend2(Surface)` ⇒ 真名 **`IModelDoc2.InsertLoftRefSurface2`**。★ 同族 `FeatureExtruRefSurface{,2,3}` 命名不同 ⇒ **不能按前缀猜**。"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/b6b-surface-ref-evidence.json` 顶层逐字 `verdict=None` · `passed=1/2`（采集于 2026-10-03T13:07:44）⇒ ★ **只过了 1 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "🕓 **2026-10-04（接手轮）上一条的结论已被**同域另一条目**推翻 —— 不删上文、在此补正**（★ 处置 `JUDGE-F_G_H_I_J.md` 的 🔴 **#3** · `I1-2`）—— ★ 裁判逐字：「★ `surface_ref_ops`『旋转曲面本条不登记』**已被 `surface_revolve` evidence 推翻**」✓ ★★ **实测复核**：★ `surface_revolve` 的 `evidence` 逐字有「★★ 2026-10-03（轮 529）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：前视面上画**轮廓 + 中心线**（`CreateCenterLine`），选那个草图（回读 `sel=1`）⇒ ★ **建成 `曲面-旋转1`**（类型名 **`RevolvRefSurf`**）。★ **两条入口都成**」✓ ★★★ 而它**明确修正了归因**：★「… ★ 本仓此前对它的「不成」（轮 501，5 组全试过）**真因是**前置缺中心线**，而**不是**架构问题**」✓ ⇒ ★★★★ **所以上文那句「旋转曲面本条不登记」已被推翻**（★ 它是**轮 501 时**的结论，★ 轮 529 真机建成）✓ ★★★ 而**上文不删**（★ 它是历史，★ 且它详述了「5 组全试过」那条死路）★ 只在此说明「以哪一条为准 = **轮 529 的建成**」 ✓",
         "★ **扫描曲面**：两个曲面版（`InsertSweepRefSurface` 与 `…RefSurface2`）**都标 Obsolete**，继任者写的是**实体**那族的 `IFeatureManager::InsertProtrusionSwept3` ⇒ 曲面版在新架构里走哪条，**两个源都没给出**。（线索：2018 起扫描改走 `ISweepFeatureData`，★ 本仓 `sw_sweep` 用的就是它）",
         "★ **边界曲面**：全 `C:\\swapi\\types` 搜 `*Boundary*`，**没有任何** Boss/Surface/Feature 成员；`InsertBoundaryBoss` **也不在**。★ 可能并入放样，★ **但那是推断、不是查到的** ⇒ 不假装做到。"
@@ -3828,6 +3831,7 @@
         "★★★ **而「boundary entities」到底是什么，是真机定的**：★ 轮 516 先试**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、返回值 `False`；★ 轮 517 改试**草图**（闭合轮廓 · mark=1）⇒ **返回 `True` · 建成** ✓ ⇒ ★★ **故它指的是草图**（★ 而官方那句 `Remarks` **两种读法都通**）。"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/planar-replace-variants-evidence.json` 顶层逐字 `verdict=None` · `passed=2/3`（采集于 2026-10-03T14:41:20）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★ 前置：**先按 mark=1 选一个闭合草图**（★ 特征按**名字**选可行 —— 事实 32 的「没有名字」只对**实体**成立）。★ 本包装的 `sketch_name` 留空 ⇒ 用**最后一个**草图。",
         "⚠ **未查**：① 多个草图同时选；② 非矩形轮廓（圆 / 任意闭合）；③ 对**实体边**而非草图。"
       ]
@@ -3853,6 +3857,7 @@
         "★★★ **两个 mark 的分工是真机定的**（★ 官方那句 `Remarks` **被截断了**）：★ 轮 516 按「实体面=1 · 曲面面=2」⇒ **0 增量**；★ 轮 517 调过来（实体面=2 · 曲面面=1）⇒ **建成 `替换面1`** ✓ ⇒ ★★ **曲面面 = mark 1（要替换掉的）· 实体面 = mark 2（替换成它）**，★ 而它与官方「要替换的面 mark 1」**一致**。"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/planar-replace-variants-evidence.json` 顶层逐字 `verdict=None` · `passed=2/3`（采集于 2026-10-03T14:41:20）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★ 前置：**两张面**（曲面面 mark=1 · 实体面 mark=2）。",
         "⚠ **未查**：① 选具体哪一张面（★ 本包装取各体**第一张**）；② 多对面；③ 两个曲面之间替换。"
       ]
@@ -3904,6 +3909,7 @@
         "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/hv-dimension-with-selection-evidence.json` 顶层逐字 `verdict='hv_dimension_works'` · `passed=2/3`（采集于 2026-10-03T15:30:25）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★★ **前置：必须先选中实体**（★ 一条线段**或**两个端点都行）—— ★ 而**不选时**它会弹「修改」框等人填数（★ 而那会**看起来像挂死**）。",
         "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
         "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
@@ -3931,6 +3937,7 @@
         "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/hv-dimension-with-selection-evidence.json` 顶层逐字 `verdict='hv_dimension_works'` · `passed=2/3`（采集于 2026-10-03T15:30:25）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★★ **前置：必须先选中实体**（★ 一条线段**或**两个端点都行）—— ★ 而**不选时**它会弹「修改」框等人填数（★ 而那会**看起来像挂死**）。",
         "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
         "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
@@ -4009,6 +4016,7 @@
         "★★★ **而根因是一组**四格对照**定下的**：\n       ① 面(1) + **锚点(16)**        ⇒ **成** ✓\n       ② 面(1) + 引导边(2)（**无锚点**）⇒ **不成** ✗\n       ③ 面(1) + 锚点(16) + 引导边(2) ⇒ **成** ✓\n       ④ **只给面(1)**                ⇒ **不成** ✗\n       ⇒ ★★ **故：`mark = 16`（锚点）是**必需的****—— ★ 四格里**只有带锚点的两格成** ✓"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/flatten-with-anchor-evidence.json` 顶层逐字 `verdict='flatten_with_marks_works'` · `passed=2/4`（采集于 2026-10-03T16:13:26）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★★ **前置（官方 Remarks）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）**；★ 另可选 2=引导边 · 4=映射边 · 8=撕裂边。",
         "★ **`AccuracyFactor` 范围：10 ≥ 精度 ≥ 1**（1 = 最高）；★ 真机用 **4** 成。",
         "⚠ **本包装未接进 MCP 工具层**（★ 现为探针可调用）；⚠ 未查：`ShouldUseTears = True`、以及非可展开曲面的行为。"
@@ -4120,6 +4128,7 @@
         "★★ **而负例与官方 Remarks 逐字对上**：★ **无活动草图**时调它 ⇒ **回 `None`**、草图段数**不可读（-1）** —— ★ 官方：\"If a sketch is **not active**, then the line is **not created and NULL is returned**\" ✓"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/createline2-and-createspline-evidence.json` 顶层逐字 `verdict='partial_1'` · `passed=1/3`（采集于 2026-10-03T16:33:48）⇒ ★ **只过了 1 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★ **必须先有活动草图**（否则不建、回 `None`）。",
         "★ 2D 草图里 **Z 被忽略**（官方）。",
         "⚠ 本包装未接进 MCP 工具层；⚠ 工具层原本用的是 `ISketchManager.CreateLine`（★ **未废弃**）—— ★ **本条不替换它**，只记下继任者的真机证据。"
@@ -4147,6 +4156,7 @@
         "★★★ **而本轮又一次证明“失败在我这边”**：第一版我用 `str(Surface.Identity)` 里含 `\"Cylinder\"` 来**猜**哪个面是圆柱面 ⇒ ★ **三组全 `cyl=False`**（★ 根本没找到面）⚠；\n       ★ 而官方有现成的 **`ISurface.IsCylinder()`** ⇒ ★ 换成它之后**一次就成** ✓"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/cosmetic-thread-evidence.json` 顶层逐字 `verdict='cosmetic_thread_works'` · `passed=1/3`（采集于 2026-10-03T16:39:58）⇒ ★ **只过了 1 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★★ **前置**：选**圆柱面的边**（★ 而**不是面**）。",
         "★ **7 参**：`Standard`（**1 = ANSI Metric**）· `StandardType` · `Size` · `Diameter` · `EndType`（**2 = Through**）· `Depth`（仅 Blind 类有效）· `Note`。",
         "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：Blind（`EndType=0`）与 `Depth` 的配合。"
@@ -4174,6 +4184,7 @@
         "★★ **而本轮还证明了一件事**：★ `call_com_member` **就是 `get_com_member` 的别名**（实现只有一行；★ 只是**名字即意图**）⇒ ★ **换名字不会改行为** ⚠"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/spline-with-variant-evidence.json` 顶层逐字 `verdict='spline_variant_works'` · `passed=1/4`（采集于 2026-10-03T16:50:26）⇒ ★ **只过了 1 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★★ **三个条件**：成员名 `CreateSpline2`、数组形态 `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`、第二参 `False`。",
         "★ **必须先有活动草图**；★ **2D 草图里 Z 被忽略**（官方）；★ 官方说它**不配合 `AddToDB`**。",
         "⚠ 本包装未接进 MCP 工具层；⚠ 未查：`SimulateNaturalEnds = True` 的行为。"
@@ -4227,6 +4238,7 @@
         "★★★ **而本轮又纠了一个自己的错**：我第一版传了 **8 个参数**（★ **漏了 `AngleAboutZDir`**）⇒ `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）；\n       ★ 而**那个错看不出是哪个参数漏了** ⚠ —— ★ 故又靠**反射的 arity**把它钉出来（铁律 4）。"
       ],
       "limitations": [
+        "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/rotate-or-copy-3d-evidence.json` 顶层逐字 `verdict='rotate_or_copy_works'` · `passed=1/2`（采集于 2026-10-03T17:03:30）⇒ ★ **只过了 1 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
         "★★ **前置**：一个 **3D 草图**（`Insert3DSketch`）+ 里面有要复制的图元。",
         "★ **9 参**：`Copy` · `NumCopies` · `KeepRelations` · `BaseX/Y/Z` · `AngleAboutXDir/YDir/ZDir`。",
         "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：**2D 草图**的复制（★ 那一条可能走 `EditCopy`/`EditPaste`）。"
