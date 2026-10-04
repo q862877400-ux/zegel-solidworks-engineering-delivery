@@ -81,7 +81,9 @@
 
 ## 四 · ★ 还没榨的（★ 留给接手的人）
 
-- ★ `c4-merged.json` 的 **3709 条 `example_more_specific`**（★ T4-2：对方自标只过单侧闸、10–25% 需复核）
+- ★ `c4-merged.json` 的 **3806 条 `example_more_specific`**（★ T4-2：对方自标只过单侧闸、10–25% 需复核）
+  ★★ **更正（2026-10-04 第 22 轮）**：★ 此处原写 **3709**，是**照目标文本抄的**；
+  ★ 实量（`c4-merged.json` 的 `tally.more_specific`）是 **3806** ⇒ ★ **以实量为准** ✓
 - ★ `c4-merged.json` 的 **`precondition_diff` 324 条**（★ 已进必查表，但未逐条判）
 - ★ `c2-calls-verified.json`（812 KB）**本线一次都没用**（★ 可能的用途：与我们自己的调用点对账）
 
