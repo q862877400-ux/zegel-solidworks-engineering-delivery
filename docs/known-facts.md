@@ -5064,3 +5064,61 @@ sim.apply_normal_force(study, 100.0, model=doc)   # ⇒ ★ 空 DispArray ⇒ �
 ★ **依据**：`tools/probe_batch88_return_types.py` · `tools/probe_selectionmgr_component_members.py` ·
 `output/batch88-return-types-evidence.json` · `output/selectionmgr-member-probe.json` ·
 `scripts/sw_selection.py` · `mcp-server/register_capabilities.py` · `tools/bunny_toolspec_pipeline.py`
+
+---
+
+## 534 · ★★★★★★ 「expose 现有函数以增加工具数」这条漏斗**已经走完** —— 四种死因 + 量化账
+
+**背景**：规格 `specs/205-tool-ramp/` 的 **SC-001**（`all_specs()` ≥ 400）。**433 达成**（批 80–91）。
+本事实记的是**为什么不能再多了** —— ★ 免得下一个人重走一遍 ✓
+
+### 一 · 量化账（★ 判据全从盘上重推：`tools/bunny_toolspec_pipeline.py survey`）
+
+```
+★ 机械预筛共 659 个"未挂的公开函数"，普查后分四桶：
+   ① 已覆盖（ToolSpec）                    128
+   ② 歧义首参（"取哪一个"）—— **一律不碰**   119
+   ③ 政策不做（含派过且判不做）             249
+   ④ 疑似真增量（★ 需逐个语义核对）          151   ← ★ 这一桶是假象，见下
+```
+★★★ **第 ④ 桶为什么是假象**（★ 我**自己踩过一次**）：★ 我按 `(module, function)` 是否在
+  `all_specs()` 里判"未覆盖" ⇒ ★★ 于是把**同一能力已由别的路径包成工具**的
+  （如 `sw_simulation_loads.add_pressure` ↔ `solidworks_simulation_apply_pressure`）
+  也报成"真增量" ⇒ **差点白开一坡 Bunny** ✓
+  ⇒ ★ 复核当年 Bunny 的判读后确认：那批**理由都成立**（见"四种死因"）⇒ **不该推翻** ✓
+  ⇒ ★ 判据收紧成「**参数是否全是显式标量**」⇒ **151 → 25** ⇒ 其中真能挂的 **11 个**（批 91）✓
+
+### 二 · ★★ 四种死因（每一种都有实例与证据）
+
+```
+① **已覆盖**（★ 最多）—— 同一能力已被上游 `server.py`（45 个）或既有 ToolSpec 包过；
+   ★ 而我最初的判据**看不到上游那 45 个** ⇒ 那是假阳性的来源之一 ✓
+② **歧义首参**（119）—— "取哪一个？"（`win`25 / `hwnd`15 / `route_manager`15 / `target`8 /
+   `pdm_document`8 / `ctrl`7 / `study_name`7 / `obj`6 / `h`6 …）⇒ ★ 事实 36 那一族：
+   **对象选错的表现是"什么都没反应"** ⇒ ★ **一律不碰** ✓
+③ **政策不做**（249）—— 逐条带原因，例如：弹模态框的 `send_message` ·
+   返回**裸 COM 对象**过不了 JSON 边界的（★ 机测过：`CDispatch`）· 官方**逐字标 Obsolete** ·
+   **未护栏的原始网格旋钮**（★ 事实 526 的 40 GB 事故）· 形参是 **COM DispArray** 表达不了 ✓
+④ **在 MCP 边界上冗余** —— ★★ 本回合新识别的这一类（最有意思）：
+   `sw_simulation_worker.*_by_name` 那 7 个函数**看起来**是新入口（按名字 + 入参可 JSON 化），
+   ★★ 但它们的价值是「**可隔离执行**」（丢进子进程），**不是为了"按名字访问"** ——
+   而 ★ **"按名字"在 MCP 边界上早就有了**：`resolve_study` 逐行读 `study_name`（第 74 行）、
+   按名取研究（第 85 行 `get_study_by_name`）⇒ ★ 挂它们是**同一能力的第三次暴露**
+   （对象版 + `by_name` 版 + 注入键版）⇒ ★ **FR-006 判不做** ✓
+```
+
+### 三 · ★ 结论与下一步（★ 不是"没办法"，是"这条路走完了"）
+
+```
+★ 若**继续增加工具数**，只有三条路，都**超出"expose 现有函数"**这个前提：
+  ① ★ **写新的能力包装**（报告式 / 按名字）—— ★ 把②那 119 个歧义组**逐个包成声明式入口**；
+     ★ 代价：每个都要写代码 + 真机验证（不是挂一行 ToolSpec）✓
+  ② ★ **新域**—— 目前未覆盖的官方接口族（★ 但 `capabilities.yaml` 已记 112 条 · verified 100）
+  ③ ★ **把 `stitched` 提成 `verified`**（10 条）—— ★ 那是**能力真实性**的活，不是数量活
+★★ 而按规格自己的话：**SC-008 早就说了「工具数是代码组织方式的函数，不是能力指标」** ——
+   ★ 433 个工具 vs 112 条能力（verified 100）⇒ ★★ **再堆数量的边际价值已经很低** ✓
+```
+
+★ **依据**：`tools/bunny_toolspec_pipeline.py survey`（本回合新加的勘探子命令）·
+`output/prescreen-all.json` · `mcp-server/register_capabilities.py`（`resolve_study` 第 74/85 行）·
+`output/bunny*-gate-report.json`（各坡的逐行判读）· `specs/205-tool-ramp/tasks.md` 的 T-8 表
