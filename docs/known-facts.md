@@ -4790,3 +4790,92 @@ sim.apply_normal_force(study, 100.0, model=doc)   # ⇒ ★ 空 DispArray ⇒ �
 `swsSolverType_e`（本机类型库）✓
 ⚠ ★ **仍然没有的**：★ **直接法（Direct Sparse / Intel）的内存规则** ——
   ★ 两套官方源里都没找到 ⇒ ★ **如实留空缺**（★ 不发明一条）✓
+
+---
+
+## 530 · ★★★★★★ 规格 204「工具数量提升」开工 —— ★ 地基数据 · 批 79（FR-008 两半）· 注入键的教训
+
+**时间**：2026-10-04（接手轮 · 业主指令：「以**提升工具数量**为第一目标 … 按 spec 规范列出施工计划、设定工作目标 … 全自动运行」）
+
+### 一 · ★★★ 地基数据（`output/capability-harvest-*.json`，**现算、不引旧数字**）
+
+| 指标 | 数 |
+|---|---|
+| 能力层顶格公开 `def` | **909** |
+| 已被工具用掉（按名） | 274 |
+| 未被工具使用 | **635** |
+| —— 含**裸坐标形参**（规则 3 挡住） | 26 |
+| —— **可打捞候选** | **609** |
+| **整域未暴露**的模块 | **21 个 / 166 个候选** |
+| 域内工具很少（< 6） | 6 个 / 70 个候选 |
+
+★ **按域判比按函数名判准**：`sw_simulation_loads` 的 raw `add_*` 没挂工具，
+★★ 但**载荷域本身已有工具**（`solidworks_simulation_apply_*`）⇒ 按函数名去重会**虚高** ✓
+★ 排序口径：**整域未暴露优先**（`sw_routing` 21 · `sw_pdm` 13 · `sw_jlcfa_*` 70 · `sw_preflight` 11 ·
+`sw_macro_guard` 9 · `sw_featureworks` 5 …）✓
+
+### 二 · ★ 规格（Spec Kit · `specs/204-tool-ramp/`）
+
+★ `spec.md`（FR-001…FR-012 · SC-001…SC-007 · 非目标 · **决策记录 D-1…D-5**）· `plan.md`（每批**七步工序**）·
+`tasks.md`（T-0…T-Z）✓
+★ **SC-001 目标 = 工具数 ≥ 400**（起点 296）· ★ **D-1 解释为什么封 400 而不更高**：
+  再高就要动 `jlcfa/gui`（坐标自动化需重包装 + 许可待核）与 `sw_connect` 基础设施（**FR-007 禁**）
+  ⇒ ★★ **那些是"假数量"，宁缺毋滥** ✓
+★ **FR 里最要紧的四条**：① 只挂**已存在**的能力（铁律 1）· ② **不为凑数发明**（记"不做 + 原因"）·
+  ③ **规则 3 不收裸坐标** · ⑥ ★ **按域去重**（避免"数字虚高"）✓
+
+### 三 · ★★★★★ 批 79 已落地：**FR-008 的两半**（工具 **296 → 313**）
+
+★ 实测开工前 `capabilities.yaml` 搜 `Explode` / `RunMacro` = **0 命中** ⇒ ★★ 而规格 202 的 **FR-008**
+  逐字要求「装配**爆炸视图**与**宏/VBA 执行** MUST 可用」⇒ 两块**完全空白**，本批即它的落地 ✓
+
+```
+① 爆炸视图 9 个（`scripts/sw_assembly_doc.py` **新增包装**）：
+   create_exploded_view · auto_explode · view_explode_assembly · view_collapse_assembly ·
+   show_exploded · get_exploded_view_names · get_exploded_view_count ·
+   get_exploded_view_configuration_name · edit_explode_parameters
+   ★ 成员名与**实参个数**取自该模块**机械生成的登记表** `ASSEMBLY_DOC_ARITY`
+     ⇒ `call_assembly_doc` **在发起调用之前**核实参个数（★ 不手抄、不猜）✓
+   ★ 官方依据逐页读过（`C:\swapi\types\IAssemblyDoc\*.md`）—— 含 3 条 Remarks：
+     · `CreateExplodedView` 可**多次调用**加多个视图 · `AutoExplode` **每配置只建一个**
+     · `ViewExplodeAssembly` 与 `ViewCollapseAssembly` **成对切换** ✓
+② 宏 8 个：
+   · **新建 `scripts/sw_macro.py`** —— `ISldWorks.RunMacro2`（★ 官方签名 **4 入 + 1 out**）+
+     `swRunMacroOption_e`（2 成员）与 `swRunMacroError_e`（**28 成员**）
+   · `sw_macro_guard` 的 **7 个纯文本**函数（生成提示词 / 抽代码 / 校验 / 选模板 / 兜底 / 落盘）
+     —— ★ 它们此前**一个都没挂**（该模块 9 个公开函数里 2 个不可挂：一个要**回调**、一个是 CLI `main`）✓
+```
+
+★ 本批**零重叠**（SC-004）：既有 296 个里没有爆炸视图、也没有宏**执行**工具 ✓
+
+### 四 · ★★★★★ 门禁当场抓到我一个真错（★ 记下来，因为它是**可复用的形态**）
+
+```
+★ 我第一版写 `inject="asm_model"` ⇒ `check_param_binding` 报：
+  「`inject='asm_model'` **不在函数的形参表里**（形参：['doc']）—— ★ `register()` 不传 `inject_as`
+   ⇒ **注入键字面上等于 `inject` 的值** ⇒ 调用时必
+   `TypeError: unexpected keyword argument 'asm_model'`」
+★★ 而我新写的 9 个包装首参叫 **`doc`**（该模块既有的 `add_mate(doc)` / `hide_component(doc, …)` 一律 `doc`）
+⇒ ★ 正解 = 按 `RESOLVERS` 那张表**自己的设计意图**加一行 **`"doc": resolve_model`**
+  ★ **而不是**去改包装的形参名（那会让模块内部风格分裂）✓
+★ 修完：`check_param_binding` ⇒ **扫 313 个工具 · 0 处** ✓
+```
+
+### 五 · ★ 顺带更正一处仓库旧记载
+
+★ `scripts/sw_com_traps.py` 的注释写「`swRunMacroError_e` **不在官方 interop 类型库中** ⇒ 第三方转录，
+  未经本机反射核实」⇒ ★★ **实测在**：`_raw\enum_values_sldworks.txt` 里 **28 个成员齐全**，
+  且与官方页 `swRunMacroError_e.md` **按成员逐一比对一致**（★ 只是排列顺序不同）✓
+⇒ ★ 本条的读数按"两源一致"用，★ 并把该句标为**过时**（`sw_macro.py` 的来源块里记了这件事）✓
+
+### 六 · ★ 依据与产物
+
+★ 规格：`specs/204-tool-ramp/{spec.md,plan.md,tasks.md}` ·
+  计划数据 `output/tool-ramp-plan-data.json` · 勘察 `output/capability-harvest-{survey,by-domain}.json` ✓
+★ 代码：`scripts/sw_macro.py`（新）· `scripts/sw_assembly_doc.py`（**只增 101 行、零删除**）·
+  `mcp-server/tool_specs_batch79.py`（17 条）· `mcp-server/register_capabilities.py`（注册 + `doc` 解析器）✓
+★ 测试：`tests/test_tool_specs_batch79.py`（**6 passed**）· `tests/test_server_wiring.py`（计数 296 → 313）✓
+★ 收尾链：`release_check 第 1 轮 OK` · `check_param_binding` 0 处 ✓
+⚠ ★ **尚未做**（SC-005）：FR-008 的**真机验证**（爆炸视图需装配文档 · 宏需 `.swp`/`.swb` 与模块名）
+  ⇒ ★ 素材已备：SW 自带 `Simulation\enable.swp` · `sldBenchmarking\Macro\testmacro.swp` ·
+  本仓 `NativeHoldLineMacro.swb`（明文 VB.NET，`Sub main`）✓

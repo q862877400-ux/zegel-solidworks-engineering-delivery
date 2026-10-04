@@ -167,6 +167,18 @@ RESOLVERS: dict[str, Any] = {
     #:     （★ 它们原先声明 `inject="manager"` —— 而那是 **Simulation** 的解析器）。
     "sw": resolve_sw,
     "cost_manager": resolve_cost_manager,
+    #: ★★★★★ 2026-10-04（接手轮 · 规格 204 的批 79）：**`doc`** ——
+    #:   ★ 那一批是**装配爆炸视图 9 个**（`scripts/sw_assembly_doc.py` 里新增的包装）——
+    #:   ★★ **它们的首参叫 `doc`**（该模块**既有**的 `add_mate(doc)` / `hide_component(doc, …)`
+    #:     一律用 `doc`），★ 而 `RESOLVERS` 里**只有 `model` / `asm_model`，没有 `doc`** ⇒
+    #:   ★★★ 我第一版写 `inject="asm_model"` ⇒ `check_param_binding` **当场报**：
+    #:     「`inject='asm_model'` **不在函数的形参表里**（形参：['doc']）—— ★ `register()` 不传
+    #:      `inject_as` ⇒ **注入键字面上等于 inject 的值** ⇒ 调用时必
+    #:      `TypeError: unexpected keyword argument 'asm_model'`」（★ 事实 502/169 的同一回事）✓
+    #:   ⇒ ★ 按那张表**自己的设计意图**加这一行（"注入名各不相同 ⇒ 加一行正是它的用途"），
+    #:     ★ **而不是去改包装的形参名**（那会让 `sw_assembly_doc.py` 内部风格分裂）✓
+    #:   ★ 装配/零件文档都是 `IModelDoc2` ⇒ **复用 `resolve_model`**，与上面 `asm_model` 同一手法 ✓
+    "doc": resolve_model,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。
@@ -450,6 +462,16 @@ BATCH_MODULES = (
     #:   ⇒ ★ 本批 2 个：`..._create_mesh_safely`（量闸 → 安全档 → 建网格 → 真读数 → 内存闸 → **还原**）
     #:     + `..._solver_type`（★ 让调用方**看得见求解器**，免得把 FFEPlus 的内存换算过度外推 —— 事实 529）✓
     "tool_specs_batch78",
+    #: ★★★★★★ 轮 105：**规格 204 的批 79 —— FR-008 的两半**（`specs/204-tool-ramp/`）：
+    #:   ★ 规格 202 的 FR-008 逐字要求「装配**爆炸视图**与**宏/VBA 执行** MUST 可用」，
+    #:     ★★ 而实测 `capabilities.yaml` 搜 `Explode`/`RunMacro` = **0 命中** ⇒ 两块**完全空白** ✓
+    #:   · ① **爆炸视图 9 个**：`sw_assembly_doc` 里**新增** 9 个包装（成员名与 arity 取自该模块
+    #:     机械生成的登记表 → `call_assembly_doc` 会**在调用前**核实参个数）·
+    #:   · ② **宏 8 个**：新建 `scripts/sw_macro.py`（`ISldWorks.RunMacro2`，★ 官方签名 **4 入 + 1 out**）
+    #:     + `sw_macro_guard` 的 7 个**纯文本**函数（生成/抽取/校验/选模板/落盘；它们此前一个都没挂）✓
+    #:   ★ 本批 **17 个** ⇒ 工具数 296 → **313**（规格 204 的 SC-001 第一段）✓
+    #:   ★ 与既有工具**零重叠**（SC-004）：既有 296 个里没有爆炸视图、也没有宏**执行**工具 ✓
+    "tool_specs_batch79",
 )
 
 def all_specs() -> list:

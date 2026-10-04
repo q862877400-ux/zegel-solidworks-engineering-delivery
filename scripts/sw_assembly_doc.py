@@ -480,3 +480,104 @@ def list_external_file_references_count(component, *, include_hidden=False):
     except TypeError:
         return int(call_com_member(component, "ListExternalFileReferencesCount",
                                    bool(include_hidden)) or 0)
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）+ 官方结构化页
+# 文件:   `C:\swapi\types\IAssemblyDoc\CreateExplodedView.md`（`System.bool CreateExplodedView()`）
+#         · `...\AutoExplode.md`（`System.bool AutoExplode()`）
+#         · `...\ViewExplodeAssembly.md`（`void ViewExplodeAssembly()`）
+#         · `...\ViewCollapseAssembly.md`（`void ViewCollapseAssembly()`）
+#         · `...\ShowExploded2.md`（`System.bool ShowExploded2(Boolean ShowIt, String ExplodeViewName)`）
+#         · `...\GetExplodedViewNames2.md`（`System.object GetExplodedViewNames2(String ConfigurationName)`）
+#         · `...\GetExplodedViewCount2.md`（`System.int GetExplodedViewCount2(String ConfigurationName)`）
+#         · `...\GetExplodedViewConfigurationName.md` · `...\EditExplodeParameters.md`
+# 定位:   ★★★ 规格 `specs/202-user-coverage-gaps/spec.md` 的 **FR-008** 逐字要求
+#         「装配**爆炸视图**与宏/VBA 执行 MUST 可用」——★ 而实测本仓**一条都没有**
+#         （`capabilities.yaml` 里搜 `Explode` = 0 命中）⇒ 本段补的就是它 ✓
+#         ★ 成员名与**实参个数**取自本模块上方那张机械生成的登记表 `ASSEMBLY_DOC_ARITY`
+#         （★ 不手抄；`call_assembly_doc` 会在**发起调用之前**核个数）✓
+# 官方依据: 见上「文件」逐页；★ 语义以官方页为准（本段只做薄包装，不解释语义）
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   本段以下 9 个函数（自 `create_exploded_view` 至 `edit_explode_parameters`）
+# ⚠ 未查证（如实标）：`.swb`/VSTA 与 VBA 在 `ModuleName` 语义上的差别（`RunMacro2` 那页 Remarks 为空）；
+#   以及 `GetExplodedViewConfigurationName` 那 1 个实参的**确切含义** —— 官方页只写 Parameters，未给语义。
+# ─────────────────────────────────────────────────────────────────────────────
+def create_exploded_view(doc) -> bool:
+    """建一个爆炸视图（官方 `IAssemblyDoc.CreateExplodedView`，**零参**）。
+
+    ★ 官方 Remarks 逐字：**多次调用**可给同一配置加**多个**爆炸视图；
+      ★ 且「Perfect explode views often require user interaction」—— 它按**当前配合条件**尽力建。
+    ★ 判据：官方回 `bool`（成功 True/False）⇒ 本函数**原样回那个 bool**，
+      ★★ 但**不要**把它当唯一判据 —— 配 `get_exploded_view_count` 回读才自证 ✓
+    """
+    return bool(call_assembly_doc(doc, "CreateExplodedView"))
+
+
+def auto_explode(doc) -> bool:
+    """自动生成爆炸视图（官方 `IAssemblyDoc.AutoExplode`，**零参**）。
+
+    ★ 官方 Remarks 逐字：**每个配置只建一个**爆炸视图；★ 要多个请用 `create_exploded_view`。
+    """
+    return bool(call_assembly_doc(doc, "AutoExplode"))
+
+
+def view_explode_assembly(doc):
+    """把选中的爆炸视图**展开显示**（官方 `IAssemblyDoc.ViewExplodeAssembly`，**零参**，回 `void`）。
+
+    ★ 官方 Remarks 逐字：与 `ViewCollapseAssembly` 成对，用来**切换**装配爆炸视图的显示。
+    """
+    return call_assembly_doc(doc, "ViewExplodeAssembly")
+
+
+def view_collapse_assembly(doc):
+    """把爆炸视图**收拢显示**（官方 `IAssemblyDoc.ViewCollapseAssembly`，**零参**，回 `void`）。"""
+    return call_assembly_doc(doc, "ViewCollapseAssembly")
+
+
+def show_exploded(doc, show_it: bool, explode_view_name: str) -> bool:
+    """显示/收起**指定名字**的爆炸视图（官方 `IAssemblyDoc.ShowExploded2`，**2 参**）。
+
+    :param show_it: True = 按爆炸态显示；False = 按收拢态显示（官方页逐字）。
+    :param explode_view_name: 爆炸视图名（★ 名字从 :func:`get_exploded_view_names` 取）。
+    """
+    return bool(call_assembly_doc(doc, "ShowExploded2", bool(show_it), str(explode_view_name)))
+
+
+def get_exploded_view_names(doc, configuration_name: str) -> list[str]:
+    """取指定配置下的爆炸视图**名字数组**（官方 `GetExplodedViewNames2`，**1 参**）。
+
+    :returns: 字符串列表（★ 官方回 `System.object` = 字符串数组 ⇒ 这里转成 `list[str]`；
+              拿到 `None` 时回**空列表**，★ 而不是把 None 当"有一个空名字"）✓
+    """
+    raw = call_assembly_doc(doc, "GetExplodedViewNames2", str(configuration_name))
+    if raw is None:
+        return []
+    if isinstance(raw, str):
+        return [raw]
+    try:
+        return [str(x) for x in raw]
+    except TypeError:
+        return [str(raw)]
+
+
+def get_exploded_view_count(doc, configuration_name: str) -> int:
+    """数指定配置下的爆炸视图个数（官方 `GetExplodedViewCount2`，**1 参**，回 `System.int`）。"""
+    return int(call_assembly_doc(doc, "GetExplodedViewCount2", str(configuration_name)) or 0)
+
+
+def get_exploded_view_configuration_name(doc, arg) -> str:
+    """官方 `IAssemblyDoc.GetExplodedViewConfigurationName`（**1 参**）。
+
+    ⚠ ★ **那个实参的含义官方页没写**（只有 Parameters 段）⇒ 本函数**原样透传**，
+      ★ **不猜**它是索引还是名字（铁律 5）✓
+    """
+    return str(call_assembly_doc(doc, "GetExplodedViewConfigurationName", arg) or "")
+
+
+def edit_explode_parameters(doc):
+    """打开爆炸参数编辑（官方 `IAssemblyDoc.EditExplodeParameters`，**零参**，回 `void`）。
+
+    ⚠ ★ 官方页未给 Remarks ⇒ **它是否弹交互界面未查证** ⇒ 本包装只透传调用，不代它保证无 UI。
+    """
+    return call_assembly_doc(doc, "EditExplodeParameters")
