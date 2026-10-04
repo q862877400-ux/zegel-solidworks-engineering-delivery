@@ -22,7 +22,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DEFECTS = ROOT / "specs" / "203-bunny-sideline-batches" / "recon" / "b2-defects.json"
 SCAN_DIRS = ("scripts", "mcp-server", "tools")
-SKIP_FILES = {Path(__file__).name}
+SKIP_FILES = {Path(__file__).name,
+              #: ★★ 这两个是**诊断/测量工具** —— ★ 它们的**职责就是指名坏引用**，
+              #:   所以它们不是「引用了不存在的官方页」（★ 事实 528 家族：**提及 ≠ 使用**）✓
+              "judge_two_boundary_cases.py",
+              "measure_official_defects_fp.py"}
 
 #: ★ 只从这两种缺陷里取"错拼名"：
 #:   · `spelling` —— 同一页里同一接口两种拼法（★ 错的那个一定不是真名）
@@ -76,6 +80,11 @@ LINK_REF = re.compile(r"\[\[([A-Za-z0-9_]+)::([A-Za-z0-9_]+)\]\]")
 PATH_REF = re.compile(r"[Cc]:\\swapi\\(types|enums)\\([A-Za-z0-9_]+)(?:\\([A-Za-z0-9_]+)\.md)")
 #: ★ 归一：去 `Method`/`Property`/`Function` 后缀、忽略大小写（★ 与另一对话 §1.1 的判据同款）
 SUFFIX = re.compile(r"(Method|Property|Function)$", re.I)
+#: ★★★ 引文语境判据（第 29 轮加；**事实 544** 判出来的第 ③ 类）：
+#:   若该行是**引用官方原文**，则**不报** —— ★ 那时坏的链接是【官方的】，
+#:   而我们**正是在登记那条官方缺陷**（铁律 5）⇒ 报它等于把"记录官方缺陷"判成我们的错 ✓
+#:   ★ 标记取三种：行内含「逐字」/「Superseded by」/ 行是 `#:` 官方引文块 ✓
+CITATION = re.compile(r"逐字|Superseded by|^\s*#:")
 
 
 def _real() -> tuple:
@@ -100,9 +109,14 @@ def scan(_bad=None) -> list:
             if f.name in SKIP_FILES:
                 continue
             text = f.read_text(encoding="utf-8", errors="replace")
+            _lines = text.splitlines()
             for m in LINK_REF.finditer(text):
                 iface, member = m.group(1), m.group(2)
                 ln = text[:m.start()].count("\n") + 1
+                #: ★★★ 引文语境 ⇒ **不报**（事实 544 判出的第 ③ 类）：
+                #:   那时坏的链接是【官方的】，我们**正是在登记那条官方缺陷**（铁律 5）✓
+                if ln - 1 < len(_lines) and CITATION.search(_lines[ln - 1]):
+                    continue
                 if iface.lower() not in ifaces:
                     hits.append((str(f.relative_to(ROOT)), ln, "[[%s::%s]]" % (iface, member),
                                  "接口 `%s` 在 C:\\swapi\\types 下不存在" % iface))
