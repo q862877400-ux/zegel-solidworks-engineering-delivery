@@ -261,4 +261,36 @@ SPECS_BATCH77 = [
             "`FeatureScopeBodies`/`StartDirectionVector`/`EndDirectionVector`（★ 对象或数组）·"
             "★ `ISet*`（★ `ref`）· ★ `Set*`（★ 写）· ★ `AccessSelections`（★ 前置）✓",
     ),
+    ToolSpec(
+        name="solidworks_drawing_view_annotations",
+        title="Read Drawing View Annotations",
+        module="sw_drawing_query", inject="model", function="view_annotations_report",
+        params=[],
+        doc="★ **读当前图纸**每个视图上的注释 / 显示尺寸 / 弧数****（★ **工程图读侧第一批**）✓"
+            "★★★★★★ **为什么做它**：★ 本仓有 `add_note`（**能写注释**）★ 而**读不回来** ⇒"
+            "★★ **⇒ 又是「能写不能读」**（★ 本会话**第 6 次同型**：`shell`/`dome`/`sweep`/"
+            "`revolve`/`loft` 之后）✓"
+            "★★★★★ **官方例子的**调用序**（★ 签名与 `## Remarks` 都给不了）** ——"
+            "逐字来自 `Get_Names_of_Annotations_Example_VB.md`：`GetFirstView` ⇒"
+            "★ **`' First drawing view is the sheet, so get first drawing view`** ⇒ `GetNextView` ⇒"
+            "`GetName2` ⇒ **`annArray = swDrView.GetAnnotations`** ⇒ `If Not IsEmpty(annArray)` ⇒"
+            "`For Each obj In annArray` ⇒ `currAnn.GetName` ⇒ `GetNextView` ✓"
+            "★★ **⇒ 那印证了本模块 `list_views` 早就写下的那条**：★ **第一个视图是**图纸本身**（sheet）** ⇒"
+            "★ **必须跳过它**（★ 否则会列出一个假视图）✓"
+            "★★★★★★ **✅ 真机读数（★ 建视图 → 写注释 → 读回）**：★ 零件**先存盘** ⇒"
+            "`create_projected_view` ⇒ ★ **`ok: True`** ⇒ `add_drawing_note(x_mm=50, y_mm=50)` ⇒"
+            "★ **`ok: True`** ⇒ ★★ **读回 `view_count = 1`**："
+            "`{name: 工程图视图1, type: 7, annotation_count_by_api: 1, annotations: [细节项目254], "
+            "annotation_len: 1, display_dimension_count: 0, arc_count: 0}` ⇒"
+            "★★★ **两条独立读数一致**（`1` 与 `1`）⇒ `mismatches = 0` ⇒ **判据成立** ✓"
+            "而 `细节项目254` **正是我写进去的那条注释**（★ SolidWorks 自动编号）⇒"
+            "★★★★ **⇒ 「能写」与「能读」在真机上**对上了**** ✓"
+            "★★★★★ **⚠ 两条边界（★ 都实测过）**："
+            "★ **① 零件必须先存盘** —— 不存盘则 `GetPathName()` 是**空串** ⇒ 视图插不上 ⇒"
+            "`view_count = 0`（★ **那是应然的、★ 不是读侧坏了**）·"
+            "★★ **② 本机 `create_three_standard_views` 是 `blocked`**"
+            "（★ 逐字：★「本机实测为 blocked：`CreateFirstAngleViews2` 不可用」）⇒"
+            "★ **要插视图请走 `create_projected_view`** ✓"
+            "★★★★ **⚠ 不读**：★ `GetLineCount()` ⇒ ★ **官方标 `Obsolete`** ⇒ **本模块不碰** ✓",
+    ),
 ]

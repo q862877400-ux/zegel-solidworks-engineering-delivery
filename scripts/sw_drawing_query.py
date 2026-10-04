@@ -58,7 +58,8 @@ __all__ = [
     "sheets_summary",
     "current_sheet_info",
     "list_views",
-]
+
+    "view_annotations_report"]
 
 #: `swDocumentTypes_e`：零件 1 / 装配 2 / **工程图 3**
 SWDOC_DRAWING = 3
@@ -198,6 +199,112 @@ def list_views(model) -> list[dict[str, Any]]:
             break
         view = nxt
     return views
+
+
+# ── 工程图读侧第一批（★ 注释 / 尺寸 / 弧数）─────────────────────────────────────
+def view_annotations_report(model) -> dict:
+    """★ 读**当前图纸每个视图上的注释 / 显示尺寸 / 弧数**（★ 工程图读侧第一批）✓
+
+    ★★★★★★ **为什么做这个**（★ 阶段 4/5）：★ 本仓有 `add_note`（★ **能写注释**）、
+      ★ 而**读不回来** ⇒ ★★ **⇒ 又是「能写不能读」**（★ 本会话第 6 次同型）✓
+
+    ★★★★★ **官方例子的**调用序**（★ 签名与 `## Remarks` 都给不了）** ——
+      逐字来自 `Get_Names_of_Annotations_Example_VB.md`：
+        `GetFirstView` ⇒ ★★ **`' First drawing view is the sheet, so get first drawing view`**
+        ⇒ `GetNextView` ⇒ `GetName2` ⇒ ★★★ `annArray = swDrView.**GetAnnotations**` ⇒
+        `If Not IsEmpty(annArray)` ⇒ `For Each obj In annArray` ⇒ `currAnn.GetName` ⇒ `GetNextView` ✓
+      ★★ **⇒ 那印证了本模块 `list_views` 早就写下的那条**：★ **第一个视图是**图纸本身**（sheet）** ⇒
+        ★ **必须跳过它**（★ 否则会列出一个**假视图**）✓
+
+    ★★★★★ **⚠ `GetAnnotations` 直接回数组** —— ★ 而 `GetAnnotationCount()` 的
+      `## Remarks` 逐字说「Call this method before `GetAnnotations` to determine the size
+      of the array for that method」⇒ ★★ **⇒ 那是给**别的语言**用的（VB 有 `IsEmpty` 判定、
+        C++ 要自己分配数组）⇒ ★ **pywin32 上直接拿数组即可** ✓
+      ★★★ **而本函数**仍然读 `GetAnnotationCount()`** —— ★ 因为它是**独立的第二个判据**
+        （★ 两个数应当一致 ⇒ ★ **不一致就说明有东西没读到**）✓
+
+    ★★★★★ **⚠ 不读**：★ `GetLineCount()` ⇒ ★ **官方标 `Obsolete`** ⇒ **本模块不碰** ✓
+
+    ★★★★★★★ **✅ 真机读数（★ 2026-10-04 轮 136 · ★ 建视图 → 写注释 → 读回）**：
+      ★ 证据：★ `output/drawing-annotations-capability-recheck.json` ✓
+      · ★ `create_projected_view`（★ 零件**先存盘**）⇒ ★ **`ok: True`** ——
+        ★ `verified_by` 逐字：★「返回非 None（★ 底层为 `CreateDrawViewFromModelView3`、
+        ★ **视图名自动本地化**）」✓
+      · ★★ **`create_three_standard_views`（★ 同一张图）⇒ `ok: False`** ·
+        ★ `verified_by` 逐字：★「★ 返回里有建成视图（★ **本机实测为 blocked**：
+        ★ `CreateFirstAngleViews2` 不可用）」⇒ ★ **⇒ 那是**本机的一条已知限制****、
+        ★★ **⇒ 要插视图请走 `create_projected_view`** ✓
+      · ★★★ **写**：★ `add_drawing_note(x_mm=50, y_mm=50, text="…")` ⇒ **`ok: True`** ✓
+      · ★★★★ **读回**：★ **`view_count = **1**`** ⇒
+        `{"name": "**工程图视图1**", "type": **7**, "annotation_count_by_api": **1**,
+          "annotations": ["**细节项目254**"], "annotation_len": **1**,
+          "display_dimension_count": **0**, "arc_count": **0**}` ✓
+      · ★★★★★ **两条独立读数一致**（★ `annotation_count_by_api = 1` 与 `annotation_len = 1`）⇒
+        ★ **`mismatches = 0`** ⇒ **判据成立** ✓
+        而 `细节项目254` **正是我写进去的那条注释**（★ SolidWorks **自动编号**）⇒
+        ★★ **⇒ 「能写」与「能读」在真机上**对上了**** ✓
+      ★★★★★★ **⚠ 而前置有一条**（★ 值记）：★ **零件必须先存盘** ——
+        ★ 实测不存盘 ⇒ `GetPathName()` 是**空串** ⇒ `create_projected_view` **插不了视图** ⇒
+        ★★ **⇒ 于是 `view_count = 0`、★ 而那是**应然的**、★ 不是读侧坏了** ✓
+        ★★★ **可复用判据**：★★★ **"零件/装配体要被投影"的能力，前置是**那个文件有路径**** ✓
+    """
+    require_drawing(model)
+    views = []
+    view = get_com_member(model, "GetFirstView")
+    seen = 0
+    while view is not None and seen < 500:
+        seen += 1
+        try:
+            vtype = int(get_com_member(view, "Type"))
+        except Exception:                                                 # noqa: BLE001
+            vtype = -1
+        try:
+            name = str(get_com_member(view, "GetName2"))
+        except Exception:                                                 # noqa: BLE001
+            name = str(get_com_member(view, "Name") or "")
+        if vtype == SHEET_PSEUDO_VIEW_TYPE:                               #: ★ 跳过"图纸本身"
+            nxt = get_com_member(view, "GetNextView")
+            if nxt is None:
+                break
+            view = nxt
+            continue
+        item: dict[str, Any] = {"name": name, "type": vtype}
+        #: ★ `GetAnnotationCount()` —— 独立的第一个判据（★ 官方 Remarks 说它给数组定大小）
+        try:
+            item["annotation_count_by_api"] = int(get_com_member(view, "GetAnnotationCount"))
+        except Exception as exc:                                          # noqa: BLE001
+            item["annotation_count_by_api"] = "err: %s" % str(exc)[:50]
+        #: ★★ `GetAnnotations()` —— 官方例子用的就是它（★ 直接回数组）
+        try:
+            arr = get_com_member(view, "GetAnnotations")
+            names = []
+            for a in (arr or []):
+                try:
+                    names.append(str(get_com_member(a, "GetName")))
+                except Exception:                                         # noqa: BLE001
+                    names.append("(无名)")
+            item["annotations"] = names
+            item["annotation_len"] = len(names)
+        except Exception as exc:                                          # noqa: BLE001
+            item["annotations"] = "err: %s" % str(exc)[:60]
+        #: ★ `GetDisplayDimensions()` —— 官方 Remarks 说**用它一次取全部**
+        try:
+            dims = get_com_member(view, "GetDisplayDimensions")
+            item["display_dimension_count"] = len(list(dims or []))
+        except Exception as exc:                                          # noqa: BLE001
+            item["display_dimension_count"] = "err: %s" % str(exc)[:50]
+        #: ★ `GetArcCount()` —— 零参 · ★ 非废弃
+        try:
+            item["arc_count"] = int(get_com_member(view, "GetArcCount"))
+        except Exception as exc:                                          # noqa: BLE001
+            item["arc_count"] = "err: %s" % str(exc)[:50]
+        views.append(item)
+        nxt = get_com_member(view, "GetNextView")
+        if nxt is None:
+            break
+        view = nxt
+    return {"view_count": len(views), "views": views,
+            "★_不读": ["GetLineCount（★ 官方标 Obsolete）"]}
 
 
 # ── 24h 计划 段 6 续（Spec Kit `164`）：**图纸比例的读与写** ────────────────────────

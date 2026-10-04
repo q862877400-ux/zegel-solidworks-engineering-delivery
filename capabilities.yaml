@@ -1693,11 +1693,13 @@
     {
       "id": "sketch_edit_ops",
       "label": "草图编辑（倒角 / 镜像 / 转换实体引用）",
-      "level": "stitched",
+      "level": "verified",
       "backends": [
         "solidworks-com-pywin32"
       ],
-      "verified_versions": [],
+      "verified_versions": [
+        "2026"
+      ],
       "dependencies": [
         "SolidWorks",
         "pywin32"
@@ -1709,6 +1711,10 @@
         "　 ❌ **`create_sketch_chamfer` 到不了** —— 选中 2 条后调 `CreateChamfer` 报 `pywintypes.com_error: (-2147417851, '服务器出现意外情况')`。★ `0x80010105` **正是已知事实 47 / 28 那个错误码** ⇒ 属「pywintypes 迟到绑定到不了需要真实指针的接口」这一**架构性限制**，**不是参数没调对**。⚠ 按**事实 53** 停手。",
         "　 ⚠ `convert_entities` / `sketch_mirror` **未实测**（前者要选中的边/环/面，后者要中心线 mark=2 的选中标记）—— **不得当成「验过了」**。",
         "⚠ **无本机运行证据**（等级 `stitched`，不得标 `verified`）：签名经两源互核，但本机从未做过草图倒角/镜像。",
+        "★★★★★ 2026-10-04（接手轮 · 轮 14）**由 `stitched` 转 `verified`** —— ★ 处置 SPEC `202-user-coverage-gaps` 的 **SC-004** ⇒ ★ **本条是第 2 条**（★ 第 1 条是 `topology_readback`）✓ ★★ **功能边界（★ 写死）**：本条 = **镜像 + 转换实体引用**（★ 那两个 `mcp_tools`）；★ **倒角不在本条** —— ★ 它**已拆成独立条目** `sketch_chamfer`（`verified`，★ 真机 **10/10**）✓ ★★★ **真机证据**（★ `tools/probe_sketch_edit_pending_evidence.py` · ★ 走 `sw_guard` · ★ 零弹窗 ⇒ `output/sketch-edit-pending-evidence.json`）：★ **两项都过、★ 且都是几何读数**（★ SPEC 的 Edge Cases 逐字要求「判据要含几何读数」）：· **`convert_entities`** ⇒ 草图段数 **0 → 1** · 能力层回 `ok=true`（`official_return: true` **and** `new_segments: 1`）✓ · **`sketch_mirror`** ⇒ 草图段数 **2 → 3** · 能力层回 `ok=True` ✓",
+        "★★★★★★ 2026-10-04（接手轮 · 轮 5）**本轮顺带修掉一个真 bug —— ★ 参数传错了对象**（★ 值记，★ 因为它是「真机读数先暴露、★ 再看代码才找到」的典型）：★ 真机第一版里 `segments_before` / `segments_after` **都回 `null`** ⇒ 让**三态判据**保守地判 `ok=false`；★★ **而几何其实变了**（同一轮真机、另一条路径读到 **0 → 1**）⇒ ★★★ **真因**：`sw_sketch.get_lines(sketch)` / `get_arcs(sketch)` 的第一个形参是 **`ISketch` 对象**（内部第一句 `_require(sketch)`），★ **而 `_active_sketch_segment_count` 把 `model` 直接传了进去** ⇒ 类型不对 ⇒ 取不到 ✓ ⇒ **修法**：先从 `ISketchManager.ActiveSketch` 取活动草图、再传下去 ✓ ★★★★ **可复用判据**：★★★ **「取数为 `None`」与「真的没变」是两件事** —— ★ 而**三态判据**（★ 变了 True · ★ 没变 False · ★ **量不到 `None`**）的价值就在这里：★★ **它没把「量不到」骗成 False**，★ 才让真因被查出来 ✓（★ 与**事实 517**同族：★ **「我调错了」与「能力坏了」长得一模一样**）✓",
+        "★★★★ 2026-10-04（接手轮 · 轮 5）**而第一版 `convert_entities` 的失败是**我调错了前置****（★ 又一条**事实 517**）：★ 第一版写的是「**先选边 → 再进草图**」⇒ 段数 **0 → 0**、★ 判 False；★★ **真因**：★ **「进草图」这个动作把选区清掉了**（★ 而我当时没核）⇒ ★★★ **修正为「先进草图 → 再选边 → 再投影」**后 ⇒ 段数 **0 → 1** 成，★ 且回读到**草图中选区计数 = 1**（★ 事实 8：★ 只看计数、★ 不信返回值）✓ ★★★★ **可复用判据**：★★★ **凡「先做 A 再做 B」的前置顺序，★ 每一步之后都要**回读状态**** —— ★ 否则**中间那步清掉了什么，你永远看不见** ✓",
+        "★★★★★ 2026-10-04（接手轮 · 轮 14）**⚠ 并记一次**并发事故****：★ 本条的转级**第一次做过**（★ 同一天更早的一轮），★★ **而它被另一路对话对同一个 `capabilities.yaml` 的并发编辑**覆盖掉了**** —— ★ 那一轮我改完时 `level` 确已是 `verified`、★ 而几十分钟后再读**又回到 `stitched`** ✓ ★★★ **⇒ 可复用判据**：★ **共享文件上的并发编辑，症状是「我改的东西莫名回退」** —— ★ 而**它和「我改错了」长得一模一样**（★ 与**事实 517**同族）⇒ ★★★★ **判据：★ 改共享文件前先看它的 mtime、★ 改完再回读一次** ✓",
         "★★ **枚举两源冲突，按铁律 4 取出厂反射**：`swSketchChamfer_DistanceDistance` 在 `C:\\swapi\\enums\\swSketchChamferType_e.md` 里写 **-1**、在出厂反射里写 **1**。本模块取 **1**。★ 这是铁律 4「冲突以出厂类型库为准」的**活例**。",
         "倒角走**非废弃**入口：官方明写 `IModelDoc2.SketchChamfer` 是 `Obsolete`，被 `ISketchManager::CreateChamfer` 取代 ⇒ 本模块用后继。",
         "⚠ **前置条件**（两处都要求「先选中」，本模块**不代选**）：倒角需选中**两条**草图实体；镜像需按官方标记选中（**线段 mark=1** / **中心线 mark=2**）—— 标记是选中时定的，不是传参定的（官方签名 0 参）。",

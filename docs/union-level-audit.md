@@ -86,7 +86,7 @@
 | 76 | `sketch_chamfer` | `verified` | `original` | ✓ | — |
 | 77 | `sketch_dimension_horizontal` | `verified` | `original` | ✓ | — |
 | 78 | `sketch_dimension_vertical` | `verified` | `original` | ✓ | — |
-| 79 | `sketch_edit_ops` | `stitched` | `original` | ✓ | — |
+| 79 | `sketch_edit_ops` | `verified` | `original` | ✓ | — |
 | 80 | `sketch_edit_ops_b3` | `verified` | `original` | ✓ | — |
 | 81 | `sketch_equation_curve` | `verified` | `original` | ✓ | — |
 | 82 | `sketch_line2` | `verified` | `original` | ✓ | — |
@@ -128,8 +128,8 @@
 | `indexed` | 0 |
 | `not_implemented` | 2 |
 | `source_verified` | 0 |
-| `stitched` | 12 |
-| `verified` | 96 |
+| `stitched` | 11 |
+| `verified` | 97 |
 
 ## 三、`source` 分布
 
@@ -148,8 +148,8 @@
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
 | `not_implemented` | 0 | 1 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
-| `stitched` | 0 | 4 | 8 | 0 | 0 |
-| `verified` | 0 | 6 | 72 | 1 | 17 |
+| `stitched` | 0 | 4 | 7 | 0 | 0 |
+| `verified` | 0 | 6 | 73 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

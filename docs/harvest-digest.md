@@ -45,8 +45,8 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 96 | **有我们自己的运行证据**（`evidence` 非空） |
-| `stitched` | 12 | 已缝合，**缺我们自己的运行证据** |
+| `verified` | 97 | **有我们自己的运行证据**（`evidence` 非空） |
+| `stitched` | 11 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 2 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
@@ -88,6 +88,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `topology_optimization` | · `python tools/capture_topology_evidence.py（真机闭环，落 output/topology-evidence.json）`<br>· `⚠⚠ 2026-10-04（接手轮）**如实补记（铁律 5）**：★ **`output/topology-evidence.json` 当前不在仓里**（★ 脚本在、★ `output/` 被 gitignore）⇒ ★★ 本条目里引用的那些读数（`AnalysisType == 13` · `GetPlotCount == 4` 等）**回不到原文**，要复现就**重跑 `tools/capture_topology_evidence.py`** ✓`<br>· `pytest tests/test_sw_topology_contract.py（8 条契约测试，无 COM）` |
 | `costing` | · `python tools/verify_costing_e2e.py（⇒ ★★ **verdict 是 `partial`、不是 `pass`** —— ★⚠ 2026-10-04（接手轮）更正：★ 此处原写「verdict: pass」，★ 而**证据文件** output/costing-evidence.json 逐字是 `"verdict": "partial"` · `"passed": 5` · `"of": 6` ⇒ ★★★ **5/6**；★ 唯一未过的那一步是 **`list_templates`**（★ 其余五步 `get_costing_manager` / `evidence` / `body_count` / `list_bodies` / `read_analysis` 全 `true`）✓ 处置 `JUDGE-A_B.md` 的 🔴 **A-moldcosting V-1**：「★ 条目写 `verdict: pass`，★ 文件是 `partial`（5/6）；★ 同仓另两条文字（`costing_readback` + ROADMAP）都写 partial ⇒ ★ **一个文件被写成两种结论**」✓ 依据 output/costing-evidence.json 逐字）` |
 | `helix_and_spiral` | · `python tools/verify_helix_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画圆 → 选中 → 建螺旋线 → **读回定义** → 关件不保存，**13/13 通过**，证据落 output/helix-smoke-evidence.json）`<br>· `pytest tests/test_sw_helix_contract.py（**契约测试，无 COM**）` |
+| `sketch_edit_ops` | · `python tools/verify_sketch_edit_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画两条相接直线 → 选中两条 → 调 `create_sketch_chamfer`，**8/10** —— 选中前置成立，但倒角报错）`<br>· `pytest tests/test_sw_sketch_edit_contract.py（**16 条契约测试，无 COM**）` |
 | `equations` | · `python tools/verify_equation_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新建临时零件 → 加方程式 → 列 → 求解 → 关件不保存，**5/5 通过**，证据落 output/equation-smoke-evidence.json）`<br>· `pytest tests/test_sw_equation_contract.py（**10 条契约测试，无 COM**）` |
 | `sketch_query` | · `python 真机（轮 399）★ **PASS** —— 24h 计划 v2 段 3：`solidworks_current_sketch_name`（读当前活动草图名）。真机（走 `sw_guard`）：草图打开时回 **「草图1」**（**真名**，不是 English fallback）；草图**关闭后** + 自定义回退值 ⇒ 回**那个回退值**（★ 验证的是**已文档化的局限**：★ 回退值 ≠ 真名 ⇒ 别拿它去按名取草图）。证据 output/part-read-dimension-evidence.json（`verdict: pass` 4/4）。★ 同轮分诊补了**第四/五层证据**：`*_report` 包装已暴露⇒不是缺口（此前把 `sw_selection_spec` 的 2 条误判为缺口）；**空存根**（`pass`-only）⇒不做。`<br>· `python tools/verify_sketch_getters_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画 1 条线 + 1 段弧 → 逐个调取法 → 退草图 → 关件不保存，**17/17 通过**，证据落 output/sketch-getters-smoke-evidence.json）`<br>· `pytest tests/test_sw_sketch_contract.py（**12 条契约测试，无 COM**）`<br>· `python tools/probe_sketch_getter_shapes.py + probe_spline_creation.py + probe_spline_redraw.py（**真机**，SW 2026 SP4.1 / 34.4.1）：**按类型取法全是数值数组** （line/arc/ellipse = **12 / 16 / 22** 个 `float` 每实体，画 1/2 个 ⇒ 12/24 · 16/32 · 22/44）；★★ 并查出 **`sketch_spline` 是静默空操作** —— `CreateSpline2` 返回 `None`、段数 **0**，**重绘后仍是 0**（排除了官方 Remark 的「必须重绘」解释）⇒ 已改成**失败即抛**`<br>· `python tools/probe_slot_and_point_shapes.py（**真机**，SW 2026 SP4.1 / 34.4.1）：★ **推翻轮 141 的一概而论** —— `get_sketch_slots` 画 1/2 个 ⇒ **1/2** 个 `CDispatch`；`get_sketch_points` 画 1/2 条直线 ⇒ **2/4** 个（**每条线两个端点**）⇒ **这两条返回对象列表**，而 `get_lines`/`get_arcs`/`get_ellipses` 返回数值数组`<br>· `python tools/capture_sketch_evidence.py（**真机**，2026-10-01 轮 222 / 砌墙 W1：新零件 → 画 1 条线 + 1 个圆 → **退草图** → 按名取草图对象 → 4 个读数 + 2 个负例，**verdict: pass**，证据落 output/sketch-evidence.json）—— ★ 这一步是**挂成 MCP 工具之后**的验证：走的是工具真实路径（import tool_specs_batch18._sketch_args），不是只调底层函数。★ 它当场抓到一个只有真机能暴露的 bug：草图关闭时 sw_part.current_sketch_name 回**英文 fallback**「Sketch1」，而中文 UI 下真名是「草图1」⇒ 新加 sw_sketch.resolve_sketch （中英文候选名 → 特征树兜底 → 抛错）修掉。` |
 | `standard_parts_toolbox` | · `python -c "import sw_toolbox_index as tb; print(len(tb.list_standards()), len(tb.load_index()['parts']))"（**2026-10-01 轮 163 实跑**：**19** 套标准 / **1844** 个零件）`<br>· `tb.search('bearing') ⇒ **184** 条（检索可用）`<br>· `★ **可核的产物**：`scripts/sw_toolbox_index.py`（实现）+ `scripts/toolbox_index.json`（索引本体）—— ★ 上面那两个数字（19 套 / 1844 个零件）可从它们重算。` |
@@ -211,7 +212,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 
-### 4.1 未达 `verified` 的能力（14 条）
+### 4.1 未达 `verified` 的能力（13 条）
 
 | 能力 | `level` | `source` | 为什么还没到 `verified`（取 `limitations` 首条）|
 |---|---|---|---|
@@ -225,7 +226,6 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `routing` | `stitched` | `mixed` | ★★★ 2026-10-01（轮 279）**由 verified 降为 stitched**，依据是**可执行的探测**：cadstudio_routing_preflight 回 **blocked** / readyForNativeWrite=false / error_code=routing_addin_or_license_unavailable，blocker=「未检测到 SOLI |
 | `animation_export` | `stitched` | `original` | ★★★★★ 2026-10-01（轮 289）**理由第六次也是最后一次收窄 —— 而这次到了"通用错误码"这一层，按事实 53 停止深挖**：
   ★ **本轮查清了那个错误码的含义**：`save_document` 的内部是 `model.Extension.SaveAs(path, 0, 1, …, errors, warnings)`，★ 而两个输入参数都**对**（`swSaveAsV |
-| `sketch_edit_ops` | `stitched` | `original` | ★★★ **2026-10-01（轮 164）更正轮 122 的定性**：轮 122 看到 `type=2` 报`com_error 0x80010105` 就判它「**架构性限制、到不了**」并停手 —— **那是误判**。★ 轮 164 用 `tools/probe_chamfer_forms.py` **逐类型试 + 回读线段数**（`tools/probe_chamfer_forms.py |
 | `geometric_tolerance` | `stitched` | `original` | ★★★ **2026-10-01（轮 166）穷尽式结论**：`IGtolFrame.AddIndicator` 那半 —— `tools/probe_gtol_indicator_matrix.py` 把 `BorderType`(0..3) × `TolType`（官方 Remarks 允许的 **5 个**：20/22/21/25/13）= **20 组全试**，而**每一组的帧都拿到了** |
 | `analysis_run_readback` | `stitched` | `original` | ★★★ ★ 2026-10-02（轮 376）**措辞更正**（★ 事实 293）：先前写的「`run_analysis` **进入求解即挂**」**会误导** —— 观察器抓到屏幕上一直有一个 SolidWorks Simulation 的**求解进度窗**（`DSH-142`）：`当前任务: **建立刚度矩阵**` · `已用时间: **33分0秒**` · `自由度: 30,456` · ` |
 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ⚠⚠⚠ **未真机验证**（真机报后端级错误）—— 等级 = `stitched` |

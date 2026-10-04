@@ -10,7 +10,7 @@
 
 | 口径 | 数 |
 |---|---|
-| 「死路」条目 | **66** |
+| 「死路」条目 | **67** |
 | 涉及能力 | **38** |
 
 ## 逐条（★ 按能力分组；等级 = 该能力当前等级）
@@ -149,10 +149,11 @@
 
 - 轮 281 填实（空壳）：sw_sketch_edit.create_sketch_chamfer。★ 注意与特征倒角(solidworks_chamfer)不是一回事；★ 而事实 47 的后端限制说的是**特征**倒角，草图倒角另算。证据 tools/verify_sketch_edit_smoke.py（真机）
 
-### `sketch_edit_ops`（stitched）
+### `sketch_edit_ops`（verified）
 
 - ★★★ **2026-10-01（轮 164）更正轮 122 的定性**：轮 122 看到 `type=2` 报`com_error 0x80010105` 就判它「**架构性限制、到不了**」并停手 —— **那是误判**。★ 轮 164 用 `tools/probe_chamfer_forms.py` **逐类型试 + 回读线段数**（`tools/probe_chamfer_forms.py`）：`type=0`（默认）/ `type=1` ⇒ 段数 **2 → 2**（没变）且返回 `None`；**`type=2`（`distance_equal`）⇒ 段数 `2 → 3`（倒角真的建出来了）**，只是**返回对象拿不到**（`com_error 0x80010105`）。⇒ ★★ 真正的限制是「**拿不到返回对象**」，**不是**「做不了倒角」。★ 根因：轮 122 **只看异常、没回读副作用** —— 与事实 94 那一族（**不信返回值，回读状态**）同源。⇒ ★ 已把倒角拆成独立条目 `sketch_chamfer`（`level: verified`，真机 **10/10**）；本条目**仍为 `stitched`**：`sketch_mirror` 与 `convert_entities` **本轮未单独取证**。
 - ❌ **`create_sketch_chamfer` 到不了** —— 选中 2 条后调 `CreateChamfer` 报 `pywintypes.com_error: (-2147417851, '服务器出现意外情况')`。★ `0x80010105` **正是已知事实 47 / 28 那个错误码** ⇒ 属「pywintypes 迟到绑定到不了需要真实指针的接口」这一**架构性限制**，**不是参数没调对**。⚠ 按**事实 53** 停手。
+- ★★★★★★ 2026-10-04（接手轮 · 轮 5）**本轮顺带修掉一个真 bug —— ★ 参数传错了对象**（★ 值记，★ 因为它是「真机读数先暴露、★ 再看代码才找到」的典型）：★ 真机第一版里 `segments_before` / `segments_after` **都回 `null`** ⇒ 让**三态判据**保守地判 `ok=false`；★★ **而几何其实变了**（同一轮真机、另一条路径读到 **0 → 1**）⇒ ★★★ **真因**：`sw_sketch.get_lines(sketch)` / `get_arcs(sketch)` 的第一个形参是 **`ISketch` 对象**（内部第一句 `_require(sketch)`），★ **而 `_active_sketch_segment_count` 把 `model` 直接传了进去** ⇒ 类型不对 ⇒ 取不到 ✓ ⇒ **修法**：先从 `ISketchManager.ActiveSketch` 取活动草图、再传下去 ✓ ★★★★ **可复用判据**：★★★ **「取数为 `None`」与「真的没变」是两件事** —— ★ 而**三态判据**（★ 变了 True · ★ 没变 False · ★ **量不到 `None`**）的价值就在这里：★★ **它没把「量不到」骗成 False**，★ 才让真因被查出来 ✓（★ 与**事实 517**同族：★ **「我调错了」与「能力坏了」长得一模一样**）✓
 
 ### `surface_features`（verified）
 
