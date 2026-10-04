@@ -179,7 +179,7 @@ _BATCH75: list[ToolSpec] = [
             "★★ 同孔表：`InsertTableAnnotation` **建不出修订表**（它没有\"表类型\"参数）⇒ 走**真入口**。"
             "★★ 官方 Returns 逐字：**已有修订表时回 `null`** ⇒ ★ **第二次调用「回 null」是契约、不是失败**"
             "（★ 返回值里有 `raw_is_none` 供按契约解释）。"
-            "★ 真机证据：`output/drawing-batch-evidence.json` 的 A7 格（两格都返回非 None）。",
+            "★ 真机证据：`output/drawing-batch-evidence.json` 的 A7 格（两格都返回非 None）。 ★ 别名: pdm, pdm_operations, revision, vault",
     ),
     ToolSpec(
         name="solidworks_drawing_insert_center_marks",

@@ -46,10 +46,7 @@ SPECS_BATCH80 = [
                                                "the classic 'type mismatch' / DISP_E_TYPEMISMATCH). "
                                                "★ Accepts the signed value Python's COM layer "
                                                "raises, not only the unsigned hex form.")],
-        doc="Turn an HRESULT into plain words using THIS REPO's table. "
-            "★★ Its own docstring states the discipline: when the code is not in the table it says "
-            "so — it does NOT invent a meaning (repo rule 5). ★ Source is the repo's own table, "
-            "NOT an official enum page, so treat the text as a repo-authored hint.",
+        doc="Turn an HRESULT into plain words using THIS REPO's table. ★★ Its own docstring states the discipline: when the code is not in the table it says so — it does NOT invent a meaning (repo rule 5). ★ Source is the repo's own table, NOT an official enum page, so treat the text as a repo-authored hint.",
     ),
     ToolSpec(
         name="solidworks_automation_enter_command_lock",

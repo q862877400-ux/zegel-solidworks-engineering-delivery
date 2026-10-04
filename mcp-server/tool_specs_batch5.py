@@ -88,7 +88,7 @@ SPECS_BATCH5 = [
         module="sw_render_material", function="collect_appearance_evidence",
         inject="model",
         read_only=True,
-        doc="Collect appearance evidence for the active document (read-only, for verification).",
+        doc="Collect appearance evidence for the active document (read-only, for verification). ★ 别名: appearance, background, scene",
         param_alias={},
         params=[],
     ),

@@ -79,7 +79,7 @@ SPECS_BATCH25 = [
                               "sub-assemblies."),
         ],
         doc="List the components of the ACTIVE assembly: for each one its name, file path, "
-            "whether it is suppressed and whether it is visible. ★ Reading only.",
+            "whether it is suppressed and whether it is visible. ★ Reading only. ★ 别名: batch, list, operation, operations",
     ),
     ToolSpec(
         name="solidworks_assembly_list_mates",
@@ -97,10 +97,6 @@ SPECS_BATCH25 = [
         module="sw_assembly", function="get_interference_detection",
         inject="asm_model",
         params=[],
-        doc="Run interference detection on the ACTIVE assembly and return an auditable report: "
-            "`status` (pass when nothing interferes / warn when something does / blocked when the "
-            "check itself failed), `interference_count`, and per-interference `volume` + "
-            "`component_count`. ⚠ `blocked` means the CHECK failed — do not read it as 'no "
-            "interference'. ★ Reading only (it runs the detector, it does not change the model).",
+        doc="Run interference detection on the ACTIVE assembly and return an auditable report: `status` (pass when nothing interferes / warn when something does / blocked when the check itself failed), `interference_count`, and per-interference `volume` + `component_count`. ⚠ `blocked` means the CHECK failed — do not read it as 'no interference'. ★ Reading only (it runs the detector, it does not change the model).",
     ),
 ]

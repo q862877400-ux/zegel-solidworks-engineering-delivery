@@ -58,7 +58,7 @@ SPECS_BATCH14 = [
         inject="model",
         doc="List the entities of one body (kind EDGE, FACE, or VERTEX). "
             "⚠ Index order is NOT promised stable by the official API — do not treat "
-            "body_index as a persistent reference across rebuilds.",
+            "body_index as a persistent reference across rebuilds. ★ 别名: body, edge, edges, entit, vertex, vertices",
         params=[
             Param("kind", str,
                   description="Entity kind. Valid values (from sw_selection_spec.ENTITY_KINDS): "

@@ -5292,3 +5292,42 @@ C2 的 90.8% 数字旁**没带「仅 273/433 适用」** ✓
 `t1_build_alias_table.py` · `t1_tally_alias_gate.py` · `docs/tool-aliases.md`（生成物）·
 `output/t1-alias-{candidates,gain,final}.json` · `output/t1-judge/alias-out-{0,1,2}.json` ·
 `tools/metric_scope.py` 的 `alias_gain` 口径（★ 含「不算什么」：不证明用户会这么说）✓
+
+---
+
+| 520 | **★★★★★ 别名这条路的三条方法论教训 —— ★ 本项目已实测出「局部增益 ≠ 整体增益」且「平均值会掩盖天花板」** —— 2026-10-04（接手轮 T1-5/T1-6，规格 `specs/206-c1c6-harvest/`）。
+
+**背景**：T1 把 C5 手核的「换名已有」做成别名，过三道闸（机械筛 → 增益实测 → 语义闸）后
+采纳 10 条，按 D-2 把别名行追加进 `doc`。★ 然后用**两面**复测（★ 刻意不只报有利的一面）：
+
+| 面 | 测什么 | 现状（剥掉别名）| 装上后 | 差 |
+|---|---|---|---|---|
+| **A** | 48 题的**中文**查询 | top-1 19% · top-5 25% | top-1 19% · top-5 25% | ★★ **精确的 0** |
+| **B** | 别名**自己的词**当查询 | top-1 7 · top-5 37% | top-1 10 · top-5 38% | ★ 几乎不动 |
+
+★★ **面 A = 0 的原因**：别名是**英文**，中文查询与它**词元不重叠** ⇒
+**英文别名对中文用户无效**（★ 本条与事实 519 的「英语工具面」是同一条线的两端）✓
+
+★★★ **但逐工具量（十个别名同时装）却是：提升 5 · 不变 5 · 变差 0** ——
+★ 因为「不变」那 5 个里 **4 个本来就是 rank 1**（**没有上升空间**）✓
+
+**⇒ 三条可复用的方法论教训**：
+```
+① ★★ 「增益实测」分不开对错 —— 查询词就是被追加的别名本身，
+   语义上错的别名一样提升（★ 事实 519 已记）
+② ★★ 「逐条增益」推不出「整体增益」 —— 孤立测 45/52 提升、最大 56→1；
+   十个一起装后平均几乎不动 ⇒ ★ 这是【局部外推到整体】的错，与 ① 同族
+③ ★★ 「平均值会掩盖天花板」 —— 『平均只涨 1 个点』说的是那 5 个**已在 rank 1** 的工具，
+   不是那 5 个真提升的 ⇒ ★★ 平均值**既不能证明有效、也不能证明无效**，必须看逐项
+```
+
+**★ 处置**：按 D-2 自己的判据（**别名必须挣到字节**）**只留 5 条、回退 5 条**：
+留 `assembly_list_components`（15→1）· `entities_on_body`（2→1）· `collect_appearance_evidence`（2→1）·
+`drawing_create_revision_table`（2→1）· `drawing_insert_datum_tag`（4→2）；
+回退 `assembly_check_interference` / `automation_explain_hresult` / `gtol_insert` /
+`insert_global_bounding_box` / `part_bounding_box`（★ 全是 1→1 或 2→2）✓
+★ 工具总数实测仍 **433**（★ 只追加 `doc` 文本，未动 schema 契约）✓
+
+★ **依据**：`tools/t1_remeasure_sc1.py`（两面 A/B）· `tools/t1_joint_gain.py`（联合逐工具）·
+`tools/t1_revert_nonearning_aliases.py`（回退）· `tools/t1_apply_aliases_to_doc.py`（追加）·
+`output/t1-joint-gain.json` · `docs/tool-aliases.md` §六 · `tools/metric_scope.py` 的 `alias_gain` 口径 ✓

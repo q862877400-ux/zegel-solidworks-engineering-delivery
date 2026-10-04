@@ -228,7 +228,7 @@ _BATCH73: list[ToolSpec] = [
             "（★ 这既由官方签名决定，★ 也正好合上规则 3 的「禁裸坐标」）。"
             "★ 入口是 `IModelDoc2`（**不是** `IModelDocExtension`）—— ★ 与表面粗糙度符号那 14 参"
             "**不是同一个宿主对象**。"
-            "★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量**，★ 不是「返回非 None」。",
+            "★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量**，★ 不是「返回非 None」。 ★ 别名: annotation, balloon, datum, gdt, gtol, note, tolerance",
     ),
 ]
 
