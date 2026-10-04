@@ -10,8 +10,8 @@
 
 | 口径 | 数 |
 |---|---|
-| 「死路」条目 | **67** |
-| 涉及能力 | **38** |
+| 「死路」条目 | **68** |
+| 涉及能力 | **39** |
 
 ## 逐条（★ 按能力分组；等级 = 该能力当前等级）
 
@@ -84,6 +84,10 @@
 ### `loft_and_sweep`（verified）
 
 - ★★★ 2026-10-01（轮 313）**本条是「四家有我们没有」里**核实的真缺****： ★ 全仓 grep `loft` ⇒ **工具 0 · 函数 0**（`sw_api_sldworks` 反射表除外），`sweep` 同样 0。 ★ 而**放样与扫描是 SolidWorks 最基本的两种特征**（★ 与拉伸 / 旋转并列）—— ★ 我们有拉伸、旋转、肋、抽壳、圆顶，**就是没有这两种**。 ★ 四家并集（349）里正有 **`loft`**（★ Slacker-LLC 提供）与 `sweep`。 ★★ **判据已换成硬的**（2026-10-01 轮 314）：真机定出 **放样特征 `GetTypeName2()` 回 `Blend`**（★ 对照拉伸回 `Extrusion`）， ★ 本包装现在**要求类型名 = `Blend`**（★ 它比"体积期望"可靠： 体积依赖我造几何的能力，★ 而类型名只依赖 API 对不对）。 ⚠ **而体积仍未验**： ★★ **扫描（轮 315）**：★ 入口是 `CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature` （★ `InsertProtrusionSwept*` 整族已被 SOLIDWORKS 2018 标为 **obsolete** —— 官方 Remarks 原文）。 ★ mark：**轮廓=1 · 路径=4** · 引导线=2 · 方向向量=128（官方专文）。 ⚠ **官方硬约束**：路径的**起点必须落在轮廓所在平面上** —— 真机上违反它就建不成（★ 本次 `Right Plane` 那一例就是）。 ⚠ `AccessSelections(model, 空Dispatch)` 在本机报 **`0x80010105`**（★ 事实 47 的后端限制） —— ★★ **而它非必需**：真机上它报错时**特征仍然建成**。
+
+### `macro_execution`（verified）
+
+- ★★ **`.swb` 下 `ProcedureName` 无法区分**：真机把过程名换成 `_definitely_not_a_proc_` **仍回 True**（★ 与官方 Remarks「Options/Error 只对 VBA 宏生效」一致）⇒ ★ `.swb` 请把过程名当**入口提示**、不要当校验手段 ✓
 
 ### `mass_property_read`（verified）
 
