@@ -5331,3 +5331,51 @@ C2 的 90.8% 数字旁**没带「仅 273/433 适用」** ✓
 ★ **依据**：`tools/t1_remeasure_sc1.py`（两面 A/B）· `tools/t1_joint_gain.py`（联合逐工具）·
 `tools/t1_revert_nonearning_aliases.py`（回退）· `tools/t1_apply_aliases_to_doc.py`（追加）·
 `output/t1-joint-gain.json` · `docs/tool-aliases.md` §六 · `tools/metric_scope.py` 的 `alias_gain` 口径 ✓
+
+---
+
+| 521 | **★★★★ C3 的 534 条前置里，**可机检的只有 102 条（51 个能力）** —— 剩下 220 条是**环境要求**，不是缺陷** —— 2026-10-04（接手轮 T2-1/T2-2/T2-5，规格 `specs/206-c1c6-harvest/`）。
+
+**输入端只用 C3 对账**（`specs/204-bunny-moat-batches/recon/c3-merged.json`，只读复用）：
+```
+98 个能力条目 · 91 个有前置 · 前置条目共 **534**
+  三态: not_covered **322** · cannot_tell 81 · covered 131
+  承上：另一个对话的 verdict = has_uncovered 80 · cannot_tell 15 · all_covered **仅 3**
+```
+
+**★ 机械分类的判据（★ 两段式，且写明「不算什么」）**：
+```
+★ 可机检 = 文本提到 **会话/文档/选择/保存态**（已运行·已连接·已打开·活动文档·选中·已保存·
+  命令锁 CommandInProgress · active document · selected · saved …）
+   ∧ **不含** 外部工具链/人工操作（Visual Studio · Immediate 窗口 · 建好工程 · GUID · 注册表 ·
+   regasm · 录制宏 · 手工/手动 · 点击菜单 …）
+⇒ ★ 结果: **102 条可机检**（51 个能力）· **220 条不可机检**
+   （7 条外部工具链 + **213 条没提到会话状态**）
+```
+
+★★ **本条的要点：那 220 条「不可机检」不是缺陷** —— 它们是**环境/工具链要求**
+（如「先在 Visual Studio 2010+ 里建好 C# add-in 工程」「打开 Immediate 窗口」），
+本仓**不该**为此写断言 ✓ ★★ **把它们算成"缺口"会虚增分母** —— 这正是**判据要写「不算什么」**的又一例 ✓
+
+**★ 可机检前置最多的能力**（值得先补断言）：`selection_helpers` 8 · `declarative_hole_creation` 6 ·
+`preview_and_review_report` 4 · `holes_and_finishing` 3 · `geometry_and_delivery_review` 3 ·
+`simulation_study_create` 3 · `config_and_export` 3 · `surface_features` 3 · `loft_and_sweep` 3 ·
+`sketch_primitives_b1` 3 · `sketch_edit_ops_b3` 3 · `sketch_modify_ops` 3 …
+
+**★ 抽样的可机检前置**（真能写成断言的样子）：
+- 「调 `InsertFeatureChamfer` 前须先选中要倒角的边（示例两次 `SelectByID2 EDGE`，第二次 append=true）」
+- 「建草图槽前须已打开新零件文档并进入草图：`SelectByID2` 选 Front Plane → `InsertSketch(true)` → `CreateSketchSlot`」
+- 「建草图前先用 `SelectByID2` 选中基准面（`"PLANE"`、mark 0）再 `InsertSketch`」
+- 「镜像前先 `ClearSelection2`；被镜像特征 mark=1、镜像平面 mark=2；参考平面须用 `Feature` 选而非 `Entity`」
+
+**★ 交付物**：`docs/precondition-coverage-gaps.md`（159 行，**只出清单** —— D-5：不改 `capabilities.yaml` 的 level）
+★★ 本清单**不算什么**（已写进文件）：① 不等于「这 98 条能力是坏的」② **不是** level 的依据
+③ 不可机检的 220 条不算缺陷 ④ ★ 来源是**另一个对话的判读**且全程 `conditional_pass`
+（其 REPORT §七 自陈 C3 的更正**未再被门禁复核**）⇒ **本清单是候选队列，采纳前需逐条过闸** ✓
+
+★ **依据**：`tools/t2_filter_checkable_preconditions.py` · `tools/t2_write_precondition_gaps.py` ·
+`output/t2-preconditions-checkable.json` · `docs/precondition-coverage-gaps.md` ·
+`specs/204-bunny-moat-batches/recon/c3-merged.json`（只读）✓
+
+★ **本批未做（留下一轮）**：T2-3（★ 先证明「≥3 条测试原本是假绿的」—— 事实 57 的机制）·
+T2-4（每条断言配负例）· T2-6（真机验证，D-3 一次一个）✓
