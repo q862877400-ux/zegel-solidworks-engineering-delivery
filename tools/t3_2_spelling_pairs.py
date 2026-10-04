@@ -41,12 +41,12 @@ print("★ 已核验 spelling: **%d** 条" % len(spelling))
 #: ★ 错拼候选名 = 不是本机真名、且形状像 COM 标识符的名字（★ 从 why/quote 里抽）
 import re
 CAND = re.compile(r"\b([A-Z][A-Za-z0-9]{3,})\b")
-bad: dict = {}
+pairs: dict = {}
 for r in spelling:
     blob = "%s\n%s\n%s" % (r.get("quote_a") or "", r.get("quote_b") or "", r.get("why") or "")
     for m in CAND.finditer(blob):
         nm = m.group(1)
-        if nm in real or nm in bad:
+        if nm in real or nm in pairs:
             continue
         #: ★ 与某个真名的编辑距离 ≤2 ⇒ 判为「该真名的错拼」
         best = None
@@ -64,10 +64,10 @@ for r in spelling:
             #:   ② `真错拼`：其余（字母换位 / 漏字母，如 `IConfiguraiton` → `IConfiguration`）
             #:      ⇒ ★ 这才是"照它写就一定失败"的那种 ✓
             cls = "少I前缀" if cor == "I" + nm_is else "真错拼"
-            bad[nm_is] = {"correct": cor, "dist": best[1], "cls": cls,
+            pairs[nm_is] = {"correct": cor, "dist": best[1], "cls": cls,
                           "why": (r.get("why") or "")[:110]}
 
-print("★★ 抽到「错拼 → 正确名」配对: **%d** 对" % len(bad))
+print("★★ 抽到「错拼 → 正确名」配对: **%d** 对" % len(pairs))
 print()
 L = [
     "# 官方源里的**错拼名 → 正确名**表（★ T3-2：554 条 `spelling` 的机械复核）",
@@ -82,7 +82,7 @@ L = [
     "|---|---|",
     "| 本机真名集合 | **%d**（接口目录 + 枚举页）|" % len(real),
     "| 已核验 `spelling` | **%d** 条（★ 其总数 554）|" % len(spelling),
-    "| ★ 本表配对出 | **%d** 对「错拼 → 正确名」|" % len(bad),
+    "| ★ 本表配对出 | **%d** 对「错拼 → 正确名」|" % len(pairs),
     "",
     "★★ 本表「不算什么」：",
     "",
@@ -97,13 +97,13 @@ L = [
     "| 错拼 | ★ 正确名 | 编辑距离 | 官方源的解释 |",
     "|---|---|---:|---|",
 ]
-for nm, info in sorted(bad.items(),
+for nm, info in sorted(pairs.items(),
                        key=lambda kv: (kv[1]["cls"] != "真错拼", kv[1]["dist"], kv[0])):
     if info["cls"] == "真错拼":
         L.append("| `%s` | `%s` | %d | %s |"
                  % (nm, info["correct"], info["dist"], info["why"].replace("|", "/")[:100]))
-n_true = sum(1 for v in bad.values() if v["cls"] == "真错拼")
-n_pref = len(bad) - n_true
+n_true = sum(1 for v in pairs.values() if v["cls"] == "真错拼")
+n_pref = len(pairs) - n_true
 L += [
     "",
     "## 三 · ★ 少 `I` 前缀（**不是拼错** —— 是官方**链接写法不完整**）",
@@ -116,7 +116,7 @@ L += [
     "| 官方链接里写 | ★ 真名 |",
     "|---|---|",
 ]
-for nm, info in sorted(bad.items(),
+for nm, info in sorted(pairs.items(),
                        key=lambda kv: (kv[1]["cls"] != "少I前缀", kv[0])):
     if info["cls"] == "少I前缀":
         L.append("| `%s` | `%s` |" % (nm, info["correct"]))
@@ -138,5 +138,5 @@ out = ROOT / "docs" / "recon-206" / "spelling-pairs.md"
 out.write_text("\n".join(L) + "\n", encoding="utf-8")
 print("★ 写出 %s（%d 行）" % (out.name, len(L)))
 print()
-for nm, info in sorted(bad.items(), key=lambda kv: (kv[1]["dist"], kv[0]))[:10]:
+for nm, info in sorted(pairs.items(), key=lambda kv: (kv[1]["dist"], kv[0]))[:10]:
     print("   %-22s → %-22s (d=%d)" % (nm, info["correct"], info["dist"]))

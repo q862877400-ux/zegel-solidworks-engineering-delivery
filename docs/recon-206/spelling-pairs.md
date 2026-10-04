@@ -43,7 +43,7 @@
 | `IEdgeflangeFeatureData` | `IEdgeFlangeFeatureData` | 1 | 同一接口里同一成员出现两种拼法：小写 f（flange）+ 漏字母（Postion）。PositionOffsetType.md 存在而 PostionOffsetType.md 不存在 → 死链。 |
 | `IEquationaMgr` | `IEquationMgr` | 1 | 同族两页同一句，Add2 写成 IEquationaMgr（多一个 a）。已全库搜索 C:\swapi：不存在任何 IEquationaMgr 文件，该链接必为死链。 |
 | `IExtrudedFeatureData2` | `IExtrudeFeatureData2` | 1 | 接口名两拼：IExtrudedFeatureData2（多一个 d）/ IExtrudeFeatureData2。本页 frontmatter 与标题都是 IExtrudeFeatureData2；实 |
-| `IFace` | `IFacet` | 1 | 同一页 Obsolete 继承句里同一接口两种拼法：IFace::GetTessTriStripNorms 少末尾 2，其余 11 个链接均为 IFace2::。types 下只有 IFace2 目录 |
+| `IFace` | `IFace2` | 1 | 同一页 Obsolete 继承句里同一接口两种拼法：IFace::GetTessTriStripNorms 少末尾 2，其余 11 个链接均为 IFace2::。types 下只有 IFace2 目录 |
 | `IFaces2` | `IFace2` | 1 | 同族两页同一接口两种拼法：GetEdges.md 与 IGetEdges.md 正文把 IFace2::EnumEdges 写成 IFaces2::EnumEdges（多一个 s），而同句后半段与另页 |
 | `IFae2` | `IFace2` | 1 | 同一页 See Also 写 IFae2（c 写成 a），同页 Remarks 写 IFace2。无 IFae2 目录；GetAllDecalProperties.md 在 IFace2 目录下存在。 |
 | `IFeaturemanager` | `IFeatureManager` | 1 | 同一句里同一接口名两种大小写：IFeaturemanager / IFeatureManager。全库官方名为 IFeatureManager（带大写 M）。 |
@@ -91,8 +91,8 @@
 | `Configurations` | `IConfiguration` | 2 | 同一页：参数定义行链的是 swInConfigurationOpts_e，下一行正文写成 swInConfiguration_e（少 Opts）。C:\swapi\enums 下无 swInConfi |
 | `Dimensions` | `IDimension` | 2 | 同族相邻两页同一句前置，枚举名一为复数 Dimensions、一为单数 Dimension，同一标识符两种写法。 |
 | `Edges` | `IEdge` | 2 | 同接口同一概念两种大小写。ISetConstraintCurves.md 也用小写 [[edges]]，SetConstraintCurves.md 也用大写 [[Edges]]；C:\swapi 下 |
-| `Face` | `IFacet` | 2 | 同族（插入新零件）两页同一个面/平面参数写成两种拼法：Face_or_Plane_to_select 与 FaceOrPlaneToSelect。 |
-| `Faces` | `IFacet` | 2 | 同一列表三行示例链接，VB.NET 那行目标名 FAces 与 C#/VBA 的 Faces 拼法不同；该 .md 确实以此名存在。 |
+| `Face` | `IFace2` | 2 | 同族（插入新零件）两页同一个面/平面参数写成两种拼法：Face_or_Plane_to_select 与 FaceOrPlaneToSelect。 |
+| `Faces` | `IFace2` | 2 | 同一列表三行示例链接，VB.NET 那行目标名 FAces 与 C#/VBA 的 Faces 拼法不同；该 .md 确实以此名存在。 |
 | `Featuare` | `IFeature` | 2 | 同一页 Examples 三个链接里两处把 Feature 拼成 Featuare（a/e 换位），第三处写法正确。 |
 | `Featur` | `IFeature` | 2 | 同一接口页内接口名少了 e（Featur/Feature）。同页 L26 仍写 [[IEdgeFlangeFeatureData Interface]]，且 types\IEdgeFlangeFeat |
 | `Features` | `IFeature` | 2 | 同一工具栏名两种拼法：本行 Feaures（缺 t），同表其余行一律 Features。 |
