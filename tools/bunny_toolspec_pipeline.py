@@ -80,6 +80,12 @@ def _save(p: Path, rows: list[dict]) -> None:
     p.write_text(json.dumps({"rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
+def _specs_raw():
+    """★ 返回 ToolSpec 列表（勘探用）。"""
+    import register_capabilities as rc
+    return rc.all_specs()
+
+
 def _spec_names() -> set[str]:
     import register_capabilities as rc
     return {getattr(s, "name", "") for s in rc.all_specs()}
@@ -155,6 +161,66 @@ def step_drop(path: Path) -> int:
     return 0 if not left else 1
 
 
+# ── 第 0 步 · 勘探：这条漏斗**还剩多少真可挂**（★ SC-009 要的"先算预估可挂"）──────────
+def step_survey(limit: int = 40) -> int:
+    """★ 报"未覆盖候选"的构成，**并明确区分四类**（★ 免得把"看着没挂"当成"真增量"）。
+
+    ★★★ 为什么要有它（2026-10-04 · 我**自己踩过一次假阳性**）：
+      我按 `(module, function)` 是否出现在 `all_specs()` 里判"未覆盖" ⇒
+      ★★ 于是把**同一能力已由别的路径包成工具**的那些（如 `sw_simulation_loads.add_pressure`
+      ↔ `solidworks_simulation_apply_pressure`）也报成"真增量" ⇒ **差点白开一坡** ✓
+      ⇒ ★ 本命令把四类分开报，并**要求人对"④ 疑似真增量"逐个做语义核对**（不能只看名字）✓
+    """
+    rows = _load(ROOT / "output" / "prescreen-all.json")["rows"]
+    covered = {(s.module, s.function) for s in _specs_raw()}
+    dispatched: set = set()
+    for f in ("bunny-screen-rows.json", "bunny-wave2-rows.json", "bunny-wave3-rows.json",
+              "bunny-wave4-rows.json", "bunny-probe-rows.json", "bunny-wave6-rows.json"):
+        p = ROOT / "output" / f
+        if p.is_file():
+            for r in _load(p)["rows"]:
+                dispatched.add((r["module"], r["function"]))
+    #: ★ 上游 `server.py` 的工具名（★ 45 个，`all_specs()` 看不到它们）
+    srv = (ROOT / "mcp-server" / "server.py").read_text(encoding="utf-8", errors="replace")
+    upstream = set(re.findall(r"@mcp\.tool[^\n]*\n(?:[^\n]*\n)*?def\s+(\w+)", srv))
+
+    AMBIG = {"win", "hwnd", "ctrl", "obj", "h", "w", "target", "route_manager", "table",
+             "pdm_document", "featureworks", "route_property", "main_hwnd", "study_name"}
+    buckets: dict = {"① 已覆盖（ToolSpec）": 0, "② 歧义首参（不碰）": 0,
+                     "③ 政策不做": 0, "④ 疑似真增量（★ 需语义核对）": []}
+    for r in rows:
+        if r["module"].startswith("sw_api_"):
+            continue
+        k = (r["module"], r["function"])
+        if k in covered:
+            buckets["① 已覆盖（ToolSpec）"] += 1
+            continue
+        first = r["args"][0] if r["args"] else ""
+        if first in AMBIG:
+            buckets["② 歧义首参（不碰）"] += 1
+            continue
+        if any(first == n for n in REFUSED):
+            buckets["③ 政策不做"] += 1
+            continue
+        if k in dispatched:
+            buckets["③ 政策不做"] += 1          # ★ 派过且判了不做 ⇒ 同桶（已裁决）
+            continue
+        buckets["④ 疑似真增量（★ 需语义核对）"].append("%s.%s(args=%s)" % (
+            r["module"], r["function"], r["args"][:3]))
+    print("★ 漏斗勘探（★ 判据全从盘上重推；★ 上游工具名认到 %d 个）:" % len(upstream))
+    for k in ("① 已覆盖（ToolSpec）", "② 歧义首参（不碰）", "③ 政策不做"):
+        print("   %-28s %d" % (k, buckets[k]))
+    tail = buckets["④ 疑似真增量（★ 需语义核对）"]
+    print("   %-28s %d" % ("④ 疑似真增量", len(tail)))
+    for s in tail[:limit]:
+        print("        %s" % s)
+    if len(tail) > limit:
+        print("        …（还有 %d 个）" % (len(tail) - limit))
+    print("★★ ⚠ ④ 那一桶**必须逐个做语义核对**（★ 我踩过一次假阳性："
+          "同一能力由别的路径包成工具时，按 `(module,function)` 会误判成「未覆盖」）")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Bunny 扇出 → ToolSpec 批次 的五步管线")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -183,9 +249,14 @@ def main() -> int:
     p = sub.add_parser("drop-refused", help="第 5b 步：删掉政策不做项")
     p.add_argument("--batch-file", required=True)
 
+    p = sub.add_parser("survey", help="第 0 步：勘探这条漏斗还剩多少真可挂（★ SC-009）")
+    p.add_argument("--limit", type=int, default=40)
+
     p = sub.add_parser("list-refused", help="打印政策名单（★ 政策也是可复核的）")
     a = ap.parse_args()
 
+    if a.cmd == "survey":
+        return step_survey(a.limit)
     if a.cmd == "collect":
         return subprocess.call([sys.executable, str(ROOT / "tools" / "collect_bunny_rows.py"),
                                 "--dir", a.dir, "--out", a.out])

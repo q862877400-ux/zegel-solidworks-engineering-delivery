@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 448 | 448 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 459 | 459 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -37,12 +37,12 @@
 
 | 域 | Eduardof0nt | andrewbartels1 | vespo92 | Slacker-LLC | 本仓库(MCP) | 本仓库能力面 | 并集 | 缺口(MCP) |
 |---|---|---|---|---|---|---|---|---|
-| ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 17 | 61⚠ | 50 | **33** |
+| ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 18 | 61⚠ | 51 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
 | ③ 草图 | 26 | 15 | 16 | 20 | 44 | 107⚠ | 77 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
-| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 34 | 106⚠ | 58 | **24** |
-| ⑥ 曲面 | 11 | · | 1 | · | 18 | 49⚠ | 26 | **8** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 37 | 106⚠ | 61 | **24** |
+| ⑥ 曲面 | 11 | · | 1 | · | 19 | 49⚠ | 27 | **8** |
 | ⑦ 钣金 | 10 | · | 1 | · | 9 | 20⚠ | 20 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 16 | 19⚠ | 21 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
@@ -53,9 +53,9 @@
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 16 | 49⚠ | 26 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 40 | 14 | 40 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 101 | 517⚠ | 143 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 107 | 517⚠ | 149 | **42** |
 
-**合计**：并集 759 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 770 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 410 个操作只有本仓库有：
+共 421 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -158,6 +158,9 @@
 - `basic_part`（⑰ 未归类）
 - `batch_export_files`（⑮ 宏 / 自动化）
 - `center_of_mass`（⑰ 未归类）
+- `chamfer_circular_rim_volume`（⑤ 零件特征）
+- `chamfer_straight_edge_volume`（⑤ 零件特征）
+- `chamfer_volume_report`（⑤ 零件特征）
 - `check_dfm`（⑯ 高级 / 专项（含护城河候选））
 - `check_routing`（⑯ 高级 / 专项（含护城河候选））
 - `clear_selection_for_preview`（⑰ 未归类）
@@ -268,7 +271,14 @@
 - `generate_drawing`（⑪ 工程图）
 - `global_bounding_box`（⑫ 检查 / 测量 / 反馈）
 - `gtol_insert`（⑰ 未归类）
+- `gui_assert_focus`（⑰ 未归类）
+- `gui_assert_no_modal`（⑰ 未归类）
+- `gui_close_modals`（① 会话 / 文档 / 文件）
+- `gui_ensure_focus`（⑰ 未归类）
+- `gui_find_modals`（⑰ 未归类）
+- `gui_focus_state`（⑰ 未归类）
 - `gui_get_foreground_window`（⑰ 未归类）
+- `gui_modal_report`（⑰ 未归类）
 - `gui_screen_png`（⑰ 未归类）
 - `health_check`（⑰ 未归类）
 - `helix_insert`（⑤ 零件特征）
@@ -473,6 +483,7 @@
 - `surface_fill`（⑥ 曲面）
 - `surface_knit`（⑥ 曲面）
 - `surface_midsurface_create`（⑥ 曲面）
+- `surface_runtime_available`（⑥ 曲面）
 - `sweep_params`（⑤ 零件特征）
 - `thicken`（⑥ 曲面）
 - `toolbox_list_standards`（⑯ 高级 / 专项（含护城河候选））

@@ -929,6 +929,21 @@ BATCH_MODULES = (
     #:     `solidworks_costing_read_analysis` / `…_read_body`（只读侧一早就建好了）⇒ 只取写侧 ✓
     #:   ★ 计数：419 → **422**
     "tool_specs_batch90",
+    #: ★★★★★ 轮 117：**规格 205 的批 91 —— 弹窗护栏 / 焦点 / 倒角几何 / 曲面运行时**（11 个）：
+    #:   ★★ 本批的选域依据是**漏斗勘探**（`tools/bunny_toolspec_pipeline.py survey`）——
+    #:     我把未覆盖候选按「**参数是否全是显式标量**」筛过 ⇒ 只剩 **25 个**，再剔掉
+    #:     基础设施/内部件（`sw_connect` / `sw_isolate` / `sw_sensor` 出参工厂 …）⇒ ★ 本批 11 个 ✓
+    #:   · ★★ **`sw_gui_modal` 4 个 —— 弹窗护栏本体**（`find_modals` / `modal_report` /
+    #:     `assert_no_modal` / `close_modals`）：★ 弹窗把 COM 调用**冻住**是本仓的头号死因
+    #:     ⇒ ★ 让 agent 能**查 / 判 / 关**弹窗，正是事实 527 那套常驻监控的工具化 ✓
+    #:   · `sw_chamfer_geometry` 3 个 —— ★ **纯计算**（倒角切掉的体积 + 断言报表）✓
+    #:   · `sw_gui_focus` 3 个 —— 焦点断言/修复（与既有 `gui_get_foreground_window` 同族不同面）✓
+    #:   · `sw_surface.runtime_available` —— ★ **只读**前置检查（事实 40 那张实测表的读侧）✓
+    #:   ★ 全部 `inject=""`（首参是标量或**窗口句柄** —— ★ 句柄不是几何坐标 ⇒ **不违反规则 3**）✓
+    #:   ★★ 本批**不做**：`sw_capture.capture`（返回 PIL Image，过不了 JSON 边界）·
+    #:     `sw_sensor.out_*`（COM 出参工厂）· `sw_isolate`/`sw_simulation_worker`（基础设施，FR-007）✓
+    #:   ★ 计数：422 → **433**
+    "tool_specs_batch91",
 )
 
 def all_specs() -> list:

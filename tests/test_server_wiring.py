@@ -257,7 +257,14 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 422
+    assert len(all_specs()) == 433
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 91**）：**422 → 433** —— ★ **我加的 11 条**
+    #:   ★★ 选域依据是**漏斗勘探**（`tools/bunny_toolspec_pipeline.py survey`）：未覆盖候选按
+    #:     「**参数是否全是显式标量**」筛过 ⇒ 只剩 25 个 ⇒ 剔掉基础设施/内部件 ⇒ **11 个** ✓
+    #:   · ★★ **`sw_gui_modal` 4 个 = 弹窗护栏本体**（查 / 判 / 断言 / 关）—— ★ 弹窗把 COM 调用
+    #:     **冻住**是本仓头号死因（事实 527）⇒ 把这套常驻监控**工具化** ✓
+    #:   · `sw_chamfer_geometry` 3（★ 纯计算）· `sw_gui_focus` 3 · `sw_surface.runtime_available` 1 ✓
+    #:   ★ 全部 `inject=""`；★ GUI 工具收的是**窗口句柄**（**不是**几何坐标 ⇒ 不违反规则 3）✓
     #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 90**）：**419 → 422** —— ★ **我加的 3 条**
     #:   （Costing **写侧收尾**：批量 / 加价 / 自定义成本）⇒ ★ 选域依据是 **SC-009 要求的预筛**：
     #:   C 类未覆盖 281 个里 **97 个属「取哪一个」的歧义组**（一律不碰），
