@@ -1180,20 +1180,92 @@ def run_analysis_report(study) -> dict[str, Any]:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def check_mesh_size_sane(model, element_size: float) -> dict[str, Any]:
-    """★ **建网格之前**判一次：给定的单元尺寸对**这个零件**是否合理。
+# ★★★★★ 2026-10-04（接手轮）**判据②的两个系数与内存预算** —— ★ 依据逐条写在下面：
+#
+# 【一】官方内存规则（★ 逐字取自本机解包的 Simulation 手册）
+#   文件: C:\cworks_manual\c_Analysis_Solvers.htm · C:\cworks_manual\IDC_HELP_PRESTATIC_OPTIONS.htm
+#   逐字: 「FFEPlus (iterative) … For every 2,000,000 degrees of freedom, you need 1GB of RAM.」
+#   ⇒ ★ 故 DOF_PER_GB = 2_000_000（★ 这是**官方给的那条换算**，不是我们拍的）✓
+#
+# 【二】每单元的自由度系数（★ 实测标定，不是猜）
+#   依据: 本仓事实 293 的**求解进度窗**逐字 —— 「自由度: **30,456** · 节数: 11,301 ·
+#         单元数: **7,250**」⇒ 30_456 / 7_250 = **4.20** ✓
+#   ⚠ 这个系数**粗糙**（随单元类型 / 网格质量变），★ 故它只用来拒绝**离谱的量级**
+#     （★ 实测那个事故差 ~9 个数量级 ⇒ 系数再差 2 倍也照样拦得住）✓
+DOF_PER_GB = 2_000_000
+DOF_PER_ELEMENT = 4.2
 
-    ★★★ 这是把"跑求解必挂"**掐断在源头**的那道闸 —— 依据见本段顶部的对照表：
-    读到的 `element_size` 若**大于零件的最大边**，那么网格必然退化、
+# 【三】默认内存预算
+#   ★ 为什么要有它：★ 2026-10-04 真机事故里，求解进程实际吃到 **38.5 GB / 整机 63.8 GB**
+#     ⇒ 整机只剩 5.7 GB ⇒ **卡死**。★ 故默认取「物理内存的一半，且不超过 16 GB」——
+#     ★ 一半：给系统与 SolidWorks 自己留余量；★ 16 GB 上限：再大的单次求解**本来就该换做法**
+#     （★ 官方：模型超出物理内存时用 **Large Problem Direct Sparse**，
+#      或改用对称 / 2D 简化 / 梁壳理想化 —— 见 `c_Analysis_Solvers.htm`）✓
+DEFAULT_MEMORY_BUDGET_GB = 16.0
+
+
+def default_solve_memory_budget_gb() -> float:
+    """★ 默认的**单次求解内存预算**（GB）= min(物理内存的一半, 16)。
+
+    ⚠ **读不到物理内存时回 `DEFAULT_MEMORY_BUDGET_GB`**（★ 不因为读不到就误拒）✓
+    """
+    try:
+        import ctypes
+
+        class _MemStatus(ctypes.Structure):
+            _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+                        ("ullTotalPhys", ctypes.c_ulonglong),
+                        ("ullAvailPhys", ctypes.c_ulonglong),
+                        ("ullTotalPageFile", ctypes.c_ulonglong),
+                        ("ullAvailPageFile", ctypes.c_ulonglong),
+                        ("ullTotalVirtual", ctypes.c_ulonglong),
+                        ("ullAvailVirtual", ctypes.c_ulonglong),
+                        ("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+
+        st = _MemStatus()
+        st.dwLength = ctypes.sizeof(_MemStatus)
+        if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(st)):
+            return DEFAULT_MEMORY_BUDGET_GB
+        total_gb = float(st.ullTotalPhys) / (1024.0 ** 3)
+        return max(1.0, min(total_gb / 2.0, DEFAULT_MEMORY_BUDGET_GB))
+    except Exception:                                          # noqa: BLE001
+        return DEFAULT_MEMORY_BUDGET_GB
+
+
+def check_mesh_size_sane(model, element_size: float, *,
+                         memory_budget_gb: float | None = None) -> dict[str, Any]:
+    """★ **建网格之前**判一次：给定的单元尺寸对**这个零件**是否合理 —— ★★ **两侧都判**。
+
+    ★★★ 这是把"跑求解必挂 / 把机器打爆"**掐断在源头**的那道闸。
+
+    **判据 ①（原有 · 太大方向）**：`element_size` 若**大于零件的最大边**，网格必然退化、
     `CreateMesh` 会**静默退回默认值**，而随后的 `RunAnalysis` **无解 ⇒ 弹模态框 ⇒ 挂住会话**。
+
+    **判据 ②（★ 2026-10-04 新加 · 太小方向）**：`element_size` 若**小得离谱**，
+    网格单元数会爆炸 ⇒ **求解器把内存吃光**。★ 真机事故（本轮实录）：
+    一个 100×60×20 mm 的板被喂进 **0.0049（把"米"当"毫米"）** ⇒ 单元数按包围盒估 ≈ 1e12
+    ⇒ 求解进程 `cwbcbfmesh.exe` 实际吃到 **38.5 GB 工作集 / 52.6 GB 提交**
+    （整机 63.8 GB，剩余 5.7 GB）⇒ **整机卡死、程序无响应**。
+
+    ★★★★ **判据②的公式不是发明的，两个系数各有官方/实测出处**：
+      · **每 2,000,000 自由度 1 GB RAM** —— ★ 官方逐字（FFEPlus 求解器）：
+        `C:\\cworks_manual\\c_Analysis_Solvers.htm` 与 `IDC_HELP_PRESTATIC_OPTIONS.htm`
+        「For every 2,000,000 degrees of freedom, you need 1GB of RAM.」✓
+      · **每单元 4.2 个自由度** —— ★ 本仓实测（事实 293 的求解进度窗逐字）：
+        「自由度: **30,456** · 单元数: **7,250**」⇒ 30456 / 7250 = **4.20** ✓
+      · 单元数按 **包围盒体积 / element_size³** 估（★ 粗糙，但**只用于拒绝"离谱"的量级**）✓
 
     :param model: 活动文档（用来量零件包围盒）。
     :param element_size: 打算传给 ``CreateMesh`` 的单元尺寸（★ 单位口径见 `create_mesh` 的 docstring）。
-    :returns: ``{"ok": bool, "element_size": float, "max_dim": float | None, "reason": str}``
-        ★ **`ok=False` 时调用方应当停下**（不要建网格、更不要跑求解）。
+    :param memory_budget_gb: ★ 允许这次求解用掉的内存上限（GB）；★ `None` ⇒ 用默认
+        （见 `default_solve_memory_budget_gb`：**物理内存的一半，且不超过 16 GB**）。
+    :returns: ``{ok, element_size, max_dim, volume_mm3, est_elements, est_dof, est_ram_gb,
+        memory_budget_gb, reason}`` —— ★ **`ok=False` 时调用方应当停下**
+        （不要建网格、更不要跑求解）。
     """
     out: dict[str, Any] = {"element_size": float(element_size), "max_dim": None,
-                           "ok": True, "reason": "", "★": "建网格前的合理性判据（段 5 修地基）"}
+                           "ok": True, "reason": "",
+                           "★": "建网格前的**双侧**合理性判据（★ 太大=网格退化；★ 太小=内存打爆）"}
     if not (float(element_size) > 0.0):
         out.update({"ok": False, "reason": "element_size 不是正数（%r）" % element_size})
         return out
@@ -1211,12 +1283,40 @@ def check_mesh_size_sane(model, element_size: float) -> dict[str, Any]:
             return out
         max_dim = max(float(x) for x in size)
         out["max_dim"] = max_dim
+        #: ★ 判据 ①（原有）：太大 ⇒ 网格退化
         if float(element_size) > max_dim:
             out.update({
                 "ok": False,
                 "reason": ("单元尺寸 %.4f 大于零件最大边 %.4f ⇒ **网格必然退化**"
                            "（CreateMesh 会静默退回默认值，随后 RunAnalysis 无解 ⇒ 弹模态框 ⇒ 挂住会话）"
                            % (float(element_size), max_dim)),
+            })
+            return out
+        #: ★ 判据 ②（★ 新）：太小 ⇒ 单元数爆炸 ⇒ 求解吃光内存
+        volume = 1.0
+        for x in size:
+            volume *= max(float(x), 0.0)
+        if volume <= 0.0:
+            out.update({"reason": "包围盒体积算不出（%r）⇒ **只记不判**" % (size,)})
+            return out
+        est_elements = volume / (float(element_size) ** 3)
+        est_dof = est_elements * DOF_PER_ELEMENT
+        est_ram_gb = est_dof / DOF_PER_GB
+        budget = (float(memory_budget_gb) if memory_budget_gb is not None
+                  else default_solve_memory_budget_gb())
+        out.update({"volume_mm3": round(volume, 4),
+                    "est_elements": est_elements, "est_dof": est_dof,
+                    "est_ram_gb": est_ram_gb, "memory_budget_gb": budget,
+                    "★_公式": "单元数≈包围盒体积/单元尺寸³ · DOF≈4.2×单元数（事实 293 实测）· "
+                              "RAM≈DOF/2,000,000 GB（官方 FFEPlus 规则）"})
+        if est_ram_gb > budget:
+            out.update({
+                "ok": False,
+                "reason": ("单元尺寸 %.6f 太小 ⇒ 按包围盒估 **%.3g 个单元 / %.3g 自由度**"
+                           " ⇒ 预估求解内存 **%.1f GB** > 预算 %.1f GB"
+                           "（★ 官方规则：每 2,000,000 自由度需 1 GB RAM）"
+                           " ⇒ **会把内存吃光 / 走 out-of-core 而极慢**"
+                           % (float(element_size), est_elements, est_dof, est_ram_gb, budget)),
             })
         return out
     except Exception as exc:                                   # noqa: BLE001

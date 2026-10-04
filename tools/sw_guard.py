@@ -733,9 +733,23 @@ def main() -> int:
                       % (second, not _u.IsWindow(d["hwnd"])))
         return 0
     if args.command:
-        r = run_guarded(args.command)
-        print(json.dumps({k: v for k, v in r.items() if k != "stdout_tail"},
-                         ensure_ascii=False, indent=1)[:1200])
+        #: ★★★ 2026-10-04（接手轮）**修一处真缺陷**：这里原来写 `run_guarded(args.command)`
+        #:   —— ★ `--timeout` **被解析了、却从没传进去** ⇒ **永远走 120 s 默认值**。
+        #:   ★★ 真机现场：`python tools/sw_guard.py --timeout 3000 -- python <长跑探针>.py`
+        #:     ⇒ 探针在 **120.43 s** 被杀，★ 而返回体里 `timed_out: true · dialogs: []`
+        #:     ⇒ ★ **看不出是"护栏自己的超时没生效"**，极容易被读成"探针挂了"（★ 事实 517 同族）。
+        #:   ★★★ **这条正是本仓自己的定则**（事实 40）：「★ **一个存在但没人用的参数，
+        #:     与没有它等价**」—— ★ 而它比没有更糟：★ **文档与 `--help` 都写着它管用** ✓
+        r = run_guarded(args.command, timeout=args.timeout)
+        #: ★ 顺带把**子进程的 stdout** 也带回来（★ 原来只回一个 ≤1200 字符的 JSON 且
+        #:   **明确剔掉了 `stdout_tail`**）⇒ ★ 长跑探针的**过程读数**（每一步的 print）
+        #:   就全丢了 —— ★ 而"哪一步走完了"正是排查长跑失败时最需要的东西（★ 事实 293 同族）。
+        out = {k: v for k, v in r.items() if k != "stdout_tail"}
+        print(json.dumps(out, ensure_ascii=False, indent=1)[:1200])
+        tail = (r.get("stdout_tail") or "").strip()
+        if tail:
+            print("── 子进程 stdout（尾部 4000 字符）──")
+            print(tail[-4000:])
         return 0 if r["ok"] else 1
     ap.print_help()
     return 0

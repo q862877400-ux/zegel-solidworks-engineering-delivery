@@ -84,12 +84,19 @@ SPECS_BATCH31 = [
         params=[
             Param("element_size_mm", float,
                   description=_SIZE),
+            Param("memory_budget_gb", float,
+                  description="★ 允许这次求解用掉的内存上限（**GB**）。省略 = 默认"
+                              "「物理内存的一半，且不超过 16 GB」。★ 依据官方 FFEPlus 规则"
+                              "「每 2,000,000 自由度需 1 GB RAM」。"),
         ],
         doc="Decide whether a global element size is sane for the ACTIVE part BEFORE meshing, "
-            "and return `{ok, element_size, max_dim, reason}`. ★ Call this before "
-            "solidworks_simulation_create_mesh: when `ok` is false the element is larger than "
-            "the part itself, so the mesh would be degenerate and the subsequent solve would "
-            "raise a modal dialog that hangs the COM session. "
+            "and return `{ok, element_size, max_dim, volume_mm3, est_elements, est_dof, "
+            "est_ram_gb, memory_budget_gb, reason}`. ★ Call this before "
+            "solidworks_simulation_create_mesh. ★★ **判据是双侧的**："
+            "① 单元尺寸**大于零件最大边** ⇒ 网格退化 ⇒ 后续求解会弹模态框挂住会话；"
+            "② 单元尺寸**小得离谱** ⇒ 按包围盒估的求解内存超过 `memory_budget_gb` "
+            "⇒ **会把整机内存吃光**（★ 真机事故：0.0049 mm ⇒ 求解进程 38.5 GB / 整机 63.8 GB ⇒ 卡死）；"
+            "★ `ok` 为 false 时**不要建网格、更不要跑求解**。"
             "★ It does NOT create a mesh and does NOT run the solver.",
     ),
 ]

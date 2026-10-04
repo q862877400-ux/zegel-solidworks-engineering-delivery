@@ -1,0 +1,120 @@
+"""★ 网格尺寸**双侧**合理性闸的负例测试（★ 含今天那场「把米当毫米 ⇒ 40 GB」的事故）。
+
+★ 事实 62：**没有负例的判据不算数** —— ★ 本测试的正例就用**真机事故里那个数**。
+"""
+# ── 来源 ─────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身 + SOLIDWORKS Simulation 官方手册（本机解包 `C:\cworks_manual\`）
+# 文件:   `scripts/sw_simulation.py`（★ 被测的 `check_mesh_size_sane` /
+#         `default_solve_memory_budget_gb` / `DOF_PER_GB` / `DOF_PER_ELEMENT`）
+# 官方依据: `C:\cworks_manual\c_Analysis_Solvers.htm` 与 `IDC_HELP_PRESTATIC_OPTIONS.htm` 逐字
+#           「FFEPlus … For every 2,000,000 degrees of freedom, you need 1GB of RAM.」
+#           · 同页逐字「If a solver requires more memory than available on the computer,
+#             then the solver uses disk space … the solution progress can be extremely slow.」
+#           · 同页逐字「the Large Problem Direct Sparse solver can handle simulation problems
+#             that exceed the physical memory of your computer.」
+# 实测依据: 事实 293 的求解进度窗：「自由度: 30,456 · 单元数: 7,250」⇒ DOF/单元 = 4.20
+# 定位:   ★★★ **为什么写它**（2026-10-04 真机事故）：本闸原来**只判一侧**（单元尺寸大于零件
+#   最大边 ⇒ 网格退化）⇒ ★★ 而探针的"自校准"把 `units=2` 回的**米**级值（0.0049）
+#   喂进 `create_mesh`（★ 那个参数吃**毫米**）⇒ 网格单元数按包围盒估 ~1e12
+#   ⇒ 求解进程 `cwbcbfmesh.exe` 实际吃到 **38.5 GB 工作集 / 52.6 GB 提交**（整机 63.8 GB）
+#   ⇒ **整机卡死**。★ 故本测试的正例逐字是**那个数**：`0.0049` 必须被拒 ✓
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+for p in (str(ROOT), str(ROOT / "scripts")):
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+import sw_simulation as sim  # noqa: E402
+
+#: ★ 真机夹具的尺寸（探针造的那块板）—— 100 × 60 × 20 mm
+PLATE = (100.0, 60.0, 20.0)
+
+
+def _fake_model_bbox(size=PLATE):
+    """把 `sw_part.get_bounding_box` 换掉 —— ★ 判据只读 `size`，故无需真 COM。"""
+    import sw_part
+
+    def _bb(_model):
+        return {} if size is None else {"size": tuple(size)}
+
+    sw_part.get_bounding_box = _bb            # type: ignore[assignment]
+    return object()
+
+
+def test_the_official_constants_are_the_documented_ones() -> None:
+    """★ 判据的两个系数必须**等于出处里那个数**（★ 改它就要改这条测试并说明依据）。"""
+    assert sim.DOF_PER_GB == 2_000_000, "★ 官方逐字：每 2,000,000 自由度 1 GB RAM"
+    assert abs(sim.DOF_PER_ELEMENT - 4.2) < 1e-9, (
+        "★ 事实 293 的进度窗：30,456 自由度 / 7,250 单元 = 4.20")
+    b = sim.default_solve_memory_budget_gb()
+    assert 1.0 <= b <= 16.0, "★ 预算默认值必须在 (1, 16] GB 内，实测 %r" % b
+
+
+def test_positive_todays_accident_value_is_rejected() -> None:
+    """★★★ 核心正例：**事故里那个数**（0.0049 mm，本意是 4.9 米的"米"口径）必须被拒。"""
+    m = _fake_model_bbox()
+    r = sim.check_mesh_size_sane(m, 0.0049)
+    assert r["ok"] is False, "★ 0.0049 mm 没被拦住 ⇒ 那道闸抓不到今天这场事故"
+    assert "内存" in r["reason"] or "太小" in r["reason"], r["reason"]
+    assert r["est_ram_gb"] > 16.0, r
+    assert r["est_elements"] > 1e9, "★ 包围盒估出的单元数应当是个天文数字：%r" % r["est_elements"]
+
+
+def test_negative_the_value_that_worked_is_accepted() -> None:
+    """★ 反例：**跑通过的那个值**（4.9339 mm ⇒ 7310 单元）不许被拒 —— ★ 否则闸太紧。"""
+    for good in (4.9339, 4.9305, 5.0, 10.0):
+        r = sim.check_mesh_size_sane(_fake_model_bbox(), good)
+        assert r["ok"] is True, "★ 误伤：%r ⇒ %s" % (good, r.get("reason"))
+    r = sim.check_mesh_size_sane(_fake_model_bbox(), 4.9339)
+    assert r["est_elements"] < 1e6, "★ 合理网格的单元数估计不该是天文数字：%r" % r["est_elements"]
+
+
+def test_existing_behaviour_too_large_still_rejected() -> None:
+    """★ 原有那一侧（太大 ⇒ 网格退化）**不能被这次改动弄丢**（★ 事实 61 同族）。"""
+    r = sim.check_mesh_size_sane(_fake_model_bbox(), 4930.5)
+    assert r["ok"] is False and "网格必然退化" in r["reason"], r
+    for bad in (0.0, -1.0):
+        assert sim.check_mesh_size_sane(_fake_model_bbox(), bad)["ok"] is False
+
+
+def test_budget_parameter_is_honoured() -> None:
+    """★ 预算可调：★ 把预算压到极小 ⇒ **连合理值也被拒**（★ 否则那个参数是摆设 · 事实 40）。"""
+    m = _fake_model_bbox()
+    assert sim.check_mesh_size_sane(m, 4.9339)["ok"] is True
+    tight = sim.check_mesh_size_sane(m, 4.9339, memory_budget_gb=1e-9)
+    assert tight["ok"] is False, "★ 预算参数没被用上 ⇒ 它就是个没人用的守卫"
+    assert tight["memory_budget_gb"] == 1e-9
+
+
+def test_no_bbox_means_record_only_do_not_judge() -> None:
+    """★ 量不到包围盒 ⇒ **只记不判**（★ 不因为没有参照就误拒）。"""
+    r = sim.check_mesh_size_sane(_fake_model_bbox(None), 0.0049)
+    assert r["ok"] is True and "只记不判" in r["reason"], r
+
+
+# ── 直接运行 ──────────────────────────────────────────────────────────────
+
+def _main() -> int:
+    fails = []
+    for name, fn in sorted(globals().items()):
+        if name.startswith("test_") and callable(fn):
+            try:
+                fn()
+                print("  [ok] %s" % name)
+            except AssertionError as exc:
+                fails.append(name)
+                print("  [FAIL] %s: %s" % (name, exc))
+    print("★ %d 条失败" % len(fails))
+    return 1 if fails else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(_main())

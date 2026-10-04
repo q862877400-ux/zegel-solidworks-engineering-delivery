@@ -29,7 +29,24 @@
 #   ★★★ **判据（★ 含几何/结果读数）**：★ ① `element_count`（网格读数）·
 #     ★ ② `results_present` / `plot_count` / `plot_names`（★ **解算结果读数**）·
 #     ★ ③ `timed_out` · ★ ④ `wall_seconds` ✓
-#   ★★★★ **只报不动**：★ 不改仓 · ★ 只写 `output/` · ★ 关掉**自己开的**那份文档 ✓
+#   ★★★★★★ **⚠⚠ 第六版（本版）—— 上一版把整机内存打爆了，★ 事故与修法都记在这里**：
+#     ★ **事故**：第五版用一个"自校准"循环挑候选（`units=2/-1/0` 各读一次，取第一个过闸的）
+#       ⇒ ★★ 而当时那道闸**只判一侧**（只拒"单元尺寸大于零件最大边"）
+#       ⇒ ★ 于是它把 `units=2` 回的**米**级值 **0.0049** 当成毫米选了 ⇒
+#       ⇒ 求解进程 `cwbcbfmesh.exe` 实测 **38.5 GB 工作集 / 52.6 GB 提交**
+#         （整机 63.8 GB、剩余 5.7 GB）⇒ **整机卡死、SolidWorks 无响应** ✓
+#     ★ **修法（两层，都已落地）**：
+#       ① ★★★ `scripts/sw_simulation.py::check_mesh_size_sane` **改成双侧** ——
+#          新增「太小 ⇒ 预估求解内存超预算就拒」，★ 两个系数**各有出处**：
+#          · 每 **2,000,000** 自由度 **1 GB** RAM —— 官方逐字（`c_Analysis_Solvers.htm`）✓
+#          · 每单元 **4.2** 自由度 —— 事实 293 的进度窗（30,456 / 7,250 = 4.2）✓
+#          · 预算默认 = min(物理内存一半, 16 GB)，★ 可用 `memory_budget_gb` 覆盖 ✓
+#          负例自证 `tests/test_mesh_size_memory_gate.py`（**6 passed**）：
+#          ★ 正例逐字就是**事故里那个数** 0.0049 ⇒ 必须拒；★ 跑通的 4.9339 ⇒ 必须放行 ✓
+#       ② ★ 本探针的候选循环**沿用那道闸** ⇒ 现在 0.0049 会在**建网格之前**被拒 ✓
+#     ★★★ **教训（可复用）**：★ **"自校准"这类循环必须配一条双侧判据** ——
+#       单侧判据会把"另一侧的离谱值"当成合法解，★ 而它比"判不出来"更危险（会真跑下去）✓
+#   ★★★★★★★ **只报不动**：★ 不改仓 · ★ 只写 `output/` · ★ 关掉**自己开的**那份文档 ✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -106,40 +123,64 @@ def main() -> int:
             r["wall_seconds"] = round(time.time() - t0, 1)
             return r
 
-        #: ② ★★★ **单位口径**：★ `create_mesh` 的 `element_size` 与**实测那条跑通的链**
-        #:   （`tools/capture_simulation_evidence.py` 传 **4.9339** ⇒ 7310 单元）**同口径** ⇒
-        #:   ★ **吃毫米** ⇒ 本版**直接传 `units=-1` 读回的那个数**（★ 4.9339 mm），
-        #:   ★★ **而上一版手工喂的 4930.5 是同一口径下的「把米当毫米」**（★ 4.9 米/单元）
-        #:   ⇒ ★ 判据：★ 若 `CreateMesh` 后 `element_count` ≈ 7000（而不是退回默认的 7250 附近）
-        #:     且求解出结果 ⇒ ★ **毫米口径坐实** ✓
-        #:   ⚠ ★ **只在读了 `units=-1` 而那个数看起来像米（< 1.0）时**才 ×1000 —— ★ 而本机
-        #:     实测它回的是 **4.9339**（= 毫米）⇒ ★ **因子应为 1.0**，两个口径都记进证据 ✓
-        size_r = iso("mesh_size_by_name", [STUDY], {"units": -1}, 120)
-        raw = (size_r.get("result") or {}) if isinstance(size_r.get("result"), dict) else {}
-        raw_size = raw.get("element_size")
-        raw_tol = raw.get("tolerance")
-        #: ★ 判据：`< 1.0` 才当成"这个数是米"（100 mm 的零件，建议单元尺寸若按米就该是 0.0049）
-        factor = 1000.0 if (raw_size is not None and abs(float(raw_size)) < 1.0) else 1.0
-        element_size = float(raw_size) * factor if raw_size is not None else 0.0
-        tolerance = float(raw_tol) * factor if raw_tol is not None else 0.0
-        ev["steps"]["mesh_size"] = {
-            "ok": size_r.get("ok"), "timed_out": size_r.get("timed_out"),
-            "raw_from_units_minus1": raw,
-            "★_换算因子": factor,
-            "★_喂给_create_mesh_的值": {"element_size": element_size,
-                                        "tolerance": tolerance},
-            "★": "★ `units=-1` 实测回 4.9339（毫米）；★ 它与跑通那条链（4.9339 ⇒ 7310 单元）同口径",
-        }
-        print("  [1] 网格尺寸: raw=%r ×%g ⇒ element_size=%.4f · tol=%.4f"
-              % (raw_size, factor, element_size, tolerance))
+        #: ② ★★★ **单位口径：本探针不再"假设"，改成"三个单位各读一次 + 用几何闸选"** ——
+        #:   ★★ 第五版（本版）的**实测起点**（第四版的负结果，★ 已落盘）：
+        #:     `mesh_size_report(study, units=-1)` 在本机回 **4930.501659457233**，
+        #:     ★★ **不是** `sw_simulation.py` 注释里那个"跑通"的 **4.933908705960544**
+        #:     ⇒ ★ 两处记录**差 ~1000×**、且**官方页没写单位** ⇒ ★ 按铁律 5：**不猜**，
+        #:     改成**当场把三个单位都读出来**（-1 / 0=SI / 2=Metric），★ 全部记进证据 ✓
+        #:   ★★★ **选哪个**：★ 用**几何判据**（`check_mesh_size_sane`：单元尺寸不得大于零件最大边）
+        #:     —— ★ 它是**既有的那道闸**、且与本探针的零件尺寸直接相关
+        #:     ⇒ ★ 候选按「更像毫米」排序，**取第一个过闸的**；★ 三个都不过就**停下报事实** ✓
+        reading: dict = {}
+        for u in (-1, 0, 2):
+            r = iso("mesh_size_by_name", [STUDY], {"units": u}, 120)
+            got = (r.get("result") or {}) if isinstance(r.get("result"), dict) else {}
+            reading["units=%d" % u] = {"ok": r.get("ok"), "timed_out": r.get("timed_out"),
+                                       "result": r.get("result")}
+            print("  [1] units=%-3d element_size=%r tolerance=%r"
+                  % (u, got.get("element_size"), got.get("tolerance")))
 
-        #: ★ 建网格前的合理性判据（★ 既有的那道闸）
-        sane = sim.check_mesh_size_sane(doc, element_size)
+        #: ★ 候选：每个都是「从某个读数按某个**显式**口径换算到毫米」的结果（★ 口径写在名字里）
+        cands: list[tuple[str, float, float]] = []
+        for u in (2, -1, 0):
+            got = (reading.get("units=%d" % u) or {}).get("result") or {}
+            s, t = got.get("element_size"), got.get("tolerance")
+            if s is None:
+                continue
+            s, t = float(s), float(t or 0.0)
+            if u == 2:
+                cands.append(("units=2 原值", s, t))
+            if u == -1:
+                cands.append(("units=-1 ÷1000", s / 1000.0, t / 1000.0))
+                cands.append(("units=-1 原值", s, t))
+            if u == 0:
+                cands.append(("units=0 ×1000", s * 1000.0, t * 1000.0))
+        chosen, sane, tried = None, None, []
+        for label, s, t in cands:
+            chk = sim.check_mesh_size_sane(doc, s)
+            tried.append({"候选": label, "element_size": s, "tolerance": t,
+                          "sane": chk.get("ok"), "reason": chk.get("reason")})
+            print("      [候选] %-16s element_size=%-12.4f sane=%s %s"
+                  % (label, s, chk.get("ok"), str(chk.get("reason"))[:64]))
+            if chk.get("ok"):
+                chosen, sane = (label, s, t), chk
+                break
+        ev["steps"]["mesh_size"] = {
+            "readings": reading, "候选": tried,
+            "★_选中": chosen[0] if chosen else None,
+            "★": "★ 官方**没写单位** ⇒ 三个单位各读一次 + 用几何闸选（★ 不许隐式换算）",
+        }
         ev["steps"]["mesh_size_sane"] = sane
-        print("      check_mesh_size_sane: ok=%s max_dim=%s %s"
-              % (sane.get("ok"), sane.get("max_dim"), str(sane.get("reason"))[:90]))
-        if not sane.get("ok"):
-            raise RuntimeError("网格尺寸不合理 ⇒ 停下（%s）" % sane.get("reason"))
+        #: ★ 把**内存预算与预估**一并落进证据（★ 事后能看出"当时放行时预估是多少"）
+        ev["★_内存预算_GB"] = sane.get("memory_budget_gb")
+        ev["★_预估求解内存_GB"] = sane.get("est_ram_gb")
+        ev["★_预估单元数"] = sane.get("est_elements")
+        if not chosen:
+            raise RuntimeError("三个单位口径的读数都不合理 ⇒ 停下报事实（不猜单位）")
+        element_size, tolerance = chosen[1], chosen[2]
+        print("  [1b] ★ 选中 %s ⇒ element_size=%.4f · tolerance=%.4f（max_dim=%s）"
+              % (chosen[0], element_size, tolerance, sane.get("max_dim")))
 
         #: ③ 建网格（★ 粗网格 ⇒ 单元少 ⇒ 刚度矩阵小 ⇒ 算得快）
         mesh_r = iso("create_mesh_by_name", [STUDY],

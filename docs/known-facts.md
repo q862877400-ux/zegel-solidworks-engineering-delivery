@@ -4136,3 +4136,134 @@ tests/test_drawing_signature_contract.py（mock 的键）· tests/test_drawing_v
 ★ `C:\swapi\types\IModelDoc2\ModelViewManager.md` ·
 ★ `_raw/reflect_sldworks/iface_sldworks.txt` ·
 ★ `tools/selfcheck_official_source_errors.py` ✓
+
+
+---
+
+## 521 · ★★★★★★ **单侧判据 + "自校准"循环 = 把整机内存打爆** —— ★ 而官方把内存那条换算逐字给了
+
+**发现时间**：2026-10-04（接手轮 · 真机事故与处置）
+
+### 一 · ★★★ 事故（★ 逐字记，★ 含真实读数）
+
+```
+★ 场景：给 `analysis_run_readback`（SPEC `202` 的 SC-004 第 3 条）配网格。
+★ 我写了个"自校准"循环：把 `mesh_size_report(study, units=-1/0/2)` **各读一次**，
+  ★★ 再取**第一个通过 `check_mesh_size_sane`** 的候选去建网格。
+★ 而那道闸**只判一侧**（逐字只拒「单元尺寸 > 零件最大边」）⇒ ★★ 于是 `units=2`
+  回的**米**级值 **0.0049** 被选中，★ 而 `create_mesh` 的 `element_size` 吃**毫米**。
+★★ 实测后果（`Get-Process` 逐字）：
+     进程 `cwbcbfmesh.exe`：工作集 **38.50 GB** · 提交 **52.56 GB** · CPU **4987 s**
+     整机 63.8 GB ⇒ 剩余 **5.7 GB** ⇒ ★★★ **整机卡死、SolidWorks 显示"无响应"**
+   ★ 用户当场点破：「这个直接给我内存干满，程序还卡住」
+```
+
+### 二 · ★★★★ 修法：把判据改成**双侧**（★ 两个系数各有出处，★ 不是我拍的）
+
+| 系数 | 值 | 出处（★ 逐字） |
+|---|---|---|
+| 每多少自由度 1 GB RAM | **2,000,000** | ★ **官方**：`C:\cworks_manual\c_Analysis_Solvers.htm` 与 `IDC_HELP_PRESTATIC_OPTIONS.htm`：「FFEPlus (iterative) … **For every 2,000,000 degrees of freedom, you need 1GB of RAM.**」 |
+| 每单元多少自由度 | **4.2** | ★ **本仓实测**（事实 293 的求解进度窗）：「自由度: **30,456** · 单元数: **7,250**」⇒ 30456/7250 = **4.20** |
+| 单元数估计 | 包围盒体积 ÷ 单元尺寸³ | ★ **粗糙但够用**：只用来拒"离谱的量级"（★ 实测那次差 ~9 个数量级） |
+| 默认内存预算 | **min(物理内存一半, 16 GB)** | ★ 事故里它吃到 38.5 GB ⇒ 一半给系统与 SW 自己留余量；★ 上限 16 GB 因为更大的求解**本来就该换做法** |
+
+★★ **对照实测（`output/_compare_mesh_gate.py`，同一个输入 0.0049）**：
+```
+★ 旧闸（HEAD）：ok=True  · max_dim=100.0                    ← ★ 放行 = 事故的入口
+★ 新闸（本次）：ok=False · est_elements=1.02e12 · est_dof=4.28e12
+                · est_ram_gb=2141964.7 > budget=16.0        ← ★ 拦住
+```
+★ **负例自证**：`tests/test_mesh_size_memory_gate.py`（**6 passed**）——
+★ 正例**逐字就是事故里那个数** `0.0049` ⇒ 必须拒；★ 跑通过的值 `4.9339` ⇒ 必须放行；
+★ 原有那一侧（太大 ⇒ 网格退化）**不许弄丢**；★ 预算参数**必须真的生效**（压到 1e-9 ⇒ 连合理值也拒）✓
+
+### 三 · ★★★ 可复用定则（★ 这条是本事实的价值）
+
+> ★★★★ **"自校准"这类循环，必须配一条双侧判据** —— ★ 单侧判据会把**另一侧的离谱值**
+> 当成合法解，★ 而它比"判不出来"**更危险**：★ 判不出来会停，★ 判错了会**真跑下去**。
+
+★ **与**事实 40 的关系：40 说「**一个没人用的守卫 = 没有守卫**」；
+★★ **本条是它的反面**：★ **一个只有一半的守卫 = 半个守卫**，★ 而缺的那一半正好是**危险的那一半** ✓
+★ **与**事实 486 的关系：486 说「树增量不足，判据要含几何读数」；
+★★ **本条说**：★ **几何读数也要**双侧**（太大与太小都要判）** ✓
+
+### 四 · ★★★★ 顺带的收获：官方那三条**性能/内存**事实（★ 都逐字可查）
+
+| ★ | 官方逐字 | 出处 |
+|---|---|---|
+| ① | 「**FFEPlus** … uses advanced matrix reordering techniques that are more efficient for large problems. … **requires less RAM** than the Intel Direct Sparse solver」 | `c_Analysis_Solvers.htm` |
+| ② | 「If a solver requires more memory than available on the computer, then the solver **uses disk space** … you get a message saying that the solution is **going out of core** and the solution progress **slows down** … can be **extremely slow**」 | 同上 |
+| ③ | 「the **Large Problem Direct Sparse** solver can handle simulation problems that **exceed the physical memory** of your computer」· ★ 且「**Intel Direct Sparse** … more efficient at taking advantage of **multiple cores**」 | 同上 |
+| ④ | 「all solvers are efficient for small problems (**25,000 DOFs or less**)」· ★ 「FFEPlus is faster … with **DOF over 100,000**」 | 同上 |
+
+★ 求解器选择是**属性**：`CWStaticStudyOptions.SolverType`（`Long`），
+★ 取值逐字来自官方类型库 `CosmosWorksLib~swsSolverType_e.html`：
+`Automatic=0` · `DirectSparse=1` · `FFEPlus=2` · `CASI=5` · `Abaqus=6` · `INTEL=7` · `INTELCluster=8`
+⚠ ★ **枚举值 ↔ UI 名字（"Large Problem Direct Sparse" / "Intel Direct Sparse"）的对应关系，
+两套官方源都没写** ⇒ ★ 按铁律 5：**不猜**（★ 故本事实只登记枚举值本身）✓
+
+### 五 · ★★★★ 「为什么不能用 GPU」—— ★ 官方源里**没有 GPU 求解器**
+
+```
+★ 判据一：求解器枚举 **7 个成员全是 CPU 求解器**（见上），★ **没有 GPU 项** ✓
+★ 判据二：把 Simulation 的三套文档（手册 2052 份 / 英文 2790 / 类型库 3000）全库 grep
+          `GPU|CUDA|OpenCL|graphics card|hardware acceleration` ⇒ **命中 7 处，
+          ★★ 而这 7 处全部落在 `c_copyright_solidworks.htm` 里** ——
+          ★ 那是**捆绑的 Intel 库的第三方许可声明**（oneAPI Level Zero / OpenCL 驱动 /
+          Intel Graphics Compiler），★ **不是求解器能力** ✓
+★ 判据三：SW Simulation 的求解器是 **FFEPlus（迭代）** 与三个 **Direct Sparse** 族
+          （Intel / Large Problem / 经典）—— ★ 全是**矩阵分解**法，★ 走 CPU 多核与内存/磁盘 ✓
+⇒ ★★ **结论**：★ GPU 在 SolidWorks 里服务于**图形/渲染**（RealView · Visualize），
+   ★ **不服务于 FEA 求解** ⇒ ★ 「换 GPU 让它更快」在本机**没有可打开的开关** ✓
+```
+
+### 六 · ★ 依据
+★ 事故现场：`Get-Process cwbcbfmesh`（38.50 GB 工作集 / 52.56 GB 提交）· ★ 用户当场点破 ✓
+★ 官方：`C:\cworks_manual\c_Analysis_Solvers.htm` · `IDC_HELP_PRESTATIC_OPTIONS.htm` ·
+`C:\cworks_vb6\CosmosWorksLib~swsSolverType_e.html` · `…~CWStaticStudyOptions~SolverType.html` ✓
+★ 代码：`scripts/sw_simulation.py`（`check_mesh_size_sane` · `DOF_PER_GB` · `DOF_PER_ELEMENT` ·
+`default_solve_memory_budget_gb`）· `mcp-server/tool_specs_batch31.py`（加 `memory_budget_gb`）✓
+★ 测试：`tests/test_mesh_size_memory_gate.py`（**6 passed**）· 对照：`output/_compare_mesh_gate.py` ✓
+
+
+---
+
+## 522 · ★★★★ CLI 参数**解析了却没传下去** ⇒ 护栏按默认值把长跑探针杀了 120 s
+
+**发现时间**：2026-10-04（接手轮 · 同一场事故的前一站）
+
+### 一 · 现象（★ 逐字）
+
+```
+★ 命令：`python tools/sw_guard.py --timeout 3000 -- python tools/probe_analysis_run_long_timeout.py`
+★ 返回：`{"ok": false, "timed_out": true, "seconds": 120.43, "dialogs": []}`
+        （returncode=null）
+★★ 而 `--help` 与仓内文档**都写着** `--timeout` 就是那个硬超时 ⇒ ★ 极容易被读成
+   「探针自己挂了」（★ 事实 517 同族：**返回值没区分"谁超的时"**）✓
+```
+
+### 二 · 真因（★ 一行）
+
+```python
+# tools/sw_guard.py::main
+ap.add_argument("--timeout", type=float, default=180.0, ...)   # ★ 解析了
+...
+r = run_guarded(args.command)          # ✗ 没传 timeout ⇒ 永远走 run_guarded 的默认 120.0
+```
+
+### 三 · 修法（两处）
+
+1. ★ `r = run_guarded(args.command, timeout=args.timeout)` ✓
+2. ★★ **顺带把子进程 stdout 带回来** —— 原来那行 `{k: v for k, v in r.items() if k != "stdout_tail"}`
+   **明确剔掉了** `stdout_tail` ⇒ ★ **长跑探针每一步的 print 全丢**，
+   而"哪一步走完了"正是排查长跑失败最需要的东西（★ 事实 293 同族）✓
+
+### 四 · ★★★ 可复用定则
+
+> ★★★ **"参数解析了" ≠ "参数生效了"** —— ★ 与 `check_param_binding.py` 判的那件事同源：
+> 那边判「工具声明的参数有没有归属」，★ **本处是 CLI 层的同一个病** ✓
+> ★ 判别法：★ 改一个参数之后**必须有一条能看出它生效的读数**（★ 本例：子进程 stdout 出现）✓
+
+### 五 · ★ 依据
+★ `tools/sw_guard.py` 的 `main()`（修前后各一行）· ★ 真机实录 `seconds: 120.43` ✓
+★ 回归：`tests/test_sw_guard_dialog_tiers.py`（**7 passed**，★ 改动后仍绿）✓
