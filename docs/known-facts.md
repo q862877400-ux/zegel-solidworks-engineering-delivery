@@ -5552,3 +5552,45 @@ return_shape_diff 75 · **unit_diff 15** · **mark_diff 10**
 `specs/204-bunny-moat-batches/recon/c4-merged.json`（2.6 MB，只读复用）✓
 ★ **过程记录**：`kind` 在**嵌套的 `conflicts` 列表里**（顶层无 kind）⇒ 第一版按顶层过滤抽到 0 条，
   靠打印结构才发现；★ 另修了一处中文里的 ASCII 引号（`"详略差异"` → 「详略差异」，事实 48 同族）✓
+
+---
+
+| 526 | **★★★★ T4-1 逐条核（机械部分）：25 条冲突收窄到 **8 个我们真用到的成员**，其中 2 个正是最危险的那两类** —— 2026-10-04（接手轮 T4-1 第二步，规格 `specs/206-c1c6-harvest/`）。
+
+**做法**（★ 机械化，不需判断力）：25 条冲突（unit_diff 15 + mark_diff 10）→ 取涉及的 **19 个成员**
+⇒ 在本仓 `scripts/` `mcp-server/` `tools/` 里按**三种引用写法**找它们
+（`get_com_member(…, "X")` / `.X` 属性访问 / `"X"` 字面量）⇒ 分成"我们用了"与"我们没用到" ✓
+
+**★★ 结果**：
+```
+★ 我们【用了】的: **8** 个（★ 需要人核的那批）
+   ★★ AutoDimension2         → `scripts/sw_part.py:805`（get_com_member，6 处）
+        ★ 正是那条 **mark_diff 样板** —— Remarks 要求基准打 `swAutodimMark*`，
+          而官方示例用**没有 mark 形参**的 `Select4` ⇒ ★ **我们真在用，所以这条对我们有效** ✓
+   ★★ FeatureCircularPattern4 → `scripts/sw_part.py:1441`（attr_access，5 处）
+        ★ 那条 **unit_diff**：「total angle in radians if EqualSpacing」✓
+   FeatureLinearPattern4 · InsertProtrusionBlend2 · InsertSewRefSurface ·
+   InsertWeldmentTrimFeature2 · SetSystemValue3 · SetupSheet6
+★ 我们【没用】的: **11** 个（★ 那几条冲突对我们**当前**无直接影响；
+   若将来实现同一能力，届时才触发 —— 仍留在表里）
+```
+
+**★★ 交付物**：`docs/recon-206/conflicts-25-crosscheck.md`（73 行）
+★ 本表**不算什么**（已写进文件）：① **不判**我们调得对不对（只说用没用、用在哪）；
+② 没用到的成员**不等于无影响**；③ 匹配的第三种写法会把注释里的提及也算进来 ⇒ **可能高估用了没** ✓
+
+**★ 下一步**：对那 8 个成员逐条读**我们那一行代码 + 官方页 `## Remarks`** ⇒
+判「我们用的是示例写法还是 Remarks 写法」；★ **与 Remarks 冲突且有证据的才改** ✓
+
+**★★ 过程记录（★ 本轮我自己造的事故，值得记）**：
+```
+① 中文串里嵌 ASCII 引号 ⇒ 本会话**第 N 次**（`"我们调得对不对"` 等）⇒ 事实 48 同族
+② ★★ 然后我写了个"批量修中文引号"的脚本，**它把合法的字符串定界符也换了**
+   （`"属性/方法访问"` 是真字面量，不是"中文里嵌引号"）⇒ **把文件改坏** ✓✗
+   ⇒ ★ 处置：删除该文件与修复脚本（都未提交）⇒ 重写一份全程用「」、不嵌套引号的最小版 ✓
+③ ★ 另：先删后写同名文件会被文件守卫拒（"file no longer exists"）⇒ **换文件名**即可 ✓
+⇒ ★★ 教训：**"看起来该修的模式"不能批量盲改** —— 与事实 524 的定则（两张表=冗余是未验证的直觉）**同族** ✓
+```
+
+★ **依据**：`tools/t4_member_crosscheck.py` · `docs/recon-206/conflicts-25-crosscheck.md` ·
+`docs/recon-206/conflicts-25.md`（上一轮）· `c4-merged.json`（只读复用）✓
