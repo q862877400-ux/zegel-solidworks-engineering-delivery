@@ -225,6 +225,53 @@ def resolve_selection_manager(params: Any):
     return mgr
 
 
+def resolve_cost_part(params: Any):
+    """注入 **Costing 的"成本模型"对象**（`ICostModel`）—— ★ 供首参名叫 `cost_part` 的那批函数。
+
+    ★ 依据（★ 仓里既有代码给的，不是猜的）：`scripts/sw_costing.py` 的
+      `get_body_count_report(cost_manager)` 里逐字写着
+      ``m, _d, err = _costing_chain(cost_manager)`` 然后 ``get_body_count(m)``
+      —— 而 `get_body_count(cost_part)` 的首参就叫 `cost_part`
+      ⇒ ★★ **`cost_part` 就是 `cost_manager` 取出来的那个"成本模型"对象** ✓
+    """
+    from scripts.sw_costing import get_costing_model
+    return get_costing_model(resolve_cost_manager(params))
+
+
+def resolve_motion_study(params: Any):
+    """注入**运动算例**（`IMotionStudy`）—— ★ 供首参名叫 `motion_study` 的那批函数。
+
+    ★ 定位规则（★ **能唯一确定才给，否则响亮报错** —— 与我给 `family` 的处理同一手法）：
+      ① 传了 `motion_study_name` ⇒ 按名取（官方 `GetMotionStudy(String MotionStudyName)`）✓
+      ② 没传：算例数 **== 1** ⇒ 就那一个；**0** 或 **>1** ⇒ ★ **报错并说清该怎么办** ✓
+         （★ 0 ⇒ 先 `solidworks_motion_create_study`；★ >1 ⇒ 请补 `motion_study_name`）✓
+    """
+    from scripts.sw_motion import get_motion_study_manager, motion_member
+    name = str(getattr(params, "motion_study_name", "") or "").strip()
+    #: ★ 注：本解析器需要**装配体**（运动算例挂在装配上）⇒ 用 `asm_model` 那条口子取文档
+    model = resolve_model(params)
+    mgr = get_motion_study_manager(model)
+    if mgr is None:
+        raise RuntimeError("取不到 `MotionStudyManager` ⇒ ★ 先确认 Motion 加载项可用"
+                           "（`solidworks_motion_ensure_type_library`）")
+    if name:
+        study = motion_member(mgr, "GetMotionStudy", name)
+        if study is None:
+            names = motion_member(mgr, "GetMotionStudyNames") or []
+            raise RuntimeError("没有名为 %r 的运动算例；现有：%r" % (name, list(names)[:10]))
+        return study
+    count = int(motion_member(mgr, "GetMotionStudyCount") or 0)
+    if count == 0:
+        raise RuntimeError("该装配上**没有运动算例** ⇒ `motion_study` 注入键无法解析。"
+                           "★ 请先 `solidworks_motion_create_study`")
+    if count > 1:
+        names = motion_member(mgr, "GetMotionStudyNames") or []
+        raise RuntimeError("该装配上有 **%d 个**运动算例 ⇒ ★ **本解析器不替你猜用哪一个**，"
+                           "请显式传 `motion_study_name`（现有：%r）" % (count, list(names)[:10]))
+    return motion_member(mgr, "GetMotionStudy", str(list(motion_member(
+        mgr, "GetMotionStudyNames") or [])[0]))
+
+
 def resolve_costing_defaults(params: Any):
     """注入 **Costing 的默认值对象** —— ★ 供首参名叫 `defaults` 的 `sw_costing` 族函数。
 
@@ -389,6 +436,16 @@ RESOLVERS: dict[str, Any] = {
     #:   ⚠ 两者**没有**就先**响亮报错**（★ 不猜、不静默失败）✓
     "sketch": resolve_active_sketch,
     "selection": resolve_selection_manager,
+    #: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」第四批）：**`cost_part` / `motion_study`** ——
+    #:   ★ C 类里**最后两组语义无歧义**的：
+    #:     · `cost_part` ⇒ **Costing 的成本模型对象**（★ 依据在仓里：`get_body_count_report` 里
+    #:       逐字把 `_costing_chain(cost_manager)` 取出的对象喂给 `get_body_count(cost_part)`）✓
+    #:     · `motion_study` ⇒ **运动算例**（★ 按 `motion_study_name` 取；未传时**只在算例数 == 1**
+    #:       才给，0 或 >1 都**响亮报错** ⇒ 不猜）✓ —— ★ AVI 导出是三个**护城河域**之一 ✓
+    #:   ⚠ 其余 C 类组（`win`/`hwnd`/`ctrl`/`obj`/`target`/`route_manager`/`sketch` 的图纸侧…）
+    #:     **一律不碰** —— ★ 它们是"取哪一个？"的问题（事实 36 那一族）✓
+    "cost_part": resolve_cost_part,
+    "motion_study": resolve_motion_study,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。
@@ -785,6 +842,21 @@ BATCH_MODULES = (
     #:     故**如实标注**：真机调用时若报序列化错，应改为"报告式"包装（★ 与既有 `*_report` 手法一致）✓
     #:   ★★ 计数：401 → **418** ✓
     "tool_specs_batch88",
+    #: ★★★★★ 轮 115：**规格 205 的批 89 —— C 类最后两组语义无歧义的解锁**（5 个）：
+    #:   ★ 走「**加解析器换工具**」那条路：同笔加两个注入键
+    #:     `"cost_part"`（Costing 的成本模型对象）· `"motion_study"`（运动算例，按名字取、
+    #:     **只在算例数 == 1 时才给**、0 或 >1 都响亮报错 ⇒ 不猜）✓
+    #:   · Costing **写侧 3 个** —— 纳入实体 / 设成本方法 / 全部实体重算
+    #:     （★ 官方依据：`C:\swapi\types` **无这三页** ⇒ 真源如实标为**本仓** `scripts/sw_costing.py`，
+    #:      其来源块写明依据是「反射确认的实参个数」）✓
+    #:   · 运动算例 **2 个** —— 计算(可选播放) · ★★ **导出 AVI**（★ **护城河域**之一，
+    #:     官方页逐字 `IMotionStudy\SaveToAVI.md` ⇒ `System.bool SaveToAVI( System.string FileName,
+    #:     AVIParameter Parameter )`）✓
+    #:   ★★ 本批**不做**的（FR-006/D-5，逐条写在批次文件头）：Costing 那 5 个只读候选
+    #:     **各自的 `*_report` 包装已挂成工具**；motion 的 `add_constant_speed_rotary_motor*`
+    #:     被**上游遗留工具** `solidworks_add_rotary_motor` 覆盖 ✓
+    #:   ★ 计数：414 → **419**
+    "tool_specs_batch89",
 )
 
 def all_specs() -> list:

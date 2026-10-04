@@ -257,7 +257,12 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 414
+    assert len(all_specs()) == 419
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 89**）：**414 → 419** —— ★ **我加的 5 条**
+    #:   ★ C 类里**最后两组语义无歧义**的：Costing 写侧 3（纳入实体/设成本方法/全部重算）·
+    #:   运动算例 2（计算可选播放 · ★★ **导出 AVI** = **护城河域**）✓
+    #:   ★ 走「加解析器换工具」：同笔加注入键 cost_part / motion_study（★ 后者只在
+    #:     **算例数 == 1** 时才给、0 或 >1 都响亮报错 ⇒ **不猜**）✓
     #: ★★★ 2026-10-04（接手轮 · **批 88 的真机后裁决**）：**418 → 414**
     #:   ★ 真机探针（	ools/probe_batch88_return_types.py）测出：批 88 里那 4 个
     #:     「返回可能是 COM 对象、未验证」的工具 —— **2 个证明返回裸 CDispatch（过不了 JSON 边界）**、
