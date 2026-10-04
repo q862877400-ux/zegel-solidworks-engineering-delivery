@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 369 | 369 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 382 | 382 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -46,16 +46,16 @@
 | ⑦ 钣金 | 10 | · | 1 | · | 9 | 20⚠ | 20 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 14 | 19⚠ | 19 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
-| ⑩ 装配 | 13 | 7 | 4 | 3 | 17 | 65⚠ | 36 | **19** |
+| ⑩ 装配 | 13 | 7 | 4 | 3 | 24 | 65⚠ | 43 | **19** |
 | ⑪ 工程图 | 18 | 18 | 15 | 17 | 33 | 74⚠ | 82 | **49** |
 | ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 11 | 28⚠ | 27 | **16** |
-| ⑬ 仿真 / Motion | 3 | · | 1 | · | 32 | 124⚠ | 36 | **4** |
-| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 14 | 49⚠ | 24 | **10** |
+| ⑬ 仿真 / Motion | 3 | · | 1 | · | 37 | 124⚠ | 41 | **4** |
+| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 15 | 49⚠ | 25 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 29 | 14 | 29 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 75 | 517⚠ | 117 | **42** |
 
-**合计**：并集 680 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 693 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,22 +117,30 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 331 个操作只有本仓库有：
+共 344 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
 - `addin_host_status`（⑰ 未归类）
 - `api_deprecated_successor`（⑰ 未归类）
+- `appearance_delete_render_material`（⑭ 外观 / 材质 / 配置）
+- `assembly_add_mate_checked`（⑩ 装配）
+- `assembly_add_parallel_mate`（⑩ 装配）
 - `assembly_auto_explode`（⑩ 装配）
 - `assembly_check_interference`（⑩ 装配）
 - `assembly_create_exploded_view`（⑪ 工程图）
+- `assembly_dissolve`（⑩ 装配）
 - `assembly_edit_explode_parameters`（⑩ 装配）
+- `assembly_exit_edit_part_in_context`（⑩ 装配）
 - `assembly_exploded_view_configuration`（⑭ 外观 / 材质 / 配置）
 - `assembly_get_exploded_view_count`（⑩ 装配）
 - `assembly_get_exploded_view_names`（⑩ 装配）
 - `assembly_list_components`（⑩ 装配）
 - `assembly_list_mates`（⑩ 装配）
+- `assembly_replace_component`（⑩ 装配）
 - `assembly_show_exploded`（⑩ 装配）
+- `assembly_suppress_component`（⑩ 装配）
+- `assembly_unsuppress_component`（⑩ 装配）
 - `assembly_view_collapse`（⑩ 装配）
 - `assembly_view_explode`（⑩ 装配）
 - `auto_dimension_sketch`（③ 草图）
@@ -365,11 +373,16 @@
 - `simulation_create_mesh_for_control`（⑬ 仿真 / Motion）
 - `simulation_create_mesh_safely`（⑬ 仿真 / Motion）
 - `simulation_create_study`（⑬ 仿真 / Motion）
+- `simulation_create_study_by_type`（⑬ 仿真 / Motion）
 - `simulation_default_element_size_and_tolerance`（⑯ 高级 / 专项（含护城河候选））
+- `simulation_default_solve_memory_budget_gb`（⑬ 仿真 / Motion）
+- `simulation_ensure_addin`（⑬ 仿真 / Motion）
 - `simulation_find_study`（⑬ 仿真 / Motion）
 - `simulation_generate_report`（⑬ 仿真 / Motion）
+- `simulation_get_study_manager`（⑬ 仿真 / Motion）
 - `simulation_list_setter_summary`（⑬ 仿真 / Motion）
 - `simulation_list_studies`（⑬ 仿真 / Motion）
+- `simulation_mesh_settings_report`（⑬ 仿真 / Motion）
 - `simulation_mesh_size`（⑬ 仿真 / Motion）
 - `simulation_run_analysis`（⑬ 仿真 / Motion）
 - `simulation_set_material`（⑬ 仿真 / Motion）

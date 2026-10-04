@@ -185,7 +185,13 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
             if not any(k in desc_low for k in ("无量纲", "dimensionless", "不是长度", "非长度")):
                 bad.append("⑤ 长度类参数 %r 缺 `_mm` 后缀（规则 2）" % name)
         if any(w in low for w in ANGLE_WORDS) and not low.endswith("_deg"):
-            bad.append("⑤ 角度类参数 %r 缺 `_deg` 后缀（规则 2）" % name)
+            #: ★★ 误伤修正（★ 第二坡真产出）：`lock_rotation` / `rotation_locked` 这类**布尔开关**
+            #:   名字里带 "rotation" 而**不是角度** ⇒ ★ 按 `type` 与 desc 放行（事实 51 同族）✓
+            typ = str(p.get("type") or "").lower()
+            d2 = str(p.get("desc") or "").lower()
+            if typ not in ("bool", "boolean") and not any(
+                    k in d2 for k in ("布尔", "开关", "bool", "flag", "是否")):
+                bad.append("⑤ 角度类参数 %r 缺 `_deg` 后缀（规则 2）" % name)
     #: ⑦ 注入键
     #: ★★ 判据**以盘上 `RESOLVERS` 为准**（★ 与 ⑩ 同一原则）—— 第一版用**静态白名单** `INJECT_KEYS`
     #:   ⇒ ★ 我新加 `sldworks` 键之后，5 行本来能挂的被判"不是 RESOLVERS 的键" ⇒ **冤枉** ✓

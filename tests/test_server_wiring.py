@@ -236,7 +236,15 @@ def test_expected_batch_size(server):
     #:     （`send_message` 弹模态框 · `is_type_mismatch` 无独立价值）✓
     #:   ★ 域：sw_review 10 · sw_feature_readback 3 · sw_import_mesh_reference 2 ·
     #:     sw_preflight / sw_sketch_dimensions / sw_misumi / sw_automation_knowledge / sw_com_traps 各 1 ✓
-    assert len(all_specs()) == 343
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 82**）：**343 → 356** —— ★ **我加的 13 条**
+    #:   ★ 来自**第二坡 58 路扇出**（仿真/装配/导出域）⇒ 生成器产出 19 个 ⇒
+    #:     ★★ 主线按 **FR-006 语义去重删掉 6 个**：`export_pdf` / `export_flat_pattern_dxf` /
+    #:     `…_report`（`export_active` 已含 PDF、`export_dxf` 就是钣金展开导出）·
+    #:     `assembly_add_distance_mate_by_name`（`add_distance_mate` 已覆盖）·
+    #:     ★★ **`simulation_configure_mesh_settings` / `simulation_mesh_safety_apply`**（它们是
+    #:     **未护栏的原始网格旋钮** —— 事实 526 的 40 GB 事故正是盲设它们造成的；批 78 已定
+    #:     「安全入口 = `create_mesh_safely`」）⇒ ★ **不单独发旋钮**（D-1 宁缺毋滥）✓
+    assert len(all_specs()) == 356
 
 
 # ── ③ 命名与「两者不混用」（规则 1）──────────────────────────────

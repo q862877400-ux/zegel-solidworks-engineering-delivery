@@ -25,7 +25,15 @@ PYTYPE = {"int": "int", "float": "float", "bool": "bool", "str": "str", "string"
 
 
 def _esc(s: str) -> str:
-    """★ 把一段文本安全地放进**双引号 Python 字符串**：★ 先转义反斜杠（Windows 路径！），再换引号 ✓"""
+    """★ 把一段文本安全地放进**双引号 Python 字符串**（★ 三件事都要做，缺一就炸）：
+
+    ① ★ **转义反斜杠** —— Windows 路径 `C:\\swapi` 否则是非法转义（`SyntaxWarning`）；
+    ② ★ **折掉换行/制表** —— ★ Bunny 引的官方签名**可能是多行的**
+      （实测：`def export_flat_pattern_dxf(` 后面直接换行 ⇒ 生成物 `SyntaxError:
+       unterminated string literal`）★ 真产出里当场撞到 ✓
+    ③ ★ 把 `"` 换成 `'` —— 免得提前闭合字符串 ✓
+    """
+    s = re.sub(r"\s+", " ", s.replace("\r", " ").replace("\n", " ").replace("\t", " "))
     return s.replace("\\", "\\\\").replace('"', "'")
 
 
@@ -75,7 +83,15 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
              "__all__ = [\"SPECS_BATCH%s\"]" % batch, "",
              "SPECS_BATCH%s = [" % batch]
     for r in rows:
+        #: ★★★ 2026-10-04 修正（★ 被**仓库自己的** `check_param_binding` 抓到）：★ **必须把行里
+        #:   Bunny 给的 `param_alias` 一并带出来** —— 第一版只自动补了 `_mm`/`_deg` 那两类改名，
+        #:   ★★ 而 Bunny 还会把 `distance` 改名成 `distance_mm`（规则 2）并在 `param_alias` 里写明
+        #:   映射 ⇒ ★ 我不带出来 ⇒ 生成物里参数**对不上形参** ⇒ 运行期 `TypeError`
+        #:   （★ 真产出里 `sw_assembly.add_mate5_checked` 的 6 个参数就是这样丢的）✓
         alias = {}
+        for k, v in (r.get("param_alias") or {}).items():
+            if isinstance(k, str) and isinstance(v, str) and k != v:
+                alias[k] = v
         params_src = []
         for p in r.get("params") or []:
             kind = PYTYPE.get(str(p.get("type", "str")).lower(), "str")

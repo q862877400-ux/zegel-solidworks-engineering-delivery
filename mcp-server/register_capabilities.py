@@ -504,6 +504,18 @@ BATCH_MODULES = (
     #:   ★ 本批文件**由 `tools/build_toolspec_batch_from_rows.py` 生成**（★ 只收过门禁且
     #:     `exposable=True` 的行，并按构造保证规则 2 —— 长度缺 `_mm` 就自动改名 + 补 `param_alias`）✓
     "tool_specs_batch81",
+    #: ★★★★★★ 轮 108：**规格 205 的批 82 —— 第二坡扇出（仿真/装配/导出域）**（13 个）：
+    #:   ★ 生成器产出 **19** 个 ⇒ ★ 主线按 **FR-006 语义去重**删掉 **6** 个：
+    #:     · `export_pdf` / `export_flat_pattern_dxf` / `…_report` —— ★ `export_active` 已含 PDF、
+    #:       `export_dxf` **就是**钣金展开导出（其 doc 逐字这么写）⇒ **真重复** ✓
+    #:     · `assembly_add_distance_mate_by_name` —— `add_distance_mate` 已覆盖 ✓
+    #:     · ★★ **`simulation_configure_mesh_settings` / `simulation_mesh_safety_apply`** ——
+    #:       ★ 它们是**未护栏的原始网格旋钮**：★ 事实 526 的 **40 GB 事故**正是**盲设它们**造成的；
+    #:       批 78 已定「安全入口 = `create_mesh_safely`」（自动设安全档 + 事后还原）
+    #:       ⇒ ★ **不单独发旋钮**（D-1 宁缺毋滥）—— ★ 这是**安全**判断，不是数量判断 ✓
+    #:   ★ 留下的 13 个覆盖：装配（含 5 种配合/抑制/替换/平行）· 导出 · 外观渲染材质删除 ·
+    #:     仿真（加载项 / 研究管理器 / 按类型建研究 / 内存预算 / 网格设置报表 / 校验）✓
+    "tool_specs_batch82",
 )
 
 def all_specs() -> list:
