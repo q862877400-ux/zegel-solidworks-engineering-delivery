@@ -249,7 +249,11 @@ def test_expected_batch_size(server):
     #:     ★ **只读**的 `solve_memory_preflight` · 边焊缝连接件读数）✓
     #:   ★★ 本批带一条**安全对照**并由测试守住：★ 只读的闸可以发，而**会改研究设置**的
     #:     `configure_mesh_settings` / `mesh_safety_apply` **仍不许**出现（事实 526）✓
-    assert len(all_specs()) == 360
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 84**）：**360 → 367** —— ★ **我加的 7 条**
+    #:   （第三坡·薄模块产出 ⇒ 45 行里只有 9 行 exposable，★ **真新 7 个**）：
+    #:   ★ 真建模能力 `revolve_cut` / `surface_cut` / `ref_geometry_create_3d_bounding_box` /
+    #:     `sketch_select_segment`（★ 走**序号**，不收坐标）+ 诊断取证 3 个（前台窗口 / 截屏 / 焊件遍历）✓
+    assert len(all_specs()) == 367
 
 
 # ── ③ 命名与「两者不混用」（规则 1）──────────────────────────────

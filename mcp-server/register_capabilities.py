@@ -622,6 +622,16 @@ BATCH_MODULES = (
     #:     （★ 与危险旋钮不同：**它只算不设**，故单独发它是安全的 —— 对比批 82 删掉的那两个）✓
     #:   · `solidworks_simulation_get_edge_weld_connector` —— 边焊缝连接件读数 ✓
     "tool_specs_batch83",
+    #: ★★★★★ 轮 110：**规格 205 的批 84 —— 第三坡（残余 40 模块）产出**（7 个）：
+    #:   ★ 第三坡是**薄模块**（`sw_part` / `sw_hole_features` / `sw_costing` / `sw_sketch` /
+    #:     `sw_surface_features` / `sw_weldment` / `sw_ref_geometry` / `sw_gui_*` …）——
+    #:     ★★ 实测**可暴露率偏低**（45 行里只有 9 行 exposable）⇒ ★ 真正新的 7 个 ✓
+    #:   · ★ 真建模能力：`solidworks_revolve_cut`（旋转切除）· `solidworks_surface_cut`（曲面切除）·
+    #:     `solidworks_ref_geometry_create_3d_bounding_box`（3D 边界框）·
+    #:     `solidworks_sketch_select_segment`（按序号选草图段 —— ★ 声明式，不收坐标）✓
+    #:   · 诊断/取证：`solidworks_gui_get_foreground_window` · `solidworks_gui_screen_png` ·
+    #:     `solidworks_weldment_iter_features`（焊件特征树遍历）✓
+    "tool_specs_batch84",
 )
 
 def all_specs() -> list:
