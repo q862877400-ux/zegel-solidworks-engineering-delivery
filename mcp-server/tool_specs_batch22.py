@@ -71,6 +71,13 @@ _SKETCH = ("Name of an EXISTING sketch (e.g. \"Sketch1\" / \"草图1\"). ★ Cre
 
 _DIR = "True = extrude along the sketch normal; False = reverse."
 
+#: ★★ 2026-10-04（接手轮）**这里曾经有两个助手 `_consumed()` / `_meters_of_mm()`** ——
+#:   我加了它们做「`total_depth_mm` → 米」的换算，**随后又连同换算一起回退** ✓
+#:   ⇒ ★ 回退理由见下面 `solidworks_extrude_midplane` 那段注释（真机三条读数一致指向"按毫米"，
+#:     而用户截图显示 `84300.00mm` ⇒ **两者互斥、我未复现成功**）✓
+#:   ★ 教训（值得留）：**不用的助手要删掉** —— 留着会让下一个人以为"换算是这么做的"，
+#:     而它其实没接上（★ 与事实 40「存在但没人用的守卫比没有更糟」同族）✓
+
 
 SPECS_BATCH22 = [
     ToolSpec(
@@ -118,6 +125,17 @@ SPECS_BATCH22 = [
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
         #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
+        #: ★★★ 2026-10-04（接手轮）**这一处我试过改成 `_consumed` + `derived_args` 做 /1000 换算，
+        #:   然后又回退了** —— ★★ 理由（★ 证据互斥，我不敢动）：真机读数**一致指向"按毫米"**：
+        #:     · `solidworks_part_bounding_box`：传 **84.3** ⇒ 盒 X = **84.3** ✓
+        #:     · `IModelDoc2.Parameter("D1@凸台-拉伸1")` 的 `GetSystemValue3` ⇒ **84.3** ✓
+        #:     · **分辨性测试**：把 D1 改成 **50** ⇒ 盒 X 跟着变 **50** ⇒ ★ **该参数确实在驱动深度** ✓
+        #:   ⇒ ★★ 若在这里再除以 1000，宽度会变成 **0.0843 mm** —— ★ **把已经对的东西改坏** ✓✗
+        #:   ★★★ **而未解的矛盾**：用户在 SolidWorks 里截图显示深度框是 **`84300.00mm`**，
+        #:     与上面三条读数**互斥**，★ **我解释不了它** ⇒ 按本仓纪律「解释必须能被一条独立证据
+        #:     区分」，**在我能复现并区分之前不动这个换算** ✓
+        #:   ⇒ ★ 留给下一手：**先复现那个 84300 的对话框**（它只在 UI 里出现，API 侧读不到），
+        #:     再决定换算。★ 相关证据：`output/dim-list-evidence.json` · `output/units-verdict-evidence.json`
         param_alias={"total_depth_mm": "total_depth"},
         params=[
             Param("sketch_name", str, description=_SKETCH),
