@@ -61,4 +61,26 @@ python tools/check_subagent_models.py --selftest      # ★ 造 1 bunny + 1 deep
 
 两个教训：**一，`returned: 0` 要当成失败来查，不能当成「没活干」**；**二，先跑 2 路探针再铺 100 路** —— 上面那次 100 路是白跑的代价换来的。
 
+### ★★ 扇出之后的**五步管线**是一条命令 —— 别再用 `output/` 里的一次性脚本
+
+```
+python tools/bunny_toolspec_pipeline.py collect  --dir output/bunny-rowsN --out output/rowsN-all.json
+python tools/bunny_toolspec_pipeline.py backfill --in output/rowsN-all.json --out output/rowsN-bf.json
+python tools/bunny_toolspec_pipeline.py gate     --rows output/rowsN-bf.json --json output/gateN.json
+python tools/bunny_toolspec_pipeline.py remaining --report output/gateN.json --out output/newN.json
+python tools/bunny_toolspec_pipeline.py build    --report output/newN.json --batch NN --out mcp-server/tool_specs_batchNN.py
+python tools/bunny_toolspec_pipeline.py drop-refused --batch-file mcp-server/tool_specs_batchNN.py
+python tools/bunny_toolspec_pipeline.py list-refused        # ★ 打印"不做"政策名单（12 条，逐条带原因）
+```
+
+**为什么要有它**（★ 2026-10-04 · 业主问「会不会有一次忘了提交」时查出来的真缺口）：
+批 80–88 的工序**写在提交信息里**，而其中的「回填 `source_kind`」「算可建未挂」「删不做项」
+三步原先只是 `output/_*.py` 里的一次性脚本 —— ★ 而 **`output/` 被 gitignore**
+⇒ ★★ **别人克隆仓库后跑不出同样的批次**（管线不可复现）✓
+⇒ 现已收进入库工具；★ **"不做"政策名单（12 条、逐条带原因）也从草稿提升成 `REFUSED` 常量** ——
+★ 评它是**政策**（不是草稿），必须入库、必须可复核 ✓
+
+★★ 实测（在真实数据上走了一遍）：`remaining` 报「门禁报告 56 行 ⇒ 可建且未挂 **0** 行
+（**已挂跳过 17**）」—— ★ 那 17 正是批 88 建掉的那一批，**证明这一步真的对** ✓
+
 
