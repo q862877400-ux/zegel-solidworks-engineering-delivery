@@ -87,30 +87,60 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         bad.append("① params 不是数组")
         return bad
     #: ② 函数存在 + 形参一致（★ 必填的必须全在；可选的可省略）
+    #: ★★ 但**判"不做"（exposable=False）的行不做形参校验** —— ★ 反正不会建它，
+    #:   挑它的形参错只是噪音（★ 判据要贴合用途 —— 事实 51）✓
     req, opt, err = _fn_params(row["module"], row["function"])
     if err:
         bad.append("② %s" % err)
-    else:
+    elif row.get("exposable") is not False:
         claimed = [p.get("name") for p in row["params"] if isinstance(p, dict)]
         injected = row.get("inject") or ""
         #: ★ 注入的那个形参**不出现在** params 里（它由解析器供给）
         req_x = [a for a in req if a != injected]
-        miss = [a for a in req_x if a not in claimed]
-        extra = [a for a in claimed if a not in req and a not in opt]
+        #: ★★ 规则 2 的**合法改名**要认：★ `padding_m` → `padding_mm`（★ Bunny 在真产出里就这么做的，
+        #:   而第一版门禁按**逐字相等**比 ⇒ **把做对的判成错的** —— 事实 51：判据要贴合数据的形态）✓
+        def _alias_ok(claimed_name: str, real_name: str) -> bool:
+            return claimed_name in (real_name, real_name + "_mm", real_name + "_deg")
+
+        miss = [a for a in req_x if not any(_alias_ok(c, a) for c in claimed)]
+        extra = [a for a in claimed
+                 if not any(_alias_ok(a, r) for r in (req + opt))]
         if miss:
             bad.append("② **必填形参没声明**: %r（盘上必填=%r）" % (miss, req_x))
         if extra:
             bad.append("② **声明了盘上没有的形参**: %r（可选=%r）" % (extra, opt))
-        #: ★ 顺序也要对（按盘上顺序取子序列）
-        order = [a for a in (req + opt) if a in claimed and a != injected]
-        if order and claimed and order != claimed:
-            bad.append("② 形参**顺序**与盘上不一致：应 %r，草稿写 %r" % (order, claimed))
+        #: ★ 顺序也要对（按盘上顺序取子序列，★ 认可 `_mm`/`_deg` 改名后的对应）
+        def _real_of(name: str):
+            for r in (req + opt):
+                if _alias_ok(name, r):
+                    return r
+            return None
+
+        order = [_real_of(c) for c in claimed]
+        order = [x for x in order if x]
+        if order and order != [a for a in (req + opt) if a in order and a != injected]:
+            bad.append("② 形参**顺序**与盘上不一致（按盘上序取子序列应为 %r，草稿写 %r）"
+                       % ([a for a in (req + opt) if a in order and a != injected], claimed))
     #: ③ 官方出处存在 + 引文逐字命中
-    #: ★★ 例外：`exposable=False`（判"不做"）时**官方出处可以为空** ——
-    #:   ★ 有些函数本来就没有官方页（本仓自建的插件域模块）⇒ ★ 但**必须写原因**（铁律 5）✓
+    #: ★★ 例外一：`exposable=False`（判"不做"）时**官方出处可以为空**，但**必须写原因**（铁律 5）✓
+    #: ★★ 例外二（2026-10-04 补，★ 因真产出里 4 行被判"自相矛盾"而发现）：
+    #:   `source_kind == "repo_original"` —— ★ **本仓自研的纯计算/编排函数本来就没有官方页**
+    #:   （如 `sw_review.inspect_pdf_text_layout` / `collect_geometry_measurements` 这类聚合器）。
+    #:   ★ 那时**不要求** `official_file` 是官方 md 页，★ 但**要求它指向一个真实存在的仓库文件**
+    #:   （= 真源），★ 且**必须**在 `official_remarks_gist` 里说清"真源是本仓哪一段" ✓
+    src_kind = str(row.get("source_kind") or "official_page")
     if row.get("exposable") is False:
         if not str(row.get("reason_if_not") or "").strip():
             bad.append("③ 判 exposable=False 却**没写原因** ⇒ 无法核（★ 铁律 5）")
+    elif src_kind == "repo_original":
+        of = str(row.get("official_file") or "")
+        p = Path(of) if of else None
+        if not of or not p.is_file():
+            bad.append("③ `source_kind=repo_original` 但 `official_file` 不是**存在的仓库文件**: %r"
+                       % of[:80])
+        if "本仓" not in str(row.get("official_remarks_gist") or "") + \
+                str(row.get("reason_if_not") or ""):
+            bad.append("③ `repo_original` 却没说明「真源是本仓哪一段」（★ 铁律 1 要能指认出处）")
     else:
         of = str(row.get("official_file") or "")
         if not of:
@@ -142,7 +172,10 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         if low in COORD_NAMES:
             bad.append("⑥ 参数 %r 是**裸坐标**（规则 3 禁）" % name)
         if any(w in low for w in LENGTH_WORDS) and not re.search(r"_(mm|m|inch|in)$", low):
-            if not re.search(r"_(mm|m|inch|in)$", low):
+            #: ★★ 误伤修正（事实 51 同族）：`axis_tolerance` 这类**无量纲**容差被词表抓到
+            #:   —— ★ 真产出里 Bunny 的 desc 已写明「无量纲」⇒ ★ 尊重它，不报
+            desc_low = str(p.get("desc") or "").lower()
+            if not any(k in desc_low for k in ("无量纲", "dimensionless", "不是长度", "非长度")):
                 bad.append("⑤ 长度类参数 %r 缺 `_mm` 后缀（规则 2）" % name)
         if any(w in low for w in ANGLE_WORDS) and not low.endswith("_deg"):
             bad.append("⑤ 角度类参数 %r 缺 `_deg` 后缀（规则 2）" % name)
@@ -160,15 +193,34 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         bad.append("⑧ ★ 与既有工具**撞名**: %s" % tn)
     if row.get("exposable") is False and not str(row.get("reason_if_not") or "").strip():
         bad.append("⑧ 判 exposable=False 却**没写原因**（★ 铁律 5：说清为什么）")
-    #: ⑨⑩ ★ 三问筛的**自相矛盾检查**（★ 只在行里带了那两个字段时才查 —— 兼容早期行）
+    #: ⑨⑩ ★ 三问筛的**自相矛盾检查**
+    #: ★★ ⑩ 的关键：`q2_inject_key_available` **以盘上 `RESOLVERS` 为准**，不信行里的自述 ——
+    #:   ★ 真产出里就有这种情形：Bunny 的快照**早于**我加 `sldworks` 键，于是它写 `false`
+    #:   而在正文里说明"实际注册表里已有" ⇒ ★ 若照它自述判，就会**冤枉一行本来能挂的** ✓
+    #:   ★ 这正是本门禁自己的原则：**判据从盘上重推** ✓
+    inj_key = str(row.get("inject") or "")
+    disk_has_key = (inj_key == "") or (inj_key in _resolver_keys())
     q1 = row.get("q1_official_page_exists")
     q2c = row.get("q2_first_param_com_object")
-    q2k = row.get("q2_inject_key_available")
-    if row.get("exposable") is True and q1 is False:
-        bad.append("⑨ ★ 自相矛盾：判可暴露，却自述**官方页不存在**（q1=False）")
-    if row.get("exposable") is True and q2c is True and q2k is False:
-        bad.append("⑩ ★ 自相矛盾：判可暴露，却自述**首参是 COM 对象且无注入键可用**")
+    if row.get("exposable") is True and q1 is False and src_kind != "repo_original":
+        bad.append("⑨ ★ 自相矛盾：判可暴露，却自述**官方页不存在**（q1=False）——"
+                   "★ 若它其实是**本仓自研**的纯计算函数，请把 `source_kind` 写成 `repo_original` 并"
+                   "让 `official_file` 指向**仓库文件**（★ 真源）✓")
+    if row.get("exposable") is True and q2c is True and not disk_has_key:
+        bad.append("⑩ ★ 自相矛盾：判可暴露，却自述**首参是 COM 对象且无注入键可用**"
+                   "（★ 已按盘上 RESOLVERS 复核：键 %r 不在表里）" % inj_key)
     return bad
+
+
+def _resolver_keys() -> set[str]:
+    """★ 盘上 `RESOLVERS` 的**真键集**（★ 判据从盘上重推，不信行里自述）。"""
+    try:
+        sys.path.insert(0, str(ROOT / "mcp-server"))
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import register_capabilities as rc                          # noqa: PLC0415
+        return set(rc.RESOLVERS.keys())
+    except Exception:                                                # noqa: BLE001
+        return set(INJECT_KEYS)
 
 
 def _existing_tools() -> set[str]:
