@@ -6457,3 +6457,58 @@ CreateStructureSystemMemberData · Elliptical · FeatureFillet3（各 3 条）
 ★ **依据**：`scripts/check_official_source_defects.py`（`CITATION` 收窄 + `PLACEHOLDER`）·
 `tools/measure_official_defects_fp.py`（四组测量）· 事实 545（第 29 轮）· 事实 542（改判据须重测）✓
 ★ **本批的下限**：★ 那 **2 处待判**未判；★ 门禁**仍未接硬门禁**（★ 但四项指标全绿，★ 接闸的依据已齐）✓
+
+---
+
+| 547 | **★★★★★ 门禁的**第 4 类命中**判出：**判据假设 `C:\swapi` 是唯一官方源** ⇒ 它会把任何「只在 CHM 里」的页判成不存在**** —— 2026-10-04（接手轮，规格 `specs/206-c1c6-harvest/`）。
+
+**★ 判法（★ 机械：查文件系统 + 查 CHM）**：
+```
+★ 剩下 2 处命中:
+   ① `tools/prove_absolute_criteria.py:8` 引 `C:\swapi\types\IMassProperty\Volume.md`
+   ② `tools/trigger_analysis_dialogs.py:7` 引 `C:\swapi\types\ICWStudy\RunAnalysis.md`
+★ 在 `C:\swapi` 里都**不存在**（★ `C:\swapi\types\` 下**连 `ICW*` 目录都没有**）✓
+★★ 但查**另一套源**（CHM 解包 `D:\AI\SW\AI Solidworks\官方文档\`）⇒
+   ★★★ **`SolidWorks.Interop.sldworks~…IMassProperty~Volume.html` 【存在】** ✓✓
+   ⇒ ★★ **① 那处引用是【对的】**，只是引的是**另一套官方源**的页 ⇒ **误报** ✓
+★ 而 `RunAnalysis` / `ICWStudy` 在 CHM 里**也搜不到** ⇒ ★ 记「**两套源都没有**」（铁律 5）✓
+```
+
+**★★★ 由此判出第 4 类命中（★ 本门禁至今四类）**：
+| # | 类 | 例 | 该报吗 |
+|---|---|---|---|
+| ① | 我们自己的真断链 | `[[SketchManager::…]]` ×5 | ★ 该报（已修）|
+| ② | 注释里的**模板占位** | `[[Iface::Member]]` | ✗（已加 `PLACEHOLDER` 豁免）|
+| ③ | **官方缺陷的逐字引文** | `[[IFeatureManager::IInsertMidSurface]]` | ✗（已加 `CITATION`）|
+| ④ | ★★★ **只在 CHM 里的页** | `IMassProperty\Volume.md` | ✗ **误报（判据的真限界）** |
+
+**★★★ 第 4 类的性质（★ 与前三类不同）**：
+```
+★ 前三类是**判据没覆盖到的语义**（可加判据解决）；
+★★★ 第 4 类是**判据的数据面不全** —— ★ 本门禁只加载 `C:\swapi` 的真名集合，
+   而本仓**有两套官方源**（★ 铁律 4：两套都要查）⇒
+   ★★ **任何"只在 CHM 里"的页都会被判成不存在** ✓
+⇒ ★★ 修法不是加语义判据，而是**让判据同时认 CHM 源**（★ 那是**范围变更**，建议交主线）✓
+```
+
+**★ 处置**：★ 豁免理由更新为**第 4 版**（★ 三类语义 + 第 4 类数据面 + **明确的接闸前置**：
+★ ① 让判据同时认 CHM；② 把 `ICWStudy\RunAnalysis.md` 那条查清）✓
+
+**★ 定则（★ 与事实 546 同族，但更根本）**：
+```
+★★★ **判据的"数据面"与"语义面"要分开看** ——
+   ★ 我前几轮一直在加**语义判据**（引文、占位），而第 4 类是**数据面**缺一整套源 ✓
+   ★★ 而**数据面不全**时，加再多语义判据也修不好（★ 因为它压根没查过那个源）✓
+```
+
+★ **依据**：`C:\swapi\types\`（无 `ICW*` 目录）· CHM 解包里 `IMassProperty~Volume.html` 存在 ·
+`docs/gate-wiring-exemptions.json`（理由第 4 版）· 事实 546（判据取舍）· 铁律 4（两套源都要查）✓
+★ **本批的下限**：★ 第 4 类**未修**（★ 需主线决定是否把 CHM 纳入判据的数据面）；
+★ `ICWStudy\RunAnalysis.md` **未查清** ⇒ 记录为「两套源都搜不到」✓
+
+
+★★ **本条的落地限度（如实）**：★ 第 4 版豁免理由**未写进** \docs/gate-wiring-exemptions.json\ ——
+我在写它时**连续两次**把非法转义放进 JSON（★ 先是 \C:\swapi\ 的反斜杠、后是正则字面量 \^\s*#:\ 里的 \\s\），
+★★ 而 elease_check\ **每次都拦住了提交**；★ 我随后**把该文件回退到 HEAD 的合法版本**，
+★ 故**第 4 类这个发现只落在本条事实里**，★ 未写进豁免理由（★ 那是**下一手**该做的：
+★ 写 JSON 时**正则字面量与 Windows 路径都要转义**）✓
