@@ -93,21 +93,68 @@ class MetricScope:
 SCOPES: tuple = (
     MetricScope(
         key="bm25_topk",
-        question="用朴素 BM25 检索，我标注的期望工具落在 top-k 里的比例是多少",
+        question="用朴素 BM25 检索，我标注的期望工具落在 top-k 里的比例是多少（★ 手写题批）",
         unit="任务",
-        denominator="24 条手写中文/英文任务（★ 早期批次）",
+        denominator="★ **两批，不可相减、不可混报**：早期批 **24** 条手写题；分层批见 `bm25_topk_stratified`",
         normalization="tokenizer 已修（★ 字符类不含 `_`，snake_case 被切开）",
-        counts_as_hit="`rank(期望工具) <= k`",
+        counts_as_hit="`rank(期望工具) <= k`，k ∈ {1,3,5,10}（★ 报数必须写明 k）",
         not_counted=(
             "★ 返回了但**不是**期望工具的那些结果，一律不算（★ 这是**召回**口径，不是**正确性**口径）",
             "★ 期望工具是**我标的** ⇒ 我标错则本条判据失效",
+            "★ **未报的 k 不算**（只报 top-5 时，不得据它推断 top-1/top-10 的水平）",
         ),
         ordering="按 (-score, tool_name) 排序 —— ★ 同分用名字码点升序钉死",
         corpus="`register_capabilities.all_specs()`（当期 433 个 ToolSpec）",
-        known_limits=("题面由我手写 ⇒ 我自己的措辞偏倚未消除",),
+        known_limits=(
+            "题面由我手写 ⇒ 我自己的措辞偏倚未消除",
+            "★ 百分比未声明取整方式（本轮按四舍五入到整数报）",
+        ),
         not_comparable_with=(
             "★ `model_pick_correct` —— 那量的是「挑出来的对不对」，与本条的「召回」不同口径",
             "★ `lens_replica_topk` —— 检索器不同",
+            "★★ `name_reverse_lookup` —— 那是**工具**口径且**近乎同义反复**，不得与任务口径并列",
+            "★★ `bm25_topk_stratified` —— 分母是分层抽样的 48 题，与本条的 24 条**不可相减**",
+        ),
+    ),
+    MetricScope(
+        key="bm25_topk_stratified",
+        question="在同一份 BM25 上换成**分层抽样的 48 题**（冷门/薄文档/自研层/热门各一档），召回是多少",
+        unit="任务",
+        denominator="★ 分层批 **48** 题（各格样本：C1 冷门 18 · C2 薄文档 2 · C3 自研 18 · H 热门 10）",
+        normalization="同 `bm25_topk`（同一 tokenizer、同一目录）",
+        counts_as_hit="`rank(期望工具) <= k`，k 与每格 n **必须同时报**",
+        not_counted=(
+            "★ 同 `bm25_topk`：不是期望工具的返回不算",
+            "★★ **样本过小的格不下结论** —— C2 只有 2 题，它的百分比**不得**被当成该层的水平",
+            "★ 未报 k 的档不算",
+        ),
+        ordering="按 (-score, tool_name) 排序；★ 分层内的汇总也按层键升序，不依赖 dict 迭代序",
+        corpus="同一份 433 个 ToolSpec；题面为 Bunny 写的中文查询（独立产出者）",
+        known_limits=(
+            "★ 48 路里 34 路产出成功（覆盖 68 个工具），后按 48 题重抽 ⇒ 部分是子集",
+            "★ 分层是按「是否出现在中文清单 / 域大小」机械分的，不代表真实使用频率",
+        ),
+        not_comparable_with=(
+            "★★ `bm25_topk` 的 24 条手写批 —— 分母不同，**不可相减**",
+            "★ `model_pick_correct` —— 同题面但**机制不同**（有检索器 vs 模型自己挑）",
+        ),
+    ),
+    MetricScope(
+        key="name_reverse_lookup",
+        question="把工具名去掉前缀下划线换空格当作查询，能不能命中该工具自己（★ 工具口径）",
+        unit="工具",
+        denominator="当期 433 个 ToolSpec",
+        normalization="`name.removeprefix('solidworks_').replace('_', ' ')`",
+        counts_as_hit="排名 <= k",
+        not_counted=(
+            "★★ **它不构成任何召回/可用性证据** —— 用工具自己的名字查它自己，**近乎同义反复**",
+            "★ 它只证明「工具面自洽：没有结构上找不到的工具」这一点",
+        ),
+        ordering="按 (-score, name) 排序",
+        corpus="同一份 433 个 ToolSpec",
+        known_limits=("★ 该口径的高命中率是**构造使然**，不是质量指标",),
+        not_comparable_with=(
+            "★★ **任何任务口径的召回或正确率** —— 单位不同（工具 vs 任务），且是同义反复",
         ),
     ),
     MetricScope(
@@ -133,9 +180,13 @@ SCOPES: tuple = (
         key="model_pick_correct",
         question="真模型自己挑的工具，**到底对不对**（不是「有没有挑到我标的那个」）",
         unit="任务",
-        denominator="48 题（冷门 40 + 薄文档 5 + 自研层 40 + 热门 20 分层抽样后的 48）",
+        denominator="★ **有效 47 / 回收 48**（48 路里 1 路失败；另 1 组自报看不见工具清单 ⇒ 已排除）",
         normalization="判档四值 yes / partial / no / cannot_tell；★ 主判 A + 复核 B，两判独立",
-        counts_as_hit="★ **盲判裁判判 `yes`**（= 这个工具**就是**用来做这件事的）",
+        counts_as_hit=(
+            "★ **盲判裁判判 `yes`**（= 这个工具**就是**用来做这件事的）；"
+            "★★ 分三个**各自命名**的口径报：「主判 A」「复核 B」「前二≥1」（首选或备选里至少一个 yes）"
+            " —— ★ 三者**不得合并或并列**成一个数"
+        ),
         not_counted=(
             "★ `partial` **不算**命中（只做一部分/要配合别的工具）",
             "★ `cannot_tell` **不算**命中",
@@ -170,7 +221,11 @@ SCOPES: tuple = (
             "★ 未含上游 `server.py` 的 45 个工具 ⇒ ★ 真实模型可见面是 **433+45**，"
             "★ 我曾把它说成 433 ⇒ **已更正**",
         ),
-        not_comparable_with=("★ 与支线那路报的 `161 / 37.2%` **不同口径**（它们算了 schema）",),
+        not_comparable_with=(
+            "★ 与支线那路报的 `161 / 37.2%` **不同口径**（它们算了 schema）",
+            "★★ `official_term_alignment` 的 90.8% —— 那的分母是 **273**（能取到官方成员名者），"
+            "本条的 47.3% 分母是 **433**，★ 两者**不得并列**成「工具面健康度」（★ 裁判 A 点名）",
+        ),
     ),
     MetricScope(
         key="official_term_alignment",
@@ -182,6 +237,7 @@ SCOPES: tuple = (
         not_counted=(
             "★★ **本指标与检索命中率几乎无关** —— 官方成员名**不在模型可见面上**（模型只看到工具名/描述/参数）",
             "★ 抽取器抓到平凡成员（`Name` / `__len__`）或报告类工具时，**不构成「命名错」** —— 那是量法 artifact",
+            "★ **平凡单共词**（如 `name` / `get` / `set`）造成的交集**不算语义对应**（★ 两条路裁判都点了这一条）",
         ),
         ordering="不涉及排序（是计数）",
         corpus="`all_specs()` 的 `module`+`function` → `scripts/<module>.py` 函数体内的字符串实参",
