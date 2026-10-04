@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 351 | 351 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 369 | 369 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -37,9 +37,9 @@
 
 | 域 | Eduardof0nt | andrewbartels1 | vespo92 | Slacker-LLC | 本仓库(MCP) | 本仓库能力面 | 并集 | 缺口(MCP) |
 |---|---|---|---|---|---|---|---|---|
-| ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 16 | 61⚠ | 49 | **33** |
+| ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 17 | 61⚠ | 50 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 42 | 107⚠ | 75 | **33** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 43 | 107⚠ | 76 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 32⚠ | 16 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 33 | 106⚠ | 57 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 17 | 49⚠ | 25 | **8** |
@@ -47,15 +47,15 @@
 | ⑧ 焊件 | 5 | · | · | · | 14 | 19⚠ | 19 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
 | ⑩ 装配 | 13 | 7 | 4 | 3 | 17 | 65⚠ | 36 | **19** |
-| ⑪ 工程图 | 18 | 18 | 15 | 17 | 31 | 74⚠ | 80 | **49** |
-| ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 7 | 28⚠ | 23 | **16** |
+| ⑪ 工程图 | 18 | 18 | 15 | 17 | 33 | 74⚠ | 82 | **49** |
+| ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 11 | 28⚠ | 27 | **16** |
 | ⑬ 仿真 / Motion | 3 | · | 1 | · | 32 | 124⚠ | 36 | **4** |
-| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 13 | 49⚠ | 23 | **10** |
+| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 14 | 49⚠ | 24 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 29 | 14 | 29 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 66 | 517⚠ | 108 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 75 | 517⚠ | 117 | **42** |
 
-**合计**：并集 662 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 680 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 313 个操作只有本仓库有：
+共 331 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -233,8 +233,11 @@
 - `feature_cosmetic_thread`（⑰ 未归类）
 - `feature_delete`（⑰ 未归类）
 - `feature_info`（⑰ 未归类）
+- `feature_list_names`（⑰ 未归类）
+- `feature_present`（⑰ 未归类）
 - `feature_suppress`（⑰ 未归类）
 - `feature_unsuppress`（⑰ 未归类）
+- `feature_whats_wrong`（⑰ 未归类）
 - `fillet_params`（⑤ 零件特征）
 - `flatten_surface`（⑥ 曲面）
 - `gear_calculate_spur`（⑰ 未归类）
@@ -267,6 +270,9 @@
 - `macro_validate_vba_code`（⑮ 宏 / 自动化）
 - `macro_write_file`（⑮ 宏 / 自动化）
 - `measure_selection`（⑫ 检查 / 测量 / 反馈）
+- `mesh_configure_import_preferences`（⑭ 外观 / 材质 / 配置）
+- `mesh_restore_import_preferences`（① 会话 / 文档 / 文件）
+- `misumi_suggest_part`（⑰ 未归类）
 - `mold_core_cavity_split`（⑨ 模具）
 - `mold_draft_analysis`（⑨ 模具）
 - `mold_evidence`（⑨ 模具）
@@ -294,6 +300,7 @@
 - `part_sweep`（⑤ 零件特征）
 - `part_wrap`（⑤ 零件特征）
 - `pattern_params`（⑤ 零件特征）
+- `preflight_check_com_dependencies`（⑫ 检查 / 测量 / 反馈）
 - `prepare_fea`（⑰ 未归类）
 - `read_document_units`（① 会话 / 文档 / 文件）
 - `read_sensors`（⑫ 检查 / 测量 / 反馈）
@@ -306,8 +313,17 @@
 - `resolve_selection`（⑰ 未归类）
 - `review_active`（⑰ 未归类）
 - `review_advanced_geometry`（⑫ 检查 / 测量 / 反馈）
+- `review_collect_geometry_measurements`（⑫ 检查 / 测量 / 反馈）
 - `review_drawing`（⑪ 工程图）
+- `review_drawing_layout`（⑪ 工程图）
+- `review_evaluate_report`（⑰ 未归类）
+- `review_export_previews`（⑪ 工程图）
+- `review_inspect_bmp`（⑫ 检查 / 测量 / 反馈）
+- `review_pdf_text_layout`（⑰ 未归类）
 - `review_report`（⑰ 未归类）
+- `review_run`（⑰ 未归类）
+- `review_write_report`（⑰ 未归类）
+- `review_write_summary`（⑰ 未归类）
 - `revolve_boss`（⑤ 零件特征）
 - `revolve_params`（⑤ 零件特征）
 - `rotary_motor`（⑰ 未归类）
@@ -385,6 +401,7 @@
 - `sketch_end`（③ 草图）
 - `sketch_flip_entities`（③ 草图）
 - `sketch_fully_defined_status`（③ 草图）
+- `sketch_insert_chain_dimensions`（③ 草图）
 - `sketch_is_3d`（③ 草图）
 - `sketch_move_entities`（③ 草图）
 - `sketch_relation`（③ 草图）
@@ -418,6 +435,7 @@
 - `topology_run`（⑯ 高级 / 专项（含护城河候选））
 - `update_dimension`（④ 尺寸 / 约束 / 参数）
 - `validate_motion_study`（⑬ 仿真 / Motion）
+- `view_zoom_to_fit`（⑫ 检查 / 测量 / 反馈）
 - `weldment_create_cut_list`（⑧ 焊件）
 - `weldment_create_profile_center_mate`（⑧ 焊件）
 - `weldment_create_structural_member`（⑧ 焊件）

@@ -229,7 +229,14 @@ def test_expected_batch_size(server):
     #:     `is_swp_macro` · generator 的 `iter_real_sources`）—— ★ 原因逐条写在批次文件头，
     #:     并由测试断言「真的没挂」✓
     #:   ★ 本批新加注入键 `"sldworks": resolve_sw`（★ 与既有 `"sw"` 同一手法 —— 事实 169）✓
-    assert len(all_specs()) == 325
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 81**）：**325 → 343** —— ★ **我加的 18 条**
+    #:   ★★ 这是**第一次**用「**60 路 Bunny 扇出 → 机器门禁逐行核 → 转换器生成批次文件**」做的批次：
+    #:     `tools/check_bunny_toolspec_rows.py`（8 条判据 + 2 条自相矛盾检查，全部**从盘上重推**）
+    #:     ⇒ `tools/build_toolspec_batch_from_rows.py` ⇒ ★ 主线再删掉「明确不做」的两个
+    #:     （`send_message` 弹模态框 · `is_type_mismatch` 无独立价值）✓
+    #:   ★ 域：sw_review 10 · sw_feature_readback 3 · sw_import_mesh_reference 2 ·
+    #:     sw_preflight / sw_sketch_dimensions / sw_misumi / sw_automation_knowledge / sw_com_traps 各 1 ✓
+    assert len(all_specs()) == 343
 
 
 # ── ③ 命名与「两者不混用」（规则 1）──────────────────────────────

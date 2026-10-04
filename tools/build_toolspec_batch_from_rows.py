@@ -24,6 +24,11 @@ ANGLE_WORDS = ("angle", "rotation", "twist")
 PYTYPE = {"int": "int", "float": "float", "bool": "bool", "str": "str", "string": "str"}
 
 
+def _esc(s: str) -> str:
+    """★ 把一段文本安全地放进**双引号 Python 字符串**：★ 先转义反斜杠（Windows 路径！），再换引号 ✓"""
+    return s.replace("\\", "\\\\").replace('"', "'")
+
+
 def _default_literal(kind: str, raw: str) -> str:
     """★ 把 Bunny 的字符串 `default` 转成 Python 字面量（★ 按它声明的类型）。"""
     s = "" if raw is None else str(raw).strip()
@@ -77,7 +82,7 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
             out, real = _maybe_unit_name(str(p["name"]))
             if real:
                 alias[out] = real
-            desc = str(p.get("desc") or "").replace("\\", "\\\\").replace('"', "'")
+            desc = _esc(str(p.get("desc") or ""))
             params_src.append('            Param("%s", %s, default=%s, description="%s"),'
                               % (out, kind, _default_literal(kind, p.get("default")), desc[:300]))
         if r.get("inject"):
@@ -95,10 +100,13 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
         lines.append("        params=[")
         lines += params_src
         lines += ["        ],",
+                  #: ★★ 生成的 `doc` 里常带 **Windows 路径**（`C:\swapi\...`）⇒ ★ 必须**转义反斜杠**，
+                  #:   否则 Python 报 `SyntaxWarning: invalid escape sequence '\s'`
+                  #:   （★ 第一版只在 `desc` 里转了义、`doc` 里忘了 ⇒ 生成物 7 处告警，实测发现）✓
                   '        doc="★ 官方签名（逐字，来自 %s）：`%s`。%s",'
                   % (Path(r["official_file"]).name,
-                     str(r.get("official_signature") or "").replace('"', "'")[:200],
-                     str(r.get("official_remarks_gist") or "").replace('"', "'")[:300]),
+                     _esc(str(r.get("official_signature") or "")[:200]),
+                     _esc(str(r.get("official_remarks_gist") or "")[:300])),
                   "    ),"]
     lines += ["]", ""]
     return "\n".join(lines)

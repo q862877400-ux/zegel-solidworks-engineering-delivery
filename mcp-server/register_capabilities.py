@@ -493,6 +493,17 @@ BATCH_MODULES = (
     #:   ★ 选域依据：机械预筛（`output/prescreen-deduped.json`）—— ★ 不再按"候选数"排序，
     #:     而按"**去重后可挂数**"排序（★ 这是 v3 批序的由来，见规格 §8.2）✓
     "tool_specs_batch80",
+    #: ★★★★★★ 轮 107：**规格 205 的批 81 —— 由 Bunny 扇出产出、经机器门禁过滤**（18 个）：
+    #:   ★ 这是**第一次**用"60 路 Bunny 扇出 → 门禁逐行核 → 转换器生成批次文件"这条路做的批次 ✓
+    #:   · 域：`sw_review`（10）· `sw_feature_readback`（3）· `sw_import_mesh_reference`（2）·
+    #:     `sw_preflight` / `sw_sketch_dimensions` / `sw_misumi` / `sw_automation_knowledge` /
+    #:     `sw_com_traps`（各 1）✓
+    #:   ★★ 门禁挡下的与**主线明确不做**的都不进来：
+    #:     · `solidworks_dialog_send_message`（弹模态框）· `solidworks_com_is_type_mismatch`
+    #:       （无独立价值）—— ★ 由 `tools/build_toolspec_batch_from_rows.py` 生成后**主线再删** ✓
+    #:   ★ 本批文件**由 `tools/build_toolspec_batch_from_rows.py` 生成**（★ 只收过门禁且
+    #:     `exposable=True` 的行，并按构造保证规则 2 —— 长度缺 `_mm` 就自动改名 + 补 `param_alias`）✓
+    "tool_specs_batch81",
 )
 
 def all_specs() -> list:

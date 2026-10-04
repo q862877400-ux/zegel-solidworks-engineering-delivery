@@ -97,10 +97,17 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         injected = row.get("inject") or ""
         #: ★ 注入的那个形参**不出现在** params 里（它由解析器供给）
         req_x = [a for a in req if a != injected]
-        #: ★★ 规则 2 的**合法改名**要认：★ `padding_m` → `padding_mm`（★ Bunny 在真产出里就这么做的，
-        #:   而第一版门禁按**逐字相等**比 ⇒ **把做对的判成错的** —— 事实 51：判据要贴合数据的形态）✓
+        #: ★★ 规则 2 的**合法改名**要认：★ `padding_m` → `padding_mm`（★ Bunny 在真产出里就这么做的）
+        #: ★★ 且**行自带 `param_alias` 时一律认可** —— ★ 真产出里 `save_preview` 把
+        #:   `width/height` 改成 `pixel_width/pixel_height`（★ 与既有 `solidworks_export_bmp`
+        #:   同一手法：像素不是长度 ⇒ 不该叫 `width`）⇒ ★ 那是**做对了**，第一版却判它"盘上没这个形参" ✓
+        alias = row.get("param_alias") or {}
+        aliased = {str(k): str(v) for k, v in alias.items()} if isinstance(alias, dict) else {}
+
         def _alias_ok(claimed_name: str, real_name: str) -> bool:
-            return claimed_name in (real_name, real_name + "_mm", real_name + "_deg")
+            if claimed_name in (real_name, real_name + "_mm", real_name + "_deg"):
+                return True
+            return aliased.get(claimed_name) == real_name
 
         miss = [a for a in req_x if not any(_alias_ok(c, a) for c in claimed)]
         extra = [a for a in claimed
@@ -180,9 +187,12 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         if any(w in low for w in ANGLE_WORDS) and not low.endswith("_deg"):
             bad.append("⑤ 角度类参数 %r 缺 `_deg` 后缀（规则 2）" % name)
     #: ⑦ 注入键
+    #: ★★ 判据**以盘上 `RESOLVERS` 为准**（★ 与 ⑩ 同一原则）—— 第一版用**静态白名单** `INJECT_KEYS`
+    #:   ⇒ ★ 我新加 `sldworks` 键之后，5 行本来能挂的被判"不是 RESOLVERS 的键" ⇒ **冤枉** ✓
     inj = str(row.get("inject") or "")
-    if inj not in INJECT_KEYS:
-        bad.append("⑦ inject=%r 不是 RESOLVERS 的键" % inj)
+    keys = _resolver_keys()
+    if inj and inj not in keys and inj not in INJECT_KEYS:
+        bad.append("⑦ inject=%r 既不在盘上 RESOLVERS 里、也不在静态白名单里" % inj)
     elif inj and req is not None and inj not in (req + (opt or [])):
         bad.append("⑦ ★ 注入键 %r **不在**目标函数形参表 %r 里（事实 502：注入键字面当关键字传）"
                    % (inj, req + (opt or [])))
