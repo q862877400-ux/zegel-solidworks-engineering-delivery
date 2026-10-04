@@ -6545,3 +6545,46 @@ CreateStructureSystemMemberData · Elliptical · FeatureFillet3（各 3 条）
 ★ **依据**：`docs/gate-wiring-exemptions.json`（两条理由 · 实读）· 事实 541/542/546/547（那 6 次改动）·
 本仓的「门禁接线元门禁」（`scripts/check_gate_wiring.py`）✓
 ★ **本批的下限**：★ 只查了**我自己两条**；★ **未**做成自动检查（★ 有意 —— 见定则）✓
+
+---
+
+| 549 | **★★★★ T2-4 的第一个样板：把「官方 Remarks 揭示的前置」写成**静态断言**（★ 4 tests · 含两个负例）—— 且挑的正是**我们真错过**的那一条** —— 2026-10-04（接手轮，规格 `specs/206-c1c6-harvest/`）。
+
+**★ 为什么挑这一条（★ 三条理由，缺一不可）**：
+```
+① ★ 官方 `InsertMirrorFeature2.md` 的 `## Remarks` **给了完整的 mark 表**：
+     **Features ⇒ 1** · Faces ⇒ 128 · Bodies ⇒ 256 · **Planes or planar faces ⇒ 2** ✓
+② ★★★ **我们真的错过** —— `scripts/sw_part.py` L1488-1493 逐字记着
+     「2026-10-01（轮 317）**mark 分配原本是反的**：特征 mark=**4**（表里没有 4）·
+      平面 mark=1（而 1 是**特征**）⇒ **两个都错** ⇒ `InsertMirrorFeature2` **静默回 `None`**」✓
+③ ★★ 判据**纯静态**（读我们自己的源码）⇒ ★ **不需要真机** ⇒ D-3 的按批限制不适用 ✓
+```
+
+**★★ 交付物**：`tests/test_mirror_precondition_marks.py`（**4 passed**）
+★ 四个测试：① 源可达守卫（★ 抽不出函数体时会"静默全通过"）② **主断言**（特征 mark=1 · 平面 mark=2）
+③ **负例：mark 调反**（★ 4/1 ⇒ 必须报）④ **负例：不写 mark**（★ `None` ≠ 期望 ⇒ 必须报）✓
+★ 判据：★ **只取 `mirror_feature` 的函数体**（到下一个 `def` 为止）⇒
+★★ **不做全文件匹配** —— ★ 因为全库还有别处也调 `_select_by_id`（★ 事实 51：范围要贴合组织单元）✓
+
+**★★★ 过程里撞到一个本仓专门警告过的陷阱，并用本仓自己的工具绕开**：
+```
+★ 我先用 grep 找实现 ⇒ ★ 命中的全是 `scripts/sw_api_sldworks.py`
+★★ 而那是**机器生成的反射转储** —— ★ 本仓自己写着「naive grep matches those and tells you nothing」✓✗
+★★★ 于是改用本仓的工具 `solidworks_repo_find_real_implementations`（★ 它的存在**就是**为排除那些转储）
+   ⇒ 立刻得到真实现：**`sw_part.py:1489 / 1493 / 1498`** ✓✓
+⇒ ★★ 可复用工作流：**在本仓找"某成员在哪被真用" → 用它，不要用 grep** ✓
+```
+
+**★ 这一条对 T2-4 的意义**：
+```
+★ 规格的 T2-4 是「用 459 条示例派生的前置写出**带负例**的测试断言」（★ 清单是 102 条可机检的）
+⇒ ★ 本条交付的是**第一个样板**：★ 证明这条路的形态（★ 静态读源码 + 期望值来自官方 Remarks +
+  正/负例）**可行且零真机成本** ⇒ ★★ 其余 101 条**可按此复制** ✓
+★★ 而挑样本的原则也一起立了：**优先挑"我们真错过、且现在没有断言守着"的那些** ——
+   ★ 因为那些的**回归风险**最高（★ 轮 317 修好了，但没人拦着它再错一次）✓
+```
+
+★ **依据**：`tests/test_mirror_precondition_marks.py` · `scripts/sw_part.py:1484-1498` ·
+官方 `InsertMirrorFeature2.md` 的 Remarks · `docs/precondition-coverage-gaps.md` §三 ·
+事实 51 / 62 / 8 ✓
+★ **本批的下限**：★ 只做了**一条**（★ D-3 每批 ≤5 条，★ 一条是安全的）；★ 其余 101 条**未做** ✓
