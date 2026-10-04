@@ -2380,17 +2380,20 @@
     },
     {
       "id": "analysis_run_readback",
-      "label": "跑求解并回读结果（★ 未真机验证 —— RunAnalysis 仍会挂，被隔离兜住）",
-      "level": "stitched",
+      "label": "跑求解并回读结果（★ 真机已验证：2.6 s 出 4 张图）",
+      "level": "verified",
       "backends": [
         "solidworks-com-pywin32"
       ],
-      "verified_versions": [],
+      "verified_versions": [
+        "2026"
+      ],
       "dependencies": [
         "solidworks",
         "simulation-addin"
       ],
       "limitations": [
+        "★★★★★ 2026-10-04（接手轮）**升为 `verified`（真机一跑走完 · 事实 528）**：`固定-1`(entities=1) / `力-1`(entities=1) → 网格 **6541 单元 / 1492 节点** → 求解前内存闸 ok（est 0.0022 GB / 预算 16）→ **求解 2.6 s · `results_present=True` · `plot_count=4`** ✓ ★ 且求解器**自己的读数**：`自由度 3,636 · 节数 1,492 · 单元数 6,541 · 类型 Intel Direct Sparse`（★ 实测 `自由度 ≈ 2.44 × 节数` ⇒ `DOF_PER_NODE=3` 是**保守上界**）✓ ★★ **真根因（同轮查清）**：★ 旧配方把**力**加在 `(0,0,0)` 上，而**原点在实体内部** ⇒ `SelectByID2(\"\",\"FACE\",0,0,0,…)` 回**选区计数 0**（★ 本文件 `select_face_at` 的注释里**早已写着**这条真机对比、★ 而**没有任何调用方执行它**）⇒ ★★ 载荷建成也**无效** ⇒ Simulation 弹「未定义载荷或规定的位移 … 固定-刚性零件上的载荷将不处于活动状态」⇒ `RunAnalysis` 回 0 而 `Results` 为空 ⇒ **整条链白跑** ✓ ⇒ ★ 处置：① 两个 apply 新增 `face_selector`（**声明式、零坐标**）· ② **空选区 ⇒ 拒绝**（`_require_nonempty_selection`）· ③ 探针改用 `-z`/`+z` ⇒ **一次成功** ✓ ⚠ ★ **并纠正一条旧推测**：★ 早前把 `State=0` 当成「未激活」并做过对照实验（`output/load-state-active.json`）⇒ ★ `State` 置 1 后仍 `rc=30 / results_present=false` ⇒ ★★ **`State` 不是根因**（★ 真因是**空选区**）✓",
         "★★★ ★ 2026-10-02（轮 376）**措辞更正**（★ 事实 293）：先前写的「`run_analysis` **进入求解即挂**」**会误导** —— 观察器抓到屏幕上一直有一个 SolidWorks Simulation 的**求解进度窗**（`DSH-142`）：`当前任务: **建立刚度矩阵**` · `已用时间: **33分0秒**` · `自由度: 30,456` · `节数: 11,301` · `单元数: 7,250`，按钮有 **`暂停`/`取消`**⇒ ★★ **求解器真的在算（已经算了 33 分钟），不是卡死**。★ 正解：`timed_out=True`（300 s）**≠ 卡死**，而是**“300 s 不够”**；判“在算 vs 死了”要看**那个进度窗**（★ 它有 `当前任务`/`已用时间` 且 `hung=False`）。★ 新框架 `tools/sw_guard.py` 会把**进度窗**与**卡死**分开，避免把“正在算 33 分钟”误报成“卡住”。",
         "★★★★ 2026-10-02（轮 374）**状态写准**：跑前人建的 `tools/capture_mesh_solve_evidence.py`（★ 三步全走 `run_isolated`）⇒ `mesh_size` ok（element_size 4930.5）· `create_mesh` ok（**element_count = 7250**）· **`run_analysis` 进入求解即挂**（timed_out=True · 300 s）。★ 与轮 24/350 那次“立刻回 19/23”**并不矛盾**：**前置不足 ⇒ 立刻报错（不挂）；前置齐备 ⇒ 真求解时挂**。★ 新线索：`[ 前置 ]` 显示两个载荷的 `State` **都是 0**（未激活）⇒ 下一轮单一实验：**把 State 置 1** 后重跑同一路径（★ 仍走 `run_isolated`）。",
         "⚠⚠⚠ **未真机验证**（按硬约束③明确标注；等级 = `stitched`）",
@@ -2405,6 +2408,7 @@
         "reviewed"
       ],
       "evidence": [
+        "★★★ **2026-10-04 真机整链（可复现 · SW 2026 SP4.1）**：`python tools/sw_guard.py --timeout 1200 -- python tools/probe_analysis_run_long_timeout.py` ⇒ `[1e]` 夹具/载荷读数 `count=2 · 固定-1(type=2,entities=1) · 力-1(type=3,entities=1)` · `[2]` 建网格 ok（**6541 单元 / 1492 节点**）· `[2b]` 内存闸 ok · `[3]` **跑求解 ok · timed_out=False · 2.6 s · results_present=True · plot_count=4** ✓ ★ 证据落 `output/analysis-run-long-timeout-evidence.json`（★ `output/` 被 gitignore ⇒ ★ **要复现就重跑那条命令**）· ★★ 网格档位对照 `output/mesh-profile-matrix-evidence.json` （★ 出厂 11301 节点 vs 安全档 1492 节点 = **7.6×**）✓",
         "⚠ **无** —— 真机实测 `timed_out=True`（300s 后杀子进程）；★ 该结果已如实记入 `output/mesh-solve-evidence.json` 的 `run_analysis.timed_out`",
         "★ **反证（有价值）**：同一份证据里 `mesh_size` 与 `create_mesh` **成功** ⇒ ★ 说明失败点**精确定位在「跑求解」**，而不是整条链"
       ],

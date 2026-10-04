@@ -497,13 +497,56 @@ def _selected_dispatch_array(model, expected: int | None = None):
 #   与第 2 参无关（官方 VB 写 `Nothing`，那 ≡ pywin32 的 `VARIANT(VT_DISPATCH, None)`）。
 #   传对之后 `LoadsAndRestraintsManager.Count == 1`，夹具确实建成。
 # ────────────────────────────────────────────────────────────────────
-def apply_fixed_restraint(study, *, model=None, restraint_type: int = SWS_RESTRAINT_TYPES["fixed"]):
+def _require_nonempty_selection(model, *, what: str) -> int:
+    """★★★ **前置判据：选区不能为空**（★ 2026-10-04 —— 这条的缺失正是那条弹窗的根因）。
+
+    ★★★★ 为什么必须有它（★ 真根因，就在本文件的注释里、**写了好几年而没人执行**）：
+      · 本文件 `select_face_at` 的 docstring 逐字写着：
+        「计数为 ``0`` 就说明没选中，**此时不要继续施夹/加载**（会得到空的 ``DispArray``）」✓
+      · ★★ 而**没有任何调用方执行它** ⇒ 于是当坐标不在面上时（真机实测：
+        `SelectByID2("", "FACE", 0, 0, 0, …)` 回计数 **0**，因为**原点在实体内部**），
+        `AddForce` 拿到**空 DispArray** ⇒ ★★ **载荷建成但无效** ⇒ Simulation 弹
+        「**未定义载荷或规定的位移** … 固定-刚性零件上的载荷将不处于活动状态」⇒
+        ★ `RunAnalysis` 返回 0、`Results` 为空 ⇒ **整条链白跑**（★ 2026-10-01/02 与今天
+        三次撞的都是它，而那句注释每次都在旁边）✓
+    ⇒ ★ 所以把它**变成会拒绝的代码**（★ 事实 40：判据要能被机器守住，否则等于没有）✓
+
+    :raises ValueError: 选区计数为 0（★ 带**怎么改**的提示）。
+    """
+    try:
+        from .sw_selection_spec import get_selection_count
+    except ImportError:
+        from sw_selection_spec import get_selection_count
+
+    n = int(get_selection_count(model) or 0)
+    if n <= 0:
+        raise ValueError(
+            "%s 之前**选区是空的**（回读计数 0）⇒ 拒绝继续 —— ★ 那会得到空的 DispArray，"
+            "载荷/夹具**建成也无效**，求解时会弹「未定义载荷或规定的位移」并失败。"
+            "★ 改法：用 `face_selector`（如 `-z` / `+z` / `+x` …）或先确认那个坐标点"
+            "**落在面上**（真机实测：`(0,0,0)` 在实体内部 ⇒ 计数 0；`(0,0,-0.02)` 在面上 ⇒ 计数 1）"
+            % what)
+    return n
+
+
+def apply_fixed_restraint(study, *, model=None, face_selector: str | None = None,
+                          restraint_type: int = SWS_RESTRAINT_TYPES["fixed"]):
     """施加夹具，返回 ICWRestraint 对象。
 
-    调用前须由调用方用 ``sw_part._select_by_id`` 选好要固定的实体。
+    ★ 实体选择有**三条**合法的路（★ 推荐第 1 条 —— 它**不带坐标**）：
+      ① ``face_selector="-z"`` 之类**声明式**选择器（本函数内部解析成面上的点并回读计数）；
+      ② 调用方**先选好**（此时本函数只回读计数）；
+      ③ ``sw_part._select_by_id`` 一类的旧路（★ 不推荐）。
+    ★★ **三条路都要求选区计数 ≥ 1** —— ★ 空选区会被**拒绝**（见 `_require_nonempty_selection`）✓
     ``model`` 是活动文档 —— **给了它才会把选区实体装成官方要求的 ``DispArray``**；
     不给则退回旧行为（传 ``None``），此时**必然建不出来**，只为兼容既有调用方。
     """
+    if face_selector is not None:
+        if model is None:
+            raise ValueError("给了 `face_selector` 就必须同时给 `model`（要用来解析面上的点）")
+        _n = select_face_by_selector(model, str(face_selector))
+    if model is not None:
+        _require_nonempty_selection(model, what="AddRestraint")
     manager = _loads_and_restraints_manager(study)
     entities = _selected_dispatch_array(model) if model is not None else None
     restraint = get_com_member(
@@ -543,20 +586,30 @@ def apply_normal_force(
     magnitude: float,
     *,
     model=None,
+    face_selector: str | None = None,
     force_type: int = SWS_FORCE_TYPES["normal"],
     unit: int = SWS_FORCE_UNITS["n_or_nm"],
 ):
     """施加法向力载荷，返回 ICWForce 对象。
 
+    ★ 与 `apply_fixed_restraint` 同契约：★ `face_selector="-z"/"+z"` 之类**声明式**选择器
+      （★ **推荐**）· 或调用方**先选好** —— ★★ **两者都要求选区计数 ≥ 1**，
+      ★ 空选区会被**拒绝**（★ 那正是「未定义载荷或规定的位移」那条弹窗的根因，
+      见 `_require_nonempty_selection`）✓
     ``model`` 是活动文档 —— **给了它才会把选区实体装成官方要求的 ``DispArray``**。
-    调用前须由调用方选好施力面。
 
     :param magnitude: 力的数值，其量纲由 ``unit`` 决定
         （``n_or_nm``=N，``lb_or_lbin``=lbf，``kgf_or_kgfcm``=kgf）。
-    :raises ValueError: ``magnitude`` 为 0 时拒绝创建。
+    :raises ValueError: ``magnitude`` 为 0 时拒绝创建；★ 或**选区为空**时拒绝。
     """
     if float(magnitude) == 0.0:
         raise ValueError("力的大小不能为 0")
+    if face_selector is not None:
+        if model is None:
+            raise ValueError("给了 `face_selector` 就必须同时给 `model`（要用来解析面上的点）")
+        _n = select_face_by_selector(model, str(face_selector))
+    if model is not None:
+        _require_nonempty_selection(model, what="AddForce")
 
     manager = _loads_and_restraints_manager(study)
     entities = _selected_dispatch_array(model) if model is not None else None

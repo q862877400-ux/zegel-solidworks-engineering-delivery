@@ -4637,3 +4637,89 @@ if pid is not None and p.value != pid:      # ← 只看"我们那个进程"
 ★ "定点处置必须 `PostMessage` 而非 `SendMessage`" ✓
 ★ 官方：`ISldWorks.CommandInProgress` 管不到 `star.exe` 的框（事实 174 逐字，★ 三次实测）
 ⇒ ★ 本机制**不依赖**它 ✓
+
+---
+
+## 528 · ★★★★★★★ 仿真**终于出结果了**（2.6 s · 4 张图）—— ★ 真根因：**力加在一个空选区上**；一条**写在注释里、几年没人执行**的判据
+
+**发现/达成时间**：2026-10-04（接手轮 · 业主要求「继续攻 SC-004」）
+
+### 一 · ★★★ 真根因（就在本文件的注释里，逐字写着）
+
+`scripts/sw_simulation.py::select_face_at` 的来源块（**早于本轮很久**）逐字：
+
+```
+真机对比（同一个 100×60×20 mm 的板）：
+    SelectByID2("", "FACE", 0, 0, 0, …)      → 选区计数 **0**     ← ★ 原点在实体内部、不在面上
+    SelectByID2("", "FACE", 0, 0, -0.02, …)  → 选区计数 **1**  ✓
+```
+
+★★ 而同文件 docstring 又写着：「**计数为 `0` 就说明没选中，此时不要继续施夹/加载**」——
+★★★ **而没有任何调用方执行这条判据** ⇒ 配方与探针里：
+
+```python
+sim.select_face_at(doc, 0.0, 0.0, -0.02)      # ⇒ 计数 1 ✓  夹具建在真面上
+sim.apply_fixed_restraint(study, model=doc)
+sim.select_face_at(doc, 0.0, 0.0, 0.0)        # ⇒ ★★ 计数 0！ 力的面**没选中**
+sim.apply_normal_force(study, 100.0, model=doc)   # ⇒ ★ 空 DispArray ⇒ 载荷建成也**无效**
+```
+
+⇒ ★★★ 于是 Simulation 弹「**未定义载荷或规定的位移** … 固定-刚性零件上的载荷将不处于活动状态」
+（★ 用户 2026-10-01 与 2026-10-04 两次截图的**就是这条**）
+⇒ `RunAnalysis` 回 **0** 而 `Results` **为空** ⇒ ★ **整条链白跑**（三次都栽在这）✓
+
+★★★ **一笔更正**：我此前把 `verdict: "pass"`（`output/mesh-solve-evidence.json`）读成"跑通" ——
+★ 那份证据**逐字**是 `run_analysis: ok=false · results_present=false · plot_count=null`，
+★ 而外层 `verdict` 只判「三步都没超时」⇒ ★★ **那是"把没挂写成成功"**（事实 517 那一类）✓
+⇒ ★ **"求解出结果"这条，本轮之前从未真正达成过** ✓
+
+### 二 · ★★★★★ 处置（三条，全部随项目发布）
+
+```
+① ★ 两个 apply 新增 `face_selector`（**声明式、零坐标**）：
+   `apply_fixed_restraint(study, model=doc, face_selector="-z")`
+   `apply_normal_force(study, 100.0, model=doc, face_selector="+z")`
+   ⇒ ★ 内部走 `select_face_by_selector`（`resolve_face_selector` 给出**面上的点**）✓
+② ★★ **空选区 ⇒ 拒绝**（`_require_nonempty_selection`，带"怎么改"的提示）——
+   ★ 那条"写在注释里、没人执行"的判据**终于变成了会拒绝的代码**（★ 事实 40 的正解）✓
+③ ★ 探针改为：`[1e]` 先**回读夹具/载荷**（`Count` + 每条 `Name/Type/EntityCount/State`）再往下走 ✓
+```
+
+### 三 · ★★★★★ 真机结果（一跑走完 · 决定性对照）
+
+| | 修前（同一脚本） | **修后（本轮）** |
+|---|---|---|
+| 夹具 / 载荷 | ★ **力加在空选区** | `固定-1`(type=2, **entities=1**) · `力-1`(type=3, **entities=1**) |
+| 网格 | 6541 单元 / 1492 节点 | 6541 单元 / 1492 节点（安全档） |
+| 求解 | **596.7 s** → `results_present=false` | ★ **2.6 s** → **`results_present=true` · `plot_count=4`** ✓ |
+| 弹窗 | ★ 「未定义载荷或规定的位移」 | ★ 无 |
+
+★★★ 而且求解器**自己的读数**（护栏把进度窗证据带回来了）：
+```
+当前任务: 建立刚度矩阵 · 已用时间:1s
+自由度: **3,636** · 节数: **1,492** · 单元数: **6,541**
+类型: **Intel Direct Sparse**
+```
+⇒ ★★ 实测 `自由度 = 2.44 × 节数` ⇒ `DOF_PER_NODE = 3` 是**保守上界** ✓
+⚠ ★ 而**实际求解器是 `Intel Direct Sparse`**，不是 FFEPlus ⇒ ★ 我们那条内存换算
+（每 2,000,000 自由度 1 GB）**出处是 FFEPlus 官方页**（事实 521 已逐字标注）⇒
+★ 对 Direct Sparse **不能当同一把尺子**用（★ 如实标注，未据此下结论）✓
+
+### 四 · ★★★★ 顺带修掉一个"护栏误伤"（★ 事实 297 的原病复现）
+
+★ 那次**已经成功**的求解，被护栏标成 `aborted_for_llm: true · ok: false` ——
+★★ 因为它把「求解**进度窗**」（`#32770` + `暂停/取消/更多>>` + `当前任务/已用时间/自由度`）
+判成了 `needs_llm` ⇒ ★ 外层据此**中止了我们的调用** ✓
+⇒ ★★★ 而那正是事实 297 明令禁止的「**中断一个正在跑的正常任务**」✓
+★ 修法：`classify_dialog` 新增一档 **`progress`**（判据：Static 里出现 `当前任务`/`已用时间`/`自由度`
+这类**运行态读数**）⇒ ★ **既不点、也不中止**；★★ 而"不点"这条不变量**照旧覆盖它** ✓
+（★ 既有契约测试 `test_sw_guard_dialog_tiers.py` 的两条断言**有意改了**，理由写在测试里）
+
+### 五 · ★ 依据
+★ 证据：`output/analysis-run-long-timeout-evidence.json`（★ 本轮的 15 步，含 `loads_and_restraints`）·
+`output/mesh-profile-matrix-evidence.json`（四档对照）· `output/load-state-active.json`（★ **否掉 `State` 假设**的那次实验）✓
+★ 代码：`scripts/sw_simulation.py`（`_require_nonempty_selection` · 两个 apply 的 `face_selector`）·
+`tools/probe_analysis_run_long_timeout.py`（`-z`/`+z` + `[1e]` 回读）· `tools/sw_guard.py`（`progress` 档）✓
+★ 能力：`capabilities.yaml` ⇒ **`analysis_run_readback` 由 `stitched` 升为 `verified`**
+（`verified_versions: ["2026"]` + 真机证据 + 新限制条；★ 分布 **98 verified / 10 stitched / 2 not_implemented**）✓
+★ 测试：`tests/test_sw_guard_dialog_tiers.py` + `tests/test_dialog_watch.py`（**16 passed**）✓

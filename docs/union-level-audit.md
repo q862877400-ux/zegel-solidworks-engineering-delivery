@@ -8,7 +8,7 @@
 
 | # | 能力 id | level | source | 有 evidence | 有 provenance |
 |---|---|---|---|---|---|
-| 1 | `analysis_run_readback` | `stitched` | `original` | ✓ | — |
+| 1 | `analysis_run_readback` | `verified` | `original` | ✓ | — |
 | 2 | `animation_export` | `stitched` | `original` | ✓ | — |
 | 3 | `assembly_and_mates` | `stitched` | `mixed` | ✓ | — |
 | 4 | `assembly_read` | `verified` | `original` | ✓ | — |
@@ -128,8 +128,8 @@
 | `indexed` | 0 |
 | `not_implemented` | 2 |
 | `source_verified` | 0 |
-| `stitched` | 11 |
-| `verified` | 97 |
+| `stitched` | 10 |
+| `verified` | 98 |
 
 ## 三、`source` 分布
 
@@ -148,8 +148,8 @@
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
 | `not_implemented` | 0 | 1 | 0 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
-| `stitched` | 0 | 4 | 7 | 0 | 0 |
-| `verified` | 0 | 6 | 73 | 1 | 17 |
+| `stitched` | 0 | 4 | 6 | 0 | 0 |
+| `verified` | 0 | 6 | 74 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。

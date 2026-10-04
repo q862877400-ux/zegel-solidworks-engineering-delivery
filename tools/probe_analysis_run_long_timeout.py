@@ -119,11 +119,40 @@ def main() -> int:
         study = sim.get_study_by_name(sw, STUDY)
         if study is None:
             raise RuntimeError("按名字取不到研究 %r" % STUDY)
-        sim.select_face_at(doc, 0.0, 0.0, -0.02)
-        sim.apply_fixed_restraint(study, model=doc)
+        #: ★★★★★ 2026-10-04（第十一版）**修正夹具/载荷的面选择 —— 这是那条弹窗的根因**：
+        #:   ★ 原文用的是**裸坐标** `select_face_at(0,0,-0.02)` / `select_face_at(0,0,0)`，
+        #:     而本文件自己的注释（`sw_simulation.select_face_at` 的来源块）逐字记着真机实测：
+        #:       `SelectByID2("", "FACE", 0, 0, 0, …)`      → 计数 **0**（★ 原点在**实体内部**）
+        #:       `SelectByID2("", "FACE", 0, 0, -0.02, …)`  → 计数 **1** ✓
+        #:   ★★ 于是**力的那一步是加在空选区上的** ⇒ 载荷建成也无效 ⇒ Simulation 弹
+        #:     「**未定义载荷或规定的位移** … 固定-刚性零件上的载荷将不处于活动状态」⇒
+        #:     `RunAnalysis` 回 0 而 `Results` 为空 ⇒ ★ **整条链白跑**（三次都栽在这）✓
+        #:   ⇒ ★ 现在**不再用坐标**：按**声明式选择器**（`-z` 固定 / `+z` 施力）选面，
+        #:     并且两个 apply **都会拒绝空选区**（★ 那条判据终于被执行了）✓
+        sim.apply_fixed_restraint(study, model=doc, face_selector="-z")
         sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
-        sim.select_face_at(doc, 0.0, 0.0, 0.0)
-        sim.apply_normal_force(study, 100.0, model=doc)
+        sim.apply_normal_force(study, 100.0, model=doc, face_selector="+z")
+        #: ★★ **证前读数**：载荷与夹具到底建成了几条、各是什么（★ 以前这里什么都没记）
+        try:
+            _mgr = sim._loads_and_restraints_manager(study)
+            _cnt = int(sw_connect.safe_get_com_member(_mgr, "Count") or 0)
+            _items = []
+            for _i in range(_cnt):
+                try:
+                    _it = sw_connect.safe_get_com_member(_mgr, "GetLoadsAndRestraints", _i,
+                                                         sw_connect.out_i4())
+                    _items.append({"name": str(sw_connect.safe_get_com_member(_it, "Name") or ""),
+                                   "type": sw_connect.safe_get_com_member(_it, "Type"),
+                                   "entities": sw_connect.safe_get_com_member(_it, "EntityCount"),
+                                   "state": sw_connect.safe_get_com_member(_it, "State")})
+                except Exception as exc:                                   # noqa: BLE001
+                    _items.append({"error": "%s: %s" % (type(exc).__name__, str(exc)[:60])})
+            ev["steps"]["loads_and_restraints"] = {"count": _cnt, "items": _items}
+        except Exception as exc:                                           # noqa: BLE001
+            ev["steps"]["loads_and_restraints"] = {"error": "%s: %s" % (type(exc).__name__,
+                                                                       str(exc)[:120])}
+        print("  [1e] 夹具/载荷读数: %s" % str(ev["steps"]["loads_and_restraints"])[:220])
+        flush()
         ev["steps"]["setup"] = {"material": material, "study": STUDY}
 
         def iso(fn: str, args: list, kwargs: dict, timeout: float) -> dict:

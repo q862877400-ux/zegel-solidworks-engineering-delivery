@@ -66,14 +66,28 @@ def test_question_dialog_is_forbidden():
         assert v["mode"] == "forbidden", (text, v)
 
 
-def test_progress_window_is_needs_llm():
-    """★★ **负例**：`暂停|取消`（求解进度窗）⇒ `needs_llm` —— 点掉就是**中断正常任务**。"""
+def test_progress_window_is_its_own_tier():
+    """★★★ **求解进度窗 ⇒ 自成一档 `progress`**（★ 2026-10-04 改，★ 真机证据在此）。
+
+    ★ 旧契约（本测试原来写的）：`暂停|取消` ⇒ `needs_llm` —— ★ 那**保住了"不点"**，
+      ★★ 但**顺带把调用也中止了**（`run_guarded` 对任何 `needs_llm` ⇒ `taskkill` + 早返回）✓
+    ★★★ 真机代价（2026-10-04）：★ 一次**已经成功**的求解（`results_present=True · plot_count=4`）
+      被标成 `aborted_for_llm: true`、`ok: false` —— ★★ 而那正是**事实 297 明令禁止的
+      "中断一个正在跑的正常任务"** ✓
+    ⇒ ★ 新契约：`progress` 档 ⇒ ★ **既不点、也不中止**（★ 只记证）——
+      ★ 而"**不点**"这条不变量**原样保住**（★ 见下面 `test_needs_llm_or_forbidden_never_auto_dismiss`）✓
+    """
     v = _classify(_b("暂停", "取消", "更多>>") + _s("当前任务: 建立刚度矩阵"))
-    assert v["mode"] == "needs_llm", v
+    assert v["mode"] == "progress", v
+    assert v["mode"] != "auto", v
 
 
 def test_cancel_only_is_needs_llm():
-    """★ 唯一按钮是"取消" ⇒ `needs_llm`（★ "取消"不是"确认"）。"""
+    """★ 唯一按钮是"取消" ⇒ `needs_llm`（★ "取消"不是"确认"）。
+
+    ⚠ ★ **注意与上一档的区别**：★ 这里是**没有运行态读数**的框（`Static` 只有 "abc"）
+      ⇒ ★ 它**不是**"正在跑的任务"，而是一个**等回答的框** ⇒ `needs_llm` ✓
+    """
     v = _classify(_b("取消") + _s("abc"))
     assert v["mode"] == "needs_llm", v
 
@@ -84,7 +98,11 @@ def test_empty_controls_is_needs_llm():
 
 
 def test_needs_llm_or_forbidden_never_auto_dismiss():
-    """★★ **本组的核心不变量**：`needs_llm` / `forbidden` **一律不许自动点**。"""
+    """★★ **本组的核心不变量**：`needs_llm` / `forbidden` / **`progress`** ⇒ **一律不许自动点**。
+
+    ★ 2026-10-04：★ `progress` 档加进来之后，**这条不变量必须一起覆盖它** ——
+      ★★ 否则"新增一档"就成了"新增一个能被点的地方"✓
+    """
     risky = [
         _b("是", "否") + _s("是否替换现有文件？"),
         _b("删除") + _s("不可恢复"),
@@ -94,5 +112,5 @@ def test_needs_llm_or_forbidden_never_auto_dismiss():
     ]
     for ctls in risky:
         v = _classify(ctls)
-        assert v["mode"] in ("needs_llm", "forbidden"), (ctls, v)
+        assert v["mode"] in ("needs_llm", "forbidden", "progress"), (ctls, v)
         assert v["mode"] != "auto", (ctls, v)

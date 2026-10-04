@@ -113,6 +113,38 @@ def test_forbidden_tier_is_never_dismissed(monkeypatch):
     assert snap["pending_needs_llm"] == 1, snap
 
 
+def test_progress_window_is_recognised_and_not_treated_as_needing_llm():
+    """★★★ **正常求解的进度窗 ⇒ `progress` 档**（★ 既不点、**也不中止**）。
+
+    ★★★ 真机现场（2026-10-04，用户那个错误框的**旁边**）：`#32770` / `star.exe`，按钮
+      `暂停·取消·更多>>·算例·解算器·收敛图表·求解器参数`，Static
+      `当前任务: 建立刚度矩阵` · `已用时间:1s` · `自由度:3,636` · `节数:1,492` · `类型:Intel Direct Sparse` ✓
+    ★★ 旧判据只看按钮 ⇒ 撞上 `取消`/`暂停` ⇒ 判成 `needs_llm` ⇒ ★ **外层据此中止了我们的调用**
+      ⇒ ★★★ 而那一次求解**已经成功了**（`results_present=True · plot_count=4`）——
+      ★ 那正是事实 297 明令禁止的"**中断一个正在跑的正常任务**" ✓
+    """
+    prog = {"class": "#32770", "title": "SPEC202_Solve", "hung": False,
+            "controls": [{"class": "Button", "text": "暂停"}, {"class": "Button", "text": "取消"},
+                         {"class": "Button", "text": "更多>>"},
+                         {"class": "Static", "text": "当前任务: 建立刚度矩阵"},
+                         {"class": "Static", "text": "已用时间:1s"},
+                         {"class": "Static", "text": "自由度:3,636"}]}
+    v = sw_guard.classify_dialog(prog)
+    assert v["mode"] == "progress", v
+    #: ★★ `needs_llm=False` ⇒ 外层的"中止调用"那条路**不会**被触发
+    assert v.get("needs_llm") in (None, False), v
+    #: ★ 而真需要 LLM 的那个（是/否/确定）**仍然是 needs_llm**
+    err = {"class": "#32770", "title": "Simulation", "hung": False,
+           "controls": [{"class": "Edit", "text": "未定义载荷或规定的位移"},
+                        {"class": "Button", "text": "是"}, {"class": "Button", "text": "否"},
+                        {"class": "Button", "text": "确定"}]}
+    assert sw_guard.classify_dialog(err)["mode"] == "needs_llm"
+    #: ★ 单按钮确认框仍然是 auto（★ 那条也不能被这次改动弄坏）
+    ok = {"class": "#32770", "title": "Simulation", "hung": False,
+          "controls": [{"class": "Static", "text": "零件2 : 失败"}, {"class": "Button", "text": "确定"}]}
+    assert sw_guard.classify_dialog(ok)["mode"] == "auto"
+
+
 # ── ② pid 只聚焦、不排除（★ 用 git 里的修复前源码自证）──────────────────
 
 #: ★ 被否定的形态：**裸的精确 pid 过滤**（★ 家族进程的窗口会被它跳过）
