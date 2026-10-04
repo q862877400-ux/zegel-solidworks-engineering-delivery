@@ -253,7 +253,11 @@ def test_expected_batch_size(server):
     #:   （第三坡·薄模块产出 ⇒ 45 行里只有 9 行 exposable，★ **真新 7 个**）：
     #:   ★ 真建模能力 `revolve_cut` / `surface_cut` / `ref_geometry_create_3d_bounding_box` /
     #:     `sketch_select_segment`（★ 走**序号**，不收坐标）+ 诊断取证 3 个（前台窗口 / 截屏 / 焊件遍历）✓
-    assert len(all_specs()) == 367
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 85**）：**367 → 369** —— ★ **我加的 2 条**
+    #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
+    #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
+    #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
+    assert len(all_specs()) == 369
 
 
 # ── ③ 命名与「两者不混用」（规则 1）──────────────────────────────

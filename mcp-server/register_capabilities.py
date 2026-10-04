@@ -193,6 +193,30 @@ def resolve_view(params: Any):
     return get_active_view(resolve_model(params))
 
 
+def resolve_costing_defaults(params: Any):
+    """注入 **Costing 的默认值对象** —— ★ 供首参名叫 `defaults` 的 `sw_costing` 族函数。
+
+    ★ 由 `cost_manager` 取（复用 `resolve_cost_manager`，它已处理"本机有没有 Costing 加载项"）✓
+    """
+    from scripts.sw_costing import get_costing_defaults
+    return get_costing_defaults(resolve_cost_manager(params))
+
+
+def resolve_selected_component(params: Any):
+    """注入**当前选中的第一个组件**（`IComponent2`）—— ★ 供首参名叫 `component` 的那批函数。
+
+    ⚠ ★ **没有选中就没有** ⇒ ★ **响亮报错**，★ **绝不猜**（"取第一个组件"是另一种对象，
+      语义不同 —— 事实 36 那一族）✓
+    """
+    from scripts.sw_selection import get_selected_component
+    model = resolve_model(params)
+    comp = get_selected_component(model, 0)
+    if comp is None:
+        raise RuntimeError("当前**没有选中的组件** ⇒ `component` 注入键无法解析。"
+                           "★ 请先在装配里选中一个组件（★ 本键**不替你猜**该用哪一个）")
+    return comp
+
+
 def resolve_study_options(params: Any):
     """注入**研究选项对象** —— ★ 供首参名叫 `options` 的那批函数。
 
@@ -283,6 +307,18 @@ RESOLVERS: dict[str, Any] = {
     #:     `module == "sw_drawing_view"` ∧ `inject == "view"` ⇒ **判废** ✓
     #:   ★ 要挂 `sw_drawing_view` 那族，得**另加**一个按名字取 `IView` 的解析器（本轮未加）✓
     "view": resolve_view,
+    #: ★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」第二批）：**`defaults` / `component`** ——
+    #:   ★ 两个都**语义唯一**（不是"取哪一个"的猜测）：
+    #:     · `defaults` ⇒ **Costing 的默认值对象**（★ 由 `cost_manager` 取，仓里已有
+    #:       `sw_costing.get_costing_defaults(cost_manager)`）⇒ 解锁 5 个 `sw_costing` 候选 ✓
+    #:     · `component` ⇒ **当前选中的第一个组件**（★ 仓里已有 `sw_selection.get_selected_component`；
+    #:       ★ **没有选中就没有** ⇒ 响亮报错，**不猜**）⇒ 解锁 9 个候选 ✓
+    #:   ⚠ 与之相对：★ `win` / `hwnd` / `ctrl` / `obj` / `sketch` / `selection` 那几组**一律不碰**
+    #:     —— ★ 它们是"取哪一个？"的问题（事实 36 那一族）；
+    #:     ★★ 特别地 `obj`（18 个）**出在 `sw_api_*.py`** —— ★ 那些是**反射转储**、不是能力实现
+    #:     ⇒ ★ 已把 `sw_api_*` 加进选域黑名单（它们**不该**出现在候选里）✓
+    "defaults": resolve_costing_defaults,
+    "component": resolve_selected_component,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。
@@ -632,6 +668,13 @@ BATCH_MODULES = (
     #:   · 诊断/取证：`solidworks_gui_get_foreground_window` · `solidworks_gui_screen_png` ·
     #:     `solidworks_weldment_iter_features`（焊件特征树遍历）✓
     "tool_specs_batch84",
+    #: ★★★★★ 轮 111：**规格 205 的批 85 —— 两条"真能力"**（2 个）：
+    #:   · `solidworks_drawing_create_three_standard_views` —— ★ **三视图布局**
+    #:     （★ 这一条有历史：`capabilities.yaml` 曾把它记成 `blocked / DRAWING_PROJECTION_API_UNAVAILABLE`，
+    #:     而 2026-10-04 查明真因是**成员名拼错** —— 官方真名 `Create1stAngleViews2`（`1st` 非 `First`）
+    #:     ⇒ 已在 `drawing_workflow.py` 修正；★ 本工具挂的是**修好之后**的入口）✓
+    #:   · `solidworks_costing_defaults` —— Costing 默认值读数（★ Costing 是本仓三个**护城河域**之一）✓
+    "tool_specs_batch85",
 )
 
 def all_specs() -> list:
