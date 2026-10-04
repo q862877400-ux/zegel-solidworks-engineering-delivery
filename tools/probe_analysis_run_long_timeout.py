@@ -343,8 +343,18 @@ def main() -> int:
         #: ⑤ ★★★ **跑求解前的第二道闸**（★ 优先用**真节点数** ⇒ DOF≈3×节点数）——
         #:   ★ `check_mesh_size_sane` 只能按**包围盒**估；★ 这里用**真实读数**
         #:   ⇒ ★★ **内存超预算就绝不进求解**（★ 官方：内存不够会走 out-of-core、极慢）
+        #:   ★★★ 2026-10-04（第十三版）：★ 先把**本研究的求解器**读出来一起交给闸门 ——
+        #:     ★ 因为那条换算「每 2e6 自由度 1 GB」**逐字出自 FFEPlus**，
+        #:     而真机跑的是 **`Intel Direct Sparse`** ⇒ ★ **不能当同一把尺子**（★ 结果里会写明）✓
+        _solver = sim.static_solver_type_report(study)
+        ev["steps"]["solver_type"] = _solver
+        flush()
+        print("  [2a] 本研究求解器: ok=%s value=%s name=%s%s"
+              % (_solver.get("ok"), _solver.get("value"), _solver.get("name"),
+                 ("（读不到：%s）" % _solver.get("reason"))[:80] if not _solver.get("ok") else ""))
         pre = sim.solve_memory_preflight(int(mesh_res.get("element_count") or 0),
-                                        node_count=int(after_settings.get("NodeCount") or 0) or None)
+                                        node_count=int(after_settings.get("NodeCount") or 0) or None,
+                                        solver_name=_solver.get("name"))
         ev["steps"]["solve_memory_preflight"] = pre
         print("  [2b] 求解前内存闸: ok=%s est_dof=%s est_ram_gb=%s budget=%s"
               % (pre.get("ok"), pre.get("est_dof"), pre.get("est_ram_gb"),

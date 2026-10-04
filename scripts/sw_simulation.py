@@ -1559,8 +1559,57 @@ def create_mesh_safely(study, *, model=None, units: int = 0, element_size: float
     return out
 
 
+#: ★★ `swsSolverType_e` —— ★ 出处：本仓 `_raw` 的 cosworks 枚举页 + `STUDY_OPTION_SETTERS`
+#:   （★ 逐条核过：Automatic=0 · DirectSparse=1 · **FFEPlus=2** · CASI=5 · Abaqus=6 ·
+#:    INTEL=7 · INTELCluster=8）✓
+SWS_SOLVER_TYPES = {
+    "automatic": 0, "direct_sparse": 1, "ffeplus": 2, "casi": 5,
+    "abaqus": 6, "intel": 7, "intel_cluster": 8,
+}
+_SOLVER_NAME_BY_VALUE = {v: k for k, v in SWS_SOLVER_TYPES.items()}
+
+
+def static_solver_type_report(study) -> dict[str, Any]:
+    """★ 读**本研究当前用的求解器**（`ICWStaticStudyOptions.SolverType`）—— ★ 只读。
+
+    ★★★ 为什么要它（★ 2026-10-04 · 我自己刚留下的一个正确性漏洞）：
+      · ★ `solve_memory_preflight` 用的那条换算「**每 2,000,000 自由度 1 GB RAM**」
+        **逐字出自 FFEPlus 那一页**（`c_Analysis_Solvers.htm`）✓
+      · ★★ 而真机那次成功的求解，进度窗上写的是 **`类型: Intel Direct Sparse`** ⇒
+        ★ **不是 FFEPlus** ⇒ ★★ **那条换算对直接法不能当同一把尺子** ✓
+      ⇒ ★ 所以要把"本研究用的是哪个求解器"**读出来并如实带进估计结果**，
+        ★ 而不是让调用方以为那条规则普适 ✓
+    ⚠ ★ `SolverType` 在 `STUDY_OPTION_SETTERS` 里是 **setter** ⇒ ★ **它能不能读**未在本仓验证 ⇒
+      ★ 读不到就回 `{"ok": False, "reason": ...}`（★ **不猜、也不默认成 FFEPlus**）✓
+    """
+    out: dict[str, Any] = {"ok": False, "value": None, "name": None, "reason": ""}
+    try:
+        from .sw_simulation_study_options import study_options_of
+    except ImportError:
+        from sw_simulation_study_options import study_options_of
+
+    try:
+        options = study_options_of(study, "ICWStaticStudyOptions")
+    except Exception as exc:                                   # noqa: BLE001
+        out["reason"] = "取不到 ICWStaticStudyOptions：%s: %s" % (type(exc).__name__, str(exc)[:120])
+        return out
+    if options is None:
+        out["reason"] = "ICWStaticStudyOptions 为 None（该研究可能不是静力族）"
+        return out
+    try:
+        value = get_com_member(options, "SolverType")
+    except Exception as exc:                                   # noqa: BLE001
+        out["reason"] = ("读 SolverType 失败（★ 它在本仓只以 **setter** 记过、getter 未验证）："
+                         "%s: %s" % (type(exc).__name__, str(exc)[:100]))
+        return out
+    out.update({"ok": True, "value": value,
+                "name": _SOLVER_NAME_BY_VALUE.get(value, "unknown(%r)" % (value,))})
+    return out
+
+
 def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
-                           memory_budget_gb: float | None = None) -> dict[str, Any]:
+                           memory_budget_gb: float | None = None,
+                           solver_name: str | None = None) -> dict[str, Any]:
     """★ **建完网格、跑求解之前**再判一次 —— ★★ 有 `NodeCount` 时用**真节点数**算，最准。
 
     ★★★ 为什么要有**第二道**（第一道是 `check_mesh_size_sane`）：
@@ -1600,6 +1649,37 @@ def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
               else default_solve_memory_budget_gb())
     out.update({"est_dof": est_dof, "est_ram_gb": est_ram_gb, "memory_budget_gb": budget,
                 "★_算式": basis + " · RAM ≈ DOF / 2,000,000 GB（★ 官方 FFEPlus 规则）"})
+    #: ★★★★ 2026-10-04 **把那条换算是"哪把尺子"说清楚**（★ 我自己刚留下的漏洞）：
+    #:   · ★ 它**逐字出自 FFEPlus 那一页**（`c_Analysis_Solvers.htm`）✓
+    #:   · ★★ 而真机那次**成功**的求解，求解器写的是 **`Intel Direct Sparse`** ⇒
+    #:     ★ **不是 FFEPlus** ⇒ ★★ 直接法的内存在本仓**没有官方规则**（★ 铁律 5：查不到就说查不到）✓
+    #:   ⇒ ★ 于是结果里**必须**带一句"这条换算对谁成立"，★ 免得后人当通用尺子用 ✓
+    #: ⚠ ★ **不要写 `solver_name or ""`** —— ★ `SolverType = 0`（`automatic`）是**合法值**，
+    #:   而 `0 or ""` ⇒ `""` ⇒ 被判成"未告知"（★ 由我自己的负例当场抓出）✓
+    _s = ("" if solver_name is None else str(solver_name)).strip().lower()
+    #: ⚠ ★ 按**子串**匹配，不按精确名 —— ★ 真机上那个名字是 **`Intel Direct Sparse`**（★ 带空格的组合名），
+    #:   而第一版按精确等值比 ⇒ ★ **它落进了 else 分支**（★ 由我自己当场发现的）✓
+    _is_direct = any(tok in _s for tok in ("direct", "intel", "sparse"))
+    _is_ffe = ("ffe" in _s) or ("plus" in _s)
+    if not _s:
+        out["★_适用性"] = ("⚠ ★ 求解器**未告知** ⇒ 这条换算的适用性未定（★ 它出自 **FFEPlus** 官方页；"
+                           "★ 直接法如 `Intel Direct Sparse` 的内存在本仓**无官方规则**）")
+    elif "automatic" in _s or _s == "0":
+        #: ★★ 真机实测（2026-10-04）：`SolverType = 0 (automatic)` **而求解器自己**选的是
+        #:   `Intel Direct Sparse`（进度窗逐字）⇒ ★ 对 `automatic` 这条 FFEPlus 尺子**更不适用** ✓
+        out["★_适用性"] = ("⚠⚠ 求解器 = `Automatic` ⇒ ★ **由 SolidWorks 自选** —— ★ 真机实测它选的是 "
+                           "**`Intel Direct Sparse`**（★ 直接法）⇒ ★ **别用 FFEPlus 的换算**"
+                           "（★ 想确定用哪个，就在进度窗上看 `类型:` 那一行）✓")
+    elif _is_ffe:
+        out["★_适用性"] = "★ 求解器 = `%s` ⇒ **这条换算正适用**（★ 它就是 FFEPlus 的规则）✓" % (solver_name,)
+    elif _is_direct:
+        out["★_适用性"] = ("⚠⚠ 求解器 = `%s`（**直接法**）⇒ ★ **别拿 FFEPlus 的换算当同一把尺子** —— "
+                           "★ 直接法的内存随**带宽/填充**走、与自由度**不成那条比例**，"
+                           "而本仓**没有**直接法的官方换算（★ 铁律 5）⇒ ★ 本条只能当**下界参考** ✓"
+                           % (solver_name,))
+    else:
+        out["★_适用性"] = ("⚠ 求解器 = `%s` ⇒ ★ 该换算出自 **FFEPlus**、对本求解器**适用性未查证** ✓"
+                           % (solver_name,))
     if est_ram_gb > budget:
         out.update({
             "ok": False,

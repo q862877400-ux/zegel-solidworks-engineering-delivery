@@ -4723,3 +4723,70 @@ sim.apply_normal_force(study, 100.0, model=doc)   # ⇒ ★ 空 DispArray ⇒ �
 ★ 能力：`capabilities.yaml` ⇒ **`analysis_run_readback` 由 `stitched` 升为 `verified`**
 （`verified_versions: ["2026"]` + 真机证据 + 新限制条；★ 分布 **98 verified / 10 stitched / 2 not_implemented**）✓
 ★ 测试：`tests/test_sw_guard_dialog_tiers.py` + `tests/test_dialog_watch.py`（**16 passed**）✓
+
+---
+
+## 529 · ★★★★★★ 那条内存换算**只对 FFEPlus 成立** —— 补上"哪把尺子"的标注，并读出本研究真实的求解器
+
+**发现时间**：2026-10-04（接手轮 · 收口我自己在事实 528 里留下的正确性漏洞）
+
+### 一 · ★★★★ 漏洞是什么（我自己造的）
+
+```
+★ 事实 521 起，`solve_memory_preflight` 用一条换算：「**每 2,000,000 自由度 1 GB RAM**」
+  ★ 它的出处**逐字**是本机官方页 `c_Analysis_Solvers.htm` 与 `IDC_HELP_PRESTATIC_OPTIONS.htm`，
+  ★★ 而那两页讲的是 **FFEPlus（迭代法）** ✓
+★★ 可是真机那次**成功**的求解，进度窗逐字写着 `类型: **Intel Direct Sparse**` ⇒
+  ★ 它**不是** FFEPlus ⇒ ★★ **那条换算对直接法不能当同一把尺子** ✓
+⇒ ★★★ 而我先前把结果标成「★ 官方 FFEPlus 规则」却**没把"适用性"说出来** ⇒
+  ★ 后人（或我自己）会拿它当**通用**内存判据 —— ★★ 这正是「**过度外推**」那一类错（事实 517 同族）✓
+```
+
+### 二 · ★★★★★ 处置（三条）
+
+```
+① ★ `solve_memory_preflight(..., solver_name=…)` 新增**适用性标注**（★ 结果里必带 `★_适用性`）：
+   · `FFEPlus` ⇒ **正适用**（★ 那条规则就是它的）
+   · `Intel Direct Sparse` / `Direct Sparse` / `INTEL` … ⇒ ★★ **别拿 FFEPlus 的换算当同一把尺子**
+     —— ★ 直接法的内存随**带宽/填充**走、与自由度**不成那条比例**，
+     而本仓**没有**直接法的官方换算（★ 铁律 5：查不到就说查不到）⇒ ★ 本条只能当**下界参考** ✓
+   · ★ `Automatic` ⇒ ★ **SW 自选** —— ★ 真机实测它选的是 **`Intel Direct Sparse`** ⇒ 同样**别用** ✓
+   · ★ 未告知 / 不认识 ⇒ **适用性未定 / 未查证**（★ **不许默认成"适用"**）✓
+② ★ 新增 `static_solver_type_report(study)` —— ★ 读 `ICWStaticStudyOptions.SolverType`：
+   ★ 它在本仓**只以 setter 记过**（`STUDY_OPTION_SETTERS`）⇒ ★ 读不到就 `ok=False + 原因`
+   （★ **不猜、也不默认成 FFEPlus**）✓
+   ★★ **真机验证**：`SolverType` 的 getter **真能读** ⇒ 本机回 **`value=0 · name=automatic`** ✓
+   ★ 枚举出处：`swsSolverType_e` ⇒ `automatic 0 / direct_sparse 1 / **ffeplus 2** / casi 5 / abaqus 6 /
+     intel 7 / intel_cluster 8`（★ 逐条核过，写在常量上方）✓
+③ ★ 探针新增 `[2a]` 步：**把求解器读数先记进证据**再交给内存闸 ✓
+```
+
+### 三 · ★★★ 顺带又抓到我自己两个小 bug（★ 都是**负例测试当场抓的**）
+
+```
+· ★★ 第一版按**精确名**匹配 ⇒ ★ 真机上那个名字是 **`Intel Direct Sparse`**（带空格的组合名）
+  ⇒ ★ **它落进了 else 分支**（判成"未查证"）⇒ 改成**按子串**匹配 ✓
+· ★★ `str(solver_name or "")` 对 **`SolverType = 0`**（合法值 `automatic`）⇒ `0 or "" ⇒ ""`
+  ⇒ ★ 被判成"**未告知**" ⇒ 改成显式判 `None` ✓（★ 与事实 51 同族：判据与数据源的**取值域**要对齐）
+```
+
+### 四 · ★★★ 真机复核（一跑全绿 · 24.67 s）
+
+```
+[1e] 夹具/载荷: 固定-1(type=2,entities=1) · 力-1(type=3,entities=1)
+[2]  网格: 6541 单元 / 1492 节点（0.4 s）
+[2a] 本研究求解器: ok=True value=0 name=**automatic**
+[2b] 内存闸: ok（est 0.002238 GB / 预算 16）
+[3]  求解: **0.8 s · results_present=true · plot_count=4** ✓
+★ 护栏: dialogs=[] · aborted_for_llm=false（★ 零弹窗；★ 且现在进度窗是 `progress` 档、**不会**中止）✓
+```
+
+### 五 · ★ 依据
+★ 代码：`scripts/sw_simulation.py`（`SWS_SOLVER_TYPES` · `static_solver_type_report` ·
+`solve_memory_preflight(solver_name=…)`）· `tools/probe_analysis_run_long_timeout.py`（`[2a]`）✓
+★ 测试：`tests/test_simulation_safety_gates.py`（**24 passed** —— ★ 含"真机上那个名字必须进直接法那一支"·
+"`automatic` 也别用 FFEPlus 的尺子"·"`solver_name=0` 不许被当成未告知"）✓
+★ 官方：`c_Analysis_Solvers.htm` / `IDC_HELP_PRESTATIC_OPTIONS.htm`（**FFEPlus 那两页**）·
+`swsSolverType_e`（本机类型库）✓
+⚠ ★ **仍然没有的**：★ **直接法（Direct Sparse / Intel）的内存规则** ——
+  ★ 两套官方源里都没找到 ⇒ ★ **如实留空缺**（★ 不发明一条）✓

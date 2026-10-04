@@ -154,6 +154,45 @@ class FakeStudy:
         self.Mesh = mesh if mesh is not None else FakeMesh()
 
 
+def test_preflight_says_which_solver_the_rule_belongs_to():
+    """★★★ **那条内存换算是"哪把尺子"必须写在结果里**（★ 2026-10-04 · 我自己留下的漏洞）。
+
+    ★ 事实：那条换算「每 2,000,000 自由度 1 GB」**逐字出自 FFEPlus 那一页** ✓
+    ★★ 而真机那次**成功**的求解，求解器自己写的是 **`Intel Direct Sparse`**
+      ⇒ ★ 直接法**不能**用 FFEPlus 的尺子（★ 而本仓**没有**直接法的官方换算 —— 铁律 5）✓
+    ⚠ ★ 第一版按**精确名**匹配 ⇒ ★ `Intel Direct Sparse` **落进了 else 分支**（★ 当场发现）⇒
+      现在按**子串**匹配 ✓
+    """
+    #: ★ FFEPlus ⇒ 正适用
+    assert "正适用" in sim.solve_memory_preflight(100, solver_name="FFEPlus")["★_适用性"]
+    #: ★★ 真机上那个名字（带空格的组合名）⇒ **必须进直接法那一支**
+    v = sim.solve_memory_preflight(100, solver_name="Intel Direct Sparse")["★_适用性"]
+    assert "直接法" in v and "同一把尺子" in v, v
+    for name in ("Direct Sparse", "INTEL", "intel_cluster"):
+        assert "直接法" in sim.solve_memory_preflight(100, solver_name=name)["★_适用性"], name
+    #: ★ 没告知 ⇒ **适用性未定**（★ 不许默认成"适用"）
+    assert "未告知" in sim.solve_memory_preflight(100)["★_适用性"]
+    #: ★★ `automatic` ⇒ **SW 自选**（★ 真机实测选的是 Intel Direct Sparse）⇒ 也别用 FFEPlus 的尺子
+    for name in ("automatic", "Automatic", 0):
+        v = sim.solve_memory_preflight(100, solver_name=name)["★_适用性"]
+        assert "自选" in v and "别用 FFEPlus" in v, (name, v)
+    #: ★ 不认识的 ⇒ 未查证（★ 不猜）
+    assert "未查证" in sim.solve_memory_preflight(100, solver_name="ZZZ")["★_适用性"]
+
+
+def test_solver_type_report_never_invents_a_default():
+    """★ 读不到求解器类型 ⇒ **`ok=False` + 原因**（★ **不许默认成 FFEPlus** —— 铁律 5）。"""
+    class _Boom:
+        def __getattr__(self, n):
+            raise RuntimeError("no such member")
+
+    r = sim.static_solver_type_report(_Boom())
+    assert r["ok"] is False and r["reason"], r
+    assert r["value"] is None and r["name"] is None, r
+    #: ★ 枚举映射本身要是**逐条可核**的（出处写在常量上方）
+    assert sim.SWS_SOLVER_TYPES["ffeplus"] == 2 and sim.SWS_SOLVER_TYPES["direct_sparse"] == 1
+
+
 def test_mesh_safety_apply_only_touches_the_two_int32_knobs():
     """★★ 安全档**只碰** `Quality`/`MesherType`（★ 两个 `Int32`，★ 无单位风险）。
 
