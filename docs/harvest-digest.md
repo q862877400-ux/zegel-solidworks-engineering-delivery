@@ -312,7 +312,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 五 门禁栈（**方法论沉淀**：把判定交给机器，而不是靠人记得）
 
-`scripts/check_*.py` 共 **28** 道；其中接进 `release_check.py`（发布前硬失败）的：
+`scripts/check_*.py` 共 **30** 道；其中接进 `release_check.py`（发布前硬失败）的：
 
 | 门禁 | 接进 `release_check`？ |
 |---|---|
@@ -322,6 +322,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_digest_freshness.py` | ✅ |
 | `scripts/check_enum_values_vs_reflection.py` | ✅ |
 | `scripts/check_env_pitfalls.py` | ✅ |
+| `scripts/check_fact_single_home.py` | — |
 | `scripts/check_gate_wiring.py` | ✅ |
 | `scripts/check_interface_member_ownership.py` | ✅ |
 | `scripts/check_license_redlines.py` | ✅ |
@@ -329,6 +330,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_member_owner_interface.py` | — |
 | `scripts/check_negative_input_selfproof.py` | ✅ |
 | `scripts/check_official_md_claims.py` | ✅ |
+| `scripts/check_official_source_defects.py` | — |
 | `scripts/check_param_binding.py` | ✅ |
 | `scripts/check_property_form_members.py` | ✅ |
 | `scripts/check_provenance.py` | ✅ |

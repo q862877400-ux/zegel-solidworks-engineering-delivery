@@ -18,6 +18,16 @@
         "D:/AI/SW/specs/206-c1c6-harvest/spec.md",
         "D:/AI/SW/specs/203-bunny-sideline-batches/recon/b2-defects.json"
       ]
+    },
+    {
+      "gate": "check_fact_single_home.py",
+      "reason": "★ **告警级、不拦（exit 0）** —— 规格 206 / **T5-1** 的交付物，按 **D-1**（新建门禁误报率 ≤5%，未达标者留待复核桶）先做告警。★ 判据已验证有效（`tests/test_fact_single_home_gate.py` 5 passed，含关键负例「逐字抄一段事实正文 ⇒ 必须报出来」与反向负例「只引用编号 ⇒ 不该报」），且**已在其首次运行中抓到 2 处真复述**（`docs/dead-ends.md` 复述事实 230 · `specs/202-*/recon/verify50/…` 复述事实 303）。★ 本门禁**不会**自动改文档（只报告）。★★ **不接硬门禁的理由**：判据是「归一后 ≥80 字符逐字片段」的启发式，而**正当引用与真复述在文本上可能难分**（与事实 538/539 同族的教训：判据越宽越易误报）⇒ 要先把那 2 处处置掉、并抽检 20 条确认误报率后再考虑接闸。",
+      "evidence": [
+        "D:/AI/SW/scripts/check_fact_single_home.py",
+        "D:/AI/SW/tests/test_fact_single_home_gate.py",
+        "D:/AI/SW/specs/206-c1c6-harvest/spec.md",
+        "D:/AI/SW/docs/known-facts.md"
+      ]
     }
   ]
 }
