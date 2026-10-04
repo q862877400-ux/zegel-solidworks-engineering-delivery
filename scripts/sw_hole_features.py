@@ -215,13 +215,16 @@ def create_semicircular_slot(
     feature_name = _feature_name(extrude_cut(model, sketch_name, depth), name)
     return {
         "feature_kind": "semicircular_slot",
-        "start_mm": list(start),
-        "end_mm": list(end),
+        #: ★★★ 2026-10-04（接手轮）：**删掉 4 行死代码** —— 这里原先
+        #:   `"start_mm": list(start)` / `"end_mm": list(end)` / `"width_mm": width` /
+        #:   `"depth_mm": depth` 各写了一遍，**紧接着又被同名键覆盖** ⇒
+        #:   ★★ 输出碰巧是对的（Python 取**后写**的那个），但**死代码会误导读者**
+        #:   （看着像"以 `_mm` 命名却存米"），且任何 linter 都会报重复键 ✓
+        #:   ★ 发现者：Bunny 扇出（它在做别的判读时**只读发现**并如实上报，★ 不自己改 ——
+        #:     交主线拍板）⇒ ★ 这正是"Bunny 报事实、主线拍板"该有的样子 ✓
         "start_mm": [round(value * 1000.0, 6) for value in start],
         "end_mm": [round(value * 1000.0, 6) for value in end],
-        "width_mm": width,
         "width_mm": round(width * 1000.0, 6),
-        "depth_mm": None if depth == 0.0 else depth,
         "depth_mm": None if depth == 0.0 else round(depth * 1000.0, 6),
         "through": depth == 0.0,
         "plane_name": plane_name,

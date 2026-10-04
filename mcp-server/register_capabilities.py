@@ -252,11 +252,26 @@ def resolve_selected_component(params: Any):
 def resolve_study_options(params: Any):
     """注入**研究选项对象** —— ★ 供首参名叫 `options` 的那批函数。
 
-    ★ 读两个参数：`study_name`（定位研究，空名取第一个）与 `family`
-      （选项族，缺省 `ICWStaticStudyOptions`）—— ★ 与 `resolve_study` 同手法 ✓
+    ★ 读两个参数：`study_name`（定位研究，空名取第一个）与 `family`（选项族）✓
+
+    ★★★ 2026-10-04（接手轮）**收掉一个静默陷阱**（★ 由 Bunny 扇出**如实上报**后我核实的）：
+      第一版把 `family` **缺省成 `ICWStaticStudyOptions`** —— ★ 而 `sw_simulation_study_options`
+      里那几个原始函数（`configure_static_solver` / `configure_frequency_solver` /
+      `configure_buckling_solver`）**各自硬编码自己的族**、**形参里根本没有 `family`** ⇒
+      ★★ 若将来有人把这类函数挂成工具，缺省值会**静默地把频率/屈曲选项注成"静态选项对象"**
+      （★ 事实 36 那一族的形态：**对象错了，表现是"什么都没发生"**）✓
+    ⇒ ★ 改为**响亮失败**：拿不到 `family` 就报错并说清"要么把它声明成参数、要么别用 `options` 键" ✓
+      ★ 代价为零 —— 现有用 `options` 键的两个工具（`set_option` / `set_options`）**都声明了 `family`** ✓
     """
     from scripts.sw_simulation_study_options import study_options_of
-    family = (getattr(params, "family", "") or "ICWStaticStudyOptions").strip()
+    family = str(getattr(params, "family", "") or "").strip()
+    if not family:
+        raise RuntimeError(
+            "`options` 注入键拿不到**选项族 `family`** ⇒ 无法确定该注哪个选项对象。"
+            "★ 这**不能靠猜**：不同族（静态/频率/屈曲）是**不同的对象**，注错了表现为"
+            "「什么都没发生」（事实 36 那一族）。"
+            "★ 正解二选一：① 把 `family` 声明成工具参数（既有两个工具就是这么做的）；"
+            "② 若目标函数**自己**硬编码了族，就别用 `options` 键 —— ★ 本解析器**不替它猜**")
     study = resolve_study(params)
     opts = study_options_of(study, family)
     if opts is None:
