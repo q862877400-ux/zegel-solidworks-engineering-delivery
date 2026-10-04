@@ -199,8 +199,22 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     elif inj and req and req[0] != inj:
         bad.append("⑦ ★ 注入键 %r ≠ 目标函数首参 %r（事实 502）" % (inj, req[0]))
     #: ⑧ 查重
+    #: ★★★ 2026-10-04 细分（★ 拿真产出校准时发现）：`tool_name` 已在 `all_specs()` 里有**两种**含义：
+    #:   · ★ **已建**（那条既有工具**就是从同一个 `module`+`function` 来的**）—— ★ 例如批 81 建完
+    #:     第一坡之后，24 行 exposable 全落进这一类 ✓
+    #:   · ✗ **真撞名**（既有工具来自别的函数 ⇒ 两件不同的事抢同一个名字）✓
+    #: ★★ **但两者都算失败** —— ★ 因为"再声明一次同名工具"会**在批次文件里重复** ⇒
+    #:   `check_union_conventions` 与注册器都会炸 ⇒ ★ 只是**失败原因不同、处置不同**：
+    #:   已建的那类**跳过即可**（别重建），真撞名的**必须改名** ✓
+    #: ⚠ ★ 我第一版把"已建"**豁免成通过** ⇒ ★★ **自测的反例④当场失败**（"门禁有洞 ✗"）——
+    #:   ★ 那正是自测的用处：**它证明我那个"细化"改坏了判据** ⇒ 改回"仍算失败、只标信息" ✓
     if tn in existing_tools:
-        bad.append("⑧ ★ 与既有工具**撞名**: %s" % tn)
+        if tn in _built_from():
+            row["_already_built"] = True
+            bad.append("⑧ ★ 该工具名**已经建过**了（同一 `module`+`function` 已挂出）⇒ "
+                       "**别再建一次**（★ 若你是想加一个**不同**的入口，请改名）")
+        else:
+            bad.append("⑧ ★ 与既有工具**真撞名**: %s（★ 既有那条来自**别的**函数 ⇒ 必须改名）" % tn)
     if row.get("exposable") is False and not str(row.get("reason_if_not") or "").strip():
         bad.append("⑧ 判 exposable=False 却**没写原因**（★ 铁律 5：说清为什么）")
     #: ⑨⑩ ★ 三问筛的**自相矛盾检查**
@@ -231,6 +245,20 @@ def _resolver_keys() -> set[str]:
         return set(rc.RESOLVERS.keys())
     except Exception:                                                # noqa: BLE001
         return set(INJECT_KEYS)
+
+
+def _built_from() -> set[str]:
+    """★ 既有工具里，**由 `module`+`function` 直接挂出来的**那些名字（= "已建"判据）。
+
+    ★ 依据：`ToolSpec` 的 `module`/`function` 声明 —— ★ 有它才能把"**已建**"与"**真撞名**"分开 ✓
+    """
+    try:
+        sys.path.insert(0, str(ROOT / "mcp-server"))
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import register_capabilities as rc                          # noqa: PLC0415
+        return {s.name for s in rc.all_specs() if getattr(s, "function", "")}
+    except Exception:                                                # noqa: BLE001
+        return set()
 
 
 def _existing_tools() -> set[str]:
