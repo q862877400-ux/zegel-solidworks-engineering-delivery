@@ -6312,3 +6312,58 @@ CreateStructureSystemMemberData · Elliptical · FeatureFillet3（各 3 条）
 `docs/gate-wiring-exemptions.json`（理由已更新）· 事实 541/542（同流程的前两次）✓
 ★ **本批的下限**：★ 样本**合成**（★ 临时目录里的假文件）⇒ ★ 量的是**判据性质**，不是真仓库命中率；
 ★ 「正当引用」只取真名前 10 个；★★ 那 2 处边界**仍未判** ✓
+
+---
+
+| 544 | **★★★★★ 那 2 处「边界」判完了 —— 判出**三类命中**，而其中一处**根本不是我们的错，是官方页自身的缺陷被我们逐字引用**** —— 2026-10-04（接手轮，规格 `specs/206-c1c6-harvest/`）。
+
+**★ 判法（★ 两处都用机械事实判，不靠印象）**：
+```
+① `[[IFeatureManager::IInsertMidSurface]]`（mcp-server/tool_specs_batch74.py:401）
+   ★ 查文件系统: IFeatureManager 下的真名是 **`InsertMidSurface`**（**不带 I**）；
+     ★ 全库 `IInsertMidSurface*` 只有 1 个 —— **IModelDoc2\IInsertMidSurfaceExt.md** ✓
+   ★★ 但我又读了那一行的**上下文**（L400-402）⇒ ★★★ **判断反转**:
+      L400 逐字: 「顺带登记**一条本批查到的「查不到」**（铁律 5）：
+        `IModelDoc2.IInsertMidSurfaceExt` 官方逐字标
+        `Obsolete. Superseded by [[IFeatureManager::IInsertMidSurface]].`，
+        而 **`IFeatureManager::IInsertMidSurface` 那一页官方没写**」
+② `[[Iface::Member]]`（tools/build_obsolete_index.py:25）
+   ★ 读那行: `#: ★ 后继的名字（★ 官方那句里通常在 [[Iface::Member]] 或反引号里）`
+   ⇒ ★★ **注释里的模板占位** ⇒ 误报 ✓
+```
+
+**★★★ 结论：本门禁的命中分三类，只有第一类该报**：
+| # | 类 | 例 | 该报吗 |
+|---|---|---|---|
+| ① | **我们自己的真断链** | `[[SketchManager::ActiveSketch]]` ×5 | ★ **该报**（已修）|
+| ② | **注释里的模板占位** | `[[Iface::Member]]` | ✗ 误报 |
+| ③ | ★★★ **官方页自身缺陷的逐字引文** | `[[IFeatureManager::IInsertMidSurface]]` | ✗ **不该报** |
+
+**★★★ 第 ③ 类为什么最重要**：
+```
+★ 官方页 `IModelDoc2/IInsertMidSurfaceExt.md` **逐字**写着
+  `Obsolete. Superseded by [[IFeatureManager::IInsertMidSurface]].`
+★★ 而那个**目标页本机全库不存在** ⇒ ★★★ **这是一条【官方源自身的缺陷】**
+   （★ 与 T3-1 那 212 条死链候选**同一族**）✓
+★★ 我们的代码**正是在登记它**（★ 铁律 5：查不到就说查不到）⇒
+   ★★★ ★ **把"记录官方缺陷"判成"我们的错"，正是本门禁最该避免的误报** ✓
+```
+
+**★ 我上一轮判错了（★ 如实记）**：★ 我在豁免理由里写「`IInsertMidSurface` 的 `I` 前缀是官方
+**进程内指针变体**命名法 ⇒ 疑误报」⇒ ★★ **那个说法用错了地方** ——
+★ `I`-前缀家族**确实存在**（`IInsertMidSurfaceExt` 在 `IModelDoc2` 下），
+★★ **但它不在 `IFeatureManager` 下**，所以那条链接**确实是断的** ——
+★★★ **只是断的不是"我们"，是"官方"** ✓
+
+**★ 处置**：★ 豁免理由更新为**第 3 版**（★ 写明三类 + 接闸的真正前置：
+先加「**引文语境**」判据，如行内含「逐字」「Superseded by」或在 `#:` 官方引文块内则不报）✓
+
+**★ 定则**：
+```
+★★ **「读一行」不够，要读那一行的【上下文】** —— 本会话第三次因此反转判断
+   （★ 事实 535 读代码反转、事实 528 读 805 行反转、本条读 L400-402 反转）✓
+★★★ 而三次反转**都不是**因为判据差，是因为**我停在了第一层证据**上 ✓
+```
+
+★ **依据**：`tools/judge_two_boundary_cases.py` · `mcp-server/tool_specs_batch74.py:400-402` ·
+`tools/build_obsolete_index.py:25` · `docs/gate-wiring-exemptions.json`（理由第 3 版）✓
