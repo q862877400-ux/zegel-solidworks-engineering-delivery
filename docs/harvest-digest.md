@@ -41,17 +41,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **110** 条能力。
+共 **112** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 98 | **有我们自己的运行证据**（`evidence` 非空） |
+| `verified` | 100 | **有我们自己的运行证据**（`evidence` 非空） |
 | `stitched` | 10 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 2 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 80 | **本项目自研**（护城河域等） |
+| `original` | 82 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
@@ -210,6 +210,8 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
          ★ 而**事实 32 早写着**：选实体要用 **`IEntity.Select4`（按对象）**；★ 本仓封装：`sw_selection_spec.entities_on_body` + `select_object`
        ② ★ **`Select4` 没有 mark 参数** ⇒ 用 **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** 补设 ✓` |
 | `coverage_gap_batch1` | · `★★★ 2026-10-03（接手轮）**真机 3/3**（走 `tools/sw_guard.py`，零弹窗、`sw_alive: true`）：`python tools/prove_coverage_gap_batch1.py`。① **旋转曲面** ⇒ 树新增 **`曲面-旋转1`** · **曲面体 0→1** · 选中轮廓 1；② **孔向导** ⇒ 树新增 **`异型孔向导`**（`M8`）；③ **完全定义检查** ⇒ `GetConstrainedStatus` 回 **int**。证据 `output/coverage-gap-batch1-evidence.json`。`<br>· `★★ **完全定义那个读数**证明**有区分度**（不是常量）：欠定义的矩形（4 段）回 **2**；对 4 段全加 `sgFIXED` 后回 **3** ⇒ ★ 两次读数**不同**。`<br>· `★★ **覆盖率回读（生成器现算，★ 不是我算的）**：`docs/user-feature-coverage.md` §三 本仓库 **96/145 (66%) → 99/145 (68%)**；§八「只有四家有」**35 → 32 项** ⇒ ★ **+3 与接出去的工具数完全对上**（★ 这不是刷分：那 3 个工具**确实就是那些功能**，且都有真机证据）。`<br>· `★ 三个工具名**有意含覆盖率脚本要的关键词**（`revolved_surface` / `hole_wizard` / `fully_defined`）—— ★ 该脚本按「功能关键词**子串**命中工具名」计分 ⇒ **让名字与能力对上**是应有之义。` |
+| `assembly_exploded_views` | · `★★★ 真机（2026-10-04 · 规格 204 的 SC-005）：`python tools/sw_guard.py --timeout 600 -- python tools/probe_fr008_explode_macro.py` ⇒ ★ 打开**装配副本**（`GetType=2` · 活动配置 `默认`）⇒ `create_exploded_view` 回 **True** · **回读计数 0 → 1** · `get_exploded_view_names` 回 **['爆炸视图1']** ⇒ `view_explode_assembly` / `view_collapse_assembly` 两次调用**都没抛** ⇒ `show_exploded(True, '爆炸视图1')` 回 **True**（随后收起）✓ ★ 证据落 `output/fr008-explode-macro-evidence.json`（★ `output/` 被 gitignore ⇒ 要复现就重跑那条命令）`<br>· `★ 官方依据逐页读过：`C:\swapi\types\IAssemblyDoc\{CreateExplodedView,AutoExplode,ViewExplodeAssembly,ViewCollapseAssembly,ShowExploded2,GetExplodedViewNames2,GetExplodedViewCount2,GetExplodedViewConfigurationName,EditExplodeParameters}.md`` |
+| `macro_execution` | · `★★★ 真机（2026-10-04 · 规格 204 的 SC-005 · 同一份证据文件）：① **正例**：跑本仓自己的 `.swb`（`subskills/solidworks-fillet-chamfer-cnc/scripts/native/NativeHoldLineMacro.swb`，明文 VB.NET、含 `Sub main`）⇒ `run_macro(sw, path, "", "main")` 回 **ok=True · return_value=True** ✓ ② **反例**：路径不存在 ⇒ **return_value=False · file_exists=False** ✓ ★ 证据落 `output/fr008-explode-macro-evidence.json``<br>· `★ 官方依据：`C:\swapi\types\ISldWorks\RunMacro2.md`（官方签名 **4 入 + 1 out**：`bool RunMacro2(String FilePathName, String ModuleName, String ProcedureName, Int32 Options, out Int32 Error)`）· `swRunMacroOption_e.md`（2 成员）· `swRunMacroError_e.md`（**28 成员**，★ 与出厂反射 `_raw/enum_values_sldworks.txt` **按成员逐一比对一致**）`<br>· `★ 配套 7 个**纯文本**能力（`sw_macro_guard`：生成提示词 / 抽代码 / 静态校验 / 选模板 / 兜底 / 落盘）—— ★ 它们**不碰 COM**，故无需真机证据；★ 但要真机跑宏仍走 `run_macro` ✓` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 

@@ -14,12 +14,22 @@
 
 ## T-1 · 批 79 · FR-008：宏/VBA + 爆炸视图（★ 规格 202 的 MUST）
 
-- [ ] **T-101** 读 `scripts/sw_macro_guard.py` 与装配爆炸视图相关能力，判可暴露性（FR-003/006/007）
-- [ ] **T-102** 写 `mcp-server/tool_specs_batch79.py`（★ 目标 +9 ~ 12）
-- [ ] **T-103** 注册进 `BATCH_MODULES` + 写 `tests/test_tool_specs_batch79.py`
-- [ ] **T-104** 改全局计数（`tests/test_server_wiring.py`）
-- [ ] **T-105** ★ **真机**：爆炸视图 一正一反 · 宏/VBA 一正一反（SC-005），证据落 `output/`
-- [ ] **T-106** 收尾链 + 提交
+- [x] **T-101** 读 `scripts/sw_macro_guard.py` 与装配爆炸视图相关能力，判可暴露性（FR-003/006/007）
+      ⇒ ★ 宏那 9 个公开函数里 **7 个可挂**（另 2 个：`generate_macro_with_guard` 要**回调**、`main` 是 CLI 入口）；
+      ★ 爆炸视图**没有包装**，但 `ASSEMBLY_DOC_ARITY` 登记表里 **9 个成员的 arity 齐全** ⇒ 新写包装 ✓
+- [x] **T-102** 写 `mcp-server/tool_specs_batch79.py`（★ 实得 **17** 个：爆炸视图 9 + 宏 8）
+- [x] **T-103** 注册进 `BATCH_MODULES` + 写 `tests/test_tool_specs_batch79.py`（**6 passed**）
+- [x] **T-104** 改全局计数（`tests/test_server_wiring.py`：296 → **313**）
+- [x] **T-105** ★ **真机**（SC-005 · `tools/probe_fr008_explode_macro.py`，走 `sw_guard`）：
+      · **爆炸视图正例**：装配副本（`GetType=2` · 配置 `默认`）⇒ `create_exploded_view` 回 **True** ·
+        **回读计数 0 → 1** · 名字 **['爆炸视图1']** · 展开/收拢都没抛 · 按名显示回 **True** ✓
+      · **宏正例**：本仓 `.swb`（明文 VB.NET、`Sub main`）⇒ `ok=True · return_value=True` ✓
+      · **宏反例**：路径不存在 ⇒ `return_value=False · file_exists=False` ✓（★ `error_code=0` ⇒ 语义**未定**，已记）
+      · ⚠ **爆炸视图反例未做**：`NewDocument("",0,0.0,0.0)` 真机回 `None` ⇒ 拿不到零件 ⇒ **如实记"未做"**，
+        ★ 不把装配读数冒充零件读数 ✓
+- [x] **T-106** 收尾链 + 提交 ⇒ `release_check 第 1 轮 OK` · `check_param_binding` **0 处** ·
+      ★ 并把两块**新能力**登记进 `capabilities.yaml`（`assembly_exploded_views` · `macro_execution`，
+      各带真机 evidence + 如实 limitations ⇒ 112 条 · **100 verified** / 10 stitched / 2 not_implemented）✓
 
 ## T-2 · 批 80 · `sw_featureworks`（特征识别）
 

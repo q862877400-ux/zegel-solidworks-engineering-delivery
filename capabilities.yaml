@@ -4414,6 +4414,89 @@
         "⚠ **审计工具只判「本仓有没有引用该成员」**，★ **不判「该不该暴露成工具」** —— ★ 很多函数是同一流程的内部步骤（事实 53：不为它调启发式）。",
         "⚠ **本批未跑全量 pytest**（按 AGENTS.md：全量只在发布前或改了 `sw_connect.py`/门禁本体时跑）。"
       ]
+    },
+    {
+      "id": "assembly_exploded_views",
+      "label": "装配爆炸视图（`IAssemblyDoc` 的 9 个成员）—— ★ 真机建成并回读自证",
+      "level": "verified",
+      "verified_versions": [
+        "2026"
+      ],
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "dependencies": [
+        "solidworks"
+      ],
+      "evidence": [
+        "★★★ 真机（2026-10-04 · 规格 204 的 SC-005）：`python tools/sw_guard.py --timeout 600 -- python tools/probe_fr008_explode_macro.py` ⇒ ★ 打开**装配副本**（`GetType=2` · 活动配置 `默认`）⇒ `create_exploded_view` 回 **True** · **回读计数 0 → 1** · `get_exploded_view_names` 回 **['爆炸视图1']** ⇒ `view_explode_assembly` / `view_collapse_assembly` 两次调用**都没抛** ⇒ `show_exploded(True, '爆炸视图1')` 回 **True**（随后收起）✓ ★ 证据落 `output/fr008-explode-macro-evidence.json`（★ `output/` 被 gitignore ⇒ 要复现就重跑那条命令）",
+        "★ 官方依据逐页读过：`C:\\swapi\\types\\IAssemblyDoc\\{CreateExplodedView,AutoExplode,ViewExplodeAssembly,ViewCollapseAssembly,ShowExploded2,GetExplodedViewNames2,GetExplodedViewCount2,GetExplodedViewConfigurationName,EditExplodeParameters}.md`"
+      ],
+      "limitations": [
+        "★★ 反例**未做**（如实记）：本想「对零件文档调爆炸视图应失败」，但真机 `NewDocument(\"\", 0, 0.0, 0.0)` **回 `None`** ⇒ 拿不到零件文档 ⇒ ★ 探针按纪律记**「反例未做」**，★ **不把装配上的读数冒充零件读数** ✓（★ 要补就换一条能拿到零件的开文档路径）",
+        "★ `GetExplodedViewConfigurationName` 那 **1 个实参的含义官方页没写**（只有 Parameters 段）⇒ 本仓包装**原样透传、不猜**（铁律 5）",
+        "★ `EditExplodeParameters` 官方页**无 Remarks** ⇒ 它**是否弹交互界面未查证** ⇒ 真机调用请照本仓纪律走弹窗护栏",
+        "⚠ 只在**本机 SW 2026 SP4.1** 与那一个装配体（换刀主轴 BT30 · 副本）上验过；★ 多个配置 / 多个爆炸视图的组合**未验**（官方 Remarks 说 `CreateExplodedView` 可多次调用、`AutoExplode` 每配置只建一个 —— ★ 那两条**只是官方说法**，本轮没逐条复现）"
+      ],
+      "source_evidence": "★ 本仓自建（按**官方签名与 Remarks**立）：`C:\\swapi\\types\\IAssemblyDoc\\{CreateExplodedView,AutoExplode,ViewExplodeAssembly,ViewCollapseAssembly,ShowExploded2,GetExplodedViewNames2,GetExplodedViewCount2,GetExplodedViewConfigurationName,EditExplodeParameters}.md` —— ★ **九页逐页读过**（签名 + Remarks；三条 Remarks 已落进包装的 docstring）✓ ★ 成员名与**实参个数**取自 `tools/gen_member_registry.py` **机械生成**的 `ASSEMBLY_DOC_ARITY`（**不手抄**）· ★ **不来自任何外部项目**（四家里没有爆炸视图）✓",
+      "source": "original",
+      "allowed_modes": [
+        "interactive",
+        "reviewed"
+      ],
+      "mcp_tools": [
+        "solidworks_assembly_create_exploded_view",
+        "solidworks_assembly_auto_explode",
+        "solidworks_assembly_view_explode",
+        "solidworks_assembly_view_collapse",
+        "solidworks_assembly_show_exploded",
+        "solidworks_assembly_get_exploded_view_names",
+        "solidworks_assembly_get_exploded_view_count",
+        "solidworks_assembly_exploded_view_configuration",
+        "solidworks_assembly_edit_explode_parameters"
+      ]
+    },
+    {
+      "id": "macro_execution",
+      "label": "宏执行（`ISldWorks.RunMacro2`）—— ★ 真机跑通（`.swb` 正例）",
+      "level": "verified",
+      "verified_versions": [
+        "2026"
+      ],
+      "backends": [
+        "solidworks-com-pywin32"
+      ],
+      "dependencies": [
+        "solidworks"
+      ],
+      "evidence": [
+        "★★★ 真机（2026-10-04 · 规格 204 的 SC-005 · 同一份证据文件）：① **正例**：跑本仓自己的 `.swb`（`subskills/solidworks-fillet-chamfer-cnc/scripts/native/NativeHoldLineMacro.swb`，明文 VB.NET、含 `Sub main`）⇒ `run_macro(sw, path, \"\", \"main\")` 回 **ok=True · return_value=True** ✓ ② **反例**：路径不存在 ⇒ **return_value=False · file_exists=False** ✓ ★ 证据落 `output/fr008-explode-macro-evidence.json`",
+        "★ 官方依据：`C:\\swapi\\types\\ISldWorks\\RunMacro2.md`（官方签名 **4 入 + 1 out**：`bool RunMacro2(String FilePathName, String ModuleName, String ProcedureName, Int32 Options, out Int32 Error)`）· `swRunMacroOption_e.md`（2 成员）· `swRunMacroError_e.md`（**28 成员**，★ 与出厂反射 `_raw/enum_values_sldworks.txt` **按成员逐一比对一致**）",
+        "★ 配套 7 个**纯文本**能力（`sw_macro_guard`：生成提示词 / 抽代码 / 静态校验 / 选模板 / 兜底 / 落盘）—— ★ 它们**不碰 COM**，故无需真机证据；★ 但要真机跑宏仍走 `run_macro` ✓"
+      ],
+      "limitations": [
+        "★★ **`.swp`（VBA）路径未验**（无素材）：判据是 `RunMacro2` 要**模块名 + 过程名**，而 SW 自带的 `Simulation\\enable.swp` / `sldBenchmarking\\Macro\\testmacro.swp` 是**OLE 压缩存储** ⇒ 本机从二进制里**抠不出** `Attribute VB_Name`（实测 0 命中）⇒ ★ **本仓没有可确定模块名的 `.swp`** ⇒ 如实记「未验」；★ 要补：在 SW 里存一个自己的 `.swp` 后填模块名 ✓",
+        "★★ **`Error` 出参的读数语义未定**：反例（路径不存在）真机回 **`return_value=False` 而 `error_code=0`** ⇒ ★ 与「路径不存在应回 `swRunMacroError_OpenFileFailed(28)`」的**预期不符** ⇒ 本仓**不据此下结论**（可能该错误码只在别的条件下回、或该 out 参在本后端下不被写回 —— 事实 47 那一族）✓ ⇒ ★ 判据请用 **bool 返回值 + `file_exists`**，别只看 `error_code` ✓",
+        "★★ **`.swb` 下 `ProcedureName` 无法区分**：真机把过程名换成 `_definitely_not_a_proc_` **仍回 True**（★ 与官方 Remarks「Options/Error 只对 VBA 宏生效」一致）⇒ ★ `.swb` 请把过程名当**入口提示**、不要当校验手段 ✓",
+        "⚠ 官方页 `## Remarks` 对 `RunMacro2` **是空的** ⇒ ★ 本仓**不替官方补语义**；宏**是否被允许运行**还受 SW 的宏安全设置影响（★ 该设置的读法本轮**未查**）"
+      ],
+      "source_evidence": "★ 本仓自建（按**官方签名与枚举**立）：`C:\\swapi\\types\\ISldWorks\\RunMacro2.md`（官方签名 **4 入 + 1 out**）· `C:\\swapi\\enums\\swRunMacroOption_e.md`（2 成员）· `C:\\swapi\\enums\\swRunMacroError_e.md`（**28 成员** —— ★ 与出厂反射 `_raw\\enum_values_sldworks.txt` **按成员逐一比对一致**）✓ · ★ 那 7 个**纯文本**能力是**本仓既有**实现（`scripts/sw_macro_guard.py`）—— 不是本轮新写的 ✓ · ★ **不来自任何外部项目**（四家里没有宏执行 / 爆炸视图）✓",
+      "source": "original",
+      "allowed_modes": [
+        "interactive",
+        "reviewed",
+        "unattended"
+      ],
+      "mcp_tools": [
+        "solidworks_macro_run",
+        "solidworks_macro_normalize_model_family",
+        "solidworks_macro_build_prompt",
+        "solidworks_macro_extract_vba_code",
+        "solidworks_macro_validate_vba_code",
+        "solidworks_macro_select_template",
+        "solidworks_macro_fallback_template",
+        "solidworks_macro_write_file"
+      ]
     }
   ]
 }
