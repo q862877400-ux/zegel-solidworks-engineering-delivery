@@ -32,6 +32,27 @@ lead 维护 `docs/union-coverage-matrix.md` 与 `docs/gap-analysis.md` 的打勾
 
 省下来的额度用在 Lead 的真机与门禁上；机械穷举、全面阅读、逐条对账、抄录这类活本来就不需要 DeepSeek。
 
+### ★★ 扇出之后还要核一次**运行期记录** —— 参数写了 Bunny ≠ 它真的跑了 Bunny
+
+```
+python tools/check_subagent_models.py --marker <我提示词里独有的串> [--marker …] [--exclude-self <Lead会话片段>]
+python tools/check_subagent_models.py --selftest      # ★ 造 1 bunny + 1 deepseek 假会话，必须报出后者
+```
+
+**为什么**（★ 2026-10-04 · 业主追问「你派出的子代理是什么模型，有没有遵循必须用 Bunny 的纪律」触发）：
+上面那条「实测偏差」记的是 **Teammate** 注册表；而 **`workflow` 扇出的子代理**另有记录 ——
+★ 判据只能是**运行期写下的字段**，不能是我在 `agent()` 里传的 opts（★ 事实 62：写着 ≠ 生效）。
+
+**判据与实测**：
+- 源：DSH 的会话投影缓存 `~/.dsh/storages/session_projcache/sessions/*.json`；
+- 每份子代理会话里有**运行期字段**：`"model"` · `"provider"` · `"lastModel"` ·
+  `"cost": {"<provider>": {"<model>": …}}`（★ 这三个字段名是**实测读出来的**，不是猜的）；
+- ★★ 挑「我派的」要用**提示词标记串**（我扇出提示词里独有的文件名/字段名），
+  ★ 免得把**别的对话 / 别的项目**的子代理算进来 —— ★ 本机实测：缓存里共 **2668** 份会话记录，
+  其中**别人的子代理 2232 份**（含 `deepseek-flash` 的）⇒ ★★ **不筛标记串就会得出「纪律没执行」的错误结论** ✓
+- ★★★ **实测结论（2026-10-04 两坡）**：我派出的 **62 路全部是 `space-bunny-free` / `opencode-zen`**，
+  `deepseek` 字样 **0 次**；★ 而唯一那个 `deepseek-flash` 的会话是 **Lead 自己**（`--exclude-self` 排掉）✓
+
 ### 大批量扇出用 workflow，且 provider 与 model 必须成对写
 
 `spawn_teammate` 有硬上限 8（本会话实测：已有 7 个 teammate 时第 8 个报 `Team member limit 8 reached`），派不出上百路。要规模就改用 `workflow`：写一段 JS，用 `pipeline(items, stage)` 把每项扇出一个子代理。

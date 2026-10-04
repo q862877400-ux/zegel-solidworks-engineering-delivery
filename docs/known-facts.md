@@ -4879,3 +4879,59 @@ sim.apply_normal_force(study, 100.0, model=doc)   # ⇒ ★ 空 DispArray ⇒ �
 ⚠ ★ **尚未做**（SC-005）：FR-008 的**真机验证**（爆炸视图需装配文档 · 宏需 `.swp`/`.swb` 与模块名）
   ⇒ ★ 素材已备：SW 自带 `Simulation\enable.swp` · `sldBenchmarking\Macro\testmacro.swp` ·
   本仓 `NativeHoldLineMacro.swb`（明文 VB.NET，`Sub main`）✓
+
+---
+
+## 531 · ★★★★★ 子代理**实际**跑在哪个模型上 —— 判据是运行期记录，不是我的调用参数
+
+**触发**：业主 2026-10-04 追问「你派出的子代理是什么模型，有没有遵循批量子代理必须用 space bunny 的纪律」。
+
+### 一 · ★★ 为什么"我传了 provider/model"不算证据
+
+```
+★ `docs/team-roles.md` 逐字要求「**子代理一律用 space-bunny，不用 DeepSeek**」——
+  ★★ 而"我在 `agent()` 的 opts 里写了那对"**不等于**"它真的那么跑了"（★ 事实 62 同族：写着 ≠ 生效）✓
+★ 支线还实测过**反面**：只写 `model` 不写 `provider` ⇒ 100 路**整批静默失败**
+  （回 `{requested: 100, returned: 0, rows: []}` 而**返回值里没有任何错误信息**）✓
+⇒ ★ 所以判据只能是**运行期写下的字段** ✓
+```
+
+### 二 · ★★★ 运行期记录在哪、看哪几个字段（实测出来的）
+
+```
+★ 源：`~/.dsh/storages/session_projcache/sessions/*.json`（DSH 的会话投影缓存；本机 2668 份）
+★ 每份子代理会话里有：
+     "model"      ← ★ 运行期写下的模型名（实测值 `space-bunny-free`）
+     "provider"   ← ★ 运行期写下的供应商（实测值 `opencode-zen`）
+     "lastModel"  ← 同 model
+     "cost": {"opencode-zen": {"space-bunny-free": …}}   ← ★ 计费归属，**旁证**
+★ 挑"我派的"：★ 用**提示词标记串**（我扇出提示词里独有的文件名/字段名）
+  ⇒ ★★ 不筛就会误判：本机缓存里 **2232 份是别人的子代理**（含 `deepseek-flash` 的）✓
+```
+
+### 三 · ★★★★★ 实测结论（2026-10-04 · 两坡扇出）
+
+| 项 | 读数 |
+|---|---|
+| 扫过的会话记录 | **2668** 份 |
+| 其中**我的**子代理 | **62** 个（★ = 我派的两坡：5 路探针 + 62 路筛选，实际落盘 62） |
+| 别人的子代理（未计入） | 2232 个 |
+| ★ 我的 62 路的模型分布 | **`space-bunny-free` × 62** ✓ |
+| ★ 我的 62 路的供应商分布 | **`opencode-zen` × 62** ✓ |
+| `deepseek` 字样 | **0 次**（★ 唯一那个 `deepseek-flash` 会话经 `--exclude-self` 确认是 **Lead 自己**）✓ |
+| **结论** | ★★ **纪律 100% 遵守：我派出的每一路都是 Bunny** ✓ |
+
+### 四 · ★ 处置：把这条判据做成**可复用门禁**
+
+```
+★ 新增 `tools/check_subagent_models.py`：
+  · 三条判据：① 按标记串挑"我派的" ② 逐份读 model/provider/lastModel ③ 任何一份不是
+    `space-bunny-free`/`opencode-zen` ⇒ 报出来（退出码 1）✓
+  · ★ 边界照样**响亮**：★ 缓存目录不存在 ⇒ 退出码 2（**不许当成通过**）·
+    ★ 一份都没匹配到 ⇒ 退出码 2 并写明"**判据可能失效**"（★ 与事实 62 的教训一致）✓
+  · ★★ `--selftest`：造 1 bunny + 1 deepseek 假会话 ⇒ 必须报出后者；★ 标记串不存在 ⇒ 必须判"判据失效"
+    ⇒ 「门禁有效 ✓」✓
+★ 纪律已写进 `docs/team-roles.md`（"扇出之后还要核一次运行期记录"那段）✓
+```
+
+★ **依据**：`tools/check_subagent_models.py` · `docs/team-roles.md` · 本机会话缓存实测（2668 份扫过）

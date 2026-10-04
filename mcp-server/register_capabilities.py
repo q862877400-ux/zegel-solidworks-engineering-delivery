@@ -179,6 +179,13 @@ RESOLVERS: dict[str, Any] = {
     #:     ★ **而不是去改包装的形参名**（那会让 `sw_assembly_doc.py` 内部风格分裂）✓
     #:   ★ 装配/零件文档都是 `IModelDoc2` ⇒ **复用 `resolve_model`**，与上面 `asm_model` 同一手法 ✓
     "doc": resolve_model,
+    #: ★★★★★ 2026-10-04（接手轮 · 规格 205 的批 80）：**`sldworks`** ——
+    #:   ★ `scripts/sw_automation_knowledge.py` 那 6 个函数（命令锁 / 首选项开关 / 自弹提示）
+    #:     的**首参叫 `sldworks`**（★ 它们是 `ISldWorks` 上的操作）⇒ 白名单里既没有 `sldworks`
+    #:     也没有它等价的键名 ⇒ ★ 事实 502（注入键**字面当关键字**传入）下必 `TypeError` ✓
+    #:   ★ 复用 `resolve_sw`（= `resolve_sw_app`，回 `ISldWorks`）——
+    #:     ★ 与该表既有的 `sw` 键**同一手法**（`sw` 也是为此加的，见上方 `"sw"` 那条）✓
+    "sldworks": resolve_sw,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。
