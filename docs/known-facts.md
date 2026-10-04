@@ -5715,3 +5715,46 @@ return_shape_diff 75 · **unit_diff 15** · **mark_diff 10**
 ★ **依据**：`tools/t4_3_build_lookup.py` · `docs/recon-206/pre-code-conflict-lookup.md` ·
 `AGENTS.md`（第 0.5 步那行）· `c4-merged.json`（只读复用）✓
 ★ **本批限度**：★ 本表**未回查官方页原文**（材料来自另一个对话的 `conditional_pass` 产出）⇒ ★ **采纳前须回查** ✓
+
+---
+
+| 530 | **★★★★ T3-2 交付：130 对「错拼 → 正确名」，★ 而拆开后发现其中 **28 对根本不是拼错**** —— 编辑距离**分不开这两个缺陷类** —— 2026-10-04（接手轮 T3-2，规格 `specs/206-c1c6-harvest/`）。
+
+**做法**（★ 机械）：554 条已核验 `spelling` → 抽错拼候选名 → 与本机 **1529** 个真名（566 接口目录 + 枚举页）按**编辑距离 ≤2 且长度差 ≤2** 配对 ⇒ **130 对** ✓
+
+**★★★ 但第一版结果里前 10 条全是同一种形态**：
+```
+Attribute → IAttribute · CenterOfMass → ICenterOfMass · Configuration → IConfiguration ·
+Component2 → IComponent2 · CommandGroup → ICommandGroup · …
+⇒ ★★ 这些【不是错拼】—— 它们是【少了个 `I` 前缀】（官方**链接**写法不完整）✓
+⇒ 拆两类:
+   ① 真错拼（★ 照它写就一定失败）: `IConfiguraiton` → `IConfiguration`  ⇒ **102** 对
+   ② 少 `I` 前缀（★ 不影响写码，只影响读官方链接）: `Attribute` → `IAttribute` ⇒ **28** 对
+```
+
+**★ 判据为什么宽了（★ 本规格第 6 次同族）**：
+```
+★★ 「编辑距离 ≤2」把**两个不同的缺陷类**混成一个 ——
+   ★ 而它们在**处理方式上完全不同**：① 要改拼法；② 只要查的时候自己补 `I` ✓
+⇒ ★ 拆类之后两类各自可用；★ 不拆的话，本表会被当成「130 个要改的拼法」**误导** ✓
+★ **与事实 523 同族**：那一处也是「`I` 前缀的变体」害我把判据写宽（`IInsertMidSurface`）✓
+```
+
+**★ 交付物**：`docs/recon-206/spelling-pairs.md`（177 行 · 两类分列 · 含口径与「不算什么」）
+★ **本表的「不算什么」**（已写进文件）：① 判据是**启发式**（编辑距离），不是官方裁定；
+② 两个真名都近时**只取最近的** ⇒ **可能有歧义未标**；③ **配不上对的不在本表里** ⇒
+★ **不要读成「本表就是全部错拼」**；④ 来源是另一个对话的 `conditional_pass` 产出 ✓
+
+**★ 与既有四件的分工（★ 合起来才完整）**：
+```
+· `docs/recon-206/spelling-pairs.md`（本件）      —— 名字**该拼成什么**
+· `scripts/check_official_source_defects.py`      —— 我们**引用的官方页是否存在**
+· `docs/official-source-errors.md`                —— 抄录时**怎么办**（行动层）
+· `docs/recon/official-source-defects-2.md`       —— 964 条**穷举**（广度层）
+· `docs/recon-206/pre-code-conflict-lookup.md`    —— 官方**内部冲突**（Remarks vs 示例）
+```
+
+★ **依据**：`tools/t3_2_spelling_pairs.py` · `docs/recon-206/spelling-pairs.md` ·
+`b2-defects.json`（只读复用）· `C:\swapi\types` + `enums` ✓
+★ **过程记录**：★ 我又两次踩内联 Python 的引号（PowerShell 的 `|` 与中文引号）⇒
+★ 定则重申：**多行内容一律走 `write` 工具或独立文件，不要内联进 `pwsh -c`** ✓
