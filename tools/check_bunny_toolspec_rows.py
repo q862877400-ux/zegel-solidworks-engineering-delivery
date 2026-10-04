@@ -239,6 +239,14 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     if row.get("exposable") is True and q2c is True and not disk_has_key:
         bad.append("⑩ ★ 自相矛盾：判可暴露，却自述**首参是 COM 对象且无注入键可用**"
                    "（★ 已按盘上 RESOLVERS 复核：键 %r 不在表里）" % inj_key)
+    #: ⑪ ★★ **对象族禁忌（可执行）**：★ `view` 这个注入键给的是 **`IModelView`（模型视图）**，
+    #:   而 `sw_drawing_view.py` 那些函数的首参**虽然也叫 `view`**，却是 **`IView`（图纸视图）**
+    #:   ⇒ ★ 注错对象会**静默地"什么都没反应"**（★ 事实 36 那一族，最难查）
+    #:   ⇒ ★ 判废，并写明正解是**另加一个按名字取 `IView` 的解析器** ✓
+    if inj_key == "view" and str(row.get("module") or "") == "sw_drawing_view":
+        bad.append("⑪ ★★ **对象族禁忌**：`sw_drawing_view` 的首参 `view` 是 **`IView`（图纸视图）**，"
+                   "而 `view` 注入键给的是 **`IModelView`（模型视图）** ⇒ **注错对象**。"
+                   "★ 正解：另加一个按**视图名**取 `IView` 的解析器（本轮未加）⇒ 判废")
     return bad
 
 

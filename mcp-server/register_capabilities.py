@@ -136,6 +136,78 @@ def resolve_cost_manager(_params: Any):
     return get_costing_manager(resolve_model(_params))
 
 
+#: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」）：**三个"从 study 取子对象"的解析器**。
+#:
+#: 为什么（★ 机械预筛给的判据）：★ **A/B 类（首参是标量或已有注入键）已被前三坡吃干** ——
+#: 要到 SC-001 的 400 就必须解锁 **C 类（351 个，首参像 COM 对象）**；
+#: ★ 而 C 类里 **~90 个**只需要几个**语义无歧义**的解析器，其中这三个最干净：
+#:   · `results` ⇒ `ICWStudy.Results`（研究的**结果**对象）
+#:   · `mesh`    ⇒ `ICWStudy.Mesh`（研究的**网格**对象）
+#:   · `options` ⇒ 研究**选项**对象（★ 读参数里的 `study_name` 与 `family`）
+#: ★ 与 `resolve_study` 同手法（都按 `study_name` 定位），只是**多走一步**取子对象 ✓
+#: ⚠ **与"危险旋钮"的区别**：★ 这三个只**取对象**、不替调用方改设置 ⇒ 安全；
+#:   ★ 批 82 删掉的 `configure_mesh_settings` / `mesh_safety_apply` 是**会改设置**的原始旋钮
+#:   （事实 526 的 40 GB 事故）⇒ ★ 那条禁令不受本次影响 ✓
+
+
+def resolve_results(params: Any):
+    """注入**研究的 `Results` 对象**（`ICWStudy.Results`）—— ★ 供首参名叫 `results` 的那批函数。
+
+    ★ 定位方式与 `resolve_study` **完全一致**（读 `study_name`；空名取第一个研究）✓
+    :raises RuntimeError: 研究上取不到 `Results`（★ 不返回 None 让下游崩在别处）
+    """
+    from scripts.sw_connect import get_com_member
+    study = resolve_study(params)
+    try:
+        res = get_com_member(study, "Results")
+    except Exception as exc:                                        # noqa: BLE001
+        raise RuntimeError("研究上取不到 `Results`（%s: %s）—— ★ 先跑一次求解再读结果"
+                           % (type(exc).__name__, str(exc)[:120]))
+    if res is None:
+        raise RuntimeError("研究上 `Results` 为 None —— ★ 该研究**还没算出结果**"
+                           "（先 `solidworks_simulation_run_analysis`）")
+    return res
+
+
+def resolve_mesh(params: Any):
+    """注入**研究的 `Mesh` 对象**（`ICWStudy.Mesh`）—— ★ 供首参名叫 `mesh` 的那批函数。"""
+    from scripts.sw_connect import get_com_member
+    study = resolve_study(params)
+    try:
+        mesh = get_com_member(study, "Mesh")
+    except Exception as exc:                                        # noqa: BLE001
+        raise RuntimeError("研究上取不到 `Mesh`（%s: %s）—— ★ 先建网格"
+                           % (type(exc).__name__, str(exc)[:120]))
+    if mesh is None:
+        raise RuntimeError("研究上 `Mesh` 为 None —— ★ 该研究**还没建网格**"
+                           "（用 `solidworks_simulation_create_mesh_safely`）")
+    return mesh
+
+
+def resolve_view(params: Any):
+    """注入**活动文档的活动视图**（`IModelView`）—— ★ 供首参名叫 `view` 的 `sw_view` 族函数。
+
+    :raises RuntimeError: 活动视图取不到（★ 不返回 None 让下游崩在别处）
+    """
+    from scripts.sw_view import get_active_view
+    return get_active_view(resolve_model(params))
+
+
+def resolve_study_options(params: Any):
+    """注入**研究选项对象** —— ★ 供首参名叫 `options` 的那批函数。
+
+    ★ 读两个参数：`study_name`（定位研究，空名取第一个）与 `family`
+      （选项族，缺省 `ICWStaticStudyOptions`）—— ★ 与 `resolve_study` 同手法 ✓
+    """
+    from scripts.sw_simulation_study_options import study_options_of
+    family = (getattr(params, "family", "") or "ICWStaticStudyOptions").strip()
+    study = resolve_study(params)
+    opts = study_options_of(study, family)
+    if opts is None:
+        raise RuntimeError("取不到研究选项族 %r —— ★ 该研究可能不属于这一族" % family)
+    return opts
+
+
 RESOLVERS: dict[str, Any] = {
     "model": resolve_model,
     "sw_app": resolve_sw_app,
@@ -186,6 +258,31 @@ RESOLVERS: dict[str, Any] = {
     #:   ★ 复用 `resolve_sw`（= `resolve_sw_app`，回 `ISldWorks`）——
     #:     ★ 与该表既有的 `sw` 键**同一手法**（`sw` 也是为此加的，见上方 `"sw"` 那条）✓
     "sldworks": resolve_sw,
+    #: ★★★★★ 2026-10-04（接手轮 · 规格 205 的"解锁 C 类"）：**`results` / `mesh` / `options`** ——
+    #:   ★★ 为什么要加（★ 机械预筛给的判据）：★ A/B 类（首参是标量或已有注入键）**已被前三坡吃干**，
+    #:     要到 400 必须解锁 **C 类（351 个，首参像 COM 对象）**；
+    #:   ★ 而 C 类里 **~90 个**只需几个"**从 study 取**"的解析器 —— ★ **语义无歧义**：
+    #:     · `results` ⇒ `ICWStudy.Results`（研究的**结果**对象）
+    #:     · `mesh`    ⇒ `ICWStudy.Mesh`（研究的**网格**对象）
+    #:     · `options` ⇒ 研究**选项**对象（★ 与 `resolve_study` 同手法：**读参数**里的 `study_name`
+    #:       与 `family`，缺省取第一个研究 / `ICWStaticStudyOptions`）✓
+    #:   ★ 它们与 `resolve_study` 是**同一种**解析器（都按 `study_name` 定位），只是**多走一步**
+    #:     从 study 上取子对象 ⇒ ★ 与事实 169 那张表的设计意图一致 ✓
+    #:   ⚠ **与"危险旋钮"的区别**：★ 这三个只**取对象**、不替调用方改设置 ⇒ 安全；
+    #:     ★ 而批 82 删掉的 `configure_mesh_settings` / `mesh_safety_apply` 是**会改研究设置**的
+    #:     原始旋钮（事实 526 的 40 GB 事故）⇒ ★ 那条禁令不受本次影响 ✓
+    "results": resolve_results,
+    "mesh": resolve_mesh,
+    "options": resolve_study_options,
+    #: ★★★★★ **`view`** —— ★ 解锁 `sw_view.py` 的 **26 个**候选（它们的首参都叫 `view`，是
+    #:   **`IModelView`**，而"活动文档的活动视图"**语义唯一**）⇒ ★ 仓里已有 `sw_view.get_active_view` ✓
+    #: ⚠⚠ **禁忌（可执行）**：★ `sw_drawing_view.py` 里那些首参**也叫 `view`**，但它们是
+    #:   **`IView`（图纸视图）**、**不是** `IModelView` ⇒ ★ 用本键注给它们会**注错对象**
+    #:   （★ 事实 36 那一族：接口/对象错了表现为"什么都没反应"，最难看）
+    #:   ⇒ ★ 由 `tools/check_bunny_toolspec_rows.py` 的 **⑪** 挡住：
+    #:     `module == "sw_drawing_view"` ∧ `inject == "view"` ⇒ **判废** ✓
+    #:   ★ 要挂 `sw_drawing_view` 那族，得**另加**一个按名字取 `IView` 的解析器（本轮未加）✓
+    "view": resolve_view,
 }
 
 #: 全部批次（**按注册顺序**）。新增批次只在这里加一行。
