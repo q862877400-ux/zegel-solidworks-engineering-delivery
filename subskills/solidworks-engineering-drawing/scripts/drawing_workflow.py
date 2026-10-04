@@ -831,11 +831,19 @@ def create_adaptive_standard_views(drawing_model, part_path, layout) -> dict:
         if view is None:
             if not created:
                 projection = str(layout.get("projection", "third_angle")).lower()
-                # 部分 SolidWorks 版本（包括当前 SW2026 COM 代理）没有
-                # CreateFirstAngleViews2。先用可用的原生三视图 API 建立视图，
-                # 再按 DrawingSpec 的第一角/第三角布局重新定位并回读位置。
+                # ★★ 2026-10-04（接手轮）**修一处假阴性**：这里原来写 `CreateFirstAngleViews2`,
+                #   而**官方没有这个名字** —— 官方逐字是 `Create1stAngleViews2`
+                #   （`C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md`：
+                #    `System.bool Create1stAngleViews2(System.string ModelName)`）。
+                #   ★ 三重佐证：① 官方 md 页名；② 出厂类型库反射 `_raw/reflect_sldworks/`
+                #   里 `Create1stAngleViews2` **2 处**、`CreateFirstAngleViews2` **0 处**；
+                #   ③ `tools/selfcheck_official_source_errors.py` 的 CORRECTED 表里就有它。
+                #   ⇒ ★ 旧行为：`getattr(drawing_model, "CreateFirstAngleViews2", None)` **必回 None**
+                #   ⇒ `create_standard_views_with_projection(first_angle)` 一路上报
+                #   `{"status": "blocked", "error_code": "DRAWING_PROJECTION_API_UNAVAILABLE"}`,
+                #   而那句**「本机 COM 代理没有那个成员」是错的** —— 本机**有**真名那个成员。
                 method_candidates = (
-                    ("CreateFirstAngleViews2", "Create3rdAngleViews2")
+                    ("Create1stAngleViews2", "Create3rdAngleViews2")
                     if projection == "first_angle"
                     else ("Create3rdAngleViews2",)
                 )
@@ -886,7 +894,7 @@ def create_adaptive_standard_views(drawing_model, part_path, layout) -> dict:
                             "native_3rd_angle"
                             if projection == "third_angle"
                             else "native_first_angle"
-                            if method_name == "CreateFirstAngleViews2"
+                            if method_name == "Create1stAngleViews2"
                             else "native_first_angle_via_3rd_angle"
                         )
                         return {
@@ -967,18 +975,33 @@ def create_standard_views(drawing_model, part_path):
 
 
 def create_standard_views_with_projection(drawing_model, part_path, projection="first_angle"):
-    """@brief 按指定投影法创建原生三视图并返回明确失败状态。"""
+    """@brief 按指定投影法创建原生三视图并返回明确失败状态。
+
+    ★★ 2026-10-04（接手轮）**真名修正**：第一角那条原写 `CreateFirstAngleViews2`，
+    而**官方成员名是 `Create1stAngleViews2`**（`1st`，不是 `First`）——
+    依据：`C:\\swapi\\types\\IDrawingDoc\\Create1stAngleViews2.md` 的
+    `System.bool Create1stAngleViews2(System.string ModelName)`，以及出厂类型库反射
+    `_raw/reflect_sldworks/iface_sldworks.txt`（`Create1stAngleViews2` 命中 2 处、
+    `CreateFirstAngleViews2` 命中 0 处）。
+    ⇒ ★ 旧行为下 `getattr(..., "CreateFirstAngleViews2", None)` **必回 `None`**
+    ⇒ ★ 本函数**永远**返回 `blocked / DRAWING_PROJECTION_API_UNAVAILABLE`，
+    而那句「本机 COM 代理没有那个成员」**是假阴性**（本机有真名那个成员）。
+    ⚠ 保留 `getattr(..., None)` 这条存在性检查（它本就是这段代码的判据）——
+    但**同时要求取到的东西可调用**（★ 事实 386：pywin32 迟到绑定下 `getattr`
+    可能回一个**不是方法**的元组，那时「成员在」而「调不动」）。
+    """
     projection = str(projection).lower()
     if projection not in {"first_angle", "third_angle"}:
         raise ValueError("projection 必须是 first_angle 或 third_angle")
-    method_name = "CreateFirstAngleViews2" if projection == "first_angle" else "Create3rdAngleViews2"
+    method_name = "Create1stAngleViews2" if projection == "first_angle" else "Create3rdAngleViews2"
     method = getattr(drawing_model, method_name, None)
-    if method is None:
+    if method is None or not callable(method):
         return {
             "status": "blocked",
             "projection": projection,
             "method": method_name,
             "error_code": "DRAWING_PROJECTION_API_UNAVAILABLE",
+            "member_present_but_not_callable": method is not None,
             "manual_review_required": True,
         }
     created = bool(method(part_path))
@@ -2886,10 +2909,23 @@ MODEL_VIEW_MANAGER_UI_MEMBERS = (
 
 
 def get_model_view_manager(model):
-    """取 IModelViewManager（属性，不是方法）。"""
-    manager = get_com_member(model, "GetModelViewManager")
+    """取 IModelViewManager。
+
+    ★★ 2026-10-04（接手轮）**修一处假阴性**：这里原来写
+    `get_com_member(model, "GetModelViewManager")` —— ★ 而**官方没有这个成员**：
+      · 官方逐字 `C:\\swapi\\types\\IModelDoc2\\ModelViewManager.md`：
+        `**Signature**: ModelViewManager ModelViewManager {get;}` · `kind: property`
+        ⇒ ★ **它是属性，名字就叫 `ModelViewManager`**（★ 与本函数自己的 docstring
+        「属性，不是方法」一致 —— ★ **文档对了、代码没跟上**）✓
+      · 出厂类型库反射 `_raw/reflect_sldworks/iface_sldworks.txt:10284` 逐字：
+        `  ModelViewManager get_ModelViewManager()` ⇒ ★ **`GetModelViewManager` 这个名字
+        在类型库里出现 0 次**（`ModelViewManager` 6 次）✓
+    ⇒ ★ 旧行为：`getattr(model, "GetModelViewManager")` 抛 `AttributeError`
+      ⇒ 本节 4 个函数（剖视定义 / 建剖视 / 取剖视定义 / 删剖视）**全部取不到 manager**。
+    """
+    manager = get_com_member(model, "ModelViewManager")
     if manager is None:
-        raise RuntimeError("IModelDoc2.GetModelViewManager() 返回 None")
+        raise RuntimeError("IModelDoc2.ModelViewManager 返回 None")
     return manager
 
 

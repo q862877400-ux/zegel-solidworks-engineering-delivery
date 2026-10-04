@@ -288,9 +288,12 @@ SPECS_BATCH77 = [
             "★★★★★ **⚠ 两条边界（★ 都实测过）**："
             "★ **① 零件必须先存盘** —— 不存盘则 `GetPathName()` 是**空串** ⇒ 视图插不上 ⇒"
             "`view_count = 0`（★ **那是应然的、★ 不是读侧坏了**）·"
-            "★★ **② 本机 `create_three_standard_views` 是 `blocked`**"
-            "（★ 逐字：★「本机实测为 blocked：`CreateFirstAngleViews2` 不可用」）⇒"
-            "★ **要插视图请走 `create_projected_view`** ✓"
+            "★★ **② 本机 `create_three_standard_views` 当时是 `blocked`**"
+            "（★ 逐字：★「本机实测为 blocked：`CreateFirstAngleViews2` 不可用」）"
+            "—— ★★ **2026-10-04（接手轮）更正：那句「不可用」是假阴性** ——"
+            "真因是**成员名拼错**（`CreateFirstAngleViews2` 官方**不存在**；真名 **`Create1stAngleViews2`**，"
+            "`1st` 非 `First`）⇒ 已在 `drawing_workflow.py` 修正、**待真机复验** ⇒"
+            "★ **要插视图仍建议走 `create_projected_view`**（★ 它已真机建成）✓"
             "★★★★ **⚠ 不读**：★ `GetLineCount()` ⇒ ★ **官方标 `Obsolete`** ⇒ **本模块不碰** ✓",
     ),
 ]

@@ -67,11 +67,12 @@ def create_projected_view(drawing_model, part_path: str, *, view_name: str = "*F
     """★ 投影/模型视图 —— ★ **走 `add_view`（真机已验证可用）**，不是 `create_standard_views_with_projection`。
 
     ★★ **为什么改走这条**（2026-10-03 真机工具层 e2e 实测）：
-      · `create_standard_views_with_projection` 在本机**被另一件事挡住** —— 它内部先试
-        `CreateFirstAngleViews2`，而层自己返回
-        `{"status": "blocked", "method": "CreateFirstAngleViews2",
-          "error_code": "DRAWING_PROJECTION_API_UNAVAILABLE"}` ⇒ ★ **本机 COM 代理没有那个成员**，
-        ★ **与视图名无关**（是**另一条**已知限制，不属本函数）。
+      · `create_standard_views_with_projection` 在本机**返回 blocked** —— ★ 而那**不是**
+        「本机 COM 代理没有那个成员」：★★ 2026-10-04（接手轮）查明真因是**成员名拼错** ——
+        代码里写 `CreateFirstAngleViews2`，而**官方真名是 `Create1stAngleViews2`**
+        （`1st` 非 `First`；`C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md` +
+        出厂类型库反射：真名 2 处 / 错名 0 处）。⇒ ★ 那条 `DRAWING_PROJECTION_API_UNAVAILABLE`
+        **是假阴性**，已在 `drawing_workflow.py` 修掉（★ 修完**仍需真机复验**）。
       · 而 `add_view` → `CreateDrawViewFromModelView3` **实测建成**（返回真实 `CDispatch` 视图对象），
         ★ 且它走的正是 `_create_model_view` ⇒ **本地化名字由底层自动解析**（事实 494）。
     ★ 前置：`part_path` 必须是**已存盘的模型完整路径且含 `.sldprt`/`.sldasm`**（官方 Remarks 逐字）。
@@ -86,18 +87,21 @@ def create_projected_view(drawing_model, part_path: str, *, view_name: str = "*F
 
 def create_three_standard_views(drawing_model, part_path: str, *,
                                 projection: str = "first_angle") -> dict:
-    """★ 三视图布局（第一角/第三角）—— ⚠ **本机被挡**，见返回值里的 `error_code`。
+    """★ 三视图布局（第一角/第三角）。
 
-    ★★ **已知限制（真机实测）**：底层先试 `CreateFirstAngleViews2`，本机 COM 代理**没有该成员**
-      ⇒ 返回 `{"status": "blocked", "error_code": "DRAWING_PROJECTION_API_UNAVAILABLE"}`。
-    ★ 本函数**如实把这个结果带回来**（★ 不假装建成、也不吞掉错误码）。
+    ★★ **2026-10-04（接手轮）更正**：本函数原来写着「本机被挡 / 本机 COM 代理没有该成员」
+      —— ★ **那是假阴性**：底层当时查的成员名 `CreateFirstAngleViews2` **官方不存在**，
+      真名是 **`Create1stAngleViews2`**（`1st` 非 `First`）⇒ 已在 `drawing_workflow.py` 修正。
+    ★ 本函数**如实把底层结果带回来**（★ 不假装建成、也不吞掉错误码）——
+      ★ 若仍返回 `blocked`，那**才是**真的取不到该成员，而返回值里会带
+      `member_present_but_not_callable` 说明「成员在但不可调用」（★ 事实 386）。
     """
     res = D.create_standard_views_with_projection(drawing_model, part_path, projection=projection)
     ok = bool(isinstance(res, dict) and res.get("status") not in ("blocked",)
               and any((v is not None) for v in (res.get("views") or []))) if isinstance(res, dict) else \
         res is not None
     out = _result("create_three_standard_views", res if isinstance(res, dict) else {"value": res},
-                  "返回里有建成视图（★ 本机实测为 blocked：CreateFirstAngleViews2 不可用）")
+                  "返回里有建成视图（★ 真名 Create1stAngleViews2；★ blocked 才是真取不到）")
     out["ok"] = ok
     return out
 

@@ -67,9 +67,11 @@ _BATCH75: list[ToolSpec] = [
         doc="★ **投影/模型视图**：`CreateDrawViewFromModelView3`（经 `add_view`）。"
             "★★ **真机证据**：本工具**经工具层**实测返回真实视图对象（`CDispatch`）、"
             "★ 且**正是靠本地化名回退**建成（`*Front` 失败 → `*前视` 成功；known-facts 494）。"
-            "⚠ **另有一条已知限制与本工具无关**：`create_standard_views_with_projection`（三视图布局那条路）"
-            "在本机返回 `blocked / CreateFirstAngleViews2 / DRAWING_PROJECTION_API_UNAVAILABLE`"
-            "（本机 COM 代理没有那个成员）⇒ ★ 该限制**未**挂成工具。",
+            "⚠ **另一条与本工具无关的**（★ 2026-10-04 接手轮更正）："
+            "`create_standard_views_with_projection`（三视图布局那条路）此前在本机返回 "
+            "`blocked / DRAWING_PROJECTION_API_UNAVAILABLE`，而**真因不是「本机 COM 代理没有那个成员」**"
+            "—— 是**成员名拼错**：代码写 `CreateFirstAngleViews2`，官方真名 **`Create1stAngleViews2`**"
+            "（`1st` 非 `First`）⇒ ★ 已在 `drawing_workflow.py` 修正。该限制**未**挂成工具。",
     ),
     ToolSpec(
         name="solidworks_drawing_create_section_view",

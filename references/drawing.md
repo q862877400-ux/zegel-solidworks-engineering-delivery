@@ -5,8 +5,8 @@
 ### 标准三视图
 
 ```python
-drawing.Create3rdAngleViews2(partPath)  # 第三角投影法
-drawing.CreateFirstAngleViews2(partPath) # 第一角投影法
+drawing.Create3rdAngleViews2(partPath)   # 第三角投影法
+drawing.Create1stAngleViews2(partPath)   # 第一角投影法（★ 官方是 `1st`，不是 `First`）
 ```
 
 ### 自定义视图

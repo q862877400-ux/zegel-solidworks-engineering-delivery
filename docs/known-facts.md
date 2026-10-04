@@ -4073,3 +4073,66 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 ★ `scripts/sw_drawing_create_missing.py`（★ `insert_break_lines`）·
 ★ `mcp-server` 的 `solidworks_drawing_create_broken_view` ✓
 ★ 提交：阶段 1 · `JUDGE-C_D_E` 🔴 #12 的记档轮 ✓
+
+
+---
+
+## 520 · ★★★★ 「**成员名拼错**」会伪装成「**本机后端没有这个成员**」—— ★ 而两者**修法相反**
+
+**发现时间**：2026-10-04（接手轮 · 处置 `HANDOFF-SPEC202-next-session.md` §六.3 的两条候选）
+
+### 一 · 两个实例（★ 都在同一份交接单里被点出，★ 本轮定案）
+
+| 代码里写的 | 官方真名 | 形态 | 现场症状 |
+|---|---|---|---|
+| `CreateFirstAngleViews2` | **`Create1stAngleViews2`**（★ `1st` 非 `First`） | `IDrawingDoc`，`bool (String ModelName)` | ★ `getattr(drw, …, None)` **回 `None`** ⇒ 回 `blocked / DRAWING_PROJECTION_API_UNAVAILABLE` ⇒ ★ 被写成「**本机 COM 代理没有那个成员**」 |
+| `GetModelViewManager` | **`ModelViewManager`**（★ **属性**、无 `Get` 前缀） | `IModelDoc2`，`ModelViewManager ModelViewManager {get;}` | ★ `get_com_member` 开头是**裸** `getattr` ⇒ **抛 `AttributeError`** ⇒ ★ 那 4 个剖视函数**全都取不到 manager** |
+
+### 二 · ★★★ 三条静态依据（★ 三源互证，铁律 4）
+
+```
+① 官方页名   C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md      ← 存在
+             C:\swapi\types\IDrawingDoc\CreateFirstAngleViews2.md    ← 不存在（0 命中）
+             C:\swapi\types\IModelDoc2\ModelViewManager.md           ← kind: property
+② 出厂反射   _raw/reflect_sldworks/iface_sldworks.txt
+             'Create1stAngleViews2' 2 处 / 'CreateFirstAngleViews2' 0 处
+             'ModelViewManager' 6 处（:10284 逐字 `ModelViewManager get_ModelViewManager()`）
+             'GetModelViewManager' 0 处
+③ 本仓已有   tools/selfcheck_official_source_errors.py 的 CORRECTED 表里**就写着**
+             `("IDrawingDoc", "Create1stAngleViews2")` ⇒ ★ **真名早就记下了，而代码没跟上**
+```
+
+### 三 · ★★★★ 定则（★ 可复用 · 这条才是本事实的价值）
+
+> ★★★★ **看到「本机没有这个成员 / 该 API 不可用」的结论时，先做一次「名字核对」再下判**：
+> ① 官方页有没有那个**页名**；② 出厂反射里那个**串**命中几次；
+> ③ ★★ **判别法**：**反射命中 0 次 = 名字错**（能修）；**反射命中 ≥1 次而运行期取不到 = 后端限制**
+> （事实 28/40/47 那一族，修不了）。
+> ★ **两者表象一样（都取不到），修法完全相反** ⇒ ★ 把前者记成后者，等于**把一条能修的路封死**。
+
+★ **与**事实 36 的关系：36 说「**同名接口分属不同族**」（★ 用错接口）；
+★★ **本条是它的近亲**：★ **同一个成员的**名字**写错**（★ 与"接口族"无关）✓
+★ **与**事实 518 的关系：518 说「本仓那张 `ARITY` 表里没有 ≠ 不存在」；
+★★ **本条补上另一半**：★ **「本仓代码里这样写」≠「官方这样叫」** ✓
+★ **与**事实 53 的关系：★ 53 说「启发式连续补 ≥3 次就该停」——
+★★ **本条的实例正好是"没停"的反例**：★ 一处 `blocked` 被**接受**了（★ 没人回头核名字）✓
+
+### 四 · 处置（★ 已改，★ **真机复验待做**）
+
+```
+drawing_workflow.py        3 处 + 1 个属性名（★ 每处都留「原行为 → 为什么错 → 依据」）
+sw_drawing_expose.py       2 处 docstring 的**归因**更正（★ 原来那句"本机 COM 代理没有"是错的）
+tool_specs_batch75.py / 77.py   同步更正
+references/drawing.md · subskills/.../api-lookup.md   参考表同步
+tests/test_drawing_signature_contract.py（mock 的键）· tests/test_drawing_view_annotations.py（断言）
+```
+⚠ ★★ **不进结论的部分（★ 必须写明）**：★ 这两条**都还没有真机证据** ——
+★ 静态三源能定「名字对不对」，**不能定「改完在真机上建成」**
+⇒ ★ 故 **`capabilities.yaml` 的 `level` 本轮不动**，等真机那一格 ✓
+
+### 五 · ★ 依据
+★ `docs/t003-spotcheck-l2-record.md` §七（★ 两条的逐条处置记录）·
+★ `C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md` ·
+★ `C:\swapi\types\IModelDoc2\ModelViewManager.md` ·
+★ `_raw/reflect_sldworks/iface_sldworks.txt` ·
+★ `tools/selfcheck_official_source_errors.py` ✓

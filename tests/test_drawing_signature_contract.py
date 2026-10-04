@@ -458,7 +458,9 @@ def test_feature_manager_section_helpers_use_official_arity():
                                 "CreateSectionView": 1, "GetSectionViewData": "SDATA",
                                 "RemoveSectionView": 1})
         model = _Rec()
-        model.results["GetModelViewManager"] = manager
+        #: ★ 2026-10-04（接手轮）：原名 `GetModelViewManager` **官方没有** ——
+        #: 官方 `IModelDoc2.ModelViewManager`（`kind: property`，`{get;}`）⇒ 无 `Get` 前缀。
+        model.results["ModelViewManager"] = manager
         build(model)
         assert manager.calls[-1] == expected
 

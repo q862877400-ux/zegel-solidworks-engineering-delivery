@@ -3,7 +3,7 @@
 实现以下 API 前必须查询官方文档或本机 Interop：
 
 - `SetupSheet6`、`NewSheet4`
-- `CreateFirstAngleViews2`、`Create3rdAngleViews2`
+- `Create1stAngleViews2`（★ 官方是 `1st`；本仓曾误写 `CreateFirstAngleViews2`）、`Create3rdAngleViews2`
 - `CreateDrawViewFromModelView3`
 - `InsertModelAnnotations3/4`
 - `InsertBomTable4`

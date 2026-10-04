@@ -94,3 +94,25 @@ def get_model_view_manager(model):
 **「侦察稿里的拼写错」与「代码里的拼写错」是两件事，而只有后者会变成 bug。**
 本轮 143 个名字里 2 个不准 —— 若只停在稿子上，它们无害；而它们**都进了代码**，
 所以抽查的价值不在"稿子准不准"，在于**把稿子的名字回溯到代码里去看它有没有被用**。
+
+## 七 · ★ 两条「候选 bug」的处置（2026-10-04 接手轮）
+
+★ 第四节把两条都留成了「候选」、并写明**判据缺口**：① `CreateFirstAngleViews2` 缺一次
+「用正确拼写试」的对照；② `GetModelViewManager` 要知道真机报的是 `AttributeError` 还是别的。
+
+★★ **本轮用**静态三源**把①的缺口补掉了 —— 而②的形态也被**官方源**定死**：
+
+| 项 | 静态证据（三源） | 结论 | 真机 |
+|---|---|---|---|
+| ① `CreateFirstAngleViews2` | ★ 官方页：`C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md` 存在、`…FirstAngleViews2.md` **不存在** · ★ 出厂类型库反射 `_raw/reflect_sldworks/iface_sldworks.txt`：`Create1stAngleViews2` **2 处** / `CreateFirstAngleViews2` **0 处** · ★ 官方 `Create3rdAngleViews2.md` 的 See Also 点名 `Create1stAngleViews2` | ★ **`CreateFirstAngleViews2` 官方不存在** ⇒ 那个 `blocked` 的**归因错**（不是"本机 COM 代理没有"）；★ **已改成 `Create1stAngleViews2`**（3 处）+ 文件头/参考表同步 | ⏳ **待真机复验**（须跑 `create_standard_views_with_projection(first_angle)`） |
+| ② `GetModelViewManager` | ★ 官方页 `C:\swapi\types\IModelDoc2\ModelViewManager.md`：`Signature: ModelViewManager ModelViewManager {get;}`、`kind: property` · ★ 反射：`ModelViewManager get_ModelViewManager()` ⇒ **`GetModelViewManager` 这个名字出现 0 次** · ★ 本仓源码：`get_com_member` 开头是**裸** `getattr(obj, attr_name)`（无 try） | ★ **必抛 `AttributeError`**（不是"返回 None"）⇒ 本节那 4 个剖视函数**全都取不到 manager**；★ **已改成 `ModelViewManager`** | ⏳ **待真机复验** |
+
+★ 配套改动（★ 都留了「原行为 → 为什么错 → 依据」）：
+`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`（3 处 + 1 个属性名）·
+`scripts/sw_drawing_expose.py`（2 处 docstring 的**归因**更正）· `mcp-server/tool_specs_batch75.py` ·
+`tool_specs_batch77.py` · `references/drawing.md` · `subskills/.../api-lookup.md` ·
+`tests/test_drawing_signature_contract.py`（mock 的键）· `tests/test_drawing_view_annotations.py`（断言）。
+
+⚠ **不进结论的部分（★ 仍然成立）**：★ 这两条**都还没有真机证据** ——
+★ 静态三源能定「名字对不对」，**不能定「改完在真机上建成」**。
+★ 故 `capabilities` 的 `level` **本轮不动**，等真机那一格。

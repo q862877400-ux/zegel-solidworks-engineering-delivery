@@ -111,11 +111,23 @@ def test_the_two_boundaries_are_recorded_and_evidenced() -> None:
     body = func_source(SRC.read_text(encoding="utf-8", errors="replace"),
                        "view_annotations_report")
     assert "存盘" in body and "GetPathName" in body, "★ 「零件要先存盘」那条没记"
-    assert "CreateFirstAngleViews2" in body or "blocked" in body, (
+    assert "Create1stAngleViews2" in body or "blocked" in body, (
         "★ 「本机三视图 blocked」那条没记")
     t = PROBE.read_text(encoding="utf-8", errors="replace")
     assert "create_projected_view" in t and "create_three_standard_views" in t, (
         "★ 探针只试了一条路 ⇒ blocked 那件事就没有证据")
+    #: ★★★ 2026-10-04（接手轮）**给真机产物加一道可解释的闸** —— ★ 处置**事实 57 的同族**：
+    #:   `output/` 在 `.gitignore:120` 里 ⇒ ★ **那份证据是"本机产物"、不是入库件** ⇒
+    #:   ★★ **干净检出上它必然不在** ⇒ 原来的 `json.loads(OUT.read_text(...))` 会抛
+    #:   `FileNotFoundError`（★ 而后人只会看到一条红，看不出"这是环境依赖"）。
+    #:   ⇒ ★ 判据：**前置（那份证据在不在）**与**结论（两条路都进了证据）**分开 ——
+    #:     ★ 不在 ⇒ `skip` 并**写明缺的是哪一份、由哪个探针产**（★ 契约违约**可见**）。
+    if not OUT.is_file():
+        import pytest
+
+        pytest.skip("★ 前置未成立：本机产物 `output/%s` 不在（`.gitignore:120` 排除 `output/`）"
+                    "⇒ 重跑 `python tools/sw_guard.py --timeout 900 -- python %s` 再验"
+                    % (OUT.name, PROBE.name))
     d = json.loads(OUT.read_text(encoding="utf-8"))
     step = next((s for s in d["steps"] if s["name"] == "insert_views"), None)
     assert step and "projected" in step and "three_std" in step, "★ 两条路的返回没进证据"
