@@ -207,6 +207,23 @@ _LEN_SUFFIX_EXEMPT: dict = {
         "**一个参数不可能同时是长度与角度**。"
         "★★ 也**不是**「交给 SolidWorks 的**文档默认**量」（那是另一类豁免的形态）—— "
         "它**是我们自己换算出的度**，只是后缀该是 `_deg` 而非 `_mm`。",
+    #: ★★★★ 2026-10-04（接手轮 · 规格 205 的批 86）：`sw_view.set_view_frame` 的四个**像素**参数。
+    #:   ★ 该函数的官方读数逐字是「Left position of document window in client area **in pixels**」
+    #:     ⇒ ★★ **单位是像素、不是长度** ⇒ 加 `_mm` 会把「像素」说成「毫米」（**那是说错话**）✓
+    #:   ★ 与既有的 `solidworks_export_bmp` 的 `pixel_width`/`pixel_height` **同一形态**
+    #:     （★ 门禁按**子串**匹配，`width`/`height`/`left`/`top` 都在 `_LEN_WORDS` 里）✓
+    #:   ⚠ ★ 我先前让**生成器自动改名**成 `width_px_mm` 想绕过本门禁 —— ★★ **方向错了**
+    #:     （那会造出一个**不存在的形参**，被 `check_param_binding` 与注册器**双双拒绝、整批 30 个
+    #:     全注册不上**）；★ 正解就是这里：**走豁免通道并写明理由** ✓
+    ("solidworks_view_set_frame", "left_px"):
+        "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
+        "`Left position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
+    ("solidworks_view_set_frame", "top_px"):
+        "同 `left_px`：官方读数逐字 `Top position of document window in client area in pixels`。",
+    ("solidworks_view_set_frame", "width_px"):
+        "同 `left_px`：官方读数逐字 `Width of the window in pixels` ⇒ 单位是**像素**。",
+    ("solidworks_view_set_frame", "height_px"):
+        "同 `left_px`：官方读数逐字 `Height of the window in pixels` ⇒ 单位是**像素**。",
 }
 
 

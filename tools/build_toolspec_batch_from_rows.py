@@ -18,6 +18,18 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 ROOT = Path(r"D:\AI\SW")
 
+import importlib
+import inspect
+import sys
+from pathlib import Path as _Path
+
+#: ★★★ 本脚本要 **import 目标能力模块**（核"真形参名"）⇒ ★ 必须把仓库的两处放进 `sys.path`，
+#: 否则报 `ModuleNotFoundError: No module named 'scripts.sw_xxx'`（★ 真产出里当场撞到）✓
+_ROOT = _Path(__file__).resolve().parents[1]
+for _p in (str(_ROOT), str(_ROOT / "scripts"), str(_ROOT / "mcp-server")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
 LENGTH_WORDS = ("size", "distance", "radius", "thickness", "length", "depth", "height", "width",
                 "diameter", "offset", "gap", "pitch", "spacing", "tolerance", "thick")
 ANGLE_WORDS = ("angle", "rotation", "twist")
@@ -93,9 +105,20 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
             if isinstance(k, str) and isinstance(v, str) and k != v:
                 alias[k] = v
         params_src = []
+        _UNITISH = ("_mm", "_m", "_cm", "_inch", "_in", "_deg", "_px", "_pct", "_percent")
         for p in r.get("params") or []:
             kind = PYTYPE.get(str(p.get("type", "str")).lower(), "str")
-            out, real = _maybe_unit_name(str(p["name"]))
+            nm = str(p["name"])
+            #: ★★★★ 2026-10-04 修正（★ 被 `check_param_binding` 抓到、且**注册器整批拒绝**）：
+            #:   **自动加单位后缀**这件事有两条**前置**，缺一就会造出假参数：
+            #:   ① ★ 名字**已经带单位后缀**（`_mm`/`_px`/`_deg`…）⇒ ★ 别再改（真产出里
+            #:      `width_px` 被我又改成 `width_px_mm` ⇒ 生成物里多出两个**不存在的形参**
+            #:      ⇒ 注册器报「param_alias 指向未声明的参数」+ 绑定门禁报「必填形参没被声明」）✓
+            #:   ② ★ 行里**已经给过这个参数的别名**（`param_alias` 里有它）⇒ ★ 以行的为准，别再动 ✓
+            if nm.lower().endswith(_UNITISH) or nm in alias:
+                out, real = nm, None
+            else:
+                out, real = _maybe_unit_name(nm)
             if real:
                 alias[out] = real
             desc = _esc(str(p.get("desc") or ""))
@@ -111,6 +134,21 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
             '        inject=%s,' % (json.dumps(r["inject"]) if r.get("inject") else '""'),
         ]
         alias.pop("__inject__", None)
+        #: ★★★★ 2026-10-04 修正（★ 被**注册器自己的门禁**抓到、且它**整批拒绝**）：
+        #:   `param_alias` 的**值必须是真形参名**（不是工具参数名）—— ★ 真产出里 `set_view_frame`
+        #:   变成了 `{"width_px":"width", …, "width_px_mm":"width_px"}` ⇒ ★ 那条**链式别名**
+        #:   （`width_px_mm → width_px`，而 `width_px` 不是真形参）⇒ 注册器报
+        #:   「param_alias 指向未声明的参数」⇒ ★★ **整批 30 个工具全注册不上** ✓
+        #:   ⇒ ★ 加一条**不变量**：**丢掉所有"值不是真形参名"的别名条目**（并如实报数）✓
+        real_params = set(inspect.signature(
+            getattr(importlib.import_module("scripts.%s" % r["module"]), r["function"])
+        ).parameters) if True else set()
+        dropped = [k for k, v in alias.items() if v not in real_params]
+        for k in dropped:
+            alias.pop(k, None)
+        if dropped:
+            print("   ⚠ %s：丢掉 %d 条**值不是真形参名**的别名 %r（★ 注册器会因此拒绝整批）"
+                  % (r["tool_name"], len(dropped), dropped))
         if alias:
             lines.append("        param_alias=%s," % json.dumps(alias, ensure_ascii=False))
         lines.append("        params=[")

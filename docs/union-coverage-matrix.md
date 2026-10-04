@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 395 | 395 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 425 | 425 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -40,22 +40,22 @@
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 17 | 61⚠ | 50 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
 | ③ 草图 | 26 | 15 | 16 | 20 | 44 | 107⚠ | 77 | **33** |
-| ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 6 | 32⚠ | 16 | **10** |
+| ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 34 | 106⚠ | 58 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 18 | 49⚠ | 26 | **8** |
 | ⑦ 钣金 | 10 | · | 1 | · | 9 | 20⚠ | 20 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 16 | 19⚠ | 21 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
 | ⑩ 装配 | 13 | 7 | 4 | 3 | 24 | 65⚠ | 43 | **19** |
-| ⑪ 工程图 | 18 | 18 | 15 | 17 | 34 | 74⚠ | 83 | **49** |
-| ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 12 | 28⚠ | 28 | **16** |
-| ⑬ 仿真 / Motion | 3 | · | 1 | · | 40 | 124⚠ | 44 | **4** |
+| ⑪ 工程图 | 18 | 18 | 15 | 17 | 36 | 74⚠ | 85 | **49** |
+| ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 15 | 28⚠ | 31 | **16** |
+| ⑬ 仿真 / Motion | 3 | · | 1 | · | 47 | 124⚠ | 51 | **4** |
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 15 | 49⚠ | 25 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 30 | 14 | 30 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 77 | 517⚠ | 119 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 93 | 517⚠ | 135 | **42** |
 
-**合计**：并集 706 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 736 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 357 个操作只有本仓库有：
+共 387 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -164,6 +164,7 @@
 - `collect_appearance_evidence`（⑭ 外观 / 材质 / 配置）
 - `collect_assembly_bom`（⑩ 装配）
 - `collect_model_summary`（⑰ 未归类）
+- `collect_view_evidence`（⑰ 未归类）
 - `concentric_mate`（⑩ 装配）
 - `config_activate`（⑭ 外观 / 材质 / 配置）
 - `config_create`（⑭ 外观 / 材质 / 配置）
@@ -366,12 +367,14 @@
 - `sheet_metal_insert_closed_corner`（⑦ 钣金）
 - `sheet_metal_insert_miter_flange`（⑦ 钣金）
 - `shell_params`（⑤ 零件特征）
+- `simulation_activate_plot`（⑬ 仿真 / Motion）
 - `simulation_apply_fixed_restraint`（⑬ 仿真 / Motion）
 - `simulation_apply_link_connector`（⑬ 仿真 / Motion）
 - `simulation_apply_normal_force`（⑬ 仿真 / Motion）
 - `simulation_apply_rigid_connector`（⑬ 仿真 / Motion）
 - `simulation_check_mesh_size`（⑬ 仿真 / Motion）
 - `simulation_collect_evidence`（⑬ 仿真 / Motion）
+- `simulation_collect_mesh_evidence`（⑬ 仿真 / Motion）
 - `simulation_configure_buckling_solver`（⑬ 仿真 / Motion）
 - `simulation_configure_frequency_solver`（⑬ 仿真 / Motion）
 - `simulation_configure_static_solver`（⑬ 仿真 / Motion）
@@ -382,19 +385,24 @@
 - `simulation_create_study_by_type`（⑬ 仿真 / Motion）
 - `simulation_default_element_size_and_tolerance`（⑯ 高级 / 专项（含护城河候选））
 - `simulation_default_solve_memory_budget_gb`（⑬ 仿真 / Motion）
+- `simulation_delete_plot`（⑬ 仿真 / Motion）
 - `simulation_ensure_addin`（⑬ 仿真 / Motion）
 - `simulation_find_study`（⑬ 仿真 / Motion）
 - `simulation_generate_report`（⑬ 仿真 / Motion）
+- `simulation_get_buckling_load_factors`（⑬ 仿真 / Motion）
 - `simulation_get_edge_weld_connector`（⑧ 焊件）
 - `simulation_get_loads_manager`（⑬ 仿真 / Motion）
 - `simulation_get_results`（⑬ 仿真 / Motion）
 - `simulation_get_study_manager`（⑬ 仿真 / Motion）
+- `simulation_get_worst_jacobian_ratio`（⑬ 仿真 / Motion）
+- `simulation_is_component_failed`（⑬ 仿真 / Motion）
 - `simulation_list_setter_summary`（⑬ 仿真 / Motion）
 - `simulation_list_studies`（⑬ 仿真 / Motion）
 - `simulation_mesh_settings_report`（⑬ 仿真 / Motion）
 - `simulation_mesh_size`（⑬ 仿真 / Motion）
 - `simulation_run_analysis`（⑬ 仿真 / Motion）
 - `simulation_set_material`（⑬ 仿真 / Motion）
+- `simulation_set_registered_study_option`（⑬ 仿真 / Motion）
 - `simulation_set_study_option`（⑬ 仿真 / Motion）
 - `simulation_set_study_options`（⑬ 仿真 / Motion）
 - `simulation_solve_memory_preflight`（⑬ 仿真 / Motion）
@@ -460,6 +468,28 @@
 - `topology_run`（⑯ 高级 / 专项（含护城河候选））
 - `update_dimension`（④ 尺寸 / 约束 / 参数）
 - `validate_motion_study`（⑬ 仿真 / Motion）
+- `view_activate`（⑰ 未归类）
+- `view_add_perspective`（⑰ 未归类）
+- `view_get_camera`（⑰ 未归类）
+- `view_get_display_mode`（⑫ 检查 / 测量 / 反馈）
+- `view_get_frame`（⑰ 未归类）
+- `view_get_next`（⑰ 未归类）
+- `view_get_scale`（④ 尺寸 / 约束 / 参数）
+- `view_has_perspective`（⑰ 未归类）
+- `view_initialize_shading`（⑰ 未归类）
+- `view_model_doc`（⑰ 未归类）
+- `view_redraw`（⑰ 未归类）
+- `view_remove_perspective`（⑰ 未归类）
+- `view_roll_view`（⑪ 工程图）
+- `view_rotate_about_center`（⑰ 未归类）
+- `view_set_camera_by_name`（⑰ 未归类）
+- `view_set_display_mode`（⑫ 检查 / 测量 / 反馈）
+- `view_set_frame`（⑰ 未归类）
+- `view_set_scale`（④ 尺寸 / 约束 / 参数）
+- `view_start_dynamics`（⑰ 未归类）
+- `view_stop_dynamics`（⑰ 未归类）
+- `view_translate_view`（⑪ 工程图）
+- `view_zoom_by_factor`（⑫ 检查 / 测量 / 反馈）
 - `view_zoom_to_fit`（⑫ 检查 / 测量 / 反馈）
 - `weldment_create_cut_list`（⑧ 焊件）
 - `weldment_create_profile_center_mate`（⑧ 焊件）

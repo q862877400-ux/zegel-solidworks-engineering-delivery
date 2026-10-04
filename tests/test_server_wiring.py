@@ -257,7 +257,15 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 369
+    assert len(all_specs()) == 399
+    #: ★★★★★★ 2026-10-04（接手轮 · **规格 205 的批 86**）：**369 → 399** —— ★ **我加的 30 条**
+    #:   ★★ 这是**第四坡"解锁 C 类"**的产出，也是"**加解析器换工具**"这条路走通的证明：
+    #:     加了 `view`/`results`/`mesh`/`options` 四个**语义无歧义**的解析器之后，
+    #:     同一坡 **38 行里 30 行可暴露、门禁 37/37 全过**（★ 对比第三坡薄模块：45 行只 9 行可暴露）✓
+    #:   · `sw_view` 23（视图族：激活/重画/着色/取帧/显示模式/比例/缩放平移旋转/相机/透视/动态/证据）·
+    #:     `sw_simulation_results` 6（网格证据 · 屈曲因子 · 雅可比 · 单元失败 · 图 激活/删除）·
+    #:     `sw_simulation_study_options` 1 ✓
+    #:   ★★ **399 ⇒ 距 SC-001 的 400 只差 1 个**（第五坡与余量里补）✓
 
 
 # ── ③ 命名与「两者不混用」（规则 1）──────────────────────────────
