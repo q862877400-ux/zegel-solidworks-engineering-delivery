@@ -298,13 +298,42 @@ def view_annotations_report(model) -> dict:
             item["arc_count"] = int(get_com_member(view, "GetArcCount"))
         except Exception as exc:                                          # noqa: BLE001
             item["arc_count"] = "err: %s" % str(exc)[:50]
+        #: ★★★★★★★ 2026-10-04（轮 139）**第二批零参读侧（★ 工程图）** ——
+        #:   ★ **四个全零参、★ 全非废弃、★ 全非指针**、★ 而它们的 `## Remarks` 都是**同一句**：
+        #:     ★「Call this method before `IView::IGet…` to determine the size of the array
+        #:       for that method」⇒ ★ **⇒ 即"先数个数、★ 再去取数组"的**前半**** ✓
+        #:   · ★ `GetBendLineCount()` ⇒「Number of **bendlines** in a flat-pattern view」✓
+        #:   · ★ `GetCThreadCount()` ⇒「Number of **cosmetic threads**」（★ 装饰螺纹）✓
+        #:   · ★ `GetDatumOriginCount()` ⇒「Number of **datum origins**」（★ 基准原点）✓
+        #:   · ★ `GetCenterLineCount()` ⇒「Number of **centerlines**」✓
+        #:   ★★ **⚠ 而另两条**看起来也是候选、★ 本轮**故意不纳入****（★ 逐条读 Remarks 才看见）：
+        #:     ★ **① `GetBomTable()`** —— `## Remarks` 逐字：★「This method **only returns a BOM
+        #:       table if there is a Microsoft Excel-based BOM** for the drawing view」⇒
+        #:       ★★ **⇒ 前置不满足时**静默回 `None`**** ⇒ **⇒ 会误导** ⇒ 不纳入 ✓
+        #:     ★ **② `GetCenterMarkCount2(out int Size)`** —— `## Remarks` 逐字：★「**Center marks
+        #:       are now annotations. Previously, center marks were features.** ★ This method is
+        #:       **only valid for center marks that are features**」⇒
+        #:       ★★ **⇒ 它对**新画的**中心标记**不适用****、★ 且**带 `out`**（★ 本仓既有结论：
+        #:         带 `out` 的在 pywin32 上到不了）⇒ **不纳入** ✓
+        for _key, _mem in (("bend_line_count", "GetBendLineCount"),
+                           ("cosmetic_thread_count", "GetCThreadCount"),
+                           ("datum_origin_count", "GetDatumOriginCount"),
+                           ("center_line_count", "GetCenterLineCount")):
+            try:
+                item[_key] = int(get_com_member(view, _mem))
+            except Exception as exc:                                      # noqa: BLE001
+                item[_key] = "err: %s" % str(exc)[:50]
         views.append(item)
         nxt = get_com_member(view, "GetNextView")
         if nxt is None:
             break
         view = nxt
     return {"view_count": len(views), "views": views,
-            "★_不读": ["GetLineCount（★ 官方标 Obsolete）"]}
+            "★_不读": [
+                "GetLineCount（★ 官方标 Obsolete）",
+                "GetBomTable（★ 官方 Remarks：★ 只有 Excel 型 BOM 才有 ⇒ 前置不满足时静默回 None）",
+                "GetCenterMarkCount2（★ 官方 Remarks：★ 只对**作为特征**的中心标记有效、"
+                "★ 且带 `out` ⇒ 在 pywin32 上到不了）"]}
 
 
 # ── 24h 计划 段 6 续（Spec Kit `164`）：**图纸比例的读与写** ────────────────────────

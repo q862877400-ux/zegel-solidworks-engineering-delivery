@@ -58,6 +58,17 @@ def main() -> int:
     P.extrude_boss(part, sk, 10.0)
     step("part", title=str(get_com_member(part, "GetTitle")))
 
+    #: ★★★★★★★ 2026-10-04（轮 139）**⚠ 那个"试装饰螺纹"的步骤**放在**最末****（★ 值记）：
+    #:   ★ **第一版我把它放在这里**（★ 存盘之前）⇒ ★★ **结果 `save_document` 回了 `False`**
+    #:     （★ 零件没存盘）⇒ 后面 `insert_views` 报「零件还没存盘 ⇒ 没有路径」⇒
+    #:     **`view_count = 0`** ⇒ ★★★ **⇒ 把**上一轮已验通**的步骤**全带红了** ✗
+    #:   ★★★★ **⇒ 真因**：★ 前面那个操作**前置未成立**（★ `ok: False`）⇒
+    #:     ★ **它留下了未完成的操作状态** ⇒ **⇒ 污染了后面** ✓
+    #:   ★★★★★ **可复用判据**：★★★ **探针里"试探性的、★ 可能失败的前置操作"要放在**最后**、
+    #:     或者**单起一个探针** —— ★ 别让它污染后面**已验通**的步骤** ✓
+    #:     ★★ 同族：★ 本仓既有纪律「**一次只证伪一个假设**」—— ★ 那是**增量**方向；
+    #:       而这是**反过来**：★ **别让一个失败的试验回头毁掉已成立的结论** ✓
+
     #: ★★★★ 2026-10-04（轮 136）**先让零件存盘** —— ★ 实测：★ 不存盘则 `GetPathName()` 是
     #:   **空串** ⇒ ★★ **⇒ `create_three_standard_views` 插不了视图**（★ 它要 `part_path`）⇒
     #:   ★★★ **⇒ 于是 `view_count = 0`**、★ **而那是**应然的**、★ 验不了读侧** ✗
@@ -139,6 +150,21 @@ def main() -> int:
     ev["★_结论"] = ("★ **建成并读回**（★ 视图 %d 个）" % rep.get("view_count", 0)
                     if rep.get("view_count") else "★ **视图 0 个** ⇒ ★ 如实标")
     step("VERDICT", verdict=ev["★_结论"], mismatches=len(bad))
+
+    #: ★★★★★★★ **非零场景的试探** —— ★ 放在**最后**（★ 它可能失败、★ 别污染前面的结论）✓
+    #:   ★ **为什么要试**：★ 上一批四个计数**全回 `0`**、★ 而那是**应然的**（★ 简单方板没有
+    #:     折弯线 / 装饰螺纹 / 基准原点 / 中心线）⇒ ★★ **⇒ 那样"能读"只到**成员可达**这一层** ⇒
+    #:     ★★★ **⇒ 试一个**非零**场景** ⇒ ★ 官方依据：★ `IView::GetCThreadCount()` ⇒
+    #:       `## Returns: Number of cosmetic threads` ✓
+    thr = {"error": None}
+    try:
+        import sw_feature_entry_ops as FE
+        thr["returned"] = str(FE.insert_cosmetic_thread(
+            part, standard=1, standard_type="", size="",
+            diameter_mm=8.0, end_type=2, depth_mm=0.0, note=""))[:190]
+    except Exception as exc:                                              # noqa: BLE001
+        thr["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
+    step("insert_cosmetic_thread(末步试探)", **thr)
 
     OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
     print("★ 已写", OUT)

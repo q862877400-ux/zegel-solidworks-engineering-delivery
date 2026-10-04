@@ -27,6 +27,7 @@
 python tools/reclaim_solidworks.py --probe          # 只探（★ 不动任何东西）
 python tools/reclaim_solidworks.py --restart        # 探不通且文档安全 ⇒ 重启
 python tools/reclaim_solidworks.py --restart --force  # 忽略文档判定（★ 明确知道自己在做什么时）
+python tools/reclaim_solidworks.py --close          # ★ **只关**（★ 纪律：★ 跨轮不许留；★ 关完不要再调真机工具）
 ```
 
 """
@@ -114,6 +115,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--probe", action="store_true", help="只探（默认行为）")
     ap.add_argument("--restart", action="store_true", help="探不通且文档安全时重启")
+    ap.add_argument("--close", action="store_true",
+                    help="★ **只关**（★ 不重连）—— 纪律：跨轮不许留 SolidWorks")
     ap.add_argument("--force", action="store_true", help="忽略文档判定")
     args = ap.parse_args()
 
@@ -128,11 +131,71 @@ def main() -> int:
 
     r = _probe()
     print("  探测: %s（%s）" % ("✓ 通" if r["ok"] else "✗ 不通", r["why"]))
+
+    #: ★★★★★★★ 2026-10-04（轮 139）**新增 `--close`**：★ **只关、★ 不复验连接** ——
+    #:   ★ 依据：★ `~/.dsh/纪律/资源与环境.md` 逐字 ——
+    #:     ★「★ **用完了就关掉 SolidWorks** —— 一轮真机活收尾时它是**关着的**、
+    #:       ★ **不是最小化的**、★ **也不是留着下轮接着用**」·
+    #:     ★★「★ **同一轮里还有后续真机步骤时可以留着它；跨轮不许留** —— **收尾链跑完就关**」✓
+    #:   ★★★ **为什么不能复用 `--restart`**（★ 值记，★ 我实测出来的）：
+    #:     ★ `--restart` 是 `Stop-Process` **之后重连** ⇒ ★★ **⇒ 而重连会把它**又拉起来**** ✗
+    #:     ★ 实测：★ 我手工 kill 了整族 9 个进程（★ 合计 **28539 MB**）⇒ ★★ **几秒后
+    #:       `SLDWORKS` 又回来了、★ 而 PID 全是新的** ⇒ ★★★ **⇒ 真凶是
+    #:       `mcp-server/server.py`**（★ 它的 `connect` 逐字是
+    #:       「connects to a running SolidWorks instance **or starts one**」）⇒
+    #:       ★ **⇒ 任何一次真机工具调用都可能把它拉起来** ✓
+    #:   ★★★★ **⇒ 所以"关"必须是**只关不启**、★ 且**关完不再碰真机工具**** ✓
+    #:   ★★★★★ **⚠ 安全判定**：★ **不是自己开的文档一个都不许关**（★ 与 `--restart` 同一条）✓
+    if args.close:
+        #: 只关**我们自己启动过**的实例。
+        #: 第一版按进程名杀整族（会误杀别的对话）；第二版为了拿归属标记去 connect，
+        #: 而 connect 的语义是 "attach or START one" ⇒ 判断前先把它启起来了。
+        #: 现在只认 sw_connect 在启动那一刻落下的 PID 标记：证不出归属就不动。
+        code = (
+            "import sys\n"
+            "sys.path.insert(0, r'%s')\n"
+            "from sw_connect import (connect_solidworks, close_owned_solidworks,\n"
+            "                        read_owned_instance, clear_owned_instance)\n"
+            "m = read_owned_instance()\n"
+            "print('MARK', m)\n"
+            "if not m or not m.get('pid'):\n"
+            "    print('SKIP 没有「我们启动过」的标记 ⇒ 不关（可能是别的对话的实例）')\n"
+            "    raise SystemExit(0)\n"
+            "sw, _d = connect_solidworks(visible=True)\n"
+            "ok = close_owned_solidworks(sw, True)\n"
+            "print('CLOSED', bool(ok))\n"
+            "if ok:\n"
+            "    clear_owned_instance()\n"
+        ) % str(REPO_ROOT / "scripts")
+        print("  ⇒ 只关**我们启动过**的那一个（按 PID 标记；证不出归属就不动）：")
+        try:
+            rr = subprocess.run([sys.executable, "-c", code], check=False,
+                                capture_output=True, text=True, encoding="utf-8",
+                                errors="replace", timeout=180,
+                                stdin=subprocess.DEVNULL)
+        except subprocess.TimeoutExpired:
+            print("     ✗ 超时 ⇒ **不关**（宁可留着，也不误杀）")
+            return 3
+        for line in (rr.stdout or "").splitlines():
+            s = line.strip()
+            if not s:
+                continue
+            if s.startswith("MARK"):
+                print("     ★ 归属标记: %s" % s[4:].strip())
+            elif s.startswith("CLOSED"):
+                print("     ★ close_owned_solidworks ⇒ **%s**" % s.split(None, 1)[-1])
+            elif s.startswith("SKIP"):
+                print("     ★ **%s**" % s[4:].strip())
+        if "CLOSED True" in (rr.stdout or ""):
+            print("  ⇒ 关完了 —— 此后不要再调真机工具（一调就会被拉起来）。")
+        return 0
+
     if r["ok"]:
         print("  ⇒ ★ 会话健康，不需要处置。")
         return 0
     if not args.restart:
         print("  ⇒ ★ 要重启请加 `--restart`（★ 本脚本会先判定打开的文档是不是自己的）。")
+        print("     ★ **用完要关**（★ 跨轮不许留）请加 `--close`。")
         return 1
 
     #: ★★ 安全判定：不是自己的文档一个都不许开着

@@ -173,3 +173,22 @@ if ($Full) {
 
 Write-Output ''
 "── 合计 {0:N1} s（★ 全量 pytest 单独要 ~160 s）──" -f $sw.Elapsed.TotalSeconds
+
+#: ★★★★★★★ 2026-10-04（轮 139）**收尾链跑完就关 SolidWorks** —— ★ 用户点的那条纪律：
+#:   ★ 「★ **用完了就关掉 SolidWorks** —— 一轮真机活收尾时它是**关着的**、
+#:      ★ **不是最小化的**、★ **也不是留着下轮接着用**」
+#:   ★★ 「★ **同一轮里还有后续真机步骤时可以留着它；跨轮不许留** —— **收尾链跑完就关**」
+#:     （★ 归口：`~/.dsh/纪律/资源与环境.md` §一 · ★ 由 `~/.dsh/AGENTS.md` 每轮注入）✓
+#:   ★★★ **为什么必须**机械化**（★ 值记）**：★ 那条纪律**一直在**、
+#:     而我**跨了十几轮没收** —— ★★ **⇒ 实测代价**：★ `cwbcbfmesh` **两个进程合计 27.4 GB**
+#:        （★ 纪律记的实测是 8286 MB）⇒ ★★★ **⇒ "我会记得"不是机制** ✓
+#:   ★★★★ **⚠ 为什么是 `--close` 而不是 `--restart`**：★ `--restart` 是"停完**重连**" ⇒
+#:     ★★ **⇒ 重连会把它**又拉起来** ✗（★ 实测：★ kill 掉 28539 MB 那 9 个进程后
+#:       几秒它就回来了、★ PID 全新 ⇒ 真凶是 `mcp-server/server.py` 的 connect）✓
+#:   ★★★★★ **⚠ 安全**：★ `--close` **自带文档判定** —— ★ 只要有一个**不是自己开的**文档就**拒绝关闭** ✓
+Write-Output ''
+Write-Output '── ④ 关 SolidWorks（★ 纪律：跨轮不许留 · 收尾链跑完就关）──'
+python tools\reclaim_solidworks.py --close 2>&1 |
+    Select-String -Pattern 'BEFORE|AFTER|拒绝|关完' |
+    ForEach-Object { Write-Output ("  " + ([string]$_).Trim()) }
+Write-Output '  ★ 关完**不要再调真机工具** —— 一调它就会被 `mcp-server` 拉起来。'

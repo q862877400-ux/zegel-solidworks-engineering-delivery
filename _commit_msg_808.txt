@@ -1,0 +1,70 @@
+fix(资源纪律): 只关自己启动的 SolidWorks（PID 标记）+ 子代理改走 Bunny
+
+■ 一 · 用户点破的两件事
+  · 「solidworks 用完了要关掉」
+  · 「**不要误杀别的对话打开的 solidworks，只关闭你自己打开的窗口**」
+  · 「不要用 DeepSeek 做子代理，太贵了」
+
+■ 二 · 我第一版 `--close` 是**危险**的（两处错，都是实测出来的）
+  ★ 错法一：**按进程名杀整族**（SLDWORKS + sldProcMon + swCefSubProc + cwbcbfmesh +
+    sldsurfacing + sldworks_fs）⇒ 会误杀别的对话的会话。
+    而它依赖的安全判定 `_OURS = (零件|Part)\d+|^MCP_` **按文档名判** ⇒
+    别人的对话也多半开着 `零件N`；**若别人没开文档** ⇒ `others=[]` ⇒ 判定通过 ⇒ 照样误杀。
+  ★ 错法二：第二版为了拿 `started_by_cad_studio`，调了 `connect_solidworks(visible=True)`
+    —— 而它的语义逐字是「connects to a running instance **or starts one**」⇒
+    **为了判断该不该关，先把它启起来了**。证据：kill 掉那 9 个进程后几秒它又回来、PID 全新。
+
+■ 三 · 正解：归属要能**跨进程证明**
+  · `scripts/sw_connect.py`：**它自己**启动实例那一刻把 PID 落进
+    `output/.sw-started-by-us.json`（新增 `_record_owned_instance` / `read_owned_instance` /
+    `clear_owned_instance`）；写失败不影响连接（代价只是这次证不出归属）。
+  · `tools/reclaim_solidworks.py --close`：**只认那个标记**；没有标记、或拿不到标记 ⇒
+    **拒绝关闭**（宁可留着，也不误杀）。动作走 `close_owned_solidworks`（`ExitApp`/`Quit` 优雅退出）。
+  · `tools/round_chain.ps1`：末尾新增第 ④ 步「关 SolidWorks」——**纪律说"跨轮不许留、
+    收尾链跑完就关"，所以它必须是机制、不是靠我记得**。
+  · **为什么不复用 `--restart`**：它是"停完**重连**" ⇒ 重连又把它拉起来。
+
+■ 四 · 为什么必须机械化（代价是实测出来的）
+  那条纪律一直在（`~/.dsh/纪律/资源与环境.md` §一，且 `~/.dsh/AGENTS.md` 每轮注入），
+  而我**跨了十几轮没收**。实测代价：`cwbcbfmesh` **两个进程合计 27.4 GB**
+  （纪律记的实测是 8286 MB）。⇒ **"我会记得"不是机制。**
+  收工动作实测：`BEFORE 6 进程 / 720 MB` ⇒ `AFTER 0`。
+
+■ 五 · 子代理改走 Bunny
+  · `$DSH_HOME/team-roles.yaml`：worker / reviewer / researcher 由
+    `deepseek-official`+`deepseek-flash` 改成 `opencode-zen`+`space-bunny-free`
+    （artist 本来就是 Bunny；writer 仍 gemini-3.8-flash）。改前各留
+    `.bak-20261004-084336-before-bunny-subagents`。
+  · `D:\AI\SW\.dsh\team-roles.yaml`（项目级覆盖件）：coder / researcher / reviewer 同样改到 Bunny。
+  · **不会立即生效** —— 角色表在插件加载时读一次即缓存（全局表顶部注释写着）⇒ 需重启 DSH。
+  · **冲突已如实记**（那份文件自己写着）：2026-10-03 实测「本机模型做不了多步工具调用」
+    才把 worker/researcher 改回 DeepSeek；而 Bunny 那条引业主原话「使用 bunny 要尽可能
+    简单任务机械重复」⇒ **`worker`（后端实现与自测，要连着调工具）最可能被拖垮的是它**。
+
+■ 六 · 大批量扇出：`spawn_teammate` 上限 8 ⇒ 改用 `workflow`
+  · 实测 `Team member limit 8 reached`（已有 7 个 teammate 时）。
+  · **第一次 100 路整批失败、且返回值里没有任何错误**：
+    传了 `model: "space-bunny-free"` 而**没传 `provider`** ⇒
+    `{requested: 100, returned: 0, rows: []}`。
+  · 补上 `provider: "opencode-zen"` 后 **2 路探针 `returned: 2`**，读数与 Lead 自己数的
+    一致（`IView` 461 个 .md · `IDatumTag` 34 个）⇒ **根因确认**。
+  · **两条教训**：一，`returned: 0` 要当**失败**来查，不能当成「没活干」；
+    二，**先跑 2 路探针再铺 100 路** —— 那次 100 路是白跑的代价换来的。
+  · 已记进 `docs/team-roles.md`。
+
+■ 七 · 本批同时把工程图读侧第二批带上
+  · `scripts/sw_drawing_query.py`：`view_annotations_report` 新增 4 个零参读侧
+    （`GetBendLineCount` / `GetCThreadCount` / `GetDatumOriginCount` / `GetCenterLineCount`）
+    ⇒ 真机读数 4 个全回 `0`（**不是 `err:`** ⇒ 成员可达）；而 `0` 是**应然的**（简单方板）。
+  · 另记两条**故意不纳入**的（逐条读 `## Remarks` 才看见）：
+    `GetBomTable`（官方：只有 Excel 型 BOM 才有 ⇒ 前置不满足时静默回 None）、
+    `GetCenterMarkCount2`（官方：只对**作为特征**的中心标记有效、且带 `out`）。
+
+■ 八 · 索引纪律（我这轮又犯一次）
+  · 现象：`git add` 只写了 6 个显式路径，暂存区里却还有别人的 3 个在途件与 `recon/` 产物。
+  · **真因**：之前那句 `git add -A` 已经把东西放进了**索引**，后续 `git add <路径>`
+    **不会把它们撤出来**。
+  · 修法：`git reset`（只清索引、不动工作树）再按路径 add ⇒ 现暂存区**只有我的 6 个文件**。
+  · ⚠ **历史事实（只报告、不动）**：`176fc285` / `b95daf24` / `216f6927` / `7368e9a0`
+    四次提交各扫进一个 teammate 的在途探针；已核——那 4 个文件**各只有 1 次提交**
+    （就是扫进它们的那次）⇒ **我只加入索引、没改内容**，错的只是提交归属。

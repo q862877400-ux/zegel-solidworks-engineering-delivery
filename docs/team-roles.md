@@ -23,3 +23,21 @@ lead 维护 `docs/union-coverage-matrix.md` 与 `docs/gap-analysis.md` 的打勾
 **派活时写清三条**。一，给文件路径并明确要求重新读，否则它会按过时的签名准备实参。二，显式说明 `param_alias` 要应用，否则它会把好参数当成坏参数报。三，要求每条结论带可搜索的原文片段、不要行号，因为行号随代码漂移（实测偏 47 行）。
 
 **它的判据有已知弱点，产出永远要经 Lead 复核**：它会照抄想象或过时的契约，也会把一条错的既有结论当既定事实。因此它的产出不许直接进 `capabilities.yaml` 的 `verified`。
+
+## 子代理一律用 space-bunny，不用 DeepSeek
+
+**派子代理用 `role="artist"`（space-bunny-free）；不要用 DeepSeek 起子代理 —— 它贵。** Lead 自己仍是 DeepSeek，只有派出去的那些受这条约束。
+
+实测偏差：2026-10-04 查会话注册表，7 个 teammate（`impl-drawing` / `rev-drawing` / `qwen-test` / `contract-audit` / `impl-drawing-missing` / `impl-drawing-missing2` / `contract-audit2`）全部记成 `model: deepseek-flash`、`provider: spawn` —— 即都不是 Bunny。这批不是我这几轮建的，所以只能说注册表现在这么记；但「M2 铺张用免费的 space-bunny」这条作业方法当时确实没执行。派活前先确认 `list_agents` 里那条的 `model` 是 `space-bunny-free`，不是就说明角色没传对。
+
+省下来的额度用在 Lead 的真机与门禁上；机械穷举、全面阅读、逐条对账、抄录这类活本来就不需要 DeepSeek。
+
+### 大批量扇出用 workflow，且 provider 与 model 必须成对写
+
+`spawn_teammate` 有硬上限 8（本会话实测：已有 7 个 teammate 时第 8 个报 `Team member limit 8 reached`），派不出上百路。要规模就改用 `workflow`：写一段 JS，用 `pipeline(items, stage)` 把每项扇出一个子代理。
+
+**`agent()` 的 opts 里 `provider` 与 `model` 必须成对写。只写 `model` 会整批静默失败。** 2026-10-04 实测：传 `model: "space-bunny-free"` 而不传 `provider`，100 路跑完回 `{requested: 100, returned: 0, rows: []}` —— **100 个子代理全部失败，而返回值里没有任何错误信息**。补上 `provider: "opencode-zen"` 后同一批 2 路探针 `returned: 2`，且读数与 Lead 自己数的一致（`IView` 461 个 .md、`IDatumTag` 34 个）。
+
+两个教训：**一，`returned: 0` 要当成失败来查，不能当成「没活干」**；**二，先跑 2 路探针再铺 100 路** —— 上面那次 100 路是白跑的代价换来的。
+
+

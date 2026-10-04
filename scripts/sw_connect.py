@@ -673,6 +673,47 @@ def _wait_until_ready(sw, timeout_seconds):
     )
 
 
+#: 我们启动过的 SolidWorks 实例的 PID 标记（跨进程、跨轮可读）。
+#: 落盘位置在 output/（已 gitignore），不进版本库。
+OWNED_MARKER = Path(__file__).resolve().parents[1] / "output" / ".sw-started-by-us.json"
+
+
+def _record_owned_instance(sw, prog_id: str) -> None:
+    """记下**我们自己启动**的实例 PID —— 回收时只认它，绝不按进程名杀。"""
+    try:
+        import json as _json
+        import time as _time
+        pid = None
+        try:
+            pid = int(get_com_member(sw, "GetProcessID"))
+        except Exception:
+            pass
+        OWNED_MARKER.parent.mkdir(parents=True, exist_ok=True)
+        OWNED_MARKER.write_text(_json.dumps(
+            {"pid": pid, "prog_id": prog_id, "at": _time.strftime("%Y-%m-%dT%H:%M:%S")},
+            ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        #: 标记写失败**不许影响连接** —— 代价只是"这次回收时证不出归属"。
+        pass
+
+
+def read_owned_instance() -> dict | None:
+    """读归属标记；没有就回 None。"""
+    try:
+        import json as _json
+        return _json.loads(OWNED_MARKER.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def clear_owned_instance() -> None:
+    """清掉归属标记（成功回收之后）。"""
+    try:
+        OWNED_MARKER.unlink()
+    except Exception:
+        pass
+
+
 def close_owned_solidworks(sw, started_by_cad_studio):
     """只退出由当前 CAD Studio 会话启动的 SolidWorks 实例。"""
     if not started_by_cad_studio:
@@ -713,6 +754,10 @@ def connect_solidworks(version=None, wait_seconds=5, visible=True, return_metada
             try:
                 sw = win32com_client.Dispatch(prog_id)
                 launched_here = True
+                #: 落「我们启动的实例」标记 —— 用户要求「不要误杀别的对话打开的 solidworks，
+                #: 只关闭你自己打开的窗口」。进程内的 launched_here 传不出本进程，
+                #: 所以把 PID 写进一个跨进程可读的标记文件；回收时只认这个标记。
+                _record_owned_instance(sw, prog_id)
                 try:
                     sw.Visible = visible
                 except Exception:
