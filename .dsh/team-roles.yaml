@@ -28,8 +28,8 @@ roles:
       - write
       - edit
       - pwsh
-    provider: ninfer
-    model: qwen3.8-27b-doc
+    provider: opencode-zen
+    model: space-bunny-free
 
   coder:
     description: 实现功能并自测。改完必须跑一次验证再报告完成。
@@ -106,8 +106,8 @@ roles:
       - mcp__solidworks__sheet_metal_feature
       - mcp__solidworks__submit_feature_graph
       - mcp__solidworks__verify_state
-    provider: omniroute
-    model: deepseek/deepseek-v4-flash
+    provider: opencode-zen
+    model: space-bunny-free
 
   reviewer:
     description: 独立复核改动，专门找问题。不修，只报告。
@@ -128,5 +128,5 @@ roles:
       - write
       - edit
       - pwsh
-    provider: mimo
-    model: mimo-v2.6-pro
+    provider: opencode-zen
+    model: space-bunny-free
