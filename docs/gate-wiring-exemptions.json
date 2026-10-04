@@ -21,9 +21,11 @@
     },
     {
       "gate": "check_fact_single_home.py",
-      "reason": "★ **告警级、不拦（exit 0）** —— 规格 206 / **T5-1** 的交付物，按 **D-1**（新建门禁误报率 ≤5%，未达标者留待复核桶）先做告警。★ 判据已验证有效（`tests/test_fact_single_home_gate.py` 5 passed，含关键负例「逐字抄一段事实正文 ⇒ 必须报出来」与反向负例「只引用编号 ⇒ 不该报」），且**已在其首次运行中抓到 2 处真复述**（`docs/dead-ends.md` 复述事实 230 · `specs/202-*/recon/verify50/…` 复述事实 303）。★ 本门禁**不会**自动改文档（只报告）。★★ **不接硬门禁的理由**：判据是「归一后 ≥80 字符逐字片段」的启发式，而**正当引用与真复述在文本上可能难分**（与事实 538/539 同族的教训：判据越宽越易误报）⇒ 要先把那 2 处处置掉、并抽检 20 条确认误报率后再考虑接闸。",
+      "reason": "★ **告警级、不拦（exit 0）** —— 规格 206 / **T5-1** 的交付物。★★ **D-1 合规实测已做完**（`tools/measure_fact_single_home_fp.py` + `docs/recon-206/fact-single-home-fp.md`）：造 20 例（10 真复述 + 10 正当引用，★ 均用真实文本）⇒ **假阳性 0/10（误报率 0% ⇒ D-1 达标 ✓）**、★ 但**真阳性只 8/10（漏报 2 例）** ⇒ ★★ 判据**不对称：不过度报、但会漏报**。★ 判据实现已验证有效（`tests/test_fact_single_home_gate.py` 5 passed，含「逐字抄 ⇒ 必须报」的负例与「只引用 ⇒ 不该报」的反向负例），且首次运行抓到 2 处真复述（`docs/dead-ends.md` 复述事实 230 · `specs/202-*/recon/verify50/…` 复述事实 303）。★ 本门禁**不会**自动改文档（只报告）。★★ **不接硬门禁的理由（更新为实测后）**：D-1 的误报率**已达标**，因此**技术上可以接**；★ 未接是因为**它会漏报**（recall 80%）⇒ 接进去会给人「已经防住了」的错觉（★ 事实 40/62 同族：一个存在但会漏的守卫可能比没有更糟）⇒ ★ **建议交主线决定**：要么接受「抓一部分」并接闸、要么先提升 recall 再接。",
       "evidence": [
         "D:/AI/SW/scripts/check_fact_single_home.py",
+        "D:/AI/SW/tools/measure_fact_single_home_fp.py",
+        "D:/AI/SW/docs/recon-206/fact-single-home-fp.md",
         "D:/AI/SW/tests/test_fact_single_home_gate.py",
         "D:/AI/SW/specs/206-c1c6-harvest/spec.md",
         "D:/AI/SW/docs/known-facts.md"
