@@ -287,7 +287,7 @@ v2
 
 | 成员 | 类 | 我们用的是示例写法还是 Remarks 写法 | 结论 | 证据 |
 |---|---|---|---|---|
-| `AutoDimension2` | mark_diff | ★ **两者都不是**：我们**只在探针里真调用**（`tools/probe_fullydefinesketch.py:71`），且**调用前没有「选基准边并打 `swAutodimMark*`」这一步** | ★★ **对探针成立 · 对产品不成立** | ★ `scripts/sw_part.py:707` 与两处 `mcp-server`/`tools` 的命中都是**注释/docstring 里的提及**（非调用）；★ 真调用只有探针那处，实参 `(1,1,-1,1,-1)` 五个位置参数、无 mark 前置 ⇒ 探针的「通过」**不代表能力可用**（★ 事实 57 家族）|
+| `AutoDimension2` | mark_diff | ★ **两者都不是**：我们**只在真调用里**用它（★ `ast` 判：**`scripts/sw_part.py:805`** 与 `tools/probe_fullydefinesketch.py:71`），且★ **调用前没有「选基准边并打 `swAutodimMark*`」这一步** | ★★ **成立**（★ 对**产品代码也成立** —— 2026-10-04 第 12 轮更正：`scripts/sw_part.py:805` 有真调用）| ★ 第 12 轮用 `ast` 重判：真调用 2 处（`sw_part.py:805` 的 `get_com_member` + 探针那处）；★★ 上一轮基于**文本匹配**把 805 行看成了 docstring ⇒ **结论错了，已更正** ✓ |
 | `FeatureCircularPattern4` | unit_diff | （待填）| （待填）| （待填）|
 | `FeatureLinearPattern4` | unit_diff | （待填）| （待填）| （待填）|
 | `FeatureLinearPattern4` | mark_diff | （待填）| （待填）| （待填）|
