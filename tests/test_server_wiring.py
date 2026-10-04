@@ -244,7 +244,12 @@ def test_expected_batch_size(server):
     #:     ★★ **`simulation_configure_mesh_settings` / `simulation_mesh_safety_apply`**（它们是
     #:     **未护栏的原始网格旋钮** —— 事实 526 的 40 GB 事故正是盲设它们造成的；批 78 已定
     #:     「安全入口 = `create_mesh_safely`」）⇒ ★ **不单独发旋钮**（D-1 宁缺毋滥）✓
-    assert len(all_specs()) == 356
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 83**）：**356 → 360** —— ★ **我加的 4 条**
+    #:   （第二坡 92 行里**真新**的残余：仿真读数 `get_loads_manager` / `get_results` ·
+    #:     ★ **只读**的 `solve_memory_preflight` · 边焊缝连接件读数）✓
+    #:   ★★ 本批带一条**安全对照**并由测试守住：★ 只读的闸可以发，而**会改研究设置**的
+    #:     `configure_mesh_settings` / `mesh_safety_apply` **仍不许**出现（事实 526）✓
+    assert len(all_specs()) == 360
 
 
 # ── ③ 命名与「两者不混用」（规则 1）──────────────────────────────

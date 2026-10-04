@@ -516,6 +516,15 @@ BATCH_MODULES = (
     #:   ★ 留下的 13 个覆盖：装配（含 5 种配合/抑制/替换/平行）· 导出 · 外观渲染材质删除 ·
     #:     仿真（加载项 / 研究管理器 / 按类型建研究 / 内存预算 / 网格设置报表 / 校验）✓
     "tool_specs_batch82",
+    #: ★★★★★ 轮 109：**规格 205 的批 83 —— 第二坡的"真新"残余**（4 个）：
+    #:   ★ 第二坡 92 行里，**33 条是"已建过"**（★ 门禁的 ⑧ 分支把"已建"与"真撞名"分开之后
+    #:   才读得出来）、6 条是主线按 FR-006/安全判掉的 ⇒ ★ **真正新的只有这 4 个** ✓
+    #:   · `solidworks_simulation_get_loads_manager` / `get_results` —— ★ 仿真**读数**入口
+    #:     （★ 与批 78 的"安全建网格"配套：建完要能读结果）✓
+    #:   · `solidworks_simulation_solve_memory_preflight` —— ★ **只读**内存预算前置闸
+    #:     （★ 与危险旋钮不同：**它只算不设**，故单独发它是安全的 —— 对比批 82 删掉的那两个）✓
+    #:   · `solidworks_simulation_get_edge_weld_connector` —— 边焊缝连接件读数 ✓
+    "tool_specs_batch83",
 )
 
 def all_specs() -> list:

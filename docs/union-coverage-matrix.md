@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 382 | 382 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 386 | 386 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -44,18 +44,18 @@
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 33 | 106⚠ | 57 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 17 | 49⚠ | 25 | **8** |
 | ⑦ 钣金 | 10 | · | 1 | · | 9 | 20⚠ | 20 | **11** |
-| ⑧ 焊件 | 5 | · | · | · | 14 | 19⚠ | 19 | **5** |
+| ⑧ 焊件 | 5 | · | · | · | 15 | 19⚠ | 20 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
 | ⑩ 装配 | 13 | 7 | 4 | 3 | 24 | 65⚠ | 43 | **19** |
 | ⑪ 工程图 | 18 | 18 | 15 | 17 | 33 | 74⚠ | 82 | **49** |
 | ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 11 | 28⚠ | 27 | **16** |
-| ⑬ 仿真 / Motion | 3 | · | 1 | · | 37 | 124⚠ | 41 | **4** |
+| ⑬ 仿真 / Motion | 3 | · | 1 | · | 40 | 124⚠ | 44 | **4** |
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 15 | 49⚠ | 25 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 29 | 14 | 29 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 75 | 517⚠ | 117 | **42** |
 
-**合计**：并集 693 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 697 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 344 个操作只有本仓库有：
+共 348 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -379,6 +379,9 @@
 - `simulation_ensure_addin`（⑬ 仿真 / Motion）
 - `simulation_find_study`（⑬ 仿真 / Motion）
 - `simulation_generate_report`（⑬ 仿真 / Motion）
+- `simulation_get_edge_weld_connector`（⑧ 焊件）
+- `simulation_get_loads_manager`（⑬ 仿真 / Motion）
+- `simulation_get_results`（⑬ 仿真 / Motion）
 - `simulation_get_study_manager`（⑬ 仿真 / Motion）
 - `simulation_list_setter_summary`（⑬ 仿真 / Motion）
 - `simulation_list_studies`（⑬ 仿真 / Motion）
@@ -388,6 +391,7 @@
 - `simulation_set_material`（⑬ 仿真 / Motion）
 - `simulation_set_study_option`（⑬ 仿真 / Motion）
 - `simulation_set_study_options`（⑬ 仿真 / Motion）
+- `simulation_solve_memory_preflight`（⑬ 仿真 / Motion）
 - `simulation_solver_type`（⑬ 仿真 / Motion）
 - `simulation_study_options`（⑬ 仿真 / Motion）
 - `sketch_add_3point_arc`（③ 草图）
