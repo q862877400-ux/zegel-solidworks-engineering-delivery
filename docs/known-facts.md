@@ -6510,5 +6510,5 @@ CreateStructureSystemMemberData · Elliptical · FeatureFillet3（各 3 条）
 ★★ **本条的落地限度（如实）**：★ 第 4 版豁免理由**未写进** \docs/gate-wiring-exemptions.json\ ——
 我在写它时**连续两次**把非法转义放进 JSON（★ 先是 \C:\swapi\ 的反斜杠、后是正则字面量 \^\s*#:\ 里的 \\s\），
 ★★ 而 elease_check\ **每次都拦住了提交**；★ 我随后**把该文件回退到 HEAD 的合法版本**，
-★ 故**第 4 类这个发现只落在本条事实里**，★ 未写进豁免理由（★ 那是**下一手**该做的：
+★★ **第 32 轮已补上**（★ 全程不用反斜杠 ⇒ 路径写正斜杠、正则用文字描述 ⇒ 一次成功，JSON 合法且 release_check exit=0）（★ 那是**下一手**该做的：
 ★ 写 JSON 时**正则字面量与 Windows 路径都要转义**）✓
