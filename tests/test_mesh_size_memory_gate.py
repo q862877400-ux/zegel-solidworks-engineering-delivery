@@ -100,6 +100,37 @@ def test_no_bbox_means_record_only_do_not_judge() -> None:
     assert r["ok"] is True and "只记不判" in r["reason"], r
 
 
+# ── 第二道闸（★ 建完网格、跑求解之前 · 用**真实单元数**）────────────────────
+
+def test_preflight_rejects_a_giant_mesh() -> None:
+    """★★ 第二道闸：真实单元数过大 ⇒ 必须拒（★ 它是"跑求解"前的最后一关）。"""
+    r = sim.solve_memory_preflight(50_000_000)
+    assert r["ok"] is False, r
+    assert r["est_ram_gb"] > r["memory_budget_gb"]
+    assert "别跑" in r["reason"], r["reason"]
+
+
+def test_preflight_allows_the_mesh_that_worked() -> None:
+    """★ 反例：真机跑通过的那个网格（**7,310 个单元**）不许被拒。"""
+    for good in (7_250, 7_310):
+        r = sim.solve_memory_preflight(good)
+        assert r["ok"] is True, "★ 误伤 %r：%s" % (good, r.get("reason"))
+        assert r["est_ram_gb"] < 1.0, r
+
+
+def test_preflight_rejects_a_missing_mesh() -> None:
+    """★ `element_count` 不是正整数（网格没建成）⇒ 拒 —— ★ 否则会拿空网格去求解。"""
+    for bad in (0, -3, None):
+        assert sim.solve_memory_preflight(bad)["ok"] is False
+
+
+def test_preflight_budget_is_honoured() -> None:
+    """★ 预算参数必须真的生效（★ 事实 40：没人用的参数 = 没有它）。"""
+    assert sim.solve_memory_preflight(7_310)["ok"] is True
+    tight = sim.solve_memory_preflight(7_310, memory_budget_gb=1e-9)
+    assert tight["ok"] is False and tight["memory_budget_gb"] == 1e-9
+
+
 # ── 直接运行 ──────────────────────────────────────────────────────────────
 
 def _main() -> int:

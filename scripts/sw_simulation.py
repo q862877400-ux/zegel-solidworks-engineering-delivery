@@ -1232,6 +1232,46 @@ def default_solve_memory_budget_gb() -> float:
         return DEFAULT_MEMORY_BUDGET_GB
 
 
+def solve_memory_preflight(element_count: int, *,
+                           memory_budget_gb: float | None = None) -> dict[str, Any]:
+    """★ **建完网格、跑求解之前**再判一次 —— ★★ 这一版用的是**真实单元数**。
+
+    ★★★ 为什么要有**第二道**（第一道是 `check_mesh_size_sane`）：
+      · 第一道只能按**包围盒体积 ÷ 单元尺寸³** 估单元数 ⇒ ★ 对**非长方体**的零件会高估，
+        对**局部细化**的网格会低估 ⇒ ★ 它够用来拒"离谱"，**不够用来决定"跑不跑"**；
+      · ★★ 而**建完网格后 `ICWMesh.ElementCount` 是真实读数** ⇒ ★ 用它算内存**准得多** ✓
+    公式与系数同第一道（★ 出处见 `DOF_PER_GB` / `DOF_PER_ELEMENT` 上方注释：
+    官方「每 2,000,000 自由度 1 GB」+ 事实 293 实测的 4.2 自由度/单元）。
+
+    :param element_count: `ICWMesh.ElementCount` 的回读值。
+    :param memory_budget_gb: 内存上限（GB）；★ `None` ⇒ `default_solve_memory_budget_gb()`。
+    :returns: ``{ok, element_count, est_dof, est_ram_gb, memory_budget_gb, reason}``
+        ★ **`ok=False` ⇒ 不要跑求解**（★ 官方：内存不够会走 out-of-core，**极慢**）。
+    """
+    out: dict[str, Any] = {"element_count": int(element_count or 0), "ok": True, "reason": "",
+                           "★": "跑求解前的第二道闸（★ 用**真实单元数**，比包围盒估计准）"}
+    n = int(element_count or 0)
+    if n <= 0:
+        out.update({"ok": False, "reason": "element_count 不是正整数（%r）⇒ 网格没建成" % element_count})
+        return out
+    est_dof = n * DOF_PER_ELEMENT
+    est_ram_gb = est_dof / DOF_PER_GB
+    budget = (float(memory_budget_gb) if memory_budget_gb is not None
+              else default_solve_memory_budget_gb())
+    out.update({"est_dof": est_dof, "est_ram_gb": est_ram_gb, "memory_budget_gb": budget,
+                "★_公式": "DOF≈4.2×单元数（事实 293）· RAM≈DOF/2,000,000 GB（官方 FFEPlus 规则）"})
+    if est_ram_gb > budget:
+        out.update({
+            "ok": False,
+            "reason": ("%d 个单元 ⇒ 估 %.3g 自由度 ⇒ 预估求解内存 **%.2f GB** > 预算 %.1f GB"
+                       "（★ 官方规则：每 2,000,000 自由度需 1 GB RAM）"
+                       " ⇒ **别跑** —— 官方向导：内存不够会走 out-of-core、"
+                       "「the solution progress can be extremely slow」"
+                       % (n, est_dof, est_ram_gb, budget)),
+        })
+    return out
+
+
 def check_mesh_size_sane(model, element_size: float, *,
                          memory_budget_gb: float | None = None) -> dict[str, Any]:
     """★ **建网格之前**判一次：给定的单元尺寸对**这个零件**是否合理 —— ★★ **两侧都判**。

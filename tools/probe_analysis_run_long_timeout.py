@@ -194,7 +194,18 @@ def main() -> int:
               % (mesh_r.get("ok"), mesh_r.get("timed_out"), mesh_r.get("wall_seconds"),
                  mesh_res.get("element_count")))
 
-        #: ④ ★★ 跑求解 —— 本探针的核心（★ T_RUN=1800）✓
+        #: ④ ★★★ **跑求解前的第二道闸**（★ 本轮新增的第二层保险）——
+        #:   ★ `check_mesh_size_sane` 只能按**包围盒**估单元数；★ 这里用**真实单元数** `ElementCount`
+        #:   ⇒ ★★ **内存超预算就绝不进求解**（★ 官方：内存不够会走 out-of-core、极慢）
+        pre = sim.solve_memory_preflight(int(mesh_res.get("element_count") or 0))
+        ev["steps"]["solve_memory_preflight"] = pre
+        print("  [2b] 求解前内存闸: ok=%s est_dof=%s est_ram_gb=%s budget=%s"
+              % (pre.get("ok"), pre.get("est_dof"), pre.get("est_ram_gb"),
+                 pre.get("memory_budget_gb")))
+        if not pre.get("ok"):
+            raise RuntimeError("求解前内存闸不放行 ⇒ 停下（★ 不拿内存去赌）：%s" % pre.get("reason"))
+
+        #: ⑤ ★★ 跑求解 —— 本探针的核心（★ T_RUN=1800）✓
         run_r = iso("run_analysis_by_name", [STUDY], {}, T_RUN)
         run_res = run_r.get("result") if isinstance(run_r.get("result"), dict) else {}
         ev["steps"]["run_analysis"] = {k: run_r.get(k) for k in
