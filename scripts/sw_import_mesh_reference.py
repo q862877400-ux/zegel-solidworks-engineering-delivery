@@ -115,6 +115,9 @@ def configure_mesh_import_preferences(
         "units": unit_key,
         "model_type": type_key,
         "operations": [],
+        #: ★★ 2026-10-04（接手轮）**记下旧值**，好让调用方用完还回去（★ 事实 525）：
+        #:   本函数改的是**全局用户偏好** ⇒ ★ 不记旧值 = 永远回不去 ✓
+        "restore": [],
     }
 
     int_preferences = [
@@ -122,7 +125,11 @@ def configure_mesh_import_preferences(
         (SW_IMPORT_STL_VRML_UNITS, SW_LENGTH_UNITS[unit_key]),
         (SW_IMPORT_UNIT_PREFERENCE, 0),
     ]
+    # preference-guard: 本函数只"设"，★ 旧值逐条记进 `restore`，由 restore_mesh_import_preferences
+    #   在 `import_mesh_reference` 的 `finally` 里还回去（★ 事实 525）
     for preference, value in int_preferences:
+        old = _read_preference_quietly(sw, "integer", preference)
+        report["restore"].append({"kind": "integer", "preference": preference, "old": old})
         ok = sw.SetUserPreferenceIntegerValue(preference, value)
         report["operations"].append(
             {"kind": "integer", "preference": preference, "value": value, "ok": bool(ok)}
@@ -134,6 +141,8 @@ def configure_mesh_import_preferences(
         (SW_VRML_STL_IMPORT_SEGMENTED, bool(segmented)),
     ]
     for preference, value in toggle_preferences:
+        old = _read_preference_quietly(sw, "toggle", preference)
+        report["restore"].append({"kind": "toggle", "preference": preference, "old": old})
         # SetUserPreferenceToggle 在部分版本返回 void；没有 COM 异常即可继续，最终以导入和预览为准。
         returned = sw.SetUserPreferenceToggle(preference, value)
         report["operations"].append(
@@ -145,6 +154,53 @@ def configure_mesh_import_preferences(
             }
         )
 
+    return report
+
+
+def _read_preference_quietly(sw, kind: str, preference: int):
+    """★ 读一条偏好；读不到回 `None`（★ 由 `restore_...` 决定"读不到就不写回"）。"""
+    try:
+        from sw_preference_guard import read_preference
+
+        return read_preference(sw, kind, preference)
+    except Exception:                                          # noqa: BLE001
+        return None
+
+
+def restore_mesh_import_preferences(sw, report: dict[str, Any]) -> dict[str, Any]:
+    """★ 把 `configure_mesh_import_preferences` 改过的偏好**还回去**（★ 事实 525）。
+
+    ★ 判据（★ 与 `sw_preference_guard` 同口径）：
+      · ★ **旧值读不到的，不写回**（★ 免得把"读不到"变成"写了个错的旧值"）；
+      · ★ **读回校验**：写完再读一次，逐条给 `match` —— ★ 不把"设了"当成"还原了" ✓
+    """
+    restored, skipped, errors = [], [], []
+    # preference-guard: 本函数就是"还原那一步"（★ 写回 `configure_mesh_import_preferences` 记下的旧值 —— 事实 525）
+    for item in report.get("restore") or []:
+        kind, preference, old = item.get("kind"), item.get("preference"), item.get("old")
+        if old is None:
+            skipped.append({"kind": kind, "preference": preference,
+                            "why": "★ 旧值读不到 ⇒ 不写回（免得写错）"})
+            continue
+        try:
+            from sw_preference_guard import read_preference
+
+            if kind == "integer":
+                sw.SetUserPreferenceIntegerValue(preference, int(old))
+            else:
+                sw.SetUserPreferenceToggle(preference, bool(old))
+            back = read_preference(sw, kind, preference)
+            restored.append({"kind": kind, "preference": preference, "old": old,
+                             "readback": back, "match": bool(back) == bool(old)
+                             if kind == "toggle" else back == old})
+        except Exception as exc:                               # noqa: BLE001
+            errors.append({"kind": kind, "preference": preference,
+                           "error": "%s: %s" % (type(exc).__name__, str(exc)[:120])})
+    report["restored"] = restored
+    report["restore_skipped"] = skipped
+    report["restore_errors"] = errors
+    if errors:
+        print("⚠ 导入偏好的还原有失败项 ⇒ %r" % (errors,))
     return report
 
 
@@ -197,7 +253,15 @@ def import_mesh_reference(
 
     # 关键坑位：OBJ/STL 走 LoadFile4 时不要传 None，也不要先 GetImportFileData()。
     # None 会触发“类型不匹配”；OpenDoc6 在部分 SW2024 环境中会报 2097152。
-    model = sw.LoadFile4(str(mesh), "r", create_empty_dispatch_variant(), errors)
+    #: ★★ 2026-10-04（接手轮）**导入偏好用完立刻还回去**（★ 交付纪律 · 事实 525）：
+    #:   `configure_mesh_import_preferences` 改的是**全局用户偏好** ⇒ 原来**永不还原**
+    #:   ⇒ 别人装一次我们的工具，他的 STL/VRML 导入设置就被永久改掉 ✓
+    #:   ★ 这些偏好**只在 `LoadFile4` 那一步需要生效**（保存/审查都不读它们）
+    #:   ⇒ ★ 故放在 `try/finally` 里：**连导入抛异常也还回去** ✓
+    try:
+        model = sw.LoadFile4(str(mesh), "r", create_empty_dispatch_variant(), errors)
+    finally:
+        restore_mesh_import_preferences(sw, result["import_preferences"])
     result["loadfile4_errors"] = int(errors.value)
     result["opened"] = model is not None
     if model is None:

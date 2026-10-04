@@ -4380,3 +4380,80 @@ coordinator + worker agent、static/nonlinear），★★ **而同一页逐字�
 `swsMeshQuality_e.html` · `_raw/reflect/iface_cosworks.txt`（`ICWMesh.Quality` / `NodeCount`）✓
 ★ 网上：GoEngineer（offload 与 2021 退役）· SOLIDWORKS 2019/2021 帮助 · NVIDIA（Abaqus GPU 白皮书）·
 Dassault HPC 专题 · Ansys release notes（GPU Acceleration）· Supermicro/Ansys · SOLIDBI（NVMe/PCIe）✓
+
+---
+
+## 525 · ★★★★★★ **「驱动软件」≠「修改软件」** —— 交付边界实测，并收掉 8 处会留在用户 SolidWorks 里的写入
+
+**发现时间**：2026-10-04（接手轮 · 业主问「我们这个项目别人装上，是不是也要改他的软件？」）
+
+★ **全文（逐条证据 + 部署清单）**：[`references/deployment-boundary.md`](deployment-boundary.md)
+
+### 一 · ★★★ 结论（先回答业主那一问）
+
+```
+★ **本体零改动**：全仓**没有**一处写 SolidWorks 注册表、**没有**写安装目录、
+  **没有**打补丁/注入 DLL，全程走**官方公开的 COM API** —— ★ 等同于用户自己在界面里点 ✓
+  ★ 实测：注册表**写**调用 **0 处**（唯一命中是 `tests/test_sw_topology_contract.py:303` 的
+  `fake.SetValue(75.0)` —— ★ 那是 `_FakeCom` **假对象**）；注册表**读** 28 处，**全是只读** ✓
+★★ **但有一处真落点**：全仓曾有 **8 处 `SetUserPreference*`** 直接改用户的
+  **SolidWorks 全局用户偏好**，且**多数永不还原** ⇒ ★ 装一次我们的工具，
+  他的设置就被改掉且回不去 ✓
+```
+
+### 二 · ★★★ 那 8 处是什么（★ 都存在用户的 SolidWorks 配置里、不在文档里）
+
+| 位置 | 改什么 |
+|---|---|
+| `scripts/sw_connect.py` `ensure_default_templates` | ★ **默认模板路径 ×3** + 关掉"新建提示"（导入外来 CAD 那条路） |
+| `scripts/sw_export.py` `export_to_stl` | ★ **STL 导出精细度**（偏好号 78） |
+| `scripts/sw_import_mesh_reference.py` | ★ **STL/VRML 导入选项 ×6** |
+| 两个 subskill 验证脚本 | 隐藏原点 / 参考三轴显示 |
+| `_sw_export_backup.py` | STL 精细度（★ **死代码**：全仓 0 引用） |
+
+### 三 · ★★★★ 处置（三条纪律 + 一道硬门禁，★ 每一步都有负例）
+
+```
+① ★ 新增 `scripts/sw_preference_guard.py` —— **唯一被认可的写入姿势**：
+   `with preference_guard(obj, [Preference(kind, pref_id, value, why=…)])`
+   · 读旧值 → 设 → **finally 还原**（★ 连异常路径也还原）· 值没变就不写
+   · ★★ **旧值读不到的条目不写**（★ 否则那条设置**永远回不去**—— 这条是第一版漏的，被负例抓出）
+   · 还原后**读回校验**给 `match`；★ 失败进 `restore_errors` **不吞**
+   · `keep=` / `restore=False` 是唯一能留下的路，★ 且**必须在报告里说出来**
+   ⇒ ★ 负例 `tests/test_preference_guard.py`（**10 passed**）——
+     ★ 其中 3 条是我自己第一版的设计 bug（keep 跳过读、读不到照写、错误分桶混用），全被负例抓出 ✓
+② ★ 各站点改成**成对写法**并把还原放进 `finally`：
+   `ensure_default_templates` ↔ `restore_default_templates`（包 `LoadFile4`）·
+   `configure_mesh_import_preferences` ↔ `restore_mesh_import_preferences` ·
+   `export_to_stl` 直接用 guard · 两个 subskill：`hide/restore_review_helpers` ✓
+③ ★ 新增硬门禁 `scripts/check_user_preference_writes.py`（★ `release_check` 第 **28** 道）：
+   每处裸写必须 ① 落在 guard 的 `with` 里 · 或 ② 所在函数带**非空理由**的
+   `preference-guard:` 标记 · 或 ③ 进 `docs/preference-write-exemptions.json`（带 reason+evidence）✓
+   ★ 负例 `tests/test_user_preference_writes_gate.py`（**7 passed**）：
+     ★ 正例取自 **`git show` 的修复前原文**；★★ 并含「**只有标记、没有理由 ⇒ 必须仍被抓**」
+     —— ★ 而这条**当场抓出我正则的一个洞**（`\s` 含换行 ⇒ 下一行的字符被当成"理由"）✓
+```
+
+### 四 · ★★★★ 可复用定则（★ 本条的价值）
+
+> ★★★★ **「驱动软件」与「修改软件」的分界，看**改动存在哪里****：
+> · 改**文档/算例内**的东西（study 设置、模型、视图、图纸）⇒ ★ **用软件**：随文件走、可回退 ✓
+> · 改**全局用户偏好 / 注册表 / 安装目录** ⇒ ★★ **动他的软件**：**必须可还原**，或显式声明 + 给卸载路径 ✓
+> · ★ 判据：**"卸载我们之后，他机器上还剩什么"** —— ★ 凡答不上来的，就是没收口的 ✓
+
+★ **与**事实 40 的关系：40 说「一个存在但没人用的守卫 = 没有守卫」；
+★★ **本条是它的延伸**：★ **守卫要挂门禁、门禁要有负例**（★ 否则"我们改了守卫"只是自我感觉）✓
+
+### 五 · ★★ 唯一真需要动系统的地方：**可选的** C# Add-in（★ 默认交付不需要）
+
+★ CurrentUser 模式：写 `HKCU\...\Classes\{ProgID,CLSID}` + `HKCU\...\SOLIDWORKS\Addins\{GUID}` ⇒ **免提权**；
+★ Machine 模式：`RegAsm /codebase /tlb` + `HKLM\SOFTWARE\SOLIDWORKS\Addins\{GUID}` ⇒ **需管理员**；
+★ 有 **`/unregister`** 卸载路径，读侧检查 `solidworks_addin_host_status` 是**只读**的 ✓
+
+### 六 · ★ 依据
+★ 全文：[`references/deployment-boundary.md`](deployment-boundary.md)（★ 含"别人装上必须/不需要什么"清单）✓
+★ 代码：`scripts/sw_preference_guard.py` · `scripts/check_user_preference_writes.py` ·
+`docs/preference-write-exemptions.json` · `scripts/release_check.py`（第 28 道）·
+`docs/gate-classification.json`（33 条）✓
+★ 测试：`tests/test_preference_guard.py`（10）· `tests/test_user_preference_writes_gate.py`（7）✓
+★ 核查方法：AST 扫 `SetUserPreference*` / 注册表读写调用（`_FakeCom` 假对象与只读调用已逐处辨认）✓

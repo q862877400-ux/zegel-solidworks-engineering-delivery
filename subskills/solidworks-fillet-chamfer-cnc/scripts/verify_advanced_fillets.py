@@ -144,14 +144,36 @@ def _select_plane(model) -> None:
     raise RuntimeError("无法选择前视基准面")
 
 
-def _hide_review_helpers(model) -> None:
-    """@brief 隐藏原点和参考三轴，避免蓝色构造符号污染审查图。"""
+def _hide_review_helpers(model):
+    """@brief 隐藏原点和参考三轴，避免蓝色构造符号污染审查图。
+
+    ★★ 2026-10-04（接手轮）**返回旧值，好让出图之后还回去**（★ 交付纪律 · 事实 525）：
+      这两条是**全局用户偏好**、原文改完**永不还原** ⇒ 别人跑一次验证，他的
+      "显示原点/参考三轴"设置就被永久改掉 ⇒ ★ 现返回 `saved`，由 `_restore_review_helpers` 还原 ✓
+    """
+    # preference-guard: 旧值由本函数返回、并由 _restore_review_helpers 在出图后的 finally 里还原
+    saved = []
     for preference in (SW_DISPLAY_ORIGINS, SW_DISPLAY_REFERENCE_TRIAD):
         try:
+            saved.append((preference, model.GetUserPreferenceToggle(preference)))
+        except Exception:                                      # noqa: BLE001
+            continue
+        try:
             model.SetUserPreferenceToggle(preference, False)
-        except Exception:
+        except Exception:                                      # noqa: BLE001
             continue
     model.ClearSelection2(True)
+    return saved
+
+
+def _restore_review_helpers(model, saved) -> None:
+    """★ 把 `_hide_review_helpers` 改过的显示开关**还回去**（★ 事实 525）。"""
+    # preference-guard: 本函数就是"还原那一步"（写回旧值 = 把用户的设置恢复原样）
+    for preference, old in saved or []:
+        try:
+            model.SetUserPreferenceToggle(preference, bool(old))
+        except Exception:                                      # noqa: BLE001
+            continue
 
 
 def _create_box(model, length_mm: float, width_mm: float, height_mm: float, name: str):
@@ -849,18 +871,22 @@ def _verify_one(session: SolidWorksSession, kind: str, output_dir: Path) -> dict
             _create_box(model, *size, name=f"Base_{kind}")
         feature, validation = builder(model, session.sw) if kind == "hold_line" else builder(model)
         set_document_appearance(model, "silver")
-        _hide_review_helpers(model)
+        _saved_helpers = _hide_review_helpers(model)
         model.ViewZoomtofit2()
         if not session.save(model, str(part_path)):
             raise RuntimeError(f"保存失败: {part_path}")
         if not export_to_step(model, str(step_path)):
             raise RuntimeError(f"STEP 导出失败: {step_path}")
-        review, review_path = run_review(
-            model,
-            output_dir,
-            basename=basename,
-            expected_outputs=[str(part_path), str(step_path)],
-        )
+        try:
+            review, review_path = run_review(
+                model,
+                output_dir,
+                basename=basename,
+                expected_outputs=[str(part_path), str(step_path)],
+            )
+        finally:
+            #: ★ 出图之后**立刻**把显示开关还回去（★ 连审查抛异常也还 —— 事实 525）
+            _restore_review_helpers(model, _saved_helpers)
         before_close = _feature_data_evidence(feature, kind, model)
         feature_name = str(feature.Name)
         session.close(title=get_com_member(model, "GetTitle"))

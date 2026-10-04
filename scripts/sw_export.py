@@ -15,6 +15,28 @@ except ImportError:
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 
+try:
+    from .sw_preference_guard import Preference, preference_guard
+except ImportError:
+    from sw_preference_guard import Preference, preference_guard
+
+#: ★ 导出 STL 的精细度偏好号（★ 沿用既有字面量 `78` —— ★ 名字**未核实**，故见 `export_to_stl` 的 docstring）
+SW_STL_QUALITY_PREF = 78
+
+
+def _report_preference_guard(rep, where: str, result=None):
+    """★ 把 `preference_guard` 的交代**说出来**（★ 不吞掉"没还原成功"这件事）。
+
+    ★ 判据（★ 事实 517：绝不把失败写成成功）：`ok` 为假 ⇒ **必定打印**；
+    ★★ 而返回体若是 `dict`，就再挂一份结构化报告（★ 不改变返回值本身的形状与真值）。
+    """
+    data = rep.as_dict()
+    if not data["ok"]:
+        print("⚠ %s：用户偏好守卫没完全成功 ⇒ %r" % (where, data))
+    if isinstance(result, dict):
+        result.setdefault("preference_guard", data)
+    return data
+
 SUPPORTED_BATCH_FORMATS = {".step", ".stp", ".stl", ".igs", ".iges", ".x_t", ".pdf", ".dxf", ".dwg"}
 
 
@@ -36,12 +58,26 @@ def export_to_stl(model, output_path, quality="fine"):
 
     参数:
         quality: "coarse" | "fine" | "custom"
+
+    ★★ 2026-10-04（接手轮）**不再把用户的 STL 质量设置留在原地**（★ 交付纪律 · 事实 525）：
+      原文逐字是 `model.SetUserPreferenceIntegerValue(78, …)` —— ★ 那是**全局用户偏好**，
+      **改完永不还原** ⇒ 别人装一次我们的工具，他的 STL 导出精细度就被永久改掉。
+      ⇒ ★ 现在走 `sw_preference_guard`：**读旧值 → 设 → 用完在 `finally` 里还原** ✓
+    ⚠ ★ **偏好号 78 的官方名字未核实**：仓内注释写的是 `swSTLQuality`，而
+      ★ 两套官方源（`C:\swapi\enums\swUserPreferenceIntegerValue_e.md` 的 Value 列是**描述**、
+      `_raw/enum_values_pref.txt`）在本机都**查不到 `swSTLQuality` 与数值的对应**
+      ⇒ ★ 按铁律 5 **不改号、也不声称名字**：沿用既有的 `78`（★ 行为与改动前**完全一致**，
+      只是**用完还回去**）✓
     """
-    # 设置 STL 质量
     quality_map = {"coarse": 1, "fine": 0}
-    if quality in quality_map:
-        model.SetUserPreferenceIntegerValue(78, quality_map[quality])  # swSTLQuality
-    return _export_generic(model, output_path)
+    if quality not in quality_map:
+        return _export_generic(model, output_path)
+    with preference_guard(model, [Preference(
+            "integer", SW_STL_QUALITY_PREF, quality_map[quality],
+            why="导出 STL 的精细度（沿用既有偏好号 78，名字未核实）")]) as rep:
+        result = _export_generic(model, output_path)
+    _report_preference_guard(rep, "export_to_stl", result)
+    return result
 
 
 def export_to_iges(model, output_path):

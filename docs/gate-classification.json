@@ -210,6 +210,12 @@
       "runner": "_run_property_form_members_gate",
       "kind": "hard",
       "reason": "**硬门禁**：别把**官方属性**当方法叫（`get_X`/`set_X`）。★ 2026-10-04（接手轮 · 事实 520）实例：`drawing_workflow.py` 里 `get_com_member(model, \"GetModelViewManager\")` —— 而官方 `IModelDoc2` 上**只有属性** `ModelViewManager`（`kind: property`）⇒ `getattr` **抛 AttributeError** ⇒ **那 4 个剖视函数全都取不到 manager**，而它一度被记成「本机后端限制」。★ 与既有三道「名字」门禁**分工不同**：`check_member_names` 只扫 `scripts/*.py`（★ 而它落在 `subskills/`）·`check_interface_member_ownership` 管「属于哪个接口」·`check_unreachable_members` 只认一份手工 deny 名单 —— ★ **三道都漏这一类**。★ 判据要**两个官方源同时成立**（反射里那个 `get_X` 没有裸名 **且** 官方 md 里 `get_X` **没有页**）—— ★ 只用反射会**误伤几百处**（`GetBodies2` / `GetCurrentSheet` 都是**官方方法、各有自己的页**）。★ 它**自己有负例自证**：`tests/test_property_form_members_gate.py`（**4 passed**，★ 正例 = **修复前**的原文 `git show d15723d~1:…/drawing_workflow.py` ⇒ 必须命中；★ 4 条负例：修好版 + 三个官方方法 + 「像但合法」的形态 ⇒ 不许命中）。⚠ **覆盖边界**：只查走 `getattr`/`get_com_member` 等**字符串实参**的调用；★ 变量接力的成员名（`_safe_member(doc, name, …)`）**本道看不到**。"
+    },
+    {
+      "gate": "check_user_preference_writes.py",
+      "runner": "_run_user_preference_writes_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：写 SolidWorks **全局用户偏好**的每一处都必须可还原（★ 事实 525）。★★ 起因（业主问「别人装上是不是也要改他的 SolidWorks？」）：★ 核查结论是**本体零改动**（注册表写入 0 处 · 不写安装目录 · 不打补丁 · 不注入，全走官方 COM API）；★ 而全仓**曾有 8 处 `SetUserPreference*` 直接改用户的全局用户偏好，且多数不还原** ——默认模板路径 ×3 · 新建提示 · STL 导出质量 · STL-VRML 导入 ×6 · 原点与三轴显示 ×2⇒ ★ 装一次就把别人的设置永久改掉。★★ 判据三条：① 落在 `with preference_guard(...)` 里（首选，★ 那条路有 10 条负例证明）；② 所在函数带**非空理由**的 `preference-guard:` 标记（★ 用于「设/还原」分居两函数的情形，如 `ensure_default_templates` 与 `restore_default_templates`）；③ 进 `docs/preference-write-exemptions.json`（★ 每条必须带 reason + evidence，照 `check_unreachable_members` 的既有模式）。★ 负例自证：`tests/test_user_preference_writes_gate.py`（★ 正例取自 `git show` 的**修复前原文**；★ 并含「只有标记、没有理由 ⇒ 必须仍被抓」那一条）。⚠ **边界**：它保证「走过守卫 / 写过理由」，**不证明「还原真的生效」** —— ★ 后者由 `scripts/sw_preference_guard.py` 的 10 条负例在做。"
     }
   ]
 }

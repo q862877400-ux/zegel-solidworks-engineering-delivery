@@ -850,22 +850,73 @@ def find_template(sw, doc_type="part"):
 
 def ensure_default_templates(sw):
     """
-    @brief 配置默认模板并关闭新建文件模板选择提示。
+    @brief 配置默认模板并关闭新建文件模板选择提示 —— ★★ **并把旧值记下来，供调用方还原**。
     @param sw SolidWorks 应用对象。
-    @return 字典，包含已确认的默认模板路径。
+    @return 字典：`{"templates": {...}, "restore": [...]}`。
+
+    ★★★ 2026-10-04（接手轮）**交付纪律修正**（★ 事实 525）：本函数改的是
+      **SolidWorks 全局用户偏好**（默认模板路径 ×3 + 新建提示 ×1）——
+      ★ 原文**改完永不还原** ⇒ 别人装一次我们的工具，他的设置就被永久改掉。
+      ⇒ ★ 现在它**额外回一个 `restore` 列表**（每条带 `kind` / `preference` / `old`），
+      ★ 调用方**必须**在 `finally` 里交给 `restore_default_templates` 还回去
+      （★ 本文件 `open_document` 的 `LoadFile4` 分支就是这么用的）✓
+      ⚠ ★ 本函数**自己不改回**：因为这几条偏好必须在 SolidWorks **内部创建文档**那一步
+        仍然生效（★ 提前还原 = 那一步会弹"选模板"对话框而阻塞自动化）✓
     """
     templates = {}
+    restore: list[dict] = []
+    # preference-guard: 本函数只"设"，★ 旧值全记进 `restore` 并由 restore_default_templates
+    #   在调用方的 `finally` 里还回去（★ 事实 525 —— 见 open_document 的 LoadFile4 分支）
     for doc_type, preference in DEFAULT_TEMPLATE_PREFS.items():
         template_path = find_template(sw, doc_type)
         templates[doc_type] = template_path
         current_path = str(sw.GetUserPreferenceStringValue(preference) or "")
+        restore.append({"kind": "string", "preference": preference, "old": current_path})
         if _expand_path(current_path) != _expand_path(template_path):
             sw.SetUserPreferenceStringValue(preference, template_path)
     try:
+        old_toggle = sw.GetUserPreferenceToggle(SW_ALWAYS_USE_DEFAULT_TEMPLATES)
+        restore.append({"kind": "toggle", "preference": SW_ALWAYS_USE_DEFAULT_TEMPLATES,
+                        "old": old_toggle})
         sw.SetUserPreferenceToggle(SW_ALWAYS_USE_DEFAULT_TEMPLATES, True)
     except Exception as exc:
         print(f"提示: 无法设置始终使用默认模板: {exc}")
-    return templates
+    return {"templates": templates, "restore": restore}
+
+
+def restore_default_templates(sw, template_info):
+    """★ 把 `ensure_default_templates` 改过的偏好**还回去**（★ 事实 525 · 交付纪律）。
+
+    ★ 判据：**旧值读不到的条目不写回**（★ 免得把"读不到"变成"写了个错的旧值"）；
+    ★ **写回后读一次校验**，逐条给 `match` —— ★ 不把"设了"当成"还原了" ✓
+    """
+    info = template_info or {}
+    restored, skipped, errors = [], [], []
+    # preference-guard: 本函数就是"还原那一步"（★ 写回 `ensure_default_templates` 记下的旧值 —— 事实 525）
+    for item in info.get("restore") or []:
+        kind, preference, old = item.get("kind"), item.get("preference"), item.get("old")
+        if old is None or (kind == "string" and old == ""):
+            skipped.append({"kind": kind, "preference": preference,
+                            "why": "★ 旧值读不到/为空 ⇒ 不写回（免得写错）"})
+            continue
+        try:
+            if kind == "string":
+                sw.SetUserPreferenceStringValue(preference, old)
+                back = str(sw.GetUserPreferenceStringValue(preference) or "")
+                match = _expand_path(back) == _expand_path(old)
+            else:
+                sw.SetUserPreferenceToggle(preference, bool(old))
+                back = sw.GetUserPreferenceToggle(preference)
+                match = bool(back) == bool(old)
+            restored.append({"kind": kind, "preference": preference, "old": old,
+                             "readback": back, "match": match})
+        except Exception as exc:                               # noqa: BLE001
+            errors.append({"kind": kind, "preference": preference,
+                           "error": f"{type(exc).__name__}: {str(exc)[:120]}"})
+    info["restored"], info["restore_skipped"], info["restore_errors"] = restored, skipped, errors
+    if errors:
+        print(f"⚠ 默认模板偏好的还原有失败项 ⇒ {errors}")
+    return info
 
 
 def new_document(sw, doc_type="part", template_path=None):
@@ -982,27 +1033,37 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
             print("提示: LoadFile4 导入外来 CAD 文件时不支持 read_only，已忽略该参数")
         if silent:
             print("提示: LoadFile4 导入外来 CAD 文件时不支持 OpenDoc6 silent 选项，已忽略该参数")
-        ensure_default_templates(sw)
-        import_data = sw.GetImportFileData(file_path)
-        if import_data is None:
-            message = f"获取导入数据失败: {file_path}"
-            if raise_on_error:
-                raise RuntimeError(message)
-            print(message)
-            return None
-        # 非 DXF/DWG、非 Pro/E 外来文件应传 "r"，表示导入为新的 SolidWorks 文档；
-        # 空字符串会在部分 SW2024 环境中弹出模板选择对话框并阻塞自动化。
+        #: ★★ 2026-10-04（接手轮）**这两条偏好用完立刻还回去**（★ 交付纪律 · 事实 525）：
+        #:   原文是 `ensure_default_templates(sw)` **直接写全局用户偏好且永不还原**
+        #:   ⇒ ★ 别人装一次我们的工具，他的**默认模板路径**与"新建提示"设置就被永久改掉 ✓
+        #:   ★ 而官方 `ISldWorks.NewDocument(TemplateName, …)` 的 `TemplateName` 逐字就是
+        #:     「Fully qualified path and name of the template」—— ★ 我们自己的 `new_document`
+        #:     也**已经直接传完整路径** ⇒ 这两条偏好**只在 SolidWorks 内部创建文档时才需要**
+        #:     （`LoadFile4` 导入外来 CAD 正是这种情形）⇒ ★ 故用 `try/finally` 只包住那一步 ✓
+        template_info = ensure_default_templates(sw)
         try:
-            model = sw.LoadFile4(file_path, "r", import_data, errors)
-        except TypeError:
-            # SW2026 的 makepy 强类型代理会对 LoadFile4 的 [out] long
-            # 再执行 int(VARIANT)，与 OpenDoc6 的已知问题相同。动态代理
-            # 可以正确保留 by-ref 错误码，同时继续复用已取得的导入选项。
-            ole_object = getattr(sw, "_oleobj_", None)
-            if ole_object is None:
-                raise
-            dynamic_sw = win32com_client.dynamic.DumbDispatch(ole_object, "SldWorks.Application")
-            model = dynamic_sw.LoadFile4(file_path, "r", import_data, errors)
+            import_data = sw.GetImportFileData(file_path)
+            if import_data is None:
+                message = f"获取导入数据失败: {file_path}"
+                if raise_on_error:
+                    raise RuntimeError(message)
+                print(message)
+                return None
+            # 非 DXF/DWG、非 Pro/E 外来文件应传 "r"，表示导入为新的 SolidWorks 文档；
+            # 空字符串会在部分 SW2024 环境中弹出模板选择对话框并阻塞自动化。
+            try:
+                model = sw.LoadFile4(file_path, "r", import_data, errors)
+            except TypeError:
+                # SW2026 的 makepy 强类型代理会对 LoadFile4 的 [out] long
+                # 再执行 int(VARIANT)，与 OpenDoc6 的已知问题相同。动态代理
+                # 可以正确保留 by-ref 错误码，同时继续复用已取得的导入选项。
+                ole_object = getattr(sw, "_oleobj_", None)
+                if ole_object is None:
+                    raise
+                dynamic_sw = win32com_client.dynamic.DumbDispatch(ole_object, "SldWorks.Application")
+                model = dynamic_sw.LoadFile4(file_path, "r", import_data, errors)
+        finally:
+            restore_default_templates(sw, template_info)
         warnings.value = 0
     else:
         doc_type = type_map.get(ext, 1)

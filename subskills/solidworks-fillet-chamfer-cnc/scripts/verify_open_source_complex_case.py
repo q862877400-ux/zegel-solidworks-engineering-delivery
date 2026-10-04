@@ -200,14 +200,35 @@ def apply_complex_width_width_chamfer(model, case: dict[str, Any]) -> dict[str, 
     }
 
 
-def hide_review_helpers(model) -> None:
-    """@brief 隐藏原点和参考三轴，保持复杂案例预览干净。"""
+def hide_review_helpers(model):
+    """@brief 隐藏原点和参考三轴，保持复杂案例预览干净。
+
+    ★★ 2026-10-04（接手轮）**返回旧值，好让出图之后还回去**（★ 交付纪律 · 事实 525）：
+      这两条是**全局用户偏好**、原文改完**永不还原** ⇒ 别人跑一次验证，他的显示设置就被永久改掉 ✓
+    """
+    # preference-guard: 旧值由本函数返回、并由 restore_review_helpers 在出图后的 finally 里还原
+    saved = []
     for preference in (SW_DISPLAY_ORIGINS, SW_DISPLAY_REFERENCE_TRIAD):
         try:
+            saved.append((preference, model.GetUserPreferenceToggle(preference)))
+        except Exception:                                      # noqa: BLE001
+            continue
+        try:
             model.SetUserPreferenceToggle(preference, False)
-        except Exception:
+        except Exception:                                      # noqa: BLE001
             continue
     model.ClearSelection2(True)
+    return saved
+
+
+def restore_review_helpers(model, saved) -> None:
+    """★ 把 `hide_review_helpers` 改过的显示开关**还回去**（★ 事实 525）。"""
+    # preference-guard: 本函数就是"还原那一步"（写回旧值 = 把用户的设置恢复原样）
+    for preference, old in saved or []:
+        try:
+            model.SetUserPreferenceToggle(preference, bool(old))
+        except Exception:                                      # noqa: BLE001
+            continue
 
 
 def run_solidworks_case(case: dict[str, Any], source: Path, output_dir: Path, version: int) -> dict[str, Any]:
@@ -230,13 +251,17 @@ def run_solidworks_case(case: dict[str, Any], source: Path, output_dir: Path, ve
             raise RuntimeError(f"原生另存失败: {part_path}")
         if not export_to_step(model, step_path):
             raise RuntimeError(f"STEP 往返导出失败: {step_path}")
-        hide_review_helpers(model)
-        review, review_path = run_review(
-            model,
-            output_dir,
-            basename="OpenSource_2020_Corner_Bracket",
-            expected_outputs=[str(part_path), str(step_path)],
-        )
+        _saved_helpers = hide_review_helpers(model)
+        try:
+            review, review_path = run_review(
+                model,
+                output_dir,
+                basename="OpenSource_2020_Corner_Bracket",
+                expected_outputs=[str(part_path), str(step_path)],
+            )
+        finally:
+            #: ★ 出图之后**立刻**把显示开关还回去（★ 连审查抛异常也还 —— 事实 525）
+            restore_review_helpers(model, _saved_helpers)
         if review["evaluation"]["status"] != "pass":
             raise RuntimeError(f"复杂件多视角审查未通过: {review['evaluation']}")
         session.close(model=model)

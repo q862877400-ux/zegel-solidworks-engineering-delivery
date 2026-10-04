@@ -1,0 +1,11 @@
+{
+  "_comment": "★ 写 SolidWorks 全局用户偏好的**豁免名单**（门禁 check_user_preference_writes.py 读它）。★ 每条必须带非空 reason + evidence（★ 照 check_unreachable_members 的既有模式；★ 缺一即判 BAD）。",
+  "_why": "★ 本仓的交付纪律：**别人的 SolidWorks 设置不该被我们留下痕迹**（事实 525）。★ 首选是 `with preference_guard(...)`；★★ 分居两个函数的「设 / 还原」要留 `preference-guard: <理由>` 标记；★ 只有两者都不适用时才进本名单。",
+  "exemptions": [
+    {
+      "file": "_sw_export_backup.py",
+      "reason": "★ 它是 `scripts/sw_export.py` 的**历史备份件**（逐字是旧版副本），★ 全仓**没有任何引用**（`grep _sw_export_backup` 在 *.py 里 0 命中）⇒ 不在运行时路径上。★ 不删（删文件是红线）、也不改（改一个冻结的备份只会让人以为它是活代码）。",
+      "evidence": "★ 引用核查：`grep -rn '_sw_export_backup' --include=*.py .` ⇒ 只有它自己；★ 运行路径核查：`mcp-server/server.py:88` 挂的是 `export.export_to_stl`（= `scripts/sw_export.py`，**已改为 guard 姿势**）✓"
+    }
+  ]
+}

@@ -863,6 +863,42 @@ def _run_property_form_members_gate() -> dict[str, object]:
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把「**别人装我们的工具，不该改他的 SolidWorks 设置**」接进发布前检查）
+# 文件:   `scripts/check_user_preference_writes.py`（本门禁的实现）
+#         `scripts/sw_preference_guard.py`（★ 唯一被认可的写入姿势：读旧值 → 设 → finally 还原）
+#         `docs/preference-write-exemptions.json`（★ 带 reason + evidence 的豁免名单）
+# 定位:   新增 `_run_user_preference_writes_gate`：**硬门禁**。
+#   ★★ **为什么接进来**（★ 2026-10-04 业主体检出的**交付**问题）：业主问
+#     「我们这个项目别人装上，是不是也要改他的 SolidWorks？」—— ★ 核查结论：
+#     ★ 本体零改动（注册表写入 0 处 / 不写安装目录 / 不打补丁 / 不注入，全走官方 COM API）；
+#     ★★ 而**有一处真落点**：全仓 **8 处 `SetUserPreference*`** 直接改用户的**全局用户偏好**
+#       （默认模板路径 ×3 · 新建提示 · STL 导出质量 · STL-VRML 导入 ×6 · 原点与三轴显示 ×2），
+#       ★ 且**多数不还原** ⇒ 装一次就把别人的设置永久改掉 ✓
+#   ★★★ **判据三条**（首选守卫、次选带理由标记、末选豁免名单）——
+#     见 `check_user_preference_writes.py` 的来源块；★ 门禁**边界**也写在那里：
+#     它保证"走过守卫 / 写过理由"，**不证明"还原真的生效"**（★ 那由 guard 的 10 条负例在做）✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_user_preference_writes_gate() -> dict[str, object]:
+    """@brief 跑用户偏好写入门禁（`scripts/check_user_preference_writes.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_user_preference_writes.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "reason": f"检查**无法启动**（超时/OSError）: {exc}"}
+    return {
+        "status": "pass" if proc.returncode == 0 else "fail",
+        "output": (proc.stdout or "").strip()[-1800:],
+    }
+
+
 def _run_official_md_claims_gate() -> dict[str, object]:
     """@brief 跑官方断言门禁（`scripts/check_official_md_claims.py`）。"""
     try:
@@ -1202,6 +1238,14 @@ def run_release_check() -> dict[str, object]:
             "属性形成员名门禁未通过（把官方属性写成 `get_X`/`set_X` 去调 ⇒ 反射里没有该名 ⇒ "
             "`getattr` 抛 AttributeError）：\n"
             + str(property_form.get("output", "")))
+    # ⚑ **用户偏好写入门禁**（硬门禁，2026-10-04 接进 · 事实 525）：
+    #   ★ 判「**别人装我们的工具会不会被改掉 SolidWorks 设置**」——
+    #   ★ 每一处 `SetUserPreference*` 必须可还原（守卫 / 带理由标记 / 豁免名单）。
+    pref_writes = _run_user_preference_writes_gate()
+    if pref_writes.get("status") == "fail":
+        raise AssertionError(
+            "用户偏好写入门禁未通过（有不可还原的全局偏好写入 ⇒ 会留在用户的 SolidWorks 里）：\n"
+            + str(pref_writes.get("output", "")))
     # ⚑ **工作区遮蔽门禁**（硬门禁）：工作区根若有与 `server.py` 依赖包同名的 `.py`/目录，
     #   以该工作区为 CWD 的 Python 进程就会 `import` 到**那个本地文件**而不是真包
     #   （实测：`D:\AI\SW\mcp.py` 遮蔽 `mcp` ⇒ `No module named 'mcp.server'`）。
@@ -1445,6 +1489,8 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-04（接手轮）★ **同一道元门禁第三次教同一课**：新门禁必须**进返回体**
         #:   —— ★ 否则「静默跳过」与「没跑」等价（`check_gate_wiring.py` 会拦）✓
         "property_form_members": property_form,
+        #: ★ 2026-10-04（接手轮）★ 交付纪律门禁（事实 525）—— ★ 两处都必须加（元门禁在守）
+        "user_preference_writes": pref_writes,
         #: ★ 2026-10-03（轮 594）★ 同一道元门禁，★ **第二次**教了同一课
         "verified_evidence": verified_ev,
         "backend_limited": backend_lim,
@@ -1538,6 +1584,8 @@ def run_release_check() -> dict[str, object]:
         "unreachable": unreachable,
         #: ★ 2026-10-04（接手轮）★ 新门禁的**第二处**（★ 两处必须同时加）✓
         "property_form_members": property_form,
+        #: ★ 2026-10-04（接手轮）★ 交付纪律门禁（事实 525）—— ★ 两处都必须加（元门禁在守）
+        "user_preference_writes": pref_writes,
         "verified_evidence": verified_ev,
         "interface_ownership": ownership,
         "missing": [],
