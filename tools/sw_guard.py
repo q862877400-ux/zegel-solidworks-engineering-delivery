@@ -32,6 +32,7 @@ from __future__ import annotations
 import argparse
 import ctypes
 import json
+import re
 import subprocess
 import sys
 import threading
@@ -187,6 +188,23 @@ def sw_family_window(hwnd: int) -> bool:
     return base.startswith(("sld", "sw")) and base.endswith(".exe")
 
 
+#: ★★★ 2026-10-04 **模板骨架框**的占位文本（★ 实测抓到的假阳性）——
+#:   ★ 现场：`SLDWORKS.exe` 有个**标题为空**的 `#32770`，子控件文本全是
+#:   `标题` / `描述` / `Button1` / `Button2` / `Hyperlink Text 1` / `Hyperlink Text 2` ✓
+#:   ★★ 那是 SolidWorks 的**消息框模板**（占位符尚未填内容）⇒ 我原来的三条判据
+#:   （`#32770` / 有 Button / 有可读文本）**全中** ⇒ 被当成 `needs_llm` 弹窗**刷屏** ✓
+#:   ⇒ ★ 判据：★ **文本子控件全是占位符** ⇒ 判为模板、**不当弹窗**（★ 但仍记一条 `debug` 事件，
+#:     免得"又变成静默失效" —— ★ 与事实 40 的老毛病保持距离）✓
+_TEMPLATE_TEXT = re.compile(r"^(标题|描述|Title|Description|Button\d+|Hyperlink Text \d+)$")
+
+
+def _looks_like_template(controls: list[dict]) -> bool:
+    """★ 这些子控件文本是不是**纯占位符**（★ 那说明它是个**模板**、不是真弹窗）。"""
+    texts = [str(c.get("text", "")).strip() for c in controls
+             if c.get("class") in ("Static", "Edit") and str(c.get("text", "")).strip()]
+    return bool(texts) and all(_TEMPLATE_TEXT.match(t) for t in texts)
+
+
 def classify_dialog(d: dict) -> dict:
     """★ **弹窗安全分级** —— 决定"能不能自动点、点哪个"，★ 还是**必须交给 LLM**。
 
@@ -335,6 +353,11 @@ def scan_family_windows(pid: int | None = None, *, known: set | None = None) -> 
         _u.EnumChildWindows(h, _PROC(_ck), 0)
         is_dialog = (c == "#32770") or bool(kids_buttons) or (kids_text > 0)
         if not is_dialog:
+            return True
+        #: ★★ 2026-10-04 **模板骨架框**排除（★ 见 `_looks_like_template`）——
+        #:   ★ 否则那个"标题/描述/Button1/Hyperlink Text 1"的模板会**每次扫描都报一次**
+        #:   ⇒ ★ 把真弹窗**淹掉**（★ 而"淹掉"在效果上等于"没检测到"）✓
+        if _looks_like_template(controls):
             return True
         key = (int(h), c, t)
         if key in seen:

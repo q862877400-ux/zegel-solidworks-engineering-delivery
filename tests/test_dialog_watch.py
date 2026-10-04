@@ -25,6 +25,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
     if _p not in sys.path:
@@ -32,6 +34,25 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
 
 import sw_guard                                            # noqa: E402
 import sw_dialog_watch as watch                            # noqa: E402
+
+
+# ── ⓪ 测试**绝不许往生产日志里写** ──────────────────────────────────────
+
+def _isolate_outputs(monkeypatch, tmp_path):
+    """★★★ 把监控的落点**全部改到 tmp** —— ★ 否则测试会往 `output/dialog-watch/events.jsonl`
+    写**伪造事件**（★ 实测发生过：日志里出现了 `hwnd=4242 · verdict={"why":"★ 测试"}`）⇒
+    ★★ 而那条日志是**给 LLM/人读的证据** ⇒ **假证据比没有证据更坏**（事实 517 同族）✓
+    """
+    monkeypatch.setattr(watch, "OUT_DIR", tmp_path)
+    monkeypatch.setattr(watch, "EVENTS", tmp_path / "events.jsonl")
+    monkeypatch.setattr(watch, "STATUS", tmp_path / "status.json")
+    monkeypatch.setattr(watch, "PIDFILE", tmp_path / "watcher.pid")
+
+
+@pytest.fixture(autouse=True)
+def _no_production_writes(tmp_path, monkeypatch):
+    _isolate_outputs(monkeypatch, tmp_path)
+    yield
 
 
 # ── ① 处置纪律：只有 auto 才点 ────────────────────────────────────────────
@@ -102,17 +123,25 @@ def _has_bare_pid_filter(src: str) -> bool:
     return bool(REFUTED.search(src))
 
 
+#: ★★ **钉一个历史版本**当"修复前"的样本 —— ★ **不要用 `HEAD`**：
+#:   ★ 我第一次写的就是 `HEAD`，★ 而**提交之后 HEAD 就变成修复后的了** ⇒
+#:   ★ 那条负例**当场红**（★ 它是对的：判据在"修复后"的源码上本来就该报"找不到"）✓
+#:   ⇒ ★ 教训：**"修复前"必须钉成不可移动的版本号**，★ 否则测试会随提交**自己失效** ✓
+PRE_FIX_REV = "99f894f"          #: ★ 弹窗修复（`de7648a7`）之前的那一版
+
+
 def test_the_refuted_pid_filter_is_detectable_in_the_pre_fix_source():
-    """★★★ **负例自证**（★ 事实 62 的手法）：★ 拿 **HEAD（修复前）** 的 `sw_guard.py`
+    """★★★ **负例自证**（★ 事实 62 的手法）：★ 拿**钉住的历史版本**的 `sw_guard.py`
     跑这条判据 ⇒ **必须报**；★ 工作副本 ⇒ **必须不报** ✓
 
     ★ 为什么这条重要：★ 那个过滤器的后果是**整个弹窗机制静默失效**
       （★ 实测：`scan_family_windows(49384)` 对 `star.exe` 的框回 **0**）——
       ★★ 而它**看起来完全合理**（"只看我们那个进程的窗口"），★ 极易被后人再写回来 ✓
     """
-    head = subprocess.run(["git", "-C", str(ROOT), "show", "HEAD:tools/sw_guard.py"],
+    head = subprocess.run(["git", "-C", str(ROOT), "show", "%s:tools/sw_guard.py" % PRE_FIX_REV],
                           capture_output=True, text=True, encoding="utf-8", errors="replace")
-    assert head.returncode == 0 and head.stdout, "★ 取不到 HEAD 版本 ⇒ 这条自证不成立"
+    if head.returncode != 0 or not head.stdout:
+        pytest.skip("★ 取不到 %s 的源码（浅克隆等）⇒ 这条自证不成立，跳过而不是假装通过" % PRE_FIX_REV)
     assert _has_bare_pid_filter(head.stdout), "★ 判据在**修复前**的源码上没报 ⇒ 它抓不到那个 bug"
     now = (ROOT / "tools" / "sw_guard.py").read_text(encoding="utf-8")
     assert not _has_bare_pid_filter(now), "★ 修复后的源码里**又出现**了裸 pid 过滤"
@@ -144,3 +173,22 @@ def test_watcher_status_readback_shape():
     st = watch.status()
     for k in ("watcher_pidfile", "watcher_alive", "events_file", "events_lines"):
         assert k in st, "★ 状态里少了 %s" % k
+
+
+# ── ④ 模板骨架框：不许把真弹窗淹掉 ────────────────────────────────────────
+
+def test_template_skeleton_dialog_is_not_treated_as_a_dialog():
+    """★★★ 实测假阳性：★ `SLDWORKS.exe` 有个**标题为空**的 `#32770`，子控件全是
+    `标题` / `描述` / `Button1` / `Hyperlink Text 1` —— ★★ 那是**消息框模板**（占位符）✓
+    ★ 我原来的三条判据（`#32770` / 有 Button / 有可读文本）**全中** ⇒ 每次扫描都报一次
+      ⇒ ★ 把真弹窗**淹掉**（★ 而"淹掉"效果上等于"没检测到"）✓
+    """
+    assert sw_guard._looks_like_template(
+        [{"class": "Static", "text": "标题"}, {"class": "Static", "text": "描述"},
+         {"class": "Static", "text": "Button1"}, {"class": "Static", "text": "Hyperlink Text 1"}])
+    #: ★ 真弹窗的文本**不许**被判成模板
+    assert not sw_guard._looks_like_template(
+        [{"class": "Edit", "text": "未定义载荷或规定的位移"},
+         {"class": "Static", "text": "请参阅知识库文章 QA00000299039"}])
+    #: ★ 空窗口（无文本）也不算模板命中（★ 由别的判据去筛）
+    assert not sw_guard._looks_like_template([])
