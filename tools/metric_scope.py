@@ -205,6 +205,32 @@ SCOPES: tuple = (
         ),
     ),
     MetricScope(
+        key="alias_gain",
+        question="给工具追加别名后，用该别名当查询去检索，这个工具的排名提升多少",
+        unit="工具",
+        denominator="★ 机械筛后的 **52** 个工具（源自 C5 手核的 24 行「换名已有」→ 79 对 → 归并到 52 个工具）",
+        normalization="同一 tokenizer、同一 433 工具面；★ 别名只在**内存里**追加（不碰 ToolSpec）",
+        counts_as_hit="★ 排名数字（现状 rank → 加别名 rank）；「提升」= rank1 < rank0",
+        not_counted=(
+            "★★ **它不证明用户真的会这么说** —— 查询词就是被追加的那个别名本身，"
+            "**结构上近似同义反复**（★ 与 `name_reverse_lookup` 同族缺陷）",
+            "★ **不构成**任何「中文用户会怎么说」的证据（别名全是英文词）",
+            "★ 变差的一律不采纳（本批 0 个变差）",
+            "★ 无变化的（7 个）**不采纳** —— 别名挣不到它的字节",
+        ),
+        ordering="按 (-gain, tool_name) 排序 —— ★ 同分用名字码点升序钉死",
+        corpus="别名取自 `c5-gap-handcheck.json`（另一个对话的手核，只读复用）里 `op` 与 `keys` —— "
+               "★ 那些词来自**四家外部开源项目各自的工具名**，不是本仓编的",
+        known_limits=(
+            "★ 缓解证据仅到「四个独立团队都这么命名 ⇒ 是该领域自然用词的弱到中等证据」",
+            "★ 本批未做中文别名（无真实中文语料）",
+        ),
+        not_comparable_with=(
+            "★★ `bm25_topk` / `model_pick_correct` 等**任务口径**的召回或正确率 —— 本条是**工具口径**的机制验证",
+            "★ `name_reverse_lookup` —— 同族（都是拿被测对象自己的词去查它），**不得叠加引用当两个证据**",
+        ),
+    ),
+    MetricScope(
         key="zero_han_surface",
         question="有多少个工具的**模型可见文本**完全不含汉字（中文查询对它词元重叠恒为 0）",
         unit="工具",

@@ -5242,3 +5242,53 @@ C2 的 90.8% 数字旁**没带「仅 273/433 适用」** ✓
 `tools/build_t0_judge_inputs.py` + `tools/tally_t0_judges.py` ·
 `output/t0-judge/judge-out-{0,1,2}.json`（三路原始产出）·
 `tests/test_metric_scope.py`（11 用例 · 含 4 负例）· `specs/206-c1c6-harvest/spec.md` 的 SC-5 ✓
+---
+
+| 519 | **★★★★★ 别名（alias）这条路：★ 增益实测**永远分不开对错**，只有语义闸能；★ C5 的「换名已有」经闸后从 24/27 缩到 **10/52**** —— 2026-10-04（接手轮 T1，规格 `specs/206-c1c6-harvest/`）。
+
+**做了什么**：用另一个对话的 C5 手核数据（`c5-gap-handcheck.json` 里判「换名已有」的 24 行）
+造「别名 → 工具」对，依次过三道：
+```
+① 机械筛：op 或其 key 必须【作为词】出现在目标工具的 name/title 里
+   ⇒ 97 对 → 79 对（★ 丢掉 18 对「子串疑云」，如 bbox → toolbox_list_standards，只因 toolbox 含 box）
+② 增益实测：查询 = 该工具的 op+keys（★ 对方词表），把别名追加进该工具 doc 后看排名
+   ⇒ ★ 45/52 **提升**、0 变差（最大的 sketch_add_3point_arc **56 → 1**）
+③ ★★ 语义闸：3 路独立 DeepSeek 裁判逐条判「别名与工具是不是同一件事」
+   ⇒ ★★★ **same 10 · related 21 · wrong 21**
+```
+
+★★★ **头号发现（方法论级，可复用）**：
+```
+★★ 「增益实测」**永远分不开对与错** —— 因为【查询词就是被追加的那个别名本身】，
+   所以一个**语义上错误**的别名同样会让排名提升（例：costing_list_bodies 的别名
+   `list`/`operation`/`operations` **也**提升）✓✗
+⇒ ★★ **检索增益不能用来验证别名**（它与 `name_reverse_lookup` 同族：拿被测对象自己的词查它自己）
+⇒ ★★★ **只有语义闸（独立裁判 / 人工）能分开** —— 这是本条的普适教训 ✓
+```
+
+**★★ 副产物：C5 那个结论缩水了多少**：
+| 阶段 | 数 |
+|---|---|
+| C5 手核判「换名已有」 | **24** 行 |
+| 展开 + 机械筛后 | 79 对 / **52** 工具 |
+| 增益实测「提升」 | 45 / 52 |
+| ★★ **语义闸判 `same`** | ★ **10** / 52 ⇒ ★ **精度约 19%** |
+**⇒ ★★ 误报率 `wrong 21/52 = 40.4%`，远超我自定的 D-1 阈值（≤5%）**
+⇒ 处置：**只把 10 条当候选队列接进 doc（记 `conditional_pass`）**，21 条 `related` **留待复核**、
+21 条 `wrong` **弃用**（★ 附裁判点名的泛词：`sketch`/`hide`/`show`/`list`/`body`/`drawing`）✓
+
+**★ 采纳的 10 条（示例）**：`assembly_list_components`（别名 `list`/`batch`/`operation`，15→1）·
+`drawing_insert_datum_tag`（`datum`/`gdt`/`gtol`/`tolerance`，4→1）·
+`entities_on_body`（`edge`/`edges`/`vertex`/`vertices`，2→1）·
+`part_bounding_box`（`bbox`/`bounding`/`box`，2→1）·
+`drawing_create_revision_table`（`revision`/`pdm`/`vault`，2→1）·
+`collect_appearance_evidence`（`appearance`/`background`/`scene`，2→1）等 ✓
+
+★ **本批的限度（如实）**：每条**只被 1 路裁判判过**（3 路各判 1/3）⇒ 未做多数票 ⇒ 记 `conditional_pass`；
+★★ **别名全是英文词** ⇒ **不构成任何「中文用户会怎么说」的证据**；
+★ 别名来源仅到「四家外部项目各自的工具名」⇒ 是自然用词的**弱到中等**证据 ✓
+
+★ **依据**：`tools/t1_filter_alias_candidates.py` · `t1_measure_alias_gain.py` ·
+`t1_build_alias_table.py` · `t1_tally_alias_gate.py` · `docs/tool-aliases.md`（生成物）·
+`output/t1-alias-{candidates,gain,final}.json` · `output/t1-judge/alias-out-{0,1,2}.json` ·
+`tools/metric_scope.py` 的 `alias_gain` 口径（★ 含「不算什么」：不证明用户会这么说）✓
