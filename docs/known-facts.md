@@ -5922,3 +5922,50 @@ Component2 → IComponent2 · CommandGroup → ICommandGroup · …
 
 ★ **依据**：`tools/t4_mark_audit.py` · `docs/recon-206/mark-audit.md` · `c4-merged.json`（只读）✓
 ★ **本批的下限**：★ 5 处 `unknown` **未继续查**（★ 要读全函数或真机）⇒ ★ 如实留作下一步 ✓
+
+---
+
+| 535 | **★★★★ T4-1 机械判读 `unit_diff`：12 个成员 ⇒ 我们真调用的只 4 个 ⇒ ★ 逐条读下来 **无缺陷**（并当场验了一条"像缺陷"的）** —— 2026-10-04（接手轮 T4-1，规格 `specs/206-c1c6-harvest/`）。
+
+**做法**：`unit_diff` 的 12 个成员 ⇒ 找真调用点（`ast` 判）⇒ 判调用点前后 **15 行**内
+**有没有单位换算**（度↔弧度 / 毫米↔米 / 毫米↔英寸）✓
+
+**★ 结果（逐级收窄）**：
+```
+★ 12 个成员 ⇒ ★ **我们真调用的只 4 个**（6 个调用点）
+   FeatureCircularPattern4(2) · FeatureLinearPattern4(2) · InsertSewRefSurface(1) · SetSystemValue3(1)
+★★ 8 个一次都没调（`ConeParams` / `FieldOfViewAngle` / `GetEnvironment` / `GetMergeDistance` /
+   `GetRowHeight` / `IsTolerant` / `MaxValueForGapRange` / `SetupSheet6`）⇒ 无直接影响 ✓
+★ 6 个调用点的机械判定:
+   ① `InsertSewRefSurface` → `scripts/sw_surface_features.py:263` ⇒ ★ 窗口内有换算（毫米→米）
+   ② 其余 5 处 ⇒ ★★ 窗口内**没有**换算
+```
+
+**★★★ 而那 5 处「没有换算」里有一条看着像缺陷 —— 我当场读了代码定案**：
+```
+★ `FeatureCircularPattern4` → `scripts/sw_part.py:1441`
+   ★ 其 Remarks 逐字: 「total angle **in radians** if EqualSpacing」
+   ⇒ ★ 若我们传度 ⇒ 真缺陷。**读代码后**:
+       L1435:  `angle_rad: 总角度（**弧度**）`   ← ★ 参数名与 docstring 都写明弧度
+       L1442:  直接传 `angle_rad`、**不做转换**  ← ★ 因为**它本来就是弧度** ✓
+   ⇒ ★★★ **我们跟的是 Remarks，不是示例** ⇒ 这条 unit_diff 对我们【**不成立**】✓
+★ 附带发现: L1449 的来源块写着「2026-10-01（轮 132）**只做了一件事**：把长度单位声明
+   从「米」校正为「**毫米**」」⇒ ★ 这个函数的单位**早已被审计并校正过** ✓
+```
+
+**★★ 结论：`unit_diff` 对我们的调用点 ⇒ 无缺陷（★ 这是**负结果**，与事实 534 的 `mark_diff` 同）**：
+```
+★ 12 → 4（真调用）→ 6 个调用点 → **0 个确认缺陷** ✓
+★★ 定则：机械判读给的 `unknown` / `没有换算` **只是提示** ——
+   ★ **必须读那一行代码才能定案**（★ 本例读完全反转了初判：看着像缺陷，实际是对的）✓
+   ★ 这与事实 528 同族：**机械口径定不了结论，只能收窄范围** ✓
+```
+
+**★ 交付物**：`docs/recon-206/unit-audit.md`（138 行 · 逐成员 + 逐调用点 + 口径 + 「不算什么」）
+★ **本表的「不算什么」**（已写进文件）：① **不等于**「我们单位用错了」——
+★「有没有换算」与「换算对不对」是**两件事**；② **窗口内没有换算 ≠ 错**（★ 可能本来就按官方单位传）；
+③ 窗口 15 行是启发式（换算写在调用方时会误判）；④ 只覆盖真调用过的 ✓
+
+★ **依据**：`tools/t4_unit_audit.py` · `docs/recon-206/unit-audit.md` ·
+`scripts/sw_part.py:1435-1452`（★ 定案所读的那段）· `c4-merged.json`（只读）✓
+★ **至此 T4-1 的两类致命冲突都判完**：`mark_diff`（事实 534）与 `unit_diff`（本条）⇒ **均无确认缺陷** ✓
