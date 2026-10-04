@@ -498,10 +498,29 @@ def _export_generic(model, output_path):
     #:     `SaveAs2.md` ⇒「**Obsolete. Superseded by `SaveAs3`**」· ★ `SaveAs3.md` **无标记** ✓
     #:   ★★ 修法：★ 与 `export_to_pdf` 同形 —— ★ **7 参 `SaveAs3`**，★ 而本条是**通用导出**
     #:     ⇒ **第 4 参（`ExportData`）仍给空 Dispatch** ✓
+    #: ★★★★★ 2026-10-04（接手轮 · 真机实测）**补上**漏掉的那一参** —— ★★★★ 这是一处
+    #:   **真·缺陷**（★ 用户问"项目能不能用"时当场实测撞到的）：**STEP / STL / IGES / Parasolid
+    #:   导出全部失败**，报 `com_error: (-2147352571, '类型不匹配。', None, **5**)` ✓
+    #:   ★ **根因（★ 四格对照实测，不是推断）**：官方 `SaveAs3.md` 的 `**Signature**:` 逐字是 **7 参** ⇒
+    #:     `(Name, Version, Options, ExportData, **AdvancedSaveAsOptions**, out Errors, out Warnings)`；
+    #:     ★★ 而这里原来**只传 6 个** ⇒ `AdvancedSaveAsOptions` **整段缺席** ⇒
+    #:     ★★★ `errors` 落到了**位置 5** ⇒ ★ 报错里那个「**位置 5**」正是它 ✓
+    #:   ★★★ **实测证据**（`probe_export_saveas3_arity.py` · `sw_guard` · 零弹窗 ·
+    #:     `output/export-saveas3-arity-evidence.json`）：
+    #:     | ★ 写法 | ★ 结果 |
+    #:     |---|---|
+    #:     | ★ 现状 **6 参** | ★★ **`类型不匹配`（位置 5）· 无文件** ✓✗ |
+    #:     | ★★ **补空 Dispatch（7 参）** | ★★★ **`ok=True` · `errors=0` · STEP 16044 字节** ✓ |
+    #:     | ★ 位置 5 传 `None` | ★★ **`类型不匹配`（位置 5）** —— ★ 与**事实 12** 同族：
+    #:       ★「空」必须是**空 Dispatch**，**不是** `None` ✓ |
+    #:   ★★ 即：★ **同一文件里那个"能用"的 `export_to_image`（传 7 个）就是正解** ——
+    #:     ★★★ 这处缺陷的形态是「**照它抄时漏抄了一整参**」 ✓
     success = get_com_member(
         get_com_member(model, "Extension"), "SaveAs3",
         output_path, 0, 1,
-        create_empty_dispatch_variant(), errors, warnings
+        create_empty_dispatch_variant(),              #: ★ ExportData（★ 空 Dispatch，不是 None）
+        create_empty_dispatch_variant(),              #: ★★ AdvancedSaveAsOptions（★ 原来漏了这一参 ⇒ 位置 5 报错）
+        errors, warnings
     )
 
     ext = os.path.splitext(output_path)[1].upper()

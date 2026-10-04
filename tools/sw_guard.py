@@ -41,6 +41,21 @@ from ctypes import wintypes as wt
 from datetime import datetime
 from pathlib import Path
 
+# ── ★★★ 2026-10-04（接手轮 · 真机实测撞出来的）**stdout 必须 reconfigure** ────────────
+# ★ 症状：本工具**干完了活**，却在**打印结果时自己崩** ——
+#   `UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2'`（`⇒`）✓✗
+# ★★ 根因：父进程是 pwsh ⇒ stdout 的编码 = 本机 **GBK**，而本工具打印的 JSON 里有 `⇒` / `★`
+#   ⇒ ★ 与**事实 58**（`subprocess` 不给 `encoding=` 就在中文 Windows 上炸）**同族** ✓
+# ★★★ 为什么这条值得修（★ 不是美观问题）：★ 崩在 `print` 上会让**调用方拿到非零退出码**，
+#   而那一轮的**真结果已经在盘上了**（证据 JSON 已写）⇒ ★★ **"活干完了却报失败"** ——
+#   这正是本仓反复点名的**假信号**（★ 与事实 40「失败看起来像正常值」是一对反向的坑）✓
+# ⇒ ★ 处置：与全仓 40+ 个脚本同一条定则 —— **入口处 reconfigure 成 UTF-8** ✓
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:                                                      # noqa: BLE001
+        pass
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 #: ★ 弹窗取证落盘目录（★ 供 LLM 事后读；★ 也供 `--report` 打印）
 OUT_DIR = Path(r"D:\AI\SW\output\dialog-events")
