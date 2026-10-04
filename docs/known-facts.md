@@ -5475,3 +5475,37 @@ scripts/sw_sketch_status.py · tools/probe_activesketch_successor.py
 
 ★ **依据**：`scripts/check_official_source_defects.py` · `tests/test_official_source_defects_gate.py` ·
 `specs/203-bunny-sideline-batches/recon/b2-defects.json`（只读）· `docs/recon/official-source-defects-2.md` §1.1 ✓
+
+---
+
+| 524 | **★★★★ 「官方源自身的错」在本仓有两张表，★ 实测证明**它们不是冗余** —— 定归属：广度层管"有哪些错"、行动层管"抄录时怎么办"** —— 2026-10-04（接手轮 T3-6 合流，规格 `specs/206-c1c6-harvest/` 的 **SC-6「一个事实一个家」**）。
+
+**两层的实况**（★ 都是盘上事实）：
+```
+★ 广度层: `docs/recon/official-source-defects-2.md`（142 KB）+ `b2-defects.json`
+          ⇒ **964 条**已核验（spelling 554 · dead_link_candidate 212 · other 164 ·
+            undefined_item 24 · number_mismatch 10），穷举 13086 份官页
+★ 行动层: `docs/official-source-errors.md`（原 83 行）
+          ⇒ **3 条**，但每条带「逐字原文 / 错在哪 / **正确写法在哪** / **抄录时怎么办**」
+```
+
+**★★ 合流前的实测（★ 不拍脑袋定归属）**：把行动层那 3 条拿去 964 条里查 ——
+| 行动层的条目 | 在 964 里命中 | 结论 |
+|---|---|---|
+| ① `ISheet.GetProperties` 说 seven 却列 8 | **4** 条 | ★ 广度层已覆盖 |
+| ② `IDrawingDoc` 同族 8 个死链 | **27** 条 | ★ 已覆盖 |
+| ★★ ③ 一个枚举只有 **4** 个成员 | ★ **0 条** | ★★ **只有它没被覆盖 ⇒ 行动层独有** |
+
+**⇒ 处置（已落盘）**：在 `official-source-errors.md` 加 **§〇 归属段** ——
+① 声明两层各管什么、谁维护；② ★ **本文件不重复广度层内容**，只留"正确写法/抄录指引"；
+③ ★ 把上表（含 ③ 未被覆盖这件事）写进去；④ ★ 给主线的提示：`number_mismatch` 的 10 条
+**只覆盖"散文数字 ≠ 列表长度"**，**未覆盖"枚举页成员数"** ⇒ 是否纳入扫描范围是 `specs/203-*` 的决定（★ 我不替它改）✓
+
+**★ 由此的定则**：**"两张表 = 冗余"是个未验证的直觉** ——
+★ 先量「A 的条目在 B 里命中几条」，再决定是"合并"还是"定归属" ✓
+★ 本例量完发现 **3 条里 2 条重叠、1 条独有** ⇒ 正解是**定归属**而不是删一张 ✓
+★★ 这与事实 520 的教训②（局部外推到整体）**同族**：不能凭"看起来重复"就动手 ✓
+
+★ **依据**：`tools/t3_6_check_manual_vs_exhaustive.py`（★ 一次性脚本，跑完已删）·
+`docs/official-source-errors.md` §〇（83 → 110 行）· `b2-defects.json`（只读）·
+`specs/206-c1c6-harvest/spec.md` 的 **SC-6** ✓
