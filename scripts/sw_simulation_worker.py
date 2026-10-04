@@ -43,13 +43,16 @@ from typing import Any
 
 from sw_connect import connect_solidworks
 from sw_simulation import (
+    configure_mesh_settings,
     create_mesh_report,
     get_study_by_name,
+    mesh_settings_report,
     mesh_size_report,
     run_analysis_report,
 )
 
-__all__ = ["mesh_size_by_name", "create_mesh_by_name", "run_analysis_by_name"]
+__all__ = ["mesh_size_by_name", "create_mesh_by_name", "run_analysis_by_name",
+           "mesh_settings_by_name", "configure_mesh_settings_by_name"]
 
 
 def _study(name: str):
@@ -82,3 +85,18 @@ def create_mesh_by_name(study_name: str, units: int = 0, element_size: float = 0
 def run_analysis_by_name(study_name: str) -> dict[str, Any]:
     """按**研究名**跑求解并回**回读报告**（★ 入参可 JSON 化 ⇒ 可隔离执行）。"""
     return run_analysis_report(_study(study_name))
+
+
+def mesh_settings_by_name(study_name: str) -> dict[str, Any]:
+    """按**研究名**读那一组"决定网格规模"的设置（★ 只读 ⇒ 可隔离执行）。
+
+    ★★ 2026-10-04（接手轮）**为什么要它**：★ 我在主进程里直接读/写这些属性时，
+      ★ 有一次**把 SolidWorks 留在了一次长计算里**（主进程被杀、而 SW 自己还在烧 CPU）
+      ⇒ ★ 教训：★ **凡可能在 SW 侧触发计算的调用，都要能被子进程隔离层杀掉** ✓
+    """
+    return mesh_settings_report(_study(study_name))
+
+
+def configure_mesh_settings_by_name(study_name: str, **settings) -> dict[str, Any]:
+    """按**研究名**设那一组网格旋钮（★ 入参可 JSON 化 ⇒ 可隔离执行）。"""
+    return configure_mesh_settings(_study(study_name), **settings)

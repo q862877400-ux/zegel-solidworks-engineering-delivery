@@ -1194,6 +1194,10 @@ def run_analysis_report(study) -> dict[str, Any]:
 #     （★ 实测那个事故差 ~9 个数量级 ⇒ 系数再差 2 倍也照样拦得住）✓
 DOF_PER_GB = 2_000_000
 DOF_PER_ELEMENT = 4.2
+#: ★★ 每个节点的自由度数 = **3**（★ 三个平动）—— ★ 这是**第一性原理**，不是标定值。
+#:   ★ 而在本机的实测里它是**上界**：事实 293 的「30,456 自由度 / 11,301 节点」= **2.69**
+#:   （★ 因为约束把部分自由度消掉了）⇒ ★ 用 3 是**保守**（偏大）⇒ 对"内存上限"这种判据是**安全侧** ✓
+DOF_PER_NODE = 3
 
 # 【三】默认内存预算
 #   ★ 为什么要有它：★ 2026-10-04 真机事故里，求解进程实际吃到 **38.5 GB / 整机 63.8 GB**
@@ -1232,42 +1236,152 @@ def default_solve_memory_budget_gb() -> float:
         return DEFAULT_MEMORY_BUDGET_GB
 
 
-def solve_memory_preflight(element_count: int, *,
+def mesh_settings_report(study) -> dict[str, Any]:
+    """★ 读 `ICWMesh` 上**决定网格规模**的那一组设置（★ 只读，用来"改动前后"对照）。
+
+    ★ 成因（★ 官方手册给了机制，★ 这正是"同一单元尺寸两条链差别巨大"的解释）：
+      · `C:\\cworks_manual\\c_meshing_options.htm` 逐字：
+        「**Curvature-based mesher** — Creates **more elements in higher-curvature areas
+         automatically**, without the need for mesh control」；
+      · `c_Element_Size_in_Curvature_Based_Mesher.htm` 逐字：
+        「For a **curvature based** mesh, the element size is determined mathematically by the
+         **minimum number of elements that fit in a hypothetical circle**」·「For this option to
+         have effect, **h_min < h < h_max** where h_min and h_max are sizes from
+         **Minimum element size** and **Maximum element size**」
+      ⇒ ★★ **即：曲率自适应网格器会在高曲率处自动加密，而加密下界由 `MinElementSize` 定、
+        **不由全局 `element_size` 定** ⇒ 只给 `element_size` 是**管不住**网格规模的** ✓
+    """
+    mesh = get_com_member(study, "Mesh")
+    if mesh is None:
+        return {"ok": False, "reason": "study 上取不到 Mesh 对象"}
+    out: dict[str, Any] = {"ok": True}
+    for name in ("Quality", "MesherType", "ElementSize", "MinElementSize", "MaxElementSize",
+                 "ElementSizeFactorForEachLoop", "MinElementsInCircle", "NumberOfLoops",
+                 "AutomaticLooping2", "ElementCount", "NodeCount"):
+        try:
+            out[name] = get_com_member(mesh, name)
+        except Exception as exc:                               # noqa: BLE001
+            out[name] = "err: %s" % (str(exc)[:60],)
+    return out
+
+
+def configure_mesh_settings(study, *, quality: int | None = None,
+                            mesher_type: int | None = None,
+                            min_element_size: float | None = None,
+                            max_element_size: float | None = None,
+                            element_size_factor_for_each_loop: float | None = None,
+                            min_elements_in_circle: int | None = None,
+                            number_of_loops: int | None = None,
+                            automatic_looping: bool | None = None) -> dict[str, Any]:
+    """★ **建网格之前**设那一组"决定规模"的网格设置 —— ★ 每一项都**回读核对**。
+
+    ★★★ 为什么要有它（★ 2026-10-04 · 官方给的两条机制）：
+      · ★ 缺内存时，**先降网格规模**比"换机器"便宜得多；而**降规模的旋钮是这几个**，不是
+        `element_size` 一个（★ 曲率自适应会绕过它，见 `mesh_settings_report` 的引用）✓
+      · ★ 取值逐字来自本机官方枚举：
+        `swsMeshQuality_e` ⇒ **`Draft=0` / `High=1`**（★ 官方手册：draft「**does not have
+        midside nodes**」⇒ 线性四面体 ⇒ 节点数与 DOF 都大降）；
+        `swsMesherType_e` ⇒ **`Standard=0` / `Alternate=1` / `AlternateCB=2`** ✓
+      ⚠ ★ **本函数不预设默认值**：★ 只设调用方**显式给的**项 ——
+        ★ 免得"顺手把用户的网格偏好改成 draft"而没人知道（★ 与事实 525 的纪律同源）✓
+      ⚠ ★ **代价要说清**：官方手册逐字「Use a **draft quality mesh for a quick evaluation** and
+        in solid models where **bending effects are small**. Use a **high-quality mesh in most
+        cases**」⇒ ★★ **draft 是"快评"用，不是通用推荐** ——
+        ★ 所以本函数把它做成**显式选择**、并在返回值里带 `★_代价` ✓
+
+    :returns: ``{ok, changed, readback, failed, ★_代价}`` —— ★ `changed` 只记**真的变了**的项，
+        ★ 每项都带**回读值**（★ 不把"set 没报错"当成"设上了" —— 规则 6）。
+    """
+    mesh = get_com_member(study, "Mesh")
+    if mesh is None:
+        return {"ok": False, "reason": "study 上取不到 Mesh 对象", "changed": [], "readback": {}}
+    wanted = {
+        "Quality": quality, "MesherType": mesher_type,
+        "MinElementSize": min_element_size, "MaxElementSize": max_element_size,
+        "ElementSizeFactorForEachLoop": element_size_factor_for_each_loop,
+        "MinElementsInCircle": min_elements_in_circle, "NumberOfLoops": number_of_loops,
+        "AutomaticLooping2": automatic_looping,
+    }
+    changed, readback, failed, before = [], {}, [], {}
+    for name, value in wanted.items():
+        if value is None:
+            continue
+        try:
+            before[name] = get_com_member(mesh, name)
+        except Exception:                                      # noqa: BLE001
+            before[name] = None
+        try:
+            set_com_member(mesh, name, value)
+        except Exception as exc:                               # noqa: BLE001
+            failed.append({"name": name, "value": value,
+                           "error": "%s: %s" % (type(exc).__name__, str(exc)[:100])})
+            continue
+        try:
+            readback[name] = get_com_member(mesh, name)
+        except Exception as exc:                               # noqa: BLE001
+            readback[name] = "err: %s" % (str(exc)[:60],)
+        if readback.get(name) != before.get(name):
+            changed.append({"name": name, "before": before.get(name), "after": readback.get(name)})
+    return {
+        "ok": not failed,
+        "changed": changed, "readback": readback, "failed": failed, "before": before,
+        "★_代价": ("★ `Quality=Draft(0)` ⇒ 线性单元（无中间节点）：★ 官方逐字"
+                   "「for a quick evaluation … where bending effects are small」"
+                   "⇒ **弯曲为主的问题别用 draft**；★ 换机器或换求解器更合适 ✓"),
+        "★_依据": "官方 `c_meshing_options.htm` · `c_Element_Size_in_Curvature_Based_Mesher.htm` · "
+                  "枚举 `swsMeshQuality_e` / `swsMesherType_e`（本机官方类型库）",
+    }
+
+
+def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
                            memory_budget_gb: float | None = None) -> dict[str, Any]:
-    """★ **建完网格、跑求解之前**再判一次 —— ★★ 这一版用的是**真实单元数**。
+    """★ **建完网格、跑求解之前**再判一次 —— ★★ 有 `NodeCount` 时用**真节点数**算，最准。
 
     ★★★ 为什么要有**第二道**（第一道是 `check_mesh_size_sane`）：
-      · 第一道只能按**包围盒体积 ÷ 单元尺寸³** 估单元数 ⇒ ★ 对**非长方体**的零件会高估，
-        对**局部细化**的网格会低估 ⇒ ★ 它够用来拒"离谱"，**不够用来决定"跑不跑"**；
-      · ★★ 而**建完网格后 `ICWMesh.ElementCount` 是真实读数** ⇒ ★ 用它算内存**准得多** ✓
-    公式与系数同第一道（★ 出处见 `DOF_PER_GB` / `DOF_PER_ELEMENT` 上方注释：
-    官方「每 2,000,000 自由度 1 GB」+ 事实 293 实测的 4.2 自由度/单元）。
+      · 第一道只能按**包围盒体积 ÷ 单元尺寸³** 估单元数 ⇒ ★ 对**非长方体**会高估、
+        对**曲率自适应加密**会**严重低估** ⇒ ★ 它够用来拒"离谱"，**不够用来决定"跑不跑"**；
+      · ★★ 而建完网格后 `ICWMesh.ElementCount` / `ICWMesh.NodeCount` 都是**真实读数** ✓
+    ★★★ **自由度怎么算**（★ 两档，★ 优先用节点数 —— ★ 那是**第一性原理**）：
+      · 有 `node_count` ⇒ **DOF ≈ 3 × 节点数**（★ 每个节点 3 个平动自由度）；
+      · 否则回落到 **DOF ≈ 4.2 × 单元数**（★ 本仓实测标定：事实 293 的 30,456 / 7,250 = 4.20）。
+      ★ 两者在**同一台真机**上互相印证：30,456 自由度 / 11,301 节点 = **2.69** ⇒ ★ 3× 是它的上界 ✓
+    内存换算仍是官方那条：**每 2,000,000 自由度 1 GB RAM**（见 `DOF_PER_GB` 上方注释）。
 
     :param element_count: `ICWMesh.ElementCount` 的回读值。
+    :param node_count: `ICWMesh.NodeCount` 的回读值（★ 给了就用它算，更准）。
     :param memory_budget_gb: 内存上限（GB）；★ `None` ⇒ `default_solve_memory_budget_gb()`。
-    :returns: ``{ok, element_count, est_dof, est_ram_gb, memory_budget_gb, reason}``
+    :returns: ``{ok, element_count, node_count, est_dof, est_ram_gb, memory_budget_gb, reason}``
         ★ **`ok=False` ⇒ 不要跑求解**（★ 官方：内存不够会走 out-of-core，**极慢**）。
     """
-    out: dict[str, Any] = {"element_count": int(element_count or 0), "ok": True, "reason": "",
-                           "★": "跑求解前的第二道闸（★ 用**真实单元数**，比包围盒估计准）"}
     n = int(element_count or 0)
-    if n <= 0:
-        out.update({"ok": False, "reason": "element_count 不是正整数（%r）⇒ 网格没建成" % element_count})
+    nodes = int(node_count) if node_count else 0
+    out: dict[str, Any] = {"element_count": n, "node_count": nodes or None, "ok": True,
+                           "reason": "",
+                           "★": "跑求解前的第二道闸（★ 优先用**真节点数**；★ DOF≈3×节点数）"}
+    if nodes > 0:
+        est_dof = nodes * DOF_PER_NODE
+        basis = "3 × 节点数（★ 第一性原理：每节点 3 个平动自由度）"
+    elif n > 0:
+        est_dof = n * DOF_PER_ELEMENT
+        basis = "4.2 × 单元数（★ 事实 293 实测标定）"
+    else:
+        out.update({"ok": False,
+                    "reason": "element_count 与 node_count 都不是正整数（%r / %r）⇒ 网格没建成"
+                              % (element_count, node_count)})
         return out
-    est_dof = n * DOF_PER_ELEMENT
     est_ram_gb = est_dof / DOF_PER_GB
     budget = (float(memory_budget_gb) if memory_budget_gb is not None
               else default_solve_memory_budget_gb())
     out.update({"est_dof": est_dof, "est_ram_gb": est_ram_gb, "memory_budget_gb": budget,
-                "★_公式": "DOF≈4.2×单元数（事实 293）· RAM≈DOF/2,000,000 GB（官方 FFEPlus 规则）"})
+                "★_算式": basis + " · RAM ≈ DOF / 2,000,000 GB（★ 官方 FFEPlus 规则）"})
     if est_ram_gb > budget:
         out.update({
             "ok": False,
-            "reason": ("%d 个单元 ⇒ 估 %.3g 自由度 ⇒ 预估求解内存 **%.2f GB** > 预算 %.1f GB"
+            "reason": ("%s ⇒ 估 %.3g 自由度 ⇒ 预估求解内存 **%.2f GB** > 预算 %.1f GB"
                        "（★ 官方规则：每 2,000,000 自由度需 1 GB RAM）"
                        " ⇒ **别跑** —— 官方向导：内存不够会走 out-of-core、"
                        "「the solution progress can be extremely slow」"
-                       % (n, est_dof, est_ram_gb, budget)),
+                       % (basis, est_dof, est_ram_gb, budget)),
         })
     return out
 

@@ -4457,3 +4457,93 @@ Dassault HPC 专题 · Ansys release notes（GPU Acceleration）· Supermicro/An
 `docs/gate-classification.json`（33 条）✓
 ★ 测试：`tests/test_preference_guard.py`（10）· `tests/test_user_preference_writes_gate.py`（7）✓
 ★ 核查方法：AST 扫 `SetUserPreference*` / 注册表读写调用（`_FakeCom` 假对象与只读调用已逐处辨认）✓
+
+---
+
+## 526 · ★★★★★★ 网格爆内存的**机制找到了**（曲率自适应 + 无下界）；★ 而**隔离层也有一条没覆盖的边界**
+
+**发现时间**：2026-10-04（接手轮 · 业主要求「先从 2 下手，然后试试」）
+
+### 一 · ★★★★ 只读实测：`ICWMesh` 的**出厂默认**（★ 一个字节都没写）
+
+★ 证据：`output/mesh-settings-readonly-evidence.json`（★ 探针 `tools/probe_mesh_settings_readonly.py`，
+★ 23.7 s 跑完、全程只读、**每一步都落盘**）
+
+```
+Quality = 1                      ← High（10 节点二次单元）
+MesherType = 2                   ← ★★ AlternateCB = **曲率自适应**网格器
+ElementSize = 0.0                ← 未设（用默认）
+MinElementSize = 0.0             ← ★★★ **未设 ⇒ 加密没有下界**
+MaxElementSize = 0.0             ← 未设
+ElementSizeFactorForEachLoop = 0.8
+MinElementsInCircle = 8
+NumberOfLoops = 3
+AutomaticLooping2 = False
+ElementCount = 0 · NodeCount = 0
+```
+
+### 二 · ★★★★★★ 这就是"同一 `element_size`，一条链 7250 单元/1.4 s、另一条 40 GB"的机制
+
+★ 官方逐字（本机解包手册）：
+```
+c_meshing_options.htm ：「**Curvature-based mesher** — Creates **more elements in
+  higher-curvature areas automatically**, without the need for mesh control」·
+  「a **draft quality mesh does not have midside nodes**」
+c_Element_Size_in_Curvature_Based_Mesher.htm ：「For a **curvature based** mesh, the element
+  size is determined mathematically by the **minimum number of elements that fit in a
+  hypothetical circle**」·「For this option to have effect, **h_min < h < h_max** where
+  h_min and h_max are sizes from **Minimum element size** and **Maximum element size**」
+```
+⇒ ★★★ **即**：★ 默认网格器是**曲率自适应**，它**在高曲率处自动加密**；
+★★ 而**加密的下界 `MinElementSize` 出厂是 `0`（=没有下界）**
+⇒ ★★ **全局 `element_size` 管不住网格规模** —— ★ **零件上的圆角/边可以触发无界细化** ✓
+★ 这正是事实 521 那次 38.5 GB 的**机制**（★ 而不是"element_size 喂错了"）✓
+
+### 三 · ★★★ 单位口径**仍未定**（★ 铁律 5：不猜，故只用两个枚举旋钮）
+
+★ `ElementSize` / `MinElementSize` / `MaxElementSize` 出厂**都是 `0.0`** ⇒ **读不出单位** ✓
+★★ 而我第六版**按毫米**写了 `MinElementSize = 2.465` ⇒ ★ **探针在 SW 里卡 13 分钟**、
+  SW 主线程 `Not Responding`（★ 那次是**非隔离**调用 ⇒ SW 被留在计算里、主进程杀掉它也不停）✓
+⇒ ★ 故第七版只设**两个枚举**旋钮（`Int32`，**无单位风险**）：
+  · `Quality = 0`（`swsMeshQualityDraft`，官方枚举 `swsMeshQuality_e`）
+  · `MesherType = 0`（`swsMesherTypeStandard`，官方枚举 `swsMesherType_e`）
+★ 并在返回值里**带上 draft 的代价**（官方逐字「for a **quick evaluation** … where **bending
+  effects are small**」⇒ ★ 弯曲为主的问题**不该**靠 draft 蒙）✓
+
+### 四 · ★★★★★ 隔离层的新边界（★ 这条比网格本身更重要）
+
+★ 现场：一次**只读**的隔离调用（`mesh_settings_by_name`，`timeout=180`）**卡了 5 分钟以上**：
+```
+子进程 48004：CPU **0.10 s** · `Responding` · 40 MB  ⇒ ★ **卡在跨进程 COM 调用里**（不是在算）
+主进程 51012：CPU **0.25 s** · 无进展 · 证据停在 **12:13:19**
+SolidWorks ：**持续吃 ~1 核**（那个 `进度` 状态窗还活着）
+★★ 全程**零弹窗**（`sw_guard --report` 在 12:13 之后**无事件**）· ★ **内存没涨**（42 GB 空闲）
+   ⇒ ★★ **与"内存爆"是两种完全不同的病** ✓
+★★★ 我手动 `taskkill /PID 48004 /F /T` ⇒ **一秒就杀掉了** ⇒ ★ **说明 `subprocess.run(timeout=)`
+   那条路没有生效**（子进程在我手动杀之前一直活着）✓
+★★★★ 而**杀掉子进程之后，父进程仍然没有恢复**（再等 5 s 还是 0.25 s CPU、证据不动）
+   ⇒ ★ **父进程不是卡在等这个子进程** ⇒ ★ 它卡在**自己的一次 COM 调用**里（不可中断）✓
+```
+⇒ ★★★★ **结论（可复用）**：`sw_isolate` 那句「**结构上保证挂起不外溢**」**有一个没覆盖的情形** ——
+  ★ **当 SolidWorks 自己正忙时**，隔离子进程会卡在跨进程 COM 里，
+  ★★ 而**`subprocess.run` 的超时不一定杀得掉它**、**杀掉了也**不保证调用方恢复** ✓
+★ **正解方向（下一步，尚未实现）**：
+  ① `run_isolated` 改**手工 `Popen`** + 超时后 **`taskkill /T /F` 杀整棵进程树**
+     （★ 实测 `taskkill /F /T` **一秒生效**，而 `Popen.kill()` 那条路没生效）✓
+  ② ★ **父进程侧不做无界等待**（★ 超时后**无论如何**都要返回并把"没恢复"如实报出来）✓
+  ③ ★ **加"SW 忙就别进去"的前置判据**：认那个 `进度`（`OperationStatusWindow`）状态窗
+     与 `swPM_GhostWindow` 的「Not Responding」鬼窗 —— ★ **看得到就别开始新调用** ✓
+
+### 五 · ★ 依据
+★ 只读证据：`output/mesh-settings-readonly-evidence.json`（★ 出厂默认 11 项）·
+`output/analysis-run-long-timeout-evidence.json`（★ 卡住前已落盘的 4 步：`doc` / `setup` /
+`mesh_size`（三个单位口径）/ `mesh_size_sane`）✓
+★ 代码：`scripts/sw_simulation.py`（`mesh_settings_report` · `configure_mesh_settings` ·
+`solve_memory_preflight` 的**节点数档** `DOF_PER_NODE=3`）·
+`scripts/sw_simulation_worker.py`（`mesh_settings_by_name` · `configure_mesh_settings_by_name`）·
+`tools/probe_mesh_settings_readonly.py` · `tools/probe_analysis_run_long_timeout.py`（★ 第八版：
+★ 设置读写**全走隔离层** + **每步落盘**）✓
+★ 测试：`tests/test_mesh_size_memory_gate.py`（**16 passed** —— ★ 含 `NodeCount` 档、
+★ `configure_mesh_settings` 的"只碰给过的项"、★ 设失败可见、★ draft 代价随返回值给出）✓
+★ 官方：`c_meshing_options.htm` · `c_Element_Size_in_Curvature_Based_Mesher.htm` ·
+`C:\cworks_vb6\CosmosWorksLib~CWMesh~{Quality,MesherType,MinElementSize,NodeCount}.html` ✓

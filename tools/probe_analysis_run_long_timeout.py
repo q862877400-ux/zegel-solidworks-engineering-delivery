@@ -82,6 +82,12 @@ def main() -> int:
                           "；③ 真正 timed_out=True 的那次网格是对的（观察窗：建立刚度矩阵 33 分钟）",
                 "steps": {}}
     doc = None
+
+    def flush() -> None:
+        """★ **每一步都落盘**（★ 第八版新增）—— ★ 上一版挂住时 `ev` 还在内存里、**读数全丢** ✓"""
+        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str),
+                       encoding="utf-8")
+
     try:
         import sw_connect
         from scripts import sw_part, sw_simulation as sim
@@ -174,15 +180,74 @@ def main() -> int:
         ev["steps"]["mesh_size_sane"] = sane
         #: ★ 把**内存预算与预估**一并落进证据（★ 事后能看出"当时放行时预估是多少"）
         ev["★_内存预算_GB"] = sane.get("memory_budget_gb")
+        flush()
         ev["★_预估求解内存_GB"] = sane.get("est_ram_gb")
+        flush()
         ev["★_预估单元数"] = sane.get("est_elements")
+        flush()
         if not chosen:
             raise RuntimeError("三个单位口径的读数都不合理 ⇒ 停下报事实（不猜单位）")
         element_size, tolerance = chosen[1], chosen[2]
         print("  [1b] ★ 选中 %s ⇒ element_size=%.4f · tolerance=%.4f（max_dim=%s）"
               % (chosen[0], element_size, tolerance, sane.get("max_dim")))
 
-        #: ③ 建网格（★ 粗网格 ⇒ 单元少 ⇒ 刚度矩阵小 ⇒ 算得快）
+        #: ③ ★★★ **建网格之前先按官方那几条"降规模"的旋钮设一遍**（★ 第七版 · 本轮新增）——
+        #:   ★★ 真因（★ 官方手册给了机制）：★ **曲率自适应网格器会在高曲率处自动加密**，
+        #:     而加密下界由 **`MinElementSize`** 定、**不由全局 `element_size` 定**
+        #:     ⇒ ★ 这解释了"同一名义单元尺寸，一条链 7250 单元/1.4 s、另一条 40 GB" ✓
+        #:   ★ 逐条取值与依据：
+        #:     · `Quality = 0`（`swsMeshQualityDraft`）—— 官方：draft「**does not have midside
+        #:       nodes**」⇒ 线性四面体 ⇒ 节点/DOF 大降；★ **代价**：官方说 draft 是给"quick
+        #:       evaluation"用的 ⇒ 弯曲为主的问题该换机器/换求解器，**不该**靠 draft 蒙；
+        #:     · `MesherType = 0`（`swsMesherTypeStandard`）—— 避开曲率自适应自动加密；
+        #:     · `MinElementSize = element_size/2`、`MaxElementSize = element_size*2` —— 官方逐字：
+        #:       「For this option to have effect, **h_min < h < h_max**」⇒ 给上**上下界**才管得住；
+        #:     · `MinElementsInCircle = 4` —— 官方的曲率密度旋钮（"minimum number of elements
+        #:       that fit in a hypothetical circle"），★ 越小越省 ✓
+        #:   ⚠ ★ **不改** `NumberOfLoops` / `AutomaticLooping2` —— ★ 它们的语义**未查证**
+        #:     （铁律 5：查不到就别动）✓
+        #:   ★★ **第七版（实测后修正）—— 只设两个"枚举"旋钮，不碰带单位的 Double**：
+        #:     ★ 只读实测（`output/mesh-settings-readonly-evidence.json`）拿到的**出厂默认**是：
+        #:       `Quality=1`（High）· **`MesherType=2`（`AlternateCB` = 曲率自适应）** ·
+        #:       `ElementSize=0` · **`MinElementSize=0`** · `MaxElementSize=0` ·
+        #:       `ElementSizeFactorForEachLoop=0.8` · `MinElementsInCircle=8` ·
+        #:       `NumberOfLoops=3` · `AutomaticLooping2=False` ✓
+        #:     ★★★ **这就是"同一 `element_size` 两条链差别巨大"的机制**（★ 官方逐字）：
+        #:       `c_meshing_options.htm`「**Curvature-based mesher** — Creates **more elements in
+        #:       higher-curvature areas automatically**」+ `c_Element_Size_in_Curvature_Based_Mesher.htm`
+        #:       「the element size is determined … by the **minimum number of elements that fit in
+        #:       a hypothetical circle**」·「For this option to have effect, **h_min < h < h_max**」
+        #:       ⇒ ★★ **加密下界 `MinElementSize` 出厂是 0（=没有下界）** ⇒ ★ 曲率自适应**可以无限
+        #:       细化**、而**全局 `element_size` 管不住它** ✓
+        #:     ⚠ ★ **为什么不设 `MinElementSize`**（★ 第六版在这里栽过）：★ 它的**单位口径未定**
+        #:       （只读实测回的是 `0.0` ⇒ 定不了）；★ 我上一轮按毫米写了 `2.465` ⇒
+        #:       ★★ **探针在 SW 里卡了 13 分钟、SW 主线程 `Not Responding`** ✓
+        #:       ⇒ ★ 按铁律 5：**不猜单位** —— ★ 先只用两个**枚举**旋钮（`Int32`，**无单位风险**）：
+        #:         · `Quality = 0`（`swsMeshQualityDraft`）⇒ 线性四面体（无中间节点）⇒ DOF 大降；
+        #:         · `MesherType = 0`（`swsMesherTypeStandard`）⇒ **避开曲率自适应自动加密** ✓
+        #: ★★ **读写都走隔离层**（★ 第六版的教训）：非隔离调用一旦把 SW 带进长计算，
+        #:   ★ 主进程被杀之后 **SW 自己还在烧 CPU**（实测：`Not Responding` + 每个 6 秒吃 1 核）
+        #:   ⇒ ★ **凡可能在 SW 侧触发计算的调用，一律经 `run_isolated`**（可杀）✓
+        ms_r = iso("mesh_settings_by_name", [STUDY], {}, 180)
+        before_settings = ms_r.get("result") if isinstance(ms_r.get("result"), dict) else {}
+        ev["steps"]["mesh_settings_before"] = {**ms_r, "result": before_settings}
+        ev["steps"]["mesh_settings_before"] = before_settings
+        print("  [1c] 改动前的网格设置：Quality=%s MesherType=%s MinElementSize=%s "
+              "MaxElementSize=%s MinElementsInCircle=%s ElementSize=%s"
+              % (before_settings.get("Quality"), before_settings.get("MesherType"),
+                 before_settings.get("MinElementSize"), before_settings.get("MaxElementSize"),
+                 before_settings.get("MinElementsInCircle"), before_settings.get("ElementSize")))
+        cfg_r = iso("configure_mesh_settings_by_name", [STUDY],
+                    {"quality": 0, "mesher_type": 0}, 300)
+        cfg = cfg_r.get("result") if isinstance(cfg_r.get("result"), dict) else {}
+        #: ⚠ ★ **不设** `min_element_size` / `max_element_size` / `min_elements_in_circle` ——
+        #:   ★ 前两个是**带单位的 Double**、口径未定（见上）；★ 后一个虽是无量纲 Int32，
+        #:   但它属于**曲率自适应那条路**，而本版已把 `MesherType` 换成 Standard ⇒ 先不动它 ✓
+        ev["steps"]["mesh_settings_configure"] = {**cfg_r, "result": cfg}
+        print("  [1d] 设网格旋钮: ok=%s changed=%s"
+              % (cfg.get("ok"), [c["name"] for c in cfg.get("changed") or []]))
+
+        #: ④ 建网格（★ 粗网格 ⇒ 单元少 ⇒ 刚度矩阵小 ⇒ 算得快）
         mesh_r = iso("create_mesh_by_name", [STUDY],
                      {"units": 0, "element_size": element_size, "tolerance": tolerance},
                      T_MESH)
@@ -193,11 +258,20 @@ def main() -> int:
         print("  [2] 建网格: ok=%s timed_out=%s wall=%ss element_count=%s"
               % (mesh_r.get("ok"), mesh_r.get("timed_out"), mesh_r.get("wall_seconds"),
                  mesh_res.get("element_count")))
+        #: ★ 建完再读一次 —— ★★ `NodeCount` 是**真实节点数**（比单元数更适合算 DOF）
+        #:   ★ 同样走隔离层（★ 与上面同理）
+        as_r = iso("mesh_settings_by_name", [STUDY], {}, 180)
+        after_settings = as_r.get("result") if isinstance(as_r.get("result"), dict) else {}
+        ev["steps"]["mesh_settings_after"] = {**as_r, "result": after_settings}
+        print("      ★ 真实读数：ElementCount=%s **NodeCount=%s** Quality=%s"
+              % (after_settings.get("ElementCount"), after_settings.get("NodeCount"),
+                 after_settings.get("Quality")))
 
-        #: ④ ★★★ **跑求解前的第二道闸**（★ 本轮新增的第二层保险）——
-        #:   ★ `check_mesh_size_sane` 只能按**包围盒**估单元数；★ 这里用**真实单元数** `ElementCount`
+        #: ⑤ ★★★ **跑求解前的第二道闸**（★ 优先用**真节点数** ⇒ DOF≈3×节点数）——
+        #:   ★ `check_mesh_size_sane` 只能按**包围盒**估；★ 这里用**真实读数**
         #:   ⇒ ★★ **内存超预算就绝不进求解**（★ 官方：内存不够会走 out-of-core、极慢）
-        pre = sim.solve_memory_preflight(int(mesh_res.get("element_count") or 0))
+        pre = sim.solve_memory_preflight(int(mesh_res.get("element_count") or 0),
+                                        node_count=int(after_settings.get("NodeCount") or 0) or None)
         ev["steps"]["solve_memory_preflight"] = pre
         print("  [2b] 求解前内存闸: ok=%s est_dof=%s est_ram_gb=%s budget=%s"
               % (pre.get("ok"), pre.get("est_dof"), pre.get("est_ram_gb"),
@@ -205,7 +279,7 @@ def main() -> int:
         if not pre.get("ok"):
             raise RuntimeError("求解前内存闸不放行 ⇒ 停下（★ 不拿内存去赌）：%s" % pre.get("reason"))
 
-        #: ⑤ ★★ 跑求解 —— 本探针的核心（★ T_RUN=1800）✓
+        #: ⑥ ★★ 跑求解 —— 本探针的核心（★ T_RUN=1800）✓
         run_r = iso("run_analysis_by_name", [STUDY], {}, T_RUN)
         run_res = run_r.get("result") if isinstance(run_r.get("result"), dict) else {}
         ev["steps"]["run_analysis"] = {k: run_r.get(k) for k in
@@ -262,16 +336,23 @@ def main() -> int:
         if final_res.get("plot_count") not in (None, 0):
             plot_count = final_res.get("plot_count")
         ev["★_timed_out"] = run_r.get("timed_out")
+        flush()
         ev["★_element_count"] = mesh_res.get("element_count")
+        flush()
         ev["★_results_present"] = bool(run_res.get("results_present")
                                        or final_res.get("results_present")
                                        or (poll and poll[-1].get("results_present")))
+        flush()
         ev["★_plot_count"] = plot_count
+        flush()
         ev["★_ok"] = bool(ev["★_results_present"] and int(plot_count or 0) > 0)
+        flush()
         ev["★_判据"] = ("★ ① element_count（网格读数）② results_present/plot_count/plot_names"
                         "（**解算结果读数**）③ timed_out ④ wall_seconds")
+        flush()
     except Exception as exc:                                          # noqa: BLE001
         ev["★_异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        flush()
     finally:
         try:
             import sw_connect

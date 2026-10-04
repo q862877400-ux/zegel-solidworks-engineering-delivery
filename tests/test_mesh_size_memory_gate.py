@@ -131,6 +131,101 @@ def test_preflight_budget_is_honoured() -> None:
     assert tight["ok"] is False and tight["memory_budget_gb"] == 1e-9
 
 
+def test_preflight_prefers_the_real_node_count() -> None:
+    """★★ 给了 `node_count` 就用**第一性原理**那档（3×节点数），★ 且它是**上界**。
+
+    ★ 真机标定：事实 293 的「30,456 自由度 / 11,301 节点」= 2.69 ⇒ ★ 3× 是保守侧 ✓
+    """
+    r = sim.solve_memory_preflight(7_250, node_count=11_301)
+    assert r["est_dof"] == 11_301 * sim.DOF_PER_NODE, r
+    assert "节点数" in r["★_算式"], r["★_算式"]
+    assert r["est_dof"] > 30_456, "★ 3× 必须是实测值 30,456 的**上界**"
+    #: ★ 只有单元数时回落到标定档
+    r2 = sim.solve_memory_preflight(7_250)
+    assert "单元数" in r2["★_算式"], r2["★_算式"]
+
+
+def test_preflight_with_node_count_can_still_refuse() -> None:
+    """★ 节点数**很大**时第二道闸照样要拦（★ 用节点数不是放松判据）。"""
+    r = sim.solve_memory_preflight(1, node_count=50_000_000)
+    assert r["ok"] is False and r["est_ram_gb"] > r["memory_budget_gb"], r
+
+
+# ── 网格侧旋钮（★ 官方给的那几条"降规模"的路）────────────────────────────
+
+class FakeMesh:
+    """★ 假 CWMesh：行为要**像 COM 属性**（★ `set_com_member` 走的是 `obj.<名> = 值`）。
+
+    ⚠★ 第一版把它写成"方法 `_set`" ⇒ `set_com_member` 的 `setattr` **绕过了它**
+      ⇒ 于是"设不上"那条负例**永远不触发**（★ 由负例当场抓出）✓
+    """
+
+    def __init__(self):
+        object.__setattr__(self, "values", {
+            "Quality": 1, "MesherType": 2, "ElementSize": 4.93,
+            "MinElementSize": 0.5, "MaxElementSize": 20.0,
+            "ElementSizeFactorForEachLoop": 1.0, "MinElementsInCircle": 12,
+            "NumberOfLoops": 3, "AutomaticLooping2": True,
+            "ElementCount": 7_250, "NodeCount": 11_301})
+        object.__setattr__(self, "fail_for", set())
+
+    def __getattr__(self, name):
+        values = object.__getattribute__(self, "values")
+        if name in values:
+            return values[name]
+        raise AttributeError(name)
+
+    def __setattr__(self, name, value):
+        if name in object.__getattribute__(self, "fail_for"):
+            raise RuntimeError("设不上 %s" % name)
+        object.__getattribute__(self, "values")[name] = value
+
+
+class FakeStudy:
+    def __init__(self, mesh=None):
+        self.Mesh = mesh if mesh is not None else FakeMesh()
+
+
+def test_mesh_settings_report_reads_the_scale_knobs() -> None:
+    """★ 只读报告：规模相关的旋钮都要读到（★ 那是"改动前后"对照的前提）。"""
+    rep = sim.mesh_settings_report(FakeStudy())
+    assert rep["ok"] is True
+    for k in ("Quality", "MesherType", "MinElementSize", "MaxElementSize",
+              "MinElementsInCircle", "NumberOfLoops", "ElementCount", "NodeCount"):
+        assert k in rep, "★ 少了 %s" % k
+    assert rep["NodeCount"] == 11_301
+
+
+def test_configure_mesh_settings_reads_back_and_only_touches_what_it_is_given() -> None:
+    """★★ 两条契约：① 每项**回读核对**；② **没给的不碰**（★ 不顺手改用户的网格偏好）。"""
+    study = FakeStudy()
+    rep = sim.configure_mesh_settings(study, quality=0, min_element_size=2.0,
+                                      min_elements_in_circle=6)
+    assert rep["ok"] is True, rep
+    names = {c["name"] for c in rep["changed"]}
+    assert names == {"Quality", "MinElementSize", "MinElementsInCircle"}, names
+    assert study.Mesh.values["Quality"] == 0 and study.Mesh.values["MinElementSize"] == 2.0
+    #: ★ 没给的三项必须**原样不动**
+    assert study.Mesh.values["MesherType"] == 2 and study.Mesh.values["NumberOfLoops"] == 3
+    assert study.Mesh.values["MaxElementSize"] == 20.0
+
+
+def test_configure_mesh_settings_reports_set_failures() -> None:
+    """★★ 设不上 ⇒ `failed` 里可见（★ 不把"set 没报错"当成"设上了" —— 规则 6）。"""
+    study = FakeStudy()
+    study.Mesh.fail_for.add("Quality")
+    rep = sim.configure_mesh_settings(study, quality=0)
+    assert rep["ok"] is False and rep["failed"], rep
+    assert "Quality" not in {c["name"] for c in rep["changed"]}
+
+
+def test_configure_mesh_settings_says_what_draft_costs() -> None:
+    """★★★ `Quality=Draft` 的**代价必须随返回值一起给**（★ 官方逐字：draft 是"快评"用）。"""
+    rep = sim.configure_mesh_settings(FakeStudy(), quality=0)
+    assert "代价" in rep["★_代价"] or "Draft" in rep["★_代价"]
+    assert "quick evaluation" in rep["★_代价"], rep["★_代价"]
+
+
 # ── 直接运行 ──────────────────────────────────────────────────────────────
 
 def _main() -> int:
