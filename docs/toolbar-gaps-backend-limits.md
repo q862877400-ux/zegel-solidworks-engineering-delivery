@@ -377,6 +377,62 @@ ICreatePoint / ICreateVector（**带 I**）
 
 ---
 
+### 3.8 ★★★ 2026-10-04 · **该族的新实例：钣金角撑板 + 焊件三入口**（★ 而它**推翻了一条静态判据**）
+
+★ **来源**：SPEC `specs/202-user-coverage-gaps` 的 **T302**（★ 逐字：「**有 `AccessSelections` 的**
+先判指针族**再决定做不做**（事实 47/474）」）✓
+
+**项**：钣金 · **角撑板**；焊件 · **顶端盖 / 角撑板 / 裁剪延伸**。
+
+#### 一 · ★★★★★★ **而本条推翻了一个我原本在用的静态判据**
+
+★ 我在 `output/t400-t302-official-entries.md` 里，用**静态判据**把 12 个钣金/焊件族分了档：
+```
+★ 8 个有 IAccessSelections / IAccessSelections2  ⇒ 预判"指针族"
+★ 4 个没有（含 ISMGussetFeatureData）           ⇒ 我说"待真机判"（★ 隐含乐观）
+```
+★★ **而真机把那个隐含乐观推翻了**：
+```
+★ ISMGussetFeatureData 的成员表里**没有** IAccessSelections（★ 只有 AccessSelections +
+  ReleaseSelectionAccess）—— ★ 而 `CreateDefinition(swFmSMGusset=118)` 拿到对象后调
+  `AccessSelections(model, VARIANT(VT_DISPATCH,None))` ⇒
+  com_error: (-2147417851, '服务器出现意外情况。')
+  ★ 而 -2147417851 的补码 = **0x80010105** ⇒ 与事实 28/47/67 同一个错误码 ✓
+```
+⇒ ★★★ **⇒ 「有没有 `IAccessSelections`」是**线索**、★ 不是**判据**** ✓
+★★★ **⚠ 而那正是**事实 47**一贯的写法** —— ★ 它自己就记着**轮 122 的误判被轮 164 纠正** ✓
+
+#### 二 · ★★★★★ **焊件三入口：★ 全部「静默不成」**（★ 比 `0x80010105` 更难发现）
+
+★ 前置**已成立**（同一次真机里 `create_structural_member_from_sketch` **ok=True**，焊件结构构件真的建出来了）✓
+
+| ★ 入口 | ★ 传来的参数 | ★ 报错 | ★ 特征数 | ★ 实体数 |
+|---|---|---|---|---|
+| ★ `IFeatureManager.InsertEndCapFeature3` | ★ 按官方签名 **10 参** | ★★ **没报错** | ★ **21→21** | ★ **1→1** |
+| ★ `IFeatureManager.InsertGussetFeature3` | ★ 按官方签名 **20 参** | ★★ **没报错** | ★ **21→21** | ★ **1→1** |
+| ★ `IFeatureManager.InsertWeldmentTrimFeature2` | ★ 按官方签名 **5 参** | ★★ **没报错** | ★ **21→21** | ★ **1→1** |
+
+★★ **⇒ 三条都是「没报错而什么都没变」** ⇒ ★★★ **静默不成（silent no-op）** ✓
+★★★ **⇒ 与事实 417–419 那一族同型**（★ 剪裁曲面三条入口 / 加厚曲面 / 直纹曲面）✓
+★★★★ **⚠ 且比事实 486 那种"树涨了几何没变"更早一层** —— ★ **这里连树都没涨** ✓
+
+#### 三 · ⚠ **定性边界（★ 不许当"永远不行"）**
+
+★ 官方 Remarks 对这三条都要求**先选面/选体**：
+```
+EndCapFeature3        : Before calling this method, select one or more **end faces** of a structural member
+GussetFeature3        : you must call SelectByID2 to select **two faces that are the supporting legs**
+WeldmentTrimFeature2  : SelectByID2 的 marks：1 = Body to trim · 2 = Trimming boundaries
+```
+★★ **而本探针**没选**（★ 只验证"按签名调"这个形态）⇒
+★★★ **⇒ 本条的定性是**：「**按签名调、未选面**这个形态静默不成」——
+★ **选面之后的形态未测**（★ 铁律 5：★ **不许把"我没试"写成"到不了"**）✓
+
+**证据**：`tools/probe_t302_four_families_v2.py` · `output/t302-four-families-probe-v2.json`
+（★ 连带登记：`docs/backend-limited-items.json` 第 **14–17** 条）。
+
+---
+
 ## 四、结构系统（焊件）—— ✅ **成立**（★ 本节已在轮 485 更正）
 
 > ★★★ **2026-10-03（轮 485）更正** —— ★ 本节**原文**判它「不成立」，★ 而**理由是"本仓有 `sw_weldment.py` 与证据"**

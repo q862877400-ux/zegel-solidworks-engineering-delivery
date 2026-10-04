@@ -146,6 +146,52 @@
         141
       ],
       "note": "★ 真机实测（轮 141）：CreateSpline2 回 None ⇒ 草图段数 ×× 0××（重绘后仍 0）；旧版 CreateSpline（1 参）在迟到绑定里不存在。后继 CreateSpline3(Object,Object,Object,Boolean,Object&) 末参是 **BYREF Object&** ⇒ pywin32 迟到绑定到不了（事实 47/68）。同流程画直线段数 = 1 ⇒ 流程本身没问题。证据 \tools/probe_spline_creation.py / probe_spline_redraw.py。"
+    },
+    {
+      "toolbar": "钣金 · 角撑板",
+      "member": "ISMGussetFeatureData.AccessSelections",
+      "where": "0x80010105",
+      "section": "### 3.8",
+      "facts": [
+        47,
+        474
+      ],
+      "note": "★ 真机实测（2026-10-04 · SPEC `202-user-coverage-gaps` 的 T302）：`IFeatureManager.CreateDefinition(swFmSMGusset=118)` 拿到对象后调 `AccessSelections(model, VARIANT(VT_DISPATCH,None))` ⇒ 报 `com_error: (-2147417851, '服务器出现意外情况。')` —— ★ `-2147417851` 的补码就是 **`0x80010105`**（事实 28/47/67 同族）⇒ 指针族。★★ **⚠ 而本条推翻了「有 `IAccessSelections` 才是指针族」这个静态判据**：`ISMGussetFeatureData` 的成员表里**没有** `IAccessSelections`（★ 只有 `AccessSelections` + `ReleaseSelectionAccess`），★ 而真机照样报同一个错误码 ⇒ ★★ **「有没有 `IAccessSelections`」是线索、不是判据**。证据 `tools/probe_t302_four_families_v2.py` · `output/t302-four-families-probe-v2.json`。"
+    },
+    {
+      "toolbar": "焊件 · 顶端盖",
+      "member": "IFeatureManager.InsertEndCapFeature3",
+      "where": "静默不成（没报错而特征数与实体数都不变）",
+      "section": "### 3.8",
+      "facts": [
+        486,
+        417,
+        418,
+        419
+      ],
+      "note": "★ 真机实测（2026-10-04 · T302）：按官方签名传满 **10 参** ⇒ ★ **没报任何错**、★ 而 **特征数 21→21 · 实体数 1→1** ⇒ **静默不成**。★ 前置已成立（同一次真机里 `create_structural_member_from_sketch` **ok=True**）。⚠ 官方 Remarks 要求「调用前 select one or more end faces of a structural member」——★ 而**本探针没选面** ⇒ ★★ **所以本条的定性边界是「按签名调、未选面」这个形态静默不成**；★ **选面之后的形态未测**（★ 不许当「永远不行」）。证据同上。"
+    },
+    {
+      "toolbar": "焊件 · 角撑板",
+      "member": "IFeatureManager.InsertGussetFeature3",
+      "where": "静默不成（没报错而特征数与实体数都不变）",
+      "section": "### 3.8",
+      "facts": [
+        486,
+        417
+      ],
+      "note": "★ 真机实测（2026-10-04 · T302）：按官方签名传满 **20 参** ⇒ **没报错**、★ **特征数 21→21 · 实体数 1→1** ⇒ **静默不成**。★ 前置已成立。⚠ 官方 Remarks 要求「先用 `SelectByID2` select **two faces that are the supporting legs**」——★ 本探针**没选面** ⇒ ★★ **同上，定性边界是「未选面这个形态」**。★★ 另注：★ 焊件的 `IGussetFeatureData` 与钣金的 `ISMGussetFeatureData` 是**两个族**（事实 36），★ 本条指**焊件那族**。证据同上。"
+    },
+    {
+      "toolbar": "焊件 · 裁剪延伸",
+      "member": "IFeatureManager.InsertWeldmentTrimFeature2",
+      "where": "静默不成（没报错而特征数与实体数都不变）",
+      "section": "### 3.8",
+      "facts": [
+        486,
+        417
+      ],
+      "note": "★ 真机实测（2026-10-04 · T302）：按官方签名传满 **5 参**（`EndCond, Options, GapValue, BodiesToTrim, BodiesOrFaces`，★ 后两参传 `VARIANT(VT_DISPATCH,None)`）⇒ **没报错**、★ **特征数 21→21 · 实体数 1→1** ⇒ **静默不成**。★ 前置已成立。⚠ 官方 Remarks 要求「用 `SelectByID2` 按 marks 选：**1 = Body to trim · 2 = Trimming boundaries**」—— ★ 本探针**没选** ⇒ ★★ **定性边界同上**。证据同上。"
     }
   ]
 }
