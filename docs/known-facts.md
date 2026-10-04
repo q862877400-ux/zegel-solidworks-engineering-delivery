@@ -6009,3 +6009,42 @@ Component2 → IComponent2 · CommandGroup → ICommandGroup · …
 ★ **依据**：`tools/t4_2_more_specific_b.py`（单遍版）· `docs/recon-206/more-specific-audit.md` ·
 `c4-merged.json`（只读）✓
 ★ **本批的下限**：★ 那 258 个成员**未逐条判** —— 本批只做**收窄 + 排序 + 抽样建议**（20 条）⇒ ★ 如实留作下一步 ✓
+
+---
+
+| 537 | **★★★ T4-2 抽样表交付：258 个「与我们有关」的成员里取条目最多的 **20** 个，判读材料抽齐** —— 2026-10-04（接手轮 T4-2 第二步，规格 `specs/206-c1c6-harvest/`）。
+
+**★ 交付物**：`docs/recon-206/more-specific-sample20.md`（180 行）
+★ 每个成员给出：**条目数** · **我们的调用点**（`ast` 判）· **该成员的全部条目**（≤6 条，其余指向 JSON）·
+★ **判读模板**（留行待填）✓
+
+**★ 抽出的 20 个（按条目数降序）**：
+```
+CreateSketchSlot · CreateSpline · CreateSpline2 · CreateSpline3 · CylinderParams ·
+InsertMidSurface · InsertMirrorFeature2（各 4 条）
+ActivateDoc2 · AddComponent4 · AddDimension2 · AddVerticalDimension2 · AutoDimension2 ·
+Component · CreateEquationSpline2 · CreateLine2 · CreateMassProperty · CreateParabola ·
+CreateStructureSystemMemberData · Elliptical · FeatureFillet3（各 3 条）
+```
+
+**★★★ 两条口径（★ 必须与表一起读，否则会被误用）**：
+```
+① ★★ **不等于**「这 20 条是缺陷」—— 该字段语义是「**示例比 Remarks 更具体**」，
+   ★ 那是**中性的** ⇒ ★ 判读要问的是**「示例多给的信息是否改变调用形状」** ✓
+② ★★★ **抽样不随机**（★ 按条目数取头部）⇒ ★★ **不能**用它估计全量的缺陷率；
+   ★ 要估率得**随机抽**（★ 那是另一件事）——
+   ★ 即：本表给出的是【最值得先看的 20 个】，**不是**一个比例估计 ✓
+```
+
+**★ 判读要求（★ 沿用 T4-1 的经验）**：
+```
+★★ **必须读我们那一行代码才能定案** —— 事实 535 的教训：机械表说「没有换算」的那条，
+   读完全**反转**（我们本来就按官方单位传）⇒ ★ 机械表只给材料，不给结论 ✓
+```
+
+**★ 一条注意（★ 不混说）**：top-20 里的 `CreateLine2` —— ★ 本仓已知**它不存在**（★ 只有 `CreateLine`）⇒
+★★ 但那是「**名字是否存在**」的问题，与 `example_more_specific` 不是一回事 ⇒ ★ **本表不拿它当例证** ✓
+
+★ **依据**：`tools/t4_2_sample20.py` · `docs/recon-206/more-specific-sample20.md` ·
+事实 536（3806 / 2242 / 258 三个数）· `c4-merged.json`（只读）✓
+★ **本批的下限**：★ **20 条一条都没判** —— 本批只做**抽材料**；★ 判读仍未做 ✓
