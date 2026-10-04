@@ -1333,6 +1333,179 @@ def configure_mesh_settings(study, *, quality: int | None = None,
     }
 
 
+#: ★★★ **网格安全档**（★ 事实 526：这是"爆内存"的**根因处置**）——
+#:   ★ 官方逐字给的机制：★ 曲率自适应网格器「Creates **more elements in higher-curvature areas
+#:     automatically**」，而加密下界「**Minimum element size**」**出厂是 `0.0`**（=没有下界）
+#:     ⇒ ★★ **全局 `element_size` 管不住网格规模** ⇒ 圆角/边就能触发无界细化 ✓
+#:   ⇒ ★ 故安全档 = **两个 `Int32` 枚举**（★ 无单位风险，★ 见 `configure_mesh_settings` 的注）：
+#:     · `Quality = 0`（`swsMeshQualityDraft`）—— ★ 线性单元（无中间节点）⇒ 节点/DOF 大幅下降；
+#:     · `MesherType = 0`（`swsMesherTypeStandard`）—— ★ **关掉曲率自适应**（这条才是治本的那条）✓
+#:   ⚠ ★ **代价要一起给出去**（官方逐字：draft 是给「a **quick evaluation** … where **bending
+#:     effects are small**」用的）⇒ ★ 弯曲为主的问题**不该**靠它蒙 ✓
+MESH_SAFETY_QUALITY_DRAFT = 0
+MESH_SAFETY_MESHER_STANDARD = 0
+#: ★ 安全档会动的**全部**成员（★ 用来算"要不要还原" —— ★ 只碰这几个，别的一个不碰）
+MESH_SAFETY_KNOBS = ("Quality", "MesherType")
+
+
+def mesh_safety_apply(study, *, quality: int = MESH_SAFETY_QUALITY_DRAFT,
+                      mesher_type: int = MESH_SAFETY_MESHER_STANDARD) -> dict[str, Any]:
+    """★★ **建网格之前**把网格设置降到"安全档"，并回一个**可还原的凭据**。
+
+    ★★★ 为什么（★ 事实 526 · 官方给的两条机制）：★ 出厂默认是**曲率自适应 + 加密下界 0**
+      ⇒ ★ **网格规模不受全局 `element_size` 约束** ⇒ 实测见过"同一个 `element_size`，
+      一条链 7250 单元/1.4 s、另一条烧到 **38.5 GB**" ✓
+    ★★ 本函数与 `configure_mesh_settings` 的分工：★ 那个是**通用旋钮**（谁都能用）；
+      本函数是**安全档 + 还原凭据**（★ 给"我要跑一次别爆就行"的人）✓
+    ★ 判据：★ `before` 逐项记原值 ⇒ ★ 交给 `mesh_safety_restore` 就能**一字不差地还回去**
+      （★ 与事实 525 的偏好守卫**同一套纪律**：★ **改动可见 + 可还原**）✓
+
+    :returns: ``{ok, before, applied, changed, readback, failed, token, ★_代价}``
+        ★ `token` **必须**原样交给 `mesh_safety_restore`（★ 里面是改动前的原值）。
+    """
+    before = mesh_settings_report(study)
+    if not before.get("ok"):
+        return {"ok": False, "reason": before.get("reason") or "读不到 Mesh 对象",
+                "before": before, "applied": None, "changed": []}
+    knobs: dict[str, Any] = {}
+    if quality is not None:
+        knobs["quality"] = int(quality)
+    if mesher_type is not None:
+        knobs["mesher_type"] = int(mesher_type)
+    applied = configure_mesh_settings(study, **knobs)
+    token = {k: before.get(k) for k in MESH_SAFETY_KNOBS}
+    return {
+        "ok": bool(applied.get("ok")),
+        "before": {k: before.get(k) for k in MESH_SAFETY_KNOBS},
+        "applied": knobs,
+        "changed": applied.get("changed") or [],
+        "readback": applied.get("readback") or {},
+        "failed": applied.get("failed") or [],
+        "token": token,
+        "★_代价": applied.get("★_代价"),
+        "★_依据": applied.get("★_依据"),
+    }
+
+
+def mesh_safety_restore(study, token: dict[str, Any] | None) -> dict[str, Any]:
+    """★ 把 `mesh_safety_apply` 改过的网格设置**还回去**（★ 事实 526/525 的同一套纪律）。
+
+    ★ 判据：★ **原值是 `None`/读不到的项不写回**（★ 免得把"读不到"变成"写了个错的旧值"）；
+      ★ 写回后**逐项读回校验**并给 `match` ⇒ ★ 不把"设了"当成"还原了" ✓
+    """
+    if not token:
+        return {"ok": False, "reason": "没有 token ⇒ 不猜该还原成什么（★ 不写）", "restored": []}
+    knobs: dict[str, Any] = {}
+    mapping = {"Quality": "quality", "MesherType": "mesher_type"}
+    skipped: list[dict[str, Any]] = []
+    for name, arg in mapping.items():
+        old = token.get(name)
+        if old is None:
+            skipped.append({"name": name, "why": "★ 原值读不到 ⇒ 不写回（免得写错）"})
+            continue
+        knobs[arg] = int(old)
+    if not knobs:
+        return {"ok": False, "reason": "token 里所有原值都读不到 ⇒ 一个字都不写",
+                "restored": [], "skipped": skipped}
+    back = configure_mesh_settings(study, **knobs)
+    return {"ok": bool(back.get("ok")), "restored": back.get("changed") or [],
+            "readback": back.get("readback") or {}, "failed": back.get("failed") or [],
+            "skipped": skipped}
+
+
+def create_mesh_safely(study, *, model=None, units: int = 0, element_size: float = 0.0,
+                       tolerance: float = 0.0, memory_budget_gb: float | None = None,
+                       quality: int = MESH_SAFETY_QUALITY_DRAFT,
+                       mesher_type: int = MESH_SAFETY_MESHER_STANDARD,
+                       keep_profile: bool = False) -> dict[str, Any]:
+    """★★★★★ **建网格的唯一推荐入口** —— 一次调用把"别把机器算爆 / 别把会话卡死"整套做完。
+
+    ★★★ 它按顺序做**七件事**（★ 每一步都留读数，★ 任一步不成立就**停下并如实说为什么**）：
+      ① ★ **量预算前置闸**：`check_mesh_size_sane`（★ 单元尺寸 > 零件最大边 ⇒ 直接拒）；
+      ② ★ **网格安全档**：`mesh_safety_apply`（★ 关掉**曲率自适应** + 转 **Draft** ——
+         ★★ 这是"爆内存"的**根因处置**，事实 526：★ 曲率自适应会在高曲率处**无界加密**，
+         而加密下界出厂是 `0`）✓
+      ③ 建网格（`create_mesh_report`）；
+      ④ ★ **读真实读数**：`ElementCount` / **`NodeCount`**（★ 后者才是 DOF 的第一性来源）；
+      ⑤ ★ **求解前内存闸**：`solve_memory_preflight`（★ 优先用节点数 ⇒ `DOF≈3×节点`）——
+         ★ 它不过就**不进求解**（★ 官方：内存不够会走 out-of-core、极慢）；
+      ⑥ ★ **还原网格设置**（★ 除非 `keep_profile=True`）—— ★ 与事实 525 的偏好守卫**同一套纪律**：
+         ★ **改动可见 + 用完还回去** ✓
+      ⑦ 回一份**可入证据**的报告（★ 含每一项的读数与拒因）。
+
+    :param model: ★★★ **零件文档**（可选，但**强烈建议给**）—— ★ 量预算前置闸要用它读包围盒。
+        ⚠★ **第一版在这里犯过一个真错**（2026-10-04 真机跑出来的）：★ 我把 **`study`** 传给了
+        `check_mesh_size_sane(model, …)` ⇒ ★ 那道闸在**错误的对象**上取包围盒 ⇒
+        ★★ **它静默失效**（内部 `except` 把 `AttributeError` 收成"判据自身出错、不因此阻断"）
+        ⇒ ★ 于是"量预算前置闸"**看起来在跑、实际没判**（★ 事实 40 的老毛病：**存在但没生效的守卫**）✓
+        ⇒ ★ 现在：★ 给了 `model` 才判；★ **没给就把"跳过"如实记进 `size_gate`**（★ 不假装判过）✓
+    :param keep_profile: ★ `True` ⇒ **保留**安全档（★ 调用方明确要"以后都这样"时才用）。
+    :returns: ``{ok, blocked?, size_gate, safety, mesh, node_count, preflight, restored, ★_结论}``
+    """
+    out: dict[str, Any] = {"ok": False, "units": int(units), "element_size": float(element_size),
+                           "tolerance": float(tolerance),
+                           "★": "建网格的唯一推荐入口（①量闸 ②安全档 ③建网格 ④真读数 ⑤内存闸 ⑥还原）"}
+    #: ① 量预算前置闸（★ **必须用零件文档** —— ★ 传 study 会让它静默失效，见 docstring）
+    if model is None:
+        size_gate: dict[str, Any] = {"ok": None, "skipped": True,
+                                     "reason": "★ 调用方没给 `model` ⇒ **这一闸跳过**"
+                                               "（★ 如实记，不假装判过；★ 后面的求解前内存闸仍在）"}
+    else:
+        size_gate = check_mesh_size_sane(model, float(element_size),
+                                        memory_budget_gb=memory_budget_gb)
+    out["size_gate"] = size_gate
+    if size_gate.get("ok") is False:
+        out["blocked"] = "MESH_SIZE_UNSANE"
+        out["reason"] = "量预算前置闸不放行 ⇒ **不建网格**：%s" % size_gate.get("reason")
+        return out
+    #: ② 安全档（★ 记原值，供 ⑥ 还原）
+    safety = mesh_safety_apply(study, quality=quality, mesher_type=mesher_type)
+    out["safety"] = safety
+    if not safety.get("ok"):
+        out["blocked"] = "MESH_SAFETY_APPLY_FAILED"
+        out["reason"] = "网格安全档没设上 ⇒ **不建网格**（★ 不拿无界加密去赌）：%r" % (safety.get("failed"),)
+        return out
+    try:
+        #: ③ 建网格
+        try:
+            mesh = create_mesh_report(study, units=int(units), element_size=float(element_size),
+                                      tolerance=float(tolerance))
+        except Exception as exc:                               # noqa: BLE001
+            #: ★ 能力层抛错 ⇒ **如实记**（★ 不吞、也不让"还原"被跳过 —— 见 finally）
+            mesh = {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                    "★": "★ 建网格那一步抛了异常（★ 如实记，★ 不吞）"}
+            out["mesh_exception"] = mesh["error"]
+        out["mesh"] = mesh
+        #: ④ 真实读数（★ `NodeCount` 是 DOF 的第一性来源）
+        settings = mesh_settings_report(study)
+        out["after_settings"] = settings
+        node_count = int(settings.get("NodeCount") or 0) or None
+        out["node_count"] = node_count
+        out["element_count"] = int(mesh.get("element_count") or 0)
+        #: ⑤ 求解前内存闸
+        pre = solve_memory_preflight(out["element_count"], node_count=node_count,
+                                     memory_budget_gb=memory_budget_gb)
+        out["preflight"] = pre
+        out["ok"] = bool(mesh.get("ok")) and bool(pre.get("ok"))
+        if not pre.get("ok"):
+            out["blocked"] = "SOLVE_MEMORY_BUDGET"
+            out["reason"] = ("网格建成了，但**求解前内存闸不放行** ⇒ 别跑求解：%s"
+                             % pre.get("reason"))
+        elif not mesh.get("ok"):
+            out["blocked"] = "MESH_FAILED"
+            out["reason"] = "网格没建成：%r" % (mesh.get("error") or mesh.get("return_code"),)
+        out["★_结论"] = ("★ 网格读数：单元 %s · 节点 %s ⇒ 估求解内存 %.4g GB（预算 %.1f GB）"
+                         % (out["element_count"], node_count,
+                            pre.get("est_ram_gb") or 0.0, pre.get("memory_budget_gb") or 0.0))
+    finally:
+        #: ⑥ 还原（★ `finally` ⇒ **连建网格抛异常也还** —— ★ 与事实 525 同纪律）
+        if not keep_profile:
+            out["restored"] = mesh_safety_restore(study, safety.get("token"))
+        else:
+            out["restored"] = {"ok": True, "★": "keep_profile=True ⇒ 按调用方要求**保留**安全档"}
+    return out
+
+
 def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
                            memory_budget_gb: float | None = None) -> dict[str, Any]:
     """★ **建完网格、跑求解之前**再判一次 —— ★★ 有 `NodeCount` 时用**真节点数**算，最准。

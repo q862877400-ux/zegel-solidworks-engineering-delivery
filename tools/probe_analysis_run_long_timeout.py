@@ -68,6 +68,10 @@ OUT = REPO / "output" / "analysis-run-long-timeout-evidence.json"
 STUDY = "SPEC202_LongSolve_%d" % int(time.time())
 T_RUN = 1800.0        # ① 300 s → 1800 s
 T_MESH = 600.0
+#: ★ 2026-10-04（第十版）：★ **建网格这一步单独用一个更短的上限** —— ★ 真机实测它**卡过 9 分钟**
+  #: 没回来（内存平稳、SW `Not Responding`）⇒ ★ 为了"探得动"，这一步**有界在 5 分钟**：
+  #: ★ 到点就**杀子进程并如实报 `timed_out`**（★ 那本身就是一条可用结论）✓
+T_MESH_SAFE = 300.0
 #: ③ 求解后轮询：★ 每 15 s 读一次 `Results`，最多 40 次（10 分钟）
 POLL_EVERY, POLL_MAX = 15.0, 40
 
@@ -130,7 +134,7 @@ def main() -> int:
             return r
 
         #: ② ★★★ **单位口径：本探针不再"假设"，改成"三个单位各读一次 + 用几何闸选"** ——
-        #:   ★★ 第五版（本版）的**实测起点**（第四版的负结果，★ 已落盘）：
+        #:     ★★ 第五版（本版）的**实测起点**（第四版的负结果，★ 已落盘）：
         #:     `mesh_size_report(study, units=-1)` 在本机回 **4930.501659457233**，
         #:     ★★ **不是** `sw_simulation.py` 注释里那个"跑通"的 **4.933908705960544**
         #:     ⇒ ★ 两处记录**差 ~1000×**、且**官方页没写单位** ⇒ ★ 按铁律 5：**不猜**，
@@ -138,17 +142,43 @@ def main() -> int:
         #:   ★★★ **选哪个**：★ 用**几何判据**（`check_mesh_size_sane`：单元尺寸不得大于零件最大边）
         #:     —— ★ 它是**既有的那道闸**、且与本探针的零件尺寸直接相关
         #:     ⇒ ★ 候选按「更像毫米」排序，**取第一个过闸的**；★ 三个都不过就**停下报事实** ✓
+        #:   ★★★★ **先等 SolidWorks 闲下来**（★ 第十版新增）：★ 真机实测（2026-10-04）——
+        #:     ★ 刚把 SW 拉起来那几秒它自己在忙 ⇒ ★ **忙检把三次读数全拒了**（★ 假警报）
+        #:     ⇒ ★ 故用**有界**的 `wait_until_idle`（★ 事实 526 纪律：不做无界等待）✓
+        from sw_busy import wait_until_idle
+
+        idle = wait_until_idle(timeout=90, interval=3.0)
+        ev["steps"]["wait_until_idle"] = idle
+        flush()
+        print("  [1a] 等 SolidWorks 空闲: idle=%s waited=%ss attempts=%s"
+              % (idle.get("idle"), idle.get("waited"), idle.get("attempts")))
+        if not idle.get("idle"):
+            raise RuntimeError("SolidWorks 一直忙 ⇒ 停下（★ 忙时下发调用会卡死，事实 526）：%s"
+                               % idle.get("reason"))
         reading: dict = {}
         for u in (-1, 0, 2):
             r = iso("mesh_size_by_name", [STUDY], {"units": u}, 120)
             got = (r.get("result") or {}) if isinstance(r.get("result"), dict) else {}
+            if got.get("blocked") == "SOLIDWORKS_BUSY":
+                #: ★ 忙拒绝 ⇒ **等一下重试一次**（★ 那是设计好的拒绝，不是能力坏了）
+                wait_until_idle(timeout=60, interval=3.0)
+                r = iso("mesh_size_by_name", [STUDY], {"units": u}, 120)
+                got = (r.get("result") or {}) if isinstance(r.get("result"), dict) else {}
+                if got.get("blocked") == "SOLIDWORKS_BUSY":
+                    raise RuntimeError("忙检两次都拒 ⇒ 停下（★ 不硬闯，事实 526）：%s"
+                                       % got.get("error"))
             reading["units=%d" % u] = {"ok": r.get("ok"), "timed_out": r.get("timed_out"),
                                        "result": r.get("result")}
             print("  [1] units=%-3d element_size=%r tolerance=%r"
                   % (u, got.get("element_size"), got.get("tolerance")))
 
-        #: ★ 候选：每个都是「从某个读数按某个**显式**口径换算到毫米」的结果（★ 口径写在名字里）
-        cands: list[tuple[str, float, float]] = []
+        #: ★ 候选：每个都是「**值 + 与之配套的单位口径**」的一对（★ 口径写在名字里）——
+        #:   ★★★ 真机对照（`tools/probe_mesh_profile_matrix.py` 四档）把这件事**钉死了**：
+        #:     `units=2`（Metric=**毫米**）+ `element_size=4.9305` ⇒ 网格 **7250 单元 / 1.1 s** ✓
+        #:     ★ 而 `units=0`（**SI=米**）+ 同一个 `4.9305` ⇒ 单元 = **4.93 米** ⇒ 比零件还大
+        #:     ⇒ ★★ **网格退化 ⇒ `CreateMesh` 回 `rc=8` / 0 单元**（★ 那正是本探针先前"建不出来"的根源）✓
+        #:   ⇒ ★ 故候选必须是 `(标签, 值, 容差, **units**)` 四元组，★ 且**选中的 units 原样传给 create_mesh** ✓
+        cands: list[tuple[str, float, float, int]] = []
         for u in (2, -1, 0):
             got = (reading.get("units=%d" % u) or {}).get("result") or {}
             s, t = got.get("element_size"), got.get("tolerance")
@@ -156,26 +186,28 @@ def main() -> int:
                 continue
             s, t = float(s), float(t or 0.0)
             if u == 2:
-                cands.append(("units=2 原值", s, t))
+                cands.append(("units=2 原值", s, t, 2))
             if u == -1:
-                cands.append(("units=-1 ÷1000", s / 1000.0, t / 1000.0))
-                cands.append(("units=-1 原值", s, t))
+                cands.append(("units=-1 ÷1000 配 units=2", s / 1000.0, t / 1000.0, 2))
+                cands.append(("units=-1 原值 配 units=0", s, t, 0))
             if u == 0:
-                cands.append(("units=0 ×1000", s * 1000.0, t * 1000.0))
+                cands.append(("units=0 ×1000 配 units=2", s * 1000.0, t * 1000.0, 2))
         chosen, sane, tried = None, None, []
-        for label, s, t in cands:
+        for label, s, t, u_used in cands:
             chk = sim.check_mesh_size_sane(doc, s)
-            tried.append({"候选": label, "element_size": s, "tolerance": t,
+            tried.append({"候选": label, "element_size": s, "tolerance": t, "units": u_used,
                           "sane": chk.get("ok"), "reason": chk.get("reason")})
-            print("      [候选] %-16s element_size=%-12.4f sane=%s %s"
-                  % (label, s, chk.get("ok"), str(chk.get("reason"))[:64]))
+            print("      [候选] %-16s element_size=%-12.4f units=%-3s sane=%s %s"
+                  % (label, s, u_used, chk.get("ok"), str(chk.get("reason"))[:56]))
             if chk.get("ok"):
-                chosen, sane = (label, s, t), chk
+                chosen, sane = (label, s, t, u_used), chk
                 break
         ev["steps"]["mesh_size"] = {
             "readings": reading, "候选": tried,
             "★_选中": chosen[0] if chosen else None,
-            "★": "★ 官方**没写单位** ⇒ 三个单位各读一次 + 用几何闸选（★ 不许隐式换算）",
+            "★_选中的 units": chosen[3] if chosen else None,
+            "★": "★ 官方**没写单位** ⇒ 三个单位各读一次 + 用几何闸选（★ 不许隐式换算）；"
+                 "★★ **选中的 units 必须原样传给 create_mesh** —— 值与其单位口径要配套 ✓",
         }
         ev["steps"]["mesh_size_sane"] = sane
         #: ★ 把**内存预算与预估**一并落进证据（★ 事后能看出"当时放行时预估是多少"）
@@ -187,9 +219,9 @@ def main() -> int:
         flush()
         if not chosen:
             raise RuntimeError("三个单位口径的读数都不合理 ⇒ 停下报事实（不猜单位）")
-        element_size, tolerance = chosen[1], chosen[2]
-        print("  [1b] ★ 选中 %s ⇒ element_size=%.4f · tolerance=%.4f（max_dim=%s）"
-              % (chosen[0], element_size, tolerance, sane.get("max_dim")))
+        element_size, tolerance, mesh_units = chosen[1], chosen[2], chosen[3]
+        print("  [1b] ★ 选中 %s ⇒ element_size=%.4f · tolerance=%.4f · **units=%d**（max_dim=%s）"
+              % (chosen[0], element_size, tolerance, mesh_units, sane.get("max_dim")))
 
         #: ③ ★★★ **建网格之前先按官方那几条"降规模"的旋钮设一遍**（★ 第七版 · 本轮新增）——
         #:   ★★ 真因（★ 官方手册给了机制）：★ **曲率自适应网格器会在高曲率处自动加密**，
@@ -244,25 +276,37 @@ def main() -> int:
         #:   ★ 前两个是**带单位的 Double**、口径未定（见上）；★ 后一个虽是无量纲 Int32，
         #:   但它属于**曲率自适应那条路**，而本版已把 `MesherType` 换成 Standard ⇒ 先不动它 ✓
         ev["steps"]["mesh_settings_configure"] = {**cfg_r, "result": cfg}
+        flush()
         print("  [1d] 设网格旋钮: ok=%s changed=%s"
               % (cfg.get("ok"), [c["name"] for c in cfg.get("changed") or []]))
 
-        #: ④ 建网格（★ 粗网格 ⇒ 单元少 ⇒ 刚度矩阵小 ⇒ 算得快）
-        mesh_r = iso("create_mesh_by_name", [STUDY],
-                     {"units": 0, "element_size": element_size, "tolerance": tolerance},
-                     T_MESH)
-        mesh_res = mesh_r.get("result") if isinstance(mesh_r.get("result"), dict) else {}
+        #: ④ ★★★★ **建网格 —— 走"唯一推荐入口"**（★ 第九版 · 本轮把整条链收进一个能力）：
+        #:   `create_mesh_safely` 一次做七件事：① 量预算前置闸 → ② **网格安全档**
+        #:   （关曲率自适应 + Draft）→ ③ 建网格 → ④ 读**真节点数** → ⑤ 求解前内存闸 →
+        #:   ⑥ **还原网格设置**（★ 不离开用户的模型）→ ⑦ 回可入证据的报告 ✓
+        #:   ★ 而且 worker 入口**先过忙检** ⇒ ★ SolidWorks 忙时**一个 COM 调用都不发** ✓
+        mesh_r = iso("create_mesh_safely_by_name", [STUDY],
+                     {"units": mesh_units, "element_size": element_size,
+                      "tolerance": tolerance},
+                     T_MESH_SAFE)
+        mesh_safe = mesh_r.get("result") if isinstance(mesh_r.get("result"), dict) else {}
         ev["steps"]["create_mesh"] = {k: mesh_r.get(k) for k in
                                       ("ok", "timed_out", "wall_seconds", "error")}
-        ev["steps"]["create_mesh"]["result"] = mesh_r.get("result")
-        print("  [2] 建网格: ok=%s timed_out=%s wall=%ss element_count=%s"
+        ev["steps"]["create_mesh"]["result"] = mesh_safe
+        flush()
+        mesh_res = mesh_safe.get("mesh") if isinstance(mesh_safe.get("mesh"), dict) else {}
+        print("  [2] 建网格(安全入口): ok=%s timed_out=%s wall=%ss blocked=%s"
               % (mesh_r.get("ok"), mesh_r.get("timed_out"), mesh_r.get("wall_seconds"),
-                 mesh_res.get("element_count")))
-        #: ★ 建完再读一次 —— ★★ `NodeCount` 是**真实节点数**（比单元数更适合算 DOF）
-        #:   ★ 同样走隔离层（★ 与上面同理）
-        as_r = iso("mesh_settings_by_name", [STUDY], {}, 180)
-        after_settings = as_r.get("result") if isinstance(as_r.get("result"), dict) else {}
-        ev["steps"]["mesh_settings_after"] = {**as_r, "result": after_settings}
+                 mesh_safe.get("blocked")))
+        print("      element_count=%s node_count=%s ⇒ %s"
+              % (mesh_safe.get("element_count"), mesh_safe.get("node_count"),
+                 mesh_safe.get("★_结论")))
+        if mesh_safe.get("blocked"):
+            raise RuntimeError("安全入口**拒了**（★ 这是设计好的拒绝、不是失败）：%s ⇒ %s"
+                               % (mesh_safe["blocked"], mesh_safe.get("reason")))
+        after_settings = mesh_safe.get("after_settings") or {}
+        ev["steps"]["mesh_settings_after"] = after_settings
+        flush()
         print("      ★ 真实读数：ElementCount=%s **NodeCount=%s** Quality=%s"
               % (after_settings.get("ElementCount"), after_settings.get("NodeCount"),
                  after_settings.get("Quality")))

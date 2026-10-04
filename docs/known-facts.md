@@ -4547,3 +4547,93 @@ SolidWorks ：**持续吃 ~1 核**（那个 `进度` 状态窗还活着）
 ★ `configure_mesh_settings` 的"只碰给过的项"、★ 设失败可见、★ draft 代价随返回值给出）✓
 ★ 官方：`c_meshing_options.htm` · `c_Element_Size_in_Curvature_Based_Mesher.htm` ·
 `C:\cworks_vb6\CosmosWorksLib~CWMesh~{Quality,MesherType,MinElementSize,NodeCount}.html` ✓
+
+---
+
+## 527 · ★★★★★★ 「弹窗了你还不知道」的**真根因**（pid 过滤 ×3 处把整个机制废掉）+ ★ **常驻弹窗监控（项目一启用就启动）**
+
+**发现时间**：2026-10-04（接手轮 · 用户当场截图 + 点破）
+
+### 一 · ★★★ 用户的现场与要求（逐字）
+
+```
+★ 用户：★「**弹窗了你还不知道**，而且我刚刚说的弹窗检测诊断的东西，**之前已经做好了**，
+  你翻出来用，甚至**当时就是为了解决一模一样的这个弹窗而发明的**，你找一下，
+  找出来之后**设置为这个项目运行期间一直监控**，就是别人把我们这个项目部署好之后，
+  **一启用本项目，这个弹窗检测的功能也随之启动**」
+★ 截图：`[Simulation] ✗ 未定义载荷或规定的位移 … 固定-刚性零件上的载荷将不处于活动状态。
+  [请参阅知识库文章 QA00000299039]                         [确定]`
+```
+
+★ **"之前已经做好的"确实是它**（★ 三条都对上，我一搜就找到了）：
+`tools/sw_guard.py`（分级处置 · 事实 294 真机验过它抓到**这个框**）·
+`tools/modal_dialog_forensics.py`（事实 292 —— **为这个框**写的取证器）·
+`tools/trigger_analysis_dialogs.py`（复现器）· 事实 174 / 292 / 294 ✓
+
+### 二 · ★★★★★ 真根因：**一句"精确 pid 过滤"把整个弹窗机制废掉了**（★ 三处）
+
+★ 现场实测（我窗口枚举 + 复核）：
+```
+hwnd=8062406  title='Simulation'                    pid=46240  family=True  exe=**star.exe**   ← 用户截图那个框
+hwnd=49873508 title='SPEC202_LongSolve_…'            pid=46240  family=True  exe=**star.exe**   ← 进度框：建立刚度矩阵·已用 9m9s
+```
+★★★ 而护栏原文写的是：
+```python
+if pid is not None and p.value != pid:      # ← 只看"我们那个进程"
+    return True
+```
+★★ 而 `run_guarded` 传的 **永远是 `sw_pid()`（`SLDWORKS.exe`）** ⇒
+★★★ **`star.exe`（求解内核）拥有的弹窗被无条件跳过** ⇒ **实测 `scan_family_windows(49384)` 回 `0`**、
+`modal_dialog_forensics` 回 **`count: 0`**（★ 而它**当初就是为这个框写的**）✓
+
+> ★★★★ **最讽刺的一点**：`sw_family_window()` 的 docstring **自己**写着
+> 「★ **只认 `sldworks.exe` 会漏**（★ 例如网格器的报错框）」—— ★ 那个 pid 过滤器
+> **正好把那句话作废了** ✓ ⇒ ★ **一条判据与一个过滤器互相抵消，而两边单看都对** ✓
+
+★ **三处**（★ 第三处是**我写的负例测试当场抓出来的**，我先前只改了两处）：
+`scan_family_windows` · `scan_any_new_window`（兜底）· **`scan()`**（★ `--scan` / `--clear` 用的快照）
+⇒ ★ 修法统一为 **「pid 只聚焦、不排除」**：`if pid is not None and p.value != pid and not sw_family_window(h): return True`
+★ 修后实测：`scan_family_windows(49384)` **回 2**、`modal_dialog_forensics` **`count: 2`**（★ 那个框的
+**全文 + 按钮 ID**：`是 1163 / 否 1164 / 确定 1165`）✓
+
+### 三 · ★★ 第二个原因：护栏是**按条命令**开哨兵的
+
+★ `run_guarded` 包一个子进程 ⇒ ★ **命令一结束哨兵就停**；★★ 而 `star.exe` 是 **SolidWorks 自己
+拉起来的**、会在**我们的命令结束之后**才弹框 ⇒ ★ **那一刻没有任何人在看** ✓
+
+### 四 · ★★★★★ 处置：**常驻弹窗监控**（★ `tools/sw_dialog_watch.py`）
+
+```
+★ 判据与处置**全部复用** `tools/sw_guard.py`（★ 不新写判据 —— "之前做好的"就用它）：
+  · 扫描：`scan_family_windows(pid=None)`  ← ★ **不传 pid**（★ 家族里任一进程的框都要看得见）
+  · 分档：`classify_dialog`  ⇒ **只有 `auto` 才点**；★ `needs_llm` / `forbidden` **只记证**
+  · 状态：`output/dialog-watch/status.json`（★ "监控在不在跑、抓到过什么"**随时可查**）
+  · 事件：`output/dialog-watch/events.jsonl`（★ 逐条，含控件全文 + 分档结论）
+★ 新增 `dismiss_button(hwnd, text=…)`：★ **定点**按某个按钮 —— ★ 因为 `dismiss()` 是
+  "把每个按钮都点一遍"（★ 对一个 **是/否** 框用它会**同时按到"是"和"否"**）✓
+  ★ 真机实测：对那个 error 框按「**确定**」、对进度框按「**取消**」⇒ **两个框都消失**、
+  `star.exe`/`cwanalysisproc.exe` 退出、内存回到 39.7 GB 空闲 ✓
+★ **项目一启用就启动**：`mcp-server/server.py` 新增 `_start_dialog_watcher()` ——
+  ★ 以 **DETACHED_PROCESS** 起 `tools/sw_dialog_watch.py`（★ **不阻断启动**、★ **幂等**：
+  pidfile 里那个还活着就不叠第二个）✓
+```
+
+### 五 · ★★★ 与"LLM 诊断"的关系（★ 回答"为什么没生效"）
+
+★ 护栏的 LLM 档**触发条件是"有一个像弹窗的框"**（`classify_dialog` ⇒ `needs_llm`）✓
+★★ 而这次的病是 **框在，但拥有它的进程被过滤掉了**（§二）**以及**"框在我们的命令之后才出现"**（§三）
+⇒ ★ **不是 LLM 档坏了，是它连"有框"都不知道** ✓
+★★★ 现在：★ 常驻 ⇒ 什么时候弹都看得见；★ 判 `needs_llm` ⇒ 记证 + **等 LLM（我/用户）判**；
+★ 判 `auto` ⇒ 当场点掉 ⇒ ★ **"弹窗了你还不知道"从结构上不再可能** ✓
+
+### 六 · ★ 依据
+★ 现场：`output/dialogs/20261004-053401/`（★ 两个框的全文 + `.bmp` 截图）·
+`output/dialog-watch/events.jsonl` + `status.json` ✓
+★ 代码：`tools/sw_dialog_watch.py`（新）· `tools/sw_guard.py`（**三处 pid 过滤修正** +
+`dismiss_button` / `list_buttons` 新增）· `tools/modal_dialog_forensics.py`（同一根因第二处）·
+`mcp-server/server.py::_start_dialog_watcher` ✓
+★ 测试：`tests/test_dialog_watch.py`（**7 passed**）—— ★ 含"**用 git 里修复前的真源码**自证
+判据抓得到那个过滤器"、★ "`needs_llm`/`forbidden` 一个都不许点"、
+★ "定点处置必须 `PostMessage` 而非 `SendMessage`" ✓
+★ 官方：`ISldWorks.CommandInProgress` 管不到 `star.exe` 的框（事实 174 逐字，★ 三次实测）
+⇒ ★ 本机制**不依赖**它 ✓

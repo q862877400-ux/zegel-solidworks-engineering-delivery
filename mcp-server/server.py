@@ -2514,6 +2514,69 @@ def _register_declarative_tools() -> None:
 _register_declarative_tools()
 
 
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   `tools/sw_dialog_watch.py`（★ 常驻弹窗监控 —— 判据与处置**全部复用** `tools/sw_guard.py`）
+#         `tools/sw_guard.py`（★ `scan_family_windows` / `classify_dialog` / `dismiss`）
+#         `docs/known-facts.md` 事实 174 / 292 / 294（★ 这个框的三次交手）· 本轮的 527（★ 真根因）
+# 定位:   新增 `_start_dialog_watcher()`：★ **项目一启用就把弹窗监控拉起来**。
+#   ★★★★ **为什么**（★ 2026-10-04 · 用户当场点破）：
+#     ```
+#     ★ 用户原话：★「**弹窗了你还不知道** …… 设置为**这个项目运行期间一直监控**，就是别人把
+#       我们这个项目部署好之后，**一启用本项目，这个弹窗检测的功能也随之启动**」
+#     ```
+#   ★★ 两个真原因（★ 都已修）：① ★ 既有护栏的 pid 过滤把 **`star.exe` 拥有的弹窗**
+#     无条件跳过（★ 实测：那个`[Simulation] 未定义载荷…`框的 owner 就是 `star.exe`）；
+#     ② ★ 护栏是**按条命令**开哨兵的 ⇒ ★ 命令一结束就没人看，而 `star.exe` 是 SolidWorks
+#     **自己**拉起来的、会在那之后才弹框 ✓
+#   ⇒ ★ 本条接的是第 ② 条的补：★ **常驻**（不绑任何一条命令）✓
+# 官方依据: 不适用（纯 Win32 窗口枚举，**不碰 COM** ⇒ 与"会话是否挂住"无关，永远能跑）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# ⚠ **安全**：★ 全有或全无地**不阻断启动** —— 起不来（没装、路径不对、权限）只**打一行日志**，
+#    ★ **绝不让 MCP server 因此起不来**（★ 监控是"辅助"，不是"依赖"）。
+# ⚠ **幂等**：★ 已经有活着的 watcher（pidfile）就**不再起第二个**（★ 免得每次启用都叠一个）。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _start_dialog_watcher() -> None:
+    """★ **常驻弹窗监控**：项目一启用就跟着起来（★ 失败只打日志、**不阻断**）。"""
+    try:
+        import subprocess
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[1]
+        watcher = root / "tools" / "sw_dialog_watch.py"
+        if not watcher.is_file():
+            print("[dialog-watch] 找不到 %s ⇒ 跳过（★ 不阻断启动）" % watcher, file=sys.stderr)
+            return
+        pidfile = root / "output" / "dialog-watch" / "watcher.pid"
+        if pidfile.is_file():
+            try:
+                import ctypes
+
+                pid = int(pidfile.read_text(encoding="utf-8").strip())
+                h = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)
+                if h:
+                    ctypes.windll.kernel32.CloseHandle(h)
+                    return                       #: ★ 已经在跑 ⇒ **不叠第二个**（幂等）
+            except Exception:                                   # noqa: BLE001
+                pass
+        creation = 0x00000008 | 0x00000200          #: DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
+        kwargs: dict = {"cwd": str(root), "stdin": subprocess.DEVNULL,
+                        "stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL,
+                        "creationflags": creation}
+        if hasattr(subprocess, "DETACHED_PROCESS"):           #: 平台上有就用官方常量
+            kwargs["creationflags"] = subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+        subprocess.Popen([sys.executable, str(watcher), "--interval", "1.0", "--quiet"], **kwargs)
+        print("[dialog-watch] 已启动常驻弹窗监控（★ 判据复用 sw_guard）", file=sys.stderr)
+    except Exception as exc:                                   # noqa: BLE001
+        #: ★★ **绝不因为监控起不来而让 server 起不来**（★ 监控是辅助、不是依赖）
+        print("[dialog-watch] 启动失败（★ 已忽略，不影响服务）：%s" % (str(exc)[:160],),
+              file=sys.stderr)
+
+
+_start_dialog_watcher()
+
+
 def main() -> None:
     """Run the SolidWorks MCP server over stdio."""
     if sys.stdout is not _MCP_STDOUT:

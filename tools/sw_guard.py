@@ -292,7 +292,19 @@ def scan_family_windows(pid: int | None = None, *, known: set | None = None) -> 
             return True
         p = wt.DWORD()
         _u.GetWindowThreadProcessId(h, ctypes.byref(p))
-        if pid is not None and p.value != pid:
+        #: ★★★★★ 2026-10-04（接手轮）**修掉一个会让"整个机制静默失效"的过滤器** ——
+        #:   ★★ 现场（用户当场截图 + 我窗口枚举复核）：
+        #:     `[Simulation] 未定义载荷或规定的位移 … [请参阅知识库文章 QA00000299039]`
+        #:     ★ 它的 **owner 是 `star.exe`（pid 46240）**，而**不是** `SLDWORKS.exe`（pid 49384）✓
+        #:   ★★★ 而原文这里写的是 `if pid is not None and p.value != pid: return True`
+        #:     ⇒ ★★ 由于 `run_guarded` 传的是 `sw_pid()`（**永远是 SLDWORKS 的 pid**）
+        #:     ⇒ ★ **`star.exe` 的框被无条件跳过** ⇒ 取证工具当场回 `count: 0`（★ 我实测过）✓
+        #:   ★★★★ **而 `sw_family_window()` 存在的理由恰恰是"框可能来自家族里任一进程"**
+        #:     （★ 见它 docstring 逐字：「★ 只认 `sldworks.exe` 会漏（★ 例如网格器的报错框）」）
+        #:     ⇒ ★ **那个过滤器把这条判据整个废掉了** —— 这就是"弹窗了你还不知道"的**真根因** ✓
+        #:   ★ 修法：★ **pid 只用来"聚焦"，不再用来"排除"** ——
+        #:     ★ 同族进程的窗口**一律放行**，由 `sw_family_window()` + "像弹窗"去筛 ✓
+        if pid is not None and p.value != pid and not sw_family_window(h):
             return True
         if not sw_family_window(h):
             return True
@@ -361,7 +373,12 @@ def scan_any_new_window(pid: int | None = None, *, known: set | None = None) -> 
     def _cb(h, _l):
         p = wt.DWORD()
         _u.GetWindowThreadProcessId(h, ctypes.byref(p))
-        if pid is not None and p.value != pid:
+        #: ★★★★★ 2026-10-04 **同一个根因的第二处**（★ 见 `scan_family_windows` 的注）：
+        #:   ★ 原来这里是 `if pid is not None and p.value != pid: return True`
+        #:   ⇒ ★★ **`star.exe` / `cwbcbfmesh.exe` 等家族进程的窗口**被无条件排除
+        #:   ⇒ ★ 于是"兜底让盲区可见"这一层**对它们也是瞎的** ✓
+        #:   ★ 修法同上：★ **pid 只聚焦、不排除**；★ 同族窗口放行 ✓
+        if pid is not None and p.value != pid and not sw_family_window(h):
             return True
         if not _u.IsWindowVisible(h):
             return True
@@ -408,7 +425,10 @@ def scan(pid: int | None = None, *, visible_only: bool = True) -> list[dict]:
     def _cb(h, _l):
         p = wt.DWORD()
         _u.GetWindowThreadProcessId(h, ctypes.byref(p))
-        if pid is not None and p.value != pid:
+        #: ★★★★★ 2026-10-04 **同一个根因的第三处**（★ 前两处在 `scan_family_windows` /
+        #:   `scan_any_new_window`）—— ★★ **这处是负例测试当场抓出来的**（我先前漏了它）：
+        #:   ★ 于是 `python tools/sw_guard.py --scan` / `--clear` **也看不见** `star.exe` 的框 ✓
+        if pid is not None and p.value != pid and not sw_family_window(h):
             return True
         if visible_only and not _u.IsWindowVisible(h):
             return True
@@ -466,6 +486,51 @@ def dismiss(hwnd: int) -> bool:
     return ok
 
 
+def dismiss_button(hwnd: int, *, text: str) -> bool:
+    """★ **定点**按下标题为 `text` 的那个按钮（★ 只在**已判明**该按哪个时用）。
+
+    ★★★★ 为什么需要它（★ 2026-10-04 · 用户当场那个框）：
+      `[Simulation] 未定义载荷或规定的位移 …` 的按钮是 **是 / 否 / 确定** ⇒
+      ★ `classify_dialog` 判 **`needs_llm`**（★ 谁也不自动点 —— ★ 那是对的：是/否后果相反）✓
+      ★★ 但**当 LLM（或用户）已经判明"该按确定"之后**，需要一条**定点**的通路 ——
+      ★ `dismiss(hwnd)` 是"**把每个按钮都点一遍**"（★ 那是为"随便哪个都能关掉"的框设计的），
+      ★ **对一个"是/否"框用它会同时按到"是"和"否"** ⇒ ★ 所以必须能**指名**按哪一个 ✓
+    ★ 实现：★ 与 `dismiss` 同一条已验证的路（★ **`PostMessage` 而非 `SendMessage`** ——
+      ★ 同步发的会挂在模态框的消息循环上，实测 300 s），★ 先发 `WM_COMMAND` + **真实控件 ID**、
+      再对那个按钮补一发 `BM_CLICK` ✓
+    """
+    wanted = str(text).strip()
+    hit: list[int] = []
+
+    def _cb(ch, _l):
+        if _cls(ch) == "Button" and _txt(ch).strip() == wanted:
+            hit.append(int(ch))
+        return True
+
+    _u.EnumChildWindows(hwnd, _PROC(_cb), 0)
+    ok = False
+    for btn in hit:
+        cid = int(_u.GetDlgCtrlID(btn))
+        if _u.PostMessageW(hwnd, _WM_COMMAND, cid, btn):
+            ok = True
+        if _u.PostMessageW(btn, _BM_CLICK, 0, 0):
+            ok = True
+    return ok
+
+
+def list_buttons(hwnd: int) -> list[dict]:
+    """★ 列出该弹窗里每个按钮的**文本 + 控件 ID + hwnd**（★ 定点处置的输入）。"""
+    rows: list[dict] = []
+
+    def _cb(ch, _l):
+        if _cls(ch) == "Button":
+            rows.append({"text": _txt(ch)[:60], "id": int(_u.GetDlgCtrlID(ch)), "hwnd": int(ch)})
+        return True
+
+    _u.EnumChildWindows(hwnd, _PROC(_cb), 0)
+    return rows
+
+
 def sw_pid() -> int | None:
     """★ SLDWORKS 的 PID（★ 按父窗口特征，★ 不跑子进程）。"""
     got: int | None = None
@@ -491,10 +556,27 @@ class Sentinel:
     ★ 它同时扫 **启动前就有的**（★ `pre_scan`）与 **执行中弹的** —— ★ 两者都算"报警弹窗"。
     """
 
-    def __init__(self, pid: int | None, *, interval: float = 0.5, auto_dismiss: bool = True):
+    def __init__(self, pid: int | None, *, interval: float = 0.5, auto_dismiss: bool = True,
+                 stuck_after: float = 90.0):
         self.pid = pid
         self.interval = interval
         self.auto_dismiss = auto_dismiss
+        #: ★★★★ 2026-10-04 **新增：`stuck_after`** —— ★ "**没弹窗但卡住了**"多少秒之后报警。
+        #:   ★★ 起因（★ 用户当场问：「**之前做好的弹窗检测 LLM 诊断怎么没有生效**」）：
+        #:     ★ 护栏的 LLM 档**只在"有一个像弹窗的框"时才分档**（`classify_dialog` ⇒ `needs_llm`）——
+        #:     ★★ 而真机上那两次的病是「**一个框都没有、调用就挂着**」⇒ `dialogs: []` **是对的**、
+        #:     ★ **LLM 档根本无从进入** ✓
+        #:     ★ 另有两条窗也看不见：`swPM_GhostWindow`「Not Responding」**不满足"像弹窗"**三条
+        #:     （不是 `#32770`、无 `Button` 子控件、无文本子控件）；`进度` 窗**不属家族**（属 Explorer）✓
+        #:   ⇒ ★ 故补这一档：★ **不响应 + 没有任何求解内核进程** ⇒ `kind="stuck"` + `needs_llm=True`
+        #:     ⇒ ★★ **复用既有的"立刻终止子进程 + 把证据交回 LLM"那条路**（第 ④ 条）✓
+        #:   ⚠ ★ **反证是必须的**：★ "不响应"在**正常长求解**里也会出现 ⇒
+        #:     ★ 判据要求"**没有** `cwbcbfmesh`/`star` 这类真在算的进程"（见 `scripts/sw_busy.py`）——
+        #:     ★★ 否则就会**误杀一个正在跑的正常任务**（★ 事实 297 明令禁止）✓
+        self.stuck_after = float(stuck_after)
+        #: ★ 卡住状态**从哪一刻开始**（★ `None` = 当前不卡）—— 用来算"持续了多久"
+        self._stuck_since: float | None = None
+        self._stuck_fired = False
         self.events: list[dict] = []
         self._stop = threading.Event()
         self._seen: set[tuple] = set()
@@ -511,7 +593,63 @@ class Sentinel:
         #: ★★ **进调用之前先扫一遍**（★ 对应"只检测新窗口"那种失败：旧弹窗也得管）
         self._sweep(first=True)
 
+    def _sweep_stuck(self) -> None:
+        """★★★ **"没弹窗但卡住了"这一档**（★ 2026-10-04 新增 · 用户当场问出来的缺环）。
+
+        ★ 判据来自 `scripts/sw_busy.py::solidworks_stuck`（★ 纯 ctypes 读窗口 + 进程，**不碰 COM**）：
+          ★ **SolidWorks 不响应**（鬼窗 / 家族标题写着"不响应"）**且没有任何求解内核进程**
+          ⇒ ★ 判定为**卡住** ⇒ ★ 记 `kind="stuck"` + **`needs_llm=True`**
+          ⇒ ★★ 外层 `run_guarded` 的第 ④ 条会**立刻 taskkill 那个子进程并返回**，
+            把证据（窗口 + 进程 + 持续秒数）交回 LLM ✓
+        ★ 反证：★ 只要 `cwbcbfmesh`/`star` 这类内核在跑 ⇒ **不判卡住**（★ 不误杀正常求解）✓
+        """
+        try:
+            import sys as _sys
+            _scripts = str(REPO_ROOT / "scripts")
+            if _scripts not in _sys.path:
+                _sys.path.insert(0, _scripts)
+            from sw_busy import solidworks_stuck
+
+            info = solidworks_stuck()
+        except Exception as exc:                                # noqa: BLE001
+            #: ⚠ ★ 判据自身坏了 ⇒ **如实记一条**（★ 不静默）——
+            #:   ★★ 本处第一次写时用了**从未绑定**的 `SCRIPTS_DIR`，★ 而那个 `except` 会把
+            #:   `NameError` **吞掉** ⇒ ★ **"卡住检测"会静默永不生效**（★ 正是事实 40 的毛病）；
+            #:   是**未定义名门禁**当场抓出来的（★ 它比"运行时才炸"早一步）✓
+            self.events.append({"at": datetime.now().isoformat(timespec="seconds"),
+                                "kind": "stuck-probe-error", "error": str(exc)[:160],
+                                "note": "★ 卡住判据没跑起来（★ 如实记 —— 不静默失效）"})
+            return
+        if not info.get("stuck"):
+            self._stuck_since = None
+            return
+        now = time.time()
+        if self._stuck_since is None:
+            self._stuck_since = now
+        held = now - self._stuck_since
+        if held < self.stuck_after or self._stuck_fired:
+            return
+        self._stuck_fired = True
+        ev = {"at": datetime.now().isoformat(timespec="seconds"), "phase": "during",
+              "kind": "stuck",
+              "title": "SolidWorks 不响应，且没有任何求解/网格内核进程",
+              "class": None, "exe": None, "hwnd": 0,
+              "solver_alive": info.get("solver_alive"), "solver_names": info.get("solver_names"),
+              "held_seconds": round(held, 1), "stuck_after": self.stuck_after,
+              "controls": [{"class": "Static", "text": r} for r in (info.get("reasons") or [])[:3]],
+              "hung": True,
+              "verdict": {"mode": "needs_llm", "why": "★ 没弹窗但**卡住了** ⇒ 交 LLM 判（★ 不瞎点）"},
+              "needs_llm": True,
+              "dismissed": False, "still_present": True,
+              "note": "★ 本档补的是**没有弹窗**那一类：★ 护栏原来只在「有框」时分档 ⇒ "
+                      "★★ 病因是「没框、调用挂着」时，LLM 档**永远进不去**（★ 用户当场问出来）"}
+        self.events.append(ev)
+        self._write(ev)
+
     def _sweep(self, *, first: bool = False) -> None:
+        #: ★★★★ 2026-10-04 **先判"没弹窗但卡住了"** —— ★ 它不受"像弹窗"三条的约束，
+        #:   也**不依赖"窗口属于家族"**（★ 于是 Explorer 托管的 `进度` 窗那个盲区也一并跨过）✓
+        self._sweep_stuck()
         #: ★★★★ 2026-10-02（轮 379）**主路径换成放宽判据** —— 用户要求
         #:   「★ **只要是 SolidWorks 的弹窗，这个机制就应该 100% 能处理**」。
         #:   ⇒ `scan_family_windows`：★ **属于 SolidWorks 家族**（★ 主进程 + `sldProcMon` /

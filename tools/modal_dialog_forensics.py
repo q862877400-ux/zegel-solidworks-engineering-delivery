@@ -77,13 +77,30 @@ def resolve_pid(target=None) -> int | None:
 
 
 def _top_level(hwnd, pid):
+    """★ 该窗口是否**归我们关注的对象**（★ 2026-10-04 修：★ **同族进程的也要算**）。
+
+    ★★★★ 真根因（★ 用户当场截图 + 我复核）：★ 那个
+      `[Simulation] 未定义载荷或规定的位移 … QA00000299039` 框的 owner 是
+      ★ **`star.exe`（pid 46240）**、**不是** `SLDWORKS.exe`（pid 49384）✓
+    ★★ 而原文只判 `wpid.value == pid` ⇒ ★ **本工具对那个框回 `count: 0`**（★ 我实测过）——
+      ★★ **而它当初就是为这个框写的**（事实 292）⇒ ★ 一个"PID 精确匹配"把整条判据废掉了 ✓
+    ★ 修法：★ `pid` 只用来"聚焦"，★ **同族进程（`star.exe` / `cwbcbfmesh.exe` …）一律放行** ✓
+    """
     _, wpid = wt.DWORD(), wt.DWORD()
     user32.GetWindowThreadProcessId(hwnd, ctypes.byref(wpid))
-    return wpid.value == pid
+    if wpid.value == pid:
+        return True
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import sw_guard
+
+        return bool(sw_guard.sw_family_window(hwnd))
+    except Exception:                                       # noqa: BLE001
+        return False
 
 
 def list_dialogs(pid: int) -> list[int]:
-    """★ 列出该 PID 的顶层 `#32770` 窗口句柄（★ 按类名，不按标题）。"""
+    """★ 列出**我们关注的进程（或其家族进程）**的顶层 `#32770` 窗口句柄（★ 按类名，不按标题）。"""
     found: list[int] = []
 
     @ctypes.WINFUNCTYPE(wt.BOOL, wt.HWND, wt.LPARAM)
