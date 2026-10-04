@@ -5594,3 +5594,43 @@ return_shape_diff 75 · **unit_diff 15** · **mark_diff 10**
 
 ★ **依据**：`tools/t4_member_crosscheck.py` · `docs/recon-206/conflicts-25-crosscheck.md` ·
 `docs/recon-206/conflicts-25.md`（上一轮）· `c4-merged.json`（只读复用）✓
+
+---
+
+| 527 | **★★★★ T4-1 第三步的第一条判读：`AutoDimension2` 的 mark 冲突 ★ 对探针成立、对产品不成立** —— 2026-10-04（接手轮 T4-1，规格 `specs/206-c1c6-harvest/`）。
+
+**材料**（★ 已抽到一处：`docs/recon-206/conflicts-8-judge-materials.md`）：
+```
+★ 官方 `## Remarks`：Select and mark a unique vertical edge, vertex, sketch point, or
+  vertical sketch line as the datum …, using **swAutodimMarkHorizontalDatum** as the mark value.
+★ 官方示例：`bRet = swSketchSegVert.Select4(True, Nothing)` ⇒ ★ **Select4 没有 mark 形参**
+★ 另一个对话的判读：备注要求基准必须打 swAutodimMark* 标记；示例用没有 mark 形参的 Select4 却声明成功。
+```
+
+**★ 我们的实况（★ 逐命中点看出来的，不是猜的）**：
+```
+★ 7 处命中里，**只有 1 处是真调用** —— `tools/probe_fullydefinesketch.py:71`
+    `got = get_com_member(act, "AutoDimension2", 1, 1, -1, 1, -1)`
+    ⇒ ★ 5 个位置实参，★ **调用前没有「选基准边并打 swAutodimMark*」这一步** ✓
+★★ 另 3 处（`scripts/sw_part.py:707` · `tool_specs_batch55.py:15` · `probe_autodimension_successor.py:1`）
+   都是**注释/docstring 里的提及**（★ 写"官方签名依据是 `ISketch.AutoDimension2`"），**不是调用** ✓
+```
+⇒ ★★ **一个可复用的教训**：**我的"用了没"判据把注释里的提及也算成"用了"**
+（★ 上一轮已在 `conflicts-25-crosscheck.md` 的「不算什么」里预告过这条风险 —— ★ 现在实测确认它**确实高估了**）✓
+
+**★★ 判读结论**：
+| 对象 | 结论 | 依据 |
+|---|---|---|
+| ★ **探针** | **成立** —— 探针缺「选基准边 + 打 mark」前置 ⇒ 它的「通过」**不代表能力可用** | ★ 事实 57 家族（前置不满足时它也绿）|
+| ★ **产品代码** | **不成立** —— 我们**还没在 `scripts/` 里实现**这个能力 | ★ 真调用只在 `tools/` 的探针里 |
+
+★ **影响面**：★ 这条冲突**尚未影响产品**，只影响**探针的有效性** ⇒ ★ 优先级低于"产品代码里真用到"的那几条 ✓
+★ **建议处置**（★ 留给下一步）：① 给那个探针补前置（或标注"未验证前置"）；② 将来在 `scripts/` 实现
+`auto_dimension_sketch` 时，**必须先读 Remarks 并打 `swAutodimMark*`** ✓
+
+★ **依据**：`docs/recon-206/conflicts-8-judge-materials.md`（★ 270→299 行，判读模板第 1 行已填）·
+`tools/t4_judge_materials.py` · `tools/probe_fullydefinesketch.py:71` ·
+`c4-merged.json`（只读复用）✓
+
+★ **本批的限度**：★ 8 个成员里**只判了 1 条**（10 条冲突中的 1 条）；★ 其余 9 条材料已齐备、
+判读模板已留行 ⇒ 下一步逐条填 ✓
