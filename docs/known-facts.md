@@ -4326,3 +4326,57 @@ units= 2  element_size=   4.930501659457232   tolerance=  0.24652508297286163 �
 ★ 官方：`C:\cworks_vb6\CosmosWorksLib~swsStudyMeshError_e.html`（★ 0..7，无 8）·
 `CosmosWorksLib~CWStudy~CreateMesh.html`（★ 只有签名、**没有错误码表**）✓
 ★ 内存闸现场：`output/solver-memory-watch.jsonl` ✓
+
+---
+
+## 524 · ★★★★★ 仿真内存/性能/GPU：**官方源 + 网上来源**都查了 —— ★ 结论与可执行杠杆
+
+**发现时间**：2026-10-04（接手轮 · 业主追问「别人 64 GB 都没有，怎么配」与「有没有第三方办法跑 GPU」）
+
+★ **全文（带逐条引用）**：[`references/simulation-performance-memory-gpu.md`](simulation-performance-memory-gpu.md)
+
+### 一 · ★★★★ 三条结论
+
+```
+① ★ SW Simulation 自己的求解器**没有 GPU** —— 7 个求解器全 CPU（迭代 + 三种直接分解 + Abaqus + 两个集群项）；
+   ★ 三套 Simulation 文档全库 grep `GPU|CUDA|OpenCL` 命中 7 处，**全部是捆绑 Intel 库的第三方许可声明** ✓
+② ★ 内存不够时官方给的正解是两级：**换省内存的求解器** → **out-of-core（走磁盘）**；
+   ★★ 而官方逐字说 out-of-core 是「the solution progress can be **extremely slow**」——
+   ★ **不是报错、是极慢** ⇒ ★★ **所以外部闸是必须的**（本仓三层闸即为此，事实 521）✓
+③ ★★ **要吃 GPU 就得换求解器**：★ SW Simulation 能**导出算例**（官方枚举 `swsStudyExportOption_e`
+   逐字有 `Abaqus=6` / `Ansys=1` / `Nastran=2` / …），★ 而 GPU 加速存在于 **Abaqus / Ansys** 那一侧
+   （NVIDIA 的 Abaqus 白皮书 · Ansys release notes 的「GPU Acceleration Feature Updates」）
+   ⇒ ★ **路线是"导出 + 外部求解器"，不是"打开某个 GPU 开关"** ✓
+```
+
+### 二 · ★★★★ 「卸载到另一台机器」：★ 功能有版本寿命，而 API 还在（★ 不许混为一谈）
+
+★ 〔网上〕经销商 GoEngineer 逐字：SW Simulation **2017** 起支持 offload（**Premium** 许可、同域、
+coordinator + worker agent、static/nonlinear），★★ **而同一页逐字写着
+「Note: SOLIDWORKS 2021 is the last release to support Offloaded Simulation」** ✓
+★ 〔本机官方类型库〕而在我们这台 **2026** 上，同族 API **仍然在**：
+`ICWStudy.OffLoad`（`Public Property OffLoad As Boolean`）·
+`ICWStudyManager.ManageDistributedSimulation2(BOffLoad As Boolean, ComputerNames As Variant) As Long` ✓
+⇒ ★★★ **「功能退役的传言」与「API 仍在」并存** ⇒ ★ 按铁律 5：**本条不判它在本机能不能用**，
+★ 只记下**一个可做的单变量实验**（读 `study.OffLoad` 可否设 · 看 `ManageDistributedSimulation2` 返回码）✓
+
+### 三 · ★★★★ 落到本仓的可执行杠杆（★ 都是本机官方成员）
+
+| 杠杆 | 成员 | 作用 | 状态 |
+|---|---|---|---|
+| 求解器 | `ICWStaticStudyOptions.SolverType`（`swsSolverType_e`） | 缺内存优先 `FFEPlus=2` | ★ 已在类型表里、**未挂显式参数** |
+| ★ 网格质量 | **`ICWMesh.Quality`**（`swsMeshQuality_e`：`Draft=0`/`High=1`） | ★★ Draft 用线性单元 ⇒ 节点/DOF 大降 | ★ 已定位、**未实现** |
+| ★★ 节点数 | **`ICWMesh.NodeCount`** | ★★ **DOF ≈ 3×节点数**（★ 实测标定：事实 293 的 30,456/11,301 = **2.69**）⇒ 比"4.2×单元数"**更准且是第一性原理** | ★ 已定位、**未实现** |
+| 网格类型 | `ICWStudy.MeshType`（`swsMeshType_e`） | ★★ 梁/壳/中面 = 数量级降 DOF | ★ 已定位、**未实现** |
+| 三层闸 | `check_mesh_size_sane` · `solve_memory_preflight` · `watch_solver_memory.py` | ★ 内存上限可执行 | ★★ 已实现 + 10 条负例 |
+
+★ **建议下一步**：① 把 `NodeCount` 接进 `solve_memory_preflight`（把 DOF 估计换成 `3×节点数`）；
+② 把 `Quality` / `SolverType` 做成可传参数；③ 真机试 `OffLoad` 到底还能不能用 ✓
+
+### 四 · ★ 依据
+★ 全文与逐条引用：[`references/simulation-performance-memory-gpu.md`](simulation-performance-memory-gpu.md)（★ 本机官方与网上来源**分开标注**）✓
+★ 本机官方：`c_Analysis_Solvers.htm` · `IDC_HELP_PRESTATIC_OPTIONS.htm` · `swsSolverType_e.html` ·
+`swsStudyExportOption_e.html` · `CWStudy~OffLoad.html` · `ManageDistributedSimulation2.html` ·
+`swsMeshQuality_e.html` · `_raw/reflect/iface_cosworks.txt`（`ICWMesh.Quality` / `NodeCount`）✓
+★ 网上：GoEngineer（offload 与 2021 退役）· SOLIDWORKS 2019/2021 帮助 · NVIDIA（Abaqus GPU 白皮书）·
+Dassault HPC 专题 · Ansys release notes（GPU Acceleration）· Supermicro/Ansys · SOLIDBI（NVMe/PCIe）✓
