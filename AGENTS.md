@@ -36,6 +36,7 @@ docs/dead-ends.md      # ★ 由 tools/gen_dead_ends.py 生成（45 条 / 28 能
 ② **它的 `## Remarks`**（前置与语义都在这）· ③ **CHM 那页顶上的 `Example` / `See Also`**（★ **例子给的是"调用序"，签名与 Remarks 都给不了**）。
 ⇒ ★ **"试参数"是最后手段** —— ★ 读完仍不成才开探针，★ 且探针 `来源块` 要**写明读的是哪一页**。
 ★ 顺序：**① 官方页 → ② `docs/dead-ends.md` → ③ 该能力的 `limitations` → ④ `known-facts.md` → ⑤ 动手。**
+★★ **第 0.5 步（★ 2026-10-04 加）**：碰下面这些成员前，先查 **[docs/recon-206/pre-code-conflict-lookup.md](docs/recon-206/pre-code-conflict-lookup.md)** —— 它列了 **368 个成员 / 424 条**「官方 `## Remarks` 与官方示例**不能同时成立**」的位置（`unit_diff` 15 · `mark_diff` 10 · `return_shape_diff` 75 · `precondition_diff` 324）⇒ ★ **照示例写可能就写错了** ✓（★ 样例：`AutoDimension2` 的 Remarks 要求基准打 `swAutodimMark*`，而示例用没有 mark 形参的 `Select4` 却声明成功）
 **为什么**：2026-10-03 轮 501–548 我在这件事上**栽了六次**（剪裁顺序反了 · 分割线 mark 全错 · 旋转曲面缺中心线 7 轮 · 扫描曲面从没查过 `InsertSweepSurface2` · 指针族误判 · "会挂"没读自己的弹窗落盘）—— **每一处官方都写着**。
 详见 **[docs/official-docs-first.md](docs/official-docs-first.md)**。
 
