@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 339 | 339 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 351 | 351 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -53,9 +53,9 @@
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 13 | 49⚠ | 23 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 29 | 14 | 29 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 54 | 517⚠ | 96 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 66 | 517⚠ | 108 | **42** |
 
-**合计**：并集 650 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 662 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,11 +117,12 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 301 个操作只有本仓库有：
+共 313 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
 - `addin_host_status`（⑰ 未归类）
+- `api_deprecated_successor`（⑰ 未归类）
 - `assembly_auto_explode`（⑩ 装配）
 - `assembly_check_interference`（⑩ 装配）
 - `assembly_create_exploded_view`（⑪ 工程图）
@@ -135,6 +136,12 @@
 - `assembly_view_collapse`（⑩ 装配）
 - `assembly_view_explode`（⑩ 装配）
 - `auto_dimension_sketch`（③ 草图）
+- `automation_enter_command_lock`（⑰ 未归类）
+- `automation_exit_command_lock`（⑰ 未归类）
+- `automation_explain_hresult`（⑰ 未归类）
+- `automation_get_flag`（⑰ 未归类）
+- `automation_is_command_locked`（⑰ 未归类）
+- `automation_set_flag`（⑰ 未归类）
 - `available_direction_selectors`（⑰ 未归类）
 - `available_point_selectors`（⑰ 未归类）
 - `base_flange_params`（⑦ 钣金）
@@ -293,6 +300,7 @@
 - `refresh_scene_graph`（⑰ 未归类）
 - `render_materials`（⑭ 外观 / 材质 / 配置）
 - `replace_face`（⑰ 未归类）
+- `repo_find_real_implementations`（⑰ 未归类）
 - `resolve_backend`（⑰ 未归类）
 - `resolve_entity`（⑰ 未归类）
 - `resolve_selection`（⑰ 未归类）
@@ -314,6 +322,10 @@
 - `selection_point`（⑰ 未归类）
 - `selector_resolve_direction`（⑰ 未归类）
 - `selector_resolve_point`（⑰ 未归类）
+- `session_busy_status`（⑰ 未归类）
+- `session_solver_processes`（⑰ 未归类）
+- `session_stuck_status`（⑰ 未归类）
+- `session_wait_until_idle`（⑰ 未归类）
 - `sheet_metal_create_base_flange`（⑦ 钣金）
 - `sheet_metal_create_draft`（⑦ 钣金）
 - `sheet_metal_create_edge_flange`（⑦ 钣金）

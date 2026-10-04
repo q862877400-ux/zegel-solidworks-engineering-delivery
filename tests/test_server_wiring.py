@@ -221,7 +221,15 @@ def test_expected_batch_size(server):
     #:    ② **宏/VBA 8 个**（新建 `scripts/sw_macro.py` 的 `RunMacro2` + `sw_macro_guard` 的 7 个纯函数））✓
     #:   ★ 实测开工前 `capabilities.yaml` 搜 `Explode`/`RunMacro` = **0 命中** ⇒ 两块**完全空白**，
     #:     而规格 202 的 FR-008 逐字要求它们 **MUST 可用** ⇒ 本批是它的落地 ✓
-    assert len(all_specs()) == 313
+    #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 80**）：**313 → 325** —— ★ **我加的 12 条**
+    #:   （`tool_specs_batch80.py`：★ 自动化**诊断知识** 6（HRESULT 释义 / 命令锁 3 / 首选项开关 2）·
+    #:    COM 陷阱纯函数 2 · **会话忙闲检测 4**（忙 / 卡死 / 求解器进程 / 等空闲））✓
+    #:   ★ 同批**明确不做 7 个**（弹模态框的 `send_message` · 重复的 `explain` · 无独立价值的
+    #:     `is_type_mismatch` · 内部管道 `byref_*` · 收可调用的 `adaptive_arity` · 收字节的
+    #:     `is_swp_macro` · generator 的 `iter_real_sources`）—— ★ 原因逐条写在批次文件头，
+    #:     并由测试断言「真的没挂」✓
+    #:   ★ 本批新加注入键 `"sldworks": resolve_sw`（★ 与既有 `"sw"` 同一手法 —— 事实 169）✓
+    assert len(all_specs()) == 325
 
 
 # ── ③ 命名与「两者不混用」（规则 1）──────────────────────────────

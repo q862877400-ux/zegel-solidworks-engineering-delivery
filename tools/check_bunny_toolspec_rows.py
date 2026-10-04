@@ -48,18 +48,31 @@ def _load(path: Path) -> dict:
 
 
 def _fn_params(module: str, function: str):
-    """★ 从 `scripts/<module>.py` **重新解析**该函数的形参（★ 不信 Bunny 的自述）。"""
+    """★ 从 `scripts/<module>.py` **重新解析**该函数的形参（★ 不信 Bunny 的自述）。
+
+    :returns: `(required, optional, err)` —— ★ `required` 是**没有默认值**的形参（必须全声明），
+      `optional` 是有默认值的（**可以省略** ⇒ 由 Python 默认值兜住）✓
+      ★★ 修一处**过严**判据（2026-10-04 建批 80 时发现）：第一版要求"声明的形参 == 全部形参"
+      ⇒ ★ 于是 `solidworks_busy(windows=None)` 这类**带默认值**的首参**没法省略** ⇒ 假阳性 ✓
+      ★ 正解按事实 51：判据要贴合**数据的组织单元** —— 有默认值的形参本来就允许不传 ✓
+    """
     f = ROOT / "scripts" / ("%s.py" % module)
     if not f.is_file():
-        return None, "模块文件不存在: scripts/%s.py" % module
+        return None, None, "模块文件不存在: scripts/%s.py" % module
     try:
         tree = ast.parse(f.read_text(encoding="utf-8", errors="replace"))
     except SyntaxError as exc:
-        return None, "模块语法错: %s" % exc
+        return None, None, "模块语法错: %s" % exc
     for n in tree.body:
         if isinstance(n, ast.FunctionDef) and n.name == function:
-            return ([a.arg for a in n.args.args] + [a.arg for a in n.args.kwonlyargs]), None
-    return None, "该模块里没有顶格公开 def %s" % function
+            pos = [a.arg for a in n.args.args]
+            kw = [a.arg for a in n.args.kwonlyargs]
+            n_def = len(n.args.defaults)
+            req = pos[:len(pos) - n_def] if n_def else list(pos)
+            opt = (pos[len(pos) - n_def:] if n_def else []) + [
+                k for k, d in zip(kw, n.args.kw_defaults) if d is not None]
+            return req, opt, None
+    return None, None, "该模块里没有顶格公开 def %s" % function
 
 
 def check_row(row: dict, existing_tools: set[str]) -> list[str]:
@@ -73,18 +86,25 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     if not isinstance(row.get("params"), list):
         bad.append("① params 不是数组")
         return bad
-    #: ② 函数存在 + 形参一致
-    real, err = _fn_params(row["module"], row["function"])
+    #: ② 函数存在 + 形参一致（★ 必填的必须全在；可选的可省略）
+    req, opt, err = _fn_params(row["module"], row["function"])
     if err:
         bad.append("② %s" % err)
     else:
         claimed = [p.get("name") for p in row["params"] if isinstance(p, dict)]
         injected = row.get("inject") or ""
         #: ★ 注入的那个形参**不出现在** params 里（它由解析器供给）
-        expect = [a for a in real if a != injected]
-        if claimed != expect:
-            bad.append("② 形参不符：盘上 %r → 去掉注入键 %r 后应为 %r，而草稿写 %r"
-                       % (real, injected, expect, claimed))
+        req_x = [a for a in req if a != injected]
+        miss = [a for a in req_x if a not in claimed]
+        extra = [a for a in claimed if a not in req and a not in opt]
+        if miss:
+            bad.append("② **必填形参没声明**: %r（盘上必填=%r）" % (miss, req_x))
+        if extra:
+            bad.append("② **声明了盘上没有的形参**: %r（可选=%r）" % (extra, opt))
+        #: ★ 顺序也要对（按盘上顺序取子序列）
+        order = [a for a in (req + opt) if a in claimed and a != injected]
+        if order and claimed and order != claimed:
+            bad.append("② 形参**顺序**与盘上不一致：应 %r，草稿写 %r" % (order, claimed))
     #: ③ 官方出处存在 + 引文逐字命中
     #: ★★ 例外：`exposable=False`（判"不做"）时**官方出处可以为空** ——
     #:   ★ 有些函数本来就没有官方页（本仓自建的插件域模块）⇒ ★ 但**必须写原因**（铁律 5）✓
@@ -130,9 +150,11 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     inj = str(row.get("inject") or "")
     if inj not in INJECT_KEYS:
         bad.append("⑦ inject=%r 不是 RESOLVERS 的键" % inj)
-    elif inj and real and real[0] != inj:
-        bad.append("⑦ ★ 注入键 %r ≠ 目标函数首参 %r（事实 502：注入键字面当关键字传）"
-                   % (inj, real[0]))
+    elif inj and req is not None and inj not in (req + (opt or [])):
+        bad.append("⑦ ★ 注入键 %r **不在**目标函数形参表 %r 里（事实 502：注入键字面当关键字传）"
+                   % (inj, req + (opt or [])))
+    elif inj and req and req[0] != inj:
+        bad.append("⑦ ★ 注入键 %r ≠ 目标函数首参 %r（事实 502）" % (inj, req[0]))
     #: ⑧ 查重
     if tn in existing_tools:
         bad.append("⑧ ★ 与既有工具**撞名**: %s" % tn)

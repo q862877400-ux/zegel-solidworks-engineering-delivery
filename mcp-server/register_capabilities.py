@@ -479,6 +479,20 @@ BATCH_MODULES = (
     #:   ★ 本批 **17 个** ⇒ 工具数 296 → **313**（规格 204 的 SC-001 第一段）✓
     #:   ★ 与既有工具**零重叠**（SC-004）：既有 296 个里没有爆炸视图、也没有宏**执行**工具 ✓
     "tool_specs_batch79",
+    #: ★★★★★★ 轮 106：**规格 205 的批 80 —— 自动化诊断知识 + 会话忙闲检测**（12 个）：
+    #:   · `sw_automation_knowledge` 6 个（HRESULT 释义 / 命令锁 3 / 首选项开关 2）——
+    #:     ★ 它们的首参叫 **`sldworks`** ⇒ ★ 本批**新加了一个注入键** `"sldworks": resolve_sw`
+    #:     （★ 与既有的 `"sw"` 键同一手法 —— 事实 169 那张表的设计用途）✓
+    #:   · `sw_com_traps` 2 个**纯函数**（`deprecated_successor` / `find_real_implementations`）——
+    #:     ★ 同一批里另 7 个**明确不做**（弹框的 `send_message` · 重复的 `explain` ·
+    #:       无独立价值的 `is_type_mismatch` · 内部管道 `byref_*` · 收可调用的 `adaptive_arity` ·
+    #:       收字节的 `is_swp_macro` · generator 的 `iter_real_sources`）⇒ ★ 原因逐条写在批次文件头 ✓
+    #:   · `sw_busy` 4 个（忙闲 / 卡死 / 求解器进程 / 等空闲）—— ★ 本会话新建的模块，
+    #:     ★★ 它的判据正是事实 526 的教训（忙碌要**归属家族进程**，否则孤儿窗口假阳性）✓
+    #:   ★ 本批 **12 个** ⇒ 工具数 313 → **325** ✓
+    #:   ★ 选域依据：机械预筛（`output/prescreen-deduped.json`）—— ★ 不再按"候选数"排序，
+    #:     而按"**去重后可挂数**"排序（★ 这是 v3 批序的由来，见规格 §8.2）✓
+    "tool_specs_batch80",
 )
 
 def all_specs() -> list:
