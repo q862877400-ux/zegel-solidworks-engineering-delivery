@@ -5509,3 +5509,46 @@ scripts/sw_sketch_status.py · tools/probe_activesketch_successor.py
 ★ **依据**：`tools/t3_6_check_manual_vs_exhaustive.py`（★ 一次性脚本，跑完已删）·
 `docs/official-source-errors.md` §〇（83 → 110 行）· `b2-defects.json`（只读）·
 `specs/206-c1c6-harvest/spec.md` 的 **SC-6** ✓
+
+---
+
+| 525 | **★★★★ C4 里最危险的两类冲突抽出来了：`unit_diff` 15 + `mark_diff` 10 = 25 条（19 个成员），每条带**两侧原文**** —— 2026-10-04（接手轮 T4-1，规格 `specs/206-c1c6-harvest/`）。
+
+**为什么先做这两类**（★ C4 的分类与量）：
+```
+C4 共报 598 条冲突（过引文闸 544）：precondition_diff 324 · other_conflict 174 ·
+return_shape_diff 75 · **unit_diff 15** · **mark_diff 10**
+★★ 只取后两类 —— **单位写错、选择 mark 写错会直接让工具算错或选错**；
+★ 前几类多半是「详略差异」（★ 另一对话 V1 抽检：12 条里只 4 条真互斥 ⇒ 真冲突约 220–270）✓
+```
+
+**★ 交付物**：`docs/recon-206/conflicts-25.md`（74 行 · 25 条 · 19 个成员）
+★ 每条带：`member` · `kind` · **`remarks_quote`（成员页原文）** · **`example_quote`（示例原文）** ·
+`example_file` · `why`（另一对话的判读）✓
+
+**★★ 抽样看这几条（★ 直接可用的那类）**：
+| 成员 | 类 | Remarks 说 | 示例写 |
+|---|---|---|---|
+| `AutoDimension2` | mark_diff | 「…mark a unique vertical edge … using **swAutodimMarkHorizontalDatum** as the mark value」| `swSketchSegVert.Select4(True, Nothing)` ⇒ ★★ **`Select4` 没有 mark 形参**，却声明成功 |
+| `ConeParams` | unit_diff | 「half angle, origin, and radius **are in meters**」| 示例里做 `* 57.3` 的**度**换算 |
+| `FeatureCircularPattern4` | unit_diff | 「total angle **in radians** if EqualSpacing」| ★ 与本仓已记的「弧度口径」直接相关 |
+| `EditMate3` | mark_diff | 「two mated items must be selected with a selection mark of **1**」| — |
+| `FeatureExtruRefSurface2` | mark_diff | 「Sketch; call `SelectByID2` with selection mark **0**」| — |
+
+★★★ **`AutoDimension2` 那条是这一类的样板**：Remarks 要求基准必须打 `swAutodimMark*`，
+★ 而示例用**没有 mark 形参**的 `Select4` ⇒ ★★ **照示例写，我们的"选择 mark"约定就是错的** ——
+★ 直击本仓 `docs/union-conventions.md` 的「选择统一」那条纪律 ✓
+
+**★ 本表的「不算什么」（★ 已写进文件）**：
+① 不等于「官方文档错、示例对」（★ 只记**两侧不能同时成立**，谁对要逐条判）；
+② **不构成**「我们的实现错了」—— 要先看我们**实际怎么调**；
+③ ★ 来源全程 `conditional_pass`（该规格 REPORT §七 自陈：C4 只覆盖 **91%** 箱、**丢箱系统偏向尾部**）
+⇒ **候选队列，逐条过闸才采纳** ✓
+
+★ **下一步（T4-1 的「逐条核」）**：每条判三态（成立 / 不成立 / 查不到）；
+★ 成立的才去核 `scripts/` 里对应实现，**有证据才改** ✓
+
+★ **依据**：`tools/t4_extract_unit_mark_conflicts.py` · `docs/recon-206/conflicts-25.md` ·
+`specs/204-bunny-moat-batches/recon/c4-merged.json`（2.6 MB，只读复用）✓
+★ **过程记录**：`kind` 在**嵌套的 `conflicts` 列表里**（顶层无 kind）⇒ 第一版按顶层过滤抽到 0 条，
+  靠打印结构才发现；★ 另修了一处中文里的 ASCII 引号（`"详略差异"` → 「详略差异」，事实 48 同族）✓
