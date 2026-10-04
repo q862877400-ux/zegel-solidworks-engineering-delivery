@@ -6683,3 +6683,159 @@ CreateStructureSystemMemberData · Elliptical · FeatureFillet3（各 3 条）
    我的样板说「**我们真错过、且现在没人守着**」⇒ ★★★ **交集才是最高优先级**，
    判据三条（① 在清单里 ② 有真错过的记录 ③ 现在没有断言守着）✓
    ★ **依据**：`tools/t2_sample_vs_checkable.py` · `docs/recon-206/t2-sample-vs-checkable.md` ✓
+
+| 552 | **★★★★★★ T2-4 交集法实测：交接件里那句「其余约 100 条」【不成立】—— 严格交集只有 1 条（★ 已写成第 4 个样板）** |
+|---|
+
+**★ 做法（★ 判据三条，逐字来自 `docs/recon-206/t2-sample-vs-checkable.md` §四）**：
+```
+① ★ 在 102 条「可机检前置」清单里（★ 来自 C3）
+② ★ 有「真错过」的记录（★ 标识符落在 known-facts / tasks.md 的「过去错误」±400 字窗口内）
+③ ★ 现在没有断言守着（★ 该标识符未出现在任何 tests/test_*.py）
+```
+
+**★★★ 实量（`tools/t2_intersect_past_errors.py`）**：
+
+| 判据 | 条数 |
+|---|---:|
+| ① 与「过去错误」笔记有词面交集 | **2** |
+| ② 而那交集**未被任何测试提到**（= 无断言守着）| **1** |
+| ③ 其中能力名本身在错误笔记附近的 | **0** |
+
+★ **唯一候选**：`[pattern_and_mirror] FeatureCircularPattern4 前必须 SelectByID2 选中种子特征：Type=BODYFEATURE、mark=4`
+★★ **⇒ 本轮把它写成断言**：`tests/test_circular_pattern_marks.py`（**7 passed**，含 **3 个负例**）✓
+★★ 它的**官方依据是两条独立源**（★ 不是单源）：`FeatureCircularPattern4.md` 的 Remarks mark 表
+（逐字「1 to mark the direction axis」·「4 to mark the features to pattern」）**+** 官方示例的调用序 ✓
+
+**★★★ 为什么差这么多（★ 量化，不是感觉）**：
+```
+① ★ 那 102 条说的是「官方示例揭示了某前置、而我们**没有运行证据**」——
+   ★★ 它**不是**「我们错了」的清单 ⇒ 把它当待办数量本身就错位 ✓
+② ★ 「真错过」这件事**很稀疏**：102 条里与过去错误笔记有交集的只 **2** 条 ⇒ 交集 **1** ✓
+③ ★ 前 3 个样板**根本不在**这 102 条里（★ 同文档 §二 已量化：关键词命中 16/2/1，
+   ★★ 而那是**关键词**命中、不是"同一条"）✓
+```
+
+**⇒ ★★ 定则（本规格第 13 条）**：
+```
+★ 「A 有 102 条、B 有 N 条 ⇒ 交集约 100 条」是**未验证的直觉** ——
+  ★★ 与事实 524（「两张表 = 冗余」也是未验证的直觉）**同族** ⇒ ★ **先量，再报数** ✓
+```
+
+★ **依据**：`tools/t2_intersect_past_errors.py` · `docs/recon-206/t2-intersect-past-errors.md` ·
+`output/t2-intersect-past-errors.json` · `tests/test_circular_pattern_marks.py` ·
+`docs/recon-206/t2-sample-vs-checkable.md` §二/§四 · 事实 524/549/550/551/62 ✓
+★ **本表的下限（「不算什么」）**：① 词面交集是粗判；② 判据③「出现在测试里」**不等于**「有断言守着」
+（★ 出现在测试的**注释**里也算出现）⇒ 它只会**高估**已守；③ 它只筛候选，判读留给人 ✓
+
+---
+
+| 553 | **★★★★★★ 我自己按「同族类推」写下的断言【当场红】—— 官方示例证明我推反了；★ 而这次是测试抓住的，不是我** |
+|---|
+
+**★ 事故经过（★ 如实，因为它是本批最有价值的一条）**：
+```
+① ★ 我给圆阵写「选区顺序」断言时，依据是「同仓**旋转**那家踩过反序 ⇒ 轴必须先于轮廓」
+   ★★ ⇒ 我类推成「圆阵也要**轴先**」⇒ 断言写成 kinds.index("AXIS") < kinds.index("BODYFEATURE") ✓✗
+② ★★ 测试**当场红**：真值 ['BODYFEATURE', 'AXIS']  ⇒ assert 1 < 0 失败 ✓
+③ ★★★ 逐字回查官方示例 `Create_Circular_Pattern_Example_VB.md` 四条选择，逐字是：
+     SelectByID2("Cut-Extrude1", "BODYFEATURE", …, False, 4, …)   ← ★ **先**，mark 4
+     SelectByID2("", "EDGE",            …, True,  1, …)            ← ★ **后**，mark 1
+   ⇒ ★★ **官方示例就是「先特征、后轴」** ⇒ ★ **我方代码与示例一致**、★ **是我的断言反了** ✓
+④ ★★★ 于是我把断言改成**示例的序**（`test_feature_is_selected_before_axis`），
+   ★★ 并把这次的经过**逐字写进测试的来源块**（★ 免得下一个人再类推一次）✓
+```
+
+**★★★ 与之配套的一条「不算什么」（★ 差点又被误读）**：
+★ `FeatureCircularPattern4.md` 的 Remarks 里有一句逐字：
+「Using `IModelDocExtension::SelectByID2` to select features and components,
+**ordered selection of the features and components is required**」
+⇒ ★★ **它约束的是「特征与特征之间」的次序**（★ 示例里确实连续选了两个 `BODYFEATURE`，都是 mark 4）；
+★ 它**没有**规定「特征 vs 轴」谁先 —— ★ 后者**只能从示例读** ✓
+
+**⇒ ★★ 定则两条**：
+```
+★ 之一（★ 本规格第 12 条）：**「同族里一个成员的顺序」不能类推到另一个成员** ——
+  ★★ 顺序要么读**该成员自己的**示例，要么**就别断言** ✓
+★★ 之二（★ 这条更值钱）：**断言里固化的必须是【外部依据】，不能是【我的类推】** ——
+  ★ 我原本会把一个**错误的类推**固化成一个**看起来像守卫的**断言，
+  ★★★ 那比没有断言更坏（★ 与事实 40 的「存在但没人用的守卫」同族）✓
+```
+
+★ **依据**：`tests/test_circular_pattern_marks.py`（★ 失败记录 + 改正后的 7 passed）·
+`C:\swapi\examples\Create_Circular_Pattern_Example_VB.md`（四条选择逐字）·
+`C:\swapi\types\IFeatureManager\FeatureCircularPattern4.md`（Remarks 的 mark 表 + 那句 ordered）·
+`scripts/sw_part.py` 的 `circular_pattern` · 事实 40/62/549/552 ✓
+
+---
+
+| 554 | **★★★★★★ T4-1 判读收口：10 条**三态已判**（8 成立/不成立/查不到）；★ 其中**两条真发现**，且**一条推翻了我上一轮的判读** |
+|---|
+
+**★ 交付物**：`docs/recon-206/conflicts-8-judgement.md`（★ 10 行判读表 + 两条真发现 + 下一步）✓
+
+**★★ 判读的总口径（★ 三条「不算什么」，都是本轮实测撞出来的）**：
+```
+① ★ 「同一节里我们『用到了』」≠「产品代码里有真调用」——
+   ★★ 8 个成员里 **2 个只出现在探针/散文**（SetupSheet6 · InsertWeldmentTrimFeature2）⇒ 必须分开数 ✓
+② ★ 「官方示例与 Remarks 打架」≠「我们错了」——
+   ★★ 10 条里**只有 2 条**真指到我们的代码（AutoDimension2 · SetSystemValue3）✓
+③ ★ 「我们没照示例写」≠「我们错了」——
+   ★ 当两者打架时**照 Remarks 写是合理选择**，★ 但**必须记下"我们无法用示例交叉验证它"** ✓
+```
+
+**★★★ 真发现之一：我上一轮对 `AutoDimension2` 的判读写【错】了我们自己的代码**
+```
+★ 上一轮（材料文件模板第 1 行）逐字：「★ 调用前**没有**『选基准边并打 swAutodimMark*』这一步」
+★★ 而 `scripts/sw_part.py:745-758` 逐字：
+     for segment, mark in ((vertical, 2), (horizontal, 4)):
+         segment.Select3(selected > 0, mark, _empty_callout())    ← ★ **真打了 2 / 4**
+         ↓ 仅当 Select3 抛异常才退到
+         segment.Select4(selected > 0, _empty_callout())          ← ★ 这条**没有 mark 形参 ⇒ 静默丢 mark**
+⇒ ★★ 更正为：我们**有**打 mark（= Remarks 那一边）；★★ **我们的真缺陷是**「退路会静默丢 mark」
+   + 「返回码不译」⇒ ★ 官方 `swAutodimStatusDatumNotSupplied = 11` 可达而用户看不懂 ✓
+★★ 而 mark 4 = swAutodimMark**Vertical**Datum（★ 枚举逐字，不是我的猜测）⇒ ★ 注释里那句
+   「4=垂直基准」**与枚举一致**、★ 而它作用在**水平方案**上 ⇒ ★ 这正是官方那个 mark_diff 的实质 ✓
+```
+**⇒ ★★ 教训（★ 与定则 ⑦ 同族）**：**判「我们有没有做某一步」必须读那一行代码**，不能读围绕它的散文 ✓
+
+**★★★ 真发现之二（★ 不在那 25 条里）：`update_dimension_mm` 把【角度】尺寸当【长度】收**
+```
+★ 触发: 官方示例 `Change_Dimension_Example_VB.md` 逐字
+   ' Change D3 of LocalCirPattern1 from 360 degrees to 270 degrees (4.72 radians)
+   errors = swDim.SetSystemValue3(4.72, swThisConfiguration, Nothing)
+   ⇒ ★ 即：官方页那句「in meters」对**角度尺寸**不适用 ✓
+★★ 而我方 tool_specs_batch33.py:126 逐字：Param("value_mm", … "New value in MILLIMETRES.")
+   ★ 实现 sw_document_data.py:366 逐字：float(value_mm) / _scale   ← ★ 一律按长度换算，**没有角度概念** ✓
+⇒ ★★★ 传 `D3@LocalCirPattern1` 这类名字时，传 270（本意 270°）**数值上恰好对**
+   （270° = 4.712 rad）—— ★ **纯属巧合**（我们做的是 270/1.0，换算是**恒等的**）；
+   ★★ 一旦文档单位不是毫米（_scale ≠ 1）⇒ ★ 同一个调用**立刻错** ✓
+★★ 修法（★ 官方枚举支持、一行就能判）:
+   types/IDimension/GetType.md 逐字 Returns ⇒ swDimensionParamType_e
+   enums/swDimensionParamType_e.md 逐字: DoubleLinear=0 · ★ DoubleAngular=**1**
+   ⇒ ★ 判 GetType()==1 就**显式拒绝并说明**（★ 别静默按长度写）✓
+★ 本轮**不改**（★ 行为改动要先有真机证据；★ 且改 scripts/ 里别人的实现须有证据）✓
+```
+
+**★ 一个交付纪律（★ 本规格第 11 条）**：
+```
+★ 材料文件 `conflicts-8-judge-materials.md` 是**生成物**（★ 头两行逐字「不要手改」）⇒
+  ★★ 往它的模板行里填字，**下次重跑脚本就被覆盖**（★ 与事实 531「探针写坏真交付物」同族）✓
+⇒ ★ 定则：**生成物里可以留空模板，但结论要另立一份非生成物** ——
+  ★★ 否则「填了又被覆盖」会让结论**看起来存在而实际消失**（★ 比没填更坏）✓
+```
+
+★ **依据**：`docs/recon-206/conflicts-8-judgement.md` · `conflicts-8-judge-materials.md` ·
+`conflicts-25-crosscheck.md` §1/§5 · `scripts/sw_part.py:745-805` ·
+`scripts/sw_document_data.py:217-239,353-370` · `scripts/sw_surface_features.py:251,263` ·
+`scripts/sw_loft.py:79-87` · `scripts/sw_part.py:1441` · `mcp-server/tool_specs_batch17.py:94` ·
+`mcp-server/tool_specs_batch33.py:126` · 官方 `swAutodimStatus_e`（19 成员）· `swAutodimMark_e` ·
+`swDimensionParamType_e` · `AutoDimension2.md` · `SetSystemValue3.md` · `InsertSewRefSurface.md` ·
+`InsertWeldmentTrimFeature2.md` · `FeatureLinearPattern4.md` · `FeatureCircularPattern4.md` ·
+示例 `Change_Dimension_Example_VB.md` · `Create_Circular_Pattern_Example_VB.md` ·
+`Create_Surface_Knit_Feature_Example_CSharp.md` · `Fill_Holes_in_Part_Example_CSharp.md` ·
+`Insert_Weldment_Features_Example_CSharp.md` · 事实 517/531/40/62 ✓
+★ **本批的下限（「不算什么」）**：① 真机**未跑**（★ 本轮 SolidWorks 未在运行 ⇒ 两条真发现都只有**静态/官方**证据）；
+② 那 **258 个** `example_more_specific` 成员的逐条判**未做**（★ 本表只判了 8 个）；
+③ `FeatureLinearPattern4` 的 `mark=8388608` 与 `InsertWeldmentTrimFeature2` 的 mark 1/2 记成
+**潜在前置/单源不可判** ⇒ ★ **没改代码**（★ 改了也无从判对错）✓
