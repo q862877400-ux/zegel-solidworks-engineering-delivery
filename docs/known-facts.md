@@ -6588,3 +6588,48 @@ CreateStructureSystemMemberData · Elliptical · FeatureFillet3（各 3 条）
 官方 `InsertMirrorFeature2.md` 的 Remarks · `docs/precondition-coverage-gaps.md` §三 ·
 事实 51 / 62 / 8 ✓
 ★ **本批的下限**：★ 只做了**一条**（★ D-3 每批 ≤5 条，★ 一条是安全的）；★ 其余 101 条**未做** ✓
+
+---
+
+| 550 | **★★★★ T2-4 的第二个样板（★ 形状不同：**值域**前置）+ ★★ 挑样方法**机械化了**：从本仓自己的"过去错误"笔记里挖** —— 2026-10-04（接手轮，规格 `specs/206-c1c6-harvest/`）。
+
+**★ 本轮的**方法**贡献（★ 比那一条断言更值钱）**：
+```
+★★★ 上轮立的挑样原则是「**我们真错过 + 现在没人守着**」⇒ ★★ 本轮把它**机械化**：
+   ★ 用 grep 挖本仓**自己的"过去错误"笔记** ——
+     `原本是|原本为|曾错|写反|反了|静默回|轮 \d+ .{0,12}修`
+   ⇒ ★★★ 命中的每一条，**按构造**就是"回归风险最高"的候选 ✓✓
+★ 实测挖出 4 个候选：`sw_gtol.py:270`（轮 120）· `sw_assembly.py:913` · `sw_equation.py:100` ·
+  `sw_gui_focus.py:62` / `sw_gui_input.py:81`（轮 62）✓
+```
+
+**★ 交付物**：`tests/test_gtol_allowed_tol_types.py`（**4 passed**）
+```
+★ 题材：官方 `IGtolFrame/AddIndicator.md` 的 Remarks 逐字给的值域 ——
+  「`TolType` **只能是这 5 个** `swGtolGeomCharSymbol_e` 成员」✓
+★ 我们的实现：`scripts/sw_gtol.py` 有 `GTOL_INDICATOR_ALLOWED_TOL_TYPES`
+  = {20: angularity, 22: parallelism, 21: perpendicularity, 25: circular_runout, 13: symmetry} ✓
+★★ **真错过**（L286-288 逐字）：「`GTOL_GEOM_SYMBOL` 里另外 **14 个**（flatness / position /
+  straightness …）**都不在清单里** ⇒ 传它们 `AddIndicator` **必然返回 False**
+  （**过去会被读成"到不了"**）」✓
+★ 四个测试：① 源/常量可达守卫 ② **主断言**（我们的集合**恰好等于**官方那 5 个）
+  ③ **负例：多放一个**（flatness=19 ⇒ 必须报）④ **负例：少一个**（删 symmetry=13 ⇒ 必须报）✓
+```
+
+**★★ 两个样板的**形状**不同（★ 这正是"样板"的价值所在）**：
+| # | 前置的**种类** | 题材 | 期望值来源 |
+|---|---|---|---|
+| ①（事实 549）| **调用顺序 / 选择** | 镜像的 mark 表（特征=1 · 平面=2）| 官方 Remarks 的 mark 表 |
+| ②（本条）| ★★ **值域** | `AddIndicator` 允许的符号成员 | 官方 Remarks 的成员清单 |
+⇒ ★★ 两类都**纯静态可判**、都**有真错过的记录** ⇒ ★ **其余 100 条可按这两型归类后复制** ✓
+
+**★ 过程记录**：★ 两处小坑——① `dict(OFFICIAL, **{19: "flatness"})` 报
+`TypeError: keywords must be strings`（★ `**` 要求字符串键）⇒ 改 `{**OFFICIAL, 19: …}` ✓；
+② ★ 读常量时**只从源码抽**（★ 不 `import` 模块 —— 那会拉起 COM 依赖）✓
+
+★ **依据**：`tests/test_gtol_allowed_tol_types.py` · `scripts/sw_gtol.py`
+（`GTOL_INDICATOR_ALLOWED_TOL_TYPES` + L270-273 的轮 120 修正 + L283-288 的官方限制）·
+官方 `IGtolFrame/AddIndicator.md` · 事实 549（第一个样板）· 事实 62 ✓
+★ **本批的下限**：★ 只做了 **1 条**（★ 累计 2 条）；★ 其余 ~100 条**未做**；
+★ 另有 **2 条已挖出但未做**的候选（`sw_assembly.py:913` · `sw_equation.py:100`，★ 同一形态：
+「原本是 `get_com_member`（读）」）✓
