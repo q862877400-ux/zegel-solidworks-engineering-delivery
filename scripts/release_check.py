@@ -809,6 +809,47 @@ def _run_unreachable_members_gate() -> dict[str, object]:
         "status": "pass" if proc.returncode == 0 else "fail",
         "output": (proc.stdout or "").strip()[-1500:],
     }
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把「**别把官方属性当方法叫**」接进发布前检查）
+# 文件:   `scripts/check_property_form_members.py`（本门禁的实现）
+#         两个官方源：`_raw/**/iface_sldworks.txt`（出厂反射）· `C:\swapi\types\**\*.md`（kind 元数据）
+# 定位:   新增 `_run_property_form_members_gate`：**硬门禁**。
+#   ★☆ **为什么接进来**（★ 2026-10-04 接手轮 · 事实 520）：★ `drawing_workflow.py` 里
+#     `get_com_member(model, "GetModelViewManager")` —— ★ 而官方 `IModelDoc2` 上
+#     **只有属性** `ModelViewManager`（`kind: property`）⇒ ★ `getattr` **抛 AttributeError**
+#     ⇒ ★★ 那 4 个剖视函数**全都取不到 manager**，而它一度被记成"后端限制"。
+#   ★★ **既有三道「名字」门禁都抓不到它**，各有各的原因：
+#     · `check_member_names.py`     —— ★ 只扫 `scripts/*.py`（★ 而它落在 `subskills/`）；
+#     · `check_interface_member_ownership.py` —— ★ 管"成员属于哪个接口"，不管"名字对不对"；
+#     · `check_unreachable_members.py` —— ★ 只认**一份手工 deny 名单**（★ 而这个名字不在里面）。
+#   ★★★ **判据要两个源**（★ 只有反射会**误伤几百处**：`GetBodies2` / `GetCurrentSheet` …
+#     都是**官方方法、各有自己的页**）：★ 也就是"反射说它只有属性形" **且**
+#     "官方 md 里那个 `get_X` **没有页**" —— ★ 实测**收敛到 0 处**（真 bug 已修）✓
+#   ★★★★ **判据已被负例证明**：`tests/test_property_form_members_gate.py` 拿
+#     **修复前的原文**（`git show …`）喂进去 ⇒ **命中**；★ 修好版 + 4 个合法方法 ⇒ **不命中** ✓
+#   ⚠ **便携性**：两个源任一不在 ⇒ 门禁自己 `[SKIP]` 并 exit 0 ⇒ **可以无条件接线** ✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_property_form_members_gate() -> dict[str, object]:
+    """@brief 跑属性形成员名门禁（`scripts/check_property_form_members.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_property_form_members.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "reason": f"检查**无法启动**（超时/OSError）: {exc}"}
+    return {
+        "status": "pass" if proc.returncode == 0 else "fail",
+        "output": (proc.stdout or "").strip()[-1800:],
+    }
+
 # ⚠⚠ **为什么现在才接**（2026-10-01 轮 70）：该门禁**早就存在**，却**不在硬门禁列表里**
 #   ⇒ 它**红着也没人知道**。实测时它报：
 #   ```
@@ -1151,6 +1192,16 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "可达性门禁未通过（代码里调了**已证到不了**的成员）：\n"
             + str(unreachable.get("output", "")))
+    # ⚑ **属性形成员名门禁**（硬门禁，2026-10-04 接手轮接进 · 事实 520）：
+    #   ★ 判「**官方那个成员是属性，而代码把它当方法叫**」—— ★ 两个官方源同时成立才算
+    #   （★ 只有反射会误伤几百处：`GetBodies2` / `GetCurrentSheet` 都是**官方方法、各有页**）。
+    #   ★★ 既有三道名字门禁都漏这一类（各因见 `_run_property_form_members_gate` 的来源块）。
+    property_form = _run_property_form_members_gate()
+    if property_form.get("status") == "fail":
+        raise AssertionError(
+            "属性形成员名门禁未通过（把官方属性写成 `get_X`/`set_X` 去调 ⇒ 反射里没有该名 ⇒ "
+            "`getattr` 抛 AttributeError）：\n"
+            + str(property_form.get("output", "")))
     # ⚑ **工作区遮蔽门禁**（硬门禁）：工作区根若有与 `server.py` 依赖包同名的 `.py`/目录，
     #   以该工作区为 CWD 的 Python 进程就会 `import` 到**那个本地文件**而不是真包
     #   （实测：`D:\AI\SW\mcp.py` 遮蔽 `mcp` ⇒ `No module named 'mcp.server'`）。
@@ -1391,6 +1442,9 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
         #:   `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价」⚠
         "unreachable": unreachable,
+        #: ★ 2026-10-04（接手轮）★ **同一道元门禁第三次教同一课**：新门禁必须**进返回体**
+        #:   —— ★ 否则「静默跳过」与「没跑」等价（`check_gate_wiring.py` 会拦）✓
+        "property_form_members": property_form,
         #: ★ 2026-10-03（轮 594）★ 同一道元门禁，★ **第二次**教了同一课
         "verified_evidence": verified_ev,
         "backend_limited": backend_lim,
@@ -1482,6 +1536,8 @@ def run_release_check() -> dict[str, object]:
         "refuted": refuted,
         #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点** ⚠
         "unreachable": unreachable,
+        #: ★ 2026-10-04（接手轮）★ 新门禁的**第二处**（★ 两处必须同时加）✓
+        "property_form_members": property_form,
         "verified_evidence": verified_ev,
         "interface_ownership": ownership,
         "missing": [],

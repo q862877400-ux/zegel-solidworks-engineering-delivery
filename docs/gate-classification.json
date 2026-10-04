@@ -204,6 +204,12 @@
       "runner": "_run_refuted_patterns_gate",
       "kind": "hard",
       "reason": "C8 · 台账分叉：★ docs/refuted-patterns.json 里每条的 anchor_quote 必须**逐字**出现在 docs/known-facts.md 中。★ 它自称「唯一常驻硬门禁」，而 2026-10-04（接手轮）的 A-3 查出它唯一依据的文件当时不存在 ⇒ 那条闸永远「通过」（事实 40 同族）；★ 现已建表并接进本处 ⇒ **必须拦发布**，否则又是一条「存在但没人用」的守卫。"
+    },
+    {
+      "gate": "check_property_form_members.py",
+      "runner": "_run_property_form_members_gate",
+      "kind": "hard",
+      "reason": "**硬门禁**：别把**官方属性**当方法叫（`get_X`/`set_X`）。★ 2026-10-04（接手轮 · 事实 520）实例：`drawing_workflow.py` 里 `get_com_member(model, \"GetModelViewManager\")` —— 而官方 `IModelDoc2` 上**只有属性** `ModelViewManager`（`kind: property`）⇒ `getattr` **抛 AttributeError** ⇒ **那 4 个剖视函数全都取不到 manager**，而它一度被记成「本机后端限制」。★ 与既有三道「名字」门禁**分工不同**：`check_member_names` 只扫 `scripts/*.py`（★ 而它落在 `subskills/`）·`check_interface_member_ownership` 管「属于哪个接口」·`check_unreachable_members` 只认一份手工 deny 名单 —— ★ **三道都漏这一类**。★ 判据要**两个官方源同时成立**（反射里那个 `get_X` 没有裸名 **且** 官方 md 里 `get_X` **没有页**）—— ★ 只用反射会**误伤几百处**（`GetBodies2` / `GetCurrentSheet` 都是**官方方法、各有自己的页**）。★ 它**自己有负例自证**：`tests/test_property_form_members_gate.py`（**4 passed**，★ 正例 = **修复前**的原文 `git show d15723d~1:…/drawing_workflow.py` ⇒ 必须命中；★ 4 条负例：修好版 + 三个官方方法 + 「像但合法」的形态 ⇒ 不许命中）。⚠ **覆盖边界**：只查走 `getattr`/`get_com_member` 等**字符串实参**的调用；★ 变量接力的成员名（`_safe_member(doc, name, …)`）**本道看不到**。"
     }
   ]
 }
