@@ -138,6 +138,14 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         bad.append("⑧ ★ 与既有工具**撞名**: %s" % tn)
     if row.get("exposable") is False and not str(row.get("reason_if_not") or "").strip():
         bad.append("⑧ 判 exposable=False 却**没写原因**（★ 铁律 5：说清为什么）")
+    #: ⑨⑩ ★ 三问筛的**自相矛盾检查**（★ 只在行里带了那两个字段时才查 —— 兼容早期行）
+    q1 = row.get("q1_official_page_exists")
+    q2c = row.get("q2_first_param_com_object")
+    q2k = row.get("q2_inject_key_available")
+    if row.get("exposable") is True and q1 is False:
+        bad.append("⑨ ★ 自相矛盾：判可暴露，却自述**官方页不存在**（q1=False）")
+    if row.get("exposable") is True and q2c is True and q2k is False:
+        bad.append("⑩ ★ 自相矛盾：判可暴露，却自述**首参是 COM 对象且无注入键可用**")
     return bad
 
 
