@@ -336,6 +336,11 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 用 `git diff upstream/main --stat` 看我们相对上游的增量。**⚠ `upstream` 目前只登记了 URL、还没 fetch**（本机未联网取）⇒ `upstream/main` 这个 ref 不存在，`round_chain.ps1` 会**优雅跳过**那行统计、`report_freshness` 门禁会 **SKIP**（那是便携性守卫，不是失败）。要用对照能力就先 `git fetch upstream`。
 
 - 三条红线（任何模式都不豁免）：删数据 / 删仓库 / 强推；对外发布；只有用户能提供的东西（凭据、业务口径）。
+- ★★ **提交一律走 `python tools/commit_mine.py -m <信息文件> <路径…>`** —— 且**信息先写成文件**。
+  ★ **禁止**裸 `git commit -m "<多行带引号的字符串>"`：PowerShell 会把信息里的引号/换行**当成 pathspec**（报
+  `did not match any file(s) known to git`），而 **`git add` 已经成功** ⇒ 产生「**表面像提交了、实际没提交**」
+  的**假提交**（与事实 48 定则①同族）。★ 2026-10-05 我**同一条犯了三次**，前两次还写进了提交信息与规格，
+  ⇒ ★ **纪律写在提交信息里没用**（我不会每轮重读它）；它必须写在本文件（每轮注入）才拦得住 ✓
 - 推送前置义务：并入了 Apache-2.0 来源（`Slacker-LLC/solidworks-mcp`）⇒ 推送任何远端都要带 `THIRD-PARTY-NOTICES.md`（含 `Copyright 2026 JIALE LIU` 与改动文件清单），该文件**已存在**；MIT 来源保留版权声明。这条对上游与四家一体适用。
 - 分支策略：`main` 与上游保持一致便于 rebase；每个功能域一个分支（`feat/simulation`、`feat/drawing-views` …）；每个 PR 一句话写清「补了哪个官方接口族，来源是哪个项目 / 哪套文档」。
 
