@@ -61,7 +61,18 @@
 
 ## T5 · 治理
 
-- [ ] **T5-1** `fact-single-home` ⇒ `scripts/check_fact_single_home.py`（**告警级**，不改数）
+- [x] **T5-1** `fact-single-home` ⇒ `scripts/check_fact_single_home.py`（**告警级**，不改数）
+      ★★ **机械核过（2026-10-05）**：脚本在（5434 B）· 自述逐字「**规格 206 / T5-1 的交付物**」·
+        实跑 **exit 0**（告警级、不拦）· 它认了家中 **528** 条（≥80 字符）事实正文，报出 **2 处**逐字复述：
+          · `docs/dead-ends.md` 复述事实 **230**
+          · `specs/202-user-coverage-gaps/recon/verify50/vd50-A-surface.md` 复述事实 **303**
+      ★ **未做的部分（如实记，不含糊）**：它**没接进** `release_check.py` / `round_chain.ps1`
+        （唯一命中是它自己的文件头）⇒ ★ 现在**不会自动跑**。
+        不接的原因：`release_check.py` 是 18 道门禁的共用文件，且有一条按门禁数枚举的测试
+        （`test_gate_details_exposed_for_every_gate`）⇒ 加线要连测试一起改，属**独立一轮**的活；
+        ★ 这条**留给下一轮**，本行不声称"已接入" ✓
+      ★ 那 2 处复述**未修**：门禁自述的处置是「改成『见事实 N』」，但两处都在**别人的规格目录**里
+        （`dead-ends.md` 是生成物、另一处在 `specs/202-*`）⇒ ★ 按写盘边界不由我改，**只记录** ✓
 - [ ] **T5-2** `competitor-signature-crosscheck` 归档为「抄别家之前的判据」
 - [x] **T5-3** `docs/recon-206/README.md`：登记 **30** 个原始 JSON 为**只读数据集**（★ 只**建议**主线登记）
       ★★ **机械核过（2026-10-05）**：生成器 `tools/t5_3_register_recon.py`（4784 B）在 ·
