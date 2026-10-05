@@ -7032,11 +7032,11 @@ dp1 片 **错-把已有的判成缺口 6/26 = 23%**（`undo`/`wrap`/`sweep`/`ver
 
 **★ 依据**：`tools/make_union_workload_349.py` · `tools/verify_union_349.py`（负例自检 4/4）·
 `tools/report_false_positive_rate.py` · `tools/list_adoptable.py` ·
-`output/bunny-records-verify/`（273 份）· `output/bunny-records-deep/`（51 份）·
+`output/bunny-records-verify/`（273 份）· `output/bunny-records-deep/`（**76** 份）·
 `docs/recon-207/union-verify-summary.md` · `docs/recon-207/adjudication.md` · 事实 62 ✓
 
-**★ 本表的下限**：① **deep 档未收齐**（★ **不写死进度**，实时数看 `output/union-verify-349.json` 的 `totals`）
-  ⇒ 反方向那半是**部分值**，不是定案；
+**★ 本表的下限**：① ~~deep 档未收齐~~ ⇒ ★★ **已收齐（76/76，349/349，SC 全绿）** ——
+  反方向那半**现在是定案值**，不再是"部分样本"（★ 2026-10-05 改，原文见 git 历史）✓
 ② **一条真机都没验**（全程离线静态 —— 几十个 bunny 并发抢单实例 COM 会死锁，事实 24）⇒
 「后端可达」都是**静态推断**；③ 本表测的是「它标『已有』时的**错判率**」，
 **不是**「它标『缺口』时的**漏判率**」；④ 「照官方签名写就能成」**未被证明** ——
