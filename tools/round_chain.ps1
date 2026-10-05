@@ -123,7 +123,15 @@ $ok = $false
 for ($i = 1; $i -le 3; $i++) {
     $o = python scripts/release_check.py 2>&1
     if ($LASTEXITCODE -eq 0) { Write-Output "  release_check: 第 $i 轮 OK"; $ok = $true; break }
-    $want = ($o | Where-Object { $_ -match '> 偏离上游：' } | Select-Object -Last 1)
+    #: ★★ 2026-10-05 修（第三次数据损坏事故的根因）：**必须锚定行首**。
+    #:   旧写法 `-match '> 偏离上游：'` 会命中 `check_negative_input_selfproof` 的审计诊断 ——
+    #:   因为它**逐字回显** `probe_skip_semantics.py` 里含该串的那一行**源码**；
+    #:   而那条在 release_check 输出里是**唯一**匹配（实测），`Select-Object -Last 1` 必中它
+    #:   ⇒ 于是把**审计源码**写进了 `docs/harvest-report.md`（真报告那行被替换掉）。
+    #:   ★ 形态实测：该行被重复前缀 **86** 次 / 2383 字符；**每跑一轮链就再污染一次**。
+    #:   真报告那行是**带 4 空格缩进**的（见 `check_report_freshness.py` 的打印）⇒
+    #:   `^\s*>` 两项都对得上：**命中真行**、**放过** `   L101 …` 那条诊断。
+    $want = ($o | Where-Object { $_ -match '^\s*> 偏离上游：' } | Select-Object -Last 1)
     if (-not $want) {
         Write-Output '  release_check: 非"偏离"问题 —— 尾部：'
         $o | Select-Object -Last 8 | ForEach-Object { Write-Output ("    " + ([string]$_).Trim()) }
