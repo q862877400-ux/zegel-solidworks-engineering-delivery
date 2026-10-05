@@ -63,7 +63,12 @@
 
 - [ ] **T5-1** `fact-single-home` ⇒ `scripts/check_fact_single_home.py`（**告警级**，不改数）
 - [ ] **T5-2** `competitor-signature-crosscheck` 归档为「抄别家之前的判据」
-- [ ] **T5-3** `docs/recon-206/README.md`：登记 30 个原始 JSON 为**只读数据集**（★ 只**建议**主线登记）
+- [x] **T5-3** `docs/recon-206/README.md`：登记 **30** 个原始 JSON 为**只读数据集**（★ 只**建议**主线登记）
+      ★★ **机械核过（2026-10-05）**：生成器 `tools/t5_3_register_recon.py`（4784 B）在 ·
+        `specs/204-bunny-moat-batches/recon` **恰好 30 个 JSON** · 抽验 3 个大小与 README **逐字一致**
+        （`c1-truth` 208.9 KB · `c4-merged` 2629.5 KB · `c2-calls-verified` 811.9 KB）✓
+      ★ 如实记一处**未核实**：README 另列的"规格 203 那批 10 个"我没能定位到目录
+        （猜的 `specs/203-bunny-moat/recon` **不存在**）⇒ ★ 不硬标「全部核实」
 
 ---
 
