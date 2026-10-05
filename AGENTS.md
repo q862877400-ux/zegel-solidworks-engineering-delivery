@@ -277,7 +277,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 
 ## 六、已知事实（完整表在 [`docs/known-facts.md`](docs/known-facts.md)）
 
-**共 374 条**，全文在 [`docs/known-facts.md`](docs/known-facts.md)。
+**共 559 条**，全文在 [`docs/known-facts.md`](docs/known-facts.md)。
 ⚠ **为什么会分开**：该表已占 AGENTS.md 的 ~71%，而本文件受 **65536 字节指令预算**限制
 ⇒ **超预算会被截断，且截掉的是**末尾最新**的条目**（静默退化）。
 ⇒ **查事实请读那个文件**；本节只留**最常查的 21 条**做速查。
