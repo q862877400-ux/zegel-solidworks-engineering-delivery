@@ -188,13 +188,33 @@ def main() -> int:
     for sc, ok, ev in results:
         print("  %-5s %-16s %s" % (sc, ok, ev))
     hard = [r for r in results if r[1] == "★ 不达标"]
+    pend = [r for r in results if r[1] == "★ 未定案"]
+    stale = [r for r in results if r[1] == "★ 聚合件陈旧"]
+    manual = [r for r in results if r[1].startswith("待人核")]
     print("-" * 70)
-    print("★ 不达标的 %d 条 · 未定案 %d 条 · 待人核 %d 条"
-          % (len(hard),
-             len([r for r in results if r[1] == "★ 未定案"]),
-             len([r for r in results if r[1].startswith("待人核")])))
-    #: ★ 退出码语义：★ **只在"不达标"时非 0**（"未定案"是 deep 还在跑的应然状态，不是失败）✓
-    return 1 if hard else 0
+    #: ★★ **退出码语义（2026-10-05 第 19 轮改）**：★ 只在**全绿**时才 0 ——
+    #:   ★ 起因：旧版在「2 条未定案」时**仍返回 0**，而"未定案"意味着**规格还没完成**
+    #:     ⇒ ★ 那个 0 **会被读成「全绿」**，而目标的完成判据逐字就是「SC-1..SC-8 全绿」✓✗
+    #:   ★ 一条**看起来通过**的判据比一条失败的判据更坏（本会话已记过同型：
+    #:     「存在但没人用的守卫」·「静默跳过与没跑等价」）✓
+    #:   ★ 所以：**未定案 = 未全绿 = 非 0**；★ 同时**打印一行结论**，避免只看码不看字 ✓
+    if not hard and not pend and not stale:
+        print("★ 结论：**全绿**（8 条判据：%d 达标 · %d 待人核有实据）⇒ exit 0"
+              % (len([r for r in results if r[1] == "达标"]), len(manual)))
+        return 0
+    print("★ 结论：**未全绿** ⇒ exit 1")
+    if hard:
+        print("   ★ 不达标 %d 条：%s" % (len(hard), " · ".join(r[0] for r in hard)))
+    if stale:
+        print("   ★ 聚合件陈旧 %d 条：%s（⇒ 先重跑 tools/build_union_verify_349.py）"
+              % (len(stale), " · ".join(r[0] for r in stale)))
+    if pend:
+        print("   ★ 未定案 %d 条：%s（★ 等 deep 档收齐后重跑本检查器）"
+              % (len(pend), " · ".join(r[0] for r in pend)))
+    if manual:
+        print("   · 待人核 %d 条：%s（★ 它们**不算未定案**：实据已记，只是需人读一遍）"
+              % (len(manual), " · ".join(r[0] for r in manual)))
+    return 1
 
 
 if __name__ == "__main__":
