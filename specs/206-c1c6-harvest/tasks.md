@@ -131,6 +131,22 @@
         「1/2 处造负例输入的变换没有自证」上报 FAIL，而走 `round_chain.ps1` 是绿的**
         ⇒ ★ 印证 AGENTS.md 那句「**生成器必须先跑**：门禁查的是它们的产物」——
         判「仓库好不好」**只能看链**，不能裸跑单件 ✓
+      ★★★ **2026-10-05 第 11 轮：把两条报错的真因查清了，下次是纯机械执行**（本轮未改代码）
+      ★ **报错②的真因（`skipped`）**：`check_gate_wiring.py` 的 `ALLOWED_SKIP_CONDITIONS` 逐字规定
+        `skipped` **只允许**由三种**可核**条件触发 —— `_git_available` / `returncode == 2` / `[SKIP]`；
+        而它的注释逐字写着「**那是故障，不是便携性！已全部改成 `fail`**」
+        ⇒ ★ 我那个「脚本缺失 / `TimeoutExpired` / `OSError`」**必须返回 `fail`，不能返回 `skipped`**
+        ⇒ ★ **修法就一行**：两处 `return {"status": "skipped", ...}` 改成 `fail`（诊断的 `fail` 会出现在
+          `gates` 里、一眼看得见，但**不 raise ⇒ 仍不拦发布**）✓
+      ★ **报错①的真因（登记表）**：表在 **`docs/gate-classification.json`**，形状逐字为
+        `{"_comment": [...], "classification": [{"kind": "hard"|"diagnostic", "runner": "_run_*", "reason": "..."}]}`
+        ⇒ ★ 我要加一条 **`{"kind": "diagnostic", "runner": "_run_fact_single_home_gate", "reason": ...}`**
+        ★ 判据是「精确到**兄弟语句**」：它看 `x = _run_yyy()` 的**下一个兄弟语句**是不是
+          `if x.get("status") == "fail": … raise …` ⇒ ★ 我不 raise ⇒ 必须登记为 **diagnostic** ✓
+      ★ **完整工序（5 处，下次照做）**：① helper ② 调用点 ③ `_gate_results` ④ 返回体
+        ⑤ `docs/gate-classification.json` 加一条；★ 且 helper 里**一处都不要用 `skipped`** ✓
+      ★ 我这两轮的状态：★ **第 10 轮试接被拦并回退**（链复核绿）· ★ **第 11 轮把规格查全但不改代码**
+        —— ★ 两轮都**没有**让链变红，也没有把"未接入"写成"已接入" ✓
       ★ 那 2 处复述**未修**：门禁自述的处置是「改成『见事实 N』」，但两处都在**别人的规格目录**里
         （`dead-ends.md` 是生成物、另一处在 `specs/202-*`）⇒ ★ 按写盘边界不由我改，**只记录** ✓
 - [x] **T5-2** `competitor-signature-crosscheck` 归档为「抄别家之前的判据」
