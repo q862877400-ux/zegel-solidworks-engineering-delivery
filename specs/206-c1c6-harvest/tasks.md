@@ -79,6 +79,20 @@
         ④ `ClearSelection2(True)` · ⑤ `AccessSelections`（**负期望**：失败但原因与事实 47 一致即算通过）
         ⇒ ★ **下一批接着跑**（一次一条 · 每批 ≤5）✓
       ★ 收尾：文档已 `close_documents(save_changes=false)` 关闭 ✓（★ 按新纪律，会话随后自关）
+      ★★★★ **2026-10-05 第 37 轮续：第二批 ③④ 成立**（真机，用完已 `reclaim --close` ⇒
+        `close_owned_solidworks ⇒ True`、复核「进程 0 个」）
+      ★ 模型：`create_basic_part(box, 40×40×10)` **+ `create_hole_feature(through, ⌀8)`**
+        ⇒ 两个特征（`凸台-拉伸1` + `MCP_T26_通孔`）⇒ **③ 的模型前置成立** ✓
+      ★★ **③ `GetSelectedObject6`**：选中 `EDGE` index 0 ⇒ 回读选区计数 **1**、
+        `current_selection` 回 **1 个对象** ⇒ ★ **「选中 → 读回选中对象」这条链通** ✓
+      ★★ **④ `ClearSelection2(True)`**：清空后回读计数 **0** ✓
+        （★ 判据是**回读计数**，不是返回值 —— 事实 8）✓
+      ★ **⑤ `AccessSelections`（负期望）本轮未跑，如实记原因**：它**不是 MCP 工具能覆盖的** ——
+        要**先拿到特征数据对象**（如 `IFeature::GetDefinition`）再调 `AccessSelections`，
+        而现有工具层**没有"取特征数据对象"的只读入口** ⇒ ★ 必须写一个走 `sw_guard` 的**探针脚本**
+        （铁律 2 的实测形态）⇒ ★ **留给下一批**（一次一条 · 每批 ≤5）✓
+      ★★ **本批的净收益**：T2-6 第一批 ①② + 第二批 ③④ **共 4 条前置已真机确认**；
+        ⑤ 是**唯一需要写探针**的一条，且它预期是**印证事实 47**（不是发现新缺口）✓
 
 ## T3 · 官方源缺陷（纠错价值最高）
 
