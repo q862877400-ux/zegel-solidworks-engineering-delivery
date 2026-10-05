@@ -8494,6 +8494,62 @@
 ⚠ **仍未达成的**：A9 的 `verified`（卡在求解步）。
 ```
 
+## 一·C · 支线：Bunny 并行批量作业（规格 specs/203-bunny-sideline-batches）
+
+> **这一节是支线的**（另一个对话在做，见 docs/kickoff-bunny-sideline.md）。
+> 支线**只做可穷举、可逐条核、不需要判断力**的批量辅助；判据设计 / 真机 / 门禁 / 提交仍归主线。
+> 主线只需要读**产物**，不必读支线的做法。
+
+| 批 | 做什么 | 产物 | 实测读数 |
+|---|---|---|---|
+| — | 官方成员页抄录（上一批 A 任务） | docs/recon/iview-read-members.md · drawingdoc-read-members.md · isheet-read-members.md | IView 461（**149 废弃 / 45 指针 / 267 可用**）· IDrawingDoc 274（110/4/160）· ISheet 53（13/2/39） |
+| — | 仓库 COM 成员名对账（B 任务） | docs/recon/member-inventory.md | 1429 调用点 / **744 去重** / 524 有官方页 / 220 只在反射清单 / **两源皆无 0** |
+| — | docs/ 文档互相矛盾（C 任务） | docs/recon/doc-contradictions.md | 97 份 / 6390 claim → 6385 过引文核验 → 137 强候选**逐条判完，真矛盾 0** |
+| **B1** ✅ | `capabilities.yaml` 的 `evidence` 回读 | `docs/recon/verified-evidence-audit-2.md` | 110 条 / 314 条 evidence / 64 yes · 42 no（**其中 34 条 `level=verified`**，已附**两形态**标注）/ 1 条证据路径不存在 / **98 条 evidence 其实是散文** |
+| **B2** ✅ | 官方源自身的机械缺陷 | `docs/recon/official-source-defects-2.md` | 13086 页 / 964 条过闸（作废 6）/ **65 条真死链 + 50 条拼错接口名 + 58 条成员名不在**（文件系统事实）· 554 条同族两种拼法 |
+| **B3+B4** ✅ | 官方示例的调用序 + 成员索引 | `docs/recon/member-to-example-index.md` | **2839 份示例全读** / 抽出 **3985 个成员名（3887 查得到）** / **2826 份带具体前置**（`*.sldprt must be open`、`must be selected` 那类） |
+| **B5** ✅ | 全量接口台账 | `docs/recon/interface-ledger.md` | 566 目录 / **11557 成员** / 1642 废弃(严) / 520 指针(R) / 9395 可用 · **IView 回归 6 项全对** |
+
+**三条实测出来的作业方式**（再派活请照做）：
+
+1. **子代理只能是 Bunny**，且 provider 与 model **必须成对写**（opencode-zen + space-bunny-free）——
+   只写 model 会**整批静默失败**（100 路回 
+eturned: 0 且无报错）。
+2. **一波 ≤ 60 路**，且**一份文档一路**（3 份合批的 8 个批次曾**全灭**；一份一路 38/38）。
+3. **两道闸缺一不可**：① 每条 quote **逐字回查原文**（实测挡掉过 Bunny 的 5 条编造）；
+   ② Lead **独立复核**（B1 里我把「目录」误判成「不存在」，留档在产物 §三）。
+
+**支线不碰**：capabilities.yaml · scripts/ · 	ests/ · 	ools/ · 根 AGENTS.md · 门禁 · git。
+
+## 一·D · 支线规格 204：Bunny 集群的六件「别人做不到」的事（全部完成）
+
+> 接 §一·C（规格 203）。**六件全部产出、全部过三裁判门禁**。进度与全部门禁结论在
+> `specs/204-bunny-moat-batches/goal-bar.md`。
+
+| 件 | 做什么 | 产物 | 门禁改写了什么 |
+|---|---|---|---|
+| **C1** | 多路一致率（K 路交叉验证） | `docs/recon/multiway-agreement.md` | 我的头条一致率**虚高 4.5 个点**（把 L1 归一化叫成「原始」） |
+| **C2** | 四家工具 × 官方签名对账 | `docs/recon/competitor-signature-crosscheck.md` | 名字数 **185 行 → 162 名**（185 是行数不是名字数） |
+| **C3** | 官方示例前置 × 本仓 evidence | `docs/recon/precondition-vs-evidence.md` | 头部 **80 → 75**；V2 抓到 **3 个编造的示例文件名** |
+| **C4** | 官方示例 ↔ 成员页 Remarks 冲突 | `docs/recon/official-internal-conflicts.md` | 真冲突 **544 → 约 250**（抽检 12 条只 4 条真互斥）；**漏报一整类**（官方幽灵成员名） |
+| **C5** | 并集 349 个操作的三态澄清 | `docs/recon/union-gap-tristate.md` | **真缺 ≥5 → ≥2**；`why` 约三成是抽签产物（脚本 bug） |
+| **C6** | 事实唯一家（6390 条 claim） | `docs/recon/fact-single-home.md` | **真分歧 4 → 0**（4 组全是时序更新） |
+
+★★ **贯穿六件的一条**：**没有一件是门禁原样通过的**，六件的头条数**全部被改写**。
+更正集中在三类，**每一类都可预先防住**：
+
+1. **口径未写死**（C1 归一化层级 · C4 引文闸折叠口径 · C6 归一化配方 · C5 工具名 441/460）
+   ⇒ ★ **判定式必须落成可复现的代码，不能只写在散文里。**
+2. **判据比结论宽**（C4 把「示例没照文档做」算成矛盾 · C3 把示例运行环境算成 API 前置）
+   ⇒ ★ **判据要写「不算什么」，不只是「算什么」。**
+3. **稳定性没验**（C5 从 `set` 里取 `exact[0]` · C6 的公式漂移）
+   ⇒ ★ **凡是从集合里「取一个」的地方，都要固定顺序。**
+
+★ **V2 对抗者是最有价值的那一票**：它三次找到「编造/幽灵」（C3 的假文件名 · C4 的漏报 · C5 的抽签指向），
+而它在第 3–5 轮因 `space-bunny-free` 路由故障缺席过三次。
+⇒ ★ **三票不齐时我坚持记 `conditional_pass`、不写「完成」** —— 事后证明这个坚持是对的：
+C5 一直是 conditional，而 V2 一回来就推翻了它的结论。
+
 ## 一·B 本轮新增的**关键事实**（写代码直接用，别重新推导）
 
 | 事实 | 依据 |
@@ -8684,7 +8740,10 @@ python -c "import json;d=json.load(open('capabilities.yaml',encoding='utf-8'));e
 python scripts\check_union_conventions.py    # → exit 0（R5 会查 verified 的 evidence）
 python -m pytest tests/test_unattended_equivalence.py -q   # → 全绿（授权集合变化要被这条测试承认）
 ```
-**⚠ 这台机器上只有用户的 SolidWorks**：只接管已开的实例，**不自行启动**；跑完必须收尾。
+**⚠ 这台机器上只有用户的 SolidWorks**：可**自行拉起**，但**必须自关** —— 跑完立刻收尾；
+拉起用 `python tools/reclaim_solidworks.py --restart`（自带安全判定：打开的文档只要有一个不是自己的就拒绝重启），
+**不要手写 WMI 派发**；关闭时**只关自己开的那一个**（同时可能有别的会话在用）。
+★ 2026-10-05 业主明确授权「自开自关」；原文（只接管已开的实例、**不自行启动**）已按授权改。
 
 **产出**：`capabilities.yaml` 该条升 `verified` + `evidence`；实测脚本归 `D:\AI\SW\`
 

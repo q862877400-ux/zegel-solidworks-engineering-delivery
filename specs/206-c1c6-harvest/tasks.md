@@ -61,6 +61,24 @@
       ★ 每条的做法（★ 一次一条，不许并跑 —— 事实 24 单实例 COM）：`sw_guard` 包住的最小探针 →
         断言前置是否真的成立 → ★ 若**前置不成立**才记缺口；★ 若前置成立而**功能仍不成**，那是**另一类**问题，
         要与"前置缺口"分开记 ✓
+      ★★★★ **2026-10-05 第 37 轮：第一批已跑，①② 前置成立 + 两个采纳候选的 API 确证**（★ 真机）
+      ★ 授权变更：业主明确允许**自行拉起** SolidWorks（用完必须自关）⇒ 已据此改 `docs/ROADMAP.md`
+        那条纪律（原文「只接管已开的实例、**不自行启动**」⇒ 现为「可自行拉起、**必须自关**」）；
+        拉起用 `python tools/reclaim_solidworks.py --restart`（自带安全判定）✓
+      ★ 会话：`reclaim --probe/--restart` ⇒ `SolidWorks 进程 1 个：PID=19104 responding=True`、
+        打开文档 `<无>`、「探测 ✓ 通（已连上）」；★ 无异物 ⇒ 自开自关安全 ✓
+      ★ 模型：`solidworks_create_basic_part(box, 40×40×10)` ⇒ `凸台-拉伸1` 建成（零件文档已开）✓
+      ★★ **判据 = 几何预期的数**（不是"返回了东西"）：
+        · ① `GetEdges` 前置「Open a part document」⇒ **成立**，返回 **12** 条边（盒子正好 12）✓
+        · ② `GetBodies2` 前置「Open a part or assembly」⇒ **成立**（能取到体并枚举其拓扑）✓
+        · ★★ **欧拉公式 `V − E + F = 8 − 12 + 6 = 2`** ⇒ **闭合拓扑判据成立** ✓
+      ★★★ **直接确证两个采纳候选的落地 API**（此前只有静态推断、bunny 标「未实测」）：
+        · **#115 `GetEdges`**（`IBody2::GetEdges`）⇒ **可用** ✓
+        · **#145 `GetFaces`**（`IBody2::GetFaces`）⇒ **可用** ✓
+      ★ **本批未测的（如实记）**：③ `GetSelectedObject6` 前置（需两个特征 + 在特征树里选中）·
+        ④ `ClearSelection2(True)` · ⑤ `AccessSelections`（**负期望**：失败但原因与事实 47 一致即算通过）
+        ⇒ ★ **下一批接着跑**（一次一条 · 每批 ≤5）✓
+      ★ 收尾：文档已 `close_documents(save_changes=false)` 关闭 ✓（★ 按新纪律，会话随后自关）
 
 ## T3 · 官方源缺陷（纠错价值最高）
 
