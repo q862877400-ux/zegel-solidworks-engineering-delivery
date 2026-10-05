@@ -154,6 +154,46 @@ def find_bundled_skill_drift(root: Path, bundled_skill: Path, expected_paths=Non
     return drift
 
 
+def _run_fact_single_home_gate() -> dict[str, object]:
+    """★ **诊断**门禁：一个事实一个家（规格 206 / T5-1 的接线）。
+
+    ★★ **为什么是诊断**：它抓的是「别的文档**逐字复述**了 `docs/known-facts.md` 的事实正文」——
+    复述会让同一件事**两处漂移**（事实 538/539 的同族定则）。但「该不该留摘要」是**人的判断**
+    ⇒ ★ **它不拦发布**（本函数**不 raise**），状态取 ``clean`` / ``hits``，
+    与返回体 `gates_diagnostic` 的词汇一致 ✓
+
+    ★★★ **一处都不返回 `skipped`**：按 `check_gate_wiring.py` 的 `ALLOWED_SKIP_CONDITIONS`，
+    `skipped` **只允许**由三种**可核**条件触发（`_git_available` / `returncode == 2` / `[SKIP]`）；
+    而「脚本缺失 / 起不来」**是故障、不是便携性** —— 那边的注释逐字写着
+    「那是故障，不是便携性！**已全部改成 `fail`**」✓
+    ⇒ ★ 故障返回 **`fail`**：它会出现在 `gates` 里一眼可见，但**不 raise ⇒ 仍不拦发布** ✓
+    """
+    script = ROOT / "scripts" / "check_fact_single_home.py"
+    if not script.is_file():
+        #: ★ 脚本缺失 = 门禁**没在跑** ⇒ `fail`（不属那三种可核条件，不能用 `skipped`）✓
+        return {"status": "fail", "reason": "门禁脚本缺失：%s" % script}
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"), str(script)],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        #: ★ 起不来也是故障（与 `_run_provenance_gate` 的同类分支一致）⇒ `fail` ✓
+        return {"status": "fail", "reason": "门禁**无法启动**（超时/OSError）: %s" % exc}
+    out = (proc.stdout or "").strip()
+    #: ★ 数**逐条**告警行（不数那句汇总，否则会多算 1）——
+    #:   脚本的逐条措辞是「[WARN] <文件> 逐字复述了事实 <N> 的正文」✓
+    hits = sum(1 for line in out.splitlines()
+               if "[WARN]" in line and "复述了事实" in line)
+    return {
+        "status": "hits" if hits else "clean",
+        "hits": hits,
+        "output": out[-2000:],
+    }
+
+
 def _run_marker_gate() -> dict[str, object]:
     """跑 diff 记号残留检查（scripts/check_diff_markers.py）。
 
@@ -1181,6 +1221,9 @@ def run_release_check() -> dict[str, object]:
             "来源可追溯性门禁未通过（新增代码缺少出处）：\n"
             + str(provenance.get("output", ""))
         )
+    #: ★ **诊断**级（规格 206 / T5-1）：**不 raise** —— 只记录命中数 ⇒ 状态 `clean` / `hits` ✓
+    #:   ★ 位置放在 provenance 之后：两者同属「文档层的卫生」，一起读更省事 ✓
+    fact_single_home = _run_fact_single_home_gate()
     markers = _run_marker_gate()
     if markers.get("status") == "fail":
         raise AssertionError(
@@ -1476,6 +1519,9 @@ def run_release_check() -> dict[str, object]:
     #   ⇒ 把 13 个状态一次全列出来，并**单独列出被跳过的**（**显式**，不靠人去翻各段）。
     _gate_results = {
         "provenance": provenance,
+        #: ★ 2026-10-05（规格 206 / T5-1 接线）★ **诊断**门禁：一个事实一个家
+        #:   —— ★ 元门禁 `check_gate_wiring.py` 要求**两处同时加**（此处 + 返回体）✓
+        "fact_single_home": fact_single_home,
         "diff_markers": markers,
         "member_names": member_names,
         #: ★★ 2026-10-04（接手轮）★ **同一道元门禁第**三次**教同一课** ——
@@ -1575,6 +1621,9 @@ def run_release_check() -> dict[str, object]:
         "gates_diagnostic": sorted(n for n, s in gates.items()
                                    if s in ("clean", "hits", "checked_nothing")),
         "provenance": provenance,
+        #: ★ 2026-10-05 ★ 诊断门禁的**第二处**（与 `_gate_results` 那处必须同时加，
+        #:   否则元门禁报「没进返回体」= 静默跳过与没跑等价）✓
+        "fact_single_home": fact_single_home,
         "diff_markers": markers,
         "member_names": member_names,
         #: ★★ 2026-10-04（接手轮）**返回体这一处**（★ 元门禁要的**第二处**）——

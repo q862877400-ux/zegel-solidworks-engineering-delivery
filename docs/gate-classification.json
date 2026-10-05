@@ -20,6 +20,13 @@
   ],
   "classification": [
     {
+      "gate": "check_fact_single_home.py",
+      "kind": "diagnostic",
+      "runner": "_run_fact_single_home_gate",
+      "reason": "★ 2026-10-05 规格 206 / T5-1：一个事实一个家。它抓「别的文档逐字复述了 known-facts.md 的事实正文」（复述会两处漂移），但「该不该留摘要」是人的判断 ⇒ 不拦发布（不 raise），状态取 clean / hits（与返回体 gates_diagnostic 的词汇一致）。★ 一处都不用 skipped：按 ALLOWED_SKIP_CONDITIONS，skipped 只允许由三种可核条件触发；「脚本缺失 / 起不来」是故障、不是便携性 ⇒ 返回 fail。"
+    },
+
+    {
       "gate": "check_provenance.py",
       "runner": "_run_provenance_gate",
       "kind": "hard",

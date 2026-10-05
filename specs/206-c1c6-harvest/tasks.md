@@ -147,6 +147,23 @@
         ⑤ `docs/gate-classification.json` 加一条；★ 且 helper 里**一处都不要用 `skipped`** ✓
       ★ 我这两轮的状态：★ **第 10 轮试接被拦并回退**（链复核绿）· ★ **第 11 轮把规格查全但不改代码**
         —— ★ 两轮都**没有**让链变红，也没有把"未接入"写成"已接入" ✓
+      ★★★★ **2026-10-05 第 12 轮：接线完成并核验通过（5 处全部落地）**
+      ★ 落地（改动**纯加法**）：`scripts/release_check.py` **+49 / −0** ·
+        `docs/gate-classification.json` **+6 / −0**（另补 `gate` 字段 1 行）✓
+      ★ 判据（两条独立、都过）：
+        · `python scripts/check_gate_wiring.py` ⇒ **[PASS] 30 个门禁全部已接线**
+          （原 29 → **30**）、**exit 0** ⇒ ★ 元门禁（它守着 ①②③④⑤ 的结构）亲自放行 ✓
+        · `pwsh -File tools/round_chain.ps1 …` ⇒ **8 passed · exit 0** ✓
+      ★ 第 5 处（登记表）**卡了我一次**：先报「分类条目缺非空 `gate`」⇒ ★ 补上
+        `"gate": "check_fact_single_home.py"` 即过 —— ★ 形状逐字为
+        `{"gate": "<脚本名>", "runner": "_run_*", "kind": "hard"|"diagnostic", "reason": "..."}` ✓
+      ★ **诊断语义已按它的定则落地**：状态取 `clean` / `hits`；★ **一处 `skipped` 都不用**，
+        故障（脚本缺失 / 起不来）返回 **`fail`** ⇒ ★ 既不违反 `ALLOWED_SKIP_CONDITIONS`，
+        又**不 raise ⇒ 不拦发布** ✓
+      ★ 该门禁**实跑读数**（单跑 `scripts/check_fact_single_home.py`）：告警级 **exit 0**、
+        报 **2 处**逐字复述（`docs/dead-ends.md` 复述事实 230 ·
+        `specs/202-user-coverage-gaps/.../vd50-A-surface.md` 复述事实 303）⇒ ★ 这 2 处**仍未修**
+        （都在别人的规格目录/生成物里，写盘边界不由我改）✓
       ★ 那 2 处复述**未修**：门禁自述的处置是「改成『见事实 N』」，但两处都在**别人的规格目录**里
         （`dead-ends.md` 是生成物、另一处在 `specs/202-*`）⇒ ★ 按写盘边界不由我改，**只记录** ✓
 - [x] **T5-2** `competitor-signature-crosscheck` 归档为「抄别家之前的判据」
