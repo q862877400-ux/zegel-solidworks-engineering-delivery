@@ -40,8 +40,27 @@ def main() -> int:
     # ── SC-1：349 个操作每个都有一条记录（覆盖率）────────────────────────
     ref_rows = json.loads(REF.read_text(encoding="utf-8"))["rows"]
     ref_ops = {r.get("operation") for r in ref_rows}
+    #: ★★ **陈旧检测**：聚合件是**被生成**的，而逐条记录**一直在长** ⇒ ★ 若只看聚合件，
+    #:   SC-1 会报一个**过时的**覆盖率，且**看不出来它过时**（实测撞到过：聚合件说 330/349、
+    #:   而同一条又写"deep 还差 14 条"，两个数**对不上**）✓✗
+    #:   ⇒ ★ **一个会静默读陈旧产物的判据，就是静默失效的判据** ⇒ 这里先算生数、再比对，
+    #:     不一致就**大声报**（不静默）✓
+    n_vf_raw = len(list(VF.glob("*.json")))
+    n_dp_raw = len(list(DP.glob("*.json")))
+    stale = ""
+    if AGG.is_file():
+        _t = json.loads(AGG.read_text(encoding="utf-8")).get("totals", {})
+        if (_t.get("verify"), _t.get("deep")) != (n_vf_raw, n_dp_raw):
+            stale = ("★ 聚合件已陈旧：件内记 verify=%s/deep=%s，而逐条实为 verify=%d/deep=%d "
+                     "⇒ 先重跑 tools/build_union_verify_349.py" %
+                     (_t.get("verify"), _t.get("deep"), n_vf_raw, n_dp_raw))
     if not AGG.is_file():
         add("SC-1", "★ 不达标", "聚合件不存在：%s ⇒ 先跑 tools/build_union_verify_349.py" % AGG.name)
+    elif stale:
+        add("SC-1", "★ 聚合件陈旧",
+            "%s（★ 生数口径：已到 %d/%d ⇒ 还差 %d 条）"
+            % (stale, n_vf_raw + n_dp_raw, len(ref_rows),
+               len(ref_rows) - n_vf_raw - n_dp_raw))
     else:
         agg = json.loads(AGG.read_text(encoding="utf-8"))
         recs = agg.get("records", [])
