@@ -61,3 +61,29 @@
 
 **dp1 片的方向与数字（与 ① 档相反）**：verdict 已有 9 / 其实没有 8 / **查不到 9**；recommendation 采纳 5 / 缓办 2 / **不做 19**；分类器 **错-把已有的判成缺口 6/26 = 23%** ⇒ ★★ **深调档的错法是"悲观"方向，与 ① 档的"单向乐观"正好相反** —— 这是"两个方向都会错"的第二个实测样本。
 
+## 六 · 第三批裁决（deep 59/76 时新到的候选）
+
+**新增 采纳 2 · 缓办 3**，逐条裁（D-4）：
+
+| # | op | 引的官方成员 | 裁决 | 我加/改的约束 |
+|---|---|---|---|---|
+| 211 | `native_macro_recording` | `ISldWorks::RecordLine(Text)` + `RunCommand(swCommands_RecordMacro)` + `DSldWorksEvents::BeginRecordNotify/EndRecordNotify` | **采纳** | ★★ **必须先解决弹窗**：`swCommands_e.md` 逐字写 `swCommands_StopMacro` **会弹 Save As** ⇒ 无头下即本仓头号死因 ⇒ 工具**必须在 `CommandInProgress` + 弹窗护栏下跑**，并把"要写盘"这件事**显式要求调用方给路径**，不许让它弹 ✓ |
+| 145 | `faces` | `IBody2::GetFaces` | **采纳（并入 #115）** | ★ 与 #115 的 `GetEdges` **是同一件活的两种 kind** ⇒ ★ **一条工具**（FACE/EDGE/VERTEX），**不许开两条**。★ 同一类风险（事实 36：读属性读不到）⇒ 先做那条小验证 |
+| 227 | `pause_resume_macro_recording` | `RunCommand(swCommands_RecordPauseMacro)` | **缓办** | ★ **同意 bunny**：官方**没有"查当前是否在录制"的成员** ⇒ toggle 工具**保证不了目标状态** ⇒ 要用就必须先用 `BeginRecordNotify/EndRecordNotify` 建**状态跟踪**，再谈开关 ✓ |
+| 146 | `feature_vba` | — | **缓办** | 与 211 同族（宏/录制）；★ 等 211 落地后再看它是否需要 |
+| 219 | `optimize_performance` | — | **缓办** | 应用设置类，无真机证据前不动 ✓ |
+
+### ★★★ 本轮**纠正了我自己的一个结论**（记下来，因为我说过相反的话）
+
+我在更早一轮说过「**宏录制成员在文档源 / 出厂反射 / 我们的 dump 里零命中**」，并据此把它当成
+「别家幻觉」的证据。★ 那句**只对一半**：
+
+- ✓ 对的：我搜的那几个名字（`StartRecordingMacro` / `StopRecordMacro` / `RecordMacro` …）**确实不存在**；
+- ✗ 错的：**能力是可达到的**，只是入口是 **`RecordLine`（写宏行）+ `RunCommand`（开关）+ 事件通知** ——
+  而这三样**都在官方源里**（本批记录逐字给了文件路径与签名）✓
+
+⇒ ★★ **"我按某个名字搜不到" ≠ "这个能力不存在"** —— 这正是铁律 5 的反面用法：
+名字缺席只能推出「**这个名字**不在官方 API 里」，**推不出**「这件事做不到」✓
+★ 而这也说明**深调档的价值**：它逼着人去读**做同一件事的别的入口** ✓
+
+
