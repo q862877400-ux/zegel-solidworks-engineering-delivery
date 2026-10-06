@@ -10,8 +10,8 @@
 
 | 口径 | 数 |
 |---|---|
-| 「死路」条目 | **72** |
-| 涉及能力 | **43** |
+| 「死路」条目 | **73** |
+| 涉及能力 | **44** |
 
 ## 逐条（★ 按能力分组；等级 = 该能力当前等级）
 
@@ -32,6 +32,10 @@
 ### `coverage_gap_batch1`（verified）
 
 - ★★ **本批故意不收「样条曲线」** —— ★ `audit_gap_implementations.py` 也报它「有实现」，★ 而读那个函数自己的文档串才发现：它**2026-10-01 轮 141 已真机实测不达**（`CreateSpline2` 回 `None`、重绘后段数仍 0；旧版 `CreateSpline` 在迟到绑定里不存在；后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ pywin32 到不了，事实 47/68）。⇒ ★ 它已登记进 `docs/backend-limited-items.json`。**教训：「有实现」≠「能用」。**
+
+### `curve_driven_pattern`（stitched）
+
+- ★★★ 三次「布尔字段救命」的第三次：为每处前置单独落字段，才看出第 2 档的读数是无效的 —— 因为「读数无效」与「真的不建」长得一模一样（前两次：B3-1 的 select_entity_by_index 的 append 默认 False；上一批的 iter_features_recursive 取不到特征导致特征树为空）
 
 ### `declarative_hole_creation`（verified）
 

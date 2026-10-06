@@ -7,11 +7,14 @@ from pathlib import Path
 
 try:
     from .sw_preflight import import_com_dependencies
-    from .sw_connect import create_empty_dispatch_variant, get_com_member, open_document, set_com_member
+    #: ★★ 2026-10-07（规格 211 · D 项）：★ 加 `save_document` 到**已有的**导入行 ——
+    #:   ★ 那是「受控临时另存」要用的（★ 用户授权，见 `export_flat_pattern_dxf` 的 docstring ✓）
+    #:   ★★★ **加名字、不加行**：★ `check_relative_imports.py` 的棘轮数的是**行** ✓
+    from .sw_connect import create_empty_dispatch_variant, get_com_member, open_document, save_document, set_com_member
     from .sw_connect import out_i4
 except ImportError:
     from sw_preflight import import_com_dependencies
-    from sw_connect import create_empty_dispatch_variant, get_com_member, open_document, out_i4, set_com_member
+    from sw_connect import create_empty_dispatch_variant, get_com_member, open_document, out_i4, save_document, set_com_member
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 
@@ -231,6 +234,19 @@ def export_to_dxf(model, output_path):
         return export_flat_pattern_dxf(model, output_path)
 
 
+def _save_as(model, file_path) -> bool:
+    """★ 另存（★ 薄包装 `sw_connect.save_document` —— ★ 只缝合、不另造 ✓）。
+
+    ★★ 存在的理由：`sw_export.py` 原先**没有**任何"保存"动作（★ 全仓的既有约定）✗；
+    ★★★ 而 2026-10-07 用户授权的 D 项需要**一次**受控另存 ✓ ⇒
+      ★ 本函数是**唯一**入口，★ 而它的**调用点也只有一个**（`export_flat_pattern_dxf`
+      在 `allow_temporary_save=True` 且零件未保存时 ✓）。
+    ★★ 判据：★ `save_document` 回 `bool` ⇒ ★ 直接透传（★ 而**调用方要回读路径**才算数 ——
+      ★ 事实 8：★ bool 返回值不可信 ✓）。
+    """
+    return bool(save_document(model, str(file_path)))
+
+
 def export_flat_pattern_dxf(
     model,
     output_path,
@@ -241,16 +257,67 @@ def export_flat_pattern_dxf(
     include_bounding_box=False,
     merge_coplanar_faces=False,
     alignment=None,
+    allow_temporary_save=False,
+    temporary_save_dir=None,
 ):
     """
     导出钣金展开图为 DXF
 
     参数:
         model: 钣金零件的 IModelDoc2
+        output_path: 目标 DXF 路径
+        allow_temporary_save: ★★ **受控例外**（★ 默认 `False` ⇒ **行为与从前完全一致** ✓）——
+            ★ 官方的真前置是「**已保存**的钣金件」（★ 见 `docs/dead-ends.md` 轮 407 那条）✗；
+            ★★ 而本仓硬约束⑦原先是「**一律不保存文档**」✓ ⇒ ★ 于是本函数在未保存时**显式拒绝** ✓。
+            ★★★ 用户 2026-10-07 明确授权：「**D 我允许你做**」⇒ ★ 参数为 `True` 时，
+            先**临时另存**到 `temporary_save_dir`（★ **只在仓库内** ✓）再导出 ✓。
+        temporary_save_dir: 临时另存的落点（★ 默认 `output\\_temp_save` ⇒ **仍在仓库内** ✓）；
+            ★★ **非仓库内路径一律拒绝** —— ★ 那是「真机跑不许写到用户目录」那条硬约束的落点 ✓
+
+    返回:
+        bool（★ 与从前一致 ✓）；★ 临时另存那次会**打印**落点与"用完请删"的提示 ✓
     """
     model_path = str(get_com_member(model, "GetPathName") or "")
     if not model_path:
-        raise ValueError("导出展开 DXF 前必须先保存钣金零件")
+        if not allow_temporary_save:
+            raise ValueError(
+                "导出展开 DXF 前必须先保存钣金零件"
+                "（★ 若愿意为导出而临时保存，传 allow_temporary_save=True —— "
+                "★ 那是 2026-10-07 用户明确授权的受控例外）"
+            )
+        #: ★★★ **受控临时另存**（★ 本仓第一个"保存文档"的动作 ⇒ 约束拉满 ✓）
+        target_dir = temporary_save_dir or os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "_temp_save")
+        target_dir = os.path.abspath(os.path.expandvars(os.path.expanduser(str(target_dir))))
+        #: ★★ 判据①：**必须在仓库内**（★ 不许写用户目录 —— 硬约束 ✓）
+        #:   ★★★ 2026-10-07 **修过一版**：★ 第一版写的是
+        #:     `target.lower().startswith(repo_root.lower())` ✗ ——
+        #:     ★★ **那是子串前缀**，★ `D:\AI\SW-evil\x` 会被判成"仓库内"通过** ✗✗
+        #:     （★ 是 `tests/test_spec211_flat_pattern_save.py` 里那条
+        #:      「负例的负例」把它抓出来的 ✓）
+        #:   ⇒ ★ 正解：★ **两侧都补上路径分隔符后再比前缀** ✓
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        repo_prefix = os.path.abspath(repo_root).lower().rstrip("\\/") + os.sep
+        target_norm = os.path.abspath(target_dir).lower().rstrip("\\/") + os.sep
+        if not target_norm.startswith(repo_prefix):
+            raise ValueError(
+                "★ 临时另存只允许落在仓库内（★ 收到 %r，★ 仓库根 %r）—— "
+                "「真机跑不许写到用户目录」那条硬约束在这一点上不放行" % (target_dir, repo_root))
+        _ensure_parent_dir(os.path.join(target_dir, "x.sldprt"))
+        #: ★★ 判据②：**不许覆盖已有文件**（★ 用时间戳名 ✓ —— ★ 覆盖会毁掉上一次的证据 ✓）
+        import time as _time
+        stamp = _time.strftime("%Y%m%d-%H%M%S")
+        temp_path = os.path.join(target_dir, "flatpattern-%s.sldprt" % stamp)
+        if os.path.exists(temp_path):
+            raise ValueError("★ 临时另存目标已存在、拒绝覆盖：%r" % temp_path)
+        model_title = str(get_com_member(model, "GetTitle") or "part")
+        if not _save_as(model, temp_path):
+            raise RuntimeError("★ 临时另存失败：%r ⇒ 展开 DXF 的前置仍未满足" % temp_path)
+        model_path = str(get_com_member(model, "GetPathName") or "")
+        if not model_path:
+            raise RuntimeError("★ 临时另存后仍读不到路径 ⇒ 放弃导出（★ 不猜）")
+        print("★★ 已临时另存（★ 用户授权的受控例外）：%s" % temp_path)
+        print("★★ 文档 %r 用完请自行决定去留 —— ★ 本函数**不删**它（★ 删数据是红线 ✓）" % model_title)
 
     output_path = os.path.abspath(os.path.expandvars(os.path.expanduser(output_path)))
     _ensure_parent_dir(output_path)

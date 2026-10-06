@@ -8,7 +8,7 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项（★ **人工终判**）：★ **可做 10** · **不做 10** · **已覆盖 1** · **待实测 0**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 11** · **不做 9** · **已覆盖 1** · **待实测 0**
 
 ## 特征 · 边界凸台 ⇒ **不做**
 
@@ -105,9 +105,9 @@
   · `[swapi] IDrawingDoc::CreateUnfoldedViewAt2` `System.bool CreateUnfoldedViewAt2( System.double X, System.double Y, System.double Z, System.bool NotAligned  
   · …（共 10 个候选）
 
-## 钣金 · 平板型式/导出 DXF ⇒ **不做**
+## 钣金 · 平板型式/导出 DXF ⇒ **可做**
 
-· 初判：★★ **人工终判**：★★★ **被本仓硬约束挡住**（★ 而**实现早就有** ✓）—— ★ `scripts/sw_export.py` 的 `export_flat_pattern_dxf`/`export_flat_pattern_dxf_report`（★ 走 `ExportToDWG2` ✓）✓；★★ 理由**逐字**见 `docs/plan-24h-v2-convergence.md:53`：「★ **轮 407 真的造了一个钣金件**（回读三项全 true）而它**仍拒绝** —— 真前置是「**已保存**的钣金件」，★ 而**保存是硬约束⑦ 明禁**的」✗ ★ 旁证 `docs/A9-solve-attempts.md:84`「所有脚本都**不保存**文档」✓ ⇒ ★★ **「官方前置要求保存、本仓不许保存」** —— ★ 与「剪裁曲面」（前置全对上仍不建）**不同族** ✗；★ **若用户允许为导出而临时保存 ⇒ 本项即可做** ✓　（★ 自动台账原判：待核实）
+· 初判：★★ **人工终判**：★★★★★ **用户 2026-10-07 授权后真机建成**（★ 原话「★ **D 我允许你做**」✓）—— ★★ 实现：`scripts/sw_export.py` 的 `export_flat_pattern_dxf` 新增 `allow_temporary_save`（★ **默认 `False`** ⇒ ★ 行为与从前**完全一致** ✓）与 `temporary_save_dir` ✓；★★★ 判据**一正两负**（`tests/test_spec211_flat_pattern_save.py` **4 passed** + `tools/probe_spec211_flatsave.py`）⇒ ★ 回读 DXF **20219 字节** ✓ ★★ 授权是**场景性的**、★ **不是**全仓废止硬约束⑦ ✓　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IAnnotationView::FlatPatternView` `System.bool FlatPatternView {get;}` 
   · `[swapi] IDrawingDoc::ChangeRefConfigurationOfFlatPatternView` `System.bool ChangeRefConfigurationOfFlatPatternView( System.string ModelName, System.string ConfigName )` 

@@ -49,7 +49,7 @@ ITEM_TO_CAP = {
     "特征识别/Instant3D": None,           #: ★ 判"不做"（官方无 API 入口）✓
     "成形工具": "forming_tool",             #: ★★★ 真机建成 ⇒ verified ✓
     "展开/折叠": None,                    #: ★ 已覆盖（`specs/209` 收口 ✓）
-    "平板型式/导出 DXF": None,
+    "平板型式/导出 DXF": "flat_pattern_dxf",   #: ★★★ D 项：用户授权后真机建成 ⇒ verified ✓
     "爆炸直线": "explode_line_sketch",   #: ★★★ 真机建成 ⇒ verified ✓
     "零部件阵列": None,
     "SpeedPak": "speedpak",            #: ★★★ 真机建成 ⇒ verified ✓

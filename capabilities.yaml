@@ -5490,6 +5490,44 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "flat_pattern_dxf",
+   "label": "钣金展开图导出 DXF（IModelDoc2::ExportToDWG2 + 用户授权的受控临时另存）",
+   "level": "verified",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IModelDoc2\\ExportToDWG2.md 的 swExportToDWG_e 族 —— 展开图导出走 swExportToDWG_SHEET_METAL，几何/折弯线/草图/隐藏边/包围盒/共面合并六个选项位在 scripts/sw_export.py 里已有常量",
+    "★★ 官方的真前置是「已保存的钣金件」—— 依据本仓 docs/dead-ends.md 轮 407 那条与 docs/plan-24h-v2-convergence.md:53：轮 407 真造了钣金件（回读三项全 true）而它仍拒绝；旁证 docs/A9-solve-attempts.md:84「所有脚本都不保存文档（CloseDoc 前未 SaveAs）」",
+    "★★★ 用户 2026-10-07 授权：「D 我允许你做」—— D 即本项；此前判「不做」的唯一理由就是本仓硬约束⑦「一律不保存文档」与官方前置冲突"
+   ],
+   "evidence": [
+    "★★★★★ 真机建成（tools/probe_spec211_flatsave.py，走 tools/sw_guard.py 护栏，一正两负）：① 负例① 默认（allow_temporary_save=False）⇒ 抛 ValueError ✓；② 负例② 授权但 temporary_save_dir 在仓库外（C:\\Users\\…）⇒ 抛 ValueError、且 _save_as 一次都没被调（拒绝发生在另存之前）、且那个目录没被建 ✓；③ 正例 授权 + 仓库内目录 ⇒ 临时另存到 D:\\AI\\SW\\output\\spec211-d-flatsave\\_temp_save\\flatpattern-20261007-052005.sldprt，随后导出成功，回读 DXF 存在且 20219 字节 ✓",
+    "★★ 判据用回读、不信返回值：DXF 的判据是文件真的存在与字节数（事实 8）",
+    "★★★ 实现里修过一版真 bug：第一版的仓库内判据写的是 target.startswith(repo_root)（子串前缀）⇒ D:\\AI\\SW-evil\\x 会被判成「仓库内」通过；由 tests/ 里那条「负例的负例」抓出，改成两侧都补路径分隔符后再比前缀",
+    "★ 契约/负例：python -m pytest tests/test_spec211_flat_pattern_save.py -q ⇒ 4 passed（离线、不连 COM）"
+   ],
+   "limitations": [
+    "★★★ 默认行为完全不变：allow_temporary_save 默认 False ⇒ 未保存的零件仍被显式拒绝，错误信息里点名那个开关，好让人发现这条受控例外",
+    "★★ 临时另存的落点有两条硬判据：① 必须在仓库内（两侧补分隔符后比前缀）；② 不许覆盖已有文件（用时间戳名）",
+    "★★ 本函数不删临时零件 —— 删数据是红线；用完的去留由人决定（真机那次也打印了去留提示）",
+    "★ 临时另存用时间戳名，同一秒内两次调用会撞名并被拒（宁可拒、不覆盖）",
+    "★ 本项只走 ExportToDWG2 这一条路；另一种「先派生展开图视图再导出」的路本批未试",
+    "★ 本次只试了一个钣金件（80×60×2mm 基体法兰）+ 一个输出路径 ⇒ 不许推广成所有钣金形态、所有选项位组合都成",
+    "★ 用户的授权是场景性的（为导出而临时保存），不是全仓废止硬约束⑦ —— 其它任何保存动作仍受原约束"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "interactive"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }

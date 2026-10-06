@@ -41,20 +41,20 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **133** 条能力。
+共 **140** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 112 | **有我们自己的运行证据**（`evidence` 非空） |
-| `stitched` | 19 | 已缝合，**缺我们自己的运行证据** |
-| `not_implemented` | 2 | 明确未实现 |
+| `verified` | 117 | **有我们自己的运行证据**（`evidence` 非空） |
+| `stitched` | 20 | 已缝合，**缺我们自己的运行证据** |
+| `not_implemented` | 3 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
 | `original` | 96 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
+| `official` | 14 |  |
 | `mixed` | 11 | 多家来源混合 |
-| `official` | 7 |  |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
 
 ## 三 `verified` 的逐条运行证据（**A4 的硬证据**）
@@ -225,10 +225,15 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `drawing_bom_balloons` | · `★★★ 真机（2026-10-06 · 规格 209 的 **B2-2** · idx **34**）：`python tools/sw_guard.py --timeout 900 -- python tools/probe_spec209_b2_balloon.py` ⇒ 自建 **装配**（2 个组件，存盘）+ **两张独立的**装配工程图，**两格对照**：① **没有 BOM 表** ⇒ **`ok=True`** · `sum(IView::GetNoteCount)` **0 → 1（Δ=1）**、`AutoBalloon5` 返回的数组长度 **1**；② **先插一张 BOM 表**（`IView::InsertBomTable6`）⇒ **`ok=True`** · **Δ=1**、返回长度 **1** ✓ ★ 证据 `output/spec209-balloon.json``<br>· `★★★ **这一条是裁决书点名要「真机定案」的那件**（§一 逐字：「★★ 两家结论**互相矛盾**（Slacker-LLC 说静默无效、Eduardof0nt 直接调并回 `bool(result)`）⇒ **不许照抄任何一家**」）⇒ ★★ **定案**：装配工程图上**有没有 BOM 表都插得进去**（两格各 Δ=1）⇒ ★ **Slacker-LLC 的「静默无效」在本机不成立**；★ 而 **Eduardof0nt 的 `bool(result)` 也不能当判据**（★ 它只是「返回数组非空」，与"真的插进去了"不是一回事）⇒ ★★ **判据只能是 `sum(IView::GetNoteCount)` 的增量 > 0** ✓`<br>· `★★ **我自己的假设也被这一轮推翻（如实记）**：我原先按官方示例的 `Preconditions` 逐字（「Open a drawing **with a bill of materials (BOM) table**」）假设「**没有 BOM 表 ⇒ 静默无效**」⇒ ★★ **真机否证了它**（没有 BOM 表那格 **Δ=1**）⇒ ★ **官方示例的 `Preconditions` 是「例子的环境」，不是「方法的硬前置」** —— ★ 这已记进 `spec.md` §五 ✓`<br>· `★★ **探针自身的一处设计缺陷（也如实记）**：第一版把第二格跑在**同一张图、同一个视图**上⇒ 那时气泡**已经存在**，`IgnoreMultiple=True` 很可能只是**没重复插** ⇒ ★ 那一格的 Δ=0 **不能**当证据 ⇒ ★ 改成**两张独立图纸**重做，才得到上面那两格 ✓`<br>· `★ 官方依据逐页读过：`C:\swapi\types\IDrawingDoc\AutoBalloon5.md`（Returns 逐字 「Array of **INotes**」；`## Remarks` 给**四步前置** —— ① 先选中一个或多个**视图或图纸** （★ 选**图纸**时会插到该图纸的**所有**视图上）② `CreateAutoBalloonOptions()` ③ 设属性 ④ 调它）· `C:\swapi\types\IView\GetNoteCount.md`（**判据来源**）· `C:\swapi\types\IModelDocExtension\InsertBOMBalloon2.md`（单发气泡：`Note InsertBOMBalloon2(BalloonOptions)`，**同样是四步前置**）· `C:\swapi\types\IView\InsertBomTable6.md`（★ 用来造「有 BOM 表」那格的夹具）· `enums\{swBomType_e,swBomConfigurationAnchorType_e}.md` · ★★ `examples\Add_Autoballoon_to_Face_Example_VB.md`（**调用序** + 默认值来源）✓` |
 | `scale_feature` | · `★★ 真机（tools/probe_spec211_scale.py，走 tools/sw_guard.py 护栏）：建 100×60×20 mm 板 ⇒ 特征树新增 `缩放比例1` ✓`<br>· `★★★ 主判据（体积比 x³）：因子 3.0 ⇒ 期望 27.0，真机读数 volume_ratio = 27.0 · volume_ok = True ✓ ⇒ 证据文件 output/spec211-b1-scale.json`<br>· `★★ 特征名用「建之前/之后对比」量出来的（不是猜）：建之前 [前视基准面, …, 草图1, 凸台-拉伸1] ⇒ 之后多出 `缩放比例1` ✓`<br>· `★ 负例（都不碰 COM ⇒ 必然失败）：Type=999（不在 swScaleType_e ⇒ 必然非法）· x=0（我方工程选择）⇒ 两条都抛 ValueError ✓`<br>· `★ 契约/负例：python -m pytest tests/test_spec211_scale.py -q ⇒ 8 passed` |
 | `sweep_surface` | · `★★★★★ 真机建成（tools/probe_spec211_sweep_pre.py）：轮廓草图（前视面·圆 R10）mark 1 + 路径草图（上视面·直线 60mm）mark 4 ⇒ 选区计数 2 ⇒ 调用 ⇒ 特征树 7→8、新增 曲面-扫描1 ✓`<br>· `★★★★ 变体 A 带引导线（tools/probe_spec211_sweep_variants.py）：轮廓（前视·圆）mark 1 + 路径（上视·直线）mark 4 + 引导线（右视·直线）mark 2 ⇒ 建成 ✓`<br>· `★★★★ 变体 B 闭合路径（同探针）：轮廓（前视·圆 R5）mark 1 + 路径（上视·圆 R30，闭合）mark 4 ⇒ 静默回 None（★ 前置已完全对上）⇒ ★★ 试死 ✓`<br>· `★★ 对照实验（tools/probe_spec211_sweep.py）：空零件、无选择下直接调 ⇒ returned_is_none = True、特征树 5→5 ⇒ 同一成员在「前置没上」时静默回 None（★ 解释了那一次读数 ✓）`<br>· `★ 证据文件 output/spec211-b2-sweep-pre.json · output/spec211-b2-sweep-variants.json · output/spec211-b2-sweep.json`<br>· `★ 契约/负例：python -m pytest tests/test_spec211_sweep.py -q ⇒ 7 passed` |
+| `forming_tool` | · `★★★★★ 真机建成（tools/probe_spec211_formtool.py，走 tools/sw_guard.py 护栏）：建钣金件（基体法兰，特征 5→9）+ 本机 Design Library 的 circular emboss.sldftp + 按 Remarks 选一个面（选区计数 1）⇒ 调用 ⇒ 特征树新增 circular emboss1、返回值也是 circular emboss1 ✓`<br>· `★★ 文件级前置是现场查的、不是假设：C:\ProgramData\SolidWorks\SOLIDWORKS 2026\design library\ 下有 .sldftp（circular emboss · counter sink emboss · counter sink emboss2 · dimple）；同树下 annotations\ 有 .sldweldfvt（那是焊接符号名清单，供另一项用）`<br>· `★★★ 三次无效读数、三次都由前置布尔字段与判定文字抓出：① 我第一版把 create_base_flange(model, 80.0, 60.0, 2.0) 当契约调（真实契约是 (model, sketch_ref, spec: BaseFlangeSpec)）⇒ 它不抛、回 None ⇒ flange_created=False 一眼看出；② 官方 Remarks 要选面而我没选 ⇒ 回 None；③ 我补丁脚本自己的 print 里嵌了裸引号 ⇒ 脚本没运行、探针未改`<br>· `★ 证据文件 output/spec211-b7-formtool.json（output/ 为 gitignore 产物目录）` |
+| `explode_line_sketch` | · `★★★★★ 真机建成（tools/probe_spec211_explodeline.py，走 tools/sw_guard.py 护栏）：零件落盘（output/ 内）⇒ 装配体加零件 ⇒ 爆炸视图 ⇒ 调用 ⇒ 返回 True，且 ISketchManager::ActiveSketch 由 False 变 True（正是官方 Returns 里那个 inserted）✓`<br>· `★★★ 判据换位的教训：第一次用顶层特征名做判据 ⇒ 新增 []，看起来像没做成；换成 ActiveSketch（草图侧）才看见变化 ⇒ 判据要落在「它真正改变的东西」上（顶层特征树只反映特征，草图另有其树）`<br>· `★★ 前置三层都打通并各有读数：① 零件文件（add_component 要磁盘路径 ⇒ save_document 到仓库内 output/）② 装配体（new_document(sw, assembly) + add_component）③ 爆炸状态（仓里 sw_assembly_doc.create_exploded_view，IAssemblyDoc::CreateExplodedView，已覆盖）`<br>· `★ 证据文件 output/spec211-b6-explodeline.json（output/ 为 gitignore 产物目录）` |
+| `speedpak` | · `★★★★★ 真机建成（tools/probe_spec211_speedpak.py，走 tools/sw_guard.py 护栏）：两个零件落盘 + 子装配落盘 + 顶层装配插入子装配 ⇒ 按官方示例用 SelectByID2('sub-1', 'COMPONENT', …) 选（回读选区 > 0）⇒ 调用 CreateSpeedPak(1) 回 True，且 IComponent2::IsSpeedPak 由 False 变 True ✓`<br>· `★★★ 判据用回读、不信返回值：CreateSpeedPak 回 True 是旁证，主判据是 IComponent2::IsSpeedPak 的 False → True（事实 8：bool 返回值不可信）`<br>· `★★ 三处错逐条修掉（每处都由前置布尔字段抓出）：① 组件数 3 而非 1 ⇒ GetComponents(False) 会把子装配里面的零件递归带出来，改 True；② 抛 AttributeError: <unknown>.AssemblyDoc ⇒ 装配体文档本身就是 IAssemblyDoc，改用 sw_assembly_doc.call_assembly_doc(doc, member, *args)；③ 选组件 False ⇒ IComponent2.Select4 不生效，改按官方示例用 SelectByID2(<名字>, 'COMPONENT', …)（组件名形态 'sub-1' 与示例的 'arm1-1@wrench' 同族）`<br>· `★ 证据文件 output/spec211-b6-speedpak.json（output/ 为 gitignore 产物目录）` |
+| `weld_symbol` | · `★★★★★ 真机建成（tools/probe_spec211_weldsymbol_real.py，走 tools/sw_guard.py 护栏）：建零件 + 选一个面（官方示例的前置，回读选区 > 0）⇒ InsertWeldSymbol3() 回了对象 ⇒ SetText(True, 'Left', 'BUTT', 'Right', 'Stagger', 0) 回 True ⇒ 回读 IWeldSymbol：GetLineCount = 3 · GetArrowHeadCount = 1 · GetLeaderCount = 1 · IsAttached = True ✓`<br>· `★★★ 本项最值钱的一课：前四步我走的是**另一条 API**（IDrawingDoc::InsertWeldSymbol 的 10 参版本），而它调完不抛、静默无效（12 组形态×开关位全部 0 → 0）；真因是官方示例揭示的第三样：真入口是零参的 IModelDoc2::InsertWeldSymbol3 + 两步式（先拿 IWeldSymbol 对象、再 SetText），且符号名来自 gtol.sym 的短名（BUTT / FILL / PLUG …），不是我先前用的 design library\annotations\*.sldweldfvt`<br>· `★★ 判据用回读、不信返回值：SetText 回 bool 只是旁证，主判据是 IWeldSymbol 的 GetLineCount / GetArrowHeadCount / GetLeaderCount / IsAttached（事实 8：bool 返回值不可信）`<br>· `★ 证据文件 output/spec211-b3-weldsymbol-real.json（output/ 为 gitignore 产物目录）` |
+| `flat_pattern_dxf` | · `★★★★★ 真机建成（tools/probe_spec211_flatsave.py，走 tools/sw_guard.py 护栏，一正两负）：① 负例① 默认（allow_temporary_save=False）⇒ 抛 ValueError ✓；② 负例② 授权但 temporary_save_dir 在仓库外（C:\Users\…）⇒ 抛 ValueError、且 _save_as 一次都没被调（拒绝发生在另存之前）、且那个目录没被建 ✓；③ 正例 授权 + 仓库内目录 ⇒ 临时另存到 D:\AI\SW\output\spec211-d-flatsave\_temp_save\flatpattern-20261007-052005.sldprt，随后导出成功，回读 DXF 存在且 20219 字节 ✓`<br>· `★★ 判据用回读、不信返回值：DXF 的判据是文件真的存在与字节数（事实 8）`<br>· `★★★ 实现里修过一版真 bug：第一版的仓库内判据写的是 target.startswith(repo_root)（子串前缀）⇒ D:\AI\SW-evil\x 会被判成「仓库内」通过；由 tests/ 里那条「负例的负例」抓出，改成两侧都补路径分隔符后再比前缀`<br>· `★ 契约/负例：python -m pytest tests/test_spec211_flat_pattern_save.py -q ⇒ 4 passed（离线、不连 COM）` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 
-### 4.1 未达 `verified` 的能力（21 条）
+### 4.1 未达 `verified` 的能力（23 条）
 
 | 能力 | `level` | `source` | 为什么还没到 `verified`（取 `limitations` 首条）|
 |---|---|---|---|
@@ -256,6 +261,8 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `weldment_trim` | `stitched` | `official` | ★★★★★ 真机试死（三处成因逐条追过之后才下的结论）：① 前置 ✓（焊件特征建了、两个相交体在）② mark ✓（1 = 体[按生成体的特征名] · 2 = 面，两条都 True）③ 档位 ✓（EndCond 四档 × Options 两档 = 8 组全试）⇒ 而特征树一次都没变 ⇒ 判「裁剪/延伸焊件」在后端到不了建成 |
 | `weldment_gusset` | `stitched` | `official` | ★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的；官方 Parameters 明写 CrvIndex 要两条相交的边 ⇒ 静默回 None 很可能只是因为前置没上 |
 | `fillet_weld_bead` | `stitched` | `official` | ★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的（18 参里的 FaceSet1/FaceSet2 是面集合 ⇒ 前置没上） |
+| `curve_driven_pattern` | `stitched` | `official` | ★★★ 本条只到「两档有效读数皆不建」，不是干净的建成 —— 登记 stitched 而非 verified |
+| `pdm` | `not_implemented` | `official` | ★★★ 本判的依据是三条并列：① 接口面（ISldWorks 无入口、IApplication 拿不到）② 成员面（IPDMDocManager 只有 3 个设置状态成员、没有用户理解的 PDM 功能）③ 产品性质（独立许可产品，与 Simulation / Routers 同类） |
 
 ### 4.2 明确「不做」的（4 条，A1 的另一半）
 
