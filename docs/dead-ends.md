@@ -10,8 +10,8 @@
 
 | 口径 | 数 |
 |---|---|
-| 「死路」条目 | **69** |
-| 涉及能力 | **40** |
+| 「死路」条目 | **72** |
+| 涉及能力 | **43** |
 
 ## 逐条（★ 按能力分组；等级 = 该能力当前等级）
 
@@ -179,6 +179,10 @@
 
 - ⚠ **官方 Remarks 说 “face **or edges**”** —— ★ 而本机上**面那条路五个组合全败**（Face=0/1/2 与 BTrimOppositeSide=True）⚠ —— ★ 不碰它。
 
+### `sweep_surface`（verified）
+
+- ★★★ 必须与「路 A」分开：路 A = CreateDefinition(swFmSweepSurface) + CreateFeature ⇒ 已按事实 392 试死（静默回 None）；★ 本能力只走路 B ⇒ 路 A 的结论不适用于本条 ✓
+
 ### `topology_iteration_options_backend_limited`（stitched）
 
 - ★ 47：「`ISketchedBendFeatureData` 的 `AccessSelections` / `SetFixedFace` 在 pywin32 迟到绑定下**不可调用** —— 这是**架构性限制**，不是参数没找对」（改传 `VARIANT(VT_DISPATCH, None)` 后报的**正是**这一个错误码）
@@ -200,7 +204,15 @@
 - ⚠ **真机 1/3**：`export_cut_list_csv` ✅（文件 26 B）· `create_cut_list` ⚠ **接口不可达** —— 报「`IFeatureManager.InsertWeldmentCutList2` 在当前后端（pywin32 迟到绑定）上**取不到**」（★ 与**事实 47** 同族）· `set_cut_list_properties` ⚠ **正确的失败**（「没有可写入切割清单的结构构件实体」= 前置不满足）
 - 🕓 **2026-10-04（接手轮）上一条已被**同条目的 evidence**推翻 —— 不删上文、在此补正**（★ 处置 `JUDGE-F_G_H_I_J.md` 的 🔴 **#3** · `I1-1`）—— ★ 裁判逐字：「★ `weldment_cut_list` limitation 第 3 条**已被同能力 evidence 推翻**」✓ ★★ **实测复核**：★ 本条 `evidence` 里逐字有「★★★ 2026-10-03（轮 496-498）**更正上面那条（轮 270）的「create_cut_list 后端限制」定性** —— ★ 它**不是后端限制**：★ 回筛 `GetIDsOfNames("InsertWeldmentCutList2")` ⇒ **`dispid = 174`**（★ 不是 1）；`Invoke(174, 0, DISPATCH_METHOD, True, VARIANT(VT_ARRAY|VT_DISPATCH, bodies))` ⇒ **4/4 全调通**、★ 两条**树真的新增 `切割清单项目1`**」✓ ⇒ ★★★★ **所以上文那句「接口不可达」已不成立**（★ 它是**轮 270 的误判**，★ 轮 496-498 已更正）✓ ★★★ 而**上文不删**（★ 它是历史），★ 只在此说明「以哪一条为准」 ✓
 
+### `weldment_gusset`（stitched）
+
+- ★★★ 必须与事实 47 分开（这是本条的判别力所在）：事实 47 记的 create_gusset 到不了建成，★ 而那条用的是属性式 ISMGussetFeatureData（SM 钣金那一族）；★ 参数式 InsertGussetFeature3 从没试过
+
 ### `weldment_profile_and_curve`（verified）
 
 - ★★ **结构系统（Structure System）那条链在 pywin32 上到不了「建成」**（★ 2026-10-03 轮 441–446 · 事实 356 / 360 / 361 · `output/structure-system-evidence.json`）。★★ **入口查得到**（而在 **`IModelDocExtension`** 上：`CreateStructureSystemMemberData(MemberType)` ⇒ `IStructureSystemMemberFeatureData` · `CreateStructureSystem(primary[], secondary[])` ⇒ `IFeature`）—— ★ **而走不通**：① `ext.CreateStructureSystem` 在**迟到绑定下取不到**（`getattr` 回 `None`）；② `SetPathSegments` 只在 `IPrimaryMemberPathSegmentFeatureData` 上，而**换接口要 QI** —— 而 **pywin32 里换不了**（`QueryInterface` 报 `no interface object registered`，与「注册表 TypeLib 检索 591 个条目里 0 个 SOLIDWORKS」吻合）。⚠ **故 `configure_member_profile` / `configure_split_member` 判「不做」**，★ 而理由**不是「查不到」**（那已被推翻）而是「**在这条后端上到不了**」· 与**事实 47** 同族。★★ 而**完整官方序列已入库**（事实 358）⇒ **换个后端就能接着做**。
+
+### `weldment_trim`（stitched）
+
+- ★★★★★ 真机试死（三处成因逐条追过之后才下的结论）：① 前置 ✓（焊件特征建了、两个相交体在）② mark ✓（1 = 体[按生成体的特征名] · 2 = 面，两条都 True）③ 档位 ✓（EndCond 四档 × Options 两档 = 8 组全试）⇒ 而特征树一次都没变 ⇒ 判「裁剪/延伸焊件」在后端到不了建成
 

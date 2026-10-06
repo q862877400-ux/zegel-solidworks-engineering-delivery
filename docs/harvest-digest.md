@@ -41,12 +41,12 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）
 
-共 **126** 条能力。
+共 **133** 条能力。
 
 | `level` | 条数 | 含义 |
 |---|---|---|
-| `verified` | 110 | **有我们自己的运行证据**（`evidence` 非空） |
-| `stitched` | 14 | 已缝合，**缺我们自己的运行证据** |
+| `verified` | 112 | **有我们自己的运行证据**（`evidence` 非空） |
+| `stitched` | 19 | 已缝合，**缺我们自己的运行证据** |
 | `not_implemented` | 2 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
@@ -54,6 +54,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `original` | 96 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
 | `mixed` | 11 | 多家来源混合 |
+| `official` | 7 |  |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
 
 ## 三 `verified` 的逐条运行证据（**A4 的硬证据**）
@@ -222,10 +223,12 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `sketch_visibility` | · `★★★ 真机（2026-10-06 · 规格 209 的 **B2-4** · idx **175**）：`python tools/sw_guard.py --timeout 900 -- python tools/probe_spec209_b2_blank_sketch.py` ⇒ 新建零件 + 两张草图，按**名字**选中 `草图1` ⇒ ① `set_sketch_blanked(blank=True)` ⇒ **`ok=True`** · `IFeature::Visible` 回读 **`shown`(2) → `hide`(1)**；② `blank=False` ⇒ **`ok=True`** · **`hide`(1) → `shown`(2)**；③ 负例（名字不存在）⇒ 选区计数 **0** + **大声报** ✓ ★ 证据 `output/spec209-blank-sketch.json`（★ `output/` 被 gitignore ⇒ 重跑那条命令即可）`<br>· `★★ **本条解决的是裁决书点名的那个真风险**：「怎么回读「隐藏了没有」」—— ★ 官方 `BlankSketch` 回 `void`、那页**既无 Returns 也无 Remarks**，★ 官方示例的判据**只有肉眼**（逐字「Examine the graphics area」）⇒ ★★ 本仓真机**定出了那个回读入口**：**`IFeature::Visible`**（`System.int Visible {get;}`）→ `swVisibilityState_e` ✓`<br>· `★ 官方依据逐页读过：`C:\swapi\types\IModelDoc2\{BlankSketch,UnblankSketch}.md`（都零参回 `void`；★ `BlankSketch` 摘要逐字「Hides the **selected** sketches」）· `C:\swapi\types\IFeature\Visible.md` · `C:\swapi\enums\swVisibilityState_e.md`（Hide=1 · Shown=2 · Unknown=3，**没有 0**）· `C:\swapi\examples\Hide_and_Show_Sketches_Example_VB.md`（★ **调用序**：先在树/图形区选中草图，再 `BlankSketch`；显示同样要先选中）` |
 | `part_intersect` | · `★★★ 真机（2026-10-06 · 规格 209 的 **B4-3** · idx **181**）：`python tools/sw_guard.py --timeout 900 -- python tools/probe_spec209_b4_intersect.py` ⇒ 60×40×20 的板 + 基准面，按**名字 + 类型**选（`SOLIDBODY:凸台-拉伸1,PLANE:前视基准面`）⇒ **四种组合**（`region_type` ∈ {`intersecting`, `intersecting_and_internal`} × `exclude` ∈ {空, `0`}）：① 不排除 ⇒ `PreIntersect2` 回 **1 个体**、`PostIntersect` 建出 **`相交1`**、`IIntersectFeatureData::GetIntersectionsCount()` 回 **1**（★ 两种 region_type 都成立）；② ★★ **排除唯一的体** ⇒ `PostIntersect` **回 `None`**、特征**没建出来**（树增量 0）✓ ★ 证据 `output/spec209-intersect.json``<br>· `★★ **裁决书点名「唯一要实测」的那件事已验**：`PostIntersect` 的第 1 参是 **`System.object`（布尔 SafeArray）** —— ★ 本仓包 **`VARIANT(VT_ARRAY | VT_BOOL)`**，★★ 而**真机是「双向」证实的**：不排除 ⇒ 建出特征；**把唯一的体标成排除** ⇒ 特征**建不出来** ⇒ ★★ **说明那个 `True` 真的被 SW 读走了**（★ 不是「参数被忽略但没报错」）✓`<br>· `★ 官方依据逐页读过：`C:\swapi\types\IFeatureManager\PreIntersect2.md`（`System.object PreIntersect2(System.bool CapPlanar, System.int RegionType)`；`## Parameters` 逐字给出 **RegionType 三值**；`## Remarks` 逐字要求**先选中**相交的曲面/实体/基准面）· `IFeatureManager\PostIntersect.md`（`Feature PostIntersect(System.object, System.bool Merge, System.bool Consume)`；`IntersectionsToExclude` 逐字是「**Array of booleans**」）· `IIntersectFeatureData\{GetIntersectionsCount,CapPlanar,Merge,Consume}.md` · ★★ `examples\Create_Intersect_Feature_Example_VB.md`（**调用序**：名字+类型选、都 **mark 0**、清选区、拼**与体数等长**的布尔数组、`PostIntersect(arr, True, False)`）` |
 | `drawing_bom_balloons` | · `★★★ 真机（2026-10-06 · 规格 209 的 **B2-2** · idx **34**）：`python tools/sw_guard.py --timeout 900 -- python tools/probe_spec209_b2_balloon.py` ⇒ 自建 **装配**（2 个组件，存盘）+ **两张独立的**装配工程图，**两格对照**：① **没有 BOM 表** ⇒ **`ok=True`** · `sum(IView::GetNoteCount)` **0 → 1（Δ=1）**、`AutoBalloon5` 返回的数组长度 **1**；② **先插一张 BOM 表**（`IView::InsertBomTable6`）⇒ **`ok=True`** · **Δ=1**、返回长度 **1** ✓ ★ 证据 `output/spec209-balloon.json``<br>· `★★★ **这一条是裁决书点名要「真机定案」的那件**（§一 逐字：「★★ 两家结论**互相矛盾**（Slacker-LLC 说静默无效、Eduardof0nt 直接调并回 `bool(result)`）⇒ **不许照抄任何一家**」）⇒ ★★ **定案**：装配工程图上**有没有 BOM 表都插得进去**（两格各 Δ=1）⇒ ★ **Slacker-LLC 的「静默无效」在本机不成立**；★ 而 **Eduardof0nt 的 `bool(result)` 也不能当判据**（★ 它只是「返回数组非空」，与"真的插进去了"不是一回事）⇒ ★★ **判据只能是 `sum(IView::GetNoteCount)` 的增量 > 0** ✓`<br>· `★★ **我自己的假设也被这一轮推翻（如实记）**：我原先按官方示例的 `Preconditions` 逐字（「Open a drawing **with a bill of materials (BOM) table**」）假设「**没有 BOM 表 ⇒ 静默无效**」⇒ ★★ **真机否证了它**（没有 BOM 表那格 **Δ=1**）⇒ ★ **官方示例的 `Preconditions` 是「例子的环境」，不是「方法的硬前置」** —— ★ 这已记进 `spec.md` §五 ✓`<br>· `★★ **探针自身的一处设计缺陷（也如实记）**：第一版把第二格跑在**同一张图、同一个视图**上⇒ 那时气泡**已经存在**，`IgnoreMultiple=True` 很可能只是**没重复插** ⇒ ★ 那一格的 Δ=0 **不能**当证据 ⇒ ★ 改成**两张独立图纸**重做，才得到上面那两格 ✓`<br>· `★ 官方依据逐页读过：`C:\swapi\types\IDrawingDoc\AutoBalloon5.md`（Returns 逐字 「Array of **INotes**」；`## Remarks` 给**四步前置** —— ① 先选中一个或多个**视图或图纸** （★ 选**图纸**时会插到该图纸的**所有**视图上）② `CreateAutoBalloonOptions()` ③ 设属性 ④ 调它）· `C:\swapi\types\IView\GetNoteCount.md`（**判据来源**）· `C:\swapi\types\IModelDocExtension\InsertBOMBalloon2.md`（单发气泡：`Note InsertBOMBalloon2(BalloonOptions)`，**同样是四步前置**）· `C:\swapi\types\IView\InsertBomTable6.md`（★ 用来造「有 BOM 表」那格的夹具）· `enums\{swBomType_e,swBomConfigurationAnchorType_e}.md` · ★★ `examples\Add_Autoballoon_to_Face_Example_VB.md`（**调用序** + 默认值来源）✓` |
+| `scale_feature` | · `★★ 真机（tools/probe_spec211_scale.py，走 tools/sw_guard.py 护栏）：建 100×60×20 mm 板 ⇒ 特征树新增 `缩放比例1` ✓`<br>· `★★★ 主判据（体积比 x³）：因子 3.0 ⇒ 期望 27.0，真机读数 volume_ratio = 27.0 · volume_ok = True ✓ ⇒ 证据文件 output/spec211-b1-scale.json`<br>· `★★ 特征名用「建之前/之后对比」量出来的（不是猜）：建之前 [前视基准面, …, 草图1, 凸台-拉伸1] ⇒ 之后多出 `缩放比例1` ✓`<br>· `★ 负例（都不碰 COM ⇒ 必然失败）：Type=999（不在 swScaleType_e ⇒ 必然非法）· x=0（我方工程选择）⇒ 两条都抛 ValueError ✓`<br>· `★ 契约/负例：python -m pytest tests/test_spec211_scale.py -q ⇒ 8 passed` |
+| `sweep_surface` | · `★★★★★ 真机建成（tools/probe_spec211_sweep_pre.py）：轮廓草图（前视面·圆 R10）mark 1 + 路径草图（上视面·直线 60mm）mark 4 ⇒ 选区计数 2 ⇒ 调用 ⇒ 特征树 7→8、新增 曲面-扫描1 ✓`<br>· `★★★★ 变体 A 带引导线（tools/probe_spec211_sweep_variants.py）：轮廓（前视·圆）mark 1 + 路径（上视·直线）mark 4 + 引导线（右视·直线）mark 2 ⇒ 建成 ✓`<br>· `★★★★ 变体 B 闭合路径（同探针）：轮廓（前视·圆 R5）mark 1 + 路径（上视·圆 R30，闭合）mark 4 ⇒ 静默回 None（★ 前置已完全对上）⇒ ★★ 试死 ✓`<br>· `★★ 对照实验（tools/probe_spec211_sweep.py）：空零件、无选择下直接调 ⇒ returned_is_none = True、特征树 5→5 ⇒ 同一成员在「前置没上」时静默回 None（★ 解释了那一次读数 ✓）`<br>· `★ 证据文件 output/spec211-b2-sweep-pre.json · output/spec211-b2-sweep-variants.json · output/spec211-b2-sweep.json`<br>· `★ 契约/负例：python -m pytest tests/test_spec211_sweep.py -q ⇒ 7 passed` |
 
 ## 四 **仍空缺什么、为什么**（A8 的正面回答）
 
-### 4.1 未达 `verified` 的能力（16 条）
+### 4.1 未达 `verified` 的能力（21 条）
 
 | 能力 | `level` | `source` | 为什么还没到 `verified`（取 `limitations` 首条）|
 |---|---|---|---|
@@ -248,6 +251,11 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `drawing_model_annotations` | `stitched` | `original` | ★★★ **没能产出非空插入**（★ 因此 `level` = `stitched`，**不是** `verified`）：夹具里的零件**没有尺寸/标注可插**。★ **下一步（写清楚）**：① 先**选中一条草图段**再调`AddHorizontalDimension2`（★ 它要 selected entities）把尺寸**真建出来**；或 ② 直接用**已有的、带尺寸的**零件（★ 磁盘 |
 | `drawing_center_lines` | `stitched` | `original` | ★★★ **官方前置只复现了一半**（★ 这是标 `stitched` 的**主要**原因）：官方示例的调用序是**先选 `COMPONENT`、再按点选 `FACE`**，★ 而**它的视图来自装配**（示例里的选择串是 `cylinder20-9@Drawing View1`）⇒ ★ 本轮只复现了「**选实体**」那一半，**没走「先选组件」**、且夹具是**零件**视图 ⇒ ★★ **结论必 |
 | `macro_native_recording` | `stitched` | `original` | ★★★ **`RecordLine` 的返回值不可当判据**（★ 真机实测）：**未开录制时它也回 True** ⇒ ★ 本模块把「开录制 / 逐行 / 停录制」**三个 bool 全部回报**、★ 并**明写限度**（`stop_macro_warning` 字段）⇒ ★ 调用方**不应**把这些 True 读成「写成功了」✓ |
+| `section_properties` | `stitched` | `official` | ★★ **面积单位未确证**：正方体实验里**端面**读 400（= 20×20 的真值 mm²），而**侧面**读 0.4（应为 400，差 **1000** 倍）；★ **1000 不是任何面积换算**（1 cm² = 100 mm²）⇒ ★ 所以**不是「单位差」、而是那类面读的不是同一个东西** ✗ ⇒ ★ 返回值带 `units_verified: False` + `unit_cave |
+| `untrim_surface` | `stitched` | `official` | ★★ **正例（曲面零件上真的取消剪裁）本轮未做** ✗ —— 它需要「先建出被剪裁的曲面」那一条链（曲面 → 相交 → 剪裁），★ 不在本批范围 ⇒ ★ 故 `level` 只取 `stitched`，**不取 `verified`** ✓ |
+| `weldment_trim` | `stitched` | `official` | ★★★★★ 真机试死（三处成因逐条追过之后才下的结论）：① 前置 ✓（焊件特征建了、两个相交体在）② mark ✓（1 = 体[按生成体的特征名] · 2 = 面，两条都 True）③ 档位 ✓（EndCond 四档 × Options 两档 = 8 组全试）⇒ 而特征树一次都没变 ⇒ 判「裁剪/延伸焊件」在后端到不了建成 |
+| `weldment_gusset` | `stitched` | `official` | ★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的；官方 Parameters 明写 CrvIndex 要两条相交的边 ⇒ 静默回 None 很可能只是因为前置没上 |
+| `fillet_weld_bead` | `stitched` | `official` | ★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的（18 参里的 FaceSet1/FaceSet2 是面集合 ⇒ 前置没上） |
 
 ### 4.2 明确「不做」的（4 条，A1 的另一半）
 
@@ -326,7 +334,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 五 门禁栈（**方法论沉淀**：把判定交给机器，而不是靠人记得）
 
-`scripts/check_*.py` 共 **30** 道；其中接进 `release_check.py`（发布前硬失败）的：
+`scripts/check_*.py` 共 **31** 道；其中接进 `release_check.py`（发布前硬失败）的：
 
 | 门禁 | 接进 `release_check`？ |
 |---|---|
@@ -350,6 +358,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_provenance.py` | ✅ |
 | `scripts/check_python_syntax.py` | ✅ |
 | `scripts/check_refuted_patterns.py` | ✅ |
+| `scripts/check_relative_imports.py` | ✅ |
 | `scripts/check_report_criteria_alignment.py` | ✅ |
 | `scripts/check_report_freshness.py` | ✅ |
 | `scripts/check_signature_audit_freshness.py` | ✅ |
