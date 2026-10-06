@@ -137,3 +137,15 @@
 - ★★ **结论**：preset 场景用 **A 路线**（核心补丁 + `mode: lean`，与 PTC 同族）；
   **插件只用于 profile 层**。★ **不要在 preset 里挂本插件。**
 - ✅ 清理：3099 已停、浏览器标签已关、Hindsight 从未被拉起、生产零改动
+
+## 十三 · 第 13 轮：B 路线（核心补丁 + `mode: lean`）界面验证
+
+- ✅ **机制通了**：界面里选「Lean 模式」后，系统提示词里**出现了目录段**
+  （`## Tool catalog ★ Each line gives the tool's TOP-LEVEL JSON argument shape…`）⇒ `presentAs` 在 preset 里生效
+- ★ 该次**目录是空的**：我的测试 preset 只挂了 `persona` + `tool-presentation`，**一个工具插件都没挂** ⇒ agent 手里没工具 ⇒ 目录自然空
+  ⇒ ★ **这是我测试 preset 的缺陷，不是功能问题**
+- ⚠ 加上工具插件（tool-fs / tool-fs-search / tool-pwsh / tool-jobs / tool-skill）后，**该 preset 从界面菜单里消失了**
+  （注册不上，日志无报错，**原因未查**）
+- ★ **结论**：**B 路线的机制已验证可行**；但要交付"能日常选的 Lean 模式"，还差**"给 preset 正确配一套工具"**这一步
+  （照官方 `极简模式` 的写法抄应可解）
+- ✅ 清理：3099 已停、浏览器已收、Hindsight 未拉起、生产零改动
