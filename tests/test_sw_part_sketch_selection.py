@@ -11,8 +11,6 @@ import sys
 import types
 import unittest
 
-import pytest
-
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -49,14 +47,6 @@ class FakeVariant:
 #:   `import sw_part` 在**收集期**就炸 ⇒ ★★ 它一炸就把**后面所有测试的模块身份也带坏**
 #:   （实测：`tests/test_tool_specs_batch92.py` **单独跑 25 passed**、跟在它后面跑就红）✓
 #:   ⇒ ★ 本条本来就是"桩要跟着真模块走"，★ **这次把它补全** ✓
-#: ★★★★ 2026-10-06（同轮，★ 真因比"缺成员"更深一层）：★ `sw_part` 在导入时就把
-#:   **假函数按名字绑走了**（`from sw_connect import get_com_member`）⇒ ★ **光修桩不够**：
-#:   假替身与"绑了假替身的那些模块"会**一直留在 `sys.modules` 里**，污染后面所有测试 ✓
-#:   ⇒ ★ 现在**装桩前先拍快照**、**模块跑完全部归还**（见文件末尾的 `_restore_faked_modules`）✓
-_PRE_MODULES = set(sys.modules)
-_saved_modules: dict = {}
-for _name in ("sw_connect", "sw_preflight"):
-    _saved_modules[_name] = sys.modules.get(_name)
 sys.modules["sw_connect"] = types.SimpleNamespace(
     get_com_member=fake_get_com_member,
     call_com_member=fake_get_com_member,
@@ -71,25 +61,6 @@ sys.modules["sw_preflight"] = types.SimpleNamespace(
 )
 
 import sw_part  # noqa: E402
-
-#: ★★ 本次导入**新拉进来**的模块 —— ★ 它们里面凡是 `from sw_connect import ...` 的，
-#:   绑的都是**假替身** ⇒ ★ 模块跑完必须把这些名字**从 `sys.modules` 里摘掉**，
-#:   后面的测试才会**重新干净导入**（★ 本模块自己的 `sw_part` 全局引用不受影响）✓
-_LEAKED = sorted(set(sys.modules) - _PRE_MODULES)
-
-
-@pytest.fixture(scope="module", autouse=True)
-def _restore_faked_modules():
-    """★ 跑完**归还模块身份** —— ★ 不归还，假 `sys.modules["sw_connect"]` 就污染后续测试
-    （★ 实测：`tests/test_tool_specs_batch92.py` **单独跑 25 passed**、跟在本文件后面就**成批 FAILED**）✓"""
-    yield
-    for _name in _LEAKED:
-        sys.modules.pop(_name, None)
-    for _name, _prev in _saved_modules.items():
-        if _prev is None:
-            sys.modules.pop(_name, None)
-        else:
-            sys.modules[_name] = _prev
 
 
 class FakeFeature:
