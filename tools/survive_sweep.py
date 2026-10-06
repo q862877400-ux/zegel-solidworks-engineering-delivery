@@ -87,6 +87,38 @@ def synth_args(spec) -> dict:
     return out
 
 
+#: ★★★ **按 `requires` 分组**（★ 规格 210 · B3 的核心优化）——
+#:   ★★ 评审的判决：「**成本的主项是"建立前置状态"，不是调用本身**」⇒
+#:     ★ 每组**只建一次状态**、组内**连着调** ⇒ ★ **耗时随"不同前置的数量"增长，不随工具数增长** ✓
+#:   ★ 本仓实测：★ 448 个工具只落在 **9 种宿主**上（★ `part` 236 · `none` 57 · `app` 45 ·
+#:     `study` 40 · `view` 23 · `costing` 15 · `assembly` 14 · `drawing` 9 · `selection` 9）✓
+#:   ★ 改写前：★ 每条工具**各建一个新零件**（47 条 ⇒ 47 个）✗
+#:   ★ 改写后：★ **`part` 组只建一个**、★ 只在**写工具之后重建**（★ 那就是"副本重载"）✓
+_KIND_BY_REQUIRES = {
+    "part": "part", "none": "part", "selection": "part", "view": "part",
+    "study": "part", "costing": "part",
+    "assembly": "assembly", "drawing": "drawing",
+    "app": None,          # ★ 只需要应用对象 ⇒ **不用建文档** ✓
+}
+
+
+def build_state(sw, requires: str):
+    """★ 建**这一组**的宿主状态（★ 每组只建一次）✓
+
+    :returns: `(model, why)` —— ★ `None` **不一定**是失败（★ `app` 组本来就不需要文档）✓
+    ★⚠ 限度：★ `view` / `study` / `costing` 这三组目前**按零件兜底**
+      （★ 真正的"带视图/带研究/带成本管理器"的状态**还没建**）⇒ ★ 那会在读数里**如实体现** ✓
+    """
+    kind = _KIND_BY_REQUIRES.get(requires)
+    if kind is None:
+        return None, "★ `app` 组不需要文档"
+    import sw_connect
+    try:
+        return sw_connect.new_document(sw, kind), ""
+    except Exception as exc:                                            # noqa: BLE001
+        return None, "★ 建 %s 失败：%s" % (kind, type(exc).__name__)
+
+
 def classify(declared_writes, diff, usable, *, call_ok: bool) -> str:
     """★★ 四类判定（★ 严格照 spec：`missed` 与 `undecided` **不许混**）✓
 
@@ -126,6 +158,10 @@ def main() -> int:
 
     table = json.loads(EFFECTS.read_text(encoding="utf-8")).get("tools", {})
     #: ★ 按 `--declared` 选目标（★ `[]` / 非空 / `None` / 全部 —— ★ 三组**不许混**）✓
+    #: ★★ 先把目标按 `requires` **分组**（★ 每组只建一次状态）✓
+    def _requires_of(tool_name: str) -> str:
+        return str((table.get(tool_name) or {}).get("requires") or "unknown")
+
     if args.declared == "empty":
         targets = sorted(n for n, r in table.items() if r.get("writes") == [])
     elif args.declared == "nonempty":
@@ -136,7 +172,12 @@ def main() -> int:
         targets = sorted(table)
     if args.limit:
         targets = targets[:args.limit]
-    print("★ 目标：%d 个（★ 按声明分组 `%s`）" % (len(targets), args.declared))
+    by_requires: dict = {}
+    for n in targets:
+        by_requires.setdefault(_requires_of(n), []).append(n)
+    print("★ 目标：%d 个（★ 按声明分组 `%s`）· ★ 分成 **%d** 个 `requires` 组：%s"
+          % (len(targets), args.declared, len(by_requires),
+             {k: len(v) for k, v in sorted(by_requires.items())}))
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -144,35 +185,53 @@ def main() -> int:
         return 2
 
     rows = []
-    for name in targets:
-        model = _fresh_part(sw)
-        if model is None:
-            rows.append({"tool": name, "verdict": "undecided", "why": "★ 建不了新零件"})
+    for req in sorted(by_requires):
+        group = by_requires[req]
+        print("\n★ ── `requires=%s` 组：%d 个（★ **只建一次状态**，★ 写工具后重建）──"
+              % (req, len(group)))
+        model, why_state = build_state(sw, req)
+        if model is None and req != "app":
+            #: ★ 建不出宿主 ⇒ 整组**如实记未判定**（★ 不许当成通过）✓
+            for _n in group:
+                rows.append({"tool": _n, "verdict": "undecided", "requires": req,
+                             "writer_ok": True, "why": why_state})
+            print("   ★ 整组跳过：%s" % why_state)
             continue
-        before = FP.read(model, sw)
-        #: ★★ 按声明**合成实参**（★ 真机证明 12/17 的失败只是"没给参数"）✓
-        spec_entry = tool_caller._specs().get(name)
-        extra = synth_args(spec_entry[0]) if spec_entry else {}
-        ok, note = tool_caller.call(name, inject_objects={"model": model, "sw": sw},
-                                    **{k: v for k, v in extra.items()
-                                       if k not in ("model", "sw", "asm_model", "view",
-                                                    "sldworks", "doc", "study")})
-        after = FP.read(model, sw)
-        diff = FP.compare_detailed(before, after)
-        verdict = classify(table[name].get("writes"),
-                           {"changed": diff["changed"], "unknown": diff["unknown"]},
-                           bool(before.get("usable")) and bool(after.get("usable")),
-                           call_ok=bool(ok))
-        rows.append({
-            "tool": name, "verdict": verdict, "writer_ok": ok,
-            "call_note": str(note)[:120],
-            "declared_writes": table[name].get("writes"),
-            "changed_classes": [c["class"] for c in diff["changed"]],
-            "unknown_classes": [c["class"] for c in diff["unknown"]],
-        })
-        print("   %-46s %-13s 变了=%s 未判定=%s" % (name, verdict,
-                                                 rows[-1]["changed_classes"] or "无",
-                                                 rows[-1]["unknown_classes"] or "无"))
+        #: ★★ 组内**连着调**；★ **写工具之后重建状态**（★ 那是"副本重载"）✓
+        #:   ★★ 我第一版把 `before = …` 那段**写在了组循环外面** ⇒ 每组只有**最后一个**
+        #:     工具被处理（★ 真机现象：47 个只出 **7 行** —— ★ 正好等于组数）✗
+        for name in group:
+            decl = table.get(name) or {}
+            if decl.get("writes"):
+                model, why_state = build_state(sw, req)
+                if model is None and req != "app":
+                    rows.append({"tool": name, "verdict": "undecided", "requires": req,
+                                 "writer_ok": True, "why": "★ 重建状态失败：%s" % why_state})
+                    continue
+            before = FP.read(model, sw)
+            #: ★★ 按声明**合成实参**（★ 真机证明 12/17 的失败只是"没给参数"）✓
+            spec_entry = tool_caller._specs().get(name)
+            extra = synth_args(spec_entry[0]) if spec_entry else {}
+            ok, note = tool_caller.call(
+                name, inject_objects={"model": model, "sw": sw},
+                **{k: v for k, v in extra.items()
+                   if k not in ("model", "sw", "asm_model", "view", "sldworks",
+                                "doc", "study")})
+            after = FP.read(model, sw)
+            diff = FP.compare_detailed(before, after)
+            verdict = classify(table[name].get("writes"),
+                               {"changed": diff["changed"], "unknown": diff["unknown"]},
+                               bool(before.get("usable")) and bool(after.get("usable")),
+                               call_ok=bool(ok))
+            rows.append({
+                "tool": name, "verdict": verdict, "writer_ok": ok, "requires": req,
+                "call_note": str(note)[:120],
+                "declared_writes": table[name].get("writes"),
+                "changed_classes": [c["class"] for c in diff["changed"]],
+                "unknown_classes": [c["class"] for c in diff["unknown"]],
+            })
+            print("   %-46s %-13s 变了=%s" % (name, verdict,
+                                             rows[-1]["changed_classes"] or "无"))
 
     counts: dict = {}
     for r in rows:
