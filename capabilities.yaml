@@ -5189,6 +5189,75 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "weldment_gusset",
+   "label": "角撑板（焊件）· 参数式（IFeatureManager::InsertGussetFeature3）",
+   "level": "stitched",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IFeatureManager\\InsertGussetFeature3.md：Feature InsertGussetFeature3(double Depth, short DirType, short LocType, bool BIsProfile, double ProfileD1, double ProfileD2, double ProfileD3, double ProfileAngle, double ProfileD4, bool BOffset, double DProfileOffset, int CrvIndex, bool BReverseDir, bool BReverseFace, bool BUseLenDim, double ProfileD5, double ProfileD6, double ProfileChamferAngle, bool BUseLenDimForChamfer, bool BNeedChamferInGusset) —— 纯参数式 20 参、不带 AccessSelections、无 object 数组",
+    "同页 Parameters 逐字：BIsProfile 是 True to use a polygon profile, false to use a triangle profile；CrvIndex 是 Index of the edge to use if multiple intersecting edges exist（⇒ 需要两条相交的边）",
+    "★★ 真宿主核对：C:\\swapi\\types 全扫 ⇒ 焊件角撑板是 IFeatureManager::InsertGussetFeature / 2 / 3；而 ISMGussetFeatureData 是钣金那一族（事实 36：两个不同接口、不可互认）"
+   ],
+   "evidence": [
+    "★ 真机（tools/probe_spec211_weld_misc.py，走 tools/sw_guard.py 护栏）：空零件、无选择下直调参数式 ⇒ ★ 调用没抛、★ 返回 None ⇒ 静默回 None",
+    "★★ 而有判别力的一点：参数式入口**调通了**（不抛）—— 与属性式那条路的表现为类型不匹配不同",
+    "★ 证据文件 output/spec211-b3-weld-misc.json"
+   ],
+   "limitations": [
+    "★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的；官方 Parameters 明写 CrvIndex 要两条相交的边 ⇒ 静默回 None 很可能只是因为前置没上",
+    "★★★ 必须与事实 47 分开（这是本条的判别力所在）：事实 47 记的 create_gusset 到不了建成，★ 而那条用的是属性式 ISMGussetFeatureData（SM 钣金那一族）；★ 参数式 InsertGussetFeature3 从没试过",
+    "★★ 下一步（判据已想好）：建两条相交的边并按 mark 选好再调 ⇒ 若仍不建 ⇒ 那才够格叫试死；若建成 ⇒ 参数式翻案",
+    "★ 官方对 Depth（厚度）没写单位 ⇒ 本包装在边界用 sw_connect.mm() 换算一次（缝合既有约定）",
+    "★ 会新建焊件特征（非只读）"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "part"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
+  },
+  {
+   "id": "fillet_weld_bead",
+   "label": "圆角焊缝 · 参数式（IFeatureManager::InsertFilletBeadFeature3）",
+   "level": "stitched",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IFeatureManager\\InsertFilletBeadFeature3.md：Feature InsertFilletBeadFeature3(short Type1, double Size1, double Length1, short PenetrationType1, double PenetrationValue1, double Pitch, short Type2, double Size2, double Length2, short PenetrationType2, double PenetrationValue2, int Flag, int EdgeNum1, object DeSelEdge1, int EdgeNum2, object DeSelEdge2, object FaceSet1, object FaceSet2) —— 参数式 18 参",
+    "同页 Parameters 逐字：Type1 取 0 = Full length · 1 = Intermittent · 2 = Staggered；PenetrationType1 取 0 = Full penetration · 1 = Partial · 2 = No；Pitch 是 Pitch, if Intermittent or Staggered on both sides"
+   ],
+   "evidence": [
+    "★ 真机（tools/probe_spec211_weld_misc.py，走 tools/sw_guard.py 护栏）：空零件、无选择下直调 ⇒ ★ 调用没抛、★ 返回 None ⇒ 静默回 None",
+    "★★ 其中 FaceSet1 / FaceSet2 与 DeSelEdge1 / DeSelEdge2 是 System.object ⇒ 按事实 12/33 传空 VARIANT（create_empty_dispatch_variant）⇒ 调用完成（未报类型不匹配）",
+    "★ 证据文件 output/spec211-b3-weld-misc.json"
+   ],
+   "limitations": [
+    "★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的（18 参里的 FaceSet1/FaceSet2 是面集合 ⇒ 前置没上）",
+    "★★ 两个 object 形参的正确形态已按事实 12/33 试出：空 VARIANT(VT_DISPATCH, None) ⇒ 调用完成、不报类型不匹配",
+    "★★ 下一步（判据已想好）：建两组相接的面并按 FaceSet 传好再调 ⇒ 若仍不建 ⇒ 那才够格叫试死",
+    "★ 官方对 Size1/Length1 没写单位 ⇒ 本包装在边界用 sw_connect.mm() 换算一次",
+    "★ 会新建焊缝特征（非只读）"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "part"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }
