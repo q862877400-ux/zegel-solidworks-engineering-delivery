@@ -43,14 +43,68 @@ PAIR = re.compile(
 )
 
 
+def _string_constants(text: str):
+    """★ 取源码里**全部字符串常量的值**（★ 递归进容器）；★ 解析不了 ⇒ `None` ✓
+
+    ★★ 用途：★ 做"**只改分隔符、不改内容**"的**语义护栏** ✓
+    """
+    import ast
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return None
+    out = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            out.append(node.value)
+    return sorted(out)
+
+
 def fix_text(src: str) -> tuple[str, int]:
-    """★ 返回 `(改过的文本, 改动处数)` —— ★ **不做任何其它改写** ✓"""
+    """★ 返回 `(改过的文本, 改动处数)` —— ★ **不做任何其它改写** ✓
+
+    ★★★ 2026-10-06 **加了一道语义护栏**（★ 真机被抓到，★ 这次是它**改坏了断言**）：
+      ★ 实录：★ `assert … == str(("另一个", "默认<按加工>"))` 被改成
+        `str(("另一个「, 」默认<按加工>"))` ✗✗ —— ★ 它把**代码里的两个字符串**
+        当成了"散文里的引号对" ✓
+      ★ 现象有多坑：★ 那个文件**仍能解析**（★ 只是**语义变了**）⇒ ★ 于是
+        **一条一直绿的测试突然红，而报错指向断言的值、不指引号** ✗
+      ⇒ ★★ 护栏判据（★ **语义级，不是形态级**）：
+        ★ 若**原文能解析**，★ 则**改完也必须能解析**，★★ **且两边"字符串常量集合"必须一字不差** ✓
+        ★ 任一条不满足 ⇒ ★ **整份原样返回、改动数记 0**（★ 宁可不改，不许改坏）✓
+      ★★ 这与本仓**两次"过度纠正"**的教训**同族**：★ **宁可不改 ≠ 一律不改** ——
+        ★ 护栏只在"**会改变语义**"时拒绝 ✓
+    """
 
     def _sub(m: re.Match) -> str:
         return "%s%s「%s」%s" % (m.group(1), m.group(2), m.group(3), m.group(4))
 
     new, n = PAIR.subn(_sub, src)
-    return new, n
+    if not n:
+        return src, 0
+    #: ★★ **语义护栏**：★ 原文本来就解析不了（★ 如 `.md`）⇒ 不适用护栏 ✓
+    before = _string_constants(src)
+    if before is None:
+        return new, n
+    if _string_constants(new) == before:
+        return new, n
+    #: ★★★ **逐行回退**（★ 全有全无**太粗** —— ★ 真机：一个文件里既有正当的散文、
+    #:   又有会改坏的代码 ⇒ ★ 整份拒绝会把**该改的也不改** ✗）：
+    #:   ★ 只改"**改完仍满足不变式**"的那些行 ⇒ ★ 精确到**行** ✓
+    #:   ★（★ 判据仍是**语义级**：★ 每行改完，★ 全文件字符串常量必须一字不变）✓
+    out_lines, changed = [], 0
+    for idx, ln in enumerate(src.splitlines(keepends=True)):
+        cand, cnt = PAIR.subn(_sub, ln)
+        if not cnt:
+            out_lines.append(ln)
+            continue
+        trial = "".join(out_lines) + cand + "".join(src.splitlines(keepends=True)[idx + 1:])
+        if _string_constants(trial) == before:
+            out_lines.append(cand)
+            changed += cnt
+        else:
+            out_lines.append(ln)          # ★ 这一行会改坏语义 ⇒ **原样保留** ✓
+    return "".join(out_lines), changed
 
 
 def main(argv=None) -> int:
