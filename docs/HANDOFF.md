@@ -12,6 +12,131 @@
 
 ---
 
+# ★★★ 本版（2026-10-07）：规格 211 **21 项全部收口** —— ★ 并记下本版**最值钱的三条教训**
+
+> ★ 本版接在「规格 209/210 收口」之上。★ **旧版内容原样保留在本文后半** ✓。
+> ★ 本版主结论：★★ **`specs/211-user-feature-gaps` 的 21 项用户功能**全部有结论**** ✓ ——
+> ★ 逐项结论表见 [../specs/211-user-feature-gaps/b8-final-table.md](../specs/211-user-feature-gaps/b8-final-table.md)（★ 由
+> `tools/gen_spec211_final_table.py` 从两处机器可读来源**合成**、★ **不手写** ✓）。
+
+## 一 · 一句话现状
+
+★ **21 项终判**：★ **可做 10**（★ **已做 10**：`verified` **6** · `stitched` **4**）·
+★ **不做 10**（★ **逐条带理由 + 证据**）· ★ **已覆盖 1** · ★ **待实测 0** ✓
+
+★★ **本版新增 / 升级的能力**（★ 全部落在 `capabilities.yaml` ✓）：
+| 能力 id | level | 一句话 |
+|---|---|---|
+| ★ `sweep_surface` | ★★ **`verified`** | ★ 扫描曲面 —— ★ **查了那条从没查过的"路 B"**（`InsertSweepSurface2` + 官方 mark 表 ✓）|
+| ★ `forming_tool` | ★★ **`verified`** | ★ 钣金成形工具 —— ★ 真机建成 `circular emboss1` ✓ |
+| ★ `explode_line_sketch` | ★★ **`verified`** | ★ 爆炸直线（`ISketchManager`，零参 ✓）|
+| ★ `speedpak` | ★★ **`verified`** | ★ SpeedPak（★ "怎么选"只有官方示例说得清 ✓）|
+| ★ `weld_symbol` | ★★ **`verified`** | ★ 焊接符号（★ **真入口是另一条 API** ✓）|
+| ★ `curve_driven_pattern` · `weldment_trim` · `weldment_gusset` · `fillet_weld_bead` · `untrim_surface` | ★ `stitched` | ★ 有真机读数、★ 未到建成（★ 每条 `limitations` 写死了"还差什么"）|
+
+## 二 · ★★★★★ 本版最值钱的教训：**我可能走的是"另一条 API"**（★ 三次实证）
+
+★ **同一个形态在本版出现三次** ✗ —— ★ **而每一次都是"官方示例"救的场** ✓：
+| # | 项 | 我当时以为的"真入口" | 官方示例真正走的 |
+|---|---|---|---|
+| ★ 1 | ★ **扫描曲面** | ★ 路 A：`CreateDefinition` + `CreateFeature`（★ 静默回 `None`）| ★★ **路 B：`InsertSweepSurface2` + mark 表** ✓ |
+| ★ 2 | ★ **焊接符号** | ★ `IDrawingDoc::InsertWeldSymbol`（★ **10 个参数**）| ★★ **`IModelDoc2::InsertWeldSymbol3()`**（★ **零参**）+ `IWeldSymbol` ✓ |
+| ★ 3 | ★ **曲线驱动 / 零部件阵列** | ★ `IFeatureManager::FeatureLocalCurveDrivenPattern`（★ 参数式）| ★★ **`CreateDefinition` + `CreateFeature`**（★ 属性式）✓ |
+⇒ ★★★★ **可机械执行的判据（★ 本版最有用的操作）**：
+  ★★★ **动手之前，先在官方 `examples/` 里搜一遍那个成员名，看官方示例**实际调的是哪一条** ✓** ——
+  ★★ **那比读签名更接近真相** ✓（★ 本版三次里，★ 有两次是**签名与 `## Remarks` 都没说清**的事情 ✓）
+
+★★ **配套的第二条定则**（★ 本版第二次翻案时补的）：
+  ★★ **「某个入口存在且无 ACL」≠「这个能力可做」** ✗ —— ★★ **因为官方示例可能走**另一条**入口** ✓
+  ★（★ 反向那句也成立：★ **「某个入口要 ACL」≠「这个能力要 ACL」** ✓ —— ★ **两句都要** ✓）
+
+## 三 · ★★★★★ 第二条教训：**为每一处前置单独落一个布尔字段**（★ 六次救命）
+
+★★★ **因为「读数无效」与「真的不建」**长得一模一样**** ✗ —— ★ 本版六次实录：
+| # | 场景 | 若不看那个字段会怎样 |
+|---|---|---|
+| ★ 1 | ★ `select_entity_by_index` 的 `append` **默认 `False`** ⇒ 它**清空了 mark 1 的体** | ★ 八组读数**全无效**、★ 而样子与"真的不建"**一样** ✗ |
+| ★ 2 | ★ `iter_features_recursive` 取不到特征 ⇒ **`特征树 = []`** | ★ 会把"前置没上"写成"试死" ✗ |
+| ★ 3 | ★ `create_base_flange` 传错参数（★ 它**不抛、只回 `None`**）| ★ 会以为"钣金建不出来" ✗ |
+| ★ 4 | ★ 官方 Remarks 要"先选面"而我没选 | ★ 同理 ✗ |
+| ★ 5 | ★★ **补丁脚本自己的 `print` 里嵌了裸引号** ⇒ 脚本没运行 | ★ 会以为"探针已改" ✗ |
+| ★ 6 | ★ `GetComponents(**False**)` 把子装配**里面的零件递归带出来** | ★ 会以为"没选中组件" ✗ |
+⇒ ★★★ **配套的三条 | 可机械判定的信号**（★ 本版实测出来的 ✓）：
+  ★ **① 行号在两次报错之间变化 ⇒ 文件已被写脏** ✓（★ 用 `git checkout --` 回退、★ 再用 `edit` 工具 ✓）
+  ★★ **② 「读回取不到（`None`）」与「读回取到但是 0」是两件事** ✓ —— ★ 后者才说明判据落到位了 ✓
+  ★★★ **③ 穷举读数要说清"穷举的是哪几个维度"** ✓ —— ★ 别把"3 形态 × 4 开关 = 12 组"说成"全试过了" ✗
+
+## 四 · ★★★ 第三条教训：**记定则要记到"族"那一层**
+
+★ 我在 SpeedPak 那批记下：「★ **装配体**文档本身就是 `IAssemblyDoc`」✗ ——
+★★ 而下一批换成**工程图**时**又踩一次**（★ 写了 `get_com_member(drawing, "GetDrawingDoc")` ✗）
+⇒ ★★★ **正解**：★★ **`IModelDoc2` 的族接口（`IAssemblyDoc` / `IDrawingDoc` / `IPartDoc`）
+**就是文档对象本身**，★ 不需要 `GetXxxDoc` 那一层** ✓
+★ **教训**：★ **定则写窄了 = 下一个人（或下一批的我）会再踩** ✓
+
+## 五 · ★★★★ 全量 pytest 的基线（★ 这一条**必须**看，否则会误判）
+
+★ 本版**跑了全量**（★ 而这一条本身是个教训 ✓）：
+★★ **纪律写在 `AGENTS.md` 里**：「★ 收尾链只跑**聚焦测试**；★ **全量只在两种情况跑**：
+  ① 发布前 ② **改了 `sw_connect.py` 或门禁本体**」✗ ——
+  ★★ **而本版改了** `mcp-server/server.py` · `tool_registry.py` · 多个 `scripts/*.py` · `capabilities.yaml`
+  ⇒ ★★★ **那些都会影响被大量测试共用的东西** ✗ ⇒ ★ **早该跑全量** ✓
+
+★★ **读数与拆账**（★ **基线必须用 `git worktree` 量** —— 事实 57 的推论：
+  ★「一个红的测试也未必是我弄的」✓）：
+| 类 | 数 | 说明 |
+|---|---|---|
+| ★★ **既有红**（★ 与本次改动无关）| ★ **12 条** | ★ `test_release_check` · `test_tool_specs_batch79` · `test_mcp_protocol_layer` · `test_registry_wiring` · `test_sw_connect_open_document` · `test_sketch_slot_params` · `test_real_gap_triage_contract` · `test_com_member_helpers` · `test_no_bare_byref_args` · `test_no_uncalled_helpers` · `test_gate_negative_cases`（2 条）|
+| ★★ **本版引入并已修** | ★ **6 组 22 条** | ★ 见下 |
+⇒ ★★★ **最终读数**：★ **12 个套件在基线与当前**完全一致**（7 failed / 99 passed）** ✓✓
+  ⇒ ★ **我引入的失败**已清零**** ✓
+
+★ **那 6 组是什么**（★ 每一组的真因都值得记 ✓）：
+1. ★★ `test_result_serializer`（4 条）⇒ **`server.py` 里 `_jsonable` → `_tool_error` 之间是"被离线抽取区"** ✗ ——
+   ★ 往那里插代码要**自包含**（★ 我插的单位守卫用了 `re`/`os`/`sys`，★ 而测试的注入表没有 ✓）
+2. ★★ `test_unattended_equivalence`（7 条）⇒ ★ **`allowed_modes` 是授权维度** ✓ ——
+   ★ **R11**：`allowed_modes ⊆ {interactive, reviewed, unattended}` 且 **`level != verified` ⇒ 不含 `unattended`** ✓
+   ★（★ 我误把"文档类型"（`part`/`assembly`）当成了"模式" ✗）
+3. ★★ `test_language_backend_matrix`（8 条）⇒ ★ **同上**（★ 根因同一处 ✓）
+4. ★★ `test_relative_imports_gate`（1 条）⇒ ★ **本仓的棘轮计数"紧跟前一行的 `try:`"** ✗ ——
+   ★ **每个文件只有第一行合格**、★ 新增导入行会 +1 ⇒ ★ **优先复用文件内既有能力** ✓
+5. ★ `test_signature_audit_freshness_gate`（1 条）⇒ ★ **加了 COM 调用 ⇒ 签名审计表要跟着改** ✓
+   ★（★ 该门禁**不要求数字不变**、★ **只要求文档跟得上代码** ✓）
+6. ★ `test_matrix_tool_name_normalization`（1 条）⇒ ★ **别把当时的数字写死** ✓ ——
+   ★ **工具集会随规格长大** ⇒ ★ 钉"关系"、★ 不钉"数字" ✓
+
+## 六 · ★★ 本版顺带解开的两个"机制死结"（★ 值得继承）
+
+★★★ **① `sw_guard` 的 `--allow-path` 是"声明"、★ 不是"绕过"** ✓ ——
+  ★ 会话里有非我方文档时预检**拒绝开始** ✓ ⇒ ★ 而**清理它们要连 COM** ⇒ ★ **死结** ✗
+  ★★ 正解：★ **用 `--allow-path` 逐个声明"这是我方打开的文档路径"** ✓ ——
+  ★ **实测**：★ 声明 3 个后预检从「非我方 **4** 个」变成「**1** 个」⇒
+  ★★★ **护栏逐个核对、★ 把声明的正确排除、★ 仍拦住真正不明的那一个** ✓✓
+★★★ **② 配套写了两把工具**（★ 建议保留 ✓）：
+  · ★ `tools/probe_list_open_docs.py` —— ★ **只读**列文档（★ `path` / `title` / `visible` / `saved` ✓）
+  · ★ `tools/probe_close_our_docs.py` —— ★ **只关我方**：★ 判据**只有三类**（★ ① 路径在 `output/` 下 ·
+    ★② 无路径 + SW 默认名 · ★③ 无路径 + `<名字> - 图纸<N>` **且前缀在我方 `output/` 的实据里** ✓），
+    ★★ 且**关闭顺序是"先无路径、后有路径"** ✓（★ 工程图/装配打开了那些零件 ✓）
+  ★★★ **而它跑之前**用 7 个用例自证**过** ✓ —— ★ 含两个"**不该关**"的安全用例
+    （★ `C:\Users\...\用户的零件.sldprt` · ★ `wrench.SLDASM`）✓
+
+## 七 · ★ 本版留下的（未处置，★ 如实写）
+
+1. ★★ **`stitched` 那 5 项各有"下一步判据"**（★ 都在 `capabilities.yaml` 的 `limitations` 里写死了 ✓）：
+   ★ `weldment_trim`（★ 两条有效读数皆不建）· ★ `explode_line_sketch` **已 `verified`** ·
+   ★ `weldment_gusset` / `fillet_weld_bead`（★ **只到"前置基本对上"**）·
+   ★ `curve_driven_pattern`（★ 参数式那条两档有效读数皆不建）· ★ `untrim_surface`（★ 正例未做）
+2. ★★ **`output/` 里留了若干落盘的零件/装配/工程图**（★ 那是 `add_component` 要磁盘路径的必然结果 ✓）——
+   ★ **该目录 gitignore、不入库** ✓；★ 若有人接手，★ **先用 `probe_close_our_docs.py` 清场** ✓
+3. ★★ **`PDM` 那一项的判据有三层**（★ 接口面 + 成员面 + 产品性质）✓ —— ★ 而
+   ★ **"本机没装 PDM"没有直接证据** ✗（★ 没查注册表 —— ★ **硬约束明禁动系统层** ✓）；
+   ★★ 若将来本机装了 PDM 且授权到位，★ **该项应重开**（★ 而入口仍在 `IApplication`，
+   ★ **那条路要先解决怎么拿到 `IApplication`** ✗）
+4. ★ **`docs/recon/*` 那 15 项 untracked**（★ 规格 206 的既有产物）—— ★ **本版没碰它们** ✗，
+   ★ 入库与否是**另一个决定** ✓
+
+---
+
 # ★★★ 本版（2026-10-06）：规格 210 **B1 · B2 · B4 · B5 已收口；B3 进行中**
 
 ★ **本版干的事**：把「**工具到底会改什么状态**」从**口头约定**变成**机器可读的声明 + 真机实证** ✓

@@ -73,6 +73,7 @@
 | `animation_export` | `stitched` |
 | `assembly_and_mates` | `stitched` |
 | `autocad_basic_drafting` | `not_implemented` |
+| `curve_driven_pattern` | `stitched` |
 | `drawing_center_lines` | `stitched` |
 | `drawing_dimension_insertion` | `not_implemented` |
 | `drawing_model_annotations` | `stitched` |
@@ -81,6 +82,7 @@
 | `macro_native_recording` | `stitched` |
 | `mold_parting_geometry` | `stitched` |
 | `mold_tools` | `stitched` |
+| `pdm` | `not_implemented` |
 | `routing` | `stitched` |
 | `section_properties` | `stitched` |
 | `sheet_metal_creation` | `stitched` |
