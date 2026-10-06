@@ -5374,6 +5374,46 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "speedpak",
+   "label": "SpeedPak（IAssemblyDoc::CreateSpeedPak）",
+   "level": "verified",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IAssemblyDoc\\CreateSpeedPak.md：System.bool CreateSpeedPak( System.int SpeedPakType ) —— 参数式 1 参",
+    "同页 ## Parameters 逐字：SpeedPakType —— 1 = Mated · 2 = Graphics",
+    "★★★ 同页 ## Returns 逐字：True if SpeedPak is created for the active configurations of the selected subassemblies in this assembly, false if not ⇒ 前置 = 选中的子装配",
+    "同页 ## Remarks：If a selected subassembly already has SpeedPak, then calling this method again does not create another SpeedPak, regardless if the type of SpeedPak to create is different than the existing SpeedPak",
+    "★★★ 官方示例 C:\\swapi\\examples\\Create_SpeedPak_for_Subassemblies_Example_VB.md 的代码逐字给出了选择方式：SelectByID2(\"arm1-1@wrench\", \"COMPONENT\", 0, 0, 0, False, 0, Nothing, 0) 然后 swAssembly.CreateSpeedPak(2) ⇒ 组件名格式 <组件>-<实例号>@<装配名>，且用的是 SelectByID2 的 COMPONENT 类型、不是 IComponent2.Select4",
+    "★ 回读成员：IComponent2::IsSpeedPak（也有 IConfiguration::IsSpeedPak）"
+   ],
+   "evidence": [
+    "★★★★★ 真机建成（tools/probe_spec211_speedpak.py，走 tools/sw_guard.py 护栏）：两个零件落盘 + 子装配落盘 + 顶层装配插入子装配 ⇒ 按官方示例用 SelectByID2('sub-1', 'COMPONENT', …) 选（回读选区 > 0）⇒ 调用 CreateSpeedPak(1) 回 True，且 IComponent2::IsSpeedPak 由 False 变 True ✓",
+    "★★★ 判据用回读、不信返回值：CreateSpeedPak 回 True 是旁证，主判据是 IComponent2::IsSpeedPak 的 False → True（事实 8：bool 返回值不可信）",
+    "★★ 三处错逐条修掉（每处都由前置布尔字段抓出）：① 组件数 3 而非 1 ⇒ GetComponents(False) 会把子装配里面的零件递归带出来，改 True；② 抛 AttributeError: <unknown>.AssemblyDoc ⇒ 装配体文档本身就是 IAssemblyDoc，改用 sw_assembly_doc.call_assembly_doc(doc, member, *args)；③ 选组件 False ⇒ IComponent2.Select4 不生效，改按官方示例用 SelectByID2(<名字>, 'COMPONENT', …)（组件名形态 'sub-1' 与示例的 'arm1-1@wrench' 同族）",
+    "★ 证据文件 output/spec211-b6-speedpak.json（output/ 为 gitignore 产物目录）"
+   ],
+   "limitations": [
+    "★★ 前置三件：① 零件要落盘（add_component 要磁盘路径）② 子装配本身也要落盘（顶层装配要 add_component(<子装配路径>)）③ 调用前必须选中子装配",
+    "★★★ 选择方式只能从官方示例得到：签名与 ## Remarks 都只说 selected subassemblies，而示例给出 SelectByID2(<组件名>, \"COMPONENT\", …) 与组件名格式 <组件>-<实例号>@<装配名>（本次实测名为 sub-1）—— IComponent2.Select4 在这条链上选不上",
+    "★ 本次只试了 SpeedPakType = 1（Mated）⇒ 2（Graphics）未试；也只试了一个子装配 ⇒ 不许推广成多组件、多档都成",
+    "★ 官方 Remarks 说已选子装配已有 SpeedPak 时再调不会新建 ⇒ 重复调用是幂等的（未实测）",
+    "★ 另有一族相关成员本次未试：SetSpeedPakConfigurations / SetSpeedPakToParent / UpdateSpeedPak / UseSpeedPak",
+    "★ 会改装配体的轻化配置（非只读）"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "interactive"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }

@@ -46,7 +46,7 @@ ITEM_TO_CAP = {
     "平板型式/导出 DXF": None,
     "爆炸直线": "explode_line_sketch",   #: ★★★ 真机建成 ⇒ verified ✓
     "零部件阵列": None,
-    "SpeedPak": None,
+    "SpeedPak": "speedpak",            #: ★★★ 真机建成 ⇒ verified ✓
     "序列 / 说明书（Assembly Visualization）": None,
     "装配体性能分析": None,
     "PDM": None,

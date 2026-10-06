@@ -223,25 +223,52 @@ if __name__ == "__main__":
         #:   ★★ 于是下一轮的护栏预检报「★ 有 4 个**不是我们打开的**文档 ⇒ **拒绝开始**」✗
         #:   ★ 而★ 那些**确实是我自己的产物** ✓ ⇒ ★ **该由我自己关掉** ✓
         #:   ★ 只关**本探针建的那几个**（★ 按路径前缀认，★ **绝不碰任何别的文档** ✓）
+        #:   ★★★ 2026-10-07（第二轮修）：★ 上一版收尾报「关掉 []」✗ —— 两个真因：
+        #:     ① ★ 我用 `getattr(_sw, "GetDocuments", …)()` **直接属性调用** ✗ ⇒
+        #:        ★ 正解是 `get_com_member(_sw, "GetDocuments")` ✓（★ 官方签名 `System.object GetDocuments()` ✓）
+        #:     ② ★★ **`GetDocuments` 会包含"作为文件引用被打开"的文档** ✗（★ 官方 `EnumDocuments2`
+        #:        的 `## Remarks` 逐字：「includes `IModelDoc2` objects that may have been opened as
+        #:        **file references**, for example, from an assembly or drawing」✓）——
+        #:        ★ 我的装配引用了 `sp1`/`sp2`/`sub` ⇒ ★ **它们会带上** ✓
+        #:        ★★★ 而官方给了判据：★「use `IModelDoc::Visible` to determine if a particular document
+        #:        **has its own window**」✓ ⇒ ★ **只关"有自己窗口的"那批** ✓
         try:
             import sw_connect as _C
             _sw, _ = _C.connect_solidworks(wait_seconds=15)
             if _sw is not None:
                 _mine = ("sp1", "sp2", "sub")
-                _titles = []
                 try:
-                    _titles = [str(t) for t in (getattr(_sw, "GetDocuments", lambda: [])() or [])]
+                    _docs = _C.get_com_member(_sw, "GetDocuments") or []
                 except Exception:                                       # noqa: BLE001
-                    _titles = []
+                    _docs = []
                 _closed = []
-                for _d in _titles:
-                    _base = Path(_d).stem
-                    if str(WORK).lower() in _d.lower() or _base in _mine:
-                        try:
-                            _C.get_com_member(_sw, "CloseDoc", _d)
-                            _closed.append(_base)
-                        except Exception:                               # noqa: BLE001
-                            pass
-                print("★ 收尾：★ 关掉我方文档 %r" % _closed)
+                _skipped_invisible = []
+                for _d in _docs:
+                    if _d is None:
+                        continue
+                    try:
+                        _path = str(_C.get_com_member(_d, "GetPathName") or "")
+                        _title = str(_C.get_com_member(_d, "GetTitle") or "")
+                    except Exception:                                   # noqa: BLE001
+                        continue
+                    _base = Path(_path).stem or _title
+                    if not (str(WORK).lower() in _path.lower() or _base in _mine
+                            or any(_base.startswith(x) for x in _mine)):
+                        continue
+                    #: ★★ 官方判据：★ **只关"有自己窗口的"** ✓（★ 引用文档没有窗口 ✗）
+                    try:
+                        _vis = bool(_C.get_com_member(_d, "Visible"))
+                    except Exception:                                   # noqa: BLE001
+                        _vis = True
+                    if not _vis:
+                        _skipped_invisible.append(_base)
+                        continue
+                    try:
+                        _C.get_com_member(_sw, "CloseDoc", _title or _path)
+                        _closed.append(_base)
+                    except Exception:                                   # noqa: BLE001
+                        pass
+                print("★ 收尾：★ 关掉我方文档 %r · ★ 跳过（无窗口的引用文档）%r"
+                      % (_closed, _skipped_invisible))
         except Exception:                                               # noqa: BLE001
             pass
