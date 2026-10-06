@@ -43,6 +43,17 @@ OFFICIAL = {
     "rebuild": "IModelDoc2.GetBendState / 重建状态（见 sw_session.needs_rebuild_status）",
 }
 
+#: ★★★ **已知不可用**的状态类（★ 有依据、有错误码 —— ★ 不是"还没试"）：
+#:   ★ `display`：★ `IModelDocExtension.GetDisplayStateSetting(1|2|3)` **三种 Option 全部**抛
+#:     `com_error (-2147417851, '服务器出现意外情况')` ⇒ ★ 与**事实 47**（`AccessSelections`）
+#:     **同一个错误族**（服务端故障 / RPC）⇒ ★ 该成员在**本后端**上**不可用** ✓
+#:   ★★ 处置：★ 它**不该**把每一条差分都拖成"未判定" ——
+#:     那是**把"量具的盲区"当成"被测对象的未知"** ✗（★ 与"选不上当成能力不行"同族）
+#:   ⇒ ★ 单独成桶 `unavailable`，★ 并在每条判定里**如实报出"这一次排除了哪几类"** ✓
+KNOWN_UNAVAILABLE = {
+    "display": "★★ 后端限定：GetDisplayStateSetting 三种 Option 全抛 com_error -2147417851（与事实 47 同族）",
+}
+
 #: ★ 特征遍历的**上限**（★ 防病态文档把探针拖死；★ 到顶就记 `None` + 原因，★ 不假装数完）✓
 FEATURE_CAP = 5000
 
@@ -279,9 +290,15 @@ def compare_detailed(before, after) -> dict:
     ★★ 为什么必须分桶：★ 把「读不到」混进 `same` ⇒ ★ **B3 会把盲区报成「声明一致」** ✗
       ★★ 而那正是本规格要防的那类假结论（同族：把「选不上」当成「能力不行」）✓
     """
-    changed, unknown, same = [], [], []
+    changed, unknown, same, unavailable = [], [], [], []
     rb, ra = (before or {}).get("readings", {}), (after or {}).get("readings", {})
     for cls in STATE_CLASSES:
+        #: ★★ **先分流"已知不可用"** —— ★ 它**不属于"未知"**（★ 前者是量具的盲区、
+        #:   后者是被测对象的未知）⇒ ★ 混在一起会让**每一条**都变成"未判定" ✗
+        #:   ★（★ 真机踩过：`display` 一直读不到 ⇒ 整个普查 6/6 全 `undecided` ✓）
+        if cls in KNOWN_UNAVAILABLE:
+            unavailable.append({"class": cls, "why": KNOWN_UNAVAILABLE[cls]})
+            continue
         #: ★ 双保险：★ 即便上游没归一，这里也按归一后的值比 ✓
         b, a = jsonable(rb.get(cls)), jsonable(ra.get(cls))
         if b is None or a is None:
@@ -290,4 +307,5 @@ def compare_detailed(before, after) -> dict:
             changed.append({"class": cls, "before": b, "after": a})
         else:
             same.append(cls)
-    return {"changed": changed, "unknown": unknown, "same": same}
+    return {"changed": changed, "unknown": unknown, "same": same,
+            "unavailable": unavailable}
