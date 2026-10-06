@@ -32,6 +32,7 @@ from __future__ import annotations
 import argparse
 import ctypes
 import json
+import os
 import re
 import subprocess
 import sys
@@ -793,6 +794,32 @@ class Sentinel:
             self._th.join(timeout=2.0)
 
 
+def _child_env() -> dict:
+    """★★ 给**探针子进程**的环境：★ 打开**沙盒模式** —— 规格 210 · B5-3。
+
+    ★★ 为什么把开关放在**护栏**这一层：★ 护栏是"真机跑"的唯一入口（本仓纪律：一律走护栏）⇒
+      ★ 于是"真机跑"这条路被保护，★ 而**离线调用与单测不受影响**（它们默认 `passthrough`）✓
+    ★ 同时把运行 id 与输出根固定下来 —— ★ 跑完由 `collect_outputs` 把结果拷到那里 ✓
+    """
+    env = dict(os.environ)
+    env["SW_SANDBOX_MODE"] = "enforce"
+    env.setdefault("SW_RUN_ID", __import__("datetime").datetime.now().strftime("%Y%m%d-%H%M%S"))
+    import sw_sandbox as _sb                                          # noqa: PLC0415
+    env.setdefault("SW_SANDBOX_ROOT", str(_sb.sandbox_root()))
+    env.setdefault("SW_OUTPUT_ROOT", str(_sb.output_root()))
+    return env
+
+
+def collect_sandbox_outputs() -> list:
+    """★ 跑完把沙盒里的产物**拷到配置的输出根目录**（★ copy-out）—— ★ 失败不影响探针结论 ✓"""
+    try:
+        import sw_sandbox as _sb                                      # noqa: PLC0415
+        produced = _sb.sweep()
+        return _sb.collect_outputs(produced, note="由 tools/sw_guard.py 在跑完后收集")
+    except Exception:                                                  # noqa: BLE001
+        return []
+
+
 def precheck_before_run(allowed_paths=(), *, allow_untitled: bool = False,
                         timeout_s: int = 25) -> dict:
     """★★ **跑探针之前先问会话干不干净** —— 规格 210 · B5-2b。
@@ -862,7 +889,8 @@ def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = No
     try:
         proc = subprocess.run(argv, check=False, capture_output=True, text=True,
                               encoding="utf-8", errors="replace", timeout=timeout,
-                              cwd=str(REPO_ROOT), stdin=subprocess.DEVNULL)
+                              cwd=str(REPO_ROOT), stdin=subprocess.DEVNULL,
+                              env=_child_env())
         rc, out, err = proc.returncode, proc.stdout or "", proc.stderr or ""
     except subprocess.TimeoutExpired as exc:
         rc, timed = None, True
@@ -924,6 +952,8 @@ def main() -> int:
     ap.add_argument("--clear", action="store_true", help="扫一遍并**点掉**所有弹窗")
     ap.add_argument("--report", action="store_true", help="打印已记录的事件")
     #: ★ B5-2b：默认**开**预检（★ 真机跑的安全前提）；★ 只有确实需要时才 `--skip-precheck` ✓
+    ap.add_argument("--skip-sandbox-collect", action="store_true",
+                    help="★ 跑完不把沙盒产物拷到输出根目录（★ 默认会拷）")
     ap.add_argument("--skip-precheck", action="store_true",
                     help="★ 跳过会话预检（★ 默认是开的 —— 有非我方文档就拒绝开始）")
     ap.add_argument("--allow-path", action="append", default=[],
@@ -1000,6 +1030,18 @@ def main() -> int:
         if tail:
             print("── 子进程 stdout（尾部 4000 字符）──")
             print(tail[-4000:])
+        #: ★★ **copy-out**（规格 210 · B5-3）：跑完把沙盒里的产物**拷到配置的输出根目录** ✓
+        #:   ★ 无论探针成功与否都收（★ 失败的现场往往更有用），★ 且**收集失败不影响结论** ✓
+        if not args.skip_sandbox_collect:
+            got = collect_sandbox_outputs()
+            if got:
+                print("── 沙盒产物已收集 %d 个 ⇒ %s ──"
+                      % (len(got), os.path.dirname(got[0]["copied_to"])))
+            try:
+                import sw_sandbox as _sb
+                print("   （沙盒：%s · 输出根：%s）" % (_sb.sandbox_root(), _sb.output_root()))
+            except Exception:                                          # noqa: BLE001
+                pass
         return 0 if r["ok"] else 1
     ap.print_help()
     return 0

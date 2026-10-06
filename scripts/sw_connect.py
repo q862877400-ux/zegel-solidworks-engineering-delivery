@@ -984,6 +984,23 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
         IModelDoc2 对象
     """
     file_path = _expand_path(file_path)
+    #: ★★★ **B5-3 的咽喉点**：会打开文档的调用**几乎都经过这里** ⇒ 沙盒策略就挂在这一处 ✓
+    #:   ★★ 评审的判决：要守的**不是**"输出不落在输入旁边"，而是「**打开的永远不是原件**」——
+    #:     ★ 出事的根因正是"对**原件路径**直接开了分析"⇒ ★ 外部路径在这里被**复制进沙盒**，
+    #:     ★ 后面 `OpenDoc6` 打开的是**副本** ✓
+    #:   ★ 默认 `passthrough`（不改变既有行为）；★ **护栏**会给探针设 `enforce` ✓
+    try:
+        import sw_sandbox as _sb
+    except ImportError:                                                 # pragma: no cover
+        try:
+            from . import sw_sandbox as _sb
+        except ImportError:
+            _sb = None
+    if _sb is not None:
+        _resolved = _sb.resolve_input(file_path)
+        if _resolved.get("materialized"):
+            print("  " + _resolved["why"])
+        file_path = _resolved["path"]
     if not os.path.exists(file_path):
         message = f"文件不存在: {file_path}"
         if raise_on_error:
