@@ -53,6 +53,7 @@ ToolSpec(
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -507,6 +508,40 @@ def build_input_model(spec: ToolSpec, base: type, response_enum: Any) -> type:
                                       **{k: v[1] for k, v in fields.items()}})
 
 
+#: ★★ B4 的预检开关（★ 规格 210）—— ★ **默认开**；★ `SW_PRECHECK=off` 可关（★ 于是**可回退**）✓
+PRECHECK_ENABLED = str(os.environ.get("SW_PRECHECK", "on")).strip().lower() not in ("off", "0", "false")
+
+
+def precheck_payload(spec: "ToolSpec", inject_name: str, host) -> Optional[str]:
+    """★★ **按声明自动生成的预检** —— ★ 返回 `None` 表示**放行**；★ 否则返回**要直接回的 JSON 串** ✓
+
+    ★★ 这是 B4 的落点（★ 评审的四条之一）：★「工具层返回**结构化**的『不适用』，
+      ★ **不要抛字符串异常**」⇒ ★★ 于是**不适用时工具回的是 JSON 载荷**，★ 不是异常 ✓
+    ★★ 三条保守判据：
+      ① ★ **预检自己出错 ⇒ 放行** —— ★ 预检是**保护**，★ 不该变成新的**路障** ✓
+         （★ 这条与本会话两次"过度纠正"的教训**同族**：★ 保守 ≠ 一律拒绝）✓
+      ② ★ **没建的检查（`unchecked`）⇒ 放行**（★ 它如实说"没查"，★ 不许因此挡住工具）✓
+      ③ ★ 开关关掉 ⇒ 一律放行 ✓
+    """
+    if not PRECHECK_ENABLED or not inject_name:
+        return None
+    try:
+        try:
+            import scripts.sw_applicability as ap
+        except ImportError:
+            import sw_applicability as ap                                  # noqa: PLC0415
+        ap.precheck(inject_name, host, tool_name=spec.name)
+        return None
+    except Exception as exc:                                            # noqa: BLE001
+        #: ★ 认得出是"不适用" ⇒ 回**结构化载荷**（★ 这是唯一的"拒绝"路径）✓
+        name = type(exc).__name__
+        if name == "NotApplicable" and hasattr(exc, "to_dict"):
+            import json as _json
+            return _json.dumps(exc.to_dict(), ensure_ascii=False)
+        #: ★ 其余异常（含"没建的检查"）⇒ **放行** —— ★ 保护不许变成路障 ✓
+        return None
+
+
 def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[..., str],
                        resolve_model: Optional[Callable[[], Any]] = None,
                        resolvers: Optional[dict[str, Callable[[Any], Any]]] = None,
@@ -541,6 +576,11 @@ def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[.
                         "（已给的：%r）" % (spec.name, inj, sorted((resolvers or {}).keys()))
                     )
                 kwargs[inject_as or inj] = resolver(params)
+                #: ★★ **B4：按声明自动生成的预检** ⇒ ★ 不适用就回**结构化载荷**，★ 不调目标函数 ✓
+                #:   ★（★ 只在 `inject` 非空时做 —— ★ 没有宿主对象就没有"不适用"可言）✓
+                _blocked = precheck_payload(spec, inj, kwargs.get(inject_as or inj))
+                if _blocked is not None:
+                    return _blocked
             if spec.extra_op is not None:
                 return spec.extra_op(params)
             if spec.pre_call is not None:

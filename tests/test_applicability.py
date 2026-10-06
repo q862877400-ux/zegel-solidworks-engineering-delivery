@@ -148,3 +148,46 @@ def test_precheck_tool_reads_the_declaration(tmp_path, monkeypatch):
     with pytest.raises(AP.NotApplicable):
         AP.precheck_tool("t", {"asm_model": _Doc(1)})
     assert AP.precheck_tool("t", {"asm_model": _Doc(2)})["kind"] == "assembly"
+
+
+# ── ⑤ 接进注册层的钩子：★ 不适用回**结构化载荷**，★ 不是异常 ─────────────
+class _TinySpec:
+    name = "synthetic_tool"
+    params = []
+    param_alias = {}
+
+
+def test_registry_hook_returns_structured_payload_for_a_mismatch():
+    """★★★ **B4 第 ① 条的判据**：★ 工具层要回**结构化的「不适用」**，
+    ★★ **不要抛字符串异常**（★ 评审明确要求）⇒ ★ 钩子回的是**可解析的 JSON** ✓"""
+    import json
+    import tool_registry as TR
+    out = TR.precheck_payload(_TinySpec(), "asm_model", _Doc(1))
+    assert out, "★ 错文档类型必须被挡下"
+    d = json.loads(out)
+    assert d["not_applicable"] is True and d["code"] == "wrong_doc_type"
+    assert d["needs"] == ["assembly"] and d["action_hint"]
+
+
+def test_registry_hook_passes_a_matching_document():
+    import tool_registry as TR
+    assert TR.precheck_payload(_TinySpec(), "model", _Doc(1)) is None
+
+
+def test_registry_hook_never_blocks_on_an_unbuilt_check():
+    """★★ **负例（★ 保护不许变成路障）**：★ 还没建检查的那几类 ⇒ ★ **必须放行** ✓
+
+    ★★ 这条与本会话两次「过度纠正」的教训**同族**：★ **保守 ≠ 一律拒绝** ✓
+    """
+    import tool_registry as TR
+    assert TR.precheck_payload(_TinySpec(), "view", object()) is None
+    assert TR.precheck_payload(_TinySpec(), "study", object()) is None
+
+
+def test_registry_hook_can_be_switched_off(monkeypatch):
+    """★ **可回退**：★ `SW_PRECHECK=off` ⇒ 一律放行（★ 于是这次运行期变更是**可逆的**）✓"""
+    import importlib
+    import tool_registry as TR
+    monkeypatch.setattr(TR, "PRECHECK_ENABLED", False)
+    assert TR.precheck_payload(_TinySpec(), "asm_model", _Doc(1)) is None
+    importlib.reload(TR)
