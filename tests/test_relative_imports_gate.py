@@ -60,10 +60,17 @@ def test_guarded_relative_import_is_accepted_even_with_a_trailing_comment():
 
 def test_the_repaired_file_is_clean_and_the_old_one_was_not():
     """★★★ **两侧一起证**（★ 事实 62：用**修复前**的原文当负例输入）✓"""
-    before = subprocess.run(["git", "show", "HEAD:scripts/sw_simulation_loads.py"],
+    #: ★★★ **负例必须钉在一个"确定的旧提交"上，★ 不能钉 `HEAD`** ——
+    #:   ★ 真机踩过：★ 我第一版写 `git show HEAD:…` ⇒ ★★ 而**修复一提交，HEAD 就含修复**
+    #:     ⇒ ★ 负例的前提**自动失效** ⇒ 测试变红 ✗（★ 而它**看起来像门禁坏了**）✓
+    #:   ★ 正解：★ 钉 **`d6bb5c27`**（★ 修复前的那一个提交）✓
+    FIXED_AT = "62796a28"        # ★ `sw_simulation_loads.py` **修复前**的最后一个提交 ✓
+    #:   ★（★ 我第一次写 `d6bb5c27` ⇒ ★ 那**已经是修复后**了 ⇒ 负例前提失效 ✗ ——
+    #:     ★ **钉旧提交也要实测确认**，★ 不能凭"它看起来在前面"就选 ✓）
+    before = subprocess.run(["git", "show", "%s:scripts/sw_simulation_loads.py" % FIXED_AT],
                             cwd=str(ROOT), capture_output=True,
                             encoding="utf-8", errors="replace").stdout
-    assert before, "★ 取不到修复前的原文"
+    assert before, "★ 取不到修复前的原文（★ 该提交还在吗）"
     assert len(_scan_text(before)) == 17, "★ 修复前应当命中 17 处"
     now = (ROOT / "scripts" / "sw_simulation_loads.py").read_text(encoding="utf-8")
     assert _scan_text(now) == [], "★ 修复后应当 0 命中"

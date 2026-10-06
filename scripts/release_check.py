@@ -334,6 +334,22 @@ def _run_union_conventions_gate() -> dict[str, object]:
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────
+def _run_relative_imports_gate() -> dict[str, object]:
+    """@brief 跑相对导入兜底门禁（`scripts/check_relative_imports.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_relative_imports.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "相对导入兜底门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_env_pitfalls_gate() -> dict[str, object]:
     """@brief 跑环境坑门禁（`scripts/check_env_pitfalls.py`）。"""
     try:
@@ -1377,6 +1393,16 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "环境坑门禁未通过（subprocess 编码 / Path 盘根）：\n"
             + str(env_pitfalls.get("output", "")))
+    # ⚑ **相对导入兜底门禁**（硬门禁，规格 210 · B3）：函数内的相对导入**必须带兜底** ——
+    #   ⚠ 触发它的是 2026-10-06 存活普查里的**真机报错**：
+    #     `ImportError: attempted relative import with no known parent package` ——
+    #     ★ 而它是**机制性**的（不依赖某次运行的环境）：★ 无兜底的相对导入
+    #       在**非包导入路径**下**一定会炸**。★ 修了那 17 处，并**钉住不许再增长** ✓
+    rel_imports = _run_relative_imports_gate()
+    if rel_imports.get("status") == "fail":
+        raise AssertionError(
+            "相对导入兜底门禁未通过（棘轮基线被突破）：\n"
+            + str(rel_imports.get("output", "")))
     # ⚑ **验收命令可跑性门禁**（硬门禁）：`specs/**/*.md` 的 `→ 验收:` 行点到的脚本
     #   必须在**仓库里**（ROADMAP §〇 纪律三「验收必须是可跑的命令」）。
     #   触发它的是 2026-10-01 实测到的 **2 例仓库外验收脚本**。
@@ -1546,6 +1572,7 @@ def run_release_check() -> dict[str, object]:
         "param_binding": param_binding,
         "union_conventions": union,
         "env_pitfalls": env_pitfalls,
+        "relative_imports": rel_imports,
         "spec_acceptance_paths": spec_paths,
         "report_freshness": report_fresh,
         "signature_audit_freshness": sig_fresh,
