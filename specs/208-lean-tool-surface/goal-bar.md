@@ -208,3 +208,31 @@
 - ✅ ★★ **真启动 + 界面选「Lean 模式」**：会话 `6784794d` —— 系统提示词 **10,703**、**目录段 ✓**、**参数信封 ✓（26 行）**
 - ✅ 首页双语都补上了 GitHub 安装命令并推送
 - ✅ 清理：3099 已停、浏览器已收、Hindsight 未拉起、生产零改动
+
+## 十九 · 第 19 轮：★★★ 已装进**生产环境**（从 GitHub）
+
+**命令**（用生产自己的启动参数，`DSH_HOME` 默认）：
+```
+cd D:\AI\DSH\deepseek-harness\apps\cli\src
+node --import tsx\esm <bin.ts> plugin --profile web add -w github:q862877400-ux/dsh-lean-mode
+```
+★ **必须加 `-w`**：生产 profile 是多包 workspace（`packages: ['.', 'harness/apps/*', …]`），
+不加会被 pnpm 以 `ERR_PNPM_ADDING_TO_ROOT` 拒绝（沙盒那份只有 `packages: ['.']` 所以不加也行）。
+
+**结果**：
+- ✅ `package.json` 写入 `"@local/dsh-lean-mode": "github:q862877400-ux/dsh-lean-mode"`（依赖 + 插件清单两处）
+- ✅ `--dump-config`：`lean-mode`（`presets: [lean]`）与 `preset-lean` **都在组合树里**
+- ✅ ★ `cordis.patch.yml` **一个字没变**（DSH 把 bundle 补丁记在 `.plugin-manager/`，不污染 profile）
+- ★ 那堆 peerDependencies warning 是**你原有插件**的，不是本插件的（本包无 peerDeps）
+
+**备份**（按你 home 惯例命名，都在 `profiles\web\`）：
+`cordis.patch.yml` / `package.json` / `pnpm-lock.yaml` → `*.bak-20261006154125-before-lean-mode`
+
+**回滚**：
+```
+node --import tsx\esm <bin.ts> plugin --profile web remove '@local/dsh-lean-mode'
+```
+（必要时再用那三个 `.bak-…-before-lean-mode` 覆盖回去）
+
+**用法**：★ **开一个新会话** ⇒ 模式菜单里选「Lean 模式」。
+DSH 自己的说明：「**已存在的会话沿用它们启动时的插件版本；改完的行为请在新会话里验证**」。
