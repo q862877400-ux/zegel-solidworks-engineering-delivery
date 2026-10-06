@@ -41,8 +41,17 @@ def _fresh_part(sw):
         return None
 
 
-def classify(declared_writes, diff, usable) -> str:
-    """★★ 四类判定（★ 严格照 spec：`missed` 与 `undecided` **不许混**）✓"""
+def classify(declared_writes, diff, usable, *, call_ok: bool) -> str:
+    """★★ 四类判定（★ 严格照 spec：`missed` 与 `undecided` **不许混**）✓
+
+    ★★★ 2026-10-06 **跑写工具之前必须先修的一处假结论**：★ 若那次调用**根本没调成**
+      （★ 例如写工具缺前置）⇒ ★ 指纹当然不会变 ⇒ ★★ 而只指纹判定会报 **`agree`**
+      ⇒ ★ **那是「假一致」**：★ 我们**根本没测到它**（★ 与事实 57「一直是绿的，
+      ★ 可能只是环境恰好满足」同族）✓
+    ⇒ ★ 判序把 `call_ok` 放**最前**：★ **没调成 ⇒ `undecided`**（★ 并记明原因）✓
+    """
+    if not call_ok:
+        return "undecided"
     if not usable or diff["unknown"]:
         return "undecided"
     changed = bool(diff["changed"])
@@ -100,7 +109,8 @@ def main() -> int:
         diff = FP.compare_detailed(before, after)
         verdict = classify(table[name].get("writes"),
                            {"changed": diff["changed"], "unknown": diff["unknown"]},
-                           bool(before.get("usable")) and bool(after.get("usable")))
+                           bool(before.get("usable")) and bool(after.get("usable")),
+                           call_ok=bool(ok))
         rows.append({
             "tool": name, "verdict": verdict, "writer_ok": ok,
             "call_note": str(note)[:120],
@@ -116,11 +126,13 @@ def main() -> int:
     for r in rows:
         counts[r["verdict"]] = counts.get(r["verdict"], 0) + 1
     missed = [r["tool"] for r in rows if r["verdict"] == "missed"]
+    #: ★★ 「调用没调成」单列 —— ★ 它**既不是通过也不是失败**，★ 是**我们没测到** ✓
+    call_failed = [r["tool"] for r in rows if not r.get("writer_ok")]
     out = {
         "_": "★ B3 存活普查的「声明 vs 观察」差异表（★ 每条各用一个新零件）",
         "declared_group": args.declared,
         "_judge": "★ agree=一致 · conservative=声明保守 · ★★ missed=**声明漏报**（硬红门禁）· undecided=未判定",
-        "counts": counts, "missed": missed, "rows": rows,
+        "counts": counts, "missed": missed, "call_failed": call_failed, "rows": rows,
     }
     p = Path(args.json_out)
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -128,6 +140,8 @@ def main() -> int:
     print("★ 四类统计：%s" % counts)
     print("★★ 硬红门禁（声明只读却观察到指纹变化）：**%d** 条 %s"
           % (len(missed), missed[:5] if missed else ""))
+    print("★ 调用没调成的（★ 我们没测到，不算通过也不算失败）：**%d** 条 %s"
+          % (len(call_failed), call_failed[:5] if call_failed else ""))
     print("★ 报告：%s" % p)
     return 0
 
