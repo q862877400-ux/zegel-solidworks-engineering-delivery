@@ -23,24 +23,36 @@
 - [x] **B1-5** idx **244** `referenced_documents` ⇒ `scripts/sw_document_data.py::document_dependencies`
       + `solidworks_document_dependencies`
       ★ 怎么知道的：真机自建 1 零件 + 1 装配 ⇒ `ok=True` · `count=1` · `raw_len=2`；开了只读信息 ⇒ `raw_len=3` ⇒ T4 格
-- [ ] **B1-6** idx **209** `move_body` ⇒ `scripts/sw_body_ops.py`（新）+ `solidworks_part_move_copy_body`
-      ★ 裁决书 §九 称它是「**本批最干净的一条**」（官方页 signature + 逐字 mark 表 1/2/4/8 + 示例调用序 + 读侧全齐）
-      ★ 未做的原因：★ **B1 其余 4 件已收口**，本条要**新建模块**且要 mark 表选体 ⇒ 单独一轮做（★ 不半途塞进本批）
+- [x] **B1-6** idx **209** `move_body` ⇒ `scripts/sw_body_ops.py`（新）+ `solidworks_part_move_copy_body`
+      ⇒ `scripts/sw_body_ops.py`（新）+ `solidworks_part_move_copy_body`
+      ★ 怎么知道的：真机（★ 判据 = **包围盒变 / 实体个数增**，都回读）——
+      移动 `25 mm` ⇒ 包围盒 x `-30/30 → -5/55`（**正好 25**）；复制 ⇒ **实体 1→2**；
+      平移+旋转同给 ⇒ `both_given=True`；负例越界 ⇒ `ok=False` ⇒ T5 格
+- [x] **B1-7** ★★ **真机定死两件官方没写的事**（★ 都随返回值带出，不写就是静默错）
+      ★ 怎么知道的：① **长度是 mm 不是米**（先按"米"换算传 0.025 只挪了 0.025 ⇒ 那是**静默的 1000× 错**）；
+      ② **角度是弧度**（传 30.0 得到约 81°）⇒ **一个调用里混两种口径**；
+      ③ **官方参数名与实际作用轴 X↔Z 互换** —— 由 `T5b` 三格互证（只给一个角、看**哪一轴跨度不变**）定出，
+      ★ 补偿后复验：`rotate_angle_z_deg=30` ⇒ 跨度 `[60,40,20] → [71.9615,64.641,20]`，
+      而 `71.9615 = 60·cos30+40·sin30`、`64.641 = 60·sin30+40·cos30` **逐位吻合** ⇒ 单位与轴**同时被证**✓
 
 ## B1 · 门禁与登记（★ 与上面 5 件活同批收口）
 
-- [x] **SC-2** 工具真正注册 —— `register_capabilities.all_specs()` 实测 **438** 个（本批 433 → 438，5 条）
+- [x] **SC-2** 工具真正注册 —— `register_capabilities.all_specs()` 实测 **439** 个（本批 433 → 439，6 条）
       ★ 怎么知道的：`check_specs(all_specs())` 回 **0 个问题**
 - [x] **SC-3** 本批过收尾链 —— `pwsh -File tools/round_chain.ps1 -Tests tests/test_tool_specs_batch92.py`
 - [x] **SC-4** 真机证据文件落盘 —— `output/union-adopt-b1-evidence.json`（★ 判据全是**回读**，不是返回值）
-- [x] **SC-5** ★★ **官方文档与真机读数不一致处逐条记账** —— `spec.md` §五 **4 条**：
+- [x] **SC-5** ★★ **官方文档与真机读数不一致处逐条记账** —— `spec.md` §五 **6 条**：
       `EditRebuild3` 读即调（恒真）· 只读信息串真机回 `"FALSE"` 而官方例子是空串 ·
-      `CreateConstructionGeometry` 实测是置位（官方没说）· 「第一个名字即活动」在装配里不成立
-- [x] **SC-6** `capabilities.yaml` 追加 **4 条**（`level: verified`，★ 各带 evidence + limitations）
-      ★ 怎么知道的：`git diff --stat capabilities.yaml` = **139 行纯插入 / 0 删除**（★ 事实 61：先看 deletions）
-- [x] **B1-7** 契约测试 19 条全绿 —— `pytest tests/test_tool_specs_batch92.py -q`
-      ★ 其中 **5 条是裁决书点名的硬约束回归**（`EditRebuild3` **真被调用** · 装配 `ambiguous` ·
-      两入口读数不一致必须报 · 长度除不尽必须拒 · `"FALSE"` 必须判成 `False`、认不出的回 `None`）
+      `CreateConstructionGeometry` 实测是置位（官方没说）· 「第一个名字即活动」在装配里不成立 ·
+      **`InsertMoveCopyBody2` 的长度是 mm 不是米** · **同一成员的 `RotAngle*` 是弧度且 X↔Z 互换**
+- [x] **SC-6** `capabilities.yaml` 追加 **5 条**（`level: verified`，★ 各带 evidence + limitations）
+      ★ 怎么知道的：第一次追加 139 行纯插入；第二次（更正 + 追加）**39 插入 / 1 删除**
+      （★ 那 1 删除是 `session_rebuild` 的 `evidence[0]` 被替换 —— **是有意改的**，不是误删）✓
+- [x] **B1-8** 契约测试 25 条全绿 —— `pytest tests/test_tool_specs_batch92.py -q`
+      ★ 其中 **7 条是硬约束/自查项的回归**（`EditRebuild3` **真被调用** · 装配 `ambiguous` ·
+      两入口读数不一致必须报 · 长度除不尽必须拒 · `"FALSE"` 必须判成 `False` 且认不出回 `None` ·
+      **`bbox_comparable`：`None`（读不到）与 `False`（没变）必须分得开** ·
+      **旋转轴补偿：要"绕 Z"就放进第 1 个角槽**）
 
 ## B2 · 须真机定前置（4 条）
 

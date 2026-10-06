@@ -51,7 +51,8 @@ def main() -> int:
           "_": "规格 209 · B1 批（idx 235+236 / 79 / 97 / 244）真机",
           "judge": "回读状态 / 回读属性 / 回读清单（★ 按能力分）",
           "T1_rebuild": [], "T1_trap": None, "T2_construction": [], "T2_toggle_probe": None,
-          "T3_display_states": {}, "T4_dependencies": {}}
+          "T3_display_states": {}, "T4_dependencies": {}, "T5_move_body": {},
+          "T5b_rotation_units": {}}
     opened = []
 
     def _close(doc):
@@ -83,7 +84,10 @@ def main() -> int:
                 "needs_after": r.get("needs_rebuild_after"),
                 "state_before": r.get("state_before"), "state_after": r.get("state_after"),
                 "tree": [r.get("tree_before"), r.get("tree_after")],
-                "bbox_changed": r.get("bbox_changed"), "entry_used": r.get("entry_used"),
+                "bbox_changed": r.get("bbox_changed"),
+                "bbox_comparable": r.get("bbox_comparable"),
+                "bbox_before": r.get("bbox_before"), "bbox_after": r.get("bbox_after"),
+                "entry_used": r.get("entry_used"),
                 "error": r.get("error")})
             print("  T1 %-6s ok=%-5s needs %s→%s tree %s→%s bbox_changed=%s" % (
                 mode, r.get("ok"), r.get("needs_rebuild_before"), r.get("needs_rebuild_after"),
@@ -223,6 +227,79 @@ def main() -> int:
     except Exception as exc:                                   # noqa: BLE001
         ev["T4_dependencies"] = {"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
         print("  T4 FATAL %s" % str(exc)[:120])
+
+    #: ── T5 · 移动 / 复制实体（idx 209）★ 判据 = 包围盒变（移动）/ 实体个数增（复制）────────────
+    try:
+        import sw_body_ops as BO
+        doc = _make_box()
+        r_move = BO.move_copy_body(doc, "all", translate_x_mm=25.0)
+        r_copy = BO.move_copy_body(doc, "all", translate_x_mm=40.0, copy=True, num_copies=1)
+        #: ★★ 官方 Remarks 的坑：平移与旋转**同时给** ⇒ 官方只应用旋转 ⇒ 本工具必须**说出来**
+        r_both = BO.move_copy_body(doc, "all", translate_x_mm=5.0, rotate_angle_z_deg=30.0)
+        r_neg = BO.move_copy_body(doc, "index:99", translate_x_mm=1.0)
+        #: ★★ T5b · **用"旋转后的包围盒"定死角度单位与"哪根轴"**（★ 不是靠"没报错"当判据）：
+        #:   60×40×20（x ±30 / y ±20 / z ∈[-20,0]）分别只给 **X / Y / Z 一个角**，
+        #:   再看**哪个平面被转了** —— 判据是**跨度的变化**，不是返回值：
+        #:   ```
+        #:   绕 X 转 ⇒ x 跨度不变、y/z 跨度变
+        #:   绕 Y 转 ⇒ y 跨度不变、x/z 跨度变
+        #:   绕 Z 转 ⇒ z 跨度不变、x/y 跨度变
+        #:   ```
+        import math as _m
+
+        def _spans(doc_):
+            st = BO.body_state(doc_)
+            bb = st.get("bbox_mm") or {}
+            if not bb.get("min"):
+                return None
+            return tuple(round(bb["max"][i] - bb["min"][i], 4) for i in range(3))
+
+        def _plane_moved(s0, s1):
+            """★ 判据 = **哪一轴的跨度不动**（绕某轴转 ⇒ 该轴坐标逐点不变 ⇒ 它的跨度是唯一不动的）✓"""
+            if not (s0 and s1):
+                return "读不到跨度"
+            unchanged = [i for i in range(3) if abs(s0[i] - s1[i]) <= 1e-3]
+            name = {0: "X", 1: "Y", 2: "Z"}
+            if len(unchanged) == 1:
+                return "实际绕 %s 轴（该轴跨度不变）" % name[unchanged[0]]
+            return "★ 判据分不出来（跨度不变的轴 = %r）" % ([name[i] for i in unchanged],)
+
+        axes = {}
+        for label, kw in (("x", {"rotate_angle_x_deg": 30.0}),
+                          ("y", {"rotate_angle_y_deg": 30.0}),
+                          ("z", {"rotate_angle_z_deg": 30.0})):
+            d_ax = _make_box()
+            s0 = _spans(d_ax)
+            r_ax = BO.move_copy_body(d_ax, "all", **kw)
+            s1 = _spans(d_ax)
+            axes[label] = {"ok": r_ax.get("ok"), "moved": r_ax.get("moved"),
+                           "spans_before": s0, "spans_after": s1,
+                           "verdict": _plane_moved(s0, s1) if (s0 and s1) else "读不到跨度"}
+            _close(d_ax)
+            print("  T5b 只给 %s 角 ⇒ %s" % (label, axes[label]["verdict"]))
+        #: ★ 幅度判据：0.5236 rad = 30° ⇒ 绕 X 转 30° 后 y 跨度应为
+        #:   `20cos30+20sin30 = 27.3205`、z 跨度 `20cos30+20sin30 = 27.3205`（★ 与"按弧度解释"对不上）
+        ev["T5b_rotation_units"] = {
+            "axes": axes,
+            "expected_span_if_30deg": round(20.0 * _m.cos(_m.radians(30.0))
+                                            + 20.0 * _m.sin(_m.radians(30.0)), 4),
+            "★ verdict": "见 axes[*].verdict（★ 三格互相对照 ⇒ 能区分'轴错位'与'单位错'）",
+            "_": "官方页**没写** RotAngle 的单位、也没说哪根轴；本格是**实测**，用跨度判，不用返回值判"}
+        ev["T5_move_body"] = {
+            "move": {k: r_move.get(k) for k in ("ok", "selection_count", "moved", "copied",
+                                                "before", "after", "returned", "error")},
+            "copy": {k: r_copy.get(k) for k in ("ok", "before", "after", "copied", "error")},
+            "both_translation_and_rotation": {k: r_both.get(k) for k in ("ok", "both_given",
+                                                                        "note", "error")},
+            "negative_index": {k: r_neg.get(k) for k in ("ok", "error")},
+            "judge": "移动 ⇒ 包围盒必变；复制 ⇒ 实体个数必增（★ 都回读，不用 IFeature 指针）"}
+        _close(doc)
+        print("  T5 move ok=%s moved=%s | copy ok=%s copied=%s | both_given=%s | neg ok=%s"
+              % (r_move.get("ok"), r_move.get("moved"), r_copy.get("ok"), r_copy.get("copied"),
+                 r_both.get("both_given"), r_neg.get("ok")))
+    except Exception as exc:                                   # noqa: BLE001
+        ev["T5_move_body"] = {"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+        print("  T5 FATAL %s" % str(exc)[:120])
 
     for d in opened:
         _close(d)

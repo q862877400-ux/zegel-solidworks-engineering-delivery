@@ -23,7 +23,7 @@
 #        ⇒ 装配里必须给 `ambiguous`；
 #     ③ `GetDocumentDependencies2` 「**Library features 不会返回**」⇒ 盲区要随返回值带出去。
 # 许可:   本仓库 MIT。★ 无第三方代码引入（全部按官方签名自建）。
-# 规模:   **5 个工具** ⇒ 工具数 433 → **438**
+# 规模:   **6 个工具** ⇒ 工具数 433 → **439**
 # ★★ 本批**不做**的（★ 裁决书已裁掉，**别顺手补**）：
 #     · idx 273 `setup_template_positions` —— **缓办**（域未分类 + 要用 `ISheet::SetProperties2`
 #       的写入通道，且那些属性名/数值约定**两套官方源都查不到**）✓
@@ -157,5 +157,55 @@ SPECS_BATCH92 = [
             "★ **把这份清单当「完整依赖」是错的** ✓ "
             "⚠ 另两条官方逐字已写进返回值：★ **被压缩的组件也会出现**（别把「出现了」当「生效了」）· "
             "★ `search=True` 会**改当前目录**。",
+    ),
+    # ── ⑤ 移动/复制实体（1）—— ★ 裁决书 §九 称它是「本批最干净的一条」────────────────────
+    ToolSpec(
+        name="solidworks_part_move_copy_body",
+        title="Move or Copy Solid Bodies (InsertMoveCopyBody2)",
+        module="sw_body_ops", function="move_copy_body",
+        inject="model",
+        params=[
+            Param("selection", str, default="all",
+                  description="声明式选择器（★ 规则 3：不收坐标）—— `\"all\"`（全部实体，"
+                              "★ 与官方示例同）或 `\"index:<n>\"`（第 n 个实体）。"),
+            Param("translate_x_mm", float, default=0.0, description="平移增量 X（毫米）。"),
+            Param("translate_y_mm", float, default=0.0, description="平移增量 Y（毫米）。"),
+            Param("translate_z_mm", float, default=0.0, description="平移增量 Z（毫米）。"),
+            Param("translate_dist_mm", float, default=0.0,
+                  description="平移**距离**（毫米；官方 `TransDist`）。"),
+            Param("rotate_point_x_mm", float, default=0.0, description="旋转原点 X（毫米）。"),
+            Param("rotate_point_y_mm", float, default=0.0, description="旋转原点 Y（毫米）。"),
+            Param("rotate_point_z_mm", float, default=0.0, description="旋转原点 Z（毫米）。"),
+            Param("rotate_angle_x_deg", float, default=0.0,
+                  description="**绕 X 轴**的旋转角（**度**）—— ⚠ 官方页**没写单位**（真机实测 COM 侧是"
+                              "**弧度**）⇒ 本工具收度、在边界换算一次；★★ 且官方参数名与实际作用轴"
+                              "**不一致（X↔Z 互换）** ⇒ 本工具**已补偿**，此参数**真的绕 X**。"),
+            Param("rotate_angle_y_deg", float, default=0.0, description="绕 Y 的旋转角（度）。"),
+            Param("rotate_angle_z_deg", float, default=0.0, description="绕 Z 的旋转角（度）。"),
+            Param("copy", bool, default=False,
+                  description="`True` = **复制**、`False` = **移动**（官方 `BCopy`）。"),
+            Param("num_copies", int, default=1, description="复制几个（官方 `NumCopies`，须 ≥ 1）。"),
+        ],
+        doc="★ **移动或复制实体**（官方 `IFeatureManager::InsertMoveCopyBody2`，**12 参**）—— "
+            "★ 官方页 **signature + 逐字 mark 表（1/2/4/8）+ 官方示例调用序**全齐 ✓ "
+            "★★ **判据（规则 6）**：① **移动** ⇒ **包围盒必须变**；② **复制** ⇒ **实体个数必须增** —— "
+            "两者都用 `IBody2.GetBodyBox` / `GetBodies2` **回读**，"
+            "★ **不用**它回的 `IFeature` 指针 ✓ "
+            "★★ **官方 Remarks 的坑已编码**：**平移与旋转不能同时生效**，**同时给则只应用旋转** ⇒ "
+            "本工具检测到两者都给时**置 `both_given=True` 并写明**（★ 不静默）✓ "
+            "★ **mark 不在 `Select2` 的形参里** —— 它设在 `ISelectData` 对象上 "
+            "（官方示例调用序：`CreateSelectData` → `Mark = 1` → `body.Select2(True, data)`）✓ "
+            "★★ **单位是个坑，且本工具已按实测定死**：官方页**没写**这几个长度参数的单位，"
+            "真机实测**按文档长度单位（本机 mm）解释、不是米** —— 传 25 就挪 25 mm；"
+            "★ 因此本工具**原样收毫米、不做换算**（⚠ 与本仓绝大多数 COM 几何接口**相反**）✓ "
+            "★ 角度则收**度**、在边界换算成**弧度**（真机实测 COM 侧是弧度）—— "
+            "★ 也就是说**同一个调用里长度是 mm、角度是 rad** ✓ "
+            "★★ **还有一件官方没写的事**：**参数名与实际作用轴不一致（`RotAngleX` 实际绕 Z、"
+            "`RotAngleZ` 实际绕 X，`Y` 是对的）** —— 真机由「只给一个角、看哪一轴跨度不变」"
+            "的三格互证定出 ⇒ ★ 本工具**已按单源常量 `ROTATION_AXIS_MAP` 补偿**，"
+            "对外的 `rotate_angle_x/y/z_deg` **含义就是「绕该轴转」** ✓ "
+            "⚠ **已知限制**：★ 只验了**单实体 / 全部实体**两种选择器；"
+            "★ 旋转只验了「**只给一个轴、30°、RotPoint=(0,0,0)**」（★ **三轴同时给的合成顺序未验**）；"
+            "★ 非原点旋转与「绕选定参考实体」（mark 2/4/8）**未验**。",
     ),
 ]

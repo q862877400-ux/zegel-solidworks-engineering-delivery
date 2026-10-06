@@ -30,7 +30,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 import register_capabilities as rc                            # noqa: E402
 import tool_specs_batch92 as b92                              # noqa: E402
 
-EXPECTED = 5
+EXPECTED = 6
 
 
 def test_batch92_registered():
@@ -38,7 +38,7 @@ def test_batch92_registered():
     assert '"tool_specs_batch92"' in t
 
 
-def test_five_specs_declared_and_resolve():
+def test_six_specs_declared_and_resolve():
     assert len(b92.SPECS_BATCH92) == EXPECTED, len(b92.SPECS_BATCH92)
     for s in b92.SPECS_BATCH92:
         m = importlib.import_module("scripts.%s" % s.module)
@@ -61,15 +61,19 @@ def test_required_params_are_all_declared():
 
 
 def test_no_bare_coordinates_and_readonly_flags():
-    """★ 规则 3：本批**不收裸坐标**（★ 三个几何类参数都带 `_mm`/`_deg` 或不是坐标）✓"""
+    """★ 规则 3：本批**不收裸坐标**（★ 所有几何类参数都带 `_mm`/`_deg`）✓"""
     for s in b92.SPECS_BATCH92:
         for p in (getattr(s, "params", None) or []):
             low = p.name.lower()
+            if low.endswith(("_mm", "_deg")):
+                continue
             assert low not in ("x", "y", "z", "point", "coordinate"), (s.name, p.name)
+            assert not low.endswith(("_x", "_y", "_z")), (s.name, p.name)
     ro = {s.name: bool(s.read_only) for s in b92.SPECS_BATCH92}
     assert ro["solidworks_config_list_display_states"] is True
     assert ro["solidworks_document_dependencies"] is True
     assert ro["solidworks_config_apply_display_state"] is False
+    assert ro["solidworks_part_move_copy_body"] is False
 
 
 # ── 负例 / 契约 ②③④（★ 用假对象，**不连 SolidWorks**）────────────────────────────────
@@ -301,3 +305,141 @@ def test_dependencies_carries_the_library_feature_blind_spot():
     blob = " ".join(r["limitations"])
     assert "Library features" in blob, blob
     assert "Suppressed components" in blob, blob
+
+
+# ── 移动 / 复制实体（idx 209）──────────────────────────────────────────────────
+
+class _Body:
+    def __init__(self, box, owner=None):
+        self._box = box
+        self.owner = owner
+        self.selected_with = None
+
+    def GetBodyBox(self):
+        return list(self._box)
+
+    def Select2(self, append, data):
+        self.selected_with = getattr(data, "Mark", None)
+        if self.owner is not None:                              # ★ 模拟"选中被记进选区"
+            self.owner.SelectionManager.count += 1
+        return True
+
+
+class _SelData:
+    Mark = 0
+
+
+class _SelMgr:
+    def __init__(self):
+        self.count = 0
+
+    def CreateSelectData(self):
+        return _SelData()
+
+    def GetSelectedObjectCount2(self, mark):
+        return self.count
+
+
+class _BodyModel:
+    """★ 假零件：`GetBodies2` / `ClearSelection2` / `SelectionManager` / `FeatureManager`。"""
+
+    def __init__(self, n_bodies=1):
+        self.SelectionManager = _SelMgr()
+        self.bodies = [_Body([0.0, 0.0, 0.0, 60.0, 40.0, 20.0], self) for _ in range(n_bodies)]
+        self.calls = []
+        self.move_geometry = True
+
+    def GetBodies2(self, kind, visible_only):
+        return list(self.bodies)
+
+    def ClearSelection2(self, flag):
+        self.SelectionManager.count = 0
+
+    @property
+    def FeatureManager(self):
+        return self
+
+    def InsertMoveCopyBody2(self, *args):
+        self.calls.append(args)
+        self.SelectionManager.count = len(self.bodies)      # ★ 特征建完后 SW 会清掉选择
+        if len(args) >= 11 and args[10]:                    # BCopy
+            self.bodies.append(_Body([100.0, 0.0, 0.0, 160.0, 40.0, 20.0], self))
+        elif self.move_geometry:
+            self.bodies[0] = _Body([25.0, 0.0, 0.0, 85.0, 40.0, 20.0], self)
+        return object()                                     # IFeature 指针（★ 不当判据）
+
+
+def test_move_copy_body_passes_millimetres_raw():
+    """★★ 规则 2 的要害是**单位对**，不是"换算了就算数" —— 实测这几个长度参数按**文档长度单位
+    （mm）**解释（★ 与官方页没写单位、与本仓绝大多数 COM 几何接口的"米"**相反**）⇒
+    ★ 本用例钉住：**原样传毫米，不做 mm→m 换算** ✓"""
+    import sw_body_ops as BO
+    m = _BodyModel()
+    r = BO.move_copy_body(m, "all", translate_x_mm=25.0)
+    assert r["ok"] is True and r["moved"] is True, r
+    args = m.calls[0]
+    assert args[0] == 25.0 and args[3] == 0.0, args       # ★ 25.0 原样，不是 0.025
+    assert len(args) == 12, args
+    assert any("文档长度单位" in x for x in r["unit_findings"]), r["unit_findings"]
+
+
+def test_move_copy_body_copy_increases_body_count():
+    """★ 判据是**回读**：复制档要**实体个数增加**（★ 不看它回的 IFeature 指针）✓"""
+    import sw_body_ops as BO
+    m = _BodyModel()
+    r = BO.move_copy_body(m, "all", translate_x_mm=40.0, copy=True, num_copies=1)
+    assert r["ok"] is True and r["copied"] is True, r
+    assert r["after"]["body_count"] == r["before"]["body_count"] + 1, r
+
+
+def test_move_copy_body_reports_the_official_both_given_trap():
+    """★★ 官方 Remarks 的坑：**平移与旋转不能同时生效**、同时给**只应用旋转** ⇒
+    ★ 本工具必须**说出来**（`both_given=True` + 写明官方逐字），★ 不静默 ✓"""
+    import sw_body_ops as BO
+    m = _BodyModel()
+    r = BO.move_copy_body(m, "all", translate_x_mm=5.0, rotate_angle_z_deg=30.0)
+    assert r["both_given"] is True, r
+    assert "only the rotation parameters are applied" in (r["note"] or ""), r
+    #: ★ 实测：COM 侧角度是**弧度**（★ 而同一调用的长度是**毫米** —— 一个接口混两种口径）
+    #:   ⇒ 本仓在边界 `deg()` 换算**一次**（规则 2 的原话）
+    #: ★★ 且实测**官方参数名与作用轴不一致（X↔Z 互换）** ⇒ 要"绕 Z 转"就得放进**第 1 个角槽**
+    #:   ⇒ 本用例把补偿钉住（`args[7]` = RotAngleX 槽 = π/6，`args[9]` = RotAngleZ 槽 = 0）✓
+    assert abs(m.calls[0][7] - 0.5235987755982988) < 1e-12, m.calls[0]
+    assert m.calls[0][9] == 0.0, m.calls[0]
+    assert m.calls[0][0] == 5.0, m.calls[0]              # ★ 长度原样（不换算）
+
+
+def test_move_copy_body_rejects_bad_selection_and_copies():
+    import sw_body_ops as BO
+    m = _BodyModel()
+    bad = BO.move_copy_body(m, "index:99", translate_x_mm=1.0)
+    assert bad["ok"] is False and "越界" in (bad["error"] or ""), bad
+    assert BO.move_copy_body(m, "all", num_copies=0)["ok"] is False
+    assert BO.move_copy_body(None, "all")["ok"] is False
+
+
+def test_body_state_keeps_unreadable_bbox_distinct_from_unchanged():
+    """★★ `None`（读不到 ⇒ 判据不可用）与 `False`（读了 ⇒ 没变）**必须分得开** ——
+    ★ 否则"读不到"会被当成"没变"（★ 这是本轮自查抓到的真实静默失效）✓"""
+    import sw_body_ops as BO
+    m = _BodyModel()
+    good = BO.body_state(m)
+    assert good["bbox_comparable"] is True and good["bbox_mm"]["max"][0] == 60.0, good
+    empty = BO.body_state(_BodyModel(n_bodies=0))
+    assert empty["bbox_comparable"] is False and empty["bbox_mm"] is None, empty
+
+
+def test_rebuild_bbox_criterion_is_not_vacuous(monkeypatch):
+    """★★ 回归：`get_bounding_box` 回的是**字典** —— 第一版按可迭代对象写 ⇒
+    `float("min")` 抛异常被吞 ⇒ **`bbox_changed` 永远 False（判据空转）** ⇒ 本用例钉住修好的形态 ✓"""
+    import sw_session
+    import sw_part
+    _patch_feature_names(monkeypatch)
+    monkeypatch.setattr(sw_part, "get_bounding_box",
+                        lambda model, **kw: {"min": [0.0, 0.0, 0.0], "max": [60.0, 40.0, 20.0],
+                                             "size": [60.0, 40.0, 20.0]})
+    doc = _Model(state=0)
+    r = sw_session.rebuild_report(doc, "edit")
+    assert r["bbox_comparable"] is True, r
+    assert r["bbox_before"] == ((0.0, 0.0, 0.0), (60.0, 40.0, 20.0)), r["bbox_before"]
+    assert r["bbox_changed"] is False, r

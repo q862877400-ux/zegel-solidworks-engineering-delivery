@@ -955,7 +955,7 @@ BATCH_MODULES = (
     #:     ② `GetDisplayStates` 的「first name = active」**只在没有多个显示状态同时活动时**成立
     #:        ⇒ 装配里必须给 `ambiguous`；
     #:     ③ `GetDocumentDependencies2`「**Library features 不会返回**」⇒ 盲区要**随返回值**带出去。
-    #:   ★ 计数：433 → **438**
+    #:   ★ 计数：433 → **439**（★ 后补 idx 209 `move_body` —— 裁决书称它是「本批最干净的一条」）
     "tool_specs_batch92",
 )
 

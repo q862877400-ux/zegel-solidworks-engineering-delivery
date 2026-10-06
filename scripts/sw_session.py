@@ -331,7 +331,8 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
         "needs_rebuild_before": None, "needs_rebuild_after": None,
         "state_before": None, "state_after": None,
         "tree_before": None, "tree_after": None, "bbox_changed": None,
-        "top_only_applied": None, "error": None,
+        "bbox_before": None, "bbox_after": None, "bbox_comparable": None,
+        "top_only_applied": None, "error": None, "note": None,
         "★": "判据用**回读**（NeedsRebuild2 + 特征树 + 包围盒），**不用返回值** —— "
              "`EditRebuild3` 是**方法**，当属性读会拿到 bound method（恒真）",
     }
@@ -345,10 +346,22 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
     out["mode"] = key
 
     def _bbox_key():
+        """★ 取包围盒的**可比较键**（`sw_part.get_bounding_box` 回的是**字典** ⇒ 取 min/max 两组）。
+
+        ⚠⚠ **2026-10-06 自查抓到的一处"静默失效"（本轮修的）**：第一版写的是
+        `tuple(float(v) for v in bb)` —— ★ 而 `bb` 是**字典** ⇒ 迭代出来的是**键名字符串**
+        （`"min"/"max"/"size"`）⇒ `float("min")` 抛异常 ⇒ 被 `except` 吞掉 ⇒ **回 `None`**
+        ⇒ ★★ 于是 `bbox_changed` **永远是 `False`** —— **判据看着在、其实空转** ✓
+        ⇒ ★ 修法两件：① 这个函数**取对字段**；② 返回值里**显式给出 `bbox_comparable`**
+        （★ `None`（读不到）与 `False`（没变）**必须分得开** —— 否则"读不到"会被当成"没变"）✓
+        """
         try:
             from sw_part import get_bounding_box
             bb = get_bounding_box(model)
-            return None if not bb else tuple(round(float(v), 6) for v in bb)
+            if not isinstance(bb, dict):
+                return None
+            return (tuple(round(float(v), 6) for v in bb["min"]),
+                    tuple(round(float(v), 6) for v in bb["max"]))
         except Exception:                                      # noqa: BLE001
             return None
 
@@ -393,12 +406,20 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
 
     out["bbox_changed"] = (bbox_before is not None and bbox_after is not None
                            and bbox_before != bbox_after)
+    out["bbox_before"] = bbox_before
+    out["bbox_after"] = bbox_after
+    #: ★★ **`None`（读不到，判据不可用）与 `False`（读了、没变）必须分得开** ——
+    #:   否则"读不到"会被当成"没变"（★ 那正是本函数第一版踩的坑）✓
+    out["bbox_comparable"] = bbox_before is not None and bbox_after is not None
     out["ok"] = (out["needs_rebuild_after"] == 0
                  and out["tree_after"] == out["tree_before"]
-                 and not out["bbox_changed"])
+                 and (not out["bbox_changed"] if out["bbox_comparable"] else True))
     if not out["ok"]:
         out["error"] = ("回读判据未过：needs_rebuild_after=%r（要 0）· tree %r→%r（要相等）· "
                         "bbox_changed=%r（要 False）"
                         % (out["needs_rebuild_after"], out["tree_before"], out["tree_after"],
                            out["bbox_changed"]))
+    elif not out["bbox_comparable"]:
+        out["note"] = ("★ 包围盒这一条**判据不可用**（读不到 —— 例如文档里没有实体）⇒ "
+                       "本轮只用「状态归零 + 特征树不变」两条，★ 如实记，**不拿没读到当没变**")
     return out
