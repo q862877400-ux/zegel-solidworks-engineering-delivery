@@ -32,7 +32,7 @@
 
 import math
 
-from sw_connect import get_com_member
+from sw_connect import get_com_member, mm
 from sw_feature_readback import feature_names
 
 #: ★ `swEndConditions_e` / `swStartConditions_e` 的取值（★ 从反射来）
@@ -1054,6 +1054,107 @@ def _select_two_faces_for_replace(model) -> int:
 # ★ 流程（★ 两段式）：**选中「要剪裁的面」+「剪裁工具」** ⇒ `PreTrimSurface(4 布尔)`
 #   ⇒ `PostTrimSurface(BSewSurfaceIn)`。
 # ★ 判据（★ 规则 6）：**特征树多了新特征**。
+
+
+# ── 规格 211 · B2-1「剪裁曲面 · 取消剪裁」（`IFeatureManager::InsertUntrimSurface2`）──────
+# 官方依据（★ 三样逐字读过）：
+#   · `C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md`
+#       `Feature InsertUntrimSurface2( System.int FaceUntrimType, System.int EdgeUntrimType,
+#        System.double Distance, System.bool BMerge, System.bool BTrimOppositeSide )`
+#     ★ `## Parameters` 逐字：`FaceUntrimType`（`swFaceUntrimType_e`；**valid only if a face is
+#       selected**）· `EdgeUntrimType`（`swEdgeUntrimType_e`；**valid only of one or more edges are
+#       selected**）· `Distance`（★ **没给单位**）· `BMerge`（True ⇒ 与原面合并；false ⇒ 另建独立面体）·
+#       `BTrimOppositeSide`（**valid only if BMerge is false**）
+#     ★ `## Returns`：`Pointer to the IFeature object`
+#   · ★★★ `## Remarks` **两条**（★ 都是**官方写死的前置** ⇒ ★ 都能当"必然失败"的依据 ✓）：
+#       「This method **is valid only for surface parts**.」
+#       「**requires preselection of the face or edges you want to untrim**.」
+# 判据（★ 规则 6 的回读）：
+#   ★★ 主判据 = **特征树多了新特征**（★ 与本文件 `trim_surface_report` **同一判据** ✓）
+#   ★★ **"选不上"与"选了没用"分开记**：★ 选择计数单独落在 `faces_selected` 字段 ✓
+# ⚠ ★★ **我**没有**把"是不是曲面零件"做成静态判据** —— ★ 理由：★ 那需要一个"体里有没有曲面"的
+#   判据，★ 而**官方没给现成的** ✗ ⇒ ★ 按**铁律 5**：★ **不发明判据** ✓
+#   ⇒ ★ 改为：★ **调用后特征树没变** ⇒ ★ 报错信息**逐字引用官方那两条前置**，★ 让读者知道该查什么 ✓
+# ⚠ ★ 官方对 `Distance` **没给单位** ⇒ ★ 按仓里既有约定**加 `unit_assumption`**（★ 缝合，不发明 ✓）
+# ⚠ ★ **两个枚举**越界 ⇒ **必然非法**（★ 官方定义集合 ✓）
+UNT_FACE_UNTYPES = {0: "swFaceUntrimTypeAutomatic", 1: "swFaceUntrimTypeManual"}
+UNT_EDGE_UNTYPES = {0: "swEdgeUntrimTypeAutomatic", 1: "swEdgeUntrimTypeManual"}
+
+
+def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type: int = 0,
+                          distance_mm: float = 0.0, merge: bool = True,
+                          trim_opposite_side: bool = False) -> dict:
+    """★ **取消剪裁**（`IFeatureManager::InsertUntrimSurface2`）—— ★ 把被剪掉的面边长回来 ✓
+
+    ★★ 官方 `## Remarks` 两条前置（★ 本包装**如实记下**、★ 但**不做静态判据** —— 见上）：
+      ① 「**is valid only for surface parts**」② 「**requires preselection** of the face or edges」
+    ★ 判据：★ **特征树多了新特征**（★ 回读 —— ★ 不看返回值 ✓）✓
+    ★★ **`distance_mm` 的官方单位未给** ⇒ ★ 返回里带 `unit_assumption`（★ 缝合既有约定 ✓）
+    """
+    out: dict = {"ok": False, "entry": "IFeatureManager.InsertUntrimSurface2",
+                 "documented_preconditions": [
+                     "★ 官方 `## Remarks` 逐字：「This method is valid only for surface parts.」",
+                     "★ 官方 `## Remarks` 逐字：「requires preselection of the face or edges "
+                     "you want to untrim.」",
+                 ],
+                 "unit_assumption": ("★ 官方 `Distance` **没给单位**（Parameters 只写 "
+                                     "'Distance by which to untrim the surface'）⇒ ★ 本工具"
+                                     "**对外收毫米**、★ 在边界用 `sw_connect.mm()` 换算一次 ✓"),
+                 "side_effects": "★ 会改变面体（★ 非只读）"}
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    #: ★ 枚举越界 ⇒ 必然非法（★ 官方定义集合）✓
+    if int(face_untrim_type) not in UNT_FACE_UNTYPES:
+        out["error"] = ("face_untrim_type=%r 不在官方 `swFaceUntrimType_e` 内 ⇒ 必然非法（★ 合法：%s）"
+                        % (face_untrim_type, sorted(UNT_FACE_UNTYPES)))
+        return out
+    if int(edge_untrim_type) not in UNT_EDGE_UNTYPES:
+        out["error"] = ("edge_untrim_type=%r 不在官方 `swEdgeUntrimType_e` 内 ⇒ 必然非法（★ 合法：%s）"
+                        % (edge_untrim_type, sorted(UNT_EDGE_UNTYPES)))
+        return out
+    #: ★ `BTrimOppositeSide` **只在 `BMerge=False` 时有意义**（★ 官方逐字）⇒ ★ 如实记、★ 不改语义 ✓
+    out["trim_opposite_side_valid"] = (not bool(merge))
+    before = feature_names(model)
+    try:
+        out["doc_type"] = int(get_com_member(model, "GetType"))
+    except Exception:                                                   # noqa: BLE001
+        out["doc_type"] = None
+    #: ★★ **"选不上"单独记**（★ 与"选了没用"分开 ✓）
+    selected = _select_all_surface_faces(model, mark=0)
+    out["faces_selected"] = selected
+    if selected <= 0:
+        out["stage"] = "selection"
+        out["error"] = ("★ 选不到面/边 ⇒ **不调** —— ★ 官方 `## Remarks` 逐字要求"
+                        "「**requires preselection** of the face or edges you want to untrim」✓ "
+                        "★（★ 这是**官方写死**的前置，★ 与 `extend_surface` 那次"
+                        "「不选也许也行」**不同**）✓")
+        return out
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        out["error"] = "取不到 FeatureManager"
+        return out
+    try:
+        feat = get_com_member(fm, "InsertUntrimSurface2",
+                             int(face_untrim_type), int(edge_untrim_type),
+                             float(mm(float(distance_mm))), bool(merge),
+                             bool(trim_opposite_side))
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+        return out
+    after = feature_names(model)
+    out["new_features"] = [n for n in after if n not in before]
+    out["feature_count_before"] = len(before)
+    out["feature_count_after"] = len(after)
+    out["returned_is_none"] = feat is None
+    out["returned_name"] = getattr(feat, "Name", None) if feat is not None else None
+    #: ★★ **真判据**：★ 特征树多了新特征 ✓（★ 回读，★ 不看返回值 ✓）
+    out["ok"] = len(out["new_features"]) > 0
+    if not out["ok"]:
+        out["error"] = ("★ 调用没抛、★ 而**特征树没变化** ⇒ ★ 按官方那两条前置复查："
+                        "★ ① 文档是不是**曲面零件**；★ ② **预选**是否被认（★ 见 "
+                        "`documented_preconditions`）✓")
+    return out
 
 
 def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True,

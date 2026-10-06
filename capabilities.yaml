@@ -5067,6 +5067,44 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "untrim_surface",
+   "label": "剪裁曲面 · 取消剪裁（IFeatureManager::InsertUntrimSurface2）",
+   "level": "stitched",
+   "source": "official",
+   "source_evidence": [
+    "官方 `C:\\swapi\\types\\IFeatureManager\\InsertUntrimSurface2.md`：`Feature InsertUntrimSurface2(int FaceUntrimType, int EdgeUntrimType, double Distance, bool BMerge, bool BTrimOppositeSide)`",
+    "同页 `## Parameters` 逐字：`FaceUntrimType`（`swFaceUntrimType_e`；valid only if a face is selected）· `EdgeUntrimType`（`swEdgeUntrimType_e`；valid only of one or more edges are selected）· `Distance`（★ 没给单位）· `BMerge`（True ⇒ 与原面合并；false ⇒ 另建独立面体）· `BTrimOppositeSide`（valid only if BMerge is false）",
+    "★★ 同页 `## Remarks` 两条（★ 都是官方写死的前置）：「This method is valid only for surface parts.」「requires preselection of the face or edges you want to untrim.」"
+   ],
+   "evidence": [
+    "★ 真机（`tools/probe_spec211_untrim.py`，走 `tools/sw_guard.py` 护栏）：负例 `face_untrim_type=9` / `edge_untrim_type=9` ⇒ 两条都拒（不在官方枚举内 ⇒ 必然非法）✓",
+    "★★★ 官方前置的实证：在**普通零件**上、**能选到面**、调用**没抛** ⇒ **特征树 7→7、新增 `[]`** ✓ ⇒ 印证官方「is valid only for surface parts」✓",
+    "★★ 没预选 ⇒ `stage='selection'` · `faces_selected=0` ✓（★「选不上」与「选了没用」分开记 ✓）",
+    "★ `BTrimOppositeSide` 在 `merge=True` 时记 `trim_opposite_side_valid=False` ✓（★ 官方：只在 `BMerge=false` 时有效）",
+    "★ 契约/负例：`python -m pytest tests/test_spec211_untrim.py -q` ⇒ 10 passed",
+    "★ 证据文件 `output/spec211-b2-untrim.json`"
+   ],
+   "limitations": [
+    "★★ **正例（曲面零件上真的取消剪裁）本轮未做** ✗ —— 它需要「先建出被剪裁的曲面」那一条链（曲面 → 相交 → 剪裁），★ 不在本批范围 ⇒ ★ 故 `level` 只取 `stitched`，**不取 `verified`** ✓",
+    "★★ **「剪裁曲面」本身仓里已有**（`trim_surface_report` + `cut_surface_report`，走 `PreTrimSurface` + `PostTrimSurface` 两段式）⇒ ★ 本能力补的是**「取消剪裁」**这一半 ✓",
+    "★★ 官方对 `Distance` **没给单位** ⇒ 返回值带 `unit_assumption`（★ 「对外收毫米、边界换算一次」，★ 缝合仓里既有约定 ✓）",
+    "★ **会改面体**（非只读）⇒ 返回值带 `side_effects` 声明 ✓",
+    "⚠ ★ **没有**把「是不是曲面零件」做成静态判据 —— ★ 那需要一个「体里有没有曲面」的判据、★ 而**官方没给现成的** ✗ ⇒ 按铁律 5 **不发明判据**；★ 改为：★ 调用后特征树没变 ⇒ 报错信息**逐字引用官方那两条前置** ✓"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "part"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }
