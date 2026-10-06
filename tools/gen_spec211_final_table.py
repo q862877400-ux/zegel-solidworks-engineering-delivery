@@ -38,10 +38,10 @@ ITEM_TO_CAP = {
     "角撑板（焊件）": "weldment_gusset",
     "圆角焊缝": "fillet_weld_bead",
     "焊接符号": None,                     #: ★ 台账判"可做"，★ 但**尚未真机验** ⇒ 待处理 ✓
-    "曲线驱动阵列": None,                 #: ★ 判"不做"（事实 47 链）✓
+    "曲线驱动阵列": "curve_driven_pattern",   #: ★★ B8 翻案：改判「可做」⇒ stitched ✓
     "边界凸台": None,                     #: ★ 判"不做"（要 ACL）✓
     "特征识别/Instant3D": None,           #: ★ 判"不做"（官方无 API 入口）✓
-    "成形工具": None,                     #: ★ 台账判…（见下报告）
+    "成形工具": "forming_tool",             #: ★★★ 真机建成 ⇒ verified ✓
     "展开/折叠": None,                    #: ★ 已覆盖（`specs/209` 收口 ✓）
     "平板型式/导出 DXF": None,
     "爆炸直线": None,

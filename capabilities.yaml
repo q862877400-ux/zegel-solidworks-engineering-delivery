@@ -5297,6 +5297,45 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "forming_tool",
+   "label": "钣金成形工具（IFeatureManager::InsertFormToolFeature，参数式）",
+   "level": "verified",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IFeatureManager\\InsertFormToolFeature.md：Feature InsertFormToolFeature(string Path, bool Flip, double RotAngle, string Config, bool OverrideDoc, bool ShowPunch, bool ShowProfile, bool ShowCenter, bool LinkToPart) —— 纯参数式 9 参",
+    "同页 ## Parameters 逐字：Path = Pathname of the forming tool part file in the Design Library · RotAngle = Angle of the forming tool · OverrideDoc = True to override the document settings in Tools > Options > Document Properties > Sheet Metal · ShowPunch / ShowProfile / ShowCenter 均 valid only if OverrideDoc = true",
+    "★★★ 同页 ## Remarks 逐字（★ 前置就在这里）：Before calling this method, select either a face or a 2D sketch containing points. If you select: face, a single instance of the Design Library forming tool is placed on it; sketch containing points, an instance is placed at each point in the sketch. To create your own forming tool, call IFeatureManager::CreateFormTool.",
+    "★ 另有属性式一代 ILibraryFormToolFeatureData —— 该接口带 AccessSelections ⇒ 那条路到不了建成（事实 47）⇒ 本能力只走参数式"
+   ],
+   "evidence": [
+    "★★★★★ 真机建成（tools/probe_spec211_formtool.py，走 tools/sw_guard.py 护栏）：建钣金件（基体法兰，特征 5→9）+ 本机 Design Library 的 circular emboss.sldftp + 按 Remarks 选一个面（选区计数 1）⇒ 调用 ⇒ 特征树新增 circular emboss1、返回值也是 circular emboss1 ✓",
+    "★★ 文件级前置是现场查的、不是假设：C:\\ProgramData\\SolidWorks\\SOLIDWORKS 2026\\design library\\ 下有 .sldftp（circular emboss · counter sink emboss · counter sink emboss2 · dimple）；同树下 annotations\\ 有 .sldweldfvt（那是焊接符号名清单，供另一项用）",
+    "★★★ 三次无效读数、三次都由前置布尔字段与判定文字抓出：① 我第一版把 create_base_flange(model, 80.0, 60.0, 2.0) 当契约调（真实契约是 (model, sketch_ref, spec: BaseFlangeSpec)）⇒ 它不抛、回 None ⇒ flange_created=False 一眼看出；② 官方 Remarks 要选面而我没选 ⇒ 回 None；③ 我补丁脚本自己的 print 里嵌了裸引号 ⇒ 脚本没运行、探针未改",
+    "★ 证据文件 output/spec211-b7-formtool.json（output/ 为 gitignore 产物目录）"
+   ],
+   "limitations": [
+    "★★★ 前置是硬性的（官方 ## Remarks 逐字）：调之前必须先选一个面、或一个含点的 2D 草图 ⇒ 不选则静默回 None（不抛）",
+    "★★ 前置有两层：① 文档层 —— 必须是钣金件（本仓 sw_sheet_metal.create_base_flange 真机可建）；② 文件层 —— Design Library 里要有 .sldftp；③ 选择层 —— 选面或含点草图",
+    "★★ 按契约调（AGENTS.md 那条）：create_base_flange 的契约是 (model, sketch_ref, spec: BaseFlangeSpec)，BaseFlangeSpec 字段 = thickness / bend_radius / depth / k_factor=0.42 / relief_ratio=0.5 / reverse_direction / reverse_thickness —— 不按契约调时它不抛、只回 None，看起来像能力坏了",
+    "★ OverrideDoc / ShowPunch / ShowProfile / ShowCenter 四参本次均传 False；官方逐字说后三个 valid only if OverrideDoc = true ⇒ 未试",
+    "★ 另有一条建自定义成形工具的入口 IFeatureManager::CreateFormTool / CreateFormTool2 —— 本批未试",
+    "★ 本次只试了一个工具（circular emboss）+ 一个面 ⇒ 不许推广成「所有成形工具、所有放置方式都成」；未试：含点草图放置（官方 Remarks 的另一半）、多实例、Flip/RotAngle 各档",
+    "★ 会新建成形工具特征（非只读）"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "interactive"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }
