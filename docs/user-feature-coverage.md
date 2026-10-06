@@ -87,6 +87,7 @@
 | `surface_modeling` | `stitched` |
 | `surface_thicken_silent_noop` | `stitched` |
 | `topology_iteration_options_backend_limited` | `stitched` |
+| `untrim_surface` | `stitched` |
 
 ⇒ ★ 落到 §四 的表上：**钣金、曲面、模具分型几何、GD&T、仿真结果读回** 这几域的 ✅ 要打折看。
 

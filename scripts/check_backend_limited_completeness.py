@@ -78,6 +78,14 @@ def is_obsolete(member: str) -> bool:
       ★ 而它的"继任者" `InsertSweepSurface` **三代也全废弃**、★ 最终指向
       `ISweepFeatureData`（★ **带 `AccessSelections`**）
       ⇒ ★ **而那一条恰恰逃过了当时那道门禁**（★ 判据只认 `*FeatureData` 字样）⚠
+      ★★★ 2026-10-07（规格 211 · B2）**实测更正**：★ 上面那句「`InsertSweepSurface` **三代也全废弃**」
+        与官方页**不符** ✗ —— ★ 逐页读过头 20 行：`InsertSweepSurface` / `2` / `3` **三代全「未标
+        `Obsolete`」** ✓；★ 且 `InsertSweepSurface2` 是**纯参数式签名**（11 参、**不要求
+        `AccessSelections`**）✓，★ 其 `## Remarks` 还给了完整 **mark 表**（★ `1 = Profile` ·
+        `2 = Guide curve` · `4 = Sweep path`）✓
+        ⇒ ★★ **所以"带 `AccessSelections`"的是属性式的 `ISweepFeatureData`**（★ 那条确实带 ✓），
+          ★ **而不是"扫描曲面这件事本身做不了"** ✓ —— ★ 两者要分开 ✗
+        ★（★ 原文**不删**：★ 它可能指的是**另一个成员**的继任链 ✓ —— ★ 只在此并列实测读数 ✓）
     """
     if not SWAPI_TYPES.exists():
         return False

@@ -8,7 +8,7 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项（★ **人工终判**）：★ **可做 15** · **不做 4** · **已覆盖 1** · **待实测 1**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 14** · **不做 5** · **已覆盖 1** · **待实测 1**
 
 ## 特征 · 边界凸台 ⇒ **不做**
 
@@ -69,9 +69,9 @@
   · `[swapi] IModeler::ICreateRuledSurfaceFromEdge` `System.int ICreateRuledSurfaceFromEdge( ModelDoc2 ModDoc, System.int NumOfEdges, ref Edge Edges, System.int T 
   · …（共 11 个候选）
 
-## 曲面 · 剪裁曲面 ⇒ **可做**
+## 曲面 · 剪裁曲面 ⇒ **不做**
 
-· 初判：★★ **人工终判**：★ `InsertUntrimSurface2`（★ 仓里已有该包装）· `CreatePlanarTrimSurfaceDLL` ✓
+· 初判：★★ **人工终判**：★★ **后端受限** —— ★ 依据**事实 419**：★「**照官方例子把前置完全对上**」**而特征仍不建**（★ 案例之一就是**剔裁曲面**）✗ ⇒ ★ **不做** ✓ ★（★ **「取消剪裁」是另一半** —— ★ B2-1 已补包装、`untrim_surface` = `stitched` ✓）　（★ 自动台账原判：可做）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::InsertUntrimSurface` `Feature InsertUntrimSurface( System.int FaceUntrimType, System.int EdgeUntrimType, System.double Distance, Sy 
   · `[swapi] IFeatureManager::InsertUntrimSurface2` `Feature InsertUntrimSurface2( System.int FaceUntrimType, System.int EdgeUntrimType, System.double Distance, S 
