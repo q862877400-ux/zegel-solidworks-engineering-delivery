@@ -103,7 +103,15 @@ def test_explicit_plumbing_names_are_internals(module: str, name: str) -> None:
     #: ★★ 2026-10-03（轮 436）**batch_export 已移出本名单** ——
     #:   ★ 它是 `batch_export_formats` 的**薄包装**，而后者已是工具
     #:   `solidworks_batch_export_files`（★ 已登记进 `ALIASED_BY_TOOL`）。
-    ("sw_export", "export_flat_pattern_dxf"),        #: ★ 导出族，撞红线（事实 322）
+    #: ★★★ 2026-10-07（规格 213 · B1）**样本再次随事实更新**（★ 同上面那几轮的做法 ✓）：
+    #:   ★ `export_flat_pattern_dxf` **已归入「已有」** ✓ —— ★ 因为规格 213 把它**挂成了工具**
+    #:     （`solidworks_export_flat_pattern_dxf` ✓）；★ 而它能挂上的前提是**用户 2026-10-07
+    #:     授权**了那条受控例外（★ 原话「**D 我允许你做**」✓）—— ★ 此前它**撞硬约束⑦**
+    #:     （★ 「一律不保存文档」✗，★ 而官方真前置要「**已保存**的钣金件」✓）⇒ ★ **那时它到不了建成** ✓
+    #:   ★★ **换成**仍是真缺口的 `export_flat_pattern_dxf_report` ✓ ——
+    #:     ★ 实测 `T.classify("sw_export","export_flat_pattern_dxf_report")` ⇒ **`该挂`** ✓
+    #:     （★ 它是那条能力的 `_report` 兄弟、★ 返回更富的证据字典 ✓）
+    ("sw_export", "export_flat_pattern_dxf_report"),  #: ★ `_report` 兄弟，仍未挂
 ])
 def test_real_capabilities_default_to_should_expose(module: str, name: str) -> None:
     """★★ 反向保护：★ **真能力一律 `该挂`**（默认不是"内部件"）。"""
@@ -157,8 +165,12 @@ def test_wrapper_rule_does_not_swallow_real_gaps() -> None:
     #:   （★ 它是 `batch_export_formats` 的薄包装，而后者已是工具）⇒ ★ 换成**确实还没有包装**的名字。
     #: ★★ 2026-10-03（轮 470）**样本再次随事实更新**（★ 同上面那条 parametrize 的理由）：
     #:   `add_link_connector` 已被 `add_link_connector_report` 包装暴露 ⇒ 换成 `add_pin_connector`。
+    #: ★★★ 2026-10-07（规格 213 · B1）**再一次随事实更新**：
+    #:   ★ `export_flat_pattern_dxf` **已归入「已有」**（★ 规格 213 把它挂成工具 ✓，
+    #:     前置是**用户授权的受控例外** ✓）⇒ ★ **换上它的 `_report` 兄弟** ✓
+    #:     （★ 实测仍是 `该挂` ✓ —— ★ 保持这条测试的**判别力**，★ 而不是把它删空 ✗）
     for module, name in (("sw_part", "linear_pattern"),
-                         ("sw_export", "export_flat_pattern_dxf"),
+                         ("sw_export", "export_flat_pattern_dxf_report"),
                          ("sw_simulation_loads", "add_pin_connector")):
         kind, _ = T.classify(module, name)
         assert kind == "该挂", "%s.%s 是真缺口，不能被包装规则吞掉" % (module, name)

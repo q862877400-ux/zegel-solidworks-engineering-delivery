@@ -24,7 +24,19 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 import register_capabilities as rc                            # noqa: E402
 
 #: ★ 本批**明确删掉**的（FR-006 语义重复 + 两个安全旋钮）
-DROPPED = ("solidworks_export_pdf", "solidworks_export_flat_pattern_dxf",
+#: ★★★ 2026-10-07（规格 213 · B1）**订正一处**：★ `solidworks_export_flat_pattern_dxf`
+#:   **从本表移出** ✓ —— ★ 而它的 `_report` 兄弟**仍留在表里** ✓
+#:   ★★ 事由：★ batch82 把它俩当 **FR-006 语义重复**删掉（★ 两个名字指同一能力 ✓），
+#:     ★ 而**另有一条硬理由**：★ 官方真前置是「**已保存**的钣金件」✗，★ 而本仓硬约束⑦
+#:       原先是「**一律不保存文档**」⇒ 那时它**到不了建成** ✓
+#:   ★★★ **用户 2026-10-07 授权**（★ 原话「**D 我允许你做**」✓）⇒ ★ 本仓把它做成
+#:     **受控例外**（★ `allow_temporary_save` **默认 `False`** ⇒ ★ 行为与从前完全一致 ✓），
+#:     ★ 并**真机建成**（★ 回读 DXF **20219 字节** ✓）⇒ ★ 于是**挂且只挂一个** ✓
+#:   ★★★★ **为什么只挂一个是对的**（★ 与本规格 B4-6 的终检结论一致 ✓）：
+#:     ★★ **一个能力挂两个工具 = "大杂烩"** ✗（★ 违反本仓定位 ✓）⇒
+#:     ★ **`solidworks_export_flat_pattern_dxf_report` 有意仍不挂** ✓ ——
+#:     ★ 它作为**内部入口**留着（★ 返回更富的证据字典 ✓）✓
+DROPPED = ("solidworks_export_pdf",
            "solidworks_export_flat_pattern_dxf_report",
            "solidworks_assembly_add_distance_mate_by_name",
            "solidworks_simulation_configure_mesh_settings",

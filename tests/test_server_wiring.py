@@ -257,7 +257,18 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 448
+    #: ★★★★★ 2026-10-07（规格 213 · **B1/B2/B3 三批**）：**448 → 459** —— ★ **我加的 11 条** ✓
+    #:   ★ 起因：★★ `docs/user-feature-coverage.md` 只量三列里的**第一列「有入口」**，
+    #:     而它的来源是 `all_specs()` 的**工具名集合** ✓ ⇒ ★★ **规格 211 收口时做成 `verified`
+    #:     的能力，没有任何 ToolSpec 引用它们** ✗ ⇒ ★ **从「用户可发现、可调用」口径看等于不存在** ✓
+    #:   ★ **A 类 6 项**（★ 实现已有、只差声明 ✓）：`section_properties` · `scale_feature` ·
+    #:     `untrim_surface` · `sweep_surface` · `weldment_trim` · `flat_pattern_dxf` ✓
+    #:   ★ **B 类 5 项**（★ 先把探针调用序缝进 `scripts/`、再挂 ✓）：`weld_symbol` ·
+    #:     `forming_tool` · `explode_line_sketch` · `speedpak` · `curve_driven_pattern` ✓
+    #:   ★★ **等级分档如实**（★ A7：★ 不许把 `stitched` 写成 `verified` ✓）：★ 除
+    #:     `curve_driven_pattern`（★ 官方页第一行就是 **`Obsolete`** ✓）登记为 `stitched` 外，
+    #:     其余 10 项均为真机建成的 `verified` ✓
+    assert len(all_specs()) == 459
     #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 91**）：**422 → 433** —— ★ **我加的 11 条**
     #:   ★★ 选域依据是**漏斗勘探**（`tools/bunny_toolspec_pipeline.py survey`）：未覆盖候选按
     #:     「**参数是否全是显式标量**」筛过 ⇒ 只剩 25 个 ⇒ 剔掉基础设施/内部件 ⇒ **11 个** ✓

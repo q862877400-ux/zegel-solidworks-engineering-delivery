@@ -142,6 +142,14 @@ ASSEMBLY_DOC_ARITY: dict[str, int] = {
     'GetEditTarget': 0,
     'GetEditTargetComponent': 0,
     'GetExplodedViewConfigurationName': 1,
+    #: ★★★ 2026-10-07（规格 213 · B2b）：★ **补登记** —— ★ 本仓**真机撞过**这一条 ✗：
+    #:   ★ 我为"爆炸直线"的前置复核写了 `call_assembly_doc(doc, "GetExplodedViewCount", 0)` ✗ ——
+    #:   ★★ **多传了一个实参**，★ 而 `call_assembly_doc` 有 **arity 校核** ⇒ **被拒** ✓
+    #:   ★★★ 真机表现就是 `explode_view_count = None` ✗ —— ★ 我一度以为"取不到"，
+    #:     ★★ **其实是我传错了参数个数** ✓
+    #:   ★ 官方 `swapi` 与反射**两源一致**：★ `System.int GetExplodedViewCount()` ⇒ **零参** ✓
+    #:     （★ 反射逐字：`Int32 GetExplodedViewCount()` ✓）⇒ ★ **登记为 0** ✓
+    'GetExplodedViewCount': 0,
     'GetExplodedViewCount2': 1,
     'GetExplodedViewNames2': 1,
     'GetFeatureScope': 1,
@@ -627,8 +635,13 @@ def insert_explode_line_sketch_report(doc):
         return out
 
     #: ★ 前置②：★ 爆炸状态（★ 回读、★ 不猜 ✓）
+    #:   ★★★ **修过一处真 bug**：★ 第一版写的是 `call_assembly_doc(doc, "GetExplodedViewCount", 0)` ✗ ——
+    #:     ★★ **多传了一个实参**（★ 官方与反射**两源一致**：★ `Int32 GetExplodedViewCount()` **零参** ✓）⇒
+    #:     ★ `call_assembly_doc` 的 **arity 校核**把它拒了 ✓
+    #:   ★★★ 真机表现：★ `explode_view_count = None` ✗ —— ★ 我一度读成"取不到"，
+    #:     ★★ **而那是"我传错参数个数"** ✓（★ 与本规格反复吃的那类坑同型 ✓）
     try:
-        out["explode_view_count"] = int(call_assembly_doc(doc, "GetExplodedViewCount", 0) or 0)
+        out["explode_view_count"] = int(call_assembly_doc(doc, "GetExplodedViewCount") or 0)
     except Exception as e:                                              # noqa: BLE001
         out["explode_view_count"] = None
         out["explode_view_error"] = "%s: %s" % (type(e).__name__, str(e)[:100])

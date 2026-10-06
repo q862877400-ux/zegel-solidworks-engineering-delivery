@@ -8,9 +8,9 @@
  ],
  "_regenerate": "python tools/gen_effect_declarations.py",
  "counts": {
-  "has_writes": 135,
-  "pure_read": 47,
-  "unknown": 266
+  "has_writes": 140,
+  "pure_read": 49,
+  "unknown": 270
  },
  "errors": [],
  "state_classes": [
@@ -818,6 +818,19 @@
     "document"
    ]
   },
+  "solidworks_create_speedpak": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 7,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document",
+    "selection"
+   ]
+  },
   "solidworks_csys_params": {
    "destructive": false,
    "doc_type": null,
@@ -1343,6 +1356,16 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": []
+  },
+  "solidworks_export_flat_pattern_dxf": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 3,
    "needs": [],
    "requires": "part",
    "source": "static",
@@ -1910,6 +1933,32 @@
     "document"
    ]
   },
+  "solidworks_insert_explode_line_sketch": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 4,
+   "needs": [
+    "edit:sketch"
+   ],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
+  },
+  "solidworks_insert_form_tool": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 3,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
+  },
   "solidworks_insert_global_bounding_box": {
    "destructive": false,
    "doc_type": null,
@@ -1921,6 +1970,16 @@
    "writes": [
     "document"
    ]
+  },
+  "solidworks_insert_local_curve_driven_pattern": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 3,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
   },
   "solidworks_insert_lofted_ref_surface": {
    "destructive": false,
@@ -1995,6 +2054,18 @@
    ]
   },
   "solidworks_insert_ruled_surface": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 2,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
+  },
+  "solidworks_insert_weld_symbol": {
    "destructive": false,
    "doc_type": null,
    "inject": "model",
@@ -2693,6 +2764,28 @@
    "requires": "part",
    "source": "unknown",
    "writes": null
+  },
+  "solidworks_scale_feature": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 2,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
+  },
+  "solidworks_section_properties": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 2,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": []
   },
   "solidworks_select_by_selector": {
    "destructive": false,
@@ -4297,6 +4390,16 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_sweep_surface": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 5,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
   "solidworks_thicken": {
    "destructive": true,
    "doc_type": null,
@@ -4518,6 +4621,16 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_untrim_surface": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 6,
    "needs": [],
    "requires": "part",
    "source": "unknown",
@@ -4900,6 +5013,16 @@
    "doc_type": null,
    "inject": "model",
    "members": 10,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_weldment_trim": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 5,
    "needs": [],
    "requires": "part",
    "source": "unknown",

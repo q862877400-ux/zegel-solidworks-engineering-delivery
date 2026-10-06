@@ -52,7 +52,15 @@ EXPECTED = {
     "property_lines": 13,
     "property_names": 8,
     "method_count": 173,
-    "distinct_capabilities": 133,
+    #: ★★ 2026-10-07（规格 213 · B2b）：**133 → 134** —— ★ **补登记 1 个成员**
+    #:   `GetExplodedViewCount`（★ 官方 `swapi` 与反射**两源一致**：`Int32 GetExplodedViewCount()` **零参** ✓）。
+    #:   ★★★ **为什么补登记、而不是改调用**：★ 我为"爆炸直线"的前置复核要**回读爆炸视图数** ✓，
+    #:     ★ 而那个成员**本来就在官方接口上**、★ **只是本仓没登记** ✗ ⇒ ★ 登记它才对 ✓
+    #:   ★★ 而★ **补登记当场暴露了我一个真 bug**：★ 我第一版写的是
+    #:     `call_assembly_doc(doc, "GetExplodedViewCount", 0)` ✗ —— **多传一个实参** ✓，
+    #:     ★ `call_assembly_doc` 的 **arity 校核**把它拒了 ⇒ ★ 真机表现是 `explode_view_count = None` ✗
+    #:     —— ★★ 我一度读成"取不到"，★ **其实是我传错参数个数** ✓（★ 与规格 213 反复吃的那类坑同型 ✓）
+    "distinct_capabilities": 134,
 }
 
 #: 本模块曾凭想象写、且**在 IAssemblyDoc 上不存在**的成员 —— 不得复活
