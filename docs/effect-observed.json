@@ -1,0 +1,58 @@
+{
+ "_": "★★ 实证覆盖层（规格 210 · B3/B4）：★ **真机观察到变化的工具** —— ★ 实证**优先于**静态。",
+ "_judge": "★ 静态说「无写」而实证观察到改动 ⇒ ★ **以实证为准**（★ 一旦观察到，就不许再当只读）✓",
+ "_regenerate": "python tools/gen_observed_effects.py",
+ "_why": "★ 每一条都是「**静态漏报**」—— ★ 那是这份覆盖层存在的唯一理由 ✓",
+ "generated": "2026-10-06 21:44:38",
+ "scanned": [
+  "spec210-survival-diff-empty.json",
+  "spec210-survival-diff-nonempty.json"
+ ],
+ "tools": {
+  "solidworks_assembly_check_interference": {
+   "observed_verdict": "missed",
+   "requires": "asm_model",
+   "seen_in": [
+    "spec210-survival-diff-empty.json"
+   ],
+   "source": "observed",
+   "static_was_silent": true,
+   "static_writes": [],
+   "writes": [
+    "selection"
+   ]
+  },
+  "solidworks_config_create": {
+   "observed_verdict": "conservative",
+   "requires": null,
+   "seen_in": [
+    "spec210-survival-diff-nonempty.json"
+   ],
+   "source": "observed",
+   "static_was_silent": false,
+   "static_writes": [
+    "document",
+    "edit_mode"
+   ],
+   "writes": [
+    "config",
+    "dirty"
+   ]
+  },
+  "solidworks_motion_create_study": {
+   "observed_verdict": "missed",
+   "requires": "asm_model",
+   "seen_in": [
+    "spec210-survival-diff-empty.json"
+   ],
+   "source": "observed",
+   "static_was_silent": true,
+   "static_writes": [],
+   "writes": [
+    "dirty",
+    "features",
+    "selection"
+   ]
+  }
+ }
+}
