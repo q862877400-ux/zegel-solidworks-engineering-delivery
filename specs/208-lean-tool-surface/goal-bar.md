@@ -236,3 +236,26 @@ node --import tsx\esm <bin.ts> plugin --profile web remove '@local/dsh-lean-mode
 
 **用法**：★ **开一个新会话** ⇒ 模式菜单里选「Lean 模式」。
 DSH 自己的说明：「**已存在的会话沿用它们启动时的插件版本；改完的行为请在新会话里验证**」。
+
+## 二十 · 第 20 轮：排查 `tool input is invalid JSON`（**与本插件无关**）
+
+**现象**：`D:\AI\work space\zcode` 的会话 `c71573df` 第 4 步崩，`MALFORMED_RESPONSE`。
+
+**排查步骤与证据**：
+1. ★ 该会话 `agentPreset = "standard"` ⇒ **本插件只在 `lean` 模式动作，对它是完全惰性的** ✓（先自证清白）
+2. 跨 9 个最近会话搜该错误串：**只有这 1 次是真错误**（另 3 个"命中"是本会话自己的文字与 Hindsight 配置文档）
+3. 报错出处：`llm-deepseek\src\translate.ts:155`
+   ```ts
+   if (reason.kind !== 'max-tokens') {          // ★ 故意容忍截断；其它一律判错
+     try { parsed = JSON.parse(content.arguments) }
+     catch { return malformed('tool input is invalid JSON') }
+   }
+   ```
+4. ★★ **根因**：模型在 `ask_user_question` 的参数里写了**未转义的 ASCII 双引号**
+   —— 它想表达中文引号，却打出 `"`，于是整段 `arguments` **不是合法 JSON**
+   （原文：`并且说"第二种能不能单独跑"还没确认`）
+5. ★ `assistant/attempt` 只出现 **1 次** ⇒ **DSH 没有自动重试**，该轮直接终止
+
+**结论**：**模型输出缺陷**（不是插件、不是工具面、不是 standard 模式的错）。
+**建议**：① 重发/继续即可（随机性失误）；② 少让它把**带引号的长段中文**塞进工具参数（那正是模型滑倒的地方）；
+③ 若频繁复现，可考虑给 DSH 提一条「MALFORMED_RESPONSE 自动重试一次」的改进。
