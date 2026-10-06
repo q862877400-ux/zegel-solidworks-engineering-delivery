@@ -7,17 +7,36 @@
 
 ★ 判据：★「**声明只读却观察到指纹变化**」⇒ 必须为 **0**（或逐条定性）。
 
-★★ 实测：**2 条** —— ★★ 未满足 ✗
+★★ 实测：**2 条** —— **满足** ✓「 if not missed else 」★★ 未满足 ✗
 
 ## 四类统计
 
-★ agree **16** · missed **2** · undecided **29**
+agree **16**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **29**
 
 ★★ **语义说明**（★ 四类不许混）：
 
 · `agree`（16）：★ **一致**（声明「无写」，观察也确实**没变**）
 · `missed`（2）：★★★ **漏报**（声明「无写」而观察**变了**）—— ★ **硬红门禁**这一条 ✗
 · `undecided`（29）：★ **未判定**（有一侧读不到）—— ★ **不算通过也不算失败**
+
+## 按 `inject` 组的判定分布
+
+★ 组由**声明里的 `inject`** 决定（★ 不是猜的）✓
+
+· `asm_model`：agree **2** · missed **2**
+· `component`：agree **1**
+· `cost_manager`：undecided **2**
+· `manager`：undecided **2**
+· `model`：agree **13** · undecided **13**
+· `none`：undecided **1**
+· `sldworks`：undecided **1**
+· `study`：undecided **1**
+· `sw`：undecided **3**
+· `sw_app`：undecided **3**
+· `view`：undecided **3**
+
+★★ **两种 `undecided` 性质不同**：★ **调用没调成**（★ 我们没测到）与 ★ **调用成功但读数读不到**（★ 量具的盲区）—— ★ 混在一起就看不见了 ✓
+
 
 ## 逐条
 
@@ -328,21 +347,24 @@
 
 **`solidworks_get_view_model_doc`** ⇒ `undecided`
 
-· 声明 `writes`：`None`
+· 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`<COMObject <unknown>>`
 
 **`solidworks_view_get_next`** ⇒ `undecided`
 
-· 声明 `writes`：`None`
+· 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`None`
 
 **`solidworks_view_has_perspective`** ⇒ `undecided`
 
-· 声明 `writes`：`None`
+· 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`False`
 
 ## ⚠ 本记录的限度（★ 不许当成「448 个都验过了」）
 

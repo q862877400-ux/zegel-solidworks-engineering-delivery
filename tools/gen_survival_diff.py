@@ -64,11 +64,11 @@ def main() -> int:
         "",
         "★ 判据：★「**声明只读却观察到指纹变化**」⇒ 必须为 **0**（或逐条定性）。",
         "",
-        "★★ 实测：**%d 条** —— %s" % (len(missed), "**满足** ✓" if not missed else "★★ 未满足 ✗"),
+        "★★ 实测：**%d 条** —— %s" % (len(missed), "**满足** ✓「 if not missed else 」★★ 未满足 ✗"),
         "",
         "## 四类统计",
         "",
-        "★ " + " · ".join("%s **%d**" % (k, n) for k, n in sorted(counts.items())),
+        "★ 「 + 」 · ".join("%s **%d**" % (k, n) for k, n in sorted(counts.items())),
         "",
         "★★ **语义说明**（★ 四类不许混）：",
         "",
@@ -76,6 +76,21 @@ def main() -> int:
     for k in ("agree", "conservative", "missed", "undecided"):
         if counts.get(k):
             lines.append("· `%s`（%d）：%s" % (k, counts[k], NOTE[k]))
+    #: ★★ **按 `inject` 组的判定分布** —— ★ 它告诉我们「`undecided` 到底来自哪一组」 ✓
+    #:   ★ 真机实证：★ `view` 组 3 条 `undecided` **且 0 条未调成**（★ 调用成功、读数读不到）·
+    #:   ★ 而 `sw`/`sw_app`/`manager`/`study`/`cost_manager` 那些组是**未调成** ✓
+    #:   ⇒ ★ 两种 `undecided` **性质完全不同**，★ 混在一起就看不见了 ✓
+    import collections as _c
+    by_grp = _c.defaultdict(_c.Counter)
+    for r in rows:
+        by_grp[r.get("requires") or "(未知)"][r["verdict"]] += 1
+    lines += ["", "## 按 `inject` 组的判定分布", "",
+              "★ 组由**声明里的 `inject`** 决定（★ 不是猜的）✓", ""]
+    for k in sorted(by_grp):
+        parts = " · ".join("%s **%d**" % (v, n) for v, n in sorted(by_grp[k].items()))
+        lines.append("· `%s`：%s" % (k, parts))
+    lines += ["", "★★ **两种 `undecided` 性质不同**：★ **调用没调成**（★ 我们没测到）与 "
+              "★ **调用成功但读数读不到**（★ 量具的盲区）—— ★ 混在一起就看不见了 ✓", ""]
     lines += ["", "## 逐条", ""]
     for r in rows:
         lines += [
