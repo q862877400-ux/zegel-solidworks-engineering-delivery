@@ -5454,6 +5454,42 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "pdm",
+   "label": "PDM —— 判「不做（需另装独立许可产品）」",
+   "level": "not_implemented",
+   "source": "official",
+   "source_evidence": [
+    "★ 全扫 C:\\swapi\\types：★ ISldWorks 下没有 PDM 入口；入口在 IApplication::PDMDocManager（★ 且是属性）—— 而 IApplication 不是 ISldWorks",
+    "★★ IPDMDocManager 只有 3 个成员：SetCancelOperation / SetDocumentStatus / SetManagedDocument —— 全是设置状态，没有检入、检出、取版本这类 PDM 核心操作",
+    "★ 覆盖表那行（其他 / PDM）第四格是 ✅ ⇒ 四家里只有 SolidworksMCP-TS（vespo92）声明做了 PDM；本项目、上游、Eduardof0nt、andrewbartels1 都没有"
+   ],
+   "evidence": [
+    "★ 真机（tools/probe_spec211_pdm.py，走 tools/sw_guard.py 护栏）：三种取法全部 AttributeError —— sw.PDMDocManager / sw.GetPDMDocManager() / sw.Application.PDMDocManager ⇒ 从 ISldWorks 出发到不了 PDM",
+    "★★★ 读数分两层，必须分开记：① ISldWorks 上没有这些成员（AttributeError ⇒ 成员不存在）② 而不是 0x80040112（那是 COM 类未授权的许可错误）",
+    "★★ 本仓既有的两条知识直接支撑本判：scripts/sw_automation_knowledge.py 写着「它只在『你调 PDM 而没买许可』时出现」；scripts/sw_com_traps.py 写着「0x80040112: COM 类未授权 —— 通常是该产品没许可（PDM / Simulation / Routers）」",
+    "★ 证据文件 output/spec211-b7-pdm.json（output/ 为 gitignore 产物目录）"
+   ],
+   "limitations": [
+    "★★★ 本判的依据是三条并列：① 接口面（ISldWorks 无入口、IApplication 拿不到）② 成员面（IPDMDocManager 只有 3 个设置状态成员、没有用户理解的 PDM 功能）③ 产品性质（独立许可产品，与 Simulation / Routers 同类）",
+    "★★ 本机没装 PDM 这件事没有直接证据（没查注册表、没查安装目录）—— 因为硬约束明禁动系统层；判据来自『从 ISldWorks 出发拿不到』＋『本仓既有的许可错误知识』",
+    "★★ 若本机将来装了 PDM 且授权到位，本条应重开——但入口仍在 IApplication（不是 ISldWorks），那条路要先解决怎么拿到 IApplication",
+    "★ 本条判的是『本项目不做』，不是『官方 API 没有 PDM 相关成员』—— IPDMDocManager 确实存在，只是它的 3 个成员不构成用户功能级的 PDM",
+    "★ 四家里只有 vespo92/SolidworksMCP-TS 声明做了 PDM（MIT）；本批没有去读它的实现来判断其真伪"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "interactive"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }

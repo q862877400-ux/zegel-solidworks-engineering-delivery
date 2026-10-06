@@ -142,7 +142,7 @@ VERDICTS = {
                                 "★ CHM 的 `Performance` 只命中枚举 `swPerformanceFeedback_e` / "
                                 "`swSearchIndexingPerformance_e`（**不是分析功能**）"),
     "截面属性": ("评估", "可做", "★ `IModelDocExtension::GetSectionProperties2`（System.object 返回、**无 ACL**）✓"),
-    "PDM": ("其他", "待实测", "★ 自动台账只有 1 个候选 ⇒ ★ **需真机确认本机有没有装 PDM**（★ 不装不改系统层）✓"),
+    "PDM": ("其他", "不做", "★ 自动台账只有 1 个候选 ⇒ ★ **需真机确认本机有没有装 PDM**（★ 不装不改系统层）✓"),
 }
 
 
