@@ -37,13 +37,26 @@ def _spec(*params):
                     params=list(params))
 
 
-# ── ① 负例：名字带后缀、描述里没单位词 ⇒ 必须拦 ─────────────────────────────
-def test_name_suffix_without_unit_word_is_rejected():
+# ── ① ★★ **"没写全"不该硬拦**（★ 分寸定则 —— 被一次测试失败逼出来的）────────
+def test_name_suffix_without_unit_word_is_NOT_a_hard_failure():
+    """★★★ **判据的分寸**：★ **硬拦只该拦"说假话"，不该拦"没说全"** ✓
+
+    ★ 实录：★ 我第一版把这条也做成硬拦 ⇒ ★★ **既有测试**
+      `test_radius_param_is_not_flagged_as_an_angle` **当场失败** ✗ ——
+      ★ 它的夹具 `bend_radius_mm` **描述里没写 "mm"**、★ 而那条夹具的**意图与单位无关** ✓
+    ★★ 判断：★「描述没写全」**不构成危险**（★ 名字已经说清了 ✓）⇒
+      ★ **它适合当"审计发现"、不适合当"硬拦"** ✗ ✓
+    ★★★ 故分工：★ **前半**留 `tools/check_unit_suffix_consistency.py`（★ 只报 ✓）·
+      ★ **后半（说假话）**在 `check_spec` 里硬拦 ✓ ← ★ 那才是**主动误导** ✗
+    """
     spec = _spec(Param("depth_mm", float, default=1.0,
                        description="Extrusion depth."))
-    with pytest.raises(GateError) as ei:
-        tr.check_spec(spec)
-    assert "规则 2b" in str(ei.value)
+    tr.check_spec(spec)                       #: ★ **不该抛** —— 门禁不管"没写全" ✓
+    #: ★★ 但**审计工具会报它**（★ 那一侧才是它的归属）⇒ ★ 断言那个工具仍在
+    import importlib.util
+    audit = ROOT / "tools" / "check_unit_suffix_consistency.py"
+    assert audit.is_file(), "★ 前半的归属（审计脚本）必须存在"
+    assert importlib.util.spec_from_file_location("_audit", audit) is not None
 
 
 # ── ② 负例：描述自称无量纲、名字却带后缀 ⇒ 必须拦（★ "后缀说假话"）──────────
