@@ -200,7 +200,10 @@ def read(model, sw=None) -> dict:
         else:
             names, why3 = _read("Names", setting)
             if names is None:
-                put("display", None, why3 or "★ IDisplayStateSetting.Names 返回 None")
+                #: ★★★ 与 `bodies` **同一条教训**：★ pywin32 对**空的 VARIANT 数组**回 `None` ⇒
+                #:   ★★ 那是「**没有名字**」，★ **不是「读不到」** ✗
+                #:   ⇒ ★ 按**空**处理（★ 值 `"()"` 稳定可比）⇒ ★ 于是这一格**可读** ✓
+                put("display", str(()))
             else:
                 #: ★ 归成一个**可比、稳定**的表示：排序后的名字元组 ✓
                 seq = names if isinstance(names, (list, tuple)) else [names]
