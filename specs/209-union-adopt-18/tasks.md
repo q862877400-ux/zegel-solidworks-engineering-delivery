@@ -157,7 +157,10 @@
       ⇒ ★ **裁决书要求做成 L2/L3 静态断言 —— 已做**（`tests/test_tool_specs_batch93.py`：
       五个成员一个不漏 · 幻觉名不许进**代码**（★ 注释里引用它是**防它的证据**，要用
       `strip_comments_and_strings` 把"引用"与"断言"分开））
-      ★★ **真机结论：建不出来**（五种形态全部回 `None`）⇒ 能力标 **`stitched`**、
+      ★★ **真机结论：在当前夹具与已验证调用路径下未能建成**（五种形态全部回 `None`）⇒ 能力标 **`stitched`**、
+      ★★ 措辞按**高级模型裁决 §4** 定死：★ **只能说「在当前夹具与已验证调用路径下未能建成」**，
+      **不许**写成「API 不支持」或「本机永远建不出」—— ★ 下一步仍有三条路（真实折弯件夹具 /
+      Obsolete 前代 `InsertSheetMetalHem` / 先 `InsertSheetMetalFold` 造出折弯）✓
       工具挂出来但 `require_verified` **调用前抛带原因的错误** ⇒ `output/spec209-hem-*.json`
 - [x] **B4-3** idx 181 `intersect` ⇒ `scripts/sw_boolean_ops.py`（**新建** —— 本仓既有零件特征模块里
       没有多体/布尔这一族，★ 裁决书指定的落点就是它）+ `solidworks_part_intersect`

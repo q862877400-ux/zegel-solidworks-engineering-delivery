@@ -4747,7 +4747,7 @@
     },
     {
       "id": "sheet_metal_hem",
-      "label": "钣金折边（`IFeatureManager::InsertSheetMetalHem2`，16 形参）—— ★★ **本机建不出**（如实记，标 stitched）",
+      "label": "钣金折边（`IFeatureManager::InsertSheetMetalHem2`，16 形参）—— ★★ **在当前夹具与已验证调用路径下未能建成**（如实记 negative evidence，标 stitched；★ **不等于 API 不支持**）",
       "level": "stitched",
       "verified_versions": [
         "2026"
@@ -4763,7 +4763,7 @@
         "★ 官方依据逐页读过：`C:\\swapi\\types\\IFeatureManager\\InsertSheetMetalHem2.md`（**16 形参** + `## Remarks` 的**四步前置**）· `examples\\Insert_Sheet_Metal_Hem_Example_VB.md`（调用序）· `IFeatureManager\\CreateCustomBendAllowance.md` · `ICustomBendAllowance\\Type.md` · `enums\\{swHemTypes_e,swHemPositionTypes_e,swSheetMetalReliefTypes_e,swReliefTearTypes_e}.md`"
       ],
       "limitations": [
-        "★★★ **五种形态全部回 `None` ⇒ 本机（SW 2026 SP4.1 + pywin32）建不出折边** ⇒ ★ 按**事实 53**（同一启发式连续修补 ≥3 次即停）**当场停止**，★ **不再凑形态** ✓ ★ 而**成员名与 16 参顺序、五个枚举值已逐条核对官方无误**；官方 `## Remarks` 的四步前置（`CreateCustomBendAllowance` → 初始化 → 赋 `PCBA` → **再**选边）**已按序照做**（★ 我第一版顺序反了，已修）仍 `None` ✓",
+        "★★★ **五种形态全部回 `None` ⇒ ★★ 在当前夹具与已验证调用路径下未能建成**（★ 这是 **negative evidence**，**不等于「API 不支持」** —— ★ 下一步仍有三条路，见 limitation 3） ⇒ ★ 按**事实 53**（同一启发式连续修补 ≥3 次即停）**当场停止**，★ **不再凑形态** ✓ ★ 而**成员名与 16 参顺序、五个枚举值已逐条核对官方无误**；官方 `## Remarks` 的四步前置（`CreateCustomBendAllowance` → 初始化 → 赋 `PCBA` → **再**选边）**已按序照做**（★ 我第一版顺序反了，已修）仍 `None` ✓",
         "★★ **价值在别处（裁决书原话：「dp5 的发现比实现本身更值」）**：别家调的 `InsertHemFeature2` 在官方全树**零命中**（真名 `InsertSheetMetalHem2`）· 别家把 `swHemTypes_e` 的 `Open=0`/`Closed=1` **正好互换** · **漏掉 `Double=4`** ⇒ ★★ 这三处已做成**常量表 + 静态断言**（`tests/test_tool_specs_batch93.py`：五个成员一个不漏 · 幻觉名不许进代码）✓",
         "★★ **下一步（写清楚，免得后人重走）**：① 找一个**现成的带折弯钣金件**当夹具（★ 本机磁盘上**没有**这种模型 —— 全盘扫过 `.SLDPRT`）；② 或换 `InsertSheetMetalHem`（**已 Obsolete** 的前代）；③ 或**先做成 `InsertSheetMetalFold` 造出折弯**再回来 ✓",
         "★ `ICustomBendAllowance::Type` 的 `## Remarks` 逐字：「use this property to set the value for the type … **If you do not set this property last, the ICustomBendAllowance property set last automatically overrides any previously set custom bend allowance type.**」⇒ ★ 本仓**先设 `KFactor`、最后设 `Type`**（★ 官方示例顺序相反，但 `KFactor` 恰好也等于 2 ⇒ 它**靠巧合成立**）✓"

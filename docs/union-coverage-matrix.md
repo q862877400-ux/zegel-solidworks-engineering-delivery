@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 459 | 459 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 474 | 474 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -37,25 +37,25 @@
 
 | 域 | Eduardof0nt | andrewbartels1 | vespo92 | Slacker-LLC | 本仓库(MCP) | 本仓库能力面 | 并集 | 缺口(MCP) |
 |---|---|---|---|---|---|---|---|---|
-| ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 18 | 61⚠ | 51 | **33** |
+| ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 20 | 63⚠ | 53 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 44 | 107⚠ | 77 | **33** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 46 | 112⚠ | 79 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
-| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 37 | 106⚠ | 61 | **24** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 39 | 109⚠ | 63 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 19 | 49⚠ | 27 | **8** |
-| ⑦ 钣金 | 10 | · | 1 | · | 9 | 20⚠ | 20 | **11** |
+| ⑦ 钣金 | 10 | · | 1 | · | 12 | 24⚠ | 23 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 16 | 19⚠ | 21 | **5** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
 | ⑩ 装配 | 13 | 7 | 4 | 3 | 26 | 65⚠ | 45 | **19** |
-| ⑪ 工程图 | 18 | 18 | 15 | 17 | 36 | 74⚠ | 85 | **49** |
+| ⑪ 工程图 | 18 | 18 | 15 | 17 | 39 | 76⚠ | 88 | **49** |
 | ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 15 | 28⚠ | 31 | **16** |
-| ⑬ 仿真 / Motion | 3 | · | 1 | · | 49 | 124⚠ | 53 | **4** |
-| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 16 | 49⚠ | 26 | **10** |
-| ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
+| ⑬ 仿真 / Motion | 3 | · | 1 | · | 49 | 126⚠ | 53 | **4** |
+| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 18 | 50⚠ | 28 | **10** |
+| ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 10 | 24⚠ | 52 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 40 | 14 | 40 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 107 | 517⚠ | 149 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 107 | 537⚠ | 149 | **42** |
 
-**合计**：并集 770 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 785 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 421 个操作只有本仓库有：
+共 436 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -172,8 +172,10 @@
 - `collect_view_evidence`（⑰ 未归类）
 - `concentric_mate`（⑩ 装配）
 - `config_activate`（⑭ 外观 / 材质 / 配置）
+- `config_apply_display_state`（⑭ 外观 / 材质 / 配置）
 - `config_create`（⑭ 外观 / 材质 / 配置）
 - `config_inspect`（⑭ 外观 / 材质 / 配置）
+- `config_list_display_states`（⑭ 外观 / 材质 / 配置）
 - `config_read_custom_property`（⑭ 外观 / 材质 / 配置）
 - `config_set_custom_properties`（⑭ 外观 / 材质 / 配置）
 - `config_update_dimension`（⑭ 外观 / 材质 / 配置）
@@ -210,6 +212,7 @@
 - `delivery_export_bom_csv`（① 会话 / 文档 / 文件）
 - `delivery_pack_and_go_audit_matrix`（⑰ 未归类）
 - `distance_mate`（⑩ 装配）
+- `document_dependencies`（① 会话 / 文档 / 文件）
 - `dome_params`（⑤ 零件特征）
 - `drawing_add_note`（⑪ 工程图）
 - `drawing_collect_view_evidence`（⑪ 工程图）
@@ -224,8 +227,11 @@
 - `drawing_current_sheet_info`（⑪ 工程图）
 - `drawing_current_sheet_name`（⑪ 工程图）
 - `drawing_get_current_sheet`（⑪ 工程图）
+- `drawing_insert_balloons`（⑪ 工程图）
+- `drawing_insert_center_lines`（⑪ 工程图）
 - `drawing_insert_center_marks`（⑪ 工程图）
 - `drawing_insert_datum_tag`（⑯ 高级 / 专项（含护城河候选））
+- `drawing_insert_model_items`（⑪ 工程图）
 - `drawing_insert_surface_finish_symbol`（⑯ 高级 / 专项（含护城河候选））
 - `drawing_list_sheets`（⑪ 工程图）
 - `drawing_list_views`（⑪ 工程图）
@@ -300,6 +306,7 @@
 - `macro_extract_vba_code`（⑮ 宏 / 自动化）
 - `macro_fallback_template`（⑮ 宏 / 自动化）
 - `macro_normalize_model_family`（⑮ 宏 / 自动化）
+- `macro_record_lines`（⑮ 宏 / 自动化）
 - `macro_run`（⑮ 宏 / 自动化）
 - `macro_select_template`（⑮ 宏 / 自动化）
 - `macro_validate_vba_code`（⑮ 宏 / 自动化）
@@ -330,8 +337,10 @@
 - `part_bounding_box`（⑫ 检查 / 测量 / 反馈）
 - `part_insert_composite_curve`（⑰ 未归类）
 - `part_insert_dome`（⑤ 零件特征）
+- `part_intersect`（⑤ 零件特征）
 - `part_loft`（⑥ 曲面）
 - `part_mass_properties`（⑫ 检查 / 测量 / 反馈）
+- `part_move_copy_body`（⑤ 零件特征）
 - `part_rib`（⑤ 零件特征）
 - `part_shell`（⑤ 零件特征）
 - `part_sweep`（⑤ 零件特征）
@@ -387,15 +396,19 @@
 - `selector_resolve_direction`（⑰ 未归类）
 - `selector_resolve_point`（⑰ 未归类）
 - `session_busy_status`（⑰ 未归类）
+- `session_rebuild`（① 会话 / 文档 / 文件）
 - `session_solver_processes`（⑰ 未归类）
 - `session_stuck_status`（⑰ 未归类）
 - `session_wait_until_idle`（⑰ 未归类）
 - `sheet_metal_create_base_flange`（⑦ 钣金）
 - `sheet_metal_create_draft`（⑦ 钣金）
 - `sheet_metal_create_edge_flange`（⑦ 钣金）
+- `sheet_metal_create_fold`（⑦ 钣金）
 - `sheet_metal_create_gusset`（⑧ 焊件）
+- `sheet_metal_create_hem`（⑦ 钣金）
 - `sheet_metal_create_one_bend`（⑦ 钣金）
 - `sheet_metal_create_swept_flange`（⑦ 钣金）
+- `sheet_metal_create_unfold`（⑦ 钣金）
 - `sheet_metal_evidence`（⑦ 钣金）
 - `sheet_metal_insert_closed_corner`（⑦ 钣金）
 - `sheet_metal_insert_miter_flange`（⑦ 钣金）
@@ -472,6 +485,8 @@
 - `sketch_rotate_entities`（③ 草图）
 - `sketch_scale_entities`（③ 草图）
 - `sketch_select_segment`（③ 草图）
+- `sketch_set_blanked`（③ 草图）
+- `sketch_set_construction_geometry`（③ 草图）
 - `sketch_start`（③ 草图）
 - `sketch_stretch_entities`（③ 草图）
 - `slot_semicircular_by_selection`（③ 草图）

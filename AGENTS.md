@@ -38,7 +38,8 @@ docs/dead-ends.md      # ★ 由 tools/gen_dead_ends.py 生成（45 条 / 28 能
 ★ 顺序：**① 官方页 → ② `docs/dead-ends.md` → ③ 该能力的 `limitations` → ④ `known-facts.md` → ⑤ 动手。**
 ★★ **第 0.5 步（★ 2026-10-04 加）**：碰下面这些成员前，先查 **[docs/recon-206/pre-code-conflict-lookup.md](docs/recon-206/pre-code-conflict-lookup.md)** —— 它列了 **368 个成员 / 424 条**「官方 `## Remarks` 与官方示例**不能同时成立**」的位置（`unit_diff` 15 · `mark_diff` 10 · `return_shape_diff` 75 · `precondition_diff` 324）⇒ ★ **照示例写可能就写错了** ✓（★ 样例：`AutoDimension2` 的 Remarks 要求基准打 `swAutodimMark*`，而示例用没有 mark 形参的 `Select4` 却声明成功）
 **为什么**：2026-10-03 轮 501–548 我在这件事上**栽了六次**（剪裁顺序反了 · 分割线 mark 全错 · 旋转曲面缺中心线 7 轮 · 扫描曲面从没查过 `InsertSweepSurface2` · 指针族误判 · "会挂"没读自己的弹窗落盘）—— **每一处官方都写着**。
-详见 **[docs/official-docs-first.md](docs/official-docs-first.md)**。
+★★ **示例的 `Preconditions` 不得默认升级为 API 契约**（★ 2026-10-06 用户裁决）：它**默认只是「该示例可复现所需的环境」**，★ 除非 `## Remarks` / Requirements **或真机行为**证明它是**强制前置**；★ 示例里的 **mark / 参数 / 顺序**同样要分「示例复现条件」与「API 强制要求」；★ 复查上面那 324 条 `precondition_diff` 时**先分四类、优先 C 类**（官方未说明而代码曾自行推断）。
+详见 **[docs/official-docs-first.md](docs/official-docs-first.md)**（定则 ②）。
 
 ## 〇、一句话任务
 
@@ -176,6 +177,8 @@ python tools/reclaim_solidworks.py --restart    # 探不通且打开的文档都
 | A10 | 按需搬取：每一件搬进来的东西都过一遍「并入六条规则」，冲突在搬进来的当时解决 | `scripts/check_union_conventions.py` 退出码 0 + 并入清单逐条核对 |
 
 > A1–A10 是交付判据，不是每轮都要全绿：A3（门禁）是可执行的不变量，任何时候都该绿；其余随并入逐条满足。
+
+★★ **`verified` 的证据门槛 = L1–L5 阶梯**（★ 2026-10-06 用户裁决）：**L1 文档说** → **L2 代码能调** → **L3 成对调用可达** → **L4 真机行为可观察** → **L5 真机结果可回读**；★ **L1–L3 全绿也只到 `stitched`** —— ★ 因为**返回值与"真的做成了"不是一回事**（事实 8 · `RecordLine` 未开录制也回 `True` · `SetSelectedObjectMark` 传错 Action 返回 false 且不报错）⇒ ★ **`verified` 的判据必须是回读**；★ 而**停在 L2/L3 的 `stitched` 是合法的**（不是失败，写死下一步即可）。★ 正文见 [docs/union-conventions.md](docs/union-conventions.md) 规则 4 的「证据阶梯」。
 
 进度与下一步看 `capabilities.yaml`（能力清单：每条带 `level`，`verified` 另带 `evidence`）—— 状态由清单承载，不写进本文件。`docs/union-coverage-matrix.md` 第五节的「并入清单」是缺口地图（每域缺什么、从哪抄、该来源声明跑过没有），不是进度。
 
