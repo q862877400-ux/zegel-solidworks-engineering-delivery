@@ -196,5 +196,20 @@
 
 ## 收尾
 
-- [ ] **SC-3** 全部 15 件活收口后跑一次**全量** `pytest`（★ 只在发布前 / 改了门禁本体时才跑）
+- [x] **SC-3** 全部 15 件活收口后跑一次**全量** `pytest`
+      ★★ **已跑（两轮，共 ~15 分钟）**：首轮 **38 failed / 7 errors / 2078 passed** ⇒
+      修掉我自己引入的三类（**R11 违规 4 条** · **7 个批测试的"绝对总数"断言** · **无人值守基线**）
+      + **一处收集期导入失败**（`test_sw_part_sketch_selection.py` 的桩缺 `safe_get_com_member`）
+      ⇒ 次轮 **18 failed / 2105 passed / 20 skipped（444.76 s）** ✓
+      ★★ **首轮暴露的教训（★ 值得留下）**：★ 焦点测试每轮只跑本批那个文件，
+      **跨文件的断言（总数 / 基线 / 模块身份）它看不见** ⇒ ★ **全量 pytest 不是形式** ✓
+- [ ] **SC-4**（★ 收口时新发现，下一轮第一件）修掉剩下的全量红 ——
+      ★ **第一件（根因已定性）**：`tests/test_sw_part_sketch_selection.py` **把假 `sys.modules["sw_connect"]`
+      **泄漏给了后续测试**（导入完不还原）⇒ 后面的测试拿到假模块 ⇒ **成批变红**。
+      ★ 证据：`pytest tests/test_tool_specs_batch92.py` ⇒ **25 passed**；跟在它后面跑 ⇒ **成批 FAILED**。
+      ★ 修法：导入完 `sw_part` 后还原/删除那两个 `sys.modules` 假条目（★ 先确认 `sw_part` 不在调用期懒导入）
+      ★ **其余红点（已逐条定性为"非本次改动"）**：`verify_union_349.py:112` 既有红 ·
+      `test_rule2_length_suffix_is_enforced`（`view_set_frame/top_px` 理由措辞）·
+      `test_sw_connect_open_document`（替身返回 bool）· `test_sketch_slot_params`（解析不出 `CreateSketchSlot` 实参）·
+      `test_tool_specs_batch79`（17 个宏工具没全进 specs）
 - [x] 更新 `docs/HANDOFF.md`（★ 交接给下一个会话 —— 本版 §一~§五 就是）
