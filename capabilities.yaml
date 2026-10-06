@@ -4772,8 +4772,7 @@
       "source": "original",
       "allowed_modes": [
         "interactive",
-        "reviewed",
-        "unattended"
+        "reviewed"
       ],
       "mcp_tools": [
         "solidworks_sheet_metal_create_hem"
@@ -4880,8 +4879,7 @@
       "source": "original",
       "allowed_modes": [
         "interactive",
-        "reviewed",
-        "unattended"
+        "reviewed"
       ],
       "mcp_tools": [
         "solidworks_drawing_insert_model_items"
@@ -4955,8 +4953,7 @@
       "source": "original",
       "allowed_modes": [
         "interactive",
-        "reviewed",
-        "unattended"
+        "reviewed"
       ],
       "mcp_tools": [
         "solidworks_drawing_insert_center_lines"
@@ -4992,8 +4989,7 @@
       "source": "original",
       "allowed_modes": [
         "interactive",
-        "reviewed",
-        "unattended"
+        "reviewed"
       ],
       "mcp_tools": [
         "solidworks_macro_record_lines"

@@ -143,4 +143,7 @@ def test_name_list_accepts_string_or_list():
 
 def test_total_specs_count_grew_by_three():
     """★ SC-2：工具总数 = 439（批 92 后）+ 3 ✓"""
-    assert len(rc.all_specs()) == 442, len(rc.all_specs())
+        #: ★★ 这里**故意不钉绝对总数** —— ★ 我原来钉的是 `== 442`，结果**每加一批就让
+    #:   前面所有批次的测试全红**（★ 全量 pytest 时才暴露，焦点测试看不见）⇒
+    #:   ★ **绝对总数只有一处权威断言**：`tests/test_server_wiring.py` ✓
+    assert len(rc.all_specs()) >= 442

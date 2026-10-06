@@ -126,4 +126,7 @@ def test_refuses_when_nothing_is_asked_for():
 
 
 def test_tool_total_grew_by_one():
-    assert len(rc.all_specs()) == 445, len(rc.all_specs())
+        #: ★★ 这里**故意不钉绝对总数** —— ★ 我原来钉的是 `== 445`，结果**每加一批就让
+    #:   前面所有批次的测试全红**（★ 全量 pytest 时才暴露，焦点测试看不见）⇒
+    #:   ★ **绝对总数只有一处权威断言**：`tests/test_server_wiring.py` ✓
+    assert len(rc.all_specs()) >= 445

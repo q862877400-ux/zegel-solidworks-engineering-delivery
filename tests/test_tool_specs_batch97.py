@@ -95,4 +95,7 @@ def test_return_shape_carries_both_readings_and_the_official_precondition():
 
 
 def test_tool_total_grew_by_one():
-    assert len(rc.all_specs()) == 446, len(rc.all_specs())
+        #: ★★ 这里**故意不钉绝对总数** —— ★ 我原来钉的是 `== 446`，结果**每加一批就让
+    #:   前面所有批次的测试全红**（★ 全量 pytest 时才暴露，焦点测试看不见）⇒
+    #:   ★ **绝对总数只有一处权威断言**：`tests/test_server_wiring.py` ✓
+    assert len(rc.all_specs()) >= 446

@@ -257,7 +257,7 @@ def test_expected_batch_size(server):
     #:   · `solidworks_drawing_create_three_standard_views`（★ 三视图布局 —— 该能力曾因
     #:     **成员名拼错**（官方真名 `Create1stAngleViews2`）被误记为 `blocked`，2026-10-04 已修正）✓
     #:   · `solidworks_costing_defaults`（Costing 默认值读数 —— Costing 是**护城河域**之一）✓
-    assert len(all_specs()) == 433
+    assert len(all_specs()) == 448
     #: ★★★★★ 2026-10-04（接手轮 · **规格 205 的批 91**）：**422 → 433** —— ★ **我加的 11 条**
     #:   ★★ 选域依据是**漏斗勘探**（`tools/bunny_toolspec_pipeline.py survey`）：未覆盖候选按
     #:     「**参数是否全是显式标量**」筛过 ⇒ 只剩 25 个 ⇒ 剔掉基础设施/内部件 ⇒ **11 个** ✓
