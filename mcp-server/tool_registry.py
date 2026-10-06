@@ -179,8 +179,46 @@ _ANGLE_SUFFIX_EXEMPT: dict = {
         "同上（`ThirdConstraintAngleOrDistance`）—— ★ 官方同一个形参承载角度或长度两种量纲。",
 }
 
-_LEN_SUFFIX_EXEMPT: dict = {
-    #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_mm` 会**说错一半**。
+#: ⚑⚑⚑ **规则 2b 的三件套**（★ 2026-10-07 规格 212 · C-4；★ 判据**全确定性**、★ 不猜语义）─────
+#:   ★★ ① `_UNIT_DESC_WORDS`：**每档单位后缀 ↔ 该单位的写法**（★ 极窄：★ 只收该单位本身）✓
+#:     ★ 为什么要窄：★ C 批第一版"从描述推断形参是不是长度"**假阳性压不住** ✗
+#:     （★ 实录：`deg` 命中 `degenerate` · 「度」命中「**深**度」「**厚**度」）⇒
+#:     ★★ **换了立足点**：★ **名字已带后缀** ⇒ ★ 只需查"描述里有没有本档单位词" ✓
+_UNIT_DESC_WORDS: dict = {
+    "_mm": re.compile(r"(\bmm\b|\bmm2\b|\bmm3\b|毫米|millimet\w*)", re.I),
+    "_mm2": re.compile(r"(mm\s*[²2]\b|平方毫米|square\s+milli)", re.I),
+    "_mm3": re.compile(r"(mm\s*[³3]|立方毫米|cubic\s+milli)", re.I),
+    "_deg": re.compile(r"(\bdeg\w*|\bdegree\w*|度\b|°|弧度)", re.I),
+    "_px": re.compile(r"(\bpixel\w*|\bpx\b|像素)", re.I),
+    "_s": re.compile(r"(\bsecond\w*|\bsec\b|秒)", re.I),
+    "_kg": re.compile(r"(\bkilogram\w*|\bkg\b|千克|公斤)", re.I),
+}
+
+#: ★★ ② `_DIMENSIONLESS_CLAIM`：**描述自称无量纲的固定词**（★ 用于"后缀说假话"那半）✓
+_DIMENSIONLESS_CLAIM = re.compile(r"(无量纲|枚举值|布尔|百分比|比值|计数|序号)")
+
+#: ★★ ③ `_UNIT_DESC_EXEMPT`：**唯一的逃生口** —— ★ 每条**必须写清"为什么它不需要描述里写单位"** ✓
+#:   ★ 照 `_LEN_SUFFIX_EXEMPT` 的先例（`check_interface_member_ownership.MANUAL_MAP`）：
+#:   **绝不覆盖自动结果**、**输出分开报**、**没有依据的不许进来** ✓
+_UNIT_DESC_EXEMPT: dict = {
+    ("solidworks_sheet_metal_insert_miter_flange", "relief_width_mm"):
+        #: ★★ **这一条是"挂起"而不是"豁免"** —— ★ 它的单位**本身就没确证** ✗
+        #:   ★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**「…specify relief **depth**」⇒
+        #:   ★ **官方这两句自相矛盾** ⇒ ★ 本工具**原样透传、不替官方调和**（铁律 5）✓
+        #:   ★★ 而代码实测（`scripts/sw_sheet_metal.py`）：★ `float(args["ReliefWidth"])`
+        #:   **直接送进 `InsertSheetMetalHem2`**、★ **中途没有 `mm()` 换算** ✗
+        #:   ⇒ ★★★ **所以"名字该不该留 `_mm`"取决于官方吃什么 —— 而官方没说** ✗
+        #:   ★ 已登记为 **`docs/unit-conflicts.md` 第 2 条**（★ 含真机验证判据：
+        #:   ★ 传 `1.0` ⇒ **回读几何**：≈1mm ⇒ 名字对；★ ≈1000mm ⇒ 名字说假话）✓
+        #:   ⚠ ★ **结论出来后要回到这里改**（★ 要么补描述、要么去掉后缀）—— ★ **不是永久豁免** ✓
+        "★ **挂起**（不是豁免）：★ 官方对该形参**未给单位**、★ 且官方 `ReliefWidth`/`ReliefDepth` "
+        "两句自相矛盾 ⇒ ★ 『名字该不该留 `_mm`』**取决于官方吃什么，而官方没说** ✗ "
+        "★ 已登记 `docs/unit-conflicts.md` 第 2 条，★ **真机验完就回来改**（★ 非永久豁免）✓",
+}
+
+
+#: ⚑⚑ **规则 2 的显式豁免**（★ 原表 —— ★ 2026-10-07 我插 2b 三件套时**误删了这一行** ✗，现补回）✓
+_LEN_SUFFIX_EXEMPT: dict = {    #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_mm` 会**说错一半**。
     ("solidworks_insert_reference_point", "distance_or_percent"):
         "官方参数 `DDistance_or_Percent` —— ★ **同一个形参**在 "
         "`NRefPointAlongCurveType` 取 `Distance(0)` 时是**距离**、取 `Percentage(1)` 时是**百分比**"
@@ -484,6 +522,48 @@ def check_spec(spec: ToolSpec) -> None:
                     "**写明为什么它不是度**"
                     % (spec.name, p.name, _ANGLE_SUFFIX, p.name, _ANGLE_SUFFIX)
                 )
+        # ⚑⚑⚑ 规则 2b 的**前半**（★ 2026-10-07 规格 212 · C-4 **从"只报不拦"升级成硬拦**）。
+        #    ★★ 判据（★ 确定性，★ 不猜语义）：**名字带单位后缀 ⇒ 描述里必须有本档单位词** ✓
+        #    ★ 依据：★ 规则 2b 第 ② 条「**输入侧的逆向一半**」⇒ ★ 名字与描述**必须互相印证** ✓
+        #    ⚠ **为什么升级得了**：★ C 批先"只报不拦"出清单 ⇒ ★ ① 档清到**只剩 1 条**、
+        #      ★ ③ 档**归零** ⇒ ★★ 现在才具备硬拦条件 ✓
+        #    ⚠⚠ **代价**：★ 一次硬拦会让**新写错**的声明**整体注册不上** ✗（★ 那是"半套工具"
+        #      进不了运行期，★ **比不拦更糟**）⇒ ★ 故 `_UNIT_DESC_EXEMPT` 是**唯一的逃生口**，
+        #      ★ 且**每条都必须写清"为什么它不需要描述里写单位"** ✓
+        if p.kind is not bool and isinstance(p.description, str) and p.description:
+            _want = next((s for s in _UNIT_DESC_WORDS if low.endswith(s)), None)
+            if _want is not None:
+                if not _UNIT_DESC_WORDS[_want].search(p.description):
+                    if (spec.name, p.name) not in _UNIT_DESC_EXEMPT:
+                        raise GateError(
+                            "规则 2b 违反（描述与名字不一致）：工具 %r 的入参 %r **名字声明了 %r**，"
+                            "★ 而描述里**没有出现对应的单位词** ⇒ 两者须互相印证 —— "
+                            "要么在描述里写明单位，要么在 `_UNIT_DESC_EXEMPT` 里"
+                            "**写明为什么它不需要**"
+                            % (spec.name, p.name, _want)
+                        )
+        # ⚑⚑⚑ 规则 2b 的**后半：不许说假话**（★ 同批升级成硬拦；★ C 批清后**已 0 条**）→
+        #    ★★ **描述自称无量纲/枚举/布尔 ⇒ 名字不许带单位后缀** ✗
+        #    ★ 依据：★ 实录 —— `lock_rotation_deg` 是 `bool`、`width_mate_option_mm` 是 `int` 枚举，
+        #      ★★ 两个后缀**都在说假话**，★ 而**读代码的人与 AI 都会信它** ✗
+        #    ★★ 这正是**规则 2 的盲区**：★ 原门禁只查「名字含长度词却无 `_mm`」（**单向** ✗）⇒
+        #      ★ 反过来那种（★ **不含长度词、却带了 `_mm`/`_deg`**）**门禁抓不到** ✓
+        #    ⚠⚠ ★ **修过一次**：★ 我第一版在这半里也写了 `p.kind is not bool` ⇒
+        #      ★★ **于是 `lock_rotation_deg`（★ 它正是 `bool`）逃掉了** ✗ ——
+        #      ★ 是**负例测试当场报 `DID NOT RAISE`** 抓出来的 ✓
+        #      ⇒ ★★ 定则：★ **前半可以排除 `bool`（`use_default_radius` 那类标志）**，
+        #        ★ **后半绝不能** —— ★ **布尔带单位后缀恰恰是最典型的"说假话"** ✗ ✓
+        if isinstance(p.description, str) and p.description:
+            _fake = next((s for s in _UNIT_DESC_WORDS if low.endswith(s)), None)
+            if _fake is not None:
+                _m = _DIMENSIONLESS_CLAIM.search(p.description)
+                if _m:
+                    raise GateError(
+                        "规则 2b 违反（后缀说假话）：工具 %r 的入参 %r 带着 %r 后缀，"
+                        "★ 而描述里自称「%s」⇒ ★ 两者矛盾：要么去掉后缀，"
+                        "要么把描述改准（★ 不许让后缀说假话）"
+                        % (spec.name, p.name, _fake, _m.group(0))
+                    )
 
 
 def check_specs(specs: list[ToolSpec]) -> list[str]:
