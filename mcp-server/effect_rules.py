@@ -17,6 +17,9 @@
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
+from pathlib import Path
+from typing import Optional
+
 #: ★ 七类状态（★ 顺序固定，便于比对与显示）✓
 STATE_CLASSES = ("document", "filesystem", "selection", "active_doc", "edit_mode", "view", "rebuild")
 
@@ -70,7 +73,7 @@ def first_verb(member: str) -> str:
     return parts[0].lower() if parts else ""
 
 
-def classify_members(members) -> dict:
+def classify_members(members, kinds=()) -> dict:
     """★ 一组 COM 成员名 ⇒ 效应结论。
 
     :returns: `{"writes": [类别…], "destructive": bool, "unclassified": [动词…]}`
@@ -80,17 +83,22 @@ def classify_members(members) -> dict:
     ms = [m for m in (members or []) if m]
     if not ms:
         return {"writes": None, "destructive": False, "unclassified": []}
+    #: ★ 默认**不用**索引（★ 保证干净机器与测试的行为是确定的）；
+    #:   ★★ 要用第二路就**显式传入**（★ 生成器传 `load_kind_index()`）✓
     writes: set[str] = set()
     destructive = False
     unclassified: list[str] = []
+    #: ★ 第二路（官方类型库）把成员判成了写的，★ 也要归进状态类别 ——
+    #:   ★ 属性式写入默认归 **document**（★ 保守：我们不假装知道它更细的归属）✓
     for m in ms:
         v = first_verb(m)
-        if v in WRITE_VERBS:
+        verdict = classify_member(m, kinds)
+        if v in WRITE_VERBS or verdict == "write":
             for cls in VERB_TO_CLASSES.get(v, ("document",)):
                 writes.add(cls)
             if any(d in m.lower() for d in DESTRUCTIVE_VERBS):
                 destructive = True
-        elif v not in READ_VERBS:
+        elif verdict is None:
             unclassified.append(v or "(无首词)")
     return {
         #: ★★★ **有「认不出的成员」⇒ 判未知，不判「确认无写」** ——
@@ -101,3 +109,50 @@ def classify_members(members) -> dict:
         "destructive": destructive,
         "unclassified": sorted(set(unclassified)),
     }
+
+#: ★★ 官方**成员种类索引**（规格 210 · B1-7）：成员名 ⇒ `{"kind": property|method, "settable": bool}`。
+#:   ★ 由 `tools/gen_member_kind_index.py` 从官方类型库派生（★ 缓存、不入库）；
+#:   ★★ **读不到索引 ⇒ 只有动词这一路**（★ 保守：判不出的仍判未知，绝不因此宣称只读）✓
+_KIND_INDEX_PATH = Path(__file__).resolve().parents[1] / ".api-signatures" / "member-kinds.json"
+_KIND_CACHE: Optional[dict] = None
+
+
+def load_kind_index() -> dict:
+    """★ 惰性加载成员种类索引；★ 读不到就回空（⇒ 退化成"只有动词一路"，保守）✓"""
+    global _KIND_CACHE
+    if _KIND_CACHE is None:
+        try:
+            import json as _json
+            _KIND_CACHE = _json.loads(
+                _KIND_INDEX_PATH.read_text(encoding="utf-8")).get("members", {})
+        except Exception:                                               # noqa: BLE001
+            _KIND_CACHE = {}
+        if not isinstance(_KIND_CACHE, dict):
+            _KIND_CACHE = {}
+    return _KIND_CACHE
+
+
+def classify_member(member: str, kinds: Optional[dict] = None) -> Optional[str]:
+    """★ 单个成员判成 `"write"` / `"read"` / `None`（**判不出**）—— ★ 三态，`None` 不是"读" ✓
+
+    ★ 判序（★ **任一来源说"写"就不许标只读**，这是外部评审给的裁决规则）：
+      ① 动词说写 ⇒ 写；② 动词说读 ⇒ 读；
+      ③ 动词认不出 ⇒ 查官方类型库：★ **属性且可设（`{get; set;}`）⇒ 写** ·
+         ★ **属性且只读（`{get;}`）⇒ 读** · ★ **方法 ⇒ 判不出**（★ 评审：方法没有读写标记）✓
+    """
+    v = first_verb(member)
+    if v in WRITE_VERBS:
+        return "write"
+    if v in READ_VERBS:
+        return "read"
+    rec = (kinds or {}).get(member)
+    if not rec:
+        #: ★ 动词认不出、类型库也没有 ⇒ **判不出**（★ 不是"读"）✓
+        return None
+    if rec.get("kind") == "property":
+        if rec.get("settable") is True:
+            return "write"                      # ★ `{get; set;}` ⇒ 可写 ✓
+        if rec.get("settable") is False:
+            return "read"                       # ★ `{get;}` ⇒ 只读 ✓
+        return None                             # ★ 属性但签名没标 ⇒ 判不出
+    return None                                 # ★ 方法 ⇒ 官方无读写标记 ⇒ 判不出 ✓

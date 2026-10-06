@@ -80,7 +80,7 @@ def _members_of(func, module) -> list[str]:
 
 def build() -> dict:
     import register_capabilities as rc
-    from effect_rules import STATE_CLASSES, classify_members
+    from effect_rules import STATE_CLASSES, classify_members, load_kind_index
     specs = rc.all_specs()
     tools: dict = {}
     errors: list[str] = []
@@ -102,7 +102,8 @@ def build() -> dict:
             errors.append("%s: 函数 %s 不存在" % (s.name, s.function))
             continue
         members = _members_of(fn, mod)
-        verdict = classify_members(members)
+        #: ★★ 第二路：显式把官方成员种类索引传进去（规格 210 · B1-7）✓
+        verdict = classify_members(members, kinds=load_kind_index())
         tools[s.name] = {
             "writes": verdict["writes"],            # ★ None = 未知（★ 不是「无写」）
             "destructive": verdict["destructive"],

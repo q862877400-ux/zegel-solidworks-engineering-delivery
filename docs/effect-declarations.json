@@ -8,9 +8,9 @@
  ],
  "_regenerate": "python tools/gen_effect_declarations.py",
  "counts": {
-  "has_writes": 53,
-  "pure_read": 35,
-  "unknown": 360
+  "has_writes": 135,
+  "pure_read": 47,
+  "unknown": 266
  },
  "errors": [],
  "state_classes": [
@@ -52,8 +52,10 @@
   "solidworks_appearance_delete_render_material": {
    "destructive": true,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_assembly_add_mate_checked": {
    "destructive": false,
@@ -82,8 +84,8 @@
   "solidworks_assembly_check_interference": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_assembly_create_exploded_view": {
    "destructive": false,
@@ -138,8 +140,10 @@
   "solidworks_assembly_list_components": {
    "destructive": false,
    "members": 5,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_assembly_list_mates": {
    "destructive": false,
@@ -216,8 +220,10 @@
   "solidworks_automation_is_command_locked": {
    "destructive": false,
    "members": 1,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_automation_set_flag": {
    "destructive": false,
@@ -298,14 +304,18 @@
   "solidworks_collect_appearance_evidence": {
    "destructive": false,
    "members": 8,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_collect_assembly_bom": {
    "destructive": false,
    "members": 7,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_collect_model_summary": {
    "destructive": false,
@@ -316,20 +326,26 @@
   "solidworks_collect_view_evidence": {
    "destructive": false,
    "members": 14,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_config_activate": {
    "destructive": false,
    "members": 7,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "edit_mode"
+   ]
   },
   "solidworks_config_apply_display_state": {
    "destructive": false,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_config_create": {
    "destructive": false,
@@ -343,8 +359,8 @@
   "solidworks_config_inspect": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_config_list_display_states": {
    "destructive": false,
@@ -489,8 +505,10 @@
   "solidworks_create_revolved_surface": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_csys_params": {
    "destructive": false,
@@ -501,8 +519,10 @@
   "solidworks_current_selection": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_current_sketch_name": {
    "destructive": false,
@@ -543,8 +563,10 @@
   "solidworks_delivery_export_bom_csv": {
    "destructive": false,
    "members": 7,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_delivery_pack_and_go_audit_matrix": {
    "destructive": false,
@@ -601,8 +623,10 @@
   "solidworks_drawing_create_hole_table": {
    "destructive": false,
    "members": 9,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_drawing_create_projected_view": {
    "destructive": false,
@@ -621,8 +645,10 @@
   "solidworks_drawing_create_section_view": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_drawing_create_three_standard_views": {
    "destructive": false,
@@ -677,8 +703,12 @@
   "solidworks_drawing_insert_model_items": {
    "destructive": true,
    "members": 7,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "active_doc",
+    "document",
+    "selection"
+   ]
   },
   "solidworks_drawing_insert_surface_finish_symbol": {
    "destructive": false,
@@ -697,8 +727,10 @@
   "solidworks_drawing_list_views": {
    "destructive": false,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_drawing_set_sheet_format": {
    "destructive": false,
@@ -739,8 +771,10 @@
   "solidworks_drawing_view_annotations": {
    "destructive": false,
    "members": 12,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_drawing_view_scale": {
    "destructive": false,
@@ -753,8 +787,10 @@
   "solidworks_drawing_view_set_scale": {
    "destructive": false,
    "members": 1,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_entities_on_body": {
    "destructive": false,
@@ -785,8 +821,10 @@
   "solidworks_equation_list": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_export_bmp": {
    "destructive": false,
@@ -811,8 +849,10 @@
   "solidworks_export_image": {
    "destructive": true,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "filesystem"
+   ]
   },
   "solidworks_export_parasolid": {
    "destructive": false,
@@ -877,14 +917,21 @@
   "solidworks_feature_cosmetic_thread": {
    "destructive": true,
    "members": 8,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document",
+    "selection"
+   ]
   },
   "solidworks_feature_delete": {
    "destructive": true,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document",
+    "edit_mode",
+    "selection"
+   ]
   },
   "solidworks_feature_info": {
    "destructive": false,
@@ -907,20 +954,28 @@
   "solidworks_feature_suppress": {
    "destructive": true,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document",
+    "edit_mode",
+    "selection"
+   ]
   },
   "solidworks_feature_unsuppress": {
    "destructive": true,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document",
+    "edit_mode",
+    "selection"
+   ]
   },
   "solidworks_feature_whats_wrong": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_fillet": {
    "destructive": false,
@@ -937,8 +992,11 @@
   "solidworks_flatten_surface": {
    "destructive": true,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document",
+    "selection"
+   ]
   },
   "solidworks_gear_calculate_spur": {
    "destructive": false,
@@ -955,14 +1013,16 @@
   "solidworks_get_active_view": {
    "destructive": false,
    "members": 1,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_get_costing_manager": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_get_view_model_doc": {
    "destructive": false,
@@ -1035,8 +1095,8 @@
   "solidworks_helix_insert": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_hole_blind_by_selection": {
    "destructive": false,
@@ -1089,14 +1149,18 @@
   "solidworks_insert_center_of_mass": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_insert_coordinate_system": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_insert_curve_through_points": {
    "destructive": false,
@@ -1109,14 +1173,18 @@
   "solidworks_insert_delete_face": {
    "destructive": true,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_insert_global_bounding_box": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_insert_lofted_ref_surface": {
    "destructive": false,
@@ -1145,14 +1213,18 @@
   "solidworks_insert_ref_plane": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_insert_reference_point": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_insert_replace_face": {
    "destructive": false,
@@ -1165,14 +1237,16 @@
   "solidworks_insert_ruled_surface": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_list_render_materials": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_list_simulation_study_options": {
    "destructive": false,
@@ -1275,8 +1349,10 @@
   "solidworks_mold_core_cavity_split": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_mold_draft_analysis": {
    "destructive": false,
@@ -1287,26 +1363,32 @@
   "solidworks_mold_evidence": {
    "destructive": false,
    "members": 1,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_mold_parting_line": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_mold_parting_surface": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_mold_shut_off_surface": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_mold_undercut_detect": {
    "destructive": false,
@@ -1405,8 +1487,8 @@
   "solidworks_part_mass_properties": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_part_move_copy_body": {
    "destructive": true,
@@ -1455,8 +1537,8 @@
   "solidworks_read_document_units": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_read_sensors": {
    "destructive": false,
@@ -1473,8 +1555,10 @@
   "solidworks_refresh_scene_graph": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "rebuild"
+   ]
   },
   "solidworks_repo_find_real_implementations": {
    "destructive": false,
@@ -1485,14 +1569,18 @@
   "solidworks_resolve_entity": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_resolve_selection": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_review_collect_geometry_measurements": {
    "destructive": false,
@@ -1595,14 +1683,18 @@
   "solidworks_selection_collect_evidence": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_selection_count": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_selection_deselect": {
    "destructive": false,
@@ -1637,8 +1729,10 @@
   "solidworks_selection_point": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_selection_set_object_mark": {
    "destructive": false,
@@ -1661,8 +1755,10 @@
   "solidworks_selector_resolve_point": {
    "destructive": false,
    "members": 5,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_session_busy_status": {
    "destructive": false,
@@ -1703,20 +1799,26 @@
   "solidworks_sheet_metal_create_base_flange": {
    "destructive": false,
    "members": 5,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sheet_metal_create_draft": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sheet_metal_create_edge_flange": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sheet_metal_create_fold": {
    "destructive": false,
@@ -1729,26 +1831,34 @@
   "solidworks_sheet_metal_create_gusset": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sheet_metal_create_hem": {
    "destructive": false,
    "members": 8,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sheet_metal_create_one_bend": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sheet_metal_create_swept_flange": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sheet_metal_create_unfold": {
    "destructive": false,
@@ -1767,14 +1877,18 @@
   "solidworks_sheet_metal_insert_closed_corner": {
    "destructive": false,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sheet_metal_insert_miter_flange": {
    "destructive": false,
    "members": 8,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_shell_params": {
    "destructive": false,
@@ -2099,8 +2213,10 @@
   "solidworks_simulation_set_material": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_simulation_set_registered_study_option": {
    "destructive": false,
@@ -2153,56 +2269,74 @@
   "solidworks_sketch_add_arc": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_centerline": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_circle": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_conic": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_ellipse": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_line": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_parabola": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_parallelogram": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_partial_ellipse": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_perimeter_circle": {
    "destructive": false,
@@ -2213,32 +2347,42 @@
   "solidworks_sketch_add_polygon": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_rectangle": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_slot": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_add_tangent_arc": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_circular_pattern": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_convert_entities": {
    "destructive": false,
@@ -2267,8 +2411,10 @@
   "solidworks_sketch_create_chamfer": {
    "destructive": false,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_end": {
    "destructive": false,
@@ -2285,8 +2431,10 @@
   "solidworks_sketch_fillet": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_flip_entities": {
    "destructive": false,
@@ -2303,8 +2451,10 @@
   "solidworks_sketch_insert_chain_dimensions": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_is_3d": {
    "destructive": false,
@@ -2315,14 +2465,16 @@
   "solidworks_sketch_linear_pattern": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_sketch_mirror": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_sketch_move_entities": {
    "destructive": false,
@@ -2357,8 +2509,11 @@
   "solidworks_sketch_set_blanked": {
    "destructive": true,
    "members": 14,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document",
+    "selection"
+   ]
   },
   "solidworks_sketch_set_construction_geometry": {
    "destructive": false,
@@ -2369,8 +2524,8 @@
   "solidworks_sketch_spline": {
    "destructive": false,
    "members": 1,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_sketch_start": {
    "destructive": false,
@@ -2435,8 +2590,10 @@
   "solidworks_surface_midsurface_create": {
    "destructive": false,
    "members": 3,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_surface_runtime_available": {
    "destructive": false,
@@ -2453,8 +2610,10 @@
   "solidworks_thicken": {
    "destructive": true,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "selection"
+   ]
   },
   "solidworks_toolbox_list_standards": {
    "destructive": false,
@@ -2605,20 +2764,26 @@
   "solidworks_view_get_camera": {
    "destructive": false,
    "members": 1,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_view_get_display_mode": {
    "destructive": false,
    "members": 1,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_view_get_frame": {
    "destructive": false,
    "members": 5,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_view_get_next": {
    "destructive": false,
@@ -2737,14 +2902,18 @@
   "solidworks_weldment_create_cut_list": {
    "destructive": false,
    "members": 6,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_weldment_create_profile_center_mate": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_weldment_create_structural_member": {
    "destructive": false,
@@ -2755,14 +2924,16 @@
   "solidworks_weldment_create_sub_weld_folder": {
    "destructive": false,
    "members": 2,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_weldment_create_weldment_profile": {
    "destructive": false,
    "members": 4,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": []
   },
   "solidworks_weldment_ensure_cut_list": {
    "destructive": false,
@@ -2785,14 +2956,18 @@
   "solidworks_weldment_gusset_create": {
    "destructive": false,
    "members": 8,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_weldment_insert_end_cap": {
    "destructive": false,
    "members": 7,
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_weldment_iter_features": {
    "destructive": false,

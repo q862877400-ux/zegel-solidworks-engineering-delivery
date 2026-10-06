@@ -27,7 +27,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server"), str(ROOT 
 
 import register_capabilities as rc                            # noqa: E402
 from tool_registry import ToolSpec, effective_read_only, effective_writes, _tool_annotations   # noqa: E402
-from effect_rules import STATE_CLASSES, classify_members, first_verb   # noqa: E402
+from effect_rules import (STATE_CLASSES, classify_member, classify_members,   # noqa: E402
+                          first_verb, load_kind_index)
 
 TABLE = ROOT / "docs" / "effect-declarations.json"
 
@@ -98,6 +99,9 @@ def test_state_classes_are_the_seven_from_the_review():
 def test_effects_table_is_fresh():
     """★ 生成物必须等于**现算**结果（★ 与 `level` 审计同族：门禁查产物，不查承诺）✓"""
     assert TABLE.exists(), "★ 缺生成物：跑 python tools/gen_effect_declarations.py"
+    if not load_kind_index():
+        import pytest
+        pytest.skip("★ 本机无官方成员种类索引 ⇒ 现算结果必然不同，按铁律 5 记「查不到」")
     committed = json.loads(TABLE.read_text(encoding="utf-8"))
     import gen_effect_declarations as gen
     fresh = gen.build()
@@ -124,3 +128,45 @@ def test_real_annotations_are_conservative():
                 and not effective_read_only(s):
             bad.append((s.name, "destructiveHint"))
     assert bad == [], bad[:5]
+
+
+# ── ④ 第二路（官方类型库）：属性看 {get; set;} ──────────────────────────────
+def test_property_settable_is_a_write_by_type_library():
+    """★★ 官方类型库那一路：★ 属性且可设（`{get; set;}`）⇒ **写** ⇒ ★ 该工具不许标只读 ✓"""
+    idx = {"SomeWidget": {"kind": "property", "settable": True}}
+    assert classify_member("SomeWidget", idx) == "write"
+    v = classify_members(["SomeWidget"], kinds=idx)
+    assert v["writes"] == ["document"], v
+
+
+def test_property_get_only_is_a_read_by_type_library():
+    """★ 属性且只读（`{get;}`）⇒ **读**（★ 这才算"认得"，可以让工具成为纯读）✓"""
+    idx = {"SomeWidget": {"kind": "property", "settable": False}}
+    assert classify_member("SomeWidget", idx) == "read"
+    assert classify_members(["SomeWidget"], kinds=idx)["writes"] == []
+
+
+def test_method_stays_unclassified_even_with_type_library():
+    """★★ 评审的提醒必须成立：★ **普通方法没有读写标记** ⇒ ★ 即便查了类型库仍**判不出** ✓"""
+    idx = {"SomeMethod": {"kind": "method", "settable": None}}
+    assert classify_member("SomeMethod", idx) is None
+    assert classify_members(["SomeMethod"], kinds=idx)["writes"] is None
+
+
+def test_no_index_means_unknown_not_read():
+    """★ 没有索引（干净机器 / 测试）⇒ 行为必须**确定**：★ 判不出仍是未知，★ 绝不是"读" ✓"""
+    assert classify_member("SomeWidget", {}) is None
+    assert classify_members(["SomeWidget"], kinds={})["writes"] is None
+
+
+def test_second_path_actually_raises_coverage():
+    """★ B1-7 的判据：★ 接上第二路后，**确认结论的覆盖率必须显著上升**（本机实测 20% → 41%）✓"""
+    idx = load_kind_index()
+    if not idx:
+        import pytest
+        pytest.skip("★ 本机没有成员种类索引 ⇒ 按铁律 5 记「查不到」，不假装测过")
+    import register_capabilities as rc
+    import gen_effect_declarations as gen
+    fresh = gen.build()
+    known = sum(1 for r in fresh["tools"].values() if r["writes"] is not None)
+    assert known / max(1, len(fresh["tools"])) > 0.25, known
