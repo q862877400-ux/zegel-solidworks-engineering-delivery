@@ -164,8 +164,8 @@ SPECS_BATCH86 = [
         inject="view",
         param_alias={"dx_mm": "dx", "dy_mm": "dy"},
         params=[
-            Param("dx_mm", float, default=0.0, description="★ 规则 2 改名：仓库形参 `dx` → `dx_mm`（长度带 `_mm`）。官方 `IModelView.TranslateBy` 的第一个参数。★ 官方 Parameters 逐字：「**X**: Translation in X direction, **in meters** and relative to X,Y axes of the graphics area」⇒ ★ 官方单位是**米**，且相对**图形区**的 X/Y 轴。★ 边界换算：本工具对外收**毫米**、在边界只换算一次成米（`sw_connect.mm()` 同一手法，参见 `solidworks_add_dim"),
-            Param("dy_mm", float, default=0.0, description="★ 规则 2 改名：仓库形参 `dy` → `dy_mm`（长度带 `_mm`）。官方 `IModelView.TranslateBy` 的第二个参数。★ 官方 Parameters 逐字：「**Y**: Translation in Y direction, **in meters** and relative to **Windows** X,Y axes of the graphics area」⇒ ★ 注意官方对 Y 特意写的是 **Windows 的 X,Y 轴**（X 用的是「X,Y axes of the graphics area」）⇒ 两个轴的基准措辞在官方页里**不一致**"),
+            Param("dx_mm", float, default=0.0, description="★ 规则 2 改名：仓库形参 `dx` → `dx_mm`（长度带 `_mm`，★ 即**毫米** —— ★ 与官方 `TranslateBy` 吃的**米**在边界换算一次）。官方 `IModelView.TranslateBy` 的第一个参数。★ 官方 Parameters 逐字：「**X**: Translation in X direction, **in meters** and relative to X,Y axes of the graphics area」⇒ ★ 官方单位是**米**，且相对**图形区**的 X/Y 轴。★ 边界换算：本工具对外收**毫米**、在边界只换算一次成米（`sw_connect.mm()` 同一手法，参见 `solidworks_add_dim"),
+            Param("dy_mm", float, default=0.0, description="★ 规则 2 改名：仓库形参 `dy` → `dy_mm`（长度带 `_mm`，★ 即**毫米** —— ★ 与官方 `TranslateBy` 吃的**米**在边界换算一次）。官方 `IModelView.TranslateBy` 的第二个参数。★ 官方 Parameters 逐字：「**Y**: Translation in Y direction, **in meters** and relative to **Windows** X,Y axes of the graphics area」⇒ ★ 注意官方对 Y 特意写的是 **Windows 的 X,Y 轴**（X 用的是「X,Y axes of the graphics area」）⇒ 两个轴的基准措辞在官方页里**不一致**"),
         ],
         doc="★ 官方签名（逐字，来自 TranslateBy.md）：`**Signature**: `void TranslateBy( System.double X, System.double Y )``。官方页有 `## Remarks`（逐字要点）：指定一个向量来平移当前 SOLIDWORKS **图形区**；该向量**单位是米**、相对图形区的 X,Y 轴；★ 「This vector has **no relation to the SOLIDWORKS triad axis** that is displayed in the graphics area」（与模型三轴无关）；本方法等价于用户界面上对图形区的 **panning**（平移）。★ 调用序证据（`docs/recon/member-to-example-index.md:3303` 登记 2 个例子 → `Set_Viewp",
     ),
@@ -176,8 +176,8 @@ SPECS_BATCH86 = [
         inject="view",
         param_alias={"x_angle_deg": "angle_x", "y_angle_deg": "angle_y"},
         params=[
-            Param("x_angle_deg", float, default=0.0, description="★ 规则 2 改名：仓库形参 `angle_x` → `x_angle_deg`（角度带 `_deg`；★ 由于官方形参名是 `XAngle`，`_deg` 后缀不能直接挂在 `angle_x` 后面凑成自动别名，故同时给 `param_alias`）。官方 `IModelView.RotateAboutCenter` 的第一个参数。★★ **单位官方未标注（铁律 5：查不到就说查不到）** —— 官方页 Parameters 逐字只有「**XAngle**: Rotation about the X axis」，**没有单位**；该页**整页没有 `## Remarks` 段**。★ 因此本"),
-            Param("y_angle_deg", float, default=0.0, description="★ 规则 2 改名：仓库形参 `angle_y` → `y_angle_deg`（理由同上，同时配 `param_alias`）。官方 `IModelView.RotateAboutCenter` 的第二个参数。★★ **单位官方未标注** —— Parameters 逐字只有「**YAngle**: Rotation about the Y axis」，无单位、无 Remarks ⇒ **原样透传不换算**，理由与 `x_angle_deg` 完全相同（同一条官方页、同一处缺口，不重复编造依据）。★ `scripts/sw_view.py:311-313` 的来源块也逐字记着同一件事：「⚠ "),
+            Param("x_angle_deg", float, default=0.0, description="★ 规则 2 改名：仓库形参 `angle_x` → `x_angle_deg`（角度带 `_deg`，★ 本工具按**度**收 —— ★ 官方**未标注单位**，本仓按度数处理；★ 由于官方形参名是 `XAngle`，`_deg` 后缀不能直接挂在 `angle_x` 后面凑成自动别名，故同时给 `param_alias`）。官方 `IModelView.RotateAboutCenter` 的第一个参数。★★ **单位官方未标注（铁律 5：查不到就说查不到）** —— 官方页 Parameters 逐字只有「**XAngle**: Rotation about the X axis」，**没有单位**；该页**整页没有 `## Remarks` 段**。★ 因此本"),
+            Param("y_angle_deg", float, default=0.0, description="★ 规则 2 改名：仓库形参 `angle_y` → `y_angle_deg`（★ 角度带 `_deg`、本工具按**度**收 —— ★ 官方**未标注单位**；理由同上，同时配 `param_alias`）。官方 `IModelView.RotateAboutCenter` 的第二个参数。★★ **单位官方未标注** —— Parameters 逐字只有「**YAngle**: Rotation about the Y axis」，无单位、无 Remarks ⇒ **原样透传不换算**，理由与 `x_angle_deg` 完全相同（同一条官方页、同一处缺口，不重复编造依据）。★ `scripts/sw_view.py:311-313` 的来源块也逐字记着同一件事：「⚠ "),
         ],
         doc="★ 官方签名（逐字，来自 RotateAboutCenter.md）：`**Signature**: `void RotateAboutCenter( System.double XAngle, System.double YAngle )``。★ **该官方页没有 `## Remarks` 段** —— 逐段核过：只有 front-matter（type/member/kind/assembly/namespace/category）、标题「Rotates the model view about the screen X and Y axes.」、`## Parameters`、`## Examples`、`## See Also` ⇒ 前置条件与语义**官方无文档**，故本行不编前置（铁律 5）。★ Parameters 逐字只有两条且**均未标单位**：「**XAngle**: Rotation about the X axi",
     ),

@@ -35,6 +35,32 @@
 
 ---
 
+## 第 2 条 · 钣金卷边族（`InsertSheetMetalHem2`）的 `ReliefWidth` / `ReliefDepth` —— "名字说毫米、代码直接透传"
+
+| 要素 | 内容 |
+|---|---|
+| ★ **官方页** | `C:\swapi\types\IFeatureManager\InsertSheetMetalHem2.md` |
+| ★ **官方原话** | ★ **这一族官方没给单位** —— ★ 本仓工具的描述逐字写着「★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**「…specify relief **depth**」⇒ ★ **官方这两句自相矛盾** ⇒ 本工具 **原样透传、不替官方调和**（铁律 5）」（★ 出处 `mcp-server/tool_specs_batch74.py` 的 `relief_width_mm`）✓ |
+| ★★ **代码实测** | ★ `scripts/sw_sheet_metal.py`：★ 形参 `relief_width_mm` / `relief_depth_mm` ⇒ ★★ **`float(args["ReliefWidth"])` 直接被送进 `InsertSheetMetalHem2`**，★ **中途没有 `mm()` 换算** ✗（★ 同段的 `DLength`/`DGap`/`DRad` 也一样透传 ✓）<br>⇒ ★★ **若官方吃米，则传 `relief_width_mm=1.0`（想写 1mm）实际给了 1 米** ✗ |
+| ★ **证据文件** | ★ `output/spec212-suffix-consistency.json`（★ 该形参一直挂在"描述里没有本档单位词"清单上）· ★ `tools/check_unit_suffix_consistency.py`（★ 三档判据） |
+| ★ **可复算** | `python tools/check_unit_suffix_consistency.py` ⇒ ★ ① 档里应出现 `solidworks_sheet_metal_insert_miter_flange · relief_width_mm` ✓ |
+
+**★ 为什么**不能**直接判成 bug**（★ 要说清楚，★ 铁律 5）
+★ **官方对这一族没给单位** —— ★ 工具描述**自己就写着**「官方这两句自相矛盾」「原样透传、不替官方调和」✓
+⇒ ★★ 所以**"名字说毫米"与"代码透传官方值"这两件事，哪一件是错的，取决于官方吃的是什么** ——
+  ★ 而**官方没说** ✗ ⇒ ★★ **本仓不许替官方断言** ✓
+
+**★ 处置（★ 分两条，★ 都不是"改个数字"）**
+1. ★★ **登记在此**（★ 本文件的存在意义）：★ 这一族是**已知的"单位未确证 + 名字可能说假话"** ✓
+2. ★★★ **真机验证的判据已经想好**（★ 留给接手的人）：
+   ★ 建一块带卷边的钣金件、★ **传一个小值**（★ 如 `relief_width_mm=1.0`）⇒ ★ **回读几何**：
+   · ★ 若回读到的让位尺寸 ≈ **1 mm** ⇒ ★ **官方吃毫米** ⇒ ★ 名字对 ✓
+   · ★ 若回读到的 ≈ **1000 mm** ⇒ ★ **官方吃米** ⇒ ★★ **名字在说假话、且代码少一次换算** ✗
+   · ★ 若回读失败 ⇒ ★ 按**事实 47** 那族处理（★ 那多半又是 `AccessSelections` 挡着）✓
+   ★⚠ **回读用什么**：★ 判据**必须是回读**（★ 特征树 / 边的几何 / 面的面积），★ 不是返回值 ✓
+
+---
+
 ## ★ 登记纪律（★ 后人照这个加）
 
 1. ★★ **五要素齐了才登记**（★ 官方页 / 官方原话 / 真机读数 / 证据文件 / 处置）✓

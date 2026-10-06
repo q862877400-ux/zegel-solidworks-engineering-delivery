@@ -22,7 +22,17 @@ SPECS_BATCH82 = [
         title="Add a Mate (IAssemblyDoc::AddMate5) With Error-Code Check",
         module="sw_assembly", function="add_mate5_checked",
         inject="asm_model",
-        param_alias={"distance_mm": "distance", "distance_upper_mm": "distance_upper", "distance_lower_mm": "distance_lower", "angle_deg": "angle", "angle_upper_deg": "angle_upper", "angle_lower_deg": "angle_lower", "lock_rotation_deg": "lock_rotation", "width_mate_option_mm": "width_mate_option"},
+        #: ★★★ 2026-10-07（规格 212 · C-3）：★ **改掉两个"说假话"的后缀** ——
+        #:   ★ 实录：`lock_rotation_deg` 实为 **bool**、`width_mate_option_mm` 实为 **int 枚举**
+        #:   ⇒ ★★ **`_deg` / `_mm` 在说假话** ✗ —— ★ 而**读代码的人与 AI 都会信它** ✓
+        #:   ★★ 这是**规则 2 的盲区**：★ 门禁只查「名字含长度词却无 `_mm`」（**单向** ✗）⇒
+        #:     ★ 反过来那种（★ **不含长度词、却带了 `_mm`/`_deg`**）门禁抓不到 ✗
+        #:   ★ 新判据补上了这个方向（★ `tools/check_unit_suffix_consistency.py` 的第 ③ 档）✓
+        #:   ★ 改法：★ **改成能力层已有的正确名**（`sw_assembly.add_mate5_checked` 的形参就是
+        #:     `lock_rotation` / `width_mate_option`）⇒ ★★ **于是别名条目成了自映射、一并删掉** ✓
+        #:   ⚠★ **兼容性**：★ 这两个名字**原先就带错后缀** ⇒ ★ 改后**旧的传参名不再被接受** ✓
+        #:     ★ 这是**有意为之** —— ★★ 留着假后缀比破坏一次兼容更糟（★ 它会持续骗人）✓
+        param_alias={"distance_mm": "distance", "distance_upper_mm": "distance_upper", "distance_lower_mm": "distance_lower", "angle_deg": "angle", "angle_upper_deg": "angle_upper", "angle_lower_deg": "angle_lower"},
         params=[
             Param("mate_type", int, default=0, description="配合类型，官方 swMateType_e 枚举值（无量纲）。★ 调用前必须先按 mark 选好两个实体，否则官方写明返回 Nothing、ErrorStatus=swAddMateError_IncorrectSelections。"),
             Param("align", int, default=0, description="对齐方式，官方 swMateAlign_e 枚举值（无量纲）。源码默认 0。"),
@@ -36,8 +46,12 @@ SPECS_BATCH82 = [
             Param("angle_upper_deg", str, default="", description="角度绝对上限（**度**）。★ 源码把 None 回落到 angle（sw_assembly.py:412）。"),
             Param("angle_lower_deg", str, default="", description="角度绝对下限（**度**）。★ 源码把 None 回落到 angle（sw_assembly.py:413）。"),
             Param("for_positioning_only", bool, default=False, description="True = 只按配合关系摆位、不返回 Mate（无量纲布尔）。"),
-            Param("lock_rotation_deg", bool, default=False, description="True = 锁定组件旋转（无量纲布尔）。★ 同心配合在运动模型里应保持 False。"),
-            Param("width_mate_option_mm", int, default=0, description="宽度配合选项，官方 swMateWidthOptions_e 枚举值（无量纲）。官方逐字：valid only if MateTypeFromEnum is swMateWIDTH。★ 这正是 AddMate4→AddMate5 的唯一差别。"),
+            #: ★★ 原为 `lock_rotation_deg` —— ★ **`_deg` 是假话**（它类型是 `bool`、描述自称"无量纲布尔"）✗
+            #:   ⇒ ★ 2026-10-07（规格 212）改成能力层的真名 `lock_rotation` ✓
+            Param("lock_rotation", bool, default=False, description="True = 锁定组件旋转（无量纲布尔）。★ 同心配合在运动模型里应保持 False。"),
+            #: ★★ 原为 `width_mate_option_mm` —— ★ **`_mm` 是假话**（它是 `int`、官方 `swMateWidthOptions_e` **枚举值**）✗
+            #:   ⇒ ★ 2026-10-07（规格 212）改成能力层的真名 `width_mate_option` ✓
+            Param("width_mate_option", int, default=0, description="宽度配合选项，官方 swMateWidthOptions_e 枚举值（无量纲）。官方逐字：valid only if MateTypeFromEnum is swMateWIDTH。★ 这正是 AddMate4→AddMate5 的唯一差别。"),
             Param("name", str, default="", description="可选的 Mate 名称；给定时写入 mate.Name（源码对写入失败是吞掉的 best-effort，sw_assembly.py:440-444）。"),
             Param("clear_selection", bool, default=True, description="建完配合后是否调 ClearSelection2 清选区（无量纲布尔）。★ 官方调用序第 4 步。"),
         ],
