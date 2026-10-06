@@ -1029,3 +1029,110 @@ def create_structural_member_from_sketch(model, sketch_name: str, profile_path, 
         "note": ("★ 判据是**特征树**（★ 不是计数）：★ `new_type_names` 应含 "
                  "`WeldmentFeature` 与 `WeldMemberFeat`"),
     }
+
+
+#: ── 焊接符号（★ 规格 213 · B2：★ 从探针 `tools/probe_spec211_weldsymbol_real.py`
+#:    **已证实**的调用序缝合进模块 ✓ —— ★ 铁律 1：只缝合、不发明 ✓）──────────────────
+# ★★ 官方依据（`swapi` + CHM 逐字）：
+#   · `C:\swapi\types\IModelDoc2\InsertWeldSymbol3.md` ⇒ `System.object InsertWeldSymbol3()`
+#     ★★ **零参** ✓ · `## Returns` = **Newly created weld symbol** ✓
+#   · `IWeldSymbol::SetText` ⇒
+#     `System.bool SetText( System.bool Top, System.string Left, System.string Symbol,
+#       System.string Right, System.string Stagger, System.int Contour )` ⇒ ★ **6 参** ✓
+#   · ★ 回读成员：`GetLineCount` · `GetTextCount` · `IsAttached` ✓
+# ★★★ **真入口是另一条 API**（★ 本仓在这一点上栽过）：★ 我原先走
+#   `IDrawingDoc::InsertWeldSymbol`（**10 参、静默无效、12 组 0→0**）✗ ——
+#   ★★ 而官方示例走的是 **`IModelDoc2::InsertWeldSymbol3()`（零参）** ✓
+# ★★ 符号名来自 `…\english\gtol.sym` 的**短名**（`BUTT` / `FILL` / `PLUG` …）；
+#   ★ 前几个名字**可能抛**（★ 探针实测）⇒ ★ 由调用方给 `symbol`、★ 并把实际用的名字回报 ✓
+# ★★ 前置 = 「在**零件**上选一个面 / 边 / 草图段」（★ 官方示例的 Preconditions 逐字）✓
+def insert_weld_symbol_report(model, *, face_index: int = 0, top: bool = False, left: str = "Left",
+                              symbol: str = "BUTT", right: str = "Right",
+                              stagger: str = "Stagger", contour: int = 0):
+    """插入焊接符号（`IModelDoc2::InsertWeldSymbol3` + `IWeldSymbol::SetText`）—— ★ 判据用回读。
+
+    参数:
+        model: `IModelDoc2`（★ 零件；★ 前置是**先选一个面/边/草图段** ✓）
+        face_index: 要选的面在 `select_entity_by_index` 里的序号（★ 前置 ✓）
+        top: `SetText` 的 `Top`（★ 符号画在横线上方还是下方 ✓）
+        left: 左侧文字（★ 缺省即占位符 `Left` ✓）
+        symbol: **符号短名**（★ 来自 `gtol.sym`，★ 如 `BUTT` / `FILL` / `PLUG` ✓）
+        right: 右侧文字
+        stagger: 交错文字
+        contour: `swWeldContour*` 档位（★ 枚举 ⇒ ★ **无量纲** ✓）
+
+    返回:
+        dict —— ★★ 判据是**回读**（★ 不看 `SetText` 的 bool —— ★ 事实 8）：
+        `GetLineCount` / `GetTextCount` / `IsAttached` 三项 ✓
+    """
+    import sw_selection_spec as SS
+
+    out: dict = {
+        "official": "IModelDoc2.InsertWeldSymbol3",
+        "note": ("★ 真入口是 `InsertWeldSymbol3()`（**零参**）—— ★★ 不是 "
+                 "`IDrawingDoc::InsertWeldSymbol`（10 参那条**静默无效**）✓"),
+        "face_index": int(face_index),
+        "symbol_requested": symbol,
+    }
+    #: ★ 前置：★ 选一个面（★ `append` 默认 `False` ⇒ 正好清空后单选 ✓）
+    try:
+        SS.select_entity_by_index(model, "FACE", int(face_index))
+    except Exception as e:                                              # noqa: BLE001
+        out["ok"] = False
+        out["error"] = "★ 前置选择失败：%s: %s" % (type(e).__name__, str(e)[:130])
+        return out
+    out["selection_count"] = SS.get_selection_count(model)
+    if not out["selection_count"]:
+        out["ok"] = False
+        out["error"] = "★ 前置选择无效：选区计数 = 0（★ 那与「符号建不出来」是两件事 —— 事实 8）"
+        return out
+
+    #: ★ ① 建符号（★ **零参** ✓）
+    ws_obj = None
+    try:
+        ws_obj = get_com_member(model, "InsertWeldSymbol3")
+    except Exception as e:                                              # noqa: BLE001
+        out["ok"] = False
+        out["error"] = "★ `InsertWeldSymbol3()` 抛：%s: %s" % (type(e).__name__, str(e)[:130])
+        return out
+    out["symbol_object_created"] = ws_obj is not None
+    if ws_obj is None:
+        out["ok"] = False
+        out["error"] = ("★ `InsertWeldSymbol3()` 回 `None` ⇒ ★ 前置仍未满足"
+                        "（★ 官方 Preconditions 逐字：「select a face, edge, or sketch segment」）")
+        return out
+
+    #: ★ ② `SetText`（★ 6 参逐位：★ Top · Left · Symbol · Right · Stagger · Contour ✓）
+    set_ret = None
+    set_exc = None
+    try:
+        set_ret = get_com_member(ws_obj, "SetText", bool(top), str(left), str(symbol),
+                                 str(right), str(stagger), int(contour))
+    except Exception as e:                                              # noqa: BLE001
+        set_exc = "%s: %s" % (type(e).__name__, str(e)[:130])
+    out["set_text_returned"] = str(set_ret)
+    out["set_text_exception"] = set_exc
+
+    #: ★ ③ **回读**（★ 判据 —— ★ 「它真正改变的东西」✓）
+    rb: dict = {}
+    for m in ("GetLineCount", "GetTextCount", "IsAttached"):
+        try:
+            rb[m] = get_com_member(ws_obj, m)
+        except Exception:                                               # noqa: BLE001
+            rb[m] = None
+    out["readback"] = {k: (v if isinstance(v, (int, bool)) else str(v)[:40]) for k, v in rb.items()}
+
+    lines = rb.get("GetLineCount")
+    texts = rb.get("GetTextCount")
+    attached = rb.get("IsAttached")
+    out["ok"] = bool(isinstance(lines, int) and lines > 0)
+    if out["ok"]:
+        out["verdict"] = ("★★★★★ **建成** —— ★ `GetLineCount = %r` · ★ `GetTextCount = %r` · "
+                          "★ `IsAttached = %r`（★ 回读、★ 不是信返回值 ✓）"
+                          % (lines, texts, attached))
+    else:
+        out["error"] = ("★ 回读判据未过：`GetLineCount = %r` ⇒ ★ 符号名 **%r** 可能不在 "
+                        "`gtol.sym` 的短名表里（★ 探针实测：前几个名字会抛）—— "
+                        "★ 换一个短名重试；★ `SetText` 的返回值**证明不了任何事**（事实 8）✓"
+                        % (lines, symbol))
+    return out

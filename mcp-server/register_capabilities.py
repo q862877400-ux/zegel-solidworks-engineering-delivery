@@ -1040,6 +1040,17 @@ BATCH_MODULES = (
     #:     ★ 而它们其实是**无量纲缩放比例** ⇒ ★ 改名 `*_factor` + ★ `param_alias` 映射回形参 ✓
     #:   ★ 计数：448 → **454**
     "tool_specs_batch100",
+    #: ★★ 规格 213 · B3（前半）—— B 类 5 项里的 **`weld_symbol`** 与 **`forming_tool`** ✓
+    #:   ★ B 类的两步：★ **B2 先把探针里已证实的调用序缝进模块**（已完成 ✓）·
+    #:     本批 **把模块函数挂成 ToolSpec** ✓
+    #:   ★★ 两项各自的价值（★ 都值得单独记）：
+    #:     · `weld_symbol` —— ★★ **「真入口是另一条 API」的实证**：★ 原先走
+    #:       `IDrawingDoc::InsertWeldSymbol`（10 参、**静默无效、12 组 0→0**）✗；
+    #:       ★ 官方示例走 **`IModelDoc2::InsertWeldSymbol3()`（零参）** ✓
+    #:     · `forming_tool` —— ★ 官方 `## Remarks` 逐字要求**先选一个面** ✗，
+    #:       ★ 没选时回 `None`、★ **与「建不出来」长得一样** ✓
+    #:   ★ 计数：454 → **456**
+    "tool_specs_batch101",
 )
 
 def all_specs() -> list:

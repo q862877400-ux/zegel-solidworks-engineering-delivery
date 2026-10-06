@@ -4,11 +4,18 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+#: ★★ 2026-10-07（规格 213 · B2）：★ 给**已有的**导入行加了 `deg` ——
+#:   ★ 成形工具的 `RotAngle` 是**度**、★ 而 API 要**弧度** ⇒ ★ 用仓里既有的换算入口 ✓
+#:   （★ `sw_connect.deg` 逐字：`return value * math.pi / 180.0` ✓ —— ★ 与 `mm()` 同一模式 ✓）
+#:   ★★★ **加名字、不加行**：★ `check_relative_imports.py` 的棘轮数的是**行** ✓
+#:   ★★★★ **而注释不许插在 `try:` 与导入行之间** ✗ —— 那条棘轮的判据是
+#:     「**前一行为 `try:`**」⇒ ★ 插了注释就把这一行从"有兜底"变成"无兜底"，棘轮 **35 → 36** ✗
+#:     （★ 本批实测撞了两次：★ 第一次是函数里新加 `import` 行、★ 第二次就是这个注释位置 ✓）
 try:
-    from .sw_connect import get_com_member, call_com_member
+    from .sw_connect import get_com_member, call_com_member, deg
     from .sw_part import _ensure_sketch_selected
 except ImportError:
-    from sw_connect import get_com_member, call_com_member
+    from sw_connect import get_com_member, call_com_member, deg
     from sw_part import _ensure_sketch_selected
 
 
@@ -1266,5 +1273,105 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
         out["error"] = ("回读判据未过：特征树 %r → %r（要 +1）· 面数 %r → %r · 包围盒变化 %r"
                         % (out["tree_before"], out["tree_after"], out["face_count_before"],
                            out["face_count_after"], out["bbox_changed"]))
+    return out
+
+
+#: ── 成形工具（★ 规格 213 · B2：★ 从探针 `tools/probe_spec211_formtool.py`
+#:    **已证实**的调用序缝合进模块 ✓ —— ★ 铁律 1：只缝合、不发明 ✓）────────────────────
+# ★★ 官方依据（`swapi` 逐字）：
+#   · `C:\swapi\types\IFeatureManager\InsertFormToolFeature.md` ⇒
+#     `Feature InsertFormToolFeature( System.string Path, System.bool Flip, System.double RotAngle,
+#       System.string Config, System.bool OverrideDoc, System.bool ShowPunch,
+#       System.bool ShowProfile, System.bool ShowCenter, System.bool LinkToPart )`
+#     ⇒ ★ **9 参** ✓
+#   · ★★★ 官方 `## Remarks` 逐字：「**Before calling this method, select either a face or a
+#     2D sketch containing points**」✗ ⇒ ★★ **前置 = 先选一个面** ✓
+#     ★ 我第一版**没选** ⇒ 回 `None` ⇒ ★ 那正是「前置没上」、★ 与「工具建不出来」**长得一样** ✗
+#   · ★★ 另一个前置是**钣金件** ✓ —— ★ 本仓 `sw_sheet_metal.create_base_flange` 真机已验能建成 ✓
+#     ⚠ 它的契约是 `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ✗ ——
+#       ★ 不是 `(model, sketch, thickness, ...)`（★ 本会话在这上面栽过一次，★ 且它**不抛、只回 `None`**）✓
+#   · ★ **工具文件要落盘** —— `Path` 是磁盘路径 ⇒ ★ 落到**仓库内 `output/`**（★ 非用户目录 ✓）
+# ★★ 判据 = **回读**（★ 特征树增量，★ 不看返回值 —— 事实 8）✓
+def insert_form_tool_report(model, tool_path, *, face_index: int = 0, flip: bool = False,
+                            rot_angle_deg: float = 0.0, config: str = "", override_doc: bool = False,
+                            show_punch: bool = True, show_profile: bool = True,
+                            show_center: bool = True, link_to_part: bool = True):
+    """插入成形工具（`IFeatureManager::InsertFormToolFeature`）—— ★ 判据用回读。
+
+    参数:
+        model: `IModelDoc2`（★ **钣金件** —— ★ 官方前置之一 ✓）
+        tool_path: 成形工具文件（`*.sldftp`）在**磁盘上的路径**（★ 落仓库内 `output/` ✓）
+        face_index: 要选的面序号（★ **官方 `## Remarks` 逐字要求先选一个面** ✓）
+        flip: `Flip`（★ 是否翻转 ✓）
+        rot_angle_deg: `RotAngle`（**度**）—— ★ 按参数名后缀，★ 边界处换算一次 ✓
+        config: `Config`（★ 配置名；★ 空串即缺省 ✓）
+        override_doc: `OverrideDoc`
+        show_punch: `ShowPunch`
+        show_profile: `ShowProfile`
+        show_center: `ShowCenter`
+        link_to_part: `LinkToPart`
+
+    返回:
+        dict —— ★★ 判据是**回读**：★ 特征树增量（★ 不看返回值 ✓）
+    """
+    import sw_selection_spec as SS
+
+    out: dict = {
+        "official": "IFeatureManager.InsertFormToolFeature",
+        "arity": 9,
+        "note": ("★ 官方 `## Remarks` 逐字要求**先选一个面**（`select either a face or a 2D sketch "
+                 "containing points`）—— ★ 没选时**静默回 `None`**，★ 那与「建不出来」长得一样 ✗"),
+        "tool_path": str(tool_path),
+        "face_index": int(face_index),
+    }
+    #: ★ 前置①：★ 工件文件在盘上吗（★ 先查、★ 免得把"文件不在"记成"工具建不出来" ✓）
+    from pathlib import Path as _Path
+    if not _Path(str(tool_path)).is_file():
+        out["ok"] = False
+        out["error"] = ("★ 前置①失败：成形工具文件不存在 %r ⇒ ★ 官方 `Path` 参数是**磁盘路径** ✓"
+                        % str(tool_path))
+        return out
+    out["tool_file_exists"] = True
+
+    #: ★ 前置②：★ 选一个面（★ `append` 默认 `False` ⇒ 正好清空后单选 ✓）
+    try:
+        SS.select_entity_by_index(model, "FACE", int(face_index))
+    except Exception as e:                                              # noqa: BLE001
+        out["ok"] = False
+        out["error"] = "★ 前置②选择失败：%s: %s" % (type(e).__name__, str(e)[:130])
+        return out
+    out["selection_count"] = SS.get_selection_count(model)
+    if not out["selection_count"]:
+        out["ok"] = False
+        out["error"] = "★ 前置②无效：选区计数 = 0（★ 与「建不出来」是两件事 —— 事实 8）"
+        return out
+
+    before = _feature_names_snapshot(model)
+    feat = None
+    exc = None
+    try:
+        #: ★ 9 参逐位：★ Path · Flip · RotAngle · Config · OverrideDoc ·
+        #:   ShowPunch · ShowProfile · ShowCenter · LinkToPart ✓
+        #: ★ 度 ⇒ 弧度：★ 规则 2 说换算**只在边界做一次**（★ 用 `sw_connect.deg` ✓）
+        #: ★ 取 `FeatureManager` 用本模块既有的写法（★ 逐字：`get_com_member(model, "FeatureManager")` ✓）
+        _mgr = get_com_member(model, "FeatureManager")
+        feat = get_com_member(_mgr, "InsertFormToolFeature",
+                              str(tool_path), bool(flip), float(deg(rot_angle_deg)),
+                              str(config), bool(override_doc), bool(show_punch),
+                              bool(show_profile), bool(show_center), bool(link_to_part))
+    except Exception as e:                                              # noqa: BLE001
+        exc = e
+    after = _feature_names_snapshot(model)
+    added = [n for n in after if n not in before]
+    out.update({"feature_returned_is_none": feat is None, "added": added,
+                "call_exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:150])})
+    out["ok"] = bool(added)
+    if out["ok"]:
+        out["feature"] = str(added[0])
+        out["verdict"] = ("★★★★★ **建成** —— ★ 特征树新增 %r（★ 回读、★ 不是信返回值 ✓）" % added)
+    else:
+        out["error"] = ("★ 回读判据未过：特征树没有增量（★ 选了面=%r · ★ 文件在=%r）⇒ "
+                        "★ 三处成因逐条排除后再下结论（★ 事实 62：★ 只有负例能证明判据有效）✓"
+                        % (out["selection_count"], out["tool_file_exists"]))
     return out
 
