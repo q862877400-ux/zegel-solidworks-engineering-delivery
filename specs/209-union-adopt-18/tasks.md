@@ -135,9 +135,23 @@
 
 ## B4 · 余下（5 条）
 
-- [ ] **B4-1** idx 211 `native_macro_recording`（`RecordLine` + `RunCommand` + 事件）
-      ★★ **必须先解决弹窗**：官方 `swCommands_e` 逐字写 `swCommands_StopMacro` **会弹 Save As**
-      ⇒ 工具**必须**在 `CommandInProgress` + 弹窗护栏下跑，并把"要写盘"这件事**显式要求调用方给路径**
+- [x] **B4-1** idx 211 `native_macro_recording`（`ISldWorks::RecordLine` + `RunCommand`）
+      ⇒ `scripts/sw_macro.py::toggle_macro_recording` / `record_line` / `record_macro_lines`
+      + `solidworks_macro_record_lines`（★ level = **`stitched`**）
+      ★★★ **裁决书点名的头号风险已绕开**：`swCommands_StopMacro`(31) 官方枚举页**逐字**
+      「**opens the Save As dialog**」⇒ ★ 本模块**永不调 31**，停录制改走
+      `swCommands_RecordPauseMacro`(29) 这个**切换**（★ 官方 `RecordLine` 的 Remarks 也正是用 29 开关录制）✓
+      ★★ 怎么知道的：真机（`tools/probe_spec209_b4_macro_recording.py`）⇒
+      ① ★★ **未开录制时 `RecordLine` 也回 `True`**；② 成对（29 → RecordLine ×3 → 29）⇒
+      开 True · 逐行 [True,True,True] · 停 True；③ 空文本入口就拒；④ **31 一次都没调**、
+      **0 弹窗** ⇒ `output/spec209-macro-recording.json`
+      ★★★ **为什么是 `stitched`（这条读数最有价值）**：官方 Remarks 说「**只有录制开着才写得进去**」，
+      而★ **真机"未开录制"也回 `True`** ⇒ ★★ **那个 bool 证明不了任何事**；
+      ★ 要真证得看**落盘的宏文件**，那要 31 的 Save As ⇒ ★ 本条只到「成对调用可达」这一级 ✓
+      ★★ 静态守卫：断言源码里**不许出现**把 31 传给 `RunCommand` 的调用（★ 只扫代码 ——
+      注释里引用它是"防它的证据"）✓ ★ 并在 `finally` 里保证**录制一定被停掉** ✓
+      ⚠ **未接**：裁决书提到的 `DSldWorksEvents::{BeginRecordNotify,EndRecordNotify}`（事件）⇒
+      ★ 如实记「未接」（★ 铁律 5）✓
 - [x] **B4-2** idx 173 `hem`（真名 `IFeatureManager::InsertSheetMetalHem2`，**16 形参**）
       ★★ 别家三处错误（成员名零命中 · `hem_type` 把 `Open=0`/`Closed=1` **正好互换** · **漏掉 `Double=4`**）
       ⇒ ★ **裁决书要求做成 L2/L3 静态断言 —— 已做**（`tests/test_tool_specs_batch93.py`：

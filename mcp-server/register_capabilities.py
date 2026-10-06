@@ -1018,6 +1018,16 @@ BATCH_MODULES = (
     #:     `auto_center_marks` 收结构化 requirements 列表 ⇒ `Param` 表达不了）⇒ ★ 偏离已记 tasks.md ✓
     #:   ★ 计数：446 → **447**
     "tool_specs_batch98",
+    #: ★★★ 2026-10-06：**规格 209 的批 99 —— 原生宏录制**（1 个）：★ 来源 idx **211
+    #:   `native_macro_recording`**（`ISldWorks::RecordLine` + `RunCommand`）。
+    #:   ★★★ **裁决书点名的头号风险已绕开**：`swCommands_StopMacro`(31) 官方枚举页**逐字**
+    #:     标注「**opens the Save As dialog**」⇒ ★ 本模块**永不调 31**，
+    #:     改用 `swCommands_RecordPauseMacro`(29) 这个**切换**成对开关录制 ✓
+    #:   ★★★ **真机硬证据（也是标 `stitched` 的理由）**：官方 Remarks 说"只有录制开着才写得进去"，
+    #:     而★ **真机"未开录制"时 `RecordLine` 也回 `True`** ⇒ ★★ **那个 bool 证明不了任何事**；
+    #:     ★ 要真证得**落盘的宏文件**，那要 31 的 Save As ⇒ ★ 本条只到「成对调用可达」这一级 ✓
+    #:   ★ 计数：447 → **448**
+    "tool_specs_batch99",
 )
 
 def all_specs() -> list:
