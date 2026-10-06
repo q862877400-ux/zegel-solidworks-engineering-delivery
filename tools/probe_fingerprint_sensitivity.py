@@ -35,6 +35,7 @@ import sw_fingerprint as FP                                          # noqa: E40
 #:   ★★ 本仓纪律原话：「写探针验能力时：**按 `ToolSpec` 的契约调**，别手调内部实现」✓
 #:   ★ 空串 = 本轮**没给这一类配写操作** ⇒ ★ 记 `untested`（★ **不许**说成「看不见」）✓
 KNOWN_WRITERS = {
+    #: ★ 写操作：清空选区 ⇒ ★ 要**先有选区**才清得掉（★ 前置见下）✓
     "selection": "solidworks_clear_selection",
     "edit_mode": "solidworks_sketch_start",
     #: ★★ 真机实测：`sketch_start` **确实进了编辑态**（`edit_mode` = sensitive）
@@ -44,7 +45,10 @@ KNOWN_WRITERS = {
     "features": "solidworks_extrude_boss",
     "bodies": "solidworks_extrude_boss",
     "faces": "solidworks_extrude_boss",
-    "display": "",              # ★ 没有"改显示状态"的现成工具 ⇒ 记 untested
+    #: ★ `display` 这一格读的是**显示状态的名字**（配置级）；本仓**没有**"改显示状态"的工具 ⇒
+    #:   ★ 用一个**视图**写操作去试（★ `set_standard_view`）—— ★ **预期它不会动这一格** ⇒
+    #:   ★★ 于是我们得到一条**明确的"这一类当前不可见"记录**（★ 比 `untested` 强）✓
+    "display": "solidworks_set_standard_view",
     "config": "solidworks_config_create",
     "rebuild": "solidworks_session_rebuild",
 }
@@ -58,10 +62,19 @@ KNOWN_WRITERS = {
 #:   ★ 前置也**按契约调**（★ 同一个 `tool_caller`），★ 且**前置失败 ⇒ 该类记 `untested`** ✓
 #:   ★★ 这正好与 B3 的「每组只建一次状态」是同一件事 —— ★ 两批在这里**接上**了 ✓
 _RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 40.0, "y2_mm": 30.0}
+#: ★ 造一个实体（★ 后续「选实体」与"重建"都要它）✓
+_BODY_CHAIN = (("solidworks_sketch_start", {}),
+               ("solidworks_sketch_add_rectangle", _RECT),
+               ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": 10.0}))
+
+#: ★ `select_by_selector` 的 `selector` 支持 `index:<n>`（★ 读该工具的声明描述得知）✓
+_SELECT_ONE = ("solidworks_select_by_selector",
+               {"selector": "index:0", "kind": "EDGE", "body_index": 0})
+
 WRITER_PRECONDITION = {
-    #: ★ 画一个矩形 ⇒ 草图里**有选中对象**（★ 于是 `clear_selection` 才清得掉东西）✓
-    "selection": [("solidworks_sketch_start", {}),
-                  ("solidworks_sketch_add_rectangle", _RECT)],
+    #: ★★ 真机查明：★ **画矩形并不会留下选中** ⇒ 选区仍是 0 ⇒ `clear_selection` 清不掉东西 ✗
+    #:   ⇒ ★ 前置改成：★ **先造体 → 再选一个实体**（★ 选区变成 1）⇒ 再清就有得清 ✓
+    "selection": list(_BODY_CHAIN) + [_SELECT_ONE],
     #: ★ 先建草图、画矩形 ⇒ `extrude_boss` 才有 `Sketch1` 可拉 ✓
     "features": [("solidworks_sketch_start", {}),
                  ("solidworks_sketch_add_rectangle", _RECT)],
@@ -69,6 +82,9 @@ WRITER_PRECONDITION = {
                ("solidworks_sketch_add_rectangle", _RECT)],
     "faces": [("solidworks_sketch_start", {}),
               ("solidworks_sketch_add_rectangle", _RECT)],
+    #: ★★ 真机查明：★ **新零件本来就是重建好的** ⇒ `session_rebuild` 不改变那个布尔 ✗
+    #:   ⇒ ★ 前置改成：★ **先造一个实体的改动**（★ 那会留下「需要重建」）⇒ 再重建就有得变 ✓
+    "rebuild": list(_BODY_CHAIN),
 }
 
 #: ★ 每个写操作要传的形参（★ 名字与声明一致；★ 没给的用声明里的默认值）✓
@@ -86,6 +102,7 @@ WRITER_PARAMS = {
     #:   ⇒ ★ 写操作"成功"却**什么都没改** ⇒ 被记成 `not_detected`（★ 那是假结论）✗
     "solidworks_config_create": {"configuration_name": "MCP_CALIB_%d" % __import__("time").time_ns()},
     "solidworks_session_rebuild": {},
+    "solidworks_set_standard_view": {},
 }
 
 
@@ -123,13 +140,27 @@ def act(sw, model, name, cls=""):
     """
     import tool_caller
     inj = {"model": model, "sw": sw}
-    #: ★★ 先跑**前置链**（★ 让写操作"从一个变得了的状态出发"）✓
+    params = dict(WRITER_PARAMS.get(name) or {})
+    return tool_caller.call(name, inject_objects=inj, **params)
+
+
+def run_precondition(sw, model, cls):
+    """★★ 跑**前置链** —— ★★ 必须在 **`before` 读数之前**跑（★ 真机踩过）✓
+
+    ★★★ 2026-10-06 **真机查明的顺序错**：★ 前置原来写在 `act()` 里 ⇒
+      ★ 而 `before = FP.read(...)` 在 `act()` **之前** ⇒ ★★ 于是 before 是在
+      **还没建前置状态**的新零件上取的 ✗
+      ★ 现场：`selection` 的前置会**选中一个实体**（工具回 `count: 1`、直接回读也是 `1` ✓）⇒
+      ★ 可 before 取在选中**之前** ⇒ ★★ 读出 `0 ⇒ 0` ⇒ **被误判成「这一类不可见」** ✗✗
+      ⇒ ★ 正解：★ **先跑前置 → 再取 before → 再跑写操作 → 再取 after** ✓
+    """
+    import tool_caller
+    inj = {"model": model, "sw": sw}
     for step_name, step_params in (WRITER_PRECONDITION.get(cls) or []):
         ok_step, note_step = tool_caller.call(step_name, inject_objects=inj, **step_params)
         if not ok_step:
             return False, "★ 前置 %s 没成：%s" % (step_name, note_step[:90])
-    params = dict(WRITER_PARAMS.get(name) or {})
-    return tool_caller.call(name, inject_objects=inj, **params)
+    return True, ""
 
 
 def main() -> int:
@@ -196,6 +227,12 @@ def main() -> int:
             print("   %-10s ⇒ ★ untested（建不了新零件）" % cls)
             continue
         model = fresh
+        #: ★★ **顺序**（★ 真机踩过）：★ 前置 ⇒ before ⇒ 写操作 ⇒ after ✓
+        pre_ok, pre_note = run_precondition(sw, model, cls)
+        if not pre_ok:
+            report["classes"][cls] = {"verdict": "untested", "writer": writer, "why": pre_note}
+            print("   %-10s ⇒ ★ untested（前置没成：%s）" % (cls, pre_note[:60]))
+            continue
         before = FP.read(model, sw)
         ok, note = act(sw, model, writer, cls)
         if not ok:

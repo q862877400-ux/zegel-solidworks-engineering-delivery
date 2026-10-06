@@ -196,7 +196,15 @@ def read(model, sw=None) -> dict:
         #:     ★ 直接存对象又会落回"不可比的字符串" ✗ ⇒ ★ 取它的 `Names` ✓
         setting, why2 = _read("GetDisplayStateSetting", ext, SW_ALL_DISPLAY_STATE)
         if setting is None:
-            put("display", None, why2 or "★ GetDisplayStateSetting(2) 返回 None")
+            #: ★★★ 真机查明（★ 这**不是**"读不到"，是一条**可记录的限定**）：
+            #:   ★ `GetDisplayStateSetting(1|2|3)` **三种 Option 全部**抛
+            #:     `com_error (-2147417851, '服务器出现意外情况')` ⇒
+            #:   ★★ 与**事实 47**（`AccessSelections`）**同一个错误族**（服务端故障 / RPC）
+            #:     ⇒ ★ 该成员在**本后端**上**不可用** ✓
+            #:   ⇒ ★ 于是 `display` 这一类**当前无法作为差分依据** ⇒
+            #:     ★★ 按验收判据的第二种出口**明写出来**（★ 不是"没试"，也不是"看不见"）✓
+            put("display", None, "★★ 读数不可用（★ 本后端限定）：`GetDisplayStateSetting` 三种 Option "
+                                 "全部抛 `com_error -2147417851`（服务端故障，★ 与事实 47 同族）")
         else:
             names, why3 = _read("Names", setting)
             if names is None:

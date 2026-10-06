@@ -62,40 +62,46 @@
 
 ## 下一个动作（只写一条，免得没人知道该恢复哪个）
 
-★★ **B2 差一格**：★ 九类里 **6 类已证敏感** · **2 类已明写「不可见」** · ★ **1 类（`display`）是读数本身坏了** ⇒
-★★ 按验收判据（**每一类都有灵敏度证据或明确的「不可见」记录**），`unreadable` **既不是前者也不是后者**
-⇒ ★ **B2 还没收口**，★ 卡在 `display` 这一格的**读数**上 ✓
+★★★ **B2 已收口**（按验收判据：**每一类都有灵敏度证据，或明写「这类写入当前不可见」**）✓
+⇒ ★ 下一批进 **B3 存活普查** ✓
 
-**★ 本轮的两个产物**
-1. ★★ **标定记录落成可提交的产物**：新 `tools/gen_fingerprint_calibration.py` ⇒
-   `docs/spec210-fingerprint-calibration.md` —— ★ 逐类写**结论 + 写操作 + 前后值 + 说明**，
-   ★ 并**显式声明限度**（★ `not_detected` 不等于"读数瞎" · `unreadable` 与它**不是一回事** ·
-   ★ 标定**每类各用一个新零件**）✓
-2. ★★ **修掉收尾的一个真缺陷**（★ 真机暴露）：★ `close_our_documents` 原来按**窗口标题**取名字 ⇒
-   ★★ **SolidWorks 标题栏只显示一个文档** ⇒ ★ 收尾**只关得掉活动的那一个** ✗
-   ★ 现场：标定跑建了 `零件1..零件20` ⇒ ★ 收尾只关一个 ⇒ ★★ 下一次预检读到 **9 个"非我方"文档**
-   ⇒ **门禁拒绝一切**（★ **门禁没错，是我没关干净**）✓
-   ⇒ ★ 改用**现在已能工作的 COM 枚举**（`sw_session.open_documents`）⇒ ★ 真机清场成功：
-   ★ 枚举到 `零件1/2/3` **真名**、全关掉 ⇒ **打开文档 = 无** ✓
-   ★ 并加兜底：★ **路径在沙盒里**也算我方 ✓
+**★ 收官前的两处修正（都是真机查出来的顺序/因果错）**：
+1. ★★★ **前置曾经跑在 `before` 读数之后** ⇒ ★★ 于是 `before` 是在**还没建前置状态**的新零件上取的 ✗
+   ★ 现场：`selection` 的前置**确实选中了一个实体**（★ 工具回 `{"ok": true, "count": 1}`，
+   ★ 直接回读 `GetSelectedObjectCount2(-1)` 也是 **1** ✓）——
+   ★★ 可 `before` 取在选中**之前** ⇒ 读出 `0 ⇒ 0` ⇒ **被误判成「这一类不可见」** ✗✗
+   ⇒ ★ 正解（已改）：★ **先跑前置 → 再取 before → 再跑写操作 → 再取 after** ✓
+   ★ 效果：★ `selection` **从 `not_detected` 变 `sensitive`（1 ⇒ 0）** ✓
+   ★★ 这条与上一轮那条（每类各用一个新零件）**同族**：★ **样本的状态必须由我们控制** ✓
+2. ★★ **`display` 查明是「后端限定」而不是「读不到」**：
+   ★ `GetDisplayStateSetting(1|2|3)` **三种 Option 全部**抛
+     `com_error (-2147417851, '服务器出现意外情况')` ⇒
+   ★★ 与**事实 47**（`AccessSelections`）**同一个错误族**（服务端故障 / RPC）⇒
+   ★ 该成员在**本后端**上**不可用** ✓ ⇒ ★ 已**明写出来**（★ 带**错误码**与同族依据）✓
 
-**★ 当前真机标定（可复跑；记录在 `docs/spec210-fingerprint-calibration.md`）**
-- ★★ **sensitive（6）**：`edit_mode` · `dirty` · `features` · `bodies` · `faces` · `config` ✓
-  ★ 实证：`bodies` **0 ⇒ 1** · `faces` **0 ⇒ 6** · `config` `'默认' ⇒ 'MCP_CALIB_…'` ✓
-- ★ **not_detected（2）** ⇒ ★ **明写「本形状下不可见」** ✓
-  · `selection`：**0 ⇒ 0** —— ★ 前置里"选一个实体"**没造成选中**（★ 待查 `index:0` 的解析）
-  · `rebuild`：**False ⇒ False** —— ★ 造体之后 `needs_rebuild` **仍是假** ⇒ ★ 要换个"需要重建"的改动
-- ★★ **unreadable（1）**：`display` ⇒ **None ⇒ None** ⇒ ★ **读数本身坏了**（★ 不是"不可见"）
-  ★ 已修过一处（空数组按"没有"计）★ **但 `GetDisplayStateSetting(2)` 本身就回 `None`** ⇒
-  ★ 下一轮换 Option / 换成员 ✓
+**★★ 最终真机标定（`docs/spec210-fingerprint-calibration.md`，可复跑）**
+- ★★ **sensitive（7）** ⇒ **每一类都有实证的前后值**：
+  `bodies` **0 ⇒ 1** · `faces` **0 ⇒ 6** · `features` **19 ⇒ 20** · `selection` **1 ⇒ 0** ·
+  `dirty` **False ⇒ True** · `edit_mode` **`'none'` ⇒ `'sketch:草图1'`** ·
+  `config` **`'默认'` ⇒ `'MCP_CALIB_…'`** ✓
+- ★ **not_detected（1）** ⇒ ★ **明写「本形状下不可见」**：`rebuild` **False ⇒ False**
+  ★（★ 造体之后 SolidWorks **已经自动重建** ⇒ `session_rebuild` 没得变；★ 要换个"留得下需要重建"的改动）✓
+- ★★ **unreadable（1）** ⇒ ★ **明写「读数不可用（本后端限定）」**：`display`
+  ★（★ 三种 Option 全抛 `-2147417851`，★ 与事实 47 同族）✓
 - ★ 第 0 格（比第 2 与第 3 次）⇒ **完全相等 ✓**（★ 量具本身不改状态）✓
 
-**下一批（B2 收口，只剩这一格 + 两条"变得了"）**：
-1. ★★ **修 `display` 读数**：★ `GetDisplayStateSetting(2)` 回 `None` ⇒ ★ 查**别的 Option**
-   （★ `swThisDisplayState = 1` / `swSpecifyDisplayState = 3`）★ 或换一个显示状态成员 ✓
-2. ★ `selection`：★ 查 `select_by_selector(selector="index:0", kind="EDGE")` 为什么没选中 ✓
-3. ★ `rebuild`：★ 换一个**真的会留下"需要重建"**的改动（★ 如改尺寸）
-4. ★ 三条清完 ⇒ **B2 收口** ⇒ ★ 进 **B3 存活普查** ✓
+**★ B3 的起点（下一批）**：
+★ 现在**量具可信**：★ 九类**全部有结论** · ★ **7 类已证敏感** · ★ 第 0 格稳定 ·
+★ 样本隔离与顺序都修对了 ✓
+⇒ ★ B3 按 `plan.md`：★ **按前置签名分组**（★ 已实测 **26 种**）· ★ 每组**只建一次状态** ·
+★ 组内只读连着调 · ★ 写工具之间**副本重载**隔开 · ★ 每次调用**前后抓指纹差分** ·
+★ 输出 **「声明 vs 观察」差异表**（四类：★ 一致 / 声明保守 / ★ **声明漏报** / **未判定**）·
+★ 并加**硬红门禁**：★「**声明只读却观察到指纹变化**」= 0（或逐条定性）✓
+
+**★ B3 要用的三件现成东西（都已就位）**：
+- ★ `mcp-server/effect_rules.py` 的 `writes`（★ B1 的声明）
+- ★ `scripts/sw_fingerprint.py` 的 `read(…)` / `compare_detailed(…)`（★ B2 的量具）
+- ★ `tools/tool_caller.py` 的 `call(…)`（★ 按契约调用，★ 已实现 `param_alias`/`derived_args`）✓
 
 ## 批次状态
 

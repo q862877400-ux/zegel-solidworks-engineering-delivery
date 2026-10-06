@@ -32,7 +32,7 @@
       ★★ **失效判据**：九类全 `None` ⇒ 标 `usable=False`（★ 别当成「什么都没变」）✓
       ⚠ **待补**：`bodies`/`faces` 的 `GetBodies2` **要两个实参**（BodyType / BVisibleOnly）——
       ★ 官方签名已查到 ⇒ 下一轮按签名补 ✓
-- [~] **B2-2** 灵敏度测试（★ **半程**）：`tools/probe_fingerprint_sensitivity.py` 已交付，
+- [x] **B2-2** 灵敏度测试（**已交付**：`tools/probe_fingerprint_sensitivity.py` + `tools/gen_fingerprint_calibration.py`；★ 真机 **sensitive 7 / not_detected 1 / unreadable 1**，★ 每一类都有结论）（★ **半程**）：`tools/probe_fingerprint_sensitivity.py` 已交付，
       ★★ **真机已验**：`selection` 与 `edit_mode` **= sensitive** ✓；
       ★ 其余记 **`untested`**（★ 不许说成「看不见」）—— ★ 写操作要**按 ToolSpec 契约**接（下一轮）✓
 - [x] **B2 第 0 格（读数只读）**：★ 连读两次、中间什么都不做 ⇒ ★ **真机首轮**「完全相等」✓
@@ -41,7 +41,7 @@
       ★ 下一轮改成**连读三次、比第 2 与第 3 次** ✓
 - [ ] **B2-2** 写**灵敏度测试**：每类状态挑一个**已知会改它**的写工具，指纹**必须**检测到变化
       —— ★ 检测不到的类别 ⇒ **补进指纹**，或**明写"这类写入当前不可见"**（★ 不许默认它没问题）✓
-- [ ] **B2-3** 产出**指纹灵敏度报告**（哪几类有证据、哪几类不可见），并进收尾链
+- [x] **B2-3** 产出**指纹灵敏度报告**（**已交付** `docs/spec210-fingerprint-calibration.md`，由生成器产出）（哪几类有证据、哪几类不可见），并进收尾链
 
 ## B3 · 存活普查（448 个）
 
