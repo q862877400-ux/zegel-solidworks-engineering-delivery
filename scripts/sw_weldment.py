@@ -6,13 +6,18 @@ from pathlib import Path
 from typing import Any, Iterable
 
 try:
-    from .sw_connect import get_com_member, call_com_member, save_document, set_com_member
+    from .sw_connect import (get_com_member, call_com_member, save_document,
+                             set_com_member, mm, create_empty_dispatch_variant)
     from .sw_document_data import set_custom_properties
+    #: ★ 2026-10-07（规格 211 · B3-1）：★ 新增的 `insert_weldment_trim_report` 要用它 ✓
+    from .sw_feature_readback import feature_names
     from .sw_part import _ensure_sketch_selected
     from .sw_preflight import import_com_dependencies
 except ImportError:
-    from sw_connect import get_com_member, call_com_member, save_document, set_com_member
+    from sw_connect import (get_com_member, call_com_member, save_document,
+                        set_com_member, mm, create_empty_dispatch_variant)
     from sw_document_data import set_custom_properties
+    from sw_feature_readback import feature_names
     from sw_part import _ensure_sketch_selected
     from sw_preflight import import_com_dependencies
 
@@ -104,6 +109,103 @@ def _active_configuration_name(model) -> str:
     manager = get_com_member(model, "ConfigurationManager")
     configuration = get_com_member(manager, "ActiveConfiguration")
     return str(get_com_member(configuration, "Name") or "")
+
+
+# ── 规格 211 · B3-1「裁剪/延伸焊件」（`IFeatureManager::InsertWeldmentTrimFeature2`）──
+# 官方依据（★ 三样逐字读过）：
+#   · `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`
+#       `Feature InsertWeldmentTrimFeature2( System.int EndCond, System.int Options,
+#        System.double GapValue, System.object BodiesToTrim, System.object BodiesOrFaces )`
+#     ★ `## Parameters` 逐字：
+#       · `EndCond`: as defined by `swSolidworksWeldmentEndCondOptions_e`
+#       · `Options`: **Logical sum** of values as defined by `swWeldmentTrimExtendOptionType_e`
+#       · `GapValue`: **Length to trim**（★ ⚠ **没给单位**）
+#       · `BodiesToTrim`: Array of bodies to trim
+#       · `BodiesOrFaces`: Array of bodies or faces that define the trimming boundaries
+#     ★ `## Returns`：`IFeature`
+#   · ★★★ `## Remarks` **给了完整「调用序」**（★ 第 ③ 样的价值）：
+#       「Use `IModelDocExtension::SelectByID2` and specify the following marks to select the
+#        body, or bodies, to trim and the trimming boundaries:
+#        **1 = Body or bodies to trim** · **2 = Trimming boundaries (body or face)**」✓
+#   · ★ 另有一处 `## Remarks` 断句：「If you include `swWeldmentTrimExtendOp…`」⇒ ★ 与
+#     `Options` 那条「**Logical sum**」相印证（★ 选项是**按位或**叠的 ✓）
+# 判据（★ 规则 6 的回读）：
+#   ★★ 主判据 = **特征树多了新特征**（★ 回读，★ 不看返回值 ✓）
+#   ★★★ **薄包装**（★ 与 `sweep_surface_report` **同一风格**）：★ **不替调用方做选择** ——
+#     官方明写要用 `SelectByID2` **按 mark 选** ⇒ ★ 本包装**把官方 mark 表放进返回值**、
+#     ★ 并**记下调用前的选择计数**（★ 让「选不上」与「选了没用」可分辨 ✓）
+#     ⚠ ★ 为什么不做自动选择：★ 那需要一个"按选择器 + mark 选体/面"的 helper，
+#       ★ 而**本文件没有**、★ 本批**不发明它**（★ 铁律 1 + 只读优先 ✓）
+# ⚠ ★★ **`GapValue` 官方没给单位**（★ Parameters 只写 "Length to trim"）⇒
+#   ★ 按仓里既有约定**加 `unit_assumption`**（★ 缝合，不发明 ✓）
+# ⚠ ★ 官方**没有**标 `Obsolete`（★ 与 `InsertWeldmentTrimFeature` 老版并存 ⇒ 本包装用 `…2` ✓）
+WELDMENT_TRIM_MARKS = {"body_to_trim": 1, "trim_boundary": 2}
+
+
+def insert_weldment_trim_report(model, *, end_cond: int = 0, options: int = 0,
+                                gap_mm: float = 0.0) -> dict:
+    """★ **裁剪/延伸焊件**（`IFeatureManager::InsertWeldmentTrimFeature2`）—— ★ 参数式 ✓
+
+    ★★★ **前置由选择契约承载**（★ 官方 `## Remarks`）：★ 调之前**必须**用 `SelectByID2` 按 mark 选：
+      ★ **`1 = Body or bodies to trim`** · ★ **`2 = Trimming boundaries (body or face)`** ✓
+    ★ 判据：★ **特征树多了新特征**（★ 回读 —— ★ 不看返回值 ✓）✓
+    ★★ **`gap_mm` 的官方单位未给** ⇒ ★ 返回里带 `unit_assumption`（★ 缝合既有约定 ✓）
+    """
+    out: dict = {"ok": False, "entry": "IFeatureManager.InsertWeldmentTrimFeature2",
+                 "official_marks": dict(WELDMENT_TRIM_MARKS),
+                 "selection_contract": ("★ 调之前必须用 `SelectByID2` 按 mark 选："
+                                        "**1 = Body or bodies to trim** · "
+                                        "**2 = Trimming boundaries (body or face)** ✓"
+                                        "（★ 官方 `## Remarks` 逐字）"),
+                 "options_note": ("★ 官方逐字：`Options` 是 `swWeldmentTrimExtendOptionType_e` 的"
+                                  "**Logical sum**（★ 按位或叠 ✓）"),
+                 "end_cond_note": ("★ 官方逐字：`EndCond` 取 "
+                                   "`swSolidworksWeldmentEndCondOptions_e` ✓"),
+                 "unit_assumption": ("★ 官方 `GapValue` **没给单位**（Parameters 只写 "
+                                     "'Length to trim'）⇒ ★ 本工具**对外收毫米**、★ 在边界用 "
+                                     "`sw_connect.mm()` 换算一次 ✓"),
+                 "side_effects": "★ 会改变/新建焊件体（★ 非只读）"}
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    before = feature_names(model)
+    #: ★★ **记调用前的选择计数**（★ 让"选不上"与"选了没用"可分辨 ✓）
+    try:
+        import sw_selection_spec as SS
+        out["selection_count_before"] = SS.get_selection_count(model)
+    except Exception as exc:                                            # noqa: BLE001
+        out["selection_count_before"] = None
+        out["selection_count_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        out["error"] = "取不到 FeatureManager"
+        return out
+    try:
+        feat = get_com_member(fm, "InsertWeldmentTrimFeature2",
+                             int(end_cond), int(options), float(mm(float(gap_mm))),
+                             #: ★★ 两个 `object` 数组形参**必须传空 VARIANT**（★ 事实 12/33）——
+                             #:   ★ 实测：★ 传 Python `None` **调不通**；★ 传
+                             #:   `VARIANT(VT_DISPATCH, None)` ⇒ **调用完成、回对象** ✓
+                             #:   ★（`sw_connect.create_empty_dispatch_variant()` 就是它 ✓）
+                             create_empty_dispatch_variant(),
+                             create_empty_dispatch_variant())
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
+        return out
+    after = feature_names(model)
+    out["new_features"] = [n for n in after if n not in before]
+    out["feature_count_before"] = len(before)
+    out["feature_count_after"] = len(after)
+    out["returned_is_none"] = feat is None
+    out["returned_name"] = getattr(feat, "Name", None) if feat is not None else None
+    #: ★★ **真判据**：★ 特征树多了新特征 ✓（★ 回读，★ 不看返回值 ✓）
+    out["ok"] = len(out["new_features"]) > 0
+    if not out["ok"]:
+        out["error"] = ("★ 调用没抛、★ **而特征树没变化**（★ `returned_is_none=%r`）⇒ "
+                        "★ 按官方 `## Remarks` 复查：★ **mark 1/2 有没有都选上**"
+                        "（★ 1 = Body to trim · 2 = Trimming boundaries）✓"
+                        % out["returned_is_none"])
+    return out
 
 
 def create_weldment_profile(

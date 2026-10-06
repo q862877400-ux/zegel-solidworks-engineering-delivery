@@ -5147,6 +5147,46 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "weldment_trim",
+   "label": "裁剪/延伸焊件（IFeatureManager::InsertWeldmentTrimFeature2，参数式 + 官方 mark 表）",
+   "level": "stitched",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IFeatureManager\\InsertWeldmentTrimFeature2.md：Feature InsertWeldmentTrimFeature2(int EndCond, int Options, double GapValue, object BodiesToTrim, object BodiesOrFaces)",
+    "同页 ## Parameters 逐字：EndCond 取 swSolidworksWeldmentEndCondOptions_e · Options 是 swWeldmentTrimExtendOptionType_e 的 Logical sum · GapValue 只写 Length to trim（★ 没给单位）· BodiesToTrim 是 Array of bodies to trim · BodiesOrFaces 是 Array of bodies or faces that define the trimming boundaries",
+    "★★ 同页 ## Remarks 给了完整「调用序」：Use IModelDocExtension::SelectByID2 and specify the following marks —— 1 = Body or bodies to trim · 2 = Trimming boundaries (body or face)",
+    "★ 老版 InsertWeldmentTrimFeature 也在（★ 本包装用带 2 的后继版 ✓）"
+   ],
+   "evidence": [
+    "★ 真机（tools/probe_spec211_weldtrim.py，走 tools/sw_guard.py 护栏）：★ 两种数组形参形态**都调通**（不抛）—— ★ 传 None 与 ★ 传空 VARIANT 均完成调用 ✓",
+    "★★★ 形态判定（★ 事实 12/33 的现场）：★ 两个 object 数组形参**正确形态是 `VARIANT(VT_DISPATCH, None)`** —— ★ 实测调用完成、回对象 ✓",
+    "★★ 而**特征树没变**（★ feature_count 前后相同）⇒ ★ **因为前置没上**（★ 官方 ## Remarks 明写 mark 1/2 都要选）⇒ ★★ **还不到「试死」** ✓",
+    "★ 证据文件 output/spec211-b3-weldtrim.json",
+    "★ 契约/负例：python -m pytest tests/test_spec211_weldment_trim.py -q ⇒ 7 passed"
+   ],
+   "limitations": [
+    "★★★ 本条只到「第一步：查行为」，还不到「试死」 —— ★ 真机读数：两种形态都调通（不抛），而特征树都没变 ⇒ 因为前置没上（官方明写 mark 1 与 2 都要选）",
+    "★★★ 定则（★ 从「扫描曲面」那条路学来的）：读到静默或没建 ≠ 判定试死；★ 中间的桥是「前置是否完全对上」 —— ★ 当时若把扫描曲面写成试死，后来建成的发现就会被自己的记录挡住",
+    "★★ 下一步（判据已想好）：建焊件体（结构构件）并按 mark 1/2 选好再调 ⇒ 若仍不建 ⇒ 那才是真正的试死；若建成 ⇒ 大发现",
+    "★★ 两个 object 数组形参必须传空 VARIANT（VARIANT(VT_DISPATCH, None)）—— 事实 12/33；★ 本包装已改用 create_empty_dispatch_variant()",
+    "★ 官方 GapValue 没给单位 ⇒ 返回值带 unit_assumption（对外收毫米、边界换算一次，缝合既有约定）",
+    "★ 本包装是薄包装：不替调用方做选择 ⇒ 官方 mark 表放在返回值里，另记调用前的选择计数",
+    "★ 会改/建焊件体（非只读）⇒ 返回值带 side_effects 声明"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "part"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }
