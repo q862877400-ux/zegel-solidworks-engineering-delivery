@@ -4,18 +4,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-#: ★★ 2026-10-07（规格 213 · B2）：★ 给**已有的**导入行加了 `deg` ——
-#:   ★ 成形工具的 `RotAngle` 是**度**、★ 而 API 要**弧度** ⇒ ★ 用仓里既有的换算入口 ✓
-#:   （★ `sw_connect.deg` 逐字：`return value * math.pi / 180.0` ✓ —— ★ 与 `mm()` 同一模式 ✓）
-#:   ★★★ **加名字、不加行**：★ `check_relative_imports.py` 的棘轮数的是**行** ✓
-#:   ★★★★ **而注释不许插在 `try:` 与导入行之间** ✗ —— 那条棘轮的判据是
-#:     「**前一行为 `try:`**」⇒ ★ 插了注释就把这一行从"有兜底"变成"无兜底"，棘轮 **35 → 36** ✗
-#:     （★ 本批实测撞了两次：★ 第一次是函数里新加 `import` 行、★ 第二次就是这个注释位置 ✓）
 try:
-    from .sw_connect import get_com_member, call_com_member, deg
+    from .sw_connect import get_com_member, call_com_member
     from .sw_part import _ensure_sketch_selected
 except ImportError:
-    from sw_connect import get_com_member, call_com_member, deg
+    from sw_connect import get_com_member, call_com_member
     from sw_part import _ensure_sketch_selected
 
 
@@ -1352,7 +1345,21 @@ def insert_form_tool_report(model, tool_path, *, face_index: int = 0, flip: bool
     try:
         #: ★ 9 参逐位：★ Path · Flip · RotAngle · Config · OverrideDoc ·
         #:   ShowPunch · ShowProfile · ShowCenter · LinkToPart ✓
-        #: ★ 度 ⇒ 弧度：★ 规则 2 说换算**只在边界做一次**（★ 用 `sw_connect.deg` ✓）
+        #: ★★ 2026-10-07（规格 213 · B2）—— ★★★ **度数换算的取法改过一次，★ 两次都栽了**：
+        #:   ★ **第一版**：★ 函数里裸写 `from .sw_connect import mm as _mm` ✗ ⇒
+        #:     ★ 相对导入棘轮 **35 → 36** 被拦 ✓
+        #:   ★★ **第二版**：★ 把 `deg` 加进**模块级**那行 ✓ ⇒ ★ **棘轮过了**，
+        #:     而★ **`tests/test_sw_sheet_metal.py` 收集期炸** ✗ ——
+        #:     ★ 逐字：`ImportError: cannot import name 'deg' from '<unknown module name>'` ✓
+        #:     ★★ 真因：★ 那个测试只往 `sys.path` 塞 `scripts/`（★ 不是包）⇒
+        #:       `sw_sheet_metal` 的**模块级** `from .sw_connect import … deg` 走进
+        #:       **半初始化**路径 ✓；★ 而**别的名字在缓存里已有**、★ 只有**新加的 `deg`** 暴露了这个 ✗
+        #:   ⇒ ★★★ **正解（第三版）**：★ **放在函数内、★ 且写完整的 `try:/except ImportError:`** ✓ ——
+        #:     ★ 既满足棘轮判据（★ 「紧跟 `try:` 的那一行」✓）、★ 又不碰模块级导入 ✓
+        try:
+            from .sw_connect import deg
+        except ImportError:
+            from sw_connect import deg
         #: ★ 取 `FeatureManager` 用本模块既有的写法（★ 逐字：`get_com_member(model, "FeatureManager")` ✓）
         _mgr = get_com_member(model, "FeatureManager")
         feat = get_com_member(_mgr, "InsertFormToolFeature",
