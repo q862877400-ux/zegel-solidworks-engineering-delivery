@@ -117,23 +117,49 @@ def main() -> int:
     print("★ ③ 顶层装配加子装配 ⇒ %r" % inst_ok)
 
     #: ④ **按对象选**那个组件（★ `IComponent2.Select4`，★ 无 mark ✓）
+    #: ④ **按官方示例选组件**（★★★ 官方页三样里**第 ③ 样的价值**就在这里）：
+    #:   `Create_SpeedPak_for_Subassemblies_Example_VB.md` 的代码**逐字**：
+    #:     `SelectByID2("arm1-1@wrench", "COMPONENT", 0,0,0, False, 0, Nothing, 0)`
+    #:     `swAssembly.CreateSpeedPak(2)`
+    #:   ⇒ ★★ 三点：① ★ 组件名格式 **`<组件>-<实例号>@<装配名>`** ✓
+    #:             ② ★ **用 `SelectByID2(名字, "COMPONENT", …)`、★ 不是 `Select4`** ✗✓
+    #:             ③ ★ `CreateSpeedPak(2)`（★ Graphics ✓）
+    #:   ★★★ **而签名与 `## Remarks` 都只说"selected subassemblies"** ✗ ——
+    #:     ★ **只有示例说了"用什么选、名字长什么样"** ✓
     comps = _components(top) if top is not None else []
     out["component_count"] = len(comps)
     sel_ok = False
     is_sp_before = None
+    comp_name = None
     if comps:
+        import sw_selection_spec as SS
         try:
             is_sp_before = bool(sw_connect.get_com_member(comps[0], "IsSpeedPak"))
-            sw_connect.get_com_member(comps[0], "Select4", False,
-                                      sw_connect.create_empty_dispatch_variant())
-            import sw_selection_spec as SS
+        except Exception:                                               # noqa: BLE001
+            is_sp_before = None
+        for _accessor in ("Name2", "GetName2", "Name"):
+            try:
+                comp_name = sw_connect.get_com_member(comps[0], _accessor)
+                if comp_name:
+                    out["component_name_accessor"] = _accessor
+                    break
+            except Exception:                                           # noqa: BLE001
+                comp_name = None
+        out["component_name"] = comp_name
+        try:
+            #: ★ 官方示例的调用序：★ `SelectByID2(<组件名>, "COMPONENT", 0,0,0, append, mark, callout, 0)` ✓
+            ext = sw_connect.get_com_member(top, "Extension")
+            sel_ok = bool(sw_connect.get_com_member(
+                ext, "SelectByID2", str(comp_name), "COMPONENT", 0.0, 0.0, 0.0,
+                False, 0, sw_connect.create_empty_dispatch_variant(), 0))
+            #: ★ 回读（★ 不许信返回值 —— 事实 8 ✓）
             sel_ok = SS.get_selection_count(top) > 0
         except Exception as e:                                          # noqa: BLE001
             out["select_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["component_selected"] = sel_ok
     out["is_speedpak_before"] = is_sp_before
-    print("★ ④ 选组件 ⇒ %r · 组件数=%r · 选前 IsSpeedPak=%r"
-          % (sel_ok, len(comps), is_sp_before))
+    print("★ ④ 选组件 ⇒ %r · 组件数=%r · 名=%r · 选前 IsSpeedPak=%r"
+          % (sel_ok, len(comps), comp_name, is_sp_before))
 
     #: ⑤ **调**（★ `SpeedPakType = 1` = Mated ✓）
     ret = None
@@ -191,3 +217,31 @@ if __name__ == "__main__":
         (ROOT / "output" / "spec211-b6-speedpak-traceback.txt").write_text(tb, encoding="utf-8")
         print("★★ 异常已落盘：\n%s" % tb[-1200:])
         raise SystemExit(3)
+    finally:
+        #: ★★★ 2026-10-07（B6）：★ **探针自己收尾** ——
+        #:   ★ 上一版**漏了这一步** ✗ ⇒ 它落盘的 `sp1` / `sp2` / `sub` **留在会话里开着**，
+        #:   ★★ 于是下一轮的护栏预检报「★ 有 4 个**不是我们打开的**文档 ⇒ **拒绝开始**」✗
+        #:   ★ 而★ 那些**确实是我自己的产物** ✓ ⇒ ★ **该由我自己关掉** ✓
+        #:   ★ 只关**本探针建的那几个**（★ 按路径前缀认，★ **绝不碰任何别的文档** ✓）
+        try:
+            import sw_connect as _C
+            _sw, _ = _C.connect_solidworks(wait_seconds=15)
+            if _sw is not None:
+                _mine = ("sp1", "sp2", "sub")
+                _titles = []
+                try:
+                    _titles = [str(t) for t in (getattr(_sw, "GetDocuments", lambda: [])() or [])]
+                except Exception:                                       # noqa: BLE001
+                    _titles = []
+                _closed = []
+                for _d in _titles:
+                    _base = Path(_d).stem
+                    if str(WORK).lower() in _d.lower() or _base in _mine:
+                        try:
+                            _C.get_com_member(_sw, "CloseDoc", _d)
+                            _closed.append(_base)
+                        except Exception:                               # noqa: BLE001
+                            pass
+                print("★ 收尾：★ 关掉我方文档 %r" % _closed)
+        except Exception:                                               # noqa: BLE001
+            pass
