@@ -49,6 +49,28 @@ KNOWN_WRITERS = {
     "rebuild": "solidworks_session_rebuild",
 }
 
+#: ★★★ 2026-10-06 **本轮最重要的认识**：★ `not_detected` 大多**不是"读数瞎"**，
+#:   而是 ★ **"那个写操作没有真的改变任何东西"** —— ★ 真机返回体坐实了三条：
+#:     · `config` ⇒ `{"created": false, "reused": true}`（配置**本来就存在**）
+#:     · `rebuild` ⇒ `needs_rebuild_before=0 · after=0`（文档**本来就是重建好的**）
+#:     · `selection` ⇒ 选区**本来就是空的**
+#:   ⇒ ★★ 正解：★ **给每一类配前置**，★ 让它**从一个「变得了」的状态出发** ✓
+#:   ★ 前置也**按契约调**（★ 同一个 `tool_caller`），★ 且**前置失败 ⇒ 该类记 `untested`** ✓
+#:   ★★ 这正好与 B3 的「每组只建一次状态」是同一件事 —— ★ 两批在这里**接上**了 ✓
+_RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 40.0, "y2_mm": 30.0}
+WRITER_PRECONDITION = {
+    #: ★ 画一个矩形 ⇒ 草图里**有选中对象**（★ 于是 `clear_selection` 才清得掉东西）✓
+    "selection": [("solidworks_sketch_start", {}),
+                  ("solidworks_sketch_add_rectangle", _RECT)],
+    #: ★ 先建草图、画矩形 ⇒ `extrude_boss` 才有 `Sketch1` 可拉 ✓
+    "features": [("solidworks_sketch_start", {}),
+                 ("solidworks_sketch_add_rectangle", _RECT)],
+    "bodies": [("solidworks_sketch_start", {}),
+               ("solidworks_sketch_add_rectangle", _RECT)],
+    "faces": [("solidworks_sketch_start", {}),
+              ("solidworks_sketch_add_rectangle", _RECT)],
+}
+
 #: ★ 每个写操作要传的形参（★ 名字与声明一致；★ 没给的用声明里的默认值）✓
 WRITER_PARAMS = {
     "solidworks_clear_selection": {},
@@ -60,7 +82,9 @@ WRITER_PARAMS = {
     #:   ⇒ ★ 调用器已补上；★ 探针按**对外声明名**传即可 ✓
     "solidworks_extrude_boss": {"sketch_name": "Sketch1", "depth_mm": 10.0},
     #: ★ 真机实测：★ 声明里的形参是 `configuration_name`（`Ellipsis` = 必填）
-    "solidworks_config_create": {"configuration_name": "标定用配置"},
+    #: ★★ 用**唯一名字** —— 真机踩过：★ 复用同名 ⇒ `{"created": false, "reused": true}`
+    #:   ⇒ ★ 写操作"成功"却**什么都没改** ⇒ 被记成 `not_detected`（★ 那是假结论）✗
+    "solidworks_config_create": {"configuration_name": "MCP_CALIB_%d" % __import__("time").time_ns()},
     "solidworks_session_rebuild": {},
 }
 
@@ -76,7 +100,20 @@ def _new_part(sw):
     return sw_connect.new_document(sw, "part")
 
 
-def act(sw, model, name):
+def _new_part(sw):
+    """★ 建一个**新的空零件**（★ 每一类标定都从干净状态出发）✓
+
+    ⚠ 说明：★ 这里用的是**能力层**的建文档函数 —— ★ 它**不是被测的写操作**，
+      ★ 只是**搭舞台**；★ 被测的写操作一律按 `ToolSpec` 契约调 ✓
+    """
+    import sw_connect
+    try:
+        return sw_connect.new_document(sw, "part")
+    except Exception:                                                   # noqa: BLE001
+        return None
+
+
+def act(sw, model, name, cls=""):
     """★ 执行一个「已知会改状态」的写操作 —— ★ **按 `ToolSpec` 契约调工具** ✓
 
     ★ 契约（读 `tool_registry.make_tool_function` 得知）：★ 底层函数按 **kwargs** 调，
@@ -85,8 +122,14 @@ def act(sw, model, name):
       ★ **绝不许**把"没调成"说成"这一类不可见" ✗
     """
     import tool_caller
+    inj = {"model": model, "sw": sw}
+    #: ★★ 先跑**前置链**（★ 让写操作"从一个变得了的状态出发"）✓
+    for step_name, step_params in (WRITER_PRECONDITION.get(cls) or []):
+        ok_step, note_step = tool_caller.call(step_name, inject_objects=inj, **step_params)
+        if not ok_step:
+            return False, "★ 前置 %s 没成：%s" % (step_name, note_step[:90])
     params = dict(WRITER_PARAMS.get(name) or {})
-    return tool_caller.call(name, inject_objects={"model": model, "sw": sw}, **params)
+    return tool_caller.call(name, inject_objects=inj, **params)
 
 
 def main() -> int:
@@ -141,8 +184,20 @@ def main() -> int:
                                       "why": "★ 本轮没给这一类配廉价写操作 ⇒ 如实记「没试」"}
             print("   %-10s ⇒ ★ untested（没试）" % cls)
             continue
+        #: ★★★ 2026-10-06 **真机暴露的更根本的设计错**：★ 我原来把九类**在同一个文档上顺序标定**
+        #:   ⇒ ★★ 前面的类改过文档之后，**后面的类就"没得变了"** —— 现场：
+        #:     · `features` 的前置把文档弄脏 ⇒ ★ 轮到 `dirty` 时它**已经是脏的** ⇒ 记 `not_detected` ✗
+        #:     · `features` 用掉了 `Sketch1` ⇒ ★ 轮到 `bodies`/`faces` 时 `extrude` 没东西可拉 ⇒ 也没动 ✗
+        #:   ★ 这两条**都不是**"读数瞎" —— ★ 是**我的标定顺序污染了后面的样本** ✓
+        #:   ⇒ ★★ 修法：★ **每一类各用一个新零件**（★ 前置也在新零件上重建）✓
+        fresh = _new_part(sw)
+        if fresh is None:
+            report["classes"][cls] = {"verdict": "untested", "why": "★ 建不了新零件"}
+            print("   %-10s ⇒ ★ untested（建不了新零件）" % cls)
+            continue
+        model = fresh
         before = FP.read(model, sw)
-        ok, note = act(sw, model, writer)
+        ok, note = act(sw, model, writer, cls)
         if not ok:
             #: ★★ **没调成 ⇒ 记 `untested`**（★ 不许说成"不可见"）✓
             report["classes"][cls] = {"verdict": "untested", "writer": writer, "why": note}
