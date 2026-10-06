@@ -581,3 +581,236 @@ def edit_explode_parameters(doc):
     ⚠ ★ 官方页未给 Remarks ⇒ **它是否弹交互界面未查证** ⇒ 本包装只透传调用，不代它保证无 UI。
     """
     return call_assembly_doc(doc, "EditExplodeParameters")
+
+
+#: ── 爆炸直线（★ 规格 213 · B2：★ 从探针 `tools/probe_spec211_explodeline.py`
+#:    **已证实**的调用序缝合进模块 ✓ —— ★ 铁律 1：只缝合、不发明 ✓）──────────────────
+# ★★ 官方依据（`swapi` 逐字）：
+#   · `C:\swapi\types\ISketchManager\InsertExplodeLineSketch.md` ⇒
+#     `System.bool InsertExplodeLineSketch()` ⇒ ★★ **零参** ✓
+#     ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false if not ✓
+#   · ★★ **入口在 `ISketchManager` 上、不在装配文档上** ✗ ——
+#     ★ 所以要先 `get_com_member(doc, "SketchManager")` 再调 ✓
+#   · ★★ **前置链有三环，★ 而每一环单独落布尔**（★ 「读数无效」与「真的不建」长得一样 ✓）：
+#     ★ ① 零件要**落盘**（`add_component` 要磁盘路径 ✗）· ★ ② 装配体
+#     · ★ ③ **爆炸状态**（`create_exploded_view`；★ 否则"爆炸直线"没有可依附的爆炸 ✓）
+# ★★ 判据 = **回读**：★ 特征树增量 + **`ISketchManager::ActiveSketch`** ✓ ——
+#   ★ 「回 True」只说明"插入或关闭"，★ **证明不了插进去了**（事实 8）✓
+def insert_explode_line_sketch_report(doc):
+    """插入/关闭爆炸直线草图（官方 `ISketchManager.InsertExplodeLineSketch`，**零参**）。
+
+    ★★ 判据是**回读**：特征树增量 + `ActiveSketch` ——
+    ★ 不看那个 `bool`（★ 官方 `## Returns` 逐字说它是"**插入或关闭**"⇒ 两种结果都回真 ✓）。
+
+    ⚠ ★ **前置是爆炸状态**：★ 装配体没有爆炸视图时它没有可依附的对象 ⇒
+    ★ 调用方应先用 `create_exploded_view` ✓（★ 本函数**不代做**，★ 只把前置读数如实回报 ✓）
+    """
+    out: dict = {
+        "official": "ISketchManager.InsertExplodeLineSketch",
+        "arity": 0,
+        "note": ("★ 入口在 **`ISketchManager`** 上（★ 不是 `IAssemblyDoc` ✗）⇒ 先取 "
+                 "`SketchManager` 再调 ✓ · ★ 官方 `## Returns` 逐字说的是"
+                 "「**inserted or closed**」⇒ ★★ **那个 bool 分辨不了这两件事** ✓"),
+    }
+    #: ★ 前置①：★ 取 `ISketchManager`
+    sm = None
+    try:
+        sm = get_com_member(doc, "SketchManager")
+    except Exception as e:                                              # noqa: BLE001
+        out["ok"] = False
+        out["error"] = "★ 前置①失败：取 `SketchManager` 抛 %s: %s" % (type(e).__name__, str(e)[:120])
+        return out
+    out["sketch_manager_ok"] = sm is not None
+    if sm is None:
+        out["ok"] = False
+        out["error"] = "★ 前置①失败：`SketchManager` 取不到（★ 与「建不出来」是两件事 ✓）"
+        return out
+
+    #: ★ 前置②：★ 爆炸状态（★ 回读、★ 不猜 ✓）
+    try:
+        out["explode_view_count"] = int(call_assembly_doc(doc, "GetExplodedViewCount", 0) or 0)
+    except Exception as e:                                              # noqa: BLE001
+        out["explode_view_count"] = None
+        out["explode_view_error"] = "%s: %s" % (type(e).__name__, str(e)[:100])
+
+    #: ★★ 取特征名：★ 用仓里**既有的** `sw_feature_readback.feature_names`（★ 缝合、不发明 ✓）——
+    #:   ★★★ **必须写成带上兜底的相对导入**：★ `scripts/check_relative_imports.py` 的判据逐字是
+    #:     「`prev.startswith("try:")`」⇒ ★ **紧跟 `try:` 的那一行才算"有兜底"** ✓
+    #:     ★★ 它**也扫函数内**的导入 ⇒ ★ 这样写**既不新增欠账、也不新起一层** ✓
+    #:     （★ 本批已在这条上撞过两次：★ 一次函数内裸写、★ 一次在 `try:` 与导入行之间插注释 ✗）
+    try:
+        from .sw_feature_readback import feature_names
+    except ImportError:
+        from sw_feature_readback import feature_names
+
+    #: ★★★ 回读 `ActiveSketch` —— ★★ **要记**前后**，★ 而判据是**变化**** ✗
+    #:   ★ 本函数第一版只记了「现在有没有」（`active_sketch_present`）✗，
+    #:   ★★ 而**真机对照原探针**才发现：★ 原探针的判据是 **`active_sketch_before=False →
+    #:     active_sketch_after=True`**（★ 那才对应官方 Returns 里的 **inserted** ✓）——
+    #:   ★★★ **只看"现在有"分辨不了"插入"与"本来就开着"** ✗（★ 与 SpeedPak 那项同一个坑 ✓）
+    active_before = None
+    try:
+        active_before = get_com_member(sm, "ActiveSketch")
+    except Exception:                                                   # noqa: BLE001
+        active_before = None
+    before = feature_names(doc)
+    ret = None
+    exc = None
+    try:
+        #: ★★ **零参** ✓
+        ret = get_com_member(sm, "InsertExplodeLineSketch")
+    except Exception as e:                                              # noqa: BLE001
+        exc = e
+    after = feature_names(doc)
+    added = [n for n in after if n not in before]
+
+    active_after = None
+    try:
+        active_after = get_com_member(sm, "ActiveSketch")
+    except Exception:                                                   # noqa: BLE001
+        active_after = None
+
+    #: ★★ 判据①：**侧变化**（★ 与原探针一致 ✓）—— ★ 只看"现在有"是不够的 ✗
+    side_changed = (bool(active_before is None) != bool(active_after is None))
+    out.update({"returned": str(ret), "added": added,
+                "active_sketch_before": active_before is not None,
+                "active_sketch_after": active_after is not None,
+                "active_sketch_present": active_after is not None,
+                "active_sketch_side_changed": side_changed,
+                "call_exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:140])})
+    #: ★★ 判据：★ **回读**（★ 不是那个 bool ✓）—— ★ 两条腿：特征树增量 **或** 草图侧变化 ✓
+    out["ok"] = bool(added) or side_changed
+    if out["ok"]:
+        out["verdict"] = ("★★★★★ **建成** —— ★ 特征树新增 %r · ★★ **`ActiveSketch` 侧变化 %r → %r**"
+                          "（★ 回读、★ 不是信那个 bool ✓；★ 判据是**变化**、★ 不是「现在有」 ✓）"
+                          % (added, out["active_sketch_before"], out["active_sketch_after"]))
+    else:
+        out["error"] = ("★ 回读判据未过：特征树无增量、★ 且草图侧**没变化**（%r → %r）⇒ "
+                        "★ 先复核**前置②**（★ 爆炸视图数 = %r；★ 官方要求装配处于爆炸状态 ✓）—— "
+                        "★ 「读到静默」≠「判定试死」（定则 ✓）"
+                        % (out.get("active_sketch_before"), out.get("active_sketch_after"),
+                           out.get("explode_view_count")))
+    return out
+
+
+#: ── SpeedPak（★ 规格 213 · B2：★ 从探针 `tools/probe_spec211_speedpak.py`
+#:    **已证实**的调用序缝合进模块 ✓ —— ★ 铁律 1：只缝合、不发明 ✓）──────────────────
+# ★★ 官方依据（`swapi` 逐字）：
+#   · `C:\swapi\types\IAssemblyDoc\CreateSpeedPak.md` ⇒
+#     `System.bool CreateSpeedPak( System.int SpeedPakType )` ⇒ ★ 参数式 **1 参** ✓
+#     ★ `## Parameters` 逐字：**1 = Mated** · **2 = Graphics** ✓
+#   · ★★ **回读成员**：★ **`IComponent2::IsSpeedPak`** ✓（★ 也有 `IConfiguration::IsSpeedPak` ✓）
+#   · ★★★ **判据只能落在回读上**：★ 顶层**特征树看不见 SpeedPak** ✗ ⇒
+#     ★ 本函数**必须**回读 `IsSpeedPak` 才算数 ✓
+#   ★★ 前置：★ **选中的子装配** —— ★ 用官方示例的调用序
+#     `SelectByID2(<组件名>, "COMPONENT", 0,0,0, append, mark, callout, 0)` ✓
+def create_speedpak_report(doc, *, speedpak_type: int = 1, component_name: str | None = None,
+                           component_index: int = 0):
+    """创建 SpeedPak（官方 `IAssemblyDoc.CreateSpeedPak(int)`）—— ★ 判据用 `IsSpeedPak` 回读。
+
+    参数:
+        doc: `IAssemblyDoc`（★ 顶层装配 ✓）
+        speedpak_type: **1 = Mated** · **2 = Graphics**（★ 官方 `## Parameters` 逐字 ✓）
+        component_name: 要选中的子装配名（★ 缺省时按 `component_index` 取并**自行解析名字** ✓）
+        component_index: 取第几个组件（★ 仅在没给 `component_name` 时用 ✓）
+
+    返回:
+        dict —— ★★ 判据是 **`IComponent2::IsSpeedPak` 的前后对比**（★ 顶层特征树看不见它 ✗）
+    """
+    out: dict = {
+        "official": "IAssemblyDoc.CreateSpeedPak",
+        "arity": 1,
+        "speedpak_type": int(speedpak_type),
+        "speedpak_type_enum": {"1": "Mated", "2": "Graphics"},
+        "note": ("★★ **判据只能落在回读上**：★ 顶层**特征树看不见 SpeedPak** ✗ ⇒ "
+                 "★ 必须回读 `IComponent2::IsSpeedPak` 才算数 ✓"),
+    }
+    #: ★ 前置①：★ 取组件列表（★ 官方示例要按**组件名**选 ✓）
+    comps = []
+    try:
+        #: ★ 官方示例的调用序是 `IComponent2.Select4` 按**对象**选；
+        #:   ★ 这里先用 `GetComponents` 取列表以**解析名字** ✓
+        comps = list(get_com_member(doc, "GetComponents", False) or [])
+    except Exception as e:                                              # noqa: BLE001
+        out["ok"] = False
+        out["error"] = "★ 前置①失败：`GetComponents` 抛 %s: %s" % (type(e).__name__, str(e)[:120])
+        return out
+    out["component_count"] = len(comps)
+    if not comps:
+        out["ok"] = False
+        out["error"] = "★ 前置①失败：装配里**没有组件** ⇒ ★ 无对象可做 SpeedPak（★ 与「建不出来」两件事 ✓）"
+        return out
+    target = comps[min(int(component_index), len(comps) - 1)]
+
+    #: ★ 前置②：★ **回读初始状态**（★ 「本来就开着」与「这次建成了」要分开 ✓）
+    is_sp_before = None
+    try:
+        is_sp_before = bool(get_com_member(target, "IsSpeedPak"))
+    except Exception:                                                   # noqa: BLE001
+        is_sp_before = None
+    out["is_speedpak_before"] = is_sp_before
+
+    #: ★ 前置③：★ 解析组件名（★ 官方示例要按名字选 ✓；★ 多个访问器逐个试）
+    name = component_name
+    if not name:
+        for _acc in ("Name2", "GetName2", "Name"):
+            try:
+                name = get_com_member(target, _acc)
+                if name:
+                    out["component_name_accessor"] = _acc
+                    break
+            except Exception:                                           # noqa: BLE001
+                name = None
+    out["component_name"] = str(name) if name else None
+    if not name:
+        out["ok"] = False
+        out["error"] = "★ 前置③失败：解析不出组件名（★ `Name2`/`GetName2`/`Name` 三个都取不到 ✓）"
+        return out
+
+    #: ★ 前置④：★ 按官方示例的调用序选中（★ `SelectByID2(<名>, "COMPONENT", …)` ✓）
+    sel_ok = False
+    try:
+        ext = get_com_member(doc, "Extension")
+        get_com_member(ext, "SelectByID2", str(name), "COMPONENT", 0.0, 0.0, 0.0,
+                       False, 0, create_empty_dispatch_variant(), 0)
+        #: ★★ 回读（★ 不信返回值 —— 事实 8 ✓）
+        sel_ok = bool(get_com_member(get_com_member(doc, "SelectionManager"),
+                                     "GetSelectedObjectCount2", -1))
+    except Exception as e:                                              # noqa: BLE001
+        out["select_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
+    out["selected"] = sel_ok
+    if not sel_ok:
+        out["ok"] = False
+        out["error"] = ("★ 前置④失败：`SelectByID2(%r, \"COMPONENT\", …)` 没选中 ⇒ "
+                        "★ 那与「建不出来」是两件事（★ 官方前置 = **选中的子装配** ✓）" % name)
+        return out
+
+    #: ★ 调（★ **1 参** ✓）
+    ret = None
+    exc = None
+    try:
+        ret = call_assembly_doc(doc, "CreateSpeedPak", int(speedpak_type))
+    except Exception as e:                                              # noqa: BLE001
+        exc = e
+    out["returned"] = str(ret)
+    out["call_exception"] = None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:140])
+
+    #: ★★ 判据：★ **回读 `IsSpeedPak`**（★ 不看返回值 —— 事实 8 ✓）
+    is_sp_after = None
+    try:
+        is_sp_after = bool(get_com_member(target, "IsSpeedPak"))
+    except Exception:                                                   # noqa: BLE001
+        is_sp_after = None
+    out["is_speedpak_after"] = is_sp_after
+    out["ok"] = bool(is_sp_after is True and is_sp_before is not True)
+    if out["ok"]:
+        out["verdict"] = ("★★★★★ **建成** —— ★ `IsSpeedPak` **%r → %r**（★ 回读、★ 不是信返回值 ✓）"
+                          % (is_sp_before, is_sp_after))
+    elif is_sp_after is True and is_sp_before is True:
+        out["error"] = ("★ 回读判据未过：**本来就开着**（%r → %r）⇒ ★ 「这次建成了」与"
+                        "「它一直是开的」要分开记 ✗" % (is_sp_before, is_sp_after))
+    else:
+        out["error"] = ("★ 回读判据未过：`IsSpeedPak` 仍 %r（★ 回 %r）⇒ ★ **还不算试死** —— "
+                        "★ 前置复核：★ 组件 %r · ★ 选中=%r · ★ 初始=%r（定则：「读到静默」≠「判定试死」✓）"
+                        % (is_sp_after, out["returned"], out["component_name"], sel_ok, is_sp_before))
+    return out

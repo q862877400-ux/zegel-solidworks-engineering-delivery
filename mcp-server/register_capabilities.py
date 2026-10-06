@@ -1051,6 +1051,13 @@ BATCH_MODULES = (
     #:       ★ 没选时回 `None`、★ **与「建不出来」长得一样** ✓
     #:   ★ 计数：454 → **456**
     "tool_specs_batch101",
+    #: ★★ 规格 213 · B3（后半）—— B 类余下三项 ✓
+    #:   · `explode_line_sketch`（★ 真机建成 ⇒ `verified` ✓）
+    #:   · `speedpak`（★ 真机建成 ⇒ `verified` ✓）
+    #:   · ★★ `curve_driven_pattern`（★ **官方页第一行就是 `Obsolete`** ✗ 且真机两档有效读数皆不建
+    #:     ⇒ ★ **只到 `stitched`** ✓ —— ★ A7：★ 不许把 `stitched` 写成 `verified` ✓）
+    #:   ★ 计数：456 → **459**
+    "tool_specs_batch102",
 )
 
 def all_specs() -> list:

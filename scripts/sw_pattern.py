@@ -426,3 +426,138 @@ def collect_pattern_evidence(data) -> dict[str, Any]:
         "pattern_feature_count": int(_checked(data, "GetPatternFeatureCount") or 0),
         "skipped_item_count": int(_checked(data, "GetSkippedItemCount") or 0),
     }
+
+
+#: ── 曲线驱动阵列（**参数式**那条）（★ 规格 213 · B2：★ 从探针
+#:    `tools/probe_spec211_curvedriven.py` **已证实**的调用序缝合进模块 ✓ —— 铁律 1 ✓）──────
+# ★★ **本模块里已有一条同名的路** —— :func:`configure_curve_driven_pattern`（★ **属性式** ✗）：
+#   ★ 它走 `edit_selection(..., "ICurveDrivenPatternFeatureData")` ⇒ ★ **那条 Data 带
+#     `AccessSelections`** ✗ ⇒ ★ **事实 47 一挡就到不了建成** ✓
+#   ★★★ **而本函数是**另一条**：参数式、★ 不需要 ACL** ✓ —— ★★ 两者**不是同一件事**，
+#     所以**分开两个函数**、★ 名字里带 `local` 以区别 ✓
+# ★★ 官方依据（`C:\swapi\types\IFeatureManager\FeatureLocalCurveDrivenPattern.md` 逐字）：
+#   · 签名 **13 参**：`FlipDir1, Num1, EqualSpacing1, Spacing1, ReferencePoint, CurveMethod,
+#     AlignMethod, Direction2, FlipDir2, Num2, EqualSpacing2, Spacing2, PatternSeedOnly` ✓
+#   · `## Returns` = Local curve pattern feature ✓
+#   · `## Remarks` 的 mark 表逐字：★ **1 = Components to pattern** ·
+#     ★ **2 = Curve, edge, sketch, or sketch entity for Direction 1** ✓
+#   ★★★ **而它的第一行就是**`Obsolete`**** ✗ —— 逐字：
+#     「Obsolete. See `IFeatureManager::CreateFeature` and the Remarks in
+#       `ILocalCurvePatternFeatureData`.」⇒ ★★ **官方自己指向属性式那条** ✓
+#   ⇒ ★★★★ **所以本能力的登记等级是 `stitched`、★ 不是 `verified`** ✓ ——
+#     ★ 参数式在这台机器上**存在且可调**，★ 而**真机两档有效读数皆不建** ✗
+#     （★ 第 0 / 1 档：`mark1=True · mark2=True · 选区=2` 而新增 `[]`）✓
+def insert_local_curve_driven_pattern_report(
+    model,
+    *,
+    flip_dir1: bool = False,
+    num1: int = 3,
+    equal_spacing1: bool = False,
+    spacing1_mm: float = 30.0,
+    reference_point: int = 0,
+    curve_method: int = 0,
+    align_method: int = 0,
+    direction2: bool = False,
+    flip_dir2: bool = False,
+    num2: int = 1,
+    equal_spacing2: bool = False,
+    spacing2_mm: float = 0.0,
+    pattern_seed_only: bool = False,
+    seed_feature: str | None = None,
+    curve_sketch: str | None = None,
+) -> dict[str, Any]:
+    """曲线驱动阵列的**参数式**入口（官方 `IFeatureManager.FeatureLocalCurveDrivenPattern`）。
+
+    ⚠ ★★ **官方页第一行就写 `Obsolete`** ✗ —— 并逐字指向 `CreateFeature` +
+      `ILocalCurvePatternFeatureData`（★ **属性式**、★ 而那条 Data **带 `AccessSelections`** ✗）✓
+    ★★ **所以本函数的登记等级是 `stitched`** ✓：★ 入口存在、★ 真机可调、
+      ★ 而**两档有效读数皆不建** ✗（★ 不写成 `verified` —— 铁律 5 与 A7 ✓）
+
+    参数:
+        model: `IModelDoc2`（★ 零件 ✓）
+        spacing1_mm / spacing2_mm: 两个方向的**间距（毫米）** —— ★ 官方 `## Parameters` 说
+            「Distance between pattern instances」⇒ ★ **是长度** ⇒ ★ 按规则 2 带 `_mm` ✓
+        reference_point: `swLocalCurvePatternReferencePoint_e`（★ 枚举 ⇒ 无量纲 ✓）
+        curve_method: `swLocalCurvePatternCurveMethod_e`
+        align_method: `swLocalCurvePatternAlignment_e`
+        seed_feature: 要阵列的**体/特征名**（★ **mark 1** —— 官方 mark 表逐字 ✓）
+        curve_sketch: 方向 1 的**曲线草图名**（★ **mark 2** —— 官方 mark 表逐字 ✓）
+
+    返回:
+        dict —— ★★ 判据是**回读**：★ 特征树增量（★ 不看返回值 —— 事实 8 ✓）
+    """
+    try:
+        from .sw_part import _select_by_id
+    except ImportError:
+        from sw_part import _select_by_id
+
+    out: dict[str, Any] = {
+        "official": "IFeatureManager.FeatureLocalCurveDrivenPattern",
+        "arity": 13,
+        "official_marks": {"1": "Components to pattern",
+                           "2": "Curve, edge, sketch, or sketch entity for Direction 1"},
+        "obsolete_warning": ("★★★ 官方页第一行逐字 **`Obsolete`** ✗，并指向 `CreateFeature` + "
+                             "`ILocalCurvePatternFeatureData`（**属性式**、★ 那条带 `AccessSelections` ✗）"
+                             "⇒ ★★ 本项只到 `stitched` ✓"),
+        "note": ("★★ 本函数是**参数式**那条；★ 本模块里的 `configure_curve_driven_pattern` 是"
+                 "**属性式**那条（走 `AccessSelections` ✗）—— ★ **两者不是同一件事** ✓"),
+    }
+    #: ★ 前置①：★ mark 1 = 要阵列的体/特征（★ 官方 mark 表逐字 ✓）
+    if not seed_feature:
+        out["ok"] = False
+        out["error"] = "★ 前置①缺参：`seed_feature`（★ 官方 mark **1** = Components to pattern ✓）"
+        return out
+    #: ★ 前置②：★ mark 2 = 方向 1 的曲线（★ 官方 mark 表逐字 ✓）
+    if not curve_sketch:
+        out["ok"] = False
+        out["error"] = "★ 前置②缺参：`curve_sketch`（★ 官方 mark **2** = Curve/edge/sketch for Direction 1 ✓）"
+        return out
+    try:
+        ext = get_com_member(model, "Extension")
+        ok1 = bool(_select_by_id(ext, str(seed_feature), "BODYFEATURE", append=False, mark=1))
+        ok2 = bool(_select_by_id(ext, str(curve_sketch), "SKETCH", append=True, mark=2))
+    except Exception as e:                                              # noqa: BLE001
+        out["ok"] = False
+        out["error"] = "★ 前置选择抛：%s: %s" % (type(e).__name__, str(e)[:130])
+        return out
+    out["mark1_selected"] = ok1
+    out["mark2_selected"] = ok2
+
+    #: ★ 取特征树（★ 用仓里既有的读回入口 —— ★ 缝合、不发明 ✓）
+    try:
+        from .sw_feature_readback import feature_names
+    except ImportError:
+        from sw_feature_readback import feature_names
+
+    before = feature_names(model)
+    feat = None
+    exc = None
+    try:
+        #: ★ 13 参逐位（★ 官方签名顺序 ✓）；★ 长度按 `mm()` 在**边界换算一次** ✓
+        try:
+            from .sw_connect import mm
+        except ImportError:
+            from sw_connect import mm
+        fm = get_com_member(model, "FeatureManager")
+        feat = get_com_member(
+            fm, "FeatureLocalCurveDrivenPattern",
+            bool(flip_dir1), int(num1), bool(equal_spacing1), float(mm(spacing1_mm)),
+            int(reference_point), int(curve_method), int(align_method),
+            bool(direction2), bool(flip_dir2), int(num2), bool(equal_spacing2),
+            float(mm(spacing2_mm)), bool(pattern_seed_only))
+    except Exception as e:                                              # noqa: BLE001
+        exc = e
+    after = feature_names(model)
+    added = [n for n in after if n not in before]
+    out.update({"returned_is_none": feat is None, "added": added,
+                "call_exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:150])})
+    out["ok"] = bool(added)
+    if out["ok"]:
+        out["feature"] = str(added[0])
+        out["verdict"] = "★★★★ **建成** —— ★ 特征树新增 %r（★ 回读 ✓）" % added
+    else:
+        out["error"] = ("★ 回读判据未过：特征树没有增量（★ mark1=%r · mark2=%r）⇒ "
+                        "★ **还不算试死** —— ★ 但要先复核**那两处前置**（定则：「读到静默」≠「判定试死」✓）；"
+                        "★★ 本项按官方 `Obsolete` 与真机读数，★ 如实登记为 `stitched` ✓"
+                        % (ok1, ok2))
+    return out
