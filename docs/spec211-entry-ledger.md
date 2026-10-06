@@ -8,7 +8,7 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项（★ **人工终判**）：★ **可做 12** · **不做 7** · **已覆盖 1** · **待实测 1**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 11** · **不做 7** · **已覆盖 1** · **待实测 1**
 
 ## 特征 · 边界凸台 ⇒ **不做**
 
@@ -105,9 +105,9 @@
   · `[swapi] IDrawingDoc::CreateUnfoldedViewAt2` `System.bool CreateUnfoldedViewAt2( System.double X, System.double Y, System.double Z, System.bool NotAligned  
   · …（共 10 个候选）
 
-## 钣金 · 平板型式/导出 DXF ⇒ **可做**
+## 钣金 · 平板型式/导出 DXF ⇒ **待评估**
 
-· 初判：★★ **人工终判**：★ `GetFlatPatternCount` / `GetFlatPatterns` / `CreateFlatPatternViewFromModelView3`（**无 ACL**）· ★ 与本仓既有 DXF 导出路径合流　（★ 自动台账原判：待核实）
+· 初判：★★ **人工终判**：★★★ **实现早就有，★ 而工具面**已回退注册**** ✗ —— ★ `scripts/sw_export.py` 的 `export_flat_pattern_dxf`/`export_flat_pattern_dxf_report`（★ 走 `ExportToDWG2` ✓）✓；★★ 而覆盖表备注逐字「★ **本仓库的展开 DXF 已回退注册**」✗、★ 且 `capabilities.yaml` **无对应条目** ✗ ⇒ ★★★ **「为什么回退」我没查到** ⇒ ★ **不编理由**（铁律 5）✓ ★ 下一步：★ **先查回退的那次提交**（★ `git log -S` 那条实现 ✓），★ 再有据地决定「重做」还是「确认为不做」 ✓　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IAnnotationView::FlatPatternView` `System.bool FlatPatternView {get;}` 
   · `[swapi] IDrawingDoc::ChangeRefConfigurationOfFlatPatternView` `System.bool ChangeRefConfigurationOfFlatPatternView( System.string ModelName, System.string ConfigName )` 

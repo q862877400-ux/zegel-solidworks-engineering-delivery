@@ -78,8 +78,25 @@ VERDICTS = {
     "成形工具": ("钣金", "可做", "★ `CreateFormTool2` / `InsertFormToolFeature` / `CreateFormTool`（**参数式、无 ACL**）"),
     "展开/折叠": ("钣金", "已覆盖", "★★ **由 `specs/209` 收口**：B2-1 `create_unfold` 与 B4-4 `create_fold` "
                                 "**都已 `verified`**（真机建出 `展开1`/`折叠1`）⇒ ★ **核销，不重复建设** ✓"),
-    "平板型式/导出 DXF": ("钣金", "可做", "★ `GetFlatPatternCount` / `GetFlatPatterns` / "
-                                  "`CreateFlatPatternViewFromModelView3`（**无 ACL**）· ★ 与本仓既有 DXF 导出路径合流"),
+    #: ★★★★★ 2026-10-07（B8 **实测纠正**）：★ 这条**原判「可做」不准确** ✗ ——
+    #:   ★★ **实现其实早就有**：`scripts/sw_export.py` 的 `export_flat_pattern_dxf` /
+    #:     `export_flat_pattern_dxf_report`（★ 走 `IModelDoc2.ExportToDWG2(..., swExportToDWG_e)` ✓）✓
+    #:   ★★★ 而**覆盖表**那一行的备注**逐字写着**：
+    #:     「★ **本仓库的展开 DXF 已回退注册**」✗✓
+    #:   ★★ 且 `capabilities.yaml` 里**没有任何 `flat_pattern` / `flat` 相关的条目** ✗ ——
+    #:     ⇒ ★★★ **"回退"退得很彻底**（★ 连能力条目都没有 ✓）
+    #:   ★★★ **而"为什么回退"我没查到** ✗ —— ★ 按**铁律 5**：★ **没查到就说没查到、不编理由** ✓
+    #:   ⇒ ★★★ 故本项的终判是 **「待重新评估」**（★ 不是"可做"、★ 也不是"不做"）✓ ——
+    #:     ★★ 依据：★ **实现有** ✓ · ★ **能力未登记** ✗ · ★ **工具面未注册** ✗ · ★ **回退理由未查到** ✗
+    #:     ★ 这与"剪裁曲面"（实现有、真机不成）**不同** —— ★ 那一项**有实测证据**、★ 本项**只有一句"已回退"** ✗
+    "平板型式/导出 DXF": ("钣金", "待评估", "★★★ **实现早就有，★ 而工具面**已回退注册**** ✗ —— ★ "
+                                    "`scripts/sw_export.py` 的 `export_flat_pattern_dxf`/"
+                                    "`export_flat_pattern_dxf_report`（★ 走 `ExportToDWG2` ✓）✓；"
+                                    "★★ 而覆盖表备注逐字「★ **本仓库的展开 DXF 已回退注册**」✗、"
+                                    "★ 且 `capabilities.yaml` **无对应条目** ✗ ⇒ "
+                                    "★★★ **「为什么回退」我没查到** ⇒ ★ **不编理由**（铁律 5）✓ "
+                                    "★ 下一步：★ **先查回退的那次提交**（★ `git log -S` 那条实现 ✓），"
+                                    "★ 再有据地决定「重做」还是「确认为不做」 ✓"),
     "裁剪/延伸焊件": ("焊件", "可做", "★ `InsertWeldmentTrimFeature2`（**参数式、无 ACL**）· 另 `InsertEndCapFeature` ✓"),
     "角撑板（焊件）": ("焊件", "可做", "★ `InsertGussetFeature3`（**参数式、无 ACL**）⇒ ★ **只走参数式**；"
                                 "★ 属性式 `IGussetFeatureData` 有 `AccessSelections` ⇒ **那条不走**（事实 47）"),
