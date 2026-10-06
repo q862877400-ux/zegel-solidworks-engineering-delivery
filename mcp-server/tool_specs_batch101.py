@@ -52,7 +52,8 @@ SPECS_BATCH101 = [
             Param("contour", int, default=0,
                   description="`swWeldContour*` 档位（★ **枚举** ⇒ ★ 无量纲 ✓）。"),
         ],
-        doc="★ **焊接符号**（官方 `IModelDoc2::InsertWeldSymbol3`，★ **零参**）—— "
+        doc=
+            "焊接符号：在零件上按面插入焊接符号并设文字。""★ **焊接符号**（官方 `IModelDoc2::InsertWeldSymbol3`，★ **零参**）—— "
             "★★★ **本能力是「真入口是另一条 API」的实证**："
             "★ 我原先走 `IDrawingDoc::InsertWeldSymbol`（**10 参、静默无效** —— "
             "★ 12 组试完读数全 **0→0**）✗；"
@@ -88,7 +89,8 @@ SPECS_BATCH101 = [
             Param("show_center", bool, default=True, description="`ShowCenter` 档。"),
             Param("link_to_part", bool, default=True, description="`LinkToPart` 档。"),
         ],
-        doc="★ **成形工具**（官方 `IFeatureManager::InsertFormToolFeature`，★ **9 参**）—— "
+        doc=
+            "成形工具：在钣金面上压出成形特征（需先选面）。""★ **成形工具**（官方 `IFeatureManager::InsertFormToolFeature`，★ **9 参**）—— "
             "★★ **会新建特征**（非只读）✓ "
             "★★★ **前置有两处，★ 而它们都会「静默失败」**（★ 本仓栽过的形态）："
             "★ **① 官方 `## Remarks` 逐字要求先选一个面** —— ★ 我第一版没选 ⇒ 回 `None` ✗，"

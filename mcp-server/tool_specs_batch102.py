@@ -35,7 +35,8 @@ SPECS_BATCH102 = [
         module="sw_assembly_doc", function="insert_explode_line_sketch_report",
         inject="model",
         params=[],
-        doc="★ **爆炸直线**（官方 `ISketchManager::InsertExplodeLineSketch`，★ **零参**）—— "
+        doc=
+            "爆炸直线：在当前爆炸视图里插入/关闭爆炸直线草图。""★ **爆炸直线**（官方 `ISketchManager::InsertExplodeLineSketch`，★ **零参**）—— "
             "★★ **会插入或关闭爆炸直线草图**（★ 同一个零参调用是**切换** ✓）"
             "★★★ **入口在 `ISketchManager` 上、★ 不在装配文档上** ✗ —— "
             "★ 本工具内部先取 `SketchManager` 再调 ✓ "
@@ -62,7 +63,8 @@ SPECS_BATCH102 = [
             Param("component_index", int, default=0,
                   description="取第几个组件（★ 仅在没给 `component_name` 时用 ✓）。"),
         ],
-        doc="★ **SpeedPak**（官方 `IAssemblyDoc::CreateSpeedPak`，★ **参数式 1 参**）—— "
+        doc=
+            "SpeedPak：对选中的子装配建立 SpeedPak 简化配置。""★ **SpeedPak**（官方 `IAssemblyDoc::CreateSpeedPak`，★ **参数式 1 参**）—— "
             "★★ **会改装配的组件状态** ✓ "
             "★★★ **判据只能落在回读上**：★ 顶层**特征树看不见 SpeedPak** ✗ ⇒ "
             "★ 本工具回读 **`IComponent2::IsSpeedPak` 的**前后对比**」✓ —— "
@@ -111,7 +113,8 @@ SPECS_BATCH102 = [
                   description="方向 1 的**曲线草图名** —— ★ 官方 mark 表逐字 **2 = Curve, edge, "
                               "sketch, or sketch entity for Direction 1** ✓（★ **前置**）。"),
         ],
-        doc="★★★ **曲线驱动阵列的**参数式**入口**（官方 `IFeatureManager.FeatureLocalCurveDrivenPattern`）"
+        doc=
+            "曲线驱动阵列（参数式入口；官方标记 Obsolete）。""★★★ **曲线驱动阵列的**参数式**入口**（官方 `IFeatureManager.FeatureLocalCurveDrivenPattern`）"
             "—— ★★ **状态：`stitched`** ✗ "
             "★★★★ **为什么只到 `stitched`（★ 两条独立理由、★ 都要说）**："
             "★ **① 官方页第一行就写着 `Obsolete`** ✗ —— 逐字："

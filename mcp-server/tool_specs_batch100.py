@@ -38,7 +38,8 @@ SPECS_BATCH100 = [
         inject="model",
         read_only=True,
         params=[],
-        doc="★ **截面属性**（官方 `IModelDocExtension::GetSectionProperties2`，★ 以**当前选择集**求值）—— "
+        doc=
+            "截面属性：按当前选择集求截面面积/惯性矩等（只读）。""★ **截面属性**（官方 `IModelDocExtension::GetSectionProperties2`，★ 以**当前选择集**求值）—— "
             "★★ **只读** ✓ "
             "★★★ **单位那件事已查实并登记在册**：官方 `## Returns` 说 `square meters`，"
             "★ 而**真机读数相反** —— 20×20×20 正方体端面读 **400**（= 20×20 的 **mm²**）、"
@@ -75,7 +76,8 @@ SPECS_BATCH100 = [
             Param("z_factor", float, default=2.0,
                   description="★ **Z 方向的缩放比例（无量纲）** —— ★ **不是长度** ✗。"),
         ],
-        doc="★ **缩放 / 变形**（官方 `IFeatureManager::InsertScale`，**参数式、无 ACL**）—— "
+        doc=
+            "缩放/变形：按比例缩放实体，新建一个缩放特征。""★ **缩放 / 变形**（官方 `IFeatureManager::InsertScale`，**参数式、无 ACL**）—— "
             "★★ **会新建一个缩放特征**（非只读）✓ "
             "★★★ **判据用体积比、★ 不是查返回值**：★ 因子 3.0 ⇒ 真机回读 **`volume_ratio = 27.0`**、"
             "★ `volume_ok = True` ✓ —— ★★ 比值**无量纲** ⇒ ★ **不受单位影响**，★ 那是设计选择被实证的结果 ✓ "
@@ -101,7 +103,8 @@ SPECS_BATCH100 = [
             Param("trim_opposite_side", bool, default=False,
                   description="是否对另一侧做取消剪裁。"),
         ],
-        doc="★ **取消剪裁**（官方 `IFeatureManager::InsertUntrimSurface`）—— ★★ **会新建特征**（非只读）✓ "
+        doc=
+            "取消剪裁：把被剪裁的曲面还原回原始范围，新建特征。""★ **取消剪裁**（官方 `IFeatureManager::InsertUntrimSurface`）—— ★★ **会新建特征**（非只读）✓ "
             "★★ **它是「剪裁曲面」的另一半**：★ 剪裁曲面判「不做（后端受限，事实 419）」，"
             "★ 而取消剪裁**补了包装**并有真机读数 ⇒ ★ 登记 **`stitched`** ✓ "
             "★ 判据：★ **返回体里带 `unt_type` 两个枚举表 + 特征树增量** ✓ "
@@ -130,7 +133,8 @@ SPECS_BATCH100 = [
                   description="扭转角度（**度**）—— ★ 只在该扭转档位下有意义。"),
             Param("merge_smooth_faces", bool, default=False, description="官方 `BMergeSmoothFaces` 档。"),
         ],
-        doc="★★★ **扫描曲面**（官方 `IFeatureManager::InsertSweepSurface2`，"
+        doc=
+            "扫描曲面：按轮廓 + 路径生成一张曲面（参数式，不需 ACL）。""★★★ **扫描曲面**（官方 `IFeatureManager::InsertSweepSurface2`，"
             "**参数式 11 参、不要求 `AccessSelections`**）—— ★★ **会新建曲面体**（非只读）✓ "
             "★★★★ **本能力是实证「事实 237」的那一条**：★「**不做曲面族**」那条结论**只覆盖半条路** —— "
             "官方有**两条**建曲面的入口，★ 而**第二条从没试过** ✓ ⇒ "
@@ -161,7 +165,8 @@ SPECS_BATCH100 = [
                               "（`## Parameters` 只写 `Length to trim`）⇒ ★ 本工具按**毫米**收、"
                               "★ 并在返回里带 `unit_assumption` ✓"),
         ],
-        doc="★ **裁剪/延伸焊件**（官方 `IFeatureManager::InsertWeldmentTrimFeature2`，**参数式 5 参**）—— "
+        doc=
+            "裁剪/延伸焊件：按 mark 选体与边界，修整焊件体。""★ **裁剪/延伸焊件**（官方 `IFeatureManager::InsertWeldmentTrimFeature2`，**参数式 5 参**）—— "
             "★ **会改/新建焊件体**（非只读）✓ "
             "★★ **前置只有官方 `## Remarks` 说得清**：★ `SelectByID2` 按 mark 选 —— "
             "★ **1 = Body or bodies to trim** · ★ **2 = Trimming boundaries (body **or face**)** ✓ "
@@ -200,7 +205,8 @@ SPECS_BATCH100 = [
                   description="临时另存的落点（★ 默认仓库内 `output\\_temp_save`）—— "
                               "★★ **非仓库内路径一律拒绝**（★ 那是「真机跑不许写到用户目录」那条硬约束的落点 ✓）。"),
         ],
-        doc="★ **钣金展开图导出 DXF**（官方 `IModelDoc2::ExportToDWG2` + `swExportToDWG_SHEET_METAL`）—— "
+        doc=
+            "导出钣金展开图 DXF（可临时另存以补齐官方前置）。""★ **钣金展开图导出 DXF**（官方 `IModelDoc2::ExportToDWG2` + `swExportToDWG_SHEET_METAL`）—— "
             "★★ **会写文件**；★ 在 `allow_temporary_save=True` 且零件未保存时**还会临时另存一个零件** ✓ "
             "★★★ **判据 = 一正两负**（★ 事实 62：★ 门禁只靠负例证明 ✓）："
             "★ **负例①** 默认 ⇒ **抛 `ValueError`**、★ 且**错误里点名那个开关** ✓；"
