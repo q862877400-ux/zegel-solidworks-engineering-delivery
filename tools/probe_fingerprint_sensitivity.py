@@ -53,10 +53,14 @@ KNOWN_WRITERS = {
 WRITER_PARAMS = {
     "solidworks_clear_selection": {},
     "solidworks_sketch_start": {},
-    #: ★ 真机实测：★ `sketch_name`/`depth_mm` 的 `default` 是 `Ellipsis`（= 必填）
-    #:   ⇒ ★ 必须**主动给值**，否则底层报「缺 2 个位置实参」✗
+    #: ★★ 真机实测出的一处**声明与实现不一致**：★ 声明写 `depth_mm`，
+    #:   而底层函数签名是 `(model, sketch_name, depth, ...)` ⇒ ★ **名字对不上** ✗
+    #:   ⇒ ★ 查明：**不是声明的错** —— ★ `param_alias` 把 `depth_mm` 标成 `None`（解析器消费），
+    #:     而真正的 `depth` 由 **`derived_args`** 派生 ⇒ ★ 是**我的调用器缺了那两层映射** ✗
+    #:   ⇒ ★ 调用器已补上；★ 探针按**对外声明名**传即可 ✓
     "solidworks_extrude_boss": {"sketch_name": "Sketch1", "depth_mm": 10.0},
-    "solidworks_config_create": {"name": "标定用配置"},
+    #: ★ 真机实测：★ 声明里的形参是 `configuration_name`（`Ellipsis` = 必填）
+    "solidworks_config_create": {"configuration_name": "标定用配置"},
     "solidworks_session_rebuild": {},
 }
 
@@ -162,8 +166,12 @@ def main() -> int:
         print("   %-10s ⇒ %-12s （写操作 %s）" % (cls, verdict, "成功" if ok else "★ 失败"))
 
     if args.json_out:
+        #: ★★ 必须带 `default=str` —— ★ 真机踩过：★ 指纹里某些读数是 **COM 对象**
+        #:   ⇒ 裸 `json.dumps` 抛 `TypeError: not JSON serializable` ⇒
+        #:   ★★ **报告根本没落盘**，★ 而 stdout 只说了"三档统计" ⇒ 看不出丢了东西 ✗
         Path(args.json_out).write_text(
-            json.dumps(report, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+            json.dumps(report, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8")
         print("★ 报告：%s" % args.json_out)
     counts = {}
     for v in report["classes"].values():

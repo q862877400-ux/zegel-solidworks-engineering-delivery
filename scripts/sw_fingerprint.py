@@ -51,6 +51,24 @@ FEATURE_CAP = 5000
 SW_ALL_BODIES = -1
 
 
+def jsonable(value):
+    """★ 把读数**归一成 JSON 安全标量**（`None` / `bool` / `int` / `float` / `str`）✓
+
+    ★★★ 2026-10-06 真机踩过（★ 它让第 0 格**虚警**了一整轮）：
+      ★ 指纹里某些读数是 **COM 对象** ⇒ ★ `dict.__eq__` 对它们的比较**不成立** ⇒
+      ★★ 于是"两次读数相等"被判成**不相等** ⇒ ★ 我一度以为**读数有副作用** ✗
+      ★ 而逐字段 `%r` 打印**看起来一模一样** ⇒ ★ 靠肉眼看是发现不了的 ✓
+    ⇒ ★ 所以**在 read() 里就归一**：★ COM 对象 ⇒ `str()`；★ 其余标量原样 ✓
+      ★★ 好处：★ 第 0 格与 B3 的差分都建立在**可比、可序列化**的值上 ✓
+    """
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    try:
+        return str(value)
+    except Exception:                                                   # noqa: BLE001
+        return "<unprintable>"
+
+
 def _read(member, obj, *args, default=None):
     """★ 读一个成员并**吞掉异常** ⇒ 回 `(值, 错误说明)` —— ★ 拿不到**不等于**没变 ✓
 
@@ -94,6 +112,8 @@ def read(model, sw=None) -> dict:
     readings, missing = {}, {}
 
     def put(cls, value, why=""):
+        #: ★★ **在出口归一**（★ 见 `jsonable` 的说明：COM 对象会让比较虚警）✓
+        value = jsonable(value)
         readings[cls] = value
         if value is None:
             missing[cls] = why or "★ 读不到（值就是 None）"
@@ -211,7 +231,8 @@ def compare_detailed(before, after) -> dict:
     changed, unknown, same = [], [], []
     rb, ra = (before or {}).get("readings", {}), (after or {}).get("readings", {})
     for cls in STATE_CLASSES:
-        b, a = rb.get(cls), ra.get(cls)
+        #: ★ 双保险：★ 即便上游没归一，这里也按归一后的值比 ✓
+        b, a = jsonable(rb.get(cls)), jsonable(ra.get(cls))
         if b is None or a is None:
             unknown.append({"class": cls, "before": b, "after": a})
         elif b != a:

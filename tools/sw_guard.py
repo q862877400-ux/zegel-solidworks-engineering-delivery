@@ -1088,11 +1088,14 @@ def main() -> int:
             if not args.skip_doc_cleanup:
                 try:
                     import close_our_docs as _cd
-                    r = _cd.close_our_documents()
-                    if r["closed"]:
-                        print("── 收尾：关掉我方文档 %s ──" % "、".join(r["closed"]))
-                    if r["refused"]:
-                        print("── 收尾：**没动任何文档**（%s）──" % r["why"])
+                    #: ★★ 变量名**不能叫 `r`** —— ★ 真机踩过：★ 上面 `r` 是**探针结果**，
+                    #:   ★ 我复用它 ⇒ **覆盖掉探针结果** ⇒ 结尾 `r["ok"]` 抛 `KeyError` ✗
+                    #:   （★ 这类遮蔽 bug 只在真机跑到结尾时才炸 ⇒ ★ 单测走不到那条路径）✓
+                    _cl = _cd.close_our_documents()
+                    if _cl["closed"]:
+                        print("── 收尾：关掉我方文档 %s ──" % "、".join(_cl["closed"]))
+                    if _cl["refused"]:
+                        print("── 收尾：**没动任何文档**（%s）──" % _cl["why"])
                 except Exception as exc:                                # noqa: BLE001
                     print("── 收尾关文档失败（★ 不影响结论）：%s ──" % type(exc).__name__)
         return 0 if r["ok"] else 1
