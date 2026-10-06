@@ -978,6 +978,15 @@ BATCH_MODULES = (
     #:     —— ★ 官方示例里**只有肉眼**；★ 本批把那个**回读入口**定出来（裁决书点名的真风险）✓
     #:   ★ 计数：442 → **443**
     "tool_specs_batch94",
+    #: ★★★ 2026-10-06：**规格 209 的批 95 —— 相交特征**（1 个）：★ 来源 idx **181 `intersect`**。
+    #:   ★ 官方**两步**：`IFeatureManager::PreIntersect2` → `PostIntersect`（★ 不是一步）✓
+    #:   ★★ 裁决书点名「**唯一要实测的只有 `System.object` 布尔 SafeArray 的包装**」——
+    #:     ★ **已验**：包 `VARIANT(VT_ARRAY | VT_BOOL)`，★ 真机**双向成立**
+    #:     （不排除 ⇒ 建出 `相交1`；**排除唯一的体** ⇒ `PostIntersect` 回 `None`、
+    #:      特征没建出来 ⇒ ★★ 说明那个 `True` **真被 SW 读走了**）✓
+    #:   ★ 落点 `scripts/sw_boolean_ops.py`（**新建** —— 本仓既有零件特征模块里没有多体/布尔这一族）
+    #:   ★ 计数：443 → **444**
+    "tool_specs_batch95",
 )
 
 def all_specs() -> list:

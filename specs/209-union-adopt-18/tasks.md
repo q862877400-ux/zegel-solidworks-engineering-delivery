@@ -109,8 +109,18 @@
       `strip_comments_and_strings` 把"引用"与"断言"分开））
       ★★ **真机结论：建不出来**（五种形态全部回 `None`）⇒ 能力标 **`stitched`**、
       工具挂出来但 `require_verified` **调用前抛带原因的错误** ⇒ `output/spec209-hem-*.json`
-- [ ] **B4-3** idx 181 `intersect`（两步 `PreIntersect2` → `PostIntersect`）
-      ★ 唯一要实测的只有 `System.object` 布尔 **SafeArray 的包装**
+- [x] **B4-3** idx 181 `intersect` ⇒ `scripts/sw_boolean_ops.py`（**新建** —— 本仓既有零件特征模块里
+      没有多体/布尔这一族，★ 裁决书指定的落点就是它）+ `solidworks_part_intersect`
+      ★ 怎么知道的：真机（`tools/probe_spec209_b4_intersect.py`）**四种组合**都跑了 ——
+      不排除 ⇒ `PreIntersect2` 回 **1 个体** · `PostIntersect` 建出 **`相交1`** ·
+      `GetIntersectionsCount()` 回 **1**（★ 两种 region_type 都成立）；
+      ★★ **排除唯一的体** ⇒ `PostIntersect` 回 `None`、特征**没建出来** ⇒
+      `output/spec209-intersect.json`
+      ★★★ **裁决书点名「唯一要实测」的那件事已验**：`PostIntersect` 第 1 参是 `System.object`
+      布尔 SafeArray ⇒ 包 **`VARIANT(VT_ARRAY | VT_BOOL)`**，★ 而真机是**双向**证实的 ——
+      **排除的那个 `True` 真被 SW 读走了**（不是"参数被忽略却没报错"）✓
+      ★ 另：判据用 **`GetIntersectionsCount()`（零参回 int）**，★ **不用**
+      `GetIntersections(out Excluded)` —— 它有 out 参，而本仓已知 pywin32 下 out 参不保证回写
 - [x] **B4-4** idx 155 `fold` ⇒ `scripts/sw_sheet_metal.py::create_fold` + `solidworks_sheet_metal_create_fold`
       ★ 怎么知道的：真机 `unfold → fold` 一条链 ⇒ **建出 `折叠1`**（树 +1 · `marks=[1, 4]`）
       ⇒ `output/spec209-unfold-fold.json`
