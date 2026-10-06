@@ -198,3 +198,13 @@
 - 文件：`.gitignore LICENSE README.md README.zh.md THIRD-PARTY.md cordis.patch.yml index.mjs package.json`
 - ★ **未做**：`awesome-dsh-plugin` 精选列表的收录 —— 那是**有 data/ + 生成脚本**的项目，
   要按 `contributing.md` 加条目并**给上游提 PR**，属另一件事（等业主点头）
+
+## 十八 · 第 18 轮：★★★ 从 GitHub 安装 —— 沙盒端到端验证通过
+
+- ✅ `dsh plugin --profile webprobe remove '@local/dsh-lean-mode'` 卸掉本地链接版
+- ✅ `dsh plugin --profile webprobe add github:q862877400-ux/dsh-lean-mode`
+  ⇒ `+ @local/dsh-lean-mode github:q862877400-ux/dsh-lean-mode`（pnpm 3.5 s 拉下来）
+- ✅ `--dump-config`：插件行（`presets: [lean]`）与 `preset-lean` 声明**都从 GitHub 那份组合出来**
+- ✅ ★★ **真启动 + 界面选「Lean 模式」**：会话 `6784794d` —— 系统提示词 **10,703**、**目录段 ✓**、**参数信封 ✓（26 行）**
+- ✅ 首页双语都补上了 GitHub 安装命令并推送
+- ✅ 清理：3099 已停、浏览器已收、Hindsight 未拉起、生产零改动
