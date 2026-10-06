@@ -5105,6 +5105,42 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "sweep_surface",
+   "label": "扫描曲面 · 路 B（IFeatureManager::InsertSweepSurface2，参数式 + 官方 mark 表）",
+   "level": "stitched",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IFeatureManager\\InsertSweepSurface2.md：Feature InsertSweepSurface2(bool Propagate, short TwistCtrlOption, bool KeepTangency, bool BAdvancedSmoothing, short StartMatchingType, short EndMatchingType, int PathAlign, bool UseFeatScope, bool UseAutoSelect, double TwistAngle, bool BMergeSmoothFaces)（★ 11 参、★ 纯参数式、★ 不要求 AccessSelections）",
+    "★★ 同页 ## Remarks 给了完整「调用序」：Use IModelDocExtension::SelectByID2 to select the profile and sweep curves. The mark for: 1 = Profile selection · 2 = Guide curve selection, if provided · 4 = Sweep path",
+    "同页 Remarks：PathAlign 只在 TwistCtrlOption = swTwistControlFollowPath 时可用（0=None · 2=Direction vector · 3=All faces）；TwistAngle 只在 swTwistControlConstantTwistAlongPath 时有意义；UseAutoSelect=false 时「the user must select the bodies」"
+   ],
+   "evidence": [
+    "★ 真机（tools/probe_spec211_sweep.py，走 tools/sw_guard.py 护栏）：★ 空零件、★ 无选择（selection_count_before = 0）下直接调 ⇒ returned_is_none = True · ★ 特征树 5→5 · ★ 新增 [] ⇒ ★★ 静默回 None、特征树不变",
+    "★ 证据文件 output/spec211-b2-sweep.json",
+    "★ 契约/负例：python -m pytest tests/test_spec211_sweep.py -q ⇒ 7 passed"
+   ],
+   "limitations": [
+    "★★★ 本条只到「查了行为」这一步，还没到「试死」那一步 —— ★ 这次读数是在「没选轮廓/路径」下取的（selection_count_before = 0）；★ 而官方 ## Remarks 明写必须先按 mark 选（1=Profile · 4=Sweep path）⇒ ★★ 静默回 None 很可能只是因为「前置没上」",
+    "★★★ 必须与事实 392 分开：★ 事实 392 的静默是「前置全对上仍静默」⇒ 那才是试死；★ 而本次是「前置没上」⇒ ★ 按事实 53 的精神，不许推广",
+    "★★ 本能力走的是「路 B」 —— ★ 另有「路 A」（CreateDefinition(swFmSweepSurface) + CreateFeature）已按事实 392 试死（静默回 None）；★ 本包装不走路 A、也不宣称路 A 可行（依据事实 237：「不做曲面族」那条结论只覆盖了半条路 …而第二条从来没试过）",
+    "★★ 下一步（判据已想好）：建「轮廓草图 + 路径草图」并按 mark 选好（1 / 4）再调 ⇒ 若仍静默回 None ⇒ 那才是真正的试死；★ 若建成 ⇒ 大发现",
+    "★ 本包装是薄包装：★ 不替调用方做选择（本文件没有「按选择器 + mark 选草图」的 helper，本批不发明它）⇒ ★ 官方 mark 表放在返回值里",
+    "★ 会新建曲面体（非只读）⇒ 返回值带 side_effects 声明"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "part"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }
