@@ -12,6 +12,7 @@ import importlib
 import json
 import os
 import platform
+import re
 import sys
 import threading
 from contextlib import redirect_stdout
@@ -1033,16 +1034,102 @@ def _jsonable(value: Any) -> Any:
     return "<%s>" % tname
 
 
+#: ★★★ 规格 212 · D-5：**返回出口的单位守卫**（★ 运行期，★ 只报不拦）────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（规格 212 · D 批的 D-5）
+# 定位:   ★★ **本守卫是规格 212 里唯一"每个工具都过"的机械卡口** ——
+#   `_result()` 是**工具结果出 JSON 的唯一出口** ⇒ ★ 加在这里一次即覆盖**全部工具** ✓
+# 判据:   ★★ **确定性**（★ 不猜语义、★ 不靠 LLM）：
+#     ★ **递归扫** payload 里的**所有字典键** ⇒ 凡**键名带单位后缀**的 ⇒
+#     ★★ **后缀必须在 `_KNOWN_UNIT_SUFFIXES` 里** ✓（★ 去掉结尾数字，★ 如 `_mm2` ⇒ `_mm`）
+#   ★★ **为什么必须放在运行期**（★ 静态判据做不到的）：
+#     · 静态 AST 只看得到**字面量**返回字典 ⇒ ★ **动态构造的键、`**kwargs` 合并的键、
+#       ★ 嵌套结构里的键**，它**一律看不到** ✗（★ 这是 D 批实测的覆盖边界）✓
+#   ★★ **只报不拦**：★ 命中只**记 warning + 计数**，★ **绝不抛、绝不改 payload** ✓
+#     ★ 理由：★ 一次硬拦会让很多既有工具直接失效 ✗（★ 那是"半套工具"进不了运行期，
+#       ★ **比不拦更糟**）⇒ ★ 清空清单后才升级成硬拦 ✓
+#   ★ 开关：★ 设 `SW_UNIT_GUARD=off` 可关（★ 与规格 210 的 `SW_PRECHECK=off` 同一模式）✓
+# 官方依据: 无（本仓约定 `docs/union-conventions.md` **规则 2b**）
+# 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
+# ─────────────────────────────────────────────────────────────────────────────
+_KNOWN_UNIT_SUFFIXES = frozenset(
+    ("_mm", "_mm2", "_mm3", "_deg", "_px", "_s", "_kg", "_m2", "_m3", "_m",
+     "_rad", "_pct", "_n", "_hz", "_bar", "_c", "_gb", "_kb", "_mb"))
+
+
+#: ★ 「**像单位**」的后缀词表（★ **宽**：★ 只要像就得报出来让人认领）——
+#:   ⚠ ★ 与「**已知单位**」`_KNOWN_UNIT_SUFFIXES` 是**两件事**：
+#:     · 本表用来**发现**（★ 宽 ✓）· 那张表用来**放行**（★ 窄 ✓）
+#:   ★★ **修过一次**：★ 我第一版让 `_unit_suffix_of` **只认已知后缀** ⇒
+#:     ★★ 于是它**永远报不出"未知的后缀"** ✗（★ 六条判据里挂了三条：`_inch` / `_ft` / `_yd`）
+#:     ⇒ ★ 正解是**先判"像不像"、再判"在不在"** ✓
+_UNITLIKE_RE = re.compile(
+    r"_(mm|cm|dm|km|m|um|nm|inch|in|ft|feet|yd|yard|mil|thou|"
+    r"deg|degree|rad|radian|px|pixel|pt|"
+    r"s|sec|ms|min|hr|hour|"
+    r"kg|g|mg|lb|lbs|oz|n|kn|"
+    r"c|f|k|pct|percent|gb|mb|kb|hz|bar|pa|mpa|psi)$", re.I)
+
+
+def _unit_suffix_of(key: str) -> str | None:
+    """★ 取键名的**单位后缀**（★ 去掉结尾数字）⇒ ★ **不像单位**就回 `None` ✓
+
+    ★ 例：★ `volume_mm3` ⇒ `_mm` · ★ `area_mm2` ⇒ `_mm` · ★ `depth_mm` ⇒ `_mm` ·
+      ★ `padding_m` ⇒ `_m` · ★ `depth_inch` ⇒ ★ **`_inch`**（★ 于是能被"不在已知集合"报出来 ✓）·
+      ★ `stage` ⇒ `None` ✓
+    """
+    k = key.lower().rstrip("0123456789")
+    m = _UNITLIKE_RE.search(k)
+    return m.group(0) if m else None
+
+
+def _scan_unit_keys(node: Any, path: str, out: list) -> None:
+    """★ **递归**收集"带单位后缀的键"（★ 运行期才看得到嵌套与动态键）✓"""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            if isinstance(k, str):
+                suf = _unit_suffix_of(k)
+                if suf is not None and suf not in _KNOWN_UNIT_SUFFIXES:
+                    out.append("%s.%s（后缀 %r 不在已知集合）" % (path, k, suf))
+            _scan_unit_keys(v, "%s.%s" % (path, k), out)
+    elif isinstance(node, (list, tuple)):
+        for i, v in enumerate(node):
+            _scan_unit_keys(v, "%s[%d]" % (path, i), out)
+
+
+def _unit_guard(payload: Any, tool_name: str = "?") -> list:
+    """★ **返回出口的单位守卫**（★ 只报不拦）⇒ 回"发现列表"（★ 空列表 = 干净）✓"""
+    if os.environ.get("SW_UNIT_GUARD", "").lower() in ("off", "0", "false"):
+        return []
+    hits: list = []
+    try:
+        _scan_unit_keys(payload, tool_name, hits)
+    except Exception:                                                     # noqa: BLE001
+        return []                       #: ★ 守卫自己出错**不许影响工具**（★ 与预检同一纪律）✓
+    if hits:
+        _UNIT_GUARD_HITS.extend(hits)
+        print("[单位守卫] 工具 %s：%d 条 —— %s" % (tool_name, len(hits), "; ".join(hits[:3])),
+              file=sys.stderr)
+    return hits
+
+
+#: ★ 本进程累计的发现（★ 供收口时统计；★ 不参与任何判定）✓
+_UNIT_GUARD_HITS: list = []
+
+
 def _result(payload: Any, response_format: ResponseFormat) -> str:
     """Format a tool response as JSON or Markdown.
 
     ★ 2026-10-03：`payload` **不再假定是 dict** —— 见 `_jsonable` 的理由。
+    ★ 2026-10-07（规格 212 · D-5）：★ 出口处跑一次**单位守卫**（★ 只报不拦）✓
     """
     if not isinstance(payload, dict):
         #: ★★ 非 dict ⇒ **裹成 dict**（而不是让 `.get` / `json.dumps` 抛），★ 并**标明**原始类型。
         payload = {"status": "ok", "result": _jsonable(payload),
                    "result_type": type(payload).__name__,
                    "note": "★ 该能力返回的不是 dict ⇒ 已按对象/标量降级包装（事实 508）"}
+    #: ★★ D-5：★ 出口守卫（★ 只报不拦：★ 它绝不改 payload、绝不抛）✓
+    _unit_guard(payload)
     if response_format == ResponseFormat.JSON:
         return json.dumps(payload, ensure_ascii=False, indent=2, default=_jsonable)
     lines = [f"# {payload.get('status', 'result')}"]
