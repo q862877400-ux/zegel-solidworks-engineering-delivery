@@ -11,13 +11,13 @@
 
 ## 四类统计
 
-agree **21**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **24**
+agree **31**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **14**
 
 ★★ **语义说明**（★ 四类不许混）：
 
-· `agree`（21）：★ **一致**（声明「无写」，观察也确实**没变**）
+· `agree`（31）：★ **一致**（声明「无写」，观察也确实**没变**）
 · `missed`（2）：★★★ **漏报**（声明「无写」而观察**变了**）—— ★ **硬红门禁**这一条 ✗
-· `undecided`（24）：★ **未判定**（有一侧读不到）—— ★ **不算通过也不算失败**
+· `undecided`（14）：★ **未判定**（有一侧读不到）—— ★ **不算通过也不算失败**
 
 ## 按 `inject` 组的判定分布
 
@@ -29,12 +29,12 @@ agree **21**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **24**
 · `manager|`：agree **1** · undecided **1**
 · `model|`：agree **13** · undecided **5**
 · `model|assembly`：agree **1**
-· `model|drawing`：undecided **7**
+· `model|drawing`：agree **7**
 · `none|`：undecided **1**
 · `sldworks|`：undecided **1**
 · `study|`：undecided **1**
-· `sw_app|`：undecided **3**
-· `sw|`：undecided **3**
+· `sw_app|`：agree **2** · undecided **1**
+· `sw|`：agree **1** · undecided **2**
 · `view|`：agree **3**
 
 ★★ **两种 `undecided` 性质不同**：★ **调用没调成**（★ 我们没测到）与 ★ **调用成功但读数读不到**（★ 量具的盲区）—— ★ 混在一起就看不见了 ✓
@@ -236,53 +236,53 @@ agree **21**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **24**
 · 观察**未判定**的类：`（无）`
 · 调用返回：`{'ok': True, 'configuration': '默认', 'display_states': ['默认_显示状态-1'], 'count': 1, 'count_reported': 1, 'count_mismatch': `
 
-**`solidworks_drawing_current_sheet_info`** ⇒ `undecided`
+**`solidworks_drawing_current_sheet_info`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'sheet_name': '图纸1', 'paper_size_code': 6, 'paper_size': 'A4', 'width_mm': 297.0, 'height_mm': 210.0, 'scale_num': 1.0,`
 
-**`solidworks_drawing_current_sheet_name`** ⇒ `undecided`
+**`solidworks_drawing_current_sheet_name`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`图纸1`
 
-**`solidworks_drawing_get_current_sheet`** ⇒ `undecided`
+**`solidworks_drawing_get_current_sheet`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'sheet_name': '图纸1', 'paper_size_code': 6, 'paper_size': 'A4', 'width_mm': 297.0, 'height_mm': 210.0, 'scale_num': 1.0,`
 
-**`solidworks_drawing_list_sheets`** ⇒ `undecided`
+**`solidworks_drawing_list_sheets`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'count': 1, 'names': ['图纸1'], 'current': '图纸1'}`
 
-**`solidworks_drawing_sheet_count`** ⇒ `undecided`
+**`solidworks_drawing_sheet_count`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`1`
 
-**`solidworks_drawing_sheet_names`** ⇒ `undecided`
+**`solidworks_drawing_sheet_names`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`['图纸1']`
 
-**`solidworks_drawing_sheets_summary`** ⇒ `undecided`
+**`solidworks_drawing_sheets_summary`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'count': 1, 'names': ['图纸1'], 'current': '图纸1'}`
 
 **`solidworks_sketch_count_segments`** ⇒ `undecided`
@@ -296,7 +296,7 @@ agree **21**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **24**
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 ValueError: invalid literal for int() with base 10: 'MCP_CALIB'`
 
 **`solidworks_topology_list_constraints`** ⇒ `undecided`
@@ -305,46 +305,46 @@ agree **21**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **24**
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 
-**`solidworks_document_dependencies`** ⇒ `undecided`
+**`solidworks_document_dependencies`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'ok': True, 'document': 'MCP_CALIB', 'traverse': True, 'search': False, 'add_read_only_info': False, 'count': 0, 'entri`
 
 **`solidworks_simulation_find_study`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
-· 调用返回：`{'found': False, 'requested_name': 'MCP_CALIB', 'study_name': ''}`
+· 观察**未判定**的类：`（无）`
+· 调用返回：`★ 调用抛 com_error: (-2147417851, '服务器出现意外情况。', None, None)`
 
-**`solidworks_surface_evidence`** ⇒ `undecided`
+**`solidworks_surface_evidence`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'has_modeler': True, 'registered_creation_methods': ['CreateBsplineSurface', 'CreateConicalSurface', 'CreateConicalSurf`
 
 **`solidworks_fastener_table_types`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: IHoleStandardsData.GetFastenerTableTypes('', 0) 返回 False —— 常见原因：`fastener_id` 不在 `list_fastener_typ`
 
 **`solidworks_fastener_types`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: IHoleStandardsData.GetFastenerTypes('') 返回 False —— 常见原因：标准名拼错（用 `list_hole_standards()` 里的 `name`）`
 
-**`solidworks_hole_standards`** ⇒ `undecided`
+**`solidworks_hole_standards`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['config']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`[{'id': 0, 'name': 'ANSI Inch'}, {'id': 1, 'name': 'ANSI Metric'}, {'id': 16, 'name': 'AS'}, {'id': 2, 'name': 'BSI'}, {`
 
 **`solidworks_get_view_model_doc`** ⇒ `agree`

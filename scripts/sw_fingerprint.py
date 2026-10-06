@@ -115,6 +115,26 @@ def _count_features(model):
     return n, ""
 
 
+NOT_APPLICABLE_BY_DOC = {
+    #: ★★★ 2026-10-06 **真机拆出来的"指纹语义缺口"**：★ 七条 `drawing_*` 调用**成功**，
+    #:   而**唯一读不到的格是 `config`** ⇒ ★★ 认识：★ **图纸没有零件那种"配置"** ⇒
+    #:   ★ `config` 在图纸上**本来就不适用**，★ 而当时被记成"**读不到**" ⇒
+    #:   ★★ 于是把七条**本该 `agree`** 的工具压成 `undecided` ✗
+    #:   ★★（★ 与 `display` 的"**后端限定**"同族：★ 两者都是**量具的边界**，★ 都该**单独成桶**）✓
+    "drawing": ("config",),
+}
+
+
+def doc_kind_of(model) -> str:
+    """★ 读**这个文档是什么类型**（★ 取不到 ⇒ `"unknown"` —— ★ 不猜）✓"""
+    try:
+        import sw_connect
+        return {1: "part", 2: "assembly", 3: "drawing"}.get(
+            int(sw_connect.get_com_member(model, "GetType")), "unknown")
+    except Exception:                                                   # noqa: BLE001
+        return "unknown"
+
+
 def read(model, sw=None) -> dict:
     """★★ 抓一次**状态指纹** —— ★ 每个读数都带**官方出处**与**拿不到时的原因** ✓
 
@@ -246,6 +266,8 @@ def read(model, sw=None) -> dict:
     #:     ★ 光靠第 0 格**发现不了**它 ✗（★ 我就是在真机上这么栽的）
     usable = any(v is not None for v in readings.values())
     return {"readings": readings, "missing": missing, "notes": notes,
+            #: ★★ 带上**文档类型** ⇒ `compare_detailed` 才能判"哪些格**不适用**" ✓
+            "doc_kind": doc_kind_of(model),
             "official": dict(OFFICIAL),
             "usable": usable,
             "unusable_why": "" if usable else
@@ -290,7 +312,7 @@ def compare_detailed(before, after) -> dict:
     ★★ 为什么必须分桶：★ 把「读不到」混进 `same` ⇒ ★ **B3 会把盲区报成「声明一致」** ✗
       ★★ 而那正是本规格要防的那类假结论（同族：把「选不上」当成「能力不行」）✓
     """
-    changed, unknown, same, unavailable = [], [], [], []
+    changed, unknown, same, unavailable, not_applicable = [], [], [], [], []
     rb, ra = (before or {}).get("readings", {}), (after or {}).get("readings", {})
     for cls in STATE_CLASSES:
         #: ★★ **先分流"已知不可用"** —— ★ 它**不属于"未知"**（★ 前者是量具的盲区、
@@ -298,6 +320,15 @@ def compare_detailed(before, after) -> dict:
         #:   ★（★ 真机踩过：`display` 一直读不到 ⇒ 整个普查 6/6 全 `undecided` ✓）
         if cls in KNOWN_UNAVAILABLE:
             unavailable.append({"class": cls, "why": KNOWN_UNAVAILABLE[cls]})
+            continue
+        #: ★★ **按文档类型判"不适用"**（★ 真机：图纸上的 `config`）——
+        #:   ★★ 它**既不是"未知"也不是"没变"** ⇒ ★ 单独成桶 ✓
+        #:   ★（★ 与 `KNOWN_UNAVAILABLE` 同族：★ 两者都是**量具的边界**，
+        #:     ★ 前者是**后端**限定、★ 后者是**文档类型**限定）✓
+        _dk = (before or {}).get("doc_kind") or (after or {}).get("doc_kind")
+        if cls in (NOT_APPLICABLE_BY_DOC.get(_dk) or ()):
+            not_applicable.append({"class": cls, "doc_kind": _dk,
+                                   "why": "★ 本文档类型（`%s`）上这一类**不适用**" % _dk})
             continue
         #: ★ 双保险：★ 即便上游没归一，这里也按归一后的值比 ✓
         b, a = jsonable(rb.get(cls)), jsonable(ra.get(cls))
@@ -308,4 +339,4 @@ def compare_detailed(before, after) -> dict:
         else:
             same.append(cls)
     return {"changed": changed, "unknown": unknown, "same": same,
-            "unavailable": unavailable}
+            "unavailable": unavailable, "not_applicable": not_applicable}

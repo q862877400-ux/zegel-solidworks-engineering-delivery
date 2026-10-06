@@ -151,3 +151,36 @@ def test_feature_walk_stops_at_the_cap_instead_of_lying():
     fp = FP.read(m)
     assert fp["readings"]["features"] is None
     assert "上限" in fp["missing"]["features"], fp["missing"]
+
+
+# ── ★★ 按文档类型分「适用格」（★ 真机：图纸上的 config）────────────────
+def test_config_is_not_applicable_on_a_drawing():
+    """★★★ **真机拆出来的「指纹语义缺口」**：★ 七条 `drawing_*` 调用**成功**，
+    ★ 而**唯一读不到的格是 `config`** ⇒ ★★ 图纸**没有零件那种「配置」** ⇒
+    ★ 它**不适用**，★ **不是「读不到」** ✓
+    ★★ 若不这样分，会把**本该 `agree`** 的七条压成 `undecided` ✗（★ 真机实测过）✓
+    """
+    import sw_fingerprint as FP
+    before = {"readings": {"config": None, "dirty": False, "features": 0,
+                           "bodies": 0, "faces": 0, "selection": 0,
+                           "edit_mode": "none", "rebuild": False, "display": "()"},
+              "doc_kind": "drawing", "usable": True}
+    after = dict(before)
+    diff = FP.compare_detailed(before, after)
+    assert [c["class"] for c in diff["not_applicable"]] == ["config"], diff
+    assert diff["unknown"] == [], "★ `config` 不许落进「未知」（★ 那是两件事）"
+
+
+def test_the_same_class_is_still_compared_on_a_part():
+    """★ **负例**：★ 同一个 `config` 在**零件**上**照常比较**（★ 不适用只对图纸）✓"""
+    import sw_fingerprint as FP
+    base = {"readings": {"config": "默认", "dirty": False, "features": 0,
+                         "bodies": 0, "faces": 0, "selection": 0,
+                         "edit_mode": "none", "rebuild": False, "display": "()"},
+            "doc_kind": "part", "usable": True}
+    same = FP.compare_detailed(base, base)
+    assert same["not_applicable"] == [] and "config" in same["same"]
+    changed = dict(base)
+    changed["readings"] = dict(base["readings"], config="新配置")
+    d2 = FP.compare_detailed(base, changed)
+    assert [c["class"] for c in d2["changed"]] == ["config"], d2
