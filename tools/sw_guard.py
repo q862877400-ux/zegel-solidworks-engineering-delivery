@@ -793,8 +793,42 @@ class Sentinel:
             self._th.join(timeout=2.0)
 
 
+def precheck_before_run(allowed_paths=(), *, allow_untitled: bool = False,
+                        timeout_s: int = 25) -> dict:
+    """★★ **跑探针之前先问会话干不干净** —— 规格 210 · B5-2b。
+
+    ★★ 外部评审的设计点原话：「**启动 SolidWorks 之前先问一次、连上之后再问一次**」——
+      ★ 前者区分「**没在运行**」与「**在运行但有空文档**」；★ 这一步不能省 ✓
+    ⇒ ★ 所以这里**点名两次**（两次都记在返回值里，★ 别只留结论）：
+      `roll=1` **启动之前**：走**窗口标题路**（★ **不需要 COM** ⇒ 连没启动也能问）✓
+      `roll=2` **连上之后**：走 **COM 路**（准，读路径与官方未保存标记）✓
+    ★★ 判决方向**一律保守**：★ 有非我方文档 ⇒ **拒绝**；★ 两条路都探不通（进程在、却读不出）⇒ **也拒绝**
+      （★ 那时"读不到"本身就是要停下问人的理由，★ 不许当成"干净"）✓
+      ★ 唯一的放行例外：★ **根本没有 SLDWORKS 进程** ⇒ 会话必然是空的 ⇒ 放行 ✓
+    """
+    import session_verdict as SV                                   # noqa: PLC0415
+    rolls = []
+    for roll, prefer, label in ((1, "title", "启动之前（窗口标题路，不需 COM）"),
+                                (2, "com", "连上之后（COM 路，读实际打开的文档）")):
+        v = SV.session_verdict(allowed_paths=allowed_paths, allow_untitled=allow_untitled,
+                               prefer=prefer, timeout_s=timeout_s)
+        rolls.append({
+            "roll": roll, "label": label, "ok": bool(v.get("ok")),
+            "path_used": v.get("path_used") or "",
+            "why": v.get("why") or "",
+            "foreign": len(v.get("foreign") or []),
+            "unsaved": len(v.get("unsaved") or []),
+            "documents": len(v.get("documents") or []),
+        })
+        if not v.get("ok"):
+            return {"ok": False, "refused": True, "rolls": rolls,
+                    "why": "★ 第 %d 次点名（%s）不放行：%s" % (roll, label, v.get("why") or "")}
+    return {"ok": True, "refused": False, "rolls": rolls, "why": ""}
+
+
 def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = None,
-                auto_dismiss: bool = True) -> dict:
+                auto_dismiss: bool = True, precheck: bool = False,
+                allowed_paths=()) -> dict:
     """★ **在护栏里跑一个子进程命令** ⇒ 回 `{ok, returncode, timed_out, seconds, aborted_for_llm, dialogs}`。
 
     ★★ 四条保证（★ 前三条对"卡住"的三种失败，★ 第四条是 2026-10-02 轮 380 **用户点破**的）：
@@ -813,6 +847,13 @@ def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = No
       ```
     """
     t0 = time.time()
+    #: ★★ **跑之前先问会话干不干净**（★ 默认关，由护栏 CLI 打开 —— ★ 免得拖慢单测）✓
+    if precheck:
+        verdict = precheck_before_run(allowed_paths)
+        if verdict["refused"]:
+            return {"ok": False, "returncode": None, "timed_out": False, "seconds": 0.0,
+                    "aborted_for_llm": False, "dialogs": [], "stdout_tail": "",
+                    "refused_by_precheck": True, "precheck": verdict}
     sentinel = Sentinel(pid if pid is not None else sw_pid(), auto_dismiss=auto_dismiss).start()
     rc: int | None = None
     out = err = ""
@@ -882,6 +923,11 @@ def main() -> int:
     ap.add_argument("--scan", action="store_true", help="只扫一遍（不处置）")
     ap.add_argument("--clear", action="store_true", help="扫一遍并**点掉**所有弹窗")
     ap.add_argument("--report", action="store_true", help="打印已记录的事件")
+    #: ★ B5-2b：默认**开**预检（★ 真机跑的安全前提）；★ 只有确实需要时才 `--skip-precheck` ✓
+    ap.add_argument("--skip-precheck", action="store_true",
+                    help="★ 跳过会话预检（★ 默认是开的 —— 有非我方文档就拒绝开始）")
+    ap.add_argument("--allow-path", action="append", default=[],
+                    help="★ 明确声明「这是我方打开的文档路径」（可重复）")
     ap.add_argument("--timeout", type=float, default=180.0,
                     help="护栏执行命令时的硬超时（秒）——★ 保证不会「等到天荒地老」")
     ap.add_argument("command", nargs="*", help="要护栏执行命令（--command 之后）")
@@ -931,7 +977,20 @@ def main() -> int:
         #:     ⇒ ★ **看不出是"护栏自己的超时没生效"**，极容易被读成"探针挂了"（★ 事实 517 同族）。
         #:   ★★★ **这条正是本仓自己的定则**（事实 40）：「★ **一个存在但没人用的参数，
         #:     与没有它等价**」—— ★ 而它比没有更糟：★ **文档与 `--help` 都写着它管用** ✓
-        r = run_guarded(args.command, timeout=args.timeout)
+        #: ★★ B5-2b：**放行探针之前先点名**（★ 两次：启动之前 · 连上之后）✓
+        #:   ★ 拒绝时**不跑探针**并给**独立的退出码 2**（★ 与"探针失败=1"分开，免得读错）✓
+        if not args.skip_precheck:
+            v = precheck_before_run(args.allow_path)
+            for roll in v["rolls"]:
+                print("  [预检 第%d次] %s ⇒ %s · 读到文档 %d 个 · 非我方 %d 个 · 未保存 %d 个"
+                      % (roll["roll"], roll["label"], "放行" if roll["ok"] else "★ 不放行",
+                         roll["documents"], roll["foreign"], roll["unsaved"]))
+            if v["refused"]:
+                print("  ★★ 预检拒绝开始：%s" % v["why"])
+                print("  ★ 去留由人定；★ 确认可以继续时才用 `--skip-precheck` ✓")
+                return 2
+        r = run_guarded(args.command, timeout=args.timeout,
+                        precheck=not args.skip_precheck, allowed_paths=args.allow_path)
         #: ★ 顺带把**子进程的 stdout** 也带回来（★ 原来只回一个 ≤1200 字符的 JSON 且
         #:   **明确剔掉了 `stdout_tail`**）⇒ ★ 长跑探针的**过程读数**（每一步的 print）
         #:   就全丢了 —— ★ 而"哪一步走完了"正是排查长跑失败时最需要的东西（★ 事实 293 同族）。

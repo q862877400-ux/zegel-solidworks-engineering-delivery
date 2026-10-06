@@ -125,6 +125,14 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
         probe = com_documents(timeout_s=timeout_s) if path == "com" else title_documents()
         tried.append(path)
         if not probe.get("usable"):
+            #: ★★★ **"没在运行"不是"探不通"** —— ★ 这是本文件最容易犯的错：
+            #:   ★ SolidWorks **没启动** ⇒ 会话**必然是干净的**（没有任何文档开着）⇒ **必须放行** ✓
+            #:   ★ 而"进程在、但两条路都读不出文档"才是**探不通**（★ 那时要停下问人）✓
+            #:   ★★ 我第一版把两者混成了同一种失败 ⇒ ★ 护栏会**拒绝每一次跑**（因为探针常常要先拉起 SW）✗
+            if path == "title" and not (probe.get("processes") or []):
+                return {"ok": True, "path_used": "title", "documents": [], "ours": [],
+                        "foreign": [], "unsaved": [], "unsaved_unknown": 0,
+                        "why": "★ 没有 SLDWORKS 进程 ⇒ 会话必然是干净的（★ 这是「空」，不是「探不通」）"}
             continue
         docs = probe.get("documents") or []
         allowed = {_norm(p) for p in (allowed_paths or ()) if str(p or "").strip()}

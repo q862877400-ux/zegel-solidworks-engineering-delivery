@@ -89,13 +89,32 @@ def test_verdict_reports_unsaved_documents(title_mode, monkeypatch):
 def test_verdict_does_not_claim_clean_when_both_paths_fail(monkeypatch):
     """★★★ **两条路都探不通 ⇒ 必须 `ok=False` 并说清「探不通」** ——
     ★ 绝不许静默当成「会话是干净的」（★ 那会让门禁在最需要它的时候失效）✓
+
+    ★ 注意假件必须让**进程在、却读不出**才算「探不通」；
+      ★ 而「**根本没有进程**」是另一种情况 —— ★ 那会话必然是空的 ⇒ **应当放行**
+      （★ 见下一条测试）✓
+    """
+    monkeypatch.setattr(SV, "title_documents",
+                        lambda timeout_s=60: {"usable": False, "why": "读不出标题",
+                                              "processes": [{"pid": 1, "responding": True,
+                                                             "title": ""}],
+                                              "documents": []})
+    v = SV.session_verdict(prefer="title")
+    assert v["ok"] is False and v["path_used"] == ""
+    assert "查不到" in v["why"] and "停下问人" in v["why"], v
+
+
+def test_no_solidworks_process_means_clean_and_passes(monkeypatch):
+    """★★ **「没在运行」不是「探不通」** —— ★ 没有任何 SLDWORKS 进程 ⇒ 会话必然是空的 ⇒ **放行** ✓
+
+    ★ 为什么单列一条：★ 我第一版把两者混成同一种失败 ⇒ ★ **护栏会拒绝每一次跑**
+      （★ 因为探针常常正是要先拉起 SolidWorks 的那些）—— 那等于把门禁写成了**路障** ✓
     """
     monkeypatch.setattr(SV, "title_documents",
                         lambda timeout_s=60: {"usable": False, "why": "没有进程",
                                               "processes": [], "documents": []})
     v = SV.session_verdict(prefer="title")
-    assert v["ok"] is False and v["path_used"] == ""
-    assert "查不到" in v["why"] and "停下问人" in v["why"], v
+    assert v["ok"] is True and v["path_used"] == "title" and v["documents"] == []
 
 
 def test_verdict_always_reports_which_path_was_used(title_mode, monkeypatch):
