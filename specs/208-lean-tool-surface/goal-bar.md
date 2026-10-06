@@ -149,3 +149,16 @@
 - ★ **结论**：**B 路线的机制已验证可行**；但要交付"能日常选的 Lean 模式"，还差**"给 preset 正确配一套工具"**这一步
   （照官方 `极简模式` 的写法抄应可解）
 - ✅ 清理：3099 已停、浏览器已收、Hindsight 未拉起、生产零改动
+
+## 十四 · 第 14 轮：★ **Lean 模式做成并界面验证通过**
+
+- ✅ **做法**：**照抄官方「标准模式」整份 `plugins` 清单** + 一行 `tool-presentation{mode: lean}`
+- ✅ **界面实测**（真起 web，独立端口 3099）：界面选「Lean 模式」⇒ 会话 `bd00aebe`
+  **系统提示词 10,885、目录段 ✓、参数信封 ✓、26 条目录行** ⇒ ★★ **功能验证通过**
+- ★ **踩坑（已写入文档）**：
+  ① 手写只挂几个工具的 preset ⇒ 激活失败、**界面直接看不到该模式**
+     （诊断原话：`tool-fs: waiting for fs` / `tool-pwsh: waiting for shell, shellEnv` / `tool-jobs: waiting for jobs`）
+  ② 补上工具仍失败 ⇒ **清单不完整**（缺 `skill-filesystem`/`command-goal` 等配套行）
+  ⇒ **正解：整份照抄官方 preset，只加一行**
+- ★ 交付件：**`deliver/lean-preset.patch.yml`**（= standard 全文 + 那一行）
+- ✅ 清理：3099 已停、浏览器已收、Hindsight 未拉起、生产零改动
