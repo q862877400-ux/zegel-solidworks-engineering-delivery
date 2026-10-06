@@ -42,9 +42,15 @@ class FakeVariant:
 
 #: ⚠ 2026-10-01（轮 145）：桩要**跟着真模块走** —— 轮 145 给 `sw_connect`
 #:   加了 `call_com_member`（"故意要调"的显式名），桩里也得有，否则 `sw_part` 导入即失败。
+#: ★★★ 2026-10-06（规格 209 收口轮）：**同一处又栽了一次** —— `scripts/sw_feature_readback.py`
+#:   后来加了 `safe_get_com_member`（★ 阶段3/5 那条线，见 `git log -S`），★ 而**桩里没有** ⇒
+#:   `import sw_part` 在**收集期**就炸 ⇒ ★★ 它一炸就把**后面所有测试的模块身份也带坏**
+#:   （实测：`tests/test_tool_specs_batch92.py` **单独跑 25 passed**、跟在它后面跑就红）✓
+#:   ⇒ ★ 本条本来就是"桩要跟着真模块走"，★ **这次把它补全** ✓
 sys.modules["sw_connect"] = types.SimpleNamespace(
     get_com_member=fake_get_com_member,
     call_com_member=fake_get_com_member,
+    safe_get_com_member=fake_get_com_member,
 )
 sys.modules["sw_preflight"] = types.SimpleNamespace(
     import_com_dependencies=lambda: (
