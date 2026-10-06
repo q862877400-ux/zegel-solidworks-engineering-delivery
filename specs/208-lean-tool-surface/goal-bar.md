@@ -286,3 +286,25 @@ DSH 自己的说明：「**已存在的会话沿用它们启动时的插件版�
           - desktop-ufo     # ← 「桌面操作（UFO，按需）」preset 的 id
 ```
 ⚠ **不改**：这是你 preset 设计的决定（会改变 CAD 会话的工具呈现），等业主点头。
+
+## 二十二 · 第 22 轮：★★★ 按要求删除 `preset-solidworks` 与 `preset-desktop-ufo`（生产）
+
+**先做了后果核实（没盲删）**：
+- `mcp-solidworks` **只**声明在 `preset-solidworks` 里（第 1231 行，缩进 10；顶层 = false）⇒ **删 preset = 253 个 SolidWorks 工具整体消失**
+- `mcp-ufo` 在两处（`preset-desktop-ufo` 第 1010 行 · `preset-solidworks` 第 1255 行）
+- 结构定位边界（不是猜行号）：顶层 `- insert:` 在 106/136/194/**841**/**1030**
+  ⇒ 块1 = 841-1029（`preset-desktop-ufo`，189 行）· 块2 = 1030-1317（`preset-solidworks`，288 行）
+- ★ 两个 id 在块外**无任何引用** ✓
+- ★ 业主确认：「等我项目开发完了，到时候挂到 lean 上就行了…工具本身的代码还在」
+
+**执行**：备份 `cordis.patch.yml.bak-20261006083614-before-remove-cad-ufo-presets`（77,513 B）
+⇒ 删除 477 行（断言：删除段首行 = `- insert:` · 无残留标识 · 1317→840 行）
+
+**验证**：
+- ✅ `--dump-config`：composition 只剩 `preset-standard/ptc/minimal/cordis` + `lean-mode/preset-lean`；**无 solidworks / ufo** ✓
+- ✅ ★★ **运行中宿主的热更新也确认了**（新开会话点模式菜单）：
+  菜单 = 标准 / PTC / 极简 / 创造 / **Lean** ⇒ **CAD 建模已消失 ✓ · 桌面操作已消失 ✓ · Lean 模式仍在 ✓**
+- ✅ 工具代码**完好**：`D:\AI\SW\mcp-server`（96 个 .py）· `UFO\ufo_bridge_mcp.py` 都在
+- ✅ 生产 harness 源码零改动（HEAD `d37ca457e2`，未提交仍 4 个 .bak）
+
+**回滚**：把备份覆盖回去即可（`.bak-20261006083614-before-remove-cad-ufo-presets`）。
