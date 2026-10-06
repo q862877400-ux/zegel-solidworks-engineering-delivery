@@ -49,6 +49,8 @@ FEATURE_CAP = 5000
 
 #: ★ `swBodyType_e.swAllBodies`（官方 `C:\\swapi\\enums\\swBodyType_e.md`：`-1 = All solid and sheet bodies`）✓
 SW_ALL_BODIES = -1
+#: ★ `swDisplayStateOpts_e.swAllDisplayState`（官方同页：`2 = All display states`）✓
+SW_ALL_DISPLAY_STATE = 2
 
 
 def jsonable(value):
@@ -109,7 +111,10 @@ def read(model, sw=None) -> dict:
     ★★ `missing` 非空是有信息的：★ 它说明**这一类当前读不到** ⇒ ★ B3 的差分对它是**盲的**，
       ★★ 必须在 B2 的灵敏度报告里**明写「不可见」**，★ 而不是当成「没变」 ✗
     """
-    readings, missing = {}, {}
+    readings, missing, notes = {}, {}, {}
+
+    def notes_add(cls, text):
+        notes.setdefault(cls, []).append(text)
 
     def put(cls, value, why=""):
         #: ★★ **在出口归一**（★ 见 `jsonable` 的说明：COM 对象会让比较虚警）✓
@@ -123,8 +128,13 @@ def read(model, sw=None) -> dict:
     if sel_mgr is None:
         put("selection", None, "SelectionManager 取不到：%s" % (why or "返回 None"))
     else:
-        v, why2 = _read("GetSelectedObjectCount2", sel_mgr)
-        put("selection", v, why2 or "★ GetSelectedObjectCount2 返回 None")
+        #: ★★★ 真机踩过：★ `GetSelectedObjectCount2` **是方法、要吃 `-1` 实参**
+        #:   （★ 事实 8 就是用 `-1` 表示"全部标记"）—— ★ 我**无参**调它 ⇒
+        #:   ★ `get_com_member` 的"无实参 ⇒ 先无参调一次、失败则**返回成员本身**"语义生效 ⇒
+        #:   ★★ 读出的是 **`<bound method ...>`**（★ 再被 `jsonable` 变成字符串）✗
+        #:   ⇒ ★ 于是 `selection` 那一格**从来不是数字**，★ 差分自然"没动" ✓
+        v, why2 = _read("GetSelectedObjectCount2", sel_mgr, -1)
+        put("selection", v, why2 or "★ GetSelectedObjectCount2(-1) 返回 None")
 
     # ② 编辑态（★ 正在编辑草图 ⇒ `GetActiveSketch2` 非空）✓
     sk, why = _read("GetActiveSketch2", model)
@@ -146,8 +156,18 @@ def read(model, sw=None) -> dict:
     #:   ★ `swAllBodies = -1`（官方 `swBodyType_e` 页给的数值本页就有）；`False` = 含不可见的 ✓
     bodies, why = _read("GetBodies2", model, SW_ALL_BODIES, False)
     if bodies is None:
-        put("bodies", None, why or "★ GetBodies2 返回 None（★ 装配体上这个成员不存在）")
-        put("faces", None, "★ 体都读不到 ⇒ 面也数不了")
+        #: ★★★ 2026-10-06 **真机查明（这条很值）**：★ 在**空零件**上 `GetBodies2(-1, False)`
+        #:   返回 **`None`** —— ★★ 那**不是"读不到"，是"本来就没有实体"** ✓
+        #:   （★ 真机对照：★ 建出一个实体之后同一调用 ⇒ **`tuple(len=1)`** ✓）
+        #:   ★★ 而我把两者混成了「读不到」⇒ `bodies`/`faces` 两格**一直 unreadable** ✗
+        #:   ⇒ ★ 处置：★ **按 0 计**，★ 但把这条不确定**写进 `notes`**（★ 不假装分得清）✓
+        #:   ★ 同族教训（本仓老话）：★「**选不上**」与「**选了也没用**」是两件事 ——
+        #:     ★ 这里就是「**没有**」与「**读不到**」被混成了一件 ✓
+        notes_add("bodies", "★ GetBodies2 返回 None ⇒ 按「**没有实体**」计 0；"
+                            "★ 与「读不到」在此调用形状下**无法区分**（★ 已记此注，不假装）")
+        put("bodies", 0)
+        put("faces", 0)
+        notes_add("faces", "★ 由 bodies=0 推出 0（同上，无法与「读不到」区分）")
     else:
         seq = bodies if isinstance(bodies, (list, tuple)) else [bodies]
         seq = [b for b in seq if b is not None]
@@ -167,8 +187,24 @@ def read(model, sw=None) -> dict:
     if ext is None:
         put("display", None, "Extension 取不到：%s" % (why or "返回 None"))
     else:
-        v, why2 = _read("GetDisplayStateSetting", ext)
-        put("display", v, why2 or "★ GetDisplayStateSetting 返回 None")
+        #: ★★★ 真机踩过（与 `selection` **同一个坑**）：★ `GetDisplayStateSetting` 是**方法、
+        #:   要吃一个 `swDisplayStateOpts_e` 实参** ⇒ ★ 我无参调它 ⇒ 拿到的是
+        #:   ★★ **`<bound method ...>`**（★ 再被 `jsonable` 变成字符串）✗
+        #:   ★ 官方签名（已读）：`DisplayStateSetting GetDisplayStateSetting(int Option)`；
+        #:     ★ `swAllDisplayState = 2`（官方 `swDisplayStateOpts_e` 页给了数值）✓
+        #:   ★ 而且要读的是它里面的**标量** —— ★ 返回的是 `IDisplayStateSetting` **对象**，
+        #:     ★ 直接存对象又会落回"不可比的字符串" ✗ ⇒ ★ 取它的 `Names` ✓
+        setting, why2 = _read("GetDisplayStateSetting", ext, SW_ALL_DISPLAY_STATE)
+        if setting is None:
+            put("display", None, why2 or "★ GetDisplayStateSetting(2) 返回 None")
+        else:
+            names, why3 = _read("Names", setting)
+            if names is None:
+                put("display", None, why3 or "★ IDisplayStateSetting.Names 返回 None")
+            else:
+                #: ★ 归成一个**可比、稳定**的表示：排序后的名字元组 ✓
+                seq = names if isinstance(names, (list, tuple)) else [names]
+                put("display", tuple(sorted(str(n) for n in seq if n is not None)))
 
     # ⑧ 活动配置（★ 官方 `IModelDoc2.GetActiveConfiguration` ⇒ 取名字）✓
     cfg, why = _read("GetActiveConfiguration", model)
@@ -187,7 +223,8 @@ def read(model, sw=None) -> dict:
     #:   ★★ 为什么非要加这条：★ 全 None 的指纹**照样能让"两次读数相等"通过** ⇒
     #:     ★ 光靠第 0 格**发现不了**它 ✗（★ 我就是在真机上这么栽的）
     usable = any(v is not None for v in readings.values())
-    return {"readings": readings, "missing": missing, "official": dict(OFFICIAL),
+    return {"readings": readings, "missing": missing, "notes": notes,
+            "official": dict(OFFICIAL),
             "usable": usable,
             "unusable_why": "" if usable else
             "★★ 九类读数**全部为 None** ⇒ 指纹**失效**（★ 别把它当成「什么都没变」）"}
@@ -202,7 +239,10 @@ def _default_rebuild_reader(model):
             from sw_session import needs_rebuild_status
         st = needs_rebuild_status(model)
         if isinstance(st, dict):
-            return st.get("needs_rebuild"), ""
+            #: ★★★ 真机踩过：★ 我读的是 `needs_rebuild` —— ★ **那个键不存在** ✗
+            #:   ★ `needs_rebuild_status` 回的是 `{raw, state, fully_rebuilt}` ⇒
+            #:   ★★ 于是 `rebuild` 一直被记成「读不到」，★ 而**真因是我读错了键** ✓
+            return (not st.get("fully_rebuilt")), ""
         return str(st), ""
     except Exception as exc:                                            # noqa: BLE001
         return None, "needs_rebuild_status 不可用：%s" % type(exc).__name__

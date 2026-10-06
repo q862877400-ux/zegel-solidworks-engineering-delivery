@@ -57,7 +57,9 @@ def _model(**over):
         GetSaveFlag=False,
         FirstFeature=feat1,
         GetBodies2=[_Obj(GetFaceCount=6)],
-        Extension=_Obj(GetDisplayStateSetting=2),
+        #: ★ 真机踩过：`GetDisplayStateSetting(Option)` 要吃实参、且回的是**对象** ⇒
+        #:   ★ 假件也要照这个形状来（★ 读它里面的 `Names`）
+        Extension=_Obj(GetDisplayStateSetting=_Obj(Names=["默认<按加工>", "另一个"])),
         GetActiveConfiguration=_Obj(Name="默认"),
     )
     base.update(over)
@@ -75,6 +77,10 @@ def test_all_nine_classes_are_read():
     assert fp["readings"]["faces"] == 6
     assert fp["readings"]["config"] == "默认"
     assert fp["readings"]["edit_mode"] == "none"
+    #: ★ 归成**排序后的名字元组**（★ 可比、稳定）✓
+    #: ★ 注意：`jsonable` 只放行标量 ⇒ ★ 元组会被**字符串化**（★ 仍是可比、稳定的）✓
+    assert fp["readings"]["display"] == str(("另一个", "默认<按加工>")), \
+        fp["readings"]["display"]
 
 
 def test_every_class_cites_an_official_member():
