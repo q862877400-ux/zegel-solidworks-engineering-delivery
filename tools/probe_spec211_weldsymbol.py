@@ -144,17 +144,29 @@ def main() -> int:
     #:     on this drawing view** ✓ —— ★★ **那正是"它真正改变的东西"** ✓
     readback = {}
     if drawing is not None:
+        #: ★★★★★ 官方 `IDrawingDoc::GetFirstView` 的 `## Remarks` **逐字**（★ 层次说透了 ✓）：
+        #:   「★ **Because the drawing sheet also has sketch geometry, notes, GTols, and so on,
+        #:    this method returns the current drawing sheet.** ★ The **next** view returned by
+        #:    `IView::GetNextView` is the **first drawing view** in the current sheet.」✓✓
+        #:   ★ 且 `GetViews` 的 `## Returns` 逐字：「**An array of arrays**」+「the first view in the
+        #:    list being **the sheet itself**」✗
+        #:   ⇒ ★★★★ **所以第一个对象是**图纸**、★ 不是视图** ✗ ——
+        #:     ★★ 上一轮我把图纸当视图 ⇒ `GetWeldSymbolCount` 回 `None` ✗（★ 根因就在这里 ✓）
+        chain, cur = [], None
         try:
-            views = sw_connect.get_com_member(drawing, "GetViews") or []
+            cur = sw_connect.get_com_member(drawing, "GetFirstView")
         except Exception:                                               # noqa: BLE001
+            cur = None
+        while cur is not None and len(chain) < 16:
+            chain.append(cur)
             try:
-                v = sw_connect.get_com_member(drawing, "GetFirstView")
-                views, cur = [], v
-                while cur is not None and len(views) < 12:
-                    views.append(cur)
-                    cur = sw_connect.get_com_member(cur, "GetNextView")
+                cur = sw_connect.get_com_member(cur, "GetNextView")
             except Exception:                                           # noqa: BLE001
-                views = []
+                cur = None
+        #: ★★★ **跳过链首那个"图纸"** ✓（★ 官方 Remarks 明写它就是 sheet ✓）
+        readback["chain_len"] = len(chain)
+        readback["first_is_sheet"] = True
+        views = chain[1:] if len(chain) > 1 else []
         readback["view_count"] = len(views)
         per_view = []
         for i, v in enumerate(views):
