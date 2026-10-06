@@ -325,7 +325,12 @@ class ToolSpec:
     inject: str = ""
     needs_model: bool = False
     read_only: bool = False
-    idempotent: bool = True
+    idempotent: Optional[bool] = None
+    #: ★★ **是否会做破坏性更新**（删除、覆盖保存、清空）—— ★ 与"写"**分开**：
+    #:   ★ "写"可以是可补偿的（新增特征就删掉增量），★ "破坏性"是**不可逆**的那类 ✓
+    #:   ★ 三态：`None` = **未声明** ⇒ ★ 注解里**不发**这一条 ⇒ ★ 按 MCP 缺省语义
+    #:   **客户端会当作"可能破坏"**（★ 这正是我们要的保守方向）✓
+    destructive: Optional[bool] = None
     load_automation: bool = True
     extra_op: Optional[Callable[[Any], Any]] = None
     doc: str = ""
@@ -550,6 +555,54 @@ def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[.
     return _impl
 
 
+def _tool_annotations(spec: ToolSpec) -> dict:
+    """★ 造 MCP 工具注解 —— ★★ **只发我们真的知道的那些**（未知就**不发**，别替客户端猜）。
+
+    ★★★ 2026-10-06：**这里原本有两个对外"误报"，都是安全相关的**：
+      ① `idempotentHint` 原为 `bool(spec.idempotent)`，而 `idempotent` 的**默认值是 True**
+         ⇒ ★★ **448 个工具全部对外宣称"幂等 / 可安全重试"** —— ★ 而其中绝大多数是创建、插入、阵列类
+         （重复调用会**多出一份特征**）⇒ ★★ **客户端超时后重试就会重复改模型** ✓
+      ② `destructiveHint` **硬编码 False** ⇒ ★ 删除、覆盖保存这类工具也在宣称"**非破坏性**" ✓
+    ⇒ ★ 现在按"**三态 + 未知不发**"处理，依据是 MCP 的缺省语义：
+      ★ `destructiveHint` **缺省即视为"可能破坏"**（⇒ **省略就是保守**）；
+      ★ `idempotentHint` 缺省即"未声明"（⇒ 客户端**不得**假定可重试）✓
+    ★ 唯一**可以明确**推出的：★ `read_only=True` 的工具**确定**不做破坏性更新 ⇒ 发 `False` ✓
+    """
+    ann: dict = {
+        "readOnlyHint": bool(spec.read_only),
+        "openWorldHint": False,
+    }
+    if getattr(spec, "idempotent", None) is not None:
+        ann["idempotentHint"] = bool(spec.idempotent)
+    #: ★ 未声明破坏性时：只读 ⇒ 可明确 False；★ 其余**一律不发**（缺省 = 可能破坏 = 保守）✓
+    destructive = getattr(spec, "destructive", None)
+    if destructive is not None:
+        ann["destructiveHint"] = bool(destructive)
+    elif spec.read_only:
+        ann["destructiveHint"] = False
+    return ann
+
+
+def uniform_safety_fields(specs: list) -> dict:
+    """★ **单值安全字段**盘点（★ 门禁的判据来源）：安全相关字段里**所有工具取同一非"未知"值**的。
+
+    ★★ 为什么要有它：★ `idempotent` 曾经**448 个全是 True**、`destructiveHint` 曾经**硬编码 False** ——
+      ★ 两者都是"**没人真想过、被默认值填满**"的形态，★ 而它们在 MCP 里是**客户端据以决定
+      要不要确认、能不能重试**的依据 ⇒ ★ 单值 = **等于没声明，却看起来像声明过**（比空缺更糟）。
+    ★ 判据刻意**只报"非未知的单值"**：★ 全体都是未声明是**诚实的合法状态**，不报 ✓
+    """
+    out: dict = {}
+    for field in ("read_only", "idempotent", "destructive"):
+        values = [getattr(s, field, None) for s in specs]
+        if not values:
+            continue
+        distinct = set(values)
+        only = next(iter(distinct))
+        if len(distinct) == 1 and only is not None:
+            out[field] = {"value": only, "count": len(values)}
+    return out
+
+
 def register(mcp: Any, specs: list[ToolSpec], base: type, response_enum: Any,
              run_locked: Callable[..., str],
              resolve_model: Optional[Callable[[], Any]] = None,
@@ -577,12 +630,7 @@ def register(mcp: Any, specs: list[ToolSpec], base: type, response_enum: Any,
         decorated = mcp.tool(
             name=spec.name,
             title=spec.title,
-            annotations={
-                "readOnlyHint": bool(spec.read_only),
-                "destructiveHint": False,
-                "idempotentHint": bool(spec.idempotent),
-                "openWorldHint": False,
-            },
+            annotations=_tool_annotations(spec),
         )(fn)
         registered.append(spec.name)
         # 保持模块级可见（MCP 库会按名字解析）
