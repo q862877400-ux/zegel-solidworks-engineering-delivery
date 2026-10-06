@@ -136,3 +136,65 @@ def fingerprint_allows_retry(before, after) -> dict:
             "why": "★ 指纹没变 ⇒ 该调用**大概率没生效**，可以重试 ✓",
             "caveat": "★ 指纹有盲区（★ %s 等）⇒ 没变**不保证**真没变"
                       % "、".join(sorted(FP.KNOWN_UNAVAILABLE))}
+
+# ── 预检装饰器（规格 210 · B4 第 ② 条）──────────────────────────────────
+# ★★ 评审的原话：★「**预检由共享装饰器按声明的 `requires` 自动生成**，
+#   ★ **作者不手写**，★ 复杂性就留在一处」✓
+# ★ 判据：★ 从**静态表**读 `inject` / `requires` + 从**真机枚举**读「打开的文档是什么类型」 ⇒
+#   ★ 自动造出检查，★ **没有一个工具需要手写预检** ✓
+
+#: ★ `inject` 名 → 需要的文档类型（★ `None` = 不需要特定类型但不许为空）✓
+_DOC_TYPE_BY_INJECT = {
+    "model": None, "doc": None,
+    "asm_model": "assembly", "component": "assembly",
+    "drawing_model": "drawing",
+}
+
+#: ★ SolidWorks 文档类型码（`swDocumentTypes_e`：1=零件 · 2=装配体 · 3=工程图）✓
+_DOC_CODE_TO_KIND = {1: "part", 2: "assembly", 3: "drawing"}
+
+
+def doc_kind(doc) -> str:
+    """★ 读一个文档是**哪种类型**（★ 取不到 ⇒ `「unknown」` —— ★ 不猜）✓"""
+    try:
+        from sw_connect import get_com_member
+        return _DOC_CODE_TO_KIND.get(int(get_com_member(doc, "GetType")), "unknown")
+    except Exception:                                                   # noqa: BLE001
+        return "unknown"
+
+
+def precheck(inject_name: str, obj, *, tool_name: str = "") -> dict:
+    """★★ **按声明自动生成的预检** —— ★ 通过回 `{"ok": True}`；★ 不适用则抛 `NotApplicable` ✓
+
+    ★★ 这是「作者不手写」的落点：★ 检查**完全由 `inject` 决定**，★ 没有一行是逐工具写的 ✓
+    ★ 判序（★ 都用**已有码集**，★ 不加码）：
+      `model`/`doc` ⇒ 没有活动文档 ⇒ `no_document` ✓
+      `asm_model` / `component` ⇒ 空 ⇒ `no_document`；★ 不是装配体 ⇒ `wrong_doc_type` ✓
+      `drawing_model` ⇒ 空 ⇒ `no_document`；★ 不是工程图 ⇒ `wrong_doc_type` ✓
+      `sldworks`/`sw_app`/… ⇒ 空 ⇒ `no_document`（★ `needs` 里写明要的是哪个对象）✓
+      ★ 其余（`view`/`study`/`cost_manager`/`selection`）⇒ ★ **还没建对应的检查** ⇒
+        ★ 返回 `{"ok": True, "unchecked": True, "why": …}` —— ★ **如实说「没查」**，
+        ★ **不假装查过** ✓（★ 与「判不出就写未知」同一条纪律）
+    """
+    name = str(inject_name or "")
+    if obj is None:
+        raise NotApplicable("no_document", needs=[name or "host"],
+                            detail="★ 声明注入 %r 但拿到的是空对象" % name)
+    if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options"):
+        return {"ok": True, "checked": "app"}
+    want = _DOC_TYPE_BY_INJECT.get(name, "__none__")
+    if want == "__none__":
+        #: ★ 还没建对应检查的那几类 ⇒ ★ **如实说「没查」** ✓
+        return {"ok": True, "unchecked": True,
+                "why": "★ 这一类（`%s`）的预检**还没建** ⇒ 如实记「没查」，★ 不假装查过" % name}
+    got = doc_kind(obj)
+    if want and got != want:
+        raise NotApplicable("wrong_doc_type", needs=[want],
+                            detail="★ 需要 `%s`，★ 拿到的是 `%s`" % (want, got))
+    return {"ok": True, "checked": "doc", "kind": got}
+
+
+def precheck_tool(tool_name: str, inject_objects: dict) -> dict:
+    """★ 对一个工具**按它声明的 `inject`** 跑预检（★ 调用方只需给 `inject_objects`）✓"""
+    inj = (_table(EFFECTS).get(tool_name) or {}).get("inject") or ""
+    return precheck(inj, (inject_objects or {}).get(inj))

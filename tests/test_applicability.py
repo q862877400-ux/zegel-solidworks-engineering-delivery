@@ -103,3 +103,48 @@ def test_fingerprint_insurance_allows_retry_when_nothing_changed_but_admits_blin
     r = AP.fingerprint_allows_retry(same, same)
     assert r["retry"] is True
     assert r.get("caveat"), "★ 必须写明指纹有盲区"
+
+
+# ── ④ 自动预检：★ 按声明的 inject 生成，★ 作者不手写 ─────────────────────
+class _Doc:
+    """★ 假文档：只实现 `GetType`（★ 1=零件 · 2=装配体 · 3=工程图）✓"""
+    def __init__(self, t):
+        self._t = t
+    def GetType(self):
+        return self._t
+
+
+def test_precheck_accepts_a_matching_document():
+    assert AP.precheck("model", _Doc(1))["kind"] == "part"
+    assert AP.precheck("asm_model", _Doc(2))["kind"] == "assembly"
+    assert AP.precheck("drawing_model", _Doc(3))["kind"] == "drawing"
+
+
+def test_precheck_rejects_the_wrong_document_type_with_a_closed_code():
+    """★★ **负例**：★ 拿**零件**去跑要**装配体**的工具 ⇒ ★ 必须抛 `wrong_doc_type`，
+    ★ 且 `needs` 里写清要什么（★ 编排层据此去建/去换）✓"""
+    with pytest.raises(AP.NotApplicable) as e:
+        AP.precheck("asm_model", _Doc(1))
+    d = e.value.to_dict()
+    assert d["code"] == "wrong_doc_type" and d["needs"] == ["assembly"]
+
+
+def test_precheck_reports_no_document_for_an_empty_host():
+    with pytest.raises(AP.NotApplicable) as e:
+        AP.precheck("model", None)
+    assert e.value.to_dict()["code"] == "no_document"
+
+
+def test_unbuilt_precheck_says_unchecked_instead_of_pretending():
+    """★★ **不许假装查过**：★ `view`/`study`/`cost_manager`/`selection` 的预检**还没建** ⇒
+    ★ 必须回 `unchecked: True` 并**写明原因** ✓（★ 与「判不出就写未知」同一条纪律）✓"""
+    r = AP.precheck("view", object())
+    assert r.get("unchecked") is True and "还没建" in r["why"], r
+
+
+def test_precheck_tool_reads_the_declaration(tmp_path, monkeypatch):
+    """★ `precheck_tool` 从**声明**读 `inject` ⇒ ★ **调用方不用知道**该检查什么 ✓"""
+    monkeypatch.setattr(AP, "_table", lambda _p: {"t": {"inject": "asm_model"}})
+    with pytest.raises(AP.NotApplicable):
+        AP.precheck_tool("t", {"asm_model": _Doc(1)})
+    assert AP.precheck_tool("t", {"asm_model": _Doc(2)})["kind"] == "assembly"
