@@ -1028,6 +1028,18 @@ BATCH_MODULES = (
     #:     ★ 要真证得**落盘的宏文件**，那要 31 的 Save As ⇒ ★ 本条只到「成对调用可达」这一级 ✓
     #:   ★ 计数：447 → **448**
     "tool_specs_batch99",
+    #: ★★ 规格 213 · B1 —— A 类 6 项「**实现已有、只差 ToolSpec**」✓
+    #:   ★ 起因：★★ `docs/user-feature-coverage.md` 只量三列里的**第一列「有入口」**，
+    #:     而它的来源是 `all_specs()` 的**工具名集合** ✓
+    #:     ⇒ ★★★ 规格 211 做成 `verified` 的能力**没有任何 ToolSpec 引用它们** ✗
+    #:       ⇒ ★★ 从「用户可发现、可调用」口径看它们**等于不存在** ✓
+    #:   ★ 六项：`section_properties` · `scale_feature` · `untrim_surface` · `sweep_surface` ·
+    #:     `weldment_trim` · `flat_pattern_dxf` ✓
+    #:   ★★ **本批被门禁教了一次**：★ `scale_feature` 的入参原名 `x`/`y`/`z` **被规则 3 拦下** ✗
+    #:     （逐字：「入参 `x` 是**裸坐标** —— 必须改用具名实体 + 声明式 selection」）✓ ——
+    #:     ★ 而它们其实是**无量纲缩放比例** ⇒ ★ 改名 `*_factor` + ★ `param_alias` 映射回形参 ✓
+    #:   ★ 计数：448 → **454**
+    "tool_specs_batch100",
 )
 
 def all_specs() -> list:
