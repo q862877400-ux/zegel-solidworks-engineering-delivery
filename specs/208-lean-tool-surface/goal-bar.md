@@ -55,3 +55,13 @@
 ## 六 · 仍未做
 
 **把补丁装进运行实例** + **给 preset 贴片段** ⇒ ★ **等你定时机**（贴片段保存即生效，会影响新会话的呈现方式）。
+
+## 七 · 第 7 轮：团队内混用呈现方式
+
+- ★★ **引擎层已实测**：子作用域 `presentAs` 覆盖父/preset 的（`modeFor` 近者优先，测试 10\10 里那条）
+- ★★ **接线已做**：团员 `toolMode` 贯通（快照/spawn/重写/角色表），**125\125 绿**
+- ★★ **preset 路线对团员无效**：子 agent 继承父 preset（`child-agent.ts` 用 `composedPreset(parent.ctx)`）
+- ★ **我自己写错并修掉的两处**：① spawn 后安装是**死代码**（那时 agent 还没 live）⇒ 删，正主是 `recoverFor`
+  ② 类型检查抓到 3 处类型错误（vitest 不查类型）⇒ 已修，`pnpm run typecheck` 干净
+- ★ **限度**：未在真团队回合里端到端观测到"团员按自己的模式装配"
+- 沙盒提交 `1a806fedd2`；补丁重建 50,407 B / 14 文件 / `apply --check` exit 0
