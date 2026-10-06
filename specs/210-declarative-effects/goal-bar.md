@@ -62,51 +62,45 @@
 
 ## 下一个动作（只写一条，免得没人知道该恢复哪个）
 
-★★★★ **把 22 条 `undecided` 拆开看，拆出了一条工具层的真 bug**（★ 本轮最有价值的东西）✓
+★★★ **"声明不准"那一维机械修掉了，并又往下拆了一层** ✓
 
-**★★ 拆出来的五类（★ 22 条 `undecided`，★ 性质完全不同）**
-1. ★★ **声明不准（7 条）**：★ `drawing_current_sheet_info` / `drawing_sheet_count` / … 七条 `drawing_*`
-   ⇒ ★ 真机报 **`当前文档不是工程图（GetType()=1）`** ⇒ ★★ 它们的 `inject` 声明是 **`model`**，
-   ★ 而**实际要的是工程图** ✗ —— ★ **`inject` 没表达出"文档类型"这一维** ✓
-2. ★★ **`requires` 维度不够（4 条）**：★ `sketch_fully_defined_status` / `sketch_mirror` / `sketch_spline`
-   ⇒ ★ 报 **`没有活动草图` / `不在草图编辑态`**；★ `part_bounding_box` ⇒ ★ 报 **`零件里可能没有实体`**
-   ⇒ ★★ **它们需要的是"编辑态 / 实体"，而 `requires` 只表达"宿主对象"** ✗ —— ★ **维度少了一维** ✓
-3. ★★ **参数合成不够（4 条）**：★ `automation_get_flag` ⇒ ★ `invalid literal for int(): 'MCP_CALIB'`
-   （★ **我的合成器把字符串塞进了 int 形参** ✗）· ★ `config_set_custom_properties` ⇒ ★ 需要 **dict**
-   （★ 给了字符串 ✗）· ★ `weldment_create_weldment_profile` ⇒ ★ 要 **`.sldlfp`** 扩展名 ✗ · ★ `fastener_*` ⇒
-   ★ 需要**非空的**标准名 ✗ ⇒ ★★ **合成规则要按"类型提示"而不是只看名字后缀** ✓
-4. ★★★ **工具层真 bug（1 条）**：★ `simulation_apply_link_connector` ⇒
-   ★★ **`ImportError: attempted relative import with no known parent package`** ✗ —— ★ 见下 ✓
-5. ★ **待查（6 条）**：★ `costing_list_bodies` / `costing_read_body` / `topology_list_constraints`
-   （★ 返回体为空，★ 原因还没查）· ★ `weldment_read_property_manager`（★ `SldWorks.Application.GetNames` ✗）✓
+**★ 本轮交付**
+1. ★★ **`doc_type` 的机械初推**（★ 修"声明不准"那一类）：★ 规则是
+   **从工具源码里的"文档类型检查"反推**（★ `不是工程图` / `swDocDRAWING` / `GetType()=3` …）✓
+   ★★ **第一版只扫工具自己** ⇒ ★ 7 条 `drawing_*` **一条都没中** ✗ ——
+   ★ 因为那句检查写在**共用助手**里 ✓
+   ⇒ ★ 修法：★ 连**被调函数（本模块内、一层）的源码一起扫** ⇒
+   ★ **10 条**推出 `doc_type=drawing`（★ 含失败的 7 条**全部在内**）· 2 条 `assembly` · 1 条 `part` ✓
+2. ★★ **分组键改成 `inject|doc_type`**（★ 又一处真机教训）：★ 只按 `inject` 当键 ⇒
+   ★★ 那 7 条 `drawing_*` 和 19 条 `doc_type=None` 的工具**挤进同一个 `model` 组** ⇒
+   ★ 组里建的是**零件** ⇒ 七条仍报 `当前文档不是工程图` ✗
+   ⇒ ★ 效果：★★ **"调用没调成" 17 → 9** ✓ —— ★ 七条 `drawing_*` **全部跑到了**
+   （★ 真机建了 `工程图1 - 图纸1`、收尾关掉 ✓）
+3. ★★ **修回一处我自己删掉的东西**：★ `_fix_synth.py` 那次"从 `def synth_args` 到 `def classify`"
+   的**区域替换**把中间的 **`build_host` 一起删了** ✗ ⇒ ★ 真机现象是
+   `NameError: name 'build_host' is not defined` ✓ ⇒ ★ 已补回并加了更详细的注释 ✓
+   ★★ 教训：★ **按"两个函数名"划区域做替换，会把中间的东西一起吃掉** ⇒
+     ★ 区域替换前**先看中间还有没有别的顶层定义** ✓
 
-**★★★ 第 4 类：真 bug + 它的系统性（★ 本轮的主产出）**
-· ★ 根因：★ `scripts/sw_simulation_loads.py` **函数体内**有 **17 处**
-  `from .sw_selection_spec import …` / `from .sw_simulation import …`，★ **没有兜底** ⇒
-  ★★ 作为 `scripts.X` 导入时成立，★ **一旦按顶层模块导入就炸** ✗
-· ★★ **而仓库自己早就写好了正确写法**（同文件那处 `sw_connect`）：
-  ★ `try: from .X import Y` / ★ `except ImportError: from X import Y` ✓
-  ⇒ ★ 我**照仓库自己的写法**修了那 17 处（★ \+68/−17，★ 按**事实 61** 核对过：
-    ★ 17 处删除 = 被替换的原行，★ 每行变 4 行 ⇒ ★ 行数吻合 ✓）✓
-  ⇒ ★ 真机验证：★ 该模块**作为顶层模块现在能导入** ✓
-· ★★ **全仓扫描**：★ 同款**共 54 处 / 22 个文件**（★ 顶层**一个都没有** ⇒ ★ 没有模块因此整体坏掉，
-  ★ 只有"**在非包导入路径下调用那些函数**"才炸）✓
-· ★★ **处置（★ 按事实 61 的纪律：批量改动风险高 ⇒ 不一次改 22 个文件）**：
-  ★ 修**实际炸掉的那一个** + ★ 加**门禁棘轮**（★ 存量只许变少、不许变多）✓
-· ★ 新 `scripts/check_relative_imports.py` ⇒ 全仓实测 **35 处**（★ **基线必须实测、不许估** ——
-  ★ 我先估了 37，★ 实扫是 35，★ 已改）✓
-· ★ 新 `tests/test_relative_imports_gate.py`（**4 条**，★ **两侧都证**，★ 事实 62 的手法）：
-  ★★ **负例**：★ **修复前**的原文（`git show HEAD:…`）⇒ ★ **必须命中 17 处** ✓
-  ★★ **正例**：★ **修复后**的文件 ⇒ ★ **必须 0 命中** ✓
-  ★ **契约**：★ 判据必须 `startswith("try:")` —— ★ 因为修法带 `# noqa` 注释，
-    ★ 用 `== "try:"` 会把**已修好的**算成没兜底 ✗（★ **我第一版就栽在这，真机现象：修完仍是 54 处**）✓
+**★★ 本轮真机读数（`empty` 组 · 键 = `inject|doc_type`）**
+· ★ `agree` **21** · `missed` **2** · `undecided` **24**（★ 其中"未调成" **9**）✓
+· ★ 按组：★ `model|` **agree 13** + undecided 5 · ★ `view|` **agree 3** ·
+  ★ `model|assembly` **agree 1** · ★ `asm_model|` **missed 2** + agree 2 ·
+  ★★ **`model|drawing` ⇒ 7 条 `undecided`，★ 而它们 `ok=True`（★ 调用成功了）** ✓
+
+**★★★ 再下一层（★ 本轮最深的发现）：那是"指纹的语义缺口"，不是工具的错**
+· ★ 七条 `drawing_*` 现在 **`ok=True`**，★ 而**唯一读不到的格是 `config`** ✓
+· ★★ 认识：★ **`config` 在图纸上本来就不适用**（★ 图纸没有零件那种"配置"）⇒
+  ★ 目前被记成"**读不到**" ⇒ ★★ 于是把七条**本该 `agree`** 的压成 `undecided` ✗
+· ★ 待办：★ 让指纹**按文档类型**决定哪些格**适用** —— ★ 不适用应记
+  「**这一类在本文档类型上不适用**」，★ **不是**"读不到" ✓
+  ★★（★ 与 `display` 的"**后端限定**"同族：★ 两者都是**量具的边界**，★ 都该**单独成桶**）✓
 
 **下一批**
-1. ★★ 把 `check_relative_imports.py` **接进 `release_check.py`**（★ 那就成了常驻不变量）✓
-2. ★★ 按拆出来的五类**逐类处置**：★ 声明不准（补"文档类型"维度）· ★ `requires` 补"编辑态/实体"维度 ·
-   ★ 合成器按类型提示 · ★ 剩下的真 bug（`weldment_read_property_manager` 的 `SldWorks.Application.GetNames`）✓
-3. ★ 跑 **`nonempty`（135）** 与 **`null`（266）** ⇒ ★ 全量分布 ✓
-4. ★★ 把覆盖层接成**棘轮**（★ 每次普查的 `missed` **必须**进覆盖层 + 门禁）✓
+1. ★★ **指纹按文档类型分适用格**（★ 图纸 ⇒ `config` 记"不适用"）⇒ ★ 七条应变 `agree` ✓
+2. ★★ **`requires` 补"编辑态 / 实体"维度**（★ `sketch_*` 3 条 + `part_bounding_box`）✓
+3. ★ 把 `check_relative_imports.py` **接进 `release_check.py`** ✓
+4. ★ 跑 **`nonempty`（135）** 与 **`null`（266）** ⇒ ★ 全量分布 ✓
 
 ## 批次状态
 

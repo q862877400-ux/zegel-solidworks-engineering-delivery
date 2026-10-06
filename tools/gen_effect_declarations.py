@@ -78,10 +78,45 @@ def _members_of(func, module) -> list[str]:
     return members
 
 
+def _src_deep(fn, module=None) -> str:
+    """★ 工具**自身 + 被调函数**的源码（★ `doc_type` 往往写在共用助手里）✓
+
+    ★★ 为什么必须深扫：★ 第一版只扫工具自己 ⇒ ★ 7 条 `drawing_*` **一条都没中** ✗
+      ★ 因为「不是工程图」那句检查在**共用助手**里 ✓
+    ★ 限度：★ 只跟**本模块内**、**一层**的被调函数（★ 够用；★ 再深容易把无关的也算进来）✓
+    """
+    parts = [_src_of(fn)]
+    try:
+        import inspect
+        src = inspect.getsource(fn)
+        for name in _callees(ast.parse(_dedent(src))):
+            sub = getattr(module, name, None)
+            if callable(sub) and getattr(sub, "__module__", "") == getattr(module, "__name__", ""):
+                parts.append(_src_of(sub))
+    except Exception:                                                   # noqa: BLE001
+        pass
+    return "\n".join(p for p in parts if p)
+
+
+def _dedent(src: str) -> str:
+    """★ 去掉函数源码的公共缩进（★ 才能 `ast.parse`）✓"""
+    import textwrap
+    return textwrap.dedent(src)
+
+
+def _src_of(fn) -> str:
+    """★ 取函数的**源码文本**（★ `doc_type` 从它里面反推）✓"""
+    try:
+        import inspect
+        return inspect.getsource(fn)
+    except Exception:                                               # noqa: BLE001
+        return ""
+
+
 def build() -> dict:
     import register_capabilities as rc
-    from effect_rules import (STATE_CLASSES, classify_members, derive_requires,
-                          load_kind_index)
+    from effect_rules import (STATE_CLASSES, classify_members, derive_doc_type,
+                          derive_requires, load_kind_index)
     specs = rc.all_specs()
     tools: dict = {}
     errors: list[str] = []
@@ -115,6 +150,11 @@ def build() -> dict:
             #: ★★ `requires` —— ★ **机械初推**（★ 从 `inject` 的种类推，★ 见 `effect_rules`）✓
             #:   ★ 起因（真机）：★ `nonempty` 组的失败**全**是「声明注入 X 但没给对象」✓
             "requires": derive_requires(_inj),
+            #: ★★ `doc_type` —— ★ 从**工具源码里的类型检查**机械初推 ✓
+            #: ★★★ 2026-10-06 **第一版只扫了工具自己的源码** ⇒ ★ 7 条 `drawing_*`
+            #:   ★ **一条都没中** ✗ —— ★ 因为那句「不是工程图」的检查写在**共用助手**里 ✓
+            #:   ⇒ ★ 要把**被调函数（含传递）的源码一起扫**（★ `_callees` 已有）✓
+            "doc_type": derive_doc_type(_src_deep(fn, mod)),
             "inject": _inj,
             "writes": verdict["writes"],            # ★ None = 未知（★ 不是「无写」）
             "destructive": verdict["destructive"],

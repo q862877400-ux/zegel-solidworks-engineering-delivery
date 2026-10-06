@@ -129,6 +129,72 @@ def synth_args(spec) -> dict:
         out[pp.name] = value
     return out
 
+#: ★ 每组需要的**默认文档种类**（★ 可被生成物里的 `doc_type` 覆盖 —— ★ 见 `build_host`）✓
+_KIND_BY_REQUIRES = {
+    "part": "part", "none": "part", "selection": "part", "view": "part",
+    "study": "part", "costing": "part",
+    "assembly": "assembly", "drawing": "drawing",
+    "app": None,          # ★ 只需要应用对象 ⇒ **不用建文档** ✓
+}
+
+
+def build_host(sw, inject_name: str, doc_type=None):
+    """★★ 按**注入名**建**对的宿主对象** —— ★ 这是分组省时间之后**必须补的那一半** ✓
+
+    ★★★ 2026-10-06 **分组暴露的真问题**：★ 每组需要的**不只是"一个文档"**，★ 而是**那个特定的对象** ——
+      ★ `asm_model` 要装配体 · `view` 要视图 · `study` 要研究 · `cost_manager` 要成本管理器 ⇒
+      ★★ 而我第一版 `build_state` **只会建文档、且一律当 `model` 传** ⇒
+      ★ 于是除 `part`/`none` 外的组**根本没跑到**（★ 真机：`empty` 47 条里 33 条"调用没调成"）✗
+    ★★ 另两处更细的认识：
+      · ★ 分组键应当是 **`inject`（精确注入名）**，★ 不是 `requires`（**种类**）—— ★ 后者只做**基数统计** ✓
+      · ★★ **指纹一律读"文档"** —— ★ `view`/`sw` 那些宿主**不是文档**，
+        ★ 把宿主当文档读会让**六格同时读不到** ✗（★ 真机：13 行 × 6 格 = 78）✓
+        ⇒ ★ 故用 `_doc` 键把**文档**一起带回 ✓
+      · ★★ **`doc_type` 覆盖**：★ 真机 —— 7 条 `drawing_*` 的 `inject` 写的是 **`model`**，
+        ★ 而它们**实际要工程图** ✗ ⇒ ★ 生成物里机械初推的 `doc_type` **优先于** `inject` ✓
+
+    :returns: `(inject_objects, why)` —— ★ `why` 非空表示**这一组还没法建**（★ 如实记，不假装）✓
+    """
+    import sw_connect
+    name = str(inject_name or "")
+    if name in ("", "none"):
+        return {"sw": sw}, ""
+    #: ★ 应用对象类（`sldworks` / `sw_app` / `sw` / `manager` / `defaults` / `options`）⇒ 给 `sw` ✓
+    if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options"):
+        try:
+            doc = sw.ActiveDoc
+        except Exception:                                               # noqa: BLE001
+            doc = None
+        return {name: sw, "sw": sw, "_doc": doc}, ""
+    #: ★★ `doc_type`（★ 机械初推）**优先于** `inject` 推出的种类 ✓
+    kind = (doc_type if doc_type in ("part", "assembly", "drawing") else None) or \
+        {"model": "part", "doc": "part", "asm_model": "assembly",
+         "component": "assembly", "drawing_model": "drawing"}.get(name)
+    if kind:
+        try:
+            doc = sw_connect.new_document(sw, kind)
+            return {name: doc, "sw": sw, "_doc": doc}, ""
+        except Exception as exc:                                        # noqa: BLE001
+            return {}, "★ 建 %s 失败：%s" % (kind, type(exc).__name__)
+    #: ★★ 补两类**易取**的（★ 官方属性，★ 已读页面）✓
+    #:   · `selection` ⇒ `IModelDoc2.SelectionManager` ✓
+    #:   · `view` ⇒ `IModelDoc2.ActiveView` ✓
+    if name in ("selection", "view"):
+        try:
+            doc = sw_connect.new_document(sw, "part")
+            attr = {"selection": "SelectionManager", "view": "ActiveView"}[name]
+            host = sw_connect.get_com_member(doc, attr)
+            if host is None:
+                return {}, "★ 零件建好了，但 `%s` 取不到（★ 返回 None）" % attr
+            #: ★ `selection`/`view` 的宿主**不是文档** ⇒ ★ 但**指纹仍读在文档上** ✓
+            return {name: host, "sw": sw, "_doc": doc}, ""
+        except Exception as exc:                                        # noqa: BLE001
+            return {}, "★ 建 `%s` 宿主失败：%s" % (name, type(exc).__name__)
+    #: ★ 剩下两类（study / cost_manager）**还没建** ⇒ ★ 如实报出 ✓
+    return {}, ("★ 这一类宿主**还没建**（`%s`）—— ★ 需要构造仿真研究 / 成本管理器"
+                "（★ 要加载对应插件）" % name)
+
+
 def classify(declared_writes, diff, usable, *, call_ok: bool) -> str:
     """★★ 四类判定（★ 严格照 spec：`missed` 与 `undecided` **不许混**）✓
 
@@ -170,8 +236,16 @@ def main() -> int:
     #: ★ 按 `--declared` 选目标（★ `[]` / 非空 / `None` / 全部 —— ★ 三组**不许混**）✓
     #: ★★ 先把目标按 `requires` **分组**（★ 每组只建一次状态）✓
     def _requires_of(tool_name: str) -> str:
-        #: ★★ 分组用 **`inject`（精确注入名）**；★ `requires`（种类）只用于统计基数 ✓
-        return str((table.get(tool_name) or {}).get("inject") or "none")
+        #: ★★ 分组键 = **`inject`（精确注入名）** + **`doc_type`（机械初推的文档类型）** ✓
+        #:   ★ `requires`（**种类**）只用于统计基数 ✓
+        #: ★★★ 2026-10-06 真机：★ 我第一版只用 `inject` 当键 ⇒
+        #:   ★★ 那 7 条 `drawing_*` 和 19 条 `doc_type=None` 的工具**挤进同一个 `model` 组**
+        #:   ⇒ ★ 组里建的是**零件** ⇒ ★ 七条全报 `当前文档不是工程图` ✗
+        #:   ⇒ ★ 加 `doc_type` 进键 ⇒ ★ **同宿主且同文档类型**才同组 ✓
+        row = table.get(tool_name) or {}
+        inj = str(row.get("inject") or "none")
+        dt = str(row.get("doc_type") or "")
+        return "%s|%s" % (inj, dt)
 
     if args.declared == "empty":
         targets = sorted(n for n, r in table.items() if r.get("writes") == [])
@@ -200,7 +274,10 @@ def main() -> int:
         group = by_requires[req]
         print("\n★ ── `requires=%s` 组：%d 个（★ **只建一次状态**，★ 写工具后重建）──"
               % (req, len(group)))
-        injects, why_state = build_host(sw, req)
+        #: ★★ 组键是 `inject|doc_type` ⇒ 拆回两半分别用 ✓
+        _req_inj, _, _req_dt = req.partition("|")
+        _dt = _req_dt or (table.get(group[0]) or {}).get("doc_type")
+        injects, why_state = build_host(sw, _req_inj, _dt)
         if why_state:
             #: ★ 建不出宿主 ⇒ 整组**如实记未判定**（★ 不许当成通过）✓
             for _n in group:
@@ -214,7 +291,8 @@ def main() -> int:
         for name in group:
             decl = table.get(name) or {}
             if decl.get("writes"):
-                injects, why_state = build_host(sw, req)
+                #: ★★ 写工具之后**重建**（★ 那是"副本重载"）；★ 有 `doc_type` 就按它建 ✓
+                injects, why_state = build_host(sw, _req_inj, decl.get("doc_type") or _req_dt)
                 if why_state:
                     rows.append({"tool": name, "verdict": "undecided", "requires": req,
                                  "writer_ok": True, "why": "★ 重建状态失败：%s" % why_state})
