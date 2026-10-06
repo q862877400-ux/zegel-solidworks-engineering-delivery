@@ -5030,6 +5030,43 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "scale_feature",
+   "label": "缩放/变形（对当前模型整体缩放 · IFeatureManager::InsertScale）",
+   "level": "verified",
+   "source": "official",
+   "source_evidence": [
+    "官方 `C:\\swapi\\types\\IFeatureManager\\InsertScale.md`：`Feature InsertScale(short Type, bool Uniform, double Xscale, double YScale, double ZScale)`；`YScale`/`ZScale` valid only if Uniform is false；`Returns` = `IFeature`（当前模型）或 `Null`（选中的图形体，★ 那条 no scale feature is created）",
+    "官方 `C:\\swapi\\enums\\swScaleType_e.md`：只有 3 个成员 —— swScaleAboutCentroid(0) · swScaleAboutOrigin(1) · swScaleAboutCoordinateSystem(2)",
+    "★★ 官方示例 `C:\\swapi\\examples\\Insert_Scale_Feature_Example_VB.md`（第 ③ 样，给的是调用序）：InsertScale(swScaleAboutOrigin, True, 3, 3, 3) ⇒ 非 Nothing ⇒ GetDefinition ⇒ 读 Name 与 GetErrorCode（0 = no errors）"
+   ],
+   "evidence": [
+    "★★ 真机（tools/probe_spec211_scale.py，走 tools/sw_guard.py 护栏）：建 100×60×20 mm 板 ⇒ 特征树新增 `缩放比例1` ✓",
+    "★★★ 主判据（体积比 x³）：因子 3.0 ⇒ 期望 27.0，真机读数 volume_ratio = 27.0 · volume_ok = True ✓ ⇒ 证据文件 output/spec211-b1-scale.json",
+    "★★ 特征名用「建之前/之后对比」量出来的（不是猜）：建之前 [前视基准面, …, 草图1, 凸台-拉伸1] ⇒ 之后多出 `缩放比例1` ✓",
+    "★ 负例（都不碰 COM ⇒ 必然失败）：Type=999（不在 swScaleType_e ⇒ 必然非法）· x=0（我方工程选择）⇒ 两条都抛 ValueError ✓",
+    "★ 契约/负例：python -m pytest tests/test_spec211_scale.py -q ⇒ 8 passed"
+   ],
+   "limitations": [
+    "★ 官方 Returns 的另一种情形：缩放选中的图形体时回 Null、且 no scale feature is created（只改显示）⇒ 本包装只走「建缩放特征」那条；若回 None，报错信息会指向「多半是缩放了图形体」✓",
+    "★ x ≤ 0 被拒 —— ★★ 这是本项目的工程选择（防静默失败），不是官方要求：官方 InsertScale 页没写「0 或负数会怎样」✓（报错信息里逐字标注了这一点）",
+    "★★ 体积单位另有一条冲突（docs/unit-conflicts.md 第 3 条）：本仓 UNITS 声明 mm^3、而真机读数 = 几何真值 ÷ 1000（实际是 cm³）✗ ⇒ 但本条能力的判据（体积比 x³）不受它影响 ✓ —— 因为比值无量纲 ✓",
+    "⚠ 因子无量纲 ⇒ 本能力不涉及长度单位换算（与 B1-1 那类读数问题不同族）✓"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "part",
+    "assembly"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }

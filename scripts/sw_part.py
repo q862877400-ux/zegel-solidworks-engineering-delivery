@@ -699,6 +699,104 @@ def sketch_spline(model, points):
     return seg
 
 
+# ── 规格 211 · B1-2「缩放/变形」（`IFeatureManager::InsertScale`）──────────────────
+# 官方依据（★ 三样逐字读过）：
+#   · `C:\swapi\types\IFeatureManager\InsertScale.md`：
+#       `Feature InsertScale( System.short Type, System.bool Uniform, System.double Xscale,
+#        System.double YScale, System.double ZScale )`
+#       `Type`: Value as defined in `swScaleType_e`；`YScale`/`ZScale` **valid only if `Uniform`
+#       is false**；`Returns`: **`IFeature` 若缩放当前模型 · `Null` 若缩放选中的图形体**；
+#       `Remarks`: 缩放**图形体**时「**no scale feature is created**」（★ 只改显示）✗
+#   · `C:\swapi\enums\swScaleType_e.md`：`swScaleAboutCentroid` **0** ·
+#       `swScaleAboutOrigin` **1** · `swScaleAboutCoordinateSystem` **2**（★ 共 3 个成员）✓
+#   · ★★ **官方示例** `C:\swapi\examples\Insert_Scale_Feature_Example_VB.md`（★ 第 ③ 样，给调用序）：
+#       `Set swScaleFeat = swFeatMgr.InsertScale(swScaleAboutOrigin, True, 3, 3, 3)`
+#       `If swScaleFeat Is Nothing Then Exit Sub`
+#       `Set swScale = swScaleFeat.GetDefinition`
+#       `Debug.Print " Scale = " & swScaleFeat.Name`
+#       `Debug.Print " Error (0 = no errors) = " & swScaleFeat.GetErrorCode`
+#       ⇒ ★★ **示例里有 `GetErrorCode`（`0 = no errors`）** —— ★ 比"返回值"更好的判据 ✓
+# 判据（★ 规则 6 的回读）：
+#   ★★★ **体积按 `x³` 变化** —— ★ 缩放因子**无量纲** ⇒
+#     ★★ **这条判据不受长度单位影响**（★ 与规格 211 · B1-1 那个"单位未确证"的坑相对照）✓
+#   ★ 加 `_feature_report` 的"建之前在不在 / 建之后在不在 / 重建 / 查错"四条 ✓
+# ⚠ **两条我方工程选择**（★ 不是官方要求，★ 如实标注）：
+#   ① `Type` 必须 ∈ `{0,1,2}`（★ 官方的 `swScaleType_e` 只有这三个 ⇒ 越界**必然非法**）✓
+#   ② `x <= 0` 拒绝 —— ★ **官方没说**「0 或负数会怎样」⇒ ★ 本守卫是**本项目防静默失败的选择**，
+#      ★★ **不是「官方要求抛错」**（★ 与本文件 `insert_composite_curve` 那条注释**同一纪律**）✓
+#: ★ 官方 `swScaleType_e` 的三个取值（★ 越界必然非法）✓
+SCALE_TYPES = {0: "swScaleAboutCentroid", 1: "swScaleAboutOrigin",
+               2: "swScaleAboutCoordinateSystem"}
+
+
+def insert_scale(model, scale_type: int = 1, uniform: bool = True,
+                 x: float = 2.0, y: float = 2.0, z: float = 2.0):
+    """★ **缩放/变形**（`IFeatureManager::InsertScale`）—— ★ 因子**无量纲**，★ 不涉及长度单位 ✓
+
+    ★★ `Uniform=True` 时官方只用 `Xscale`、**三方向同倍** ⇒ ★ 此时传 `y`/`z` 无害，
+      ★ 但**判据只看 `x`** ✓（★ 官方示例也是 `InsertScale(…, True, 3, 3, 3)` 三个都给 ✓）
+    """
+    if int(scale_type) not in SCALE_TYPES:
+        raise ValueError(
+            "scale_type=%r 不在官方 `swScaleType_e` 内 ⇒ 必然非法（★ 合法值：%s）"
+            % (scale_type, sorted(SCALE_TYPES)))
+    if float(x) <= 0:
+        #: ★★ **我方工程选择**（★ 官方没说「0/负数会怎样」）—— ★ 防静默失败，★ 不假称官方要求 ✓
+        raise ValueError(
+            "x=%r ≤ 0 被拒 —— ★ 这是**本项目的工程选择**（防静默失败），"
+            "★ **不是官方要求**：官方 `InsertScale` 页没写「0 或负数会怎样」" % x)
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        raise RuntimeError("取不到 FeatureManager")
+    feat = get_com_member(fm, "InsertScale", int(scale_type), bool(uniform),
+                          float(x), float(y), float(z))
+    if feat is None:
+        #: ★ 官方：`Null` 出现在「缩放选中的**图形体**」那条路（★ 那条**不建特征**）✓
+        raise RuntimeError(
+            "InsertScale 回 None ⇒ ★ 按官方这多半是**缩放了选中的图形体**"
+            "（那条路**只改显示、不建特征**）；★ 若要**建缩放特征**，★ 先清空选择再调 ✓")
+    return feat
+
+
+def insert_scale_report(model, scale_type: int = 1, uniform: bool = True,
+                        x: float = 2.0, y: float = 2.0, z: float = 2.0,
+                        feature_name: str = "", volume_before: float | None = None):
+    """★ **缩放/变形**并回**回读报告**（★ 规则 6 + ★★ **体积 `x³` 判据**）。
+
+    ★★★ 为什么加体积判据：★ 缩放因子**无量纲** ⇒ ★ **体积比 `x³` 是能算出来的真值** ⇒
+      ★★ 这条判据**不受长度单位影响** —— ★ 正好补上 B1-1 里「单位未确证」留下的那个洞 ✓
+      ★（★ 期望体积 = `volume_before × x³`，★ 容差 1% 留给数值误差）✓
+    """
+    kv = None
+    if volume_before is not None:
+        kv = float(volume_before) * float(x) ** 3
+    rep = _feature_report(
+        model, feature_name or "缩放比例1",   #: ★★ 真机实测的**实际特征名**（★ 不是「缩放1」）——
+        #:   ★ 发现方式：★ **建之前/之后对比特征名** ⇒ 新增的正是 `缩放比例1` ✓
+        #:   ★（★ 我原先按中文直觉猜「缩放1」⇒ `_feature_report` 的 `present_after` 回 `None` ✗）✓
+        lambda: insert_scale(model, scale_type, uniform, x, y, z), "scale")
+    #: ★★ **真判据**：体积比（★ 无量纲 ⇒ 不受单位影响）✓
+    if kv is not None:
+        try:
+            from sw_mass_property import mass_properties
+            got = mass_properties(model).get("volume")
+            rep["volume_before"] = float(volume_before)
+            rep["volume_after"] = got
+            rep["volume_expected"] = kv
+            rep["volume_ratio"] = (float(got) / float(volume_before)
+                                   if got and volume_before else None)
+            rep["volume_ratio_expected"] = float(x) ** 3
+            rep["volume_ok"] = bool(got) and abs(float(got) - kv) <= max(0.01 * kv, 1e-6)
+        except Exception as exc:                                        # noqa: BLE001
+            rep["volume_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
+    rep["scale_type_text"] = SCALE_TYPES.get(int(scale_type))
+    rep["uniform"] = bool(uniform)
+    rep["factor"] = float(x)
+    rep["_math_note"] = ("★ 期望体积比 = x³ = %r（★ 无量纲 ⇒ 判据不受长度单位影响）"
+                         % (float(x) ** 3,))
+    return rep
+
+
 def auto_dimension_sketch(model, sketch=None, sketch_segments=None):
     """@brief 按官方 AutoDimension2 流程为当前草图创建真实模型尺寸。
 
