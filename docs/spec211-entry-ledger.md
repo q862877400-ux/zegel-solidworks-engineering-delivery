@@ -8,7 +8,7 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项（★ **人工终判**）：★ **可做 11** · **不做 7** · **已覆盖 1** · **待实测 1**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 11** · **不做 8** · **已覆盖 1** · **待实测 1**
 
 ## 特征 · 边界凸台 ⇒ **不做**
 
@@ -105,9 +105,9 @@
   · `[swapi] IDrawingDoc::CreateUnfoldedViewAt2` `System.bool CreateUnfoldedViewAt2( System.double X, System.double Y, System.double Z, System.bool NotAligned  
   · …（共 10 个候选）
 
-## 钣金 · 平板型式/导出 DXF ⇒ **待评估**
+## 钣金 · 平板型式/导出 DXF ⇒ **不做**
 
-· 初判：★★ **人工终判**：★★★ **实现早就有，★ 而工具面**已回退注册**** ✗ —— ★ `scripts/sw_export.py` 的 `export_flat_pattern_dxf`/`export_flat_pattern_dxf_report`（★ 走 `ExportToDWG2` ✓）✓；★★ 而覆盖表备注逐字「★ **本仓库的展开 DXF 已回退注册**」✗、★ 且 `capabilities.yaml` **无对应条目** ✗ ⇒ ★★★ **「为什么回退」我没查到** ⇒ ★ **不编理由**（铁律 5）✓ ★ 下一步：★ **先查回退的那次提交**（★ `git log -S` 那条实现 ✓），★ 再有据地决定「重做」还是「确认为不做」 ✓　（★ 自动台账原判：待核实）
+· 初判：★★ **人工终判**：★★★ **被本仓硬约束挡住**（★ 而**实现早就有** ✓）—— ★ `scripts/sw_export.py` 的 `export_flat_pattern_dxf`/`export_flat_pattern_dxf_report`（★ 走 `ExportToDWG2` ✓）✓；★★ 理由**逐字**见 `docs/plan-24h-v2-convergence.md:53`：「★ **轮 407 真的造了一个钣金件**（回读三项全 true）而它**仍拒绝** —— 真前置是「**已保存**的钣金件」，★ 而**保存是硬约束⑦ 明禁**的」✗ ★ 旁证 `docs/A9-solve-attempts.md:84`「所有脚本都**不保存**文档」✓ ⇒ ★★ **「官方前置要求保存、本仓不许保存」** —— ★ 与「剪裁曲面」（前置全对上仍不建）**不同族** ✗；★ **若用户允许为导出而临时保存 ⇒ 本项即可做** ✓　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IAnnotationView::FlatPatternView` `System.bool FlatPatternView {get;}` 
   · `[swapi] IDrawingDoc::ChangeRefConfigurationOfFlatPatternView` `System.bool ChangeRefConfigurationOfFlatPatternView( System.string ModelName, System.string ConfigName )` 
