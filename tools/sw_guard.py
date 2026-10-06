@@ -810,14 +810,34 @@ def _child_env() -> dict:
     return env
 
 
-def collect_sandbox_outputs() -> list:
-    """★ 跑完把沙盒里的产物**拷到配置的输出根目录**（★ copy-out）—— ★ 失败不影响探针结论 ✓"""
+def snapshot_sandbox() -> dict:
+    """★ 跑**之前**给沙盒拍只读快照 —— ★ 用来算「跑完 SolidWorks 自己写了什么」✓
+
+    ★★ 为什么需要它：★ 分析类产物的**落点由 SolidWorks 自己决定**，那一步**不经过我们的调用**
+      ⇒ ★ 应用层拦不住（评审确认过）⇒ ★ **能看见就已经是全部** ✓
+    """
+    try:
+        import sw_sandbox as _sb                                      # noqa: PLC0415
+        return _sb.snapshot_dir(_sb.sandbox_root())
+    except Exception:                                                  # noqa: BLE001
+        return {}
+
+
+def collect_sandbox_outputs(before: dict | None = None) -> dict:
+    """★ 跑完把沙盒产物**拷到输出根**（copy-out）+ ★ 报出**跑完多出来的文件** ✓
+
+    :returns: `{"copied": [...], "appeared": [...], "output_root": str}`
+    ★★ `appeared` 就是「SolidWorks 自己写出来的那些」—— ★ 我们**拦不住它写**，
+      ★ 但**能看见它写了什么**，★ 于是产物**有名字、有去处、能被报出来** ✓
+    """
     try:
         import sw_sandbox as _sb                                      # noqa: PLC0415
         produced = _sb.sweep()
-        return _sb.collect_outputs(produced, note="由 tools/sw_guard.py 在跑完后收集")
+        copied = _sb.collect_outputs(produced, note="由 tools/sw_guard.py 在跑完后收集")
+        appeared = _sb.new_since(before or {}, _sb.sandbox_root())
+        return {"copied": copied, "appeared": appeared, "output_root": str(_sb.output_root())}
     except Exception:                                                  # noqa: BLE001
-        return []
+        return {"copied": [], "appeared": [], "output_root": ""}
 
 
 def precheck_before_run(allowed_paths=(), *, allow_untitled: bool = False,
@@ -1019,6 +1039,9 @@ def main() -> int:
                 print("  ★★ 预检拒绝开始：%s" % v["why"])
                 print("  ★ 去留由人定；★ 确认可以继续时才用 `--skip-precheck` ✓")
                 return 2
+        #: ★★ 跑**之前**给沙盒拍只读快照（★ 用来算跑完多了什么）—— ★ 注意作用域在**这里**，
+        #:   ★ 我第一版把它写进了 `run_guarded`、却在 `main` 里用 ⇒ **每次跑完都 NameError 崩掉** ✗
+        sandbox_before = snapshot_sandbox()
         r = run_guarded(args.command, timeout=args.timeout,
                         precheck=not args.skip_precheck, allowed_paths=args.allow_path)
         #: ★ 顺带把**子进程的 stdout** 也带回来（★ 原来只回一个 ≤1200 字符的 JSON 且
@@ -1033,10 +1056,16 @@ def main() -> int:
         #: ★★ **copy-out**（规格 210 · B5-3）：跑完把沙盒里的产物**拷到配置的输出根目录** ✓
         #:   ★ 无论探针成功与否都收（★ 失败的现场往往更有用），★ 且**收集失败不影响结论** ✓
         if not args.skip_sandbox_collect:
-            got = collect_sandbox_outputs()
-            if got:
+            got = collect_sandbox_outputs(sandbox_before)
+            if got["copied"]:
                 print("── 沙盒产物已收集 %d 个 ⇒ %s ──"
-                      % (len(got), os.path.dirname(got[0]["copied_to"])))
+                      % (len(got["copied"]), os.path.dirname(got["copied"][0]["copied_to"])))
+            if got["appeared"]:
+                #: ★★ 这就是「SolidWorks 自己写出来的那些」—— ★ 拦不住，但**看得见** ✓
+                print("── ★ 跑完多出 %d 个文件（★ 其中可能有 SolidWorks 自己写的产物）──"
+                      % len(got["appeared"]))
+                for _p in got["appeared"][:8]:
+                    print("     " + _p)
             try:
                 import sw_sandbox as _sb
                 print("   （沙盒：%s · 输出根：%s）" % (_sb.sandbox_root(), _sb.output_root()))
