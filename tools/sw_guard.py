@@ -980,6 +980,8 @@ def main() -> int:
     ap.add_argument("--clear", action="store_true", help="扫一遍并**点掉**所有弹窗")
     ap.add_argument("--report", action="store_true", help="打印已记录的事件")
     #: ★ B5-2b：默认**开**预检（★ 真机跑的安全前提）；★ 只有确实需要时才 `--skip-precheck` ✓
+    ap.add_argument("--skip-doc-cleanup", action="store_true",
+                    help="★ 跑完不关我方文档（★ 默认会关；★ 有非我方文档时本来就不碰）")
     ap.add_argument("--skip-sandbox-collect", action="store_true",
                     help="★ 跑完不把沙盒产物拷到输出根目录（★ 默认会拷）")
     ap.add_argument("--skip-precheck", action="store_true",
@@ -1079,6 +1081,20 @@ def main() -> int:
                 print("   （沙盒：%s · 输出根：%s）" % (_sb.sandbox_root(), _sb.output_root()))
             except Exception:                                          # noqa: BLE001
                 pass
+            #: ★★ **收尾**（规格 210 · B5）：★ 关掉**我方**打开的文档 ——
+            #:   ★ 不这么做，下一次预检就会把**上一次留下的我方件**判成"非我方" ⇒
+            #:   ★★ **门禁把自己人挡在门外**（★ 真机现场就是这样）✓
+            #:   ★★ 只关我方的；★ **有非我方文档就整体停手**（★ 一个都不碰）✓
+            if not args.skip_doc_cleanup:
+                try:
+                    import close_our_docs as _cd
+                    r = _cd.close_our_documents()
+                    if r["closed"]:
+                        print("── 收尾：关掉我方文档 %s ──" % "、".join(r["closed"]))
+                    if r["refused"]:
+                        print("── 收尾：**没动任何文档**（%s）──" % r["why"])
+                except Exception as exc:                                # noqa: BLE001
+                    print("── 收尾关文档失败（★ 不影响结论）：%s ──" % type(exc).__name__)
         return 0 if r["ok"] else 1
     ap.print_help()
     return 0

@@ -37,7 +37,10 @@ import sw_fingerprint as FP                                          # noqa: E40
 KNOWN_WRITERS = {
     "selection": "solidworks_clear_selection",
     "edit_mode": "solidworks_sketch_start",
-    "dirty": "solidworks_sketch_start",
+    #: ★★ 真机实测：`sketch_start` **确实进了编辑态**（`edit_mode` = sensitive）
+    #:   ★ 而 `GetSaveFlag` **没动** ⇒ ★ **进草图编辑态不算「脏」**（★ 要改几何才脏）
+    #:   ⇒ ★ 所以给 `dirty` 换一个**真的改文档**的写操作 ✓
+    "dirty": "solidworks_config_create",
     "features": "solidworks_extrude_boss",
     "bodies": "solidworks_extrude_boss",
     "faces": "solidworks_extrude_boss",
@@ -50,7 +53,9 @@ KNOWN_WRITERS = {
 WRITER_PARAMS = {
     "solidworks_clear_selection": {},
     "solidworks_sketch_start": {},
-    "solidworks_extrude_boss": {},
+    #: ★ 真机实测：★ `sketch_name`/`depth_mm` 的 `default` 是 `Ellipsis`（= 必填）
+    #:   ⇒ ★ 必须**主动给值**，否则底层报「缺 2 个位置实参」✗
+    "solidworks_extrude_boss": {"sketch_name": "Sketch1", "depth_mm": 10.0},
     "solidworks_config_create": {"name": "标定用配置"},
     "solidworks_session_rebuild": {},
 }

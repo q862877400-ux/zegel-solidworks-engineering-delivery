@@ -41,9 +41,9 @@ def _specs() -> dict:
     return _SPECS_CACHE
 
 
-def describe(name: str) -> dict:
+def describe(tool_name: str) -> dict:
     """★ 一个工具的**契约摘要**（注入名 · 形参名与是否必需）—— ★ 不调它，只描述 ✓"""
-    entry = _specs().get(name)
+    entry = _specs().get(tool_name)
     if not entry:
         return {"found": False}
     spec, inject = entry
@@ -55,15 +55,17 @@ def describe(name: str) -> dict:
             "function": spec.function, "params": params}
 
 
-def call(name: str, *, inject_objects=None, **params):
+def call(tool_name: str, *, inject_objects=None, **params):
     """★★ 按契约调一个工具 —— 回 `(ok, 说明)` ✓
 
+    ★★ 首参刻意**不叫 `name`** —— ★ 真机踩过：★ 有的工具的形参**就叫 `name`** ⇒
+      ★ 用 `call(name, **params)` 形式的调用会撞成 `got multiple values for argument 'name'` ✗
     :param inject_objects: `{注入名: 宿主对象}`（★ 如 `{"model": model, "sw": sw}`）
     :param params: 形参（★ 名字与声明一致）✓
     """
-    entry = _specs().get(name)
+    entry = _specs().get(tool_name)
     if not entry:
-        return False, "★ 工具名不在声明里：%s" % name
+        return False, "★ 工具名不在声明里：%s" % tool_name
     spec, inject = entry
     try:
         mod = None
