@@ -201,6 +201,17 @@ _LEN_SUFFIX_EXEMPT: dict = {
         "只能在这里登记。★ 登记的理由要写清：加 `_mm` 会把「像素」说成「毫米」——**那是说错话**。",
     ("solidworks_export_bmp", "pixel_height"):
         "同 `pixel_width`：官方 `ExportToBMP` 的 `Height`，单位是**像素**不是长度。",
+    ("solidworks_assembly_add_mate_checked", "width_mate_option"):
+        #: ★★★ 2026-10-07（规格 212 · C-3）：★ 这条豁免是**改名撞出来的** ——
+        #:   ★ 原名 `width_mate_option_mm`，★ 而它其实是官方 `swMateWidthOptions_e` 的**枚举值**、
+        #:   ★★ **不是长度** ⇒ ★ 规格 212 的"后缀说假话"判据把它揪出来了 ✓
+        #:   ★ 改名成能力层的真名 `width_mate_option` 之后 ⇒ ★★ **门禁又命中它** ——
+        #:   ★ 因为门禁按**子串**匹配、`width` ∈ `_LEN_WORDS`）✗
+        #:   ★★ 正解就是**走豁免通道并写清"为什么它不是毫米"**（★ 门禁提示的第二条路）✓
+        #:   ⚠ ★ 门禁按子串匹配 ⇒ ★ **光改名解决不了**（★ 与 `pixel_width` 那条同一形态）✓
+        "★ **不是长度**，是**枚举值** —— 官方 `swMateWidthOptions_e`（宽度配合选项）。"
+        "官方逐字：valid only if MateTypeFromEnum is swMateWIDTH。★ 门禁命中它只因为"
+        "`width` 是 `_LEN_WORDS` 里的子串 ⇒ 加 `_mm` 会把「枚举」说成「毫米」——**那是说错话**。",
     #: ★★ 2026-10-03（轮 470）：它**是角度**（名字里就写着 `_deg`）。门禁命中它只因为
     #:   `_LEN_WORDS` 里有 `spacing`；★ 而**一个参数不可能同时是长度与角度**
     #:   ⇒ 走门禁文档写明的这条通道，**不改它的名字**（改成 `_mm` 反而是说错话）。
