@@ -62,32 +62,49 @@
 
 ## 下一个动作（只写一条，免得没人知道该恢复哪个）
 
-★★★★ **又抓到一个我自己的 bug，而且它有"指纹盲区"的伪装**：
-★★ 我上一轮把 `view` 组 3 条的 `undecided` **理解成"量具的盲区"** —— ★ **错了** ✗
-★ 真因：★ 我的普查代码把**视图/应用对象当文档**去抓指纹 ⇒
-★★ 真机证据（★ 决定性）：★ 那 3 行的"未判定格"是 **`selection`/`edit_mode`/`dirty`/`features`/
-  `config`/`rebuild` 六格全读不到**，★ 而**全组 13 行 × 6 格 = 78**，
-  ★★ **13 正好等于"宿主不是文档"的行数**（`view` 3 + `sw` 3 + `sw_app` 3 + `manager` 2 +
-  `sldworks` 1 + `none` 1）✓
-⇒ ★ 正解：★ **指纹永远读在"文档"上**（`build_host` 把文档用 `_doc` 键一起回）✓
-★★ **修正效果（同一批工具，前后对照）**：
-  · ★ **`agree` 16 → 23**（+7）· ★ **`undecided` 29 → 22**（−7）· ★ `missed` 仍 **2**（真缺陷）✓
-  · ★★ 按组看：★ **`view` 从 `undecided 3` 变 `agree 3`** · ★ **`sw_app` 从 `undecided 3` 变 `agree 3`** ✓
-  · ★ 修正后"未判定格"只剩 **1 行 × 8 格** ⇒ ★★ 正是那个**没有文档的 `none` 组**
-    （★ `_doc is None` ⇒ ★ 如实记"读不到"，★ 那是**对的**）✓
-★ 教训（★ 与 B2/B3 那几次**同族**）：★ **"看起来像对家的缺陷"，先怀疑自己那半** ——
-  ★★ 这次它伪装成了"**量具的盲区**"，★ 而**证据（6 格全空 + 13 行对齐）**才把它戳穿 ✓
-  ★★ 判据：★ **"某几格全空"通常不是"那几格读不到"，而是"我根本没在读文档"** ✓
+★★★★ **把 22 条 `undecided` 拆开看，拆出了一条工具层的真 bug**（★ 本轮最有价值的东西）✓
 
-**★★ 当前 `empty` 组读数（`docs/spec210-survival-diff.md`，可复跑）**
-· ★ `agree` **23** · `missed` **2** · `undecided` **22**（★ 其中 **19 条"调用没调成"**）✓
-· ★★ **硬红门禁：2 条**（★ 仍是那两条**真缺陷**；★ 已进**实证覆盖层**、★ 已让它们**不再是只读**）✓
+**★★ 拆出来的五类（★ 22 条 `undecided`，★ 性质完全不同）**
+1. ★★ **声明不准（7 条）**：★ `drawing_current_sheet_info` / `drawing_sheet_count` / … 七条 `drawing_*`
+   ⇒ ★ 真机报 **`当前文档不是工程图（GetType()=1）`** ⇒ ★★ 它们的 `inject` 声明是 **`model`**，
+   ★ 而**实际要的是工程图** ✗ —— ★ **`inject` 没表达出"文档类型"这一维** ✓
+2. ★★ **`requires` 维度不够（4 条）**：★ `sketch_fully_defined_status` / `sketch_mirror` / `sketch_spline`
+   ⇒ ★ 报 **`没有活动草图` / `不在草图编辑态`**；★ `part_bounding_box` ⇒ ★ 报 **`零件里可能没有实体`**
+   ⇒ ★★ **它们需要的是"编辑态 / 实体"，而 `requires` 只表达"宿主对象"** ✗ —— ★ **维度少了一维** ✓
+3. ★★ **参数合成不够（4 条）**：★ `automation_get_flag` ⇒ ★ `invalid literal for int(): 'MCP_CALIB'`
+   （★ **我的合成器把字符串塞进了 int 形参** ✗）· ★ `config_set_custom_properties` ⇒ ★ 需要 **dict**
+   （★ 给了字符串 ✗）· ★ `weldment_create_weldment_profile` ⇒ ★ 要 **`.sldlfp`** 扩展名 ✗ · ★ `fastener_*` ⇒
+   ★ 需要**非空的**标准名 ✗ ⇒ ★★ **合成规则要按"类型提示"而不是只看名字后缀** ✓
+4. ★★★ **工具层真 bug（1 条）**：★ `simulation_apply_link_connector` ⇒
+   ★★ **`ImportError: attempted relative import with no known parent package`** ✗ —— ★ 见下 ✓
+5. ★ **待查（6 条）**：★ `costing_list_bodies` / `costing_read_body` / `topology_list_constraints`
+   （★ 返回体为空，★ 原因还没查）· ★ `weldment_read_property_manager`（★ `SldWorks.Application.GetNames` ✗）✓
+
+**★★★ 第 4 类：真 bug + 它的系统性（★ 本轮的主产出）**
+· ★ 根因：★ `scripts/sw_simulation_loads.py` **函数体内**有 **17 处**
+  `from .sw_selection_spec import …` / `from .sw_simulation import …`，★ **没有兜底** ⇒
+  ★★ 作为 `scripts.X` 导入时成立，★ **一旦按顶层模块导入就炸** ✗
+· ★★ **而仓库自己早就写好了正确写法**（同文件那处 `sw_connect`）：
+  ★ `try: from .X import Y` / ★ `except ImportError: from X import Y` ✓
+  ⇒ ★ 我**照仓库自己的写法**修了那 17 处（★ \+68/−17，★ 按**事实 61** 核对过：
+    ★ 17 处删除 = 被替换的原行，★ 每行变 4 行 ⇒ ★ 行数吻合 ✓）✓
+  ⇒ ★ 真机验证：★ 该模块**作为顶层模块现在能导入** ✓
+· ★★ **全仓扫描**：★ 同款**共 54 处 / 22 个文件**（★ 顶层**一个都没有** ⇒ ★ 没有模块因此整体坏掉，
+  ★ 只有"**在非包导入路径下调用那些函数**"才炸）✓
+· ★★ **处置（★ 按事实 61 的纪律：批量改动风险高 ⇒ 不一次改 22 个文件）**：
+  ★ 修**实际炸掉的那一个** + ★ 加**门禁棘轮**（★ 存量只许变少、不许变多）✓
+· ★ 新 `scripts/check_relative_imports.py` ⇒ 全仓实测 **35 处**（★ **基线必须实测、不许估** ——
+  ★ 我先估了 37，★ 实扫是 35，★ 已改）✓
+· ★ 新 `tests/test_relative_imports_gate.py`（**4 条**，★ **两侧都证**，★ 事实 62 的手法）：
+  ★★ **负例**：★ **修复前**的原文（`git show HEAD:…`）⇒ ★ **必须命中 17 处** ✓
+  ★★ **正例**：★ **修复后**的文件 ⇒ ★ **必须 0 命中** ✓
+  ★ **契约**：★ 判据必须 `startswith("try:")` —— ★ 因为修法带 `# noqa` 注释，
+    ★ 用 `== "try:"` 会把**已修好的**算成没兜底 ✗（★ **我第一版就栽在这，真机现象：修完仍是 54 处**）✓
 
 **下一批**
-1. ★★ 把剩下的 **`undecided` 22** 再拆一层：★ 19 条"未调成"**逐条看原因** ⇒
-   ★ 分出「**缺参数**」（★ 合成规则要补）· 「**需要插件/研究/成本管理器**」（★ 建宿主）·
-   ★ 「**环境**」（★ 如"只支持装配体"）✓
-2. ★ 建 **`study` / `cost_manager`** 两类宿主（★ 要加载插件）✓
+1. ★★ 把 `check_relative_imports.py` **接进 `release_check.py`**（★ 那就成了常驻不变量）✓
+2. ★★ 按拆出来的五类**逐类处置**：★ 声明不准（补"文档类型"维度）· ★ `requires` 补"编辑态/实体"维度 ·
+   ★ 合成器按类型提示 · ★ 剩下的真 bug（`weldment_read_property_manager` 的 `SldWorks.Application.GetNames`）✓
 3. ★ 跑 **`nonempty`（135）** 与 **`null`（266）** ⇒ ★ 全量分布 ✓
 4. ★★ 把覆盖层接成**棘轮**（★ 每次普查的 `missed` **必须**进覆盖层 + 门禁）✓
 

@@ -615,7 +615,10 @@ def add_link_connector_report(manager, model, first, second, *,
       ★★ **而★ 两个顶点**可以**在同一个体上** —— 真机（事实 373）验过：★ **同体也成** ✓
     :returns: `{ok, count_before, count_after, first, second, ...}`
     """
-    from .sw_selection_spec import resolve_entity
+    try:                                                       # noqa: SIM105
+        from .sw_selection_spec import resolve_entity
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_selection_spec import resolve_entity
     try:
         count_before = int(get_com_member(manager, "Count") or 0)
     except Exception:                                          # noqa: BLE001
@@ -792,7 +795,10 @@ def apply_pressure_report(manager, model, pressure_type: int = 0, reg_geom=None)
     ★ `model` 是活动文档 —— **给了它才会把选区实体装成官方要求的 `DispArray`**
       （机制与 `sw_simulation.apply_fixed_restraint` 完全一致，★ 复用 `_selected_dispatch_array`）。
     """
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
 
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_pressure(manager, entities, pressure_type, reg_geom),
@@ -801,7 +807,10 @@ def apply_pressure_report(manager, model, pressure_type: int = 0, reg_geom=None)
 
 def apply_torque_report(manager, model, ref_geom=None):
     """**加力矩**并回**回读报告**（★ 同 `apply_pressure_report`，`model` 用来装 `DispArray`）。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
 
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_torque(manager, entities, ref_geom), "torque", model)
@@ -812,7 +821,10 @@ def apply_gravity_report(manager, model):
 
     ⚠ 官方参数是**单实体**（`DispEntity`）⇒ ★ 取选区里的**第一个**实体。
     """
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
 
     ents = _selected_dispatch_array(model)
     entity = ents[0] if ents else None
@@ -821,7 +833,10 @@ def apply_gravity_report(manager, model):
 
 def apply_centrifugal_force_report(manager, model):
     """**加离心力**并回**回读报告**。⚠ 官方参数是**单实体** ⇒ 取选区第一个。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
 
     ents = _selected_dispatch_array(model)
     entity = ents[0] if ents else None
@@ -848,42 +863,60 @@ def apply_centrifugal_force_report(manager, model):
 
 def apply_convection_report(manager, model):
     """**加对流**并回**回读报告**（★ 与 `apply_pressure_report` 同一套机器）。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_convection(manager, entities), "convection", model)
 
 
 def apply_elastic_connector_report(manager, model):
     """**加弹性连接**并回**回读报告**。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_elastic_connector(manager, entities), "elastic_connector", model)
 
 
 def apply_heat_flux_report(manager, model):
     """**加热流**并回**回读报告**。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_heat_flux(manager, entities), "heat_flux", model)
 
 
 def apply_heat_power_report(manager, model):
     """**加热功率**并回**回读报告**。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_heat_power(manager, entities), "heat_power", model)
 
 
 def apply_temperature_report(manager, model):
     """**加温度**并回**回读报告**。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_temperature(manager, entities), "temperature", model)
 
 
 def apply_radiation_report(manager, model, radiation_type: int = 0):
     """**加热辐射**并回**回读报告**（★ 唯一带一个 int 参数的那个）。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_radiation(manager, entities, radiation_type),
                    "radiation", model)
@@ -914,7 +947,10 @@ def apply_radiation_report(manager, model, radiation_type: int = 0):
 
 def apply_distributed_mass_report(manager, model, mass: float, units: int = 0):
     """**加分布质量**并回**回读报告**（★ 与 `apply_pressure_report` 同一套机器）。"""
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager, lambda: add_distributed_mass(manager, entities, float(mass), int(units)),
                    "distributed_mass", model)
@@ -926,8 +962,14 @@ def apply_force_report(manager, model, force_type: int = 1):
     ⚠★ 本包装**显式补 `ref_geom`**（空 Dispatch）—— ★ 裸函数的默认值是 `None`，
     而**事实 12** 明写 Object 入参裸传 `None` 会 `类型不匹配`。
     """
-    from .sw_connect import create_empty_dispatch_variant
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_connect import create_empty_dispatch_variant
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_connect import create_empty_dispatch_variant
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager,
                    lambda: add_force(manager, entities, int(force_type),
@@ -941,7 +983,10 @@ def apply_remote_load_report(manager, model, load_type: int, units: int,
 
     ⚠ `load_type` / `units` 的枚举在本仓的来源块里注明"反射 dump 未收录 ⇒ 只做 int 透传"。
     """
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
     return _report(manager,
                    lambda: add_remote_load(manager, entities, int(load_type), int(units),
@@ -980,7 +1025,10 @@ def _split_selection(model, *, per_side: int = 1):
     :param per_side: 每一侧要几个实体（★ 两侧都按它取 ⇒ **总数必须是 `2 * per_side`**）。
     :raises RuntimeError: 选区条数不足或不是 `2 * per_side`（★ 早失败优于静默）。
     """
-    from .sw_simulation import _selected_dispatch_array
+    try:                                                       # noqa: SIM105
+        from .sw_simulation import _selected_dispatch_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_simulation import _selected_dispatch_array
     objs = _selected_dispatch_array(model)
     want = 2 * int(per_side)
     if len(objs) < want:
@@ -1038,7 +1086,10 @@ def apply_rigid_connector_by_objects_report(manager, model, source_indices, targ
     :param source_indices / target_indices: 两组实体的**序号**（★ 0 基）。
     :param kind: `"FACE"` / `"EDGE"` / `"VERTEX"`。
     """
-    from .sw_selection_spec import entities_as_array
+    try:                                                       # noqa: SIM105
+        from .sw_selection_spec import entities_as_array
+    except ImportError:                                       # ★ 回退绝对导入 ✓
+        from sw_selection_spec import entities_as_array
     #: ★★ 两侧**可分别指定体号** —— ★ 因为"连接件"连的是**两个**东西**：
     #:   ★ 而多体零件里两个体的序号不同（★ 事实 338 的新假设：它要两个体才能连）。
     src = entities_as_array(model, kind, source_indices, body_index=source_body_index)
