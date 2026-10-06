@@ -76,6 +76,7 @@
 | `drawing_center_lines` | `stitched` |
 | `drawing_dimension_insertion` | `not_implemented` |
 | `drawing_model_annotations` | `stitched` |
+| `fillet_weld_bead` | `stitched` |
 | `geometric_tolerance` | `stitched` |
 | `macro_native_recording` | `stitched` |
 | `mold_parting_geometry` | `stitched` |
@@ -88,6 +89,7 @@
 | `surface_thicken_silent_noop` | `stitched` |
 | `topology_iteration_options_backend_limited` | `stitched` |
 | `untrim_surface` | `stitched` |
+| `weldment_gusset` | `stitched` |
 | `weldment_trim` | `stitched` |
 
 ⇒ ★ 落到 §四 的表上：**钣金、曲面、模具分型几何、GD&T、仿真结果读回** 这几域的 ✅ 要打折看。

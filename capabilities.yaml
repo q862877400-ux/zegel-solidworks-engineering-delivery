@@ -5021,8 +5021,7 @@
     "pywin32"
    ],
    "allowed_modes": [
-    "part",
-    "assembly"
+    "interactive"
    ],
    "dependencies": [],
    "verified_versions": {
@@ -5058,8 +5057,7 @@
     "pywin32"
    ],
    "allowed_modes": [
-    "part",
-    "assembly"
+    "interactive"
    ],
    "dependencies": [],
    "verified_versions": {
@@ -5097,7 +5095,7 @@
     "pywin32"
    ],
    "allowed_modes": [
-    "part"
+    "interactive"
    ],
    "dependencies": [],
    "verified_versions": {
@@ -5139,7 +5137,7 @@
     "pywin32"
    ],
    "allowed_modes": [
-    "part"
+    "interactive"
    ],
    "dependencies": [],
    "verified_versions": {
@@ -5181,7 +5179,7 @@
     "pywin32"
    ],
    "allowed_modes": [
-    "part"
+    "interactive"
    ],
    "dependencies": [],
    "verified_versions": {
@@ -5216,7 +5214,7 @@
     "pywin32"
    ],
    "allowed_modes": [
-    "part"
+    "interactive"
    ],
    "dependencies": [],
    "verified_versions": {
@@ -5250,7 +5248,7 @@
     "pywin32"
    ],
    "allowed_modes": [
-    "part"
+    "interactive"
    ],
    "dependencies": [],
    "verified_versions": {

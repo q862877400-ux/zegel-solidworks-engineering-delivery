@@ -5,19 +5,20 @@ import csv
 from pathlib import Path
 from typing import Any, Iterable
 
+#: ★ 2026-10-07（规格 211 · B3-1）：下表里 `sw_feature_readback` 与 `sw_connect` 的两个新名字
+#:   （`mm` · `create_empty_dispatch_variant`）是 `insert_weldment_trim_report` 要用的 ✓
+#:   ★★ 注释**放在 `try:` 之外** —— 因为 `scripts/check_relative_imports.py` 的判据是
+#:     「相对导入必须**紧跟** `try:`」⇒ ★ 夹在导入之间会把连续块打断、被算成"无兜底" ✗ ✓
 try:
     from .sw_connect import (get_com_member, call_com_member, save_document,
                              set_com_member, mm, create_empty_dispatch_variant)
     from .sw_document_data import set_custom_properties
-    #: ★ 2026-10-07（规格 211 · B3-1）：★ 新增的 `insert_weldment_trim_report` 要用它 ✓
-    from .sw_feature_readback import feature_names
     from .sw_part import _ensure_sketch_selected
     from .sw_preflight import import_com_dependencies
 except ImportError:
     from sw_connect import (get_com_member, call_com_member, save_document,
-                        set_com_member, mm, create_empty_dispatch_variant)
+                            set_com_member, mm, create_empty_dispatch_variant)
     from sw_document_data import set_custom_properties
-    from sw_feature_readback import feature_names
     from sw_part import _ensure_sketch_selected
     from sw_preflight import import_com_dependencies
 
@@ -168,7 +169,13 @@ def insert_weldment_trim_report(model, *, end_cond: int = 0, options: int = 0,
     if model is None:
         out["error"] = "model 为 None"
         return out
-    before = feature_names(model)
+    #: ★★ 用**本文件已有**的遍历取特征名 —— ★ 不新引导入（★ 那会撞相对导入棘轮 ✓）
+    def _fnames():
+        try:
+            return [str(get_com_member(f, "Name") or "") for f in iter_features_recursive(model)]
+        except Exception:                                               # noqa: BLE001
+            return []
+    before = _fnames()
     #: ★★ **记调用前的选择计数**（★ 让"选不上"与"选了没用"可分辨 ✓）
     try:
         import sw_selection_spec as SS
@@ -192,7 +199,7 @@ def insert_weldment_trim_report(model, *, end_cond: int = 0, options: int = 0,
     except Exception as exc:                                            # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
         return out
-    after = feature_names(model)
+    after = _fnames()
     out["new_features"] = [n for n in after if n not in before]
     out["feature_count_before"] = len(before)
     out["feature_count_after"] = len(after)

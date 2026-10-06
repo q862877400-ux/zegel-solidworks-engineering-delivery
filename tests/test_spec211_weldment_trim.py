@@ -75,7 +75,12 @@ def test_module_imports_the_new_dependencies():
       ★ **运行时 `NameError`** ⇒ ★★ 这个测试**把那个坑钉死** ✓
     """
     assert callable(W.mm), "★ `mm` 必须在（规则 2：换算只在边界做一次）"
-    assert callable(W.feature_names), "★ `feature_names` 必须在（判据要回读特征树）"
+    #: ★★ 2026-10-07（B8 收口）：★ **不再断言 `feature_names`** ——
+    #:   ★ 因为那会新增一个**独立的 `from .X import` 行**，★ 而
+    #:     `scripts/check_relative_imports.py` 的判据是「**前一行为 `try:`**」⇒
+    #:     ★★ **每个文件只有第一行合格** ✗ ⇒ 新增独立行会让棘轮计数 +1（35 → 36）✗
+    #:   ⇒ ★ 改用**本文件已有**的 `iter_features_recursive`（★ 只缝合不发明 ✓）
+    assert callable(W.iter_features_recursive), "★ `iter_features_recursive` 必须在（回读特征树用）"
     assert callable(W.create_empty_dispatch_variant), (
         "★ 空 VARIANT 必须在 —— ★ 实测：两个 object 数组形参**传 None 调不通**、"
         "★ 传 `VARIANT(VT_DISPATCH, None)` ⇒ 调用完成 ✓（事实 12/33）")

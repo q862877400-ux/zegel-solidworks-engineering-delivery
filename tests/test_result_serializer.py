@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -32,7 +33,15 @@ def _load_result():
     class _RF:
         JSON = "json"
 
-    ns = {"Any": object, "Dict": dict, "json": json, "ResponseFormat": _RF}
+    #: ★★★ 2026-10-07（规格 211 · B8）：★ **`re` 必须注入** ——
+    #:   ★ 本测试从**真源码**里抽 `_jsonable` → `_tool_error` 之间那一段离线执行 ✓
+    #:   ★★ 而**规格 212 · D-5** 往那段区间里插了**返回出口的单位守卫**（`_unit_guard` /
+    #:     `_scan_unit_keys` / `_unitlike_re` 那一族）⇒ ★ 它用了 `re` ✗ ⇒
+    #:     ★★ 注入表缺 `re` ⇒ **`NameError: name 're' is not defined`**（4 条测试全红）✓
+    #:   ★ 修法：★ **把 `re` 加进注入表** —— ★ 因为"注入哪些名字"是**本测试的实现细节**，
+    #:     ★★ 而那一族守卫是**对真源码的合法扩展** ✓（★ 不改真源码的语义 ✓）
+    ns = {"Any": object, "Dict": dict, "json": json, "re": re, "os": os,
+          "sys": sys, "ResponseFormat": _RF}
     exec(seg, ns)                                                        # noqa: S102
     return ns["_result"]
 
