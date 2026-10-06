@@ -118,16 +118,27 @@ def build_host(sw, inject_name: str):
     """
     import sw_connect
     name = str(inject_name or "")
+    #: ★★★ 2026-10-06 **真机查出的 sweep bug**：★ 我把**视图/应用对象当文档**去抓指纹 ⇒
+    #:   ★★ 六格全读不到（`selection`/`edit_mode`/`dirty`/`features`/`config`/`rebuild`）✗
+    #:   ★ 真机证据：★ `empty` 组里 **13 行**各 6 格未判定（= 78），★ 而 **13 正好等于**
+    #:     那些"宿主不是文档"的行数（`view` 3 + `sw` 3 + `sw_app` 3 + `manager` 2 + `sldworks` 1 + `none` 1）✓
+    #:   ⇒ ★ 正解：★ **指纹永远读在"文档"上** ⇒ ★ `build_host` 把文档一起回，★ 用 `_doc` 键带走 ✓
     if name in ("", "none"):
         return {"sw": sw}, ""
     #: ★ 应用对象类（`sldworks` / `sw_app` / `sw` / `manager` / `defaults` / `options`）⇒ 给 `sw` ✓
-    if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options", "sw_app"):
-        return {name: sw, "sw": sw}, ""
+    if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options"):
+        #: ★ 应用对象类：★ 宿主是 `sw` 本身，★ **但指纹要读在活动文档上** ✓
+        try:
+            doc = sw.ActiveDoc
+        except Exception:                                               # noqa: BLE001
+            doc = None
+        return {name: sw, "sw": sw, "_doc": doc}, ""
     kind = {"model": "part", "doc": "part", "asm_model": "assembly",
             "component": "assembly", "drawing_model": "drawing"}.get(name)
     if kind:
         try:
-            return {name: sw_connect.new_document(sw, kind), "sw": sw}, ""
+            doc = sw_connect.new_document(sw, kind)
+            return {name: doc, "sw": sw, "_doc": doc}, ""
         except Exception as exc:                                        # noqa: BLE001
             return {}, "★ 建 %s 失败：%s" % (kind, type(exc).__name__)
     #: ★★ 补两类**易取**的（★ 官方属性，★ 已读页面）✓
@@ -144,7 +155,8 @@ def build_host(sw, inject_name: str):
             host = _sc.get_com_member(doc, attr)
             if host is None:
                 return {}, "★ 零件建好了，但 `%s` 取不到（★ 返回 None）" % attr
-            return {name: host, "sw": sw}, ""
+            #: ★ `selection`/`view` 的宿主**不是文档** ⇒ ★ 但**指纹仍读在文档上** ✓
+            return {name: host, "sw": sw, "_doc": doc}, ""
         except Exception as exc:                                        # noqa: BLE001
             return {}, "★ 建 `%s` 宿主失败：%s" % (name, type(exc).__name__)
     #: ★ 剩下两类（study / cost_manager）**还没建** ⇒ ★ 如实报出 ✓
@@ -259,7 +271,9 @@ def main() -> int:
                     rows.append({"tool": name, "verdict": "undecided", "requires": req,
                                  "writer_ok": True, "why": "★ 重建状态失败：%s" % why_state})
                     continue
-            before = FP.read(injects.get(req) or injects.get("sw"), sw)
+            #: ★★ 指纹一律读**文档**（★ 见 `build_host` 的说明）✓
+            _doc = injects.get("_doc")
+            before = FP.read(_doc, sw) if _doc is not None else {"readings": {}, "usable": False}
             #: ★★ 按声明**合成实参**（★ 真机证明 12/17 的失败只是"没给参数"）✓
             spec_entry = tool_caller._specs().get(name)
             extra = synth_args(spec_entry[0]) if spec_entry else {}
@@ -268,7 +282,7 @@ def main() -> int:
                 **{k: v for k, v in extra.items()
                    if k not in ("model", "sw", "asm_model", "view", "sldworks",
                                 "doc", "study")})
-            after = FP.read(injects.get(req) or injects.get("sw"), sw)
+            after = FP.read(_doc, sw) if _doc is not None else {"readings": {}, "usable": False}
             diff = FP.compare_detailed(before, after)
             verdict = classify(table[name].get("writes"),
                                {"changed": diff["changed"], "unknown": diff["unknown"]},

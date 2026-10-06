@@ -11,13 +11,13 @@
 
 ## 四类统计
 
-agree **16**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **29**
+agree **23**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **22**
 
 ★★ **语义说明**（★ 四类不许混）：
 
-· `agree`（16）：★ **一致**（声明「无写」，观察也确实**没变**）
+· `agree`（23）：★ **一致**（声明「无写」，观察也确实**没变**）
 · `missed`（2）：★★★ **漏报**（声明「无写」而观察**变了**）—— ★ **硬红门禁**这一条 ✗
-· `undecided`（29）：★ **未判定**（有一侧读不到）—— ★ **不算通过也不算失败**
+· `undecided`（22）：★ **未判定**（有一侧读不到）—— ★ **不算通过也不算失败**
 
 ## 按 `inject` 组的判定分布
 
@@ -31,9 +31,9 @@ agree **16**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **29**
 · `none`：undecided **1**
 · `sldworks`：undecided **1**
 · `study`：undecided **1**
-· `sw`：undecided **3**
-· `sw_app`：undecided **3**
-· `view`：undecided **3**
+· `sw`：agree **1** · undecided **2**
+· `sw_app`：agree **3**
+· `view`：agree **3**
 
 ★★ **两种 `undecided` 性质不同**：★ **调用没调成**（★ 我们没测到）与 ★ **调用成功但读数读不到**（★ 量具的盲区）—— ★ 混在一起就看不见了 ✓
 
@@ -91,14 +91,14 @@ agree **16**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **29**
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 ImportError: attempted relative import with no known parent package`
 
 **`solidworks_weldment_read_property_manager`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 AttributeError: SldWorks.Application.GetNames`
 
 **`solidworks_activate_model_for_preview`** ⇒ `agree`
@@ -287,14 +287,14 @@ agree **16**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **29**
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'bodies', 'faces', 'config', 'rebuild']`
 · 调用返回：`★ derived_args 抛 RuntimeError: 取不到草图：试过 ['Sketch1', '草图1']；特征树里也没找到以 Sketch/草图 开头的特征`
 
 **`solidworks_automation_get_flag`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 ValueError: invalid literal for int() with base 10: 'MCP_CALIB'`
 
 **`solidworks_topology_list_constraints`** ⇒ `undecided`
@@ -307,63 +307,63 @@ agree **16**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **29**
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: IHoleStandardsData.GetFastenerTableTypes('', 0) 返回 False —— 常见原因：`fastener_id` 不在 `list_fastener_typ`
 
 **`solidworks_fastener_types`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: IHoleStandardsData.GetFastenerTypes('') 返回 False —— 常见原因：标准名拼错（用 `list_hole_standards()` 里的 `name`）`
 
-**`solidworks_hole_standards`** ⇒ `undecided`
+**`solidworks_hole_standards`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`[{'id': 0, 'name': 'ANSI Inch'}, {'id': 1, 'name': 'ANSI Metric'}, {'id': 16, 'name': 'AS'}, {'id': 2, 'name': 'BSI'}, {`
 
-**`solidworks_document_dependencies`** ⇒ `undecided`
+**`solidworks_document_dependencies`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'ok': True, 'document': 'MCP_CALIB', 'traverse': True, 'search': False, 'add_read_only_info': False, 'count': 0, 'entri`
 
-**`solidworks_simulation_find_study`** ⇒ `undecided`
+**`solidworks_simulation_find_study`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'found': False, 'requested_name': 'MCP_CALIB', 'study_name': ''}`
 
-**`solidworks_surface_evidence`** ⇒ `undecided`
+**`solidworks_surface_evidence`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`{'has_modeler': True, 'registered_creation_methods': ['CreateBsplineSurface', 'CreateConicalSurface', 'CreateConicalSurf`
 
-**`solidworks_get_view_model_doc`** ⇒ `undecided`
+**`solidworks_get_view_model_doc`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`<COMObject <unknown>>`
 
-**`solidworks_view_get_next`** ⇒ `undecided`
+**`solidworks_view_get_next`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`None`
 
-**`solidworks_view_has_perspective`** ⇒ `undecided`
+**`solidworks_view_has_perspective`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 观察**未判定**的类：`（无）`
 · 调用返回：`False`
 
 ## ⚠ 本记录的限度（★ 不许当成「448 个都验过了」）
