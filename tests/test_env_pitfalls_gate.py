@@ -245,3 +245,33 @@ def test_current_tree_has_no_unguarded_keypress() -> None:
             for ln, fn in MOD.find_unguarded_keypress(f):
                 bad.append("%s:%d %s" % (f.relative_to(MOD.ROOT), ln, fn))
     assert not bad, "未设防的 keybd_event 按下：%s" % bad
+
+# ── ④ `get_com_member(...)` 误传 `default=`（★ 真机踩过：它让 B5 门禁"瞎着放行"）────
+def test_gate_catches_get_com_member_default_keyword(tmp_path):
+    """★★ **负例**：★ 写一个带 `default=` 的样本 ⇒ ★ 门禁**必须**报出来 ✓
+
+    ★★ 为什么这条非有不可：★ 本仓事实 62 ——「一个门禁『写了』不等于它『有效』，
+      ★ **负例测试是唯一的证明**」；★ 而「存在但没人用的守卫与没有守卫等价」✓
+    """
+    from check_env_pitfalls import find_get_com_member_default
+    sample = tmp_path / "sample.py"
+    sample.write_text(
+        "from sw_connect import get_com_member\n"
+        "def f(sw):\n"
+        "    return get_com_member(sw, 'GetDocumentCount', default=None)\n",
+        encoding="utf-8")
+    hits = find_get_com_member_default(sample)
+    assert len(hits) == 1, hits
+    assert "default=" in hits[0][1]
+
+
+def test_gate_accepts_the_correct_form(tmp_path):
+    """★ 正确的写法（**不带** `default=`）⇒ ★ 门禁**不许**报 ✓"""
+    from check_env_pitfalls import find_get_com_member_default
+    ok = tmp_path / "ok.py"
+    ok.write_text(
+        "from sw_connect import get_com_member\n"
+        "def f(sw):\n"
+        "    return get_com_member(sw, 'GetDocuments')\n",
+        encoding="utf-8")
+    assert find_get_com_member_default(ok) == []

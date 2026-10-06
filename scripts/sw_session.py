@@ -466,11 +466,11 @@ def open_documents(sw) -> dict:
     problem = ""
     count = None
     try:
-        count = int(get_com_member(sw, "GetDocumentCount", default=None) or 0)
+        count = int(get_com_member(sw, "GetDocumentCount") or 0)
     except Exception:                                                   # noqa: BLE001
         count = None
     try:
-        raw = get_com_member(sw, "GetDocuments", default=None)
+        raw = get_com_member(sw, "GetDocuments")
     except Exception:                                                   # noqa: BLE001
         raw = None
     if raw is None:
@@ -481,11 +481,11 @@ def open_documents(sw) -> dict:
             if item is None:
                 continue
             try:
-                path = get_com_member(item, "GetPathName", default="")
+                path = get_com_member(item, "GetPathName")
             except Exception:                                           # noqa: BLE001
                 path = ""
             try:
-                title = get_com_member(item, "GetTitle", default="")
+                title = get_com_member(item, "GetTitle")
             except Exception:                                           # noqa: BLE001
                 title = ""
             #: ★★ **未保存标记**用官方成员读（★ 不是从窗口标题抠 `*`）：
@@ -493,7 +493,7 @@ def open_documents(sw) -> dict:
             #:   and needs to be saved" ⇒ ★ 真 = **有未保存改动** ✓
             #:   ★ 读不到时记 `None`（**未知**）—— ★ 绝不默认"没有未保存"（那会让人以为杀进程是安全的）✓
             try:
-                dirty = bool(get_com_member(item, "GetSaveFlag", default=None))
+                dirty = bool(get_com_member(item, "GetSaveFlag"))
             except Exception:                                           # noqa: BLE001
                 dirty = None
             documents.append({"path": str(path or ""), "title": str(title or ""), "dirty": dirty})
