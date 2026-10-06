@@ -5256,6 +5256,47 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "curve_driven_pattern",
+   "label": "曲线驱动阵列 / 零部件阵列（IFeatureManager::FeatureLocalCurveDrivenPattern）",
+   "level": "stitched",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IFeatureManager\\FeatureLocalCurveDrivenPattern.md：Feature FeatureLocalCurveDrivenPattern(bool FlipDir1, int Num1, bool EqualSpacing1, double Spacing1, int ReferencePoint, int CurveMethod, int AlignMethod, bool Direction2, bool FlipDir2, int Num2, bool EqualSpacing2, double Spacing2, bool PatternSeedOnly) —— 纯参数式 13 参、不带 AccessSelections",
+    "★★ 同页 ## Remarks 给了完整 mark 表：1 = Components to pattern · 2 = Curve/edge/sketch for Direction 1 · 4 = …Direction 2 · 32 = Reference point for ReferencePoint · 64 = Face on which a 3D curve lies",
+    "★★★ 同页 NOTE 逐字：If ReferencePoint is set to swLocalSketchPatternReferencePoint_e.swLocalSketchPatternSelectedPoint, then the selected reference point must be a vertex",
+    "★ 官方枚举 swLocalSketchPatternReferencePoint_e 逐字：swLocalSketchPatternSelectedPoint = 0 · swLocalSketchPatternBoundingBoxCenter = 1 · swLocalSketchPatternComponentOrigin = 2",
+    "★★ 本项与「零部件阵列」共用这一个入口 —— 覆盖表把它们分在特征域 / 装配域两行，而官方入口是同一个"
+   ],
+   "evidence": [
+    "★ 真机第一步（tools/probe_spec211_curvedriven.py，走 tools/sw_guard.py 护栏）：建凸台 + 方向草图，按 mark 1（要阵列的特征）与 mark 2（方向曲线）选 ⇒ 选区计数 2 ⇒ 调用 ⇒ 新增 []、回 None",
+    "★★★ 真机第二步（tools/probe_spec211_curvedriven_pre.py，本项的决定性实验）：遍历 ReferencePoint ∈ {0,1,2} ⇒ ★ 第 0 与第 1 档都是 mark1=True · mark2=True · 选区=2（前置完全对上）而新增 [] ⇒ 两档有效读数皆不建；★ 第 2 档 mark2=False ⇒ 该档读数无效",
+    "★★ 三成因逐条追过：① 前置 —— mark1 / mark2 / 选区 三字段（0/1 档全对、2 档的 mark2 抓到 false）；② 参数档位 —— ReferencePoint 遍历 0/1/2；③ 追完 ①② 后剩下的解释才是后端受限",
+    "★ 证据文件 output/spec211-b5-curvedriven.json · output/spec211-b5-curvedriven-pre.json"
+   ],
+   "limitations": [
+    "★★★ 本条只到「两档有效读数皆不建」，不是干净的建成 —— 登记 stitched 而非 verified",
+    "★★★★ 必须精确（不许说三档全试过）：ReferencePoint 第 0 与第 1 档的读数是有效的（mark1/mark2 双 True、选区 2）而不建；第 2 档 mark2=False ⇒ 该档读数无效、不能当结论",
+    "★★★ 三次「布尔字段救命」的第三次：为每处前置单独落字段，才看出第 2 档的读数是无效的 —— 因为「读数无效」与「真的不建」长得一模一样（前两次：B3-1 的 select_entity_by_index 的 append 默认 False；上一批的 iter_features_recursive 取不到特征导致特征树为空）",
+    "★★★ 本项是一次翻案的兑现：我原判「不做」，链条是 IModelDoc2::FeatureCurvePattern 已 Obsolete + CreateFeature 加 ICurveDrivenPatternFeatureData 要 AccessSelections（事实 47）⇒ 而那四步只覆盖了别人家的入口，漏了名字里就写着 CurveDriven 的这个参数式入口。定则：「某个入口要 ACL」≠「这个能力要 ACL」",
+    "★★ 一线索：ReferencePoint = 0（SelectedPoint）官方 NOTE 要求选顶点，而 mark 32 未选 ⇒ 那是第一批「仍不建」的第二处前置缺口；换成 1（BoundingBoxCenter，不需选点）后仍不建 ⇒ 线索本身值钱：枚举名就是判据（我第一批只读了签名与 mark 表、没读枚举）",
+    "★ CurveMethod / AlignMethod 两个枚举在 C:\\swapi\\enums 下查不到 ⇒ 两处都取 0（铁律 5：查不到就说查不到）",
+    "★ 与「零部件阵列」共用此入口 ⇒ 本条的读数对两项同时成立",
+    "★ 会新建阵列特征（非只读）"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "interactive"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }
