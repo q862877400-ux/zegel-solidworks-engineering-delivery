@@ -188,3 +188,13 @@
 - ★★ **更正一处**：我曾说"小工具集 lean 反而多花"——**错**（拿系统提示词长度比，而 native 的工具在请求体里）。
   用真实 tools 数组重算：26 个工具时 lean 也省（21KB→13KB，≈0.45）
 - ★ 规律：**量到的所有情形 lean 都省**，工具越多省得越多（26≈0.45 · 84≈0.42 · 731=**0.247**）
+
+## 十七 · 第 17 轮：★ `dsh-lean-mode` 已发布到 GitHub
+
+- ★★ **仓库**：https://github.com/q862877400-ux/dsh-lean-mode （**PUBLIC** · MIT · topics: dsh / deepseek-harness / plugin / agent-tools / context-window）
+- ★ **双语首页**：`README.md`（English）+ `README.zh.md`（中文），互相有语言切换链接
+- ★ **许可合规**：DSH 为 **MIT**（Copyright (c) 2026 DeepSeek）；`cordis.patch.yml` 复述了官方 `standard` preset 组成
+  ⇒ `LICENSE` 同时列两家版权、`THIRD-PARTY.md` 写明**改了哪几处**并声明**非官方背书**
+- 文件：`.gitignore LICENSE README.md README.zh.md THIRD-PARTY.md cordis.patch.yml index.mjs package.json`
+- ★ **未做**：`awesome-dsh-plugin` 精选列表的收录 —— 那是**有 data/ + 生成脚本**的项目，
+  要按 `contributing.md` 加条目并**给上游提 PR**，属另一件事（等业主点头）
