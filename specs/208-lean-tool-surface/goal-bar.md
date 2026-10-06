@@ -100,3 +100,15 @@
 ★★ 字节口径（shipped 装配路径，真实 731 schema）：通道 988 KB → 222 KB，加目录 149 KB = 372 KB，**字节比 0.376**。
 ★ **token 省得比字节多**（75.3% > 62.4%）—— 删掉的是标点密集的 JSON schema，它每字节最费 token。
 ★ 唯一"既省又能用"的是 S；C/F 更省但不可用。
+
+## 十 · 第 10 轮：`lean-mode` 插件（零核心改动）—— 装上即生效
+
+- ★★ **关键发现**：`system-prompt/assemble` 是**瀑布**（"返回的值是权威的" + "作用域监听器只收到该作用域的装配"）
+  ⇒ ★ **插件可以改写 `assembly.tools` 与 `assembly.sections`，不用动 `dsh-tools`**
+- ✅ 插件 `@local/dsh-lean-mode` **真装进 profile**（`dsh plugin --profile leanprobe add`）+ **真启动跑通**
+  会话 #9/#10：**不带 --patch**，系统提示词 2,951 → **7,171**、目录段 ✓、参数信封 ✓、无 SDK 段 ✓
+- ✅ 挂 preset：`preset-lean` 组合层已验证
+- ★ **我自己修掉的两个插件 bug**：① 生成器变量 `BT` 被写进文件（import 失败）② 通道 `{...t}` 保留了完整 description ⇒ 与目录重复
+- ★ 数字：731 工具字节比 **0.390**（核心补丁 0.376）、反推 token ≈ **73,000**（核心补丁实测 67,911）
+- ★ **两条路并存**：A 核心补丁 + `mode: lean`（复用上游 `tool-presentation` 行）；B ★ 插件（零核心改动）
+- ⚠ 限度：插件 token 数是**反推**；preset 挂载未真跑会话；插件不新增 `mode` 枚举（用它时 mode 保持 native）
