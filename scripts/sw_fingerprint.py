@@ -47,7 +47,11 @@ OFFICIAL = {
 FEATURE_CAP = 5000
 
 
-def _read(member, obj, default=None):
+#: ★ `swBodyType_e.swAllBodies`（官方 `C:\\swapi\\enums\\swBodyType_e.md`：`-1 = All solid and sheet bodies`）✓
+SW_ALL_BODIES = -1
+
+
+def _read(member, obj, *args, default=None):
     """★ 读一个成员并**吞掉异常** ⇒ 回 `(值, 错误说明)` —— ★ 拿不到**不等于**没变 ✓
 
     ★★★ 2026-10-06 **真机踩过的坑（必须记住）**：本仓的 `get_com_member(obj, attr, *args)`
@@ -57,7 +61,7 @@ def _read(member, obj, default=None):
       ⇒ ★ 所以**一次都没读到**这件事，靠"两次相等"是**发现不了**的 ✓
     """
     try:
-        return get_com_member(obj, member), ""
+        return get_com_member(obj, member, *args), ""
     except Exception as exc:                                            # noqa: BLE001
         return default, "%s: %s" % (type(exc).__name__, str(exc)[:80])
 
@@ -117,7 +121,10 @@ def read(model, sw=None) -> dict:
     # ④ 特征数 / ⑤ 体数 / ⑥ 面数
     n, why = _count_features(model)
     put("features", n, why)
-    bodies, why = _read("GetBodies2", model)
+    #: ★ 官方签名（已读页面）：`IPartDoc.GetBodies2(BodyType, BVisibleOnly)` —— **要两个实参** ⇒
+    #:   ★ 我第一版无参调它 ⇒ 抛异常 ⇒ ★ `bodies`/`faces` 两格一直是「读不到」✗
+    #:   ★ `swAllBodies = -1`（官方 `swBodyType_e` 页给的数值本页就有）；`False` = 含不可见的 ✓
+    bodies, why = _read("GetBodies2", model, SW_ALL_BODIES, False)
     if bodies is None:
         put("bodies", None, why or "★ GetBodies2 返回 None（★ 装配体上这个成员不存在）")
         put("faces", None, "★ 体都读不到 ⇒ 面也数不了")

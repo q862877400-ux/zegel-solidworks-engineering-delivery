@@ -62,31 +62,31 @@
 
 ## 下一个动作（只写一条，免得没人知道该恢复哪个）
 
-★★★ **B2 收口第 4 条已完成，而且它是本轮最值钱的一件**：
-「**门禁瞎着放行**」的根因查明并修掉 —— ★ 现在 COM 路**真的读得到**了 ✓
+★★ **B2 半程第 2 轮**：★ 指纹**现在能读了**（★ 只剩 `bodies`/`faces`/`rebuild` 三格），
+★ 写操作**已改成按 `ToolSpec` 契约调**（`tools/tool_caller.py`）⇒ ★★ 它**当场暴露了两个真问题** ✓
 
-**根因（真机诊断查出，`tools/diag_getdocuments.py`）**：
-- `ISldWorks.GetDocumentCount` 与 `GetDocuments` 在这个组合下**是属性、不是方法** ⇒
-  `getattr` 拿得到值（真机 `GetDocumentCount` ⇒ **int 0**），而 ★ **加括号调用就 `TypeError`** ✗
-- ★ 而本仓 `get_com_member(obj, attr, *args)` **没有 `default=`** ⇒ 我传 `default=None` 被当成
-  **位置实参** ⇒ ★★ 变成「**用 `None` 去调那个成员**」⇒ 抛异常 ⇒ **读出来全是 `None`** ✓
-- ★★ 后果链条：★ COM 路**一直读出 0 个文档** ⇒ ★ B5 门禁**瞎着放行**（SolidWorks 明明开着文档）✗
+**本轮真机读数（写了 `output/spec210-fingerprint-calib.json`）**：
+- ★★ `selection` ⇒ **sensitive** ✓ · `edit_mode` ⇒ **sensitive** ✓（★ 两类有灵敏度证据）
+- ★★ `dirty` ⇒ **`not_detected`**（★ **写操作成功、而修改标志没动**）——
+  ★ 这**不是**"没调成"，★ 是一份**真的灵敏度结论**，★ 要么 `GetSaveFlag` 不敏感、
+  ★ 要么那次写**没有真的改到文档** ⇒ ★ **下一轮必须查清是哪一个**（★ 不许含糊）✓
+- ★ `features`/`bodies`/`faces` ⇒ 仍 `untested`：★ 写操作抛
+  `TypeError: extrude_boss() got an unexpected keyword argument '...'` ⇒
+  ★★ 根因已查到：★ 声明里 `sketch_name`/`depth_mm` 的 `default` 是 **`Ellipsis`**（★ 本仓约定 = **必填**）
+  ⇒ ★ 我第一版把 `Ellipsis` 当**值**传了 ✗ ⇒ ★ 已改成**视为未给**；
+  ★ 并让调用器**按底层真实签名过滤**、**如实带回被丢的形参名**（★ 那是「声明与实现不一致」的线索）✓
+- ★ `display` ⇒ `untested`：★ **没有"改显示状态"的现成工具** ⇒ ★ 如实记 ✓
 
-**修法（三件，都做完了）**：
-1. ★ `scripts/sw_session.py` 里 **5 处** `default=` 误用**全部改掉**（★ 全库只剩这 5 处，都是我 B5 时写的）✓
-2. ★★ **加门禁拦住这个形态**：`scripts/check_env_pitfalls.py` 第 **⑤** 条
-   `find_get_com_member_default` ⇒ ★ 并配**负例测试**（★ 用 `git show HEAD:` 的**修复前原文**验，
-   ⇒ **命中 5 处** ✓ —— 事实 62 的可复用手法）✓
-3. ★★ **真机验证**：开一个自己的临时件 ⇒ `count = 1 · 文档数 = 1 · count_matches = True · 无 readback 问题`
-   ⇒ ★ **COM 路真的在读** ✓（修前是 `count=None · 0 个`）· 清场后门禁放行 · `ok: true` ✓
+**★ 第 0 格仍然不相等**（★ 比第 2 与第 3 次）⇒ ★★ 所以**不只是"文档还没稳"** ✗ ——
+  ★ 说明**读数里确实有一个会自己变**（★ 候选：`features` 的遍历 · `GetSaveFlag` · `rebuild` 那一格）
+  ⇒ ★ **下一轮要逐格二分**：★ 关掉一格读一次、看两次读数是否相等，★ 定位到那一格 ✓
+  ★★ 这是 B2 收口的**卡点**：★ 量具没校准好，B3 的差分就不可信 ✓
 
-**下一批（B2 收口剩下三条 + B3）**：
-1. ★ 按**官方签名**补 `GetBodies2(BodyType, BVisibleOnly)` ⇒ 修 `bodies`/`faces` 两个读数 ✓
-2. ★ 第 0 格改成**连读三次、比第 2 与第 3 次**（★ 首次读数会赶上"文档还在自行稳定"）✓
-3. ★ 写操作**按 ToolSpec 契约**接（★ 现在用的是能力层公开函数，形状不对 ⇒ 抛 TypeError）⇒
-   把 `features`/`bodies`/`faces`/`dirty`/`config` 从 `untested` 推到**有证据**或**明写不可见** ✓
-4. ⇒ ★ 三条做完，**B2 才算收口**（判据：每一类都有**灵敏度证据**或**明确的「不可见」记录**）✓
-5. ★ 然后进 **B3 存活普查**（★ 按前置签名分组，26 种；★ 它现在**有可用的指纹量具**了）✓
+**下一批（B2 收口）**：
+1. ★ **逐格二分**第 0 格不相等的那一格（★ 定位到具体读数）⇒ 修掉或**明写它不可用作差分依据** ✓
+2. ★ 查清 `dirty` 的 `not_detected`：★ 是 `GetSaveFlag` 不敏感，还是那次写没改到文档 ✓
+3. ★ 修 `bodies`/`faces`（`GetBodies2(-1, False)` 已补，★ 但仍读不到 ⇒ 查真因）与 `rebuild` ✓
+4. ★ 三条做完 ⇒ **B2 收口**（判据：**每一类都有灵敏度证据或明确的「不可见」记录**）✓
 
 ## 批次状态
 

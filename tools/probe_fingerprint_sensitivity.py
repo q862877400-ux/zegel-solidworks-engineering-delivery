@@ -30,16 +30,29 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
 import sw_fingerprint as FP                                          # noqa: E402
 
 #: ★ 每一类配一个"**已知会改它**"的写操作 —— ★ 值是**动作名**；★ 没有廉价写法的类就留空 ✓
+#: ★★ 每一类配一个**已知会改它**的写操作 —— ★ 值是 **MCP 工具名**（★ 按 `ToolSpec` 契约调）✓
+#:   ★ 我第一版是**手调能力层函数**（`sw_part.xxx`）⇒ ★ 形状不对、抛 `TypeError` ✗
+#:   ★★ 本仓纪律原话：「写探针验能力时：**按 `ToolSpec` 的契约调**，别手调内部实现」✓
+#:   ★ 空串 = 本轮**没给这一类配写操作** ⇒ ★ 记 `untested`（★ **不许**说成「看不见」）✓
 KNOWN_WRITERS = {
-    "selection": "select_plane",
-    "edit_mode": "open_sketch",
-    "dirty": "any_write",
-    "features": "create_extrude",
-    "bodies": "create_extrude",
-    "faces": "create_extrude",
-    "display": "",              # ★ 本轮没有廉价写法 ⇒ 记 untested（★ 不许说成 invisible）
-    "config": "add_configuration",
-    "rebuild": "",              # ★ 同上
+    "selection": "solidworks_clear_selection",
+    "edit_mode": "solidworks_sketch_start",
+    "dirty": "solidworks_sketch_start",
+    "features": "solidworks_extrude_boss",
+    "bodies": "solidworks_extrude_boss",
+    "faces": "solidworks_extrude_boss",
+    "display": "",              # ★ 没有"改显示状态"的现成工具 ⇒ 记 untested
+    "config": "solidworks_config_create",
+    "rebuild": "solidworks_session_rebuild",
+}
+
+#: ★ 每个写操作要传的形参（★ 名字与声明一致；★ 没给的用声明里的默认值）✓
+WRITER_PARAMS = {
+    "solidworks_clear_selection": {},
+    "solidworks_sketch_start": {},
+    "solidworks_extrude_boss": {},
+    "solidworks_config_create": {"name": "标定用配置"},
+    "solidworks_session_rebuild": {},
 }
 
 
@@ -55,31 +68,16 @@ def _new_part(sw):
 
 
 def act(sw, model, name):
-    """★ 执行一个「已知会改状态」的写操作 —— ★ 用本仓**工具层**（`sw_part` 的公开函数），
-    ★ 不自己调内部实现（★ 本仓纪律：「写探针时按工具层的契约调，别手调内部实现」）✓
+    """★ 执行一个「已知会改状态」的写操作 —— ★ **按 `ToolSpec` 契约调工具** ✓
 
-    ⚠ 诚实说明：★ 这里用的是**能力层的公开函数**，★ 不是 MCP 工具层那套完整契约
-      （★ 后者要造输入模型，★ 本轮没做）⇒ ★ 所以在报告里如实标 `writer_ok`，
-      ★ 且**任何写操作抛异常或返回假 ⇒ 该类记 `untested`**，★ 不许说成「不可见」✓
-    ★ 另外：★ 一个写操作**可能同时改好几类**（如 `start_sketch` 既进编辑态又改选区）——
-      ★ 那是**允许**的：★ 我只检查**目标那一类**有没有动 ✓
+    ★ 契约（读 `tool_registry.make_tool_function` 得知）：★ 底层函数按 **kwargs** 调，
+      形参名与声明一致，★ 注入对象用 **`inject` 声明的那个名字**传进去 ✓
+    ★★ **拿不到 / 缺参数 / 抛异常 ⇒ 回 `(False, 原因)`** —— ★ 调用方据此记 `untested`，
+      ★ **绝不许**把"没调成"说成"这一类不可见" ✗
     """
-    import sw_part
-    if name == "select_plane":
-        #: ★ 基准面**是特征、有名字**（★ 事实 32：实体才没有名字）⇒ 按名字选 ✓
-        return bool(sw_part.start_sketch(model, "Front Plane"))
-    if name == "open_sketch":
-        return bool(sw_part.start_sketch(model, "Front Plane"))
-    if name == "create_extrude":
-        if not sw_part.start_sketch(model, "Front Plane"):
-            return False
-        if not sw_part.sketch_rectangle(model, 0.0, 0.0, 40.0, 30.0):
-            return False
-        sw_part.end_sketch(model)
-        return bool(sw_part.extrude_boss(model, 10.0))
-    if name == "add_configuration":
-        return bool(model.AddConfiguration2("标定用配置", "", "", 0, "", "", True))
-    return None
+    import tool_caller
+    params = dict(WRITER_PARAMS.get(name) or {})
+    return tool_caller.call(name, inject_objects={"model": model, "sw": sw}, **params)
 
 
 def main() -> int:
@@ -100,17 +98,29 @@ def main() -> int:
     if model is None:
         print("★ 建不了新零件 ⇒ 停下")
         return 2
-    a = FP.read(model, sw)
-    b = FP.read(model, sw)
-    same = a["readings"] == b["readings"]
+    #: ★★★ 第 0 格改成**三次读数、比第 2 与第 3 次** —— ★ 原因（真机现场）：
+    #:   ★ 刚建好的零件**还在自行稳定**（首次读数会赶上正在变化的那一瞬）⇒
+    #:   ★★ 只比第 1 与第 2 次会把"**文档自己没稳**"误判成"**读数有副作用**" ✗
+    #:   ★ 正解：★ 让第 1 次读数**当"加热"用**，★ **只比第 2 与第 3 次**（★ 期间不做任何事）✓
+    r1 = FP.read(model, sw)
+    r2 = FP.read(model, sw)
+    r3 = FP.read(model, sw)
+    same = r2["readings"] == r3["readings"]
     report["step0_readonly"] = {
         "equal": same,
-        "a": a["readings"], "b": b["readings"],
-        "missing": a["missing"],
+        "read1": r1["readings"], "read2": r2["readings"], "read3": r3["readings"],
+        "read1_differs_from_2": r1["readings"] != r2["readings"],
+        "missing": r2["missing"],
+        "usable": r2.get("usable"),
     }
-    print("★ 第 0 格（读数只读）：两次读数 %s" % ("完全相等 ✓" if same else "★ 不相等 ⇒ 指纹有副作用 ✗"))
-    if a["missing"]:
-        print("   读不到的类：%s" % "、".join(sorted(a["missing"])))
+    print("★ 第 0 格（读数只读）：比**第 2 与第 3 次** ⇒ %s"
+          % ("完全相等 ✓" if same else "★ 不相等 ⇒ 指纹有副作用 ✗"))
+    if r1["readings"] != r2["readings"]:
+        print("   （第 1 与第 2 次不同 ⇒ ★ 文档刚建好**还没稳**，★ 所以第 1 次只当加热用）")
+    if not r2.get("usable"):
+        print("   ★★ 指纹**失效**：%s" % r2.get("unusable_why"))
+    if r2["missing"]:
+        print("   读不到的类：%s" % "、".join(sorted(r2["missing"])))
 
     # ── 逐类标定 ──────────────────────────────────────────────────────────
     for cls in FP.STATE_CLASSES:
@@ -123,12 +133,11 @@ def main() -> int:
             print("   %-10s ⇒ ★ untested（没试）" % cls)
             continue
         before = FP.read(model, sw)
-        try:
-            ok = act(sw, model, writer)
-        except Exception as exc:                                        # noqa: BLE001
-            report["classes"][cls] = {"verdict": "untested",
-                                      "why": "★ 写操作抛异常：%s" % type(exc).__name__}
-            print("   %-10s ⇒ ★ untested（写操作抛 %s）" % (cls, type(exc).__name__))
+        ok, note = act(sw, model, writer)
+        if not ok:
+            #: ★★ **没调成 ⇒ 记 `untested`**（★ 不许说成"不可见"）✓
+            report["classes"][cls] = {"verdict": "untested", "writer": writer, "why": note}
+            print("   %-10s ⇒ ★ untested（写操作没调成：%s）" % (cls, note[:70]))
             continue
         after = FP.read(model, sw)
         d = FP.compare_detailed(before, after)
@@ -142,6 +151,7 @@ def main() -> int:
         else:
             verdict = "not_detected"
         report["classes"][cls] = {"verdict": verdict, "writer": writer, "writer_ok": ok,
+                                  "writer_note": note[:120],
                                   "before": before["readings"].get(cls),
                                   "after": after["readings"].get(cls)}
         print("   %-10s ⇒ %-12s （写操作 %s）" % (cls, verdict, "成功" if ok else "★ 失败"))
