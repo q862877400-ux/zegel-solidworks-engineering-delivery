@@ -83,7 +83,28 @@
       `IgnoreMultiple` 只是没重复插）⇒ 那一格的 Δ=0 **不能当证据** ⇒ 改成**两张独立图纸**才得上面两格 ✓
       ★★ **原函数自述「不建 ToolSpec」的理由已过期**（那句说的是**底层成员**的 COM 形参；
       包装函数的形参**全是标量**）⇒ 本批把它挂成工具 ✓
-- [ ] **B2-3** idx 52 `centerline`（同上；★ 裁决书建议与 idx 30 `auto_center_marks` 合并成两种模式）
+- [x] **B2-3** idx 52 `centerline`（`IDrawingDoc::InsertCenterLine2`，零参）
+      ⇒ `scripts/sw_drawing_create_missing.py::insert_center_lines` +
+      `solidworks_drawing_insert_center_lines`（★ level = **`stitched`**）
+      ★ 怎么知道的：真机（`tools/probe_spec209_b2_centerline.py`）圆柱零件的工程图视图 ⇒
+      `GetVisibleEntities2` 回 **edge=1 · face=1**（silhouette/vertex 回 0）；`Select4` **按对象**选上后
+      **选区回读 = 1**；而 `InsertCenterLine2` **回 `None`**、`GetCenterLineCount` **0→0（Δ=0）**
+      ⇒ ★★ **「选中了也没产出」** ⇒ `output/spec209-centerline.json`
+      ★★★ **两家矛盾的定案（各对一半）**：★ 说「**静默无效**」的**不准确**（它**并不静默** ——
+      返回值就是 `None`）；★ 说 `bool(result)` 的**在本例里恰好对**，★ 但**不能通用**
+      （"回非 None 而几何没变"那种只有**回读增量**抓得住）✓
+      ★★ **为什么是 `stitched`（不是 verified）**：★ **官方前置只复现了一半** ——
+      官方示例是**先选 `COMPONENT`、再按点选 `FACE`**，且**它的视图来自装配**
+      （`cylinder20-9@Drawing View1`）⇒ ★ 本轮只复现了「选实体」那半、夹具是**零件**视图
+      ⇒ ★ 结论**限定在这条路径上**；下一步 = 装配图 + 先选组件 + 再选面 ✓
+      ★★ **我踩了已知事实 33 的同一形态**：`GetVisibleEntities2` 的 `LpViewComponent`
+      **不能传 Python `None`**（⇒ `com_error -2147352571 类型不匹配`）—— 第一次四种类型全报它，
+      ★ 看着像"读不到"、**实际是我传错了** ⇒ 现在包 `create_empty_dispatch_variant()` ✓
+      ★★ **裁决书建议"与 idx 30 `auto_center_marks` 合并成一条工具两种模式" —— 我没照做**：
+      两条入口**入参形状不同**（本条形参可全标量；`auto_center_marks` 收**结构化 requirements 列表**）
+      ⇒ `Param` 表达不了 ⇒ ★ 硬合并会造出「一半参数对一半模式无意义」的工具 ⇒ **偏离已记账** ✓
+      ⚠ **裁决书 §一 第 2 条点名的缺口**（批量路 `AutoInsertCenterMarks2` 从未单独真机验证）
+      **本轮仍未补** ⇒ ★ 已列为下一轮的活 ✓
 - [x] **B2-4** idx 175 `blank_sketch` ⇒ `scripts/sw_sketch.py::set_sketch_blanked`（+ `feature_visibility`）
       + `solidworks_sketch_set_blanked`（★ ★★★ **名字里没有 `all`** —— 见下）
       ★ 怎么知道的：真机（`tools/probe_spec209_b2_blank_sketch.py`）**双向都过**：

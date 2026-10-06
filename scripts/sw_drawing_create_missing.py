@@ -1057,3 +1057,159 @@ def insert_model_annotations(model, view_name: str = "", *, source: str = "entir
                            out["annotation_delta"], out["returned_count"]))
     out["types_used"] = sorted(k for k, v in ANNOTATION_TYPE_BITS.items() if v & out["mask"])
     return out
+
+
+# ── 规格 209 · B2-3（idx 52 `centerline`）────────────────────────────────────────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
+# 文件:   scripts/sw_drawing_create_missing.py —— 追加 `insert_center_lines`
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-3** · 外部项目 idx **52 `centerline`**。
+#   ★★ 裁决书（§一）：采纳，且「**须真机定案**」—— 理由：**两家外部项目结论互相矛盾**
+#     （一家说零件视图上 `InsertCenterLine2` **静默无效**，另一家直接调并回 `bool(result)`）✓
+#   ★★★ **关于裁决书那条「与 idx 30 `auto_center_marks` 合并成一条工具两种模式」的建议 ——
+#     我核实后**没有照做**，理由可核**：两条入口的**入参形状不同** ——
+#     本条的形参可以全做成标量（视图名 + 实体序号 + 类型），而
+#     `auto_center_marks` 收的是**结构化 requirements 列表**（`[{"id","view","targets","count"}]`，
+#     见 `subskills/…/drawing_workflow.py::auto_insert_center_marks`）⇒ ★ `Param` **表达不了**；
+#     ★★ 硬合并会造出一个「**一半参数对一半模式无意义**」的工具 ⇒ ★ 与本仓「参数要能表态」相悖 ✓
+#     ⇒ ★ 本批**只做本条新入口**，并**另行补 `AutoInsertCenterMarks2` 的真机验证**
+#       （★ 那正是裁决书 §一 第 2 条点名的缺口：「批量路从未单独真机验证」）✓
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
+#   · `C:\swapi\types\IDrawingDoc\InsertCenterLine2.md` —— `Centerline InsertCenterLine2()`
+#     ★ 摘要逐字：「Inserts a centerline on the **selected entities**.」
+#     ★ `## Returns` 逐字：「Pointer to the `ICenterLine` object」
+#     ⚠ ★ **既无 `## Remarks` 也无 `Parameters`** ⇒ ★ 「要选什么」**只能从官方示例读** ✓
+#   · ★★ `C:\swapi\examples\Get_Centerlines_in_Drawing_Example_VB.md` —— **调用序**（逐字）：
+#     ```
+#     SelectByID2("cylinder20-9@Drawing View1", "COMPONENT", 0,0,0, False, 0, Nothing, 0)
+#     SelectByID2("", "FACE", 0.513…, 0.455…, 250.01…, False, 0, Nothing, 0)
+#     Set swCenterLine = swDrawing.InsertCenterLine2()
+#     ```
+#     ⇒ ★ 官方先选**组件**、再按**点**选一个**面** ⇒ ★ 说明它选的是**工程图视图里**的实体 ✓
+#   · `C:\swapi\types\IView\GetVisibleEntities2.md` ——
+#     `System.object GetVisibleEntities2(Component2 LpViewComponent, System.int EntityType)`
+#     ★★ **没有 out 参** ⇒ pywin32 可直接用 ✓
+#   · `C:\swapi\enums\swViewEntityType_e.md` —— Edge=1 · Vertex=2 · Face=3 · SilhouetteEdge=4
+#   · `C:\swapi\types\IView\GetCenterLineCount.md` —— `System.int GetCenterLineCount()`
+#     ★★ **本条的判据来源**（视图里的中心线数）✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+# ★★ **选择怎么做的（★ 这是本条的实质）**：官方示例走「按点选面」—— ★ 那要**猜坐标**；
+#   ★★ 而本仓有更稳的一条（**事实 32**：`IEntity::Select4` **按对象**选）⇒
+#   ★ 本函数用 `IView::GetVisibleEntities2` 把**视图里可见的实体对象**取出来、再 `Select4` ✓
+#   ★ 这选的是**同一类东西**（视图里的实体），★ 只是**不猜坐标** ✓
+
+#: ★ 官方 `swViewEntityType_e`（★ 逐值抄自 `C:\swapi\enums\swViewEntityType_e.md`）
+VIEW_ENTITY_TYPES = {
+    "edge": 1,
+    "vertex": 2,
+    "face": 3,
+    "silhouette_edge": 4,
+}
+
+
+def insert_center_lines(model, view_name: str = "", *, entity_type: str = "edge",
+                        entity_index: int = 0) -> dict:
+    """★ **在工程图视图里插中心线**（官方 `IDrawingDoc::InsertCenterLine2`，**零参**）。
+
+    :param view_name: 视图名（★ 留空 = 当前图纸第一个视图）。
+    :param entity_type: `edge`(1) / `vertex`(2) / `face`(3) / `silhouette_edge`(4)
+        （★ 官方 `swViewEntityType_e`；★ 走 `IView::GetVisibleEntities2` 取**视图里可见的**实体）。
+    :param entity_index: 选第几个（0 基 —— ★ 声明式，★ 规则 3：**不收坐标**）。
+    :returns: `{ok, entry_used, view, entity_type, entity_index, visible_count, selection_count,
+        centerline_count_before, centerline_count_after, centerline_delta, returned_is_none,
+        error}`
+
+    ★★ **判据（规则 6）**：① **选区计数**（事实 8：不许信返回值）；
+      ② ★ **`IView::GetCenterLineCount()` 的前后回读**（本模块既有 `_sum_over_views` + `_delta`）——
+      ★ **不拿它回的 `ICenterLine` 当判据** ✓
+    ★★ **「静默无效」那件事怎么定案**：★ 选区计数为 0（前置没备成）时，本函数**在调它之前就报错**；
+      ★ 只有**确实选到了实体**、调完仍 **Δ=0**，才是「**选了也没用**」的证据 ⇒ ★ **两者必须分开** ✓
+    """
+    from sw_connect import get_com_member                               # noqa: E402
+    out: dict = {
+        "ok": False, "entry_used": "IDrawingDoc::InsertCenterLine2()",
+        "view": None, "entity_type": str(entity_type), "entity_index": int(entity_index),
+        "visible_count": None, "selection_count": None, "centerline_count_before": None,
+        "centerline_count_after": None, "centerline_delta": None, "returned_is_none": None,
+        "error": None, "note": None,
+        "★": "判据 = **选区计数** + **`IView::GetCenterLineCount()` 的前后回读**；"
+             "★ 它回的 `ICenterLine` **不当判据**；★★ 选区 0 与「选了仍 Δ=0」**必须分开**",
+    }
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    et = str(entity_type).strip().lower()
+    if et not in VIEW_ENTITY_TYPES:
+        out["error"] = ("未知的 entity_type %r；合法：%s"
+                        % (entity_type, ", ".join(sorted(VIEW_ENTITY_TYPES))))
+        return out
+    try:
+        views = _iter_views(model)
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "取视图失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    if not views:
+        out["error"] = "这张工程图里一个视图都没有 ⇒ 没有可选的实体（★ 官方语义是在**视图里**选）"
+        return out
+    if str(view_name or "").strip():
+        target, why = _find_view(model, str(view_name).strip())
+        if target is None:
+            out["error"] = "找不到视图 %r：%s" % (view_name, why)
+            return out
+    else:
+        target = views[0]
+    out["view"] = _view_name(target)
+    out["centerline_count_before"] = _sum_over_views(model, "GetCenterLineCount")
+    try:
+        from sw_part import _empty_callout                              # noqa: E402
+        from sw_connect import create_empty_dispatch_variant            # noqa: E402
+        #: ★★ **`LpViewComponent` 传裸 `None` 会 `类型不匹配`**（`com_error` -2147352571）——
+        #:   ★ 这正是**已知事实 33**：「`SelectByID2` / `Select4` 的 `Callout` 参数**必须**传
+        #:   `VARIANT(VT_DISPATCH, None)`；**传 `None` 得到 '类型不匹配'（`0x80028CA0`）**」的
+        #:   **同一形态**（★ 空 Dispatch 形参不能给 Python `None`）⇒ ★ 本函数用
+        #:   `sw_connect.create_empty_dispatch_variant()` ✓
+        #:   ⚠ 我第一次就是传的 `None` ⇒ 四种实体类型**全部**报"类型不匹配" —— ★ **那看着像"读不到"，
+        #:     实际是我传错了**（★ 与事实 33 记的坑一模一样）✓
+        ents = _as_list(get_com_member(target, "GetVisibleEntities2",
+                                       create_empty_dispatch_variant(),
+                                       int(VIEW_ENTITY_TYPES[et])))
+        out["visible_count"] = len(ents)
+        if not ents:
+            out["error"] = ("视图里**没有可见的 %s**（`GetVisibleEntities2` 回 0 个）⇒ ★ 前置不成立，"
+                            "**不调** `InsertCenterLine2`（★ 那样只会得到静默空结果）" % et)
+            return out
+        if entity_index < 0 or entity_index >= len(ents):
+            out["error"] = ("entity_index=%d 越界（视图里可见的 %s 共 %d 个）"
+                            % (entity_index, et, len(ents)))
+            return out
+        get_com_member(model, "ClearSelection2", True)
+        get_com_member(ents[entity_index], "Select4", False, _empty_callout())
+        out["selection_count"] = _selection_count(model)
+        if out["selection_count"] <= 0:
+            out["error"] = ("**选中后回读计数为 0** ⇒ 那个实体没被选上（★ 事实 8：不许信 `Select4` 的返回值）"
+                            "—— ★ 此时**不能**把后续的静默结果当成「能力无效」的证据")
+            return out
+        cl = get_com_member(model, "InsertCenterLine2")
+        out["returned_is_none"] = cl is None
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:220])
+        return out
+    try:
+        out["centerline_count_after"] = _sum_over_views(model, "GetCenterLineCount")
+        out["centerline_delta"] = _delta(out["centerline_count_before"],
+                                        out["centerline_count_after"])
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "后置回读失败：%s" % str(exc)[:150]
+        return out
+    out["ok"] = bool(out["centerline_delta"] and out["centerline_delta"] > 0)
+    if not out["ok"]:
+        out["error"] = ("回读判据未过：**选中了 %d 个实体**（`%s` #%d）之后，视图中心线数仍 "
+                        "**%r → %r**（差 %r）· 它回的 `ICenterLine` 是 %s —— "
+                        "★ 这是「**选了也没用**」的证据（★ 与「选不上」分开记）"
+                        % (out["selection_count"], et, entity_index,
+                           out["centerline_count_before"], out["centerline_count_after"],
+                           out["centerline_delta"],
+                           "None" if out["returned_is_none"] else "非 None"))
+    return out

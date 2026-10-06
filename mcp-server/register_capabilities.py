@@ -1008,6 +1008,16 @@ BATCH_MODULES = (
     #:     `AutoBalloonOptions` COM 形参；★ 而**包装函数的形参全是标量** ⇒ ★ 能挂 ✓
     #:   ★ 计数：445 → **446**
     "tool_specs_batch97",
+    #: ★★★ 2026-10-06：**规格 209 的批 98 —— 工程图中心线**（1 个）：★ 来源 idx **52 `centerline`**。
+    #:   ★★ 裁决书要求「须真机定案」（两家外部项目结论矛盾）⇒ ★ **已定案**：
+    #:     圆柱零件的工程图视图里 `edge=1 · face=1` 可见、`Select4` 选中后**选区回读 1**，
+    #:     而 `InsertCenterLine2` **回 `None`**、`GetCenterLineCount` **Δ=0** ⇒ ★ **选中了也没产出** ✓
+    #:     ⇒ ★ **两家各对一半**：说"静默无效"的**不准确**（它并不静默，返回 None）；
+    #:       说 `bool(result)` 的**恰好对**，但★ **不能通用**（只有回读抓得住几何没变的情形）✓
+    #:   ★★ **裁决书建议"与 idx 30 合并成一条工具两模式"—— 未照做**（入参形状不同：
+    #:     `auto_center_marks` 收结构化 requirements 列表 ⇒ `Param` 表达不了）⇒ ★ 偏离已记 tasks.md ✓
+    #:   ★ 计数：446 → **447**
+    "tool_specs_batch98",
 )
 
 def all_specs() -> list:
