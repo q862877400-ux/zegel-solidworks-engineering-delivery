@@ -30,7 +30,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, _p)
 
 import register_capabilities as rc                            # noqa: E402
-from tool_registry import ToolSpec, _tool_annotations, uniform_safety_fields   # noqa: E402
+from tool_registry import (ToolSpec, _tool_annotations, uniform_safety_fields,
+                           effective_read_only)   # noqa: E402
 
 
 def _spec(**kw) -> ToolSpec:
@@ -76,10 +77,9 @@ def test_uniform_safety_fields_gate_fires_on_the_old_bug():
     而「全体未声明」（诚实状态）**不许**报 ✓"""
     old = [_spec(name="a", idempotent=True), _spec(name="b", idempotent=True)]
     #: ★ 这两个合成 spec 的 `read_only` 也都是默认 False ⇒ ★ **两个单值字段都要报出来** ✓
-    assert uniform_safety_fields(old) == {
-        "read_only": {"value": False, "count": 2},
-        "idempotent": {"value": True, "count": 2},
-    }, uniform_safety_fields(old)
+    #: ★ `read_only` 已改成三态（默认 None）⇒ 它**不再是**单值字段，只有 `idempotent` 还单值 ✓
+    assert uniform_safety_fields(old) == {"idempotent": {"value": True, "count": 2}}, \
+        uniform_safety_fields(old)
     #: ★⚠ "诚实状态"的合成样本**必须把 `read_only` 造成不齐** —— ★ 否则它自己就是个单值字段
     #:   （★ 那是**真阳性**，不是误报；★ 我第一版就是这么写错的）✓
     honest = [_spec(name="a", read_only=True), _spec(name="b", read_only=False)]
@@ -99,6 +99,6 @@ def test_real_annotations_never_claim_idempotency_or_safety_we_do_not_know():
         if "idempotentHint" in ann and getattr(s, "idempotent", None) is None:
             bad.append((s.name, "idempotentHint"))
         if "destructiveHint" in ann and getattr(s, "destructive", None) is None \
-                and not s.read_only:
+                and not effective_read_only(s):
             bad.append((s.name, "destructiveHint"))
     assert bad == [], bad[:5]

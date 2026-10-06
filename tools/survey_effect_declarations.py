@@ -29,58 +29,9 @@ sys.path.insert(0, str(ROOT / "mcp-server"))
 sys.path.insert(0, str(ROOT / "scripts"))
 OUT = ROOT / "output" / "spec210-effect-survey.json"
 
-#: ★ 七类状态（评审给的分类；★ 顺序固定，便于比对）
-STATE_CLASSES = ("document", "filesystem", "selection", "active_doc", "edit_mode", "view", "rebuild")
-
-#: ★★ **动词表**（本脚本的核心判据；★ 刻意写成显式表，不搞隐式规则）
-#:   ★ 判「写」的动词 —— 保守：★ 宁可把读判成写，也不许反过来 ✓
-WRITE_VERBS = (
-    "create", "insert", "add", "set", "delete", "remove", "modify", "edit", "update",
-    "save", "export", "open", "close", "activate", "rebuild", "select", "unselect",
-    "clear", "reset", "apply", "run", "start", "stop", "load", "import", "move", "copy",
-    "rotate", "scale", "mirror", "pattern", "extrude", "revolve", "cut", "fillet", "chamfer",
-)
-#: ★ 判「读」的动词（★ 只在**没有任何写动词**时才用于确认「读」）✓
-READ_VERBS = (
-    "get", "is", "has", "count", "list", "read", "query", "find", "show", "report",
-    "check", "available", "name", "enum", "describe", "evaluate", "compute", "measure",
-)
-
-#: ★ 动词 → 状态类别的粗略映射（★ 一个动词可以命中多类；★ 命不中的归 `document` 并**记下来**）
-VERB_TO_CLASSES = {
-    "select": ("selection",), "unselect": ("selection",), "clear": ("selection",),
-    "activate": ("active_doc",), "open": ("active_doc", "filesystem"),
-    "close": ("active_doc",),
-    "save": ("filesystem",), "export": ("filesystem",), "import": ("filesystem",),
-    "load": ("filesystem",),
-    "edit": ("edit_mode",), "rebuild": ("rebuild",), "modify": ("edit_mode",),
-    "update": ("rebuild",), "reset": ("rebuild",),
-}
-
-#: ★ 破坏性动词（★ 与「写」**分开**：删除 / 覆盖保存 / 清空）✓
-DESTRUCTIVE_VERBS = ("delete", "remove", "clear", "saveas", "overwrite", "purge", "unload")
-
-
-def _first_verb(member: str) -> str:
-    """★ 取成员名的**首个动词**（★ 按大写驼峰切词；★ 取不到返回空串）。
-
-    ★ 为什么取首个：★ `GetSelectedObjectCount2` 首词是 `Get`（读）；★ `InsertSketch` 首词是 `Insert`（写）✓
-    ★ 而像 `CreateDefinition` 这种「建一个定义对象」的，首词 `Create` 判写 —— ★ **偏保守，正合我们要的方向** ✓
-    """
-    if not member:
-        return ""
-    #: ★ 驼峰切词：在大写字母前断开（★ 连续大写如 `ICW` 不切）
-    parts: list[str] = []
-    cur = ""
-    for i, ch in enumerate(member):
-        if ch.isupper() and cur and not member[i - 1].isupper():
-            parts.append(cur)
-            cur = ch
-        else:
-            cur += ch
-    if cur:
-        parts.append(cur)
-    return parts[0].lower() if parts else ""
+#: ★★ 判据（动词表 / 七类状态 / 破坏性动词）**全在 `mcp-server/effect_rules.py`** ——
+#:   ★ 一处实现两处用（★ 本仓反复吃过的亏：好用的规则只在一个地方用、另一处又抄一遍）✓
+from effect_rules import STATE_CLASSES, classify_members, first_verb  # noqa: E402,F401
 
 
 def _com_members_in(node: ast.AST) -> list[str]:
@@ -164,17 +115,11 @@ def survey() -> dict:
             rows.append({"tool": s.name, "error": "函数不存在：%s" % s.function})
             continue
         members, notes = _members_for(fn, mod)
-        writes: set[str] = set()
-        destructive = False
-        for m in members:
-            v = _first_verb(m)
-            if v in WRITE_VERBS:
-                for cls in VERB_TO_CLASSES.get(v, ("document",)):
-                    writes.add(cls)
-                if any(d in m.lower() for d in DESTRUCTIVE_VERBS):
-                    destructive = True
-            elif v not in READ_VERBS:
-                unclassified[v or "(无首词)"] += 1
+        verdict = classify_members(members)
+        writes = set(verdict["writes"] or ())
+        destructive = verdict["destructive"]
+        for v in verdict["unclassified"]:
+            unclassified[v] += 1
         rows.append({
             "tool": s.name,
             "module": s.module, "function": s.function,
@@ -182,7 +127,9 @@ def survey() -> dict:
             "members_sample": sorted(set(members))[:8],
             "declared_read_only": bool(getattr(s, "read_only", False)),
             "proposed_writes": sorted(writes),
-            "proposed_read_only": not writes,
+            "writes_known": verdict["writes"] is not None,
+            #: ★★ 三态：True=确认无写 · False=确认有写 · None=未知（★ 别把它写成 False，会误导）✓
+            "proposed_read_only": (None if verdict["writes"] is None else (not writes)),
             "proposed_destructive": destructive,
             "notes": notes,
         })
@@ -195,10 +142,15 @@ def survey() -> dict:
         "total": len(specs),
         "surveyed": len(ok), "errors": len(rows) - len(ok),
         "with_members": len(with_members), "no_members_found": len(no_members),
-        "proposed_read_only": sum(1 for r in with_members if r["proposed_read_only"]),
+        "proposed_read_only": sum(1 for r in with_members if r["proposed_read_only"] is True),
+        "proposed_unknown": sum(1 for r in with_members if r.get("proposed_read_only") is None),
         "declared_read_only_now": sum(1 for r in with_members if r["declared_read_only"]),
-        "mismatch_declared_read_but_proposed_write":
-            [r["tool"] for r in with_members if r["declared_read_only"] and not r["proposed_read_only"]],
+        #: ★★ 真正危险的方向：**声明只读、而规则确认它写**（★ 不含"未知"）✓
+        "mismatch_declared_read_but_confirmed_write":
+            [r["tool"] for r in with_members if r["declared_read_only"] and r["proposed_read_only"] is False],
+        #: ★ 声明只读、规则判不出（★ 这批是 B1-7 要补的，不是安全问题）✓
+        "declared_read_but_unknown":
+            [r["tool"] for r in with_members if r["declared_read_only"] and r["proposed_read_only"] is None],
         "mismatch_proposed_read_but_declared_write_count":
             sum(1 for r in with_members if r["proposed_read_only"] and not r["declared_read_only"]),
         "writes_class_histogram": dict(collections.Counter(
@@ -224,8 +176,11 @@ def main() -> int:
     print("★ 取不到成员名的    : %d  ← 「判不出」的就是这批" % ev["no_members_found"])
     print("★ 初判为只读        : %d   （现在声明的只读是 %d）"
           % (ev["proposed_read_only"], ev["declared_read_only_now"]))
-    print("★ 声明只读但初判为写: %d 个" % len(ev["mismatch_declared_read_but_proposed_write"]))
-    for t in ev["mismatch_declared_read_but_proposed_write"][:8]:
+    print("★★ 声明只读、而规则**确认它写**: %d 个  ← ★ 只有这个方向是安全问题"
+          % len(ev["mismatch_declared_read_but_confirmed_write"]))
+    print("★ 声明只读、但规则**判不出**: %d 个  ← ★ 这批是 B1-7 要补的"
+          % len(ev["declared_read_but_unknown"]))
+    for t in ev["mismatch_declared_read_but_confirmed_write"][:8]:
         print("      %s" % t)
     print("★ 初判只读但声明为写: %d 个（★ 这方向修掉就是「76 个」那件事）"
           % ev["mismatch_proposed_read_but_declared_write_count"])

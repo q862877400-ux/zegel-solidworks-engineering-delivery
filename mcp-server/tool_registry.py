@@ -52,8 +52,10 @@ ToolSpec(
 """
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Callable, Literal, Optional
 
 __all__ = [
@@ -324,8 +326,20 @@ class ToolSpec:
     params: list[Param] = field(default_factory=list)
     inject: str = ""
     needs_model: bool = False
-    read_only: bool = False
+    read_only: Optional[bool] = None
+    #: ★★ **效应声明**（规格 210 · B1）：**可能改**哪几类状态 ——
+    #:   类别固定七类：文档内容 / 文件系统 / 选区 / 激活文档 / 编辑态 / 视图 / 重建或解析。
+    #:   ★★ **三态**：`None` = **未知**（★ 机械初判判不出的那批，**不许当成"无写"**）·
+    #:   `()` = **确认不改任何状态**（这才是"纯读"）· 非空 = 改这几类 ✓
+    #:   ★ 由 `scripts/` 侧的效应表（生成物）填充，见 `effective_writes()`。
+    writes: Optional[tuple] = None
+    #: ★ `writes` 的**来源**：`static`（机械初判）/ `observed`（真机指纹实证）/ `human`（人判）
+    writes_source: str = "unknown"
+    #: ★ **依赖**哪几类状态（前置）。★ 与 `writes` 同一套类别名 ✓
+    requires: tuple = ()
     idempotent: Optional[bool] = None
+    #: ★ `idempotent` 的**来源**（`static` / `observed` / `human`；`unknown` = 尚未判过）✓
+    idempotent_source: str = "unknown"
     #: ★★ **是否会做破坏性更新**（删除、覆盖保存、清空）—— ★ 与"写"**分开**：
     #:   ★ "写"可以是可补偿的（新增特征就删掉增量），★ "破坏性"是**不可逆**的那类 ✓
     #:   ★ 三态：`None` = **未声明** ⇒ ★ 注解里**不发**这一条 ⇒ ★ 按 MCP 缺省语义
@@ -555,6 +569,53 @@ def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[.
     return _impl
 
 
+#: ★★ 效应表（**生成物**，规格 210 · B1）：`工具名 -> {"writes": [...], "destructive": bool, "source": ...}`
+#:   ★ 由 `tools/gen_effect_declarations.py` 从**底层成员动词**机械初判生成；
+#:   ★★ **表缺失或查不到 ⇒ 一律按"未知"处理**（★ 保守方向：绝不因为查不到就当成"无写"）✓
+_EFFECTS_PATH = Path(__file__).resolve().parents[1] / "docs" / "effect-declarations.json"
+_EFFECTS_CACHE: Optional[dict] = None
+
+
+def _effects_table() -> dict:
+    """★ 惰性加载效应表；★ **读不到就回空表**（⇒ 全部按未知处理，保守）✓"""
+    global _EFFECTS_CACHE
+    if _EFFECTS_CACHE is None:
+        try:
+            _EFFECTS_CACHE = json.loads(_EFFECTS_PATH.read_text(encoding="utf-8")).get("tools", {})
+        except Exception:                                               # noqa: BLE001
+            _EFFECTS_CACHE = {}
+        if not isinstance(_EFFECTS_CACHE, dict):
+            _EFFECTS_CACHE = {}
+    return _EFFECTS_CACHE
+
+
+def effective_writes(spec: "ToolSpec") -> Optional[tuple]:
+    """★ 这个工具**可能改**哪几类状态 —— ★★ `None` 表示**未知**（★ 不等于"无写"）✓
+
+    ★ 优先用**声明里显式写的**（`writes is not None`）；否则查**生成物效应表**；
+    ★★ 都查不到 ⇒ `None`（未知）—— ★ 下游据此**保守处理**（不发"只读"、不开自动重试）✓
+    """
+    if getattr(spec, "writes", None) is not None:
+        return tuple(spec.writes)
+    row = _effects_table().get(spec.name)
+    if isinstance(row, dict) and row.get("writes") is not None:
+        return tuple(row["writes"])
+    return None
+
+
+def effective_read_only(spec: "ToolSpec") -> bool:
+    """★ 是否**只读** —— ★★ 由 `writes` **派生**（这是 B1-4 要修的根因：它曾是独立手填的布尔）✓
+
+    判序：★ 显式声明优先（人判 / 真机实证）· 其次"**确认无写**" ⇒ 真 · 再次"确有写" ⇒ 假 ·
+    ★★ **未知 ⇒ 假**（★ **绝不因为"判不出"就宣称只读**）✓
+    """
+    explicit = getattr(spec, "read_only", None)
+    if explicit is not None:
+        return bool(explicit)
+    writes = effective_writes(spec)
+    return writes == ()
+
+
 def _tool_annotations(spec: ToolSpec) -> dict:
     """★ 造 MCP 工具注解 —— ★★ **只发我们真的知道的那些**（未知就**不发**，别替客户端猜）。
 
@@ -569,7 +630,7 @@ def _tool_annotations(spec: ToolSpec) -> dict:
     ★ 唯一**可以明确**推出的：★ `read_only=True` 的工具**确定**不做破坏性更新 ⇒ 发 `False` ✓
     """
     ann: dict = {
-        "readOnlyHint": bool(spec.read_only),
+        "readOnlyHint": bool(effective_read_only(spec)),
         "openWorldHint": False,
     }
     if getattr(spec, "idempotent", None) is not None:
@@ -578,7 +639,7 @@ def _tool_annotations(spec: ToolSpec) -> dict:
     destructive = getattr(spec, "destructive", None)
     if destructive is not None:
         ann["destructiveHint"] = bool(destructive)
-    elif spec.read_only:
+    elif effective_read_only(spec):
         ann["destructiveHint"] = False
     return ann
 
