@@ -53,10 +53,17 @@ SPECS_BATCH14 = [
     ),
     ToolSpec(
         name="solidworks_entities_on_body",
-        title="List Entities On Body",
-        module="sw_selection_spec", function="entities_on_body",
+        title="List Entities On Body (with geometry)",
+        #: ★★ 2026-10-06（规格 209 · B3-1 · idx 115+145）：**指向改成 `entities_report`** ——
+        #:   ★ 裁决书强制「**扩已有的 `solidworks_entities_on_body`**，**不许开平行工具**」✓
+        #:   ★★ 而改指向的**理由是可核的**：`entities_on_body` **返回 COM 对象** ⇒
+        #:     **过不了 MCP 的 JSON 边界** ⇒ 那条工具**经工具层其实拿不到东西**（★ 名字没变、能力变了）✓
+        module="sw_selection_spec", function="entities_report",
         inject="model",
-        doc="List the entities of one body (kind EDGE, FACE, or VERTEX). "
+        doc="List the entities of one body **with geometry** (kind EDGE, FACE, or VERTEX). "
+            "★ 每条带可 JSON 化的读数：EDGE ⇒ 两个端点 + **自己算的**边长（★ 官方 `IEdge` "
+            "**没有**长度成员）· FACE ⇒ `IFace2.GetArea()` · VERTEX ⇒ `IVertex.GetPoint()`。"
+            "★★ 同时回 **欧拉校验 `V−E+F=2`**（★ 本仓既有判据，不需新 API）✓ "
             "⚠ Index order is NOT promised stable by the official API — do not treat "
             "body_index as a persistent reference across rebuilds. ★ 别名: body, edge, edges, entit, vertex, vertices",
         params=[

@@ -2743,6 +2743,7 @@
         "solidworks"
       ],
       "limitations": [
+        "★★ **本条目这一轮修掉的是一个「能枚举但交不出去」的缺口**（2026-10-06 · 规格 209 · B3-1）：`entities_on_body` **返回 COM 对象** ⇒ ★ **过不了 MCP 的 JSON 边界** ⇒ 那条工具（`solidworks_entities_on_body`）**经工具层其实拿不到任何可用的东西**。★ 修法是**扩**而不是新开：**工具名不变**，指向改成 `entities_report`（只回 JSON）—— ★ 判据可核：`tests/test_tool_specs_batch14.py` 断言工具名唯一、且指向新函数 ✓",
         "⚠ 2026-10-03（轮 397）真机语义：`selection_point` 读的是**选择时鼠标落在「面」上的位置** —— ★ 选中 **VERTEX** 时 `GetSelectionPoint2` 的 **6 种 (Index, Mark) 组合全部回 None**（★ 不是 bug，是语义：顶点没有面可投影）；★ 而它**不报错、只回 None** ⇒ 用之前要看 `ok`。★ 另：`GetSelectionPoint(AtIndex)` 是 **1 参**、`GetSelectionPoint2(Index, Mark)` 是 **2 参**（★ 先前两个都传 `(1, -1)` 是个真 bug，已修 —— 事实 312）。",
         "★ 本条目由**逐域判断**补出（2026-10-01 轮 265）：★ **这 5 个工具早就挂了，但没有任何能力条目认领它们** —— 与 `render_materials_and_appearance` 同型（★ 有工具、无条目）",
         "★★ 依据：`scripts/check_tool_capability_coverage.py` 的清点（★ 117 个工具里有 31 个没归属），★ 其中 5 个全是选择器 ⇒ ★ 它们构成一个**真实的域级能力**",
@@ -2750,7 +2751,8 @@
         "⚠ `solidworks_entities_on_body` 的 `body_index` **不是稳定引用**（官方不保证索引顺序）—— ★ 已在工具说明里标注",
         "⚠ 只在 **100×60×20 mm 单实体板**与几个装配上验过",
         "★ **坐标单位已定**（2026-10-01 轮 267 对照实验）：★ `GetSelectionPoint2` 回的是 **毫米** —— 传 (10,5,0) ⇒ 回 (9.993981, 5.025228, 0) · 传 (-15,-8,0) ⇒ 回 (-15.041474, -7.984407, 0) ⇒ **比值 ≈ 1.000**（偏差 <0.6%）⇒ 与 `select_face_at` **口径一致**。★ 证据 output/selection-point-units.json。⚠ 轮 266 我记的「单位待查」**已被本轮推翻** —— 真实成因是我把 0.0225 读成了 22.5（量级读错）",
-        "★ **`select_object` / `resolve_face_selector` 两条判「不做」—— 而理由是规则 3**（★ 2026-10-03 轮 452 · 事实 367）。`select_object(model, obj)` **吃 COM 对象** ⇒ **没法入参数表达**；`resolve_face_selector(model, selector)` **回 `(x, y, z)` 米** ⇒ **暴露它就是暴露裸坐标** ⇒ **违反规则 3**。★ 而**同族的 `select_face_by_selector` 做了**（对外参数是**选择器**、坐标只在内部用）⇒ ★★ **可复用判据**：判一个吃几何的函数能不能当工具，看它的**对外参数**是「选择器 / 具名实体」还是「坐标 / 对象」—— **而不是**看它内部用了什么。"
+        "★ **`select_object` / `resolve_face_selector` 两条判「不做」—— 而理由是规则 3**（★ 2026-10-03 轮 452 · 事实 367）。`select_object(model, obj)` **吃 COM 对象** ⇒ **没法入参数表达**；`resolve_face_selector(model, selector)` **回 `(x, y, z)` 米** ⇒ **暴露它就是暴露裸坐标** ⇒ **违反规则 3**。★ 而**同族的 `select_face_by_selector` 做了**（对外参数是**选择器**、坐标只在内部用）⇒ ★★ **可复用判据**：判一个吃几何的函数能不能当工具，看它的**对外参数**是「选择器 / 具名实体」还是「坐标 / 对象」—— **而不是**看它内部用了什么。",
+        "★★ **`IEdge` 上没有任何「长度」成员**（官方成员表逐条列过：`GetCurve` / `GetCurveParams` / `GetStartVertex` / `GetEndVertex` …）⇒ ★ 边长**只能由两个顶点自己算**。⚠ 这是 2026-10-06 **真机踩出来的**：按印象读 `IEdge.GetLength` ⇒ **12 条边全部抛异常**（★ 铁律 5：**名字缺席 = 官方没有这个成员**）。★ 已有静态断言不许它回来（`tests/test_tool_specs_batch14.py`）✓ ⚠ **单位**：`IVertex::GetPoint` 的读数与文档长度单位一致（本机**毫米**）—— ★ 判据是边长：厚 0.002 的板算出 `{0.002, 40, 60}`、厚 2 的算出 `{2.0, 40, 60}`（`output/spec209-hem-units.json`）✓"
       ],
       "allowed_modes": [
         "interactive",
@@ -2763,7 +2765,8 @@
         "★ 既有：`sw_selection_spec.py` 的 `EntitySelectionError`（★ 越界会大声报错，真机证据见 `output/chamfer-fillet-evidence.json` 的 `negative_out_of_range`）",
         "python 真机（2026-10-01 轮 266）：★ `selection_point` **判据自证通过**（两侧）—— 没选中 ⇒ ok=False + 明确原因；选中面 ⇒ ok=True + point；★ 证据 output/selection-point-evidence.json",
         "python 真机对照实验（2026-10-01 轮 267）：★ 三点对照 ⇒ 比值 ≈1.000 ⇒ **单位 = 毫米**（output/selection-point-units.json）",
-        "python 真机（轮 328）★ **顶点枚举**：把 `entities_on_body` 扩展到 `VERTEX`（★ 用已有工具，**不新开**）⇒ 20×20×10 盒子 **FACE=6 · EDGE=12 · VERTEX=8**，★ **欧拉公式 `V−E+F=2` 成立** · 未知类型 ⇒ 显式拒绝 · 证据 output/vertices-evidence.json"
+        "python 真机（轮 328）★ **顶点枚举**：把 `entities_on_body` 扩展到 `VERTEX`（★ 用已有工具，**不新开**）⇒ 20×20×10 盒子 **FACE=6 · EDGE=12 · VERTEX=8**，★ **欧拉公式 `V−E+F=2` 成立** · 未知类型 ⇒ 显式拒绝 · 证据 output/vertices-evidence.json",
+        "★★★ 真机（2026-10-06 · 规格 209 的 **B3 批** · idx **115 `edges`** + idx **145 `faces`**，★ 裁决书强制**合并成一条工具**）：`python tools/sw_guard.py --timeout 900 -- python tools/probe_spec209_b3_entities.py` ⇒ 20×20×10 的拉伸盒：**FACE=6 · EDGE=12 · VERTEX=8**（★ 与几何相符），★★ **欧拉公式 `V − E + F = 2` 成立**（★ 本仓既有判据，**不需要任何新 API**）；★ 逐条几何**都读得到**：EDGE 的两个端点 + **自己算的边长** · FACE 的 `IFace2::GetArea()` · VERTEX 的 `IVertex::GetPoint()`；★ 负例（序号越界 / 非法 kind）**都大声报**（`EntitySelectionError`）✓ ★ 证据 `output/spec209-b3-entities.json`"
       ],
       "mcp_tools": [
         "solidworks_available_direction_selectors",

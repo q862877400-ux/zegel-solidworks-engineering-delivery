@@ -485,3 +485,143 @@ def entities_as_array(model, kind: str, indices, *, body_index: int = 0) -> list
                 % (kind, index, body_index, len(items)))
         picked.append(items[index])
     return picked
+
+
+# ── 规格 209 · B3（idx 115 `edges` + idx 145 `faces`，★ 裁决书强制**合并成一条工具**）──────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
+# 文件:   scripts/sw_selection_spec.py —— 追加 `entity_geometry` / `entities_report`
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B3-1** · 外部项目 idx **115 `edges`**
+#   + idx **145 `faces`**。★★ 裁决书的硬约束（§一/§三.1/§六）逐字：
+#   「★ 不新建平行工具 ⇒ **扩已有的 `solidworks_entities_on_body`**」·
+#   「与 #115 的 `GetEdges` **是同一件活的两种 kind** ⇒ ★ **一条工具**（FACE/EDGE/VERTEX），
+#     **不许开两条**」✓
+#   ★★ 它点名的**真风险**：「本条真风险**不是后端到不了**，而是『**读属性读不到**』
+#     （事实 3x）⇒ 先单独做一条**小验证**再落」✓
+#   ★★ **而本条落地的真正缺口是另一件事（我自己读代码时发现的）**：既有工具指向的
+#     `entities_on_body` **返回 COM 对象** ⇒ ★ **过不了 MCP 的 JSON 边界** ——
+#     ★ 也就是说那条工具**经工具层拿不到任何可用的东西**（"能枚举"≠"能把结果交出去"）✓
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
+#   · `C:\swapi\types\IBody2\{GetEdges,GetFaces,GetVertices}.md` —— 三个都是**零参**、回 `System.object`
+#   · `C:\swapi\types\IEdge\{GetStartVertex,GetEndVertex}.md` —— 回 `System.object`（顶点）
+#   · `C:\swapi\types\IVertex\GetPoint.md` —— `System.object GetPoint()`
+#   · `C:\swapi\types\IFace2\GetArea.md` —— `System.double GetArea()`
+#   · ★★ **`IEdge` 上没有任何「长度」成员** —— 官方成员表逐条列过（`GetCurve` / `GetCurveParams` /
+#     `GetStartVertex` / `GetEndVertex` …）⇒ ★ 边长**只能自己算**（两个顶点求距离）✓
+#     ⚠ 这一条是 2026-10-06 真机踩出来的：我按印象读 `IEdge.GetLength` ⇒ **12 条边全部抛异常**
+#     （★ 铁律 5：**名字缺席 = 官方没有这个成员**）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+# ★★ **单位**：`IVertex::GetPoint` 的读数与文档长度单位一致（本机 **毫米**）——
+#   ★ 判据是**边长**：60×40×2 的板算出 `{0.002, 40.0, 60.0}`、厚 2 的算出 `{2.0, 40.0, 60.0}`
+#   （见 `output/spec209-hem-units.json`）⇒ ★ 本模块如实标 `_mm` / `_mm2` ✓
+
+
+def entity_geometry(model, kind: str, index: int, *, body_index: int = 0) -> dict:
+    """★ 取**第 index 个实体**的**可 JSON 化的几何读数**（★ 把 COM 对象挡在函数里面）。
+
+    :param kind: `"EDGE"` / `"FACE"` / `"VERTEX"`。
+    :returns: ★ 按 kind 给不同的读数（★ **都来自官方成员，一个不编**）：
+      ```
+      VERTEX ★ {"point_mm": [x, y, z]}                    ← IVertex::GetPoint()
+      EDGE   ★ {"start_mm": [...], "end_mm": [...],
+                "length_mm": L}                            ← GetStartVertex/GetEndVertex 自己算
+                                                             ★★ 官方 IEdge **没有** Length 成员
+      FACE   ★ {"area_mm2": A}                             ← IFace2::GetArea()
+      ```
+    ⚠ **读不到就如实报**（`None` + `error`）—— ★ 这正是裁决书点名的那个风险
+      （「读属性读不到」）：★ 本函数**把"读不到"与"读到 0"分开** ✓
+    """
+    info: dict = {"index": int(index), "kind": str(kind).upper(), "error": None}
+    try:
+        items = entities_on_body(model, kind, body_index=body_index)
+        if index < 0 or index >= len(items):
+            raise EntitySelectionError(
+                "%s 序号 %d 越界（体 %d 上共 %d 个）" % (kind, index, body_index, len(items)))
+        ent = items[index]
+    except Exception as exc:                                   # noqa: BLE001
+        info["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return info
+    k = info["kind"]
+    if k == "VERTEX":
+        try:
+            pt = get_com_member(ent, "GetPoint")
+            info["point_mm"] = [round(float(v), 6) for v in list(pt)[:3]]
+        except Exception as exc:                               # noqa: BLE001
+            info["error"] = "IVertex.GetPoint 读不到：%s" % str(exc)[:120]
+    elif k == "EDGE":
+        pts = []
+        for member in ("GetStartVertex", "GetEndVertex"):
+            try:
+                v = get_com_member(ent, member)
+                p = get_com_member(v, "GetPoint") if v is not None else None
+                pts.append(None if p is None else [round(float(x), 6) for x in list(p)[:3]])
+            except Exception as exc:                           # noqa: BLE001
+                info["error"] = "IEdge.%s→GetPoint 读不到：%s" % (member, str(exc)[:100])
+                pts.append(None)
+        info["start_mm"], info["end_mm"] = pts[0], pts[1]
+        if pts[0] and pts[1]:
+            info["length_mm"] = round(sum((pts[1][i] - pts[0][i]) ** 2 for i in range(3)) ** 0.5, 6)
+    elif k == "FACE":
+        try:
+            info["area_mm2"] = round(float(get_com_member(ent, "GetArea") or 0.0), 6)
+        except Exception as exc:                               # noqa: BLE001
+            info["error"] = "IFace2.GetArea 读不到：%s" % str(exc)[:120]
+    return info
+
+
+def entities_report(model, kind: str, *, body_index: int = 0) -> dict:
+    """★ **列出体上的实体（带几何读数）**—— ★ **MCP 可用的形态**（只回 JSON，不回 COM 对象）。
+
+    ★★ 为什么需要它：既有的 `entities_on_body` **返回 COM 对象** ⇒ ★ **过不了 MCP 的 JSON 边界**
+      ⇒ 那条工具**经工具层其实拿不到东西**（★「能枚举」与「能交出去」是两件事）✓
+    ★★ **判据（规则 6）**：① **计数**；② ★ **欧拉公式 `V − E + F = 2`**（★ 本仓既有的判据，
+      20×20×10 盒子真机 `FACE=6 · EDGE=12 · VERTEX=8`）—— ★ 它**不需要任何新 API** ✓
+    :returns: `{ok, kind, body_index, count, entities, euler, error}`
+      ★ `euler` 三个计数**各自独立回读**（★ 不是从别的字段推的）；
+      ★ ★ **读不到某一类就回 `None`**（★ 不拿 0 冒充）✓
+    """
+    out: dict = {
+        "ok": False, "kind": str(kind).upper(), "body_index": int(body_index), "count": None,
+        "entities": [], "euler": None, "error": None,
+        "★": "判据 = **计数** + **欧拉公式 V−E+F=2**（★ 本仓既有判据，不需要新 API）；"
+             "★ 每类的计数**各自回读**，读不到就 `None`（不拿 0 冒充）",
+    }
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    try:
+        items = entities_on_body(model, kind, body_index=body_index)
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    out["count"] = len(items)
+    rows = []
+    for i in range(len(items)):
+        rows.append(entity_geometry(model, kind, i, body_index=body_index))
+    out["entities"] = rows
+    #: ★★ 欧拉校验：三类计数**各自独立回读**（★ 读不到 → None，★ 不拿 0 冒充）
+    counts: dict = {}
+    for k in ENTITY_KINDS:
+        try:
+            counts[k] = len(entities_on_body(model, k, body_index=body_index))
+        except Exception:                                      # noqa: BLE001
+            counts[k] = None
+    v, e, f = counts.get("VERTEX"), counts.get("EDGE"), counts.get("FACE")
+    euler = {"vertex": v, "edge": e, "face": f}
+    if None not in (v, e, f):
+        euler["v_minus_e_plus_f"] = v - e + f
+        euler["holds"] = (v - e + f) == 2
+    else:
+        euler["v_minus_e_plus_f"] = None
+        euler["holds"] = None
+        euler["note"] = "★ 有一类实体**读不到** ⇒ 欧拉式**判不了**（★ 不拿 0 冒充）"
+    out["euler"] = euler
+    out["ok"] = out["count"] is not None
+    unreadable = [r["index"] for r in rows if r.get("error")]
+    if unreadable:
+        out["error"] = ("**%d 个实体的几何读不到**（★ 这正是裁决书点名的"
+                        "「读属性读不到」风险）：序号 %r —— ★ 计数仍然有效，几何字段如实为空"
+                        % (len(unreadable), unreadable[:8]))
+    return out
