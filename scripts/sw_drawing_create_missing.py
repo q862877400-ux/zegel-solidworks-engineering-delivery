@@ -6,17 +6,17 @@
 # 定位:   ★ 2026-10-03 承 `specs/202-user-coverage-gaps` 的**工程图 5 项真缺口**：
 #   断裂视图 · 辅助视图 · 表面粗糙度符号 · 基准符号 · 气泡序号（BOM 气泡）。
 #   ★★ 这 5 项**本仓此前一个都没有** —— `docs/user-feature-coverage.md` §八列了它们，
-#     而 `tools/audit_gap_implementations.py`（AST 量"有没有真调用"）也没命中。
+#     而 `tools/audit_gap_implementations.py`（AST 量「有没有真调用」）也没命中。
 #
 #   ★★★ **每个函数的官方「前置」都写在 docstring 与返回值里** —— 本文件刻意这么做，
 #     原因是这 5 项里有 **3 项靠调用前的选区**，而选区失败时 SolidWorks **静默返回 None**
-#     ⇒ ★ 不把前置写清楚，调用者会把"没建出来"读成"能力坏了"。
+#     ⇒ ★ 不把前置写清楚，调用者会把「没建出来」读成「能力坏了」。
 #
 #   =======================  ============================  ==============================
 #   功能                      官方成员（反射 arity）              官方前置（逐字来源）
 #   =======================  ============================  ==============================
 #   断裂视图                  `IView.InsertBreak3`（6 参）        视图须按名字**解析得到**
-#                                                          （官方示例用"选中视图"取得 IView）
+#                                                          （官方示例用「选中视图」取得 IView）
 #   辅助视图                  `IDrawingDoc.CreateAuxiliaryViewAt2`  「based on a **selected edge
 #                                                            in a drawing view**」
 #   表面粗糙度符号            `IModelDocExtension.               「based on the **last selection**」
@@ -44,7 +44,7 @@
 #       `InsertBreak3(2, -2.91950859897372E-02, 1.98236302285804E-02, …)`
 #       ⇒ -29.195 mm / +19.824 mm ⇒ **官方确实用米** ✓ ★ 而本模块**把这个证据写进返回值**。
 #     ★ 官方 `GetBreakLines` 的 Remarks 还写明「**A drawing view can have break lines that are
-#       not applied**；要看"是不是真的断开了"用 `IView::IsBroken`」
+#       not applied**；要看「是不是真的断开了」用 `IView::IsBroken`」
 #       ⇒ ★ 本模块**两个都回读**（断裂数 + `IsBroken`），不拿其中一个当唯一判据。
 #
 #   ★★ **表面粗糙度符号那三条字符串参数**（`MachAllowance` / `OtherVals` / `ProdMethod` /
@@ -130,7 +130,7 @@ SW_SF_BASIC = 0                     # swSFBasic = 0（官方示例第一个实�
 
 #: `swAnnotationType_e`（`C:\swapi\enums\swAnnotationType_e.md`，19 个成员）
 #: ★ 这两个**不是**判据本身（判据用 IView 的 Get*SFCymbolCount / GetDatumTagCount），
-#: ★ 而是给调用方一个"按型取注解"的旁路（`IView.GetAnnotationsByType(Type)`，1 参）。
+#: ★ 而是给调用方一个「按型取注解」的旁路（`IView.GetAnnotationsByType(Type)`，1 参）。
 SW_ANNOTATION_DATUM_TAG = 2         # swDatumTag  = 2
 SW_ANNOTATION_SF_SYMBOL = 7         # swSFSymbol  = 7
 
@@ -148,7 +148,7 @@ SW_BALLOON_ITEMS_DONT_CHANGE = 1    # swBalloonItemNumbers_DoNotChangeItemNumber
 SW_EDIT_BALLOON_RESEQUENCE = 1      # swEditBalloonOption_Resequence            = 1
                                    #   （`C:\swapi\enums\swEditBalloonOption_e.md`）
 
-#: ★ `swDrawingViewTypes_e` 里"这不是一个视图、而是图纸本身"的那个取值。
+#: ★ `swDrawingViewTypes_e` 里「这不是一个视图、而是图纸本身」的那个取值。
 #: ★ 与 `sw_drawing_query.SHEET_PSEUDO_VIEW_TYPE` 同一个事实、同一份官方页
 #:   （`swDrawingViewTypes_e`：`swDrawingSheet = 1`）；★ 本模块**自己写一份常量**而不
 #:   跨模块 import，★ 是为了不让能力层依赖 `sw_drawing_query` 的导入形态。
@@ -165,7 +165,7 @@ DRAWING_CREATE_MISSING_STATUS = {
 }
 
 
-# ── 小工具（★ 判据要能回读 ⇒ 这里只提供"读得到多少"，★ 读不到就回 None，不猜）──────
+# ── 小工具（★ 判据要能回读 ⇒ 这里只提供「读得到多少」，★ 读不到就回 None，不猜）──────
 
 def _as_list(value) -> list:
     """★ COM 数组 → `list`；★ 单对象 → 单元素列表；★ `None` → 空列表。"""
@@ -207,7 +207,7 @@ def _view_type(view) -> int | None:
 def _iter_views(model) -> list:
     """★ **当前图纸**上的真实视图对象（★ 按官方示例的 `GetFirstView` → `GetNextView` 走）。
 
-    ★★ **必须跳过"图纸本身"那一个** —— 真机实测空图纸上 `GetFirstView()` 回的就是它
+    ★★ **必须跳过「图纸本身」那一个** —— 真机实测空图纸上 `GetFirstView()` 回的就是它
       （`Type == 1`、名字等于图纸名）⇒ 不跳过会列出一个**假视图**（本仓事实，见
       `sw_drawing_query.list_views` 的同款处理）。
     ★ **返回空列表表示"当前图纸上一个视图都没有"**；★ 返回 `None` 表示**读不到**。
@@ -273,9 +273,9 @@ def _sum_over_views(model, member: str) -> int | None:
 
     ★ 官方 `Get_Annotations_Array_Example_VB.md` 逐字就是这么读的
       （`count = swView.GetSFSymbolCount` / `count = swView.GetDatumTagCount` …）。
-    ★★ 为什么用"求和"而不是"只看新视图"：★ 那 5 项里只有断裂视图能指定视图，
+    ★★ 为什么用「求和」而不是「只看新视图」：★ 那 5 项里只有断裂视图能指定视图，
       ★ 而 **符号类注解挂在哪个视图取决于调用者的选区** ⇒ ★ 求和才是不挑视图的判据。
-    ★ 返回 `None` = **读不到**（★ 不当 0 用，否则会把"读不到"误判成"没建出来"）。
+    ★ 返回 `None` = **读不到**（★ 不当 0 用，否则会把「读不到」误判成「没建出来」）。
     """
     views = _iter_views(model)
     if views is None:
@@ -317,7 +317,7 @@ def _break_state(view) -> dict:
         applied**. To determine whether a view is broken, use `IView::IsBroken`.」
       · `IsBroken` 的 Remarks 逐字「indicates if the view is **displayed broken**, **not** if the
         view **has break lines**.」
-      ⇒ ★ 拿断裂数当"断开了"的判据**会把没生效的断裂线读成已断开** ⇒ ★ 本模块两个都回。
+      ⇒ ★ 拿断裂数当「断开了」的判据**会把没生效的断裂线读成已断开** ⇒ ★ 本模块两个都回。
     """
     lines = _as_list(_read(view, "GetBreakLines"))
     broken = _read(view, "IsBroken")
@@ -354,7 +354,7 @@ def insert_break_lines(model, view_name: str,
       > **Vertical** then Position1 and Position2 are **X** values relative to the drawing view origin
 
       ⇒ ★ 也就是说：**横向断裂吃 Y、纵向断裂吃 X**（★ 两个值都是**相对视图原点**的）
-      ⇒ ★ 本模块把"这两个数落在哪根轴上"原样回在 `positions_are_on_axis` 里。
+      ⇒ ★ 本模块把「这两个数落在哪根轴上」原样回在 `positions_are_on_axis` 里。
 
     ★★ **为什么不是 `InsertBreak` / `InsertBreak2`**（铁律 4）：★ 那两个**都标 Obsolete**
       ⇒ 可用的是 `InsertBreak3`；★ 本仓 `sw_api_sldworks.py` 的反射 dump 里
@@ -450,15 +450,15 @@ def create_auxiliary_view(model, x_mm: float, y_mm: float, *,
       （本仓事实 32：`SelectByID2("Edge1","EDGE")` 真机计数为 0）⇒ ★ **本模块不代选**
       （★ 规则 3：禁裸坐标），★ 只**回读当前选区计数**、并把它写进
       `preconditions_held` ⇒ ★ 选区没备好时调用者能**看见失败原因**，★ 不会把它
-      误读成"能力坏了"。
+      误读成「能力坏了」。
 
     ⚠★ **`NotAligned` 的官方说明与形参名自相矛盾，本模块**原样透传、照抄，不替官方解释**：
       官方 Parameters 逐字写的是「**NotAligned**: True **aligns** the view from its owner,
-      false does not」—— ★ 名字说"不对齐"、说明说"对齐" ⇒ ★ 本模块**默认传 `True`**（跟形参名），
+      false does not」—— ★ 名字说「不对齐」、说明说"对齐" ⇒ ★ 本模块**默认传 `True`**（跟形参名），
       ★ 并把这段矛盾**原样引在返回值里**，★ 由真机去定（★ 铁律 5：查不到就说查不到）。
 
     ★ **判据 = 当前图纸的视图数增量 + 新视图的 `Type`（应为 5 = `swDrawingAuxiliaryView`）**
-      —— ★ 不是"返回非 None"。
+      —— ★ 不是「返回非 None」。
     """
     if model is None:
         return {"ok": False, "op": "create_auxiliary_view", "error": "model 为 None"}
@@ -552,7 +552,7 @@ def insert_surface_finish_symbol(model, *,
       只**回读选区计数**写进 `preconditions_held`。
 
     ★ **判据 = 全图纸 `IView.GetSFSymbolCount` 求和的增量**（★ 官方示例就是这么读的）
-      —— ★ 不是"返回非 None"。
+      —— ★ 不是「返回非 None」。
     """
     if model is None:
         return {"ok": False, "op": "insert_surface_finish_symbol", "error": "model 为 None"}
@@ -633,7 +633,7 @@ def insert_datum_tag(model) -> dict:
       （★ 事实 36 一族：**同名不同族要用对接口**，★ 而这里**连名字都不同**）。
 
     ★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量**（★ 官方示例就是这么读的）
-      —— ★ 不是"返回非 None"。
+      —— ★ 不是「返回非 None」。
     """
     if model is None:
         return {"ok": False, "op": "insert_datum_tag", "error": "model 为 None"}
@@ -695,7 +695,7 @@ def auto_insert_balloons(model, *,
     :param style: `swBalloonStyle_e`（默认 `swBS_Circular = 1`）。
     :param size: `swBalloonFit_e`（默认 `swBF_5Chars = 5`）。
     :param upper_text_content: `swBalloonTextContent_e`（默认 `swBalloonTextItemNumber = 1`
-      ⇒ **气泡里显示件号**，★ 这正是"气泡序号"的语义）。
+      ⇒ **气泡里显示件号**，★ 这正是「气泡序号」的语义）。
     :param item_order: `swBalloonItemNumbersOrder_e`（默认
       `swBalloonItemNumbers_DoNotChangeItemNumbers = 1`）。
     :param edit_balloon_option: `swEditBalloonOption_e`（默认
@@ -706,7 +706,7 @@ def auto_insert_balloons(model, *,
       `ItemNumberIncrement=1` / `EditBalloons=True`。
 
     ⚠★ **默认沿用官方示例的取值，★ 但枚举页对其中几条没写"默认是什么"**
-      ⇒ ★ 本模块**不声称这些是 SolidWorks 的默认**，★ 只声称"这是官方示例用的值"。
+      ⇒ ★ 本模块**不声称这些是 SolidWorks 的默认**，★ 只声称「这是官方示例用的值」。
 
     ⚠★ **`AutoBalloon5` 的形参是 COM 对象** ⇒ ★ `mcp-server` 的 `Param` 表达不了
       ⇒ ★ **本能力层实现它、工具层不给它建 ToolSpec**（★ 见 `mcp-server/tool_specs_batch73.py`）。
@@ -798,14 +798,250 @@ def auto_insert_balloons(model, *,
 #
 # ② **断裂线的信息读取**（`GetBreakLineInfo2` / `GetBreakLineCount2`）：
 #    ★ 本模块的判据用 `GetBreakLines()`（★ 官方 `GetBreakLines.md` 的 See Also 明确列出它）
-#    + `IsBroken()` ⇒ ★ 不再引第三条同义路径，★ **免得把"官方没写语义"的成员当真源**。
+#    + `IsBroken()` ⇒ ★ 不再引第三条同义路径，★ **免得把「官方没写语义」的成员当真源**。
 #
 # ③ **表面粗糙度符号的 `lay_symbol` / `arrow_type` 默认值**：
 #    ★ 本模块传 **0** ⇒ ★ 但 `swSFLaySym_e` / `swArrowStyle_e` 的 "0 是什么"**本轮没查**
-#    ⇒ ★ **不写死"0 = 某个具体样式"的断言**，★ 只把实参原样透出（★ 铁律 5）。
+#    ⇒ ★ **不写死「0 = 某个具体样式」的断言**，★ 只把实参原样透出（★ 铁律 5）。
 #
-# ④ **辅助视图的落位方向**（官方没给任何"视图该往哪边摆"的规则）：★ 本模块**不猜**，
+# ④ **辅助视图的落位方向**（官方没给任何「视图该往哪边摆」的规则）：★ 本模块**不猜**，
 #    ★ `flip` / `not_aligned` 一律**原样透传**，★ 并把官方那句自相矛盾的说明**原样引出**。
 #
 # ⑤ **工具层（`mcp-server`）不给气泡建 ToolSpec**：★ 形参是 COM 对象、★ `Param` 表达不了
-#    ⇒ ★ 这不是遗漏，是**形态不同**（★ 同 `sw_mold_core_cavity_split` 那类"另走一层"的处置）。
+#    ⇒ ★ 这不是遗漏，是**形态不同**（★ 同 `sw_mold_core_cavity_split` 那类「另走一层」的处置）。
+
+
+# ── 规格 209 · B4-5（idx 205 `model_annotations`）────────────────────────────────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
+# 文件:   scripts/sw_drawing_create_missing.py —— 追加 `insert_model_annotations`
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-5** · 外部项目 idx **205 `model_annotations`**。
+#   ★★ 裁决书的**建议落点**是 `scripts/sw_drawing.py`，★ 而**我改成落这里** ——
+#     理由**可核**：`scripts/sw_drawing.py` 只有 **29 行**、是**桥接壳**
+#     （它 `exec_module` 加载 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`
+#     再 `globals().update`），★ **往里加实现会被桥接逻辑吞掉/覆盖**；
+#     而**真正带视图助手**的是本模块（`_iter_views` / `_sum_over_views` / `_delta` / `_find_view`
+#     / `_view_names` / `_selection_count` —— ★ 裁决书自己要求「**复用**该文件已有的读侧助手，
+#     **别新造**」，★ 那就只能落这里）✓
+#   ★ 同一条裁决书还要求与 idx 34 `balloon` / idx 52 `centerline` **同族复用** ——
+#     ★ 那两条的落点本来也就是本模块（`auto_insert_balloons` 已在本文件里）✓
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
+#   · `C:\swapi\types\IDrawingDoc\InsertModelAnnotations4.md` —— **8 参**：
+#     `System.object InsertModelAnnotations4(System.int Option, System.int Types,
+#      System.bool AllViews, System.bool DuplicateDims, System.bool HiddenFeatureDims,
+#      System.bool UsePlacementInSketch, System.bool InsertAllAnnotations,
+#      System.bool InsertAllReferenceGeometry)`
+#     ★ `## Parameters` 逐字：`Types` **只在两个 `InsertAll*` 都是 False 时才有效**；
+#       `DuplicateDims=True` = **消除重复尺寸**；`HiddenFeatureDims=True` = 连隐藏特征的尺寸也插；
+#       `UsePlacementInSketch=True` = 按**草图里的摆放**插 ✓
+#     ★ `## Returns` 逐字：「Array of inserted `IAnnotation` objects」
+#     ★ 摘要逐字：「Inserts model annotations into this drawing document's **currently selected
+#       drawing view**.」
+#   · `C:\swapi\enums\swImportModelItemsSource_e.md` —— **EntireModel=0** · SelectedFeature=1 ·
+#     SelectedComponent=2 · AssemblyOnly=3
+#   · `C:\swapi\enums\swInsertAnnotation_e.md` —— ★ **26 个成员的位掩码**
+#     （★ 官方 Description 逐字 **Bitmask**）⇒ ★ 本模块 **26 个全抄进表**（★ 一个不漏）✓
+#   · `C:\swapi\types\IView\GetAnnotationCount.md` —— `System.int GetAnnotationCount()`
+#     ★★ **这是本条的判据来源**（视图里的标注数）✓
+#   · ★★ `C:\swapi\examples\Insert_Model_Annotations_Example_VB.md` —— **调用序**（逐字）：
+#     ```
+#     Set swView = swDrawing.CreateDrawViewFromModelView3(<模型路径>, "*Front", x, y, 0)
+#     status = swModelDocExt.SelectByID2("Drawing View1", "DRAWINGVIEW", 0,0,0, False, 0, Nothing, 0)
+#     status = swDrawing.ActivateView("Drawing View1")      ← ★ **先选中、再激活**
+#     swModel.ClearSelection2 True
+#     annotations = swDrawing.InsertModelAnnotations4(0, swInsertDimensionsMarkedForDrawing,
+#                                                      True, False, False, False, False, False)
+#     ```
+#     ⇒ ★★ 本函数**严格照这个序**（★ **`ActivateView` 那一步是示例独有的，签名里看不出来**）✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+# ★★ **判据**（规则 6）：★ 它回**标注对象数组**（COM 对象 ⇒ **过不了 JSON 边界**）⇒
+#   ★★ 本函数用 **`IView::GetAnnotationCount()` 的前后回读**（本模块既有 `_sum_over_views`）+
+#   `_delta()` 当判据 ✓ —— ★ **不拿返回的数组长度当唯一判据**（★ 同 `PostIntersect` 那类教训）
+
+#: ★ 官方 `swImportModelItemsSource_e`（★ 逐值抄自 `C:\swapi\enums\`）
+MODEL_ITEM_SOURCES = {
+    "entire_model": 0,
+    "selected_feature": 1,
+    "selected_component": 2,
+    "assembly_only": 3,
+}
+
+#: ★★ 官方 `swInsertAnnotation_e` —— **26 个成员一个不漏**（★ 位掩码；逐值抄自该页的 Value 列）✓
+#:   ⚠ **不许跨条复制别的映射表**；★ 本表只属于这个成员 ✓
+ANNOTATION_TYPE_BITS = {
+    "swInsertCThreads": 1,
+    "swInsertDatums": 2,
+    "swInsertDatumTargets": 4,
+    "swInsertDimensions": 8,
+    "swInsertInstanceCounts": 16,
+    "swInsertGTols": 32,
+    "swInsertNotes": 64,
+    "swInsertSFSymbols": 128,
+    "swInsertWelds": 256,
+    "swInsertAxes": 512,
+    "swInsertCurves": 1024,
+    "swInsertPlanes": 2048,
+    "swInsertSurfaces": 4096,
+    "swInsertPoints": 8192,
+    "swInsertOrigins": 16384,
+    "swInsertDimensionsMarkedForDrawing": 32768,
+    "swInsertHoleWizardProfileDimensions": 65536,
+    "swInsertHoleWizardLocationDimensions": 131072,
+    "swInsertRefPoints": 262144,
+    "swInsertDimensionsNotMarkedForDrawing": 524288,
+    "swInsertholeCallout": 1048576,
+    "swInsertWeldBeads": 2097152,
+    "swInsertSketches": 4194304,
+    "swInsertWeldBeads_ET": 8388608,
+    "swInsertTolerancedDims": 16777216,
+    "swInsertCenterOfMass": 33554432,
+}
+
+
+def _annotation_mask(types) -> int:
+    """★ 把**类型名**（逗号分隔字符串，或序列）**按位或**成官方要的位掩码。
+
+    :raises ValueError: 出现**不在官方 26 个成员里**的名字（★ 铁律 5：**不猜**、不静默忽略）✓
+    """
+    if types is None or types == "":
+        return 0
+    if isinstance(types, str):
+        names = [x.strip() for x in types.split(",") if x.strip()]
+    else:
+        names = [str(x).strip() for x in types if str(x).strip()]
+    mask = 0
+    for name in names:
+        key = name if name.startswith("swInsert") else "swInsert" + name
+        if key not in ANNOTATION_TYPE_BITS:
+            raise ValueError(
+                "未知的标注类型 %r；合法的是官方 swInsertAnnotation_e 的 26 个成员：%s"
+                % (name, ", ".join(sorted(ANNOTATION_TYPE_BITS))))
+        mask |= ANNOTATION_TYPE_BITS[key]
+    return mask
+
+
+def insert_model_annotations(model, view_name: str = "", *, source: str = "entire_model",
+                             types="", all_views: bool = False, duplicate_dims: bool = False,
+                             hidden_feature_dims: bool = False,
+                             use_placement_in_sketch: bool = False,
+                             insert_all_annotations: bool = False,
+                             insert_all_reference_geometry: bool = False) -> dict:
+    """★ **把模型标注插进工程图视图**（官方 `IDrawingDoc::InsertModelAnnotations4`，**8 参**）。
+
+    :param view_name: 要操作的视图名（★ 留空 = 用**第一个**视图 —— 本模块的 `_iter_views`）。
+    :param source: 官方 `Option` —— `entire_model`(0) / `selected_feature`(1) /
+        `selected_component`(2) / `assembly_only`(3)。
+    :param types: 官方 `Types`（位掩码）—— 收**逗号分隔的类型名**（可省 `swInsert` 前缀）。
+        ★ **只在两个 `insert_all_*` 都是 `False` 时有意义**（官方逐字）。
+    :param all_views: 官方 `AllViews`。
+    :param duplicate_dims: 官方 `DuplicateDims` —— `True` **消除重复尺寸**。
+    :param hidden_feature_dims: 官方 `HiddenFeatureDims`。
+    :param use_placement_in_sketch: 官方 `UsePlacementInSketch`。
+    :param insert_all_annotations: 官方 `InsertAllAnnotations`。
+    :param insert_all_reference_geometry: 官方 `InsertAllReferenceGeometry`。
+    :returns: `{ok, entry_used, view, source, mask, types_used, annotation_count_before,
+        annotation_count_after, annotation_delta, returned_count, error}`
+
+    ★★ **判据（规则 6）**：★ 它回**标注对象数组**（COM 对象 ⇒ 过不了 JSON 边界）⇒
+      ★ 判据是 **`IView::GetAnnotationCount()` 的前后回读**（★ 本模块既有 `_sum_over_views`）+
+      `_delta()` —— ★ **不拿返回数组长度当唯一判据** ✓
+    ★★ **调用序照官方示例**：**先选中视图**（`SelectByID2`，类型 `DRAWINGVIEW`）⇒
+      **再 `ActivateView`**（★ 这一步签名里看不出来）⇒ `ClearSelection2` ⇒ 调它 ✓
+    """
+    from sw_connect import get_com_member                               # noqa: E402
+    out: dict = {
+        "ok": False, "entry_used": "IDrawingDoc::InsertModelAnnotations4(8 参)",
+        "view": None, "source": str(source), "mask": None, "types_used": None,
+        "annotation_count_before": None, "annotation_count_after": None,
+        "annotation_delta": None, "returned_count": None, "selected_count": None,
+        "error": None, "note": None,
+        "★": "判据 = **`IView::GetAnnotationCount()` 的前后回读**（★ 本模块既有 `_sum_over_views`）；"
+             "★ 它回的是 **COM 标注对象数组** ⇒ **过不了 JSON 边界**，故**不当唯一判据**",
+    }
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    src = str(source).strip().lower()
+    if src not in MODEL_ITEM_SOURCES:
+        out["error"] = ("未知的 source %r；合法：%s"
+                        % (source, ", ".join(sorted(MODEL_ITEM_SOURCES))))
+        return out
+    try:
+        out["mask"] = _annotation_mask(types)
+    except ValueError as exc:
+        out["error"] = str(exc)[:300]
+        return out
+    if not insert_all_annotations and not insert_all_reference_geometry and out["mask"] == 0:
+        out["error"] = ("`types` 是空的、而两个 `insert_all_*` 也都是 False ⇒ ★ 官方逐字："
+                        "`Types` **只在** `InsertAllAnnotations` 与 `InsertAllReferenceGeometry` "
+                        "都是 False 时**才有意义** ⇒ 那样等于**什么都没让它插**。"
+                        "★ 本函数**不猜你要什么**，如实拒绝 ✓")
+        return out
+    try:
+        views = _iter_views(model)
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "取视图失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    if not views:
+        out["error"] = ("这张工程图里**一个视图都没有** ⇒ 官方摘要逐字是"
+                        "「into this drawing document's **currently selected drawing view**」"
+                        "⇒ 没有视图就没有可操作的对象 ✓")
+        return out
+    if str(view_name or "").strip():
+        #: ⚠ ★ 我第一版写的是 `target = _find_view(...)` —— ★★ 而它回的是 **`(view, error)` 元组**
+        #:   （见它的 docstring）⇒ 把元组当视图对象用 ⇒ `_view_name` 读不到 ⇒ 报"取不到视图名"
+        #:   ★ 一个**指不出真因**的错。★ 记下来：**用既有助手前先读它的返回值形状** ✓
+        target, why = _find_view(model, str(view_name).strip())
+        if target is None:
+            out["error"] = "找不到视图 %r：%s" % (view_name, why)
+            return out
+    else:
+        target = views[0]
+    out["view"] = _view_name(target)
+    out["annotation_count_before"] = _sum_over_views(model, "GetAnnotationCount")
+    if not out["view"]:
+        out["error"] = "取不到视图名（★ 后面的 SelectByID2 / ActivateView 都要名字）"
+        return out
+    try:
+        from sw_part import _empty_callout                              # noqa: E402
+        ext = get_com_member(model, "Extension")
+        #: ★★ 官方示例的**调用序**：先选中视图、**再激活**、再清选区
+        get_com_member(model, "ClearSelection2", True)
+        get_com_member(ext, "SelectByID2", out["view"], "DRAWINGVIEW", 0.0, 0.0, 0.0,
+                       False, 0, _empty_callout(), 0)
+        out["selected_count"] = _selection_count(model)
+        get_com_member(model, "ActivateView", out["view"])
+        #: ★★ **选区去留取决于 `AllViews`**（★ 这条是读官方示例读出来的，不是猜的）：
+        #:   官方示例走的是 `AllViews=True`，所以它在调用前 `ClearSelection2 True`；
+        #:   而 `AllViews=False` 时官方摘要要的是「**currently selected drawing view**」
+        #:   ⇒ ★★ 那时**必须把视图留在选区里** —— ★ 我第一版**无脑清掉** ⇒
+        #:   `InsertModelAnnotations4` **回一个空数组**（★ 一个指不出真因的现象）✓
+        if all_views:
+            get_com_member(model, "ClearSelection2", True)
+        returned = get_com_member(model, "InsertModelAnnotations4",
+                                  int(MODEL_ITEM_SOURCES[src]), int(out["mask"]),
+                                  bool(all_views), bool(duplicate_dims),
+                                  bool(hidden_feature_dims), bool(use_placement_in_sketch),
+                                  bool(insert_all_annotations),
+                                  bool(insert_all_reference_geometry))
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:220])
+        return out
+    out["returned_count"] = len(list(returned)) if returned is not None else 0
+    try:
+        out["annotation_count_after"] = _sum_over_views(model, "GetAnnotationCount")
+        out["annotation_delta"] = _delta(out["annotation_count_before"],
+                                         out["annotation_count_after"])
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "后置回读失败：%s" % str(exc)[:150]
+        return out
+    out["ok"] = bool(out["annotation_delta"] and out["annotation_delta"] > 0)
+    if not out["ok"]:
+        out["error"] = ("回读判据未过：视图标注数 %r → %r（差 %r）· 官方回的数组长度 %r —— "
+                        "★ 如实判「没插进去」（★ 不拿返回值冒充）"
+                        % (out["annotation_count_before"], out["annotation_count_after"],
+                           out["annotation_delta"], out["returned_count"]))
+    out["types_used"] = sorted(k for k, v in ANNOTATION_TYPE_BITS.items() if v & out["mask"])
+    return out

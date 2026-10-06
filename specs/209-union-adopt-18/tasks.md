@@ -126,7 +126,23 @@
       ⇒ `output/spec209-unfold-fold.json`
       ⚠ **裁决书说它的 mark 表是 `Fold=0/1/4`** —— ★★ 真机读到的是 **`[1, 4]`**（外加前置特征 mark 0）
       ⇒ ★ **按读数记**（★ 这正是「不许跨条复制 mark 表」的又一处现场）
-- [ ] **B4-5** idx 205 `model_annotations`（`InsertModelAnnotations4`）★ 复用工程图注解那族的读侧助手
+- [x] **B4-5** idx 205 `model_annotations`（`IDrawingDoc::InsertModelAnnotations4`，**8 参**）
+      ⇒ `scripts/sw_drawing_create_missing.py::insert_model_annotations` +
+      `solidworks_drawing_insert_model_items`（★ level = **`stitched`**）
+      ★ 怎么知道的：真机（`tools/probe_spec209_b4_model_annotations.py`）**只验到"可达 + 回读可用"**：
+      调用**不抛**、回的是数组（长度 **0**）· `IView::GetAnnotationCount()` 前后回读 **0→0** ·
+      两个负例（空图纸 / 什么都没让它插）**都大声报** ⇒ `output/spec209-model-annotations.json`
+      ★★★ **为什么是 `stitched` 而不是 `verified`（原因已查明）**：我们的零件是**纯坐标画出来的**
+      ⇒ **一个尺寸都没有**；而本仓的 `add_horizontal_dimension` / `add_vertical_dimension`
+      **都回 `None`**（官方 `AddDimension2` 摘要逐字「for **selected entities**」⇒ 要先选中实体）
+      ⇒ ★★ **夹具里没有可插的东西** ⇒ ★ 这是**数据相关**的失败，**不是**后端到不了 ✓
+      ★★ **落点偏离裁决书建议**（它说 `scripts/sw_drawing.py`）：★ 那只有 **29 行**、是**桥接壳**
+      （`exec_module` 加载 subskill 再 `globals().update`）⇒ 往里加会被覆盖；
+      ★ 实际落 `sw_drawing_create_missing.py` —— ★ 裁决书自己要求「复用该文件已有的读侧助手」✓
+      ★★ **两处我自己写错并修掉的**（都已记进 `capabilities.yaml` 的 limitations）：
+      ① 把 `_find_view` 的 **`(view, error)` 元组**当成视图对象用 ⇒ 报"取不到视图名"（指不出真因）；
+      ② `AllViews=False` 时**无脑清选区** ⇒ 官方要的是「**currently selected** drawing view」⇒ 回空数组
+      （★ 已加静态断言 `if all_views:` 钉住）
 
 ## 收尾
 
