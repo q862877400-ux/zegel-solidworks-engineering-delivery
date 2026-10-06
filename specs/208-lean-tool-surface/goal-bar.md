@@ -112,3 +112,12 @@
 - ★ 数字：731 工具字节比 **0.390**（核心补丁 0.376）、反推 token ≈ **73,000**（核心补丁实测 67,911）
 - ★ **两条路并存**：A 核心补丁 + `mode: lean`（复用上游 `tool-presentation` 行）；B ★ 插件（零核心改动）
 - ⚠ 限度：插件 token 数是**反推**；preset 挂载未真跑会话；插件不新增 `mode` 枚举（用它时 mode 保持 native）
+
+## 十一 · 第 11 轮：preset 挂载补实（**未起 web，零副作用**）
+
+- ★★ 新增测试走**真实挂载路径** `agentPresets.mount(agentCtx, id)`（= web 应用选 preset 的同一段代码）：
+  `packages/preset/agent-preset-registry/tests/lean-mode-preset.spec.ts`
+- ✅ 断言：挂插件的 preset 只让**它自己的** agent 变浅而准；兄弟 preset 不受影响；两边工具名相同
+- ✅ registry 套件 **46\46 绿**；沙盒提交 `05a50ceb7e`
+- ★ 我**没有**真起 web profile —— 找到了更直接的路径拿到同样证据，因此没拉 Hindsight、没占端口
+- ⚠ 仍差：**UI 层**真选一次这个 preset（属上游既有行为）
