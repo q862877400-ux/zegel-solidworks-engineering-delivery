@@ -21,27 +21,26 @@ from __future__ import annotations
 VERDICTS = {
     "边界凸台": ("特征", "不做", "★ 入口 = `IBoundaryBossFeatureData`（CHM 有 `~AccessSelections`）⇒ "
                             "属性式**要 ACL** ⇒ **事实 47**（后端限制）· ★ `AutoSelect` 或可绕开但**不试**"),
-    #: ★★★★ 2026-10-07（B5 **实测纠正**）：★ 这条**原判「可做」是错的** ✗ —— ★ 链条四步：
-    #:   ① ★ 老的参数式入口 **`IModelDoc2::FeatureCurvePattern` 已标 `Obsolete`** ✗
-    #:      （★ 官方逐字：See `IFeatureManager::CreateFeature` and the Remarks of
-    #:       `ICurveDrivenPatternFeatureData`）★ —— ★★ **宿主是 `IModelDoc2`、不是
-    #:       `IFeatureManager`** ⇒ ★ **我台账原先就写错了宿主** ✗
-    #:       ★（★ 事实 36 明写：★ 同名接口分属不同族、**用错接口就没反应** ✓）
-    #:   ② ★ 现代唯一入口 = `IFeatureManager::CreateFeature` + **`ICurveDrivenPatternFeatureData`**
-    #:      ⇒ ★ 那是**属性式** ✗
-    #:   ③ ★★ 而那个 Data 接口**带 `AccessSelections`** ✓（★ 逐文件核过：`AccessSelections.md`
-    #:      与 `IAccessSelections.md` 都在 ✓）
-    #:   ④ ★★ 而 `AccessSelections` 族在 pywin32 后端**不可调用**（**事实 47**，20+ 形态穷尽）✗
-    #:   ⇒ ★★★ **所以「曲线驱动阵列」= 不做（后端限制）** ✓
-    #:     ★★ 且仓里已有的 `sw_pattern.configure_curve_driven_pattern` **走的正是**那条属性式路
-    #:     （★ `with edit_selection(data, model, "ICurveDrivenPatternFeatureData")` ✓）⇒
-    #:     ★ **它到不了建成** —— ★ 与**事实 47** 记的 `create_one_bend`/`create_edge_flange`/
-    #:     `create_gusset` 三条**同型** ✓
-    "曲线驱动阵列": ("特征", "不做", "★★ **后端受限** —— ★ 链条：① 老的参数式入口 "
-                             "`IModelDoc2::FeatureCurvePattern` **已标 `Obsolete`** ✗；② 现代唯一入口 "
-                             "`IFeatureManager::CreateFeature` + `ICurveDrivenPatternFeatureData`（★ **属性式**）✗；"
-                             "③ 该 Data 带 **`AccessSelections`**；④ **事实 47**：该族在 pywin32 后端**不可调用** "
-                             "⇒ ★ **不做** ✓ ★（★ 仓里既有实现走的正是那条属性式路 ⇒ **到不了建成** ✓）"),
+    #: ★★★★★ 2026-10-07（B8 **翻案**）：★ 这条**原判「不做」也错了** ✗ ——
+    #:   ★★ 我 B5 的链条里**漏了一个入口**：★★ **`IFeatureManager::FeatureLocalCurveDrivenPattern`** ✓
+    #:     ★★★ 官方签名（★ 逐字读过）：**纯参数式 13 参、不带 `AccessSelections`** ✓✓
+    #:       `Feature FeatureLocalCurveDrivenPattern(bool FlipDir1, int Num1, bool EqualSpacing1,
+    #:        double Spacing1, int ReferencePoint, int CurveMethod, int AlignMethod, bool Direction2,
+    #:        bool FlipDir2, int Num2, bool EqualSpacing2, double Spacing2, bool PatternSeedOnly)` ✓
+    #:   ★★ 名字里的 **`CurveDriven`** 就是它 —— ★ **它才是「曲线驱动阵列」的直接入口** ✓
+    #:   ★★★ 我原链条的两条**都只说了别的入口**：★ ① `IModelDoc2::FeatureCurvePattern`（**已 Obsolete**）✗
+    #:     ② `CreateFeature` + `ICurveDrivenPatternFeatureData`（**要 ACL**）✗ ⇒ ★ **两条都不覆盖本条** ✓
+    #:   ★★ 而 `## Parameters` 里 `ReferencePoint` 写着「Type of **selected** reference point」✗ ⇒
+    #:     ★★ **它可能要预选一个参考点**（★ 那正是下一步真机要验的 ✓）
+    #:   ★★★ **且本项与「零部件阵列」共用这个入口** —— ★ 覆盖表把它们分在**特征域 / 装配域**两行，
+    #:     ★★ 而**官方入口是同一个** ⇒ ★ **两项同判「可做」** ✓（★ 同一份证据同时定两项 ✓）
+    #:   ★★ **教训**：★ **「某个入口要 ACL」≠「这个能力要 ACL」** ✗ ——
+    #:     ★ 判「不做」之前要把**同族的入口全列一遍** ✓
+    "曲线驱动阵列": ("特征", "可做", "★★★ **参数式入口存在且无 ACL** —— ★★ `IFeatureManager::FeatureLocalCurveDrivenPattern`"
+                             "（★ **13 参、不带 `AccessSelections`** ✓，★ 名字里的 `CurveDriven` 就是它 ✓）；"
+                             "★★ 我原判「不做」**只看了另两个入口**（★ `IModelDoc2::FeatureCurvePattern` **已 Obsolete** ✗ · "
+                             "★ `CreateFeature` + `ICurveDrivenPatternFeatureData` **要 ACL** ✗）⇒ **不覆盖本条** ✓ "
+                             "★ 待验：★ `ReferencePoint` 官方写「Type of **selected** reference point」⇒ **可能要先选参考点** ✓"),
     "缩放/变形": ("特征", "可做", "★ `IFeatureManager::InsertScale(short Type, …)`（**参数式、无 ACL**）"),
     "特征识别/Instant3D": ("特征", "不做", "★ **四处零命中** ⇒ 官方无 API 入口（铁律 5）· "
                                    "★ CHM 的 9 个 `Instant3D` 页是**用户手册**、★ 不在 API 命名空间"),
@@ -107,8 +106,20 @@ VERDICTS = {
     "焊接符号": ("焊件", "可做", "★ `InsertWeldSymbol3` / `InsertWeldSymbol2`（★ 无 ACL）· 读回用 `GetFirstWeldSymbol` ✓"),
     "爆炸直线": ("装配", "可做", "★ `IAssemblyDoc::InsertExplodeLineSketch()`（**零参数、无 ACL**）· "
                             "配套 `AddExplodeStep2` 族 ✓"),
-    "零部件阵列": ("装配", "可做", "★★ **注意**：`swapi` 侧**只有 `DissolveComponentPattern`（解散）**、"
-                            "**没有「创建」** ⇒ ★ 创建要走 `CreateDefinition` 类的 **5 个 `swFmLocal*Pattern` 常量** ✓"),
+    #: ★★★★★ 2026-10-07（B8 **翻案**）：★ 本条原写「创建要走 `CreateDefinition` 类的 5 个 `swFmLocal*Pattern` 常量」✗
+    #:   —— ★★ **那是**属性式**那条路**（★ `swFmLocal*Pattern` ⇒ `CreateFeature` + `ICurveDrivenPatternFeatureData`，
+    #:   而那个 Data **带 `AccessSelections`** ✗ ⇒ **事实 47 一挡就到不了建成** ✓）
+    #:   ★★★ **而参数式入口是存在的**：★★ **`IFeatureManager::FeatureLocalCurveDrivenPattern`** ✓
+    #:     ★ 官方签名**逐字**：**13 参、不带 `AccessSelections`** ✓✓（★ 见同文件「曲线驱动阵列」那段 ✓）
+    #:   ★★★ **所以本条与「曲线驱动阵列」**共用同一个入口**** ✓ —— ★ 覆盖表把它们分在**装配域 / 特征域**两行，
+    #:     ★★ 而**官方入口是同一个** ⇒ ★ **两项同判「可做」** ✓（★ 同一份证据同时定两项 ✓）
+    #:   ★★ 旁证：★ `*LocalPattern*` **全扫为空** ✗（★ 即那张「5 个 `swFmLocal*Pattern`」的说法**查不到落实** ✓）
+    "零部件阵列": ("装配", "可做", "★★★ **与「曲线驱动阵列」共用参数式入口** —— ★★ "
+                             "`IFeatureManager::FeatureLocalCurveDrivenPattern`（★ **13 参、不带 `AccessSelections`** ✓）；"
+                             "★★ 原写「创建要走 `CreateDefinition` 类的 5 个 `swFmLocal*Pattern` 常量」✗ —— "
+                             "★ 那条是**属性式**路（★ 其 Data **带 `AccessSelections`** ✗ ⇒ **事实 47 挡死** ✓）；"
+                             "★ 旁证：★ `*LocalPattern*` 全扫为空 ✗（★ 那「5 个常量」的说法**查不到落实** ✓）"
+                             "★ 待验：★ 与「曲线驱动阵列」**同一批真机**验（★ 一次验两项 ✓）"),
     "SpeedPak": ("装配", "可做", "★ `IAssemblyDoc::CreateSpeedPak(int, …)` · `SetSpeedPakConfigurations` · "
                             "`UpdateSpeedPak`（**参数式、无 ACL**）· 读回 `IsSpeedPak` ✓"),
     "序列 / 说明书（Assembly Visualization）": ("装配", "不做", "★ **四处零命中** ⇒ 官方无 API 入口（铁律 5）· "

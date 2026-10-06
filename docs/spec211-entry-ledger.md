@@ -8,7 +8,7 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项（★ **人工终判**）：★ **可做 11** · **不做 8** · **已覆盖 1** · **待实测 1**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 12** · **不做 7** · **已覆盖 1** · **待实测 1**
 
 ## 特征 · 边界凸台 ⇒ **不做**
 
@@ -22,9 +22,9 @@
   · `[chm-api] (CHM)::SolidWorks.Interop.swconst~SolidWorks.Interop.swconst.swBoundaryBossCurveInfluenceType_e.html`  
   · …（共 8 个候选）
 
-## 特征 · 曲线驱动阵列 ⇒ **不做**
+## 特征 · 曲线驱动阵列 ⇒ **可做**
 
-· 初判：★★ **人工终判**：★★ **后端受限** —— ★ 链条：① 老的参数式入口 `IModelDoc2::FeatureCurvePattern` **已标 `Obsolete`** ✗；② 现代唯一入口 `IFeatureManager::CreateFeature` + `ICurveDrivenPatternFeatureData`（★ **属性式**）✗；③ 该 Data 带 **`AccessSelections`**；④ **事实 47**：该族在 pywin32 后端**不可调用** ⇒ ★ **不做** ✓ ★（★ 仓里既有实现走的正是那条属性式路 ⇒ **到不了建成** ✓）　（★ 自动台账原判：待核实）
+· 初判：★★ **人工终判**：★★★ **参数式入口存在且无 ACL** —— ★★ `IFeatureManager::FeatureLocalCurveDrivenPattern`（★ **13 参、不带 `AccessSelections`** ✓，★ 名字里的 `CurveDriven` 就是它 ✓）；★★ 我原判「不做」**只看了另两个入口**（★ `IModelDoc2::FeatureCurvePattern` **已 Obsolete** ✗ · ★ `CreateFeature` + `ICurveDrivenPatternFeatureData` **要 ACL** ✗）⇒ **不覆盖本条** ✓ ★ 待验：★ `ReferencePoint` 官方写「Type of **selected** reference point」⇒ **可能要先选参考点** ✓　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::FeatureLocalCurveDrivenPattern` `Feature FeatureLocalCurveDrivenPattern( System.bool FlipDir1, System.int Num1, System.bool EqualSpacing1, Sys 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.ICurveDrivenPatternFeatureData.html`  
@@ -179,7 +179,7 @@
 
 ## 装配 · 零部件阵列 ⇒ **可做**
 
-· 初判：★★ **人工终判**：★★ **注意**：`swapi` 侧**只有 `DissolveComponentPattern`（解散）**、**没有「创建」** ⇒ ★ 创建要走 `CreateDefinition` 类的 **5 个 `swFmLocal*Pattern` 常量** ✓
+· 初判：★★ **人工终判**：★★★ **与「曲线驱动阵列」共用参数式入口** —— ★★ `IFeatureManager::FeatureLocalCurveDrivenPattern`（★ **13 参、不带 `AccessSelections`** ✓）；★★ 原写「创建要走 `CreateDefinition` 类的 5 个 `swFmLocal*Pattern` 常量」✗ —— ★ 那条是**属性式**路（★ 其 Data **带 `AccessSelections`** ✗ ⇒ **事实 47 挡死** ✓）；★ 旁证：★ `*LocalPattern*` 全扫为空 ✗（★ 那「5 个常量」的说法**查不到落实** ✓）★ 待验：★ 与「曲线驱动阵列」**同一批真机**验（★ 一次验两项 ✓）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IAssemblyDoc::DissolveComponentPattern` `System.bool DissolveComponentPattern()` 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IAssemblyDoc~DissolveComponentPattern.html`  
