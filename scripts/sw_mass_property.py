@@ -58,7 +58,11 @@ from sw_connect import get_com_member
 
 __all__ = ["SWDOC_PART", "SWDOC_ASSEMBLY", "SWDOC_DRAWING",
            "require_mass_property_document", "mass_property_object",
-           "mass_properties"]
+           "mass_properties",
+           #: ★ 规格 211 · B1-1「截面属性」
+           "SECTION_STATUS", "SECTION_INDEX",
+           "section_properties", "section_area_crosscheck",
+           "require_section_document"]
 
 #: ★ 单位说明（**实测**，写在一个地方供工具说明引用）：
 #:   `Volume` mm³ · `SurfaceArea` mm² · `CenterOfMass` mm（三分量）
@@ -157,6 +161,151 @@ def mass_property_object(model):
     except Exception:                                          # noqa: BLE001
         pass
     return mp
+
+
+#: ★★ **截面属性**（规格 211 · B1-1）—— 官方 24 元数组的**下标定义**
+#:   ★ 官方依据：`C:\swapi\types\IModelDocExtension\GetSectionProperties2.md` 的 `## Remarks`
+#:   「The format of the returned array (retval) of size 24」+ 逐项下标 ✓
+SECTION_INDEX = {
+    "status": 0, "area": 1,
+    "centroid_x": 2, "centroid_y": 3, "centroid_z": 4,
+    "inertia_xx": 5, "inertia_yy": 6, "inertia_zz": 7,
+    "inertia_xy": 8, "inertia_zx": 9, "inertia_yz": 10,
+    "polar_moment": 11,
+    "principal_axis_angle": 12,
+    "principal_inertia_lx": 13, "principal_inertia_ly": 14,
+}
+
+#: ★★ 官方给的 `retval[0]`（status）取值与含义 ✓
+SECTION_STATUS = {
+    0: "success",
+    1: "invalid input",
+    2: "selected faces are not in the same or parallel planes",
+    3: "unable to compute section properties",
+}
+
+#: ★★★ **本成员的副作用**（★ 官方逐字，★ 必须如实登记）：
+#:   「**This method clears the selection set.**」
+#:   「The objects in the `Sections` parameter **are added to the current selection set**.」
+#:   ⇒ ★★ **它会清空并重写选择集** ⇒ ★ 按**规格 210** 的效应声明体系，
+#:     ★★ **它不许被标 `read_only`** ✓
+SECTION_SIDE_EFFECT = "clears_and_rewrites_selection"
+
+#: ⚠⚠ ★★ **本模块实测到的一处"官方与真机不符"，如实记在这里**（铁律 5）：
+#:   ★ 官方 `C:\swapi\types\IFace2\GetArea.md` 的 `## Returns` 写着
+#:     「**Face area in square meters**」；
+#:   ★★ 而真机（`tools/probe_spec211_section_units_cube.py`，20×20×20 正方体）读到：
+#:     · **两个端面**读数 = **400** ⇒ ★ **正是 20×20 的真面积（mm²）** ✓
+#:     · **四个侧面**读数 = **0.4** ⇒ ★ 而它们**也应是 400** ✗（差 **1000** 倍）
+#:   ⇒ ★★★ **1000 不是任何面积换算**（1 cm² = 100 mm²）⇒ ★ 所以这不是"单位差"，
+#:     而是 ★ **那四个面"读的不是同一个东西"** ✗
+#:   ⇒ ★★ 处置：★ **不断言单位**；★ 调用方拿到 `units_verified: False`，★ 自己做判断 ✓
+#:     ★（★ 铁律 5：**查不到就说查不到** —— 不许为了让返回值"好看"而编一个单位）✓
+SECTION_UNIT_CAVEAT = (
+    "★★ 面积单位**未确证**：正方体实验里端面读 400（= 20×20 的真值，mm²），"
+    "而四个侧面读 0.4（应为 400，差 1000 倍）；★ 1000 不是面积换算 ⇒ "
+    "★ 不是单位差、而是那类面读的不是同一个东西。★ 见 "
+    "`output/spec211-b1-section-units-cube.json` 与 `tools/probe_spec211_section_units_cube.py`"
+)
+
+
+def require_section_document(model):
+    """★ 截面属性**只对零件/装配有**（★ 工程图没有）—— ★ 判据同质量属性（先判类型）✓
+
+    ★★ 为什么先判类型：★ 本模块的 `mass_property_object` 吃过这个亏 ——
+      ★ 工程图上也能拿到一个"有 Mass/Volume 的对象"✗（见它的 docstring ①）✓
+    """
+    return require_mass_property_document(model)
+
+
+def section_properties(model) -> dict[str, Any]:
+    """读**当前选择集**的截面属性（★ 规格 211 · B1-1）。
+
+    :returns: `{ok, status, status_text, area, centroid, side_effect, units_verified,
+               unit_caveat, entry_used, raw_len, error}`
+
+    ★★★ **三个必须知道的真机事实**（全部有读数，见模块头与证据文件）：
+      ① ★ **入口是"当属性取"** —— `type(getattr(ext, "GetSectionProperties2"))` 是 **`tuple`**、
+         ★ `callable(...)` 为 **假**，★ **而求值即返回结果** ✓
+         ★（★ 与仓里记的 `Extension` 上"有的成员当属性取"同型；★ 对照：`GetMassProperties2`
+           是 `method` ⇒ ★★ **必须按行为判，不能按签名判**）✓
+      ② ★★ **它用"当前选择集"当输入** —— ★ 所以**调用方必须先把东西选好** ✓
+         ★（★ 属性形态**吃不到 `Sections` 形参** ⇒ ★★ **本包装只支持"用当前选择集"**，
+           ★ **不支持显式传 `Sections`** —— ★ 如实记，不假装支持）✓
+      ③ ★★★ **它有副作用**：★ 官方写它**清空并重写选择集** ⇒ ★ 见 `SECTION_SIDE_EFFECT` ✓
+
+    ★ 判据（★ 一律回读，不看"有没有抛异常"）：
+      · `retval[0]`（官方定义的 status）★ 且
+      · ★★ 面积可与 `IFace2.GetArea()` **交叉验证**（★ 12/12 次完全相同）⇒ 见 `section_area_crosscheck` ✓
+    """
+    out = {"ok": False, "side_effect": SECTION_SIDE_EFFECT,
+           "units_verified": False, "unit_caveat": SECTION_UNIT_CAVEAT,
+           "entry_used": None, "error": ""}
+    try:
+        require_section_document(model)
+        ext = get_com_member(model, "Extension")
+        if ext is None:
+            out["error"] = "取不到 model.Extension"
+            return out
+        #: ★★ **行为判据认入口**：★ 先当**属性**取（★ 实测就是这一形态）✓
+        vals, entry = None, None
+        raw = getattr(ext, "GetSectionProperties2", None)
+        if raw is not None and not callable(raw):
+            try:
+                vals, entry = tuple(raw), "GetSectionProperties2(property)"
+            except Exception:                                           # noqa: BLE001
+                vals = None
+        #: ★ 兜底：若被包成方法 ⇒ 试一次**空实参**（★ 只作兜底，★ 不假装等价）✓
+        if vals is None:
+            try:
+                cand = get_com_member(ext, "GetSectionProperties2", None)
+                if cand is not None:
+                    vals, entry = tuple(cand), "GetSectionProperties2(method)"
+            except Exception as exc:                                    # noqa: BLE001
+                out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
+        if vals is None:
+            out["error"] = out["error"] or "两种形态都拿不到结果"
+            return out
+        out["entry_used"] = entry
+        out["raw_len"] = len(vals)
+        st = vals[SECTION_INDEX["status"]] if len(vals) > 0 else None
+        out["status"] = st
+        out["status_text"] = SECTION_STATUS.get(int(st) if st is not None else -1, "unknown")
+        if len(vals) > 1:
+            out["area"] = vals[SECTION_INDEX["area"]]
+        if len(vals) > 4:
+            out["centroid"] = [vals[SECTION_INDEX[k]]
+                               for k in ("centroid_x", "centroid_y", "centroid_z")]
+        out["ok"] = (int(st) == 0) if st is not None else False
+        return out
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+        return out
+
+
+def section_area_crosscheck(model) -> dict[str, Any]:
+    """★ **交叉验证**：把当前选中面的 `IFace2.GetArea()` 与截面属性面积对照 ✓
+
+    ★★★ 为什么值得做：★ 真机 **12/12 次**里 `retval[1]` 与 `IFace2.GetArea()`
+      **完全相同** ⇒ ★★ 两个**独立的官方成员**给出同一个数 ⇒
+      ★ 这比"单看一个返回值"强得多（★ 本仓"判据一律回读"的精神）✓
+    ★⚠ 但**它们一致不等于单位已确证** —— ★ 见 `SECTION_UNIT_CAVEAT`（★ 侧面那 1000 倍仍无解释）✓
+    """
+    out = {"agree": None, "get_area": None, "area": None, "error": ""}
+    try:
+        sect = section_properties(model)
+        out["area"] = sect.get("area")
+        sm = get_com_member(model, "SelectionManager")
+        face = get_com_member(sm, "GetSelectedObject6", 1, -1)
+        if face is None:
+            out["error"] = "当前没有选中对象（★ 截面属性吃选择集，★ 先选）"
+            return out
+        out["get_area"] = float(get_com_member(face, "GetArea"))
+        if out["area"] is not None:
+            out["agree"] = abs(float(out["area"]) - out["get_area"]) <= 1e-9
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
+    return out
 
 
 def mass_properties(model) -> dict[str, Any]:

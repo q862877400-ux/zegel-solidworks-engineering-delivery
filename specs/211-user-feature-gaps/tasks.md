@@ -13,7 +13,7 @@
 
 ## B1 · 小件三合一（★ 同时用于速率标定）
 
-- [ ] **B1-1** 截面属性（评估域）
+- [x] **B1-1** 截面属性（评估域）（**已收口**：★ 落地 `scripts/sw_mass_property.py` 的 `section_properties`/`section_area_crosscheck`；★ 登记 `capabilities.yaml` = `stitched`（★ 单位未确证）；★ `tests/test_spec211_section_properties.py` **6 passed**；★ 真机读数 12/12 交叉验证；★ 并如实记「官方 Remarks 与真机不符」一条）
 - [ ] **B1-2** 缩放/变形（特征）
 - [ ] **B1-3** 边界凸台（特征）
 - [ ] **B1-4** ★ 记本批**实测速率**（分钟/件 + 通过率）⇒ 供后续批排期
