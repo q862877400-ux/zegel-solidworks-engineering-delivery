@@ -78,9 +78,9 @@ def resolve_study(params: Any):
     #:   把 `(0, <study>)` **元组**当成 study 传下去 ⇒ 下游 `study.StaticStudyOptions` 报
     #:   `取 options 失败（family=ICWStaticStudyOptions）：SldWorks.Application.StaticStudyOptions`
     #:   （★ 那个对象名是**元组外面**的东西，★ 所以错误信息**看不出是元组问题**）。
-    #:   ★★ 而这条**正好是"空名"那条路** ⇒ ★ **凡是没声明 `study_name` 的工具全部中招**
+    #:   ★★ 而这条**正好是「空名」那条路** ⇒ ★ **凡是没声明 `study_name` 的工具全部中招**
     #:     （★ 那 5 个求解器配置工具就没声明）⇒ ★ 那是一整片工具**一直没跑通**的原因。
-    #:   ⇒ ★ 修法：★ **取出来再解包**（★ 并用 `(None, None)` 兜底，★ 不与"None 当元组"混淆）。
+    #:   ⇒ ★ 修法：★ **取出来再解包**（★ 并用 `(None, None)` 兜底，★ 不与「None 当元组」混淆）。
     if name:
         study = get_study_by_name(sw, name)
     else:
@@ -102,7 +102,7 @@ def resolve_manager(params: Any):
       首参叫 **`manager`**（不是 `study`）⇒ ★ 不加这一行它们就**挂不上**。
     ★ 解析链：连 SolidWorks → 按名字取研究（**复用 `resolve_study` 的逻辑**）→
       取该研究的载荷管理器。
-    ⚠ 取不到时**抛错**（★ 不静默返回 None —— 否则会挂成一个"永远失败"的工具）。
+    ⚠ 取不到时**抛错**（★ 不静默返回 None —— 否则会挂成一个「永远失败」的工具）。
     """
     from scripts.sw_simulation import _loads_and_restraints_manager
 
@@ -136,7 +136,7 @@ def resolve_cost_manager(_params: Any):
     return get_costing_manager(resolve_model(_params))
 
 
-#: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」）：**三个"从 study 取子对象"的解析器**。
+#: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」）：**三个「从 study 取子对象」的解析器**。
 #:
 #: 为什么（★ 机械预筛给的判据）：★ **A/B 类（首参是标量或已有注入键）已被前三坡吃干** ——
 #: 要到 SC-001 的 400 就必须解锁 **C 类（351 个，首参像 COM 对象）**；
@@ -145,7 +145,7 @@ def resolve_cost_manager(_params: Any):
 #:   · `mesh`    ⇒ `ICWStudy.Mesh`（研究的**网格**对象）
 #:   · `options` ⇒ 研究**选项**对象（★ 读参数里的 `study_name` 与 `family`）
 #: ★ 与 `resolve_study` 同手法（都按 `study_name` 定位），只是**多走一步**取子对象 ✓
-#: ⚠ **与"危险旋钮"的区别**：★ 这三个只**取对象**、不替调用方改设置 ⇒ 安全；
+#: ⚠ **与「危险旋钮」的区别**：★ 这三个只**取对象**、不替调用方改设置 ⇒ 安全；
 #:   ★ 批 82 删掉的 `configure_mesh_settings` / `mesh_safety_apply` 是**会改设置**的原始旋钮
 #:   （事实 526 的 40 GB 事故）⇒ ★ 那条禁令不受本次影响 ✓
 
@@ -226,20 +226,20 @@ def resolve_selection_manager(params: Any):
 
 
 def resolve_cost_part(params: Any):
-    """注入 **Costing 的"成本模型"对象**（`ICostModel`）—— ★ 供首参名叫 `cost_part` 的那批函数。
+    """注入 **Costing 的「成本模型」对象**（`ICostModel`）—— ★ 供首参名叫 `cost_part` 的那批函数。
 
     ★ 依据（★ 仓里既有代码给的，不是猜的）：`scripts/sw_costing.py` 的
       `get_body_count_report(cost_manager)` 里逐字写着
       ``m, _d, err = _costing_chain(cost_manager)`` 然后 ``get_body_count(m)``
       —— 而 `get_body_count(cost_part)` 的首参就叫 `cost_part`
-      ⇒ ★★ **`cost_part` 就是 `cost_manager` 取出来的那个"成本模型"对象** ✓
+      ⇒ ★★ **`cost_part` 就是 `cost_manager` 取出来的那个「成本模型」对象** ✓
     """
     from scripts.sw_costing import get_costing_model
     return get_costing_model(resolve_cost_manager(params))
 
 
 def resolve_cost_analysis(params: Any):
-    """注入 **Costing 的"成本分析"对象**（`ICostAnalysis`）—— ★ 供首参名叫 `cost_analysis` 的那批。
+    """注入 **Costing 的「成本分析」对象**（`ICostAnalysis`）—— ★ 供首参名叫 `cost_analysis` 的那批。
 
     ★ 取法：`cost_part`（成本模型）→ `GetCostAnalysis` ✓（★ 与 `cost_part` 同一条链，不是猜的）
     ⚠ ★ **零件上还没有成本分析就没有** ⇒ **响亮报错**并说清先做什么 ✓
@@ -327,7 +327,7 @@ def resolve_motion_study(params: Any):
 def resolve_costing_defaults(params: Any):
     """注入 **Costing 的默认值对象** —— ★ 供首参名叫 `defaults` 的 `sw_costing` 族函数。
 
-    ★ 由 `cost_manager` 取（复用 `resolve_cost_manager`，它已处理"本机有没有 Costing 加载项"）✓
+    ★ 由 `cost_manager` 取（复用 `resolve_cost_manager`，它已处理「本机有没有 Costing 加载项」）✓
     """
     from scripts.sw_costing import get_costing_defaults
     return get_costing_defaults(resolve_cost_manager(params))
@@ -353,7 +353,7 @@ def resolve_selected_component(params: Any):
     #: ★★★ 2026-10-04（真机探针）：`ISelectionMgr` 的 **Index 是 1 基** ——
     #:   实测（`output/selectionmgr-member-probe.json`）：`GetSelectedObjectCount2(-1)` 回 **1**、
     #:   而 `GetSelectedObjectsComponent4(**0**, 0)` 回 `None`、`GetSelectedObject6(**1**, -1)` 回得到对象
-    #:   ⇒ ★★ 取"第一个选中的东西"要用 **1** 而不是 0（★ 我原先传 0 ⇒ 静默拿到 `None`）✓
+    #:   ⇒ ★★ 取「第一个选中的东西」要用 **1** 而不是 0（★ 我原先传 0 ⇒ 静默拿到 `None`）✓
     comp = get_selected_component(sel, 1)
     if comp is None:
         raise RuntimeError("当前**没有选中的组件** ⇒ `component` 注入键无法解析。"
@@ -401,7 +401,7 @@ RESOLVERS: dict[str, Any] = {
     #:   「不硬编码宿主 API，全从这里供给」）⇒ **加一行正是这张表的设计用途**。
     "asm_model": resolve_model,
     #: ★ 24h 计划 段 2.1（Spec Kit `143`）：`sw_simulation_loads` 那批函数首参是 `manager`
-    #:   ⇒ 加一行即可挂（★ 这条表**就是**为"注入名各不相同"而设计的，见 known-facts 169）。
+    #:   ⇒ 加一行即可挂（★ 这条表**就是**为「注入名各不相同」而设计的，见 known-facts 169）。
     "manager": resolve_manager,
     #: ★ 2026-10-03（接手轮）：**工程图 subskill 里的函数首参叫 `drawing_model`**
     #:   —— 实现文件 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`，
@@ -441,17 +441,17 @@ RESOLVERS: dict[str, Any] = {
     #:   ★ 复用 `resolve_sw`（= `resolve_sw_app`，回 `ISldWorks`）——
     #:     ★ 与该表既有的 `sw` 键**同一手法**（`sw` 也是为此加的，见上方 `"sw"` 那条）✓
     "sldworks": resolve_sw,
-    #: ★★★★★ 2026-10-04（接手轮 · 规格 205 的"解锁 C 类"）：**`results` / `mesh` / `options`** ——
+    #: ★★★★★ 2026-10-04（接手轮 · 规格 205 的「解锁 C 类」）：**`results` / `mesh` / `options`** ——
     #:   ★★ 为什么要加（★ 机械预筛给的判据）：★ A/B 类（首参是标量或已有注入键）**已被前三坡吃干**，
     #:     要到 400 必须解锁 **C 类（351 个，首参像 COM 对象）**；
-    #:   ★ 而 C 类里 **~90 个**只需几个"**从 study 取**"的解析器 —— ★ **语义无歧义**：
+    #:   ★ 而 C 类里 **~90 个**只需几个「**从 study 取**」的解析器 —— ★ **语义无歧义**：
     #:     · `results` ⇒ `ICWStudy.Results`（研究的**结果**对象）
     #:     · `mesh`    ⇒ `ICWStudy.Mesh`（研究的**网格**对象）
     #:     · `options` ⇒ 研究**选项**对象（★ 与 `resolve_study` 同手法：**读参数**里的 `study_name`
     #:       与 `family`，缺省取第一个研究 / `ICWStaticStudyOptions`）✓
     #:   ★ 它们与 `resolve_study` 是**同一种**解析器（都按 `study_name` 定位），只是**多走一步**
     #:     从 study 上取子对象 ⇒ ★ 与事实 169 那张表的设计意图一致 ✓
-    #:   ⚠ **与"危险旋钮"的区别**：★ 这三个只**取对象**、不替调用方改设置 ⇒ 安全；
+    #:   ⚠ **与「危险旋钮」的区别**：★ 这三个只**取对象**、不替调用方改设置 ⇒ 安全；
     #:     ★ 而批 82 删掉的 `configure_mesh_settings` / `mesh_safety_apply` 是**会改研究设置**的
     #:     原始旋钮（事实 526 的 40 GB 事故）⇒ ★ 那条禁令不受本次影响 ✓
     "results": resolve_results,
@@ -461,25 +461,25 @@ RESOLVERS: dict[str, Any] = {
     #:   **`IModelView`**，而"活动文档的活动视图"**语义唯一**）⇒ ★ 仓里已有 `sw_view.get_active_view` ✓
     #: ⚠⚠ **禁忌（可执行）**：★ `sw_drawing_view.py` 里那些首参**也叫 `view`**，但它们是
     #:   **`IView`（图纸视图）**、**不是** `IModelView` ⇒ ★ 用本键注给它们会**注错对象**
-    #:   （★ 事实 36 那一族：接口/对象错了表现为"什么都没反应"，最难看）
+    #:   （★ 事实 36 那一族：接口/对象错了表现为「什么都没反应」，最难看）
     #:   ⇒ ★ 由 `tools/check_bunny_toolspec_rows.py` 的 **⑪** 挡住：
     #:     `module == "sw_drawing_view"` ∧ `inject == "view"` ⇒ **判废** ✓
     #:   ★ 要挂 `sw_drawing_view` 那族，得**另加**一个按名字取 `IView` 的解析器（本轮未加）✓
     "view": resolve_view,
     #: ★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」第二批）：**`defaults` / `component`** ——
-    #:   ★ 两个都**语义唯一**（不是"取哪一个"的猜测）：
+    #:   ★ 两个都**语义唯一**（不是「取哪一个」的猜测）：
     #:     · `defaults` ⇒ **Costing 的默认值对象**（★ 由 `cost_manager` 取，仓里已有
     #:       `sw_costing.get_costing_defaults(cost_manager)`）⇒ 解锁 5 个 `sw_costing` 候选 ✓
     #:     · `component` ⇒ **当前选中的第一个组件**（★ 仓里已有 `sw_selection.get_selected_component`；
     #:       ★ **没有选中就没有** ⇒ 响亮报错，**不猜**）⇒ 解锁 9 个候选 ✓
     #:   ⚠ 与之相对：★ `win` / `hwnd` / `ctrl` / `obj` / `sketch` / `selection` 那几组**一律不碰**
-    #:     —— ★ 它们是"取哪一个？"的问题（事实 36 那一族）；
+    #:     —— ★ 它们是「取哪一个？」的问题（事实 36 那一族）；
     #:     ★★ 特别地 `obj`（18 个）**出在 `sw_api_*.py`** —— ★ 那些是**反射转储**、不是能力实现
     #:     ⇒ ★ 已把 `sw_api_*` 加进选域黑名单（它们**不该**出现在候选里）✓
     "defaults": resolve_costing_defaults,
     "component": resolve_selected_component,
     #: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」第三批）：**`sketch` / `selection`** ——
-    #:   ★★ 这两组是 C 类里**剩下的最大两块**，而它们的语义**同样唯一**（不是"取哪一个"的猜测）：
+    #:   ★★ 这两组是 C 类里**剩下的最大两块**，而它们的语义**同样唯一**（不是「取哪一个」的猜测）：
     #:     · `sketch`    ⇒ **活动草图**（`IModelDoc2.GetActiveSketch2`）—— ★ 解锁 `sw_sketch.py`
     #:       那 **~20 个只读内省函数**（取线/弧/椭圆/样条/点/轮廓/区域/块实例/关系管理器/
     #:       是否 3D 草图/模型到草图变换…）✓
@@ -495,11 +495,11 @@ RESOLVERS: dict[str, Any] = {
     #:     · `motion_study` ⇒ **运动算例**（★ 按 `motion_study_name` 取；未传时**只在算例数 == 1**
     #:       才给，0 或 >1 都**响亮报错** ⇒ 不猜）✓ —— ★ AVI 导出是三个**护城河域**之一 ✓
     #:   ⚠ 其余 C 类组（`win`/`hwnd`/`ctrl`/`obj`/`target`/`route_manager`/`sketch` 的图纸侧…）
-    #:     **一律不碰** —— ★ 它们是"取哪一个？"的问题（事实 36 那一族）✓
+    #:     **一律不碰** —— ★ 它们是「取哪一个？」的问题（事实 36 那一族）✓
     "cost_part": resolve_cost_part,
     "motion_study": resolve_motion_study,
     #: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」第五批）：**`cost_analysis` / `cost_body`** ——
-    #:   ★ 勘探（`output` 的 C 类普查）显示：C 类里**剩下 97 个是"取哪一个"的歧义组**（一律不碰）；
+    #:   ★ 勘探（`output` 的 C 类普查）显示：C 类里**剩下 97 个是「取哪一个」的歧义组**（一律不碰）；
     #:     而 `cost_analysis`(3) + `cost_body`(2) 这 **5 个**仍可加键 ⇒ 组内**真新 3 个** ✓
     #:     · `cost_analysis` ⇒ `cost_part` → `GetCostAnalysis`（★ 同一条链，不是猜的）✓
     #:     · `cost_body` ⇒ 按 `body_name` 在 `get_bodies(cost_part)` 清单里找；
@@ -520,11 +520,11 @@ BATCH_MODULES = (
     "tool_specs_batch8",   # 轮 97：**换池子** —— 从未暴露且「只被测试调用」的那批取
     "tool_specs_batch9",   # 轮 98：模具域「已实现 + 有测试 + 未暴露」的 3 个
     "tool_specs_batch10",  # 轮 128：把轮 123~127 **查证并真机跑过**的 4 个高层入口接出去
-    #: 轮 204（Spec Kit `123`）：★ **候选先变成"可复现的全量清单"再选** ——
+    #: 轮 204（Spec Kit `123`）：★ **候选先变成「可复现的全量清单」再选** ——
     #: `probe_unexposed_functions.py` 此前只印前 30（302 里 87% 看不见）⇒ 本轮先给它加结构化输出，
-    #: 再从"首参可注入"的 51 个里取**拓扑的目标/约束/控制**这一族 4 个。
+    #: 再从「首参可注入」的 51 个里取**拓扑的目标/约束/控制**这一族 4 个。
     "tool_specs_batch11",
-    #: 轮 205（Spec Kit `124`）：★ **先把枚举核清再挂** —— 上批因"枚举值未核"留批的三个
+    #: 轮 205（Spec Kit `124`）：★ **先把枚举核清再挂** —— 上批因「枚举值未核」留批的三个
     #: （脱模方向 / 应力比较器 / 对称类型），取值来自出厂反射转储 + 官方 VBA 示例。
     "tool_specs_batch12",
     #: 轮 206（Spec Kit `125`）：仿真研究的报告 / 按控制划网格 / 建议网格尺寸 3 个；
@@ -540,22 +540,22 @@ BATCH_MODULES = (
     "tool_specs_batch15",
     #: 轮 209（Spec Kit `128`）：草图几何关系 + 镜像特征 2 个；
     #: ★ 队列 A5 原写 add_sketch_relation/add_dimension —— 实测 add_dimension **碰规则 3**（裸坐标）⇒ 留批；
-    #:   而"干净"里的 insert_composite_curve **本来就坏**（事实 121/124）⇒ **不挂**。
+    #:   而「干净」里的 insert_composite_curve **本来就坏**（事实 121/124）⇒ **不挂**。
     "tool_specs_batch16",
     #: 轮 211（Spec Kit `130`）：圆形阵列 + 旋转凸台 2 个；
     #: ★ 并**落定规则 2 的角度换算边界** —— `_consumed(angle_deg)` + `derived_args` 用
-    #:   `sw_connect.deg()` 换算一次（**改名不换算会把"度"当"弧度"静默传进去**）。
+    #:   `sw_connect.deg()` 换算一次（**改名不换算会把「度」当「弧度」静默传进去**）。
     "tool_specs_batch17",
     #: 轮 222（砌墙 W1 / Spec Kit `131`）：草图只读查询 4 个；
     #: ★ 取草图对象**只能按名取**（真机探针：GetActiveSketch2/ActiveSketch 在草图关闭后均 None）；
-    #: ★ 挂的是"只回读数"的薄函数（get_lines 返回数值数组，AI 没法从 36 个 float 判断几条线）。
+    #: ★ 挂的是「只回读数」的薄函数（get_lines 返回数值数组，AI 没法从 36 个 float 判断几条线）。
     "tool_specs_batch18",
     #: 轮 224（砌墙 W2 / Spec Kit `132`）：当前活动工程图的轻量只读读数 3 个；
-    #: ★ 与 `solidworks_inspect_drawing` 的分工是"**不**要路径、**不**开件、**不**出预览"；
+    #: ★ 与 `solidworks_inspect_drawing` 的分工是「**不**要路径、**不**开件、**不**出预览」；
     #: ★ 两点真机坑已处理：宽高是**米**（已换算成 mm）· 图纸本身会被当成假视图（已过滤）。
     "tool_specs_batch19",
     #: 轮 227（砌墙 W3 / Spec Kit `133`）：**读文件自定义属性** 2 个；
-    #: ★ 补的是真空白 —— 本仓库能"写"属性（上游工具）却**读不回来验**；
+    #: ★ 补的是真空白 —— 本仓库能「写」属性（上游工具）却**读不回来验**；
     #: ★ 两个真机坑：`Extension.CustomPropertyManager` **必须当方法调用**；
     #:   读值只能用 `Get(name)`（`Get2..Get6` 的 by-ref out 在 pywin32 下报类型不匹配）。
     "tool_specs_batch20",
@@ -570,18 +570,18 @@ BATCH_MODULES = (
     #: ★ chamfer/fillet 不在本批 —— 它们要**选择**（selection 包装层），单独一批做。
     "tool_specs_batch22",
     #: 轮 231（砌墙 W4 续 / Spec Kit `137`）：**倒角 / 圆角** 2 个；
-    #: ★ **第一次用规则 3 的声明式 `selection` 驱动"建特征"工具** ——
+    #: ★ **第一次用规则 3 的声明式 `selection` 驱动「建特征」工具** ——
     #:   能力层两个函数**都没有 edges 参数** ⇒ 它们作用在**当前选择**上 ⇒
     #:   对外的 selection 由 `pre_call` 解析成真实选区（复用 batch4 的既有机制）。
     "tool_specs_batch23",
     #: 轮 234（砌墙 W5 / Spec Kit `138`）：**读质量属性** 1 个；
-    #: ★ 又一个"能写不能读"的真空白（有 set_mass_property_override 却读不出实际值）；
+    #: ★ 又一个「能写不能读」的真空白（有 set_mass_property_override 却读不出实际值）；
     #: ★ 单位是**毫米系**（实测，非 SI 米）⇒ 不做换算；
     #: ⚠⚠ **`mass` 的物理单位未确证**（volume×density 量纲不成立）⇒ 说明里明写，不猜。
     "tool_specs_batch24",
     #: 轮 237（砌墙 W6 / Spec Kit `139`）：**装配只读** 3 个；
     #: ★ 本批第一次用 `inject="asm_model"` —— 为此给 RESOLVERS **加了一行**；
-    #: ★★ 干涉检查那个函数**修过三处成员名却从没验过**（其注释自述"此前静默降级"）
+    #: ★★ 干涉检查那个函数**修过三处成员名却从没验过**（其注释自述「此前静默降级」）
     #:   ⇒ 本批的真机验证是它的**第一次验证**，且设计成**一正一反两个场景**。
     "tool_specs_batch25",
     #: 轮 238（砌墙 W7 / Spec Kit `140`）：**仿真载荷包装层** 2 个 —— ★★ **护城河**。
@@ -621,23 +621,23 @@ BATCH_MODULES = (
     #:   —— ★ 只读数/设参数，**不跑求解** ⇒ 无挂起风险。
     "tool_specs_batch30",
     #: ★ 24h 段 5「修地基」（Spec Kit `145`）：建网格前的**地基闸门** 1 个
-    #:   —— ★ 把"跑求解必挂"掐断在网格之前（与 `sw_isolate` 互补：一个防发生、一个防外溢）。
+    #:   —— ★ 把「跑求解必挂」掐断在网格之前（与 `sw_isolate` 互补：一个防发生、一个防外溢）。
     "tool_specs_batch31",
     #: ★ 24h 段 3（Spec Kit `146`）：建模闭环补全 4 个
     #:   —— ★ 四个都**不吃裸坐标**（规则 3），且**统一回读确认**（规则 6）。
     "tool_specs_batch32",
     #: ★ 24h 段 4（Spec Kit `147`）：**配置族 6 + 导出族 6**
     #:   —— ★ 两族**全无裸坐标**（规则 3）· 配置族能力层回 dict ⇒ 直挂；
-    #:     导出族按铁律包成"**文件存在且非空**"的回读报告。
+    #:     导出族按铁律包成「**文件存在且非空**」的回读报告。
     "tool_specs_batch33",
     #: ★ 24h 段 4 续（Spec Kit `151`）：**声明式建孔 5 个** —— ★ 规则 3 合规版
     #:   （★ 上游那个 `solidworks_create_hole_feature` 吃裸坐标 `center_x_mm/center_y_mm`）。
     "tool_specs_batch34",
     #: ★ 24h 段 4 续（Spec Kit `152`）：**焊件读数与切割清单 6 个**
-    #:   —— ★ 10 个未挂里按"入参能不能表达"筛出的 6 个（★ 全无裸坐标）。
+    #:   —— ★ 10 个未挂里按「入参能不能表达」筛出的 6 个（★ 全无裸坐标）。
     "tool_specs_batch35",
     #: ★ 24h 段 4/5 续（Spec Kit `153`）：**读数与纯数据 11 个**
-    #:   —— ★ 薄模块里按"入参能不能表达"筛出（★ 全无裸坐标）。
+    #:   —— ★ 薄模块里按「入参能不能表达」筛出（★ 全无裸坐标）。
     "tool_specs_batch36",
     #: ★ 24h 段 1 续（Spec Kit `154`）：**求解器设置 5 个**
     #:   —— ★ 注入 `study` + 包装内部取 options（★ **不动 RESOLVERS**）。
@@ -727,11 +727,11 @@ BATCH_MODULES = (
     #:   把 `docs/user-feature-coverage.md` §八 缺口项里**真有实现**的接成工具 ——
     #:   旋转曲面 · 孔向导 · 完全定义检查（★ 三个都带真机证据：`output/coverage-gap-batch1-evidence.json`）。
     #:   ⚠ 判据来自 `tools/audit_gap_implementations.py`（**AST**，★ 不用 grep ——
-    #:     grep 会把来源块里引用的官方成员名算成"有实现"）。
+    #:     grep 会把来源块里引用的官方成员名算成「有实现」）。
     "tool_specs_batch72",
     #: ★ 2026-10-03（接手轮）· 规格 `specs/202-user-coverage-gaps` 的 R2：**工程图真缺口** 4 个 ——
     #:   断裂视图 · 辅助视图 · 表面粗糙度符号 · 基准符号。
-    #:   ★★ 与 batch72 **性质不同**：batch72 接的是"AST 量出**已有实现**"的，
+    #:   ★★ 与 batch72 **性质不同**：batch72 接的是「AST 量出**已有实现**」的，
     #:     ★ 而这 4 项**本仓一个都没有** ⇒ ★ 先写能力层 `scripts/sw_drawing_create_missing.py`，
     #:     ★ 再在这里声明成工具（`module="sw_drawing_create_missing"`、`inject="model"`）。
     #:   ★ 第 5 项「气泡序号」**故意不在这里**：它的形参是 `AutoBalloonOptions` **COM 对象**，
@@ -754,7 +754,7 @@ BATCH_MODULES = (
     #:   ★★ **本批的三条废弃链查证（队友逐条核官方页）**：
     #:     ① `IModelDoc2.InsertSheetMetalMiterFlange`（**11 参**·回 `void`）**废弃**
     #:        → **`IFeatureManager.InsertSheetMetalMiterFlange`（14 参·回 `Feature`）**
-    #:        ⇒ ★ **同名两份、参数个数不同** —— 用错**不只是"没反应"，而是个数对不上**；
+    #:        ⇒ ★ **同名两份、参数个数不同** —— 用错**不只是「没反应」，而是个数对不上**；
     #:     ② `InsertEndCapFeature` → `…3`，★ 而 **`InsertEndCapFeature2` 不在链上**（其官方页**无 Obsolete 句**）
     #:        ⇒ ★ **不是 1→2→3 线性**；
     #:     ③ `InsertGussetFeature` → **`…3`**，★ 而 `…2` 的官方页**无 Obsolete 句** ⇒ ★ **中间代状态官方没写**。
@@ -780,9 +780,9 @@ BATCH_MODULES = (
     #:   ★★★★★ **判据**：★★★ **「建成了能力」与「能力能被调」是两件事** ——
     #:     ★ 前者看**函数存在 + 真机读数**、★ 后者看**ToolSpec 清单里有没有它** ✓
     "tool_specs_batch77",
-    #: ★★★★★★ 轮 104：★ **把"安全链"从探针搬进工具层** ——
+    #: ★★★★★★ 轮 104：★ **把「安全链」从探针搬进工具层** ——
     #:   ★ 业主原话：★「修好，而且要**站在未来别的人使用我们项目的时候也能生效**的角度**根因修复**」✓
-    #:   ★★ 事实 526/528 把"网格爆内存"与"求解不出结果"修在了**能力层与探针**里，
+    #:   ★★ 事实 526/528 把「网格爆内存」与「求解不出结果」修在了**能力层与探针**里，
     #:     ★★ **而工具层（别人真正会调的那一层）拿到的仍是裸的 `create_mesh_report`**：
     #:       · 不设安全档 ⇒ 曲率自适应 + `MinElementSize=0` ⇒ **网格规模不受控**；
     #:       · 无求解前内存闸 ⇒ **超预算也照跑**；· 不过忙检 ⇒ **SW 忙时照样下发调用**（卡死路径）✓
@@ -810,8 +810,8 @@ BATCH_MODULES = (
     #:   · `sw_busy` 4 个（忙闲 / 卡死 / 求解器进程 / 等空闲）—— ★ 本会话新建的模块，
     #:     ★★ 它的判据正是事实 526 的教训（忙碌要**归属家族进程**，否则孤儿窗口假阳性）✓
     #:   ★ 本批 **12 个** ⇒ 工具数 313 → **325** ✓
-    #:   ★ 选域依据：机械预筛（`output/prescreen-deduped.json`）—— ★ 不再按"候选数"排序，
-    #:     而按"**去重后可挂数**"排序（★ 这是 v3 批序的由来，见规格 §8.2）✓
+    #:   ★ 选域依据：机械预筛（`output/prescreen-deduped.json`）—— ★ 不再按「候选数」排序，
+    #:     而按「**去重后可挂数**」排序（★ 这是 v3 批序的由来，见规格 §8.2）✓
     "tool_specs_batch80",
     #: ★★★★★★ 轮 107：**规格 205 的批 81 —— 由 Bunny 扇出产出、经机器门禁过滤**（18 个）：
     #:   ★ 这是**第一次**用"60 路 Bunny 扇出 → 门禁逐行核 → 转换器生成批次文件"这条路做的批次 ✓
@@ -836,11 +836,11 @@ BATCH_MODULES = (
     #:   ★ 留下的 13 个覆盖：装配（含 5 种配合/抑制/替换/平行）· 导出 · 外观渲染材质删除 ·
     #:     仿真（加载项 / 研究管理器 / 按类型建研究 / 内存预算 / 网格设置报表 / 校验）✓
     "tool_specs_batch82",
-    #: ★★★★★ 轮 109：**规格 205 的批 83 —— 第二坡的"真新"残余**（4 个）：
-    #:   ★ 第二坡 92 行里，**33 条是"已建过"**（★ 门禁的 ⑧ 分支把"已建"与"真撞名"分开之后
+    #: ★★★★★ 轮 109：**规格 205 的批 83 —— 第二坡的「真新」残余**（4 个）：
+    #:   ★ 第二坡 92 行里，**33 条是"已建过「**（★ 门禁的 ⑧ 分支把」已建「与」真撞名"分开之后
     #:   才读得出来）、6 条是主线按 FR-006/安全判掉的 ⇒ ★ **真正新的只有这 4 个** ✓
     #:   · `solidworks_simulation_get_loads_manager` / `get_results` —— ★ 仿真**读数**入口
-    #:     （★ 与批 78 的"安全建网格"配套：建完要能读结果）✓
+    #:     （★ 与批 78 的「安全建网格」配套：建完要能读结果）✓
     #:   · `solidworks_simulation_solve_memory_preflight` —— ★ **只读**内存预算前置闸
     #:     （★ 与危险旋钮不同：**它只算不设**，故单独发它是安全的 —— 对比批 82 删掉的那两个）✓
     #:   · `solidworks_simulation_get_edge_weld_connector` —— 边焊缝连接件读数 ✓
@@ -863,9 +863,9 @@ BATCH_MODULES = (
     #:   · `solidworks_costing_defaults` —— Costing 默认值读数（★ Costing 是本仓三个**护城河域**之一）✓
     "tool_specs_batch85",
     #: ★★★★★★ 轮 112：**规格 205 的批 86 —— 第四坡（解锁 C 类！）产出 30 个**：
-    #:   ★★ 这一批是"**加解析器换工具**"这条路走通的证明：★ 给我 `view`/`results`/`mesh`/`options`
+    #:   ★★ 这一批是「**加解析器换工具**」这条路走通的证明：★ 给我 `view`/`results`/`mesh`/`options`
     #:     四个**语义无歧义**的解析器之后，同一坡扇出的 **38 行里 30 行可暴露、门禁 37/37 全过**
-    #:     （★ 对比第三坡"薄模块"：45 行只 9 行可暴露）✓
+    #:     （★ 对比第三坡「薄模块」：45 行只 9 行可暴露）✓
     #:   · `sw_view` **23 个** —— 视图族（激活 / 重画 / 着色初始化 / 取帧 / 显示模式 / 比例 /
     #:     缩放平移旋转 / 相机 / 透视 / 动态 / 收集视图证据…）★ 全走**活动视图**注入键 ✓
     #:   · `sw_simulation_results` **6 个** —— 网格证据 / 屈曲载荷因子 / 最差雅可比比 / 单元失败判定 /
@@ -875,7 +875,7 @@ BATCH_MODULES = (
     "tool_specs_batch86",
     #: ★★★★★★★ 轮 113：**规格 205 的批 87 —— 跨过 SC-001 的 400！**（2 个）：
     #:   ★ 第六坡（`sketch`/`selection` 两组 C 类，29 路）头 8 份里只有 **2 行真新** ——
-    #:     ★★ 其余 12 行 Bunny 判"不做"且**理由都成立**（★ 我逐条复核过、**不推翻**）：
+    #:     ★★ 其余 12 行 Bunny 判「不做」且**理由都成立**（★ 我逐条复核过、**不推翻**）：
     #:       · `sketch_get_lines` / `get_arcs` / `get_polylines` / `get_splines` /
     #:         `contour_edges` / `contours` / `set_automatic_solve` —— **既有工具已做同一件事**
     #:         （`solidworks_sketch_count_*`），★ 且 `tool_specs_batch2.py` 的分类表里
@@ -899,7 +899,7 @@ BATCH_MODULES = (
     #:   ⚠ ★ **留给复核的一点**：`get_component_feature` / `get_component_feature_entity` 与
     #:     `get_relation_manager` / `get_model_to_sketch_transform` 的**返回可能是 COM 对象**
     #:     （★ 那样过不了 MCP 的 JSON 边界）—— ★ 本门禁**静态查不到这一条**（它只看入参），
-    #:     故**如实标注**：真机调用时若报序列化错，应改为"报告式"包装（★ 与既有 `*_report` 手法一致）✓
+    #:     故**如实标注**：真机调用时若报序列化错，应改为「报告式」包装（★ 与既有 `*_report` 手法一致）✓
     #:   ★★ 计数：401 → **418** ✓
     "tool_specs_batch88",
     #: ★★★★★ 轮 115：**规格 205 的批 89 —— C 类最后两组语义无歧义的解锁**（5 个）：
@@ -919,7 +919,7 @@ BATCH_MODULES = (
     "tool_specs_batch89",
     #: ★★★★★ 轮 116：**规格 205 的批 90 —— Costing 写侧收尾**（3 个）：
     #:   ★ 选域依据是 **SC-009 要求的预筛**（C 类普查）：未覆盖候选 281 个里
-    #:     **97 个属"取哪一个"的歧义组**（一律不碰）；`cost_analysis`(3)+`cost_body`(2) 可加键
+    #:     **97 个属「取哪一个」的歧义组**（一律不碰）；`cost_analysis`(3)+`cost_body`(2) 可加键
     #:     ⇒ ★ **组内真新 3 个** ⇒ 达 SC-009 的门槛 ⇒ 开工 ✓
     #:   · `solidworks_costing_set_lot_size`（批量）· `set_markup`（加价类型+百分比）·
     #:     `assign_custom_cost`（给一个成本实体指定自定义成本）✓
@@ -969,6 +969,15 @@ BATCH_MODULES = (
     #:       抛**带原因**的错误，而不是让用户吃一个裸 COM 错误）✓
     #:   ★ 计数：439 → **442**
     "tool_specs_batch93",
+    #: ★★★ 2026-10-06：**规格 209 的批 94 —— 隐藏/显示选中的草图**（1 个）：
+    #:   ★ 来源 idx **175 `blank_sketch`**（★★ 裁决书：官方 `BlankSketch` 逐字是「Hides the
+    #:     **selected** sketches」⇒ **官方没有「全部」这个语义** ⇒ ★ 工具名**不许叫
+    #:     `hide_all_sketches`**）⇒ ★ 本批叫 **`solidworks_sketch_set_blanked`**、
+    #:     收**声明式选择器**、★ 并且**不新开「全隐藏」那条官方没有的路** ✓
+    #:   ★★ 判据：① 选区计数 ② **`IFeature::Visible` 的前后读数**（`swVisibilityState_e`）
+    #:     —— ★ 官方示例里**只有肉眼**；★ 本批把那个**回读入口**定出来（裁决书点名的真风险）✓
+    #:   ★ 计数：442 → **443**
+    "tool_specs_batch94",
 )
 
 def all_specs() -> list:

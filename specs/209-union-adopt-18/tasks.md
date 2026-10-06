@@ -69,8 +69,19 @@
       ② 第一轮的"没建出来"**是我自己的 bug**（`SetSelectedObjectMark` 的 `Action` 传了 `-1`，要 `0`）
 - [ ] **B2-2** idx 34 `balloon`（★ **两家结论互相矛盾** ⇒ **不许照抄任何一家**）
 - [ ] **B2-3** idx 52 `centerline`（同上；★ 裁决书建议与 idx 30 `auto_center_marks` 合并成两种模式）
-- [ ] **B2-4** idx 175 `blank_sketch`（★ 真风险 = **怎么回读「隐藏了没有」** —— 官方回 `void` 且无 Remarks
-      ⇒ ★ 且工具名**不许叫 `hide_all_sketches`**：官方语义是"**隐藏选中的**草图"）
+- [x] **B2-4** idx 175 `blank_sketch` ⇒ `scripts/sw_sketch.py::set_sketch_blanked`（+ `feature_visibility`）
+      + `solidworks_sketch_set_blanked`（★ ★★★ **名字里没有 `all`** —— 见下）
+      ★ 怎么知道的：真机（`tools/probe_spec209_b2_blank_sketch.py`）**双向都过**：
+      按名字选中 `草图1` ⇒ 隐藏档 `IFeature::Visible` 回读 **`shown`(2) → `hide`(1)**、
+      显示档 **`hide`(1) → `shown`(2)**；负例（名字不存在）⇒ 选区计数 **0** + 大声报
+      ⇒ `output/spec209-blank-sketch.json`
+      ★★★ **裁决书硬约束已照办**：官方摘要逐字「Hides the **selected** sketches」⇒
+      **官方没有 "all"** ⇒ ★ 工具名 **`solidworks_sketch_set_blanked`**
+      （★ 裁决书原建议是 `solidworks_sketch_set_all_blanked` —— **我按它自己给的理由去掉了 `all`**：
+      那个名字同样会许下官方没有的语义；★ 已加静态断言：名字里不许出现 `all`）
+      ★★ **本条的真正产出 = 把裁决书点名的「怎么回读隐藏了没有」定案**：
+      ★ 官方回 `void`、那页既无 Returns 也无 Remarks、官方示例的判据**只有肉眼** ⇒
+      ★★ 真机定出回读入口是 **`IFeature::Visible` → `swVisibilityState_e`**（Hide=1 · Shown=2 · Unknown=3）
 
 ## B3 · 先小验证（1 条）
 

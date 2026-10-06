@@ -475,17 +475,17 @@ def collect_sketch_evidence(sketch) -> dict[str, Any]:
 # 定位:   给「把 `sw_sketch` 的只读查询挂成 MCP 工具」提供**只回读数**的薄函数。
 #         ★ 为什么需要它（**真机实测定的，不是猜的**）：
 #           `get_lines` / `get_arcs` 返回的是 **数值数组**（每条线 12 个 float、每条弧 16 个），
-#           ★ **不是**"线对象列表" ⇒ AI 拿回 36 个浮点数**没法判断"有几条线"**。
+#           ★ **不是**"线对象列表「 ⇒ AI 拿回 36 个浮点数**没法判断」有几条线"**。
 #           薄函数把它翻译成**条数**，那才是调用方要的东西。
 # 官方依据: `ISketch.GetLines2` / `GetArcs2` / `GetSketchSegments` / `Is3D`
-#          （结构不在官方文档里 —— ★ 官方**没写**返回结构，见下"除数"的实测依据）
+#          （结构不在官方文档里 —— ★ 官方**没写**返回结构，见下「除数」的实测依据）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 除数的依据是**本机实测**，不是官方文档：
 #   `D:\AI\SW\output\sketch-getter-shapes.json`（`tools/probe_sketch_getter_shapes.py`，轮 141）
 #   记着 `drawn` / `segments` / `count` / `element_type` ⇒ 画 1 条线 = 12 个 float（1↔12、2↔24、3↔36）。
 # 覆盖:   本组 4 个函数
 # ────────────────────────────────────────────────────────────────────
-#: 每"条"几何在官方返回的数值数组里占几个 `float`。
+#: 每「条」几何在官方返回的数值数组里占几个 `float`。
 #: ★ **有真机证据**（`output/sketch-getter-shapes.json`：1↔12、2↔24；弧 1↔16、2↔32）。
 #: ⚠ 这是**实测形状**，官方文档**没写**；若哪天长度不是它的整数倍 ⇒ `count_*` **会报错**，不静默圆整。
 ELEMS_PER_LINE = 12
@@ -502,7 +502,7 @@ def sketch_by_name(model, name: str):
       SketchManager.ActiveSketch 草图1    **None**
       按名取（本函数）           草图1      **草图1**  ✓
     ```
-    ⇒ ★ **草图一关，两个"活动草图"取法都是 None**；而调用方的实际用法恰恰是
+    ⇒ ★ **草图一关，两个「活动草图」取法都是 None**；而调用方的实际用法恰恰是
       「草图建完了，看看里面有什么」—— **那时草图已经关闭**。
       ⇒ 所以取草图对象的**唯一可靠路径是按名取**。
 
@@ -537,7 +537,7 @@ def _count_by_divisor(sketch, raw_getter, per_element: int, label: str) -> int:
 
 
 def count_lines(sketch) -> int:
-    """草图里有**几条直线**（不是"几个 float"）。
+    """草图里有**几条直线**（不是「几个 float」）。
 
     ★ 原始取法 `get_lines()` 返回的是**数值数组**（每条 12 个 `float`）——
       实测 1 条→12、2 条→24、3 条→36（`output/sketch-getter-shapes.json`）。
@@ -554,7 +554,7 @@ def count_arcs(sketch) -> int:
 def count_segments(sketch) -> int:
     """草图里**一共几段**（`GetSketchSegments` 的元素数）。
 
-    ⚠ 与 `count_lines` **不是一个东西**：段是"几何单元"的总数，
+    ⚠ 与 `count_lines` **不是一个东西**：段是「几何单元」的总数，
       线的条数只是其中一类。★ 两者都会给出，让调用方自己判断。
     """
     return len(get_sketch_segments(sketch))
@@ -593,7 +593,7 @@ def active_sketch(model):
       ⇒ ★ **PASS** ✓ 这也**独立复核了**本仓原先那句「两者都是 None」。
 
     ★ 取不到就回 `None`（★ **不猜、不兜底** —— 与本模块 `resolve_sketch` 的分工：
-      ★ `resolve_sketch` 是"按名字稳健地找"，★ 本函数是"只问当前活动草图，★ 没有就是没有"）。
+      ★ `resolve_sketch` 是「按名字稳健地找」，★ 本函数是「只问当前活动草图，★ 没有就是没有」）。
     """
     try:
         sketch_manager = get_com_member(model, "SketchManager")
@@ -605,7 +605,7 @@ def active_sketch(model):
 
 
 def resolve_sketch(model, name: str = ""):
-    """★ **稳健地**取到一个 `ISketch`，中英文名都能用，留空则取"最后一个草图"。
+    """★ **稳健地**取到一个 `ISketch`，中英文名都能用，留空则取「最后一个草图」。
 
     解决三件事（★ 都由真机暴露，不是设想出来的）：
     ```
@@ -688,3 +688,161 @@ def resolve_sketch(model, name: str = ""):
         "取不到草图：试过 %r；特征树里也没找到以 Sketch/草图 开头的特征"
         % (tried or [base])
     )
+
+
+# ── 规格 209 · B2-4（idx 175 `blank_sketch`）────────────────────────────────────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
+# 文件:   scripts/sw_sketch.py —— 追加 `feature_visibility` / `set_sketch_blanked`
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-4** · 外部项目 idx **175 `hide_all_sketches`**。
+#   ★★★ 裁决书的硬约束（§九）逐字：「官方 `BlankSketch` 逐字是「Hides the **selected** sketches」
+#     ⇒ ★ **官方没有 "all" 这个语义**（是别家自己许的）⇒ 工具名**不许叫 `hide_all_sketches`**，
+#     要照官方的「**隐藏选中的草图**」；★ 别家**零选区 + 返回常量** = **规则 6 的反例**」✓
+#   ★★ 它点名的**真风险**：「怎么回读「隐藏了没有」」—— 官方 `BlankSketch` 回 `void`、
+#     且那一页**既无 Returns 也无 Remarks** ⇒ ★ 本节就是去**真机定出那个回读入口** ✓
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
+#   · `C:\swapi\types\IModelDoc2\BlankSketch.md` —— `void BlankSketch()`，摘要逐字
+#     「Hides the **selected** sketches.」★ **无 Returns 段、无 Remarks 段**
+#   · `C:\swapi\types\IModelDoc2\UnblankSketch.md` —— `void UnblankSketch()`，摘要逐字
+#     「Shows a hidden sketch.」
+#   · ★★ `C:\swapi\types\IFeature\Visible.md` —— `System.int Visible {get;}`，
+#     回 **`swVisibilityState_e`** ⇒ ★★ **这就是「隐藏了没有」的官方回读入口**
+#     （★ 官方示例里**只有肉眼**："Examine the graphics area"）
+#   · `C:\swapi\enums\swVisibilityState_e.md` —— `swVisibilityStateHide=1` ·
+#     `swVisibilityStateShown=2` · `swVisibilityStateUnknown=3`（★ **没有 0**）
+#   · ★★ `C:\swapi\examples\Hide_and_Show_Sketches_Example_VB.md` —— 官方**调用序**（逐字）：
+#     ```
+#     ' Preconditions: … 3. **Select the sketches** in the FeatureManager design tree
+#     '                    or graphics area that you want to hide.
+#     swModel.BlankSketch                      ← ① 隐藏**选中的**草图
+#     swModel.UnblankSketch                    ← ② 显示（也要先选中）
+#     ```
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+# ★★ **为什么工具名里没有 "all"**（★ 明写，免后人「顺手改回来」）：
+#   官方语义是「**选中的**草图」；★ 别家把它叫 `hide_all_sketches` 是**自己许的语义**，
+#   而它的实现是「**零选区 + 回一个常量**」—— ★★ 那既**没有实现"all"**、
+#   也**没有实现"选中的"**（★ 规则 6 的反例：返回常量不是判据）✓
+#   ⇒ ★ 本仓的名字 = **`set_sketch_blanked`**（动词用官方的 Blank，**不承诺 all**）✓
+
+#: ★ 官方 `swVisibilityState_e`（★ 逐值抄自 `C:\swapi\enums\swVisibilityState_e.md`；★ **注意没有 0**）
+VISIBILITY_STATES = {1: "hide", 2: "shown", 3: "unknown"}
+
+
+def _selected_feature_objects(model) -> list:
+    """★ 取**当前选区**里的对象（★ 供读 `IFeature::Visible` 用）。"""
+    mgr = get_com_member(model, "SelectionManager")
+    count = int(get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+    out = []
+    for i in range(1, count + 1):                              # ⚠ 官方 Index **从 1 开始**
+        try:
+            obj = get_com_member(mgr, "GetSelectedObject6", i, -1)
+        except Exception:                                      # noqa: BLE001
+            continue
+        if obj is not None:
+            out.append(obj)
+    return out
+
+
+def feature_visibility(feature) -> dict:
+    """★ 读一个特征的**可见性**（官方 `IFeature::Visible` → `swVisibilityState_e`）。
+
+    ★★ 这是「**隐藏了没有**」的**唯一官方回读入口**（★ 官方示例里只有肉眼）✓
+    :returns: `{raw, state, readable}` —— ★ **读不到**回 `raw=None, readable=False`
+        （★ **不拿 `unknown`(3) 冒充"读不到"**）✓
+    """
+    out = {"raw": None, "state": None, "readable": False}
+    try:
+        raw = int(get_com_member(feature, "Visible"))
+        out["raw"] = raw
+        out["state"] = VISIBILITY_STATES.get(raw, "not_in_enum_%d" % raw)
+        out["readable"] = True
+    except Exception:                                          # noqa: BLE001
+        pass
+    return out
+
+
+def set_sketch_blanked(model, selection: str = "__current_selection__", *,
+                       blank: bool = True) -> dict:
+    """★ **隐藏 / 显示选中的草图**（★ 官方 `IModelDoc2::BlankSketch` / `UnblankSketch`，**都零参**）。
+
+    :param selection: **声明式选择器**（★ 规则 3）：
+        · `"__current_selection__"` —— 用当前选区（★ 官方示例的前置就是「先在树里选中」）；
+        · 或**逗号分隔的草图特征名**（★ 事实 32：**特征可以按名字选**，草图段/实体不行）。
+    :param blank: `True` ⇒ `BlankSketch()`（隐藏）· `False` ⇒ `UnblankSketch()`（显示）。
+    :returns: `{ok, blank, entry_used, selection_count, before, after, changed, error}`
+
+    ★★ **判据（规则 6）**：★ 它**回 `void`** ⇒ 只能回读 ⇒
+      ① **选区计数**（事实 8：不许信返回值）；
+      ② ★★ **`IFeature::Visible` 的前后读数**（`swVisibilityState_e`）—— ★ 要求**真的变了** ✓
+    ⚠ **官方语义是"选中的草图"** —— ★ 本函数**不实现 "hide all"**（★ 那个语义官方没有）✓
+    """
+    from sw_part import _empty_callout                                 # noqa: E402
+    out: dict = {
+        "ok": False, "blank": bool(blank),
+        "entry_used": ("IModelDoc2::BlankSketch()" if blank else "IModelDoc2::UnblankSketch()"),
+        "selection": str(selection)[:80], "selection_count": None,
+        "before": [], "after": [], "changed": [], "error": None,
+        "★": "判据 = **选区计数** + **`IFeature::Visible` 的前后读数**（`swVisibilityState_e`）；"
+             "★ 它回 `void`，只能回读；★★ **本工具不实现「hide all」**（官方语义是「选中的草图」）",
+    }
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    sel = str(selection or "").strip() or "__current_selection__"
+    try:
+        #: ★ 官方示例前置：**先选中草图** ⇒ 按名字选时自己先清选区再逐条选（Append）
+        get_com_member(model, "ClearSelection2", True)
+        if sel != "__current_selection__":
+            names = [x.strip() for x in sel.split(",") if x.strip()]
+            if not names:
+                out["error"] = "selection 是空的名字清单"
+                return out
+            ext = get_com_member(model, "Extension")
+            for k, name in enumerate(names):
+                get_com_member(ext, "SelectByID2", name, "SKETCH", 0.0, 0.0, 0.0,
+                               bool(k > 0), 0, _empty_callout(), 0)
+        out["selection_count"] = int(
+            get_com_member(get_com_member(model, "SelectionManager"),
+                           "GetSelectedObjectCount2", -1) or 0)
+        if out["selection_count"] <= 0:
+            out["error"] = ("选完**回读计数为 0** ⇒ 没有草图在选区里（★ 事实 8）"
+                            "—— ★ 官方示例的前置就是「先在树里选中要隐藏的草图」")
+            return out
+        targets = _selected_feature_objects(model)
+        out["before"] = [{"name": str(get_com_member(f, "Name") or ""),
+                          **feature_visibility(f)} for f in targets]
+        get_com_member(model, "BlankSketch" if blank else "UnblankSketch")
+        after = _selected_feature_objects(model)
+        if not after:                                          # ★ 调用后选区可能被清掉 ⇒ 重新按名字取
+            names = [b["name"] for b in out["before"] if b.get("name")]
+            ext = get_com_member(model, "Extension")
+            get_com_member(model, "ClearSelection2", True)
+            for k, name in enumerate(names):
+                get_com_member(ext, "SelectByID2", name, "SKETCH", 0.0, 0.0, 0.0,
+                               bool(k > 0), 0, _empty_callout(), 0)
+            after = _selected_feature_objects(model)
+        out["after"] = [{"name": str(get_com_member(f, "Name") or ""),
+                         **feature_visibility(f)} for f in after]
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
+        return out
+    #: ★ 判据：**逐条比对前后读数**（★ 名字对上、且 state 真的变了）
+    before = {b["name"]: b for b in out["before"] if b.get("name")}
+    changed = []
+    for a in out["after"]:
+        b = before.get(a["name"])
+        if b and b.get("readable") and a.get("readable") and b["raw"] != a["raw"]:
+            changed.append({"name": a["name"], "raw": [b["raw"], a["raw"]],
+                            "state": [b["state"], a["state"]]})
+    out["changed"] = changed
+    want = "hide" if blank else "shown"
+    matched = [c for c in changed if c["state"][1] == want]
+    out["ok"] = bool(matched)
+    if not out["ok"]:
+        out["error"] = ("回读判据未过：**没有任何一条草图的 `Visible` 变成 %r** —— "
+                        "前 %r / 后 %r（★ 它回 `void` ⇒ 只能靠回读；★ 读不到不等于没变）"
+                        % (want, [b.get("state") for b in out["before"]],
+                           [a.get("state") for a in out["after"]]))
+    return out
