@@ -109,6 +109,7 @@
 | 9 | 钣金 FeatureData 的**长度参数** | ★ **官方页没写单位** | ★★ 真机用**厚度棱的长度**量：传 `0.002` ⇒ 边长集合 `{0.002, 40, 60}`；传 `2.0` ⇒ `{2.0, 40, 60}` ⇒ **按文档单位（本机 mm）解释，不是米** | ★★ 与 `InsertMoveCopyBody2` **同族**（都是文档单位）⇒ ★ 本仓 `BaseFlangeSpec` 的「单位为米」**是错的**，既有调用点造的是 **0.002 mm 的箔片** |
 | 10 | `ICustomBendAllowance::Type` | ★ `## Remarks` 逐字：「**If you do not set this property last**, the … property set last automatically **overrides** any previously set custom bend allowance type.」 | ★★ 官方示例本身顺序相反（先 `Type` 再 `KFactor`），**靠 `KFactor` 恰好也等于 2 而巧合成立** | ★ 不照 Remarks 写 ⇒ **`Type` 会被后设的属性覆盖**（静默） |
 | 11 | `IModelDoc2::InsertSheetMetalUnfold` 的 `mark 4` | 官方 `## Remarks` **没给 mark**；★ 官方示例选了折弯特征并打 `mark 4` | ★★ 真机：**不选任何 `mark 4` 对象**（只给固定面 mark 1）时**照样建出 `展开1`** | ★ 把示例当「**必需**」读 ⇒ 会写出一条**多余的强约束**（甚至据此判「能力不可用」—— ★ **我一开始就是这么错的**） |
+| 12 | **官方示例的 `Preconditions` 段**（不限于某一条成员） | `Add_Autoballoon_to_Face_Example_VB.md` 的 Preconditions 逐字：「Open a drawing **with a bill of materials (BOM) table**」 | ★★ 真机：**没有 BOM 表时 `AutoBalloon5` 照样插进了 1 个气泡**（`GetNoteCount` **0→1**、返回数组 1） | ★★ **把 `Preconditions` 当"方法的硬前置"读 ⇒ 会凭空给能力加一条不存在的前置**（★ 我据此假设过"没有 BOM 表就静默无效"，**被真机否证**）⇒ ★ **`Preconditions` 是「例子的环境」，不是「API 的契约」** ✓ |
 
 ---
 

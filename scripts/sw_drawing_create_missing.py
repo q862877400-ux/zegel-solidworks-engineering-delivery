@@ -763,7 +763,16 @@ def auto_insert_balloons(model, *,
     after = _sum_over_views(model, "GetNoteCount")
     delta = _delta(before, after)
     return {
-        "ok": bool(balloon_notes) and (delta is None or delta >= 0),
+        #: ★★★ 2026-10-06（规格 209 · B2-2 · idx 34）：**判据收紧成纯回读** ——
+        #:   原先 `ok` 是 `bool(balloon_notes) and (delta is None or delta >= 0)`，两处都不合规格：
+        #:   ① 它依赖 `AutoBalloon5` **返回的数组** ⇒ **那是返回值**（规则 6：判据要用回读）；
+        #:   ② `delta >= 0` **太松**（★ **差 0 也就是「什么都没插」照样通过**）。
+        #:   ⇒ 现在：`ok = delta 读得到 且 > 0`（★ **视图的标注数真的涨了**才算成），
+        #:   ★ 而返回的数组长度**照旧回报**（`balloon_note_count` / `returned_is_none`），
+        #:   只是**不当判据** ✓ —— ★ 这正是裁决书要的那个「**真机定案**」的落点 ✓
+        "ok": (delta is not None and delta > 0),
+        "criterion": ("★ **纯回读**：`sum(IView::GetNoteCount)` 的**增量 > 0**"
+                      "（★ 不用 `AutoBalloon5` 返回的数组当判据）"),
         "op": "auto_insert_balloons",
         "returned_is_none": notes is None,
         "balloon_note_count": len(balloon_notes),
@@ -779,15 +788,18 @@ def auto_insert_balloons(model, *,
             "视图或图纸；★ 第 2 步的选项对象**由本函数内部**用 CreateAutoBalloonOptions() 造"
         ),
         "official_returns_note": "★ 官方 Returns 逐字是 'Array of INotes' ⇒ 数组长度就是气泡数",
-        "no_tool_spec_reason": (
-            "★ AutoBalloon5 的形参是 **AutoBalloonOptions COM 对象** ⇒ mcp-server 的 Param "
-            "表达不了 ⇒ 本函数**只接能力层、不建 ToolSpec**"
+        "official_precondition_bom_table": (
+            "★★★ 官方示例 `Add_Autoballoon_to_Face_Example_VB.md` 的 Preconditions 逐字："
+            "「Open a drawing **with a bill of materials (BOM) table**」⇒ ★★ 没有 BOM 表时"
+            "它**静默什么都不插**（★ 2026-10-06 真机定案：`GetNoteCount` **0 → 0**、"
+            "返回的数组**长度为 0**）—— ★ 这正好解释了**两家外部项目结论互相矛盾**那件事 ✓"
         ),
         "defaults_note": (
             "★ 默认值逐条照**官方示例**（Add_Autoballoon_to_Face_Example_VB.md）；"
             "★ **不声称**它们是 SolidWorks 的出厂默认"
         ),
-        "verified_by": "len(AutoBalloon5 返回的 INotes 数组) + sum(IView.GetNoteCount) delta",
+        "verified_by": "★ **sum(IView.GetNoteCount) 的增量 > 0**（纯回读）；"
+                       "★ 返回的数组长度只**回报**、**不当判据**",
     }
 
 

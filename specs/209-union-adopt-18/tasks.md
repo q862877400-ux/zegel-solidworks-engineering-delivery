@@ -67,7 +67,22 @@
       平展型式 `GetFlatPatternCount` = 1 ⇒ `output/spec209-unfold-fold.json`
       ★★ **两条被真机纠正的**：① `mark 4` 的对象**不是必需的**（只给固定面 mark 1 也能建成）；
       ② 第一轮的"没建出来"**是我自己的 bug**（`SetSelectedObjectMark` 的 `Action` 传了 `-1`，要 `0`）
-- [ ] **B2-2** idx 34 `balloon`（★ **两家结论互相矛盾** ⇒ **不许照抄任何一家**）
+- [x] **B2-2** idx 34 `balloon`（`IDrawingDoc::AutoBalloon5`）⇒ 能力层**早已实现**
+      （`sw_drawing_create_missing.auto_insert_balloons`）⇒ 本批做三件：**收紧判据 + 挂工具 + 真机定案**
+      ⇒ `solidworks_drawing_insert_balloons`（★ level = `verified`）
+      ★★ **定案（裁决书点名的那件事：两家结论互相矛盾）**：真机**两格独立对照**（自建装配 + **两张独立图纸**）⇒
+      ① **没有 BOM 表** ⇒ `ok=True` · `GetNoteCount` **0→1（Δ=1）** · 返回数组长度 **1**；
+      ② **先插 BOM 表** ⇒ `ok=True` · **Δ=1** · 返回 **1**
+      ⇒ ★ **Slacker-LLC 的「静默无效」在本机不成立**；★ **Eduardof0nt 的 `bool(result)` 也不能当判据**
+      ⇒ ★★ **判据只能是 `GetNoteCount` 的增量** ⇒ `output/spec209-balloon.json`
+      ★★ **判据收紧**：原 `ok` 是 `bool(返回数组) and (delta >= 0)` ⇒ 现在
+      `ok = (delta is not None and delta > 0)`（★ **差 0 = 什么都没插，却会通过** —— 旧判据太松）
+      ★★ **我自己的假设被真机否证**：我按官方示例的 `Preconditions` 假设「没有 BOM 表 ⇒ 静默无效」
+      ⇒ **错**。★ 已记进 `spec.md` §五 第 12 条：**`Preconditions` 是「例子的环境」、不是「API 的契约」** ✓
+      ★★ **探针自身的一处设计缺陷**：第一版第二格与第一格**共用同一张图**（气泡已存在 ⇒
+      `IgnoreMultiple` 只是没重复插）⇒ 那一格的 Δ=0 **不能当证据** ⇒ 改成**两张独立图纸**才得上面两格 ✓
+      ★★ **原函数自述「不建 ToolSpec」的理由已过期**（那句说的是**底层成员**的 COM 形参；
+      包装函数的形参**全是标量**）⇒ 本批把它挂成工具 ✓
 - [ ] **B2-3** idx 52 `centerline`（同上；★ 裁决书建议与 idx 30 `auto_center_marks` 合并成两种模式）
 - [x] **B2-4** idx 175 `blank_sketch` ⇒ `scripts/sw_sketch.py::set_sketch_blanked`（+ `feature_visibility`）
       + `solidworks_sketch_set_blanked`（★ ★★★ **名字里没有 `all`** —— 见下）

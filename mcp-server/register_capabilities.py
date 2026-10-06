@@ -999,6 +999,15 @@ BATCH_MODULES = (
     #:     ★ 落 `sw_drawing_create_missing.py`（★ 裁决书自己要求"复用该文件已有的读侧助手"）✓
     #:   ★ 计数：444 → **445**
     "tool_specs_batch96",
+    #: ★★★ 2026-10-06：**规格 209 的批 97 —— BOM 气泡**（1 个）：★ 来源 idx **34 `balloon`**。
+    #:   ★★ 裁决书点名要"真机定案"（两家外部项目结论互相矛盾）⇒ ★ **已定案**：
+    #:     装配工程图上**有没有 BOM 表都插得进去**（各 Δ=1）⇒ ★ Slacker-LLC 的「静默无效」不成立、
+    #:     ★ Eduardof0nt 的 `bool(result)` 也不能当判据 ⇒ ★★ **判据只能是 `GetNoteCount` 的增量** ✓
+    #:   ★ 本批同时**收紧了原函数的 `ok`**（它原先依赖返回数组、且 `delta >= 0` 太松）✓
+    #:   ★★ 原函数自述"不建 ToolSpec"的理由**已过期**：那句说的是**底层成员**的
+    #:     `AutoBalloonOptions` COM 形参；★ 而**包装函数的形参全是标量** ⇒ ★ 能挂 ✓
+    #:   ★ 计数：445 → **446**
+    "tool_specs_batch97",
 )
 
 def all_specs() -> list:
