@@ -54,19 +54,70 @@ _SYNTH_BY_HINT = (
 
 
 def synth_args(spec) -> dict:
-    """★ 按**声明**给每条必填形参**合成一个值**（★ 形状对即可）✓
+    """★ 按**真函数签名**给每条必填形参**合成一个值**（★ 形状对即可）✓
 
-    ★★ 为什么值得做：★ 真机读数证明，**12/17** 的失败只是"没给参数" ⇒
-      ★ 不合成的话，我们**永远测不到**这些工具（★ 而它们会被记成 `undecided`）✓
-    ★ 优先级：★ 先看名字后缀（`_mm` / `_deg` / `_name` / `path` …），
-      ★ 都命不中就看类型提示，★ 再命不中给一个**保守的字符串** ✓
-    ★⚠ 限度：★ 合成的值**只保证类型/形状对** —— ★ **不保证语义对**；
-      ★ 所以调用**仍可能失败**，★ 那会如实记 `undecided`（★ 不许当成"通过"）✓
+    ★★★ 2026-10-06 **真机拆解逼出来的两处修正**（★ 见 `docs/spec210-b3-undecided-breakdown.md`）：
+      ① ★★ **声明里没有类型信息**：★ `ToolSpec.params` 的 `annotation` 全是 `None` ✗
+         ⇒ ★ 类型只能从**底层真函数的签名**取（★ 用 `inspect.signature`）✓
+      ② ★★ **只按名字后缀猜类型会猜错**：★ 真机实录 ——
+         · `automation_get_flag(pref)` ⇒ ★ 我给了 `'MCP_CALIB'`（字符串）⇒
+           ★★ 真函数要 **`int`** ⇒ 报 `invalid literal for int(): 'MCP_CALIB'` ✗
+         · `config_set_custom_properties(properties)` ⇒ ★ 我给了字符串 ⇒
+           ★★ 真函数要 **`dict`** ⇒ 报 `'str' object has no attribute 'items'` ✗
+    ⇒ ★ 判序：★ **① 真函数签名的类型注解 → ② 名字后缀启发式 → ③ 兜底字符串** ✓
+      ★（★ 把类型放**第一位**，★ 因为它是**真的**；★ 名字后缀是**猜的**）✓
     """
+    import inspect
+    import importlib
+    ann: dict = {}
+    try:
+        mod = importlib.import_module("scripts." + str(getattr(spec, "module", "")))
+        fn = getattr(mod, str(getattr(spec, "function", "")), None)
+        if fn is not None:
+            for pname, pp in inspect.signature(fn).parameters.items():
+                ann[pname] = pp.annotation
+    except Exception:                                                   # noqa: BLE001
+        ann = {}
+
     out = {}
     for pp in (getattr(spec, "params", None) or ()):
         if getattr(pp, "default", None) is not Ellipsis:
             continue                        # ★ 有默认值的不必合成 ✓
+        #: ★ ① 先按**真签名里的类型注解**（★ 最硬）✓
+        a = ann.get(pp.name)
+        if a is not None:
+            t = str(a).lower()
+            base = t.replace("typing.", "").split("[")[0]
+            if base in ("int",):
+                out[pp.name] = 1
+                continue
+            if base in ("float",):
+                out[pp.name] = 1.0
+                continue
+            if base in ("bool",):
+                out[pp.name] = True
+                continue
+            if base in ("dict", "mapping", "mutabledmapping"):
+                #: ★ dict 给**非空**的（★ 真空 dict 多半没用）✓
+                out[pp.name] = {"MCP_CALIB": "1"}
+                continue
+            if base in ("list", "sequence", "tuple", "iterable"):
+                out[pp.name] = ["MCP_CALIB"]
+                continue
+            if base in ("str",):
+                #: ★★ 注解说 `str` ⇒ ★ 允许 ② 的名字后缀**细化**（如 `path` 给个文件名）✓
+                #:   ★★★ **但结果必须还是 `str`** —— ★ 真机被测试抓到：★ 我原先在这里 `pass`，
+                #:     ★ 于是落到 ②，★ 而 `doc_type` 命中了 `_type` 后缀 ⇒ ★ **给了数字 `0`** ✗✗
+                #:   ⇒ ★ **"类型优先"必须落到最后一道**：★ 合成完**按注解类型校验**，★ 不合就换回对的 ✓
+                _low = pp.name.lower()
+                _cand = None
+                for _h, _v in _SYNTH_BY_HINT:
+                    if _h in _low and isinstance(_v, str):
+                        _cand = _v
+                        break
+                out[pp.name] = _cand if _cand is not None else "MCP_CALIB"
+                continue
+        #: ★ ② 再按名字后缀（★ 猜的，★ 所以排在类型后面）✓
         low = pp.name.lower()
         value = None
         for hint, v in _SYNTH_BY_HINT:
@@ -74,112 +125,9 @@ def synth_args(spec) -> dict:
                 value = v
                 break
         if value is None:
-            kind = str(getattr(pp, "kind", "") or "").lower()
-            if "int" in kind:
-                value = 0
-            elif "float" in kind or "double" in kind:
-                value = 1.0
-            elif "bool" in kind:
-                value = True
-            else:
-                value = "MCP_CALIB"
+            value = "MCP_CALIB"
         out[pp.name] = value
     return out
-
-
-#: ★★★ **按 `requires` 分组**（★ 规格 210 · B3 的核心优化）——
-#:   ★★ 评审的判决：「**成本的主项是"建立前置状态"，不是调用本身**」⇒
-#:     ★ 每组**只建一次状态**、组内**连着调** ⇒ ★ **耗时随"不同前置的数量"增长，不随工具数增长** ✓
-#:   ★ 本仓实测：★ 448 个工具只落在 **9 种宿主**上（★ `part` 236 · `none` 57 · `app` 45 ·
-#:     `study` 40 · `view` 23 · `costing` 15 · `assembly` 14 · `drawing` 9 · `selection` 9）✓
-#:   ★ 改写前：★ 每条工具**各建一个新零件**（47 条 ⇒ 47 个）✗
-#:   ★ 改写后：★ **`part` 组只建一个**、★ 只在**写工具之后重建**（★ 那就是"副本重载"）✓
-_KIND_BY_REQUIRES = {
-    "part": "part", "none": "part", "selection": "part", "view": "part",
-    "study": "part", "costing": "part",
-    "assembly": "assembly", "drawing": "drawing",
-    "app": None,          # ★ 只需要应用对象 ⇒ **不用建文档** ✓
-}
-
-
-def build_host(sw, inject_name: str):
-    """★★ 按**注入名**建**对的宿主对象** —— ★ 这是分组省时间之后**必须补的那一半** ✓
-
-    ★★★ 2026-10-06 **分组暴露的真问题**：★ 每组需要的**不只是"一个文档"**，★ 而是**那个特定的对象** ——
-      ★ `asm_model` 要装配体 · `view` 要视图 · `study` 要研究 · `cost_manager` 要成本管理器 ⇒
-      ★★ 而我第一版 `build_state` **只会建文档、且一律当 `model` 传** ⇒
-      ★ 于是除 `part`/`none` 外的组**根本没跑到**（★ 真机：`empty` 47 条里 33 条"调用没调成"）✗
-    ★★ 另外一处更细的认识：★ 分组的键应当是 **`inject`（精确的注入名）**，
-      ★ 不是 `requires`（**种类**）—— ★ `requires` 只用来做**基数统计**（9 种）✓
-
-    :returns: `(inject_objects, why)` —— ★ `why` 非空表示**这一组还没法建**（★ 如实记，不假装）✓
-    ★⚠ 限度：★ `view` / `study` / `cost_manager` / `selection` **这四类还没建**
-      （★ 要构造视图/研究/成本管理器/选中对象）⇒ ★ 那些组会**如实记 `undecided`** ✓
-    """
-    import sw_connect
-    name = str(inject_name or "")
-    #: ★★★ 2026-10-06 **真机查出的 sweep bug**：★ 我把**视图/应用对象当文档**去抓指纹 ⇒
-    #:   ★★ 六格全读不到（`selection`/`edit_mode`/`dirty`/`features`/`config`/`rebuild`）✗
-    #:   ★ 真机证据：★ `empty` 组里 **13 行**各 6 格未判定（= 78），★ 而 **13 正好等于**
-    #:     那些"宿主不是文档"的行数（`view` 3 + `sw` 3 + `sw_app` 3 + `manager` 2 + `sldworks` 1 + `none` 1）✓
-    #:   ⇒ ★ 正解：★ **指纹永远读在"文档"上** ⇒ ★ `build_host` 把文档一起回，★ 用 `_doc` 键带走 ✓
-    if name in ("", "none"):
-        return {"sw": sw}, ""
-    #: ★ 应用对象类（`sldworks` / `sw_app` / `sw` / `manager` / `defaults` / `options`）⇒ 给 `sw` ✓
-    if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options"):
-        #: ★ 应用对象类：★ 宿主是 `sw` 本身，★ **但指纹要读在活动文档上** ✓
-        try:
-            doc = sw.ActiveDoc
-        except Exception:                                               # noqa: BLE001
-            doc = None
-        return {name: sw, "sw": sw, "_doc": doc}, ""
-    kind = {"model": "part", "doc": "part", "asm_model": "assembly",
-            "component": "assembly", "drawing_model": "drawing"}.get(name)
-    if kind:
-        try:
-            doc = sw_connect.new_document(sw, kind)
-            return {name: doc, "sw": sw, "_doc": doc}, ""
-        except Exception as exc:                                        # noqa: BLE001
-            return {}, "★ 建 %s 失败：%s" % (kind, type(exc).__name__)
-    #: ★★ 补两类**易取**的（★ 官方属性，★ 已读页面）✓
-    #:   · `selection` ⇒ `IModelDoc2.SelectionManager`（★ 官方："makes the currently selected
-    #:     object available"）✓
-    #:   · `view` ⇒ `IModelDoc2.ActiveView`（★ 官方："Gets the current active model view
-    #:     in read-only mode"）✓
-    #:   ★ 这两类合起来覆盖 **32 个工具**（`selection` 9 + `view` 23）✓
-    if name in ("selection", "view"):
-        try:
-            import sw_connect as _sc
-            doc = _sc.new_document(sw, "part")
-            attr = {"selection": "SelectionManager", "view": "ActiveView"}[name]
-            host = _sc.get_com_member(doc, attr)
-            if host is None:
-                return {}, "★ 零件建好了，但 `%s` 取不到（★ 返回 None）" % attr
-            #: ★ `selection`/`view` 的宿主**不是文档** ⇒ ★ 但**指纹仍读在文档上** ✓
-            return {name: host, "sw": sw, "_doc": doc}, ""
-        except Exception as exc:                                        # noqa: BLE001
-            return {}, "★ 建 `%s` 宿主失败：%s" % (name, type(exc).__name__)
-    #: ★ 剩下两类（study / cost_manager）**还没建** ⇒ ★ 如实报出 ✓
-    return {}, ("★ 这一类宿主**还没建**（`%s`）—— ★ 需要构造仿真研究 / 成本管理器"
-                "（★ 要加载对应插件）" % name)
-
-
-def build_state(sw, requires: str):
-    """★ 建**这一组**的宿主状态（★ 每组只建一次）✓
-
-    :returns: `(model, why)` —— ★ `None` **不一定**是失败（★ `app` 组本来就不需要文档）✓
-    ★⚠ 限度：★ `view` / `study` / `costing` 这三组目前**按零件兜底**
-      （★ 真正的"带视图/带研究/带成本管理器"的状态**还没建**）⇒ ★ 那会在读数里**如实体现** ✓
-    """
-    kind = _KIND_BY_REQUIRES.get(requires)
-    if kind is None:
-        return None, "★ `app` 组不需要文档"
-    import sw_connect
-    try:
-        return sw_connect.new_document(sw, kind), ""
-    except Exception as exc:                                            # noqa: BLE001
-        return None, "★ 建 %s 失败：%s" % (kind, type(exc).__name__)
-
 
 def classify(declared_writes, diff, usable, *, call_ok: bool) -> str:
     """★★ 四类判定（★ 严格照 spec：`missed` 与 `undecided` **不许混**）✓
