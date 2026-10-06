@@ -45,7 +45,26 @@
 - ★ 记忆补充：★ 本仓记录里「**从没查过 `InsertSweepSurface2`**」⇒ ★ 本批是**第一次读它** ✓
 - ★ 回读判据：★ 曲面体数 / 特征树（★ 回读）
 
-## B2-3 · 边界曲面 — `IModeler::CreateRuledSurface(Curve1In, Curve2In, Apex)`
+## B2-3 · ~~边界曲面~~ ⇒ ★★★ **改为「查不到官方入口」（★ 本段作废）**
+
+> ★★★★★ **2026-10-07（B8 实测纠正）：本段原先写的负例是**建立在一个混淆上的** ✗** ——
+> ★ 我原把「**边界曲面**」当成 `IModeler::CreateRuledSurface(Curve1In, Curve2In, Apex)` ✗ ——
+> ★★ **而那是「直纹曲面」**（★ **另一件东西** ✓ —— ★ 覆盖表自己就分两行：
+> 「曲面 / **边界曲面** ❌」·「曲面 / **直纹曲面** ✅」✓）。
+> ★★★ **实测**：★ 全扫 `C:\swapi\types` **没有任何 `*BoundarySurface*` 入口** ✗ ——
+> 最接近的两个都不是它：★ `IFeatureManager::SetFreeformBoundaryContinuity`（**自由形**边界连续性）·
+> ★ `IFillSurfaceFeatureData::*Boundary*`（**填充曲面**的边界）✓
+> ★★ 且 `docs/toolbar-ledger.md` **早就写着**「边界曲面 | **待查**」✓
+> ⇒ ★★★ **故「边界曲面」判「查不到官方入口」（铁律 5）**，★ **本段的负例设计随之作废** ✓
+> ★★ **保留本段**（而不是删掉）★ 是为了留下**这次混淆的实物** ——
+> ★ 它与 `tools/spec211_manual_verdicts.py` 里那条纠正**互相印证** ✓
+
+### ★ 原（**作废**）内容，仅作混淆的实物保留
+
+- ★ 原写：「**官方依据**：`IModeler::CreateRuledSurface` 的 `## Remarks` 逐字「**Valid input curves are
+  b-curves**」⇒ 负例：传非 b-curve」✗
+- ★★ **那条依据本身是对的** ✓（`CreateRuledSurface` 确实要求 b-curves ✓）——
+  ★ **只是它属于「直纹曲面」、不属于「边界曲面」** ✗✓
 
 - ★★ **官方依据（逐字）**：「**Valid input curves are b-curves**.」
 - ★★ **负例**：★ **传非 b-curve**（例如一条草图直线段 `ISketchSegment`、或一条实体边）⇒ **必然失败** ✓

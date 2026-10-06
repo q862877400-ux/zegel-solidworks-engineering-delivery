@@ -46,7 +46,22 @@ VERDICTS = {
     "特征识别/Instant3D": ("特征", "不做", "★ **四处零命中** ⇒ 官方无 API 入口（铁律 5）· "
                                    "★ CHM 的 9 个 `Instant3D` 页是**用户手册**、★ 不在 API 命名空间"),
     "扫描曲面": ("曲面", "可做", "★ `InsertSweepSurface2` / `InsertSweepSurface3`（**参数式、无 ACL**）"),
-    "边界曲面": ("曲面", "可做", "★ `CreateRuledSurface` / `InsertRuledSurfaceFromEdge2`（**参数式、无 ACL**）"),
+    #: ★★★★★ 2026-10-07（B8 **实测纠正**）：★ 这条**原判「可做」是错的** ✗ ——
+    #:   ★★ **我把「边界曲面」与「直纹曲面」混成一个了** ✗✓ —— 证据：
+    #:     ★ **覆盖表自己就分两行**：★「曲面 / **边界曲面** ❌」· ★「曲面 / **直纹曲面** ✅」✓
+    #:   ★★★ 而全扫 `C:\swapi\types`：★ **没有任何 `*BoundarySurface*` 的入口** ✗ ——
+    #:     只有 `IFeatureManager::SetFreeformBoundaryContinuity`（★ **自由形**的边界连续性 ✗）·
+    #:     `IFillSurfaceFeatureData::*Boundary*`（★ **填充曲面**的边界 ✗）⇒ ★ **都不是它** ✓
+    #:   ★★ 且 `docs/toolbar-ledger.md` **早就写着**：「边界曲面 | **待查**」✓
+    #:   ⇒ ★★★ **判「查不到官方入口」**（★ **铁律 5**：★ 查不到就说查不到 ✓）
+    #:     ★★ 而**"直纹曲面"是另一件东西**、★ 仓里**已有**（★ `sw_surface_edit_ops.insert_ruled_surface`
+    #:       走 `InsertRuledSurfaceFromEdge2` ✓）—— ★ 而它**不在本规格的 21 项里** ✓
+    "边界曲面": ("曲面", "不做", "★★★ **查不到官方入口**（★ 铁律 5）—— ★ 全扫 `C:\\swapi\\types` 无 "
+                            "`*BoundarySurface*` 入口；★ 最接近的是 `SetFreeformBoundaryContinuity`"
+                            "（**自由形**边界连续性）与 `IFillSurfaceFeatureData::*Boundary*`（**填充曲面**边界）"
+                            "⇒ **都不是它** ✗ ★★ 且本仓 `docs/toolbar-ledger.md` 早就写着「边界曲面 | **待查**」✓ "
+                            "★⚠ **纠一处混淆**：★ 我原判把它当成了 `CreateRuledSurface`/`InsertRuledSurfaceFromEdge2` ✗ —— "
+                            "★ 那是**直纹曲面**（★ **仓里已有**、★ 且**不在本规格的项里** ✓）"),
     #: ★★★★ 2026-10-07（B2 **实测纠正**）：★ 这条**原判「可做」是错的** ✗ ——
     #:   ★ 覆盖表**早就写着**：「`scripts/sw_surface.py` 有实现，但**三条入口真机全不成**
     #:   （**已知事实 417–419**）⇒ 工具面不计」✓

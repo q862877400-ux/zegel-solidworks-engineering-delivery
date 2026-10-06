@@ -8,7 +8,7 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项（★ **人工终判**）：★ **可做 13** · **不做 6** · **已覆盖 1** · **待实测 1**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 12** · **不做 7** · **已覆盖 1** · **待实测 1**
 
 ## 特征 · 边界凸台 ⇒ **不做**
 
@@ -57,9 +57,9 @@
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeatureManager~InsertSweepSurface2.html`  
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeatureManager~InsertSweepSurface3.html`  
 
-## 曲面 · 边界曲面 ⇒ **可做**
+## 曲面 · 边界曲面 ⇒ **不做**
 
-· 初判：★★ **人工终判**：★ `CreateRuledSurface` / `InsertRuledSurfaceFromEdge2`（**参数式、无 ACL**）
+· 初判：★★ **人工终判**：★★★ **查不到官方入口**（★ 铁律 5）—— ★ 全扫 `C:\swapi\types` 无 `*BoundarySurface*` 入口；★ 最接近的是 `SetFreeformBoundaryContinuity`（**自由形**边界连续性）与 `IFillSurfaceFeatureData::*Boundary*`（**填充曲面**边界）⇒ **都不是它** ✗ ★★ 且本仓 `docs/toolbar-ledger.md` 早就写着「边界曲面 | **待查**」✓ ★⚠ **纠一处混淆**：★ 我原判把它当成了 `CreateRuledSurface`/`InsertRuledSurfaceFromEdge2` ✗ —— ★ 那是**直纹曲面**（★ **仓里已有**、★ 且**不在本规格的项里** ✓）　（★ 自动台账原判：可做）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IBody2::CreateRuledSurface` `System.object CreateRuledSurface( System.object Curve1, System.object Curve2, System.object ApexPoint )` 
   · `[swapi] IBody2::ICreateRuledSurface` `Surface ICreateRuledSurface( Curve Curve1, Curve Curve2, ref System.double ApexPoint )` 
