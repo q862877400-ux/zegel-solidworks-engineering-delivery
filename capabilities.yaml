@@ -5117,20 +5117,23 @@
     "同页 Remarks：PathAlign 只在 TwistCtrlOption = swTwistControlFollowPath 时可用（0=None · 2=Direction vector · 3=All faces）；TwistAngle 只在 swTwistControlConstantTwistAlongPath 时有意义；UseAutoSelect=false 时「the user must select the bodies」"
    ],
    "evidence": [
-    "★★★★★ 真机建成（tools/probe_spec211_sweep_pre.py，走 tools/sw_guard.py 护栏）：轮廓草图（前视面，圆 R10）mark 1 + 路径草图（上视面，直线 60mm）mark 4 ⇒ 选区计数 2 ⇒ 调用 ⇒ **特征树 7→8、新增 `曲面-扫描1`** ✓✓✓",
-    "★★ 对照实验（tools/probe_spec211_sweep.py）：★ 空零件、**无选择**下直接调 ⇒ returned_is_none = True、「特征树 5→5、新增 []」⇒ ★★ 同一个成员在「前置没上」时**静默回 None** ⇒ ★ 这解释了上一次的读数 ✓",
-    "★ 证据文件 output/spec211-b2-sweep-pre.json · output/spec211-b2-sweep.json",
+    "★★★★★ 真机建成（tools/probe_spec211_sweep_pre.py）：轮廓草图（前视面·圆 R10）mark 1 + 路径草图（上视面·直线 60mm）mark 4 ⇒ 选区计数 2 ⇒ 调用 ⇒ 特征树 7→8、新增 曲面-扫描1 ✓",
+    "★★★★ 变体 A 带引导线（tools/probe_spec211_sweep_variants.py）：轮廓（前视·圆）mark 1 + 路径（上视·直线）mark 4 + 引导线（右视·直线）mark 2 ⇒ 建成 ✓",
+    "★★★★ 变体 B 闭合路径（同探针）：轮廓（前视·圆 R5）mark 1 + 路径（上视·圆 R30，闭合）mark 4 ⇒ 静默回 None（★ 前置已完全对上）⇒ ★★ 试死 ✓",
+    "★★ 对照实验（tools/probe_spec211_sweep.py）：空零件、无选择下直接调 ⇒ returned_is_none = True、特征树 5→5 ⇒ 同一成员在「前置没上」时静默回 None（★ 解释了那一次读数 ✓）",
+    "★ 证据文件 output/spec211-b2-sweep-pre.json · output/spec211-b2-sweep-variants.json · output/spec211-b2-sweep.json",
     "★ 契约/负例：python -m pytest tests/test_spec211_sweep.py -q ⇒ 7 passed"
    ],
    "limitations": [
-    "★★★★★ 本条**印证了事实 237**（逐字）：「'不做曲面族'那条结论**只覆盖了半条路** —— 官方有**两条**建曲面的入口，**而第二条从来没试过**」⇒ ★★ **本批试了第二条路，通了** ✓",
-    "★★★ 必须与「路 A」分开：路 A = CreateDefinition(swFmSweepSurface) + CreateFeature ⇒ 已按事实 392 试死（静默回 None）；★ 本能力只走路 B（参数式 + mark 表）⇒ 路 A 的结论**不适用于本条** ✓",
-    "★★ 前置是**硬性的**（★ 官方 ## Remarks 逐字）：★ 调之前**必须**用 SelectByID2 按 mark 选 —— 1 = Profile · 2 = Guide（有才给）· 4 = Sweep path；★ 实测：**没选时静默回 None**（★ 不抛、特征树不变）✗ ⇒ 调用方若拿到 None，先查 mark ✓",
-    "★★ 轮廓与路径**不能共面**（★ 扫描的几何前提）：实测用的是**前视面**（轮廓）与**上视面**（路径）✓",
-    "★ SelectByID2 的 Callout **必须传** VARIANT(VT_DISPATCH, None)（事实 33）；本能力复用 sw_part._select_by_id，它内部已有 _empty_callout() ✓",
-    "★ 本包装是薄包装：**不替调用方做选择** ⇒ 官方 mark 表放在返回值里，另记调用前的选择计数（让「选不上」与「选了没用」可分辨）",
+    "★★★★★ 本条印证了事实 237（逐字）：「不做曲面族」那条结论只覆盖了半条路 —— 官方有两条建曲面的入口，而第二条从来没试过 ⇒ ★★ 本批试了第二条路，通了 ✓",
+    "★★★ 必须与「路 A」分开：路 A = CreateDefinition(swFmSweepSurface) + CreateFeature ⇒ 已按事实 392 试死（静默回 None）；★ 本能力只走路 B ⇒ 路 A 的结论不适用于本条 ✓",
+    "★★ 前置是硬性的（官方 ## Remarks 逐字）：★ 调之前必须用 SelectByID2 按 mark 选 —— 1 = Profile · 2 = Guide（有才给）· 4 = Sweep path；★ 实测：没选时静默回 None（不抛、特征树不变）⇒ 调用方若拿到 None，先查 mark ✓",
+    "★★ 轮廓与路径不能共面（扫描的几何前提）：实测用的是前视面（轮廓）与上视面（路径）✓",
+    "★ SelectByID2 的 Callout 必须传 VARIANT(VT_DISPATCH, None)（事实 33）；本能力复用 sw_part._select_by_id，它内部已有 _empty_callout() ✓",
+    "★ 本包装是薄包装：不替调用方做选择 ⇒ 官方 mark 表放在返回值里，另记调用前的选择计数（让「选不上」与「选了没用」可分辨）",
     "★ 会新建曲面体（非只读）⇒ 返回值带 side_effects 声明",
-    "⚠ 本次只试了**一条**几何（圆轮廓 + 直线路径、单一路径、无引导线）⇒ ★ **不许推广成「扫描曲面全形态都成」**（★ 事实 53 的精神）：未试的还有：★ 带引导线（mark 2）· ★ 闭合路径 · ★ TwistCtrlOption 各档 · ★ PathAlign 各档 ✓"
+    "★★★ 已试形态的边界（★ 逐条带读数，★ 不许推广）：★ 可做 —— 直线路径（无引导线）✓ · 带引导线（mark 2）✓；★★ 试死 —— 闭合路径（圆作路径，前置已完全对上仍静默回 None）✗",
+    "★★ 仍未试的（★ 想接着做就从这里挑）：TwistCtrlOption 各档 · PathAlign 各档（0/2/3）· 多引导线 · 开放轮廓（官方 Remarks 逐字说 surface 的 sections 可以是 open）· Propagate 档"
    ],
    "backends": [
     "pywin32"
