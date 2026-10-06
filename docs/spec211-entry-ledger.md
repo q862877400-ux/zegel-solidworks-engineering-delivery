@@ -8,7 +8,7 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项（★ **人工终判**）：★ **可做 14** · **不做 5** · **已覆盖 1** · **待实测 1**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 13** · **不做 6** · **已覆盖 1** · **待实测 1**
 
 ## 特征 · 边界凸台 ⇒ **不做**
 
@@ -22,9 +22,9 @@
   · `[chm-api] (CHM)::SolidWorks.Interop.swconst~SolidWorks.Interop.swconst.swBoundaryBossCurveInfluenceType_e.html`  
   · …（共 8 个候选）
 
-## 特征 · 曲线驱动阵列 ⇒ **可做**
+## 特征 · 曲线驱动阵列 ⇒ **不做**
 
-· 初判：★★ **人工终判**：★ `IFeatureManager::FeatureCurvePattern(int Num1, …)`（**参数式、无 ACL**）· 另有 `FeatureLocalCurveDrivenPattern`　（★ 自动台账原判：待核实）
+· 初判：★★ **人工终判**：★★ **后端受限** —— ★ 链条：① 老的参数式入口 `IModelDoc2::FeatureCurvePattern` **已标 `Obsolete`** ✗；② 现代唯一入口 `IFeatureManager::CreateFeature` + `ICurveDrivenPatternFeatureData`（★ **属性式**）✗；③ 该 Data 带 **`AccessSelections`**；④ **事实 47**：该族在 pywin32 后端**不可调用** ⇒ ★ **不做** ✓ ★（★ 仓里既有实现走的正是那条属性式路 ⇒ **到不了建成** ✓）　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::FeatureLocalCurveDrivenPattern` `Feature FeatureLocalCurveDrivenPattern( System.bool FlipDir1, System.int Num1, System.bool EqualSpacing1, Sys 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.ICurveDrivenPatternFeatureData.html`  

@@ -21,8 +21,27 @@ from __future__ import annotations
 VERDICTS = {
     "边界凸台": ("特征", "不做", "★ 入口 = `IBoundaryBossFeatureData`（CHM 有 `~AccessSelections`）⇒ "
                             "属性式**要 ACL** ⇒ **事实 47**（后端限制）· ★ `AutoSelect` 或可绕开但**不试**"),
-    "曲线驱动阵列": ("特征", "可做", "★ `IFeatureManager::FeatureCurvePattern(int Num1, …)`（**参数式、无 ACL**）· "
-                             "另有 `FeatureLocalCurveDrivenPattern`"),
+    #: ★★★★ 2026-10-07（B5 **实测纠正**）：★ 这条**原判「可做」是错的** ✗ —— ★ 链条四步：
+    #:   ① ★ 老的参数式入口 **`IModelDoc2::FeatureCurvePattern` 已标 `Obsolete`** ✗
+    #:      （★ 官方逐字：See `IFeatureManager::CreateFeature` and the Remarks of
+    #:       `ICurveDrivenPatternFeatureData`）★ —— ★★ **宿主是 `IModelDoc2`、不是
+    #:       `IFeatureManager`** ⇒ ★ **我台账原先就写错了宿主** ✗
+    #:       ★（★ 事实 36 明写：★ 同名接口分属不同族、**用错接口就没反应** ✓）
+    #:   ② ★ 现代唯一入口 = `IFeatureManager::CreateFeature` + **`ICurveDrivenPatternFeatureData`**
+    #:      ⇒ ★ 那是**属性式** ✗
+    #:   ③ ★★ 而那个 Data 接口**带 `AccessSelections`** ✓（★ 逐文件核过：`AccessSelections.md`
+    #:      与 `IAccessSelections.md` 都在 ✓）
+    #:   ④ ★★ 而 `AccessSelections` 族在 pywin32 后端**不可调用**（**事实 47**，20+ 形态穷尽）✗
+    #:   ⇒ ★★★ **所以「曲线驱动阵列」= 不做（后端限制）** ✓
+    #:     ★★ 且仓里已有的 `sw_pattern.configure_curve_driven_pattern` **走的正是**那条属性式路
+    #:     （★ `with edit_selection(data, model, "ICurveDrivenPatternFeatureData")` ✓）⇒
+    #:     ★ **它到不了建成** —— ★ 与**事实 47** 记的 `create_one_bend`/`create_edge_flange`/
+    #:     `create_gusset` 三条**同型** ✓
+    "曲线驱动阵列": ("特征", "不做", "★★ **后端受限** —— ★ 链条：① 老的参数式入口 "
+                             "`IModelDoc2::FeatureCurvePattern` **已标 `Obsolete`** ✗；② 现代唯一入口 "
+                             "`IFeatureManager::CreateFeature` + `ICurveDrivenPatternFeatureData`（★ **属性式**）✗；"
+                             "③ 该 Data 带 **`AccessSelections`**；④ **事实 47**：该族在 pywin32 后端**不可调用** "
+                             "⇒ ★ **不做** ✓ ★（★ 仓里既有实现走的正是那条属性式路 ⇒ **到不了建成** ✓）"),
     "缩放/变形": ("特征", "可做", "★ `IFeatureManager::InsertScale(short Type, …)`（**参数式、无 ACL**）"),
     "特征识别/Instant3D": ("特征", "不做", "★ **四处零命中** ⇒ 官方无 API 入口（铁律 5）· "
                                    "★ CHM 的 9 个 `Instant3D` 页是**用户手册**、★ 不在 API 命名空间"),
