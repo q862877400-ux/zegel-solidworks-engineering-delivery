@@ -8,11 +8,11 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项：★ **可做初判 12** · **待核实 6** · **疑无入口 3**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 15** · **不做 4** · **已覆盖 1** · **待实测 1**
 
-## 特征 · 边界凸台 ⇒ **待核实**
+## 特征 · 边界凸台 ⇒ **不做**
 
-· 初判：★ 候选里**出现 `AccessSelections`**（★ 关键词共现，**不是定论**）⇒ 需读那一页确认
+· 初判：★★ **人工终判**：★ 入口 = `IBoundaryBossFeatureData`（CHM 有 `~AccessSelections`）⇒ 属性式**要 ACL** ⇒ **事实 47**（后端限制）· ★ `AutoSelect` 或可绕开但**不试**　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IBoundaryBossFeatureData.html`  
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IBoundaryBossFeatureData_members.html`  ★ 要 AccessSelections
@@ -22,9 +22,9 @@
   · `[chm-api] (CHM)::SolidWorks.Interop.swconst~SolidWorks.Interop.swconst.swBoundaryBossCurveInfluenceType_e.html`  
   · …（共 8 个候选）
 
-## 特征 · 曲线驱动阵列 ⇒ **待核实**
+## 特征 · 曲线驱动阵列 ⇒ **可做**
 
-· 初判：★ 候选里**出现 `AccessSelections`**（★ 关键词共现，**不是定论**）⇒ 需读那一页确认
+· 初判：★★ **人工终判**：★ `IFeatureManager::FeatureCurvePattern(int Num1, …)`（**参数式、无 ACL**）· 另有 `FeatureLocalCurveDrivenPattern`　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::FeatureLocalCurveDrivenPattern` `Feature FeatureLocalCurveDrivenPattern( System.bool FlipDir1, System.int Num1, System.bool EqualSpacing1, Sys 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.ICurveDrivenPatternFeatureData.html`  
@@ -36,19 +36,19 @@
 
 ## 特征 · 缩放/变形 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `IFeatureManager::InsertScale(short Type, …)`（**参数式、无 ACL**）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::InsertScale` `Feature InsertScale( System.short Type, System.bool Uniform, System.double Xscale, System.double YScale, Syst 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeatureManager~InsertScale.html`  
 
-## 特征 · 特征识别/Instant3D ⇒ **疑无入口**
+## 特征 · 特征识别/Instant3D ⇒ **不做**
 
-· 初判：★ **四处都查不到**该入口（★ 关键词是拟的，★ 可能是我命名猜错）⇒ 需人工确认（铁律 5）
+· 初判：★★ **人工终判**：★ **四处零命中** ⇒ 官方无 API 入口（铁律 5）· ★ CHM 的 9 个 `Instant3D` 页是**用户手册**、★ 不在 API 命名空间　（★ 自动台账原判：疑无入口）
 · 该关键词命中的 CHM **示例页**：**9**
 
 ## 曲面 · 扫描曲面 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `InsertSweepSurface2` / `InsertSweepSurface3`（**参数式、无 ACL**）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::InsertSweepSurface` `Feature InsertSweepSurface( System.bool Propagate, System.short TwistCtrlOption, System.bool KeepTangency, Sy 
   · `[swapi] IFeatureManager::InsertSweepSurface2` `Feature InsertSweepSurface2( System.bool Propagate, System.short TwistCtrlOption, System.bool KeepTangency, S 
@@ -59,7 +59,7 @@
 
 ## 曲面 · 边界曲面 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `CreateRuledSurface` / `InsertRuledSurfaceFromEdge2`（**参数式、无 ACL**）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IBody2::CreateRuledSurface` `System.object CreateRuledSurface( System.object Curve1, System.object Curve2, System.object ApexPoint )` 
   · `[swapi] IBody2::ICreateRuledSurface` `Surface ICreateRuledSurface( Curve Curve1, Curve Curve2, ref System.double ApexPoint )` 
@@ -71,7 +71,7 @@
 
 ## 曲面 · 剪裁曲面 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `InsertUntrimSurface2`（★ 仓里已有该包装）· `CreatePlanarTrimSurfaceDLL` ✓
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::InsertUntrimSurface` `Feature InsertUntrimSurface( System.int FaceUntrimType, System.int EdgeUntrimType, System.double Distance, Sy 
   · `[swapi] IFeatureManager::InsertUntrimSurface2` `Feature InsertUntrimSurface2( System.int FaceUntrimType, System.int EdgeUntrimType, System.double Distance, S 
@@ -81,9 +81,9 @@
   · `[swapi] IBody2::ICreatePlanarTrimSurfaceDLL` `void ICreatePlanarTrimSurfaceDLL( System.int VertexCount, ref System.double Points, ref System.double Normal  
   · …（共 12 个候选）
 
-## 钣金 · 成形工具 ⇒ **待核实**
+## 钣金 · 成形工具 ⇒ **可做**
 
-· 初判：★ 候选里**出现 `AccessSelections`**（★ 关键词共现，**不是定论**）⇒ 需读那一页确认
+· 初判：★★ **人工终判**：★ `CreateFormTool2` / `InsertFormToolFeature` / `CreateFormTool`（**参数式、无 ACL**）　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::CreateFormTool` `Feature CreateFormTool()` 
   · `[swapi] IFeatureManager::CreateFormTool2` `Feature CreateFormTool2( System.double OriginX, System.double OriginY )` 
@@ -93,9 +93,9 @@
   · `[swapi] ILibraryFormToolFeatureData::LinkToFormTool` `System.bool LinkToFormTool {get; set;}` 
   · …（共 16 个候选）
 
-## 钣金 · 展开/折叠 ⇒ **可做**
+## 钣金 · 展开/折叠 ⇒ **已覆盖**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★★ **由 `specs/209` 收口**：B2-1 `create_unfold` 与 B4-4 `create_fold` **都已 `verified`**（真机建出 `展开1`/`折叠1`）⇒ ★ **核销，不重复建设** ✓　（★ 自动台账原判：可做）
 · 该关键词命中的 CHM **示例页**：**3**
   · `[swapi] IModelDoc2::InsertSheetMetalUnfold` `void InsertSheetMetalUnfold()` 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDoc2~InsertSheetMetalUnfold.html`  
@@ -105,9 +105,9 @@
   · `[swapi] IDrawingDoc::CreateUnfoldedViewAt2` `System.bool CreateUnfoldedViewAt2( System.double X, System.double Y, System.double Z, System.bool NotAligned  
   · …（共 10 个候选）
 
-## 钣金 · 平板型式/导出 DXF ⇒ **待核实**
+## 钣金 · 平板型式/导出 DXF ⇒ **可做**
 
-· 初判：★ 候选里**出现 `AccessSelections`**（★ 关键词共现，**不是定论**）⇒ 需读那一页确认
+· 初判：★★ **人工终判**：★ `GetFlatPatternCount` / `GetFlatPatterns` / `CreateFlatPatternViewFromModelView3`（**无 ACL**）· ★ 与本仓既有 DXF 导出路径合流　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IAnnotationView::FlatPatternView` `System.bool FlatPatternView {get;}` 
   · `[swapi] IDrawingDoc::ChangeRefConfigurationOfFlatPatternView` `System.bool ChangeRefConfigurationOfFlatPatternView( System.string ModelName, System.string ConfigName )` 
@@ -119,7 +119,7 @@
 
 ## 焊件 · 裁剪/延伸焊件 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `InsertWeldmentTrimFeature2`（**参数式、无 ACL**）· 另 `InsertEndCapFeature` ✓
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::InsertWeldmentTrimFeature` `Feature InsertWeldmentTrimFeature( System.int EndCond )` 
   · `[swapi] IFeatureManager::InsertWeldmentTrimFeature2` `Feature InsertWeldmentTrimFeature2( System.int EndCond, System.int Options, System.double GapValue, System.ob 
@@ -129,9 +129,9 @@
   · `[swapi] IFeatureManager::InsertEndCapFeature` `Feature InsertEndCapFeature( System.double Depth, System.bool BIsGivenOffset, System.bool BIsChamfer, System. 
   · …（共 11 个候选）
 
-## 焊件 · 角撑板（焊件） ⇒ **待核实**
+## 焊件 · 角撑板（焊件） ⇒ **可做**
 
-· 初判：★ 候选里**出现 `AccessSelections`**（★ 关键词共现，**不是定论**）⇒ 需读那一页确认
+· 初判：★★ **人工终判**：★ `InsertGussetFeature3`（**参数式、无 ACL**）⇒ ★ **只走参数式**；★ 属性式 `IGussetFeatureData` 有 `AccessSelections` ⇒ **那条不走**（事实 47）　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**11**
   · `[swapi] IFeatureManager::InsertGussetFeature` `Feature InsertGussetFeature( System.double Depth, System.short DirType, System.short LocType, System.bool BIs 
   · `[swapi] IFeatureManager::InsertGussetFeature2` `Feature InsertGussetFeature2( System.double Depth, System.short DirType, System.short LocType, System.bool BI 
@@ -141,9 +141,9 @@
   · `[swapi] IFeatureManager::InsertSheetMetalGussetFeature3` `Feature InsertSheetMetalGussetFeature3( System.bool BOffset, System.double DOffset, System.bool BFlipOffsetSi 
   · …（共 25 个候选）
 
-## 焊件 · 圆角焊缝 ⇒ **待核实**
+## 焊件 · 圆角焊缝 ⇒ **可做**
 
-· 初判：★ 候选里**出现 `AccessSelections`**（★ 关键词共现，**不是定论**）⇒ 需读那一页确认
+· 初判：★★ **人工终判**：★ `InsertFilletBeadFeature3` / `InsertCosmeticWeldBead`（**参数式、无 ACL**）　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::InsertFilletBeadFeature` `Feature InsertFilletBeadFeature( System.short Type1, System.double Size1, System.double Length1, System.doubl 
   · `[swapi] IFeatureManager::InsertFilletBeadFeature2` `Feature InsertFilletBeadFeature2( System.short Type1, System.double Size1, System.double Length1, System.shor 
@@ -155,7 +155,7 @@
 
 ## 焊件 · 焊接符号 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `InsertWeldSymbol3` / `InsertWeldSymbol2`（★ 无 ACL）· 读回用 `GetFirstWeldSymbol` ✓
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] ICosmeticWeldBeadFeatureData::WeldSymbol` `System.object WeldSymbol {get; set;}` 
   · `[swapi] IDrawingDoc::InsertWeldSymbol` `void InsertWeldSymbol( System.string Dim1, System.string Symbol, System.string Dim2, System.bool Symmetric, S 
@@ -167,7 +167,7 @@
 
 ## 装配 · 爆炸直线 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `IAssemblyDoc::InsertExplodeLineSketch()`（**零参数、无 ACL**）· 配套 `AddExplodeStep2` 族 ✓
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] ISketchManager::InsertExplodeLineSketch` `System.bool InsertExplodeLineSketch()` 
   · `[swapi] IConfiguration::AddExplodeStep` `System.object AddExplodeStep( System.double ExplDist, System.bool ReverseDir, System.bool RigidSubassembly, S 
@@ -179,14 +179,14 @@
 
 ## 装配 · 零部件阵列 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★★ **注意**：`swapi` 侧**只有 `DissolveComponentPattern`（解散）**、**没有「创建」** ⇒ ★ 创建要走 `CreateDefinition` 类的 **5 个 `swFmLocal*Pattern` 常量** ✓
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IAssemblyDoc::DissolveComponentPattern` `System.bool DissolveComponentPattern()` 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IAssemblyDoc~DissolveComponentPattern.html`  
 
 ## 装配 · SpeedPak ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `IAssemblyDoc::CreateSpeedPak(int, …)` · `SetSpeedPakConfigurations` · `UpdateSpeedPak`（**参数式、无 ACL**）· 读回 `IsSpeedPak` ✓
 · 该关键词命中的 CHM **示例页**：**12**
   · `[swapi] IAssemblyDoc::CreateSpeedPak` `System.bool CreateSpeedPak( System.int SpeedPakType )` 
   · `[swapi] IAssemblyDoc::SetSpeedPakConfigurations` `System.bool SetSpeedPakConfigurations( System.int Config_opt, System.object Config_names )` 
@@ -196,19 +196,19 @@
   · `[swapi] IComponent2::IsSpeedPak` `System.bool IsSpeedPak {get;}` 
   · …（共 21 个候选）
 
-## 装配 · 序列 / 说明书（Assembly Visualization） ⇒ **疑无入口**
+## 装配 · 序列 / 说明书（Assembly Visualization） ⇒ **不做**
 
-· 初判：★ **四处都查不到**该入口（★ 关键词是拟的，★ 可能是我命名猜错）⇒ 需人工确认（铁律 5）
+· 初判：★★ **人工终判**：★ **四处零命中** ⇒ 官方无 API 入口（铁律 5）· ★ CHM 的 `Sequence` 只命中 **BOM 序号**与**族表序号**（与装配序列无关）　（★ 自动台账原判：疑无入口）
 · 该关键词命中的 CHM **示例页**：**0**
 
-## 装配 · 装配体性能分析 ⇒ **疑无入口**
+## 装配 · 装配体性能分析 ⇒ **不做**
 
-· 初判：★ **四处都查不到**该入口（★ 关键词是拟的，★ 可能是我命名猜错）⇒ 需人工确认（铁律 5）
+· 初判：★★ **人工终判**：★ **四处零命中** ⇒ 官方无 API 入口（铁律 5）· ★ CHM 的 `Performance` 只命中枚举 `swPerformanceFeedback_e` / `swSearchIndexingPerformance_e`（**不是分析功能**）　（★ 自动台账原判：疑无入口）
 · 该关键词命中的 CHM **示例页**：**0**
 
 ## 评估 · 截面属性 ⇒ **可做**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ `IModelDocExtension::GetSectionProperties2`（System.object 返回、**无 ACL**）✓
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IModelDocExtension::GetSectionProperties` `System.object GetSectionProperties( System.object Sections )` 
   · `[swapi] IModelDocExtension::GetSectionProperties2` `System.object GetSectionProperties2( System.object Sections )` 
@@ -218,9 +218,9 @@
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDocExtension~GetSectionProperties2.html`  
   · …（共 8 个候选）
 
-## 其他 · PDM ⇒ **可做**
+## 其他 · PDM ⇒ **待实测**
 
-· 初判：★ 官方有入口
+· 初判：★★ **人工终判**：★ 自动台账只有 1 个候选 ⇒ ★ **需真机确认本机有没有装 PDM**（★ 不装不改系统层）✓　（★ 自动台账原判：可做）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IApplication::PDMDocManager` `PDMDocManager PDMDocManager {get;}` 
 

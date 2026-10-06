@@ -24,6 +24,9 @@ import os
 import re
 from pathlib import Path
 
+#: ★★ 人工终判表（★ 只补空、不覆盖自动结果；★ 事实 53：启发式改了 3 次就停手）✓
+import spec211_manual_verdicts as MV
+
 SWAPI = Path(r"C:\swapi")
 TYPES = SWAPI / "types"
 ENUMS = SWAPI / "enums"
@@ -173,12 +176,22 @@ def main() -> int:
         raw.append({"domain": domain, "item": name, "keys": list(keys),
                     "examples_matched": ex_n, "hits": uniq, "verdict": verdict,
                     "why": why})
+        #: ★★ **人工终判优先**（★ 只补空 + 不一致要留痕）✓
+        mv = MV.verdict_of(name)
+        auto_verdict = verdict
+        if mv:
+            m_domain, m_verdict, m_why = mv
+            why = "★★ **人工终判**：%s" % m_why
+            verdict = m_verdict
+            if m_verdict != auto_verdict:
+                why += "　（★ 自动台账原判：%s）" % auto_verdict
         rows.append((domain, name, uniq, verdict, why, ex_n))
 
     OUT_JSON.write_text(json.dumps(raw, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     n_do = sum(1 for r in rows if r[3] == "可做")
-    n_wait = sum(1 for r in rows if r[3] == "待核实")
-    n_none = sum(1 for r in rows if r[3] == "疑无入口")
+    n_no = sum(1 for r in rows if r[3] == "不做")
+    n_done = sum(1 for r in rows if r[3] == "已覆盖")
+    n_todo = sum(1 for r in rows if r[3] == "待实测")
     lines = ["# 规格 211 · B0 官方入口台账（21 项）", "",
              "> ★ 由 `tools/gen_spec211_ledger.py` 生成 —— ★ **不要手改**。",
              "> ★★ 查**四处**：`C:\\swapi\\types` · `C:\\swapi\\enums` · **CHM 的 API 命名空间** · CHM 示例页。",
@@ -187,7 +200,7 @@ def main() -> int:
              "> ⚠ ★★ **这不是终判** —— ★ `AccessSelections` 信号是**关键词共现**、★ 太粗（★ 实录：「曲线驱动阵列」17 个候选，★ 只要**一个**提到就触发）；★ 「疑无入口」也可能是我**命名猜错**。",
              "> ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。",
              "> ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓", "",
-             "★★ 合计 **21** 项：★ **可做初判 %d** · **待核实 %d** · **疑无入口 %d**" % (n_do, n_wait, n_none), ""]
+             "★★ 合计 **21** 项（★ **人工终判**）：★ **可做 %d** · **不做 %d** · **已覆盖 %d** · **待实测 %d**" % (n_do, n_no, n_done, n_todo), ""]
     for domain, name, uniq, verdict, why, ex_n in rows:
         lines.append("## %s · %s ⇒ **%s**" % (domain, name, verdict))
         lines.append("")
@@ -202,7 +215,8 @@ def main() -> int:
         lines.append("")
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("★ 台账：%s" % OUT)
-    print("★★ 初判：可做 **%d** · 待核实 **%d** · 疑无入口 **%d**" % (n_do, n_wait, n_none))
+    print("★★ 终判：可做 **%d** · 不做 **%d** · 已覆盖 **%d** · 待实测 **%d**"
+          % (n_do, n_no, n_done, n_todo))
     for domain, name, uniq, verdict, why, ex_n in rows:
         print("   %-5s %-26s %-5s 候选%3d 示例%3d  %s"
               % (domain, name, verdict, len(uniq), ex_n, why[:40]))
