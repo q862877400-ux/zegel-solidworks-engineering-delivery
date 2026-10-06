@@ -195,6 +195,42 @@ def build_host(sw, inject_name: str, doc_type=None):
                 "（★ 要加载对应插件）" % name)
 
 
+def apply_needs(sw, model, needs) -> str:
+    """★★ 按 `needs` 把宿主**推进那个状态** —— ★ 这是"第三次拆解"的落点 ✓
+
+    ★★★ 2026-10-06 真机：★ 那几条 `sketch_*` 报 `没有活动草图` / `不在草图编辑态`，
+      ★ `part_bounding_box` 报 `零件里可能没有实体` ⇒
+      ★★ 它们要的**不是"宿主对象"**，★ 而是**宿主处于某种状态** ✗
+    ★ 判据：★ 用**本仓既有的能力**把状态建出来（★ 都是**建状态**那一类，
+      ★ 不是被测的写操作）✓
+    ★ `needs` 是**机械初推**的（★ 从工具源码里的报错话与成员名反推，★ 见 `effect_rules`）✓
+    :returns: 空串表示成功；★ 否则是**原因**（★ 如实记，不当成通过）✓
+    """
+    import tool_caller
+    inj = {"model": model, "sw": sw}
+    rect = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 40.0, "y2_mm": 30.0}
+    body_steps = [("solidworks_sketch_start", {}),
+                  ("solidworks_sketch_add_rectangle", rect),
+                  ("solidworks_extrude_boss",
+                   {"sketch_name": "Sketch1", "depth_mm": 10.0})]
+    plan = {
+        "body": body_steps,
+        #: ★ `selection` ⇒ 先有个体、★ 再选一个实体 ✓
+        "selection": body_steps + [("solidworks_select_by_selector",
+                                    {"selector": "index:0", "kind": "EDGE",
+                                     "body_index": 0})],
+        "edit:sketch": [("solidworks_sketch_start", {})],
+    }
+    for n in ("body", "selection", "edit:sketch"):
+        if n not in set(needs or ()):
+            continue
+        for name, params in plan[n]:
+            ok, note = tool_caller.call(name, inject_objects=inj, **params)
+            if not ok:
+                return "★ 建状态 `%s` 时 `%s` 没成：%s" % (n, name, str(note)[:70])
+    return ""
+
+
 def classify(declared_writes, diff, usable, *, call_ok: bool) -> str:
     """★★ 四类判定（★ 严格照 spec：`missed` 与 `undecided` **不许混**）✓
 
@@ -278,6 +314,16 @@ def main() -> int:
         _req_inj, _, _req_dt = req.partition("|")
         _dt = _req_dt or (table.get(group[0]) or {}).get("doc_type")
         injects, why_state = build_host(sw, _req_inj, _dt)
+        if not why_state:
+            #: ★★ 按**整组的 `needs` 并集**把状态推到位（★ 机械初推的，见 `apply_needs`）✓
+            _needs = sorted({n for t in group for n in (table.get(t) or {}).get("needs") or []})
+            _why_needs = apply_needs(sw, injects.get("_doc"), _needs)
+            if _why_needs:
+                for _n in group:
+                    rows.append({"tool": _n, "verdict": "undecided", "requires": req,
+                                 "writer_ok": True, "why": _why_needs})
+                print("   ★ 整组跳过（建状态没成）：%s" % _why_needs[:90])
+                continue
         if why_state:
             #: ★ 建不出宿主 ⇒ 整组**如实记未判定**（★ 不许当成通过）✓
             for _n in group:
@@ -293,6 +339,10 @@ def main() -> int:
             if decl.get("writes"):
                 #: ★★ 写工具之后**重建**（★ 那是"副本重载"）；★ 有 `doc_type` 就按它建 ✓
                 injects, why_state = build_host(sw, _req_inj, decl.get("doc_type") or _req_dt)
+                if not why_state:
+                    #: ★★ 重建之后**状态要重推**（★ 重建把状态清掉了）✓
+                    _why_needs = apply_needs(sw, injects.get("_doc"),
+                                             (decl.get("needs") or []))
                 if why_state:
                     rows.append({"tool": name, "verdict": "undecided", "requires": req,
                                  "writer_ok": True, "why": "★ 重建状态失败：%s" % why_state})

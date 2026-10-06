@@ -11,13 +11,13 @@
 
 ## 四类统计
 
-agree **31**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **14**
+agree **35**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **10**
 
 ★★ **语义说明**（★ 四类不许混）：
 
-· `agree`（31）：★ **一致**（声明「无写」，观察也确实**没变**）
+· `agree`（35）：★ **一致**（声明「无写」，观察也确实**没变**）
 · `missed`（2）：★★★ **漏报**（声明「无写」而观察**变了**）—— ★ **硬红门禁**这一条 ✗
-· `undecided`（14）：★ **未判定**（有一侧读不到）—— ★ **不算通过也不算失败**
+· `undecided`（10）：★ **未判定**（有一侧读不到）—— ★ **不算通过也不算失败**
 
 ## 按 `inject` 组的判定分布
 
@@ -27,13 +27,13 @@ agree **31**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **14**
 · `component|`：agree **1**
 · `cost_manager|`：undecided **2**
 · `manager|`：agree **1** · undecided **1**
-· `model|`：agree **13** · undecided **5**
+· `model|`：agree **16** · undecided **2**
 · `model|assembly`：agree **1**
 · `model|drawing`：agree **7**
 · `none|`：undecided **1**
 · `sldworks|`：undecided **1**
 · `study|`：undecided **1**
-· `sw_app|`：agree **2** · undecided **1**
+· `sw_app|`：agree **3**
 · `sw|`：agree **1** · undecided **2**
 · `view|`：agree **3**
 
@@ -59,7 +59,7 @@ agree **31**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **14**
 **`solidworks_motion_create_study`** ⇒ `missed`
 
 · 声明 `writes`：`[]`
-· 观察**变了**的类：`['selection', 'dirty', 'features']`
+· 观察**变了**的类：`['dirty', 'features']`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`<COMObject <unknown>>`
 
@@ -164,7 +164,7 @@ agree **31**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **14**
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`Configuration Table`
+· 调用返回：`草图3`
 
 **`solidworks_list_render_materials`** ⇒ `agree`
 
@@ -180,12 +180,12 @@ agree **31**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **14**
 · 观察**未判定**的类：`（无）`
 · 调用返回：`{'counts': {'parting_lines': None, 'parting_surfaces': None, 'cavity_surfaces': None, 'core_surfaces': None}, 'parting_t`
 
-**`solidworks_part_bounding_box`** ⇒ `undecided`
+**`solidworks_part_bounding_box`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 调用抛 RuntimeError: IPartDoc.GetBodies2(0, False) 没拿到实体 ⇒ 零件里可能没有实体（先建一个特征，或把 body_index 调小）`
+· 调用返回：`{'min': [0.0, 0.0, -0.01], 'max': [40.0, 30.0, 0.0], 'size': [40.0, 30.0, 0.01]}`
 
 **`solidworks_part_mass_properties`** ⇒ `agree`
 
@@ -201,26 +201,26 @@ agree **31**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **14**
 · 观察**未判定**的类：`（无）`
 · 调用返回：`{'ok': True, 'raw': '(0, 1, 8, 2, 0)', 'tuple': [0, 1, 8, 2, 0], 'tuple_named': {'LengthUnit': 0, 'FractionBase': 1, 'Fr`
 
-**`solidworks_sketch_fully_defined_status`** ⇒ `undecided`
+**`solidworks_sketch_fully_defined_status`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 调用抛 RuntimeError: 没有活动草图 ⇒ 取不到 ISketch（`GetActiveSketch2` 与 `SketchManager.ActiveSketch` 都回 None）。★ 完全定义状态只能问**正在编辑**的`
+· 调用返回：`{'ok': True, 'op': 'constrained_status', 'status': 2, 'raw': 2, 'meaning': '查不到官方取值表（GetConstrainedStatus.md 无 ## Remark`
 
-**`solidworks_sketch_mirror`** ⇒ `undecided`
+**`solidworks_sketch_mirror`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 调用抛 RuntimeError: ISketchManager.ActiveSketch 为 None ⇒ 当前不在草图编辑态。官方 SketchMirror 需要先进入草图并选中要镜像的实体（线段 mark=1 / 中心线 mark`
+· 调用返回：`{'ok': False, 'op': 'sketch_mirror', 'segments_before': 0, 'segments_after': 0, 'new_segments': 0, 'verified_by': '★ 草图实`
 
 **`solidworks_sketch_spline`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 调用抛 RuntimeError: sketch_spline() 被调用时**没有活动草图** ⇒ 画几何会**静默无效**（几何画到不存在的地方）。★ 先调 `sketch_start(model, plane_name=...)``
+· 调用返回：`★ 调用抛 ValueError: could not convert string to float: 'M'`
 
 **`solidworks_weldment_create_weldment_profile`** ⇒ `undecided`
 
@@ -312,12 +312,12 @@ agree **31**★ 「 + 」 · missed **2**★ 「 + 」 · undecided **14**
 · 观察**未判定**的类：`（无）`
 · 调用返回：`{'ok': True, 'document': 'MCP_CALIB', 'traverse': True, 'search': False, 'add_read_only_info': False, 'count': 0, 'entri`
 
-**`solidworks_simulation_find_study`** ⇒ `undecided`
+**`solidworks_simulation_find_study`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 调用抛 com_error: (-2147417851, '服务器出现意外情况。', None, None)`
+· 调用返回：`{'found': False, 'requested_name': 'MCP_CALIB', 'study_name': ''}`
 
 **`solidworks_surface_evidence`** ⇒ `agree`
 

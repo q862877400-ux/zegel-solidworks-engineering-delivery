@@ -28,6 +28,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -37,6 +38,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -48,6 +52,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -57,6 +62,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -66,6 +72,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -77,6 +84,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 0,
+   "needs": [],
    "requires": "assembly",
    "source": "unknown",
    "writes": null
@@ -86,6 +94,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 0,
+   "needs": [],
    "requires": "assembly",
    "source": "unknown",
    "writes": null
@@ -95,6 +104,7 @@
    "doc_type": null,
    "inject": "component",
    "members": 0,
+   "needs": [],
    "requires": "assembly",
    "source": "unknown",
    "writes": null
@@ -104,6 +114,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -113,6 +124,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 4,
+   "needs": [],
    "requires": "assembly",
    "source": "static",
    "writes": []
@@ -122,6 +134,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -131,6 +144,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -140,6 +154,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -149,6 +164,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 1,
+   "needs": [],
    "requires": "assembly",
    "source": "static",
    "writes": [
@@ -160,6 +176,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -169,6 +186,7 @@
    "doc_type": null,
    "inject": "component",
    "members": 2,
+   "needs": [],
    "requires": "assembly",
    "source": "static",
    "writes": []
@@ -178,6 +196,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -187,6 +206,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -196,6 +216,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 5,
+   "needs": [],
    "requires": "assembly",
    "source": "static",
    "writes": [
@@ -207,6 +228,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -216,6 +238,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 0,
+   "needs": [],
    "requires": "assembly",
    "source": "unknown",
    "writes": null
@@ -225,6 +248,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -234,6 +258,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 0,
+   "needs": [],
    "requires": "assembly",
    "source": "unknown",
    "writes": null
@@ -243,6 +268,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 0,
+   "needs": [],
    "requires": "assembly",
    "source": "unknown",
    "writes": null
@@ -252,6 +278,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -261,6 +288,7 @@
    "doc_type": null,
    "inject": "doc",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -270,6 +298,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 9,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -279,6 +310,7 @@
    "doc_type": null,
    "inject": "sldworks",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -288,6 +320,7 @@
    "doc_type": null,
    "inject": "sldworks",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -297,6 +330,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -306,6 +340,7 @@
    "doc_type": null,
    "inject": "sldworks",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -315,6 +350,7 @@
    "doc_type": null,
    "inject": "sldworks",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -326,6 +362,7 @@
    "doc_type": null,
    "inject": "sldworks",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -337,6 +374,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -346,6 +384,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -355,6 +394,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -364,6 +404,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 19,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -373,6 +414,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -382,6 +424,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -391,6 +434,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -400,6 +444,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -409,6 +454,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -418,6 +464,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -429,6 +476,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -438,6 +486,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 8,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -449,6 +498,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -460,6 +510,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -469,6 +520,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 14,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -480,6 +532,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -491,6 +544,7 @@
    "doc_type": "assembly",
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -502,6 +556,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -514,6 +569,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -523,6 +579,7 @@
    "doc_type": "assembly",
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -532,6 +589,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -541,6 +599,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -550,6 +609,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -561,6 +621,7 @@
    "doc_type": null,
    "inject": "cost_body",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -570,6 +631,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -579,6 +641,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -588,6 +651,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 1,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -597,6 +661,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -606,6 +671,7 @@
    "doc_type": null,
    "inject": "cost_part",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -615,6 +681,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 1,
+   "needs": [],
    "requires": "costing",
    "source": "static",
    "writes": []
@@ -624,6 +691,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -633,6 +701,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -642,6 +711,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 4,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -651,6 +721,7 @@
    "doc_type": null,
    "inject": "cost_manager",
    "members": 5,
+   "needs": [],
    "requires": "costing",
    "source": "static",
    "writes": []
@@ -660,6 +731,7 @@
    "doc_type": null,
    "inject": "defaults",
    "members": 2,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -669,6 +741,7 @@
    "doc_type": null,
    "inject": "defaults",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -678,6 +751,7 @@
    "doc_type": null,
    "inject": "defaults",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -687,6 +761,7 @@
    "doc_type": null,
    "inject": "defaults",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -696,6 +771,7 @@
    "doc_type": null,
    "inject": "cost_analysis",
    "members": 1,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -705,6 +781,7 @@
    "doc_type": null,
    "inject": "cost_analysis",
    "members": 2,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -714,6 +791,7 @@
    "doc_type": null,
    "inject": "cost_part",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -723,6 +801,7 @@
    "doc_type": null,
    "inject": "cost_part",
    "members": 0,
+   "needs": [],
    "requires": "costing",
    "source": "unknown",
    "writes": null
@@ -732,6 +811,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -743,6 +823,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 8,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -752,6 +833,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -763,6 +845,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -772,6 +857,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -781,6 +867,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -790,6 +877,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -799,6 +887,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -808,6 +897,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -817,6 +907,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -828,6 +919,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -837,6 +929,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -846,6 +939,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -855,6 +949,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 0,
+   "needs": [],
    "requires": "drawing",
    "source": "unknown",
    "writes": null
@@ -864,6 +959,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -873,6 +969,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -884,6 +981,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -895,6 +993,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 0,
+   "needs": [],
    "requires": "drawing",
    "source": "unknown",
    "writes": null
@@ -904,6 +1003,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 9,
+   "needs": [],
    "requires": "drawing",
    "source": "static",
    "writes": [
@@ -915,6 +1015,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 0,
+   "needs": [],
    "requires": "drawing",
    "source": "unknown",
    "writes": null
@@ -924,6 +1025,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 2,
+   "needs": [],
    "requires": "drawing",
    "source": "static",
    "writes": [
@@ -935,6 +1037,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 2,
+   "needs": [],
    "requires": "drawing",
    "source": "static",
    "writes": [
@@ -946,6 +1049,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 0,
+   "needs": [],
    "requires": "drawing",
    "source": "unknown",
    "writes": null
@@ -955,6 +1059,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -964,6 +1069,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -973,6 +1079,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -982,6 +1089,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -991,6 +1099,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1000,6 +1109,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 0,
+   "needs": [],
    "requires": "drawing",
    "source": "unknown",
    "writes": null
@@ -1009,6 +1119,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1020,6 +1131,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1033,6 +1145,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1044,6 +1157,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1053,6 +1167,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1064,6 +1179,7 @@
    "doc_type": null,
    "inject": "drawing_model",
    "members": 4,
+   "needs": [],
    "requires": "drawing",
    "source": "unknown",
    "writes": null
@@ -1073,6 +1189,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1082,6 +1199,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1091,6 +1209,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1100,6 +1219,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1109,6 +1229,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1118,6 +1239,7 @@
    "doc_type": "drawing",
    "inject": "model",
    "members": 12,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1129,6 +1251,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1140,6 +1263,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1151,6 +1275,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1160,6 +1287,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1169,6 +1297,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1180,6 +1309,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1189,6 +1319,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1200,6 +1331,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1211,6 +1343,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1220,6 +1353,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1229,6 +1363,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1240,6 +1375,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1249,6 +1385,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1258,6 +1395,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1267,6 +1405,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1276,6 +1417,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1285,6 +1429,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 8,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1294,6 +1439,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1303,6 +1451,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1312,6 +1461,7 @@
    "doc_type": null,
    "inject": "sw",
    "members": 3,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -1321,6 +1471,7 @@
    "doc_type": null,
    "inject": "sw",
    "members": 3,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -1330,6 +1481,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 8,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1342,6 +1494,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1355,6 +1508,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1364,6 +1518,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1373,6 +1528,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1382,6 +1538,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1395,6 +1552,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1408,6 +1566,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1417,6 +1576,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1426,6 +1586,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1435,6 +1596,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1447,6 +1611,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1456,6 +1621,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1465,6 +1631,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1476,6 +1643,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1485,6 +1653,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": []
@@ -1494,6 +1663,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1505,6 +1677,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1514,6 +1687,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1523,6 +1697,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1532,6 +1707,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1541,6 +1717,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1550,6 +1727,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1559,6 +1737,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1568,6 +1747,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1577,6 +1757,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1586,6 +1767,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1595,6 +1779,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1604,6 +1791,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1613,6 +1803,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1622,6 +1815,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1631,6 +1825,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1640,6 +1835,7 @@
    "doc_type": null,
    "inject": "sw",
    "members": 3,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -1649,6 +1845,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1658,6 +1857,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1667,6 +1867,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1678,6 +1879,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1689,6 +1891,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1700,6 +1903,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1711,6 +1915,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1722,6 +1927,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1733,6 +1939,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1744,6 +1951,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1755,6 +1963,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1766,6 +1975,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1777,6 +1987,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1788,6 +1999,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1799,6 +2011,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1808,6 +2021,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1817,6 +2031,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1826,6 +2041,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1835,6 +2051,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1844,6 +2061,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1853,6 +2071,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1862,6 +2081,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 2,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -1871,6 +2091,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -1882,6 +2103,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1891,6 +2113,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1900,6 +2123,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1909,6 +2133,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1918,6 +2145,7 @@
    "doc_type": null,
    "inject": "sw",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -1927,6 +2155,7 @@
    "doc_type": null,
    "inject": "sw",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -1936,6 +2165,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1945,6 +2175,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -1954,6 +2185,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1965,6 +2197,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -1974,6 +2207,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -1983,6 +2217,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -1994,6 +2229,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2005,6 +2241,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2016,6 +2253,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2025,6 +2263,7 @@
    "doc_type": null,
    "inject": "motion_study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2034,6 +2273,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 1,
+   "needs": [],
    "requires": "assembly",
    "source": "static",
    "writes": []
@@ -2043,6 +2283,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 1,
+   "needs": [],
    "requires": "assembly",
    "source": "static",
    "writes": []
@@ -2052,6 +2293,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2061,6 +2303,7 @@
    "doc_type": null,
    "inject": "motion_study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2070,6 +2313,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 1,
+   "needs": [],
    "requires": "assembly",
    "source": "static",
    "writes": []
@@ -2079,6 +2323,7 @@
    "doc_type": null,
    "inject": "asm_model",
    "members": 0,
+   "needs": [],
    "requires": "assembly",
    "source": "unknown",
    "writes": null
@@ -2088,6 +2333,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2097,6 +2343,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2106,6 +2353,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -2115,6 +2365,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2126,6 +2377,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2137,6 +2389,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 15,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2146,6 +2401,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2155,6 +2411,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -2164,6 +2421,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2173,6 +2433,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2184,6 +2445,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2193,6 +2455,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 10,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2202,6 +2465,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 9,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2211,6 +2475,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2220,6 +2485,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2229,6 +2495,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -2238,6 +2505,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2247,6 +2515,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2256,6 +2525,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2267,6 +2537,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2276,6 +2547,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2287,6 +2561,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2298,6 +2575,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 10,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2307,6 +2585,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2316,6 +2595,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2325,6 +2605,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2334,6 +2615,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2343,6 +2625,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2352,6 +2635,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2361,6 +2645,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2370,6 +2655,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2379,6 +2665,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2388,6 +2677,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2397,6 +2689,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2406,6 +2699,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2415,6 +2711,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2424,6 +2723,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2433,6 +2733,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 1,
+   "needs": [],
    "requires": "selection",
    "source": "static",
    "writes": [
@@ -2444,6 +2745,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 2,
+   "needs": [],
    "requires": "selection",
    "source": "static",
    "writes": [
@@ -2455,6 +2757,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2466,6 +2769,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 0,
+   "needs": [],
    "requires": "selection",
    "source": "unknown",
    "writes": null
@@ -2475,6 +2779,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 0,
+   "needs": [],
    "requires": "selection",
    "source": "unknown",
    "writes": null
@@ -2484,6 +2789,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 0,
+   "needs": [],
    "requires": "selection",
    "source": "unknown",
    "writes": null
@@ -2493,6 +2799,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 0,
+   "needs": [],
    "requires": "selection",
    "source": "unknown",
    "writes": null
@@ -2502,6 +2809,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 0,
+   "needs": [],
    "requires": "selection",
    "source": "unknown",
    "writes": null
@@ -2511,6 +2819,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2522,6 +2833,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 0,
+   "needs": [],
    "requires": "selection",
    "source": "unknown",
    "writes": null
@@ -2531,6 +2843,7 @@
    "doc_type": null,
    "inject": "selection",
    "members": 0,
+   "needs": [],
    "requires": "selection",
    "source": "unknown",
    "writes": null
@@ -2540,6 +2853,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2549,6 +2863,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 5,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2560,6 +2877,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2569,6 +2887,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 9,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2578,6 +2899,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2587,6 +2909,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2596,6 +2919,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2605,6 +2929,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2614,6 +2939,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 5,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2625,6 +2951,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2636,6 +2963,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2647,6 +2975,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2658,6 +2987,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2669,6 +2999,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 8,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2680,6 +3013,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2691,6 +3025,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2702,6 +3037,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2713,6 +3049,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 12,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2722,6 +3059,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2733,6 +3071,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 8,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2744,6 +3083,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2753,6 +3093,7 @@
    "doc_type": null,
    "inject": "results",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2762,6 +3103,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2773,6 +3115,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2784,6 +3127,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2795,6 +3139,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2806,6 +3151,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 4,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2815,6 +3161,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2826,6 +3173,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2837,6 +3185,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2848,6 +3197,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2859,6 +3209,9 @@
    "doc_type": null,
    "inject": "manager",
    "members": 2,
+   "needs": [
+    "selection"
+   ],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -2868,6 +3221,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 6,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2877,6 +3231,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2888,6 +3243,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2899,6 +3255,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2910,6 +3267,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2921,6 +3279,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2932,6 +3291,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -2943,6 +3303,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -2952,6 +3313,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 19,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -2961,6 +3323,7 @@
    "doc_type": null,
    "inject": "mesh",
    "members": 16,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2970,6 +3333,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2979,6 +3343,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2988,6 +3353,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -2997,6 +3363,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 3,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3006,6 +3373,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3015,6 +3383,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 3,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3024,6 +3393,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 4,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -3035,6 +3405,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 4,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -3044,6 +3415,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 2,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3053,6 +3425,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3062,6 +3435,7 @@
    "doc_type": null,
    "inject": "results",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3071,6 +3445,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 3,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": [
@@ -3082,6 +3457,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 2,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -3091,6 +3467,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3100,6 +3477,7 @@
    "doc_type": null,
    "inject": "results",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3109,6 +3487,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -3118,6 +3497,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 1,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3127,6 +3507,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 1,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3136,6 +3517,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 2,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -3145,6 +3527,7 @@
    "doc_type": null,
    "inject": "mesh",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3154,6 +3537,7 @@
    "doc_type": null,
    "inject": "mesh",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3163,6 +3547,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3172,6 +3557,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 3,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -3181,6 +3567,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 1,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3190,6 +3577,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 2,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3199,6 +3587,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 4,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3208,6 +3597,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3219,6 +3609,7 @@
    "doc_type": null,
    "inject": "options",
    "members": 0,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -3228,6 +3619,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3237,6 +3629,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 0,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3246,6 +3639,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3255,6 +3649,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 1,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3264,6 +3659,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3273,6 +3671,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3282,6 +3683,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3291,6 +3695,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3302,6 +3707,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3313,6 +3721,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3324,6 +3733,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3335,6 +3747,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3346,6 +3761,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3357,6 +3773,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3368,6 +3787,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3379,6 +3801,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3390,6 +3815,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3399,6 +3827,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3410,6 +3839,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3421,6 +3851,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3432,6 +3863,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3443,6 +3877,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3454,6 +3891,10 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "edit:sketch",
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3463,6 +3904,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3472,6 +3914,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3481,6 +3924,7 @@
    "doc_type": null,
    "inject": "",
    "members": 1,
+   "needs": [],
    "requires": "none",
    "source": "static",
    "writes": []
@@ -3490,6 +3934,10 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [
+    "edit:sketch",
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3501,6 +3949,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3510,6 +3961,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3519,6 +3973,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3530,6 +3987,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3539,6 +3999,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -3548,6 +4011,10 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch",
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3559,6 +4026,7 @@
    "doc_type": null,
    "inject": "",
    "members": 1,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3568,6 +4036,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3579,6 +4050,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -3588,6 +4062,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3597,6 +4074,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3606,6 +4086,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3615,6 +4098,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3624,6 +4108,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3633,6 +4120,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 14,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3645,6 +4135,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 10,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3654,6 +4147,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 1,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -3663,6 +4157,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3672,6 +4167,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3681,6 +4179,10 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "edit:sketch",
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3690,6 +4192,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3699,6 +4204,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3708,6 +4214,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 9,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3717,6 +4224,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -3726,6 +4234,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3735,6 +4246,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 16,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3744,6 +4256,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 5,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3753,6 +4268,9 @@
    "doc_type": "part",
    "inject": "model",
    "members": 3,
+   "needs": [
+    "body"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3764,6 +4282,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3773,6 +4292,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3782,6 +4302,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -3793,6 +4314,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3802,6 +4324,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3811,6 +4334,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3820,6 +4344,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -3829,6 +4354,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 4,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3838,6 +4364,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 6,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3847,6 +4374,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 6,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3856,6 +4384,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 7,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3865,6 +4394,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 6,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3874,6 +4404,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 7,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3883,6 +4414,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 3,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -3892,6 +4424,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 6,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3901,6 +4434,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 9,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3910,6 +4444,7 @@
    "doc_type": null,
    "inject": "sw_app",
    "members": 6,
+   "needs": [],
    "requires": "app",
    "source": "unknown",
    "writes": null
@@ -3919,6 +4454,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 1,
+   "needs": [],
    "requires": "study",
    "source": "static",
    "writes": []
@@ -3928,6 +4464,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 2,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3937,6 +4474,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 2,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3946,6 +4484,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 7,
+   "needs": [],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -3955,6 +4494,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 8,
+   "needs": [],
    "requires": "study",
    "source": "static",
    "writes": [
@@ -3966,6 +4506,7 @@
    "doc_type": null,
    "inject": "study",
    "members": 3,
+   "needs": [],
    "requires": "study",
    "source": "static",
    "writes": [
@@ -3977,6 +4518,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -3986,6 +4528,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -3997,6 +4540,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4008,6 +4552,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4019,6 +4564,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4030,6 +4576,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 5,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4041,6 +4588,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": []
@@ -4050,6 +4598,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4061,6 +4610,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": []
@@ -4070,6 +4620,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "unknown",
    "writes": null
@@ -4079,6 +4630,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "unknown",
    "writes": null
@@ -4088,6 +4640,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4099,6 +4652,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "unknown",
    "writes": null
@@ -4108,6 +4662,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4119,6 +4674,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4130,6 +4686,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 0,
+   "needs": [],
    "requires": "view",
    "source": "unknown",
    "writes": null
@@ -4139,6 +4696,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 0,
+   "needs": [],
    "requires": "view",
    "source": "unknown",
    "writes": null
@@ -4148,6 +4706,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 0,
+   "needs": [],
    "requires": "view",
    "source": "unknown",
    "writes": null
@@ -4157,6 +4716,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4168,6 +4728,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "static",
    "writes": [
@@ -4179,6 +4740,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "unknown",
    "writes": null
@@ -4188,6 +4750,7 @@
    "doc_type": null,
    "inject": "view",
    "members": 1,
+   "needs": [],
    "requires": "view",
    "source": "unknown",
    "writes": null
@@ -4197,6 +4760,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -4206,6 +4770,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -4217,6 +4782,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -4228,6 +4794,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 13,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -4237,6 +4804,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -4248,6 +4816,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 4,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -4257,6 +4826,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 8,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -4266,6 +4836,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 27,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -4275,6 +4846,7 @@
    "doc_type": null,
    "inject": "",
    "members": 0,
+   "needs": [],
    "requires": "none",
    "source": "unknown",
    "writes": null
@@ -4284,6 +4856,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 8,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -4295,6 +4868,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 7,
+   "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -4306,6 +4880,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -4315,6 +4890,7 @@
    "doc_type": null,
    "inject": "manager",
    "members": 1,
+   "needs": [],
    "requires": "app",
    "source": "static",
    "writes": []
@@ -4324,6 +4900,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 10,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -4333,6 +4910,7 @@
    "doc_type": null,
    "inject": "model",
    "members": 9,
+   "needs": [],
    "requires": "part",
    "source": "unknown",
    "writes": null

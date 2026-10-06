@@ -223,3 +223,30 @@ def derive_doc_type(source: str) -> Optional[str]:
         if any(m in text for m in marks):
             return kind
     return None
+
+#: ★★★ **`needs` 的机械初推规则**（★ 规格 210 · B3 的第三次拆解产物）。
+#:   ★★ 起因（真机）：★ 存活普查里那几条 `sketch_*` 报
+#:     `没有活动草图` / `不在草图编辑态`，★ 而 `part_bounding_box` 报 `零件里可能没有实体` ✗
+#:   ⇒ ★★ 它们要的**不是"宿主对象"**，★ 而是**宿主处于某种状态** ——
+#:     ★ **编辑态（草图中）** 或 ★ **有实体** ✓
+#:   ★ 判据：★ 从**工具源码（含被调函数）里的报错话与成员名**反推 ——
+#:     ★ 读的是**工具自己写的检查**，★ 不是我猜的 ✓
+#:   ★★ 为什么值得推：★ 推出来之后，★ 普查就能**先把状态推到位**再调它们 ✓
+#:   ★⚠ 限度：★ 只认**文本里出现的说法**；★ 认不出 ⇒ **空元组**（★ 不许瞎猜）✓
+_NEEDS_MARKERS = (
+    ("edit:sketch", ("没有活动草图", "不在草图编辑态", "ActiveSketch", "GetActiveSketch",
+                     "ActiveSketch 为 None")),
+    ("body", ("没有实体", "零件里可能没有实体", "GetBodies2(0", "GetBodies2(-1")),
+    ("selection", ("__current_selection__", "必须已选中", "没有选中")),
+)
+
+
+def derive_needs(source: str) -> tuple:
+    """★ 从**工具源码**推它需要宿主**处于什么状态**；★ 认不出 ⇒ `()`（★ 不许瞎猜）✓"""
+    text = str(source or "")
+    out = []
+    for token, marks in _NEEDS_MARKERS:
+        if any(m in text for m in marks):
+            out.append(token)
+    return tuple(out)
+

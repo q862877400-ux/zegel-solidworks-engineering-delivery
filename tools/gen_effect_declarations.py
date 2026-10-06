@@ -116,7 +116,7 @@ def _src_of(fn) -> str:
 def build() -> dict:
     import register_capabilities as rc
     from effect_rules import (STATE_CLASSES, classify_members, derive_doc_type,
-                          derive_requires, load_kind_index)
+                          derive_needs, derive_requires, load_kind_index)
     specs = rc.all_specs()
     tools: dict = {}
     errors: list[str] = []
@@ -155,6 +155,8 @@ def build() -> dict:
             #:   ★ **一条都没中** ✗ —— ★ 因为那句「不是工程图」的检查写在**共用助手**里 ✓
             #:   ⇒ ★ 要把**被调函数（含传递）的源码一起扫**（★ `_callees` 已有）✓
             "doc_type": derive_doc_type(_src_deep(fn, mod)),
+            #: ★★ `needs` —— ★ 宿主要处于什么**状态**（★ 编辑态/实体/选区）✓
+            "needs": list(derive_needs(_src_deep(fn, mod))),
             "inject": _inj,
             "writes": verdict["writes"],            # ★ None = 未知（★ 不是「无写」）
             "destructive": verdict["destructive"],
