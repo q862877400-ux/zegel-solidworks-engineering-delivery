@@ -34,6 +34,30 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
 OURS_ROOT = (ROOT / "output")
 #: ★★ SW 默认名模式（★ "新建了没保存"的那种 ✓）
 DEFAULT_NAME = re.compile(r"^(零件|装配体|工程图|Part|Assembly|Drawing)\d*$", re.I)
+#: ★★★ 第三类（★ 2026-10-07 补，★ 并**当天加固**）：★ **无路径 + 标题形如 `<名字> - 图纸<N>`** ——
+#:   ★ 那是我方**从零件/装配新建的工程图**（★ 未保存 `GetPathName` 为空 ✓）✓
+#:   ★★ 实测来源：★ `tools/probe_spec211_weldsymbol.py` 建的工程图标题就是 `ws1 - 图纸1` ✓
+#:   ★★★ **加固（★ 必须）**：★ 自证时发现 ★ **`user - 图纸3` 也会命中** ✗ ——
+#:     ★★ 即**别人的"未保存工程图"会被误关** ✗（★ 保存过的有路径 ⇒ 不命中 ✓，
+#:        ★ 而**未保存的**就会 ✗）⇒ ★★ **所以再加一道闸：★ 标题必须含「我方前缀」** ✓
+#:     而"我方前缀"= ★ **`output/` 下现存文件的主名**（★ 例如 `ws1` / `sp1` / `sub` ✓）——
+#:     ★ **那是我方落盘留下的、可枚举的实据** ✓
+SHEET_TITLE = re.compile(r"^(.+?) - 图纸\d+$")
+
+
+def _our_stems() -> set:
+    """★ 我方前缀（★ `output/` 下现存文件的主名 —— ★ 可枚举的实据 ✓）。"""
+    try:
+        return {p.stem.lower() for p in OURS_ROOT.rglob("*") if p.is_file()}
+    except Exception:                                                   # noqa: BLE001
+        return set()
+
+
+#: ★★★ **关闭顺序**（★ 本轮修的那一处）：★ **先关"无路径的"（工程图/默认名）· 再关"有路径的"** ✓
+#:   ★ 因为：★ **工程图/装配打开了那些零件** ⇒ ★ 先关引用方，★ 被引用方才关得掉 ✓
+#:   ★★ 实测（轮 42）：★ 按 `GetDocuments` 的原顺序关 ⇒ `ws1.SLDPRT` 报"关掉"而**回读仍在** ✗
+def _priority(path: str) -> int:
+    return 1 if path else 0
 
 
 def _decide(path: str, title: str) -> tuple:
@@ -44,7 +68,16 @@ def _decide(path: str, title: str) -> tuple:
         return True, "★ ① 路径在 `output/` 产物目录下（★ 仓库内、确凿我方 ✓）"
     if not p and DEFAULT_NAME.match(t):
         return True, "★ ② 无路径 + ★ SW 默认名 `%s`（★ 新建了没保存 ⇒ 我方 ✓）" % t
-    return False, "★★ 不动：★ path=%r · title=%r（★ 不属于上面两类 ✓）" % (p, t)
+    if not p and SHEET_TITLE.match(t):
+        #: ★★★ 加固后的第三类：★ **标题必须含「我方前缀」** ✓（★ 前缀 = `output/` 下现存文件的主名 ✓）
+        _m = SHEET_TITLE.match(t)
+        _stem = (_m.group(1) if _m else "").strip().lower()
+        if _stem and _stem in _our_stems():
+            return True, ("★ ③ 无路径 + ★ 标题 `%s` 里的 `%s` **是我方 `output/` 下现存文件的主名**"
+                          "（★ 我方新建的工程图 ✓）" % (t, _stem))
+        return False, ("★★ 不动：★ 无路径 + 标题 `%s` —— ★ **它的前缀 `%s` 不在我方 `output/` 的实据里**"
+                       "（★ 可能是别人的未保存工程图 ⇒ **不错杀** ✓）" % (t, _stem))
+    return False, "★★ 不动：★ path=%r · title=%r（★ 不属于上面三类 ✓）" % (p, t)
 
 
 def main() -> int:
@@ -62,6 +95,9 @@ def main() -> int:
         return 3
 
     closed, skipped = [], []
+    #: ★★★ **按"先无路径、后有路径"排序**（★ 本轮修的那一处 ✓ —— ★ 工程图/装配
+    #:   打开了那些零件 ⇒ ★ **先关引用方、被引用方才关得掉** ✓）
+    items = []
     for d in docs:
         if d is None:
             continue
@@ -70,6 +106,9 @@ def main() -> int:
             title = str(sw_connect.get_com_member(d, "GetTitle") or "")
         except Exception:                                               # noqa: BLE001
             continue
+        items.append((_priority(path), path, title))
+    items.sort(key=lambda x: x[0])
+    for _pr, path, title in items:
         should, why = _decide(path, title)
         if not should:
             skipped.append({"path": path, "title": title, "why": why})

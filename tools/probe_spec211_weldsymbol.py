@@ -137,15 +137,44 @@ def main() -> int:
     out["exception"] = None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:160])
 
     #: ④ **判据**（★ 官方回 `void` ⇒ ★ 只能"抛不抛" + ★ 找读回成员 ✓）
+    #: ★★★★ **判据要落在「它真正改变的东西」上**（★ 第 38 轮定则 ✓）——
+    #:   ★ 焊接符号是**视图上的标注** ✗ ⇒ ★ 顶层注释计数取不到（`GetAnnotationCount` 回 None ✗）
+    #:   ★★ 正解：★ **`IView::GetWeldSymbolCount` / `GetWeldSymbols`** ✓（★ B0 全扫时见过 ✓）
+    #:     ★ 官方逐字：★ `GetWeldSymbolCount` 的 `## Returns` = **Total number of weld symbols
+    #:     on this drawing view** ✓ —— ★★ **那正是"它真正改变的东西"** ✓
     readback = {}
     if drawing is not None:
-        for label, member in (("drawing_view_count", "GetViewCount"),
-                              ("annotation_count", "GetAnnotationCount")):
+        try:
+            views = sw_connect.get_com_member(drawing, "GetViews") or []
+        except Exception:                                               # noqa: BLE001
             try:
-                readback[label] = sw_connect.get_com_member(drawing, member)
+                v = sw_connect.get_com_member(drawing, "GetFirstView")
+                views, cur = [], v
+                while cur is not None and len(views) < 12:
+                    views.append(cur)
+                    cur = sw_connect.get_com_member(cur, "GetNextView")
             except Exception:                                           # noqa: BLE001
-                readback[label] = None
-    out["readback"] = {k: str(v)[:40] for k, v in readback.items()}
+                views = []
+        readback["view_count"] = len(views)
+        per_view = []
+        for i, v in enumerate(views):
+            row = {"index": i}
+            for label, member in (("weld_symbol_count", "GetWeldSymbolCount"),
+                                  ("annotation_count", "GetAnnotationCount")):
+                try:
+                    row[label] = sw_connect.get_com_member(v, member)
+                except Exception:                                       # noqa: BLE001
+                    row[label] = None
+            try:
+                row["name"] = str(sw_connect.get_com_member(v, "GetName2") or "")
+            except Exception:                                           # noqa: BLE001
+                row["name"] = None
+            per_view.append(row)
+        readback["per_view"] = per_view
+        readback["total_weld_symbols"] = sum(
+            int(r["weld_symbol_count"] or 0) for r in per_view
+            if isinstance(r.get("weld_symbol_count"), int))
+    out["readback"] = readback
 
     if exc is None:
         out["verdict"] = ("★★ **调用完成、不抛**（★ 官方该成员回 `void` ⇒ ★ 没有返回值判据 ✓）· "
