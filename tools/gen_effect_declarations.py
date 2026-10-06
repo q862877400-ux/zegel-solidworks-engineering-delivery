@@ -80,7 +80,8 @@ def _members_of(func, module) -> list[str]:
 
 def build() -> dict:
     import register_capabilities as rc
-    from effect_rules import STATE_CLASSES, classify_members, load_kind_index
+    from effect_rules import (STATE_CLASSES, classify_members, derive_requires,
+                          load_kind_index)
     specs = rc.all_specs()
     tools: dict = {}
     errors: list[str] = []
@@ -101,10 +102,20 @@ def build() -> dict:
         if not callable(fn):
             errors.append("%s: 函数 %s 不存在" % (s.name, s.function))
             continue
+        #: ★ 取注入名（★ `requires` 由它推）✓
+        try:
+            import tool_registry as _tr
+            _inj = _tr.effective_inject(s)
+        except Exception:                                       # noqa: BLE001
+            _inj = getattr(s, "inject", "") or ""
         members = _members_of(fn, mod)
         #: ★★ 第二路：显式把官方成员种类索引传进去（规格 210 · B1-7）✓
         verdict = classify_members(members, kinds=load_kind_index())
         tools[s.name] = {
+            #: ★★ `requires` —— ★ **机械初推**（★ 从 `inject` 的种类推，★ 见 `effect_rules`）✓
+            #:   ★ 起因（真机）：★ `nonempty` 组的失败**全**是「声明注入 X 但没给对象」✓
+            "requires": derive_requires(_inj),
+            "inject": _inj,
             "writes": verdict["writes"],            # ★ None = 未知（★ 不是「无写」）
             "destructive": verdict["destructive"],
             "members": len(members),

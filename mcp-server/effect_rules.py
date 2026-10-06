@@ -103,8 +103,8 @@ def classify_members(members, kinds=()) -> dict:
     return {
         #: ★★★ **有「认不出的成员」⇒ 判未知，不判「确认无写」** ——
         #:   ★ 一个成员既不是写动词也不是读动词（如 `FeatureManager`、`FirstFeature` 这类**属性访问**），
-        #:     就**不能**因为"我没看见写动词"而说它无写 ⇒ ★ **那正是我们要防的方向** ✓
-        #:   ★ 只有"**全部成员都认得、且没有一个是写动词**"才算 `[]`（确认无写）✓
+        #:     就**不能**因为「我没看见写动词」而说它无写 ⇒ ★ **那正是我们要防的方向** ✓
+        #:   ★ 只有「**全部成员都认得、且没有一个是写动词**」才算 `[]`（确认无写）✓
         "writes": None if unclassified else sorted(writes),
         "destructive": destructive,
         "unclassified": sorted(set(unclassified)),
@@ -118,7 +118,7 @@ _KIND_CACHE: Optional[dict] = None
 
 
 def load_kind_index() -> dict:
-    """★ 惰性加载成员种类索引；★ 读不到就回空（⇒ 退化成"只有动词一路"，保守）✓"""
+    """★ 惰性加载成员种类索引；★ 读不到就回空（⇒ 退化成「只有动词一路」，保守）✓"""
     global _KIND_CACHE
     if _KIND_CACHE is None:
         try:
@@ -133,9 +133,9 @@ def load_kind_index() -> dict:
 
 
 def classify_member(member: str, kinds: Optional[dict] = None) -> Optional[str]:
-    """★ 单个成员判成 `"write"` / `"read"` / `None`（**判不出**）—— ★ 三态，`None` 不是"读" ✓
+    """★ 单个成员判成 `"write"` / `"read"` / `None`（**判不出**）—— ★ 三态，`None` 不是「读」 ✓
 
-    ★ 判序（★ **任一来源说"写"就不许标只读**，这是外部评审给的裁决规则）：
+    ★ 判序（★ **任一来源说「写」就不许标只读**，这是外部评审给的裁决规则）：
       ① 动词说写 ⇒ 写；② 动词说读 ⇒ 读；
       ③ 动词认不出 ⇒ 查官方类型库：★ **属性且可设（`{get; set;}`）⇒ 写** ·
          ★ **属性且只读（`{get;}`）⇒ 读** · ★ **方法 ⇒ 判不出**（★ 评审：方法没有读写标记）✓
@@ -147,7 +147,7 @@ def classify_member(member: str, kinds: Optional[dict] = None) -> Optional[str]:
         return "read"
     rec = (kinds or {}).get(member)
     if not rec:
-        #: ★ 动词认不出、类型库也没有 ⇒ **判不出**（★ 不是"读"）✓
+        #: ★ 动词认不出、类型库也没有 ⇒ **判不出**（★ 不是「读」）✓
         return None
     if rec.get("kind") == "property":
         if rec.get("settable") is True:
@@ -156,3 +156,43 @@ def classify_member(member: str, kinds: Optional[dict] = None) -> Optional[str]:
             return "read"                       # ★ `{get;}` ⇒ 只读 ✓
         return None                             # ★ 属性但签名没标 ⇒ 判不出
     return None                                 # ★ 方法 ⇒ 官方无读写标记 ⇒ 判不出 ✓
+
+#: ★★★ **`requires` 的机械初推规则**（★ 规格 210 · B3 的「分组基数」）。
+#:   ★★ 起因（真机读数）：★ `nonempty` 组抽样 20 里，★ 剩余的失败**全部**是
+#:     「**声明注入 X 但没给对应对象**」（`asm_model` · `view` · `sldworks`）或环境/取值类 ⇒
+#:     ★★ **分组要按「需要什么宿主对象」来分**，★ 而那个信息**声明里已经有了**（`inject`）✓
+#:   ★ 判据：★ 直接**从 `inject` 的种类**推 —— ★ 这是**声明里的事实**，★ 不是我猜的 ✓
+#:   ★★ 为什么值得机械推：★ 评审说「耗时随**不同前置的数量**增长，不随工具数增长」——
+#:     ★ 而 `requires` 的种类数就是那个「不同前置的数量」 ✓
+INJECT_REQUIRES = {
+    "": "none",                       # ★ 不需要宿主对象（★ 如纯静态查询）✓
+    "model": "part",
+    "doc": "part",
+    "asm_model": "assembly",
+    "component": "assembly",
+    "drawing_model": "drawing",
+    "view": "view",
+    "sldworks": "app",
+    "sw_app": "app",
+    "sw": "app",
+    "manager": "app",
+    "defaults": "app",
+    "options": "app",
+    "selection": "selection",
+    "study": "study",
+    "mesh": "study",
+    "results": "study",
+    "motion_study": "study",
+    "cost_manager": "costing",
+    "cost_part": "costing",
+    "cost_body": "costing",
+    "cost_analysis": "costing",
+}
+
+
+def derive_requires(inject: str) -> str:
+    """★ 从 `inject` 推**这一条需要什么宿主**（★ 未知的注入名 ⇒ 原样带回并加前缀，★ 不吞）✓"""
+    key = str(inject or "").strip()
+    if key in INJECT_REQUIRES:
+        return INJECT_REQUIRES[key]
+    return "host:" + (key or "unknown")
