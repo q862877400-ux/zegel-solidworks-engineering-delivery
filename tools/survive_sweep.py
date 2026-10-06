@@ -57,8 +57,11 @@ def classify(declared_writes, diff, usable) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description="★ 存活普查（规格 210 · B3）")
     ap.add_argument("--limit", type=int, default=0, help="★ 只跑前 N 个（★ 试跑用）")
-    ap.add_argument("--only-missed-risk", action="store_true", default=True,
-                    help="★ 只跑 `writes == []`（已确认无写）那批 —— ★ 硬红门禁盯的就是它")
+    #: ★★ 按**声明**分组跑（★ 三组语义完全不同，★ 分开跑才好读）✓
+    ap.add_argument("--declared", choices=("empty", "nonempty", "null", "all"), default="empty",
+                    help="★ empty=`writes == []`（已确认无写，硬红门禁盯这批）· "
+                         "nonempty=`writes` 非空（★ 验 conservative）· "
+                         "null=未声明（★ 预期全 undecided）· all=全部")
     ap.add_argument("--json-out", default="output/spec210-survival-diff.json")
     args = ap.parse_args()
 
@@ -67,11 +70,18 @@ def main() -> int:
     import tool_caller
 
     table = json.loads(EFFECTS.read_text(encoding="utf-8")).get("tools", {})
-    #: ★ 先取**已确认无写**的（`writes == []`，★ 不是 `null`）✓
-    targets = sorted(n for n, r in table.items() if r.get("writes") == [])
+    #: ★ 按 `--declared` 选目标（★ `[]` / 非空 / `None` / 全部 —— ★ 三组**不许混**）✓
+    if args.declared == "empty":
+        targets = sorted(n for n, r in table.items() if r.get("writes") == [])
+    elif args.declared == "nonempty":
+        targets = sorted(n for n, r in table.items() if r.get("writes"))
+    elif args.declared == "null":
+        targets = sorted(n for n, r in table.items() if r.get("writes") is None)
+    else:
+        targets = sorted(table)
     if args.limit:
         targets = targets[:args.limit]
-    print("★ 目标：%d 个「已确认无写」的工具（★ 硬红门禁盯的就是这批）" % len(targets))
+    print("★ 目标：%d 个（★ 按声明分组 `%s`）" % (len(targets), args.declared))
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -107,7 +117,8 @@ def main() -> int:
         counts[r["verdict"]] = counts.get(r["verdict"], 0) + 1
     missed = [r["tool"] for r in rows if r["verdict"] == "missed"]
     out = {
-        "_": "★ B3 存活普查的「声明 vs 观察」差异表（★ 每类各用一个新零件）",
+        "_": "★ B3 存活普查的「声明 vs 观察」差异表（★ 每条各用一个新零件）",
+        "declared_group": args.declared,
         "_judge": "★ agree=一致 · conservative=声明保守 · ★★ missed=**声明漏报**（硬红门禁）· undecided=未判定",
         "counts": counts, "missed": missed, "rows": rows,
     }

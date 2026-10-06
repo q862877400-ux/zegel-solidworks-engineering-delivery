@@ -21,6 +21,12 @@ from pathlib import Path
 
 ROOT = Path(r"D:\AI\SW")
 SRC = ROOT / "output" / "spec210-survival-diff.json"
+#: ★ 可按声明分组指定源（★ 三组的读数**不许混在一张表里**）✓
+GROUPS = {
+    "empty": ROOT / "output" / "spec210-survival-diff-empty.json",
+    "nonempty": ROOT / "output" / "spec210-survival-diff-nonempty.json",
+    "null": ROOT / "output" / "spec210-survival-diff-null.json",
+}
 OUT = ROOT / "docs" / "spec210-survival-diff.md"
 
 NOTE = {
@@ -32,10 +38,19 @@ NOTE = {
 
 
 def main() -> int:
-    if not SRC.is_file():
-        print("★ 没有普查结果：%s ⇒ 先跑 tools/survive_sweep.py" % SRC)
+    import argparse
+    ap = argparse.ArgumentParser(description="★ 把存活普查结果落成记录（规格 210 · B3）")
+    ap.add_argument("--group", choices=tuple(GROUPS), default="empty",
+                    help="★ 按声明分组（★ 三组读数不许混）")
+    ap.add_argument("--out", default=str(OUT))
+    a = ap.parse_args()
+    src = GROUPS.get(a.group, SRC)
+    out = Path(a.out)
+    if not src.is_file():
+        print("★ 没有普查结果：%s ⇒ 先跑 tools/survive_sweep.py --declared %s"
+              % (src, a.group))
         return 1
-    d = json.loads(SRC.read_text(encoding="utf-8"))
+    d = json.loads(src.read_text(encoding="utf-8"))
     rows = d.get("rows") or []
     counts = d.get("counts") or {}
     missed = d.get("missed") or []
@@ -43,7 +58,7 @@ def main() -> int:
         "# 规格 210 · 存活普查「声明 vs 观察」差异表（B3 的产物）",
         "",
         "> ★ 由 `tools/gen_survival_diff.py` 从**真机普查结果**生成 —— **不要手改**。",
-        "> ★★ 本轮取的是 **`writes == []`（已确认无写）** 那批 —— ★ 它们正是**硬红门禁**盯的那一批 ✓",
+        "> ★★ 本表按**声明分组**出具（★ `%s`）—— ★ 三组语义不同，**不许混在一张表里** ✓" % a.group,
         "",
         "## 硬红门禁（★ 本规格最要紧的一条）",
         "",
@@ -83,9 +98,9 @@ def main() -> int:
         "· ★ 判定**只看指纹**，★ **不看被调成员的返回值**（★ 本仓一贯纪律）✓",
         "",
     ]
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print("★ 已生成 %s" % OUT)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("★ 已生成 %s" % out)
     print("★ 四类：%s · 硬红 %d 条" % (counts, len(missed)))
     return 0
 
