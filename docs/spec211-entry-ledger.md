@@ -8,7 +8,7 @@
 > ★★ **终判方式：逐项读那一页的三样**（签名 / Remarks / Example）⇒ ★ 见 `tasks.md` B0-2。
 > ★ 依据**事实 53**：同一启发式已连续改 3 次 ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
 
-★★ 合计 **21** 项（★ **人工终判**）：★ **可做 12** · **不做 7** · **已覆盖 1** · **待实测 1**
+★★ 合计 **21** 项（★ **人工终判**）：★ **可做 10** · **不做 9** · **已覆盖 1** · **待实测 1**
 
 ## 特征 · 边界凸台 ⇒ **不做**
 
@@ -22,9 +22,9 @@
   · `[chm-api] (CHM)::SolidWorks.Interop.swconst~SolidWorks.Interop.swconst.swBoundaryBossCurveInfluenceType_e.html`  
   · …（共 8 个候选）
 
-## 特征 · 曲线驱动阵列 ⇒ **可做**
+## 特征 · 曲线驱动阵列 ⇒ **不做**
 
-· 初判：★★ **人工终判**：★★★ **参数式入口存在且无 ACL** —— ★★ `IFeatureManager::FeatureLocalCurveDrivenPattern`（★ **13 参、不带 `AccessSelections`** ✓，★ 名字里的 `CurveDriven` 就是它 ✓）；★★ 我原判「不做」**只看了另两个入口**（★ `IModelDoc2::FeatureCurvePattern` **已 Obsolete** ✗ · ★ `CreateFeature` + `ICurveDrivenPatternFeatureData` **要 ACL** ✗）⇒ **不覆盖本条** ✓ ★ 待验：★ `ReferencePoint` 官方写「Type of **selected** reference point」⇒ **可能要先选参考点** ✓　（★ 自动台账原判：待核实）
+· 初判：★★ **人工终判**：★★★★ **后端受限** —— ★★ **官方示例逐字**（`Create_and_Access_Curve-driven_Pattern_Feature_Example_VB.md`）走的是 **`CreateDefinition(swFmCurvePattern)` + `CreateFeature`** ✗ ⇒ ★ 那条路的 Data **`ICurveDrivenPatternFeatureData` 带 `AccessSelections`** ✗（逐文件核过）⇒ **事实 47 一挡就到不了建成** ✓ ★★ 而参数式 `FeatureLocalCurveDrivenPattern` 那条**真机两档有效读数皆不建** ⇒ ★ 一并记在此 ✓ ★⚠ **本项经历过一次错误的翻案**：★ 我曾按「参数式存在且无 ACL」改判可做 ✗ —— ★★ **漏了「官方示例不用那个入口」** ✓　（★ 自动台账原判：待核实）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IFeatureManager::FeatureLocalCurveDrivenPattern` `Feature FeatureLocalCurveDrivenPattern( System.bool FlipDir1, System.int Num1, System.bool EqualSpacing1, Sys 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.ICurveDrivenPatternFeatureData.html`  
@@ -177,9 +177,9 @@
   · `[swapi] IConfiguration::DeleteExplodeStep` `System.bool DeleteExplodeStep( System.string ExplodeStepName )` 
   · …（共 34 个候选）
 
-## 装配 · 零部件阵列 ⇒ **可做**
+## 装配 · 零部件阵列 ⇒ **不做**
 
-· 初判：★★ **人工终判**：★★★ **与「曲线驱动阵列」共用参数式入口** —— ★★ `IFeatureManager::FeatureLocalCurveDrivenPattern`（★ **13 参、不带 `AccessSelections`** ✓）；★★ 原写「创建要走 `CreateDefinition` 类的 5 个 `swFmLocal*Pattern` 常量」✗ —— ★ 那条是**属性式**路（★ 其 Data **带 `AccessSelections`** ✗ ⇒ **事实 47 挡死** ✓）；★ 旁证：★ `*LocalPattern*` 全扫为空 ✗（★ 那「5 个常量」的说法**查不到落实** ✓）★ 待验：★ 与「曲线驱动阵列」**同一批真机**验（★ 一次验两项 ✓）
+· 初判：★★ **人工终判**：★★★★ **后端受限** —— ★★ **官方示例逐字**（`Create_Local_Curve-driven_Pattern_Example_CSharp.md`）走的是 **`CreateDefinition(swFmLocalCurvePattern)` + `CreateFeature`** ✗，★ 且其 `Postconditions` 逐字「**Selects the component and edge**」⇒ **装配语境** ✓ ⇒ ★ 那条路的 Data **`ILocalCurvePatternFeatureData` 带 `AccessSelections`** ✗（逐文件核过）⇒ **事实 47 一挡就到不了建成** ✓ ★ 旁证：★ **同族的 `ILocalSketchPatternFeatureData` 也带** ✗ —— ★ 即这一族的 Data 全都带 ✓ ★⚠ **本项与「曲线驱动阵列」同时经历过一次错误的翻案** ✓　（★ 自动台账原判：可做）
 · 该关键词命中的 CHM **示例页**：**0**
   · `[swapi] IAssemblyDoc::DissolveComponentPattern` `System.bool DissolveComponentPattern()` 
   · `[chm-api] (CHM)::SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IAssemblyDoc~DissolveComponentPattern.html`  
