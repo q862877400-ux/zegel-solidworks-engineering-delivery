@@ -256,6 +256,10 @@ def classify(declared_writes, diff, usable, *, call_ok: bool) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description="★ 存活普查（规格 210 · B3）")
     ap.add_argument("--limit", type=int, default=0, help="★ 只跑前 N 个（★ 试跑用）")
+    #: ★★ **分块跑**：★ 真机实测 1.4 秒/条（★ 由 `--limit 12` 量得）⇒ 全组本应 3 分钟就能跑完，
+    #:   ★★ 而实际全组跑**卡了 50 分钟没出来** ⇒ ★ 说明**某一条卡住**（★ 不是慢）✗
+    #:   ⇒ ★ 加 `--offset` 分块，★ 既能**跑全**、★ 又能**定位卡点** ✓
+    ap.add_argument("--offset", type=int, default=0, help="★ 跳过前 N 个（★ 分块用）")
     #: ★★ 按**声明**分组跑（★ 三组语义完全不同，★ 分开跑才好读）✓
     ap.add_argument("--declared", choices=("empty", "nonempty", "null", "all"), default="empty",
                     help="★ empty=`writes == []`（已确认无写，硬红门禁盯这批）· "
@@ -291,6 +295,8 @@ def main() -> int:
         targets = sorted(n for n, r in table.items() if r.get("writes") is None)
     else:
         targets = sorted(table)
+    if args.offset:
+        targets = targets[args.offset:]
     if args.limit:
         targets = targets[:args.limit]
     by_requires: dict = {}

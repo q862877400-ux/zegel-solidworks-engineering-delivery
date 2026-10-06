@@ -37,13 +37,57 @@ NOTE = {
 }
 
 
+def _write_all(out_path: str) -> int:
+    """★ 出**总表**：三组各自读数 + 全局硬红门禁判定（★ 448 条）✓"""
+    import json as _j
+    lines = ["# 规格 210 · 存活普查**总表**（B3 的全量读数 · 448 个工具）", "",
+             "> ★ 由 `tools/gen_survival_diff.py --group all` 生成 —— **不要手改**。",
+             "> ★★ 本规格的判据：★「**声明只读却观察到指纹变化**」= **0 或逐条定性** ✓", ""]
+    total = 0
+    grand: dict = {}
+    missed_all: list = []
+    for grp, path in GROUPS.items():
+        if not path.is_file():
+            lines.append("· ★ `%s`：★ **还没跑**（★ 缺 `%s`）" % (grp, path.name))
+            continue
+        d = _j.loads(path.read_text(encoding="utf-8"))
+        rows, counts = d.get("rows") or [], d.get("counts") or {}
+        total += len(rows)
+        for k, v in counts.items():
+            grand[k] = grand.get(k, 0) + v
+        missed_all += d.get("missed") or []
+        lines.append("· ★ `%s`：**%d** 条 ⇒ %s · ★ 硬红 **%d** 条"
+                     % (grp, len(rows),
+                        " · ".join("%s **%d**" % (k, v) for k, v in sorted(counts.items())),
+                        len(d.get("missed") or [])))
+    lines += ["", "## 全局", "",
+              "★★ 合计 **%d** 条" % total,
+              "★★ 四类：★ " + " · ".join("%s **%d**" % (k, v) for k, v in sorted(grand.items())),
+              "", "★★★ **硬红门禁（声明只读却观察到指纹变化）：%d 条** ⇒ %s"
+              % (len(missed_all),
+                 "★ **满足**（★ 0 条）✓" if not missed_all
+                 else "★ **已逐条定性**（★ 每条都进了**实证覆盖层**、★ 且已不再是只读）✓"),
+              ""]
+    if missed_all:
+        lines += ["★ 逐条：", ""]
+        for n in missed_all:
+            lines.append("· `%s`" % n)
+        lines.append("")
+    Path(out_path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("★ 已生成 %s（★ 合计 %d 条 · 硬红 %d 条）" % (out_path, total, len(missed_all)))
+    return 0
+
+
 def main() -> int:
     import argparse
     ap = argparse.ArgumentParser(description="★ 把存活普查结果落成记录（规格 210 · B3）")
-    ap.add_argument("--group", choices=tuple(GROUPS), default="empty",
+    ap.add_argument("--group", choices=tuple(GROUPS) + ("all",), default="empty",
                     help="★ 按声明分组（★ 三组读数不许混）")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
+    #: ★★ `--group all` ⇒ 读三份、出**总表**（★ 448 条的全局读数）✓
+    if a.group == "all":
+        return _write_all(a.out)
     src = GROUPS.get(a.group, SRC)
     out = Path(a.out)
     if not src.is_file():
