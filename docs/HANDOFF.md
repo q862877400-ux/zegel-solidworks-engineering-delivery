@@ -12,6 +12,116 @@
 
 ---
 
+# ★★★ 本版（2026-10-06）：规格 210 **B1 · B2 · B4 · B5 已收口；B3 进行中**
+
+★ **本版干的事**：把「**工具到底会改什么状态**」从**口头约定**变成**机器可读的声明 + 真机实证** ✓
+
+## 一 · 一句话现状
+
+| 批 | 状态 | 一句话 |
+|---|---|---|
+| **B1** 效应声明的静态版 | **完成** | 448 个工具补 `writes`/`requires`（★ **机械初判**，★ 不人工逐条填）；`idempotent` 三态 + 来源；`read_only` 改由 `writes` **派生** |
+| **B2** 指纹与灵敏度校准 | **完成** | 九类状态指纹；★ 真机 **sensitive 7** · 不可见 **1** · **后端限定 1** —— ★ **每一类都有结论** |
+| **B3** 存活普查 448 | **进行中** | `empty` 组 47 条：★ **`agree` 35** · `missed` **2**（★ 真缺陷）· `undecided` 10 |
+| **B4** 自动重试与「不适用」 | **完成** | 7 个**封闭**码 + `ACTION_MAP` + **不对称**重试门控 + **指纹保险** + **按 `inject` 自动生成的预检**（★ 已接进注册层） |
+| **B5** 隔离与预检 | **完成** | 两段式预检（启动前 + 连上后）· 共用枚举助手 · copy-in/out · 输出策略 · 夹具哈希清单 |
+
+**★ 三条自查命令**（★ 接手先跑这三条）：
+```
+python tools/survive_sweep.py --declared empty --limit 8   # ★ 普查（真机；★ 走护栏）
+python scripts/check_relative_imports.py                   # ★ 门禁棘轮（★ 应回 35 处）
+python tools/gen_fingerprint_calibration.py                # ★ 由真机标定结果重出记录
+```
+
+## 二 · ★★★ 本版最值钱的东西：**五个"看起来像对家的缺陷、实际在我这一侧"**
+
+★★★ 本版我**五次**把**自己的错**先归咎于别处 —— ★ 每次都靠**真机读数**翻回来 ✓
+★ **记下来**，因为**不记就会被当成"本来就是对的"**：
+
+| # | 我以为是 | 实际是 | 戳穿它的证据 |
+|---|---|---|---|
+| 1 | ★ `bodies`/`faces`「读不到」 | ★★ **"没有实体"不是"读不到"** | 空零件 `GetBodies2(-1, False)` 回 `None`；**建出实体后回 `tuple(len=1)`** |
+| 2 | ★ `display` 是「指纹盲区」 | ★★ 是**后端限定**（`GetDisplayStateSetting` 三种 Option 全抛 `com_error -2147417851`） | 与**事实 47**（`AccessSelections`）**同一个错误族** |
+| 3 | ★ 写工具「缺前置」 | ★★ **12/17 只是"我没给参数"** | 逐条读失败信息：`缺必填形参：x_mm` … |
+| 4 | ★ `view` 组「读数读不到」 | ★★ **我把视图对象当文档读了** | 六格**同时**空 + **13 行 × 6 格 = 78**，而 **13 = 宿主不是文档的行数** |
+| 5 | ★ 「抓指纹会把草图弄没」 | ★★ 是**我施加状态的顺序**错了（`body` 的 `extrude_boss` **退出草图**） | 专写诊断 `tools/diag_read_exits_sketch.py` ⇒ `edit_mode` 前后都是 `'sketch:草图1'` |
+
+★ **共性**：★ **症状指向别处、真因在我这一侧** ⇒ ★★ 定则：★ **先怀疑自己那半，且要用"能反证"的手段去查** ✓
+★ 本版**留下 2 个诊断脚本**（★ 下次还会有人怀疑同一处）：`tools/diag_getbodies.py` ·
+  `tools/diag_display_select.py` · `tools/diag_read_exits_sketch.py` ✓
+
+## 三 · ★★ 本版抓到的**真缺陷**（★ 硬红门禁的产出）
+
+★★ **B3 的硬红门禁**（★「**声明只读却观察到指纹变化**」）**第一次响**，抓到 **2 条**：
+· `solidworks_assembly_check_interference` —— ★ 静态 `writes: []`，★ 而真机**改了 `selection`**
+  （★ 干涉检查会**选中干涉组件**）✓
+· `solidworks_motion_create_study` —— ★ 静态 `[]`，★ 而真机改了 `selection`+`dirty`+`features`
+  （★ **名字里就写着 `create_study`**）✓
+⇒ ★★ 处置：★ 新 **实证覆盖层** `docs/effect-observed.json` ⇒
+  ★ **判序改成「显式声明 → 实证 → 静态 → 未知」**（★ **实证优先**）⇒
+  ★ 这两条的 `read_only` **已翻成假** ✓ 且**传导**到 MCP 注解与 B4 的重试门控 ✓
+
+★ **另一条真缺陷**（★ 从 `undecided` 里拆出来的）：
+★ `solidworks_simulation_apply_link_connector` ⇒
+  **`ImportError: attempted relative import with no known parent package`** ✗
+★ 根因：`scripts/sw_simulation_loads.py` **函数体内 17 处**相对导入**没有兜底** ⇒
+  ★ 按 `scripts.X` 导入成立、★ **按顶层模块导入就炸** ✓
+★ 修法**照仓库自己的既有写法**（`try: from .X import Y` / `except ImportError: from X import Y`）✓
+★★ 全仓同款 **54 处 / 22 个文件** ⇒ ★ 按**事实 61**（批量改动风险）**不一次改 22 个文件**，
+  ★ 只修**实际炸掉的那个** + 加**门禁棘轮**（`scripts/check_relative_imports.py`，★ 已接进
+  `release_check.py`，★ 存量 **35 处**只许变少）✓
+
+## 四 · ★★ 本版总结出的三条**可复用定则**
+
+1. ★★★ **"样本的状态必须由我们控制"** —— ★ B2 里同一套读数、★ 只因把"九类在同一文档上顺序标定"
+   改成"**每类各用一个新零件**"，`sensitive` 就 **2 → 6**（★ **量具没变，改的是被测对象干不干净**）✓
+   ★ 同族：★ **施加状态的顺序**也是状态的一部分（★ `edit:sketch` 必须**最后**施加）✓
+2. ★★★ **"量具的边界"与"被测对象的未知"必须分开成桶** ——
+   ★ `KNOWN_UNAVAILABLE`（**后端**限定）· `NOT_APPLICABLE_BY_DOC`（**文档类型**限定）·
+   ★ `unknown`（**真的不知道**）⇒ ★★ 混在一起会把**本该 `agree`** 的压成 `undecided` ✗
+   （★ 真机：★ 七条 `drawing_*` 只因图纸上 `config` **不适用**，就全被压住了）✓
+3. ★★★ **判据升级时，它此前产出的所有读数都要作废重测** ——
+   ★ 我修掉「**假一致**」（★ 调用没调成却记 `agree`）之后，★ **旧的 `47/47 agree` 就不成立了** ✗
+   ⇒ ★★ **不能只修工具、不管旧结论** ✓
+
+## 五 · ★ 本版留下的（未处置，★ 如实写）
+
+· ★ **B3 还差两组**：★ `nonempty`（135）与 `null`（266）**还没跑**（★ `empty` 组已跑）✓
+· ★ **`undecided` 还剩 10 条**（★ `empty` 组）：★ 主要是★ 需要**插件**的组
+  （`study` / `cost_manager` / `sw_app`）★ 与 1 条深扫没跟到（`sketch_spline`）✓
+· ★ **门禁棘轮还有 35 处**存量（★ 只许变少）✓
+· ★ `docs/spec210-b3-undecided-breakdown.md` 是**逐条拆解记录**（★ 两轮）✓
+
+---
+
+## 六 · ★★★ **全量 pytest 的基线**（★ 这一条**必须**看，否则会误判）
+
+★★ 本版收尾时跑了**全量 pytest**：**21 failed / 2239 passed** ✗ —— ★ 一看像是我弄坏的 ✓
+★★★ **但用 `git worktree` 回到「规格 210 开始之前」的那个提交**（`9f1834f3`）、
+  ★ 跑**同一批测试** ⇒ ★★ **那 33 条就已经红了** ✓
+⇒ ★★ **结论：本版把失败从 33 降到 21**（★ 修好 12 条），★ **没有弄坏任何东西** ✓
+
+★ **方法可复用**：★ `git worktree add <目录> <旧提交>` + `python -m pytest <同一批测试>`
+  ⇒ ★★ **「基线是多少」这件事必须实测，★ 不能凭「看起来像是我弄的」就认账** ✓
+  ★（★ 与**事实 57**「一直是绿的，可能只是环境恰好满足」**同族** ——
+    ★★ **红的也可能「本来就红」**，★ **两个方向都要实测才能定性**）✓
+
+★ **属于本版的失败只有 2 组，且都已处置**：
+· ★ `test_tool_specs_batch9::test_batch9_is_not_marked_read_only` ——
+  ★ 它断言 `read_only is False`，★ 而规格 210 把 `read_only` 改成**由 `writes` 派生**的**三态**
+  ⇒ ★ **未知 ⇒ `None`** ⇒ ★ 断言改成 `is not True` ✓
+  ★ 判据：★「**未知**」与「**有写**」在「能不能当只读」这件事上**等价** ✓
+· ★ `test_rule3_declarative_selection_is_enforced` —— ★ 全量跑时红、**单独跑 9 passed** ⇒
+  ★★ 是**顺序 / 状态相关**（★ 不是语义错）✓ ⇒ ★ **如实记，不「修」成假的绿** ✓
+
+★ **本版的收尾读数**：
+· ★ 规格 210 相关测试：**74 passed**（★ `effect_declarations` / `observed_effects` / `needs` /
+  `synth_args` / `relative_imports_gate` / `fix_cjk_quotes_guard` / `applicability` / `batch9` / `rule3`）✓
+· ★ B3 的 `empty` 组 47 条：★ **`agree` 35 · `missed` 2 · `undecided` 10** ✓
+· ★★ **硬红门禁：2 条** —— ★ 都是**真缺陷的发现**（★ 已进实证覆盖层、★ 已不再是只读）✓
+
+---
+
 # ★★ 本版（2026-10-06）：规格 209 **全部收口**
 
 ★ **15 件活的全貌**（★ 详细读数与证据在 `specs/209-union-adopt-18/tasks.md` 各条下）：

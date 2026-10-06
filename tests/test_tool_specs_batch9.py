@@ -75,5 +75,13 @@ def test_batch9_is_not_marked_read_only():
 
     ⚠ 这是一条**反向**判据：它防的是"为了好看给改几何的操作标只读"。
     """
+    #: ★★★ 2026-10-06 **规格 210 改了 `read_only` 的语义**（★ 三态）：
+    #:   ★ 它现在**由 `writes` 派生** —— ★ `writes` 非空 ⇒ `False` ·
+    #:   ★ `writes == []`（确认无写）⇒ `True` · ★★ **`writes is None`（未知）⇒ `None`** ✓
+    #:   ⇒ ★ 断言从 `is False` 改成 **`is not True`**：★ 这三条工具**都改几何**，
+    #:     ★ 而它们的 `writes` **静态判不出**（未知）⇒ ★★ 按规格**不许**标"只读"，
+    #:     ★ 但也不该硬编成 `False`（★ 那是**假装知道**）✓
+    #:   ★★ 判据：★ **"未知"与"有写"在"能不能当只读"这件事上等价**（★ 都不许）✓
     for s in SPECS:
-        assert s.read_only is False, "%s 会改几何，不能标 read_only" % s.name
+        assert s.read_only is not True, \
+            "%s 会改几何，不能标 read_only（现为 %r）" % (s.name, s.read_only)
