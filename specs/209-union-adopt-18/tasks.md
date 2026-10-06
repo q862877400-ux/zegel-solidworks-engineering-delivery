@@ -74,10 +74,17 @@
 
 ## B3 · 先小验证（1 条）
 
-- [ ] **B3-1** idx **115+145** `edges`/`faces`（★ **裁决书强制合并成一条工具**，三种 kind）
+- [x] **B3-1** idx **115+145** `edges`/`faces`（★ **裁决书强制合并成一条工具**，三种 kind）
       ★ 形态 = **扩** `scripts/sw_selection_spec.py` 的 `entities_on_body`，**不许开平行工具**
-      ★ 第一步：小验证「读属性读不到」这个独立风险（`IBody2::GetEdges/GetFaces` 已在事实 32 真机确证可用）
+      ★ 怎么知道的：真机（`tools/probe_spec209_b3_entities.py`）20×20×10 盒 ⇒
+      **FACE=6 · EDGE=12 · VERTEX=8** + ★★ **欧拉 `V−E+F=2` 成立**；逐条几何都读得到
+      （EDGE 两端点 + **自己算的**边长 · FACE `GetArea()` · VERTEX `GetPoint()`）；
+      负例（越界序号 / 非法 kind）都大声报 ⇒ `output/spec209-b3-entities.json`
+      ★★ **真正修掉的缺口**：旧工具指向的 `entities_on_body` **返回 COM 对象** ⇒
+      **过不了 MCP 的 JSON 边界** ⇒ 那条工具**经工具层拿不到东西**；修法 = **名字不变**、
+      指向改成 `entities_report`（★ 清单这侧也不开平行条目，证据补进既有 `selection_helpers`）
       ★★ **本轮顺带拿到的**：`IEdge` **没有**长度成员（要自己用两个顶点算）—— 见 `spec.md` §五 第 7 条
+      ⚠ 探针第一版的负例判据又写错一次（报告函数**回字典不抛**）⇒ 已按 B2 批的同一教训改正
 
 ## B4 · 余下（5 条）
 
