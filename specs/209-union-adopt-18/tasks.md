@@ -56,7 +56,17 @@
 
 ## B2 · 须真机定前置（4 条）
 
-- [ ] **B2-1** idx 336 `unfold`（官方**没给 mark** ⇒ 先定"可建对象"，前置判据用回读计数）
+> ★★ **本轮的执行顺序改过一次（我的拍板，记下来）**：先做 **B4-2（hem）**，因为它当时看起来是
+> 「造出带折弯钣金件」的**唯一可达路径**（那是 unfold/fold 的前置）。★ 结果 **hem 五种形态全失败**，
+> 而 unfold/fold **只要把 mark 摆对就能建出来** ⇒ ★ 顺序上的那一跳**没有白跑**：
+> 它同时产出了「单位定案」「`IEdge` 没有长度成员」「`SetSelectedObjectMark` 的 Action」三条事实 ✓
+
+- [x] **B2-1** idx 336 `unfold` ⇒ `scripts/sw_sheet_metal.py::create_unfold` + `solidworks_sheet_metal_create_unfold`
+      ★ 怎么知道的：真机（`tools/probe_spec209_unfold_fold.py`）**建出 `展开1`** ——
+      特征树 +1 · ★★ **选择契约逐条回读** `total_count=2 · marks=[1, 4]` ·
+      平展型式 `GetFlatPatternCount` = 1 ⇒ `output/spec209-unfold-fold.json`
+      ★★ **两条被真机纠正的**：① `mark 4` 的对象**不是必需的**（只给固定面 mark 1 也能建成）；
+      ② 第一轮的"没建出来"**是我自己的 bug**（`SetSelectedObjectMark` 的 `Action` 传了 `-1`，要 `0`）
 - [ ] **B2-2** idx 34 `balloon`（★ **两家结论互相矛盾** ⇒ **不许照抄任何一家**）
 - [ ] **B2-3** idx 52 `centerline`（同上；★ 裁决书建议与 idx 30 `auto_center_marks` 合并成两种模式）
 - [ ] **B2-4** idx 175 `blank_sketch`（★ 真风险 = **怎么回读「隐藏了没有」** —— 官方回 `void` 且无 Remarks
@@ -67,18 +77,27 @@
 - [ ] **B3-1** idx **115+145** `edges`/`faces`（★ **裁决书强制合并成一条工具**，三种 kind）
       ★ 形态 = **扩** `scripts/sw_selection_spec.py` 的 `entities_on_body`，**不许开平行工具**
       ★ 第一步：小验证「读属性读不到」这个独立风险（`IBody2::GetEdges/GetFaces` 已在事实 32 真机确证可用）
+      ★★ **本轮顺带拿到的**：`IEdge` **没有**长度成员（要自己用两个顶点算）—— 见 `spec.md` §五 第 7 条
 
 ## B4 · 余下（5 条）
 
 - [ ] **B4-1** idx 211 `native_macro_recording`（`RecordLine` + `RunCommand` + 事件）
       ★★ **必须先解决弹窗**：官方 `swCommands_e` 逐字写 `swCommands_StopMacro` **会弹 Save As**
       ⇒ 工具**必须**在 `CommandInProgress` + 弹窗护栏下跑，并把"要写盘"这件事**显式要求调用方给路径**
-- [ ] **B4-2** idx 173 `hem`（真名 `IFeatureManager::InsertSheetMetalHem2`，**16 形参**）
+- [x] **B4-2** idx 173 `hem`（真名 `IFeatureManager::InsertSheetMetalHem2`，**16 形参**）
       ★★ 别家三处错误（成员名零命中 · `hem_type` 把 `Open=0`/`Closed=1` **正好互换** · **漏掉 `Double=4`**）
-      ⇒ ★ 裁决书要求做成 **L2/L3 静态断言**（谁再照它抄就当场抓住）
+      ⇒ ★ **裁决书要求做成 L2/L3 静态断言 —— 已做**（`tests/test_tool_specs_batch93.py`：
+      五个成员一个不漏 · 幻觉名不许进**代码**（★ 注释里引用它是**防它的证据**，要用
+      `strip_comments_and_strings` 把"引用"与"断言"分开））
+      ★★ **真机结论：建不出来**（五种形态全部回 `None`）⇒ 能力标 **`stitched`**、
+      工具挂出来但 `require_verified` **调用前抛带原因的错误** ⇒ `output/spec209-hem-*.json`
 - [ ] **B4-3** idx 181 `intersect`（两步 `PreIntersect2` → `PostIntersect`）
       ★ 唯一要实测的只有 `System.object` 布尔 **SafeArray 的包装**
-- [ ] **B4-4** idx 155 `fold`（★ mark 表 `Fold=0/1/4`，**与本批另两条都不同**）
+- [x] **B4-4** idx 155 `fold` ⇒ `scripts/sw_sheet_metal.py::create_fold` + `solidworks_sheet_metal_create_fold`
+      ★ 怎么知道的：真机 `unfold → fold` 一条链 ⇒ **建出 `折叠1`**（树 +1 · `marks=[1, 4]`）
+      ⇒ `output/spec209-unfold-fold.json`
+      ⚠ **裁决书说它的 mark 表是 `Fold=0/1/4`** —— ★★ 真机读到的是 **`[1, 4]`**（外加前置特征 mark 0）
+      ⇒ ★ **按读数记**（★ 这正是「不许跨条复制 mark 表」的又一处现场）
 - [ ] **B4-5** idx 205 `model_annotations`（`InsertModelAnnotations4`）★ 复用工程图注解那族的读侧助手
 
 ## 收尾

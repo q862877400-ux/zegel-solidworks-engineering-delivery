@@ -957,6 +957,18 @@ BATCH_MODULES = (
     #:     ③ `GetDocumentDependencies2`「**Library features 不会返回**」⇒ 盲区要**随返回值**带出去。
     #:   ★ 计数：433 → **439**（★ 后补 idx 209 `move_body` —— 裁决书称它是「本批最干净的一条」）
     "tool_specs_batch92",
+    #: ★★★ 2026-10-06：**规格 209 的批 93 —— 钣金展开 / 折叠 / 折边**（3 个）：
+    #:   ★ 来源是**规格 207 的 18 条采纳候选**的 **B2-1（idx 336 unfold）** ·
+    #:     **B4-4（idx 155 fold）** · **B4-2（idx 173 hem）** ⇒ 三条都落**已有模块**
+    #:     `scripts/sw_sheet_metal.py`（铁律 3）✓
+    #:   ★★ **诚实边界（别读成「三个都成了」）**：
+    #:     · `create_unfold` / `create_fold` —— ★ **真机建成了**（`展开1` / `折叠1`，
+    #:       marks 逐条 **`[1, 4]`**、特征树各 +1）✓
+    #:     · `create_hem` —— ★★ **真机五种形态全部回 `None`** ⇒ 能力标 `stitched`；
+    #:       ★ 工具**仍然挂出来**（与既有 4 个失败入口同策：★ 由 `require_verified` 在**调用前**
+    #:       抛**带原因**的错误，而不是让用户吃一个裸 COM 错误）✓
+    #:   ★ 计数：439 → **442**
+    "tool_specs_batch93",
 )
 
 def all_specs() -> list:

@@ -104,6 +104,11 @@
 | 4 | `IConfiguration::GetDisplayStates` | 「The **first name** in the list is the active display state」 | ★ 零件上成立（`['<默认>_显示状态 1']`）；★ 官方自己加了条件「**If more than one display state is active**」 | ★ 在**装配**里把"第一个"当活动状态 ⇒ 静默错答案（★ 本仓输出带 `ambiguous`） |
 | 5 | `IFeatureManager::InsertMoveCopyBody2` 的**长度参数** | ★ **官方页没写单位** | ★★ 真机：按**文档长度单位（mm）**解释 —— 传 `25.0` 把包围盒 x 从 `-30.0/30.0` 挪到 `-5.0/55.0`（**正好 25 mm**）；★ 而先按"米"换算传 `0.025` 只挪了 **0.025** | ★★ 套「COM 惯例 = 米」⇒ **静默的 1000× 错误**：工具回 `ok=True` 而只挪了千分之一（★ 而它**能过**"包围盒变了"那条判据！） |
 | 6 | 同一成员的 `RotAngle*` | ★ **官方页没写单位，也没说哪根轴** | ★★ 真机：COM 侧是**弧度**（传 `30.0` 得到约 **81°** ⇒ `30 rad ≡ 278.87° ≡ −81.1°`）⇒ ★★ **同一个调用里长度是 mm、角度是 rad** —— 一个接口**混两种口径** | ★ 同理静默错（要 30° 得到 81° 的转动）· ★ "哪根轴"另见探针 `T5b` 的三格互证 |
+| 7 | `IEdge` 的**长度** | ★ **`IEdge` 上根本没有「长度」这个成员**（官方成员表逐条列过：`GetCurve` / `GetCurveParams` / `GetStartVertex` / `GetEndVertex` … **没有 Length**） | ★ 我读 `IEdge.GetLength` ⇒ **12 条边全部抛异常** | ★ 铁律 5 的正面用法：**名字缺席 = 官方没有** ⇒ ★ 长度只能由 `GetStartVertex` / `GetEndVertex` → `IVertex::GetPoint()` **自己算** |
+| 8 | `ISelectionMgr::SetSelectedObjectMark` 的**第 3 参** | 官方签名是 `(AtIndex, Mark, Action)`，`Action` 取 `swSelectionMarkAction_e`（★ 官方两份示例都用 `swSelectionMarkSet`） | ★ 传 **`-1`** ⇒ 返回 **`false`**、**不报错**、**mark 没设上** ⇒ ★★ 我据此得出过「unfold 建不出来」的**错误结论** | ★★ 静默失效：★ **唯一能发现它的办法是"回读 mark"**（`GetSelectedObjectMark`），**不是看返回值** |
+| 9 | 钣金 FeatureData 的**长度参数** | ★ **官方页没写单位** | ★★ 真机用**厚度棱的长度**量：传 `0.002` ⇒ 边长集合 `{0.002, 40, 60}`；传 `2.0` ⇒ `{2.0, 40, 60}` ⇒ **按文档单位（本机 mm）解释，不是米** | ★★ 与 `InsertMoveCopyBody2` **同族**（都是文档单位）⇒ ★ 本仓 `BaseFlangeSpec` 的「单位为米」**是错的**，既有调用点造的是 **0.002 mm 的箔片** |
+| 10 | `ICustomBendAllowance::Type` | ★ `## Remarks` 逐字：「**If you do not set this property last**, the … property set last automatically **overrides** any previously set custom bend allowance type.」 | ★★ 官方示例本身顺序相反（先 `Type` 再 `KFactor`），**靠 `KFactor` 恰好也等于 2 而巧合成立** | ★ 不照 Remarks 写 ⇒ **`Type` 会被后设的属性覆盖**（静默） |
+| 11 | `IModelDoc2::InsertSheetMetalUnfold` 的 `mark 4` | 官方 `## Remarks` **没给 mark**；★ 官方示例选了折弯特征并打 `mark 4` | ★★ 真机：**不选任何 `mark 4` 对象**（只给固定面 mark 1）时**照样建出 `展开1`** | ★ 把示例当「**必需**」读 ⇒ 会写出一条**多余的强约束**（甚至据此判「能力不可用」—— ★ **我一开始就是这么错的**） |
 
 ---
 
@@ -116,8 +121,13 @@
 | 3 | 探针的 **T3 判据太弱**：用**刚建的那条显示状态**去验"激活后变了没有" —— 而它**本来就是活动的** ⇒ `changed=False`，等于没验 | ★ 真机读数 | 改成激活**另一条**（`MCP_DS_PROBE` → `<默认>_显示状态 1`）⇒ `changed=True` |
 | 4 | 探针的 **`EditRebuild3` 取证注释**照抄了裁决书的"拿到 bound method" | ★ 真机 `type()` 回的是 `bool` | ★ 按读数改口径（见 §五 第 1 条） |
 | 5 | ★★ `move_copy_body` 的**单位按"COM 惯例"写成米** ⇒ 真机只挪了 **0.025 mm** | ★ 真机**包围盒读数**（★ 不是"没报错"） | 长度改成**原样传毫米**、角度改成 `deg()` 换算 —— ★ 并**两处都写进 `UNIT_FINDINGS` / `ROTATION_AXIS_FINDING` 随返回值带出** |
+| 6 | ★★★ **B2 批（unfold/hem/fold）里我一次错得更深**：`SetSelectedObjectMark` 的 `Action` 传了 **`-1`**（要 `0`）⇒ **mark 静默没设上**，而我据此写下「unfold 建不出来」 | ★ **写 `create_unfold` 的"选择契约"回读时**（裁决书要求的那个回读判据）⇒ `mark_readback=1` 一出现，`展开1` **立刻就建出来了** | ① `Action` 改 `0`（`swSelectionMarkAction_e`）；② **判据从"返回值"改成"逐条回读 mark"**；③ 加回归测试钉住 `SELECTION_MARK_ACTION["set"] == 0` |
+| 7 | ★★ `create_hem` 的**前置顺序反了**：我"先选边、再建 `CustomBendAllowance`"，而官方 `## Remarks` 的四步是**先建 CBA、最后选边** | ★ 读 Remarks 时发现的（★ **步序也是签名的一部分**） | 按 Remarks 重排；★ 重试后仍 `None` ⇒ ★ **按事实 53 停止**，如实记负结论（★ 不继续凑形态） |
+| 8 | ★★ `create_fold` 的**前置特征选早了**：我把它塞在调用前，而选择函数开头有 `ClearSelection2` ⇒ **被清掉**（顺序错、静默失效） | ★ 写 `pre_select_names` 时想到的 | 把前置特征的选择挪到**清选区之后** ✓ |
+| 9 | 探针读 **`IEdge.GetLength`** —— ★ 那个成员**在官方 API 里根本不存在** ⇒ 12 条边读数全 `None` | ★ 官方成员表逐条看出来的（★ 铁律 5） | 改用 `GetStartVertex`/`GetEndVertex` → `IVertex::GetPoint()` **自己算长度** |
 
-⇒ ★★ **这五条的共同形态**：★ **判据看着在、其实没在判**（1/2/3），以及 **"惯例"顶替了实测**（4/5）。
+⇒ ★★ **这九条的共同形态**：★ **判据看着在、其实没在判**（1/2/3/6）· **"惯例"顶替了实测**（4/5）·
+**顺序/步序被当成"不重要"**（7/8）· **凭印象写成员名**（9）。
 ★ 都不是靠"更小心"避免的，★ 是靠**每次把回读数写进证据文件**才暴露的 ✓
 
 ---
