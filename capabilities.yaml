@@ -5336,6 +5336,44 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "explode_line_sketch",
+   "label": "爆炸直线（ISketchManager::InsertExplodeLineSketch，零参）",
+   "level": "verified",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\ISketchManager\\InsertExplodeLineSketch.md：System.bool InsertExplodeLineSketch() —— 零参",
+    "★★ 同页 ## Returns 逐字：True if the explode line sketch is inserted or closed, false if not",
+    "★★ 同页 ## Examples 给了六份（VB.NET x2 · VBA x2 · C# x2），而示例名本身就说清用法：Insert Explode Line Sketch and Route Line / and Jog Line ⇒ 它是先插图、再画线两步",
+    "★★★ 宿主是 ISketchManager、不是 IAssemblyDoc —— 本仓原先记在 IAssemblyDoc 下（又一处宿主写错；事实 36：同名接口分属不同族、用错接口 = 对象对任何成员都没反应）。IAssemblyDoc 下只有爆炸视图那一族（CreateExplodedView / AutoExplode / ShowExploded2 / ViewExplodeAssembly），覆盖表也把两者分两行"
+   ],
+   "evidence": [
+    "★★★★★ 真机建成（tools/probe_spec211_explodeline.py，走 tools/sw_guard.py 护栏）：零件落盘（output/ 内）⇒ 装配体加零件 ⇒ 爆炸视图 ⇒ 调用 ⇒ 返回 True，且 ISketchManager::ActiveSketch 由 False 变 True（正是官方 Returns 里那个 inserted）✓",
+    "★★★ 判据换位的教训：第一次用顶层特征名做判据 ⇒ 新增 []，看起来像没做成；换成 ActiveSketch（草图侧）才看见变化 ⇒ 判据要落在「它真正改变的东西」上（顶层特征树只反映特征，草图另有其树）",
+    "★★ 前置三层都打通并各有读数：① 零件文件（add_component 要磁盘路径 ⇒ save_document 到仓库内 output/）② 装配体（new_document(sw, assembly) + add_component）③ 爆炸状态（仓里 sw_assembly_doc.create_exploded_view，IAssemblyDoc::CreateExplodedView，已覆盖）",
+    "★ 证据文件 output/spec211-b6-explodeline.json（output/ 为 gitignore 产物目录）"
+   ],
+   "limitations": [
+    "★★ 主判据落在草图侧：ISketchManager::ActiveSketch 由 False 变 True；顶层特征树不反映它（新增 []）—— 后续调用方勿用特征树判本能力",
+    "★★★ 前置是整条链：零件文件落盘 + 装配体 + 爆炸状态，缺一不可；本次落到仓库内 output/ 而非用户目录（要落盘不等于要写到用户目录）",
+    "★ 官方 Returns 是 inserted or closed 二义 ⇒ 返回 True 也可能是 closed（关闭草图）；本次读数 ActiveSketch 由 False 变 True ⇒ 属 inserted 那一支",
+    "★ 官方示例的第二步（Route Line / Jog Line 画线）本次未做 —— 本能力只覆盖插入那一步，画线要用草图接口",
+    "★ 本次只有一个零件、一个装配、一次插入 ⇒ 不许推广成「多零件、多爆炸步骤都成」；未试：多组件、多爆炸视图、重复调用（官方 Remarks 只说 SpeedPak 那种幂等，本成员未提）",
+    "★ 会新建草图（非只读）"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "interactive"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }

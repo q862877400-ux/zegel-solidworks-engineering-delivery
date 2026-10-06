@@ -44,7 +44,7 @@ ITEM_TO_CAP = {
     "成形工具": "forming_tool",             #: ★★★ 真机建成 ⇒ verified ✓
     "展开/折叠": None,                    #: ★ 已覆盖（`specs/209` 收口 ✓）
     "平板型式/导出 DXF": None,
-    "爆炸直线": None,
+    "爆炸直线": "explode_line_sketch",   #: ★★★ 真机建成 ⇒ verified ✓
     "零部件阵列": None,
     "SpeedPak": None,
     "序列 / 说明书（Assembly Visualization）": None,

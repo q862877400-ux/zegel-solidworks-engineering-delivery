@@ -105,6 +105,18 @@ def main() -> int:
     print("★ ③ 爆炸视图 ⇒ %r" % explode_ok)
 
     #: ④ **爆炸直线**（★ `ISketchManager::InsertExplodeLineSketch`，**零参** ✓）
+    #: ★★★ 换判据（★ 上轮补的定则）：★ **判据要落在「它真正改变的东西」上** ✗ ——
+    #:   ★ 顶层特征树**只反映「特征」** ✗，★ 而**草图**另有其树 ✓
+    #:   ★★ 官方 `## Returns` 逐字：True if the explode line sketch is **inserted or closed** ✓
+    #:     ⇒ ★ **inserted 最可能的表现是「进入草图编辑」** ⇒ ★★ 判据 = `ISketchManager.ActiveSketch` ✓
+    before_active = None
+    if asm is not None:
+        try:
+            before_active = sw_connect.get_com_member(
+                sw_connect.get_com_member(asm, "SketchManager"), "ActiveSketch")
+        except Exception:                                               # noqa: BLE001
+            before_active = None
+    out["active_sketch_before"] = before_active is not None
     before = SF.feature_names(asm) if asm is not None else []
     exc = None
     ret = None
@@ -118,10 +130,23 @@ def main() -> int:
             out["sketch_manager_ok"] = out.get("sketch_manager_ok", False)
     after = SF.feature_names(asm) if asm is not None else []
     added = [n for n in after if n not in before]
+    after_active = None
+    if asm is not None:
+        try:
+            after_active = sw_connect.get_com_member(
+                sw_connect.get_com_member(asm, "SketchManager"), "ActiveSketch")
+        except Exception:                                               # noqa: BLE001
+            after_active = None
+    out["active_sketch_after"] = after_active is not None
+    out["sketch_side_changed"] = (before_active is None) != (after_active is None)
     out.update({"new_features": added, "returned": str(ret),
                 "exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:150])})
-    if added:
-        out["verdict"] = "★★★★★ **建成**（★ 新增 %r）⇒ ★ 爆炸直线**走得通** ✓" % added
+    #: ★★ 判据优先级：★ ① 特征新增 ⇒ 建成 · ★② **草图侧变化** ⇒ 建成（★ inserted 的等价物 ✓）
+    if added or out.get("sketch_side_changed"):
+        out["verdict"] = ("★★★★★ **建成** —— ★ 特征新增 %r · ★★ 草图侧变化 %r"
+                          "（★ ActiveSketch %r → %r ⇒ ★ 正是官方 Returns 里那个 inserted ✓）"
+                          % (added, out.get("sketch_side_changed"),
+                             out.get("active_sketch_before"), out.get("active_sketch_after")))
     elif exc is not None:
         out["verdict"] = "★★ **抛**：%s" % out["exception"]
     elif ret:
