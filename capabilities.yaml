@@ -5414,6 +5414,46 @@
      "2026"
     ]
    }
+  },
+  {
+   "id": "weld_symbol",
+   "label": "焊接符号（IModelDoc2::InsertWeldSymbol3 + IWeldSymbol）",
+   "level": "verified",
+   "source": "official",
+   "source_evidence": [
+    "官方 C:\\swapi\\types\\IModelDoc2\\InsertWeldSymbol3.md：System.object InsertWeldSymbol3() —— 零参；## Returns = Newly created weld symbol",
+    "★★★ 同页 ## Remarks 逐字：To use this method, insert the weld symbol into the model and then manipulate the properties and methods on the IWeldSymbol object",
+    "★★★ 同页 ## Remarks 还给出了符号名清单的真实位置：C:\\ProgramData\\SolidWorks\\SolidWorks 20*nn*\\*lang*\\*english*\\gtol.sym —— 并逐条列出 16 个 ISO 符号名：BUTT / BUSQ / BUSV / BUSB / BUSVBR / BUSBR / BUSU / BUSJ / BACK / FILL / PLUG / SPOT / SEAM / SEAMC / JSPT / JSM",
+    "★★★ 官方示例 C:\\swapi\\examples\\Insert_Weld_Symbol_Example_VB.md 的 Preconditions 逐字：Select a face, edge, or sketch segment for Weld Symbol insertion ⇒ 前置是在零件上选面/边/草图段",
+    "同示例代码是两步式：Set swWeldSymbol = swModel.InsertWeldSymbol3 然后 swWeldSymbol.SetText True, \"Left\", \"BUTT\", \"Right\", \"Stagger\", swWeldContourNone",
+    "★ IWeldSymbol::SetText 的签名：System.bool SetText( System.bool Top, System.string Left, System.string Symbol, System.string Right, System.string Stagger, System.int Contour )"
+   ],
+   "evidence": [
+    "★★★★★ 真机建成（tools/probe_spec211_weldsymbol_real.py，走 tools/sw_guard.py 护栏）：建零件 + 选一个面（官方示例的前置，回读选区 > 0）⇒ InsertWeldSymbol3() 回了对象 ⇒ SetText(True, 'Left', 'BUTT', 'Right', 'Stagger', 0) 回 True ⇒ 回读 IWeldSymbol：GetLineCount = 3 · GetArrowHeadCount = 1 · GetLeaderCount = 1 · IsAttached = True ✓",
+    "★★★ 本项最值钱的一课：前四步我走的是**另一条 API**（IDrawingDoc::InsertWeldSymbol 的 10 参版本），而它调完不抛、静默无效（12 组形态×开关位全部 0 → 0）；真因是官方示例揭示的第三样：真入口是零参的 IModelDoc2::InsertWeldSymbol3 + 两步式（先拿 IWeldSymbol 对象、再 SetText），且符号名来自 gtol.sym 的短名（BUTT / FILL / PLUG …），不是我先前用的 design library\\annotations\\*.sldweldfvt",
+    "★★ 判据用回读、不信返回值：SetText 回 bool 只是旁证，主判据是 IWeldSymbol 的 GetLineCount / GetArrowHeadCount / GetLeaderCount / IsAttached（事实 8：bool 返回值不可信）",
+    "★ 证据文件 output/spec211-b3-weldsymbol-real.json（output/ 为 gitignore 产物目录）"
+   ],
+   "limitations": [
+    "★★★ 前置是硬性的（官方示例 Preconditions 逐字）：调之前必须在零件上选一个面、边或草图段 ⇒ 不选则拿不到有意义的符号",
+    "★★ 两步式：InsertWeldSymbol3() 只负责插入并回 IWeldSymbol 对象，属性与文字要靠 IWeldSymbol 的那一族 Set*（SetText / SetFieldWeld / SetPeripheral / SetSymmetric / SetStagger / SetProcess）",
+    "★★★ 符号名来自 C:\\ProgramData\\SolidWorks\\SolidWorks 20*nn*\\*lang*\\*english*\\gtol.sym，官方列出的 ISO 短名是 BUTT / BUSQ / BUSV / BUSB / BUSVBR / BUSBR / BUSU / BUSJ / BACK / FILL / PLUG / SPOT / SEAM / SEAMC / JSPT / JSM —— 不是 design library 下的 .sldweldfvt（那是另一类文件）",
+    "★ 本次只试了一个符号名（BUTT）与一个面、且只调了 SetText ⇒ 不许推广成所有符号名、所有面类型都成；未试：SetFieldWeld / SetPeripheral / SetSymmetric / SetStagger / SetProcess 各档、边/草图段作为选择对象、多符号",
+    "★ GetTextCount 回 0 而 GetLineCount 回 3 ⇒ 文字那一支本次没体现（可能是 Contour 传 0 所致），未深究",
+    "★ 会新建焊接符号标注（非只读）"
+   ],
+   "backends": [
+    "pywin32"
+   ],
+   "allowed_modes": [
+    "interactive"
+   ],
+   "dependencies": [],
+   "verified_versions": {
+    "solidworks": [
+     "2026"
+    ]
+   }
   }
  ]
 }

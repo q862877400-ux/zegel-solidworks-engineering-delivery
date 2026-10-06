@@ -37,7 +37,7 @@ ITEM_TO_CAP = {
     "裁剪/延伸焊件": "weldment_trim",
     "角撑板（焊件）": "weldment_gusset",
     "圆角焊缝": "fillet_weld_bead",
-    "焊接符号": None,                     #: ★ 台账判"可做"，★ 但**尚未真机验** ⇒ 待处理 ✓
+    "焊接符号": "weld_symbol",            #: ★★★ 真机建成 ⇒ verified ✓
     "曲线驱动阵列": "curve_driven_pattern",   #: ★★ B8 翻案：改判「可做」⇒ stitched ✓
     "边界凸台": None,                     #: ★ 判"不做"（要 ACL）✓
     "特征识别/Instant3D": None,           #: ★ 判"不做"（官方无 API 入口）✓
