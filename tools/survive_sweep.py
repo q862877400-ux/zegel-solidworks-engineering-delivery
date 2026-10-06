@@ -102,6 +102,38 @@ _KIND_BY_REQUIRES = {
 }
 
 
+def build_host(sw, inject_name: str):
+    """★★ 按**注入名**建**对的宿主对象** —— ★ 这是分组省时间之后**必须补的那一半** ✓
+
+    ★★★ 2026-10-06 **分组暴露的真问题**：★ 每组需要的**不只是"一个文档"**，★ 而是**那个特定的对象** ——
+      ★ `asm_model` 要装配体 · `view` 要视图 · `study` 要研究 · `cost_manager` 要成本管理器 ⇒
+      ★★ 而我第一版 `build_state` **只会建文档、且一律当 `model` 传** ⇒
+      ★ 于是除 `part`/`none` 外的组**根本没跑到**（★ 真机：`empty` 47 条里 33 条"调用没调成"）✗
+    ★★ 另外一处更细的认识：★ 分组的键应当是 **`inject`（精确的注入名）**，
+      ★ 不是 `requires`（**种类**）—— ★ `requires` 只用来做**基数统计**（9 种）✓
+
+    :returns: `(inject_objects, why)` —— ★ `why` 非空表示**这一组还没法建**（★ 如实记，不假装）✓
+    ★⚠ 限度：★ `view` / `study` / `cost_manager` / `selection` **这四类还没建**
+      （★ 要构造视图/研究/成本管理器/选中对象）⇒ ★ 那些组会**如实记 `undecided`** ✓
+    """
+    import sw_connect
+    name = str(inject_name or "")
+    if name in ("", "none"):
+        return {"sw": sw}, ""
+    #: ★ 应用对象类（`sldworks` / `sw_app` / `sw` / `manager` / `defaults` / `options`）⇒ 给 `sw` ✓
+    if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options", "sw_app"):
+        return {name: sw, "sw": sw}, ""
+    kind = {"model": "part", "doc": "part", "asm_model": "assembly",
+            "component": "assembly", "drawing_model": "drawing"}.get(name)
+    if kind:
+        try:
+            return {name: sw_connect.new_document(sw, kind), "sw": sw}, ""
+        except Exception as exc:                                        # noqa: BLE001
+            return {}, "★ 建 %s 失败：%s" % (kind, type(exc).__name__)
+    #: ★ 其余四类（view / study / cost_manager / selection）**还没建** ⇒ ★ 如实报出 ✓
+    return {}, "★ 这一类宿主**还没建**（`%s`）—— ★ 需要构造视图/研究/成本管理器/选中对象" % name
+
+
 def build_state(sw, requires: str):
     """★ 建**这一组**的宿主状态（★ 每组只建一次）✓
 
@@ -160,7 +192,8 @@ def main() -> int:
     #: ★ 按 `--declared` 选目标（★ `[]` / 非空 / `None` / 全部 —— ★ 三组**不许混**）✓
     #: ★★ 先把目标按 `requires` **分组**（★ 每组只建一次状态）✓
     def _requires_of(tool_name: str) -> str:
-        return str((table.get(tool_name) or {}).get("requires") or "unknown")
+        #: ★★ 分组用 **`inject`（精确注入名）**；★ `requires`（种类）只用于统计基数 ✓
+        return str((table.get(tool_name) or {}).get("inject") or "none")
 
     if args.declared == "empty":
         targets = sorted(n for n, r in table.items() if r.get("writes") == [])
@@ -189,8 +222,8 @@ def main() -> int:
         group = by_requires[req]
         print("\n★ ── `requires=%s` 组：%d 个（★ **只建一次状态**，★ 写工具后重建）──"
               % (req, len(group)))
-        model, why_state = build_state(sw, req)
-        if model is None and req != "app":
+        injects, why_state = build_host(sw, req)
+        if why_state:
             #: ★ 建不出宿主 ⇒ 整组**如实记未判定**（★ 不许当成通过）✓
             for _n in group:
                 rows.append({"tool": _n, "verdict": "undecided", "requires": req,
@@ -203,21 +236,21 @@ def main() -> int:
         for name in group:
             decl = table.get(name) or {}
             if decl.get("writes"):
-                model, why_state = build_state(sw, req)
-                if model is None and req != "app":
+                injects, why_state = build_host(sw, req)
+                if why_state:
                     rows.append({"tool": name, "verdict": "undecided", "requires": req,
                                  "writer_ok": True, "why": "★ 重建状态失败：%s" % why_state})
                     continue
-            before = FP.read(model, sw)
+            before = FP.read(injects.get(req) or injects.get("sw"), sw)
             #: ★★ 按声明**合成实参**（★ 真机证明 12/17 的失败只是"没给参数"）✓
             spec_entry = tool_caller._specs().get(name)
             extra = synth_args(spec_entry[0]) if spec_entry else {}
             ok, note = tool_caller.call(
-                name, inject_objects={"model": model, "sw": sw},
+                name, inject_objects=dict(injects),
                 **{k: v for k, v in extra.items()
                    if k not in ("model", "sw", "asm_model", "view", "sldworks",
                                 "doc", "study")})
-            after = FP.read(model, sw)
+            after = FP.read(injects.get(req) or injects.get("sw"), sw)
             diff = FP.compare_detailed(before, after)
             verdict = classify(table[name].get("writes"),
                                {"changed": diff["changed"], "unknown": diff["unknown"]},

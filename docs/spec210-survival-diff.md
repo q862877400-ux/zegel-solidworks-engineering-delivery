@@ -7,17 +7,80 @@
 
 ★ 判据：★「**声明只读却观察到指纹变化**」⇒ 必须为 **0**（或逐条定性）。
 
-★★ 实测：**0 条** —— **满足** ✓
+★★ 实测：**2 条** —— ★★ 未满足 ✗
 
 ## 四类统计
 
-agree **47**
+★ agree **16** · missed **2** · undecided **29**
 
 ★★ **语义说明**（★ 四类不许混）：
 
-· `agree`（47）：★ **一致**（声明「无写」，观察也确实**没变**）
+· `agree`（16）：★ **一致**（声明「无写」，观察也确实**没变**）
+· `missed`（2）：★★★ **漏报**（声明「无写」而观察**变了**）—— ★ **硬红门禁**这一条 ✗
+· `undecided`（29）：★ **未判定**（有一侧读不到）—— ★ **不算通过也不算失败**
 
 ## 逐条
+
+**`solidworks_assembly_check_interference`** ⇒ `missed`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`['selection']`
+· 观察**未判定**的类：`（无）`
+· 调用返回：`{'status': 'pass', 'interference_count': 0, 'items': [], 'manual_review_required': False}`
+
+**`solidworks_motion_collect_summary`** ⇒ `agree`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`（无）`
+· 调用返回：`{'motion_type_library': 'D:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\swmotionstudy.tlb', 'study_count': 1, 'studies'`
+
+**`solidworks_motion_create_study`** ⇒ `missed`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`['selection', 'dirty', 'features']`
+· 观察**未判定**的类：`（无）`
+· 调用返回：`<COMObject <unknown>>`
+
+**`solidworks_motion_study_manager`** ⇒ `agree`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`（无）`
+· 调用返回：`<COMObject <unknown>>`
+
+**`solidworks_assembly_external_reference_count`** ⇒ `agree`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`（无）`
+· 调用返回：`0`
+
+**`solidworks_costing_list_bodies`** ⇒ `undecided`
+
+· 声明 `writes`：`None`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`（无）`
+
+**`solidworks_costing_read_body`** ⇒ `undecided`
+
+· 声明 `writes`：`None`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`（无）`
+
+**`solidworks_simulation_apply_link_connector`** ⇒ `undecided`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`★ 调用抛 ImportError: attempted relative import with no known parent package`
+
+**`solidworks_weldment_read_property_manager`** ⇒ `undecided`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`★ 调用抛 AttributeError: SldWorks.Application.GetNames`
 
 **`solidworks_activate_model_for_preview`** ⇒ `agree`
 
@@ -25,27 +88,6 @@ agree **47**
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`True`
-
-**`solidworks_assembly_check_interference`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'asm_model' 但没给对应对象`
-
-**`solidworks_assembly_external_reference_count`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'component' 但没给对应对象`
-
-**`solidworks_automation_get_flag`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：pref`
 
 **`solidworks_config_inspect`** ⇒ `agree`
 
@@ -61,77 +103,56 @@ agree **47**
 · 观察**未判定**的类：`（无）`
 · 调用返回：`{'ok': True, 'configuration': '默认', 'display_states': ['<默认>_显示状态 1'], 'count': 1, 'count_reported': 1, 'count_mismatch'`
 
-**`solidworks_config_set_custom_properties`** ⇒ `agree`
+**`solidworks_config_set_custom_properties`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：properties`
+· 调用返回：`★ 调用抛 AttributeError: 'str' object has no attribute 'items'`
 
-**`solidworks_costing_list_bodies`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'cost_manager' 但没给对应对象`
-
-**`solidworks_costing_read_body`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：body_name`
-
-**`solidworks_document_dependencies`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：document`
-
-**`solidworks_drawing_current_sheet_info`** ⇒ `agree`
+**`solidworks_drawing_current_sheet_info`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）`
 
-**`solidworks_drawing_current_sheet_name`** ⇒ `agree`
+**`solidworks_drawing_current_sheet_name`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）`
 
-**`solidworks_drawing_get_current_sheet`** ⇒ `agree`
+**`solidworks_drawing_get_current_sheet`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）`
 
-**`solidworks_drawing_list_sheets`** ⇒ `agree`
+**`solidworks_drawing_list_sheets`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）`
 
-**`solidworks_drawing_sheet_count`** ⇒ `agree`
+**`solidworks_drawing_sheet_count`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）`
 
-**`solidworks_drawing_sheet_names`** ⇒ `agree`
+**`solidworks_drawing_sheet_names`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: 当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）`
 
-**`solidworks_drawing_sheets_summary`** ⇒ `agree`
+**`solidworks_drawing_sheets_summary`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
@@ -143,7 +164,7 @@ agree **47**
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：kind`
+· 调用返回：`{'ok': False, 'kind': 'MCP_CALIB', 'body_index': 0, 'count': None, 'entities': [], 'euler': None, 'error': "EntitySelect`
 
 **`solidworks_equation_evaluate`** ⇒ `agree`
 
@@ -157,21 +178,7 @@ agree **47**
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：output_path`
-
-**`solidworks_fastener_table_types`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 调用抛 RuntimeError: IHoleStandardsData.GetFastenerTableTypes('', 0) 返回 False —— 常见原因：`fastener_id` 不在 `list_fastener_typ`
-
-**`solidworks_fastener_types`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 调用抛 RuntimeError: IHoleStandardsData.GetFastenerTypes('') 返回 False —— 常见原因：标准名拼错（用 `list_hole_standards()` 里的 `name`）`
+· 调用返回：`{'ok': False, 'format': 'dxf', 'output_path': 'MCP_CALIB_out.step', 'returned': None, 'exists': False, 'size_bytes': 0, `
 
 **`solidworks_feature_whats_wrong`** ⇒ `agree`
 
@@ -187,26 +194,12 @@ agree **47**
 · 观察**未判定**的类：`（无）`
 · 调用返回：`<COMObject <unknown>>`
 
-**`solidworks_get_view_model_doc`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'view' 但没给对应对象`
-
 **`solidworks_helix_insert`** ⇒ `agree`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：height_mm`
-
-**`solidworks_hole_standards`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`[{'id': 0, 'name': 'ANSI Inch'}, {'id': 1, 'name': 'ANSI Metric'}, {'id': 16, 'name': 'AS'}, {'id': 2, 'name': 'BSI'}, {`
+· 调用返回：`Configuration Table`
 
 **`solidworks_list_render_materials`** ⇒ `agree`
 
@@ -222,28 +215,7 @@ agree **47**
 · 观察**未判定**的类：`（无）`
 · 调用返回：`{'counts': {'parting_lines': None, 'parting_surfaces': None, 'cavity_surfaces': None, 'core_surfaces': None}, 'parting_t`
 
-**`solidworks_motion_collect_summary`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'asm_model' 但没给对应对象`
-
-**`solidworks_motion_create_study`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'asm_model' 但没给对应对象`
-
-**`solidworks_motion_study_manager`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'asm_model' 但没给对应对象`
-
-**`solidworks_part_bounding_box`** ⇒ `agree`
+**`solidworks_part_bounding_box`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
@@ -264,89 +236,113 @@ agree **47**
 · 观察**未判定**的类：`（无）`
 · 调用返回：`{'ok': True, 'raw': '(0, 1, 8, 2, 0)', 'tuple': [0, 1, 8, 2, 0], 'tuple_named': {'LengthUnit': 0, 'FractionBase': 1, 'Fr`
 
-**`solidworks_simulation_apply_link_connector`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：first`
-
-**`solidworks_simulation_find_study`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：study_name`
-
-**`solidworks_sketch_count_segments`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ derived_args 抛 RuntimeError: 取不到草图：试过 ['Sketch1', '草图1']；特征树里也没找到以 Sketch/草图 开头的特征`
-
-**`solidworks_sketch_fully_defined_status`** ⇒ `agree`
+**`solidworks_sketch_fully_defined_status`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: 没有活动草图 ⇒ 取不到 ISketch（`GetActiveSketch2` 与 `SketchManager.ActiveSketch` 都回 None）。★ 完全定义状态只能问**正在编辑**的`
 
-**`solidworks_sketch_mirror`** ⇒ `agree`
+**`solidworks_sketch_mirror`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
 · 调用返回：`★ 调用抛 RuntimeError: ISketchManager.ActiveSketch 为 None ⇒ 当前不在草图编辑态。官方 SketchMirror 需要先进入草图并选中要镜像的实体（线段 mark=1 / 中心线 mark`
 
-**`solidworks_sketch_spline`** ⇒ `agree`
+**`solidworks_sketch_spline`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：points`
+· 调用返回：`★ 调用抛 RuntimeError: sketch_spline() 被调用时**没有活动草图** ⇒ 画几何会**静默无效**（几何画到不存在的地方）。★ 先调 `sketch_start(model, plane_name=...)``
 
-**`solidworks_surface_evidence`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'sw_app' 但没给对应对象`
-
-**`solidworks_topology_list_constraints`** ⇒ `agree`
+**`solidworks_weldment_create_weldment_profile`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'study' 但没给对应对象`
+· 调用返回：`★ 调用抛 ValueError: 焊件型材输出必须使用 .sldlfp 扩展名`
 
-**`solidworks_view_get_next`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'view' 但没给对应对象`
-
-**`solidworks_view_has_perspective`** ⇒ `agree`
+**`solidworks_sketch_count_segments`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'view' 但没给对应对象`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`★ derived_args 抛 RuntimeError: 取不到草图：试过 ['Sketch1', '草图1']；特征树里也没找到以 Sketch/草图 开头的特征`
 
-**`solidworks_weldment_create_weldment_profile`** ⇒ `agree`
-
-· 声明 `writes`：`[]`
-· 观察**变了**的类：`（无）`
-· 观察**未判定**的类：`（无）`
-· 调用返回：`★ 缺必填形参：output_path`
-
-**`solidworks_weldment_read_property_manager`** ⇒ `agree`
+**`solidworks_automation_get_flag`** ⇒ `undecided`
 
 · 声明 `writes`：`[]`
 · 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`★ 调用抛 ValueError: invalid literal for int() with base 10: 'MCP_CALIB'`
+
+**`solidworks_topology_list_constraints`** ⇒ `undecided`
+
+· 声明 `writes`：`None`
+· 观察**变了**的类：`（无）`
 · 观察**未判定**的类：`（无）`
-· 调用返回：`★ 声明注入 'manager' 但没给对应对象`
+
+**`solidworks_fastener_table_types`** ⇒ `undecided`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`★ 调用抛 RuntimeError: IHoleStandardsData.GetFastenerTableTypes('', 0) 返回 False —— 常见原因：`fastener_id` 不在 `list_fastener_typ`
+
+**`solidworks_fastener_types`** ⇒ `undecided`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`★ 调用抛 RuntimeError: IHoleStandardsData.GetFastenerTypes('') 返回 False —— 常见原因：标准名拼错（用 `list_hole_standards()` 里的 `name`）`
+
+**`solidworks_hole_standards`** ⇒ `undecided`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`[{'id': 0, 'name': 'ANSI Inch'}, {'id': 1, 'name': 'ANSI Metric'}, {'id': 16, 'name': 'AS'}, {'id': 2, 'name': 'BSI'}, {`
+
+**`solidworks_document_dependencies`** ⇒ `undecided`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`{'ok': True, 'document': 'MCP_CALIB', 'traverse': True, 'search': False, 'add_read_only_info': False, 'count': 0, 'entri`
+
+**`solidworks_simulation_find_study`** ⇒ `undecided`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`{'found': False, 'requested_name': 'MCP_CALIB', 'study_name': ''}`
+
+**`solidworks_surface_evidence`** ⇒ `undecided`
+
+· 声明 `writes`：`[]`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`['selection', 'edit_mode', 'dirty', 'features', 'config', 'rebuild']`
+· 调用返回：`{'has_modeler': True, 'registered_creation_methods': ['CreateBsplineSurface', 'CreateConicalSurface', 'CreateConicalSurf`
+
+**`solidworks_get_view_model_doc`** ⇒ `undecided`
+
+· 声明 `writes`：`None`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`（无）`
+
+**`solidworks_view_get_next`** ⇒ `undecided`
+
+· 声明 `writes`：`None`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`（无）`
+
+**`solidworks_view_has_perspective`** ⇒ `undecided`
+
+· 声明 `writes`：`None`
+· 观察**变了**的类：`（无）`
+· 观察**未判定**的类：`（无）`
 
 ## ⚠ 本记录的限度（★ 不许当成「448 个都验过了」）
 

@@ -68,7 +68,7 @@ def main() -> int:
         "",
         "## 四类统计",
         "",
-        "★ 「 + 」 · ".join("%s **%d**" % (k, n) for k, n in sorted(counts.items())),
+        "★ " + " · ".join("%s **%d**" % (k, n) for k, n in sorted(counts.items())),
         "",
         "★★ **语义说明**（★ 四类不许混）：",
         "",
