@@ -121,6 +121,8 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
     """
     order = ["com", "title"] if prefer == "com" else ["title"]
     tried: list = []
+    #: ★ 因"读不出"而降级掉的那些路（★ 记进返回值，免得读者以为只试了一条）✓
+    tried_paths: list = []
     for path in order:
         probe = com_documents(timeout_s=timeout_s) if path == "com" else title_documents()
         tried.append(path)
@@ -149,6 +151,23 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
                 continue
             (ours if _norm(p) in allowed else foreign).append(d)
         unsaved = [d for d in docs if (d or {}).get("dirty") is True]
+        #: ★★★ 2026-10-06 **真机查出的静默漏洞**（★ 这是本规格最值钱的一条修正）：
+        #:   ★ 现场：SolidWorks **明明开着一个文档**，而 COM 路的 `GetDocuments` 返回**空** ⇒
+        #:     `count=None · 文档数=0`，★ 而当时的裁决**照样放行** ✗✗
+        #:   ⇒ ★★ 那就是「**一个存在但没人用的守卫**」的同类：★ **它瞎着，却报"干净"** ✓
+        #:   ★ 判据改法：★ **只要读过之后仍然"读不出文档"**（`readback_problem` 非空）
+        #:     且**一个文档都没读到** ⇒ ★ **不许放行** —— ★ 读不到 ≠ 没有 ✓
+        problem = str((probe.get("snapshot") or {}).get("readback_problem") or "")
+        if not docs and problem:
+            #: ★★★ 2026-10-06 **真机查出的静默漏洞 + 我随后的过度纠正**（两个都记下来）：
+            #:   ★ 漏洞：★ SolidWorks 明明开着文档，而 COM 路的 `GetDocuments` 返回**空** ⇒
+            #:     `count=None · 文档数=0`，★ 而当时的裁决**照样放行** ✗（★ 门禁瞎着却报"干净"）
+            #:   ★ 过度纠正：★ 我随后改成"读不出就**拒绝**" ⇒ ★★ 结果**会话干净时也拒绝** ⇒
+            #:     ★ **门禁变成了路障**（★ 与上一轮 `sandbox_before` 那次同族）✗
+            #:   ⇒ ★★ 正解：★ **降级到另一条探路**，★ 并把"用的是哪条"如实记进 `path_used`，
+            #:     ★ 同时把 COM 路的失败原因写进 `why` —— ★ 于是**既不瞎、也不堵** ✓
+            tried_paths.append(path)
+            continue
         return {
             "ok": not foreign,
             "path_used": path,
@@ -157,10 +176,12 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
             "foreign": foreign,
             "unsaved": unsaved,
             "unsaved_unknown": sum(1 for d in docs if (d or {}).get("dirty") is None),
+            "tried_paths": tried_paths,
             "why": "" if not foreign else (
                 "★ 会话里有 %d 个**不是我们打开的**文档 ⇒ 拒绝开始" % len(foreign)),
         }
     return {"ok": False, "path_used": "", "documents": [], "ours": [], "foreign": [],
-            "unsaved": [], "unsaved_unknown": 0,
-            "why": "★★ 两条探路都探不通（试过 %s）⇒ ★ 按铁律 5 记「查不到」并**停下问人**，"
-                   "★ 不许当成「会话是干净的」" % "、".join(tried)}
+            "unsaved": [], "unsaved_unknown": 0, "tried_paths": tried_paths,
+            "why": "★★ **所有探路都读不出已打开的文档**（试过 %s；其中因读不出而降级的有 %s）⇒ "
+                   "★ 按铁律 5 记「查不到」并**停下问人**，★ **不许当成「会话是干净的」**"
+                   % ("、".join(tried), "、".join(tried_paths) or "无")}

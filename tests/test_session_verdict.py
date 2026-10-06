@@ -129,3 +129,57 @@ def test_reclaim_delegates_to_the_shared_verdict():
     assert R._OURS is SV.OURS, "★ 回收脚本又自己写了一份正则 ⇒ 本仓反复吃过的亏"
     mine, others = R._our_own_docs([{"title": "MCP_Test.SLDPRT"}, {"title": "主轴壳体.sldprt"}])
     assert len(mine) == 1 and len(others) == 1
+
+
+# ── ④ 降级与矛盾（★ 真机查出的漏洞 + 我随后的过度纠正，两条都钉住）────────
+def test_com_path_degrades_to_title_instead_of_going_blind(monkeypatch):
+    """★★★ **真机查出的静默漏洞**：COM 路的 `GetDocuments` 返回**空**（★ 现场：明明开着文档）⇒
+    ★ 当时裁决**照样放行** ✗（★ 门禁瞎着却报「干净」）。
+
+    ★ 正解不是"读不出就拒绝"（★ 那会把门禁变成**路障**，会话干净时也拒）——
+    ★ 而是**降级到标题路**并**记明用的是哪条** ✓
+    """
+    class _P:
+        stdout = "1\tTrue\t[零件1]\n"
+    monkeypatch.setattr(SV.subprocess, "run", staticmethod(lambda *a, **k: _P()))
+    blind = {"usable": True, "why": "", "documents": [],
+             "snapshot": {"documents": [], "readback_problem": "GetDocuments 返回空"}}
+    monkeypatch.setattr(SV, "com_documents", lambda timeout_s=25: blind)
+    v = SV.session_verdict(prefer="com")
+    assert v["path_used"] == "title", v
+    assert len(v["documents"]) == 1, "★ 降级之后应当看得见那个文档"
+    assert "com" in (v.get("tried_paths") or []), v
+
+
+def test_all_paths_blind_still_refuses_and_says_so(monkeypatch):
+    """★ **所有探路都读不出**（且进程在）⇒ ★ 仍然**拒绝**并说清「查不到」，★ 不许说「干净」✓"""
+    monkeypatch.setattr(SV, "com_documents",
+                        lambda timeout_s=25: {"usable": False, "why": "连不上", "documents": []})
+    monkeypatch.setattr(SV, "title_documents",
+                        lambda timeout_s=60: {"usable": False, "why": "读不出标题",
+                                              "processes": [{"pid": 1, "responding": True,
+                                                             "title": ""}],
+                                              "documents": []})
+    v = SV.session_verdict(prefer="com")
+    assert v["ok"] is False and v["path_used"] == ""
+    assert "查不到" in v["why"] and "停下问人" in v["why"], v
+
+
+def test_guard_refuses_when_the_two_rolls_disagree(monkeypatch):
+    """★★ **真机现场**：标题路读到 1 个文档、COM 路读到 0 个 ⇒ ★ 两次说法不同 ⇒ **拒绝** ✓
+
+    ★ 理由：★ 两次不一致说明**至少一次是瞎的**，★ 而我们**不知道是哪次** ⇒ 保守不放行 ✓
+    """
+    import sw_guard as G
+    calls = []
+
+    def fake(allowed_paths=(), *, allow_untitled=False, prefer="com", timeout_s=25):
+        calls.append(prefer)
+        n = 1 if prefer == "title" else 0
+        return {"ok": True, "path_used": prefer, "why": "", "documents": [{}] * n,
+                "ours": [], "foreign": [], "unsaved": [], "unsaved_unknown": 0}
+
+    monkeypatch.setattr(SV, "session_verdict", fake)
+    v = G.precheck_before_run()
+    assert v["refused"] is True and "矛盾" in v["why"], v
+    assert calls == ["title", "com"], calls
