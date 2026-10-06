@@ -222,7 +222,14 @@ _LEN_SUFFIX_EXEMPT: dict = {
         "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
         "`Left position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
     ("solidworks_view_set_frame", "top_px"):
-        "同 `left_px`：官方读数逐字 `Top position of document window in client area in pixels`。",
+        #: ⚑⚑ ★ 2026-10-07（规格 212 · A-1）**修自洽性**：★ 原文只写「**同 `left_px`**」⇒
+        #:   ★★ 而门禁要求**每条豁免自己点明三类依据之一**（「文档默认」/「不是长度（如像素）」/
+        #:   「同一个形参两种量纲」）✗ —— ★ **理由挂靠别条时，读者（与门禁）都得去翻另一条** ✓
+        #:   ★ 故改成与 `width_px` **同构**的写法（★ 自己点明"不是长度、是像素"）✓
+        #:   ⚠ ★ **没有为过门禁说假话** —— ★ 该理由**本来就成立**（官方读数逐字就是像素），
+        #:     ★ 只是**没写全** ✓（★ 这条纪律见 `test_rule2_exemptions_are_explicit_and_reasoned` 的 docstring）
+        "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
+        "`Top position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
     ("solidworks_view_set_frame", "width_px"):
         "同 `left_px`：官方读数逐字 `Width of the window in pixels` ⇒ 单位是**像素**。",
     ("solidworks_view_set_frame", "height_px"):
