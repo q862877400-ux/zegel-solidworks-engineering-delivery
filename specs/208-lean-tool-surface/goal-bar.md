@@ -65,3 +65,19 @@
   ② 类型检查抓到 3 处类型错误（vitest 不查类型）⇒ 已修，`pnpm run typecheck` 干净
 - ★ **限度**：未在真团队回合里端到端观测到"团员按自己的模式装配"
 - 沙盒提交 `1a806fedd2`；补丁重建 50,407 B / 14 文件 / `apply --check` exit 0
+
+## 八 · 第 8 轮：沙盒**真启动**验证（功能生效 + 重启）
+
+- ✅ **补丁严格等价**：`git apply --check --reverse` **exit 0** ⇒ 补丁 = 生产 `d37ca457e2` → 我的 HEAD 的全部改动；工作树干净
+- ✅ **补丁完整性**：抓到并补上一个**漏提交的测试**（"子作用域覆盖父作用域"那条 —— 正是团队混合模式的关键证据）
+- ✅ **真启动**：沙盒 profile `leanprobe`（headless 模板）跑真回合，**4 次冷启动全 exit 0**
+  | 次序 | 系统提示词长 | 含目录段 | 判读 |
+  |---|---|---|---|
+  | #1 | 2,951 | ✗ | native 基线 |
+  | #2/#3/#4 | ★ **7,353（三次全同）** | ✓ | env / env / **overlay 交付件** |
+  | #5 | 2,951 | ✗ | 回 native |
+- ✅ **启动期校验是活的**：`$.mode expected "native" | "ptc" | "both" | "lean" but got "nonsense"`
+- ✅ **preset 路线**：`--profile web --patch <探测> --dump-config` ⇒ 组合树出现 `preset-leanprobe` + `tool-presentation` + `mode: lean`
+- ★★ **token 更正**：首次 lean **15,311** vs native **17,056** ⇒ **省 10.2%**（★ 我先前按**文件大小**排序把两行读反了；lean 的会话文件更大是因为目录文本被记进会话）
+- ⚠ **未做**：真跑 web profile + lean preset 的完整回合（会拉起 Hindsight 并占端口）；团体混合模式的**真回合**端到端
+- ✅ 副作用：我的 headless 启动**没有**拉起 Hindsight（8888 未监听）
