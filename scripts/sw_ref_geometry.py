@@ -180,7 +180,17 @@ def insert_ref_plane(model, first_constraint: int, first_angle_or_dist: float = 
     return _judge(model, {"_before": before, "returned_is_none": obj is None,
                           "constraints": [int(first_constraint), int(second_constraint),
                                           int(third_constraint)],
+                          #: ★★ 2026-10-07（规格 212 · D）：★ 本键**已经把"官方未给单位"说出来了** ✓，
+                          #:   但它用的是**自己造的键名** ⇒ ★★ 仓里的既有约定是 **`unit_assumption`**
+                          #:   （★ 见 `sw_curve_and_split.py` / `sw_drawing_create_missing.py`，共 7 处）✓
+                          #:   ★ 依据**铁律 1「只缝合不发明」** —— ★ **该用既有约定的键名** ✓
+                          #:   ★ 故**两个键都留**：★ `unit_assumption` 承载**统一说法**，
+                          #:   ★ `angle_or_dist_unit` 保留**它比统一说法多出的信息**（★ 指明是哪个参数）✓
                           "angle_or_dist_unit": "★ 官方未给单位 —— 按文档原样透传，本模块不换算",
+                          "unit_assumption": "★ 官方未给单位 —— 按文档原样透传，本模块不换算；"
+                                             "★ 该形参（`FirstConstraintAngleOrDistance` 族）在 "
+                                             "`FirstConstraint` 取 `Angle` 时是角度、取 `Distance` "
+                                             "时是长度 ⇒ ★ 详见 `angle_or_dist_unit`",
                           "selection_mark": "★ 官方 Remarks 只说「these marks」、**未给取值表** ⇒ 不假定"},
                   "ref_plane")
 
