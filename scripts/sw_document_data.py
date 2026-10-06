@@ -463,3 +463,143 @@ def set_custom_properties(
         "save_requested": save,
         "save_success": save_success,
     }
+
+
+# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**引用文档（依赖清单）** ────────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_document_data.py —— 追加 `document_dependencies`
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **244 `referenced_documents`**。
+#   ★ 裁决书（`docs/recon-207/adjudication.md` §一）逐字：「补齐 `solidworks_pack_and_go`
+#   一直枚举却不暴露的**读侧**」✓ ★ 落点由我先确认本模块职责后选定（该模块 = 文档数据读/写）。
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
+#   · `C:\swapi\types\ISldWorks\GetDocumentDependencies2.md` ——
+#     `System.object GetDocumentDependencies2(System.string Document, System.bool Traverseflag,
+#      System.bool Searchflag, System.bool AddReadOnlyInfo)`
+#     ★ `## Returns` 逐字：「Array of strings with **two strings for each document** … ① File name
+#       ② Filename with the complete pathname; this combination repeats itself for each dependent file」
+#     ★ `## Remarks` 逐字 ①：「calling this method on a drawing document returns a list of all the
+#       part and assemblies used in the drawing」②「**Suppressed components are recognized and
+#       returned by this method as a dependent file.**」③ ★★ **盲区**：「Be aware that **Library
+#       features are completely unassociated**. … Therefore, **this method would not return Library
+#       features**.」④ `AddReadOnlyInfo=True` 时每个文档后**多一个** `"Read-Only"` 串
+#       （★ 且**只读**的那个才有，非只读的是**空串** —— 官方例子逐字 `… "SubAssem1", "c:\…", "" `）
+#   · ⚠ `C:\swapi\types\ISldWorks\GetDocumentDependenciesCount.md` —— ★ 该页逐字写着
+#     **「Obsolete. Superseded by `ISldWorks::IGetDocumentDependenciesCount2`」** ⇒ ★★ 本函数
+#     **不去调它**（★ `I` 前缀那族是给进程内 C++ 的指针变体，且我们**本来也不需要预取个数** ——
+#     `GetDocumentDependencies2` 一次就回**完整数组**）✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+# ★★ **裁决书点名的硬约束**：「官方逐字：**Library features 不会返回** ⇒ doc **必须写明这个盲区**
+#   （不写就是静默的错答案）」✓ ⇒ ★ 见 `LIMITATIONS`，且**随返回值一起**带出去（★ 不让调用方漏读）。
+
+#: ★ 本能力的**已知盲区**（★ 官方 `## Remarks` 逐字）—— ★ **随返回值一起回给调用方**
+DOCUMENT_DEPENDENCIES_LIMITATIONS = (
+    "★★ **库特征（Library features）不会出现在结果里** —— 官方 `GetDocumentDependencies2` 的 "
+    "`## Remarks` 逐字：「Library features are completely unassociated. They do not require the "
+    "library nor do they update when changes are made to the Library feature. Therefore, this "
+    "method would not return Library features.」⇒ ★ **把本函数的清单当「完整依赖」是错的** ✓",
+    "★ `Traverseflag=False` 只回**最上一层**：官方逐字「false if you want only the highest level "
+    "within the dependencies」⇒ ★ 要**递归到零件**必须传 `traverse=True` ✓",
+    "★ `Searchflag=True` 会**改变当前目录**（官方 NOTE 逐字：「then the current directory is set to "
+    "the directory of the document file」）—— ★ 有副作用，默认 **False** ✓",
+    "★ 官方原话「**Suppressed components are recognized and returned**」⇒ ★ **被压缩的组件也在清单里**，"
+    "★ 别把「出现了」当成「生效了」 ✓",
+    "★★★ **官方例子与真机读数不一致（本能力实测抓到，★ 照例子写判据会判反）**：官方例子说开了 "
+    "`AddReadOnlyInfo` 之后，**非只读**的文档跟的是**空串** "
+    "（逐字 `[ \"Part1\", \"C:\\temp\\Part1.SLDPRT\", \"Read-Only\", \"SubAssem1\", "
+    "\"c:\\temp\\SubAssem1.SLDASM\", \"\" ]`）；"
+    "★ 而**本机实测（2026-10-06，SW 2026 SP4.1）回的是字符串 `\"FALSE\"`** —— "
+    "⇒ ★★ **若按「非空即只读」写判据，会把非只读的文档判成只读**（`bool(\"FALSE\")` 是 `True`）✓ "
+    "⇒ ★ 本函数的 `read_only_flag` 于是**按白名单判**：`\"Read-Only\"` ⇒ `True`；"
+    "`\"\"` / `\"FALSE\"` / `\"0\"` ⇒ `False`；**其余一律 `None`（不猜）** ✓ "
+    "★ 原始串**原样**留在 `read_only` 字段里，调用方可以自己核 ✓",
+)
+
+#: ★ 只读信息串的**判读白名单**（★ 依据：官方例子给 `""`、本机实测给 `"FALSE"`）
+READ_ONLY_TRUE_LITERAL = "read-only"
+READ_ONLY_FALSE_LITERALS = ("", "false", "0")
+
+
+def _read_only_flag(text):
+    """★ 把只读信息串判成 `True` / `False` / `None`（**认不出就 `None`** —— ★ 不拿"非空"当判据）。"""
+    token = str(text or "").strip().casefold()
+    if token == READ_ONLY_TRUE_LITERAL:
+        return True
+    if token in READ_ONLY_FALSE_LITERALS:
+        return False
+    return None
+
+
+def document_dependencies(
+    sw_app,
+    document: str,
+    *,
+    traverse: bool = True,
+    search: bool = False,
+    add_read_only_info: bool = False,
+) -> dict[str, Any]:
+    """★ **列出一个文档的引用（依赖）清单**（★ 官方 `ISldWorks::GetDocumentDependencies2`）。
+
+    :param sw_app: `ISldWorks`（★ 本函数的注入键是 `sw_app` —— 官方成员在 `ISldWorks` 上，不在文档上）。
+    :param document: 文档名（★ 官方 `Parameters` 逐字只有「Name of the document」⇒
+        ★ 本函数**原样透传**、不替它猜要不要全路径）。
+    :param traverse: `True` = 递归进所有被依赖的文件（官方 `Traverseflag`）。
+    :param search: `True` = 用搜索规则找依赖（★ **会改当前目录** —— 见 `LIMITATIONS`）。
+    :param add_read_only_info: `True` = 每个文档后**多一个**只读信息串（官方 `AddReadOnlyInfo`）。
+    :returns: `{ok, document, count, entries: [{name, path, read_only}], raw, limitations, error}`
+
+    ★ **判据（规则 6）**：官方返回值是**扁平字符串数组**（每个文档 **2** 个串、开了 `add_read_only_info`
+    再加 **1** 个）⇒ ★ 本函数**先按官方声明的步长还原成记录**，**再校验**「数组长度能被步长整除」——
+    ★ 除不尽 ⇒ `ok=False` 并**如实报**（★ 不硬凑、不猜哪个串是谁的）✓
+    ★ 记录里 `read_only` 的语义**逐字照官方**：`"Read-Only"` 或**空串**（★ 空串 ≠ 未知，官方例子里
+    非只读的文档就是空串）✓
+    ★★ **而本机实测回的是 `"FALSE"`**（官方例子给的是空串）⇒ `read_only_flag` **按白名单判**、
+    认不出就 `None`（★ 见 `LIMITATIONS` 第 5 条 —— **照例子写判据会判反**）✓
+    """
+    out: dict[str, Any] = {
+        "ok": False, "document": str(document), "traverse": bool(traverse),
+        "search": bool(search), "add_read_only_info": bool(add_read_only_info),
+        "count": 0, "entries": [], "raw_len": None, "raw": None,
+        "limitations": list(DOCUMENT_DEPENDENCIES_LIMITATIONS), "error": None,
+        "★": "官方 Returns 逐字：每个文档 **2** 个串（名字 + 全路径）；"
+             "`AddReadOnlyInfo=True` 时**再加 1** 个只读信息串（官方例子里非只读的是**空串**）",
+    }
+    if not str(document).strip():
+        out["error"] = "document 不能为空（★ 官方 Parameters 只写「Name of the document」，本函数原样透传）"
+        return out
+    try:
+        raw = get_com_member(sw_app, "GetDocumentDependencies2", str(document),
+                             bool(traverse), bool(search), bool(add_read_only_info))
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
+        return out
+    items = [str(x) for x in (raw or [])]
+    out["raw"] = items
+    out["raw_len"] = len(items)
+    step = 3 if add_read_only_info else 2
+    if not items:
+        #: ★ 空数组**是合法读数**（无依赖文档）—— ★ 但要说清"这可能是真没依赖、也可能是文档名不对"
+        out["ok"] = True
+        out["error"] = None
+        out["note"] = ("返回**空数组**：★ 可能是该文档**确实没有依赖**（例如未保存的新零件），"
+                       "★ 也可能是 `document` 这个名字 SW 找不到 ⇒ ★ 本函数**不区分这两种**（如实记）")
+        return out
+    if len(items) % step:
+        out["error"] = ("官方声明的步长是 %d（每个文档 %s），而数组长度 %d **除不尽** ⇒ "
+                        "★ 本函数不硬凑、不猜哪个串是谁的（如实报）"
+                        % (step, "名字+全路径+只读信息" if add_read_only_info else "名字+全路径",
+                           len(items)))
+        return out
+    entries = []
+    for i in range(0, len(items), step):
+        entry = {"name": items[i], "path": items[i + 1],
+                 "read_only": (items[i + 2] if add_read_only_info else None)}
+        entry["read_only_flag"] = (None if step == 2
+                                   else _read_only_flag(entry["read_only"]))
+        entries.append(entry)
+    out["entries"] = entries
+    out["count"] = len(entries)
+    out["ok"] = True
+    return out

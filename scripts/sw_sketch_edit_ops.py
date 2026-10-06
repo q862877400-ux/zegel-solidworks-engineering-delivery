@@ -62,7 +62,7 @@ for _p in (_HERE.parent, _HERE.parent.parent):
         sys.path.insert(0, str(_p))
 
 import sw_sketch as _SK  # noqa: E402
-from sw_connect import get_com_member  # noqa: E402
+from sw_connect import get_com_member, set_com_member as _set_com_member  # noqa: E402
 from sw_part import _empty_callout  # noqa: E402
 
 #: ★ 官方 `swSketchTrimChoice_e`（★ 逐值抄自 `C:\swapi\enums\`）
@@ -222,3 +222,152 @@ B3_MEMBERS = (
     "sketch_trim", "sketch_extend", "sketch_offset", "sketch_fillet",
     "sketch_linear_pattern", "sketch_circular_pattern", "sketch_intersect_curves",
 )
+
+
+# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**构造几何** ─────────────────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_sketch_edit_ops.py —— 追加 `sketch_set_construction_geometry`
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **79 `construction_geometry`**。
+#   ★★ 裁决书的强制约束（`docs/recon-207/adjudication.md` §一）：「零参 + 普通 dispinterface ⇒
+#   后端可达性最高。落 `sw_sketch_edit_ops.py`，**复用**该文件已有的声明式选段包装」✓
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
+#   · `C:\swapi\types\ISketchManager\CreateConstructionGeometry.md` —— `void CreateConstructionGeometry()`
+#     ★ 摘要逐字：「**Sets** selected sketch segments **to be construction geometry instead of
+#       sketch geometry**.」（★ 是**置位**、不是 toggle —— 措辞是 "Sets … instead of"，★ 不是 "toggles"）
+#     ★ `## Remarks` 逐字：「This method supports **all document types**, unlike
+#       `IDrawingDoc::CreateConstructionGeometry`, which only supports drawing documents.」
+#   · `C:\swapi\types\ISketchSegment\ConstructionGeometry.md` —— `System.bool ConstructionGeometry {get; set;}`
+#     ★ 摘要逐字：「Gets **or sets** whether this sketch segment is construction geometry」
+#     ⇒ ★★ **往回变（构造线 → 实体线）官方只有这条属性通道**（`CreateConstructionGeometry` 是单向置位）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+# ★★ **裁决书点名的、必须先定的那个开源问题（dp1）**：
+#   「官方摘要**没说**"再调一次是**切换**还是**置位**" ⇒ ★ **必须先定这个，否则会做出
+#    "第二次调用把构造线变回实体"的工具**（静默的语义错）」
+#   ⇒ ★★ 本函数的**设计**（既做对、又可证）：**置位方向走官方零参入口**
+#     （`CreateConstructionGeometry`），**复位方向走属性 setter**（★ 官方唯一的回程）✓
+#   ★ 而"再调一次会怎样"由**真机探针**单独回答（`tools/probe_union_adopt_b1.py` 的 T2-c），
+#     ★★ **不把 toggle 语义烘进工具**（★ 无论答案是哪一种，本工具的语义都是"我要它**是/不是**构造线"）
+#   ★★★ **已知事实 32** 在这里照旧成立：草图段**按名字选不中** ⇒ 本函数走**按对象选**（`Select4`）✓
+
+
+def _selection_segments(model, selection: str):
+    """★ 把**声明式选择器**解析成**草图段对象清单**（★ 与 :func:`_select_spec` 同一套语法）。
+
+    ★ 支持 ``"__current_selection__"`` / ``""``（用当前选区）与 ``"index:0,index:1"``。
+    ★ 返回 `(segments, readback_count)` —— ★ **回读计数**才是判据（事实 8：`Select4` 的返回值不可信）。
+    """
+    sk = _sketch(model)
+    sel = (selection or "").strip()
+    if sel in ("", "__current_selection__"):
+        mgr = get_com_member(model, "SelectionManager")
+        count = int(get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+        objs = []
+        for i in range(1, count + 1):            # ⚠ 官方 Index **从 1 开始**
+            try:
+                objs.append(get_com_member(mgr, "GetSelectedObject6", i, -1))
+            except Exception:                    # noqa: BLE001
+                continue
+        return [o for o in objs if o is not None], count
+    idxs = []
+    for part in sel.split(","):
+        part = part.strip()
+        if not part.startswith("index:"):
+            raise ValueError(
+                "非法的草图段选择器 %r；合法形式：'__current_selection__' 或 'index:0' / 'index:0,index:1'"
+                % part)
+        idxs.append(int(part.split(":", 1)[1]))
+    segs = _SK.get_sketch_segments(sk)
+    picked = []
+    for i in idxs:
+        if i < 0 or i >= len(segs):
+            raise ValueError("草图段下标 %d 越界（共 %d 段）" % (i, len(segs)))
+        picked.append(segs[i])
+    for k, seg in enumerate(picked):
+        get_com_member(seg, "Select4", bool(k > 0), _empty_callout())
+    mgr = get_com_member(model, "SelectionManager")
+    n = int(get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+    return picked, n
+
+
+def _construction_flags(model) -> list[bool]:
+    """★ 回读**整张草图**每段的 `ISketchSegment.ConstructionGeometry` 属性（★ 官方 get/set）。"""
+    flags = []
+    for seg in _SK.get_sketch_segments(_sketch(model)) or []:
+        try:
+            flags.append(bool(get_com_member(seg, "ConstructionGeometry")))
+        except Exception:                        # noqa: BLE001
+            flags.append(None)
+    return flags
+
+
+def sketch_set_construction_geometry(model, selection: str, *,
+                                     construction: bool = True) -> dict:
+    """★ **把选中的草图段置为 / 复位为构造几何**（★ 规则 3：只收声明式选择器，不收坐标）。
+
+    :param selection: ``"__current_selection__"`` 或 ``"index:0"`` / ``"index:0,index:1"``。
+    :param construction: `True` ⇒ 变成**构造几何**（走官方零参入口 `CreateConstructionGeometry()`）；
+        `False` ⇒ **变回实体线**（★ 官方唯一的回程是 `ISketchSegment::ConstructionGeometry` 属性
+        setter —— `CreateConstructionGeometry` 是**单向置位**，官方摘要逐字 "Sets … instead of"）。
+    :returns: `{ok, requested, entry_used, selection_count, segments_before, segments_after,
+        construction_count_after, error}`
+
+    ★★ **判据 = 回读属性**（★ 规则 6）：调用后逐段读 `ConstructionGeometry`，
+      并要求**目标段的读数 == 请求的 `construction`**；★ 读回**不等于**请求 ⇒ `ok=False`
+      并**如实报**哪几段没对上（★ 不静默 —— 这正是"toggle 还是置位"那件事会暴露的地方）。
+    """
+    out: dict = {
+        "ok": False, "requested": bool(construction), "entry_used": None,
+        "selection_count": None, "segments_before": None, "segments_after": None,
+        "target_before": None, "target_after": None, "construction_count_after": None,
+        "error": None,
+        "★": "判据是**回读 `ISketchSegment.ConstructionGeometry`**；"
+             "★ 置位方向用官方零参 `ISketchManager.CreateConstructionGeometry()`、"
+             "复位方向用属性 setter（★ 官方唯一的回程）",
+    }
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    try:
+        segs, count = _selection_segments(model, selection)
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "解析选择器失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    out["selection_count"] = count
+    if not segs:
+        out["error"] = ("选择器 %r 没给出任何草图段（★ 事实 32：草图段按名字选不中 ⇒ "
+                        "请用 'index:<n>' 或先在界面上选中）" % str(selection)[:50])
+        return out
+
+    def _flag(seg):
+        try:
+            return bool(get_com_member(seg, "ConstructionGeometry"))
+        except Exception:                                      # noqa: BLE001
+            return None
+
+    out["target_before"] = [_flag(s) for s in segs]
+    out["segments_before"] = sum(1 for f in _construction_flags(model) if f)
+    try:
+        if construction:
+            out["entry_used"] = "ISketchManager::CreateConstructionGeometry()"
+            get_com_member(get_com_member(model, "SketchManager"), "CreateConstructionGeometry")
+        else:
+            out["entry_used"] = "ISketchSegment::ConstructionGeometry (setter = False)"
+            for seg in segs:
+                _set_com_member(seg, "ConstructionGeometry", False)
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
+        return out
+    out["target_after"] = [_flag(s) for s in segs]
+    out["segments_after"] = sum(1 for f in _construction_flags(model) if f)
+    out["construction_count_after"] = out["segments_after"]
+    mismatched = [i for i, f in enumerate(out["target_after"]) if f is not bool(construction)]
+    out["ok"] = not mismatched
+    if mismatched:
+        out["error"] = ("回读不对：第 %r 段没达到请求的状态（★ 请求 %r，回读 %r）—— "
+                        "★ 这正是「再调一次是切换还是置位」那件事会暴露的地方"
+                        % (mismatched, bool(construction),
+                           [out["target_after"][i] for i in mismatched]))
+    return out

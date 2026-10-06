@@ -66,6 +66,9 @@ __all__ = [
     "delete_render_material",
     "apply_visual_properties",
     "collect_appearance_evidence",
+    #: ★ 规格 209（B1 批 · idx 97 display_states）
+    "list_display_states",
+    "apply_display_state",
 ]
 
 # 外观属性的合法值域。两套官方源都没有给区间说明（依赖材质定义），
@@ -439,3 +442,199 @@ def collect_appearance_evidence(model) -> dict[str, Any]:
         "appearances": rows,
         "has_appearance": bool(rows),
     }
+
+
+# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**显示状态**（读 + 激活）──────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_render_material.py —— 追加 `list_display_states` / `apply_display_state`
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **97 `display_states`**。
+#   ★ 裁决书（`docs/recon-207/adjudication.md` §一 / §五）给的落点与理由：
+#   「读侧落 `sw_render_material.py`（那一族已摸过，**事实 286 真机 PASS**）；显示状态与外观 ID
+#    是同一条链」✓ ★ 且「一次真机可拿全 L1–L4」✓
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
+#   · `C:\swapi\types\IConfiguration\GetDisplayStates.md` —— `System.object GetDisplayStates()`
+#     ★★ `## Remarks` 逐字 ①：「The **first name in the list is the active display state**.」
+#     ★★ ②：「**If more than one display state is active in the current model**, call
+#       `IComponent2::ReferencedDisplayState` to obtain the active display state for each
+#       component in the model that references this configuration.」
+#   · `C:\swapi\types\IConfiguration\ApplyDisplayState.md` ——
+#     `System.bool ApplyDisplayState(System.string DisplayStateName)`
+#     ★ `## Returns` 逐字：「True if the display state is applied, false if not」
+#   · `C:\swapi\types\IConfiguration\GetDisplayStatesCount.md` —— ★ **独立回读源**
+#     （★ 规则 6：不用被调成员的返回值当判据，用**另一个**入口回读）
+#   · `C:\swapi\types\IConfigurationManager\ActiveConfiguration.md` —— ★★ **不是**
+#     `IModelDoc2::GetActiveConfiguration`（那一页逐字写着 **Obsolete. Superseded by
+#     `IConfigurationManager::ActiveConfiguration`**）⇒ 本函数走**后继**✓
+#   · `C:\swapi\enums\swDocumentTypes_e.md` —— `swDocPART=1` · `swDocASSEMBLY=2` · `swDocDRAWING=3`
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+# ★★★ **裁决书点名的硬约束（照做，否则会做出静默错的东西）**：
+#   「官方逐字「第一个名字是活动显示状态」**只在单配置、无引用显示状态时干净**
+#    ⇒ 输出**必须带 `ambiguous` 标记**，**不许替调用方猜**」✓
+#   ⇒ ★ 本模块的 `ambiguous` 判据**只取官方那句的条件本身**：**装配文档**（`swDocASSEMBLY=2`）
+#     —— ★ 因为只有装配里的组件才会"引用配置"（官方原话 "each component in the model that
+#     **references this configuration**"）⇒ ★ 装配里"第一个即活动"**不保证成立** ✓
+#     ★ **零件 / 工程图**：官方那句的条件不出现 ⇒ `ambiguous=False`（★ 事实 286 的零件实测
+#     `["MCP_DS1", "<默认>_显示状态 1"]` 正是这个情形）✓
+
+#: ★ 官方 `swDocumentTypes_e`（★ 只列本模块用到的三个）
+DOC_PART, DOC_ASSEMBLY, DOC_DRAWING = 1, 2, 3
+
+
+def _active_configuration(model):
+    """★ 取**当前配置对象**（`IConfigurationManager::ActiveConfiguration` —— 官方后继入口）。
+
+    ⚠ **不用** `IModelDoc2::GetActiveConfiguration` —— 官方那页逐字写着 **Obsolete**。
+    """
+    mgr = get_com_member(model, "ConfigurationManager")
+    if mgr is None:
+        raise RuntimeError("IModelDoc2.ConfigurationManager 为 None ⇒ 取不到配置")
+    cfg = get_com_member(mgr, "ActiveConfiguration")
+    if cfg is None:
+        raise RuntimeError("IConfigurationManager.ActiveConfiguration 为 None ⇒ 取不到当前配置")
+    return cfg
+
+
+def _document_type(model) -> int:
+    """★ 读 `IModelDoc2::GetType()`（`swDocumentTypes_e`）；取不到回 `0`（未知，**不当零件**）。"""
+    try:
+        return int(get_com_member(model, "GetType") or 0)
+    except Exception:                                          # noqa: BLE001
+        return 0
+
+
+def _display_states_of(model) -> dict:
+    """★ 读当前配置的显示状态族（★ 供本模块两个公开函数共用）。
+
+    :returns: `{configuration, names, count, count_reported, active, ambiguous, ambiguous_reason}`
+    """
+    cfg = _active_configuration(model)
+    names = get_com_member(cfg, "GetDisplayStates")
+    names = [str(n) for n in (names or [])]
+    try:
+        count_reported = int(get_com_member(cfg, "GetDisplayStatesCount") or 0)
+    except Exception:                                          # noqa: BLE001
+        count_reported = None
+    dtype = _document_type(model)
+    #: ★★ `ambiguous` 的判据 = **官方那句话的条件本身**（装配里组件会引用配置）——
+    #:   ★ 只有这一条；★ 不按"名字个数 > 1"判（那会把零件的情形也误判成不干净）。
+    ambiguous = (dtype == DOC_ASSEMBLY)
+    try:
+        conf_name = str(get_com_member(cfg, "Name") or "")
+    except Exception:                                          # noqa: BLE001
+        conf_name = ""
+    return {
+        "configuration": conf_name,
+        "names": names,
+        "count": len(names),
+        "count_reported": count_reported,
+        "active": (names[0] if names else None),
+        "ambiguous": ambiguous,
+        "ambiguous_reason": (
+            "★ 官方逐字：「If more than one display state is active in the current model, call "
+            "IComponent2::ReferencedDisplayState …」—— ★ 本文件是**装配**（`swDocASSEMBLY`）⇒ "
+            "「**第一个名字即活动显示状态**」**不保证成立** ⇒ ★★ 调用方**不得**把 `active` 当证据，"
+            "要拿每个组件的 `IComponent2::ReferencedDisplayState` 自己判" if ambiguous else None),
+        "document_type": dtype,
+    }
+
+
+def list_display_states(model) -> dict:
+    """★ **列出当前配置的显示状态**（★ 官方 `IConfiguration::GetDisplayStates()`）。
+
+    :returns: `{ok, configuration, display_states, count, count_reported, count_mismatch,
+        active, ambiguous, ambiguous_reason, error}`
+
+    ★★ **`ambiguous` 必须由调用方看**（★ 裁决书硬约束）：★ 官方逐字说"第一个名字即活动显示状态"
+    **只在"没有多个显示状态同时活动"时干净** ⇒ ★ 本函数在**装配**里把 `ambiguous=True`
+    并给出理由，★ **不替调用方猜**哪个才是活动的 ✓
+    ★ 判据 = `GetDisplayStates()` 与 `GetDisplayStatesCount()` **两个入口**的读数一致（规则 6）。
+    """
+    out: dict = {"ok": False, "configuration": None, "display_states": [], "count": 0,
+                 "count_reported": None, "count_mismatch": None, "active": None,
+                 "ambiguous": None, "ambiguous_reason": None, "error": None}
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    try:
+        info = _display_states_of(model)
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "读显示状态失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    out.update({k: info[k] for k in ("configuration", "active", "ambiguous",
+                                     "ambiguous_reason", "count_reported")})
+    out["display_states"] = info["names"]
+    out["count"] = info["count"]
+    out["count_mismatch"] = (None if info["count_reported"] is None
+                             else info["count_reported"] != info["count"])
+    out["ok"] = True
+    if out["count_mismatch"]:
+        out["ok"] = False
+        out["error"] = ("两个官方入口读数不一致：`GetDisplayStates()` 回 %d 个、"
+                        "`GetDisplayStatesCount()` 回 %r ⇒ ★ 按规则 6 **不许**挑一个当结论"
+                        % (out["count"], out["count_reported"]))
+    return out
+
+
+def apply_display_state(model, display_state_name: str) -> dict:
+    """★ **激活指定显示状态**（★ 官方 `IConfiguration::ApplyDisplayState(Name)`）。
+
+    :param display_state_name: 显示状态名（★ 先用 :func:`list_display_states` 取名字）。
+    :returns: `{ok, requested, returned, before, after, active_before, active_after,
+        changed, ambiguous, entry_used, error}`
+
+    ★★ **判据（规则 6）**：① `ApplyDisplayState` 回 `True`（官方 `## Returns` 逐字）；
+      ② ★ **回读** `GetDisplayStates()` —— **第一个名字变成了请求的那个**（★ 单配置/零件下成立）；
+      ③ ★★ 若 `ambiguous=True`（装配），**只记①不据②下结论**（★ 官方那句在这里不成立）——
+      ★ 本函数于是 `ok = ①`，并在返回值里写明「②不可用」✓
+    """
+    out: dict = {"ok": False, "requested": str(display_state_name), "returned": None,
+                 "before": None, "after": None, "active_before": None, "active_after": None,
+                 "changed": None, "ambiguous": None, "entry_used": None, "error": None}
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    name = str(display_state_name or "").strip()
+    if not name:
+        out["error"] = "display_state_name 不能为空"
+        return out
+    try:
+        info_before = _display_states_of(model)
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "前置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    out["before"] = list(info_before["names"])
+    out["active_before"] = info_before["active"]
+    out["ambiguous"] = info_before["ambiguous"]
+    if name not in info_before["names"]:
+        out["error"] = ("显示状态 %r **不在这份清单里**（现有：%r）—— ★ 本函数不猜、不新建，"
+                        "如实报（铁律 5）" % (name, info_before["names"]))
+        return out
+    cfg = _active_configuration(model)
+    out["entry_used"] = "IConfiguration::ApplyDisplayState(System.string)"
+    try:
+        out["returned"] = get_com_member(cfg, "ApplyDisplayState", name)
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
+        return out
+    try:
+        info_after = _display_states_of(model)
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "后置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    out["after"] = list(info_after["names"])
+    out["active_after"] = info_after["active"]
+    out["changed"] = (out["active_before"] != out["active_after"])
+    if out["ambiguous"]:
+        #: ★★ 官方那句在装配里不成立 ⇒ **不用回读下结论**，如实说明
+        out["ok"] = bool(out["returned"])
+        if not out["ok"]:
+            out["error"] = "ApplyDisplayState 回 %r（官方 Returns 逐字：True = 已应用）" % out["returned"]
+    else:
+        out["ok"] = bool(out["returned"]) and (out["active_after"] == name)
+        if not out["ok"]:
+            out["error"] = ("回读判据未过：returned=%r · 回读到的「第一个名字」=%r（请求 %r）"
+                            % (out["returned"], out["active_after"], name))
+    return out

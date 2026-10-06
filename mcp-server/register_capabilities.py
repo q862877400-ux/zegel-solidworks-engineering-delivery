@@ -944,6 +944,19 @@ BATCH_MODULES = (
     #:     `sw_sensor.out_*`（COM 出参工厂）· `sw_isolate`/`sw_simulation_worker`（基础设施，FR-007）✓
     #:   ★ 计数：422 → **433**
     "tool_specs_batch91",
+    #: ★★★★★ 2026-10-06：**规格 209 的批 92 —— B1 批**（5 个）：★ 来源是**规格 207 的 18 条采纳候选**
+    #:   （`docs/recon-207/adjudication.md` 的 **B1 批**）—— 本批取其中最干净的 4 件活：
+    #:   · **idx 235 + 236 重建** ⇒ ★ 裁决书强制「**合并成一条工具**（三档 mode），**不建两条**」✓
+    #:   · **idx 79 构造几何** ⇒ ★ 落 `sw_sketch_edit_ops`，**复用**已有的声明式选段包装 ✓
+    #:   · **idx 97 显示状态** ⇒ 读 + 激活两条（★ 读侧落 `sw_render_material` —— 事实 286 已真机 PASS）✓
+    #:   · **idx 244 引用文档** ⇒ ★ 补 `solidworks_pack_and_go` 一直枚举却不暴露的**读侧** ✓
+    #:   ★★ 三条**官方逐字**被当成硬约束写进实现（不是我们自己的口径）：
+    #:     ① `EditRebuild3` 是**方法**（三家外部项目当属性读 ⇒ bound method ⇒ **判据恒真**）；
+    #:     ② `GetDisplayStates` 的「first name = active」**只在没有多个显示状态同时活动时**成立
+    #:        ⇒ 装配里必须给 `ambiguous`；
+    #:     ③ `GetDocumentDependencies2`「**Library features 不会返回**」⇒ 盲区要**随返回值**带出去。
+    #:   ★ 计数：433 → **438**
+    "tool_specs_batch92",
 )
 
 def all_specs() -> list:

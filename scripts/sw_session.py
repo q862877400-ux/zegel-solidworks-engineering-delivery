@@ -252,3 +252,153 @@ def undo_report(model, steps: int = 1) -> dict:
             "removed_features": gone[-4:], "undone": after < before,
             "★": "它回 void ⇒ 判据是**特征树真的退回了**（★ 规则 6）；"
                  "★ 官方 1 参 · 反射 arity 1 · `EditUndo` 已 Obsolete"}
+
+
+# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**重建**（三档 mode 一条工具）──────────────
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_session.py —— 追加 `rebuild_report`
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **235 `rebuild_document`**
+#   + idx **236 `rebuild_model`**。★★ 裁决书（`docs/recon-207/adjudication.md` §一）逐字要求：
+#   「与 236 **合并成一条工具**（三档 mode），**不建两条**」—— 理由是「两条工具做同一件事会在
+#   能力清单里留下两条永远同进同退的条目」✓
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过 + 出厂类型库反射 arity 互证）：
+#   · `C:\swapi\types\IModelDoc2\EditRebuild3.md` —— `System.bool EditRebuild3()`（**零参**）
+#     ★★ `## Remarks` 逐字：「This method only works **in-context of the active document**.」
+#   · `C:\swapi\types\IModelDoc2\ForceRebuild3.md` —— `System.bool ForceRebuild3(System.bool TopOnly)`
+#     ★ `## Parameters` 逐字：TopOnly「True rebuilds the top-level assembly only; false rebuilds
+#       the top-level assembly and all subassemblies」
+#   · `C:\swapi\types\IModelDocExtension\ForceRebuildAll.md` —— `System.bool ForceRebuildAll()`（**零参**）
+#     ★ 摘要逐字：「Forces a rebuild of all features in **all configurations without activating
+#       each configuration**」（★ 这正是它与 `ForceRebuild3` 的**分工**：一个只动活动配置、
+#       一个**不动配置就能重建全部**）
+#   · `C:\swapi\types\IModelDocExtension\NeedsRebuild2.md` —— `System.int NeedsRebuild2 {get;}`
+#   · `C:\swapi\enums\swModelRebuildStatus_e.md` —— `FullyRebuilt=0` · `NonFrozenFeatureNeedsRebuild=1`
+#     · `FrozenFeatureNeedsRebuild=2`；★ 官方 `## Description` 逐字写 **Bitmask**
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+# ★★★ **本函数最容易犯的错（裁决书点名的硬约束）**：★ `EditRebuild3` 是**方法**、不是**属性** ——
+#   三家外部项目都当属性读（`_get(doc, 'EditRebuild3')`）⇒ ★ 照抄会拿到 **bound method**，
+#   ★★ 而**拿它当判据会永远为真**（函数对象本身恒真）⇒ ★★ 本函数**必须真的调用它**，
+#   ★★ 且**判据一律用回读**（`NeedsRebuild2` + 特征树计数 + 包围盒），**不用那个返回值**✓
+
+#: ★ 三档 mode（★ 逐档对应**一个**官方成员 —— 不是三个入口随便挑）
+REBUILD_MODES = ("edit", "force", "all")
+
+#: ★ 官方 `swModelRebuildStatus_e`（★ 位掩码；`0` = 已完全重建）
+NEEDS_REBUILD_STATES = {
+    0: "fully_rebuilt",
+    1: "non_frozen_feature_needs_rebuild",
+    2: "frozen_feature_needs_rebuild",
+}
+
+
+def needs_rebuild_status(model) -> dict:
+    """★ 读**重建状态**（★ 官方 `IModelDocExtension.NeedsRebuild2`，回 `swModelRebuildStatus_e`）。
+
+    :returns: `{"raw": int, "state": str, "fully_rebuilt": bool}`；★ 取不到就抛（★ 不静默回 0 ——
+        ★★ 「读不到」与「已重建」**是两件事**，混起来会让判据永远为真）。
+    """
+    ext = get_com_member(model, "Extension")
+    if ext is None:
+        raise RuntimeError("IModelDoc2.Extension 为 None ⇒ 读不到重建状态")
+    raw = int(get_com_member(ext, "NeedsRebuild2") or 0)
+    return {"raw": raw, "state": NEEDS_REBUILD_STATES.get(raw, "unknown_%d" % raw),
+            "fully_rebuilt": raw == 0}
+
+
+def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict:
+    """★ **重建模型**（★ 三档 mode，一条工具 —— 裁决书强制合并 235/236）。
+
+    :param mode: ``"edit"``（★ `IModelDoc2.EditRebuild3()`，**只重建需要重建的特征**，零参）·
+        ``"force"``（★ `IModelDoc2.ForceRebuild3(TopOnly)`，**强制重建活动配置的全部特征**）·
+        ``"all"``（★ `IModelDocExtension.ForceRebuildAll()`，**不动配置就重建全部配置**，零参）。
+    :param top_only: ★ **只对 `mode="force"` 有意义**（对应官方 `ForceRebuild3` 的 `TopOnly`）：
+        `True` 只重建顶层装配、`False` 连子装配一起。★ 其余两档**忽略它**并在返回值里说明。
+    :returns: `{ok, mode, entry_used, returned, needs_rebuild_before/after, state_before/after,
+        tree_before/after, bbox_changed, error}`
+
+    ★★ **判据是回读，不是返回值**（★ 规则 6 + 裁决书的硬约束）：
+      · `needs_rebuild_after.raw == 0`（★ 真的不再需要重建）；
+      · `tree_after == tree_before`（★ **重建不增删特征** —— 它变的是特征的状态，不是树的形状）；
+      · `bbox_changed == False`（★ 同参数下重建**不该改几何** —— ★ 改了说明发生了回滚/报错）。
+    ⚠ **边界（如实记）**：★ `EditRebuild3` 的官方 Remarks 逐字说它**只在活动文档的上下文里**工作
+      ⇒ ★ 对未激活的文档调用**没有意义**（本函数不做「先激活」—— 那是调用方的事）。
+    """
+    out: dict = {
+        "ok": False, "mode": None, "entry_used": None, "returned": None,
+        "needs_rebuild_before": None, "needs_rebuild_after": None,
+        "state_before": None, "state_after": None,
+        "tree_before": None, "tree_after": None, "bbox_changed": None,
+        "top_only_applied": None, "error": None,
+        "★": "判据用**回读**（NeedsRebuild2 + 特征树 + 包围盒），**不用返回值** —— "
+             "`EditRebuild3` 是**方法**，当属性读会拿到 bound method（恒真）",
+    }
+    key = str(mode or "").strip().lower()
+    if key not in REBUILD_MODES:
+        out["error"] = ("未知的 mode %r；合法：%s" % (mode, ", ".join(REBUILD_MODES)))
+        return out
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    out["mode"] = key
+
+    def _bbox_key():
+        try:
+            from sw_part import get_bounding_box
+            bb = get_bounding_box(model)
+            return None if not bb else tuple(round(float(v), 6) for v in bb)
+        except Exception:                                      # noqa: BLE001
+            return None
+
+    try:
+        out["state_before"] = needs_rebuild_status(model)["state"]
+        out["needs_rebuild_before"] = needs_rebuild_status(model)["raw"]
+        out["tree_before"] = len(feature_names(model))
+        bbox_before = _bbox_key()
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "前置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+
+    try:
+        if key == "edit":
+            out["entry_used"] = "IModelDoc2::EditRebuild3()"
+            out["top_only_applied"] = False
+            out["returned"] = get_com_member(model, "EditRebuild3")        # ★ 真的调它
+        elif key == "force":
+            out["entry_used"] = "IModelDoc2::ForceRebuild3(System.bool TopOnly)"
+            out["top_only_applied"] = bool(top_only)
+            out["returned"] = get_com_member(model, "ForceRebuild3", bool(top_only))
+        else:
+            ext = get_com_member(model, "Extension")
+            if ext is None:
+                out["error"] = "IModelDoc2.Extension 为 None ⇒ ForceRebuildAll 不可达"
+                return out
+            out["entry_used"] = "IModelDocExtension::ForceRebuildAll()"
+            out["top_only_applied"] = False
+            out["returned"] = get_com_member(ext, "ForceRebuildAll")
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
+        return out
+
+    try:
+        out["needs_rebuild_after"] = needs_rebuild_status(model)["raw"]
+        out["state_after"] = needs_rebuild_status(model)["state"]
+        out["tree_after"] = len(feature_names(model))
+        bbox_after = _bbox_key()
+    except Exception as exc:                                   # noqa: BLE001
+        out["error"] = "后置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+
+    out["bbox_changed"] = (bbox_before is not None and bbox_after is not None
+                           and bbox_before != bbox_after)
+    out["ok"] = (out["needs_rebuild_after"] == 0
+                 and out["tree_after"] == out["tree_before"]
+                 and not out["bbox_changed"])
+    if not out["ok"]:
+        out["error"] = ("回读判据未过：needs_rebuild_after=%r（要 0）· tree %r→%r（要相等）· "
+                        "bbox_changed=%r（要 False）"
+                        % (out["needs_rebuild_after"], out["tree_before"], out["tree_after"],
+                           out["bbox_changed"]))
+    return out
