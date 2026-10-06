@@ -35,7 +35,7 @@
 
 ## E · "未确证"成仓级约定
 
-- [ ] **E-1** 静态查：★ 凡带 `units_verified: false` 的返回**必须**带 `unit_caveat`（★ 加测试）
+- [x] **E-1** ★ **完成**：★ 静态查 + 测试（`tests/test_spec212_unit_declaration.py` 5 条）—— ★ 并**缝回既有约定** `unit_assumption`（★ 三键并存）✓
 - [x] **E-2** 把规则 2b 的**文字条款**写进 `docs/union-conventions.md`（★ 与规则 2 并列）✓
 
 ## SC · 收口

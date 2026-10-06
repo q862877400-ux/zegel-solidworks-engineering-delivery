@@ -208,6 +208,22 @@ SECTION_UNIT_CAVEAT = (
     "`output/spec211-b1-section-units-cube.json` 与 `tools/probe_spec211_section_units_cube.py`"
 )
 
+#: ★★★ 2026-10-07（规格 212 · E-1）：★ **统一到仓里的既有约定 `unit_assumption`** ✓
+#:   ★ 发现经过：★ 我在规格 211 · B1-1 里**临时造**了 `units_verified` + `unit_caveat`，
+#:     ★★ 而扫描时发现**仓里早有** `unit_assumption`（★ 7 处：★ `sw_curve_and_split.py` ·
+#:     ★ `sw_drawing_create_missing.py` ×2 · ★ `sw_sheet_metal_weld_entry.py` ×4）✓
+#:   ★ 依据**铁律 1「只缝合不发明」** ⇒ ★ **该用既有约定的键名** ✓
+#:   ★★ **两个键并存、各有用途**（★ 不是二选一）：
+#:     · `unit_assumption` = **说法**（★ 字符串、★ 人读、★ 格式统一 ✓）
+#:     · `units_verified`  = **机器可判的布尔**（★ 供门禁与调用方**一眼判断** ✓）
+#:   ★★ 三者的关系（★ 规格 212 · E-1 的判据）：★ `units_verified: False` ⇒
+#:     ★ **必须同时**带 `unit_caveat` **与** `unit_assumption` ✓
+SECTION_UNIT_ASSUMPTION = (
+    "★ 官方 `IFace2.GetArea` 的 `## Returns` 说 **square meters**，★ 而真机读数与之**不符**"
+    " ⇒ ★ **本模块不断言单位**；★ 已登记为「官方声明 vs 真机读数」冲突、★ 未解决"
+    "（★ 见 `docs/unit-conflicts.md` 第 1 条）"
+)
+
 
 def require_section_document(model):
     """★ 截面属性**只对零件/装配有**（★ 工程图没有）—— ★ 判据同质量属性（先判类型）✓
@@ -239,7 +255,9 @@ def section_properties(model) -> dict[str, Any]:
       · ★★ 面积可与 `IFace2.GetArea()` **交叉验证**（★ 12/12 次完全相同）⇒ 见 `section_area_crosscheck` ✓
     """
     out = {"ok": False, "side_effect": SECTION_SIDE_EFFECT,
+           #: ★★ 规格 212 · E-1：★ 三个键**必须同时出现**（★ 见 `SECTION_UNIT_ASSUMPTION` 的注释）✓
            "units_verified": False, "unit_caveat": SECTION_UNIT_CAVEAT,
+           "unit_assumption": SECTION_UNIT_ASSUMPTION,
            "entry_used": None, "error": ""}
     try:
         require_section_document(model)

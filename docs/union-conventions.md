@@ -78,6 +78,12 @@ Slacker-LLC 的原话：「No tool has ever silently taken metres.」
    ★（★ 原有那条只从"名字含长度词"出发，**词表有界** ⇒ ★ 不在词表里的长度词从不被查 ✗）
 3. ★★ **"未确证"必须说出来**：凡返回值带 `units_verified: false` ⇒ ★ **必须同时带 `unit_caveat`** ✓
    ★ 依据**铁律 5「查不到就说查不到」** —— ★ **不许为了让返回值好看而编一个单位** ✗
+   ★★ **并统一到仓里的既有键 `unit_assumption`**（★ 它**早就有**：★ `sw_curve_and_split.py` ·
+   ★ `sw_drawing_create_missing.py` · ★ `sw_sheet_metal_weld_entry.py` 共 **7 处**）⇒
+   ★★ **三个键并存、各有用途**：★ `unit_assumption` = **说法**（字符串、人读、格式统一）·
+   ★ `unit_caveat` = **为什么未确证的细节** · ★ `units_verified` = **机器可判的布尔** ✓
+   ★★ 判据（★ 机械）：★ `units_verified: false` ⇒ ★ **必须同时有 `unit_caveat` 与 `unit_assumption`** ✓
+   ★（★ 测试：`tests/test_spec212_unit_declaration.py`）
 
 **为什么不做"值里带单位字符串"**（如 `depth="20mm"`）：★ MCP **只传 JSON 值** ⇒ 值带单位就是字符串
 ⇒ ★ **失去类型检查**，★ 且单位**只在下游可见** ✗ ★★ 而后缀在**形参名/键名**上 ⇒ ★ **能被静态门禁强制** ✓
