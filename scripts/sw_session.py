@@ -423,3 +423,114 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
         out["note"] = ("★ 包围盒这一条**判据不可用**（读不到 —— 例如文档里没有实体）⇒ "
                        "本轮只用「状态归零 + 特征树不变」两条，★ 如实记，**不拿没读到当没变**")
     return out
+
+# ── 会话预检（规格 210 · B5-1/B5-2）─────────────────────────────────────
+# ★★ 来源：外部评审对「SolidWorks 自己写的文件拦不住」的判决 ——
+#   ★ 它给的第一条不是"拦内部写"，而是「**SolidWorks 打开的永远不是原件**」+
+#   ★「**预检门禁**：真机跑开始前枚举已打开的文档，只要有不是我方的就拒绝开始」✓
+# ★ 官方依据（铁律 4 的第 0 步，已读）：`ISldWorks.GetDocuments` ——
+#   "Gets the open documents in this SOLIDWORKS Design session"（返回文档数组）；
+#   ★ 配套 `GetDocumentCount` 拿数量；★ 官方示例 `Get_Paths_of_Open_Documents` 给的调用序是
+#   `GetDocumentCount` → `GetDocuments` → 逐档 `IModelDoc2.GetPathName` ✓
+# ★ 为什么不用 `GetFirstDocument`：★ 它的官方 Remarks 明写「若最先打开的是装配体，
+#   则返回该装配体里**第一个组件**文档」⇒ ★ **它不是一次完整枚举**，不能用来判"有哪些开着" ✓
+# ⚠ 限度：★ path 为空（新建未存盘的文档）**按"非我方"处理**（保守）；
+#   ★ 真要放行未命名文档，得显式传 `allow_untitled=True` ✓
+
+
+class ForeignDocumentError(RuntimeError):
+    """★ 会话预检失败：SolidWorks 里开着**不是我们打开的**文档 ⇒ 拒绝开始（不删用户数据）✓"""
+
+
+def _norm_path(value) -> str:
+    """★ 归一化路径用于比较：★ Windows 大小写不敏感 · 去掉尾部分隔符 ✓"""
+    text = str(value or "").strip().strip('"')
+    if not text:
+        return ""
+    try:
+        return os.path.normcase(os.path.normpath(text))
+    except Exception:                                                   # noqa: BLE001
+        return text.lower()
+
+
+def open_documents(sw) -> dict:
+    """★ 枚举当前 SolidWorks 会话里**已打开的文档**（★ 判据是**回读**，不是被调成员的返回值）。
+
+    :returns: `{"count": 读到的数量, "documents": [{"path","title"}], "count_matches": 是否对得上,
+               "readback_problem": 数量与数组长度不一致时的说明}`
+    ★★ 为什么必须回读数量：本仓一贯纪律 —— ★ **被调成员的返回值不可信**（事实 8/40 同族）；
+      ★ 这里拿 `GetDocumentCount` 当**独立读数**，与 `GetDocuments` 数组长度**互相校验** ✓
+    """
+    documents: list = []
+    problem = ""
+    count = None
+    try:
+        count = int(get_com_member(sw, "GetDocumentCount", default=None) or 0)
+    except Exception:                                                   # noqa: BLE001
+        count = None
+    try:
+        raw = get_com_member(sw, "GetDocuments", default=None)
+    except Exception:                                                   # noqa: BLE001
+        raw = None
+    if raw is None:
+        problem = "GetDocuments 返回空 ⇒ ★ 无法确认会话里有哪些文档（★ 按铁律 5 记「查不到」）"
+    else:
+        seq = raw if isinstance(raw, (list, tuple)) else [raw]
+        for item in seq:
+            if item is None:
+                continue
+            try:
+                path = get_com_member(item, "GetPathName", default="")
+            except Exception:                                           # noqa: BLE001
+                path = ""
+            try:
+                title = get_com_member(item, "GetTitle", default="")
+            except Exception:                                           # noqa: BLE001
+                title = ""
+            documents.append({"path": str(path or ""), "title": str(title or "")})
+    if count is not None and documents and count != len(documents):
+        problem = ("★ 回读不一致：GetDocumentCount=%d 而 GetDocuments 给了 %d 个 "
+                   "⇒ 以**较大者**为准并如实报出 ✓" % (count, len(documents)))
+    return {
+        "count": count,
+        "documents": documents,
+        "count_matches": (count is None or not documents or count == len(documents)),
+        "readback_problem": problem,
+    }
+
+
+def classify_open_documents(docs, allowed_paths=(), *, allow_untitled: bool = False) -> tuple:
+    """★ 把已打开的文档分成 **(我方的, 非我方的)** —— ★ 判据是路径归一化后是否在允许集里。
+
+    :param docs: `open_documents()` 的 `documents`
+    :param allowed_paths: ★ 我们**明确知道是自己打开**的那些路径（★ 由调用方给出，不猜）
+    :param allow_untitled: ★ 默认 **False** ⇒ 空路径（新建未存盘）**算非我方** ✓ 保守
+    """
+    allowed = {_norm_path(p) for p in (allowed_paths or ()) if str(p or "").strip()}
+    ours, foreign = [], []
+    for d in (docs or ()):
+        path = str((d or {}).get("path") or "")
+        if not path:
+            (ours if allow_untitled else foreign).append(d)
+            continue
+        (ours if _norm_path(path) in allowed else foreign).append(d)
+    return ours, foreign
+
+
+def precheck_session(sw, allowed_paths=(), *, allow_untitled: bool = False) -> dict:
+    """★★ **预检门禁**：会话里只要开着**非我方**的文档 ⇒ **抛 `ForeignDocumentError` 拒绝开始** ✓
+
+    ★ 评审的要求：★ 真机跑**开始前**先做这件事；★ 且"**启动 SolidWorks 之前先问一次、
+      连上之后再问一次**"（★ 两次都要做：前者是"没在运行"与"在运行但有空文档"的区分）✓
+    :returns: `{"documents": …, "ours": …, "foreign": …, "count_matches": …}`（★ 未拒绝时才有返回值）
+    """
+    snap = open_documents(sw)
+    ours, foreign = classify_open_documents(snap["documents"], allowed_paths,
+                                            allow_untitled=allow_untitled)
+    if foreign:
+        listed = "; ".join(d.get("title") or d.get("path") or "(未命名)" for d in foreign[:5])
+        raise ForeignDocumentError(
+            "★ 会话里有 %d 个**不是我们打开的**文档 ⇒ 拒绝开始（★ 免得写到用户文件上）：%s"
+            % (len(foreign), listed))
+    return {"documents": snap["documents"], "ours": ours, "foreign": foreign,
+            "count_matches": snap["count_matches"], "readback_problem": snap["readback_problem"]}
