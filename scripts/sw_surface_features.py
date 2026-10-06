@@ -1157,6 +1157,110 @@ def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type:
     return out
 
 
+# ── 规格 211 · B2-2「扫描曲面」（`IFeatureManager::InsertSweepSurface2`）──────────────
+# 官方依据（★ 三样逐字读过）：
+#   · `C:\swapi\types\IFeatureManager\InsertSweepSurface2.md`
+#       `Feature InsertSweepSurface2( bool Propagate, short TwistCtrlOption, bool KeepTangency,
+#        bool BAdvancedSmoothing, short StartMatchingType, short EndMatchingType, int PathAlign,
+#        bool UseFeatScope, bool UseAutoSelect, double TwistAngle, bool BMergeSmoothFaces )`
+#     ★ `## Returns`：`Pointer to the IFeature object`
+#     ★★★ `## Remarks` **给了完整「调用序」**（★ 正是 AGENTS.md 说的"示例/Remarks 给调用序"）：
+#       「Because you are creating a surface, the sections can be open.」
+#       「Use `IModelDocExtension::SelectByID2` to select the profile and sweep curves.
+#        The mark for: **1 = Profile selection** · **2 = Guide curve selection, if provided** ·
+#        **4 = Sweep path**」✓
+#       「`PathAlign` available when `TwistCtrlOption = swTwistControlFollowPath`：
+#        **0 = None** · **2 = Direction vector** · **3 = All faces**」✓
+#       「When `UseAutoSelect` is **false**, the user **must select the bodies**」✓ ← ★ 官方写死的前置
+#   · ★★ **本仓的"两条路"（★ 先说清，★ 免得与既有结论打架）**：
+#       · **路 A**：`CreateDefinition(swFmSweepSurface)` + `CreateFeature` ⇒
+#         ★★ **事实 392**：★「`CreateFeature` 在这条后端上**静默回 `None`**」✗（★ **已试死** ✓）
+#       · **路 B**：★ **本函数**（★ 参数式 + mark 表）⇒ ★★ **从来没试过** ✓
+#         （★ 依据**事实 237**：「'不做曲面族'那条结论只覆盖了**半条路** —— 官方有**两条**建曲面的
+#          入口，**而第二条从来没试过**」✓）
+#       ⇒ ★★★ **本包装只走路 B** —— ★ **不重复路 A、也不宣称路 A 可行** ✓
+# 判据（★ 规则 6 的回读）：
+#   ★★ 主判据 = **特征树多了新特征**（★ 回读，★ 不看返回值 ✓）
+#   ★★★ **本包装是一层薄包装**：★ **它不替调用方做选择** —— ★ 官方 `## Remarks` 明写要用
+#     `SelectByID2` **按 mark 选**（1=Profile / 2=Guide / 4=Sweep path）⇒
+#     ★ 故本包装**把官方 mark 表放进返回值**、★ 并**记下调用前的选择计数** ✓
+#     ★（★ 与本文件 `trim_surface_report` 同一风格：★ 前置由选择契约承载 ✓）
+#     ⚠ ★ 为什么不做自动选择：★ 那需要一个"按选择器 + mark 选草图"的 helper，
+#       ★ 而**本文件没有**、★ 本批**也不发明它**（★ 铁律 1 + 只读优先 ✓）
+# ⚠ ★ `TwistAngle` 只在 `TwistCtrlOption = swTwistControlConstantTwistAlongPath` 时有意义（官方逐字）✓
+#: ★ 官方 `## Remarks` 的 **mark 表**（★ 逐字）✓
+SWEEP_MARKS = {"profile": 1, "guide": 2, "path": 4}
+
+
+def sweep_surface_report(model, *, propagate: bool = True, twist_ctrl: int = 0,
+                         keep_tangency: bool = True, advanced_smoothing: bool = False,
+                         start_matching: int = 0, end_matching: int = 0,
+                         path_align: int = 0, use_feat_scope: bool = False,
+                         use_auto_select: bool = True, twist_angle_deg: float = 0.0,
+                         merge_smooth_faces: bool = True) -> dict:
+    """★ **扫描曲面**（`IFeatureManager::InsertSweepSurface2`）—— ★ 走的是**路 B** ✓
+
+    ★★ **路 A 已试死**（★ 事实 392：`CreateDefinition` + `CreateFeature` 静默回 `None` ✗）⇒
+      ★ **本包装不走路 A、也不宣称路 A 可行** ✓
+    ★★★ **前置由选择契约承载**（★ 官方 `## Remarks`）：★ 调之前**必须**用 `SelectByID2` 按 mark 选：
+      ★ **`1 = Profile selection`** · ★ **`2 = Guide curve`**（★ 有才给）· ★ **`4 = Sweep path`** ✓
+    ★ 判据：★ **特征树多了新特征**（★ 回读 —— ★ 不看返回值 ✓）✓
+    """
+    out: dict = {"ok": False, "entry": "IFeatureManager.InsertSweepSurface2",
+                 "route": "B（参数式 + mark 表）—— ★ 路 A（CreateDefinition+CreateFeature）"
+                          "已按事实 392 试死，本包装不走它 ✓",
+                 "official_marks": dict(SWEEP_MARKS),
+                 "selection_contract": ("★ 调之前必须用 `SelectByID2` 按 mark 选："
+                                        "**1 = Profile** · **2 = Guide curve**（有才给）· "
+                                        "**4 = Sweep path** ✓（★ 官方 `## Remarks` 逐字）"),
+                 "path_align_note": ("★ 官方逐字：`PathAlign` 只在 `TwistCtrlOption = "
+                                     "swTwistControlFollowPath` 时可用 —— 0=None · "
+                                     "2=Direction vector · 3=All faces ✓"),
+                 "twist_angle_note": ("★ 官方逐字：`TwistAngle` 只在 `TwistCtrlOption = "
+                                      "swTwistControlConstantTwistAlongPath` 时有意义 ✓"),
+                 "use_auto_select_note": ("★ 官方逐字：`UseAutoSelect = false` 时"
+                                          "「the user **must select the bodies**」✓"),
+                 "side_effects": "★ 会新建曲面体（★ 非只读）"}
+    if model is None:
+        out["error"] = "model 为 None"
+        return out
+    before = feature_names(model)
+    #: ★★ **记调用前的选择计数**（★ 让"选不上"与"选了没用"可分辨 ✓）
+    try:
+        import sw_selection_spec as SS
+        out["selection_count_before"] = SS.get_selection_count(model)
+    except Exception as exc:                                            # noqa: BLE001
+        out["selection_count_before"] = None
+        out["selection_count_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
+    fm = get_com_member(model, "FeatureManager")
+    if fm is None:
+        out["error"] = "取不到 FeatureManager"
+        return out
+    try:
+        feat = get_com_member(fm, "InsertSweepSurface2",
+                             bool(propagate), int(twist_ctrl), bool(keep_tangency),
+                             bool(advanced_smoothing), int(start_matching),
+                             int(end_matching), int(path_align), bool(use_feat_scope),
+                             bool(use_auto_select), float(twist_angle_deg),
+                             bool(merge_smooth_faces))
+    except Exception as exc:                                            # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
+        return out
+    after = feature_names(model)
+    out["new_features"] = [n for n in after if n not in before]
+    out["feature_count_before"] = len(before)
+    out["feature_count_after"] = len(after)
+    out["returned_is_none"] = feat is None
+    out["returned_name"] = getattr(feat, "Name", None) if feat is not None else None
+    #: ★★ **真判据**：★ 特征树多了新特征 ✓（★ 回读，★ 不看返回值 ✓）
+    out["ok"] = len(out["new_features"]) > 0
+    if not out["ok"]:
+        out["error"] = ("★ 调用没抛、★ **而特征树没变化**（★ `returned_is_none=%r`）⇒ "
+                        "★ 按官方那两条复查：★ ① 轮廓/路径的 **mark 对不对**（1 / 4）★ ② "
+                        "`UseAutoSelect=false` 时**体有没有选** ✓" % out["returned_is_none"])
+    return out
+
+
 def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True,
                         split_linear: bool = False, remove_picked: bool = False,
                         sew: bool = False) -> dict:
