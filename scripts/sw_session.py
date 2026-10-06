@@ -456,8 +456,9 @@ def _norm_path(value) -> str:
 def open_documents(sw) -> dict:
     """★ 枚举当前 SolidWorks 会话里**已打开的文档**（★ 判据是**回读**，不是被调成员的返回值）。
 
-    :returns: `{"count": 读到的数量, "documents": [{"path","title"}], "count_matches": 是否对得上,
-               "readback_problem": 数量与数组长度不一致时的说明}`
+    :returns: `{"count": 读到的数量, "documents": [{"path","title","dirty"}], "count_matches": 是否对得上,
+               "readback_problem": 数量与数组长度不一致时的说明, "dirty_count": 有未保存改动的文档数}`
+    ★ `dirty` 取官方 `IModelDoc2.GetSaveFlag`（"是否脏、需要保存"）；★ 读不到记 **None（未知）** ✓
     ★★ 为什么必须回读数量：本仓一贯纪律 —— ★ **被调成员的返回值不可信**（事实 8/40 同族）；
       ★ 这里拿 `GetDocumentCount` 当**独立读数**，与 `GetDocuments` 数组长度**互相校验** ✓
     """
@@ -487,7 +488,15 @@ def open_documents(sw) -> dict:
                 title = get_com_member(item, "GetTitle", default="")
             except Exception:                                           # noqa: BLE001
                 title = ""
-            documents.append({"path": str(path or ""), "title": str(title or "")})
+            #: ★★ **未保存标记**用官方成员读（★ 不是从窗口标题抠 `*`）：
+            #:   `IModelDoc2.GetSaveFlag` 的官方原文 = "Gets whether the document is currently dirty
+            #:   and needs to be saved" ⇒ ★ 真 = **有未保存改动** ✓
+            #:   ★ 读不到时记 `None`（**未知**）—— ★ 绝不默认"没有未保存"（那会让人以为杀进程是安全的）✓
+            try:
+                dirty = bool(get_com_member(item, "GetSaveFlag", default=None))
+            except Exception:                                           # noqa: BLE001
+                dirty = None
+            documents.append({"path": str(path or ""), "title": str(title or ""), "dirty": dirty})
     if count is not None and documents and count != len(documents):
         problem = ("★ 回读不一致：GetDocumentCount=%d 而 GetDocuments 给了 %d 个 "
                    "⇒ 以**较大者**为准并如实报出 ✓" % (count, len(documents)))
@@ -496,6 +505,9 @@ def open_documents(sw) -> dict:
         "documents": documents,
         "count_matches": (count is None or not documents or count == len(documents)),
         "readback_problem": problem,
+        #: ★★ 有未保存改动的文档数 —— ★ 它是"能不能安全杀进程/关会话"的依据（评审点名的风险）✓
+        "dirty_count": sum(1 for d in documents if d.get("dirty") is True),
+        "dirty_unknown": sum(1 for d in documents if d.get("dirty") is None),
     }
 
 

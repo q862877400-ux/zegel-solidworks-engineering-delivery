@@ -55,7 +55,11 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 #: ★ 我们自己的临时件名字形态（★ 探针建的都是这些）
-_OURS = re.compile(r"(零件|Part)\d+|^MCP_", re.I)
+#: ★★ **判定的家已经搬走了**（规格 210 · B5-2）：枚举文档 / 认我方 / 读未保存标记
+#:   **全部在 `tools/session_verdict.py`** —— ★ 本仓反复吃过的亏就是"同一套判定两处各写一份" ✓
+#:   ★ 下面这几个薄壳**只为兼容既有调用点**保留，★ 逻辑一律走共用实现 ✓
+from session_verdict import (OURS as _OURS, parse_title_documents,   # noqa: E402
+                             session_verdict as _session_verdict)
 
 
 def _sw_processes() -> list[tuple[int, str, bool]]:
@@ -78,15 +82,19 @@ def _sw_processes() -> list[tuple[int, str, bool]]:
 
 
 def _open_docs(title: str) -> list[str]:
-    """★ 从主窗口标题里取 `[...]` 里的文档名（★ 去掉末尾的 `*` = 未保存标记）。"""
-    return [m.strip().rstrip("*").strip() for m in re.findall(r"\[([^\]]+)\]", title)]
+    """★ 从窗口标题取文档名 —— ★ **委托**给共用裁决的纯函数（★ 兼容旧调用点）✓"""
+    return [d["title"] for d in parse_title_documents(title)]
 
 
-def _our_own_docs(docs: list[str]) -> tuple[list[str], list[str]]:
-    """⇒ `(自己的, 不是自己的)` —— ★ 后者非空就**不许重启**。"""
+def _our_own_docs(docs) -> tuple[list[str], list[str]]:
+    """⇒ `(自己的, 不是自己的)` —— ★ 后者非空就**不许重启**。
+
+    ★ **委托**给共用裁决的命名约定（`session_verdict.OURS`）—— ★ 不再在本文件维护第二份正则 ✓
+    """
     mine, others = [], []
     for d in docs:
-        (mine if _OURS.search(d) else others).append(d)
+        name = d.get("title") if isinstance(d, dict) else d
+        (mine if _OURS.search(str(name or "")) else others).append(d)
     return mine, others
 
 
