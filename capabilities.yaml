@@ -2934,6 +2934,7 @@
     "solidworks"
    ],
    "limitations": [
+    "★★★ 2026-10-07（接手轮 · 规格 216 T-216-11）**边界（族级）：本机 `Create*` 那一族整体回 `None`** —— ★ 已逐个测掉前置候选：★ ① **赋材料**（`MaterialIdName` 回读 `solidworks materials|AISI 1020|2`）⇒ 仍 `None` ✗；★ ② **按名取研究**（`get_study_by_name` 回 `True`，★ 而不是用返回值）⇒ 仍 `None` ✗；★ ③ **先建目标** ⇒ ★★ `set_topology_goal` **自己**就报「`CreateMassConstraint` 未返回对象」⇒ ★★ 即**同一个族里质量约束也回 `None`** ✓ ｜ ★★ 于是失败的是**整个族**（质量约束 · 对称控制 · 脱模控制），★ 而**不是**某一条缺前置 ⇒ ★ 这是**族级/边界**现象、★ **不是「再补一步就能通」** ✗ ｜ ★ 反例仍证明**选区代码是通的**（`index:99` ⇒ `EntitySelectionError: FACE 序号 99 越界（体 0 上共 6 个）`）✓ ｜ ★★ 处置：★ 两条工具（`topology_create_symmetry_control` / `topology_create_demold_control`）**保留**（★ 便于诊断），★ 并在**预选族基线**里把 `verdict` 改成「**已定性·族级边界（★ 不修 —— 不是「待修」）**」✓ ｜ ⚠ 与上面那条 `verified`（8 项过 7）**不矛盾**：★ 那 7 项**未包含**这两个控制（★ 即**它们从来没人验过**）—— ★ 本条的 `level` **因此不应由那 8 项背书**（★ 待核它的逐项清单后再定）✗",
     "★★ 本条从 `topology_readback_and_parameters` **拆出**（2026-10-01 轮 275）：★ 依据是**写与读是两个意图** —— 本族是**设**，另一条是**读**",
     "★ 真机证据（`output/topology-readback-evidence.json` ⇒ **8 项过 7**）：★ **`set_goal` 的 `before_taken 0 → after_taken 1`** 是「设置真生效」的硬证据",
     "⚠ `set_topology_iteration_options` **不在本条**（★ 它属 `topology_iteration_options_backend_limited` —— 真机 `0x80010105`）"
