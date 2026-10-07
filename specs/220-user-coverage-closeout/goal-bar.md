@@ -468,3 +468,26 @@ Feature InsertFilletBeadFeature2(
 3. ★ 跑生成器 + `release_check` ⇒ ★ 要 **exit 0** ⇒ ★ **提交** ✓
 4. ★★ **真机**：★ `python tools/sw_guard.py --timeout 600 -- python <探针>.py`
    ★ 判据 **特征树增量 ≥ 1**（★ 事实 8）⇒ ★ 过了 ⇒ ★ 台账提 `level`（★ 并跑地图 ✓）
+
+## ★★ 第 49 轮（续）：★ 圆角焊缝初次真机 —— ★ **选边全稳，但特征没建成**（★ 诊断已出）
+
+★ 真机：★ **6.49 s** · ★ `sw_alive: true` ✓ · ★★ **`dialogs` 非空** ✗ · ★ `exit code: 1` ✗
+
+| ★ 组 | ★ 边选择读数 | ★ 特征树 |
+|---|---|---|
+| `(0,1)` | ★ **`ok=True` · 选区 1 → 2 · 共 24 条边** ✓ | ★ **22 → 22** ✗ |
+| `(2,3)` | ★ 同上 ✓ | ★ **22 → 22** ✗ |
+| `(0,6)` | ★ 同上 ✓ | ★ **22 → 22** ✗ |
+
+### ★★ 诊断（★ 有官方逐字依据）
+★ 官方 `InsertFilletBeadFeature2` 第 12 行**逐字**：★「…also **fills the gap between the pre-selected
+  part bodies**, if any.」✓
+★★ ⇒ **前置应当是"两个体（part bodies）"** ✓ —— ★ 而我**只选了边** ✗
+★ 所以：★ **边选得再对，体没预选，也建不出来** ✓ ⇒ ★★ **下一轮应先预选两个体** ✓
+
+### ★★ 下一轮（★ 两件）
+1. ★ **看 `output/spec220-bead.json` 里的 `dialogs`**（★ 弹窗内容通常是**最直接的线索** ✓
+   —— ★ 本仓纪律：★ **报信不等于处置**，★ 弹窗要读 ✓）
+2. ★ **改实现：★ 预选体**（★ `entities_on_body` 拿不到体 ⇒ ★ 用 `get_com_member(model, "GetBodies2")`
+   + `IEntity.Select4` ✓；★ 再按官方给"各侧相交边条数 + 数组"✓）
+3. ★ 重跑真机 ⇒ ★ 判据 **特征树增量 ≥ 1** ✓
