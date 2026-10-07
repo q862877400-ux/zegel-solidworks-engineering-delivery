@@ -77,7 +77,11 @@ def main() -> int:
     title = None
     evidence: dict = {
         "started": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "solidworks_revision": str((meta or {}).get("revision", "")),
+        #: ★★ 2026-10-07（接手轮 · 规格 216）：★ 原来是 `str(meta.get("revision", ""))` ——
+        #:   ★ 两处都不稳：① `connect_solidworks` 的 metadata **当时根本没有 `revision` 键**
+        #:   （★ 已在 `scripts/sw_connect.py` 补上）；② ★ 万一值为 `None`，`str(None)` 会写成
+        #:   **字符串 `"None"`** ✗ ⇒ ★ 这里加 `or ""`：★ **取不到就是空串，不写 `"None"`** ✓
+        "solidworks_revision": str((meta or {}).get("revision") or ""),
         "verdict": "unknown",
         "steps": {},
     }

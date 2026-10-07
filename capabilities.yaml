@@ -1562,6 +1562,10 @@
     "⇒ ★★ **所以上一条（轮 61）的那些读数**不在这份文件里**** —— ★ 它们**可能**来自另一次真机运行（★ 那份证据**没落盘**，★ `output/` 被 gitignore ⇒ ★ **与 B-1/B-2 同一处境**）；★★ **按铁律 5**：★ **在复现之前，那几个数字只能当「当时的读数」，不能当「可随时回原文的证据」** ✓",
     "⚑ **验收命令**（可复跑）：`python tools/verify_costing_e2e.py` ⇒ ★★ **实测当前是 `verdict: partial`（5/6）** —— ★ 与**同仓另两条文字**（`costing_readback` 条目 + `ROADMAP`）**一致** ✓。★ 未过的那一项是 `list_templates`（★ `AttributeError: <unknown>.GetTemplatePathnames`）⇒ ★★ **要恢复到 `pass`，需先解决那一个成员的可调性** ✓",
     "⚠⚠ **原文这里写的是「期望 `verdict: pass`」** —— ★ 那是**期望**、★ 而**实测是 partial** ⇒ ★★ 2026-10-04 已按实测改正（★ 免得后人拿「期望」当「现状」）✓",
+    "★★★ **2026-10-07（接手轮 · 规格 216）实测订正 —— 上面 2026-10-04 那条「partial（5/6）」已被推翻，本族现状是 `pass`**：★ 判据命令 `python tools/sw_guard.py --timeout 600 -- python tools/verify_costing_e2e.py` ⇒ ★ **`verdict: pass`**、★ `assertions` **3/3 全 `true`**（`total_to_manufacture_gt_0` · `costing_type_is_a_real_value` · `template_is_a_costing_template`）✓ —— ★ 2026-10-04 那次更正**在当时是对的**，★ 保留其历史、只订正其**现状含义** ✓",
+    "★★ **同一份证据文件的结构已变**（★ 2026-10-04 记的那 5 键 `steps`/`captured_at`/`passed`/`of`/`verdict` **已作废**）：★ 现在顶层是 `started` · `solidworks_revision` · `verdict` · `steps` · `assertions` · `finished`；★ `steps` 是 **7 项** —— `build_part` · `get_costing_manager` · `templates` · `defaults` · `bodies` · `cost_analysis` · `close` ✓",
+    "★★ **2026-10-04 抱怨的两个缺项，现在都在文件里**（★ 逐字复核 2026-10-07 那份证据）：① 四个要素 + `total_to_manufacture = 3.2714499345031918` **在**（`cost_analysis` 步）✓；② ★ `templates` 步现在**拿得到真路径**（`GetTemplatePathnames` 每类返回 **2** 条 `.sldctc`）⇒ ★★ 那条 `AttributeError: <unknown>.GetTemplatePathnames` **已不复现** ✓ ⇒ ★ 现版本脚本是「**自建零件 → 7 步 → 3 条断言**」的形状 ✓",
+    "✅ **2026-10-07 修掉一个真缺陷（本族自己发现的）**：`connect_solidworks` 的 `metadata` **从来没有 `revision` 键**，而 `tools/verify_costing_e2e.py` 读的正是它 ⇒ ★ 证据里的 `solidworks_revision` **恒为空串** ✗（★ 连带本条「证据文件…（含时间戳与版本）」那句**不成立**）⇒ ★ 修法：`scripts/sw_connect.py` 复用既有 `get_sw_version()` **补上 `revision`**（★ 防御式：取版本失败记 `None`、**不拖垮连接**），★ 并给 verifier 加 `or \"\"`（★ 免得把 `None` 写成字符串 `None`）⇒ ★ **真机证明**：修前 `''` · 修后 **`'34.4.1'`** ✓",
     "⚠⚠ **本条的入口问题曾被写错、并因此长期停在 `stitched`**：旧文写「CostManager 由 **Composer 加载项**给出，**本机没装 Composer**，ProgID 查不到 ⇒ 本模块接收调用方传入的对象」。**两条硬证据推翻**：① 官方反射里**有** `IModelDocExtension::GetCostingManager()`；② 注册表里**有** `swcCostingAddin.SwcAddin`（`.34`）等 8 个 ProgID ⇒ **Costing 加载项本机装了**。ⓘ **「4 个 ProgID 全返 None」这个观察是对的**，但**结论「所以拿不到」是错的** —— `GetAddInObject` 本来就不是正解。**⇒ 把「某条路走不通」写成「对象拿不到」，会让模块放弃唯一的正解。**",
     "⚠ **`CreateCostAnalysis(name)` 返 `None` 但分析确实建了**（SolidWorks「返回码撒谎」家族的又一例）⇒ 判据取 `GetCostAnalysis() is not None`，**不看** `CreateCostAnalysis` 的返回值。",
     "⚠ **`UpdateCostForAllBodies` 在 `CostingModel` 对象上取不到**（`AttributeError`），虽然反射里它挂在 `ICostPart` 上；而 `GetBodies` / `GetBodyCount` / `GetCostAnalysis` 在同一个对象上**都通**。⇒ 暂按「`CostingModel` 就是 `CostPart`」用，**不额外调 `UpdateCostForAllBodies`**（成本由 `GetCostAnalysis()` 直接给出）。",
@@ -1577,7 +1581,7 @@
    "source": "original",
    "source_evidence": "唯一实现模块 `scripts/sw_costing.py` **不在** `origin/main`（硬证据 `git cat-file -e origin/main:scripts/sw_costing.py` 不通过）⇒ 代码是我们新增的；且**无** `provenance` ⇒ 与 `source: original` 自洽（R13）。2026-10-01（轮 61）真机跑通完整闭环 ⇒ 升 verified",
    "evidence": [
-    "python tools/verify_costing_e2e.py（⇒ ★★ **verdict 是 `partial`、不是 `pass`** —— ★⚠ 2026-10-04（接手轮）更正：★ 此处原写「verdict: pass」，★ 而**证据文件** output/costing-evidence.json 逐字是 `\"verdict\": \"partial\"` · `\"passed\": 5` · `\"of\": 6` ⇒ ★★★ **5/6**；★ 唯一未过的那一步是 **`list_templates`**（★ 其余五步 `get_costing_manager` / `evidence` / `body_count` / `list_bodies` / `read_analysis` 全 `true`）✓ 处置 `JUDGE-A_B.md` 的 🔴 **A-moldcosting V-1**：「★ 条目写 `verdict: pass`，★ 文件是 `partial`（5/6）；★ 同仓另两条文字（`costing_readback` + ROADMAP）都写 partial ⇒ ★ **一个文件被写成两种结论**」✓ 依据 output/costing-evidence.json 逐字）"
+    "python tools/sw_guard.py --timeout 600 -- python tools/verify_costing_e2e.py（⇒ ★★★ **2026-10-07（接手轮 · 规格 216）实测 = `verdict: pass`** · `assertions` **3/3** · `solidworks_revision` = `34.4.1` · `total_to_manufacture = 3.2714499345031918` · `costing_type = 0` ✓ —— ★★ **本条此前的「partial（5/6）」是旧一版脚本的读数、已作废**；★ 2026-10-04 那次更正在**当时是对的**（★ 当时证据文件逐字 `verdict: partial` · `passed: 5` · `of: 6`，唯一未过的是 `list_templates`，报 `AttributeError: <unknown>.GetTemplatePathnames`）⇒ ★ 而现版本脚本已改为**自建零件 + 7 步 + 3 条断言**，★ 那个 `AttributeError` **不复现**、★ 该有的读数**也都在文件里**了 ✓）"
    ],
    "mcp_tools": [
     "solidworks_costing_body_count",
@@ -3008,6 +3012,7 @@
    "limitations": [
     "★★ 从 `costing` **拆出**（轮 275）：★ **成本是 AGENTS.md §〇 点名的三个「真正全网空白域」之一** ⇒ 它值得独立成条",
     "★ **真机 5/6**：`get_costing_manager` ✓ · `costing_evidence` ✓（`{body_count: 1, has_cost_analysis: True}`）· `body_count` ✓ · `list_bodies` ✓ · **`read_analysis` ✓（读到真数据，含模板路径）**；⚠ `list_templates` ✗ —— 报 `<unknown>.GetTemplatePathnames`（**事实 36 的形态**，待查）",
+    "★★★ **2026-10-07（接手轮 · 规格 216）实测订正 —— 上面那条「5/6、`list_templates` ✗」已作废**：★ 同一命令真机复跑（`python tools/sw_guard.py --timeout 600 -- python tools/verify_costing_e2e.py`）⇒ ★ **`verdict: pass`** · ★ `assertions` **3/3** · ★ `templates` 步**拿得到真路径**（`GetTemplatePathnames` 每类返回 2 条 `.sldctc`）⇒ ★★ 那个 `<unknown>.GetTemplatePathnames` **不复现** ✓ —— ★ 保留上面一条当**历史**（它在当时是对的），★ 只订正其**现状含义** ✓",
     "⚠ `list_bodies` 的实体名回 `'?'` ⇒ ★ 那个 body 对象上取 `Name` 取不到 ⇒ **按名字读**那条路在本机走不通（★ 要改用索引）",
     "★ 手法：注入 `manager` + 包装内部取下游（`CostingModel` / `CostingDefaults` / `GetCostAnalysis` / `GetBodies`）"
    ],

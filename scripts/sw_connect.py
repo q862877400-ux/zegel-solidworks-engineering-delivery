@@ -785,10 +785,25 @@ def connect_solidworks(version=None, wait_seconds=5, visible=True, return_metada
     else:
         print("当前没有打开的文档")
 
+    #: ★★ 2026-10-07（接手轮 · 规格 216）**补上 `revision`** ——
+    #:   ★ 起因（**实测到的真缺陷**）：`tools/verify_costing_e2e.py` 写的是
+    #:     `str((meta or {}).get("revision", ""))`，★ 而**本字典里从来没有 `revision` 这个键** ✗
+    #:     ⇒ ★★ 证据文件 `output/costing-evidence.json` 的 `solidworks_revision` **恒为空串**
+    #:     （★ 实测：该文件里逐字 `"solidworks_revision": ""`）✓
+    #:     ⇒ ★ 连带 `capabilities.yaml` 的 costing 条目那句「证据文件…（含时间戳与版本）」**不成立** ✓
+    #:   ★ 复用既有函数：`get_sw_version(sw)`（★ 本文件里就有，回 `{"revision", "year", "major"}`）✓
+    #:   ⚠ **防御式**：取版本要读 COM（`ISldWorks.RevisionNumber`）——
+    #:     ★ 它**失败了也不该拖垮"连接"这件正事** ⇒ 包 try/except，★ 取不到就记 `None`
+    #:     （★ 与"没这个键"区分开：★ **键一定在**、值可能是 `None`）✓
+    try:
+        revision = get_sw_version(sw)["revision"]
+    except Exception:                                                  # noqa: BLE001
+        revision = None
     metadata = {
         "prog_id": prog_id,
         "requested_version": int(version) if version is not None else None,
         "started_by_cad_studio": launched_here,
+        "revision": revision,
     }
     return (sw, model, metadata) if return_metadata else (sw, model)
 
