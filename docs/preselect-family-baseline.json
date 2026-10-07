@@ -20,8 +20,8 @@
    "tool": "solidworks_drawing_insert_balloons",
    "module": "sw_drawing_create_missing",
    "function": "auto_insert_balloons",
-   "verdict": "真危险·显式拒",
-   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体 `GetSelectedObjectCount2` ＋ 计数为 0 即 `preconditions_held=False` ⇒ ★ 经工具层**必然失败**（★ 失败**可见**，不是静默）✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+   "verdict": "已真机修好（★ 只差改成 pre_call 形状以让门禁认得）",
+   "reason": "★★★ 2026-10-07（接手轮 · 规格 216 T-216-08）**已真机修好 —— 而本门禁仍会标它，原因是判据形态不同**：★ 本门禁认的是 **`pre_call` 形状**（★ 见本条第 ① 段自己写的「修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状」）⇒ ★ 而我的修法把选区做在**函数体里**（★ 紧邻选区检查之前 `SelectByID2(<视图名>, \"DRAWINGVIEW\", …)`）⇒ ★★ 于是**能力通了、门禁却仍标它** ⇒ ★ 这是**门禁判据与实现形态的落差**、★ 不是能力还坏着 ✓ ｜ ★★ 真机复验（关沙盒那一层 + 护栏弹窗/超时照旧）：`auto_insert_balloons(dr, view_name=\"工程图视图1\")` ⇒ ★ `ok=True` · ★★ `selection_count=1` ✓；★ 反例（不存在的视图名）⇒ `ok=False`（★ 本函数回 dict、不抛）✓ ｜ ★★ 夹具的三处钥匙（★ 都是从仓库**既有探针**里捞出来的，★ 不是我自己摸的）：① 视图名要用**本机本地化名 `*前视`**（★ `*Front` 在本机建不出视图）；② 读名字要用**现行成员 `IView::GetName2`**（★ `GetName` **已废弃** —— 官方逐字「Obsolete. Superseded by `IView::GetName2` and `IView::SetName2`」）；③ ★★ `GetFirstView()` 的**第一个是「图纸本身」**（★ 真机原始读数 `['图纸1', '工程图视图1']`）⇒ ★ **必须跳过** ✓ ｜ ★ 另：★ 该函数的 docstring 写「工具层不给它建 ToolSpec」**已过期** —— ★ 实测 ToolSpec **存在**（`solidworks_drawing_insert_balloons` · `inject: model` · 15 参数）✓ ｜ ★★ **待修工作项（不是「已认可」）**：★ 函数体 `GetSelectedObjectCount2` ＋ 计数为 0 即 `preconditions_held=False` ⇒ ★ 经工具层**必然失败**（★ 失败**可见**，不是静默）✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
   },
   {
    "tool": "solidworks_part_insert_composite_curve",
