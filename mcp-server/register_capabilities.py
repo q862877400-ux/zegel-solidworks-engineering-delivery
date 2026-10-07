@@ -1091,6 +1091,9 @@ BATCH_MODULES = (
     #: ★ 规格 219 · 边界凸台 + 边界曲面（官方 InsertNetBlend，Type 区分）✓
     #:   ★★ 等级如实 stitched —— 两个都尚未真机验证（红线⑥）
     "tool_specs_batch107",
+    #: ★ 规格 220 · 目标 145/145 —— PDM 相邻证据读侧（★ 真实现已在 sw_pdm.collect_pdm_evidence）✓
+    #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
+    "tool_specs_batch108",
 )
 
 def all_specs() -> list:
