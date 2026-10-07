@@ -572,17 +572,17 @@ def dismiss_button(hwnd: int, *, text: str) -> bool:
     return ok
 
 
-def list_buttons(hwnd: int) -> list[dict]:
-    """★ 列出该弹窗里每个按钮的**文本 + 控件 ID + hwnd**（★ 定点处置的输入）。"""
-    rows: list[dict] = []
-
-    def _cb(ch, _l):
-        if _cls(ch) == "Button":
-            rows.append({"text": _txt(ch)[:60], "id": int(_u.GetDlgCtrlID(ch)), "hwnd": int(ch)})
-        return True
-
-    _u.EnumChildWindows(hwnd, _PROC(_cb), 0)
-    return rows
+# ── 墓碑（2026-10-07 接手轮）──────────────────────────────────────────────
+# ★ 这里原有 `list_buttons(hwnd)`：列出弹窗里每个按钮的**文本 + 控件 ID + hwnd**。
+# ★★ **已删** —— 依据是 `tests/test_no_uncalled_helpers.py` 的**死代码门禁**：
+#   逐个 grep 复核过 `tools/` · `scripts/` · `tests/`，它**只有 1 处 = 定义处** ⇒ 确实没人调 ✓
+# ⚠ 而它**够不上**那张 `UNCALLED_EXEMPT` 表的豁免条件 —— ★ 那条表由
+#   `tests/test_uncalled_exempt_has_reason.py` 守着，**只收私有辅助（`_` 开头的）**，
+#   ★ 而 `list_buttons` 是公开名 ✗ ⇒ 那个门禁自己给的两条路（「删掉 + 留墓碑」/
+#   「记档豁免」）里，**这里只能走第一条** ✓
+# ★ 删它**不丢能力**：本文件的 `dismiss()` 就**内联**做了同一件事（枚举 `Button`
+#   并取 `GetDlgCtrlID`）⇒ ★ 将来若要做「**按控件 ID 定点点某个按钮**」，
+#   从 `dismiss()` 抽一个出来即可（★ 那时它会**有调用点**，自然过闸）✓
 
 
 def sw_pid() -> int | None:
