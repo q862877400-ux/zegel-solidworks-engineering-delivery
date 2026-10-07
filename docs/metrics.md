@@ -22,9 +22,9 @@
 | 14 | 函数（含类方法与嵌套） | scripts/sw_*.py 里所有 def（含缩进的）—— ★ 与上一行**不是同一个东西**，不可与「工具」相比 | **1450** | `正则允许前导空白，抓缩进的 def` |
 | 15 | 函数（含工具层与声明层） | scripts/ + mcp-server/ 里的 def | **2221** | `同上，扫两个目录` |
 | 16 | 测试文件 | tests/ 下的 test_*.py | **328** | `C:\swprojects\sw-skill-fork\tests\test_*.py` |
-| 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **475** | `register_capabilities.all_specs()` |
+| 17 | MCP 工具（我们新登记） | tool_specs_batch*.py 的声明条目 | **476** | `register_capabilities.all_specs()` |
 | 18 | MCP 工具（上游原有） | server.py 里的 @mcp.tool 装饰器 | **45** | `server.py 里 @mcp.tool 出现次数` |
-| 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **520** | `两行相加` |
+| 19 | ★ MCP 工具合计 | 上面两行相加（AI 能调的按钮总数） | **521** | `两行相加` |
 | 20 | 四家工具数（原始相加） | 四家各自工具数直接相加（有重名，会虚高） | **510** | `union-sources.json 的 sources[].tools 长度相加` |
 | 21 | ★ 四家工具数（去重＝并集） | 去掉重名后的总数（★ 与上一行不是同一个东西） | **349** | `union-sources.json 的 union_operations 长度` |
 | 22 | 能力清单条目 | capabilities.yaml 的条目数 | **140** | `capabilities.yaml 里 level 字段出现次数` |

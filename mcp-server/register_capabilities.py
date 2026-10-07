@@ -1091,6 +1091,12 @@ BATCH_MODULES = (
     #: ★ 规格 219 · 边界凸台 + 边界曲面（官方 InsertNetBlend，Type 区分）✓
     #:   ★★ 等级如实 stitched —— 两个都尚未真机验证（红线⑥）
     "tool_specs_batch107",
+    #: ★ 规格 220 · 目标 145/145 —— 装配序列/说明书（★ **直接指向已有的真函数**
+    #:   `sw_delivery.collect_assembly_bom`，★ 它的首参就叫 `model` ⇒ 门禁天然满足 ✓）
+    #:   ★★ 坐标：★ 官方**没有**「装配序列」成员（只有**序号**类成员 = BOM 行号）⇒
+    #:      ★ 本工具给的是**用户心智里的装配说明书**（件表 + 行序），★ 不冒充 ✓
+    #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
+    "tool_specs_batch109",
     #: ★ 规格 220 · 目标 145/145 —— PDM 相邻证据读侧（★ 真实现已在 sw_pdm.collect_pdm_evidence）✓
     #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
     "tool_specs_batch108",
