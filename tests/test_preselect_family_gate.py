@@ -48,6 +48,27 @@ def test_function_that_selects_itself_is_not_flagged() -> None:
         "★ 自建选区的工具被误报 ⇒ 又回到 21 条里混着 3 条假阳性那一版"
 
 
+def test_helper_style_self_selection_is_not_flagged() -> None:
+    """★★ 对照①**-bis**（★ 2026-10-07 规格 216 实测补的）：★ 用**本仓自己的选择助手**也算"自己会选" ✓
+
+    ★ 起因：把 14 条逐条读函数体时，实测出**两条假阳性** —— 它们的函数体**逐字**是
+      `_select_by_id(asm_model.Extension, component_name, "COMPONENT")` 与
+      `SS.select_entity_by_index(model, "FACE", int(face_index))`，
+      ★★ 而 token 集只认 `SelectByID2` / `Select4(` 这类**裸 COM 调用** ✗
+      ⇒ ★ 于是「**自己会选**」被误报成「**没人能选**」✓
+    ⚠ 这条是**负例**（★ 事实 62：负例是判据有效的唯一证明）—— ★ 它红 ⇒ 意味着
+      ★ 又有一类"本仓自己的写法"没被认出来，★ 门禁会开始误报自己会选的工具 ✓
+    """
+    for helper in ("_select_by_id(model.Extension, 'Comp1', 'COMPONENT')",
+                   "SS.select_entity_by_index(model, 'FACE', 0)",
+                   "_select_faces_for(model, '+z')",
+                   "_select_com_object(model, 'FACE', 0)",
+                   "select_component_by_name(asm, 'Comp1')"):
+        fn = "def f(model):\n    %s\n    return model.Something()\n" % helper
+        assert gate.judge(DOC_ZH, False, False, False, fn) == "", (
+            "★ `%s` 没被当成自选 ⇒ 门禁会误报自己会选的工具" % helper.split("(")[0])
+
+
 def test_negated_requirement_is_not_flagged() -> None:
     """★ 对照②：★ 那句是**否定句**（「调用方不必先选」）⇒ 不许命中 ✓"""
     doc = "★ 本工具自己先把圆柱面按 mark=0 选中 ⇒ ★ 调用方**不必**先选中任何东西。"

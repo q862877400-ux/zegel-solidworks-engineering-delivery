@@ -2,86 +2,98 @@
 
 > ★★ **本文件是唯一进度字段** —— 进度只看上面那一行。
 
-**阶段：★ ③ 台账订正**已完成并提交（`a89358f7`）· ★ 顺带修掉 `revision` 真缺陷（真机证明）· ★★ 并**升级了一条被我的订正触红的契约守卫**（全量已回到 **0 failed**）· ★ ① 预选族 / ② AVI **未开始**（★ ① 的范围已按基数实读**从 9 条订正为 14 条**）· ★ 当前动作 = **T-216-05**
+**阶段：★ ③ 台账订正完成（`a89358f7` / `32cdbf44` / `3197d27b`）· ★★ T-216-05 完成 —— 14 条判型落地，并查出**其中 2 条是我那道门禁的假阳性**（已修门禁 + 移出基线 ⇒ **实数 12**）· ★ 剩余：**A 型 6 · B 型 3 · D 型 3**（未修）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-06**（A 型逐条加 `pre_call`）**
 
 ---
 
-## ★★ 本轮新增的实测结论（★ 都是"先读第一现场"之后才拿到的）
+## 一、T-216-05 的产出（2026-10-07）
 
-### ① 预选族的范围**从 9 条订正为 14 条**（★ 又一次前提错误）
+★ 交付物：[precall-plan.md](recon/precall-plan.md) —— ★ 14 条**逐条读目标函数体**后的判型 ✓
 
-★ 我原以为：基线里「**官方前置**」那 9 条要修，「显式拒」3 条与「诊断型」2 条**不动**。
-★★ 读完基线原文才发现：★ **14 条的理由全都写着「★★ 待修工作项（不是「已认可」）」** ✗
+| 型 | 条数 | ★ 判据（读到的原文） |
+|---|---|---|
+| ★★ **假阳性** | **2** | ★ 函数**自己就会选** —— `_select_by_id(asm_model.Extension, component_name, "COMPONENT")` · `SS.select_entity_by_index(model, "FACE", int(face_index))` ＋**随后回读计数、为 0 就报错** ✓ |
+| **A** 造选区 | **6** | 零选区 token 且官方要求先选：`insert_dome` · `insert_composite_curve` · `insert_reference_point` · `section_properties` · `dissolve_assembly` · `sketch_stretch` |
+| **B** 读"当前"选区 | **3** | 语义**就是**读当前选区：`selection_point` · `measure_selection` · `drawing_insert_balloons` |
+| **D** 需指定参照 | **3** | 参照**有语义**、不能乱造：`part_axis` · `topology_create_demold_control` · `topology_create_symmetry_control` |
 
-| 档位 | 条数 | 基线逐字理由 | ★ 我的误判 |
-|---|---|---|---|
-| 真危险·**官方前置** | **9** | 函数体零选区 token ⇒ 缺选区时**静默失败** | ★ 判断对（确实要修）|
-| 真危险·**显式拒** | **3** | 函数体读 `GetSelectedObjectCount2` + 计数 0 ⇒ `preconditions_held=False` ⇒ ★ **经工具层必然失败** | ★★ **错**：我说"不动" —— ★ 而"必然失败"就是**坏的** |
-| 真危险·**诊断型** | **2** | 函数体读选区、不显式拒 ⇒ ★ 它读到的**就是被注入清空的**那个选区 | ★★ **错**：同上，读的是空选区 |
+### ★★ 假阳性 2 条 —— 已修（本轮的实质产出）
 
-⇒ ★★ **三项都要处理**（★ 但**修法可能不同**：`measure_selection` 的语义是"量**当前**选区"，
-★ 给它造选区会改语义 ⇒ ★ 必须**逐条读目标函数**再定），★ 这正是 T-216-05 的活 ✓
-★ 本条已写进 goal 的 objective（材料性范围变更）✓
+★★ **不是"修好了"，是当初就被误报** ✗：★ 门禁 `SELF_SELECT` 当时只认**裸 COM 调用**
+（`SelectByID2` / `Select4(` …），★ 而这两条用的是**本仓自己的助手** ✓
 
-### ② 一条**契约守卫**被我的订正触红 —— 已升级而非删除
+★ 修法两件：
+1. ★ **补 token 集**（`_select_by_id` / `select_entity_by_index` / `_select_faces_for` /
+   `_select_com_object` / `select_component_by_name`）—— ★ 并**配一个新负例**
+   `test_helper_style_self_selection_is_not_flagged`（5 个助手名逐个过）✓
+2. ★ **移出基线**（14 → **12**）—— ★ 棘轮**双向**：不再命中的必须移出；
+   ★ 并把"为什么移出"写进 `docs/preselect-family-baseline.json` 的 `_comment`（★ 知识不丢）✓
 
-★ 全量跑出 **1 failed**：`tests/test_ledger_verdict_matches_evidence.py::test_evidence_file_really_is_partial`
-★★ 它的第一条断言把「**证据文件确实是 partial / 5-of-6**」**钉成了前提** ✗
-  ⇒ ★ 而文件随本轮真机复跑变成 `pass` ⇒ ★ **那条前提不再成立** ✓
-★ 该文件是 2026-10-04 为 `JUDGE-A_B` 的 V-1 写的守卫，★ 意图是「**台账 ⟺ 证据一致**」——
-  ★★ 而 V-1 抱怨的原话是「**一个文件被写成两种结论**」，★ **不是**"必须是 partial" ✓
-⇒ ★★ **升级成真正的不变量**（★ 不钉具体读数）：
-  · ① 文件自洽：`verdict == pass` ⟺ `assertions` 全 true
-  · ② ★ **核心**：台账里**必须**出现「`verdict` + ≤12 字符 + **文件里那个词**」的**相邻形态**
-    ⇒ ★ 即"台账**确实写出了一句 verdict 声明**"，★ 而不是只在别处顺口提到那个词 ✓
-  · ③ 有未过步骤 ⇒ 必须点名（★ 空集时自然成立）
-  · ④ 负例 · 补正而不删除：★ 凡引旧句就得带标记（★ 从"写死 `verdict: pass`"**泛化**）✓
-★★ **负例已证**（★ 事实 62）：`output/_t216_negproof.py` ⇒ ★ 改前 **4 passed** ·
-  ★ 抹掉台账那处现状声明 ⇒ **1 failed** · ★ 还原 ⇒ **4 passed** ✓
-★ 全量复跑 ⇒ ★ **2404 passed / 0 failed**（427 s）✓
+★ 读数：`python scripts/check_preselect_family.py` ⇒ ★ **命中 12 · 基线认可 12 · 无新增无腐坏**
+⇒ **exit 0** ✓ · ★ 门禁测试 **7 passed**（原 6 + 新负例）✓
+
+⚠ 与两处旧账**同型**（★ 值得记住）：`audit_byref_args.BYREF_OK` 只认**裸名**、
+`check_probe_reuse` 判据过宽 ⇒ ★★ **判据必须覆盖「本仓自己常用的写法」** ✓
 
 ---
 
-## 当前状态
+## 二、① 的范围被订正了**两次**（★ 病根都是"没先读第一现场"）
 
-★ **规格 216 立起**（2026-10-07，接手轮），起因是用户订正纪律：
+| 我以为 | 读原文之后 | ★ 依据 |
+|---|---|---|
+| 只有 "官方前置" **9** 条要修，另 5 条"不动" | ★ **14 条全是待修** | ★ 基线里 **14 条的理由全都写着**「★★ 待修工作项（不是「已认可」）」—— ★ "显式拒"那 3 条是**经工具层必然失败**、"诊断型"那 2 条读到的是**被清空的**选区 ✓ |
+| 14 条都要改工具 | ★ **12 条要改，2 条是门禁假阳性** | ★ 逐条读函数体（见上表）✓ |
+
+★★ **教训**：★ 我**三次**都是"没先读第一现场就下判断"（AVI 前提 · costing 状态 · 预选族范围）⇒
+★★ **动手前先读该能力的 `limitations` 与基线原文** ✓
+
+---
+
+## 三、③ costing 的产出（★ 已提交）
+
+- ★ 真机复跑（**走护栏**：`python tools/sw_guard.py --timeout 600 -- python tools/verify_costing_e2e.py`
+  ⇒ 15.9 s、0 弹窗）⇒ ★ **`verdict: pass`** · `assertions` **3/3** ✓
+- ★★ **顺带修掉一个真缺陷**：`connect_solidworks` 的 `metadata` **从来没有 `revision` 键**，
+  而 `tools/verify_costing_e2e.py` 读的正是它 ⇒ ★ 证据 `solidworks_revision` **恒为空串** ✗
+  ⇒ ★ 复用既有 `get_sw_version()` 补键（★ 防御式：失败记 `None`、不拖垮连接）+ verifier 加 `or ""`
+  ⇒ ★ **真机证明**：修前 `''` · 修后 **`'34.4.1'`** ✓
+- ★ 台账订正**两处**（`costing` · `costing_readback`）—— ★ 一律"**追加 + 标注旧条作废**"、**不删历史** ✓
+- ★★ 并**升级了一条被订正触红的契约守卫**（★ **不删**）：`test_ledger_verdict_matches_evidence`
+  原把「文件**确实是** partial」**钉成前提** ✗ ⇒ ★ 升级成**真正的不变量**「**台账现状句 ⟺ 文件原句**」
+  （★ V-1 抱怨的是"**不一致**"、不是"必须是 partial"）· ★ **负例已证**（抹掉现状声明 ⇒ 当场红）✓
+- ★ 全量 pytest ⇒ ★ **2404 passed / 0 failed**（427 s）✓
+
+---
+
+## 四、② AVI —— 前提被订正（★ 未开始）
+
+★ 我原写「根因是缺 Motion 加载项」✗ —— ★★ **台账 2026-10-01（轮 285）就已订正过这句**
+（L1611 逐字：「原写『缺 Motion 加载项』—— ★ 而实测那条**不成立**」）✓
+★ 本机体检也一致：`swmotionstudy.tlb` **存在且 `ready: true`** ⇒ ★ 类型库从来不是阻塞点；
+★★ 台账 **L3189 明确警告**：`ensure_motion_type_library` **答不了「AVI 能不能导」** ✓
+★ **真结论（L1619）**：🔴 `SaveToAVI` 需要 **`CosmosMotion` 类算例**、本机拿不到；
+★ 另有两条实测事实：4 个 Motion ProgID 全返 `None` · ★ **返回码会撒谎**（不 `Calculate` ⇒
+返 `True` 而文件 **0 字节**）⇒ ★ 判据固定为「**文件存在且大小 > 0**」、★ **不看返回值** ✓
+
+---
+
+## 五、纪律（★ 用户 2026-10-07 订正）
 
 > 「**第 3 点我允许你开，我从没说过不准开啊，纪律是开了用完要关**」
 
 ★★ **订正我此前的误读**：★ `AGENTS.md` 规定的是**怎么开**（真机命令一律走 `tools/sw_guard.py`：
 弹窗护栏 + 硬超时），★ **不是"不许开"**；★ 而"零真机"是我**自己**写进 `specs/214`/`215` 的额外约束 ✗
-★ 规格已提交 ⇒ 按 Flow-forward 不改，★ 订正记在本规格 ✓
-★ **本轮已按正确纪律执行**：★ 真机命令走护栏 ✓ · ★ 收尾 `round_chain` 关掉 SolidWorks ✓
-
-### ★★ 本轮实测推翻了两条原前提（★ 病根都是"没先读台账就下判断"）
-
-| 项 | ★ 原以为 | ★ 实测 |
-|---|---|---|
-| **③** `costing` | 台账写「`verdict: partial`（5/6），卡在 `list_templates`」 | ★ **`verdict: pass`** · `assertions` **3/3** · `templates` 步拿到真路径（每类 2 条 `.sldctc`）⇒ **旧阻塞点不复现** ✓ |
-| **②** AVI | 我写「根因是缺 Motion 加载项」 | ★★ **台账 2026-10-01（轮 285）就已订正过这句**（L1611 逐字：「原写『缺 Motion 加载项』—— ★ 而实测那条**不成立**」）⇒ ★ 真结论在 **L1619**：🔴「`SaveToAVI` 需要 **`CosmosMotion` 类算例**，而本机拿不到」✓ |
-
-★ 本机体检也与之一致：`swmotionstudy.tlb` **存在且 `ready: true`** ⇒ ★ 类型库从来不是阻塞点；
-★★ 且台账 **L3189 明确警告**：`ensure_motion_type_library` 探的是**类型库**、**答不了「AVI 能不能导」** ✓
-
-### ✅ ③ 的产出（★ 已提交 `a89358f7`）
-
-- ★ 真机复跑（**走护栏**，15.9 s、0 弹窗）⇒ `verdict: pass` · `assertions` 3/3 ✓
-- ★★ **顺带发现并修掉一个真缺陷**：`connect_solidworks` 的 `metadata` **从来没有 `revision` 键**，
-  而 `tools/verify_costing_e2e.py` 读的正是它 ⇒ ★ 证据里 `solidworks_revision` **恒为空串** ✗
-  ⇒ ★ 修法：复用既有 `get_sw_version()` 补键（★ 防御式：失败记 `None`、不拖垮连接）；
-  ★ 并给 verifier 加 `or ""`（★ 免得把 `None` 写成字符串 `None`）✓
-  ⇒ ★ **真机证明**：修前 `''` · 修后 **`'34.4.1'`** ✓
-- ★ 台账订正**两处**（`costing` · `costing_readback`）：★ **一律"追加 + 标注旧条作废"，不删历史** ✓
-  ★ `check_union_conventions` ⇒ 退出 **0** ✓
-- ⚠ 证据文件结构已变（顶层 6 键、`steps` 7 项），★ 台账旧记的 5 键已作废 ⇒ ★ 也已订正 ✓
+（★ 规格已提交 ⇒ 按 Flow-forward 不改，★ 订正记在本规格）✓
+★ **连续两轮都按正确纪律执行**：★ 真机命令走护栏 ✓ · ★ 收尾 `round_chain` 关掉 SolidWorks ✓
 
 ---
 
 ## 下一个动作（只写一条）
 
-★ **T-216-05**：★ **14 条逐条读目标函数体**（★ 不是 9 条 —— 见上「范围订正」），
-★ 把每条判进三型之一：★ **A 型**"造选区"（缺入口）· ★ **B 型**"量当前选区"（★ 如 `measure_selection`，
-★ 造选区会**改语义**）· ★ **C 型**其他；
-★ 再照 `mcp-server/tool_specs_batch74.py` 的 `_select_faces_for` 形状写 `pre_call` ✓
-→ 验收: ★ 14 条三型分类 + 每条目标函数落 `specs/216-real-machine-closeout/recon/precall-plan.md`；
-★ 改完后 `python scripts/check_preselect_family.py` 须退出 0 ✓
+★ **T-216-06**：★ 给 **A 型 6 条**逐条加 `pre_call` —— ★ 形状照
+`mcp-server/tool_specs_batch74.py` 的 `_select_faces_for`（★ 事实 503：`pre_call` 在**注入之后**跑
+⇒ 那时选区已被清空 ⇒ **必须重建**）✓
+★ **每条先定"选什么"的判据**（★ 不许乱选）：★ 首选"**唯一实体**"或"**参数指定的序号**"，
+★ 判据写进 ToolSpec 注释 ✓
+→ 验收: ★ 每条**两段**读数 —— ★ ① 选区计数 > 0 · ★ ② **特征树增量**（★ 不看返回值）；
+★ 批末 `python scripts/check_preselect_family.py` 仍须退出 0（★ 命中数应随修随降）✓

@@ -135,7 +135,18 @@ def _has_selection_param(spec) -> bool:
 #:     `create_revolved_surface`）—— 它们**不是缺陷**，却因为文档里提过「先选」被报进来 ✗
 SELF_SELECT = re.compile(
     r"SelectByID2|Select4\(|SelectByRay|\bresolve_selection\b|resolve_entity|"
-    r"clear_selection|ClearSelection",
+    r"clear_selection|ClearSelection|"
+    #: ★★ 2026-10-07（接手轮 · 规格 216 · T-216-05）**补上本仓自己的选择助手名** ——
+    #:   ★ 起因：把 14 条逐条读函数体时，实测出 **2 条假阳性**：
+    #:     · `sw_assembly.suppress_component` 逐字 `_select_by_id(asm_model.Extension, component_name, "COMPONENT")`
+    #:     · `sw_sheet_metal.insert_form_tool_report` 逐字 `SS.select_entity_by_index(model, "FACE", face_int)`
+    #:   ★★ 这两条**自己就会选**，★ 却因为 token 集不含这两个名字，被报成「没人能选」✗
+    #:   ⚠ 与 `audit_byref_args.BYREF_OK`（只认**裸名**、不认 `sw_connect.out_i4()`）·
+    #:     `check_probe_reuse`（判据过宽）**同型** ⇒ ★★ **判据必须覆盖"本仓自己常用的写法"** ✓
+    #:   ⚠ 边界（★ 刻意写清）：★ 这里**只加名字**、不加语义 —— ★ 若某函数**调用了**助手却仍
+    #:     **没选够**（例如只选了 1 个而需要 2 个），★ 本道**看不见** ⇒ ★ 那一类要靠**真机验证** ✓
+    r"_select_by_id|select_entity_by_index|_select_faces_for|_select_com_object|"
+    r"select_component_by_name",
     re.I)
 
 _MODULE_CACHE: dict = {}
