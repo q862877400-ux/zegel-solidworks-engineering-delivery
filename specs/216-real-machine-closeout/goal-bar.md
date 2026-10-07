@@ -90,10 +90,20 @@
 
 ## 下一个动作（只写一条）
 
-★ **T-216-06**：★ 给 **A 型 6 条**逐条加 `pre_call` —— ★ 形状照
-`mcp-server/tool_specs_batch74.py` 的 `_select_faces_for`（★ 事实 503：`pre_call` 在**注入之后**跑
-⇒ 那时选区已被清空 ⇒ **必须重建**）✓
-★ **每条先定"选什么"的判据**（★ 不许乱选）：★ 首选"**唯一实体**"或"**参数指定的序号**"，
-★ 判据写进 ToolSpec 注释 ✓
-→ 验收: ★ 每条**两段**读数 —— ★ ① 选区计数 > 0 · ★ ② **特征树增量**（★ 不看返回值）；
-★ 批末 `python scripts/check_preselect_family.py` 仍须退出 0（★ 命中数应随修随降）✓
+★ **T-216-06a**：★ **先逐条捞台账**（★ 不猜）—— ★ `section_properties` · `dissolve_assembly` ·
+`sketch_stretch` 三条的条目级依据**本轮 grep 未命中**（★ 可能记在别的 `capabilities[].id` 下）
+⇒ ★ 逐条把它们捞出来、读 `limitations` 再定修法 ✓
+→ 验收: ★ 三条各自的**条目 + 逐字依据**落 `recon/precall-plan.md` §5.4（★ 取代现在的"尚未查到"）✓
+
+★ **T-216-06b**（捞完即做）：★ `insert_dome` + `insert_reference_point` 两条**可修**的：
+· ★ `insert_dome` ⇒ ★ 走**两步式选面**（先 `mark=0` 选一次、`ClearSelection2(True)`、再 **`mark=1`**，
+  ★ 形态由既有冒烟 `tools/verify_dome_smoke.py` L133-139 证明 9/9）+ ★ **声明式选择器入参**
+  （★ 因为**规则 3 不许工具收裸坐标**）✓
+· ★ `insert_reference_point` ⇒ ★ 选区**必须紧邻调用**（★ 台账逐字：中间隔别的步骤会把选区清掉）✓
+→ 验收: ★ 每条**两段**真机读数 —— ★ ① 选区计数 > 0 · ★ ② **特征树增量**（★ 不看返回值）；
+★ 批末 `python scripts/check_preselect_family.py` 仍须退出 0 ✓
+
+★ **T-216-06c**：★ `insert_composite_curve` ⇒ ★ **不修**，改走"如实记为能力缺口"
+（★ 依据：台账逐字「**6 种选法全部失败**」+ `Select4` 无 mark、边与草图段无名字 ⇒ **后端墙**）✓
+→ 验收: ★ `capabilities.yaml` 该条目的 `limitations` 补上本轮结论；★ `check_union_conventions` 退出 0 ✓
+
