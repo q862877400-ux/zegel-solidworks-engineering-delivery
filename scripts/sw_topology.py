@@ -590,9 +590,45 @@ def create_preserved_region(study, *, option: int | None = None):
     return _edit(control, _configure)
 
 
-def create_symmetry_control(study, *, symmetry_type: int = 0):
-    """建对称控制（官方教程用 1/4 对称）。调用方须先选好对称平面。"""
+def _apply_declarative_selection(selection: str, selection_kind: str) -> int:
+    """★ 在**活动文档**上按声明式选择器建选区 —— 拓扑控制的官方前置用。
+
+    ★★ 2026-10-07（接手轮 · 规格 216 T-216-07）**为什么要它**：
+      ★ `CreateSymmetryControl` / `CreateDemoldControl` 的官方前置**都是"调用方先选好"**
+        （★ 见两个函数自己的 docstring：「调用方须先选好对称平面」/「调用方须先选好拔模方向的面/边/基准面」）✓
+      ★★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前选好 ✗
+      ★ 本模块的工具只拿到 `study`（★ 拿不到 model）⇒ ★ 故这里**自己取活动文档**
+        （★ 拓扑研究就在活动文档里 ⇒ ★ 选区本就该建在它上面）✓
+      ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**声明式选择器**（`index:<n>` / `__current_selection__`）✓
+    :returns: ★ **回读**到的选区计数（★ 0 会抛 —— ★ 事实 8：不信返回值）✓
+    """
+    from sw_connect import connect_solidworks, get_com_member as _get
+    import sw_selection_spec as _SS
+    sw, _m = connect_solidworks(wait_seconds=10)
+    doc = _get(sw, "ActiveDoc")
+    if doc is None:
+        raise RuntimeError(
+            "★ 没有活动文档 ⇒ ★ 选不了（★ 这是**前置未成立**、★ 与「控制建不出来」是两件事）")
+    got = int(_SS.resolve_selection(doc, str(selection), str(selection_kind or "FACE")))
+    if got <= 0:
+        raise RuntimeError("★ 选区未建立：选择器 %r 解析后计数为 %d" % (str(selection), got))
+    return got
+
+
+def create_symmetry_control(study, *, symmetry_type: int = 0,
+                            selection: str = "", selection_kind: str = "FACE"):
+    """建对称控制（官方教程用 1/4 对称）。调用方须先选好对称平面。
+
+    ★★ 2026-10-07（规格 216 T-216-07）**加声明式选区**：★ `selection` 非空时，
+      ★ 由本函数在**紧邻 `SelectSymmetryType` 之前**、在活动文档上把对称平面选上
+      （★ 官方前置那句"调用方须先选好"**就是**原因；★ 而解析器会清空选区 —— 事实 503）✓
+    """
     manager = get_topology_study_manager(study)
+    #: ★★ 2026-10-07 真机订正：★ 选区必须在 **`CreateSymmetryControl` 之前**——
+    #:   把它放在 `_configure` 里**太晚**（★ 真机读数：控制对象**根本没建出来**，
+    #:   报 `CreateSymmetryControl 未返回对象`）⇒ ★ 即**控制是"从当前选区建出来的"** ✓
+    if str(selection or "").strip():
+        _apply_declarative_selection(selection, selection_kind)
     control = get_com_member(manager, "CreateSymmetryControl", out_i4())
     if control is None:
         raise RuntimeError("CreateSymmetryControl 未返回对象")
@@ -604,9 +640,17 @@ def create_symmetry_control(study, *, symmetry_type: int = 0):
     return _edit(control, _configure)
 
 
-def create_demold_control(study, *, direction: int = 0):
-    """建脱模控制（制造约束）。调用方须先选好拔模方向的面/边/基准面。"""
+def create_demold_control(study, *, direction: int = 0,
+                          selection: str = "", selection_kind: str = "FACE"):
+    """建脱模控制（制造约束）。调用方须先选好拔模方向的面/边/基准面。
+
+    ★★ 2026-10-07（规格 216 T-216-07）**加声明式选区**：★ 同 `create_symmetry_control` ——
+      ★ `selection` 非空时，由本函数在**紧邻 `SelectDemoldDirection` 之前**选上 ✓
+    """
     manager = get_topology_study_manager(study)
+    #: ★★ 同 `create_symmetry_control`：★ 选区必须在 **`CreateDemoldControl` 之前**（★ 真机订正）✓
+    if str(selection or "").strip():
+        _apply_declarative_selection(selection, selection_kind)
     control = get_com_member(manager, "CreateDemoldControl", out_i4())
     if control is None:
         raise RuntimeError("CreateDemoldControl 未返回对象")
@@ -1058,3 +1102,4 @@ def topology_constraints_report(study) -> dict[str, Any]:
     return {"ok": True, "study_name": str(get_com_member(study, "Name") or ""),
             **_kinds_summary(study),
             "★": "ok 恒 True（这是纯读取入口）；★ 判据在 taken_count / kinds 上"}
+
