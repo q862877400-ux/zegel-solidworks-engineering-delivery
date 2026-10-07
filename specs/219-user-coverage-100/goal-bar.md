@@ -223,16 +223,32 @@
 3. ★★ **建之前必须先设数据**：`SetNetBlendCurveData` ×2 + `SetNetBlendDirectionData` ×2 ⇒ 再 `InsertNetBlend` ✓
    ★（★ 角度 `0.26179938779915` ≈ **15°** 的弧度值 ⇒ ★ 说明该参数是**弧度**，★ 我们的工具要按**度**给用户、内部转弧度 ✓）
 
+## 四之十一、★★★ 第 11 轮：官方签名与枚举拿到 —— ★ **一个包装可同时点亮两格**
+
+★ 来源：★ `C:\swapi\types\IFeatureManager\InsertNetBlend.md` · `SetNetBlendDirectionData.md`（★ 逐字读过）✓
+
+| 成员 | ★ 要点 |
+|---|---|
+| **`InsertNetBlend`** | ★ `Feature InsertNetBlend(short Type, short NCurvesDir1, short NCurvesDir2, bool HasCenterline, double TessTolFactor, bool WantsSolid, bool MergeBody, bool FeatureScope, bool AutoSelect, bool Thin, double Thickness1, double Thickness2, bool ReverseThickness, short ThinSolidType, bool UseSharedThickness, bool CapEnds, double EndThickness, bool AutoFillet, double FilletRadius, bool ForceNonRational)` ✓ |
+| ★★ `Type` 枚举（官方逐字）| ★★ **`0 = Base` · `1 = Boss` · `2 = Surface` · `3 = Cut`** ⇒ ★★ **同一入口同时管「边界凸台(1)」与「边界曲面(2)」** ✓✓ |
+| ★ 其它要点（官方逐字）| ★ `WantsSolid`「**only valid when Type = 0, 1, or 3**」· `TessTolFactor`「default value …」· `ThinSolidType` 用 `[[swThinWallType_e]]` ✓ |
+| `SetNetBlendDirectionData` | ★ `(short Direction, short InfluenceType, short TrimCurves, bool BlendClosed, bool SplitSurfaces)`<br>★ `Direction`：**0 = Direction 1 · 1 = Direction 2**<br>★ `InfluenceType`：**0 = Global · 1 = To Next Curve · 2 = To Next Sharp · 3 = To Next Edge**<br>★ `TrimCurves`：**0 = False to trim · 1 = True to trim**<br>★ `BlendClosed`：**true 闭合** · ★ `SplitSurfaces`：**Not used** ✓ |
+| ★ 该页 `## Examples` | ★ 指向 `Insert_Boundary_Surface_Feature_Example_VB` 与 `Insert_Boundary_Feature_Example_CSharp` ✓（★ 与我们读的那份同族）|
+
+★★ **由此定的实现形态（★ 下一轮照做）**：
+  ★ **写一个** `insert_net_blend_report(model, *, blend_type, selection, selection_kind, …)`：
+  ★ `blend_type=1` ⇒ 边界**凸台** · `blend_type=2` ⇒ 边界**曲面** ⇒ ★ **两格一起点亮** ✓
+  ★ + **声明式选择**（★ 面按"面上的点"选、第二个 `Append=True` —— ★ 配方已逐行拿到）✓
+  ★ + 参数按用户友好给（★ 度/毫米），内部转官方口径（★ 弧度、米）✓
+  ★ + `*_report` 回读判据（★ 特征树增量 + 若 `None` 报错并指向官方 `Returns` 的语义）✓
+
 ## 五、下一个动作（只写一条）
 
-★ **T-219-04（续，★ 配方已齐，可以动手了）**：
-  1. ★ 读 `C:\swapi\types\IFeatureManager\InsertNetBlend.md` + `SetNetBlendCurveData.md` /
-     `SetNetBlendDirectionData.md` 的**签名与 `## Remarks`**（★ 弄清每个实参的含义与枚举）✓
-  2. ★ 读 `docs/dead-ends.md` + 台账里 `surface_*` 的 `limitations`（★ 先扫走死的路）✓
-  3. ★ 写 `sw_*.py` 包装（★ 形态：★ **`*_report`** + **声明式选择**（`selection`/`selection_kind`，
-     ★ 选择紧邻调用）+ ★ 参数按**度**给、内部转弧度）✓
-  4. ★ 暴露 ⇒ 台账归属 ⇒ 契约测试 ⇒ ★ **真机验证**（`sw_guard.py`，用完关 SolidWorks）✓
-  5. ★ 重跑地图 ⇒ ★ 特征 **27/28** · ★ 曲面 **14/14 = 100%**（★ 第 **7** 个 100% 的域）✓
+★ **T-219-04（★ 前置全齐，下一轮直接写代码）**：
+  1. ★ 查 `docs/dead-ends.md` + 台账 `surface_*` / `loft*` 的 `limitations`（★ 先扫走死的路）✓
+  2. ★ 在 `scripts/` 写 `insert_net_blend_report`（★ 形态见上）⇒ 暴露 ⇒ 台账归属 ⇒ 契约测试 ✓
+  3. ★ **真机验证**（★ `sw_guard.py`，用完关 SolidWorks）★ 两个 Type 各跑一次 ✓
+  4. ★ 重跑地图 ⇒ ★ 特征 **27/28** · ★ 曲面 **14/14 = 100%**（★ 第 **7** 个 100% 的域）✓
 
 ★★ **两条元结论（★ 比单格要紧，写进规格）**：
 1. ★★ **`--check` 说"是最新的"只证明「地图与生成器一致」，不证明「地图与事实一致」** ✗ ——
