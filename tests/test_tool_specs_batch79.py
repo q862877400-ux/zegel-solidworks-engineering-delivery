@@ -38,13 +38,26 @@ def test_batch79_is_registered():
 
 
 def test_all_seventeen_tools_reach_all_specs():
-    """★★ FR-008 的两半：**9 个爆炸视图 + 8 个宏**都要在 `all_specs()` 里。"""
+    """★★ FR-008 的两半：**爆炸视图一整族 + 宏一整族**都要在 `all_specs()` 里。
+
+    ★★ 2026-10-07（接手轮 · 规格 214 T-214-08）**计数随事实更新**（★ 与本文档历来的做法一致）：
+      ★ 宏族从 **8 → 9** —— 多出来的是 **`solidworks_macro_record_lines`**
+        （★ 规格 209 **B4-1 / idx 211** 的**原生宏录制**：`ISldWorks::RecordLine` + `RunCommand`）✓
+      ★ 它是**合法新增**，不是漏挂（★ 判据：它在 `all_specs()` 里**在**，★ 且
+        `test_target_functions_resolve` 能解析到真函数）⇒ ★ 所以更新**钉死数**才是对的
+        （★ 同族的 `tests/test_mcp_protocol_layer.py` 也写着同一句话：「加了就要同时改这里」）✓
+      ⚠ 同时把 docstring 里那句过期的「9 个爆炸视图 + 8 个宏」改成**不写死数字** ——
+        ★ 因为它与下面两条断言（爆炸视图按**过滤**数、宏按**前缀**数）本就不同口径，
+        ★ 写死数字只会让它**再次过期** ✗
+    """
     names = {getattr(s, "name", "") for s in rc.all_specs()}
     assert "solidworks_assembly_view_collapse" in names, names
     got_exploded = {n for n in names if n.startswith("solidworks_assembly_")}
     assert len([n for n in got_exploded if "explode" in n or "exploded" in n]) == 8, got_exploded
     got_macro = {n for n in names if n.startswith("solidworks_macro_")}
-    assert len(got_macro) == 8, got_macro                       # 7 个文本 + 1 个执行
+    #: ★ 9 = 7 个文本（build/extract/validate/select/fallback/write/normalize）+ 1 个执行（run）
+    #:       + **1 个原生录制**（`record_lines`，★ 规格 209 B4-1 新增）✓
+    assert len(got_macro) == 9, got_macro
 
 
 def test_target_functions_resolve():

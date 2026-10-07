@@ -73,8 +73,17 @@ def test_slot_length_type_is_a_valid_enum_member() -> None:
     ★★ 实现方式：★ 把调用**剥注释后**再看，★ 并**按逗号切实参**（★ 行内注释会干扰正则）✓
     """
     code = _code_only(SRC.read_text(encoding="utf-8", errors="replace"))
-    #: ★ `[^)]*` 会被 `float(radius)` 的内层 `)` 截断 ⇒ 改成**宽松匹配到 `float(radius)` 之后**
-    m = re.search(r"CreateSketchSlot\(([^)]*float\(radius\)[^)]*)", code, re.S)
+    #: ★★ 2026-10-07（接手轮 · 规格 214 T-214-04）**只改正则，不动任何断言** ——
+    #:   ★ 起因：本条断言从某轮起一直红，而**实现是对的**（`scripts/sw_part.py` 的 `sketch_slot`
+    #:   实参逐字就是 `0, 0, 2.0 * float(radius), …`）✓
+    #:   ★★ 真因是**调用形态变了**：`sketch_slot` 不再直呼方法，而是走
+    #:     `get_com_member(<SketchManager>, "CreateSketchSlot", <实参…>)`
+    #:     ⇒ ★ 旧正则 `CreateSketchSlot\(`（要求名字后紧跟 `(`）**永远匹配不上** ✗
+    #:   ⚠ 这类"**契约测试要跟着实现形态一起改**"在本仓有先例（`tests/test_sw_selection_contract.py`
+    #:     轮 470 逐字写过同一句话）⇒ ★★ **断言（第 1/2/3 参各是什么）一个字不改**，
+    #:     ★ 只把"从哪里开始抓实参"跟着实现挪一格 ✓
+    #: ★ `[^)]*` 会被 `float(radius)` 的内层 `)` 截断 ⇒ 保持原做法：**宽松匹配到 `float(radius)` 之后**
+    m = re.search(r"""CreateSketchSlot['"]\s*,\s*([^)]*float\(radius\)[^)]*)""", code, re.S)
     assert m, "★ 剥注释后仍解析不出 CreateSketchSlot 的实参"
     args = [a.strip() for a in m.group(1).split(",")]
     assert len(args) >= 3, "★ 实参不足 3 个：%r" % args

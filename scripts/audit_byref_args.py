@@ -78,7 +78,18 @@ PURE_OUT = re.compile(r"^(Object|Variant|Dispatch)&\s*$", re.I)
 SCALAR_OUT = re.compile(r"^(Int32|Long|Double|Boolean|Int16|Single|String)&\s*$", re.I)
 
 #: 认作「by-ref 包装器」的实参文本
-BYREF_OK = re.compile(r"^\s*(_?out_\w*|_?VARIANT\s*\(|win32com\.client\.VARIANT\s*\()")
+#: ★★ 2026-10-07（接手轮 · 规格 214 T-214-06）**第二次修同一类假阳性** ——
+#:   ★ 上一版只认**裸名**（`out_i4(` / `VARIANT(`），★ 而**限定名** `sw_connect.out_i4()`
+#:     是**本文件自己**在来源块与修法提示里点名的**正确形态**（L5 · L49 · L310 逐字写着
+#:     「本项目的包装器是 `sw_connect.out_i4()`」）⇒ ★ 反而被报成"裸传" ✗
+#:   ★ 实测命中 **1 处**：`tools/probe_analysis_run_long_timeout.py:142`
+#:     （`GetLoadsAndRestraints(_i, sw_connect.out_i4())` —— ★ 那一处**本来就是对的**）✓
+#:   ⚠ 与下面那条注释**同源**：★ **工具自己的假阳性** ——
+#:     ★ 判据必须覆盖「**我自己推荐的写法**」，★ 否则它会去告自己写对的代码 ✓
+BYREF_OK = re.compile(
+    r"^\s*(?:[\w.]+\.)?_?out_\w*"        # out_i4() · _out_i4() · sw_connect.out_i4()
+    r"|^\s*(?:[\w.]+\.)?_?VARIANT\s*\("  # VARIANT( · win32com.client.VARIANT(
+)
 # ⚠ 前导下划线是**必须**的：本项目既有 `out_i4`（`sw_connect`）也有 `_out_i4`（工具里的别名），
 #   第一版正则只认 `out_` 开头 ⇒ 把我自己正确的调用报成违规（**工具自己的假阳性**）。
 

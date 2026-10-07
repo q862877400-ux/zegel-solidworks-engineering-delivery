@@ -24,6 +24,20 @@ import subprocess
 import sys
 from pathlib import Path
 
+#: ★★ 中文 Windows 上打印 `★` / `⇒` 会 `UnicodeEncodeError: 'gbk' codec can't encode character` ✓
+#:   ★ 2026-10-07（接手轮 · 规格 214 T-214-01）**实测**：本探针在**默认控制台**下**根本跑不起来** ✗ ——
+#:     ★ 它 `main()` 里第一句 `print("★ ① initialize ⇒ …")` 就抛 `UnicodeEncodeError`，
+#:     ★ 然后**外层 `except BaseException` 里那句 print 又抛一次** ⇒ ★ 最终报的是
+#:     **`print("★ 异常已落盘…")` 的编码错**，★ **真正的失败原因被彻底盖住**（★ 事实 58 那一族）✓
+#:   ★★ 判据（★ 加这一行之前/之后的**同一条命令**）：
+#:     · `python tools/probe_mcp_stdio_handshake.py` ⇒ ★ **崩在打印上**
+#:     · `$env:PYTHONIOENCODING='utf-8'` 后再跑 ⇒ ★ **`tools/list ⇒ 504` 且判定「可以挂」** ✓
+#:   ⇒ ★ 与 `scripts/check_refuted_patterns.py` / `scripts/check_relative_imports.py` 的既有修法**逐字同型** ✓
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
+except Exception:                                                         # noqa: BLE001
+    pass
+
 ROOT = Path(r"D:\AI\SW")
 SERVER = ROOT / "mcp-server" / "server.py"
 #: ★ 与 DSH 配置里将要写的那个 `command` **必须是同一个**（★ 否则验证的不是同一件事 ✗）

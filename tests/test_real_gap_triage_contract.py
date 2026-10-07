@@ -68,7 +68,18 @@ def test_class_and_exception_names_are_internals(module: str, name: str) -> None
 @pytest.mark.parametrize("module,name", [
     ("sw_surface", "get_modeler"),
     ("sw_simulation", "get_cosmosworks"),
-    ("sw_simulation", "get_study_manager"),
+    #: ★★ 2026-10-07（接手轮 · 规格 214 T-214-07）**样本第四次随事实更新** ——
+    #:   ★ 原样本是 `("sw_simulation", "get_study_manager")`，★ 它今天判 **`已有`**、不再是 `内部件` ✗
+    #:   ★★ **依据（实测，不是推断）**：`get_study_manager` **已经是一个已挂工具的实现** ——
+    #:     `register_capabilities.all_specs()` 里逐字有
+    #:     `solidworks_simulation_get_study_manager`（★ 其 `function` 就是 `get_study_manager`）✓
+    #:     ⇒ ★ 分类器走的是 `exposed_by_wrapper` 那条**更准**的分支（"功能已由…包装暴露"），
+    #:       ★ 而 `PLUMBING_WHY` 那条是"它还没被挂、只是内部管道"时的判法 ✓
+    #:   ★ 这**正是**本文件 L82-83 写明的设计意图：「★ 一旦某个名字被挂上，本测试会红 ——
+    #:     ★ 那是**有意**的：它提醒你『契约变了，来更新样本』」⇒ ★ 本条就是来更新的 ✓
+    #:   ★ 换上的 `get_cw_document` 与 `get_study_manager` **同域同形**（都是仿真域的取入口助手），
+    #:     ★ 且今天仍判 `内部件`、理由**逐字**等于 `PLUMBING_WHY` 里那条（★ 已复算）✓
+    ("sw_simulation", "get_cw_document"),
     ("sw_export", "get_mass_property_override_options"),
 ])
 def test_explicit_plumbing_names_are_internals(module: str, name: str) -> None:

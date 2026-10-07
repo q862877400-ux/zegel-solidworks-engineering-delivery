@@ -193,23 +193,21 @@ def resolve_view(params: Any):
     return get_active_view(resolve_model(params))
 
 
-def resolve_active_sketch(params: Any):
-    """注入**活动草图**（`ISketch`，来自 `IModelDoc2.GetActiveSketch2`）—— ★ 供首参叫 `sketch` 的那批。
-
-    ⚠ ★ **没有活动草图就没有** ⇒ ★ 响亮报错并说清怎么办（★ 先 `solidworks_sketch_start` 或
-      让某张草图处于编辑态）—— ★ **绝不猜"用哪张草图"** ✓
-    """
-    from scripts.sw_connect import get_com_member
-    model = resolve_model(params)
-    sk = None
-    try:
-        sk = get_com_member(model, "GetActiveSketch2")
-    except Exception:                                                # noqa: BLE001
-        sk = None
-    if sk is None:
-        raise RuntimeError("当前**没有活动草图** ⇒ `sketch` 注入键无法解析。"
-                           "★ 请先 `solidworks_sketch_start` 开一张草图（或双击某张草图进入编辑）")
-    return sk
+# ── 墓碑（2026-10-07 接手轮 · 规格 214 T-214-03）─────────────────────────────
+# ★ 这里原有 `resolve_active_sketch(params)`：注入**活动草图**（`IModelDoc2.GetActiveSketch2`），
+#   ★ 供首参叫 `sketch` 的那批函数（`scripts/sw_sketch.py` 的 25 个只读内省）✓
+# ★★ **已删** —— 依据是 `tests/test_registry_wiring.py::test_no_unused_resolver`
+#   （★ 方向与 `test_every_inject_name_has_a_resolver` 相反：**防"多"**）：
+#   ★ 它 **2026-10-04 加进来、却始终没有任何 spec 用**（实测 `inject="sketch"` 在 `mcp-server/` 里 **0 处**）✗
+#   ⇒ ★ 那条测试自己写着两条路：「**要么接上、要么删掉并说明**」⇒ ★ **本处走第二条** ✓
+# ⚠ **为什么不是"接上"**（★ 那本来才更该做）：接上 = 把那 25 个函数挂成工具 ⇒
+#   ★ 那是**覆盖规格**的活，★★ 而它要**真机证据三件套**（`ToolSpec` + `capabilities.yaml` +
+#   `output/*-evidence.json`）⇒ ★ **与规格 214 的硬约束「零真机」直接冲突** ✗
+# ★★ **所以记在这里、不丢掉**：要接上时，照下面 `resolve_selection_manager` 的形状写一个即可
+#   （★ 语义与"没有活动草图就响亮报错、绝不猜用哪张草图"的文案见 git 历史）✓
+# ★ 候选函数（`scripts/sw_sketch.py` 里首参为 `sketch`、当前未挂的）：`get_lines` · `get_arcs` ·
+#   `get_ellipses` · `get_sketch_points` · `get_user_points` · `get_sketch_contours` ·
+#   `get_sketch_regions` · `get_relation_manager` · `get_model_to_sketch_transform` …（共 25 个）✓
 
 
 def resolve_selection_manager(params: Any):
@@ -486,7 +484,13 @@ RESOLVERS: dict[str, Any] = {
     #:     · `selection` ⇒ **活动文档的 `SelectionManager`**（`IModelDoc2.SelectionManager`）——
     #:       ★ 解锁 `sw_selection.py` 那批（选择集读数 / 按对象选 / 清选 …）✓
     #:   ⚠ 两者**没有**就先**响亮报错**（★ 不猜、不静默失败）✓
-    "sketch": resolve_active_sketch,
+    #: ★★★ 2026-10-07（接手轮 · 规格 214 T-214-03）：**`"sketch"` 这一行已删** ——
+    #:   ★ 判据 `tests/test_registry_wiring.py::test_no_unused_resolver`（**防"多"**）：
+    #:   ★★ 它 2026-10-04 加进来，**却始终没有任何 spec 用**（`inject="sketch"` 实测 **0 处**）✗
+    #:   ⇒ ★ 该测试给的两条路（**接上 / 删掉并说明**）里，本处走第二条 ——
+    #:   ★★ 理由：**接上要真机三件套**，与规格 214 的「零真机」冲突 ⇒ ★ 它属于**覆盖规格**的活 ✓
+    #:   ★ 要接上时照 `resolve_selection_manager` 的形状写即可；★ 墓碑与候选函数清单在**上面**
+    #:     （`resolve_active_sketch` 原来所在处）✓
     "selection": resolve_selection_manager,
     #: ★★★★★ 2026-10-04（接手轮 · 规格 205「解锁 C 类」第四批）：**`cost_part` / `motion_study`** ——
     #:   ★ C 类里**最后两组语义无歧义**的：

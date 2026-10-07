@@ -82,7 +82,18 @@ def test_step_import_falls_back_to_dynamic_loadfile4(tmp_path, monkeypatch):
             errors.value = 0
             return expected
 
-    monkeypatch.setattr(sw_connect, "ensure_default_templates", lambda _sw: True)
+    #: ★★ 2026-10-07（接手轮 · 规格 214 T-214-09）**桩要跟着真契约走** ——
+    #:   ★ 原桩写的是 `lambda _sw: True`，★ 而 `ensure_default_templates` 的真契约是
+    #:     **回一个 dict**：`{"templates": {...}, "restore": [...]}`（`scripts/sw_connect.py:884`）✓
+    #:   ★★ 后果：`open_document` 拿到它之后会转交给 `restore_default_templates(sw, info)`（L1083），
+    #:     而那句是 `info.get("restore")` ⇒ ★ 传 `True` 就 `AttributeError: 'bool' object has no attribute 'get'` ✗
+    #:   ⇒ ★ **本测试报的错**（"LoadFile4 回退失败"）**与它要验的东西无关** —— ★ 它是在桩上炸的 ✓
+    #:   ⚠ 为什么以前是绿的：`restore_default_templates` 是**后来**才接进 `open_document` 的
+    #:     （事实 525：写全局用户偏好必须还原）⇒ ★ 那一步一加，这个**说谎的桩**就变成致命 ✗
+    #:   ★ 修法：★ 让桩**按真契约**回 dict —— ★ **不**给 `restore_default_templates` 加容错
+    #:     （★ 契约违约就该**响亮报错**；★ 本仓既有纪律：假对象要按真实接口分布暴露缺项）✓
+    monkeypatch.setattr(sw_connect, "ensure_default_templates",
+                        lambda _sw: {"templates": {}, "restore": []})
     monkeypatch.setattr(
         sw_connect.win32com_client.dynamic,
         "DumbDispatch",

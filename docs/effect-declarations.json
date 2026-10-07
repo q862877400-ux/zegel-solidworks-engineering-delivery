@@ -821,7 +821,7 @@
   "solidworks_create_speedpak": {
    "destructive": false,
    "doc_type": null,
-   "inject": "model",
+   "inject": "doc",
    "members": 7,
    "needs": [],
    "requires": "part",
@@ -1936,7 +1936,7 @@
   "solidworks_insert_explode_line_sketch": {
    "destructive": false,
    "doc_type": null,
-   "inject": "model",
+   "inject": "doc",
    "members": 4,
    "needs": [
     "edit:sketch"

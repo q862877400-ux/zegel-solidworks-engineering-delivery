@@ -245,8 +245,23 @@ def test_protocol_tool_count_matches_the_two_paths_sum():
         ★ **`tool_specs_batch77.py` 8 条** —— **阶段 3 的「读特征参数」族**，
           ★ 每条都走了「查官方签名 → 建能力 → **挂 ToolSpec** → 真机验证 → 提交」五步 ✓
       ★★ **另 3 条是**本会话之前**就有的**（★ **不逐个回溯、★ 不编造来源**）✓
+    ★★ 2026-10-07（接手轮 · 规格 214 · T-214-01）：**339 → 504**。
+      ★★ **依据是两条独立通路**（★ 不是"我觉得是 504"）：
+        ① ★ **真 JSON-RPC 握手** —— `python tools/probe_mcp_stdio_handshake.py`
+           ⇒ `tools/list` 返回 **504** 个工具（★ 按前缀：`solidworks_` **491** · `cadstudio_` **13**）✓
+        ② ★ **本测试自己那两个计数器** —— `_declared_in_server()` = **45** ·
+           `_declared_in_batches()` = **459** ⇒ ★ 合计 **504** ✓
+           （★ 与 `register_capabilities.all_specs()` 的 **459** 对账一致；★ 45 那半是
+            `mcp-server/server.py` 继承的装饰器工具 ✓）
+      ⚠ **339 → 504 之间的多次增量我没有逐个回溯**（★ 沿本 docstring 既有的做法：**不编造来源**）——
+        ★ 能指认的是：★ **这条守卫在此期间被漏改过**，★ 而那正是「**钉死数量**」这一类的固有代价 ✓
+        ★★ 但本测试的**设计意图**恰恰是"加了工具就要同时改这里" ⇒ ★ 这次把它对齐到**实测真值 504** ✓
+      ⚠ 顺带修掉一处**让探针跑不起来**的旧毛病（★ 与本断言同批）：`tools/probe_mcp_stdio_handshake.py`
+        缺 `sys.stdout.reconfigure` ⇒ ★ 默认 GBK 控制台下一 `print("★ … ⇒ …")` 就抛
+        `UnicodeEncodeError`、★ 而外层异常处理里那句 print **又抛一次** ⇒ ★ **真因被盖住** ✗
+        （**事实 58** 那一族）⇒ ★ 已按 `check_relative_imports.py` 的同型修法补上 ✓
     """
     n = len(_declared_in_server()) + len(_declared_in_batches())
-    assert n == 339, (
-        "两条路径合计 %d 条，而本测试上次实测 **339** 条 ⇒ 数字变了就说明有人加了东西"
+    assert n == 504, (
+        "两条路径合计 %d 条，而本测试上次实测 **504** 条 ⇒ 数字变了就说明有人加了东西"
         "（**本测试是「钉死数量」的守卫，加了就要同时改这里**）" % n)
