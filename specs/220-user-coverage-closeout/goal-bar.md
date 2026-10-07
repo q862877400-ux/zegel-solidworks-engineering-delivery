@@ -410,3 +410,42 @@
 1. ★ 读完 `InsertFilletBeadFeature2` 的**完整签名**（★ 数清参数个数与顺序 ✓）
 2. ★ 写 `scripts/sw_weld_bead.py`：★ `insert_fillet_bead_report(model, *, edge_index_1=0, edge_index_2=1, size_mm=…, …)` ✓
    ★ 前置：★ **选实体（边）** 走 `IEntity.Select4` ✓ · ★ 判据 **特征树增量 ≥ 1**（★ 事实 8）✓
+
+## ★★★★ 第 45 轮（续）：★ **完整签名到手（16 参）** —— ★ 下一轮照它写实现
+
+★ 官方页 `C:\\swapi\\types\\IFeatureManager\\InsertFilletBeadFeature2.md` 第 14 行**逐字**：
+
+```
+Feature InsertFilletBeadFeature2(
+  System.short  Type1, System.double Size1, System.double Length1,
+  System.short  PenetrationType1, System.double PenetrationValue1, System.double Pitch,
+  System.short  Type2, System.double Size2, System.double Length2,
+  System.short  PenetrationType2, System.double PenetrationValue2,
+  System.int    Flag,
+  System.int    EdgeNum1, System.object DeSelEdge1,
+  System.int    EdgeNum2, System.object DeSelEdge2 )
+```
+
+### ★★ 写实现前必须记住的四条
+1. ★★ **共 16 参**（★ 11 个标量 + `Flag` + `EdgeNum1` + ★ **`DeSelEdge1`（`System.object` = 数组）** ✓
+   + `EdgeNum2` + ★ **`DeSelEdge2`（数组）** ✓）
+2. ★★ **两个数组形参** ⇒ ★ 交付时要包成**元组/VARIANT**（★ 本仓既有写法可循 ✓）
+3. ★★ **前置 = 预先选中的体/实体**（★ 第 12 行逐字 `pre-selected part bodies` ✓）
+   ⇒ ★ 选实体走 **`IEntity.Select4`** ✓（★ 我在边界特征上验实过 ✓）
+4. ★★ **判据 = 特征树增量 ≥ 1**（★ 事实 8：★ 返回值不可信 ✓ —— ★ 边界特征上刚栽过 ✓）
+
+### ★ 参数语义（★ 官方逐字，★ 照抄）
+★ `Type1/Type2`：★ 0=Full length · 1=Intermittent · 2=Staggered ✓
+★ `Size1/Size2`：★ 焊脚尺寸 ✓ · ★ `Length1/Length2`：★ 焊缝长度 ✓ · ★ `Pitch`：★ 断续/交错时的节距 ✓
+★ `PenetrationType1/2`：★ 0=Full · 1=Partial · 2=No penetration ✓
+★ `PenetrationValue1/2`：★ 仅当 `PenetrationType* = 1` 时给值 ✓
+★ `Flag`：★ 0=单边无相切传播 · 1=双边 · 2=相切传播 · 3=双边且相切传播 ✓
+★ `EdgeNum1/EdgeNum2`：★ 各侧**相交边的条数** ✓
+★ `DeSelEdge1/DeSelEdge2`：★ 各侧相交边**被选中(0)/被取消(1)** 的数组 ✓
+
+### ★★ 下一轮（★ 开写）
+★ 写 `scripts/sw_weld_bead.py`：
+  ★ `insert_fillet_bead_report(model, *, edge_index_1=0, edge_index_2=1, size_mm=5.0, type_1=0, type_2=0,
+      penetration_type_1=0, penetration_type_2=0, flag=1, pitch_mm=0.0, …)` ✓
+  ★ 前置：★ **选边**（`entities_on_body(...)` 取 EDGE + `IEntity.Select4` ✓）
+  ★ 调用：★ 16 参**按官方顺序** ✓ · ★ 数组包成元组 ✓ · ★ 判据 **特征树增量 ≥ 1** ✓
