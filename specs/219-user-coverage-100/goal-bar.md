@@ -242,7 +242,66 @@
   ★ + 参数按用户友好给（★ 度/毫米），内部转官方口径（★ 弧度、米）✓
   ★ + `*_report` 回读判据（★ 特征树增量 + 若 `None` 报错并指向官方 `Returns` 的语义）✓
 
-## 六、★★ 交接（第 13 轮：本轮只做交接，不硬挂半成品）
+## 七、★★★ 第 14–15 轮：暴露链试到"差一条门禁" —— 撤回保住真实账
+
+### 七之一 · ★★ 第 14 轮实测（★ 曾真的到过 139/145）
+
+| | ★ 那一刻（暴露在时）| ★ 撤回后（**现在**）|
+|---|---|---|
+| 曲面 | ★★ **14/14 = 100%** | 13/14 = 93% |
+| 特征 | **27/28 = 96%** | 26/28 = 93% |
+| 总计 | **139/145 = 96%** | ★ **137/145 = 94%** |
+
+★ 那一刻的其它读数：★ 契约测试 **7 passed** ✓ · ★ 预选族门禁 **4=4 无新增** ✓
+（★ 声明式**面序号**让它没被拦）· ★ `level` 变更 **0** ✓
+
+### 七之二 · ★★ 门禁教我的两条（★ 都留证）
+
+1. ★★ **新模块/新工具会让"生成物过期"** ⇒ `release_check` 红 ⇒ ★ **重跑生成器即绿**
+   （★ 两轮各验一次：`build_union_map` / `gen_metrics` / `gen_harvest_digest` / `gen_dead_ends` /
+   `gen_level_audit` / `sync_bundled_skill`）✓
+2. ★★ **`derived_args` 不能给字面 `dict`** —— 门禁逐字：「字段 `derived_args` 期望
+   **function / NoneType / method**」✗ ⇒ ★ 已按"**每个 Type 一个模块级函数**"改（★ 但当场仍红，
+   另有残留项 ✗）
+
+### 七之三 · ★★★ 残留 FAIL 的**根因假设**（★ 最后一轮先验它）
+
+★ 我把 `function=` 改成 `insert_boundary_boss_report(model, **kwargs)` / `...(model, **kwargs)` ——
+★★ **而参数绑定门禁是拿"声明的 params"去对"目标函数的签名"** ⇒ ★★ **`**kwargs` 里解析不到
+`face_index_1` 等具名参数** ⇒ ★ 极可能**正是那条残留 FAIL** ✗
+★ **修法（★ 下一轮先做）**：★ 把这两个函数改成**显式签名**（★ 不再用 `**kwargs`），
+例：`def insert_boundary_boss_report(model, *, face_index_1=0, face_index_2=1, influence_type=0, ...)`
+⇒ ★ 让每个声明参数都能在签名里找到 ✓
+
+### 七之四 · ★ 撤回后的核对（★ 已做，全绿）
+
+★ **`release_check exit=0`** ✓ · ★ `all_specs() = **472**` ✓ · ★ 地图回到**真实值 137/145 = 94%**
+（★ 边界凸台 / 边界曲面回到 ❌ —— 因为它们**确实还没暴露** ✓ **不虚报**）✓
+★ 工作区干净（★ 除既有的 `M AGENTS.md` / `output/*`）· 索引 0 · ★ 第 14 轮**无新提交** ✓
+
+## 八、★★ 最后一轮（★ 一条命令级的事，别再扩）
+
+1. ★ 把 `scripts/sw_net_blend.py` 的两个 Type 函数改成**显式签名**（★ 验收据 §七之三 的假设）
+2. ★ 重做 `batch107`（★ 两个 `ToolSpec`，名字含 `boundary` / `boundary_surface`）⇒ 挂 `register_capabilities`
+   ⇒ 台账归属（★ `surface_features` 的块已勘过：4 个工具，锚点 `solidworks_surface_fill` 之后）✓
+3. ★ 契约测试（★ 照 `tests/test_spec219_boundary_tools.py` 的七条形态，★ 含三条负例：
+   不收坐标 · 不许抬 `level` · 两个 Type 必须不同）✓
+4. ★★ **先跑** `python scripts/check_preselect_family.py` ⇒ 再 `python scripts/release_check.py` ✓
+5. ★ **重跑全部生成器**（★ 这一步第 14 轮漏了会红 ⇒ 先跑能省一轮）✓
+6. ★ **真机两档**（★ `blend_type`：凸台/曲面），走 `sw_guard.py` ⇒ ★ **用完关 SolidWorks** ✓
+   ★ 真机过了**才**提 `level` 到 `verified`（★ 红线⑥）✓
+7. ★ 重跑地图 ⇒ ★ 特征 **27/28** · ★ 曲面 **14/14 = 100%**（★ 第 **7** 个 100% 的域）✓
+   ⇒ ★ 总计 **139/145 = 96%** ✓
+
+### ★ 剩余各格的现状（★ 收口时如实写）
+
+| 项 | ★ 现状 |
+|---|---|
+| ★ 特征/边界凸台 · 曲面/边界曲面 | ★★ **包装已落库**（`scripts/sw_net_blend.py`，★ 等级如实 `stitched`）⇒ ★ 只差"暴露链 + 真机" ✓ |
+| ★ 特征/特征识别 | ★ 需先补 **`featureworks` 注入器** |
+| ★ 焊件/圆角焊缝 | ★ 官方有 `InsertFilletBeadFeature`；台账 `fillet_weld_bead` = `stitched` |
+| ★ 装配/零部件阵列 | ★ 官方有 `DissolveComponentPattern` / `GetPatternComponentCount` ⇒ 可建 |
+| ★★ 装配/装配序列 · 装配/性能分析 · 其他/PDM | ★★ **官方无可用 API** ⇒ ★ 按红线④**如实写"不做 + 原因"**，不硬凑 ✅ |
 
 ★ **为什么停在这里**：★ 余下的是「暴露 + 挂接 + 台账 + 契约测试 + 真机两档验证」一整条链；
   ★★ 而**新工具大概率会被预选族门禁拦下**（★ 边界特征要**先选面** —— ★ 我的包装虽用**面序号**（声明式），
