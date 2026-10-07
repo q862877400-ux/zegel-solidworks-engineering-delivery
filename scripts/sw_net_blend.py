@@ -116,9 +116,9 @@ def insert_net_blend_report(
     model.ClearSelection2(True)
 
     #: ② 两个面：★ 第二个 `append=True`（★ 官方示例逐字）✓
-    s1 = _select_face_by_index(model, face_index_1, False)
+    s1 = select_face_with_fallback(model, face_index_1, False, 0)
     steps.append({"step": "select_face_1", **s1})
-    s2 = _select_face_by_index(model, face_index_2, True)
+    s2 = select_face_with_fallback(model, face_index_2, True, s1["selection_count"])
     steps.append({"step": "select_face_2", **s2})
     if s1["selection_count"] != 1 or s2["selection_count"] != 2:
         raise RuntimeError("★ 选面没落到 2 个（★ 判据是回读计数，不是 SelectByID2 的 bool）"
@@ -224,3 +224,45 @@ def _feature_count(model) -> int:
         return int(attr)
     except (TypeError, ValueError):
         return -1
+
+def select_face_with_fallback(model, face_index: int, append: bool,
+                              before_count: int) -> dict:
+    """★ 选一个面 —— ★ 先用**盒中心**；★ 若**回读计数没增加**就**换点重试**（★ 处置实测到的现象）。
+
+    ★★ 依据（真机读数，规格 220 T-220-01 第 5–7 轮）：★ **0 号面按盒中心选不上**
+      （`第 1 次=0`），★ 而 **1 号面同样按盒中心却立刻就成**（★ swap test 定案）⇒
+      ★★ 所以**不能假设"盒中心一定可选"**，★ 必须**按回读判决 + 换点重试** ✓
+    ★ 判据：★ **回读计数**（★ 事实 8：`SelectByID2` 的 bool 不可信）✓
+    ★ 每次尝试都把 `point` 与 `count` 记进返回值（★ 供后人核）✓
+    """
+    import sw_part as _sp
+    import sw_selection_spec as _SS
+
+    faces = list(_SS.entities_on_body(model, "FACE", body_index=0) or [])
+    if face_index < 0 or face_index >= len(faces):
+        raise RuntimeError("面序号越界：face_index=%r，本体共 %d 个面" % (face_index, len(faces)))
+    face = faces[face_index]
+    box = list(_sp.get_com_member(face, "GetBox") or [])
+    if len(box) < 6:
+        raise RuntimeError("★ 取面上失败：`IFace2.GetBox()` 回了 %r" % (box,))
+    cx = (float(box[0]) + float(box[3])) / 2.0
+    cy = (float(box[1]) + float(box[4])) / 2.0
+    cz = (float(box[2]) + float(box[5])) / 2.0
+    #: ★ 换点用的偏移（单位**米**；★ 0.5 mm = 5e-4 m）—— ★ 只动一点点，仍在该面附近
+    tries = [(0.0, 0.0, 0.0)]
+    for d in (0.0005, -0.0005):
+        tries += [(d, 0.0, 0.0), (0.0, d, 0.0), (0.0, 0.0, d),
+                  (-d, 0.0, 0.0), (0.0, -d, 0.0), (0.0, 0.0, -d)]
+    attempts = []
+    for (dx, dy, dz) in tries:
+        model.ClearSelection2(True) if False else None       #: ★ 不清（append 语义由调用方定）
+        ok = model.Extension.SelectByID2("", "FACE", cx + dx, cy + dy, cz + dz,
+                                         bool(append), 0, _sp._empty_callout(), 0)
+        cnt = int(model.SelectionManager.GetSelectedObjectCount2(-1))
+        attempts.append({"d": [round(dx, 6), round(dy, 6), round(dz, 6)],
+                         "ok": bool(ok), "count": cnt})
+        if cnt > before_count:
+            return {"ok": True, "selection_count": cnt, "point": [cx + dx, cy + dy, cz + dz],
+                    "attempts": attempts, "tries_used": len(attempts)}
+    return {"ok": False, "selection_count": attempts[-1]["count"],
+            "point": [cx, cy, cz], "attempts": attempts, "tries_used": len(attempts)}
