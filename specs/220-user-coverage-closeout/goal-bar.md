@@ -491,3 +491,28 @@ Feature InsertFilletBeadFeature2(
 2. ★ **改实现：★ 预选体**（★ `entities_on_body` 拿不到体 ⇒ ★ 用 `get_com_member(model, "GetBodies2")`
    + `IEntity.Select4` ✓；★ 再按官方给"各侧相交边条数 + 数组"✓）
 3. ★ 重跑真机 ⇒ ★ 判据 **特征树增量 ≥ 1** ✓
+
+## ★★ 第 50 轮（续）：★ 读弹窗与逐步读数 —— ★ **订正我上轮的两处误读**
+
+| ★ 项 | ★ 真读数 | ★ 我上轮的说法 |
+|---|---|---|
+| ★★ `dialogs` | ★★ **0 条** ✓ | ✗ **"`dialogs` 非空"是我读错了** —— ★ 那是 **`Select-String` 把护栏 JSON 的头截断**造成的 ✓ |
+| ★★ 特征调用 | ★★ **`returned: false`**（★ 三组都是 ✗）| ✓ 对（★ 特征没建成 ✓）|
+
+### ★★ 三条逐步读数（★ 逐字）
+★ `edges=[0,1]` ⇒ ★ `{"step": "InsertFilletBeadFeature2", "returned": false, "before": 22, "after": 22}` ✗
+★ `edges=[2,3]` ⇒ ★ 同上 ✗
+★ `edges=[0,6]` ⇒ ★ 同上 ✗
+
+★★ **归纳**：★ **选实体完美**（★ 三组 `ok=True` · 计数 1→2 ✓）· ★ **而调用"什么都没返回"** ✗ · ★ **且无弹窗** ✓
+⇒ ★★ **只剩"预选体"这一环** ✓ —— ★ 官方第 12 行逐字：
+  ★「…also **fills the gap between the pre-selected part bodies**, if any.」✓
+
+### ★★ 下一轮（★ 一件事：★ 预选两个体）
+★ 改 `scripts/sw_weld_bead.py`：★ 在选边之前，★ **先预选两个体** ✓
+  ★ 取体：★ `get_com_member(model, "GetBodies2")`（★ 迟到绑定走它 ✓ —— ★ 219 真机定案 ✓）
+  ★ 选中：★ `IEntity.Select4(Append, Callout)` ✓（★ 与选边同一条路 ✓）
+★ 然后才轮到"各侧相交边条数 + 数组"（★ `EdgeNum1`/`DeSelEdge1` ✓）
+★ 跑真机 ⇒ ★ 判据 **特征树增量 ≥ 1** ✓
+
+★ 纪律自省：★★ **`Select-String` 截断会制造"我看到的读数"** ✗ —— ★ 下一轮**读 JSON 用 python、不截断** ✓
