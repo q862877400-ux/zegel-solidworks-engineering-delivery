@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 474 | 474 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 485 | 485 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -39,23 +39,23 @@
 |---|---|---|---|---|---|---|---|---|
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 20 | 70⚠ | 53 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 46 | 112⚠ | 79 | **33** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 46 | 114⚠ | 79 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
-| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 39 | 110⚠ | 63 | **24** |
-| ⑥ 曲面 | 11 | · | 1 | · | 19 | 52⚠ | 27 | **8** |
-| ⑦ 钣金 | 10 | · | 1 | · | 12 | 24⚠ | 23 | **11** |
-| ⑧ 焊件 | 5 | · | · | · | 16 | 20⚠ | 21 | **5** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 40 | 111⚠ | 64 | **24** |
+| ⑥ 曲面 | 11 | · | 1 | · | 21 | 52⚠ | 29 | **8** |
+| ⑦ 钣金 | 10 | · | 1 | · | 13 | 24⚠ | 24 | **11** |
+| ⑧ 焊件 | 5 | · | · | · | 18 | 21⚠ | 22 | **4** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
-| ⑩ 装配 | 13 | 7 | 4 | 3 | 26 | 65⚠ | 45 | **19** |
+| ⑩ 装配 | 13 | 7 | 4 | 3 | 27 | 66⚠ | 46 | **19** |
 | ⑪ 工程图 | 18 | 18 | 15 | 17 | 39 | 80⚠ | 88 | **49** |
 | ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 15 | 32⚠ | 31 | **16** |
 | ⑬ 仿真 / Motion | 3 | · | 1 | · | 49 | 127⚠ | 53 | **4** |
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 18 | 50⚠ | 28 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 10 | 24⚠ | 52 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 40 | 14 | 40 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 107 | 564⚠ | 149 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 111 | 567⚠ | 153 | **42** |
 
-**合计**：并集 785 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 795 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -73,7 +73,7 @@
 | ④ 尺寸 / 约束 / 参数 | 10 |
 | ⑭ 外观 / 材质 / 配置 | 10 |
 | ⑥ 曲面 | 8 |
-| ⑧ 焊件 | 5 |
+| ⑧ 焊件 | 4 |
 | ⑬ 仿真 / Motion | 4 |
 | ⑨ 模具 | 3 |
 | ② 参考几何 | 2 |
@@ -105,7 +105,7 @@
 | ⑤ 零件特征 | 17 个：`combine_bodies`, `curve_driven_pattern`, `delete_body`, `dome`, `fill_pattern`, `helix`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑥ 曲面 | 8 个：`boundary_boss`, `extend_surface`, `extruded_surface`, `filled_surface`, `knit_surfaces`, `surface_modeling`… | Eduardof0nt/Solidworks-MCP-Server |
 | ⑦ 钣金 | 11 个：`base_flange`, `edge_flange`, `export_flat_pattern`, `flat_pattern_info`, `flatten_sheet_metal`, `hem`… | Eduardof0nt/Solidworks-MCP-Server |
-| ⑧ 焊件 | 5 个：`end_cap`, `gusset`, `structural_member`, `trim_weldment`, `weld_symbol` | Eduardof0nt/Solidworks-MCP-Server |
+| ⑧ 焊件 | 4 个：`end_cap`, `gusset`, `structural_member`, `trim_weldment` | Eduardof0nt/Solidworks-MCP-Server |
 | ⑨ 模具 | 3 个：`parting_line`, `shut_off_surface`, `tooling_split` | Eduardof0nt/Solidworks-MCP-Server |
 | ⑩ 装配 | 16 个：`assembly_analysis`, `assembly_components`, `assembly_mates`, `assembly_tree`, `explode_assembly`, `fix_component`… | vespo92/SolidworksMCP-TS |
 | ⑪ 工程图 | 38 个：`activate_drawing_view`, `activate_sheet`, `analyze_drawing_annotations`, `analyze_drawing_comprehensive`, `analyze_drawing_dimensions`, `analyze_drawing_views`… | Slacker-LLC/solidworks-mcp |
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 436 个操作只有本仓库有：
+共 446 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -250,10 +250,12 @@
 - `equation_delete`（④ 尺寸 / 约束 / 参数）
 - `equation_evaluate`（④ 尺寸 / 约束 / 参数）
 - `equation_list`（④ 尺寸 / 约束 / 参数）
+- `explode_line_sketch`（⑩ 装配）
 - `export_active`（① 会话 / 文档 / 文件）
 - `export_assembly_bom`（⑩ 装配）
 - `export_bmp`（① 会话 / 文档 / 文件）
 - `export_dxf`（① 会话 / 文档 / 文件）
+- `export_flat_pattern_dxf`（⑦ 钣金）
 - `export_parasolid`（① 会话 / 文档 / 文件）
 - `extrude_boss`（⑤ 零件特征）
 - `extrude_depth`（⑤ 零件特征）
@@ -272,6 +274,7 @@
 - `feature_whats_wrong`（⑰ 未归类）
 - `fillet_params`（⑤ 零件特征）
 - `flatten_surface`（⑥ 曲面）
+- `form_tool`（⑰ 未归类）
 - `gear_calculate_spur`（⑰ 未归类）
 - `gear_create_spur`（⑰ 未归类）
 - `generate_drawing`（⑪ 工程图）
@@ -300,6 +303,7 @@
 - `inspect_drawing`（⑪ 工程图）
 - `inspect_hole_features`（⑫ 检查 / 测量 / 反馈）
 - `inspect_motion_studies`（⑬ 仿真 / Motion）
+- `local_curve_driven_pattern`（⑤ 零件特征）
 - `loft_params`（⑤ 零件特征）
 - `lofted_ref_surface`（⑥ 曲面）
 - `macro_build_prompt`（⑮ 宏 / 自动化）
@@ -379,6 +383,8 @@
 - `ruled_surface`（⑥ 曲面）
 - `run_fea`（⑰ 未归类）
 - `run_fea_convergence`（⑰ 未归类）
+- `scale_feature`（⑰ 未归类）
+- `section_properties`（⑰ 未归类）
 - `select_by_selector`（⑰ 未归类）
 - `select_entity_by_index`（⑰ 未归类）
 - `select_face_selector`（⑰ 未归类）
@@ -490,6 +496,7 @@
 - `sketch_start`（③ 草图）
 - `sketch_stretch_entities`（③ 草图）
 - `slot_semicircular_by_selection`（③ 草图）
+- `speedpak`（⑰ 未归类）
 - `standard_view`（⑪ 工程图）
 - `surface_create_extruded`（⑥ 曲面）
 - `surface_cut`（⑥ 曲面）
@@ -500,6 +507,7 @@
 - `surface_midsurface_create`（⑥ 曲面）
 - `surface_runtime_available`（⑥ 曲面）
 - `sweep_params`（⑤ 零件特征）
+- `sweep_surface`（⑥ 曲面）
 - `thicken`（⑥ 曲面）
 - `toolbox_list_standards`（⑯ 高级 / 专项（含护城河候选））
 - `toolbox_load_index`（⑯ 高级 / 专项（含护城河候选））
@@ -515,6 +523,7 @@
 - `topology_create_thickness_control`（⑯ 高级 / 专项（含护城河候选））
 - `topology_evidence`（⑯ 高级 / 专项（含护城河候选））
 - `topology_run`（⑯ 高级 / 专项（含护城河候选））
+- `untrim_surface`（⑥ 曲面）
 - `update_dimension`（④ 尺寸 / 约束 / 参数）
 - `validate_motion_study`（⑬ 仿真 / Motion）
 - `view_activate`（⑰ 未归类）
@@ -553,6 +562,7 @@
 - `weldment_iter_features`（⑧ 焊件）
 - `weldment_read_property_manager`（⑧ 焊件）
 - `weldment_set_cut_list_properties`（⑧ 焊件）
+- `weldment_trim`（⑧ 焊件）
 - `weldment_update_cut_list`（⑧ 焊件）
 - `write_open_format`（① 会话 / 文档 / 文件）
 
@@ -634,13 +644,13 @@
 
 缺口操作：`base_flange`、`edge_flange`、`export_flat_pattern`、`flat_pattern_info`、`flatten_sheet_metal`、`hem`、`jog`、`miter_flange`、`sheet_metal`、`sketched_bend`、`unfold`
 
-### ⑧ 焊件（缺 5）
+### ⑧ 焊件（缺 4）
 
 | 来源 | 该域有 | 许可 | 来源验证 |
 |---|---|---|---|
 | `Eduardof0nt/Solidworks-MCP-Server` | 5 | MIT | **未声明** |
 
-缺口操作：`end_cap`、`gusset`、`structural_member`、`trim_weldment`、`weld_symbol`
+缺口操作：`end_cap`、`gusset`、`structural_member`、`trim_weldment`
 
 ### ⑨ 模具（缺 3）
 

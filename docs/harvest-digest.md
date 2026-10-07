@@ -51,9 +51,8 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 | `source` | 条数 | 含义 |
 |---|---|---|
-| `original` | 96 | **本项目自研**（护城河域等） |
+| `original` | 110 | **本项目自研**（护城河域等） |
 | `upstream` | 18 | 上游 `wzyn20051216/solidworks-automation-skill` |
-| `official` | 14 |  |
 | `mixed` | 11 | 多家来源混合 |
 | `undetermined` | 1 | **归属未定**（按铁律 5 不猜） |
 
@@ -87,7 +86,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `autocad_script_backend` | · `pytest tests/test_acad_script_backend.py（AutoCAD 脚本后端）` |
 | `autocad_dotnet_backend` | · `pytest tests/test_acad_dotnet_preflight.py（AutoCAD .NET 预检）` |
 | `topology_optimization` | · `python tools/capture_topology_evidence.py（真机闭环，落 output/topology-evidence.json）`<br>· `⚠⚠ 2026-10-04（接手轮）**如实补记（铁律 5）**：★ **`output/topology-evidence.json` 当前不在仓里**（★ 脚本在、★ `output/` 被 gitignore）⇒ ★★ 本条目里引用的那些读数（`AnalysisType == 13` · `GetPlotCount == 4` 等）**回不到原文**，要复现就**重跑 `tools/capture_topology_evidence.py`** ✓`<br>· `pytest tests/test_sw_topology_contract.py（8 条契约测试，无 COM）` |
-| `costing` | · `python tools/verify_costing_e2e.py（⇒ ★★ **verdict 是 `partial`、不是 `pass`** —— ★⚠ 2026-10-04（接手轮）更正：★ 此处原写「verdict: pass」，★ 而**证据文件** output/costing-evidence.json 逐字是 `"verdict": "partial"` · `"passed": 5` · `"of": 6` ⇒ ★★★ **5/6**；★ 唯一未过的那一步是 **`list_templates`**（★ 其余五步 `get_costing_manager` / `evidence` / `body_count` / `list_bodies` / `read_analysis` 全 `true`）✓ 处置 `JUDGE-A_B.md` 的 🔴 **A-moldcosting V-1**：「★ 条目写 `verdict: pass`，★ 文件是 `partial`（5/6）；★ 同仓另两条文字（`costing_readback` + ROADMAP）都写 partial ⇒ ★ **一个文件被写成两种结论**」✓ 依据 output/costing-evidence.json 逐字）` |
+| `costing` | · `python tools/sw_guard.py --timeout 600 -- python tools/verify_costing_e2e.py（⇒ ★★★ **2026-10-07（接手轮 · 规格 216）实测 = `verdict: pass`** · `assertions` **3/3** · `solidworks_revision` = `34.4.1` · `total_to_manufacture = 3.2714499345031918` · `costing_type = 0` ✓ —— ★★ **本条此前的「partial（5/6）」是旧一版脚本的读数、已作废**；★ 2026-10-04 那次更正在**当时是对的**（★ 当时证据文件逐字 `verdict: partial` · `passed: 5` · `of: 6`，唯一未过的是 `list_templates`，报 `AttributeError: <unknown>.GetTemplatePathnames`）⇒ ★ 而现版本脚本已改为**自建零件 + 7 步 + 3 条断言**，★ 那个 `AttributeError` **不复现**、★ 该有的读数**也都在文件里**了 ✓）` |
 | `helix_and_spiral` | · `python tools/verify_helix_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画圆 → 选中 → 建螺旋线 → **读回定义** → 关件不保存，**13/13 通过**，证据落 output/helix-smoke-evidence.json）`<br>· `pytest tests/test_sw_helix_contract.py（**契约测试，无 COM**）` |
 | `sketch_edit_ops` | · `python tools/verify_sketch_edit_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画两条相接直线 → 选中两条 → 调 `create_sketch_chamfer`，**8/10** —— 选中前置成立，但倒角报错）`<br>· `pytest tests/test_sw_sketch_edit_contract.py（**16 条契约测试，无 COM**）` |
 | `equations` | · `python tools/verify_equation_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新建临时零件 → 加方程式 → 列 → 求解 → 关件不保存，**5/5 通过**，证据落 output/equation-smoke-evidence.json）`<br>· `pytest tests/test_sw_equation_contract.py（**10 条契约测试，无 COM**）` |
@@ -256,13 +255,13 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `drawing_model_annotations` | `stitched` | `original` | ★★★ **没能产出非空插入**（★ 因此 `level` = `stitched`，**不是** `verified`）：夹具里的零件**没有尺寸/标注可插**。★ **下一步（写清楚）**：① 先**选中一条草图段**再调`AddHorizontalDimension2`（★ 它要 selected entities）把尺寸**真建出来**；或 ② 直接用**已有的、带尺寸的**零件（★ 磁盘 |
 | `drawing_center_lines` | `stitched` | `original` | ★★★ **官方前置只复现了一半**（★ 这是标 `stitched` 的**主要**原因）：官方示例的调用序是**先选 `COMPONENT`、再按点选 `FACE`**，★ 而**它的视图来自装配**（示例里的选择串是 `cylinder20-9@Drawing View1`）⇒ ★ 本轮只复现了「**选实体**」那一半，**没走「先选组件」**、且夹具是**零件**视图 ⇒ ★★ **结论必 |
 | `macro_native_recording` | `stitched` | `original` | ★★★ **`RecordLine` 的返回值不可当判据**（★ 真机实测）：**未开录制时它也回 True** ⇒ ★ 本模块把「开录制 / 逐行 / 停录制」**三个 bool 全部回报**、★ 并**明写限度**（`stop_macro_warning` 字段）⇒ ★ 调用方**不应**把这些 True 读成「写成功了」✓ |
-| `section_properties` | `stitched` | `official` | ★★ **面积单位未确证**：正方体实验里**端面**读 400（= 20×20 的真值 mm²），而**侧面**读 0.4（应为 400，差 **1000** 倍）；★ **1000 不是任何面积换算**（1 cm² = 100 mm²）⇒ ★ 所以**不是「单位差」、而是那类面读的不是同一个东西** ✗ ⇒ ★ 返回值带 `units_verified: False` + `unit_cave |
-| `untrim_surface` | `stitched` | `official` | ★★ **正例（曲面零件上真的取消剪裁）本轮未做** ✗ —— 它需要「先建出被剪裁的曲面」那一条链（曲面 → 相交 → 剪裁），★ 不在本批范围 ⇒ ★ 故 `level` 只取 `stitched`，**不取 `verified`** ✓ |
-| `weldment_trim` | `stitched` | `official` | ★★★★★ 真机试死（三处成因逐条追过之后才下的结论）：① 前置 ✓（焊件特征建了、两个相交体在）② mark ✓（1 = 体[按生成体的特征名] · 2 = 面，两条都 True）③ 档位 ✓（EndCond 四档 × Options 两档 = 8 组全试）⇒ 而特征树一次都没变 ⇒ 判「裁剪/延伸焊件」在后端到不了建成 |
-| `weldment_gusset` | `stitched` | `official` | ★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的；官方 Parameters 明写 CrvIndex 要两条相交的边 ⇒ 静默回 None 很可能只是因为前置没上 |
-| `fillet_weld_bead` | `stitched` | `official` | ★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的（18 参里的 FaceSet1/FaceSet2 是面集合 ⇒ 前置没上） |
-| `curve_driven_pattern` | `stitched` | `official` | ★★★ 本条只到「两档有效读数皆不建」，不是干净的建成 —— 登记 stitched 而非 verified |
-| `pdm` | `not_implemented` | `official` | ★★★ 本判的依据是三条并列：① 接口面（ISldWorks 无入口、IApplication 拿不到）② 成员面（IPDMDocManager 只有 3 个设置状态成员、没有用户理解的 PDM 功能）③ 产品性质（独立许可产品，与 Simulation / Routers 同类） |
+| `section_properties` | `stitched` | `original` | ★★ **面积单位未确证**：正方体实验里**端面**读 400（= 20×20 的真值 mm²），而**侧面**读 0.4（应为 400，差 **1000** 倍）；★ **1000 不是任何面积换算**（1 cm² = 100 mm²）⇒ ★ 所以**不是「单位差」、而是那类面读的不是同一个东西** ✗ ⇒ ★ 返回值带 `units_verified: False` + `unit_cave |
+| `untrim_surface` | `stitched` | `original` | ★★ **正例（曲面零件上真的取消剪裁）本轮未做** ✗ —— 它需要「先建出被剪裁的曲面」那一条链（曲面 → 相交 → 剪裁），★ 不在本批范围 ⇒ ★ 故 `level` 只取 `stitched`，**不取 `verified`** ✓ |
+| `weldment_trim` | `stitched` | `original` | ★★★★★ 真机试死（三处成因逐条追过之后才下的结论）：① 前置 ✓（焊件特征建了、两个相交体在）② mark ✓（1 = 体[按生成体的特征名] · 2 = 面，两条都 True）③ 档位 ✓（EndCond 四档 × Options 两档 = 8 组全试）⇒ 而特征树一次都没变 ⇒ 判「裁剪/延伸焊件」在后端到不了建成 |
+| `weldment_gusset` | `stitched` | `original` | ★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的；官方 Parameters 明写 CrvIndex 要两条相交的边 ⇒ 静默回 None 很可能只是因为前置没上 |
+| `fillet_weld_bead` | `stitched` | `original` | ★★★ 本条只到第一步查行为，还不到试死 —— 读数在无选择下取的（18 参里的 FaceSet1/FaceSet2 是面集合 ⇒ 前置没上） |
+| `curve_driven_pattern` | `stitched` | `original` | ★★★ 本条只到「两档有效读数皆不建」，不是干净的建成 —— 登记 stitched 而非 verified |
+| `pdm` | `not_implemented` | `original` | ★★★ 本判的依据是三条并列：① 接口面（ISldWorks 无入口、IApplication 拿不到）② 成员面（IPDMDocManager 只有 3 个设置状态成员、没有用户理解的 PDM 功能）③ 产品性质（独立许可产品，与 Simulation / Routers 同类） |
 
 ### 4.2 明确「不做」的（4 条，A1 的另一半）
 
@@ -341,7 +340,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 五 门禁栈（**方法论沉淀**：把判定交给机器，而不是靠人记得）
 
-`scripts/check_*.py` 共 **31** 道；其中接进 `release_check.py`（发布前硬失败）的：
+`scripts/check_*.py` 共 **34** 道；其中接进 `release_check.py`（发布前硬失败）的：
 
 | 门禁 | 接进 `release_check`？ |
 |---|---|
@@ -354,6 +353,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_fact_single_home.py` | ✅ |
 | `scripts/check_gate_wiring.py` | ✅ |
 | `scripts/check_interface_member_ownership.py` | ✅ |
+| `scripts/check_lean_first_line_caveat.py` | ✅ |
 | `scripts/check_license_redlines.py` | ✅ |
 | `scripts/check_member_names.py` | ✅ |
 | `scripts/check_member_owner_interface.py` | — |
@@ -361,6 +361,8 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_official_md_claims.py` | ✅ |
 | `scripts/check_official_source_defects.py` | — |
 | `scripts/check_param_binding.py` | ✅ |
+| `scripts/check_preselect_family.py` | ✅ |
+| `scripts/check_probe_reuse.py` | ✅ |
 | `scripts/check_property_form_members.py` | ✅ |
 | `scripts/check_provenance.py` | ✅ |
 | `scripts/check_python_syntax.py` | ✅ |

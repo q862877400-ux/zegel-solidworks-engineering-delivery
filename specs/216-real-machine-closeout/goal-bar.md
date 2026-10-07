@@ -2,7 +2,30 @@
 
 > ★★ **本文件是唯一进度字段** —— 进度只看上面那一行。
 
-**阶段：★★★ 预选族 **12 → 5**：★ 真修好 **7 条**（圆顶 `+圆顶1` · 参考点 `+点1` · 测距 `ok+area` · 参考轴 `+基准轴1` · 选区点 `point_mm` · 截面属性 `area=1200.0` · **草图伸展 `selected_count=4`**）· ★ 改判 1 条（composite_curve ⇒ 已裁定不修）· ★ 误报移出 2 条 · ★ **剩余 5 条**：`assembly_dissolve` · `drawing_insert_balloons` · `part_insert_composite_curve`（已裁定不修）· topology `demold`/`symmetry` · ★ ② AVI 未开始 · ★ 当前动作 = **T-216-08**（★ 建议先做 ② AVI —— 它是"做决定 + 落档"，★ 可结算目标三项里的第二项）
+**阶段：★★★ ① 预选族 **12 → 5**（真修好 7 · 改判 1 · 误报移出 2）· ★★ ③ 完成 · ★★ **② AVI：边界收窄一整环** —— 测出「轮 288 那条链的卡点（找不到圆柱面 ⇒ 马达建不出）**已被文档写法解决**（`motor_ok = True`）」，★ **唯一仍失败的**是 `SaveToAVI` 不写文件 ⇒ ★ 判据「文件存在且大小 > 0」= **0** ✗ · ★ 当前动作 = **T-216-09**（★ ① 余下 4 条 · ★ 或 ② 的候选下一步）
+
+---
+
+## ★★ ② AVI（★ 2026-10-07 · 本轮）：**先把前提订正，再把边界收窄**
+
+★ 读数与依据见 [recon/avi-boundary.md](recon/avi-boundary.md) ✓
+
+★★ **前提订正**：★ 我在目标里引的是台账 **第 4 版**（「需要 `CosmosMotion` 类算例」），
+  ★ 而那是**六版演进**里的一版 —— ★ **最终版（轮 288/289）**说的**是另一条、可修的链**：
+  「组件插入时零件文件没保存好 ⇒ 组件未解析 ⇒ 面上没几何 ⇒ 找不到圆柱面 ⇒ 马达建不出 ⇒ 空文件」✓
+  ⇒ ★★ **两版不是一回事**（★ 前者是"算例类型不可得"、★ 后者是"建件链断了"）⇒ ★ 只看一版就会误判 ✓
+
+★★ **本轮实测（走护栏 · 9.8 s · 0 弹窗）**：★ 按**文档写法**建件
+  （`with sw_part.sketch(...)` + **毫米**）后 ⇒ ★★ **轮 288 的卡点不复现**：
+  ★ `save_document` **成功** · `add_component` ×2 ✓ · `create_motion_study(type=2)` 回读 **2** ·
+  ★★ **`add_constant_speed_rotary_motor_by_cylinders` ⇒ `motor_ok = True`** · `calculate` ✓ ·
+  ★ `create_avi_parameter` / `configure_avi_parameter` / `export_motion_study_avi` 全 ok ✓
+  ★★ **唯一仍失败的**：★ **`avi_exists = False` · `size_bytes = 0`** ⇒ ★ 判据（★ 文件 > 0、★ 不看返回值）**未过** ✗
+
+★ **两条路分清**：★ **CosmosMotion 家族（4/8/16）**⇒ 本机**静默降级**、★ 加载项 4 个 ProgID 全 `None`
+  ⇒ **不可得**（★ 机器／许可边界）✗；★ **PhysicalSimulation(2)** ⇒ ★ **除导出外全通** ✓
+★ ⇒ ★★ 本轮**只声明边界收窄**、★ **不声明已解决**（★ 台账记过「保存装配体 + 先 Play ⇒ 仍 False」）✓
+
 
 ---
 
