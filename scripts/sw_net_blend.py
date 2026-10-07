@@ -97,7 +97,7 @@ def insert_net_blend_report(
         raise ValueError("influence_type 只接受 0/1/2/3（官方：0=Global·1=To Next Curve·"
                          "2=To Next Sharp·3=To Next Edge）")
 
-    before = model.GetFeatureCount()                                                 # ★ 回读基线
+    before = _feature_count(model)                                                 # ★ 回读基线
     steps = []
 
     #: ① 清选区（★ 官方示例第一句）
@@ -142,7 +142,7 @@ def insert_net_blend_report(
         float(thickness1_mm) * _MM, float(thickness2_mm) * _MM, False, 0,
         False, False, 0.0, False, 0.0, False,
     )
-    after = model.GetFeatureCount()
+    after = _feature_count(model)
     name = getattr(feat, "Name", None) if feat is not None else None
     steps.append({"step": "InsertNetBlend", "returned": feat is not None, "feature": name,
                   "before": before, "after": after})
@@ -196,3 +196,19 @@ def insert_boundary_surface_report(
         influence_type=influence_type, trim_curves=trim_curves, blend_closed=blend_closed,
         tangency_deg=tangency_deg, merge_body=merge_body,
     )
+
+def _feature_count(model) -> int:
+    """★ 特征树计数 —— ★ 本 COM 绑定里 `GetFeatureCount` 是**属性**（`() `会报
+    `TypeError: 'int' object is not callable`）⇒ ★ 这里两种形态都吃 ✓"""
+    attr = getattr(model, "GetFeatureCount", None)
+    if attr is None:
+        return -1
+    if callable(attr):
+        try:
+            return int(attr())
+        except TypeError:
+            pass
+    try:
+        return int(attr)
+    except (TypeError, ValueError):
+        return -1
