@@ -34,15 +34,15 @@
    "tool": "solidworks_topology_create_demold_control",
    "module": "sw_topology",
    "function": "create_demold_control",
-   "verdict": "真危险·官方前置",
-   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+   "verdict": "已定性·族级边界（★ 不修 —— 不是「待修」）",
+   "reason": "★★★ 2026-10-07（接手轮 · 规格 216 T-216-11）**改判为边界：`Create*` 那一族在本机**整体**回 `None`** —— ★ 已逐个测掉前置候选：★ ① **赋材料**（真机 `MaterialIdName` 回读 `solidworks materials|AISI 1020|2`）⇒ 仍 `None` ✗；★ ② **按名取研究**（`get_study_by_name` 回 `True` 而非用返回值）⇒ 仍 `None` ✗；★ ③ **先建目标**（`set_topology_goal`）⇒ ★★ 它**自己**就报 「`CreateMassConstraint 未返回对象`」⇒ ★★ 即**同一个 `Create*` 族**里**质量约束也回 `None`** ✓ ｜ ★★ 于是本机失败的是**整个族**（质量约束 · 对称控制 · 脱模控制），★ 而**不是**某一条缺前置 ⇒ 这是**族级/边界**现象，★ 不是「再补一步就能通」✗ ｜ ★ 反例仍证明**我的选区代码是通的**（`index:99` ⇒ `EntitySelectionError: FACE 序号 99 越界`）✓ ｜ ⚠ 台账 `topology_constraints_and_controls` 是 `verified`（8 项过 7）—— ★ 而那 7 项**未包含**对称/脱模这两个控制（★ 待核它的逐项清单）；★ 故**不是**「台账与实测矛盾」，★ 而是「**这两个控制从来没人验过**」✓ ｜ ★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
   },
   {
    "tool": "solidworks_topology_create_symmetry_control",
    "module": "sw_topology",
    "function": "create_symmetry_control",
-   "verdict": "真危险·官方前置",
-   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+   "verdict": "已定性·族级边界（★ 不修 —— 不是「待修」）",
+   "reason": "★★★ 2026-10-07（接手轮 · 规格 216 T-216-11）**改判为边界：`Create*` 那一族在本机**整体**回 `None`** —— ★ 已逐个测掉前置候选：★ ① **赋材料**（真机 `MaterialIdName` 回读 `solidworks materials|AISI 1020|2`）⇒ 仍 `None` ✗；★ ② **按名取研究**（`get_study_by_name` 回 `True` 而非用返回值）⇒ 仍 `None` ✗；★ ③ **先建目标**（`set_topology_goal`）⇒ ★★ 它**自己**就报 「`CreateMassConstraint 未返回对象`」⇒ ★★ 即**同一个 `Create*` 族**里**质量约束也回 `None`** ✓ ｜ ★★ 于是本机失败的是**整个族**（质量约束 · 对称控制 · 脱模控制），★ 而**不是**某一条缺前置 ⇒ 这是**族级/边界**现象，★ 不是「再补一步就能通」✗ ｜ ★ 反例仍证明**我的选区代码是通的**（`index:99` ⇒ `EntitySelectionError: FACE 序号 99 越界`）✓ ｜ ⚠ 台账 `topology_constraints_and_controls` 是 `verified`（8 项过 7）—— ★ 而那 7 项**未包含**对称/脱模这两个控制（★ 待核它的逐项清单）；★ 故**不是**「台账与实测矛盾」，★ 而是「**这两个控制从来没人验过**」✓ ｜ ★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
   }
  ]
 }
