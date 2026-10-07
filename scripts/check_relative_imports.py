@@ -27,9 +27,21 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+#: ★★ 中文 Windows 上打印 `⇒`（U+21D2）会 `UnicodeEncodeError: 'gbk' codec can't encode character` ✓
+#:   ★ 2026-10-07 实测：本门禁**逻辑上是绿的**（**35 = 基线 35**，加 `PYTHONIOENCODING=utf-8` 跑即 exit 0）✗
+#:   ★★ 而**控制台是 GBK 时它整个崩掉** ⇒ ★ `release_check` 那条子进程拿到的是**退出码 ≠ 0**
+#:     ⇒ ★★ 报成 FAIL —— ★ 那是**事实 58**（`subprocess` + GBK）**在门禁自己身上**的又一例 ✓
+#:   ⚠ `release_check.py` **不给子进程设** `PYTHONIOENCODING`/`PYTHONUTF8`（已核），
+#:     ★ 所以**必须在门禁自己这里兜住** —— 与 `check_refuted_patterns.py` 的既有修法逐字同型 ✓
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
+except Exception:                                                         # noqa: BLE001
+    pass
 
 #: ★ 认"相对导入"（★ 缩进不限；★ `from .x import y` 形态）✓
 PATTERN = re.compile(r"^(\s*)from \.([\w.]+) import (.+?)\s*$")

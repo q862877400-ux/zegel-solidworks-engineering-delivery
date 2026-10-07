@@ -25,7 +25,7 @@
 | 15 | `costing_templates_and_defaults` | `verified` | `original` | ✓ | — |
 | 16 | `coverage_gap_batch1` | `verified` | `original` | ✓ | — |
 | 17 | `curve_and_split` | `verified` | `original` | ✓ | — |
-| 18 | `curve_driven_pattern` | `stitched` | `official` | ✓ | — |
+| 18 | `curve_driven_pattern` | `stitched` | `original` | ✓ | — |
 | 19 | `curve_through_xyz` | `verified` | `original` | ✓ | — |
 | 20 | `custom_properties_and_bom` | `verified` | `upstream` | ✓ | — |
 | 21 | `declarative_hole_creation` | `verified` | `original` | ✓ | — |
@@ -42,7 +42,7 @@
 | 32 | `drawings_and_bom` | `verified` | `mixed` | ✓ | — |
 | 33 | `dxf_preview_scene` | `verified` | `upstream` | ✓ | — |
 | 34 | `equations` | `verified` | `original` | ✓ | — |
-| 35 | `explode_line_sketch` | `verified` | `official` | ✓ | — |
+| 35 | `explode_line_sketch` | `verified` | `original` | ✓ | — |
 | 36 | `export_delivery` | `verified` | `upstream` | ✓ | — |
 | 37 | `external_spur_gear_geometry` | `verified` | `upstream` | ✓ | — |
 | 38 | `feature_build_extrude` | `verified` | `original` | ✓ | — |
@@ -52,9 +52,9 @@
 | 42 | `feature_readback_criterion` | `verified` | `original` | ✓ | — |
 | 43 | `feature_revolve_cut` | `verified` | `original` | ✓ | — |
 | 44 | `file_custom_property_read` | `verified` | `original` | ✓ | — |
-| 45 | `fillet_weld_bead` | `stitched` | `official` | ✓ | — |
-| 46 | `flat_pattern_dxf` | `verified` | `official` | ✓ | — |
-| 47 | `forming_tool` | `verified` | `official` | ✓ | — |
+| 45 | `fillet_weld_bead` | `stitched` | `original` | ✓ | — |
+| 46 | `flat_pattern_dxf` | `verified` | `original` | ✓ | — |
+| 47 | `forming_tool` | `verified` | `original` | ✓ | — |
 | 48 | `geometric_tolerance` | `stitched` | `original` | ✓ | — |
 | 49 | `geometry_and_delivery_review` | `verified` | `upstream` | ✓ | — |
 | 50 | `geometry_measurement` | `verified` | `original` | ✓ | — |
@@ -80,7 +80,7 @@
 | 70 | `part_and_features` | `verified` | `upstream` | ✓ | — |
 | 71 | `part_intersect` | `verified` | `original` | ✓ | — |
 | 72 | `pattern_and_mirror` | `verified` | `original` | ✓ | — |
-| 73 | `pdm` | `not_implemented` | `official` | ✓ | — |
+| 73 | `pdm` | `not_implemented` | `original` | ✓ | — |
 | 74 | `preview_and_review_report` | `verified` | `original` | ✓ | — |
 | 75 | `ref_geometry` | `verified` | `original` | ✓ | — |
 | 76 | `reference_axis` | `verified` | `mixed` | ✓ | — |
@@ -89,8 +89,8 @@
 | 79 | `replace_face` | `verified` | `original` | ✓ | — |
 | 80 | `requirements_planning` | `verified` | `upstream` | ✓ | — |
 | 81 | `routing` | `stitched` | `mixed` | ✓ | — |
-| 82 | `scale_feature` | `verified` | `official` | ✓ | — |
-| 83 | `section_properties` | `stitched` | `official` | ✓ | — |
+| 82 | `scale_feature` | `verified` | `original` | ✓ | — |
+| 83 | `section_properties` | `stitched` | `original` | ✓ | — |
 | 84 | `select_by_ray` | `verified` | `original` | ✓ | — |
 | 85 | `selection_helpers` | `verified` | `original` | ✓ | — |
 | 86 | `session_rebuild` | `verified` | `original` | ✓ | — |
@@ -123,7 +123,7 @@
 | 113 | `sketch_spline3_2d` | `verified` | `original` | ✓ | — |
 | 114 | `sketch_visibility` | `verified` | `original` | ✓ | — |
 | 115 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
-| 116 | `speedpak` | `verified` | `official` | ✓ | — |
+| 116 | `speedpak` | `verified` | `original` | ✓ | — |
 | 117 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
 | 118 | `surface_delete_hole` | `verified` | `original` | ✓ | — |
 | 119 | `surface_edit_ops` | `verified` | `original` | ✓ | — |
@@ -136,17 +136,17 @@
 | 126 | `surface_revolve` | `verified` | `original` | ✓ | — |
 | 127 | `surface_thicken_silent_noop` | `stitched` | `original` | ✓ | — |
 | 128 | `surface_untrim` | `verified` | `original` | ✓ | — |
-| 129 | `sweep_surface` | `verified` | `official` | ✓ | — |
+| 129 | `sweep_surface` | `verified` | `original` | ✓ | — |
 | 130 | `topology_constraints_and_controls` | `verified` | `original` | ✓ | — |
 | 131 | `topology_iteration_options_backend_limited` | `stitched` | `original` | ✓ | — |
 | 132 | `topology_optimization` | `verified` | `original` | ✓ | — |
 | 133 | `topology_readback` | `verified` | `original` | ✓ | — |
-| 134 | `untrim_surface` | `stitched` | `official` | ✓ | — |
-| 135 | `weld_symbol` | `verified` | `official` | ✓ | — |
+| 134 | `untrim_surface` | `stitched` | `original` | ✓ | — |
+| 135 | `weld_symbol` | `verified` | `original` | ✓ | — |
 | 136 | `weldment_cut_list` | `verified` | `original` | ✓ | — |
-| 137 | `weldment_gusset` | `stitched` | `official` | ✓ | — |
+| 137 | `weldment_gusset` | `stitched` | `original` | ✓ | — |
 | 138 | `weldment_profile_and_curve` | `verified` | `original` | ✓ | — |
-| 139 | `weldment_trim` | `stitched` | `official` | ✓ | — |
+| 139 | `weldment_trim` | `stitched` | `original` | ✓ | — |
 | 140 | `weldments` | `verified` | `upstream` | ✓ | — |
 
 **合计 140 条**。
@@ -167,7 +167,7 @@
 |---|---|
 | `merged` | 0 |
 | `mixed` | 11 |
-| `original` | 96 |
+| `original` | 110 |
 | `undetermined` | 1 |
 | `upstream` | 18 |
 
@@ -176,10 +176,10 @@
 | level \ source | merged | mixed | original | undetermined | upstream |
 |---|---|---|---|---|---|
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
-| `not_implemented` | 0 | 1 | 0 | 0 | 1 |
+| `not_implemented` | 0 | 1 | 1 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
-| `stitched` | 0 | 4 | 10 | 0 | 0 |
-| `verified` | 0 | 6 | 86 | 1 | 17 |
+| `stitched` | 0 | 4 | 16 | 0 | 0 |
+| `verified` | 0 | 6 | 93 | 1 | 17 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。
@@ -196,22 +196,7 @@
 
 | 检查 | 问题数 |
 |---|---|
-| `check_capabilities_schema()`（R1-R3/R6/R9/R10/**R12**/**R13**） | **14** |
+| `check_capabilities_schema()`（R1-R3/R6/R9/R10/**R12**/**R13**） | **0** |
 | `check_capabilities_levels()`（规则 4 + R5/R7/R11） | **0** |
 
-⚠ **有问题**（逐条）：
-
-* 能力 section_properties 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 scale_feature 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 untrim_surface 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 sweep_surface 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 weldment_trim 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 weldment_gusset 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 fillet_weld_bead 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 curve_driven_pattern 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 forming_tool 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 explode_line_sketch 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 speedpak 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 weld_symbol 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 pdm 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
-* 能力 flat_pattern_dxf 的 source='official' 不在枚举 ['merged', 'mixed', 'original', 'undetermined', 'upstream'] 内
+✅ **两项检查都为 0 问题** —— 本报告与门禁的判读一致。

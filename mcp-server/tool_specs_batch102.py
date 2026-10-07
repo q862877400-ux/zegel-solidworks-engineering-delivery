@@ -33,7 +33,11 @@ SPECS_BATCH102 = [
         name="solidworks_insert_explode_line_sketch",
         title="Insert/Close Explode Line Sketch (ISketchManager)",
         module="sw_assembly_doc", function="insert_explode_line_sketch_report",
-        inject="model",
+        #: ★★ 2026-10-07（接手轮）订正：★ 目标函数首参是 **`doc`**，★ 不是 `model` ✗ ——
+        #:   ★ `register()` 不传 `inject_as` ⇒ **注入键字面上等于 `inject` 的值**（事实 502）
+        #:   ⇒ 写成 `inject="model"` 真调用时必 `TypeError: unexpected keyword argument 'model'` ✓
+        #:   ★ 同模块的**其余 spec 全部用 `inject="doc"`**（★ 例 `tool_specs_batch79.py:38`）✓
+        inject="doc",
         params=[],
         doc=
             "爆炸直线：在当前爆炸视图里插入/关闭爆炸直线草图。""★ **爆炸直线**（官方 `ISketchManager::InsertExplodeLineSketch`，★ **零参**）—— "
@@ -52,7 +56,10 @@ SPECS_BATCH102 = [
         name="solidworks_create_speedpak",
         title="Create SpeedPak (IAssemblyDoc::CreateSpeedPak)",
         module="sw_assembly_doc", function="create_speedpak_report",
-        inject="model",
+        #: ★★ 2026-10-07（接手轮）订正：★ 同上 —— 目标函数的**必填形参是 `doc`**
+        #:   （`create_speedpak_report(doc, *, speedpak_type, component_name, component_index)`）✓
+        #:   ⇒ ★ `inject` 必须是 `"doc"`（★ 它是 `RESOLVERS` 的键，指向同一个 `resolve_model`）✓
+        inject="doc",
         params=[
             Param("speedpak_type", int, default=1,
                   description="SpeedPak 类型 —— ★ 官方 `## Parameters` 逐字："

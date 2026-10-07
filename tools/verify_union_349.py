@@ -109,6 +109,10 @@ def selftest() -> int:
         for name, kw in (("负例①：缺一条", {"skip": 5}),
                          ("负例②：多一条", {"extra": True}),
                          ("负例③：一条非法 JSON", {"broken": True})):
+            # negproof-exempt: 这一句**不是造负例输入** —— 它只是把负例**目录名**里的全角「：」
+            #   换成「_」（`负例①：缺一条` ⇒ `负例①_缺一条`）。★ 真正的坏输入由**下一行**
+            #   `write_all(d, **kw)` 的实参造出来（`skip` 少一条 / `extra` 多一条 /
+            #   `broken` 那条非法 JSON）⇒ ★ 这里是**路径消毒**，没有"变换生效与否"可自证。
             d = base / name.replace("：", "_")
             write_all(d, **kw)
             r = check(d, WORKLOAD)

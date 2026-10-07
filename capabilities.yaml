@@ -4999,7 +4999,7 @@
    "id": "section_properties",
    "label": "截面属性（当前选择集的截面面积 / 形心 / 惯性矩族）",
    "level": "stitched",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 `C:\\swapi\\types\\IModelDocExtension\\GetSectionProperties2.md`：`System.object GetSectionProperties2(System.object Sections)`；`## Remarks` 给出**24 元返回**的下标定义与 `retval[0]` 的四个 status 取值",
     "官方 `C:\\swapi\\types\\IFace2\\GetArea.md`：`System.double GetArea()`，`## Returns` 写「Face area in square meters」（★ 而真机读数与该 Remark **不符**，见 limitations）"
@@ -5034,7 +5034,7 @@
    "id": "scale_feature",
    "label": "缩放/变形（对当前模型整体缩放 · IFeatureManager::InsertScale）",
    "level": "verified",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 `C:\\swapi\\types\\IFeatureManager\\InsertScale.md`：`Feature InsertScale(short Type, bool Uniform, double Xscale, double YScale, double ZScale)`；`YScale`/`ZScale` valid only if Uniform is false；`Returns` = `IFeature`（当前模型）或 `Null`（选中的图形体，★ 那条 no scale feature is created）",
     "官方 `C:\\swapi\\enums\\swScaleType_e.md`：只有 3 个成员 —— swScaleAboutCentroid(0) · swScaleAboutOrigin(1) · swScaleAboutCoordinateSystem(2)",
@@ -5070,7 +5070,7 @@
    "id": "untrim_surface",
    "label": "剪裁曲面 · 取消剪裁（IFeatureManager::InsertUntrimSurface2）",
    "level": "stitched",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 `C:\\swapi\\types\\IFeatureManager\\InsertUntrimSurface2.md`：`Feature InsertUntrimSurface2(int FaceUntrimType, int EdgeUntrimType, double Distance, bool BMerge, bool BTrimOppositeSide)`",
     "同页 `## Parameters` 逐字：`FaceUntrimType`（`swFaceUntrimType_e`；valid only if a face is selected）· `EdgeUntrimType`（`swEdgeUntrimType_e`；valid only of one or more edges are selected）· `Distance`（★ 没给单位）· `BMerge`（True ⇒ 与原面合并；false ⇒ 另建独立面体）· `BTrimOppositeSide`（valid only if BMerge is false）",
@@ -5108,7 +5108,7 @@
    "id": "sweep_surface",
    "label": "扫描曲面 · 路 B（IFeatureManager::InsertSweepSurface2，参数式 + 官方 mark 表）",
    "level": "verified",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IFeatureManager\\InsertSweepSurface2.md：Feature InsertSweepSurface2(bool Propagate, short TwistCtrlOption, bool KeepTangency, bool BAdvancedSmoothing, short StartMatchingType, short EndMatchingType, int PathAlign, bool UseFeatScope, bool UseAutoSelect, double TwistAngle, bool BMergeSmoothFaces)（★ 11 参、★ 纯参数式、★ 不要求 AccessSelections）",
     "★★ 同页 ## Remarks 给了完整「调用序」：Use IModelDocExtension::SelectByID2 to select the profile and sweep curves. The mark for: 1 = Profile selection · 2 = Guide curve selection, if provided · 4 = Sweep path",
@@ -5150,7 +5150,7 @@
    "id": "weldment_trim",
    "label": "裁剪/延伸焊件（IFeatureManager::InsertWeldmentTrimFeature2）—— 真机试死",
    "level": "stitched",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IFeatureManager\\InsertWeldmentTrimFeature2.md：Feature InsertWeldmentTrimFeature2(int EndCond, int Options, double GapValue, object BodiesToTrim, object BodiesOrFaces)",
     "同页 ## Parameters 逐字：EndCond 取 swSolidworksWeldmentEndCondOptions_e · Options 是 swWeldmentTrimExtendOptionType_e 的 Logical sum · GapValue 只写 Length to trim（没给单位）· BodiesToTrim 是 Array of bodies to trim · BodiesOrFaces 是 Array of bodies or faces that define the trimming boundaries",
@@ -5192,7 +5192,7 @@
    "id": "weldment_gusset",
    "label": "角撑板（焊件）· 参数式（IFeatureManager::InsertGussetFeature3）",
    "level": "stitched",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IFeatureManager\\InsertGussetFeature3.md：Feature InsertGussetFeature3(double Depth, short DirType, short LocType, bool BIsProfile, double ProfileD1, double ProfileD2, double ProfileD3, double ProfileAngle, double ProfileD4, bool BOffset, double DProfileOffset, int CrvIndex, bool BReverseDir, bool BReverseFace, bool BUseLenDim, double ProfileD5, double ProfileD6, double ProfileChamferAngle, bool BUseLenDimForChamfer, bool BNeedChamferInGusset) —— 纯参数式 20 参、不带 AccessSelections、无 object 数组",
     "同页 Parameters 逐字：BIsProfile 是 True to use a polygon profile, false to use a triangle profile；CrvIndex 是 Index of the edge to use if multiple intersecting edges exist（⇒ 需要两条相交的边）",
@@ -5227,7 +5227,7 @@
    "id": "fillet_weld_bead",
    "label": "圆角焊缝 · 参数式（IFeatureManager::InsertFilletBeadFeature3）",
    "level": "stitched",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IFeatureManager\\InsertFilletBeadFeature3.md：Feature InsertFilletBeadFeature3(short Type1, double Size1, double Length1, short PenetrationType1, double PenetrationValue1, double Pitch, short Type2, double Size2, double Length2, short PenetrationType2, double PenetrationValue2, int Flag, int EdgeNum1, object DeSelEdge1, int EdgeNum2, object DeSelEdge2, object FaceSet1, object FaceSet2) —— 参数式 18 参",
     "同页 Parameters 逐字：Type1 取 0 = Full length · 1 = Intermittent · 2 = Staggered；PenetrationType1 取 0 = Full penetration · 1 = Partial · 2 = No；Pitch 是 Pitch, if Intermittent or Staggered on both sides"
@@ -5261,7 +5261,7 @@
    "id": "curve_driven_pattern",
    "label": "曲线驱动阵列 / 零部件阵列（IFeatureManager::FeatureLocalCurveDrivenPattern）",
    "level": "stitched",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IFeatureManager\\FeatureLocalCurveDrivenPattern.md：Feature FeatureLocalCurveDrivenPattern(bool FlipDir1, int Num1, bool EqualSpacing1, double Spacing1, int ReferencePoint, int CurveMethod, int AlignMethod, bool Direction2, bool FlipDir2, int Num2, bool EqualSpacing2, double Spacing2, bool PatternSeedOnly) —— 纯参数式 13 参、不带 AccessSelections",
     "★★ 同页 ## Remarks 给了完整 mark 表：1 = Components to pattern · 2 = Curve/edge/sketch for Direction 1 · 4 = …Direction 2 · 32 = Reference point for ReferencePoint · 64 = Face on which a 3D curve lies",
@@ -5302,7 +5302,7 @@
    "id": "forming_tool",
    "label": "钣金成形工具（IFeatureManager::InsertFormToolFeature，参数式）",
    "level": "verified",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IFeatureManager\\InsertFormToolFeature.md：Feature InsertFormToolFeature(string Path, bool Flip, double RotAngle, string Config, bool OverrideDoc, bool ShowPunch, bool ShowProfile, bool ShowCenter, bool LinkToPart) —— 纯参数式 9 参",
     "同页 ## Parameters 逐字：Path = Pathname of the forming tool part file in the Design Library · RotAngle = Angle of the forming tool · OverrideDoc = True to override the document settings in Tools > Options > Document Properties > Sheet Metal · ShowPunch / ShowProfile / ShowCenter 均 valid only if OverrideDoc = true",
@@ -5341,7 +5341,7 @@
    "id": "explode_line_sketch",
    "label": "爆炸直线（ISketchManager::InsertExplodeLineSketch，零参）",
    "level": "verified",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\ISketchManager\\InsertExplodeLineSketch.md：System.bool InsertExplodeLineSketch() —— 零参",
     "★★ 同页 ## Returns 逐字：True if the explode line sketch is inserted or closed, false if not",
@@ -5379,7 +5379,7 @@
    "id": "speedpak",
    "label": "SpeedPak（IAssemblyDoc::CreateSpeedPak）",
    "level": "verified",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IAssemblyDoc\\CreateSpeedPak.md：System.bool CreateSpeedPak( System.int SpeedPakType ) —— 参数式 1 参",
     "同页 ## Parameters 逐字：SpeedPakType —— 1 = Mated · 2 = Graphics",
@@ -5419,7 +5419,7 @@
    "id": "weld_symbol",
    "label": "焊接符号（IModelDoc2::InsertWeldSymbol3 + IWeldSymbol）",
    "level": "verified",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IModelDoc2\\InsertWeldSymbol3.md：System.object InsertWeldSymbol3() —— 零参；## Returns = Newly created weld symbol",
     "★★★ 同页 ## Remarks 逐字：To use this method, insert the weld symbol into the model and then manipulate the properties and methods on the IWeldSymbol object",
@@ -5459,7 +5459,7 @@
    "id": "pdm",
    "label": "PDM —— 判「不做（需另装独立许可产品）」",
    "level": "not_implemented",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "★ 全扫 C:\\swapi\\types：★ ISldWorks 下没有 PDM 入口；入口在 IApplication::PDMDocManager（★ 且是属性）—— 而 IApplication 不是 ISldWorks",
     "★★ IPDMDocManager 只有 3 个成员：SetCancelOperation / SetDocumentStatus / SetManagedDocument —— 全是设置状态，没有检入、检出、取版本这类 PDM 核心操作",
@@ -5495,7 +5495,7 @@
    "id": "flat_pattern_dxf",
    "label": "钣金展开图导出 DXF（IModelDoc2::ExportToDWG2 + 用户授权的受控临时另存）",
    "level": "verified",
-   "source": "official",
+   "source": "original",
    "source_evidence": [
     "官方 C:\\swapi\\types\\IModelDoc2\\ExportToDWG2.md 的 swExportToDWG_e 族 —— 展开图导出走 swExportToDWG_SHEET_METAL，几何/折弯线/草图/隐藏边/包围盒/共面合并六个选项位在 scripts/sw_export.py 里已有常量",
     "★★ 官方的真前置是「已保存的钣金件」—— 依据本仓 docs/dead-ends.md 轮 407 那条与 docs/plan-24h-v2-convergence.md:53：轮 407 真造了钣金件（回读三项全 true）而它仍拒绝；旁证 docs/A9-solve-attempts.md:84「所有脚本都不保存文档（CloseDoc 前未 SaveAs）」",
