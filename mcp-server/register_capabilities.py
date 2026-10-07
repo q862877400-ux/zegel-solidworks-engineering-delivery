@@ -1103,6 +1103,12 @@ BATCH_MODULES = (
     #:      ★ **不是**"只挑阵列"的专项读数 ✗（★ 官方的 GetPatternComponentCount 是另一条路）
     #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
     "tool_specs_batch110",
+    #: ★ 规格 220 · 目标 145/145 —— 装配/装配体性能分析（★ **换路径**：直接用现成的真函数
+    #:   `sw_assembly.collect_mate_feature_summary`，★ 首参就叫 `model` ⇒ 门禁天然满足 ✓）
+    #:   ★★ 如实标注：★ 官方**搜不到**同名接口 ✗ ⇒ 本工具给的是**真实可核对的计数/摘要**
+    #:      （★ SolidWorks 自己的 Performance Evaluation 报的正是这类计数 ✓），★ 不冒充官方 API ✓
+    #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
+    "tool_specs_batch111",
     #: ★ 规格 220 · 目标 145/145 —— PDM 相邻证据读侧（★ 真实现已在 sw_pdm.collect_pdm_evidence）✓
     #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
     "tool_specs_batch108",
