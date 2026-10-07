@@ -1088,6 +1088,9 @@ BATCH_MODULES = (
     #:   ★ 三个都**无选区信号**（第 7 轮的预检闸）⇒ 可作纯暴露 ✓
     #:   ★ 计数：469 → **472**
     "tool_specs_batch106",
+    #: ★ 规格 219 · 边界凸台 + 边界曲面（官方 InsertNetBlend，Type 区分）✓
+    #:   ★★ 等级如实 stitched —— 两个都尚未真机验证（红线⑥）
+    "tool_specs_batch107",
 )
 
 def all_specs() -> list:

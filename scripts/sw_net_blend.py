@@ -159,3 +159,40 @@ def insert_net_blend_report(
         "units": "★ 入参按毫米/度；COM 侧米/弧度（本仓事实 2）",
         "verification": "stitched —— ★ 尚未真机验证（红线⑥：level 只按真机证据变）",
     }
+
+def insert_boundary_boss_report(
+    model,
+    *,
+    face_index_1: int = 0,
+    face_index_2: int = 1,
+    influence_type: int = 0,
+    trim_curves: bool = False,
+    blend_closed: bool = False,
+    tangency_deg: float = 15.0,
+    merge_body: bool = True,
+) -> dict:
+    """★ 边界**凸台**（官方 `InsertNetBlend`，`Type=1 Boss`）—— ★ 显式签名（★ 门禁要 function 形态）✓"""
+    return insert_net_blend_report(
+        model, face_index_1=face_index_1, face_index_2=face_index_2, blend_type=1,
+        influence_type=influence_type, trim_curves=trim_curves, blend_closed=blend_closed,
+        tangency_deg=tangency_deg, merge_body=merge_body,
+    )
+
+
+def insert_boundary_surface_report(
+    model,
+    *,
+    face_index_1: int = 0,
+    face_index_2: int = 1,
+    influence_type: int = 0,
+    trim_curves: bool = False,
+    blend_closed: bool = False,
+    tangency_deg: float = 15.0,
+    merge_body: bool = True,
+) -> dict:
+    """★ 边界**曲面**（官方 `InsertNetBlend`，`Type=2 Surface`）—— ★ 显式签名 ✓"""
+    return insert_net_blend_report(
+        model, face_index_1=face_index_1, face_index_2=face_index_2, blend_type=2,
+        influence_type=influence_type, trim_curves=trim_curves, blend_closed=blend_closed,
+        tangency_deg=tangency_deg, merge_body=merge_body,
+    )

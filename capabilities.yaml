@@ -3477,7 +3477,9 @@
     "solidworks_surface_create_extruded",
     "solidworks_surface_knit",
     "solidworks_surface_extend",
-    "solidworks_surface_fill"
+    "solidworks_surface_fill",
+    "solidworks_boundary_boss_report",
+    "solidworks_boundary_surface_report"
    ],
    "evidence": [
     "python 真机（轮 388）★ **PASS** —— objective② 补的第二个真缺 `filled_surface`：`scripts/sw_surface_features.py` 新增 `insert_fill_surface_report`（官方 `IFeatureManager.InsertFillSurface2`，**6 参**）。真机（走 `sw_guard`，6.47 s 无弹窗）：前置 `曲面-拉伸1`（树 6→7）· 负例 `resolutions = 9` 被拒 · **`insert_fill_surface_report(doc, 2)` ⇒ 新特征 `曲面填充1` · 选 4 条边 · 树 7→8** ⇒ `verdict: pass`。★★ **真机打通的关键**：边界边必须用 `SelectByID2` 带 **mark = 1**（官方 Remarks 的 Boundary curves）；★ `IEntity.Select4` **没有 mark 参数**（事实 32），而传 **mark = 4** 会**静默失败**（回 true 而 `GetSelectedObjectCount2(-1)` = 0 —— 事实 8）。证据 output/fill-surface-evidence.json。",
