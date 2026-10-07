@@ -200,13 +200,38 @@
   「要求先选中、而没有任何选法」**并拦下** ✗（★ batch103 那次就是被它拦回的）✓
   ⇒ ★ 实现形态：★ **`*_report` 包装 + `selection` / `selection_kind` 参数**（★ 选择紧邻调用）✓
 
+## 四之十、★★★ 第 10 轮：拿到**完整官方调用配方**（★ 入口名只有示例给得出）
+
+★ 来源：★ `Insert_Boundary_Feature_Example_VB.htm` 第 67–74 行（★ 逐行读出）✓
+
+```
+① swModel.ClearSelection2 True
+② swModelDocExt.SelectByID2("", "FACE", x1, y1, z1, False, 0, Nothing, 0)   ← 面上的点选第 1 个面
+   swModelDocExt.SelectByID2("", "FACE", x2, y2, z2, True,  0, Nothing, 0)   ← Append=True 选第 2 个面
+③ swFeatureMgr.SetNetBlendCurveData 0, 0, 0, 0, 1, True
+   swFeatureMgr.SetNetBlendCurveData 0, 1, 0, 0.26179938779915, 1, True
+④ swFeatureMgr.SetNetBlendDirectionData 0, 32, 0, False, False
+   swFeatureMgr.SetNetBlendDirectionData 1, 32, 0, False, False
+⑤ swFeature = swFeatureMgr.InsertNetBlend(1, 2, 0, False, 0.0001, True, True, True, True, False, -1, -1, False, -1, False, …)
+```
+
+★★★ **三条只有示例才给得出的情报**（★ 本仓铁律 4 明写"例子给的是调用序"）：
+1. ★★ **入口是 `IFeatureManager::InsertNetBlend`** —— ★ **不叫** `InsertBoundaryBoss` ✗
+   ⇒ ★ 只查接口名会**查不到**（★ 这正是 `docs/official-docs-first.md` 记的那类坑）✓
+2. ★★ **两个面是"按面上的点"选的**（`SelectByID2("", "FACE", x,y,z, …)`）★ 且第二个用 **`Append=True`** ✓
+   ⇒ ★ 与我们的事实 32 一致（实体没有可用名字，只能按点选）✓
+3. ★★ **建之前必须先设数据**：`SetNetBlendCurveData` ×2 + `SetNetBlendDirectionData` ×2 ⇒ 再 `InsertNetBlend` ✓
+   ★（★ 角度 `0.26179938779915` ≈ **15°** 的弧度值 ⇒ ★ 说明该参数是**弧度**，★ 我们的工具要按**度**给用户、内部转弧度 ✓）
+
 ## 五、下一个动作（只写一条）
 
-★ **T-219-04（续）**：
-  1. ★ 读完示例**余下 60–119 行**（★ 拿"**选面那一段**"与"**建特征那个入口**"的**确切调用形态**）✓
-  2. ★ 读 `C:\swapi\types\IBoundaryBossFeatureData\` 各成员的签名 + `## Remarks`（★ 尤其建特征的入口名）✓
-  3. ★ 查 `docs/dead-ends.md` 与台账里 `surface_*` 的 `limitations`（★ 先扫走死的路）✓
-  4. ★ 写包装（★ `*_report` + **声明式选择**）⇒ 暴露 ⇒ 台账 ⇒ 契约测试 ⇒ ★ **真机验证** ✓
+★ **T-219-04（续，★ 配方已齐，可以动手了）**：
+  1. ★ 读 `C:\swapi\types\IFeatureManager\InsertNetBlend.md` + `SetNetBlendCurveData.md` /
+     `SetNetBlendDirectionData.md` 的**签名与 `## Remarks`**（★ 弄清每个实参的含义与枚举）✓
+  2. ★ 读 `docs/dead-ends.md` + 台账里 `surface_*` 的 `limitations`（★ 先扫走死的路）✓
+  3. ★ 写 `sw_*.py` 包装（★ 形态：★ **`*_report`** + **声明式选择**（`selection`/`selection_kind`，
+     ★ 选择紧邻调用）+ ★ 参数按**度**给、内部转弧度）✓
+  4. ★ 暴露 ⇒ 台账归属 ⇒ 契约测试 ⇒ ★ **真机验证**（`sw_guard.py`，用完关 SolidWorks）✓
   5. ★ 重跑地图 ⇒ ★ 特征 **27/28** · ★ 曲面 **14/14 = 100%**（★ 第 **7** 个 100% 的域）✓
 
 ★★ **两条元结论（★ 比单格要紧，写进规格）**：
