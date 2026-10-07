@@ -709,3 +709,24 @@ swModel.ClearSelection2(true);
    ★ 证据逐字：★ `faces=[0,7]` · ★ **特征树 22 → 23** · ★ **6.38 s** · ★ **0 弹窗** ✓
 2. ★ 把"**穷举面对**"写进实现（★ 让工具**自己找那一对** ✓ —— ★ 比让调用方猜强 ✓）
 3. ★ 暴露（★ 名字含 `weld_bead` ⇒ 命中关键词 ✓）+ 台账 + 契约测试 ⇒ 门禁绿 ⇒ 提交 ✓
+
+## ★★★★ 第 59 轮（续）：★ 最后一格的**能力在，缺"注入器"**
+
+★ 侦察读数：
+| ★ 项 | ★ 读数 |
+|---|---|
+| ★★ 模块 | ★★ **`scripts/sw_featureworks.py` 存在** ✓（★ 30 处 FeatureWorks ✓）· ★ `sw_api_fworks.py`（★ 3 处 ✓）|
+| ★★ 函数 | ★★ `recognize_and_create(featureworks, entity_type)` · `recognize_interactive(featureworks, target, option)` ·
+  `set_advanced_options` · `set_performance_options` · `read_featureworks_state` ✓ |
+| ★★ 缺口 | ★★ **识别类函数的首参都是 `featureworks`**（★ 不是 `model` ✗）
+  ⇒ ★ 参数绑定门禁要求 `inject` 与目标函数**形参名一致** ✓ ⇒ ★ **需要一个"注入器/薄包装"** ✓ |
+
+### ★★ 于是最后一格的路径已明确（★ 两步）
+1. ★★ **找到"怎么从一个文档拿到 FeatureWorks 对象"**（★ 即注入器要注入什么 ✓）
+   ★ 候选：★ `read_featureworks_state` 里可能暗示；★ 或本仓别处已有"取 add-in 对象"的写法 ✓
+2. ★ 写 `scripts/sw_feature_recognition.py`：★ `recognize_feature_report(model, *, entity_type=…)` ✓
+   ★ 形参**首参就叫 `model`** ✓（★ 门禁天然满足 ✓）⇒ ★ 暴露（★ 名字含 `feature_recognition` ⇒ 命中关键词 ✓）
+   ★ 判据：★ **特征树回读增量 ≥ 1**（★ 事实 8 ✓）⇒ ★ 真机 ⇒ ★ 过了才提 `level` ✓
+
+★★ 引一句本目标的红线：★ **"做不到如实写不做 + 原因"** ✓ —— ★ 而这一格**不是做不到** ✗，
+  ★ 是**"能力在、接不上注入"** ✓ ⇒ ★ 差的是**一个注入器**，★ 不是"官方没有" ✓
