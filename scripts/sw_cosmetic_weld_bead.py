@@ -116,5 +116,11 @@ def insert_cosmetic_weld_bead_report(
         "steps": steps,
         "official": "IFeatureManager::InsertCosmeticWeldBead（★ v1 标 Obsolete，★ 但官方示例用的就是它 ✓）",
         "units": "★ 入参毫米；COM 侧米（事实 2）✓",
-        "verification": "stitched —— ★ 尚未真机验证（★ 红线⑥：level 只按真机证据变）",
+        #: ★★★ 2026-10-07（规格 220 续 · 第 58 轮）★ **等级按真机证据提上来**（★ 红线⑥ 的正面用例 ✓）
+        #:   ★ 真机逐字（`tools/probe_spec220_cosmetic_bead.py`）：★ **6.38 s** · ★ **0 弹窗** · ★
+        #:   `sw_alive: true` · ★★ **`faces=[0,7]` ⇒ `ok=True`** · ★★ **特征树 22 → 23** ✓
+        #:   ★ 前置（★ 真机验过 ✓）：★ **两个体 + 贴合 + 不合并**（★ `merge=False` ✓）
+        #:   ★★ 判据 = **特征树回读增量 ≥ 1**（★ 事实 8 ✓）；★ 返回值 `None` **不代表失败** ✓
+        "verification": "verified —— ★ 真机建成（faces=[0,7] · 特征树 22→23 · 6.38 s · 0 弹窗）"
+                        "（★ 规格 220 续 第 57/58 轮；判据 = 特征树回读增量，事实 8）",
     }
