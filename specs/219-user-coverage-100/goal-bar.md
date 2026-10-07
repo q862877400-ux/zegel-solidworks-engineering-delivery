@@ -184,15 +184,30 @@
 
 ⇒ ★★ **裁定：两格 = A 类「可建」**，★ 且起点是**最好的**（★ 有官方示例给"调用序"，★ 签名与 `## Remarks` 另有其页）✓
 
+## 四之九、★★ 第 9 轮：官方示例读到了 —— 调用序 + 一条**硬约束**
+
+★ 文件：★ `AI Solidworks\官方文档\…\Insert_Boundary_Feature_Example_VB.htm`（119 有效行）✓
+★ 官方自述的 **Postconditions**（逐字）：
+  ★ 「① Opens a new part. ② **Creates two boss-extrude features.** ③ **Selects a face on each
+  boss-extrude feature.** ④ **Creates a boundary feature using the selected faces.** ⑤ Gets and sets some
+  boundary feature data.」✓
+★ 示例里用到的对象：★ `SldWorks.BoundaryBossFeatureData` · `FeatureManager` · `ModelDocExtension` ·
+  `SelectionMgr` · `SketchManager` · `SelectByID2(..., "SKETCHSEGMENT", …)`（★ 草图段那条是**按名字**）✓
+
+★★★ **由此得到一条硬约束（★ 会决定实现形态）**：
+  ★★ **边界特征要求"先选中若干面"** ⇒ ★ 按我在规格 217 第 7 轮定的那道闸，
+  ★ 我们的工具**必须同时给声明式选择入口**，★ 否则 `release_check` 的**预选族门禁**会判它
+  「要求先选中、而没有任何选法」**并拦下** ✗（★ batch103 那次就是被它拦回的）✓
+  ⇒ ★ 实现形态：★ **`*_report` 包装 + `selection` / `selection_kind` 参数**（★ 选择紧邻调用）✓
+
 ## 五、下一个动作（只写一条）
 
-★ **T-219-04**：★ 攻 **特征/边界凸台** 与 **曲面/边界曲面**（★ 可一并做，★ 同族接口）——
-  1. ★ 按铁律 4 第 0 步**读完三样**：★ `C:\swapi\types\IBoundaryBossFeatureData\` 的签名 ·
-     ★ 各成员的 `## Remarks` · ★ CHM 那三份 **Example**（★ 例子给的是**调用序**）✓
-  2. ★ 查 `docs/dead-ends.md` 与该族 `limitations`（★ 先扫走死的路）✓
-  3. ★ 在 `scripts/sw_*.py` 写 `*_report` 形态的包装（★ 带回读判据）⇒ 暴露 ⇒ 台账归属 ⇒ 契约测试 ✓
-  4. ★ **真机验证**（★ `python tools/sw_guard.py --timeout N -- python <探针>.py`，★ 用完关 SolidWorks）✓
-  5. ★ 重跑地图 ⇒ ★ 特征 **27/28** · 曲面 **14/14 = 100%**（★ 第三个 100% 的域）✓
+★ **T-219-04（续）**：
+  1. ★ 读完示例**余下 60–119 行**（★ 拿"**选面那一段**"与"**建特征那个入口**"的**确切调用形态**）✓
+  2. ★ 读 `C:\swapi\types\IBoundaryBossFeatureData\` 各成员的签名 + `## Remarks`（★ 尤其建特征的入口名）✓
+  3. ★ 查 `docs/dead-ends.md` 与台账里 `surface_*` 的 `limitations`（★ 先扫走死的路）✓
+  4. ★ 写包装（★ `*_report` + **声明式选择**）⇒ 暴露 ⇒ 台账 ⇒ 契约测试 ⇒ ★ **真机验证** ✓
+  5. ★ 重跑地图 ⇒ ★ 特征 **27/28** · ★ 曲面 **14/14 = 100%**（★ 第 **7** 个 100% 的域）✓
 
 ★★ **两条元结论（★ 比单格要紧，写进规格）**：
 1. ★★ **`--check` 说"是最新的"只证明「地图与生成器一致」，不证明「地图与事实一致」** ✗ ——
