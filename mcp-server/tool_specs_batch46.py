@@ -33,8 +33,20 @@ SPECS_BATCH46 = [
         params=[
             Param("arc_option", int, default=1,
                   description="圆弧距离口径：0 = 中心到中心 · 1 = 最小距离 · 2 = 最大距离（官方示例给的语义）"),
+            #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-07）**加声明式选区入口** ——
+            #:   ★ 起因：★ 本工具的语义**就是"量调用方选中的东西"**，★ 而解析器**会清空选区**（事实 503）
+            #:     ⇒ ★ 模型**没法**把要量的东西选好 ⇒ ★ 经工具层**必然失败** ✗
+            #:   ★★ 与圆顶那次不同：★ 圆顶"给哪个面"可以随便定，★ 而**"量什么"是调用方的意图**
+            #:     ⇒ ★★ **绝不能由函数乱造** ⇒ ★ 让调用方**声明**（规则 3）✓
+            Param("selection", str, description="★ 声明式选择器（规则 3：不收坐标）：`index:<n>` 或 "
+                                                "`__current_selection__`。",
+                  required=False, default=""),
+            Param("selection_kind", str, description="`FACE` / `EDGE` / `VERTEX`（★ 与你要量的对象一致）。",
+                  required=False, default="FACE"),
         ],
-        doc="★ **量当前选中的实体**（逐几何量测）—— 走 `IModelDocExtension.CreateMeasure` → `IMeasure`。"
+        doc="★ **量声明式选区里的实体**（逐几何量测）—— 走 `IModelDocExtension.CreateMeasure` → `IMeasure`。"
+            "★★ **用 `selection` + `selection_kind` 说明量什么**（★ 规则 3：**不收坐标**；"
+            "★ 函数在**注入之后**自己重建选区 —— ★ 事实 503：注入解析器会清空选区）。"
             "★ 调用序照官方示例：`Extension` → `CreateMeasure` → 设 `ArcOption` → `Calculate` → 读数。"
             "★ 回的 `values` 含 `distance` / `normal_distance` / `angle` / `length` / `area` / `perimeter` / "
             "`delta_x` / `delta_y` / `delta_z` 等；判定含 `is_intersect` / `is_parallel` / `is_perpendicular`。"

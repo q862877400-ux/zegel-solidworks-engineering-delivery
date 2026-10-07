@@ -64,7 +64,8 @@ MEASURE_FLAGS = (
 )
 
 
-def measure_selection_report(model, arc_option: int = 1) -> dict:
+def measure_selection_report(model, arc_option: int = 1,
+                             selection: str = "", selection_kind: str = "FACE") -> dict:
     """★ **量当前选中的实体**（★ 走 `IModelDocExtension.CreateMeasure` → `IMeasure`）。
 
     ★ 调用序**照官方示例**：★ `Extension` → `CreateMeasure` → 设 `ArcOption` → `Calculate(Nothing)` → 读。
@@ -85,6 +86,23 @@ def measure_selection_report(model, arc_option: int = 1) -> dict:
         return {"ok": False, "stage": "validate",
                 "error": "arc_option 只能是 **0 / 1 / 2**（★ 官方示例给的语义）；收到 %r" % arc_option}
     from sw_connect import get_com_member as _get
+    #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-07）先按声明式选择器**重建**选区 ——
+    #:   ★ 起因：★ 本函数的语义**就是"量调用方选中的东西"**，★ 而**注入解析器会清空选区**（**事实 503**）
+    #:     ⇒ ★ 模型**没有任何办法**把要量的东西选好 ⇒ ★ 经工具层**必然失败** ✗
+    #:     （★ 预选族基线把它归在「真危险·显式拒」—— ★ 而"显式拒"只是"失败**可见**"、★ **不是"能用"**）✓
+    #:   ★★ **与 `insert_dome` 那次不同**：★ 圆顶的"给哪个面"可以随便定，
+    #:     ★ 而这里"**量什么**"是**调用方的意图** ⇒ ★★ **绝不能由函数乱造**（★ 造了量出来的就不是你要的）✗
+    #:     ⇒ ★ 正解：★ **让调用方声明**（★ 规则 3 的"声明式选择"）✓
+    #:   ★★ 选在**读计数之前** ⇒ ★ 后面那段"计数 0 就报错"**原样保留**（★ 它现在是一条**真实的回读判据**）✓
+    if str(selection or "").strip():
+        import sw_selection_spec as _SS
+        try:
+            _SS.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
+        except Exception as exc:                                   # noqa: BLE001
+            return {"ok": False, "stage": "selection", "selected_count": 0,
+                    "error": "选区未建立：%s: %s（★ 前置未成立、★ 与「量不出来」是两件事）"
+                             % (type(exc).__name__, str(exc)[:140]),
+                    "selection": str(selection), "selection_kind": str(selection_kind)}
     #: ★ ① 选中了几何？★ 回读计数（★ 事实 8：不信返回值）
     try:
         sel_n = int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", -1))

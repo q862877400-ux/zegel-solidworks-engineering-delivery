@@ -9,7 +9,8 @@
   "★ 生成口径：`python scripts/check_preselect_family.py --report` 可重算全表 ✓",
   "★★★ 2026-10-07（接手轮 · 规格 216 T-216-05）**移出 2 条**（14 → 12）—— ★ `solidworks_assembly_suppress_component` 与 `solidworks_insert_form_tool`：★ **不是「修好了」，而是当初就被误报** ✗ —— ★ 逐条读函数体发现它们**自己就会选**：前者逐字 `_select_by_id(asm_model.Extension, component_name, \"COMPONENT\")`，后者逐字 `SS.select_entity_by_index(model, \"FACE\", int(face_index))` **且随后回读计数、为 0 就报错** ✓ ★★ 而门禁的 `SELF_SELECT` 当时只认裸 COM 调用（`SelectByID2` / `Select4(` …）⇒ ★ 于是「自己会选」被误报成「没人能选」✗ ⇒ 已把那几个**本仓自己的助手名**补进 token 集 ✓ ⚠ 与 `audit_byref_args.BYREF_OK`（只认裸名）· `check_probe_reuse`（判据过宽）**同型**：★★ **判据必须覆盖「本仓自己常用的写法」** ✓",
   "★★★ 2026-10-07（接手轮 · 规格 216 T-216-06b）**移出 1 条**（12 → 11）—— ★ `solidworks_part_insert_dome`：★ **这一条是真修好的**（★ 与上一次那 2 条「当初被误报」不同）✗→✓ —— ★ 官方 `InsertDome` 的 Remarks 逐字要求「select the face for the dome using a **selection mark of 1**」，★ 而注入解析器**会清空选区**（事实 503）⇒ ★ 模型**没有任何办法**在调工具前把面选好 ✗ ★ 修法：★ 新增**声明式** `face_index` 入参（★ 规则 3 **不许收裸坐标**）+ 函数内自选（`sw_part.select_face_by_index_mark1`，★ 形态照**既有冒烟 9/9** 那一串：先按点 mark=0 选 → `ClearSelection2(True)` → 再 mark=1）✓ ★★ **真机复验**（`tools/sw_guard.py` 护栏内，6.0 s / 0 弹窗）：★ `insert_dome_report(doc, 8.0, face_index=0)` ⇒ `ok=True`、★ **特征树增量 `['圆顶1']`**（7→8）；★ 反例 `face_index=999` ⇒ **响亮报错**「前置未成立、与『圆顶建不出来』是两件事」✓ ★★ 而本门禁**自动跟着变**（命中 12→11）—— ★ 这正是**棘轮双向**的意义：★ 修好了就必须离开名单，★ 不许让名单里躺着已修项 ✓",
-  "★★★ 2026-10-07（接手轮 · 规格 216）**移出 1 条**（11 → 10）—— `solidworks_insert_reference_point`：★ 台账逐字「点（InsertReferencePoint）要先选实体，而选面必须紧接着调用」；★ 而注入解析器会清空选区（事实 503）⇒ 模型没法在调工具前选好 ✗ ⇒ 修法：新增声明式 selection/selection_kind 入参 + 函数**紧邻调用之前**自己选（resolve_selection）✓ ★★ 真机复验（走护栏，0 弹窗）：insert_reference_point(doc, 4, selection='index:0', selection_kind='FACE') ⇒ ok=True、★ 特征树增量 ['点1']（7→8）；反例 index:99 ⇒ 响亮报错「前置未成立、与『点建不出来』是两件事」✓"
+  "★★★ 2026-10-07（接手轮 · 规格 216）**移出 1 条**（11 → 10）—— `solidworks_insert_reference_point`：★ 台账逐字「点（InsertReferencePoint）要先选实体，而选面必须紧接着调用」；★ 而注入解析器会清空选区（事实 503）⇒ 模型没法在调工具前选好 ✗ ⇒ 修法：新增声明式 selection/selection_kind 入参 + 函数**紧邻调用之前**自己选（resolve_selection）✓ ★★ 真机复验（走护栏，0 弹窗）：insert_reference_point(doc, 4, selection='index:0', selection_kind='FACE') ⇒ ok=True、★ 特征树增量 ['点1']（7→8）；反例 index:99 ⇒ 响亮报错「前置未成立、与『点建不出来』是两件事」✓",
+  "★★★ 2026-10-07（接手轮 · 规格 216）**移出 2 条**（10 → 8）—— `solidworks_measure_selection`、`solidworks_part_axis`：★ 这两条是**真修好的**（不是误报）：measure_selection（B 型）与 part_axis（D 型）。★ 修法 = 加**声明式选区入参**（selection / selection_kind；★ 规则 3 禁裸坐标）+ 在**读计数之前**由函数自己重建选区（★ 事实 503：注入解析器会清空选区）✓ ★★ 与圆顶那次的**区别**：★ 圆顶'给哪个面'可以随便定，★ 而'量什么/用哪个几何建轴'是**调用方的意图** ⇒ ★ 绝不能由函数乱造 ⇒ 让调用方声明 ✓ ★★ 真机复验（走护栏）：① measure_selection_report(doc, selection='index:0', selection_kind='FACE') ⇒ ok=True · selected_count=1 · applicable=['area','perimeter']；反例 index:99 ⇒ 响亮报错「前置未成立、与『量不出来』是两件事」✓ ② create_axis_report(doc, selection='index:0', selection_kind='FACE')（圆柱面）⇒ ok=True · ★ 特征树增量 ['基准轴1'] ✓"
  ],
  "entries": [
   {
@@ -32,20 +33,6 @@
    "function": "section_properties",
    "verdict": "真危险·官方前置",
    "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
-  },
-  {
-   "tool": "solidworks_measure_selection",
-   "module": "sw_measure",
-   "function": "measure_selection_report",
-   "verdict": "真危险·显式拒",
-   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体 `GetSelectedObjectCount2` ＋ 计数为 0 即 `preconditions_held=False` ⇒ ★ 经工具层**必然失败**（★ 失败**可见**，不是静默）✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
-  },
-  {
-   "tool": "solidworks_part_axis",
-   "module": "sw_part",
-   "function": "create_axis_report",
-   "verdict": "真危险·显式拒",
-   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体 `GetSelectedObjectCount2` ＋ 计数为 0 即 `preconditions_held=False` ⇒ ★ 经工具层**必然失败**（★ 失败**可见**，不是静默）✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
   },
   {
    "tool": "solidworks_part_insert_composite_curve",

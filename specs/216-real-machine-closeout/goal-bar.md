@@ -2,7 +2,28 @@
 
 > ★★ **本文件是唯一进度字段** —— 进度只看上面那一行。
 
-**阶段：★★★ A 型两条可修的都修好并真机复验（圆顶 `+圆顶1` · 参考点 `+点1`）· ★★ **T-216-06c 完成**（`insert_composite_curve` **改判为「已定性·后端墙（不修）」** ⇒ 不再算待修）· ★ 预选族 **12 → 10**（两条真修 + 0 条移出；改判那条**仍留在名单里**——★ 判据上它**确实还命中**）· ★ 剩余：**B 型 3 条 / D 型 3 条**（★ 加声明式选区入参）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-07**（B 型 3 条）
+**阶段：★★★ 预选族 **12 → 8**：★ 真修好 **4 条**（圆顶 `+圆顶1` · 参考点 `+点1` · 测距 `ok+area` · **参考轴 `+基准轴1`**）· ★ 改判 1 条（composite_curve 后端墙）· ★ 误报移出 2 条 · ★ 剩余 **8 条**：`selection_point`(B) · `drawing_insert_balloons`(B/D) · `sketch_stretch` · `section_properties` · `assembly_dissolve` · topology `demold`/`symmetry`（D）· `composite_curve`（★ 已裁定不修）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-07b**（余下 6 条按同一形状改）
+
+---
+
+## ★★ T-216-07 的首批（★ 2026-10-07 · B 型 1 条 + D 型 1 条）
+
+★ 读数与修法见 [recon/bd-declarative-selection.md](recon/bd-declarative-selection.md) ✓
+
+| 型 | 工具 | ★ 真机读数 |
+|---|---|---|
+| **B** | `measure_selection` | ★ `ok=True` · `selected_count=1` · `applicable=['area','perimeter']`（★ 反例 `index:99` ⇒ 响亮报错）✓ |
+| **D** | `part_axis` | ★ `ok=True` · ★ **特征树增量 `['基准轴1']`**（★ 并查明圆柱面 = `index:0`）✓ |
+
+★★ **与圆顶那次的区别（★ 定义 B/D 型的理由）**：★ 圆顶"给哪个面"**可以随便定**；
+★ 而 **"量什么 / 用哪个几何建轴"是调用方的意图** ⇒ ★ **绝不能由函数乱造**（★ 造了的话结果不是你要的、
+★ 而且**看不出来**）⇒ ★ 这六条**一律让调用方声明** ✓
+
+★★ **顺带发现（★ 已记档、本轮未动）**：★ `sw_part.sketch()` 是**上下文管理器**（必须 `with`）；
+★ 且**本模块长度单位是毫米**（★ 它 docstring 逐字警告「不要写 `mm(25)`」）——
+★ 而仓库自己的 `tools/verify_costing_e2e.py` **两样都没按这个来**，★ 却**跑得出真结果**
+⇒ ★ 说明**有些助手容忍、有些不容忍**（`sketch_circle` 有守卫、`sketch_corner_rectangle` 没有）⇒ ★ **列入待查** ✓
+
 
 ---
 

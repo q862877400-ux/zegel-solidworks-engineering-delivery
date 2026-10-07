@@ -43,12 +43,23 @@ SPECS_BATCH49 = [
         params=[
             Param("reverse", bool, default=True,
                   description="官方第一参数（`InsertAxis2(Reverse)`）；★ 真机 True 有效"),
+            #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-07）**加声明式选区入口** ——
+            #:   ★ 起因：★ 函数**读当前选区**、★ 计数 0 就报错 ⇒ ★ 而解析器**会清空选区**（事实 503）
+            #:     ⇒ ★ 模型**没法**在调工具前选好 ⇒ ★ 经工具层**必然失败** ✗
+            #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 收选择器 + 实体种类 ✓
+            Param("selection", str, description="★ 声明式选择器（规则 3：不收坐标）：`index:<n>` 或 "
+                                                "`__current_selection__`；★ 空串=不选（则要求调用方已选，"
+                                                "★ 而注入后通常为空）。",
+                  required=False, default=""),
+            Param("selection_kind", str, description="`FACE` / `EDGE` / `VERTEX` —— ★ 可作轴参照的几何："
+                                                     "**圆柱面 / 圆锥面 / 两点**（★ 官方）。",
+                  required=False, default="FACE"),
         ],
-        doc="★ **从当前选中的几何建一条参考轴** —— 走 `IModelDoc2.InsertAxis2`"
+        doc="★ **从声明式选区建一条参考轴** —— 走 `IModelDoc2.InsertAxis2`"
             "（★ **注意入口在 `IModelDoc2` 上**，不在 `IFeatureManager` 上；★ 真机调后者报"
             "`AttributeError: <unknown>.InsertAxis2`）。"
-            "★ 官方要求**先选中**几何（★ 圆柱面 / 圆锥面 / 两点等 —— ★ 面没有名字，"
-            "按**面上的对象**选，事实 32）。"
+            "★★ 用 `selection` + `selection_kind` 说明用哪个几何（★ 规则 3：**不收坐标**；"
+            "★ 函数会在**注入之后**自己重建选区 —— ★ 事实 503：注入解析器会清空选区）。"
             "★★ 判据（★ 事实 242 挑只依赖被测对象的那个）：**它回 `True`** **且** "
             "**特征树出现新特征**（★ 真机：`基准轴1`）—— ⚠ **不要读返回值的 `.Name`**："
             "真机证明它回的是 **`bool`**，读 `.Name` 会报 `'bool' object has no attribute 'Name'`"

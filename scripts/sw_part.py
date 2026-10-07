@@ -2229,17 +2229,36 @@ for _fn in _SKETCH_DRAWING_FUNCS:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def create_axis_report(model, reverse: bool = True) -> dict:
+def create_axis_report(model, reverse: bool = True,
+                       selection: str = "", selection_kind: str = "FACE") -> dict:
     """★ **从当前选中的几何建参考轴**（`IModelDoc2.InsertAxis2`）。
 
     ★ 真机事实（2026-10-01 · 轮 317）：
       · ★ **入口在 `IModelDoc2`** —— ★ 调 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`；
       · ★ **返回 `bool`** —— ★ 所以**判据是"特征树多了新特征"**，★ 不是"返回值有 Name"；
       · ★ 阵列要用它：★ 官方 mark 表 `1 = 方向轴`。
+
+    ★★ 2026-10-07（接手轮 · 规格 216 T-216-07）**加声明式选区入口** ——
+      ★ 起因：★ 本函数**读当前选区**、★ 计数 0 就报错（★ 失败**可见**）⇒ ★ 而**注入解析器会清空选区**
+        （**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前选好 ⇒ ★ 经工具层**必然失败** ✗
+        （★ 预选族基线把它归在「真危险·显式拒」—— ★ "显式拒"不等于"能用"）✓
+      ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**声明式选择器 + 实体种类**：
+        ★ `index:<n>` / `__current_selection__`；★ 可作轴参照的几何（★ 官方）：**圆柱面 / 圆锥面 / 两点** ✓
+      ★★ 选在**读计数之前** ⇒ ★ 后面那段"计数 0 就报错"**原样保留**（★ 它现在是一条**真实的回读判据**）✓
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}
     from sw_connect import get_com_member as _get
+    #: ★★★ 先按声明式选择器**重建**选区（★ 必须在读计数之前；★ 事实 503：注入已把它清空）✓
+    if str(selection or "").strip():
+        import sw_selection_spec as _SS
+        try:
+            _SS.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
+        except Exception as exc:                                   # noqa: BLE001
+            return {"ok": False, "stage": "selection", "selected_count": 0,
+                    "error": "选区未建立：%s: %s（★ 前置未成立、★ 与「轴建不出来」是两件事）"
+                             % (type(exc).__name__, str(exc)[:140]),
+                    "selection": str(selection), "selection_kind": str(selection_kind)}
     try:
         sel_n = int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", -1))
     except Exception:                                          # noqa: BLE001
