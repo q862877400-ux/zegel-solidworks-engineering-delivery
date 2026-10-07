@@ -173,12 +173,26 @@
 | 其他 | 11/12 = 92% | ★ 1（PDM **无 API/需许可**）|
 | **合计** | ★★ **137/145 = 94%** | ★ **8** |
 
+## 四之八、★★★ 第 8 轮：边界凸台 / 边界曲面 **可建**，且**官方有现成示例**（T-219-04 的门已过）
+
+| 证据 | ★ 内容 |
+|---|---|
+| ★★ 接口目录**存在** | ★ `C:\swapi\types\` 下有 **`IBoundaryBossFeatureData`** ✓（★ 同族另有 `ILoftedBendsFeatureData` / `ILoftFeatureData`）|
+| ★★ 官方 **Example**（CHM 解包，★ 铁律 4 第 0 步的第 ③ 样）| ★ `Insert_Boundary_Feature_Example_CSharp.htm`（★ + `_VB` / `_VBNET`）✓<br>★ `Insert_Boundary_Surface_Feature_Example_VB.htm` ✓<br>★ `Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.htm` ✓ |
+| ★ 仓库现状 | ★ `IBoundaryBossFeatureData` **只出现在** `scripts/sw_api_sldworks.py`（**反射转储**）里 ⇒ ★ **没有实现** ✓ |
+| ★ 命名含 Boundary 的成员（★ 别误认）| ★ `IFillSurfaceFeatureData.GetPatchBoundary*` · `IWeldmentTrimExtendFeatureData.GetTrimmingBoundary*` · `ISketchManager.CreateBoundaryHatch` · `IFeatureManager.SetFreeformBoundaryContinuity` ⇒ ★ **都不是**边界凸台/边界曲面 ✗ |
+
+⇒ ★★ **裁定：两格 = A 类「可建」**，★ 且起点是**最好的**（★ 有官方示例给"调用序"，★ 签名与 `## Remarks` 另有其页）✓
+
 ## 五、下一个动作（只写一条）
 
-★ **T-219-04**：★ **边界凸台 / 边界曲面**（★ 两格可一并攻）⇒ ★ 先按铁律 4 第 0 步**逐字读官方页**
-  （★ 候选接口：`IBoundaryBossFeatureData` 一族；★ 若官方索引里没有 ⇒ ★ 按 `CAP_ONLY` 的先例**换路径或如实写不做**）✓
-  ★★ 注意：★ 第 5 轮我搜到的 `GetPatchBoundary` / `PatternFillBoundaryArray` / `SetFreeformBoundaryContinuity`
-     **不是** `IBoundaryBossFeatureData` ⇒ ★ **要继续往深查**（★ 别名/别的拼写），★ 查不到就说查不到 ✓
+★ **T-219-04**：★ 攻 **特征/边界凸台** 与 **曲面/边界曲面**（★ 可一并做，★ 同族接口）——
+  1. ★ 按铁律 4 第 0 步**读完三样**：★ `C:\swapi\types\IBoundaryBossFeatureData\` 的签名 ·
+     ★ 各成员的 `## Remarks` · ★ CHM 那三份 **Example**（★ 例子给的是**调用序**）✓
+  2. ★ 查 `docs/dead-ends.md` 与该族 `limitations`（★ 先扫走死的路）✓
+  3. ★ 在 `scripts/sw_*.py` 写 `*_report` 形态的包装（★ 带回读判据）⇒ 暴露 ⇒ 台账归属 ⇒ 契约测试 ✓
+  4. ★ **真机验证**（★ `python tools/sw_guard.py --timeout N -- python <探针>.py`，★ 用完关 SolidWorks）✓
+  5. ★ 重跑地图 ⇒ ★ 特征 **27/28** · 曲面 **14/14 = 100%**（★ 第三个 100% 的域）✓
 
 ★★ **两条元结论（★ 比单格要紧，写进规格）**：
 1. ★★ **`--check` 说"是最新的"只证明「地图与生成器一致」，不证明「地图与事实一致」** ✗ ——
