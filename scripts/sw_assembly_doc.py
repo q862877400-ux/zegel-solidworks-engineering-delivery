@@ -375,11 +375,36 @@ def hide_component(doc, hidden: bool = True) -> int:
         doc, "HideComponent" if hidden else "ShowComponent"))
 
 
-def dissolve_assembly(doc) -> int:
+def dissolve_assembly(doc, component_name: str = "") -> int:
     """解散子装配。
 
     ⚠ 官方是 ``DissolveSubAssembly()``，**没有** ``DissolveAll``。
+
+    ★★ 2026-10-07（接手轮 · 规格 216 T-216-07k）**加声明式组件名入口** ——
+      ★ 起因：★ 官方前置是**先选中要解散的那个子装配组件**，★ 而**注入解析器会清空选区**
+        （**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前选好 ⇒ ★ 缺选区时它**静默失败**
+        （★ 预选族基线把它归在「**最隐蔽的一档**」）✗
+      ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**组件名**（★ 名字不是坐标）✓
+      ★ 选法照本仓既有形态：`sw_assembly._select_by_id(ext, <名>, "COMPONENT")`（★ 同 `suppress_component`）✓
+      ★★ 选在**紧邻 `DissolveSubAssembly` 之前** —— ★ 中间不许插别的动选区的步骤 ✓
+      ★★★ 2026-10-07 **上一轮撤回、本轮重上**：★ 上一轮撤回是因为**夹具建不出来**
+        （★ 真机 `add_component` 插 `.sldasm` 回 `None`）⇒ ★ 而本轮查明**那是护栏沙盒造成的**
+        （★ 它会把输入文件**拷贝/改名** ⇒ 进程刚写的路径与 COM 看到的不是同一份）⇒
+        ★ 关掉沙盒后**子装配插得进去了**（★ 真机：`已添加组件: …sub.sldasm`）⇒ ★ 故本改动现在可验证 ✓
+    :raises RuntimeError: ★ 给了名字但**选区没建起来** ⇒ ★ 响亮报错（★ 事实 8：判据只有回读）✓
     """
+    if str(component_name or "").strip():
+        from sw_assembly import _select_by_id
+        ext = get_com_member(doc, "Extension")
+        if ext is None:
+            raise RuntimeError("取不到 doc.Extension ⇒ ★ 选不了组件（★ 前置未成立）")
+        _select_by_id(ext, str(component_name), "COMPONENT", append=False, mark=0)
+        got = int(get_com_member(get_com_member(doc, "SelectionManager"),
+                                "GetSelectedObjectCount2", -1) or 0)
+        if got <= 0:
+            raise RuntimeError(
+                "★ 选组件未成立：按名字 %r 选之后**计数仍为 0** ⇒ ★ 这是**前置未成立**"
+                "（★ 与「解散不了」是两件事）" % str(component_name))
     return int(call_assembly_doc(doc, "DissolveSubAssembly"))
 
 

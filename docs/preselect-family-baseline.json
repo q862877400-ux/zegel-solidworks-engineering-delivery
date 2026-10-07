@@ -12,16 +12,10 @@
   "★★★ 2026-10-07（接手轮 · 规格 216）**移出 1 条**（11 → 10）—— `solidworks_insert_reference_point`：★ 台账逐字「点（InsertReferencePoint）要先选实体，而选面必须紧接着调用」；★ 而注入解析器会清空选区（事实 503）⇒ 模型没法在调工具前选好 ✗ ⇒ 修法：新增声明式 selection/selection_kind 入参 + 函数**紧邻调用之前**自己选（resolve_selection）✓ ★★ 真机复验（走护栏，0 弹窗）：insert_reference_point(doc, 4, selection='index:0', selection_kind='FACE') ⇒ ok=True、★ 特征树增量 ['点1']（7→8）；反例 index:99 ⇒ 响亮报错「前置未成立、与『点建不出来』是两件事」✓",
   "★★★ 2026-10-07（接手轮 · 规格 216）**移出 2 条**（10 → 8）—— `solidworks_measure_selection`、`solidworks_part_axis`：★ 这两条是**真修好的**（不是误报）：measure_selection（B 型）与 part_axis（D 型）。★ 修法 = 加**声明式选区入参**（selection / selection_kind；★ 规则 3 禁裸坐标）+ 在**读计数之前**由函数自己重建选区（★ 事实 503：注入解析器会清空选区）✓ ★★ 与圆顶那次的**区别**：★ 圆顶'给哪个面'可以随便定，★ 而'量什么/用哪个几何建轴'是**调用方的意图** ⇒ ★ 绝不能由函数乱造 ⇒ 让调用方声明 ✓ ★★ 真机复验（走护栏）：① measure_selection_report(doc, selection='index:0', selection_kind='FACE') ⇒ ok=True · selected_count=1 · applicable=['area','perimeter']；反例 index:99 ⇒ 响亮报错「前置未成立、与『量不出来』是两件事」✓ ② create_axis_report(doc, selection='index:0', selection_kind='FACE')（圆柱面）⇒ ok=True · ★ 特征树增量 ['基准轴1'] ✓",
   "★★★ 2026-10-07（接手轮 · 规格 216）**移出 2 条**（8 → 6）—— `solidworks_section_properties`、`solidworks_selection_point`：★ 这两条是**真修好的**：selection_point（诊断型）与 section_properties（官方前置）。★ 修法 = 加**声明式选区入参**（selection / selection_kind；规则 3 禁裸坐标）+ 在**读选区之前**由函数自己重建选区（★ 事实 503：注入解析器会清空选区）✓ ★★ 真机复验（走护栏，100x60x20 mm 板）：① selection_point(doc, selection='index:0', selection_kind='FACE') ⇒ ok=True · selection_count=1 · point_mm=(-50.0, 0.0, -10.0)；反例 index:99 ⇒ 响亮报错「前置未成立、与『取不到点』是两件事」✓ ② section_properties(doc, selection='index:0', selection_kind='FACE') ⇒ ok=True · status=0.0 · area=1200.0（★ 恰是 60x20 端面面积，与几何精确对上）· entry_used=GetSectionProperties2(property)；反例 ⇒ 响亮报错「前置未成立、与『求不出截面属性』是两件事」✓ ★ 注意顺序：section_properties **自己有『清空并重写选择集』的副作用**，故『选一次、读一次』这个配对不能被打断 ✓",
-  "★★★ 2026-10-07（接手轮 · 规格 216）**移出 1 条**（6 → 5）—— `solidworks_sketch_stretch_entities`：★ 这一条**只修好了"
+  "★★★ 2026-10-07（接手轮 · 规格 216）**移出 1 条**（6 → 5）—— `solidworks_sketch_stretch_entities`：★ 这一条**只修好了",
+  "★★★ 2026-10-07（接手轮 · 规格 216）**移出 1 条**（5 → 4）—— `solidworks_assembly_dissolve`：★ 第 8 条真修好的：assembly_dissolve（官方前置）★ 修法 = 加**声明式组件名** component_name（★ 规则 3：名字不是坐标）+ 用本仓既有形态 sw_assembly._select_by_id(ext, <名>, 'COMPONENT') 在**紧邻 DissolveSubAssembly 之前**选 + **回读计数**判据（★ 事实 8：不信返回值）★ ★★ 真机复验（走护栏 + 关掉沙盒那一层）：正例 dissolve_assembly(asm, component_name='sub-1') ⇒ 返回值 1、★ **组件从 ['sub-1'] 变成 ['p-1']**（子装配真被解散、其零件升为顶层）✓；反例 '__no_such_component__' ⇒ 响亮报错『选组件未成立：计数仍为 0 ⇒ 前置未成立、与「解散不了」是两件事』✓ ★★ 上一轮曾**撤回**过这同一处改动（当时夹具建不出来）⇒ 而本轮查明那是**护栏沙盒**造成的（它把输入文件拷贝/改名）⇒ 关掉沙盒后夹具可建、改动可验 ✓"
  ],
  "entries": [
-  {
-   "tool": "solidworks_assembly_dissolve",
-   "module": "sw_assembly_doc",
-   "function": "dissolve_assembly",
-   "verdict": "真危险·官方前置",
-   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
-  },
   {
    "tool": "solidworks_drawing_insert_balloons",
    "module": "sw_drawing_create_missing",
