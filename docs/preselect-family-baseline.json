@@ -51,8 +51,8 @@
    "tool": "solidworks_part_insert_composite_curve",
    "module": "sw_part",
    "function": "insert_composite_curve_report",
-   "verdict": "真危险·官方前置",
-   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+   "verdict": "已定性·后端墙（★ 不修 —— 不是「待修」）",
+   "reason": "★★★ 2026-10-07（接手轮 · 规格 216 T-216-06c）**改判：这一条不修** —— ★ 原来它被登记为「待修工作项」，★ 而**读台账之后结论变了**：★ 不是「没找到修法」，★ 而是**这条路在本后端上被证明走不通** ✗ ⇒ ★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓ ★★ **改判依据（台账 `part_and_features` 逐字，已按事实 53 强停）**：「累计 **6 种选法全部失败**（草图整体 / 实体边 / 草图段 × 各两种选法）⇒ ★★★ **卡点查明**：`IEntity.Select4` **没有 mark 参数**（选完 mark 仍是 0），而 `SelectByID2` 需要**名字**、**边与草图段都没有名字** ⇒ ★★ 「选中 2 个实体 + mark=1」这个官方前提，**在这条后端上我没能同时满足**」；★ 另：「官方入口 `IModelDoc2.InsertCompositeCurve()`（**零参**、回 Boolean，Remarks 要求用 **mark=1** 选实体），★ 真机上它返回 **False**」✓ ⇒ ★★ 故**它的修法不是「补选区」** —— ★ 补了也过不去（★ 同一堵墙）✗ ⇒ ★ 处置：★ **如实记为能力缺口**（★ 与 `animation_export` 的 AVI 同型：★ 边界已定位、★ 记 limitations、★ 保留工具以便诊断）✓"
   },
   {
    "tool": "solidworks_selection_point",
