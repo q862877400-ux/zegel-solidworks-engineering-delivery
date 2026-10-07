@@ -145,8 +145,15 @@ SELF_SELECT = re.compile(
     #:     `check_probe_reuse`（判据过宽）**同型** ⇒ ★★ **判据必须覆盖"本仓自己常用的写法"** ✓
     #:   ⚠ 边界（★ 刻意写清）：★ 这里**只加名字**、不加语义 —— ★ 若某函数**调用了**助手却仍
     #:     **没选够**（例如只选了 1 个而需要 2 个），★ 本道**看不见** ⇒ ★ 那一类要靠**真机验证** ✓
-    r"_select_by_id|select_entity_by_index|_select_faces_for|_select_com_object|"
-    r"select_component_by_name",
+    r"_select_by_id|_select_faces_for|_select_com_object|select_component_by_name|"
+    #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b）**改成「命名约定」而不是逐个点名** ——
+    #:   ★ 起因：★ 我给圆顶新写的自选助手叫 `sw_part.select_face_by_index_mark1` ⇒
+    #:     ★ 逐个点名的名单**必然漏**（★ 本仓 `sw_selection_spec` 里就有 `select_object` /
+    #:     `select_entity_by_index` / `select_by_selector_report` / `select_face_at` … 一族）✗
+    #:   ★★ 而本仓的约定是：**凡 `select_*` 函数，就是"把选择交给一个具名助手"** ⇒
+    #:     ★ 目标函数里出现 `select_xxx(` ⇒ ★ **它自己会选** ✓
+    #:   ⚠ 仍然**不是**放宽到任意调用：★ 必须真的叫 `select_…(`（★ 带左括号 = 是**调用**、不是提及）✓
+    r"select_[a-z0-9_]+\s*\(",
     re.I)
 
 _MODULE_CACHE: dict = {}

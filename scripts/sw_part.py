@@ -2056,9 +2056,77 @@ def rib_report(model, sketch_name: str, thickness_mm: float, feature_name: str =
                            lambda: rib(model, sketch_name, float(thickness_mm), direction), "rib")
 
 
+def select_face_by_index_mark1(model, face_index: int = 0) -> int:
+    """★ 按**面序号**选中一个面并置 **mark=1**，回**回读到的 mark=1 计数**。
+
+    ★★★ 2026-10-07（接手轮 · 规格 216 T-216-06b）**为什么要这个函数**：
+      ★ **官方 `IModelDoc2.InsertDome` 的 `## Remarks` 逐字**：
+        「Before using this method, you must select the face for the dome
+          using a **selection mark of 1**.」✓
+      ★★ 而传 mark=0 时 `InsertDome` 报 **`0x8002000F`（`DISP_E_PARAMNOTOPTIONAL`）** ——
+        ★ **那个错误看不出是 mark 的问题**（台账已记，与事实 33 同一类坑）✗
+      ★★ 更根本的一条（**事实 503**）：★ 注入解析器 `RESOLVERS['model']` **会清空选区**
+        ⇒ ★ 「调用方先选好、再调工具」**经 MCP 表面不可能成立** ✗
+        ⇒ ★ 所以"选面"这步**必须由函数自己做** ✓
+
+    ★★ **形态照既有冒烟（9/9）逐字**（`tools/verify_dome_smoke.py` L133-136）：
+      ★ 先按面上的点 `mark=0` 选一次 ⇒ `ClearSelection2(True)` ⇒ ★ 再 **`mark=1`** 选一次 ✓
+      ★ 本函数**已真机复验**：`mark_after = 1`、★ **特征树增量 `['圆顶1']`** ✓
+      （★ 读数抄在 `specs/216-real-machine-closeout/recon/dome-mark-path.md`，★ 因为 `output/` 被 gitignore）
+
+    :param face_index: 第几个面（★ **声明式**，★ 从 0 起 —— ★ 规则 3 **不许收裸坐标**）✓
+    :returns: ★ **回读**到的 mark=1 计数（★ 事实 8：`Select4`/`SelectByID2` 的**返回值不可信**）✓
+    :raises RuntimeError: ★ 序号越界、或选完**计数仍为 0** ⇒ ★ **响亮报错**
+      （★ 绝不把"前置未成立"静默地混成"圆顶建不出来"）✓
+    """
+    import sw_selection_spec as _SS
+
+    items = _SS.entities_on_body(model, "FACE", body_index=0)
+    idx = int(face_index)
+    if idx < 0 or idx >= len(items):
+        raise RuntimeError(
+            "★ face_index=%d 越界（本件共 %d 个面）⇒ ★ 这是**前置未成立**、"
+            "★ 与「圆顶建不出来」是两件事" % (idx, len(items)))
+    face = items[idx]
+    #: ★ 面上的点：官方 `IFace2::GetBox()`（**零参**）⇒ 取盒中心。
+    #:   ⚠ 对**平面面**（圆顶的合法宿主）★ 盒中心必落在面内；★ 非平面面本就不适合加圆顶 ✓
+    box = list(get_com_member(face, "GetBox") or [])
+    if len(box) < 6:
+        raise RuntimeError("★ 取面上失败：`IFace2.GetBox()` 回了 %r" % (box,))
+    px = (float(box[0]) + float(box[3])) / 2.0
+    py = (float(box[1]) + float(box[4])) / 2.0
+    pz = (float(box[2]) + float(box[5])) / 2.0
+    ext = model.Extension
+    callout = _empty_callout()          #: ★ 事实 33：`Callout` 必须 VARIANT(VT_DISPATCH, None)
+    try:
+        ext.SelectByID2("", "FACE", px, py, pz, True, 0, callout, 0)    # ★ 先 mark=0 一次
+    except Exception:                                                   # noqa: BLE001
+        pass
+    try:
+        model.ClearSelection2(True)                                     # ★ 清选
+    except Exception:                                                   # noqa: BLE001
+        pass
+    ext.SelectByID2("", "FACE", px, py, pz, False, 1, callout, 0)       # ★★ 再 mark=1
+    got = int(get_com_member(get_com_member(model, "SelectionManager"),
+                             "GetSelectedObjectCount2", 1) or 0)
+    if got <= 0:
+        raise RuntimeError(
+            "★ 选面未成立：按 face_index=%d 置 mark=1 之后**计数仍为 0** "
+            "⇒ ★ 这是**前置未成立**（★ 事实 8：`SelectByID2` 的返回值不可信，判据只有回读）" % idx)
+    return got
+
+
 def insert_dome_report(model, height_mm: float, feature_name: str = "",
-                       reverse: bool = False, elliptic: bool = False):
-    """★ **圆顶**并回**回读报告**（★ 规则 6）。"""
+                       reverse: bool = False, elliptic: bool = False, face_index: int = 0):
+    """★ **圆顶**并回**回读报告**（★ 规则 6）。
+
+    ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b）：**加 `face_index` 并在这里自己选面** ——
+      ★ 起因：★ 官方 Remarks 要求"先选一个面 + **mark=1**"，★ 而解析器**会清空选区**（事实 503）
+      ⇒ ★ 模型**没有任何办法**在调工具前把面选好（★ 这正是「注册 ≠ 能跑」那一类）✗
+      ⇒ ★ 正解：★ **声明式 `face_index`（规则 3 禁裸坐标）+ 函数内自选** ✓
+      ★ 选面那步见 :func:`select_face_by_index_mark1`（★ 形态由既有冒烟 9/9 证明，★ 已真机复验）✓
+    """
+    select_face_by_index_mark1(model, face_index)
     return _feature_report(model, feature_name or "圆顶1",
                            lambda: insert_dome(model, float(height_mm), reverse, elliptic), "dome")
 

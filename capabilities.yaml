@@ -2614,6 +2614,7 @@
    "limitations": [
     "★★★ `shell` 宿主修好（真机通过）：官方 `IModelDoc2/InsertFeatureShell.md` ⇒ 挂在 `IModelDoc2`；原写法 `model.FeatureManager.InsertFeatureShell(...)` 报 `<unknown>.InsertFeatureShell` ⇒ known-facts 36 的形态",
     "★★★ `insert_dome` 修了两处（真机通过，且被既有冒烟独立确认 9/9）：① 括号位置 —— `call_com_member(obj, name, *args)` 自己就会调一次，原写法先零参调一次、又对 `void` 的返回值调一次 ⇒ 静默失败；② 官方 Remarks 要求 `mark=1` 选面（★ 既有冒烟记着：传 mark=0 时 InsertDome 报 0x8002000F 非选择性的参数，而那个错误看不出是 mark 的问题）",
+    "✅✅ **2026-10-07（接手轮 · 规格 216 T-216-06b）—— `insert_dome` 的「选区入口」也补上了**：★ 上面两条修的是**能力层**（括号位置 + mark=1），★ 而**工具层**仍缺「谁来选这个面」 ✗ —— ★ 注入解析器**会清空选区**（事实 503）⇒ ★ 模型**没有任何办法**在调工具前把面选好 ⇒ ★ 缺选区时它**静默失败**（★ 与「建不出来」长得一样）✗ ⇒ ★ 修法：★ 新增**声明式** `face_index` 入参（★ 规则 3 **不许收裸坐标**）+ 函数内自选（`sw_part.select_face_by_index_mark1`，★ 形态照**既有冒烟 9/9** 逐字那一串：按点 mark=0 选 → `ClearSelection2(True)` → 再 **mark=1**）✓ ★★ **真机复验**（`tools/sw_guard.py` 护栏内 · **6.0 s · 0 弹窗**）：★ `insert_dome_report(doc, 8.0, face_index=0)` ⇒ `ok=True`、★ **特征树增量 `['圆顶1']`**（7 → 8）✓；★ 反例 `face_index=999` ⇒ **响亮报错**「前置未成立、与『圆顶建不出来』是两件事」（★ 事实 8：判据只有回读）✓ ★★ 且**预选族门禁自动跟着变**（命中 12 → **11**）—— ★ 棘轮**双向**：★ 修好了就必须离开名单 ✓",
     "⚠⚠ `insert_dome` 的 `Height` 语义仍未查明：既有冒烟实测「传 8 ⇒ 边界框增长 14.2222」（★ 它如实记为待查，不当通过也不当失败）",
     "★★★★ 单位 = 毫米（实测判决），⚠ 而官方文档对 `Thickness` 与 `Height` 都写 meters",
     "⚠ `insert_composite_curve` 真机失败（既有冒烟 7/8，判为真失败）⇒ 能力层正确 raise（不是假通过）",

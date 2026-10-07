@@ -63,7 +63,13 @@ def test_helper_style_self_selection_is_not_flagged() -> None:
                    "SS.select_entity_by_index(model, 'FACE', 0)",
                    "_select_faces_for(model, '+z')",
                    "_select_com_object(model, 'FACE', 0)",
-                   "select_component_by_name(asm, 'Comp1')"):
+                   "select_component_by_name(asm, 'Comp1')",
+                   #: ★★ 2026-10-07 T-216-06b 实测补的两条 —— ★ 判据已收成**命名约定** `select_*`：
+                   #:   ★ 起因：我给圆顶新写的自选助手叫 `select_face_by_index_mark1`，
+                   #:     ★ 而**逐个点名的名单必然漏**（★ 本仓 `select_object` / `select_face_at` /
+                   #:     `select_by_selector_report` 是一族）⇒ ★ 改成认"调用 `select_…(`" 这个约定 ✓
+                   "select_face_by_index_mark1(model, 0)",
+                   "select_object(model, obj)"):
         fn = "def f(model):\n    %s\n    return model.Something()\n" % helper
         assert gate.judge(DOC_ZH, False, False, False, fn) == "", (
             "★ `%s` 没被当成自选 ⇒ 门禁会误报自己会选的工具" % helper.split("(")[0])
