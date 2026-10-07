@@ -44,15 +44,20 @@ def _build_plate(sw, tool_caller) -> object:
     inj = {"model": model, "sw": sw}
     #: ★★ 第 37 轮：★ **第二个不相交矩形**（★ 与 RECT 隔 30 mm ⇒ 两块独立凸台 ⇒ 两个轮廓 ✓）
     RECT2 = {"x1_mm": 130.0, "y1_mm": 0.0, "x2_mm": 230.0, "y2_mm": 60.0}
-    for step, params in (("solidworks_sketch_start", {}),
-                         ("solidworks_sketch_add_rectangle", RECT),
-                         #: ★★ 第 37 轮：★ **第二个不相交矩形** ⇒ 两个轮廓（★ 官方示例要求两处凸台 ✓）
-                         ("solidworks_sketch_add_rectangle", RECT2),
-                         ("solidworks_extrude_boss",
-                          {"sketch_name": "Sketch1", "depth_mm": DEPTH})):
-        ok, note = tool_caller.call(step, inject_objects=inj, **params)
-        if not ok:
-            raise RuntimeError("★ 建板没成：%s ⇒ %s" % (step, str(note)[:100]))
+    #: ★★★ 第 38 轮：★ **两次拉伸**（★ 官方示例 `Postconditions` 逐字要"**两个 boss-extrude 特征**" ✓）
+    #:   ★ 第 37 轮的教训：★ **同一草图里两个矩形只会拉出一块** ✗（★ 第二个把第一个挤掉了 ✓）
+    #:   ⇒ ★ 改成两轮：★ ① 草图1 + 矩形1 + 拉伸 ② **草图2 + 矩形2 + 拉伸** ✓
+    rounds = ((("solidworks_sketch_start", {}),
+               ("solidworks_sketch_add_rectangle", RECT),
+               ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": DEPTH})),
+              (("solidworks_sketch_start", {}),
+               ("solidworks_sketch_add_rectangle", RECT2),
+               ("solidworks_extrude_boss", {"sketch_name": "Sketch2", "depth_mm": DEPTH})))
+    for rnd in rounds:
+        for step, params in rnd:
+            ok, note = tool_caller.call(step, inject_objects=inj, **params)
+            if not ok:
+                raise RuntimeError("★ 建板没成：%s ⇒ %s" % (step, str(note)[:100]))
     return model
 
 
