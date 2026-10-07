@@ -42,8 +42,13 @@ def _build_plate(sw, tool_caller) -> object:
     """
     model = sw_connect.new_document(sw, "part")
     inj = {"model": model, "sw": sw}
-    #: ★★ 第 37 轮：★ **第二个不相交矩形**（★ 与 RECT 隔 30 mm ⇒ 两块独立凸台 ⇒ 两个轮廓 ✓）
-    RECT2 = {"x1_mm": 130.0, "y1_mm": 0.0, "x2_mm": 230.0, "y2_mm": 60.0}
+    #: ★★★ 第 55 轮（规格 220 续）：★ **两块凸台改成"贴着"** ——
+    #:   ★ 依据官方 `InsertCosmeticWeldBead2` 第 12 行逐字：★「…also **fills the gap between the
+    #:     pre-selected part bodies**, if any.」✓
+    #:   ★★ 第 55 轮真机：★ 两块隔 30 mm 时（★ 中间**没有缝** ✗）⇒ 选面全对（★ 12 面 / 选区 1→2 ✓）
+    #:      ★ 而 `InsertCosmeticWeldBead(12.95)` **`returned: false`**、★ 树 **22 → 22** ✗
+    #:   ⇒ ★ 改成 **x 从 100 起（与第一块共面贴合 ✓）** ⇒ ★ 两个面成为**真正的焊缝接头** ✓
+    RECT2 = {"x1_mm": 100.0, "y1_mm": 0.0, "x2_mm": 200.0, "y2_mm": 60.0}
     #: ★★★ 第 38 轮：★ **两次拉伸**（★ 官方示例 `Postconditions` 逐字要"**两个 boss-extrude 特征**" ✓）
     #:   ★ 第 37 轮的教训：★ **同一草图里两个矩形只会拉出一块** ✗（★ 第二个把第一个挤掉了 ✓）
     #:   ⇒ ★ 改成两轮：★ ① 草图1 + 矩形1 + 拉伸 ② **草图2 + 矩形2 + 拉伸** ✓
