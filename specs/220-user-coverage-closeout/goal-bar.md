@@ -546,3 +546,30 @@ Feature InsertFilletBeadFeature2(
 1. ★ 读 `C:\\swapi\\enums\\swCosmeticWeldBeadMode_e.md`（★ `WeldMode` 的合法值 ✓）
 2. ★ 读 `InsertCosmeticWeldBead2.md` 的 `## Remarks`（★ 数组里装什么、`Nothing` 何时合法 ✓）
 3. ★ 写实现 ⇒ 暴露（★ 名字含 `weld_bead` ⇒ ★ 命中关键词 `("fillet_bead","weld_bead")` ✓）⇒ 真机 ✓
+
+## ★★★★★ 第 52 轮（续）：★ **换路的配方齐了** —— ★ `WeldPath` 完全绕开卡点
+
+### ★ 枚举（★ `C:\\swapi\\enums\\swCosmeticWeldBeadMode_e.md` 逐字）
+★ `swCosmeticWeldBeadMode_WeldGeometry` = **0** ✓ · ★ `swCosmeticWeldBeadMode_WeldPath` = **1** ✓（★ 共 2 个成员 ✓）
+
+### ★★ `## Remarks` 逐字（★ 这就是配方）
+| ★ `WeldMode` | ★ weld-from 允许什么 | ★ **selection marks** | ★ weld-to |
+|---|---|---|---|
+| ★ `WeldGeometry`(0) | ★ **faces 或 edges**（★ 且两侧必须**同类型** ✓）| ★ **4**（每条 weld-from）· ★ **8**（每条 weld-to）| ★ faces/edges ✓ |
+| ★★ `WeldPath`(1) | ★★ **Edges · sketches · 或两者组合** ✓ | ★★ **0** ✓ | ★★ **`Nothing` 或 `null`** ✓✓ |
+
+★★★ **结论：可做的那条路是 `WeldPath`(1)** ——
+  ★ **weld-from = 边（mark 0）** ✓ · ★ **weld-to = `Nothing`** ✓
+  ⇒ ★★ **没有 weld-to · 不需要预选体** ✗✓ —— ★★ **而我已验稳的"选实体"正好是这条路的全部前置** ✓
+
+### ★ 官方还给了示例（★ 铁律 4 的第 3 样）
+★ `Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_CSharp.md` ✓
+★ `Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VBNET.md` ✓
+  ★★ 下一轮**读一篇**（★ 拿**调用序** —— ★ 签名与 Remarks 都给不了调用序 ✓）
+
+### ★★ 下一轮
+1. ★ 读官方 **C# 示例**（★ 调用序 + 数组怎么装 + mark 怎么打 ✓）
+2. ★ 改 `scripts/sw_weld_bead.py`：★ 改用 `InsertCosmeticWeldBead2`
+   ★ `WeldMode = 1`（WeldPath）· ★ `WeldFromFaceOrEdgeSet` = **实体数组**（★ 边，★ mark **0** ✓）
+   ★ `WeldToFaceOrEdgeSet = None` ✓ · ★ `WeldSize` ✓
+3. ★ 真机 ⇒ ★ 判据 **特征树增量 ≥ 1** ✓
