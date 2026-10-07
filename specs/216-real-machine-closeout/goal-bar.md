@@ -1,5 +1,40 @@
 # 规格 216 · 目标栏（唯一进度字段）
 
+## ★★ T-216-08（2026-10-07 · 新目标 `goal-07f64f9b`）：`drawing_insert_balloons` —— ★ **改了又撤回**（夹具没建成）
+
+★ 目标要求的下一步就是它。★ 我按官方四步的第 1 步实现了**声明式视图名**：
+  ★ `auto_insert_balloons(model, …, view_name="")` + 在**紧邻选区检查之前**
+  `SelectByID2(<视图名>, "DRAWINGVIEW", …)`（★ 规则 3：名字不是坐标；★ callout 用本仓既有的
+  `sw_part._empty_callout()` —— ★ 事实 33）✓
+
+★★ **而夹具建不出来 ⇒ 无法验证** ⇒ ★ 按纪律 **`git checkout --` 撤回**（★ 这是本规格**第三次**
+  "验不了就撤回"，★ 前两次是 `assembly_dissolve`（★ 后来查明真因是沙盒并修好）与 topology）✓
+★ 撤回后实测：★ 门禁**仍是 `命中 4 · 基线 4`**（★ 未假绿）✓ · ★ 该文件 `git status` **为空** ✓
+
+### ★ 卡在哪（★ 留给下一轮的钥匙）
+
+| 观察 | ★ 说明 |
+|---|---|
+| ★ `建视图` 报 `AttributeError: module 'scripts.sw_drawing_create_missing' has no attribute 'create_projected_view'` | ★ 它在**另一个模块**：`scripts/sw_drawing_expose.py::create_projected_view` ✓（★ 我探针里已改）|
+| ★ 改用 `sw_drawing_expose.create_projected_view(dr, PART, view_name="*Front")` 之后 | ★★ **视图名仍是 `[]`** ⇒ ★ **工程图里没建出视图**（★ 试件第一环就没成）✗ |
+| ★ 反例的期待也曾写错 | ★★ `auto_insert_balloons` **回 dict、不抛异常** ⇒ ★ 反例的形态是 `ok=False` + `error`，★ **不是** `raise` ✓ |
+| ★ `selection_count` 读数为 **0** | ★ 与"没选中"一致（★ 因为名字是空的/表的视图）✓ |
+
+### ★★ 附带查实一条"文档与实物不符"（★ 值得记）
+
+★ `sw_drawing_create_missing.auto_insert_balloons` 的 docstring 写着
+  「⚠★ **`AutoBalloon5` 的形参是 COM 对象** ⇒ ★ `mcp-server` 的 `Param` 表达不了
+    ⇒ ★ **本能力层实现它、工具层不给它建 ToolSpec**」
+★★ **而实测：ToolSpec 是有的** —— `solidworks_drawing_insert_balloons`
+  → `sw_drawing_create_missing.auto_insert_balloons`，★ `inject: model`，★ **15 个参数** ✓
+⇒ ★★ 即**那句自述已过期**（★ docstring 与实物不符 —— ★ 与"注册 ≠ 能跑"同族，★ 只是反向）✗
+
+★ **下一轮**（★ 钥匙已备好）：★ 先解决"**工程图里怎么建出视图**"这一环
+  （★ 候选：★ `new_document(sw, doc_type="drawing")` 之后**要选图纸/模板**；
+  ★ 或走 `sw_drawing_expose` 的 `create_three_standard_views`；★ 或先看看它对返回值说了什么），
+  ★ 通了再重上 `view_name` 那处改动并真机验证 ✓
+
+
 ## ★★★ 第 20 轮（目标最后一轮）的收尾状态
 
 | # | 事 | ★ 状态 |
