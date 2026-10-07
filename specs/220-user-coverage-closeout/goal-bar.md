@@ -573,3 +573,27 @@ Feature InsertFilletBeadFeature2(
    ★ `WeldMode = 1`（WeldPath）· ★ `WeldFromFaceOrEdgeSet` = **实体数组**（★ 边，★ mark **0** ✓）
    ★ `WeldToFaceOrEdgeSet = None` ✓ · ★ `WeldSize` ✓
 3. ★ 真机 ⇒ ★ 判据 **特征树增量 ≥ 1** ✓
+
+## ★★★★ 第 53 轮（续）：★ 官方示例的开头就定了几件事
+
+★ 文件：★ `C:\\swapi\\examples\\Insert_Cosmetic_Weld_Bead_Example_CSharp.md`（**118 行** ✓）
+
+| ★ 项 | ★ 读数（逐字）|
+|---|---|
+| ★ `Preconditions` | ★「Open `public_documents\\samples\\tutorial\\api\\Insert_weld.sldprt`.」✓ |
+| ★★ `Postconditions` | ★★「Inserts a **fillet weld, Weld Bead2**, and adds it to the **Weld Folder** in the FeatureManager design tree.」✓ |
+| ★★ 用到的对象 | ★★ **`ICosmeticWeldBeadFeatureData`**（★ 一个**数据对象** ✓）· ★ **`ICosmeticWeldBeadFolder`** ✓ · ★ **`FeatureManager`** ✓ · ★ **`SelectionMgr`** ✓ |
+| ★★ 局部变量 | ★★ **`object[] edges = null;`** ✓✓ ⇒ ★ **印证：★ 走"数组装边"这条路** ✓ |
+
+### ★★ 由此确认的三件事
+1. ★★ **官方示例用的就是「数据对象 + 数组」的形态** ✓（★ `ICosmeticWeldBeadFeatureData` ✓）
+   ⇒ ★ 与 `InsertCosmeticWeldBead2(WeldMode, 数组, 数组, WeldSize)` **是同一族** ✓
+2. ★★ **产物是特征树里的一个 feature**（★ 且挂在 **Weld Folder** 下 ✓）
+   ⇒ ★ ★ 判据 **仍用特征树回读增量** ✓（★ 事实 8 ✓）
+3. ★ **前置的模型是官方样例件**（★ `Insert_weld.sldprt` ✗ —— ★ 我这里没有它 ⇒ ★ 用**自建的两块凸台**替代 ✓）
+
+### ★★ 下一轮（★ 把调用序读完）
+★ 读同一文件的 **43–118 行**（★ 调用序就在这里 ✓ —— ★ 铁律 4 的第 3 样 ✓）
+★ 然后照它改 `scripts/sw_weld_bead.py`：★ 改用 `InsertCosmeticWeldBead2`
+  ★ `WeldMode = 1`（★ WeldPath ✓）· ★ `WeldFromFaceOrEdgeSet` = **边数组**（★ mark **0** ✓）·
+  ★ `WeldToFaceOrEdgeSet = None` ✓ · ★ `WeldSize` ✓
