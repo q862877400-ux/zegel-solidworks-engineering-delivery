@@ -1069,6 +1069,13 @@ BATCH_MODULES = (
     #:      ★★ 规格 204 的 P4–P6 曾把 339 暴露面缺口误当真实能力缺口而整阶段作废）✓
     #:   ★ 计数：459 → **464**
     "tool_specs_batch103",
+    #: ★ 规格 217 · B3+B4 —— 工程图全图视图清单 + 质量属性/截面/筋参数三个读侧 ✓
+    #:   · `list_drawing_views_report` / `mass_property_object` /
+    #:     `section_area_crosscheck` / `rib_params`
+    #:   ★★ **只增加暴露面** —— ★ **不动台账任何 `level`** ✓
+    #:   ★ 四个都是**读侧**（★ 不需要预选 ⇒ 不触发预选族门禁）✓
+    #:   ★ 计数：463 → **467**
+    "tool_specs_batch104",
 )
 
 def all_specs() -> list:

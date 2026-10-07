@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 489 | 489 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 493 | 493 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -47,15 +47,15 @@
 | ⑧ 焊件 | 5 | · | · | · | 18 | 21⚠ | 22 | **4** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
 | ⑩ 装配 | 13 | 7 | 4 | 3 | 27 | 66⚠ | 46 | **19** |
-| ⑪ 工程图 | 18 | 18 | 15 | 17 | 39 | 80⚠ | 88 | **49** |
-| ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 15 | 32⚠ | 31 | **16** |
+| ⑪ 工程图 | 18 | 18 | 15 | 17 | 40 | 80⚠ | 89 | **49** |
+| ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 16 | 32⚠ | 32 | **16** |
 | ⑬ 仿真 / Motion | 3 | · | 1 | · | 49 | 127⚠ | 53 | **4** |
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 18 | 50⚠ | 28 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 10 | 24⚠ | 52 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 40 | 14 | 40 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 111 | 568⚠ | 153 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 113 | 568⚠ | 155 | **42** |
 
-**合计**：并集 799 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 803 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 450 个操作只有本仓库有：
+共 454 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -238,6 +238,7 @@
 - `drawing_insert_surface_finish_symbol`（⑯ 高级 / 专项（含护城河候选））
 - `drawing_list_sheets`（⑪ 工程图）
 - `drawing_list_views`（⑪ 工程图）
+- `drawing_list_views_report`（⑪ 工程图）
 - `drawing_set_sheet_format`（⑪ 工程图）
 - `drawing_set_sheet_scale`（⑪ 工程图）
 - `drawing_sheet_count`（⑪ 工程图）
@@ -318,6 +319,7 @@
 - `macro_select_template`（⑮ 宏 / 自动化）
 - `macro_validate_vba_code`（⑮ 宏 / 自动化）
 - `macro_write_file`（⑮ 宏 / 自动化）
+- `mass_property_object`（⑫ 检查 / 测量 / 反馈）
 - `measure_selection`（⑫ 检查 / 测量 / 反馈）
 - `mesh_configure_import_preferences`（⑭ 外观 / 材质 / 配置）
 - `mesh_restore_import_preferences`（① 会话 / 文档 / 文件）
@@ -381,12 +383,14 @@
 - `revolve_boss`（⑤ 零件特征）
 - `revolve_cut`（⑤ 零件特征）
 - `revolve_params`（⑤ 零件特征）
+- `rib_params`（⑰ 未归类）
 - `rotary_motor`（⑰ 未归类）
 - `routing_preflight`（⑯ 高级 / 专项（含护城河候选））
 - `ruled_surface`（⑥ 曲面）
 - `run_fea`（⑰ 未归类）
 - `run_fea_convergence`（⑰ 未归类）
 - `scale_feature`（⑰ 未归类）
+- `section_area_crosscheck`（⑰ 未归类）
 - `section_properties`（⑰ 未归类）
 - `select_by_selector`（⑰ 未归类）
 - `select_entity_by_index`（⑰ 未归类）

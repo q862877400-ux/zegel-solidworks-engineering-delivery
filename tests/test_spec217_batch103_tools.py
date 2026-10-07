@@ -66,10 +66,13 @@ def test_five_new_specs_are_registered_and_unique():
         assert names.count(n) == 1, "★ %s 出现 %d 次（应为 1）" % (n, names.count(n))
 
 
-def test_tool_count_increment_is_exactly_five():
-    """★ 正例③：工具数 459 → 464（增量可复算）。"""
-    assert len(RC.all_specs()) == BASE_TOOL_COUNT + len(NEW), \
-        "★ 工具数不是 %d + %d" % (BASE_TOOL_COUNT, len(NEW))
+def test_tool_count_at_least_base_plus_new():
+    """★ 正例③：★ 工具数 **≥ 459 + 4 = 463**（★ **单调下界**，不是绝对数）——
+    ★★ 为什么改成下界：★ 我原先断言的是**绝对数**，★ 而后续批次（batch104）一加工具它就**误红** ✗
+    ⇒ ★ 真正的**不变量**是「这 4 个都在、且都被认领」（另两条测试守它），★ 计数只用下界 ✓
+    """
+    assert len(RC.all_specs()) >= BASE_TOOL_COUNT + len(NEW), \
+        "★ 工具数少于 %d + %d" % (BASE_TOOL_COUNT, len(NEW))
 
 
 def test_excluded_dimension_tools_are_not_exposed():

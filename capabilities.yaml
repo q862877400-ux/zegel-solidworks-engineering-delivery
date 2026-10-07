@@ -2226,7 +2226,9 @@
    "source": "original",
    "source_evidence": "scripts/sw_mass_property.py（照官方 IModelDocExtension.CreateMassProperty 与 IMassProperty2 的 Mass/Volume/SurfaceArea/CenterOfMass/Density 新写）",
    "mcp_tools": [
-    "solidworks_part_mass_properties"
+    "solidworks_part_mass_properties",
+    "solidworks_mass_property_object",
+    "solidworks_section_area_crosscheck"
    ]
   },
   {
@@ -2647,7 +2649,8 @@
     "solidworks_part_insert_composite_curve",
     "solidworks_part_insert_dome",
     "solidworks_part_rib",
-    "solidworks_part_shell"
+    "solidworks_part_shell",
+    "solidworks_rib_params"
    ]
   },
   {
@@ -3427,7 +3430,8 @@
    "mcp_tools": [
     "solidworks_drawing_view_scale",
     "solidworks_drawing_view_set_scale",
-    "solidworks_drawing_collect_view_evidence"
+    "solidworks_drawing_collect_view_evidence",
+    "solidworks_drawing_list_views_report"
    ],
    "source": "original",
    "source_evidence": "scripts/sw_drawing_view.py 的 4 个 *_report 包装 + _iter_views / _find_view"
