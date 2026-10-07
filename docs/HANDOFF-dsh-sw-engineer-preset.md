@@ -367,3 +367,44 @@ python D:\AI\SW\scripts\check_gate_wiring.py              # ★ 元门禁：已�
 ★ 另：本会话的 preset 与工具目录读数，可由**会话日志**复算 ——
 ★ 它是 **zstd 多帧**格式，★ 注意 `zlib.zstdDecompressSync` **只解第一帧**（★ 只得到 190 字节的
 会话头）⇒ ★ 要**逐帧扫魔数 `28 B5 2F FD`** 再逐帧解（★ 本次解出 56 帧 / 782,839 字节）✓
+
+### 9.6 ★★★ `release_check` 原本**不是绿的** —— ★ 4 道门禁在接手前就红着（★ 已修）
+
+★★ 这条**上一节没写**，★ 而它比 preset 本身更容易把人带沟里 ✓
+★ 接手轮实测（★ 判据 = 那 4 道门禁的**输入文件全部 `unmodified since HEAD`** ⇒ 不是接手轮引入）：
+
+| 门禁 | 病灶 | 处置 |
+|---|---|---|
+| `check_negative_input_selfproof` | ★ **假阳性**：把 `tools/verify_union_349.py` 里给**负例目录名**消毒的 `name.replace("：","_")` 当成「造负例输入的变换」 | ★ 给门禁加**带非空理由的显式豁免** `negproof-exempt: <理由>`（★ 理由为空**不生效**）；★ 只在**紧邻变换的连续注释块**里找 |
+| `check_union_conventions` | 14 条能力 `source: "official"` 不在枚举内 | ★ 改 `original`（★ 那 14 条 `provenance` **全 null**、`source_evidence` 是官方文档引用）⇒ 按 **R12** 正确值就是 `original` ✓ |
+| `check_param_binding` | ★ **真 bug**：`insert_explode_line_sketch` / `create_speedpak` 的 `inject="model"`，而目标函数必填形参是 **`doc`** ⇒ 真调用必 `TypeError`（事实 502） | ★ 改 `inject="doc"`（同模块其余 spec 都这么写） |
+| `check_relative_imports` | ★ **门禁自己在 GBK 控制台上崩**（打印 `⇒` ⇒ `UnicodeEncodeError`）⇒ 退出码≠0 ⇒ 报 FAIL ★ 而它**逻辑上是绿的**（`PYTHONIOENCODING=utf-8` 下 35 = 基线 35） | ★ 补 `sys.stdout.reconfigure(encoding="utf-8")`（**事实 58** 那一族） |
+
+★ 修完实测：`release_check: 第 1 轮 OK` ✓（★ 此前**首轮必红**）·`check_gate_wiring` PASS ✓
+★★ **另一条纪律（★ 请继承）**：★ `tools/round_chain.ps1` 在 **3 处**跑 `git add -A`（L84/L117/L150）
+⇒ ★★ 跑完它会**把整个脏工作树（本次实测 1209–1211 个文件）暂存起来** ✗ ——
+★ 所以**收尾必须**：① 先 `git reset`（★ 只清索引、**不动工作树**）② 再走
+`python tools/commit_mine.py -m <信息文件> <只点名本线的路径…>` ✓
+（★ `commit_mine.py` 的存在理由逐字就是这件事：「★ 一次普通的 `git commit` 会把**别人未提交的
+文件（914 个）一起提交**」✓）
+
+### 9.7 ★ ★ 另有一份**外部清单**要小心对待（★ 已出核对报告）
+
+★ 2026-10-07 用户转来另一对话的《部署工具集问题清单（并集 731）》
+（`D:\AI\DSH-sandbox\deliver\工具集问题清单-并集731.md`），★ 指令是
+「★ 参考一下，结合实际情况，**去伪存真，不要盲目采信**」✓
+★ 核对报告落在 **[docs/review-external-tool-list-731.md](review-external-tool-list-731.md)** ✓
+★★ 一句话：★ **它的语料不是活工具面** —— `catalog-all.json` 的 `sources` 逐字写着
+`{"sessionScan": "27 会话抽样", "sessionUnion": 554, "solidworksAdded": 177}` ⇒
+★ 它是**扫 27 个历史会话拼出来的并集**（731 个 / ≈260,885 token），
+★ 而本会话活面是 **589 个 / 134,796 字节** ⇒ ★ 它算出的「**24.5% 可删**」**不能用来指导决策** ✗
+★ 其中**最容易被误信**的一条：★ 它说「同一操作有**两种调用约定**（包 `params` vs 平铺）」
+—— ★★ **在活面上不成立**：★ 活面 **504 个 solidworks 工具里 504 个都是 `{"params": …}` 信封、
+平铺 0 个** ✓（★ 它语料里那 57 个平铺工具来自历史并集）✓
+
+### 9.8 ★ §五-1「GitHub MCP」**已由用户定案：不装** ✓
+
+★ 用户 2026-10-07 原话：「★ **那就不要了，我以为我装的有**」✓
+⇒ ★ **活配置一个字都不动**（那段注释槽位**保持原样**、★ 仍是"尚未接线"的说明）✓
+⇒ ★ 需要 GitHub 操作时走**已装的 `gh` CLI**（`C:\Program Files\GitHub CLI\gh.exe`），
+★ 界面上**不会**出现 `mcp__github__*` —— ★ 那是**已决定的**，★ 不是缺陷 ✓
