@@ -1,5 +1,57 @@
 # 规格 217 · 目标栏（唯一进度字段）
 
+## ★★★ T-217-05 复核（第 7 轮）：★ **那道闸省掉一整轮废批** —— 纯暴露实为 **5 个**（不是 14）
+
+★★ 做法：★ 按我上轮给自己加的闸 —— ★ **开工前逐个查"预选族"信号**
+  （★ 直接看函数体里有没有 `GetSelectedObjectCount2` / `preconditions_held` / `_selection_count` / 「先选中」）✓
+  ★★ **这就是"该不该暴露"的关键分水岭**：★ 要预选 ⇒ **不属于纯暴露** ✗
+
+### ★ B2 曲面：★ **6 个全要预选** ⇒ **整批不属纯暴露**
+
+| 候选 | ★ 函数体信号 |
+|---|---|
+| `insert_ruled_surface_report` | ★ `GetSelectedObjectCount2` + 「先选中」|
+| `insert_planar_ref_surface_report` | ★ `GetSelectedObjectCount2` |
+| `thicken_surface_report` | ★ 「先选中」|
+| `insert_offset_surface_report` | ★ 「先选中」|
+| `trim_surface_report` | ★ 「先选中」|
+| `insert_replace_face_report` | ★ `selected` |
+⇒ ★★ **B2 本轮一个都不能作纯暴露上**（★ 若硬上，★ 就是重演 batch103 那次被门禁拦回）✓
+
+### ★ B5：★ **只有 4 个是纯暴露**
+
+| 判定 | 候选 | ★ 信号 |
+|---|---|---|
+| ★ **可暴露** | `linear_pattern_report` · `insert_mate_reference` · `iter_feature_tree` · `iter_features` | ★ **无选区信号** ✓ |
+| ✗ 挪走 | `create_loft_cut_report`（`GetSelectedObjectCount2`+「先选中」）· `create_sweep_surface_report`（`GetSelectedObjectCount2`）· `insert_split_line_silhouette`（`preconditions_held`）| |
+
+### ★ B6：★ **1 个**（`topology_constraints_report`；★ 上轮已查明其余 4 个早已暴露）
+
+## ★★ 由此修正的计划（★ 全部有逐条证据）
+
+| 类 | ★ 个数 | ★ 内容 |
+|---|---|---|
+| ★★ **纯暴露（本规格主线）** | **5** | ★ B5 那 4 个 + B6 那 1 个 ⇒ ★ 工具数 **467 → 472** |
+| ★★ **需配声明式选择（另立批）** | **13** | ★ 3 个 `add_*_dimension` + `sketch_intersect_curves`（★ 预选族门禁判出来的）+ **B2 那 6 个** + B5 那 3 个 ⇒ ★ 每个都要**新写选择入口 + 真机验证** |
+
+★★ **两条判据级结论（建议写进 `docs/union-conventions.md` 的选择契约段）**：
+1. ★★ **"已实现 + 可注入" 不等于 "可作纯暴露上"** —— ★ **还差一道**：
+   ★ 函数体是否要求**先选中**（★ 有 ⇒ 必须同时给**声明式选择入口**，否则就是 batch103 那次的翻版）✓
+2. ★★ **"清单有时效"已被两次实测印证**（★ B6 那 4 条 · 以及本轮 B2/B5 的信号分布与预估差得远）
+   ⇒ ★ **判"该不该暴露"必须逐条查源码/近名，绝不照抄清单或估** ✓
+
+### ★ 下一轮（★ 已无侦察成本，直接开工）
+
+1. ★ **batch105 = 5 个纯暴露**（B5 那 4 个 + B6 那 1 个）⇒ 467 → **472** ✓
+   ★ 归属条目**开工时先查**（★ `linear_pattern` 类找 feature 条目 · `iter_feature_tree` 找装配条目 ·
+   ★ `iter_features` 找钣金条目 · `topology_constraints_report` 找 `topology_readout`/`constraints` 条目）✓
+2. ★ 之后：★ 那 **13 个"需配选择"** 单独立批（★ 每个=新写选择 + 真机验证 ⇒ ★ 预估要 2-3 轮）✓
+3. ★ 收口时按 A1-A7 复核并把"暴露面 N 个"写进最终账（★ **不宣称功能覆盖完成**）✓
+
+---
+
+# （以下是本规格开工时写的目标栏正文）
+
 ## ★★★ T-217-05 侦察（第 6 轮）：★ **剩余纯暴露 14 个已全部预查完**（下轮起可直接开工）
 
 ★★ **本轮最有价值的产出 = 这张预查表** —— ★ 它把"该暴露哪些"从**估**变成了**查过** ✓
