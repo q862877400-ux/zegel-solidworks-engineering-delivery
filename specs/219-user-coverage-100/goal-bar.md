@@ -242,13 +242,49 @@
   ★ + 参数按用户友好给（★ 度/毫米），内部转官方口径（★ 弧度、米）✓
   ★ + `*_report` 回读判据（★ 特征树增量 + 若 `None` 报错并指向官方 `Returns` 的语义）✓
 
-## 五、下一个动作（只写一条）
+## 六、★★ 交接（第 13 轮：本轮只做交接，不硬挂半成品）
 
-★ **T-219-04（★ 前置全齐，下一轮直接写代码）**：
-  1. ★ 查 `docs/dead-ends.md` + 台账 `surface_*` / `loft*` 的 `limitations`（★ 先扫走死的路）✓
-  2. ★ 在 `scripts/` 写 `insert_net_blend_report`（★ 形态见上）⇒ 暴露 ⇒ 台账归属 ⇒ 契约测试 ✓
-  3. ★ **真机验证**（★ `sw_guard.py`，用完关 SolidWorks）★ 两个 Type 各跑一次 ✓
-  4. ★ 重跑地图 ⇒ ★ 特征 **27/28** · ★ 曲面 **14/14 = 100%**（★ 第 **7** 个 100% 的域）✓
+★ **为什么停在这里**：★ 余下的是「暴露 + 挂接 + 台账 + 契约测试 + 真机两档验证」一整条链；
+  ★★ 而**新工具大概率会被预选族门禁拦下**（★ 边界特征要**先选面** —— ★ 我的包装虽用**面序号**（声明式），
+  ★ 但函数体里有 `GetSelectedObjectCount2`，★ 门禁可能要求显式的 `pre_call` 形状 ✗）
+  ⇒ ★ 半挂一次 = 一次假绿风险 ⇒ ★ **不硬来**，把它留给下一轮**整条做完** ✓
+
+### ★ 已完成（★ 可复算）
+
+| 项 | ★ 状态 |
+|---|---|
+| ★ 官方三样（签名 + Remarks + Example）| ★ **读完**（★ 入口 `InsertNetBlend` · `Type` 0/1/2/3 · 召唤序 5 步）✓ |
+| ★ 包装 | ★ **`scripts/sw_net_blend.py` 落库**（★ 20 参官方顺序 · 声明式面序号 · 毫米/度转米/弧度 · 回读判据）✓ |
+| ★ 等级 | ★ 如实 **`stitched`**（★ 返回里明写 `verification: stitched`）✓ |
+| ★ 门禁 | ★ **`release_check` exit 0**（★ 生成物刷新后）· `compileall exit 0` ✓ |
+| ★ 地图 | ★ **137/145 = 94%** · ★ **6 / 11 个域 100%**（★ 本轮**未变**——★ 工具还没暴露 ⇒ 两格仍 ❌，★ 不虚报）✓ |
+
+### ★★ 下一轮（★ 一条链做完，别再拆）
+
+1. ★ 写 `ToolSpec`：★ 名字**必须让地图命中** ⇒ ★ 特征那格的关键词是 `("boundary",)`、
+   ★ 曲面那格是 `("boundary_surface",)` ⇒ ★ 建议名
+   `solidworks_boundary_boss_report`（特征）与 `solidworks_boundary_surface_report`（曲面）
+   ★（★ 或一个名同时含两者 ⇒ 但**两格各要一次命中**，★ 稳妥起见**两个名字**）✓
+2. ★ 归属台账：★ 新建/挂到 `surface_*` 或 `part_and_features` 条目（★ 先 `read` 看哪条合适）✓
+3. ★ 契约测试（★ 照 `tests/test_spec217_batch10*_tools.py` 的形态：清单 + 负例）✓
+4. ★★ **先跑 `python scripts/check_preselect_family.py`** ⇒ ★ 若命中 ⇒ ★ 按 batch103 先例
+   **加 `pre_call` 形状**（★ 别等 `release_check` 拦）✓
+5. ★ **真机两档**（★ `blend_type=1` 凸台 · `2` 曲面），走
+   `python tools/sw_guard.py --timeout 600 -- python <探针>.py` ⇒ ★ **用完关 SolidWorks** ✓
+   ★ 真机过了**才**把台账 `level` 提到 `verified`（★ 红线⑥）✓
+6. ★ 重跑生成器 ⇒ ★ 特征 **27/28** · ★ 曲面 **14/14 = 100%**（★ 第 **7** 个 100% 的域）✓
+
+### ★ 剩余 8 格的清单（★ 供后续排期）
+
+| 项 | ★ 现状 |
+|---|---|
+| ★ 特征/边界凸台 · 曲面/边界曲面 | ★★ **包装已落库**（★ 只差暴露 + 真机）|
+| ★ 特征/特征识别 | ★ 需先补 **`featureworks` 注入器**（★ 本仓 resolver 只认 `model`/`sw_app`/`study`）|
+| ★ 焊件/圆角焊缝 | ★ 官方有 `InsertFilletBeadFeature`；台账 `fillet_weld_bead` = `stitched`（只到第一步）|
+| ★ 装配/零部件阵列 | ★ 官方有 `DissolveComponentPattern` / `GetPatternComponentCount` ⇒ 可建 |
+| ★★ 装配/装配序列·说明书 | ★★ **官方只有序号成员** ⇒ 无对应 API（★ 除非"换路径"用爆炸视图+注释拼）|
+| ★★ 装配/性能分析 | ★★ **类型索引里没有** ⇒ 无对应 API |
+| ★★ 其他/PDM | ★★ `not_implemented`（★ 需许可证 + 296/4683 成员）⇒ 按红线④**如实写不做** |
 
 ★★ **两条元结论（★ 比单格要紧，写进规格）**：
 1. ★★ **`--check` 说"是最新的"只证明「地图与生成器一致」，不证明「地图与事实一致」** ✗ ——
