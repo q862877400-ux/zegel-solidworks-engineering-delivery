@@ -11,6 +11,8 @@ import sys
 import types
 import unittest
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -80,6 +82,10 @@ _fake_connect.safe_get_com_member = fake_get_com_member
 if _real_sw_connect is not None:
     #: ★ PEP 562 兜底：假模块上**没手装**的名字，一律从真模块拿 ✓
     _fake_connect.__getattr__ = lambda _n: getattr(_real_sw_connect, _n)
+#: ★★ 进本模块**之前**这两个键是谁 —— ★ teardown 要把它们**原样还回去**（见文件末尾的 fixture）✓
+_saved_sw_connect = sys.modules.get("sw_connect")
+_saved_sw_preflight = sys.modules.get("sw_preflight")
+
 sys.modules["sw_connect"] = _fake_connect
 sys.modules["sw_preflight"] = types.SimpleNamespace(
     import_com_dependencies=lambda: (
@@ -90,6 +96,35 @@ sys.modules["sw_preflight"] = types.SimpleNamespace(
 )
 
 import sw_part  # noqa: E402
+
+
+#: ═══════════════════════════════════════════════════════════════════════════
+#: ★★★ 2026-10-07（接手轮 · 规格 214 T-214-12）**用完必须还回去** ——
+#:   本文件在**模块级**把 `sys.modules["sw_connect"]` 换成了假模块（★ 为了让 `import sw_part` 能过），
+#:   ★ 而**从不还原** ⇒ ★★ 它污染**同一进程里后面所有测试** ✗（★ 实测两个受害者）：
+#:     · `test_com_member_helpers::test_call_com_member_exists_and_is_documented`
+#:       —— ★ 它 `import sw_connect` 之后查 `inspect.getdoc(sw_connect.call_com_member)`，
+#:          ★ 拿到的是本文件假模块的 `fake_get_com_member`（docstring 是「测试用 COM 成员读取器」）
+#:          ⇒ ★ 断言「就是去调它」落空 ✗
+#:     · `test_effect_declarations::test_effects_table_is_fresh`
+#:       —— ★ 生成器扫到的模块 `from sw_connect import …` 拿到假的 ⇒ 声明集与落盘表对不上 ✗
+#:   ★★ 判据（实测）：本文件 + 上述任一受害者 ⇒ **1 failed**；★ 本文件**单独**跑 ⇒ 全绿 ✓
+#:      → ★ 教科书式的「单跑绿、全量红」✓
+#:   ⚠ **为什么不能"import 完就撤"**：★ `scripts/sw_part.py` 的 `_select_com_object`（L334）与
+#:     `create_axis_report`（L2174）是**函数内** `from sw_connect import …` ⇒ ★ 那两条路要到
+#:     **用例执行期**才导入 ⇒ ★ 撤早了它们会拿到**真的** `sw_connect`（★ 于是真去连 COM）✗
+#:   ⇒ ★★ **撤的时机是「本模块跑完」**，不是「import 完」✓
+#: ═══════════════════════════════════════════════════════════════════════════
+@pytest.fixture(scope="module", autouse=True)
+def _restore_modules_after_this_module():
+    """★ 本模块跑完 ⇒ 把 `sw_connect` / `sw_preflight` **原样还回去**（★ 治"顺序污染"）✓"""
+    yield
+    for _name, _saved in (("sw_connect", _saved_sw_connect),
+                          ("sw_preflight", _saved_sw_preflight)):
+        if _saved is None:
+            sys.modules.pop(_name, None)      # ★ 本来就没有 ⇒ 撤掉本模块塞的
+        else:
+            sys.modules[_name] = _saved       # ★ 本来是谁就还谁（★ 可能是真模块）✓
 
 
 class FakeFeature:

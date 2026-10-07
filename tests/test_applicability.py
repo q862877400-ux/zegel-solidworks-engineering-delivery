@@ -185,9 +185,27 @@ def test_registry_hook_never_blocks_on_an_unbuilt_check():
 
 
 def test_registry_hook_can_be_switched_off(monkeypatch):
-    """★ **可回退**：★ `SW_PRECHECK=off` ⇒ 一律放行（★ 于是这次运行期变更是**可逆的**）✓"""
-    import importlib
+    """★ **可回退**：★ `SW_PRECHECK=off` ⇒ 一律放行（★ 于是这次运行期变更是**可逆的**）✓
+
+    ★★★ 2026-10-07（接手轮 · 规格 214 T-214-12）**删掉了末尾那句 `importlib.reload(TR)`** ——
+      ★ 它不是"多余的清理"，★ 它是一处**跨测试文件的全局污染源** ✗✗
+      ★★ **机制**（★ 二分定位 + 单文件复现确证）：
+        · pytest **在收集阶段就把所有测试模块 import 完**（★ 早于任何一条用例**执行**）
+          ⇒ `tests/test_rule3_declarative_selection_is_enforced.py` 那句
+            `from tool_registry import GateError, …` 绑的是**重载之前**那个**类对象**；
+        · 而本用例执行时 `importlib.reload(TR)` **就地重跑** `tool_registry` 的模块体
+          ⇒ ★ `tool_registry.GateError` 变成**一个新类**（★ `check_spec` 也是新的）
+          ⇒ ★★ victim 那边 `pytest.raises(GateError)` 拿的是**旧类**、而抛的是**新类**
+          ⇒ ★ **异常逃出去、用例报红**，★ 而两个类**长得一模一样**（★ 极难自查）✓
+        · 实测：`test_applicability.py` + victim ⇒ **4 failed**（rule3 ×3 + spec212_rule2b ×1）；
+          只跑 victim 则**全绿** ⇒ ★ 教科书式的"单跑绿、全量红" ✓
+      ★★★ **为什么删掉是安全的**：`monkeypatch.setattr` **本身就会在用例结束自动还原** ✓
+        ⇒ ★ 那句 reload **本意就是干这件事，却用了一种会波及别人的做法**；
+        ★ 而 `precheck_payload` **惰性读全局** ⇒ monkeypatch 还原后行为与 reload 后**完全一致** ✓
+      ⚠ **留给后来人的定则**：★ 本仓**任何** `importlib.reload(<被别的测试模块顶层 import 的模块>)`
+        都会再造这一类污染 ⇒ ★★ **别用 reload 做清理，用 `monkeypatch`** ✓
+    """
     import tool_registry as TR
     monkeypatch.setattr(TR, "PRECHECK_ENABLED", False)
     assert TR.precheck_payload(_TinySpec(), "asm_model", _Doc(1)) is None
-    importlib.reload(TR)
+    #: ★ 这里**故意不 reload** —— 还原交给 `monkeypatch`（见上面那段）✓
