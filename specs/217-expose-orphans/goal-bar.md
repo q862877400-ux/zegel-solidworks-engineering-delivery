@@ -1,5 +1,37 @@
 # 规格 217 · 目标栏（唯一进度字段）
 
+## ★★★ T-217-05 侦察（第 6 轮）：★ **剩余纯暴露 14 个已全部预查完**（下轮起可直接开工）
+
+★★ **本轮最有价值的产出 = 这张预查表** —— ★ 它把"该暴露哪些"从**估**变成了**查过** ✓
+
+| 批 | ★ 候选数 | ★ 结论（逐条查过近名）| ★ 工具数增量 |
+|---|---|---|---|
+| **B2 曲面** | 6 | ★ **全部可暴露**：`insert_offset_surface_report` · `insert_planar_ref_surface_report` · `insert_replace_face_report` · `insert_ruled_surface_report` · `thicken_surface_report` · `trim_surface_report`<br>★ 其中 4 个有**对应的动作版**工具 ⇒ ★ 但 `*_report` 是**带回读判据**的形态 ⇒ 按判据①（**优先 `*_report`**）**应当暴露**，★ doc 写明与动作版的关系 ✓ | +6 |
+| **B5 特征/阵列** | 7 | ★ **全部可暴露**：`linear_pattern_report` · `create_loft_cut_report` · `create_sweep_surface_report` · `insert_mate_reference` · `insert_split_line_silhouette` · `iter_feature_tree` · `iter_features`<br>★ 两处近名（`sketch_linear_pattern` / `weldment_iter_features`）都是**不同族**（草图阵列 vs 特征阵列 · 焊件 vs 钣金）✓ | +7 |
+| **B6 topology 读侧** | ★★ **只剩 1** | ★★ 我**原估 5 个**，而实测 **4 个早已暴露**：`solidworks_topology_manager_report` ✓ · `..._options_report` ✓ · `topology_set_goal` ✓ · `topology_set_iteration_options` ✓ ⇒ ★ 只有 `topology_constraints_report` 是新的 ✓ | +1 |
+| | **合计** | | ★ **467 → 481** |
+
+### ★★ 两条要点（★ 下一轮开工前先看这里）
+
+1. ★★ **`output/orphan-capabilities.json` 对 B6 那 4 条已过期**（★ 它仍把它们当"孤立/未暴露"）
+   ⇒ ★★ 印证了我开工时写下的第 3 条守则「**清单有时效**」⇒ ★ **判"该不该暴露"必须逐条查近名**，
+   ★ **不许照抄清单** ✓（★ 本轮我正是这么查出 B6 只剩 1 个的）
+2. ⚠ **下一轮开工前必须加一道**：★ 逐个查 **`scripts/check_preselect_family.py`** 的判据 ——
+   ★★ 因为 `*_report` 形态**未必**是纯读（★ 例如 `thicken`/`trim`/`insert_*` 很可能**要求先选中**）
+   ⇒ ★ 一旦命中，★ 按 batch103 的先例：★ **撤出本批、挪进"需配声明式选择"那一批** ✓
+   （★ 别等 `release_check` 来拦 —— ★ 虽然它拦得住，★ 但那要多花一轮 ✓）
+
+### ★ 下一轮（★ 顺序与内容都已定）
+
+1. ★ **B2 = 6 个**：★ 逐个先过预选族判据 ⇒ 无预选的进 batch105；★ 命中的挪走 ✓
+2. ★ 然后 **B5 = 7 个** ⇒ batch106
+3. ★ 再 **B6 = 1 个** ⇒ batch107
+4. ★ 最后才是 **T-217-01b**（4 个需配声明式选择 + 真机验证，★ 单独一轮）✓
+
+---
+
+# （以下是本规格开工时写的目标栏正文）
+
 ## ★★★ T-217-03（B3）+ T-217-04（B4）落库（第 5 轮）：工具数 **463 → 467**
 
 | 项 | ★ 读数 |
