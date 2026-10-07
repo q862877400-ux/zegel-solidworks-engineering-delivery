@@ -84,6 +84,26 @@ def main() -> int:
             neg["bad_type_%d" % bad] = "✓ 抛 ValueError：%s" % str(exc)[:70]
     out["negatives"] = neg
 
+    #: ── ①b 逐面盒中心（★ 只读诊断：确认 face_index 0/1 的点是否不同、是否落在面内）──
+    try:
+        import sw_selection_spec as _SS
+        import sw_part as _sp
+        _faces = list(_SS.entities_on_body(_build_plate(sw, tool_caller), "FACE", body_index=0) or [])
+        centres = []
+        for _i, _f in enumerate(_faces[:6]):
+            _b = list(_sp.get_com_member(_f, "GetBox") or [])
+            if len(_b) >= 6:
+                centres.append({"i": _i,
+                                "centre": [round((_b[0] + _b[3]) / 2.0, 4),
+                                           round((_b[1] + _b[4]) / 2.0, 4),
+                                           round((_b[2] + _b[5]) / 2.0, 4)]})
+        out["face_centres"] = centres
+        out["face_count"] = len(_faces)
+        print("★ 面数 = %d · 前几个面心 = %r" % (len(_faces), [c["centre"] for c in centres]))
+    except Exception as _e:                                                       # noqa: BLE001
+        out["face_centres_error"] = str(_e)[:140]
+        print("★ 面心诊断失败：%s" % str(_e)[:120])
+
     #: ── ② 真机两档：★ 曲面（Type=2）先跑，★ 凸台（Type=1）再跑 ─────────────
     results = []
     for kind, fn_name in (("surface", "insert_boundary_surface_report"),

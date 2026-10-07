@@ -83,7 +83,7 @@ def insert_net_blend_report(
     face_index_2: int = 1,
     blend_type: int = 1,
     n_curves_dir1: int = 1,
-    n_curves_dir2: int = 1,
+    n_curves_dir2: int = 2,   #: ★ 官方示例逐字 `InsertNetBlend 1, 2, 0, …`
     influence_type: int = 0,
     trim_curves: bool = False,
     blend_closed: bool = False,
