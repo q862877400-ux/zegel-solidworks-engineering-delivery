@@ -114,12 +114,22 @@ def main() -> int:
         ptitle = get_com_member(part, "GetTitle")
         opened.append(ptitle)
         ev["steps"]["part"] = {"title": str(ptitle)}
-        sk = step("sw_part.sketch(part, 'Front Plane')",
-                  lambda: sw_part.sketch(part, "Front Plane"))
-        step("sw_part.sketch_circle(0, 0, r=0.02)",
-             lambda: sw_part.sketch_circle(part, 0.0, 0.0, 0.02))
-        step("sw_part.extrude_boss(part, sk, 0.1)",
-             lambda: sw_part.extrude_boss(part, sk, 0.1))
+        #: ★★★ 2026-10-07（规格 216 T-216-07m）**修掉建件写法** —— ★ 这是本脚本长期失败的**真因**：
+        #:   ★ 原来写的是 `sk = sw_part.sketch(part, "Front Plane")`（**没有 `with`**）+
+        #:     `sketch_circle(part, 0, 0, 0.02)`（**0.02 是"米"口径的数**）✗
+        #:   ★★ 而 `sw_part.sketch()` 是**上下文管理器**（不进入它 ⇒ 草图没开），
+        #:     且**本模块的长度单位就是毫米**（★ 它自己的 docstring 逐字警告「不要写 `mm(25)`」）⇒
+        #:   ★★★ 后果：★ 挤出的**不是有效圆柱** ⇒ 真机逐字
+        #:     「`add_constant_speed_rotary_motor_by_cylinders` ⇒ ✗ RuntimeError:
+        #:        未找到圆柱面: mcp_avi_shaft-1, **radius=[0.0, inf]**」——
+        #:     ★ `radius=[0.0, inf]` **就是退化的证据**（没有有效圆柱面）✓
+        #:   ★★ 于是本脚本历史上把「**建件写错了**」记成了「**马达建不出**」（★ 台账轮 288 那条链）✗
+        #:   ⇒ ★ 修法：★ 用 **`with`** + ★ **毫米数**（★ 与规格 216 的探针同一写法）✓
+        with sw_part.sketch(part, "Front Plane") as sk:
+            step("sw_part.sketch_circle(0, 0, r=20) [毫米]",
+                 lambda: sw_part.sketch_circle(part, 0.0, 0.0, 20.0))
+        step("sw_part.extrude_boss(part, sk, 40) [毫米]",
+             lambda: sw_part.extrude_boss(part, sk, 40.0))
         step("save_document(part, %s)" % os.path.basename(part_path),
              lambda: save_document(part, part_path))
 
