@@ -27,8 +27,14 @@ SPECS_BATCH106 = [
         title="Read Linear Pattern Feature",
         module="sw_part", function="linear_pattern_report",
         inject="model",
-        read_only=True,
-        params=[],
+        params=[
+            Param("feature_name", str,
+                  description="★ 被阵列的特征名（★ 名字不是坐标 ⇒ 规则 3 合规）。"),
+            Param("spacing_mm", float,
+                  description="★ 实例间距（**毫米**，★ 本仓单位口径见事实 2）。"),
+            Param("count", int,
+                  description="★ 实例总数（★ 含源特征）。"),
+        ],
         doc="★ **读线性阵列特征的参数**（★ 读侧）✓"
             "★★ 与既有两个阵列工具的区别（★ 逐字比对过）："
             "★ `solidworks_sketch_linear_pattern` 是**草图**里的线性阵列（**动作**）；"
@@ -41,7 +47,10 @@ SPECS_BATCH106 = [
         title="Insert Mate Reference",
         module="sw_curve_and_split", function="insert_mate_reference",
         inject="model",
-        params=[],
+        params=[
+            Param("name", str,
+                  description="★ 配合参考的名字（★ 名字不是坐标 ⇒ 规则 3 合规）。"),
+        ],
         doc="★ **插入配合参考**（★ 动作）。"
             "★★ 与既有配合工具的区别：★ `solidworks_assembly_add_*_mate` 那族是"
             "**在装配体里加配合**；★ 本工具是在**零件**上**定义配合参考**（★ 为后续装配做准备）"
