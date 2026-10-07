@@ -122,3 +122,35 @@
   ★ `batch108` 与那个测试已删）⇒ ★★ **工作树回到绿** ✓
 ★★ 依据：★ 纪律「**不提交红门禁状态**」+ ★「**不让地图指向不存在的工具**」✓ ——
   ★ 退回**不丢知识**：★ 上面两条 + 做过的形态**都记在这里**，★ 下一轮**照它重做**（★ 只差那两问）✓
+
+
+## ★★ 第 17 轮：PDM 不命中的机制**查清了**（★ 只差一次判决性对照）
+
+★ 读数（★ 逐条读生成器原文，★ 不再凭记忆）：
+
+| ★ 项 | ★ 值 |
+|---|---|
+| ★ 那一行 | ★ `182| ("其他", "PDM", ("pdm", "edm")),` ✓（★ 我**没记错** ✓）|
+| ★ `_hit`（245–246 行）| ★★ **就是简单子串**：`sorted(n for n in names if any(p in n for p in pats))` ✓ |
+| ★ `_load_ours`（210–226）| ★ 读**两个来源**：★ `rc.all_specs()`（★ 名字**转小写** `out.add(str(name).lower())` ✓）+ ★ `server.py` 的 `name="solidworks_…"` 正则 ✓ |
+| ★ `FALSE_POS` 的键 | ★ **只有 3 个**（`flatten/unfold` · `weldment_gusset/add_gusset` · `特征/缩放/变形`）⇒ ★ **PDM 不在其中** ✓ |
+| ★ 生成器自身 | ★ **跑得好好的**（★ 145 项 · 正常写图 ✓）|
+
+★★ **结论**：★ 关键词**对** ✓ · 命中逻辑**是纯子串** ✓ · **无排除** ✓ · 名字**也在 `all_specs()` 里** ✓
+⇒ ★★ **唯一剩下的可能是"生成器那个进程 `import` 到的是哪一份 `register_capabilities`"** ✗ ——
+★ 即 ★ **`sys.path` 里 `mcp-server/` 之前还有别的路径 ⇒ `import register_capabilities` 可能拿到旧的/别的一份** ✗✓✓
+★（★ 它能**同时**解释"名字在、却不命中" ✓ —— ★ 与事实 51「分析范围要贴合组织单元」同族 ✓）
+
+### ★★ 下一轮的**判决性对照**（★ 一次就能定案）
+
+1. ★ **重新落 batch108**（★ `solidworks_pdm_evidence_report`，★ 形态与上一轮一样 ✓）
+2. ★★ **在一个全新进程里**跑：★
+   ★ `python -c "import sys; sys.path.insert(0,'D:/AI/SW/mcp-server'); import register_capabilities as rc; print('pdm' in str([s.name for s in rc.all_specs()]).lower())"`
+   ★ ⇒ ★ 若 **True** ⇒ ★ 那再看生成器进程里 `_load_ours` 的结果（★ 直接 `import` 那个脚本的模块调它 ✓）
+   ★ ⇒ ★ 若 **False** ⇒ ★ **`sys.path` 顺序**就是真因 ✓
+3. ★ ★ **同时**把生成器的 `_load_ours(repo)` **单独调一次**（★ 上一轮我调过、那时**是 True** ✓）⇒
+   ★★ **若单独调 True 而整体跑不命中** ⇒ ★ 那差异只在**导入时机/`sys.path` 污染**上 ✓
+
+★ 一旦定案 ⇒ ★ 若是我这边的命名/暴露问题 ⇒ ★ 改掉重落；★ 若是生成器侧的导入问题 ⇒
+  ★ **按生成器的实现改**（★ 例如名字里 `pdm` 放在 `solidworks_` 之后即可 —— ★ 我的名字**已经**满足 ✓）⇒
+  ★ 并把**证据**写进 `not-doing.md`/目标栏（★ 不硬改生成器 ✗，★ 除非有充分依据 ✓）✓
