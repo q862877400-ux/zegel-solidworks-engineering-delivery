@@ -20,6 +20,12 @@
  ],
  "classification": [
   {
+   "gate": "check_lean_first_line_caveat.py",
+   "runner": "_run_lean_first_line_gate",
+   "kind": "hard",
+   "reason": "**硬门禁**（2026-10-07 接手轮 · 规格 215）：判「**决定模型要不要用**的结论，是否落在 lean 投影看得见的**第一句**里」。★★ 依据是 lean 的投影口径本身 —— `@local/dsh-lean-mode` 的 `firstLine()` = `text.split(/[。\\n]/)[0]` **再截到 120 字** ⇒ ★ 「本机不可用」「我是内部件」这类结论若写在第三段，★ **模型根本看不到** ✗ —— ★ 这是「守卫存在但没人看得见」的又一张面孔。★★ 判据只收**强自指**标记：① `doc` 含 `仍不可用` / `NOT USABLE` ⇒ 其一必须在首句；② `doc` 提到 `generate_macro_with_guard`（= 承认自己是那条管线的一步）⇒ 首句必须自证 `内部件`。★★ **标记集是量出来的、不是拍的**（三组实测）：`不可用`（宽）命中 **12** 而真阳性仅 **3** ✗ · `建不出` 命中 **7** 而真阳性 **0** ✗ · ★ 本组命中 **3** 而真阳性 **3** ⇒ ★★ **零假阳性 ⇒ 因此不需要豁免表**（与 probe-reuse / preselect-family 那两道要棘轮基线的门禁**不同型**，这点值得后来人注意）。★ 落地形态：`mcp-server/tool_specs_batch4.py` 3 条 + `batch79.py` 5 条 —— ★ **只做加法**（在 `doc` 最前面**前置一个字符串字面量**），★ 原有文字逐字保留（已用脚本回读证明「丢失数 = 0」）✓ ⚠ **覆盖边界**：只扫 `all_specs()` 里的 `ToolSpec.doc`；★ `Param.description` 与 `server.py` 那 45 个装饰器工具的 doc **不在其内**（后者不经过本仓的 `ToolSpec`）⇒ ★ 那一半的同类问题本道**看不到** ✓"
+  },
+  {
    "gate": "check_fact_single_home.py",
    "kind": "diagnostic",
    "runner": "_run_fact_single_home_gate",

@@ -167,7 +167,8 @@ SPECS_BATCH79 = [
         title="Normalize a Model Name to a Prompt Family",
         module="sw_macro_guard", function="normalize_model_family",
         params=[Param("model_name", str, description="Model name as written by the caller.")],
-        doc="Map a concrete model name onto one of the prompt families this repo uses "
+        doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
+            "Map a concrete model name onto one of the prompt families this repo uses "
             "(gpt / kimi / claude / generic). ★ Pure string function — no SolidWorks, no COM.",
     ),
     ToolSpec(
@@ -179,7 +180,8 @@ SPECS_BATCH79 = [
             Param("model_name", str, default="", description="Model name (normalized internally)."),
             Param("strict", bool, default=True, description="Emit the strict variant of the prompt."),
         ],
-        doc="Build the prompt that asks a model to write SolidWorks VBA for `user_request`. "
+        doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
+            "Build the prompt that asks a model to write SolidWorks VBA for `user_request`. "
             "★ Pure string function (no SolidWorks call), so it is safe to call anywhere.",
     ),
     ToolSpec(
@@ -187,7 +189,8 @@ SPECS_BATCH79 = [
         title="Extract the VBA Code Block from Model Output",
         module="sw_macro_guard", function="extract_vba_code",
         params=[Param("text", str, description="Raw model output (may contain prose + fences).")],
-        doc="Pull the VBA code out of a model's reply (official-free helper: pure text). "
+        doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
+            "Pull the VBA code out of a model's reply (official-free helper: pure text). "
             "★ Returns the extracted code; use `solidworks_macro_validate_vba_code` next.",
     ),
     ToolSpec(
@@ -203,7 +206,8 @@ SPECS_BATCH79 = [
         title="Pick a Local VBA Template by Keyword",
         module="sw_macro_guard", function="select_template_key",
         params=[Param("user_request", str, description="The user's request text.")],
-        doc="Choose the local VBA template key whose keywords match `user_request`. "
+        doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
+            "Choose the local VBA template key whose keywords match `user_request`. "
             "★ Pure function; the template bodies live in this repo (MIT).",
     ),
     ToolSpec(
@@ -211,7 +215,8 @@ SPECS_BATCH79 = [
         title="Get the Fallback VBA Template for a Request",
         module="sw_macro_guard", function="fallback_macro_for_request",
         params=[Param("user_request", str, description="The user's request text.")],
-        doc="Return the local fallback VBA template for `user_request` — used when generation fails. "
+        doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
+            "Return the local fallback VBA template for `user_request` — used when generation fails. "
             "★ Pure function; no SolidWorks call, no network.",
     ),
     ToolSpec(

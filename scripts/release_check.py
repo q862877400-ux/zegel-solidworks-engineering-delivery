@@ -491,6 +491,43 @@ def _run_preselect_family_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把「结论写在模型看不到的地方」接成硬门禁）
+# 文件:   `scripts/check_lean_first_line_caveat.py`（本门禁的实现）
+#         `tests/test_lean_first_line_caveat_gate.py`（契约测试 + 双侧负例）
+#         `specs/215-tool-surface-decisions/spec.md` §二-④（判据与实测数据）
+# 定位:   新增 `_run_lean_first_line_gate`：**硬门禁** ——
+#         ★★ 判「**决定模型要不要用这个工具**的结论，是否落在 lean 投影看得见的首句里」：
+#           ① `doc` 含 `仍不可用` / `NOT USABLE` ⇒ ★ 其一必须出现在**第一句**（前 120 字）；
+#           ② `doc` 提到 `generate_macro_with_guard`（= 自己是那条管线的一步）⇒
+#              ★ 首句必须自证 `内部件` ✓
+#         ★★ **判据是从三组实测里选的**（规格 215 §二-④ 的表）：
+#           · `不可用`（宽）⇒ 命中 **12**、真阳性 **3** ✗
+#           · `建不出`       ⇒ 命中 **7**、真阳性 **0** ✗
+#           · ★ 本组         ⇒ 命中 **3**、真阳性 **3** ⇒ ★ **零假阳性 ⇒ 无需豁免表** ✓
+#         ★ 为什么它是**硬门禁**而不是诊断：★ lean 只保留第一句（`firstLine()`）
+#           ⇒ ★ 写在第三段的结论**等于没写** —— ★ 这是"守卫存在但没人看得见"的又一张面孔 ✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────
+def _run_lean_first_line_gate() -> dict[str, object]:
+    """@brief 跑首句自证门禁（`scripts/check_lean_first_line_caveat.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_lean_first_line_caveat.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "首句自证门禁无法执行: %s" % exc}
+    #: ★ 退出码 2 = **无法判定**（注册表没加载全 / 读不到 ToolSpec）——
+    #:   ★ 那**不能算过**（宁可拦发布，也不要一个说不清的绿）✓
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把交付报告数字新鲜度接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_report_freshness.py`（本门禁的实现）
 # 定位:   新增 `_run_report_freshness_gate`：**硬门禁** ——
@@ -1351,6 +1388,21 @@ def run_release_check() -> dict[str, object]:
             "预选族门禁未通过（有工具要求调用方先选、却没有任何入口能选；★ 请加 `pre_call`，"
             "或把「它其实不需要预选」的登记进 docs/preselect-family-baseline.json 并写明理由）：\n"
             + str(preselect_family.get("output", "")))
+    # ⚑ **首句自证门禁**（硬门禁，2026-10-07 接手轮接进；★ 规格 215 §二-④ 点名要建）：
+    #   ★★ lean 投影只保留**第一句**、且截到 **120** 字
+    #     （`@local/dsh-lean-mode` 的 `firstLine()`）⇒
+    #     ★ 「本机不可用」/「内部件」这类**决定模型要不要用**的结论，若写在第三段
+    #     ⇒ ★★ **模型根本看不到** —— ★ 这是"守卫存在但没人看得见"的又一张面孔 ✗
+    #   ★★ 判据只收**强自指**标记（`仍不可用` / `NOT USABLE`）+ 管线内部件指纹 ——
+    #     ★ 那是**量了三组之后**选的：宽标记 12 命中 / `建不出` 7 命中且 0 真阳性 /
+    #       ★ 本组 3 命中且 3 真阳性 ⇒ ★ **零假阳性，故不需要豁免表** ✓
+    lean_first = _run_lean_first_line_gate()
+    if lean_first.get("status") == "fail":
+        raise AssertionError(
+            "首句自证门禁未通过（有工具把「本机不可用 / 我是内部件」的结论写在了 lean 窗口之外"
+            " —— 模型看不到；★ 修法：把该结论**前置一句**到 `doc` 最前面，★ 只做加法、"
+            "不改写原有文字；★ 见 specs/215-tool-surface-decisions/spec.md §二）：\n"
+            + str(lean_first.get("output", "")))
     # ⚑ **可达性门禁**（硬门禁，2026-10-03 轮 579 接进）：前三道「名字」门禁判的是
     #   「**存在 / 属于哪个接口**」，而**本道判「在本机调不调得动」** ——
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
@@ -1648,6 +1700,9 @@ def run_release_check() -> dict[str, object]:
         "probe_reuse": probe_reuse,
         #: ★ 2026-10-07（接手轮）★ **第五次**同一课：预选族门禁也必须**两处同时加**（★ 元门禁在守）✓
         "preselect_family": preselect_family,
+        #: ★ 2026-10-07（接手轮 · 规格 215）★ **第六次**同一课：首句自证门禁
+        #:   ★ 也必须**两处同时加**（★ `check_gate_wiring.py` 会拦"没进返回体"）✓
+        "lean_first_line": lean_first,
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
         #:   `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价」⚠
         "unreachable": unreachable,
@@ -1754,6 +1809,8 @@ def run_release_check() -> dict[str, object]:
         "probe_reuse": probe_reuse,
         #: ★ 2026-10-07（接手轮）★ 预选族门禁的**第二处** ✓
         "preselect_family": preselect_family,
+        #: ★ 2026-10-07（接手轮 · 规格 215）★ 首句自证门禁的**第二处**（★ 元门禁要的）✓
+        "lean_first_line": lean_first,
         #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点** ⚠
         "unreachable": unreachable,
         #: ★ 2026-10-04（接手轮）★ 新门禁的**第二处**（★ 两处必须同时加）✓

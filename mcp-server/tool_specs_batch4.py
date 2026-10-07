@@ -278,7 +278,8 @@ SPECS_BATCH4: list[ToolSpec] = [
                   description="Use the part default bend radius instead of bend_radius_mm."),
             Param("reverse_direction", bool, default=False, description="Reverse the flange direction."),
         ],
-        doc=("Create a native edge flange on a SELECTED edge. The edge is selected for you from `selection` BEFORE the call (the implementation requires a pre-existing selection). "
+        doc=("★★ **本机（SW 2026 SP4.1 + pywin32）仍不可用**：`SetFixedFace` / `AccessSelections` 属**进程内指针族**，pywin32 迟到绑定下调不动（事实 47，20+ 形态已穷尽）。"
+             "Create a native edge flange on a SELECTED edge. The edge is selected for you from `selection` BEFORE the call (the implementation requires a pre-existing selection). "
              "⚠ **仍不可用，但报错已前移**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #2）。"
              "★★ **旧描述（已作废）**：`setting \\`ReverseDirection\\` gave \\`Property ... can not be set\\`` ——"
              "★ 那条**属性层**的错**已修掉**：`ReverseDirection` **不属于** `IEdgeFlangeFeatureData`（★ 跨接口泄漏），"
@@ -311,7 +312,8 @@ SPECS_BATCH4: list[ToolSpec] = [
             Param("profile_angle_deg", float, default=0.0,
                   description="Profile angle in DEGREES."),
         ],
-        doc=("Create a native sheet-metal gusset on a SELECTED supporting face. The face is selected for you from `selection` BEFORE the call. "
+        doc=("★★ **本机（SW 2026 SP4.1 + pywin32）仍不可用**：`ISMGussetFeatureData` 的 `AccessSelections` 属**进程内指针族**（事实 47）；★ 属性层已修好，但**特征建不出来**。"
+             "Create a native sheet-metal gusset on a SELECTED supporting face. The face is selected for you from `selection` BEFORE the call. "
              "⚠ **仍不可用，但属性层已修好**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #3）。"
              "★★ **旧描述（已作废）**：`setting \\`Thickness\\` gave \\`Property ... can not be set\\`` ——"
              "★ **真因不是「属性只读」，是接口不对**：`Thickness` 是**焊件族**的名字，★ 本工具要走的是**钣金族**的 "
@@ -343,7 +345,8 @@ SPECS_BATCH4: list[ToolSpec] = [
             Param("depth_mm", float, description="Draft depth in MILLIMETRES."),
             Param("reverse_direction", bool, default=False, description="Reverse the draft direction."),
         ],
-        doc=("Create a native draft on a SELECTED face. NOTE: the implementation's own `face_ref` parameter is accepted but NEVER USED (verified by reading the body); this tool therefore omits it and selects from `selection` instead, matching the docstring ('on the already-selected face'). *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: CreateDefinition(3) returned None. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works."),
+        doc=("★★ **本机（SW 2026 SP4.1 + pywin32）NOT USABLE**：`CreateDefinition(3)`（`swFmDraft`）**不是合法类型** ⇒ 回 `None`；★ 且实现里的 `face_ref` 形参**从未被使用**（见原描述）。"
+             "Create a native draft on a SELECTED face. NOTE: the implementation's own `face_ref` parameter is accepted but NEVER USED (verified by reading the body); this tool therefore omits it and selects from `selection` instead, matching the docstring ('on the already-selected face'). *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: CreateDefinition(3) returned None. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works."),
     ),
     # 签名: def create_swept_flange(model, path_ref, profile_ref, spec: SweptFlangeSpec)
     ToolSpec(
