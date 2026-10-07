@@ -1,0 +1,181 @@
+{
+ "_comment": [
+  "★ **探针复用门禁的基线**（`scripts/check_probe_reuse.py` 读它）。",
+  "★ 每条 = 一处「已有工具的替代品」，★ 必须齐 `probe` / `tool` / `module` / `function` / `reason`",
+  "  （★ 与 `docs/gate-wiring-exemptions.json` 同型：**一个没有理由的豁免等于没写** ✓）。",
+  "★★ 门禁对基线**双向判**：① 出现**不在基线里的**命中 ⇒ 失败（防新犯）；",
+  "  ② 基线里有、实际**已不存在**的 ⇒ 也失败（★ 名单腐坏，要跟着改）✓",
+  "⚠ 基线**不是**通行证：★ 它只登记历史存量；★ 理由一栏要能说服人「这条为什么不能改走工具层」✓",
+  "★ 生成口径：`python scripts/check_probe_reuse.py --report` 可重算全表 ✓"
+ ],
+ "entries": [
+  {
+   "probe": "tools/probe_base_flange_params_recheck.py",
+   "tool": "solidworks_base_flange_params",
+   "module": "sw_feature_readback",
+   "function": "base_flange_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_base_flange_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_csys_params_recheck.py",
+   "tool": "solidworks_csys_params",
+   "module": "sw_feature_readback",
+   "function": "csys_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_csys_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_extrude_depth_recheck.py",
+   "tool": "solidworks_extrude_depth",
+   "module": "sw_feature_readback",
+   "function": "extrude_depth",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_extrude_depth 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_extrude_params_recheck.py",
+   "tool": "solidworks_extrude_params",
+   "module": "sw_feature_readback",
+   "function": "extrude_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_extrude_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_feature_info_recheck.py",
+   "tool": "solidworks_feature_info",
+   "module": "sw_feature_readback",
+   "function": "feature_info",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_feature_info 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_fillet_params_recheck.py",
+   "tool": "solidworks_fillet",
+   "module": "sw_part",
+   "function": "fillet",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_fillet 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_fillet_params_recheck.py",
+   "tool": "solidworks_fillet_params",
+   "module": "sw_feature_readback",
+   "function": "fillet_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_fillet_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_hole_params_recheck.py",
+   "tool": "solidworks_hole_params",
+   "module": "sw_feature_readback",
+   "function": "hole_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_hole_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_loft_params_recheck.py",
+   "tool": "solidworks_loft_params",
+   "module": "sw_feature_readback",
+   "function": "loft_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_loft_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_pattern_params_recheck.py",
+   "tool": "solidworks_pattern_params",
+   "module": "sw_feature_readback",
+   "function": "pattern_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_pattern_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_revolve_params_recheck.py",
+   "tool": "solidworks_revolve_params",
+   "module": "sw_feature_readback",
+   "function": "revolve_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_revolve_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_rib_dome_params_recheck.py",
+   "tool": "solidworks_dome_params",
+   "module": "sw_feature_readback",
+   "function": "dome_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_dome_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_shell_params_recheck.py",
+   "tool": "solidworks_shell_params",
+   "module": "sw_feature_readback",
+   "function": "shell_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_shell_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_surface_fill_fallback.py",
+   "tool": "solidworks_surface_fill",
+   "module": "sw_surface_features",
+   "function": "insert_fill_surface_report",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_surface_fill 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/probe_sweep_params_recheck.py",
+   "tool": "solidworks_sweep_params",
+   "module": "sw_feature_readback",
+   "function": "sweep_params",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_sweep_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/prove_chamfer_geometry.py",
+   "tool": "solidworks_chamfer",
+   "module": "sw_part",
+   "function": "chamfer",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_chamfer 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/prove_hole_pattern.py",
+   "tool": "solidworks_hole_pattern",
+   "module": "sw_hole_features",
+   "function": "hole_pattern_report",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_hole_pattern 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/prove_hole_wizard_wrapper.py",
+   "tool": "solidworks_hole_wizard",
+   "module": "sw_hole_features",
+   "function": "create_hole_wizard_at_selection_report",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_hole_wizard 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/prove_mold_parting_line_marks.py",
+   "tool": "solidworks_mold_parting_line",
+   "module": "sw_mold",
+   "function": "insert_parting_line",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_mold_parting_line 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/prove_revolve_cut.py",
+   "tool": "solidworks_revolve_cut",
+   "module": "sw_part",
+   "function": "revolve_cut",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_revolve_cut 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  },
+  {
+   "probe": "tools/prove_undo.py",
+   "tool": "solidworks_undo",
+   "module": "sw_session",
+   "function": "undo_report",
+   "cited_in_capabilities": false,
+   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_undo 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
+  }
+ ]
+}

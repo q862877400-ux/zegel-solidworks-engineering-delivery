@@ -242,3 +242,128 @@ python D:\AI\SW\tools\probe_mcp_stdio_handshake.py   # 真 MCP 握手（504 个�
    等于 preset 的 `config.id`（★ 两者都是 `sw-engineer` ✓）
 4. ★ **GitHub**：★ 等用户定「要不要装一个 GitHub MCP」（★ 撞硬约束「不装不改系统层」✗ ⇒ **必须他批准** ✓）
 5. ★ **建 `check_probe_reuse.py`**（★ 本文件 §五-2 的设计 ✓）—— ★ 那是防"我再犯懒"的机制 ✓
+
+---
+
+## 九 · ★★★ 接手轮实测（2026-10-07 · 新对话）
+
+> ★ 本节**只追加**，★ 上一节及以前**一字未改** ✓。★ 读数全部**可复算**，★ 复算命令随行 ✓。
+
+### 9.1 ★★★ 本会话**就是** `sw-engineer` 会话 ⇒ ★ §四-1「未验」已转**已验** ✓
+
+★ 会话日志逐字（`~/.dsh/sessions/--D-AI-SW--/session-41acd759-…/session.v4.jsonl.zstd`，
+★ 该文件是 **zstd 多帧**，★ 第 2 行解出来就是——）：
+
+```json
+{"type":"agent-preset/selected","seq":3,"time":1791327062022,"data":{"agentPreset":"sw-engineer"}}
+```
+
+★ 同一日志的 `system/message` 记录里就是**装配后的系统提示** ⇒ 逐字量得：
+
+| 读数 | 值 |
+|---|---|
+| 工具目录条目 | **589** = `mcp__solidworks` **504** + `mcp__sciverse` **6** + `mcp__crawl4ai` **2** + 内建 **77** |
+| 系统提示体积 | **113,059 字符 / 134,796 字节（UTF-8）** |
+| 其中 `## Tool catalog` 段 | **102,528 字符** |
+| `comfyui` | ★ **0 处** ✓（用户明令） |
+| `mcp__github` | ★ **0 处**（★ 见 §五-1，仍待用户定）|
+
+⇒ ★★ **§四-1 的两条判据都满足**：★ 目录里**能见到** `solidworks_*`（**504 个**，★ 与
+§四-1 表里的 `tools/list` 504 **逐数吻合**）✓ · ★ **体积没爆** ✓
+★ 与记忆库「478 工具 · 原生 693 KB ≈ **175k token** vs Lean 76 KB ≈ **19k token**」对照：
+★ 本次**整份**系统提示 **134.8 KB**（★ 含 `AGENTS.md`、内建工具说明等）⇒
+★ **没有**出现 175k token 那一档 ✓
+
+### 9.2 ★★ MCP 子进程**真的连上了** ⇒ ★ §四-2「未验」已转**已验** ✓
+
+★ 在**本会话里真调了一次只读工具**（`mcp__solidworks__solidworks_health_check`，
+★ `readOnlyHint: true`、★ **未起 SolidWorks**）⇒ 逐字回：
+
+```json
+{"status":"ok","checks":{"python_executable":"C:\\Users\\Zegel\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+ "python_version":"3.14.7","missing_com_dependencies":[],"solidworks_detected":true,
+ "server_path":"D:\\AI\\SW\\mcp-server\\server.py",
+ "motion_type_library":"D:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\swmotionstudy.tlb",
+ "motion_type_library_ready":true},"issues":[]}
+```
+
+★★ **§三 点名的那个硬验收信号命中**：`server_path = D:\AI\SW\mcp-server\server.py` ✓
+（★ **不是**记忆库里那个坑的归档路径 `C:/Users/Zegel/solidpilot-mcp/...` ✗）
+
+⚠⚠ **诚实边界（★ 别把这条读成「端到端都通了」）**：★ 它只证到
+**DSH → MCP 客户端 → MCP 子进程 → 服务端工具函数** 这一段 ✓；
+★ **没有**触发 COM 层 —— 因为 `start_solidworks: false`，★ 且当时 **SolidWorks 主进程没在跑**
+（`Get-Process` 只有 `sldworks_fs`，★ 主进程 `sldworks` **缺席**）⇒
+★★ 「**在会话里驱动 SolidWorks 建模**」**本次没有验** ✗ —— 那要么**先起 SolidWorks**、
+要么**强指一个活动文档**，★ 两个都是**有副作用**的动作 ⇒ ★ 留给你点头（见 §十一）✓
+
+### 9.3 ★★ §五-2「手搓替代品门禁」**已建成** ✓ —— ★ 而它的判据与 §五-2 的设想**不同**
+
+| 落点 | 是什么 | 状态 |
+|---|---|---|
+| `scripts/check_probe_reuse.py` | ★ 门禁本体（★ **名字对应 ∧ 调用证据**，两条都要）| 新增 |
+| `docs/probe-reuse-baseline.json` | ★ **存量 21 条**，★ 每条带 `reason`（**棘轮**，不是清零）| 新增 |
+| `scripts/release_check.py` | ★ 接成**硬门禁** `_run_probe_reuse_gate`（★ **+49 行 / 0 删除**）| 改 |
+| `docs/gate-classification.json` | ★ 登记为 `hard` | 改 |
+| `tests/test_probe_reuse_gate.py` | ★ **负例自证**（`5 passed`）| 新增 |
+
+★ 元门禁实测（`python scripts/check_gate_wiring.py`）逐字：
+「`check_probe_reuse.py` **已接线**」·「`_run_probe_reuse_gate` **hard ✓**」·「`probe_reuse` **已汇总 ✓**」✓
+
+★★ **必须让上一节作者知道的一处更正**：★ §五-2 写「★ 它今天就能抓到我 ✓（★ 例：
+`insert_form_tool` / `insert_weld_symbol` 的探针 ✓）」—— ★ **那句过于乐观** ✗。
+★ 实测：`solidworks_insert_weld_symbol` 的**词序列**（`insert`/`weld`/`symbol`）
+**不是** `probe_spec211_weldsymbol_real` 的**连续子段**（★ 后者是 `spec211`/`weldsymbol`/`real`）
+⇒ ★ **本门禁不报它** ✓ —— ★ 而这是**刻意**的：
+
+- ★ 第一版判据只有「**调了某工具的实现**」⇒ 实测报 **2112 处 / 1469 条**、几乎**全是噪声** ✗
+  ★ 两个根因：① 我给 `server.py` 收集调用时**没过 scripts 模块白名单** ⇒
+  `json.dumps` / `pathlib.Path` 被当成「工具实现」（★ **已知事实 51** 的原样复现：
+  分析范围没贴合「**哪些模块才是本仓的 scripts 模块**」这个组织单元 ✗）；
+  ② 探针**为了搭测试几何**先建个方块 ⇒ 调了 `solidworks_extrude_boss`，
+  ★ **但那不是这个探针要验的能力** ✗
+- ★★ **结论：「调到了某工具的实现」≠「这个探针在重复那个工具」** ——
+  前者是**图上的边**，后者是**探针的意图** ✓
+⇒ ★★★ **判据 = ①文件名里含这个工具名的词序列（连续子段）∧ ②真调了它的实现函数** ✓
+（★ 把「意图」交给**文件名** —— 因为 `probe_<被验的东西>.py` **正是本仓探针的既有约定** ✓）
+
+⚠ **覆盖边界三条（★ 必须记住，★ 否则会误以为它管得比实际宽）**：
+① 只扫 `tools/probe_*.py` 与 `tools/prove_*.py`；
+② 探针**绕过 `scripts/` 直接调 COM** 时本道**看不到**（★ 判据锚在「调了工具的实现函数」上）；
+③ 文件名**不对应**的探针（如 `probe_spec215_xxx.py`）即使重复了某工具，本道**也不报** ——
+★ 刻意：★ 放宽到纯调用图会立刻淹没在「搭几何」的噪声里（★ 事实 53：启发式在假阳性上凑不许凑）✓
+
+★ **本轮真抓到的 21 条**（★ 全表复算：`python scripts/check_probe_reuse.py --report`）——
+★ 形态高度一致：**能力后来才挂上工具、而探针写在那之前** ✓ 例：
+
+```
+probe_base_flange_params_recheck.py  →  solidworks_base_flange_params
+probe_shell_params_recheck.py        →  solidworks_shell_params
+prove_revolve_cut.py                 →  solidworks_revolve_cut
+prove_hole_wizard_wrapper.py         →  solidworks_hole_wizard
+probe_surface_fill_fallback.py       →  solidworks_surface_fill
+```
+
+### 9.4 ★★ 接手轮又踩到一个坑（★ 请一并继承）：改 `release_check.py` 极易**删注释**
+
+★★ `scripts/release_check.py` 是 1600+ 行的「**散文（来源块）+ 代码**」混排文件，
+★ 用 `edit` 工具改它时，★ **锚点里带了下一段注释的首行、而 `new_string` 没把它带回来**
+⇒ ★ **注释被静默删掉** ✗ —— ★ 我在**同一处犯了三次**（★ 三次都是这个形态）✓
+⇒ ★★★ **定则：改完立刻 `git diff --stat <file>`，★ 出现 `deletions` 就当成自己的 bug 查** ✓
+（★ 与 **已知事实 61 定则①**逐字同源：「批量脚本跑完先看 `git diff --stat`，有 `deletions`
+就当成自己的 bug 查」—— ★ 只是这次**不是脚本**、而是 `edit` 工具 ⇒ ★ **同一教训换了个入口** ✓）
+★ 本次最终读数：`scripts/release_check.py | 49 +++++… (1 file changed, 49 insertions(+))`，
+★ **0 deletions** ✓
+
+### 9.5 ★ 复算清单（★ 想自己再验一遍，跑这四条）
+
+```bash
+python D:\AI\SW\scripts\check_probe_reuse.py --report     # ★ 21 条全表（不判基线）
+python D:\AI\SW\scripts\check_probe_reuse.py              # ★ 棘轮：无新增、基线无腐坏 ⇒ exit 0
+python -m pytest D:\AI\SW\tests\test_probe_reuse_gate.py -q   # ★ 负例自证（5 passed）
+python D:\AI\SW\scripts\check_gate_wiring.py              # ★ 元门禁：已接线 + hard + 已汇总
+```
+
+★ 另：本会话的 preset 与工具目录读数，可由**会话日志**复算 ——
+★ 它是 **zstd 多帧**格式，★ 注意 `zlib.zstdDecompressSync` **只解第一帧**（★ 只得到 190 字节的
+会话头）⇒ ★ 要**逐帧扫魔数 `28 B5 2F FD`** 再逐帧解（★ 本次解出 56 帧 / 782,839 字节）✓

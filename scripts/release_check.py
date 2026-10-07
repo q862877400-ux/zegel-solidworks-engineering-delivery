@@ -426,6 +426,38 @@ def _run_spec_acceptance_paths_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把 2026-10-07 交接文档 §五-2 点名的门禁接进发布前检查）
+# 文件:   `scripts/check_probe_reuse.py`（本门禁的实现）
+#         `docs/HANDOFF-dsh-sw-engineer-preset.md` §五-2
+# 定位:   新增 `_run_probe_reuse_gate`：**硬门禁** ——
+#         ★ 判「**是不是又手搓了一个已有工具的替代品**」：★ 对每个 `tools/probe_*.py` /
+#           `tools/prove_*.py`，若①**探针文件名词序列包含某工具名的词序列**（连续子段）、
+#           且②**该探针确实调了那个工具的实现函数**（`module.function`）⇒ 命中。
+#         ★★ 触发它的是用户 2026-10-07 的原话：「★ 我怕你会**忘记你有哪些工具**，
+#           然后就一直用常用工具硬干」；★ 实测基础：`probe_*` 246 + `prove_*` 110 = **356 个**，
+#           而 `AGENTS.md` 那条纪律只管「**怎么调**（按 ToolSpec 契约）」、★ 不管「**该不该自己调**」✗
+#         ★★★ 存量 21 条已按「探针 × 工具」登记进 `docs/probe-reuse-baseline.json`
+#           （★ 每条带理由；★ 未登记的**新增命中**就是违规）⇒ ★ 它是**棘轮**，不是一次性清零 ✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────
+def _run_probe_reuse_gate() -> dict[str, object]:
+    """@brief 跑探针复用门禁（`scripts/check_probe_reuse.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_probe_reuse.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "探针复用门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把交付报告数字新鲜度接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_report_freshness.py`（本门禁的实现）
 # 定位:   新增 `_run_report_freshness_gate`：**硬门禁** ——
@@ -1262,6 +1294,18 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "C8 台账分叉门禁未通过（已证伪清单的锚点没有逐字命中 known-facts.md）：\n"
             + str(refuted.get("output", "")))
+    # ⚑ **探针复用门禁**（硬门禁，2026-10-07 接手轮接进 · 交接文档 §五-2）：
+    #   ★ 判「**是不是又手搓了一个已有工具的替代品**」——
+    #     ★ 356 个 `tools/probe_*` / `prove_*` 里，名字冲着某能力去、又真调了该能力实现函数的，
+    #       就是「这个能力已经有工具了、我却自己写了一遍」✓
+    #   ★★ 存量 21 条已逐条登记进 `docs/probe-reuse-baseline.json`（**带理由**）⇒
+    #     ★ 未登记的**新增命中**才拦发布 —— ★ 棘轮（ratchet），不是一次性清零 ✓
+    probe_reuse = _run_probe_reuse_gate()
+    if probe_reuse.get("status") == "fail":
+        raise AssertionError(
+            "探针复用门禁未通过（探针手搓了已有工具的替代品；★ 请改走工具层，"
+            "或把「确实不能改」的登记进 docs/probe-reuse-baseline.json 并写明理由）：\n"
+            + str(probe_reuse.get("output", "")))
     # ⚑ **可达性门禁**（硬门禁，2026-10-03 轮 579 接进）：前三道「名字」门禁判的是
     #   「**存在 / 属于哪个接口**」，而**本道判「在本机调不调得动」** ——
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
@@ -1555,6 +1599,8 @@ def run_release_check() -> dict[str, object]:
         #:   ⇒ 它报「`refuted` 的结果**没有进返回体** ⇒ ★ **静默跳过与没跑等价**」⚠
         #:   ★ 这与前两次（轮 579 的 `unreachable` · 轮 594 的 `verified_evidence`）**逐字同型** ✓
         "refuted": refuted,
+        #: ★ 2026-10-07（接手轮）★ 同一道元门禁**第四次**教同一课 ⇒ ★ 两处**必须同时加** ✓
+        "probe_reuse": probe_reuse,
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
         #:   `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价」⚠
         "unreachable": unreachable,
@@ -1656,6 +1702,9 @@ def run_release_check() -> dict[str, object]:
         #: ★★ 2026-10-04（接手轮）**返回体这一处**（★ 元门禁要的**第二处**）——
         #:   与 `_gate_results` 那处**必须同时加**，★ 否则元门禁报「没进返回体」✓
         "refuted": refuted,
+        #: ★ 2026-10-07（接手轮）★ **返回体这一处**（★ 元门禁要的**第二处**）——
+        #:   与 `_gate_results` 那处**必须同时加**，★ 否则元门禁报「没进返回体」✓
+        "probe_reuse": probe_reuse,
         #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点** ⚠
         "unreachable": unreachable,
         #: ★ 2026-10-04（接手轮）★ 新门禁的**第二处**（★ 两处必须同时加）✓
