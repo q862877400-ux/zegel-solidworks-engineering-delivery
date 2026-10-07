@@ -1109,6 +1109,13 @@ BATCH_MODULES = (
     #:      （★ SolidWorks 自己的 Performance Evaluation 报的正是这类计数 ✓），★ 不冒充官方 API ✓
     #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
     "tool_specs_batch111",
+    #: ★ 规格 220（续）· 目标 145/145 —— 焊件/圆角焊缝（★ **从零真做**：scripts/sw_weld_bead.py ✓）
+    #:   ★★ 入口：★ 官方 `InsertFilletBeadFeature2` ✓（★ v1 官方逐字 **Obsolete** ⇒ 只用 v2 ✓）
+    #:   ★★ 前置：★ **预先选中的实体（边）** ✓ —— ★ 官方第 12 行逐字 `pre-selected part bodies`
+    #:      ⇒ ★ 选边走 `IEntity.Select4`（★ 事实 32）· ★ 且**由函数自己选**（★ 事实 503）✓
+    #:   ★★ 判据：★ **特征树回读增量 ≥ 1**（★ 事实 8；★ 返回值 `None` **不代表失败** ✓）
+    #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
+    "tool_specs_batch112",
     #: ★ 规格 220 · 目标 145/145 —— PDM 相邻证据读侧（★ 真实现已在 sw_pdm.collect_pdm_evidence）✓
     #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
     "tool_specs_batch108",
