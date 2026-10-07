@@ -33,11 +33,21 @@ DEPTH = 20.0
 
 
 def _build_plate(sw, tool_caller) -> object:
-    """★ 建一块 100×60×20 mm 板（★ 骨架照 probe_spec211_scale.py）✓"""
+    """★ 建**两块**100×60×20 mm 的凸台（★ 同一草图两个不相交矩形 ⇒ 两个轮廓 ⇒ 各自的面独立）。
+
+    ★★★ 为什么改（规格 220 续 · 第 37 轮）：★ 官方示例 `Postconditions` 逐字要求
+      「② **Creates two boss-extrude features.** ③ **Selects a face on each boss-extrude feature.**」
+      ⇒ ★ 边界特征要**两个轮廓**（★ 而不是同一块板上的两个面 ✗）✓
+      ★ 本函数用**同一草图里的两个不相交矩形** ⇒ 一次拉伸出两块凸台 ⇒ 满足"两个轮廓" ✓
+    """
     model = sw_connect.new_document(sw, "part")
     inj = {"model": model, "sw": sw}
+    #: ★★ 第 37 轮：★ **第二个不相交矩形**（★ 与 RECT 隔 30 mm ⇒ 两块独立凸台 ⇒ 两个轮廓 ✓）
+    RECT2 = {"x1_mm": 130.0, "y1_mm": 0.0, "x2_mm": 230.0, "y2_mm": 60.0}
     for step, params in (("solidworks_sketch_start", {}),
                          ("solidworks_sketch_add_rectangle", RECT),
+                         #: ★★ 第 37 轮：★ **第二个不相交矩形** ⇒ 两个轮廓（★ 官方示例要求两处凸台 ✓）
+                         ("solidworks_sketch_add_rectangle", RECT2),
                          ("solidworks_extrude_boss",
                           {"sketch_name": "Sketch1", "depth_mm": DEPTH})):
         ok, note = tool_caller.call(step, inject_objects=inj, **params)
