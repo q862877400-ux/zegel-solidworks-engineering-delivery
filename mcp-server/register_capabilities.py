@@ -1062,6 +1062,13 @@ BATCH_MODULES = (
     #:     ⇒ ★ **只到 `stitched`** ✓ —— ★ A7：★ 不许把 `stitched` 写成 `verified` ✓）
     #:   ★ 计数：456 → **459**
     "tool_specs_batch102",
+    #: ★ 规格 217 · B1（前半）—— 「已实现但没暴露」的 5 个草图读数/关系/相交曲线 ✓
+    #:   · `count_sketch_relations` / `delete_all_sketch_relations` / `delete_sketch_relation`
+    #:   · `sketch_by_name` / `sketch_intersect_curves`
+    #:   ★★ **只增加暴露面** —— ★ **不动台账任何 `level`**（挂柜台：暴露成功/可运行/返回语义已验证是三件事；
+    #:      ★★ 规格 204 的 P4–P6 曾把 339 暴露面缺口误当真实能力缺口而整阶段作废）✓
+    #:   ★ 计数：459 → **464**
+    "tool_specs_batch103",
 )
 
 def all_specs() -> list:

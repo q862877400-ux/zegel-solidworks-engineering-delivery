@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 485 | 485 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 490 | 490 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -39,7 +39,7 @@
 |---|---|---|---|---|---|---|---|---|
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 20 | 70⚠ | 53 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 46 | 114⚠ | 79 | **33** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 51 | 114⚠ | 84 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 40 | 111⚠ | 64 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 21 | 52⚠ | 29 | **8** |
@@ -55,7 +55,7 @@
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 40 | 14 | 40 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 111 | 568⚠ | 153 | **42** |
 
-**合计**：并集 795 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 800 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 446 个操作只有本仓库有：
+共 451 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -200,6 +200,7 @@
 - `costing_set_markup`（⑯ 高级 / 专项（含护城河候选））
 - `costing_set_method`（⑯ 高级 / 专项（含护城河候选））
 - `costing_update_cost_for_all_bodies`（⑯ 高级 / 专项（含护城河候选））
+- `count_sketch_relations`（③ 草图）
 - `csys_params`（⑰ 未归类）
 - `current_selection`（⑰ 未归类）
 - `current_sketch_name`（③ 草图）
@@ -208,6 +209,8 @@
 - `custom_property_get`（⑰ 未归类）
 - `custom_property_list`（⑰ 未归类）
 - `custom_property_names`（⑰ 未归类）
+- `delete_all_sketch_relations`（③ 草图）
+- `delete_sketch_relation`（③ 草图）
 - `delivery_bom_traceability`（⑰ 未归类）
 - `delivery_export_bom_csv`（① 会话 / 文档 / 文件）
 - `delivery_pack_and_go_audit_matrix`（⑰ 未归类）
@@ -477,6 +480,7 @@
 - `sketch_add_rectangle`（③ 草图）
 - `sketch_add_slot`（③ 草图）
 - `sketch_add_tangent_arc`（③ 草图）
+- `sketch_by_name`（③ 草图）
 - `sketch_count_arcs`（③ 草图）
 - `sketch_count_lines`（③ 草图）
 - `sketch_count_segments`（③ 草图）
@@ -485,6 +489,7 @@
 - `sketch_flip_entities`（③ 草图）
 - `sketch_fully_defined_status`（③ 草图）
 - `sketch_insert_chain_dimensions`（③ 草图）
+- `sketch_intersect_curves`（③ 草图）
 - `sketch_is_3d`（③ 草图）
 - `sketch_move_entities`（③ 草图）
 - `sketch_relation`（③ 草图）

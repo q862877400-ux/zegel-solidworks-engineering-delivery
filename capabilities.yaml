@@ -1742,7 +1742,12 @@
    ],
    "mcp_tools": [
     "solidworks_sketch_convert_entities",
-    "solidworks_sketch_mirror"
+    "solidworks_sketch_mirror",
+    "solidworks_count_sketch_relations",
+    "solidworks_delete_all_sketch_relations",
+    "solidworks_delete_sketch_relation",
+    "solidworks_sketch_by_name",
+    "solidworks_sketch_intersect_curves"
    ]
   },
   {
