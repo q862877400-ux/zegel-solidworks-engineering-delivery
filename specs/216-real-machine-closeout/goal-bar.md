@@ -2,7 +2,25 @@
 
 > ★★ **本文件是唯一进度字段** —— 进度只看上面那一行。
 
-**阶段：★★★ 预选族 **12 → 6**：★ 真修好 **6 条**（圆顶 `+圆顶1` · 参考点 `+点1` · 测距 `ok+area` · 参考轴 `+基准轴1` · 选区点 `point_mm` · 截面属性 **`area=1200.0` 与几何精确对上**）· ★ 改判 1 条（composite_curve ⇒ 已裁定不修）· ★ 误报移出 2 条 · ★ **剩余 6 条**（`assembly_dissolve` · `drawing_insert_balloons` · `part_insert_composite_curve`（已裁定不修）· `sketch_stretch_entities` · topology `demold`/`symmetry`）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-07c**（余下 5 条）
+**阶段：★★★ 预选族 **12 → 5**：★ 真修好 **7 条**（圆顶 `+圆顶1` · 参考点 `+点1` · 测距 `ok+area` · 参考轴 `+基准轴1` · 选区点 `point_mm` · 截面属性 `area=1200.0` · **草图伸展 `selected_count=4`**）· ★ 改判 1 条（composite_curve ⇒ 已裁定不修）· ★ 误报移出 2 条 · ★ **剩余 5 条**：`assembly_dissolve` · `drawing_insert_balloons` · `part_insert_composite_curve`（已裁定不修）· topology `demold`/`symmetry` · ★ ② AVI 未开始 · ★ 当前动作 = **T-216-08**（★ 建议先做 ② AVI —— 它是"做决定 + 落档"，★ 可结算目标三项里的第二项）
+
+---
+
+## ★★ T-216-07d（★ 2026-10-07 · `sketch_stretch` —— ★ 只修好"前置"那一半）
+
+★ 读数与机制见 [recon/bd-declarative-selection.md](recon/bd-declarative-selection.md) §五 ✓
+
+| 项 | ★ 结果 |
+|---|---|
+| ★ **前置（选区入口）** | ★★ **修好并真机确证**：★ `selected_count = 4`（★ 矩形四条段**全选上**）✓ |
+| ⚠ **效果（伸展真的改了几何吗）** | ★★ **未确证** —— ★ `bbox_before/after` 与 `transform_before/after` **全 `None`** ⇒ ★ `ok = None`（★ 工具**如实报"量不到"**）✗ ⇒ ★ **列为新的待查项**（★ 本轮**不声称**效果成立）✓ |
+
+★ 机制与前面几条**不同**：★ 草图段**既不是** FACE/EDGE/VERTEX、**也没有名字**（事实 32）
+  ⇒ ★ 用不了 `resolve_selection` ⇒ ★ 换官方 `ISketch::GetSketchSegments()` + `ISketchSegment::Select4` ✓
+★★ **两件事分开记**（★ 本仓既有纪律正是"注册 ≠ 能跑"）：
+  ★ **入口修好** ≠ ★ **效果验证** ⇒ ★ 门禁收掉本条（★ 它的判据就是"有没有选区入口"），
+  ★ 而"效果取不到读数"**另立待查项** ✓
+
 
 ---
 

@@ -274,13 +274,25 @@ def sketch_scale(model, factor: float) -> dict:
 
 def sketch_stretch(model, base_x_mm: float, base_y_mm: float,
                    dest_x_mm: float, dest_y_mm: float,
-                   keep_relations: bool = True) -> dict:
+                   keep_relations: bool = True, select_all: bool = True) -> dict:
     """★ 伸展实体：`IModelDocExtension.Stretch(KeepRelations, BaseX, BaseY, DestX, DestY)`（回 `void`）。
 
     ⚠ ★ **入口在 `IModelDocExtension` 上**（不是 `IModelDoc2`）⇒ 先取 `model.Extension` ✓
     ★ 官方说明逐字 "Stretch the selected entities" ⇒ ★ **要求先选中实体**（★ 见模块头的"选择"说明）。
+
+    ★★ 2026-10-07（接手轮 · 规格 216 T-216-07）**加 `select_all`：自己把活动草图的段选上** ——
+      ★ 起因：★ 上面那句"要求先选中"就是**官方前置**，★ 而**注入解析器会清空选区**（**事实 503**）
+        ⇒ ★ 模型**没有任何办法**在调工具前选好 ⇒ ★ 缺选区时它**几乎不动**（★ 台账逐字：
+        「变化很小（±20 → -19.997/20.003），★ 与「没选中时只有极小效应」一致」）✗
+      ★ `select_all=True`（缺省）⇒ ★ 先把**活动草图的全部段**选上（★ = "伸展整张草图"）✓
+        ★ 置 `False` ⇒ ★ 保持原样（★ 依赖调用方已选 —— ★ 而经 MCP 通常为空）✓
+      ★ 实现见 :func:`select_active_sketch_segments`（★ 用官方 `GetSketchSegments` + `Select4`）✓
     """
     _require_model(model)
+    #: ★★★ 先建选区（★ 必须紧贴 `Stretch` 之前 —— ★ 中间隔别的步骤会把选区清掉）✓
+    selected = None
+    if select_all:
+        selected = select_active_sketch_segments(model)
     ext = get_com_member(model, "Extension")
     if ext is None:
         raise RuntimeError("取不到 model.Extension —— 伸展实体在 IModelDocExtension 上")
@@ -291,6 +303,8 @@ def sketch_stretch(model, base_x_mm: float, base_y_mm: float,
                    float(base_x_mm) / 1000.0, float(base_y_mm) / 1000.0,
                    float(dest_x_mm) / 1000.0, float(dest_y_mm) / 1000.0)
     out = {"op": "stretch",
+           #: ★ 2026-10-07：把"选了多少段"**带进报告** —— ★ 它同时是**前置成立与否**的读数 ✓
+           "selected_count": selected, "select_all": bool(select_all),
            "sketch_before": before, "sketch_after": _active_sketch_name(model),
            "keep_relations": bool(keep_relations)}
     out.update(_geom_evidence(model, before_bbox, before_tf))       #: ★ doc 承诺的判据
@@ -314,6 +328,38 @@ def sketch_flip(model, axis_flag: int) -> dict:
            "axis_flag_semantics": "官方 swapi 与 CHM 均未给取值表 —— 原样透传"}
     out.update(_geom_evidence(model, before_bbox, before_tf))       #: ★ doc 承诺的判据
     return out
+
+
+def select_active_sketch_segments(model, indices=None) -> int:
+    """★ 选中**活动草图**里的段 —— 供 `Stretch the **selected** entities` 这类前置用。
+
+    ★★ 2026-10-07（接手轮 · 规格 216 T-216-07）**为什么要它**：
+      ★ `IModelDocExtension.Stretch` 的官方说明逐字是 "Stretch the **selected** entities"
+        ⇒ ★ 缺选区时它**几乎不动**（★ 台账 `sketch_modify_ops` 逐字：「本次真机测到的变化很小
+        （±20 → -19.997/20.003），★ 与「没选中时只有极小效应」一致」）✓
+      ★★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前选好 ✗
+      ★ 为什么不用 `resolve_selection`：★ 它只认 `FACE` / `EDGE` / `VERTEX`（★ 体上的实体），
+        ★★ **草图段不在其列**（★ 草图段也没有名字 —— 事实 32）⇒ ★ 换用官方
+        **`ISketch::GetSketchSegments()`**（零参）+ **`ISketchSegment::Select4(Append, Data)`** ✓
+      ★ 「选哪个」的语义：★ `indices=None` ⇒ **全选**（= "伸展整张草图"）；★ 给了序号就按序号选 ✓
+    :returns: ★ **回读**到的选区计数（★ 0 会抛 —— ★ 事实 8：不信返回值）✓
+    """
+    import sw_selection_spec as _SS
+    from sw_connect import get_com_member as _get
+    from sw_sketch import active_sketch
+    sketch = active_sketch(model)
+    if sketch is None:
+        raise RuntimeError("★ 没有活动草图 ⇒ ★ 先开一张草图的编辑态（★ 与「伸展不出效果」是两件事）")
+    segs = list(_get(sketch, "GetSketchSegments") or [])
+    if not segs:
+        raise RuntimeError("★ 活动草图里没有段（`GetSketchSegments()` 回了空）")
+    pick = segs if indices is None else [segs[int(i)] for i in indices]
+    got = 0
+    for i, seg in enumerate(pick):
+        got = _SS.select_object(model, seg, append=(i > 0))
+    if int(got) <= 0:
+        raise RuntimeError("★ 选草图段未成立：回读计数为 0（★ 事实 8：判据只有回读）")
+    return int(got)
 
 
 def _active_sketch_name(model):

@@ -53,7 +53,30 @@
 
 ---
 
-## 五、★★ 顺带发现（★ 与本次改造无直接因果，但**值得记**）
+## 五、★★ 第三批（★ 2026-10-07 · `sketch_stretch` —— ★ **只修好"前置"那一半**）
+
+★ 机制与前面几条**不同**：★ 草图段**既不是** `FACE`/`EDGE`/`VERTEX`、**也没有名字**（事实 32）
+  ⇒ ★ 用不了 `resolve_selection` ⇒ ★ 换官方 **`ISketch::GetSketchSegments()`**（零参）+
+  **`ISketchSegment::Select4(Append, Data)`**（★ 官方页有：`Select4.md` 逐字
+  「`System.bool Select4( System.bool Append, SelectData Data )`」）✓
+★ 修法：★ 新增 `select_active_sketch_segments(model, indices=None)`（★ 复用本仓
+  `sw_selection_spec.select_object` ⇒ ★ callout 与回读它都处理了）+ ★ `sketch_stretch(…, select_all=True)`
+  ⇒ ★ 缺省**自己把活动草图的段全选上**（★ = "伸展整张草图"）✓
+
+| 用例 | ★ 读数 |
+|---|---|
+| ★ `sketch_stretch(doc, 0,0, 30,0, keep_relations=False, select_all=True)`（★ 40×20 矩形）| ★★ **`selected_count = 4`**（★ 四条段**全选上**）· `sketch_before → after` = `草图1 → 草图1` ✓ |
+| ⚠ 效果读数 | ★★ **取不到** —— `bbox_before_mm` / `bbox_after_mm` / `transform_before` / `transform_after` **全 `None`** ⇒ ★ **`ok = None`**（★ 工具**如实报"量不到"**、★ **不报成功**）✗ |
+
+★★ **所以本轮只确证了"前置"那一半**（★ 选区**建起来了**），★ **没有**确证"伸展真的改了几何" ⇒
+  ★★ **列为新的待查项**：★ 该工具的两个几何判据（★ 草图段端点 bbox · `ModelToSketchTransform.ArrayData`
+  平移分量）**在本机都取不到值** ⇒ ★ 原因未查（★ 本轮**不声称**效果成立）✓
+★ 门禁仍收掉本条 —— ★ 因为**本道的判据是"函数有没有选区入口"**，★ 而那一条**确实修好了** ✓
+  （★ 两件事分开记：★ **入口修好** ≠ **效果验证** —— ★ 本仓既有纪律正是"注册 ≠ 能跑"）✓
+
+---
+
+## 六、★★ 顺带发现（★ 与本次改造无直接因果，但**值得记**）
 
 ★ 我的复验脚本**第一版失败**了，★ 错误逐字：
 ```
