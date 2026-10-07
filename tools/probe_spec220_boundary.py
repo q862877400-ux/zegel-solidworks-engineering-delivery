@@ -57,7 +57,13 @@ def _build_plate(sw, tool_caller) -> object:
                ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": DEPTH})),
               (("solidworks_sketch_start", {}),
                ("solidworks_sketch_add_rectangle", RECT2),
-               ("solidworks_extrude_boss", {"sketch_name": "Sketch2", "depth_mm": DEPTH})))
+               ("solidworks_extrude_boss", {"sketch_name": "Sketch2", "depth_mm": DEPTH,
+                                             #: ★★★ 第 56 轮：★ **关掉"合并结果"** ⇒ ★★ **两个体：贴合但不合并** ✓
+                                             #:   ★ 依据第 55 轮真机：★ 隔 30 mm ⇒ 有体无"缝" ✗；
+                                             #:   ★ 贴合但**默认合并** ⇒ 并成一个体（★ 6 面 ✗）
+                                             #:   ⇒ ★ 官方 `FeatureExtrusion3` 有 **`Merge`** 形参 ✓
+                                             #:   ★ 而本仓 `solidworks_extrude_boss` **就暴露了它** ✓
+                                             "merge": False})))
     for rnd in rounds:
         for step, params in rnd:
             ok, note = tool_caller.call(step, inject_objects=inj, **params)
