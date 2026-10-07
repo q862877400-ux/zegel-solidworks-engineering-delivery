@@ -449,3 +449,22 @@ Feature InsertFilletBeadFeature2(
       penetration_type_1=0, penetration_type_2=0, flag=1, pitch_mm=0.0, …)` ✓
   ★ 前置：★ **选边**（`entities_on_body(...)` 取 EDGE + `IEntity.Select4` ✓）
   ★ 调用：★ 16 参**按官方顺序** ✓ · ★ 数组包成元组 ✓ · ★ 判据 **特征树增量 ≥ 1** ✓
+
+## ★★ 第 47 轮（续）：★ 圆角焊缝的批次已备好（★ 落 staged，★ 两个前提先验过）
+
+| ★ 项 | ★ 读数 |
+|---|---|
+| ★ 批次 | ★ `output/staged/batch112_v1.py` · ★ **`ast.parse` ✓** · ★ ASCII 双引号仅 **6**（合法分隔符 ✓）· ★ **「」 6 处** ✓ |
+| ★★ 门禁前提 | ★★ **目标函数首参 = `model`** ✓ ⇒ ★ 参数绑定门禁**天然满足** ✓（★ 第 22–24 轮定则 ✓）|
+| ★ 门禁 | ★ **`release_check exit=0`** ✓（★ staged 不在树上 ⇒ 保持绿 ✓）|
+
+★ 工具名：**`solidworks_weld_fillet_bead_report`** ✓（★ 含 `fillet_bead` ⇒ ★ 命中生成器关键词 `("fillet_bead","weld_bead")` ✓）
+★ 参数：**12 个**（★ `edge_index_1/2` · `size_mm` · `length_mm` · `bead_type_1/2` ·
+  `penetration_type_1/2` · `penetration_value_1/2` · `pitch_mm` · `flag` ✓ —— ★ 都对应官方 16 参里的具名那些 ✓）
+
+### ★★ 下一轮（★ 照 4 步链）
+1. ★ `Copy-Item` 成 `mcp-server/tool_specs_batch112.py` ✓
+2. ★ **`read` + `edit`** 挂接（★ 在 `tool_specs_batch111` 之后 ✓）
+3. ★ 跑生成器 + `release_check` ⇒ ★ 要 **exit 0** ⇒ ★ **提交** ✓
+4. ★★ **真机**：★ `python tools/sw_guard.py --timeout 600 -- python <探针>.py`
+   ★ 判据 **特征树增量 ≥ 1**（★ 事实 8）⇒ ★ 过了 ⇒ ★ 台账提 `level`（★ 并跑地图 ✓）
