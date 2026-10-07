@@ -6,6 +6,38 @@
 
 ---
 
+## ★★ T-216-07g（★ 2026-10-07）：`add_component` 插不了 `.sldasm` —— **排除了两个嫌疑，剩运行期**
+
+★ 起念：★ 上一轮查明 `dissolve` 的夹具卡在「**把子装配插进顶层装配**」（★ 真机：
+  `添加组件失败: …sub.sldasm (open_then_AddComponent5: 返回 None)`）⇒ ★ 本轮**先查这一环** ✓
+
+★★ **逐条排除（★ 都用官方源，不猜）**：
+1. ★ **形参顺序**：★ 官方 `IAssemblyDoc/AddComponent5.md` 的 `## Signature` 逐字
+   「`Component2 AddComponent5( System.string CompName, System.int ConfigOption, System.string NewConfigName,
+     System.bool UseConfigForPartReferences, System.string ExistingConfigName, System.double X, System.double Y, System.double Z )`」
+   ⇒ ★★ 而 `sw_assembly._add_component5` 传的**正是这 8 个、顺序一致** ✓ **排除** ✗
+2. ★ **`ConfigOption=0` 是否非法**：★ 官方 `swAddComponentConfigOptions_e.md` 逐字
+   「`swAddComponentConfigOptions_CurrentSelectedConfig` **= 0** = Add a part or assembly in its last saved configuration」
+   ⇒ ★★ **0 是合法值** ✓ **排除** ✗
+3. ★ 而 `add_component` 自己**已有三级退路**（`AddComponent5` → `AddComponent4` → 打开零件后再试）
+   ⇒ ★★ 真机读数：**三级全 `None`**（★ 报的是 `open_then_AddComponent5: 返回 None`）✗
+
+⇒ ★★ **剩下的是运行期/环境**（★ 候选：★ 沙盒把产物**搬走/占住**了文件 · ★ 文件被 SolidWorks 锁
+  （★ 同批收尾收到了 `~$sub.sldasm` **锁文件**）· ★ 子装配自身没保存好 · ★ 路径含沙盒临时目录）✓
+★★ **故本轮不修、只记**（★ 我没有把"运行期"证到可复现的那一层 ⇒ ★ 按事实 53 **不连改三版**）✓
+
+★ **可复用的手法（★ 本轮真正的方法论产出）**：
+  ★★ **先"排除"再"猜"** —— ★ 我把两个**可用官方源判定**的嫌疑（签名 / 枚举值）**当场排除**
+    ⇒ ★ 于是"剩下的只能是运行期"这句话**才是可判的**，★ 而不是"再试一次看看" ✓
+  ★★ 三源都在本机：★ `C:\swapi\types\IAssemblyDoc\AddComponent5.md`（签名）·
+    `C:\swapi\enums\swAddComponentConfigOptions_e.md`（枚举值）· ★ 反射转储 ✔
+
+★ **下一轮**（★ 优先级已排好）：★ ① 验"是不是沙盒/锁文件"—— ★ **最省**：★ 把子装配**放到仓库外的临时目录**
+  （★ 不走沙盒收集）再插一次，★ 一比就知道 ✗→✓；★ ② 余下 `drawing_insert_balloons`；
+  ★ ③ topology 两条（★ 查控制回 `None` 的真因）✓
+
+---
+
 ## ★★ T-216-07f（★ 2026-10-07）：`assembly_dissolve` —— ★ **改了又撤回**（★ 因为验不了）
 
 ★ 我按本仓既有形态实现了「声明式组件名」入口（★ `_select_by_id(ext, <名>, "COMPONENT")`
