@@ -50,16 +50,23 @@ def _select_face_by_index(model, face_index: int, append: bool):
     ★ 形态照 `scripts/sw_part.py::select_face_by_index_mark1`（2026-10-06 真机验过的那个：
       ★ 用 `IFace2::GetBox()` 取面上一点 ⇒ `SelectByID2("", "FACE", x,y,z, append, 0, callout, 0)`）✓
     """
+    #: ★★ 形态**照本仓真机验证过的** `sw_part.select_face_by_index_mark1`（规格 216 T-216-06b）：
+    #:   ★ **取面走 `sw_selection_spec.entities_on_body(model, "FACE", body_index=0)`** ✓
+    #:   ★ **取盒走 `get_com_member(face, "GetBox")`** ✓
+    #: ★★ 为什么不能直接点属性：★ 2026-10-07 真机实测（`tools/probe_spec220_member_shape.py`）
+    #:   ★ `body.GetFaces` 报逐字「**没有这个成员**」✗ ⇒ ★ 迟到绑定的成员要走 `get_com_member` ✓
+    import sw_selection_spec as _SS
     import sw_part                                                                  # 同目录模块
-    body = model.GetBodies2(0, False)                                                # 0 = swSolidBody
-    if not body:
-        raise RuntimeError("没有实体体（★ 边界特征要落在已存在的体/面上）")
-    faces = body[0].GetFaces()
+
+    faces = list(_SS.entities_on_body(model, "FACE", body_index=0) or [])
     if not faces or face_index < 0 or face_index >= len(faces):
         raise RuntimeError("面序号越界：face_index=%r，本体共 %d 个面"
                            % (face_index, len(faces) if faces else 0))
     face = faces[face_index]
-    box = face.GetBox()
+    box = list(sw_part.get_com_member(face, "GetBox") or [])
+    if len(box) < 6:
+        raise RuntimeError("★ 取面上失败：`IFace2.GetBox()` 回了 %r（★ 这是前置未成立，"
+                           "★ 与「边界特征建不出来」是两件事）" % (box,))
     cx = (box[0] + box[3]) / 2.0
     cy = (box[1] + box[4]) / 2.0
     cz = (box[2] + box[5]) / 2.0
