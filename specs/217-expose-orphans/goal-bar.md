@@ -1,5 +1,33 @@
 # 规格 217 · 目标栏（唯一进度字段）
 
+## ★★ T-217-02/04 侦察（第 4 轮）：★ 两个"可直接开工"的结论（附逐字依据）
+
+★★ **我原先的猜法错了一处，幸好核了** —— ★ 符合本规格判据①的"**不与既有工具语义重复**"
+  ★ **必须逐字比对**，★ 不许凭名字下判 ✓
+
+| 批 | ★ 判定 | ★ 逐字依据 |
+|---|---|---|
+| **B3** | ★ **应暴露（不是重复）** | ★ 既有 `solidworks_drawing_list_views` → `sw_drawing_query.list_views`，★ doc 逐字<br>「List the views on the **CURRENT SHEET**: name + type code. ⚠ The sheet itself is NOT reported as a view」<br>★ 候选 `sw_drawing_view.list_drawing_views_report`，★ doc 逐字<br>「★ **列出工程图的所有视图**（★ 名字 / **比例 / 注释数 / 可见件数**）」<br>⇒ ★★ **范围（全图 vs 当前图纸）与读数（4 项 vs 2 项）都不同** ⇒ ★ **不重复** ✓<br>★ 但**必须在 doc 里写明与 `list_views` 的区别**（★ 同 `count_sketch_relations` 那条的写法）✓ |
+| **B4** | ★ **三个都干净，可直接暴露** | ★ `sw_mass_property.mass_property_object(model)` · `sw_mass_property.section_area_crosscheck(model) -> dict` · `sw_feature_readback.rib_params(model, feature_name='') -> dict`<br>★★ 逐个查"已有近名工具" ⇒ <br>★ **全部 = 0**（★ 无重名、无近名）✓<br>★ 且都是**读侧**（★ 不需要预选 ⇒ ★ 不会触发预选族门禁）✓ |
+
+### ★ 下一轮（★ 顺序已定，直接开工，不必再侦察）
+
+1. ★ **B3 = 1 个工具**：`solidworks_list_drawing_views_report`（★ 归 `drawing_views_and_summary` 或
+   `drawing_current_sheet_query` —— ★ 开工时**先 `read` 看哪条的 `mcp_tools` 键更合适**，★ 别猜）✓
+2. ★ **B4 = 3 个工具**：★ `mass_property_object` · `section_area_crosscheck` · `rib_params`
+   （★ 归属条目**开工时先查**：★ 找 `mcp_tools` 里已有 `mass_property` / `rib` 类工具的那条）✓
+3. ★ 之后才是 **T-217-01b**（4 个需配声明式选择的：`add_*_dimension` ×3 + `sketch_intersect_curves`）
+   —— ★ 那一批要**新写选择 + 真机验证**，★ 单独一轮 ✓
+
+★ **可复用的操作要点**（★ 本轮踩过、已验证）：
+- ★ 改 `capabilities.yaml`：★ **先 `read` 精确原文 → 用 `edit` 手改**（★ 事实 61 定则②；★ 脚本插行连栽三次）✓
+- ★ `write` 对**已删除文件**死锁 ⇒ ★ **写到新路径再 `Copy-Item` 就位** ✓
+- ★ 长字符串一律「」（★ 事实 560，踩过 8 次）✓
+
+---
+
+# （以下是本规格开工时写的目标栏正文）
+
 ## ★★★ T-217-01 第 3 轮：**B1 前半落库**（★ 工具数 459 → **463**）· 门禁全绿
 
 | 项 | ★ 读数 |
