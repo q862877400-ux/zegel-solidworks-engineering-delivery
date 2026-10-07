@@ -50,7 +50,46 @@
 | ★ 差 | ★ **2 格**：★ **焊件/圆角焊缝** · ★ **装配/零部件阵列**（★ 都**已实查官方 API 存在** ✓）|
 | ★ 另有 | ★ **2 格**在等验证：★ 边界凸台 · 边界曲面（★ 已暴露，★ 但 `level` 仍是 `stitched`）|
 
-## 五、★ 我在这 13 轮里纠正过自己的三处（★ 都当场改账）
+## 六、★ 轮次用尽（14/14）· 交接（★ 下一手照这条，一步可接）
+
+★★ **状态**：★ 目标 `goal-6b9163d7` **轮次用尽而目标未达成** ⇒ ★ **保持 active**（★ 不标完成）✓
+★ 地图 **139/145 = 96%** · ★ **现实上限 141/145 ≈ 97%** · ★ 台账**零改动** · ★ `level` **零变更** ✓
+
+### ★★ 下一手（★ 唯一一件，照官方示例重建试件）
+
+```powershell
+# 1. 改 tools/probe_spec220_boundary.py 的建件部分：★ 建【两个拉伸】（★ 官方 Postconditions 逐字要求）
+#    ★ 每个体各取一个面 ⇒ 用 sw_selection_spec.entities_on_body(model, "FACE", body_index=n)  ✓
+# 2. 跑真机（★ 用完关 SolidWorks）
+python tools/sw_guard.py --timeout 600 -- python tools/probe_spec220_boundary.py
+# 3. ★★ 判据：特征树增量 >= 1（事实 8：不看布尔返回值）
+#    ★ 过了 ⇒ 把 capabilities.yaml 的 surface_features（及其两条工具的 evidence）提到 verified
+#    ★ 不成 ⇒ ★ 继续如实留 stitched，并把失败读数写进 limitations
+```
+
+★ 依据（★ 官方逐字）：`AI Solidworks\官方文档\…\Insert_Boundary_Feature_Example_VB.htm` 的
+  `Postconditions`：「② **Creates two boss-extrude features.** ③ **Selects a face on each
+  boss-extrude feature.** ④ Creates a boundary feature using the selected faces.」✓
+★ 参数照官方（★ 第 74 行逐字）：★ `InsertNetBlend(1, 2, 0, False, 0.0001, …)` ⇒
+  ★ `Type=1` · ★ `NCurvesDir1=1` · ★ **`NCurvesDir2=2`** ✓（★ 已设为包装默认 ✓）
+
+### ★ 之后的两件（★ 官方 API 已实查存在，可直接做）
+
+| 件 | ★ 官方入口 | ★ 判据 |
+|---|---|---|
+| ★ 焊件/圆角焊缝 ⇒ **焊件 7/7** | ★ `InsertFilletBeadFeature`（★ + `InsertCosmeticWeldBead2` · `GetWeldBeadFolder`）| ★ 特征树增量 ≥ 1 |
+| ★ 装配/零部件阵列 ⇒ **装配 8/10** | ★ `DissolveComponentPattern` · `GetPatternComponentCount` | ★ 组件/特征计数增量 |
+
+★ 做完这两件 ⇒ ★ 地图 **141/145 ≈ 97%** = ★ **本规格的目标上限** ✓
+★ 另有 **3 格**已如实标注"不做 + 原因"（★ 见 `not-doing.md`）⇒ ★ **不硬凑** ✓
+
+### ★★ 全程一句话（★ 给下一位）
+
+★★ **本规格没让地图变绿，但它把"为什么不能变绿"查到底了** —— ★ 边界特征的卡点链**四环全有真机读数**
+（★ 属性/方法 → 迟到绑定 → **`Select4` vs `SelectByID2`** → 试件），★ 而**最后一环是试件合法性**，
+★ **有官方逐字依据**、★ **一步可改** ✓
+★★ 而**没做到的事我一件都没粉饰**：★ `level` 零变更 · 台账零改动 · 地图零虚报 ✓
+
 
 1. ★★ **误判 `Append` 不累加**（★ 真因是"0 号面根本选不上"）⇒ ★ 第 9 轮双臂探针定案后改账 ✓
 2. ★★ **误判 `create_deformed_body` 是实体缩放**（★ 它是 Simulation 结果图）⇒ ★ 规格 219 第 2 轮改账 ✓
