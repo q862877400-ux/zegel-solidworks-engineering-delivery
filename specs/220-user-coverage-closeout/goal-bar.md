@@ -597,3 +597,33 @@ Feature InsertFilletBeadFeature2(
 ★ 然后照它改 `scripts/sw_weld_bead.py`：★ 改用 `InsertCosmeticWeldBead2`
   ★ `WeldMode = 1`（★ WeldPath ✓）· ★ `WeldFromFaceOrEdgeSet` = **边数组**（★ mark **0** ✓）·
   ★ `WeldToFaceOrEdgeSet = None` ✓ · ★ `WeldSize` ✓
+
+## ★★★★★ 第 54 轮（续）：★ **调用序到手 —— 破局**（★ 只要"两个面 + 一个尺寸"）
+
+### ★★ 官方示例的调用序（★ `Insert_Cosmetic_Weld_Bead_Example_CSharp.md` 第 47–52 行逐字）
+
+```csharp
+//Insert Weld Bead2
+status = swModelDocExt.SelectByID2("", "FACE", x1, y1, z1, false, 0, null, 0);   // ★ 面，mark 0
+status = swModelDocExt.SelectByID2("", "FACE", x2, y2, z2, true,  0, null, 0);   // ★ append
+swFeatureManager = (FeatureManager)swModel.FeatureManager;
+swFeature = (Feature)swFeatureManager.InsertCosmeticWeldBead(0.51);            // ★★ 一个参数！
+swModel.ClearSelection2(true);
+```
+
+### ★★★ 三条决定性结论
+1. ★★ **入口可以只用 `InsertCosmeticWeldBead(WeldSize)`** ✓ —— ★ **v1，一个参数** ✓
+   ★ 它标了 `Obsolete` ✗ **但仍可调** ✓（★ 官方自己的示例用的就是它 ✓ —— ★"标废弃"≠"已移除" ✓）
+2. ★★ **前置 = 预选两个面**（★ mark **0** ✓）⇒ ★ **不需要体 · 不需要边 · 不需要数组** ✓✓
+3. ★ 示例按点选面（`SelectByID2("", "FACE", …)`）✗ ⇒ ★ 我**改用 `Select4`** ✓
+   ★ 依据 219 真机定案：★ **按点对某些面永远选不上** ✗（★ 我在边界特征上验过 ✓）
+
+### ★★ 于是实现变得很短（★ 下一轮就写）
+★ 新 `scripts/sw_cosmetic_weld_bead.py`（★ 或改现有的 `sw_weld_bead.py` ✓）：
+  ★ `insert_cosmetic_weld_bead_report(model, *, face_index_1=0, face_index_2=1, weld_size_mm=13.0)` ✓
+  ★ ① **遍历所有体取面**（★ 边界特征那套 ✓）⇒ ★ ② 两个面各 `Select4(append, callout)`（★ mark **0** ✓）
+  ★ ③ `model.FeatureManager.InsertCosmeticWeldBead(size_in_metres)` ✓
+  ★ ④ ★★ **判据 = 特征树回读增量 ≥ 1**（★ 事实 8 ✓）
+★ 单位：★ 0.51 in ≈ **12.95 mm** ⇒ ★ 入参按毫米、内部转米（★ 事实 2 ✓）
+
+★★ **这一轮把这一格从"4 次失败"变成了"一个函数 + 一个尺寸"** ✓
