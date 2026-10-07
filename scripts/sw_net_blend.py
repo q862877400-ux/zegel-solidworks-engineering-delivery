@@ -188,7 +188,12 @@ def insert_net_blend_report(
         "steps": steps,
         "official": "IFeatureManager::InsertNetBlend",
         "units": "★ 入参按毫米/度；COM 侧米/弧度（本仓事实 2）",
-        "verification": "stitched —— ★ 尚未真机验证（红线⑥：level 只按真机证据变）",
+        #: ★★★ 2026-10-07（规格 220 续 · 第 41 轮）★ **等级按真机证据提上来**（★ 红线⑥ 的正面用例）✓
+        #:   ★ 真机逐字（`tools/probe_spec220_boundary.py`）：★ **18.54 s** · ★ **0 弹窗** · ★
+        #:   `sw_alive: true` · ★★ **`surface ok=True 22→23`** · ★★ **`boss ok=True 22→23`** ✓
+        #:   ⇒ ★ 两档**都在真机上建成**（★ 判据 = 特征树回读增量 ✓ 事实 8）✓
+        "verification": "verified —— ★ 真机两档 ok=True（特征树 22→23 ×2 · 18.54 s · 0 弹窗）"
+                        "（★ 规格 220 续 第 41 轮；判据 = 特征树回读增量，事实 8）",
     }
 
 def insert_boundary_boss_report(
