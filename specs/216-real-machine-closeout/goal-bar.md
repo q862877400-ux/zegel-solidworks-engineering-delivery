@@ -2,7 +2,27 @@
 
 > ★★ **本文件是唯一进度字段** —— 进度只看上面那一行。
 
-**阶段：★★★ 预选族 **12 → 8**：★ 真修好 **4 条**（圆顶 `+圆顶1` · 参考点 `+点1` · 测距 `ok+area` · **参考轴 `+基准轴1`**）· ★ 改判 1 条（composite_curve 后端墙）· ★ 误报移出 2 条 · ★ 剩余 **8 条**：`selection_point`(B) · `drawing_insert_balloons`(B/D) · `sketch_stretch` · `section_properties` · `assembly_dissolve` · topology `demold`/`symmetry`（D）· `composite_curve`（★ 已裁定不修）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-07b**（余下 6 条按同一形状改）
+**阶段：★★★ 预选族 **12 → 6**：★ 真修好 **6 条**（圆顶 `+圆顶1` · 参考点 `+点1` · 测距 `ok+area` · 参考轴 `+基准轴1` · 选区点 `point_mm` · 截面属性 **`area=1200.0` 与几何精确对上**）· ★ 改判 1 条（composite_curve ⇒ 已裁定不修）· ★ 误报移出 2 条 · ★ **剩余 6 条**（`assembly_dissolve` · `drawing_insert_balloons` · `part_insert_composite_curve`（已裁定不修）· `sketch_stretch_entities` · topology `demold`/`symmetry`）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-07c**（余下 5 条）
+
+---
+
+## ★★ T-216-07 第二批（★ 2026-10-07 · 又两条真机复验通过）
+
+★ 读数与顺序约束见 [recon/bd-declarative-selection.md](recon/bd-declarative-selection.md) §四 ✓
+
+| 工具 | ★ 真机读数 |
+|---|---|
+| `selection_point`（诊断型）| ★ `ok=True` · `selection_count=1` · ★ **`point_mm = (-50.0, 0.0, -10.0)`** ✓ |
+| `section_properties`（官方前置）| ★ `ok=True` · `status=0.0` · ★★ **`area = 1200.0`** · `entry_used = GetSectionProperties2(property)` ✓ |
+
+★★ **精确交叉验证**：★ `area = 1200.0` **恰是 60×20 端面面积** ⇒ ★ 说明选区**建对了**，
+  ★ 且顺带证明「`with sw_part.sketch(...)` + 毫米数」建出的**正是 100×60×20 的板** ✓
+★★ **一条本批特有的顺序约束**：★ `section_properties` **自己**会"**清空并重写选择集**"（官方 Remarks 逐字）
+  ⇒ ★ 「**选一次、读一次**」这个配对**不能被打断** —— ★ 代码里选择那行**紧贴**在读取之前 ✓
+  （★ 不是风格问题，★ 是**语义要求**）✓
+
+★ 门禁自动跟着变：★ 「命中 8 · 基线 8」⇒ ★ 「**命中 6 · 基线 6**」✓
+
 
 ---
 

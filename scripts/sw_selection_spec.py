@@ -288,7 +288,7 @@ def resolve_selection(model, selector, kind: str, *, body_index: int = 0) -> int
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def selection_point(model) -> dict:
+def selection_point(model, selection: str = "", selection_kind: str = "FACE") -> dict:
     """★ **读当前选区那个点的坐标**（★ 毫米）—— 供"用声明式选择代替裸坐标"的包装使用。
 
     ★★ 用途：★ 孔族（`create_through_hole` 等）吃 `center`（**一个坐标元组**）⇒
@@ -298,6 +298,22 @@ def selection_point(model) -> dict:
     ⚠ **不猜**：★ `GetSelectionPoint` 取不到就 `ok=False` + 写明原因（★ 铁律 5）。
     """
     out: dict = {"ok": False, "point_mm": None, "selection_count": None, "error": None}
+    #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-07）先按声明式选择器**重建**选区 ——
+    #:   ★ 起因：★ 本函数**读当前选区**、★ 而**注入解析器会清空选区**（**事实 503**）⇒
+    #:     ★ 模型**没有任何办法**先把目标选好 ⇒ ★ 经工具层**恒回空** ✗
+    #:     （★ 预选族基线把它归在「真危险·诊断型」）✓
+    #:   ★★ 与 `measure_selection` **同一条理由**：★ "读哪个"是**调用方的意图**
+    #:     ⇒ ★ **绝不能由函数乱造**（★ 造了读到的就不是你要的那个）⇒ ★ 让调用方**声明** ✓
+    #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 收 `selection`（`index:<n>` / `__current_selection__`）+ 种类 ✓
+    #:   ★ 必须在**读选区之前**（★ 下面紧接着就是读计数）✓
+    if str(selection or "").strip():
+        try:
+            resolve_selection(model, str(selection), str(selection_kind or "FACE"))
+        except Exception as exc:                                   # noqa: BLE001
+            out["selection_count"] = 0
+            out["error"] = ("选区未建立：%s: %s（★ 前置未成立、★ 与「取不到点」是两件事）"
+                            % (type(exc).__name__, str(exc)[:140]))
+            return out
     try:
         mgr = get_com_member(model, "SelectionManager")
     except Exception as exc:                                   # noqa: BLE001

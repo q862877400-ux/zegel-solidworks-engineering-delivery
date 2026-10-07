@@ -234,8 +234,15 @@ def require_section_document(model):
     return require_mass_property_document(model)
 
 
-def section_properties(model) -> dict[str, Any]:
+def section_properties(model, selection: str = "", selection_kind: str = "FACE") -> dict[str, Any]:
     """读**当前选择集**的截面属性（★ 规格 211 · B1-1）。
+
+    ★★ 2026-10-07（接手轮 · 规格 216 T-216-07）**加声明式选区入口** ——
+      ★ 起因：★ 见下面 ②「**它用"当前选择集"当输入** ⇒ ★ 调用方必须先把东西选好」，
+        ★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型**没有任何办法**先选好 ✗
+      ★ 规则 3 **不许收裸坐标** ⇒ ★ 收 `selection`（`index:<n>` / `__current_selection__`）+ `selection_kind` ✓
+      ★★ **注意顺序**：★ 选完**立刻**读 —— ★ 本函数**自己有副作用**（★ 见 ③ 它**清空并重写**选择集），
+        ★ 所以"选一次、读一次"这个配对**不能被打断** ✓
 
     :returns: `{ok, status, status_text, area, centroid, side_effect, units_verified,
                unit_caveat, entry_used, raw_len, error}`
@@ -261,6 +268,18 @@ def section_properties(model) -> dict[str, Any]:
            "entry_used": None, "error": ""}
     try:
         require_section_document(model)
+        #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-07）按声明式选择器**重建**选区，
+        #:   并让它**紧接**在下面那次读取之前（★ 本函数自己有"清空并重写选择集"的副作用，
+        #:   所以"选一次、读一次"这个配对不能被打断）✓
+        #:   ★ 依据：★ 注入解析器**会清空选区**（**事实 503**）⇒ 模型没法先选好 ✗
+        if str(selection or "").strip():
+            import sw_selection_spec as _SS
+            try:
+                _SS.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
+            except Exception as exc:                               # noqa: BLE001
+                out["error"] = ("选区未建立：%s: %s（★ 前置未成立、★ 与「求不出截面属性」是两件事）"
+                                % (type(exc).__name__, str(exc)[:140]))
+                return out
         ext = get_com_member(model, "Extension")
         if ext is None:
             out["error"] = "取不到 model.Extension"

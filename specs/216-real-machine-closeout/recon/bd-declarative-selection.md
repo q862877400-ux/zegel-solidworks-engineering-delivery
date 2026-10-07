@@ -28,7 +28,32 @@
     （★ 造了的话，量出来的/建出来的**不是你要的那个**，★ 而且**看不出来**）✓
   ⇒ ★ 所以这六条（B/D 型）**一律"让调用方声明"**，★ 而不是"函数自己挑一个" ✓
 
-## 三、★★ 顺带发现（★ 与本次改造无直接因果，但**值得记**）
+## 四、★★ 第二批（★ 2026-10-07 · 同一形状再两条）
+
+★ 跑法：★ `python tools/sw_guard.py --timeout 900 -- python output/_t216_bd2_verify.py` ✓
+★ 试件：★ **100×60×20 mm** 板（★ 建法照本模块自己的 docstring：**`with sw_part.sketch(...)` + 毫米数**）✓
+
+| 用例 | ★ 读数 |
+|---|---|
+| ★ `selection_point(doc, **selection="index:0"**, selection_kind="FACE")` | ★ `ok=True` · `selection_count=1` · ★ **`point_mm = (-50.0, 0.0, -10.0)`** ✓ |
+| ★ `selection_point(… selection="index:99")` | ★ `ok=False` · ★ 「选区未建立：FACE 序号 99 越界（体 0 上共 6 个）（★ 前置未成立、★ 与「取不到点」是两件事）」✓ |
+| ★ `section_properties(doc, **selection="index:0"**, selection_kind="FACE")` | ★ `ok=True` · `status=0.0` · ★★ **`area = 1200.0`** · `entry_used = GetSectionProperties2(property)` · `units_verified=False`（★ 单位存疑**如实带在返回里**）✓ |
+| ★ `section_properties(… selection="index:99")` | ★ `ok=False` · ★ 「选区未建立：…（★ 前置未成立、★ 与「求不出截面属性」是两件事）」✓ |
+
+★★ **一个精确的交叉验证**：★ `area = 1200.0` **恰是 60×20 的端面面积** ✓
+  ⇒ ★ 一方面说明**选区确实建对了**（★ 选中的是那张端面）；
+  ★ 另一方面**顺带证明**：★ 用 `with sw_part.sketch(...)` + **毫米数**建出来的**正是 100×60×20 的板** ✓
+  （★ 与第三节那个"待查项"互为对照：★ 不按 docstring 写法建，★ 到底建出什么，★ 仍未测）✓
+
+★★ **一条本批特有的顺序约束**：★ `section_properties` **自己**有"**清空并重写选择集**"的副作用
+  （★ 官方 `## Remarks` 逐字）⇒ ★★ 所以「**选一次、读一次**」这个配对**不能被打断** ——
+  ★ 代码里选择那一行就**紧贴**在读取之前 ✓（★ 这不是风格问题，★ 是语义要求）
+
+★ 门禁自动跟着变：★ 「命中 8 · 基线 8」⇒ ★ 「**命中 6 · 基线 6**」✓
+
+---
+
+## 五、★★ 顺带发现（★ 与本次改造无直接因果，但**值得记**）
 
 ★ 我的复验脚本**第一版失败**了，★ 错误逐字：
 ```
