@@ -58,7 +58,22 @@ def _select_face_by_index(model, face_index: int, append: bool):
     import sw_selection_spec as _SS
     import sw_part                                                                  # 同目录模块
 
-    faces = list(_SS.entities_on_body(model, "FACE", body_index=0) or [])
+    #: ★★★ 2026-10-07（规格 220 续 · 第 39 轮）★ **遍历所有体**（★ 不再只看 `body_index=0`）✓
+    #:   ★ 依据真机读数（第 38 轮）：★ **两次拉伸会建出两个独立的体** ✓ ——
+    #:   ★ 而 `entities_on_body(..., body_index=0)` **只回第一块的 6 个面** ✗ ⇒ ★ 永远凑不齐"每体各取一面" ✗
+    #:   ⇒ ★ 这里把**所有体**的面**串接**起来 ⇒ ★ `face_index` 的口径变成「**跨全部体计数**」✓
+    #:   ★（★ 官方示例 `Postconditions` 逐字要"**一个面来自每个 boss-extrude**" ✓）
+    faces = []
+    _bi = 0
+    while _bi <= 32:                                                               #: ★ 兜底，防死循环
+        try:
+            _b = list(_SS.entities_on_body(model, "FACE", body_index=_bi) or [])
+        except Exception:                                                          # noqa: BLE001
+            break
+        if not _b:
+            break
+        faces.extend(_b)
+        _bi += 1
     if not faces or face_index < 0 or face_index >= len(faces):
         raise RuntimeError("面序号越界：face_index=%r，本体共 %d 个面"
                            % (face_index, len(faces) if faces else 0))
@@ -238,7 +253,22 @@ def select_face_with_fallback(model, face_index: int, append: bool,
     import sw_part as _sp
     import sw_selection_spec as _SS
 
-    faces = list(_SS.entities_on_body(model, "FACE", body_index=0) or [])
+    #: ★★★ 2026-10-07（规格 220 续 · 第 39 轮）★ **遍历所有体**（★ 不再只看 `body_index=0`）✓
+    #:   ★ 依据真机读数（第 38 轮）：★ **两次拉伸会建出两个独立的体** ✓ ——
+    #:   ★ 而 `entities_on_body(..., body_index=0)` **只回第一块的 6 个面** ✗ ⇒ ★ 永远凑不齐"每体各取一面" ✗
+    #:   ⇒ ★ 这里把**所有体**的面**串接**起来 ⇒ ★ `face_index` 的口径变成「**跨全部体计数**」✓
+    #:   ★（★ 官方示例 `Postconditions` 逐字要"**一个面来自每个 boss-extrude**" ✓）
+    faces = []
+    _bi = 0
+    while _bi <= 32:                                                               #: ★ 兜底，防死循环
+        try:
+            _b = list(_SS.entities_on_body(model, "FACE", body_index=_bi) or [])
+        except Exception:                                                          # noqa: BLE001
+            break
+        if not _b:
+            break
+        faces.extend(_b)
+        _bi += 1
     if face_index < 0 or face_index >= len(faces):
         raise RuntimeError("面序号越界：face_index=%r，本体共 %d 个面" % (face_index, len(faces)))
     face = faces[face_index]
