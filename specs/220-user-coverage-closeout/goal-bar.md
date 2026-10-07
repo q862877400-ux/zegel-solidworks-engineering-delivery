@@ -516,3 +516,33 @@ Feature InsertFilletBeadFeature2(
 ★ 跑真机 ⇒ ★ 判据 **特征树增量 ≥ 1** ✓
 
 ★ 纪律自省：★★ **`Select-String` 截断会制造"我看到的读数"** ✗ —— ★ 下一轮**读 JSON 用 python、不截断** ✓
+
+## ★★★★★ 第 51 轮（续）：★ **按事实 53 换做法** —— ★ 圆角焊缝改走 `InsertCosmeticWeldBead2`
+
+### ★ 本轮前两次真机的读数（★ 都记下来）
+| ★ 试 | ★ 读数 |
+|---|---|
+| ★ ① 用 `get_com_member(model, "GetBodies2")` | ★ `body_count = 0` ✗ —— ★ **`GetBodies2` 是绑定的方法**（★ 219 逐字 `<bound method …>` ✓）⇒ ★ **要调用它** ✗ |
+| ★ ② 改成 `model.GetBodies2(0, False)` | ★ **`body_count = 2`** ✓ ⇒ ★ **取体对了** ✓ · ★ **但 `selection_count = 0`** ✗ ⇒ ★ **`IBody2.Select4` 没登记进选区** ✗ |
+★ 两次都：★ `returned: false` · ★ 树 **22 → 22** ✗ · ★ `dialogs` **0** ✓
+
+### ★★ 判定：★ **这是这笔债的第 4 次真机尝试** ⇒ ★ 按**事实 53**（同一处 ≥3 次 ⇒ **停下换做法** ✓）
+
+### ★★★ 换路（★ 官方同族，★ 而且更简单）
+★ 目标入口：★ **`IFeatureManager::InsertCosmeticWeldBead2`** ✓（★ 页存在 ✓）
+  ★ 第 12 行**逐字**：★「Inserts a cosmetic weld bead using either **weld geometry** or a **weld path**.」✓
+  ★ 签名：★ `System.object InsertCosmeticWeldBead2( System.int WeldMode,
+    System.object WeldFromFaceOrEdgeSet, System.object WeldToFaceOrEdgeSet, … )` ✓
+  ★ 参数：★ `WeldMode`（★ 枚举 `swCosmeticWeldBeadMode_e`）· ★ `WeldFromFaceOrEdgeSet`（**实体数组**）·
+    ★ `WeldToFaceOrEdgeSet`（**数组或 `Nothing`** ✓）· ★ `WeldSize` ✓
+★ v1 `InsertCosmeticWeldBead`：★ 官方逐字 **Obsolete** ✗ · 仅 1 参 ✗ ⇒ ★ **不用** ✓
+
+★★ **为什么它更可做**：
+1. ★ 操作对象是**实体数组** ✓ —— ★★ **正是我用 `Select4` 已在产出的东西** ✓（★ 三轮真机已验稳 ✓）
+2. ★ `WeldToFaceOrEdgeSet` **可传 `Nothing`** ✓ ⇒ ★ **少一个未知** ✓
+3. ★ `WeldMode` 支持「**weld path**」✓ ⇒ ★ **可能根本不需要预选体** ✓（★ 而那正是我卡住的地方 ✗）
+
+### ★★ 下一轮
+1. ★ 读 `C:\\swapi\\enums\\swCosmeticWeldBeadMode_e.md`（★ `WeldMode` 的合法值 ✓）
+2. ★ 读 `InsertCosmeticWeldBead2.md` 的 `## Remarks`（★ 数组里装什么、`Nothing` 何时合法 ✓）
+3. ★ 写实现 ⇒ 暴露（★ 名字含 `weld_bead` ⇒ ★ 命中关键词 `("fillet_bead","weld_bead")` ✓）⇒ 真机 ✓

@@ -107,13 +107,41 @@ def insert_fillet_bead_report(
         pass
     before = _feature_count(model)
 
+    #: ★★★ 2026-10-07（规格 220 续 · 第 51 轮）★ **先预选两个体** ——
+    #:   ★ 官方 `InsertFilletBeadFeature2` 第 12 行**逐字**：★「…also **fills the gap between the
+    #:     pre-selected part bodies**, if any.」✓ ⇒ ★★ **前置是"体"** ✓
+    #:   ★ 第 49/50 轮真机：★ **只选边 ⇒ `returned: false`** ✗（★ 三组都是 ✗）★ 而**选实体本身是全稳的** ✓
+    #:   ★ 取体走 **`get_com_member(model, "GetBodies2")`** ✓（★ 迟到绑定 —— ★ 219 真机定案 ✓）
+    import sw_part as _sp2
+
+    bodies: list[Any] = []
+    try:
+        #: ★★ 第 51 轮真机订正：★ `GetBodies2` 是**绑定的方法**（★ 219 真机逐字
+        #:   `<bound method GetBodies2 of <COMObject …>>` ✓）⇒ ★ **要调用它**（★ `get_com_member`
+        #:   是给**属性**用的 ✗ —— ★ 我用错了 ⇒ 上一跑 `body_count = 0` ✗）✓
+        bodies = list(model.GetBodies2(0, False) or [])                            #: ★ 0 = swSolidBody ✓
+    except Exception as exc:                                                       # noqa: BLE001
+        steps.append({"step": "get_bodies", "error": str(exc)[:140]})
+        try:
+            bodies = list(_sp2.get_com_member(model, "GetBodies2") or [])          #: ★ 兜底：属性形态
+        except Exception:                                                          # noqa: BLE001
+            bodies = []
+    for _i, _bd in enumerate(bodies[:2]):
+        try:
+            _bd.Select4(bool(_i == 1), _sp._empty_callout())                        #: ★ 第二个 append ✓
+        except Exception as exc:                                                   # noqa: BLE001
+            steps.append({"step": "preselect_body_%d" % _i, "error": str(exc)[:140]})
+    steps.append({"step": "preselect_bodies", "body_count": len(bodies),
+                  "selection_count": int(model.SelectionManager.GetSelectedObjectCount2(-1))})
+
     s1 = _select_edge_by_index(model, edge_index_1, False)
     steps.append({"step": "select_edge_1", **s1})
     s2 = _select_edge_by_index(model, edge_index_2, True)
     steps.append({"step": "select_edge_2", **s2})
-    if s1["selection_count"] < 1 or s2["selection_count"] < 2:
-        return {"ok": False, "error": "★ 选实体没落到 2 条边（判据是回读计数，不是 bool）",
-                "selection_counts": [s1["selection_count"], s2["selection_count"]],
+    #: ★★ 守卫改成**相对判据**（★ 体已占用选区 ⇒ 不能用绝对值 2 去卡 ✗）
+    if not (s1.get("ok") and s2.get("ok")):
+        return {"ok": False, "error": "★ 选边没成（判据是该步自己的回读增量，不是绝对计数）",
+                "selection_counts": [s1.get("selection_count"), s2.get("selection_count")],
                 "feature_count_before": before, "steps": steps}
 
     fm = model.FeatureManager
