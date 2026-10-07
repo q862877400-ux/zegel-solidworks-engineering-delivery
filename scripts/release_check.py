@@ -458,6 +458,39 @@ def _run_probe_reuse_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把「注册 ≠ 能跑」这一族里**最隐蔽的一类**接成硬门禁）
+# 文件:   `scripts/check_preselect_family.py`（本门禁的实现）
+#         `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §四「通用建议 3」（点名要建）
+#         `docs/ROADMAP.md` §一 游标「下一步候选 ①」
+# 定位:   新增 `_run_preselect_family_gate`：**硬门禁** ——
+#         ★ 判「**要求调用方先选、而模型没有任何办法选**」：① spec 文档**明写**要先选；
+#           ② 没有 `pre_call` 也没有 `derived_args`；③ 没有 `selection` 形态入参；
+#           ④ 目标函数**自己也不会选**。★ 四条同时成立才算命中 ✓
+#         ★★ 机制（**事实 503**）：调用序是 注入 → `pre_call` → `derived_args` → 目标函数，
+#           而 `RESOLVERS[inj]` **会清空选区**（真机证据 `output/selection-lifetime-evidence.json`：
+#           `mark1 = 2 → 0`）⇒ ★ 「调用方先选好我再调工具」经 MCP 表面**不可能成立** ✓
+#         ★★ 存量 **14 条**（★ 逐条读目标函数体落档、★ 每条带 verdict + 理由）登记进
+#           `docs/preselect-family-baseline.json` ⇒ ★ 棘轮：未登记的新增才拦发布 ✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────
+def _run_preselect_family_gate() -> dict[str, object]:
+    """@brief 跑预选族门禁（`scripts/check_preselect_family.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_preselect_family.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "预选族门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把交付报告数字新鲜度接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_report_freshness.py`（本门禁的实现）
 # 定位:   新增 `_run_report_freshness_gate`：**硬门禁** ——
@@ -1306,6 +1339,18 @@ def run_release_check() -> dict[str, object]:
             "探针复用门禁未通过（探针手搓了已有工具的替代品；★ 请改走工具层，"
             "或把「确实不能改」的登记进 docs/probe-reuse-baseline.json 并写明理由）：\n"
             + str(probe_reuse.get("output", "")))
+    # ⚑ **预选族门禁**（硬门禁，2026-10-07 接手轮接进；★ recon §四-3 点名要建 · ROADMAP 下一步候选 ①）：
+    #   ★ 判「**要求调用方先选、而模型没有任何办法选**」—— ★ 那就是「注册 ≠ 能跑」里最隐蔽的一类：
+    #     缺选区时它**不报错**，只是静默返回 None / 特征树不动 ✗
+    #   ★★ 机制是**事实 503**：`RESOLVERS[inj]` 会清空选区（真机证据已落盘）⇒
+    #     ★ 选区**必须**由 `pre_call` 在注入**之后**重建 ✓
+    #   ★★ 存量 14 条已逐条读函数体落档进 `docs/preselect-family-baseline.json`（带 verdict + 理由）✓
+    preselect_family = _run_preselect_family_gate()
+    if preselect_family.get("status") == "fail":
+        raise AssertionError(
+            "预选族门禁未通过（有工具要求调用方先选、却没有任何入口能选；★ 请加 `pre_call`，"
+            "或把「它其实不需要预选」的登记进 docs/preselect-family-baseline.json 并写明理由）：\n"
+            + str(preselect_family.get("output", "")))
     # ⚑ **可达性门禁**（硬门禁，2026-10-03 轮 579 接进）：前三道「名字」门禁判的是
     #   「**存在 / 属于哪个接口**」，而**本道判「在本机调不调得动」** ——
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
@@ -1601,6 +1646,8 @@ def run_release_check() -> dict[str, object]:
         "refuted": refuted,
         #: ★ 2026-10-07（接手轮）★ 同一道元门禁**第四次**教同一课 ⇒ ★ 两处**必须同时加** ✓
         "probe_reuse": probe_reuse,
+        #: ★ 2026-10-07（接手轮）★ **第五次**同一课：预选族门禁也必须**两处同时加**（★ 元门禁在守）✓
+        "preselect_family": preselect_family,
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
         #:   `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价」⚠
         "unreachable": unreachable,
@@ -1705,6 +1752,8 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-07（接手轮）★ **返回体这一处**（★ 元门禁要的**第二处**）——
         #:   与 `_gate_results` 那处**必须同时加**，★ 否则元门禁报「没进返回体」✓
         "probe_reuse": probe_reuse,
+        #: ★ 2026-10-07（接手轮）★ 预选族门禁的**第二处** ✓
+        "preselect_family": preselect_family,
         #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点** ⚠
         "unreachable": unreachable,
         #: ★ 2026-10-04（接手轮）★ 新门禁的**第二处**（★ 两处必须同时加）✓

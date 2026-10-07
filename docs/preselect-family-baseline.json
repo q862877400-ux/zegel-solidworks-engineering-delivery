@@ -1,0 +1,111 @@
+{
+ "_comment": [
+  "★ **预选族门禁的基线**（`scripts/check_preselect_family.py` 读它）。",
+  "★★ 这一批**全部是「真危险」** —— 但它们是**存量**，所以走棘轮：★ 不在名单里的**新增命中**才拦发布。",
+  "★ 每条齐 `tool` / `module` / `function` / `verdict` / `reason`；★ 理由为空不算登记。",
+  "★ 双向判：① 出现不在名单里的命中 ⇒ 失败（防新犯）；② 名单里有、实际已不存在 ⇒ 也失败（★ 名单腐坏）。",
+  "★★ 机制（**事实 503**）：`mcp-server/tool_registry.py` 的调用序是 注入解析器 → `pre_call` → `derived_args` → 目标函数；而 `RESOLVERS[inj]`（实测 `model`）**会清空选区** ⇒ ★ 「调用方先选好、我再调工具」这条路经 MCP 表面**不可能成立**，选区**必须**由 `pre_call` 在注入之后重建。",
+  "⚠ **覆盖边界**：本道闸只认「文档**明写**要先选」的那一族（关键词 + 否定过滤 + 自建选区过滤）。★ 文档**没写**却隐式吃选区的、以及 `sw_selection_spec` 那批**诊断型**（`selection_count` / `current_selection` / `resolve_selection` / `resolve_entity`），★ **本道不覆盖** —— 后者机制不同（`inject` 本身清空它要读的东西），见 recon §四末段。",
+  "★ 生成口径：`python scripts/check_preselect_family.py --report` 可重算全表 ✓"
+ ],
+ "entries": [
+  {
+   "tool": "solidworks_assembly_suppress_component",
+   "module": "sw_assembly",
+   "function": "suppress_component",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_assembly_dissolve",
+   "module": "sw_assembly_doc",
+   "function": "dissolve_assembly",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_drawing_insert_balloons",
+   "module": "sw_drawing_create_missing",
+   "function": "auto_insert_balloons",
+   "verdict": "真危险·显式拒",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体 `GetSelectedObjectCount2` ＋ 计数为 0 即 `preconditions_held=False` ⇒ ★ 经工具层**必然失败**（★ 失败**可见**，不是静默）✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_section_properties",
+   "module": "sw_mass_property",
+   "function": "section_properties",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_measure_selection",
+   "module": "sw_measure",
+   "function": "measure_selection_report",
+   "verdict": "真危险·显式拒",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体 `GetSelectedObjectCount2` ＋ 计数为 0 即 `preconditions_held=False` ⇒ ★ 经工具层**必然失败**（★ 失败**可见**，不是静默）✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_part_axis",
+   "module": "sw_part",
+   "function": "create_axis_report",
+   "verdict": "真危险·显式拒",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体 `GetSelectedObjectCount2` ＋ 计数为 0 即 `preconditions_held=False` ⇒ ★ 经工具层**必然失败**（★ 失败**可见**，不是静默）✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_part_insert_composite_curve",
+   "module": "sw_part",
+   "function": "insert_composite_curve_report",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_part_insert_dome",
+   "module": "sw_part",
+   "function": "insert_dome_report",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_insert_reference_point",
+   "module": "sw_ref_geometry",
+   "function": "insert_reference_point",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_selection_point",
+   "module": "sw_selection_spec",
+   "function": "selection_point",
+   "verdict": "真危险·诊断型",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**读选区**、且**不显式拒** ⇒ 它读到的就是**被注入清空的**那个选区（**事实 503**；真机证据 `output/selection-lifetime-evidence.json`：调过 `RESOLVERS['model']` 之后 `mark1 = 2 → 0`）⇒ ★ 经工具层**恒回空** ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_insert_form_tool",
+   "module": "sw_sheet_metal",
+   "function": "insert_form_tool_report",
+   "verdict": "真危险·诊断型",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**读选区**、且**不显式拒** ⇒ 它读到的就是**被注入清空的**那个选区（**事实 503**；真机证据 `output/selection-lifetime-evidence.json`：调过 `RESOLVERS['model']` 之后 `mark1 = 2 → 0`）⇒ ★ 经工具层**恒回空** ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_sketch_stretch_entities",
+   "module": "sw_sketch_modify_ops",
+   "function": "sketch_stretch",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_topology_create_demold_control",
+   "module": "sw_topology",
+   "function": "create_demold_control",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  },
+  {
+   "tool": "solidworks_topology_create_symmetry_control",
+   "module": "sw_topology",
+   "function": "create_symmetry_control",
+   "verdict": "真危险·官方前置",
+   "reason": "★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+  }
+ ]
+}
