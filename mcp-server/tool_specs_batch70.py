@@ -140,7 +140,8 @@ _BATCH70: list[ToolSpec] = [
         module="sw_ref_geometry", function="insert_reference_point",
         inject="model",
         param_alias={k: k for k in ("ref_point_type", "along_curve_type",
-                                    "distance_or_percent", "number_of_ref_points")},
+                                    "distance_or_percent", "number_of_ref_points",
+                                    "selection", "selection_kind")},
         params=[
             Param("ref_point_type", int, description="`swRefPointType_e`："
                                                     "0=Invalid · 1=Undefined · 2=AlongCurve · 3=CenterEdge · "
@@ -152,6 +153,17 @@ _BATCH70: list[ToolSpec] = [
                   required=False, default=0.0),
             Param("number_of_ref_points", int, description="★ 官方 Remarks：**必须是 1**（否则拒绝）。",
                   required=False, default=1),
+            #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**新增两个声明式选区入参** ——
+            #:   ★ 起因：★ 台账 `ref_geometry` 逐字「点（`InsertReferencePoint`）要先选实体，
+            #:     **而选面必须紧接着调用**（★ 中间隔别的步骤会把选区清掉）」；★ 而解析器**会清空选区**
+            #:     （事实 503）⇒ ★ 模型**没有任何办法**在调工具前选好 ✗
+            #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**选择器字符串 + 实体种类**（★ 由函数紧邻调用前自己选）✓
+            Param("selection", str, description="★ 声明式选择器（规则 3：不收坐标）："
+                                                "`index:<n>` 或 `__current_selection__`；★ 空串=不选。",
+                  required=False, default=""),
+            Param("selection_kind", str, description="`FACE` / `EDGE` / `VERTEX` —— ★ 与 `ref_point_type` 配套："
+                                                     "4=FaceCenter 配 FACE · 3=CenterEdge 配 EDGE。",
+                  required=False, default="FACE"),
         ],
         doc="★ 点：`IFeatureManager.InsertReferencePoint`（4 参，回 [[IFeature]]）。"
             "⚠ 官方 Remarks：`NumberOfRefPoints` **必须是 1**。"

@@ -3731,6 +3731,7 @@
    ],
    "limitations": [
     "★ **两处都要「先选后调」（按 mark）**：基准面（`InsertRefPlane`）要按 **mark 0/1/2** 选第一/二/三参考实体（官方 Remarks）；点（`InsertReferencePoint`）要先选实体，**而选面必须紧接着调用**（★ 中间隔别的步骤会把选区清掉 —— 这正是它「在诊断里成、在探针里不成」的原因）；边界框只有 `CustomPlane(2)` 才需先选面/基准面（官方 Remarks）。",
+    "✅✅ **2026-10-07（接手轮 · 规格 216 T-216-06b-2）—— `insert_reference_point` 的「选区入口」补上了**：★ 上面那条说的「要先选实体、**而选面必须紧接着调用**」是**官方前置**，★ 而**注入解析器会清空选区**（事实 503）⇒ ★ 模型**没有任何办法**在调工具前选好 ⇒ ★ 缺选区时它**静默不成**（★ 与「点建不出来」长得一样）✗ ⇒ ★ 修法：★ 新增**声明式** `selection` / `selection_kind` 入参（★ 规则 3 **不许收裸坐标**；★ 合法形式 `index:<n>` 与 `__current_selection__`）+ ★ 函数在**紧邻 `InsertReferencePoint` 之前**自己选（★ 这一条顺序要求**就是**上引台账那句的出处）✓ ★★ **真机复验**（`tools/sw_guard.py` 护栏内 · **0 弹窗**）：★ `insert_reference_point(doc, 4, selection=`index:0`, selection_kind=`FACE`)` ⇒ `ok=True`、★ **特征树增量 `['点1']`**（7 → 8）✓；★ 反例 `index:99` ⇒ **响亮报错**「选区未建立：FACE 序号 99 越界（体 0 上共 6 个）（★ 前置未成立、★ 与「点建不出来」是两件事）」✓ ★★ 且**预选族门禁自动跟着变**（命中 11 → **10**）✓",
     "★ 基准面的 `*_angle_or_dist`，与点的 `distance_or_percent`，**官方都是「同一个形参承载两种量纲」**（角度**或**距离 / 距离**或**百分比）⇒ ★ 本模块**不换算、不加单位后缀**（★ 加任何一个都会在另一档说错话），并在返回值里显式声明。★ 两条已登记进 `tool_registry` 的 `_LEN_SUFFIX_EXEMPT` / `_ANGLE_SUFFIX_EXEMPT` 并写明理由。",
     "★ **边界框用的是 `InsertGlobalBoundingBox2`**，而**不是**台账 T701 给的 `Create3DBoundingBox`（官方：「for a **cut list item in a weldment part**」，焊件切割清单专用）。"
    ]

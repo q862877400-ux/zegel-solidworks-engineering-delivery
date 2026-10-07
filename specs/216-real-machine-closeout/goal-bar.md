@@ -2,7 +2,26 @@
 
 > ★★ **本文件是唯一进度字段** —— 进度只看上面那一行。
 
-**阶段：★ ③ 台账订正完成 · ★★ T-216-05 完成（14 条判型 · 2 条门禁假阳性已修 ⇒ 实数 12）· ★★ T-216-06a 完成（依据捞齐）· ★★★ **T-216-06b 的圆顶一半完成并真机复验**（★ `face_index` 声明式入参 + 函数内自选 ⇒ **特征树 `+圆顶1`**；★ 预选族名单 **12 → 11**）· ★ 剩余：`insert_reference_point`（可修）· `insert_composite_curve`（后端墙 ⇒ 记缺口）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-06b-2**（reference_point）**
+**阶段：★★★ **A 型两条可修的都修好并真机复验**（圆顶 `+圆顶1` · 参考点 `+点1`）⇒ ★ **预选族名单 12 → 10** · ★ 剩余：`insert_composite_curve`（★ 后端墙 ⇒ 走"如实记为能力缺口"）· ★ B 型 3 条 / D 型 3 条（★ 需加声明式选区入参）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-06c**（composite_curve 记缺口）+ B/D 型逐条**
+
+---
+
+## ★★ T-216-06b-2 的真机读数（★ 2026-10-07 · 参考点）
+
+★ 改动：★ `sw_ref_geometry.insert_reference_point` **新增声明式 `selection` / `selection_kind`**
+（★ 规则 3 禁裸坐标；★ 合法形式 `index:<n>` / `__current_selection__`）+ ★ **在紧邻
+`InsertReferencePoint` 之前**自己选（★ 那一句顺序要求**就是**台账原文的出处）✓
+★ 跑法：`python tools/sw_guard.py --timeout 600 -- python output/_t216_refpoint_verify.py`（★ **0 弹窗**）✓
+
+| 用例 | ★ 读数 |
+|---|---|
+| ★ 正例 `insert_reference_point(doc, 4, selection="index:0", selection_kind="FACE")`（★ 不预选）| ★ `ok=True` · ★ **特征树增量 `['点1']`** · 7 → **8** ✓ |
+| ★ 反例 `selection="index:99"` | ★ `ok=False` · ★ 「选区未建立：FACE 序号 99 越界（体 0 上共 6 个）（★ 前置未成立、★ 与「点建不出来」是两件事）」✓ |
+
+★ 门禁自动跟着变：★ 命中 11 → **10**（★ 参考点离开名单）✓
+★ 顺带把"移出基线"这件事**做成了通用脚本**（`output/_t216_baseline_trim3.py`：
+★ 它**直接问门禁现在命中哪些**、差集就是要移出的 —— ★ 不再靠人读名单，★ 那正是"名单腐坏"最易出错处）✓
+**
 
 ---
 

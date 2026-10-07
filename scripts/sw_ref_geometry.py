@@ -221,7 +221,8 @@ def insert_coordinate_system(model, x_flipped: bool = False, y_flipped: bool = F
 
 def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0,
                            distance_or_percent: float = 0.0,
-                           number_of_ref_points: int = 1) -> dict:
+                           number_of_ref_points: int = 1,
+                           selection: str = "", selection_kind: str = "FACE") -> dict:
     """★ **点**：`IFeatureManager.InsertReferencePoint(4 参)` → object。
 
     :param ref_point_type: 取值见 `REF_POINT_TYPES`（★ 官方 `swRefPointType_e`）。
@@ -230,6 +231,12 @@ def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0
     :param number_of_ref_points: ★★ 官方 Remarks 逐字：
       「The **NumberOfRefPoints** argument **must contain a value of 1** to successfully create
         one reference point feature.」⇒ ★ 本模块**拒绝非 1**（★ 而不是把它悄悄传下去）。
+    :param selection: ★★ 2026-10-07（规格 216 T-216-06b-2）**声明式选择器**（★ 规则 3：不收裸坐标）：
+      ★ `""`（缺省，不选）· ★ `"index:<n>"` · ★ `"__current_selection__"`。
+      ★ 官方 Remarks 要求"先选实体"，★ 而**注入解析器会清空选区**（事实 503）
+      ⇒ ★ 由本函数**紧邻调用之前**自己选 ✓
+    :param selection_kind: `"FACE"` / `"EDGE"` / `"VERTEX"`（★ 与 `ref_point_type` 配套：
+      ★ `4=FaceCenter` 配 `FACE` · `3=CenterEdge` / `2=AlongCurve` 配 `EDGE`）✓
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}
@@ -246,6 +253,28 @@ def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0
     if fm is None:
         return {"ok": False, "error": "取不到 FeatureManager"}
     before = _tree_names(model)
+    #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**声明式选区入口 + 紧邻调用才选** ——
+    #:   ★ 起因（★ 台账 `ref_geometry` 逐字）：「点（`InsertReferencePoint`）要先选实体，
+    #:     **而选面必须紧接着调用**（★ 中间隔别的步骤会把选区清掉 —— ★ 这正是它
+    #:     「在诊断里成、在探针里不成」的原因）」✓
+    #:   ★★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前选好 ✗
+    #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 故收**声明式选择器 + 实体种类**
+    #:     （`resolve_selection` 认的合法形式：`__current_selection__` / `index:<n>` / 一个 COM 对象）✓
+    #:   ★★ 注意顺序：★ 这段**必须**紧贴下面那个 `InsertReferencePoint` 调用 ——
+    #:     ★ 中间**不许**再插任何动选区的步骤（★ 上引台账那句就是这条约束的出处）✓
+    if str(selection or "").strip():
+        import sw_selection_spec as _SS
+        try:
+            got = _SS.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
+        except Exception as exc:                                       # noqa: BLE001
+            return {"ok": False,
+                    "error": "选区未建立：%s: %s（★ 前置未成立，★ 与「点建不出来」是两件事）"
+                             % (type(exc).__name__, str(exc)[:140]),
+                    "selection": str(selection), "selection_kind": str(selection_kind)}
+        if int(got) <= 0:
+            return {"ok": False,
+                    "error": "选区未建立：选择器 %r 解析后计数为 %d（★ 前置未成立）"
+                             % (str(selection), int(got))}
     obj = get_com_member(fm, "InsertReferencePoint",
                          int(ref_point_type), int(along_curve_type),
                          float(distance_or_percent), 1)
