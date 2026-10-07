@@ -82,49 +82,69 @@ _fake_connect.safe_get_com_member = fake_get_com_member
 if _real_sw_connect is not None:
     #: ★ PEP 562 兜底：假模块上**没手装**的名字，一律从真模块拿 ✓
     _fake_connect.__getattr__ = lambda _n: getattr(_real_sw_connect, _n)
-#: ★★ 进本模块**之前**这两个键是谁 —— ★ teardown 要把它们**原样还回去**（见文件末尾的 fixture）✓
+#: ★★ 进本模块**之前**这两个键是谁 —— ★ fixture teardown 要把它们**原样还回去** ✓
 _saved_sw_connect = sys.modules.get("sw_connect")
 _saved_sw_preflight = sys.modules.get("sw_preflight")
 
-sys.modules["sw_connect"] = _fake_connect
-sys.modules["sw_preflight"] = types.SimpleNamespace(
-    import_com_dependencies=lambda: (
-        types.SimpleNamespace(VT_DISPATCH=9),
-        types.SimpleNamespace(),
-        FakeVariant,
-    )
-)
-
-import sw_part  # noqa: E402
+#: ★★ 模块级名字：**由下面的 fixture 在用例开始前填入** ——
+#:    ⚠ 收集期这里**故意是 `None`**（★ 不在这里 `import sw_part`）—— 见 fixture 那段注释 ✓
+sw_part = None
 
 
 #: ═══════════════════════════════════════════════════════════════════════════
-#: ★★★ 2026-10-07（接手轮 · 规格 214 T-214-12）**用完必须还回去** ——
-#:   本文件在**模块级**把 `sys.modules["sw_connect"]` 换成了假模块（★ 为了让 `import sw_part` 能过），
-#:   ★ 而**从不还原** ⇒ ★★ 它污染**同一进程里后面所有测试** ✗（★ 实测两个受害者）：
-#:     · `test_com_member_helpers::test_call_com_member_exists_and_is_documented`
-#:       —— ★ 它 `import sw_connect` 之后查 `inspect.getdoc(sw_connect.call_com_member)`，
-#:          ★ 拿到的是本文件假模块的 `fake_get_com_member`（docstring 是「测试用 COM 成员读取器」）
-#:          ⇒ ★ 断言「就是去调它」落空 ✗
-#:     · `test_effect_declarations::test_effects_table_is_fresh`
-#:       —— ★ 生成器扫到的模块 `from sw_connect import …` 拿到假的 ⇒ 声明集与落盘表对不上 ✗
-#:   ★★ 判据（实测）：本文件 + 上述任一受害者 ⇒ **1 failed**；★ 本文件**单独**跑 ⇒ 全绿 ✓
-#:      → ★ 教科书式的「单跑绿、全量红」✓
+#: ★★★ 2026-10-07（接手轮 · 规格 214 T-214-12）**装假模块 + `import sw_part` 一起搬进 fixture** ——
+#:   ★ 原来这两步在**模块级**（收集期就执行），★ 而**从不还原** ⇒ ★★ 污染面比"后面所有测试"**更大**：
+#:     · ★ **收集期就装上了** —— 而 pytest **收集阶段会把所有测试模块 import 完**，
+#:       早于**任何一条用例执行** ⇒ ★★ 于是**在本文件之前跑**的用例也拿到假模块 ✗✗
+#:     · ★ 实测（`-k` 只跑一条时的忠实复现）：
+#:       `test_com_member_helpers::test_call_com_member_exists_and_is_documented` 报
+#:       「`assert '就是去调它' in '测试用 COM 成员读取器'`」 —— ★ 那句 docstring 正是本文件的
+#:       `fake_get_com_member` ⇒ ★ 它拿到的是**本文件的假模块** ✓
+#:     · ★★ 为什么会"时绿时红"：★ 本文件的用例若**先跑**，fixture 的 teardown 会把真模块还回去
+#:       ⇒ 后面的用例就绿；★ 而 `test_com_member_helpers`（**c**）在字母序上**早于**本文件（**s**）
+#:       ⇒ 它跑的时候假模块**还挂着** ✗ ⇒ ★ 全量必红、而"本文件 + 它"两个文件跑却绿 ✓
+#:         （★ 这就是本轮二分**查不出单文件**的原因 —— ★ 它不是"谁污染了谁"，而是
+#:          **收集期装的东西落在了先跑的用例头上**）
+#:   ⇒ ★★★ **正解**：★ **装假模块与 `import sw_part` 都在 fixture 里做**（module 作用域 autouse）
+#:     ⇒ ★ 收集期**不碰** `sys.modules` ⇒ ★ teardown 再原样还回去 ⇒ **两个方向都不漏** ✓
 #:   ⚠ **为什么不能"import 完就撤"**：★ `scripts/sw_part.py` 的 `_select_com_object`（L334）与
 #:     `create_axis_report`（L2174）是**函数内** `from sw_connect import …` ⇒ ★ 那两条路要到
 #:     **用例执行期**才导入 ⇒ ★ 撤早了它们会拿到**真的** `sw_connect`（★ 于是真去连 COM）✗
-#:   ⇒ ★★ **撤的时机是「本模块跑完」**，不是「import 完」✓
+#:   ⚠ 同类定则（本规格已修三处）：★ **凡改**共享模块/`sys.modules` 的全局态**，一律走
+#:     `monkeypatch` 或**成对的 fixture 装/撤**，★ 不许在模块级裸做** ✓
 #: ═══════════════════════════════════════════════════════════════════════════
 @pytest.fixture(scope="module", autouse=True)
-def _restore_modules_after_this_module():
-    """★ 本模块跑完 ⇒ 把 `sw_connect` / `sw_preflight` **原样还回去**（★ 治"顺序污染"）✓"""
-    yield
-    for _name, _saved in (("sw_connect", _saved_sw_connect),
-                          ("sw_preflight", _saved_sw_preflight)):
-        if _saved is None:
-            sys.modules.pop(_name, None)      # ★ 本来就没有 ⇒ 撤掉本模块塞的
-        else:
-            sys.modules[_name] = _saved       # ★ 本来是谁就还谁（★ 可能是真模块）✓
+def _fake_modules_then_import_sw_part():
+    """★ 用例开始前装假模块并 `import sw_part`；★ 本模块跑完**原样还回去** ✓"""
+    global sw_part
+    sys.modules["sw_connect"] = _fake_connect
+    sys.modules["sw_preflight"] = types.SimpleNamespace(
+        import_com_dependencies=lambda: (
+            types.SimpleNamespace(VT_DISPATCH=9),
+            types.SimpleNamespace(),
+            FakeVariant,
+        )
+    )
+    try:
+        import sw_part as _sw_part_module
+        sw_part = _sw_part_module
+        yield
+    finally:
+        for _name, _saved in (("sw_connect", _saved_sw_connect),
+                              ("sw_preflight", _saved_sw_preflight)):
+            if _saved is None:
+                sys.modules.pop(_name, None)      # ★ 本来就没有 ⇒ 撤掉本模块塞的
+            else:
+                sys.modules[_name] = _saved       # ★ 本来是谁就还谁（★ 可能是真模块）✓
+
+
+#: ═══════════════════════════════════════════════════════════════════════════
+#: ★ 2026-10-07（接手轮 · 规格 214 T-214-12）：★ 早先我在这里单独加过一个"只还回去"的 fixture ——
+#:   ★★ **已删**，★ 因为它**治不了根**：装假模块那一步仍在**模块级**（收集期就执行），
+#:   而**先于本文件跑**的用例照样拿到假模块（★ `test_com_member_helpers` 就是这么中招的）✗
+#:   ⇒ ★★★ **现在装与撤在同一个 fixture 里**（见上面 `_fake_modules_then_import_sw_part`）——
+#:     ★ 收集期**不碰** `sys.modules` ⇒ ★ **两个方向都不漏** ✓
+#: ═══════════════════════════════════════════════════════════════════════════
 
 
 class FakeFeature:

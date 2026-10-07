@@ -38,14 +38,26 @@ import sw_simulation as sim  # noqa: E402
 PLATE = (100.0, 60.0, 20.0)
 
 
-def _fake_model_bbox(size=PLATE):
-    """把 `sw_part.get_bounding_box` 换掉 —— ★ 判据只读 `size`，故无需真 COM。"""
+def _fake_model_bbox(monkeypatch, size=PLATE):
+    """把 `sw_part.get_bounding_box` 换掉 —— ★ 判据只读 `size`，故无需真 COM。
+
+    ★★ 2026-10-07（接手轮 · 规格 214 T-214-12）**从"裸赋值"改成 `monkeypatch.setattr`** ——
+      ★ 原来那句 `sw_part.get_bounding_box = _bb` **用完不会还原** ⇒ ★★ 同进程里**后面所有测试**
+      看到的都是这个假函数 ⇒ ★ 实测把两个文件带红（★ 都是 bbox 相关，因果关系最干净）：
+        · `test_sw_part_sketch_selection::BBoxTests` **×2** —— ★ 它们**正是**在测
+          `get_bounding_box` 的边界行为（"没体/长度不对 ⇒ 必须抛 `RuntimeError`"），
+          而假函数**不抛** ⇒ 断言「RuntimeError not raised」✗
+        · `test_tool_specs_batch92` **×2** —— ★ `body_state` 与 `move_copy_body` 都要读 bbox ✗
+      ★★ ⇒ **`monkeypatch` 在用例结束自动还原** ⇒ ★ 一处改、四个受害者一起好 ✓
+      ⚠ 与本仓另外两处污染**同型**（`importlib.reload` · 假 `sw_connect` 不撤）⇒
+        ★★ **定则：凡改**共享模块的属性**，一律走 `monkeypatch`，★ 不许裸赋值** ✓
+    """
     import sw_part
 
     def _bb(_model):
         return {} if size is None else {"size": tuple(size)}
 
-    sw_part.get_bounding_box = _bb            # type: ignore[assignment]
+    monkeypatch.setattr(sw_part, "get_bounding_box", _bb)
     return object()
 
 
@@ -58,9 +70,9 @@ def test_the_official_constants_are_the_documented_ones() -> None:
     assert 1.0 <= b <= 16.0, "★ 预算默认值必须在 (1, 16] GB 内，实测 %r" % b
 
 
-def test_positive_todays_accident_value_is_rejected() -> None:
+def test_positive_todays_accident_value_is_rejected(monkeypatch) -> None:
     """★★★ 核心正例：**事故里那个数**（0.0049 mm，本意是 4.9 米的"米"口径）必须被拒。"""
-    m = _fake_model_bbox()
+    m = _fake_model_bbox(monkeypatch)
     r = sim.check_mesh_size_sane(m, 0.0049)
     assert r["ok"] is False, "★ 0.0049 mm 没被拦住 ⇒ 那道闸抓不到今天这场事故"
     assert "内存" in r["reason"] or "太小" in r["reason"], r["reason"]
@@ -68,35 +80,35 @@ def test_positive_todays_accident_value_is_rejected() -> None:
     assert r["est_elements"] > 1e9, "★ 包围盒估出的单元数应当是个天文数字：%r" % r["est_elements"]
 
 
-def test_negative_the_value_that_worked_is_accepted() -> None:
+def test_negative_the_value_that_worked_is_accepted(monkeypatch) -> None:
     """★ 反例：**跑通过的那个值**（4.9339 mm ⇒ 7310 单元）不许被拒 —— ★ 否则闸太紧。"""
     for good in (4.9339, 4.9305, 5.0, 10.0):
-        r = sim.check_mesh_size_sane(_fake_model_bbox(), good)
+        r = sim.check_mesh_size_sane(_fake_model_bbox(monkeypatch), good)
         assert r["ok"] is True, "★ 误伤：%r ⇒ %s" % (good, r.get("reason"))
-    r = sim.check_mesh_size_sane(_fake_model_bbox(), 4.9339)
+    r = sim.check_mesh_size_sane(_fake_model_bbox(monkeypatch), 4.9339)
     assert r["est_elements"] < 1e6, "★ 合理网格的单元数估计不该是天文数字：%r" % r["est_elements"]
 
 
-def test_existing_behaviour_too_large_still_rejected() -> None:
+def test_existing_behaviour_too_large_still_rejected(monkeypatch) -> None:
     """★ 原有那一侧（太大 ⇒ 网格退化）**不能被这次改动弄丢**（★ 事实 61 同族）。"""
-    r = sim.check_mesh_size_sane(_fake_model_bbox(), 4930.5)
+    r = sim.check_mesh_size_sane(_fake_model_bbox(monkeypatch), 4930.5)
     assert r["ok"] is False and "网格必然退化" in r["reason"], r
     for bad in (0.0, -1.0):
-        assert sim.check_mesh_size_sane(_fake_model_bbox(), bad)["ok"] is False
+        assert sim.check_mesh_size_sane(_fake_model_bbox(monkeypatch), bad)["ok"] is False
 
 
-def test_budget_parameter_is_honoured() -> None:
+def test_budget_parameter_is_honoured(monkeypatch) -> None:
     """★ 预算可调：★ 把预算压到极小 ⇒ **连合理值也被拒**（★ 否则那个参数是摆设 · 事实 40）。"""
-    m = _fake_model_bbox()
+    m = _fake_model_bbox(monkeypatch)
     assert sim.check_mesh_size_sane(m, 4.9339)["ok"] is True
     tight = sim.check_mesh_size_sane(m, 4.9339, memory_budget_gb=1e-9)
     assert tight["ok"] is False, "★ 预算参数没被用上 ⇒ 它就是个没人用的守卫"
     assert tight["memory_budget_gb"] == 1e-9
 
 
-def test_no_bbox_means_record_only_do_not_judge() -> None:
+def test_no_bbox_means_record_only_do_not_judge(monkeypatch) -> None:
     """★ 量不到包围盒 ⇒ **只记不判**（★ 不因为没有参照就误拒）。"""
-    r = sim.check_mesh_size_sane(_fake_model_bbox(None), 0.0049)
+    r = sim.check_mesh_size_sane(_fake_model_bbox(monkeypatch, None), 0.0049)
     assert r["ok"] is True and "只记不判" in r["reason"], r
 
 
