@@ -70,8 +70,13 @@ def _select_face_by_index(model, face_index: int, append: bool):
     cx = (box[0] + box[3]) / 2.0
     cy = (box[1] + box[4]) / 2.0
     cz = (box[2] + box[5]) / 2.0
+    #: ★★ 2026-10-07（规格 220 T-220-01）：★ **mark 从 0 改成 1** ——
+    #:   ★ 依据本仓**真机验证过**的先例（`sw_part.select_face_by_index_mark1` 的 docstring 逐字）：
+    #:   ★「先按面上的点 mark=0 选一次 ⇒ ClearSelection2(True) ⇒ ★★ 再 mark=1 选一次」
+    #:   ★ 且「传 **mark=0** 时 `InsertDome` 报 **0x8002000F**」⇒ ★ 这类特征要的是 **mark=1** ✓
+    #:   ★ 真机读数（第 5 轮）：mark=0 时第 1 次选面回读计数 **0** ✗（第 2 次 1）
     ok = model.Extension.SelectByID2("", "FACE", cx, cy, cz, bool(append), 0,
-                                     sw_part._empty_callout(), 0)
+                                     sw_part._empty_callout(), 1)
     cnt = model.SelectionManager.GetSelectedObjectCount2(-1)                         # ★ 事实 8：布尔不可信
     return {"ok": bool(ok), "selection_count": cnt, "point": [cx, cy, cz]}
 
