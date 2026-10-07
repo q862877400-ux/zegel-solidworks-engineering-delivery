@@ -347,3 +347,22 @@
 ★ 证据逐字：★ `tools/probe_spec220_boundary.py` · ★ `18.54 s` · ★ **0 弹窗** · ★
   `surface ok=True 22→23` · ★ `boss ok=True 22→23` ✓
 ★ 再跑生成器 + `release_check` 要 **exit 0** ⇒ 按路径提交 ✓
+
+## ★★ 第 42 轮（续）：★ 焊件/圆角焊缝 —— ★ 查清"要从零真做"（★ 台账那条背后没有代码）
+
+| ★ 项 | ★ 读数（逐字）|
+|---|---|
+| ★ 官方页 | ★ `C:\\swapi\\types\\IFeatureManager\\InsertFilletBeadFeature.md` **存在** ✓（★ 签名在第 14 行，**18 参** ✓）|
+| ★★ 本仓实现 | ★★ `scripts/sw_weldment.py` 里 ★ **`Bead` 0 次 · `Cosmetic` 0 次 · `FilletBead` 0 次** ✗ · ★ **无任何 bead 函数** ✗ |
+| ★★ 结论 | ★★ **这一格要"从零真做"** ✗ —— ★ 台账那条 `fillet_weld_bead` = `stitched` **背后没有代码** ✗ |
+
+### ★★ 从零做的确切步骤（★ 下一轮起）
+1. ★ 读完官方**三样**：★ 签名（18 参）· `## Remarks`（★ 前置与语义）· ★ CHM 示例（★ 调用序）✓
+2. ★ 写 `scripts/sw_weld_bead.py`：★ `insert_fillet_bead_report(model, *, face_index_1, face_index_2, …)` ✓
+   ★★ **面集合的声明式选择**：★ 用**面序号** + ★ `IEntity.Select4` ✓ —— ★ **这套我刚在边界特征上跑通并验实** ✓
+3. ★ 暴露（batch）+ 台账 + 契约测试 ⇒ ★ `release_check` 一轮绿 ✓
+4. ★★ **真机**：★ `sw_guard.py` ⇒ ★ 判据 **特征树增量 ≥ 1**（★ 事实 8）✓ ⇒ ★ 过了才提 `level` ✓
+
+### ★ 为什么它比前几格重
+★★ 前几格是"**指向现成函数**" ✓（★ 4 步落地）；★ 这一格是"**从零写实现 + 面集合 + 真机**" ✗
+  ⇒ ★ 按我现在的每轮余量，★ 大概要 **2–4 轮** ✓ —— ★ 我照 spec 一轮一轮推，不跳步 ✗
