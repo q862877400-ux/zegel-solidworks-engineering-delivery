@@ -53,7 +53,32 @@
            **99/145 (68%) → 119/145 (82%)** ≥ 110 · `tools/audit_gap_implementations.py` 退出 0 ·
            `scripts/check_union_conventions.py` 退出 0 · §八缺口 **32 → 15**）
            ★★ 第 12–25 轮火力已从「涨覆盖率」转到「**注册 ≠ 能跑**」这一类质量债（★ 见下「调整」）
-下一步:    ⓪-214 ★★★ **2026-10-07（接手轮）：全量测试归零 —— 18 failed → 0** ✓
+下一步:    ⓪-216 ★★★ **2026-10-07（接手轮）：真机收口（规格 `specs/216-real-machine-closeout/`）** ——
+              ★★ **纪律订正（用户原话）**：「★ 我允许你开，我从没说过不准开啊，**纪律是开了用完要关**」
+              ⇒ ★ `AGENTS.md` 规定的是**怎么开**（真机命令一律走 `tools/sw_guard.py`：弹窗护栏 + 硬超时），
+              ★ **不是"不许开"**；★「零真机」是我**自己**写进 `specs/214`/`215` 的额外约束（★ 已订正）✓
+              ★✅ **③ costing 已完成**：★ 台账写的是「`verdict: partial`（5/6）、卡在 `list_templates`」——
+                ★★ 而真机复跑（走护栏）⇒ **`verdict: pass`** · `assertions` **3/3** ·
+                `templates` 步拿到真路径 ⇒ ★ **旧阻塞点不复现** ✓
+                ★★ **顺带修掉一个真缺陷**：`connect_solidworks` 的 `metadata` **从来没有 `revision` 键**，
+                而 `tools/verify_costing_e2e.py` 读的正是它 ⇒ ★ 证据 `solidworks_revision` **恒为空串** ✗
+                ⇒ ★ 复用既有 `get_sw_version()` 补键（★ 防御式：失败记 `None`、不拖垮连接）+ verifier 加 `or ""`
+                ⇒ ★ **真机证明**：修前 `''` · 修后 **`'34.4.1'`** ✓
+                ★ 台账订正**两处**（`costing` · `costing_readback`）—— ★ 一律"追加 + 标注旧条作废"、**不删历史** ✓
+                ★★ 并**升级了一条被订正触红的契约守卫**（★ **不删**）：
+                  `tests/test_ledger_verdict_matches_evidence.py` 原来把「文件确实是 partial」**钉成前提** ✗
+                  ⇒ ★ 升级成真正的不变量「**台账现状句 ⟺ 文件原句**」（★ V-1 抱怨的是**不一致**、
+                  不是"必须是 partial"）· ★ 负例已证（抹掉现状声明 ⇒ 当场红）✓
+              ★★ **① 预选族：范围从 9 条订正为 14 条**（★ 我第 3 处错误前提）——
+                基线 `docs/preselect-family-baseline.json` 里 **14 条的理由全都写着**
+                「★★ 待修工作项（不是「已认可」）」：官方前置 9（静默失败）· 显式拒 3（★ **经工具层必然失败**）·
+                诊断型 2（★ 读到的**就是被注入清空的**选区）⇒ ★ 下一步：**逐条读目标函数**判三型
+                （A 造选区 · **B 量"当前"选区**（如 `measure_selection`，造选区会改语义）· C 其他）✓
+              ★ ② AVI：★ 两项待办 =（a）设法拿 `CosmosMotion` 类算例 ⇄（b）如实记为**已定位边界**的能力缺口
+                ⇒ ★ 判据固定「**文件存在且大小 > 0**」、★ **不看返回值** ✓
+              ★ 读数：★ 全量 pytest **2404 passed / 0 failed**（427 s）· ★ `release_check` 退出 0 ·
+                ★ 提交 `a89358f7` + `32cdbf44` · ★ **SolidWorks 用完已关** ✓
+           ⓪-214 ★★★ **2026-10-07（接手轮）：全量测试归零 —— 18 failed → 0** ✓
               ★ 规格 **`specs/214-test-green/`**（★ 四件制品齐 · ★ 目标 `goal-178a29eb`）✓
               · ★ **起点实测**：`pytest tests -q` ⇒ **18 failed / 2374 passed / 20 skipped**（514 s）
               · ★★ **终点实测**：⇒ ★ **2393 passed / 20 skipped / 0 failed**（513 s）✓ —— ★ **C1 达标** ✓
