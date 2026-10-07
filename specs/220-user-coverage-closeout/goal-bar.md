@@ -366,3 +366,25 @@
 ### ★ 为什么它比前几格重
 ★★ 前几格是"**指向现成函数**" ✓（★ 4 步落地）；★ 这一格是"**从零写实现 + 面集合 + 真机**" ✗
   ⇒ ★ 按我现在的每轮余量，★ 大概要 **2–4 轮** ✓ —— ★ 我照 spec 一轮一轮推，不跳步 ✗
+
+## ★★★★ 第 43 轮（续）：★ 官方页一读翻出两条 —— ★ **入口是 `…Feature2`** + ★ **操作对象是"边"不是"面集合"**
+
+| ★ 项 | ★ 读数（逐字）|
+|---|---|
+| ★★ 官方页第 12 行 | ★★ 「**Obsolete. Superseded by `[[IFeatureManager::InsertFilletBeadFeature2]]`.**」✗ ⇒ ★ **正确入口是 `InsertFilletBeadFeature2`** ✓ |
+| ★★ 参数表 | ★★ `Type1`·`Size1`·`Length1`·`Pitch`·`Type2`·`Size2`·`Length2`·`Flag`·★ **`EdgeNum1`·`DeSelEdge1`·`EdgeNum2`·`DeSelEdge2`** ✓ |
+| ★★ 含义 | ★★ **操作对象是「相交的边（edges）」** ✓ · ★ **不是"面集合"** ✗ |
+
+### ★★ 纠正（★ 我上一轮的判断错了）
+★★ 台账 `fillet_weld_bead` 的 `limitations` 写「**18 参里的 `FaceSet1`/`FaceSet2` 是面集合 ⇒ 前置没上**」✗
+  ⇒ ★★ **这条把当初那次尝试带偏了** ✗（★ 真正的参数名里**没有 `FaceSet1`/`FaceSet2`** ✓，★ 是 **`EdgeNum1`/`DeSelEdge1`** ✓）
+★ 我第 42 轮据此判「要从零写**面集合**的声明式选择」✗ —— ★★ **方向是错的** ✓
+★★ **正确方向**：★ **选中「相交的边」** ⇒ ★ 用 `IEntity.Select4` ✓ —— ★ **这套我刚在边界特征上跑通并验实** ✓✓
+
+### ★★ 修正后的下一步
+1. ★ 读 `C:\\swapi\\types\\IFeatureManager\\InsertFilletBeadFeature2.md` 的**签名 + Remarks**（★ 以后用代入口 ✓）
+2. ★ 写 `scripts/sw_weld_bead.py`：★ `insert_fillet_bead_report(model, *, edge_index_1, edge_index_2, size_mm, …)` ✓
+   ★ 选**边**走 `IEntity.Select4` ✓；★ 判据 **特征树增量 ≥ 1**（★ 事实 8）✓
+3. ★ 暴露 + 台账 + 契约测试 ⇒ 门禁一轮绿 ⇒ ★ **真机**（★ 过了才提 `level` ✓）
+
+★★ **本条正是"官方文档是第 0 步"的又一例**：★ 台账里那句二手概括（"面集合"）★ **差一点让我从零写错方向** ✗
