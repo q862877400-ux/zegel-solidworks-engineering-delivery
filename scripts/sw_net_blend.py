@@ -256,8 +256,13 @@ def select_face_with_fallback(model, face_index: int, append: bool,
     attempts = []
     for (dx, dy, dz) in tries:
         model.ClearSelection2(True) if False else None       #: ★ 不清（append 语义由调用方定）
-        ok = model.Extension.SelectByID2("", "FACE", cx + dx, cy + dy, cz + dz,
-                                         bool(append), 0, _sp._empty_callout(), 0)
+        #: ★★★ 2026-10-07（规格 220 T-220-01 第 9 轮**真机定案**）★ 选面改用
+        #:   `IEntity.Select4(Append, Callout)` ✓ —— ★ 实测（`tools/probe_spec220_append_arms.py`）：
+        #:     ★ `SelectByID2` 按点对 0 号面**两次都是 0**（永远选不上）✗
+        #:     ★ 而 `face.Select4(False)` 对**同一个面**回 **[True, 1]** ✓
+        #:     ★ 且 `face.Select4(True)` 回 **[True, 2]** ⇒ **Append 正确累加** ✓
+        #:   ⇒ ★ 两个问题一次全解 ✓（★ 这也正是本仓**事实 32**记的"按对象选"那条路）
+        ok = face.Select4(bool(append), _sp._empty_callout())
         cnt = int(model.SelectionManager.GetSelectedObjectCount2(-1))
         attempts.append({"d": [round(dx, 6), round(dy, 6), round(dz, 6)],
                          "ok": bool(ok), "count": cnt})

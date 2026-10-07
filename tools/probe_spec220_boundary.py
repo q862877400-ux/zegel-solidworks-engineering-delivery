@@ -53,7 +53,7 @@ def _run_one(sw, tool_caller, net, kind: str, fn_name: str) -> dict:
     fn = getattr(net, fn_name)
     try:
         #: ★★ 2026-10-07（规格 220 T-220-01）**swap test**：★ 交换两个面序号，★ 二分真因 ✓
-        rep = fn(model, face_index_1=1, face_index_2=0)
+        rep = fn(model, face_index_1=0, face_index_2=1)   #: ★ 已还原（第 7 轮 swap 试完即还原）
     except Exception as exc:                                                       # noqa: BLE001
         return {"kind": kind, "function": fn_name, "raised": str(exc)[:220],
                 "feature_count_before": before,
