@@ -1,5 +1,37 @@
 # 规格 217 · 目标栏（唯一进度字段）
 
+## ★★ T-217-05 归属侦察（第 8 轮）：★ 两个有主、三个无主 —— 批次未落（★ 不留半成品）
+
+★★ **本轮的取舍**：★ 走完"读两块 `mcp_tools` 原文 → 手改 → 挂接 → 复制 → 验证"需 **6-7 次往返**，
+  ★ 而我本轮余量不足 ⇒ ★ 按本规格一贯纪律（**不留半成品**）⇒ ★ **批次留到下一轮一次做完** ✓
+  ★（★ 两条判据、批次与测试的**内容都已写好**在 `output/_t217_batch105_new.py` /
+  `output/_t217_test105_new.py`，★ 下一轮直接复制就位即可 ✓）
+
+### ★ 归属侦察结果（★ 逐条有据）
+
+| 工具 | ★ 归属条目 | ★ 状态 |
+|---|---|---|
+| `solidworks_sheet_metal_iter_features` | ★ **`sheet_metal`**（★ 已有 7 个 `solidworks_sheet_metal_*` 工具）| ★ **有主** ✓ |
+| `solidworks_topology_constraints_report` | ★ **`topology_readback`**（★ 已有 7 个，含 `..._manager_report` 同族）| ★ **有主** ✓ |
+| `linear_pattern_report` | ★ **未找到**（★ 需查"阵列/特征"那一族条目）| ★ **无主** ✗ |
+| `insert_mate_reference` | ★ **未找到**（★ 需查"装配/配合"那族——★ 本仓叫"配合"不叫"mate"）| ★ **无主** ✗ |
+| `iter_feature_tree` | ★ **未找到**（★ 需查装配族的遍历类条目）| ★ **无主** ✗ |
+
+### ★ 下一轮的确切步骤（★ 照做即可，无需再想）
+
+1. ★ `read` **两处** `mcp_tools` 块的精确原文（★ `sheet_metal` 起 2658 行附近 · `topology_readback`）
+2. ★ 用 `edit` 各插一行（★ 末项补逗号 —— ★ 同 batch103/104 的做法）✓
+3. ★ `edit` `register_capabilities.py`：在 `"tool_specs_batch104",` 后加 `"tool_specs_batch105",` ✓
+4. ★ `Copy-Item` 把 `output/_t217_batch105_new.py` → `mcp-server/tool_specs_batch105.py`、
+   ★ `output/_t217_test105_new.py` → `tests/test_spec217_batch105_tools.py` ✓
+5. ★ **先跑** `python scripts/check_preselect_family.py`（★ 第 7 轮定的闸：★ 预检比等 `release_check` 拦便宜）
+6. ★ `round_chain` + `commit_mine.py` ⇒ ★ 工具数 **467 → 469** ✓
+7. ★ 然后再为那**三个无主**的找归属（★ 关键词换成本仓的命名：★ 配合=mate · 遍历=iter · 阵列=pattern）✓
+
+---
+
+# （以下是本规格开工时写的目标栏正文）
+
 ## ★★★ T-217-05 复核（第 7 轮）：★ **那道闸省掉一整轮废批** —— 纯暴露实为 **5 个**（不是 14）
 
 ★★ 做法：★ 按我上轮给自己加的闸 —— ★ **开工前逐个查"预选族"信号**
