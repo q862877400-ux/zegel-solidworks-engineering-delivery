@@ -34,7 +34,15 @@ def main() -> int:
 
     model = bp._build_plate(sw, tool_caller)
     out["tries"] = []
-    for pair in ((0, 1), (6, 7), (0, 6)):
+    #: ★★★ 第 57 轮：★ **穷举所有面对**（★ 12 个面 ⇒ C(12,2) = 66 对 ✓）
+    #:   ★ 依据第 56 轮：★ **夹具已对**（★ 12 面 = 两个体 + 贴合 + 不合并 ✓），★ 而"挑哪一对"是**机械活** ✗
+    #:   ★ 判据是**特征树回读增量** ✓ ⇒ ★ **成功即停** ✓ ⇒ ★ 不必再猜"哪两个面是焊缝接头" ✓
+    _n = len(cb._faces_all_bodies(model))
+    _pairs = [(i, j) for i in range(_n) for j in range(i + 1, _n)]
+    out["face_count"] = _n
+    out["pair_count"] = len(_pairs)
+    print("★ 面数 = %d ⇒ 试 %d 对（成功即停）" % (_n, len(_pairs)))
+    for pair in _pairs:
         try:
             rep = cb.insert_cosmetic_weld_bead_report(model, face_index_1=pair[0],
                                                       face_index_2=pair[1],
