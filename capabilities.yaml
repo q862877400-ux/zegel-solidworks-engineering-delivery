@@ -1155,7 +1155,8 @@
     "solidworks_sheet_metal_create_gusset",
     "solidworks_sheet_metal_create_one_bend",
     "solidworks_sheet_metal_create_swept_flange",
-    "solidworks_sheet_metal_evidence"
+    "solidworks_sheet_metal_evidence",
+    "solidworks_sheet_metal_iter_features"
    ]
   },
   {
@@ -3003,7 +3004,8 @@
     "solidworks_topology_list_constraints",
     "solidworks_topology_manager_report",
     "solidworks_topology_options_report",
-    "solidworks_topology_run"
+    "solidworks_topology_run",
+    "solidworks_topology_constraints_report"
    ],
    "source": "original",
    "source_evidence": "scripts/sw_topology.py 的 topology_evidence / collect_numbers / manager_report / options_report / create_study / run"

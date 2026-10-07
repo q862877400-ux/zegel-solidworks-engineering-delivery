@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 493 | 493 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 495 | 495 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -43,7 +43,7 @@
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
 | ⑤ 零件特征 | 23 | 11 | 3 | 13 | 40 | 111⚠ | 64 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 21 | 52⚠ | 29 | **8** |
-| ⑦ 钣金 | 10 | · | 1 | · | 13 | 24⚠ | 24 | **11** |
+| ⑦ 钣金 | 10 | · | 1 | · | 14 | 24⚠ | 25 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 18 | 21⚠ | 22 | **4** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
 | ⑩ 装配 | 13 | 7 | 4 | 3 | 27 | 66⚠ | 46 | **19** |
@@ -52,10 +52,10 @@
 | ⑬ 仿真 / Motion | 3 | · | 1 | · | 49 | 127⚠ | 53 | **4** |
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 18 | 50⚠ | 28 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 10 | 24⚠ | 52 | **42** |
-| ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 40 | 14 | 40 | ✓ |
+| ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 41 | 14 | 41 | ✓ |
 | ⑰ 未归类 | 18 | 17 | 10 | 16 | 113 | 568⚠ | 155 | **42** |
 
-**合计**：并集 803 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 805 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 454 个操作只有本仓库有：
+共 456 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -425,6 +425,7 @@
 - `sheet_metal_evidence`（⑦ 钣金）
 - `sheet_metal_insert_closed_corner`（⑦ 钣金）
 - `sheet_metal_insert_miter_flange`（⑦ 钣金）
+- `sheet_metal_iter_features`（⑦ 钣金）
 - `shell_params`（⑤ 零件特征）
 - `simulation_activate_plot`（⑬ 仿真 / Motion）
 - `simulation_apply_fixed_restraint`（⑬ 仿真 / Motion）
@@ -521,6 +522,7 @@
 - `toolbox_load_index`（⑯ 高级 / 专项（含护城河候选））
 - `toolbox_part_path`（⑯ 高级 / 专项（含护城河候选））
 - `toolbox_search`（⑯ 高级 / 专项（含护城河候选））
+- `topology_constraints_report`（⑯ 高级 / 专项（含护城河候选））
 - `topology_create_demold_control`（⑯ 高级 / 专项（含护城河候选））
 - `topology_create_factor_of_safety_constraint`（⑯ 高级 / 专项（含护城河候选））
 - `topology_create_mass_constraint`（⑯ 高级 / 专项（含护城河候选））

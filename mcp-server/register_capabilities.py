@@ -1076,6 +1076,12 @@ BATCH_MODULES = (
     #:   ★ 四个都是**读侧**（★ 不需要预选 ⇒ 不触发预选族门禁）✓
     #:   ★ 计数：463 → **467**
     "tool_specs_batch104",
+    #: ★ 规格 217 · B5/B6 —— 钣金特征遍历 + topology 约束读侧（2 个纯读）✓
+    #:   · `sheet_metal_iter_features` / `topology_constraints_report`
+    #:   ★★ **只增加暴露面** —— ★ **不动台账任何 `level`** ✓
+    #:   ★ 两个都**无选区信号**（★ 第 7 轮定的预检闸已过）⇒ 可作纯暴露 ✓
+    #:   ★ 计数：467 → **469**
+    "tool_specs_batch105",
 )
 
 def all_specs() -> list:
