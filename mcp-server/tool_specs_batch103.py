@@ -82,14 +82,11 @@ SPECS_BATCH103 = [
             "★ 再喂给需要草图的动作。"
             "⚠ 名字不存在时应报错（★ 不返回空对象让人误以为成功）。",
     ),
-    ToolSpec(
-        name="solidworks_sketch_intersect_curves",
-        title="Sketch Intersect Curves",
-        module="sw_sketch_edit_ops", function="sketch_intersect_curves",
-        inject="model",
-        params=[],
-        doc="★ **草图里的「相交曲线」**：★ 在两条曲线的交点处插入一个点（★ 草图编辑动作）。"
-            "★★ 判据是**草图实体计数增量**（★ 本仓工法：几何变化一律回读计数，不看返回值）。"
-            "⚠ 需要先选中相交的两条曲线（★ 选中由声明式选择那族负责，★ 规则 3）。",
-    ),
 ]
+# ★★ 2026-10-07（规格 217 · T-217-01 第 3 轮）：**`sketch_intersect_curves` 撤出本批** ——
+#   ★ 本仓**预选族门禁**（`scripts/check_preselect_family.py`，已接进 `release_check`）实测判它：
+#     「★ 要求先选中相交的两条曲线，★ 而**没有任何选法**」⇒ ★★ **门禁是对的** ✓
+#   ★ 它与 `add_*_dimension` 三条**同类**（都要先选中实体）⇒ ★ 一并挪到 **T-217-01b**
+#     （★ 那一批统一配**声明式选择 + 紧邻调用**）✓
+#   ★★ 记一笔：**这是本规格第一次"门禁在尽职地拦下我自己新加的工具"** —— ★ 判据有效 ✓
+

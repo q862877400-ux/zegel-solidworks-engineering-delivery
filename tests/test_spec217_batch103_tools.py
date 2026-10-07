@@ -30,8 +30,12 @@ import register_capabilities as RC                                    # noqa: E4
 NEW = ("solidworks_count_sketch_relations",
        "solidworks_delete_all_sketch_relations",
        "solidworks_delete_sketch_relation",
-       "solidworks_sketch_by_name",
-       "solidworks_sketch_intersect_curves")
+       "solidworks_sketch_by_name")
+
+#: ★★ `solidworks_sketch_intersect_curves` **撤出本批**（2026-10-07）——
+#:   ★ 预选族门禁逐字判它「要求先选中相交的两条曲线，而没有任何选法」⇒ **门禁是对的** ✓
+#:   ★ 它与 `add_*_dimension` 三条同类 ⇒ 一并挪到 **T-217-01b**（统一配声明式选择）✓
+#:   ★★ 故本批 = **4 个**（★ 工具数 459 → **463**）✓
 
 EXCLUDED = ("solidworks_add_horizontal_dimension",
             "solidworks_add_vertical_dimension",
