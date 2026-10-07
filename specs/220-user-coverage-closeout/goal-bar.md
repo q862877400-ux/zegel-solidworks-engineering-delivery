@@ -388,3 +388,25 @@
 3. ★ 暴露 + 台账 + 契约测试 ⇒ 门禁一轮绿 ⇒ ★ **真机**（★ 过了才提 `level` ✓）
 
 ★★ **本条正是"官方文档是第 0 步"的又一例**：★ 台账里那句二手概括（"面集合"）★ **差一点让我从零写错方向** ✗
+
+## ★★★★ 第 44 轮（续）：★ 代入口 `InsertFilletBeadFeature2` 的**关键一行** —— ★ 前置是「预先选中的体」
+
+★ 官方页第 12 行**逐字**：
+★★「Inserts a fillet weld bead feature and also **fills the gap between the pre-selected part bodies**, if any.」✓
+
+| ★ 项 | ★ 读数 |
+|---|---|
+| ★★ 前置 | ★★ **"pre-selected part bodies"** ⇒ ★ **前置 = 预先选中的体/实体** ✓ —— ★★ **再次印证不是「面集合」** ✗ |
+| ★ 新增参数 | ★★ 比 v1 **多出 `PenetrationType1`/`PenetrationValue1`/`PenetrationType2`/`PenetrationValue2`** ✓（★ 0=全熔透 · 1=部分熔透 · 2=不熔透 ✓）|
+| ★ 共有参数 | ★ `Type1`·`Size1`·`Length1`·`Pitch`·`Type2`·`Size2`·`Length2`·`Flag`·… ✓ |
+| ★ 签名 | ★ 第 14 行**仍被截断** ✗ ⇒ ★ 下一轮再读**完整签名**（★ 数清楚几个参 ✓）|
+
+### ★★ 方向确认（★ 连着两轮都在纠那一句二手概括）
+★ 台账说的「**`FaceSet1`/`FaceSet2` 是面集合**」✗ —— ★ 官方页**上根本没有这两个参数名** ✗
+★★ 官方给的是：★ **`EdgeNum1`/`DeSelEdge1`（v1）** ✓ 与 ★ **"pre-selected part bodies"（v2）** ✓
+⇒ ★★ **要选的是「实体（边/体）」** ⇒ ★ 走 **`IEntity.Select4`** ✓ —— ★ **正是我在边界特征上验实的路** ✓✓
+
+### ★★ 下一轮
+1. ★ 读完 `InsertFilletBeadFeature2` 的**完整签名**（★ 数清参数个数与顺序 ✓）
+2. ★ 写 `scripts/sw_weld_bead.py`：★ `insert_fillet_bead_report(model, *, edge_index_1=0, edge_index_2=1, size_mm=…, …)` ✓
+   ★ 前置：★ **选实体（边）** 走 `IEntity.Select4` ✓ · ★ 判据 **特征树增量 ≥ 1**（★ 事实 8）✓
