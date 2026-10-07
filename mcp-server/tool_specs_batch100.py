@@ -30,17 +30,36 @@ __all__ = ["SPECS_BATCH100"]
 
 
 SPECS_BATCH100 = [
-    #: ── ① 截面属性（★ 规格 211 B1-1 · 只读）────────────────────────────────
+    #: ── ① 截面属性（★ 规格 211 B1-1 · **⚠ 原标"只读"是错的，2026-10-07 订正**）──────
     ToolSpec(
         name="solidworks_section_properties",
         title="Section Properties (mass-property readback)",
         module="sw_mass_property", function="section_properties",
         inject="model",
-        read_only=True,
+        #: ★★★ 2026-10-07（接手轮 · 规格 216）**`read_only` 由 `True` 改成 `False`** ——
+        #:   ★★ 依据是**台账明文裁定**（`capabilities.yaml` 的 `section_properties` 条目逐字）：
+        #:     「★★ **有副作用**：★ 官方写「**This method clears the selection set**」＋
+        #:       「objects in the `Sections` parameter **are added to** the current selection set」
+        #:       ⇒ ★★ **它清空并重写选择集** ⇒ ★ 按**规格 210** 的效应声明体系，
+        #:       ★ **它不许被标 `read_only`** ✓」
+        #:   ★★ 实测复核（2026-10-07）：★ 这里原先**显式**写的是 `read_only=True` ✗ ——
+        #:     而 `tool_registry.effective_read_only` 的**判序第一是「显式声明优先」**
+        #:     （`explicit = getattr(spec, "read_only", None); if explicit is not None: return bool(explicit)`）
+        #:     ⇒ ★★ 那句显式声明**直接覆盖了派生** ⇒ ★ 于是台账的裁定**被架空**
+        #:     （★ 而**没有任何门禁**在守它 —— 已实测确认）✗
+        #:   ⚠ 为什么不能靠改效应表解决：★ 它是**生成物**（表头逐字 `★ 不要手改`），
+        #:     而它的静态判据**只用「动词这一路」**（其 `_limitations` 自述）⇒
+        #:     ★★ **看不见只写在官方 `## Remarks` 里的副作用**（"clears the selection set" 不是动词写）
+        #:     ⇒ ★ 故效应表里那条 `writes: []` 是**欠近似**（★ 但**它是生成物、不改**）✓
+        #:   ★★ 正解：★ **人判（有官方 Remarks 引文的那一判）显式覆盖** ⇒ 写 `read_only=False` ✓
+        #:   ⚠ `state_classes` **本来就含 `selection`** ⇒ ★ 这条副作用**在体系的语义之内**，
+        #:     只是**静态判据抓不到** ⇒ ★ 不是"体系没设计"，是"这一路看不见" ✓
+        read_only=False,
         params=[],
         doc=
-            "截面属性：按当前选择集求截面面积/惯性矩等（只读）。""★ **截面属性**（官方 `IModelDocExtension::GetSectionProperties2`，★ 以**当前选择集**求值）—— "
-            "★★ **只读** ✓ "
+            "★★ **⚠ 不是只读**：★ 官方 Remarks 逐字「**This method clears the selection set**」"
+            "⇒ ★ 它会**清空并重写当前选择集**（★ 按规格 210 的效应体系，`selection` 也是状态类之一）。"
+            "★ **截面属性**（官方 `IModelDocExtension::GetSectionProperties2`，★ 以**当前选择集**求值）—— "
             "★★★ **单位那件事已查实并登记在册**：官方 `## Returns` 说 `square meters`，"
             "★ 而**真机读数相反** —— 20×20×20 正方体端面读 **400**（= 20×20 的 **mm²**）、"
             "★ 侧面读 **0.4**（差 1000 倍）⇒ ★★ **不是面积换算** ✓ "

@@ -2,7 +2,7 @@
 
 > ★★ **本文件是唯一进度字段** —— 进度只看上面那一行。
 
-**阶段：★ ③ 台账订正完成（`a89358f7` / `32cdbf44` / `3197d27b`）· ★★ T-216-05 完成 —— 14 条判型落地，并查出**其中 2 条是我那道门禁的假阳性**（已修门禁 + 移出基线 ⇒ **实数 12**）· ★ 剩余：**A 型 6 · B 型 3 · D 型 3**（未修）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-06**（A 型逐条加 `pre_call`）**
+**阶段：★ ③ 台账订正完成（`a89358f7` / `32cdbf44` / `3197d27b`）· ★★ T-216-05 完成（14 条判型，查出 2 条是门禁假阳性 ⇒ 实数 12）· ★★ T-216-06a 完成（三条依据捞齐）+ **附带修掉 1 条 `read_only` 真错**（★ 台账有明文裁定）· ★ 剩余：A 型 5 条中 **2 条可修**（dome · reference_point）· 1 条是后端墙（composite_curve）· ★ ② AVI 未开始 · ★ 当前动作 = **T-216-06b****
 
 ---
 
@@ -90,20 +90,31 @@
 
 ## 下一个动作（只写一条）
 
-★ **T-216-06a**：★ **先逐条捞台账**（★ 不猜）—— ★ `section_properties` · `dissolve_assembly` ·
-`sketch_stretch` 三条的条目级依据**本轮 grep 未命中**（★ 可能记在别的 `capabilities[].id` 下）
-⇒ ★ 逐条把它们捞出来、读 `limitations` 再定修法 ✓
-→ 验收: ★ 三条各自的**条目 + 逐字依据**落 `recon/precall-plan.md` §5.4（★ 取代现在的"尚未查到"）✓
-
-★ **T-216-06b**（捞完即做）：★ `insert_dome` + `insert_reference_point` 两条**可修**的：
-· ★ `insert_dome` ⇒ ★ 走**两步式选面**（先 `mark=0` 选一次、`ClearSelection2(True)`、再 **`mark=1`**，
-  ★ 形态由既有冒烟 `tools/verify_dome_smoke.py` L133-139 证明 9/9）+ ★ **声明式选择器入参**
-  （★ 因为**规则 3 不许工具收裸坐标**）✓
-· ★ `insert_reference_point` ⇒ ★ 选区**必须紧邻调用**（★ 台账逐字：中间隔别的步骤会把选区清掉）✓
+★ **T-216-06b**：★ 实现 `insert_dome` + `insert_reference_point` 两条**可修**的（★ T-216-06a 已把依据捞齐）：
+· ★ `insert_dome` ⇒ ★ **两步式选面**（先 `mark=0` 选一次 → `ClearSelection2(True)` → 再 **`mark=1`**，
+  ★ 形态由既有冒烟 `tools/verify_dome_smoke.py` L133-139 证明 **9/9**）+ ★ **声明式选择器入参**
+  （★ 规则 3 **不许工具收裸坐标**）✓
+· ★ `insert_reference_point` ⇒ ★ 选区**必须紧邻调用**（★ 台账逐字：「中间隔别的步骤会把选区清掉」）✓
 → 验收: ★ 每条**两段**真机读数 —— ★ ① 选区计数 > 0 · ★ ② **特征树增量**（★ 不看返回值）；
 ★ 批末 `python scripts/check_preselect_family.py` 仍须退出 0 ✓
 
-★ **T-216-06c**：★ `insert_composite_curve` ⇒ ★ **不修**，改走"如实记为能力缺口"
+★ **T-216-06c**（可并行）：★ `insert_composite_curve` ⇒ ★ **不修**，走"如实记为能力缺口"
 （★ 依据：台账逐字「**6 种选法全部失败**」+ `Select4` 无 mark、边与草图段无名字 ⇒ **后端墙**）✓
-→ 验收: ★ `capabilities.yaml` 该条目的 `limitations` 补上本轮结论；★ `check_union_conventions` 退出 0 ✓
+
+---
+
+## ★★ 本轮附带发现：`read_only` 与效应体系**一族不一致**（★ 已修 1 条、记档 6 条）
+
+★ 见 [recon/read-only-vs-effects.md](recon/read-only-vs-effects.md) ✓
+★ 病灶：★ `effective_read_only` 的**判序第一是「显式声明优先」**⇒ ★ 只要 ToolSpec 写着 `True`，
+  ★★ 「效应体系说它有写」与「台账裁定它不许标只读」**一律被架空**，★ 而**没有任何门禁在守** ✗
+★ **已修**：`solidworks_section_properties` —— ★ 台账**有明文裁定**（官方 Remarks 逐字
+  「**This method clears the selection set**」⇒ 它清空并重写选择集 ⇒ 不许标 `read_only`）✓
+  ⇒ ★ `read_only=True` → **`False`**（`effective_read_only` 实测由真→假）· ★ 并把「⚠ 不是只读」
+  **提到文档首句**（★ lean 只保首句 —— 规格 215 的纪律）✓ · ★ 相关测试 **27 passed** ✓
+★ **未修 6 条**（★ 同一族：显式 `read_only=True` 而 `writes=('document',)`）——
+  ★★ **先不修的理由**：★ 台账对这 6 条**没有裁定** ⇒ 改它们就是**我替项目定政策** ✗；
+  ★ 且需要先回答一个**规范问题**：★「**只动选区、不动几何**算不算只读？」★（体系里 `selection`
+  是状态类之一 ⇒ 按体系不算；★ 而 MCP 的 `readOnlyHint` 语义是"客户端能否自动重放"⇒ **两者口径不同**）✓
+
 
