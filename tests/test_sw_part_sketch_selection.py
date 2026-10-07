@@ -47,11 +47,40 @@ class FakeVariant:
 #:   `import sw_part` 在**收集期**就炸 ⇒ ★★ 它一炸就把**后面所有测试的模块身份也带坏**
 #:   （实测：`tests/test_tool_specs_batch92.py` **单独跑 25 passed**、跟在它后面跑就红）✓
 #:   ⇒ ★ 本条本来就是"桩要跟着真模块走"，★ **这次把它补全** ✓
-sys.modules["sw_connect"] = types.SimpleNamespace(
-    get_com_member=fake_get_com_member,
-    call_com_member=fake_get_com_member,
-    safe_get_com_member=fake_get_com_member,
-)
+#: ★★★★★ 2026-10-07（接手轮）**第三次同一处** —— ★ 这次缺的是 `sw_connect` 新加的 **`deg`**
+#:   （★ 规格 213「`sw_sheet_metal.py` 的 `deg` 取法」那一条）⇒ ★ `scripts/sw_body_ops.py` /
+#:   `sw_helix.py` / `sw_sheet_metal*.py` 都 `from sw_connect import deg` ⇒ **收集期即炸**，
+#:   ★★ 实测同一副症状：`test_tool_specs_batch92.py` 单独跑 **25 passed**、跟在它后面跑 **23 failed**；
+#:   ★ 全量跑时被带坏的还有 `test_rule3_*`（3 条）· `test_spec212_rule2b_gate`（1 条）·
+#:   本文件的 `BBoxTests`（2 条）⇒ ★ **一处桩缺名，8 条测试红** ✓
+#:   ★★★ **⇒ 这次不再"手补第三个名字"**，改成 **让假模块的其余名字一律转发给真模块** ——
+#:   ★★ 这正是同仓 `tests/test_sw_selection_contract.py` 在**轮 470** 用过的**成熟解法**
+#:   （PEP 562 的模块级 `__getattr__`）⇒ ★★ **以后真 `sw_connect` 再加名字，本装置不必再改** ✓
+#:   ⚠ 为什么原来是 `types.SimpleNamespace` 就会坏：它**没有**模块级 `__getattr__`、
+#:     也**没有 `__name__`** ⇒ `from sw_connect import deg` 报
+#:     `cannot import name 'deg' from '<unknown module name>'`
+#:     —— ★★ "unknown module name" 正是**缺 `__name__`** 的后果 ⇒ **错误信息指不到真因**
+#:     （与轮 470 那条 `unknown location` 同型）✓
+#:   ⚠ 真模块**按文件路径**载入（不用 `import sw_connect`）—— ★ 因为本文件**自己**就要往
+#:     `sys.modules["sw_connect"]` 里装假模块，用名字导入会**拿到别人装的那个** ⇒ 转发会自己咬自己 ✓
+_real_sw_connect = None
+try:
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location("_real_sw_connect_for_part_tests",
+                                         str(ROOT / "scripts" / "sw_connect.py"))
+    _real_sw_connect = _ilu.module_from_spec(_spec)
+    _spec.loader.exec_module(_real_sw_connect)                                # type: ignore[union-attr]
+except Exception:                                                             # noqa: BLE001
+    _real_sw_connect = None
+
+_fake_connect = types.ModuleType("sw_connect")
+_fake_connect.get_com_member = fake_get_com_member
+_fake_connect.call_com_member = fake_get_com_member
+_fake_connect.safe_get_com_member = fake_get_com_member
+if _real_sw_connect is not None:
+    #: ★ PEP 562 兜底：假模块上**没手装**的名字，一律从真模块拿 ✓
+    _fake_connect.__getattr__ = lambda _n: getattr(_real_sw_connect, _n)
+sys.modules["sw_connect"] = _fake_connect
 sys.modules["sw_preflight"] = types.SimpleNamespace(
     import_com_dependencies=lambda: (
         types.SimpleNamespace(VT_DISPATCH=9),
