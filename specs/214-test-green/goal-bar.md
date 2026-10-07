@@ -2,7 +2,7 @@
 
 > ★★ **本文件是唯一进度字段** —— 进度只看上面这一行；其余段落是上下文，不是判据。
 
-**阶段：★ A 阶段（A1 九条稳定红）**全部收口** —— 九条逐个单跑 ⇒ **79 passed / 0 failed**（112 s）· ★ A2（顺序污染）尚未开始 · ★ 当前动作 = **T-214-11**（建复现装置）**
+**阶段：★★★ **C1 达标 —— 全量 `pytest` **2393 passed / 20 skipped / 0 failed**（513 s）** · ★ A 阶段九条 + A2 四个污染源全部收口 · ★ 当前动作 = **T-214-15**（收尾链 + 按路径提交）→ 然后 **T-214-16**（回写 ROADMAP 游标）**
 
 ---
 
@@ -15,39 +15,43 @@
 ★ **不是"某个功能没做完"，而是"仓库的收口读数一直是红的"** ——
 ★ 它挡住的是**任何一次「结项时跑全量回归」**（AGENTS.md 的收口纪律要求全量绿）✓
 
-### ★★ A 阶段进展（★ 逐条读数，不估数）
+### ★★ 进度（★ 逐条读数，不估数）
 
-| 任务 | 项 | 真因（★ 都不是"改测试绕开"）| 结果 |
+| 阶段 | 起点 | 终点 | 手段 |
 |---|---|---|---|
-| T-214-01 | `test_mcp_protocol_layer` | 钉死数 **339** 过期；真值 **504** 已由**两条独立通路**复算（真握手 504 = 491+13；本测试自己的计数器 45+459）| ★ **8 passed** ✓ |
-| T-214-02 | `test_effect_declarations` | 生成物与真源分叉 ⇒ **跑生成器**（★ 不手改生成物）| ★ **15 passed** ✓ |
-| T-214-03 | `test_registry_wiring` | `RESOLVERS['sketch']` **登记了却没有任何 spec 用**（`inject="sketch"` 0 处）⇒ 走该测试给的第二条路「删掉并说明」+ 墓碑 | ★ **5 passed** ✓ |
-| T-214-04 | `test_sketch_slot_params` | ★ **实现是对的**（`0, 0, 2.0*float(radius)` 逐字在）；★ 是测试的**正则**停在"直呼方法"的旧形态（现走 `get_com_member(..., "CreateSketchSlot", …)`）| ★ **5 passed** ✓ |
-| T-214-06 | `test_no_bare_byref_args` | ★ **审计器自己的假阳性（第二次同类）**：`BYREF_OK` 只认裸名，而 `sw_connect.out_i4()` **是本文件自己点名的正确形态** | ★ **3 passed** ✓（88 s）|
-| T-214-07 | `test_com_member_helpers` | ★ 判据 `hasattr` **看不见"函数内导入"**（★ 本仓既有模式）⇒ 加"源码级导入"判据 + **补负例** | ★ **4 passed** ✓ |
-| T-214-05 | `test_real_gap_triage_contract` | ★ **分类器是对的**：`get_study_manager` 已是已挂工具 `solidworks_simulation_get_study_manager` 的实现 ⇒ 判 `已有` ⇒ **样本过期**（★ 该测试自己写明"被挂上就该来更新样本"）| ★ **30 passed** ✓ |
-| T-214-08 | `test_tool_specs_batch79` | ★ **计数过期**：宏族 8 → **9**（多的那个是规格 209 B4-1 的 `solidworks_macro_record_lines`）| ★ **6 passed** ✓ |
-| T-214-09 | `test_sw_connect_open_document` | ★ **桩说谎**：`monkeypatch … lambda _sw: True`，而真契约回 dict ⇒ `restore_default_templates` 里 `True.get(...)` 炸（★ 报的错与本测试要验的东西**无关**）| ★ **3 passed** ✓ |
+| **A · A1 九条稳定红** | 9 failed | **0** | ★ 逐条定位真因（★ 只有两处动生产代码）|
+| **A2 · 顺序污染** | 9 failed | **0** | ★ 定位并修掉 **4 个**污染源 |
+| **合计（全量）** | ★ **18 failed / 2374 passed** | ★★ **0 failed / 2393 passed** | ★ 513 s |
 
-★★ **A 阶段合计：79 passed / 0 failed** ✓ —— ★ 其中**只有一处**动到生产代码
-（`mcp-server/register_capabilities.py` 删死接线 · `scripts/audit_byref_args.py` 扩判据），
-★ 其余都是**桩/样本/计数/正则随事实与契约更新**，★ **没有一处放宽断言** ✓
+**A2 的四个污染源（★ 机制同型：全局态没还回去）**
 
-**★ 起点基线（保留，便于对账）**
+| # | 位置 | 机制 | 受害 |
+|---|---|---|---|
+| ① | `test_applicability.py` 的 `importlib.reload(tool_registry)` | ★ 收集期已 import 的受害者绑了**旧 `GateError` 类**，而重载后抛的是**新类** ⇒ `pytest.raises` 抓不住（★ 两个类长得一模一样）| rule3 ×3 · spec212_rule2b ×1 |
+| ② | `test_sw_part_sketch_selection.py` 的假 `sw_connect` 缺 `deg` | ★ 收集期即炸 ⇒ 连带坏掉模块身份 | batch92 ×2 等 8 条（★ 规格立起前已修）|
+| ③ | `test_mesh_size_memory_gate.py` 的**裸赋值** `sw_part.get_bounding_box = _bb` | ★ 不走 `monkeypatch` ⇒ 永不还原 | BBoxTests ×2 · batch92 ×2 |
+| ④ | 同上文件的假模块**在收集期**装（见下）| ★ 收集早于一切用例 ⇒ ★ **先跑**的用例也中招 | com_member_helpers ×1 |
+
+★★ **最值钱的一条发现（④）**：★ **模块级装假模块会在收集期生效** ⇒
+  ★ 污染**先于本文件跑**的用例 —— ★★ **与"谁先跑谁中招"的直觉相反** ✗
+  ★ 判据：★ 全量收集 + `-k 只跑那一条` ⇒ **2 秒**复现；★ 而只收两个文件 ⇒ **绿**（★ 二分因此查不出单文件）✓
+★★ **由此得四条同型定则（★ 已写进各自文件）**：
+  ★ **凡改**共享模块属性 / `sys.modules`**，一律走 `monkeypatch` 或**成对的 fixture 装/撤**，
+  ★★ **且绝不在模块级裸做** ✓
+
+### ★ 起点基线（保留，便于对账）
 
 | 项 | 读数 | 出处 |
 |---|---|---|
-| 全量 pytest | ★ **18 failed / 2374 passed / 20 skipped**（514 s） | `python -m pytest tests -q` |
-| 其中 **A1 稳定红** | ★ **9** ⇒ ★ **现已全绿** | ★ 逐文件单跑实测 |
-| 其中 **A2 顺序污染** | ★ **9** | ★ 同上 |
+| 全量 pytest（起点） | ★ **18 failed / 2374 passed / 20 skipped**（514 s） | `python -m pytest tests -q` |
+| 其中 **A1 稳定红**（单跑也红） | ★ **9** | ★ 逐文件单跑实测 |
+| 其中 **A2 顺序污染**（单跑绿、全量红） | ★ **9** | ★ 同上（★ 两者的差就是判据）|
 | `release_check` | ★ **33 道全绿** | `python scripts/release_check.py` |
-| ★★ **已修的一条 A2 通路**（规格立起前） | `sw_connect` 桩缺 `deg` ⇒ 收集期炸 ⇒ 连带 8 条 | 复现装置 **23 failed → 49 passed** ✓ |
-| ⚠ 但全量**仍是 18** | ⇒ ★★ **第二个污染源未找到** | 见 `tasks.md` T-214-11..13 |
 
 **★ 已排除的假线索（★ 记下来免得重跑）**
 
 - ★ `test_gate_details_exposed_for_every_gate` 一度红 —— ★ **不是缺陷**，是我**在它 5 分钟的运行期间
-  改了 `release_check.py`** ⇒ ★ 复跑即绿 ✓（★ 由此得一条纪律：**跑长测试时不要编辑它要读的文件**）✓
+  改了 `release_check.py`** ⇒ ★ 复跑即绿 ✓（★ 纪律：**跑长测试时不要编辑它要读的文件**）✓
 - ★ `test_uncalled_helpers` / `test_uncalled_exempt_has_reason` 一度红 —— ★ **是我自己引入的**：
   我把公开名 `list_buttons` 登记进豁免表，★ 而那张表**只收 `_` 开头的私有辅助**（有元判据在守）⇒
   ★ 已改走「删掉 + 墓碑」那条路 ✓
@@ -56,7 +60,6 @@
 
 ## 下一个动作（只写一条，免得没人知道该恢复哪个）
 
-★ **T-214-11**：建 **A2 复现装置** —— ★ 已知受害者（`test_rule3_*` · `test_spec212_rule2b_gate` ·
-`test_sw_part_sketch_selection` · `test_tool_specs_batch92`）**先单独跑一遍确认全绿**，
-★ 再按**收集顺序前缀**与它们拼跑，★ 找出能**稳定复现**「单跑绿、全量红」的那一段 ✓
-→ 验收: `python -m pytest tests/test_rule3_declarative_selection_is_enforced.py tests/test_spec212_rule2b_gate.py tests/test_sw_part_sketch_selection.py tests/test_tool_specs_batch92.py -q` ⇒ 先记**基线读数**，★ 再给出「能复现红的命令」并落盘 `specs/214-test-green/recon/order-pollution.md`
+★ **T-214-15**：跑收尾链并**按路径**提交本批 ——
+→ 验收: `pwsh tools/round_chain.ps1` ⇒ 首轮 OK；★ 索引复位为 0（★ 走 `python tools/commit_mine.py`）
+★ 然后 **T-214-16**：★ 回写 `docs/ROADMAP.md` §一 游标（★ 进度只写**这里**与 `capabilities.yaml`）✓
