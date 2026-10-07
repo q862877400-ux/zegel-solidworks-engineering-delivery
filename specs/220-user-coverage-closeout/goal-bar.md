@@ -31,6 +31,33 @@
 | ★ 台账改动 | ★ **零** ✓（★ 本轮没动台账）|
 | ★ 地图 | ★ 仍 **139/145 = 96%** ✓（★ 不变——★ 工具已暴露，与验证无关 ✓）|
 
+## ★★★ T-220-01 第 2 试：★ **只读探针一次问清 + 找到根因**（3.56 s · 0 弹窗 · `sw_alive: true` ✓）
+
+★ 探针：★ `tools/probe_spec220_member_shape.py` ⇒ ★ 证据 `output/spec220-member-shape.json` ✓
+
+| ★ 成员 | ★ 真机实测形态（★ 逐字）|
+|---|---|
+| `model.GetFeatureCount` | ★ **属性**：`repr=20` · `callable=false` · `type=int` ⇒ ★ 上轮的 `_feature_count` 修对了 ✓ |
+| `model.GetBodies2` | ★ **是方法**：`<bound method GetBodies2 of <COMObject <unknown>>>` ✓ · ★ `bodies_len = 1` ⇒ ★ **取体本身是成功的** ✓ |
+| ★★ `body.GetFaces` | ★★ 逐字「**没有这个成员**」✗ ⇒ ★★ **根因在此**：★ `GetBodies2` 返回的元组里**装的不是 body 对象** ✗ ⇒ ★ 我把 `bodies[0]` 当 body 用 ⇒ ★★ 上轮那句 `'tuple' object is not callable` **就是这里来的** ✓ |
+| ★ `sw_part.select_face_by_index_mark1` | ★ 签名 `(model, face_index: int = 0) -> int` ✓ —— ★ **本仓真机验证过的取面助手就在手边** ✓ |
+
+### ★★ 下一次的确切修法（★ 两条，任选；★ 更推荐第一条）
+
+1. ★★ **改用本仓已验证的取面路径**：★ `sw_part.select_face_by_index_mark1(model, face_index)`
+   （★ 规格 216 真机验过 ✓）⇒ ★ **再补一个 append 变体**（★ 第二次选面要 `Append=True` ✓）
+   ⇒ ★ 包装里**不再自己碰 `GetBodies2`** ✓
+2. ★ 或者先**只读**弄清 `GetBodies2` 元组里到底装的是什么
+   （★ 例如打印 `type(bodies[0])` 与它有哪些含 `Face` 的成员 ✓）
+
+### ★ 等级与账（★ 红线⑥ 守住）
+
+| 项 | ★ 读数 |
+|---|---|
+| ★ 两个工具的 `level` | ★★ **仍是 `stitched`** ✓ |
+| ★ 台账改动 | ★ **零** ✓ |
+| ★ 地图 | ★ 仍 **139/145 = 96%** ✓ |
+
 ## 一、基线（★ 开工实测）
 
 | 项 | ★ 读数 |
