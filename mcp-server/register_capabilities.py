@@ -1082,6 +1082,12 @@ BATCH_MODULES = (
     #:   ★ 两个都**无选区信号**（★ 第 7 轮定的预检闸已过）⇒ 可作纯暴露 ✓
     #:   ★ 计数：467 → **469**
     "tool_specs_batch105",
+    #: ★ 规格 217 · B5 收尾 —— 最后 3 个纯暴露（特征阵列读数 / 配合参考 / 装配特征树遍历）✓
+    #:   · `linear_pattern_report` / `insert_mate_reference` / `iter_feature_tree`
+    #:   ★★ **只增加暴露面** —— ★ **不动台账任何 `level`** ✓
+    #:   ★ 三个都**无选区信号**（第 7 轮的预检闸）⇒ 可作纯暴露 ✓
+    #:   ★ 计数：469 → **472**
+    "tool_specs_batch106",
 )
 
 def all_specs() -> list:

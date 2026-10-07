@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 495 | 495 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 498 | 498 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -41,21 +41,21 @@
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
 | ③ 草图 | 26 | 15 | 16 | 20 | 50 | 114⚠ | 83 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
-| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 40 | 111⚠ | 64 | **24** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 41 | 111⚠ | 65 | **24** |
 | ⑥ 曲面 | 11 | · | 1 | · | 21 | 52⚠ | 29 | **8** |
 | ⑦ 钣金 | 10 | · | 1 | · | 14 | 24⚠ | 25 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 18 | 21⚠ | 22 | **4** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
-| ⑩ 装配 | 13 | 7 | 4 | 3 | 27 | 66⚠ | 46 | **19** |
+| ⑩ 装配 | 13 | 7 | 4 | 3 | 28 | 66⚠ | 47 | **19** |
 | ⑪ 工程图 | 18 | 18 | 15 | 17 | 40 | 80⚠ | 89 | **49** |
 | ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 16 | 32⚠ | 32 | **16** |
 | ⑬ 仿真 / Motion | 3 | · | 1 | · | 49 | 127⚠ | 53 | **4** |
 | ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 18 | 50⚠ | 28 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 10 | 24⚠ | 52 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 41 | 14 | 41 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 113 | 568⚠ | 155 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 114 | 568⚠ | 156 | **42** |
 
-**合计**：并集 805 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 808 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 456 个操作只有本仓库有：
+共 459 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -137,6 +137,7 @@
 - `assembly_external_reference_count`（⑩ 装配）
 - `assembly_get_exploded_view_count`（⑩ 装配）
 - `assembly_get_exploded_view_names`（⑩ 装配）
+- `assembly_iter_feature_tree`（⑩ 装配）
 - `assembly_list_components`（⑩ 装配）
 - `assembly_list_mates`（⑩ 装配）
 - `assembly_replace_component`（⑩ 装配）
@@ -307,6 +308,7 @@
 - `inspect_drawing`（⑪ 工程图）
 - `inspect_hole_features`（⑫ 检查 / 测量 / 反馈）
 - `inspect_motion_studies`（⑬ 仿真 / Motion）
+- `linear_pattern_report`（⑤ 零件特征）
 - `local_curve_driven_pattern`（⑤ 零件特征）
 - `loft_params`（⑤ 零件特征）
 - `lofted_ref_surface`（⑥ 曲面）
@@ -320,6 +322,7 @@
 - `macro_validate_vba_code`（⑮ 宏 / 自动化）
 - `macro_write_file`（⑮ 宏 / 自动化）
 - `mass_property_object`（⑫ 检查 / 测量 / 反馈）
+- `mate_reference`（⑰ 未归类）
 - `measure_selection`（⑫ 检查 / 测量 / 反馈）
 - `mesh_configure_import_preferences`（⑭ 外观 / 材质 / 配置）
 - `mesh_restore_import_preferences`（① 会话 / 文档 / 文件）

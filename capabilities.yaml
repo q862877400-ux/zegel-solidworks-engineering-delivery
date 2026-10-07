@@ -778,7 +778,9 @@
    "mcp_tools": [
     "solidworks_assembly_check_interference",
     "solidworks_assembly_list_components",
-    "solidworks_assembly_list_mates"
+    "solidworks_assembly_list_mates",
+    "solidworks_insert_mate_reference",
+    "solidworks_assembly_iter_feature_tree"
    ]
   },
   {
@@ -2267,7 +2269,9 @@
    "mcp_tools": [
     "solidworks_assembly_check_interference",
     "solidworks_assembly_list_components",
-    "solidworks_assembly_list_mates"
+    "solidworks_assembly_list_mates",
+    "solidworks_insert_mate_reference",
+    "solidworks_assembly_iter_feature_tree"
    ]
   },
   {
@@ -3390,7 +3394,8 @@
    ],
    "mcp_tools": [
     "solidworks_circular_pattern",
-    "solidworks_mirror_feature"
+    "solidworks_mirror_feature",
+    "solidworks_linear_pattern_report"
    ],
    "source": "original",
    "source_evidence": "mcp-server 里的 circular_pattern / mirror_feature ToolSpec（★ 底层 scripts/sw_part.py）"
