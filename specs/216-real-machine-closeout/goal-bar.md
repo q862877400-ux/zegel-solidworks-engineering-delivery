@@ -98,6 +98,21 @@
 → 验收: ★ 每条**两段**真机读数 —— ★ ① 选区计数 > 0 · ★ ② **特征树增量**（★ 不看返回值）；
 ★ 批末 `python scripts/check_preselect_family.py` 仍须退出 0 ✓
 
+## ★★ T-216-06b 的**真机读数**（★ 本轮已跑，见 [recon/dome-mark-path.md](recon/dome-mark-path.md)）
+
+★ 跑法：`python tools/sw_guard.py --timeout 600 -- python output/_t216_dome_mark_probe.py`
+⇒ ★ 20.7 s · ★ **0 弹窗** · ★ `aborted_for_llm: false` ✓
+
+| 格 | 形态 | ★ 结果 |
+|---|---|---|
+| **B** | ★ 既有冒烟逐字那一串（按点 `SelectByID2` → 清选 → **mark=1**）| ★★ **成立** —— `mark_after=1` · ★ **`tree_delta = ['圆顶1']`** · 特征 7 → **8** ✓ |
+| **A** | ★ 我原打算走的**选择器**路 | ★ **第一跳就失败** ⇒ ★★ **更正我一个假设**：`'+z'` **不是** `sw_selection_spec` 认的选择器（★ 合法只有 `__current_selection__` / `index:<n>` / COM 对象）✗ |
+
+★ 仍未定（★ 如实记）：★ `SetSelectedObjectMark(AtIndex, Mark, Value)` 的**第 3 参语义**
+（★ 格 A 没走到那一步）⇒ ★ 两条路可选：★ 实测它 · ★ 或走**格 B 那条已证明的按点+mark 路** ✓
+⇒ ★ **下一步**：★ 用**声明式 `face_index`**（规则 3 禁裸坐标）+ 工具**自己**在面上算点
+（`IFace2::GetClosestPointOn`，arity 3，反射里有）+ 照格 B 选面 ⇒ 判据取**特征树增量** ✓
+
 ★ **T-216-06c**（可并行）：★ `insert_composite_curve` ⇒ ★ **不修**，走"如实记为能力缺口"
 （★ 依据：台账逐字「**6 种选法全部失败**」+ `Select4` 无 mark、边与草图段无名字 ⇒ **后端墙**）✓
 
