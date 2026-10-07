@@ -175,7 +175,11 @@ def insert_net_blend_report(
                   "before": before, "after": after})
 
     return {
-        "ok": feat is not None and after > before,                                   # ★ 回读判据
+        #: ★★★ 2026-10-07（规格 220 续 · 第 40 轮）★ **判据只留回读** ——
+        #:   ★ 真机读数（第 39 轮）：★ **特征树 22 → 23**（★ 特征真建出来了 ✓）★ 而
+        #:   ★ `InsertNetBlend` 的**返回值是 `None`** ✗ ⇒ ★ 原来的 `feat is not None` 把它**误判为失败** ✗
+        #:   ⇒ ★★ 这正是**事实 8**：★ **返回值/bool 不可信，只有回读的计数才算数** ✓
+        "ok": after > before,                                                        # ★ 回读判据（事实 8）
         "blend_type": int(blend_type),
         "blend_type_name": {v: k for k, v in BLEND_TYPE.items()}.get(int(blend_type)),
         "feature": name,
