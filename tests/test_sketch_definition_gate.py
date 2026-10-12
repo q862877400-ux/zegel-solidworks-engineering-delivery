@@ -109,13 +109,16 @@ def test_every_sketch_states_tool_builtin() -> None:
 def test_l_shape_spells_out_all_relations() -> None:
     """★★★ 业主批注 1 的原例（L3-003 的 L 形）：**逐条**写出 6 个关系族。
 
-    ★ 判据：`relations` 里同时出现**重合/垂直/水平/竖直**四类
-      （★ 那是 L 形完全定义所必需的）。
+    ★★ 2026-10-12 更新（★ 业主批注 3）：关系**改由生成器算** ⇒
+      ★ 判据从「手写的四类词」改成「**生成器算出的四类关系**」——
+      ★ `COINCIDENT` / `HORIZONTAL` / `VERTICAL` / `PERPENDICULAR`。
     """
     x = next(y for y in _l3() if y["id"] == "L3-003")
     rels = " ".join(x["sketch_definition"]["relations"])
-    for k in ("重合", "垂直", "水平", "竖直"):
+    for k in ("COINCIDENT", "HORIZONTAL", "VERTICAL", "PERPENDICULAR"):
         assert k in rels, "★★ L 形缺 `%s` 关系" % k
+    #: ★★ 且**必须写明来自生成器**（★ 不是手写 —— 业主批注 3）
+    assert "生成器" in rels, "★★ 没写明关系来自**生成器**"
 
 
 def test_slot_spells_out_position_and_direction() -> None:

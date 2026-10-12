@@ -22,12 +22,20 @@
     dims:
     - 100（水平边长）
     - 60（竖直边长）
+    - ★★ **生成器算：还需 2 个尺寸**
     relations:
-    - 矩形工具自带：对边平行 · 邻边垂直 · 四角重合
-    - ★ 补：左下角↔原点 重合
+    - ★★ **由生成器算**（`sketch_relations_gen`）—— ★ 不是手写：输入 = 顶点坐标 `[(0, 0), (100, 0), (100, 60), (0, 60)]`
+    - COINCIDENT × 4
+    - HORIZONTAL × 2
+    - PARALLEL × 2
+    - PERPENDICULAR × 4
+    - VERTICAL × 2
+    - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     tool_builtin: 矩形工具**自带**平行+垂直+重合 ⇒ ★ 只欠**位置**与**大小**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
+    relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -64,7 +72,7 @@
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
   - 在前视基准面开始画草图
-  - 在原点画一个 φ20 的圆
+  - 让**圆心**落在原点，画一个 φ20 的圆
   - 用尺寸工具把圆约束成 φ20
   - 退出草图，拉伸 100 毫米成圆柱轴
   - 用倒角工具选两端圆的两条边缘线，倒 1×45° 角
@@ -79,6 +87,7 @@
     tool_builtin: 圆工具**不自带** ⇒ ★ 位置要自己锚
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -114,8 +123,9 @@
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
   - 在前视基准面开始画草图
-  - 用直线工具画一个 L 形轮廓（外框 100×100，切掉一角）
-  - 用尺寸工具把外框约束成 100×100、板厚方向留出 20
+  - 用直线工具依次连这 6 个点（从原点起逆时针）：(0,0) → (100,0) → (100,100) → (40,100) → (40,40) → (0,40) → 回到 (0,0)
+  - ★ 这 6 个点围出来的就是 L 形：外框 100×100，右上角挖掉一块 60×60 的方角（★ 挖掉的范围是 x=40~100、y=40~100）
+  - 用尺寸工具标 4 个尺寸：外框宽 100 · 外框高 100 · 缺口起点 40（x 向）· 缺口起点 40（y 向）
   - 退出草图，拉伸 20 毫米
   - 读回体积与包围盒
   sketch_definition:
@@ -125,16 +135,20 @@
     - 100（外框水平）
     - 100（外框竖直）
     - ★ 缺口位置与缺口大小 —— **需求没给 ⇒ 要问**
+    - ★★ **生成器算：还需 4 个尺寸**
     relations:
-    - ★ 直线工具**不自带**任何关系 ⇒ 逐条补：
-    - ① 重合 × 6（相邻边共端点）
-    - ② 垂直 × 6（L 形 6 个角全是直角）
-    - ③ 水平 × 3（上边 / 下边 / 缺口一边）
-    - ④ 竖直 × 3（左边 / 右边 / 缺口一边）
-    - ⑤ 左下角↔原点 重合（★ 位置定义）
+    - ★★ **由生成器算**（`sketch_relations_gen`）—— ★ 不是手写：输入 = 顶点坐标 `[(0, 0), (100, 0), (100, 100), (40, 100), (40, 40), (0, 40)]`
+    - COINCIDENT × 6
+    - HORIZONTAL × 3
+    - PARALLEL × 6
+    - PERPENDICULAR × 9
+    - VERTICAL × 3
+    - ★ 独立约束 rank = 18（★ 数值求秩，去掉了推出来的冗余）
     tool_builtin: ★★ 直线工具**完全不自带** ⇒ ★ 这是业主批注 1 说的坑
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
+    relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;horizontal:4;vertical:5;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,4;coincident:4,5;coincident:5,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;parallel:0,4;perpendicular:0,5;perpendicular:1,2;parallel:1,3;perpendicular:1,4;parallel:1,5;perpendicular:2,3;parallel:2,4;perpendicular:2,5;perpendicular:3,4;parallel:3,5;perpendicular:4,5
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_line
@@ -185,12 +199,20 @@
     dims:
     - 80（水平）
     - 60（竖直）
+    - ★★ **生成器算：还需 2 个尺寸**
     relations:
-    - 矩形工具自带：对边平行 · 邻边垂直 · 四角重合
-    - ★ 补：左下角↔原点 重合
+    - ★★ **由生成器算**（`sketch_relations_gen`）—— ★ 不是手写：输入 = 顶点坐标 `[(0, 0), (100, 0), (100, 60), (0, 60)]`
+    - COINCIDENT × 4
+    - HORIZONTAL × 2
+    - PARALLEL × 2
+    - PERPENDICULAR × 4
+    - VERTICAL × 2
+    - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     tool_builtin: 矩形工具自带 ⇒ 只欠位置与大小
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
+    relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -230,7 +252,7 @@
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
   - 在前视基准面开始画草图
-  - 用中心线工具在原点画一条竖直中心线（当旋转轴）
+  - 用中心线工具画一条**过原点**的竖直中心线（当旋转轴）
   - 用直线工具画阶梯轴的半剖面：φ20 段长 40、φ30 段长 30
   - 用尺寸工具把两段直径与长度都约束住
   - 退出草图，用旋转凸台绕中心线转 360°
@@ -251,6 +273,7 @@
     tool_builtin: ★ 直线工具不自带 ⇒ ★ 平行/垂直**全要手加**（★ 业主批注 3）
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_line
@@ -297,12 +320,20 @@
     dims:
     - 50（水平）
     - 50（竖直）
+    - ★★ **生成器算：还需 2 个尺寸**
     relations:
-    - 矩形工具自带：对边平行 · 邻边垂直 · 四角重合
-    - ★ 补：左下角↔原点 重合
+    - ★★ **由生成器算**（`sketch_relations_gen`）—— ★ 不是手写：输入 = 顶点坐标 `[(0, 0), (100, 0), (100, 60), (0, 60)]`
+    - COINCIDENT × 4
+    - HORIZONTAL × 2
+    - PARALLEL × 2
+    - PERPENDICULAR × 4
+    - VERTICAL × 2
+    - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     tool_builtin: 矩形工具自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
+    relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -342,7 +373,7 @@
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
   - 在前视基准面开始画草图
-  - 在原点画一个 φ6 的圆
+  - 让**圆心**落在原点，画一个 φ6 的圆
   - 用尺寸工具把圆约束成 φ6
   - 退出草图，拉伸 30 毫米成圆柱销
   - 用倒角工具选两端圆的两条边缘线，倒角边长 1 毫米
@@ -357,6 +388,7 @@
     tool_builtin: 圆工具不自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -422,6 +454,7 @@
     tool_builtin: 槽口工具自带相等/平行/相切 ⇒ ★ 欠**位置**与**方向**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -481,6 +514,7 @@
     tool_builtin: 矩形自带；孔向导的点**不自带** ⇒ 要锚
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -517,7 +551,7 @@
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
   - 在前视基准面开始画草图
-  - 在原点画一个 φ20 的圆
+  - 让**圆心**落在原点，画一个 φ20 的圆
   - 用尺寸工具约束成 φ20
   - 退出草图，拉伸成轴（长度按需）
   - 在轴的端面新建草图
@@ -539,6 +573,7 @@
     tool_builtin: ★ 圆周阵列工具会生成 6 个实例 ⇒ ★ 只需定义**种子孔**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -583,7 +618,7 @@
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
   - 在前视基准面开始画草图
-  - 在原点画一个 φ20 的圆
+  - 让**圆心**落在原点，画一个 φ20 的圆
   - 用尺寸工具约束成 φ20
   - 退出草图，拉伸 60 毫米成圆柱
   - 在圆柱端面新建草图
@@ -605,6 +640,7 @@
     tool_builtin: 矩形自带平行/垂直；★ 与圆的**相对关系**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -669,6 +705,7 @@
     tool_builtin: 矩形自带；★ 圆心与矩形的**相对位置**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -717,11 +754,20 @@
     dims:
     - 60（水平）
     - 40（竖直）
+    - ★★ **生成器算：还需 2 个尺寸**
     relations:
-    - 矩形自带：平行 · 垂直 · 重合；补：左下角↔原点
+    - ★★ **由生成器算**（`sketch_relations_gen`）—— ★ 不是手写：输入 = 顶点坐标 `[(0, 0), (100, 0), (100, 60), (0, 60)]`
+    - COINCIDENT × 4
+    - HORIZONTAL × 2
+    - PARALLEL × 2
+    - PERPENDICULAR × 4
+    - VERTICAL × 2
+    - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     tool_builtin: 矩形自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
+    relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -765,6 +811,7 @@
     tool_builtin: ★ 本条不建几何 ⇒ 无草图定义问题
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_config_set_custom_properties
     - solidworks_custom_property_list
@@ -813,6 +860,7 @@
     tool_builtin: ★ 孔向导的点**不自带任何关系** ⇒ ★ 全要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -855,11 +903,11 @@
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
   - 在前视基准面开始画草图
-  - 在原点画一个 φ25 的圆
+  - 让**圆心**落在原点，画一个 φ25 的圆
   - 用尺寸工具约束成 φ25
   - 退出草图，拉伸 120 毫米成轴
   - 在轴的中段基准面新建草图
-  - 在原点画一个 φ20 的圆
+  - 让**圆心**落在原点，画一个 φ20 的圆
   - 用尺寸工具约束成 φ20，并约束它到轴中段（宽 10）
   - 退出草图，用旋转切除（或拉伸切除）切出退刀槽
   - 读回退刀槽直径
@@ -876,6 +924,7 @@
     tool_builtin: ★ 圆不自带；★ 两圆的**同轴关系**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -932,6 +981,7 @@
     tool_builtin: ★ 装配体用配合，不用草图关系
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_new_document
     - solidworks_add_component
@@ -978,11 +1028,20 @@
     dims:
     - 100（水平）
     - 100（竖直）
+    - ★★ **生成器算：还需 2 个尺寸**
     relations:
-    - 矩形自带：平行 · 垂直 · 重合；补：左下角↔原点
+    - ★★ **由生成器算**（`sketch_relations_gen`）—— ★ 不是手写：输入 = 顶点坐标 `[(0, 0), (100, 0), (100, 60), (0, 60)]`
+    - COINCIDENT × 4
+    - HORIZONTAL × 2
+    - PARALLEL × 2
+    - PERPENDICULAR × 4
+    - VERTICAL × 2
+    - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     tool_builtin: 矩形自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
+    relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -1033,6 +1092,7 @@
     tool_builtin: ★ 工程图里的草图**不需完全定义**（官方逐字：「工程图中的草图……**不需完全定义**，因为它们不是特征的基础」）
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_drawing_create_three_standard_views
     - solidworks_drawing_list_views
@@ -1083,6 +1143,7 @@
     tool_builtin: ★ 线性阵列会生成其余 2 个 ⇒ ★ 只需定义**种子孔**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -1142,6 +1203,7 @@
     tool_builtin: ★ 直线+圆弧组合**不自带相切** ⇒ ★ 全要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_arc
@@ -1190,6 +1252,7 @@
     tool_builtin: ★ 不建几何 ⇒ 无草图定义问题
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_assembly_check_interference
     - solidworks_assembly_list_components
@@ -1229,6 +1292,7 @@
     tool_builtin: ★ 不建草图
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_scale_feature
     - solidworks_part_mass_properties
@@ -1274,6 +1338,7 @@
     tool_builtin: ★ 不建草图；★ 但它**要求**草图尺寸**已具名且完全定义**（否则方程改不动）
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
+    relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
   - - solidworks_equation_add
     - solidworks_equation_list
