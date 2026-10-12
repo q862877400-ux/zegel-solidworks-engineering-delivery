@@ -241,10 +241,19 @@ def main() -> int:
             kind_bad.append("%s 在 `release_check.py` 里被调用，却**没登记分类**"
                             "（登记表必须覆盖每一个调用点）" % runner)
             continue
-        if want not in ("hard", "diagnostic"):
-            kind_bad.append("%s 的 `kind=%r` 不在枚举 `hard`/`diagnostic` 内" % (runner, want))
+        if want not in ("hard", "diagnostic", "release_static",
+                        "release_hardware", "retired"):
+            #: ★★ 2026-10-12（规格 324 · Q16）扩到**四类**：
+            #:   `release_static` / `release_hardware` / `diagnostic` / `retired`
+            #:   ★ `hard` 与 `diagnostic` 是**旧名**，仍收（★ 向后兼容）。
+            kind_bad.append("%s 的 `kind=%r` 不在枚举 "
+                            "`release_static`/`release_hardware`/`diagnostic`/"
+                            "`retired`（旧名 `hard`/`diagnostic` 也收）内"
+                            % (runner, want))
             continue
-        if want != act:
+        #: ★★ 新旧名等价映射（★ 规格 324 的 `LEGACY_KIND_MAP`）
+        _alias = {"hard": "release_static", "diagnostic": "diagnostic"}
+        if _alias.get(want, want) != _alias.get(act, act):
             kind_bad.append("%s（%s）登记为 **%s**，而实测是 **%s** —— "
                             "「本该拦的写成诊断」会**静默放行**（后者更危险）"
                             % (runner, gate, want, act))
@@ -295,8 +304,54 @@ def main() -> int:
         agg_bad.append("`_gate_results` 里的 `%s` 没有对应的 `_run_*` 赋值"
                        "（名单腐坏：变量名改了？）" % v)
 
+    # ⚑ **第六层：覆盖范围（`scripts/` + `tools/`）与「应执行 vs 实际」**
+    #   （2026-10-12 · 规格 324 · Q16 逐字：「元门禁**同时覆盖** `scripts/`、`tools/`，
+    #     并核对「应执行集合」与「实际执行结果」，**不只检查文件被发现**」）
     print()
-    failed = bool(kind_bad) or bool(skip_bad) or bool(agg_bad)
+    print("覆盖范围与「应执行 vs 实际」（Q16 · 规格 324）：")
+    cover_bad: list = []
+    try:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from engineering import gate_inventory as GI                    # noqa: PLC0415
+        inv = GI.build_inventory()
+        print("    `scripts/` 检查文件 = %d · `tools/` 检查文件 = %d"
+              % (inv["scripts"]["n"], inv["tools"]["n"]))
+        #: ★★ **`tools/` 必须被扫到**（★ Q16 逐字要求覆盖）
+        if inv["tools"]["n"] <= 0:
+            cover_bad.append("★ `tools/` 里**一个检查文件都没扫到** ⇒ 覆盖不成立")
+        else:
+            print("    `tools/` 抽样：%s" % ", ".join(inv["tools"]["checks"][:3]))
+        #: ★★ **应执行 vs 实际**（★ Q16 逐字「不只检查文件被发现」）
+        should = set(inv["should_run_in_release"])
+        declared = set(inv["declared"])
+        miss = sorted(should - declared)
+        print("    应执行 %d · 已登记 %d · **应执行却没登记 %d**"
+              % (len(should), len(declared), len(miss)))
+        #: ★ 判据：**已登记的门禁必须有文件**（★ 名单腐坏）
+        ghost = inv["declared_but_no_file"]
+        if ghost:
+            cover_bad.append("★ 这些门禁**登记了却没有文件**（名单腐坏）：%s"
+                             % ghost[:4])
+        #: ★★ **四类计数如实报**（★ 0 条也要报 —— ★ 不假装四类都满）
+        counts = inv["counts"]
+        print("    四类计数：%s" % counts)
+        #: ★ 真机门禁必须**单独编排且明确 NOT_RUN**
+        print("    真机门禁（单独编排 · NOT_RUN）= %d" % inv["not_run_n"])
+        #: ★ `retired` 必须带替代关系
+        cls = GI.load_classification().get("classification") or []
+        ret = [e for e in cls if e.get("kind") == GI.RETIRED]
+        for e in ret:
+            if not e.get("replaced_by"):
+                cover_bad.append("★ %s 是 retired 却没有 `replaced_by`" % e.get("gate"))
+    except Exception as exc:                                               # noqa: BLE001
+        cover_bad.append("★ 清点失败：%s: %s" % (type(exc).__name__, str(exc)[:120]))
+
+    print()
+    failed = bool(kind_bad) or bool(skip_bad) or bool(agg_bad) or bool(cover_bad)
+    if cover_bad:
+        print("[FAIL] 覆盖范围/应执行-vs-实际 有问题：")
+        for b in cover_bad:
+            print("    · %s" % b)
     if agg_bad:
         print("[FAIL] 门禁结果汇总不完整：")
         for b in agg_bad:

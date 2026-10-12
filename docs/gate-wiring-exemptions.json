@@ -1,35 +1,43 @@
 {
-  "_comment": "★ 未接进 `release_check.py` 的门禁及其理由（`check_gate_wiring.py` 读这张表）。",
-  "exemptions": [
-    {
-      "gate": "check_member_owner_interface.py",
-      "reason": "★ **诊断工具，不接硬门禁** —— 本轮**没验过**它的判据够不够准（无法机验那 20 处），且它**抓不到形参 owner**（含它的动机 `mold_evidence`）。接进去会变成「看起来在查、实际乱报/漏报」的那种门禁（事实 53 / 62 同族）。",
-      "evidence": [
-        "D:/AI/SW/output/member-owner-interface.json",
-        "D:/AI/SW/specs/093-member-owner-interface-checker/spec.md"
-      ]
-    },
-    {
-      "gate": "check_official_source_defects.py",
-      "reason": "★ **暂只报告、不拦（exit 0）** —— 按规格 206 的 **D-1**。★★ **D-1 合规实测（第 27 轮）**：20 例（10 真断链 + 10 正当引用）⇒ **真阳性 10/10 · 假阳性 0/10 · 漏报 0/10** ⇒ **达标且两项满分**（`tools/measure_official_defects_fp.py`）。★ 判据已验证（`tests/test_official_source_defects_gate.py` 4 passed，含负例），且已据此**修掉 5 处真断链**（`[[SketchManager::` 正名为 `[[ISketchManager::`）。★★★ **那 2 处「边界」已逐条判完（第 28 轮）—— 判出三类命中，本门禁只有一类该报**：① **我们自己的真断链** ⇒ ★ 已修 5 处（**该报**）；② `[[Iface::Member]]`（`tools/build_obsolete_index.py:25`）⇒ ★ **注释里的模板占位**（**不该报**，误报）；③ ★★ `[[IFeatureManager::IInsertMidSurface]]`（`mcp-server/tool_specs_batch74.py:400-402`）⇒ ★★★ **那不是我们的断链，是【官方页自身的缺陷】的逐字引文** —— `IModelDoc2/IInsertMidSurfaceExt.md` 逐字写 `Obsolete. Superseded by [[IFeatureManager::IInsertMidSurface]]`，**而那个目标页本机全库不存在** ⇒ ★ 我们的代码**正是在登记这条官方缺陷**（铁律 5）⇒ ★★ **该类不该报**（否则会把「记录官方缺陷」判成我们的错）。★★★ **第 30-32 轮补记（四类命中定型 + 四项指标全绿）**。★ 第 29 轮加的 `CITATION` 曾含**泛化的「行首井号冒号」** ⇒ ★★ 盲区实测 **10/10**（★ 带该注释的真断链全被放过，而它正是我们引用官方页的标准写法）⇒ ★ **等于把门禁的主要用途关掉** ⇒ 已**收窄**为只认具体文字标记（「逐字」/「Superseded by」）⇒ 盲区 **0/10**；★ 另加**显式占位名单**（Iface、Member、Attribute、X 等，★ 用名单而非启发式，因启发式会引入新误报面）。★★★ **第 4 类命中（第 31 轮判出，★ 与前几类性质不同）**：`tools/prove_absolute_criteria.py:8` 与 `tools/trigger_analysis_dialogs.py:7` 各引一处「swapi 结构化源」里不存在的页；★ 但实测其中 `IMassProperty 的 Volume 页` 在 **CHM 解包源里【存在】** ⇒ ★★ **那是【对的】引用，只是引的是【另一套官方源】** ⇒ **误报**。★★★ **第 4 类的性质是「判据的数据面缺一整套源」**（★ 前三类是语义面缺判据）⇒ ★★ **加再多语义判据也修不好** ⇒ 修法是**让判据同时认 CHM**（★ 铁律 4：两套源都要查）⇒ ★ **那是范围变更，建议交主线**。★★ **仍不接硬门禁的理由（第 4 版）**：① 第 4 类需主线决定是否把 CHM 纳入判据数据面；② `ICWStudy 的 RunAnalysis 页`在**两套源里都搜不到**（★ 铁律 5 记「查不到」，★ **但不等于我们的引用错**）⇒ ★ **这两条判完 + 第 4 类修完，即可接闸** ✓",
-      "evidence": [
-        "D:/AI/SW/scripts/check_official_source_defects.py",
-        "D:/AI/SW/tests/test_official_source_defects_gate.py",
-        "D:/AI/SW/specs/206-c1c6-harvest/spec.md",
-        "D:/AI/SW/specs/203-bunny-sideline-batches/recon/b2-defects.json"
-      ]
-    },
-    {
-      "gate": "check_fact_single_home.py",
-      "reason": "★ **告警级、不拦（exit 0）** —— 规格 206 / **T5-1** 的交付物。★★ **D-1 合规实测（第 2 版，已修 recall）**：造 20 例（10 真复述 + 10 正当引用，★ 均用真实文本）⇒ **假阳性 0/20**、**真阳性 10/10** ⇒ ★★ **两端都到位，且 D-1 达标 ✓**。★ 第 1 版实测是 FP 0/10 但 **TP 只 8/10**；★ 真因是判据把 `MIN_LEN` 用在了短正文上（归一后短于 80 字符的正文被**直接放过**，而其实子串是匹配得上的）⇒ 补 `MIN_ANY=40` 后 recall 到 100%、精度不变（`tools/diagnose_fact_gate_recall.py` 诊断 · 事实 542）。★ 判据实现已验证有效（`tests/test_fact_single_home_gate.py` 5 passed，含「逐字抄 ⇒ 必须报」与「只引用 ⇒ 不该报」两个负例），且首次运行抓到 2 处真复述（`docs/dead-ends.md` 复述事实 230 · `specs/202-*/recon/verify50/…` 复述事实 303）。★★ **仍不接硬门禁的理由**：★ 两个指标虽已达标，但**样本是合成的**（★ 只测了三种引用写法、真实语料上的发生率未测）⇒ ★ **建议交主线**：先在那 2 处真实命中上人工确认无误报，再决定是否接闸。",
-      "evidence": [
-        "D:/AI/SW/scripts/check_fact_single_home.py",
-        "D:/AI/SW/tools/measure_fact_single_home_fp.py",
-        "D:/AI/SW/docs/recon-206/fact-single-home-fp.md",
-        "D:/AI/SW/tests/test_fact_single_home_gate.py",
-        "D:/AI/SW/specs/206-c1c6-harvest/spec.md",
-        "D:/AI/SW/docs/known-facts.md"
-      ]
-    }
+ "_comment": "★ 未接进 `release_check.py` 的门禁及其理由（`check_gate_wiring.py` 读这张表）。",
+ "exemptions": [
+  {
+   "gate": "check_member_owner_interface.py",
+   "reason": "★ **诊断工具，不接硬门禁** —— 本轮**没验过**它的判据够不够准（无法机验那 20 处），且它**抓不到形参 owner**（含它的动机 `mold_evidence`）。接进去会变成「看起来在查、实际乱报/漏报」的那种门禁（事实 53 / 62 同族）。",
+   "evidence": [
+    "D:/AI/SW/output/member-owner-interface.json",
+    "D:/AI/SW/specs/093-member-owner-interface-checker/spec.md"
+   ]
+  },
+  {
+   "gate": "check_official_source_defects.py",
+   "reason": "★ **暂只报告、不拦（exit 0）** —— 按规格 206 的 **D-1**。★★ **D-1 合规实测（第 27 轮）**：20 例（10 真断链 + 10 正当引用）⇒ **真阳性 10/10 · 假阳性 0/10 · 漏报 0/10** ⇒ **达标且两项满分**（`tools/measure_official_defects_fp.py`）。★ 判据已验证（`tests/test_official_source_defects_gate.py` 4 passed，含负例），且已据此**修掉 5 处真断链**（`[[SketchManager::` 正名为 `[[ISketchManager::`）。★★★ **那 2 处「边界」已逐条判完（第 28 轮）—— 判出三类命中，本门禁只有一类该报**：① **我们自己的真断链** ⇒ ★ 已修 5 处（**该报**）；② `[[Iface::Member]]`（`tools/build_obsolete_index.py:25`）⇒ ★ **注释里的模板占位**（**不该报**，误报）；③ ★★ `[[IFeatureManager::IInsertMidSurface]]`（`mcp-server/tool_specs_batch74.py:400-402`）⇒ ★★★ **那不是我们的断链，是【官方页自身的缺陷】的逐字引文** —— `IModelDoc2/IInsertMidSurfaceExt.md` 逐字写 `Obsolete. Superseded by [[IFeatureManager::IInsertMidSurface]]`，**而那个目标页本机全库不存在** ⇒ ★ 我们的代码**正是在登记这条官方缺陷**（铁律 5）⇒ ★★ **该类不该报**（否则会把「记录官方缺陷」判成我们的错）。★★★ **第 30-32 轮补记（四类命中定型 + 四项指标全绿）**。★ 第 29 轮加的 `CITATION` 曾含**泛化的「行首井号冒号」** ⇒ ★★ 盲区实测 **10/10**（★ 带该注释的真断链全被放过，而它正是我们引用官方页的标准写法）⇒ ★ **等于把门禁的主要用途关掉** ⇒ 已**收窄**为只认具体文字标记（「逐字」/「Superseded by」）⇒ 盲区 **0/10**；★ 另加**显式占位名单**（Iface、Member、Attribute、X 等，★ 用名单而非启发式，因启发式会引入新误报面）。★★★ **第 4 类命中（第 31 轮判出，★ 与前几类性质不同）**：`tools/prove_absolute_criteria.py:8` 与 `tools/trigger_analysis_dialogs.py:7` 各引一处「swapi 结构化源」里不存在的页；★ 但实测其中 `IMassProperty 的 Volume 页` 在 **CHM 解包源里【存在】** ⇒ ★★ **那是【对的】引用，只是引的是【另一套官方源】** ⇒ **误报**。★★★ **第 4 类的性质是「判据的数据面缺一整套源」**（★ 前三类是语义面缺判据）⇒ ★★ **加再多语义判据也修不好** ⇒ 修法是**让判据同时认 CHM**（★ 铁律 4：两套源都要查）⇒ ★ **那是范围变更，建议交主线**。★★ **仍不接硬门禁的理由（第 4 版）**：① 第 4 类需主线决定是否把 CHM 纳入判据数据面；② `ICWStudy 的 RunAnalysis 页`在**两套源里都搜不到**（★ 铁律 5 记「查不到」，★ **但不等于我们的引用错**）⇒ ★ **这两条判完 + 第 4 类修完，即可接闸** ✓",
+   "evidence": [
+    "D:/AI/SW/scripts/check_official_source_defects.py",
+    "D:/AI/SW/tests/test_official_source_defects_gate.py",
+    "D:/AI/SW/specs/206-c1c6-harvest/spec.md",
+    "D:/AI/SW/specs/203-bunny-sideline-batches/recon/b2-defects.json"
+   ]
+  },
+  {
+   "gate": "check_fact_single_home.py",
+   "reason": "★ **告警级、不拦（exit 0）** —— 规格 206 / **T5-1** 的交付物。★★ **D-1 合规实测（第 2 版，已修 recall）**：造 20 例（10 真复述 + 10 正当引用，★ 均用真实文本）⇒ **假阳性 0/20**、**真阳性 10/10** ⇒ ★★ **两端都到位，且 D-1 达标 ✓**。★ 第 1 版实测是 FP 0/10 但 **TP 只 8/10**；★ 真因是判据把 `MIN_LEN` 用在了短正文上（归一后短于 80 字符的正文被**直接放过**，而其实子串是匹配得上的）⇒ 补 `MIN_ANY=40` 后 recall 到 100%、精度不变（`tools/diagnose_fact_gate_recall.py` 诊断 · 事实 542）。★ 判据实现已验证有效（`tests/test_fact_single_home_gate.py` 5 passed，含「逐字抄 ⇒ 必须报」与「只引用 ⇒ 不该报」两个负例），且首次运行抓到 2 处真复述（`docs/dead-ends.md` 复述事实 230 · `specs/202-*/recon/verify50/…` 复述事实 303）。★★ **仍不接硬门禁的理由**：★ 两个指标虽已达标，但**样本是合成的**（★ 只测了三种引用写法、真实语料上的发生率未测）⇒ ★ **建议交主线**：先在那 2 处真实命中上人工确认无误报，再决定是否接闸。",
+   "evidence": [
+    "D:/AI/SW/scripts/check_fact_single_home.py",
+    "D:/AI/SW/tools/measure_fact_single_home_fp.py",
+    "D:/AI/SW/docs/recon-206/fact-single-home-fp.md",
+    "D:/AI/SW/tests/test_fact_single_home_gate.py",
+    "D:/AI/SW/specs/206-c1c6-harvest/spec.md",
+    "D:/AI/SW/docs/known-facts.md"
+   ]
+  }
+ ],
+ "check_official_source_defects.py": {
+  "reason": "★ **诊断工具，明确不是门禁**（2026-10-12 · 规格 324 · Q16）。它**自己声明**「暂只报告、不拦（exit 0）」，依据是 D-1（新建门禁误报率 ≤5%，未达标者留待复核桶）⇒ **达标前不接进 release_check.py**。★ Q16 逐字：「诊断工具保留但明确不是门禁」—— 本条正是这一类。",
+  "evidence": [
+   "scripts/check_official_source_defects.py 的 main() 末尾逐字：「★★ 本门禁**暂只报告、不拦（exit 0）**」",
+   "它自报「当前 2 处引用了不存在的官方页」，判据边界待人判：IInsertMidSurface 的 I 前缀变体、[[Iface::Member]] 模板占位",
+   "specs/203-bunny-sideline-batches/recon/b2-defects.json（970 条，964 verified）"
   ]
+ }
 }
