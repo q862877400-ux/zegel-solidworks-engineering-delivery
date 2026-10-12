@@ -47,23 +47,34 @@ class JobState:
     APPROVED = "approved"
     RUNNING = "running"
     UNCERTAIN = "uncertain"          #: ★★ **超时/语义不明的 COM 错误** ⇒ ★ **不重试**
+    #: ★★★★ 2026-10-12 新增（★ 规格 318 · E4）：**效应不明**。
+    #:   ★★ 与 `UNCERTAIN` 的分工（★ 两个都要，★ **不是替代**）：
+    #:     · `UNCERTAIN`      说的是「**调用**结果不明」⇒ ★ 可以靠**回读**补救
+    #:     · `UNKNOWN_EFFECT` 说的是「**这个工具到底写没写**都不知道」
+    #:       ⇒ ★★ **连该回读什么都不知道** ⇒ ★ **停下交人**
+    #:   ★ 依据：外部方案阶段 3 逐字要求「单写者所有权与 **`UNKNOWN_EFFECT` 状态**」。
+    UNKNOWN_EFFECT = "unknown_effect"
     VALIDATING = "validating"
     BLOCKED = "blocked"
     COMPLETED = "completed"
     FAILED = "failed"
 
-    ALL = (QUEUED, PLANNED, APPROVED, RUNNING, UNCERTAIN, VALIDATING,
-           BLOCKED, COMPLETED, FAILED)
+    ALL = (QUEUED, PLANNED, APPROVED, RUNNING, UNCERTAIN, UNKNOWN_EFFECT,
+           VALIDATING, BLOCKED, COMPLETED, FAILED)
 
     #: ★★ **允许的迁移**（★ 封闭表）
     TRANSITIONS = {
         QUEUED: (PLANNED, BLOCKED, FAILED),
         PLANNED: (APPROVED, BLOCKED, FAILED),
         APPROVED: (RUNNING, BLOCKED, FAILED),
-        RUNNING: (UNCERTAIN, VALIDATING, FAILED),
+        RUNNING: (UNCERTAIN, UNKNOWN_EFFECT, VALIDATING, FAILED),
         #: ★★★ **`uncertain` 只能去 `validating`（回读）或 `blocked`/`failed`**
         #:   ★★ **不能回 `running`** ⇒ ★ 那是「不重试」的**结构性保证**
         UNCERTAIN: (VALIDATING, BLOCKED, FAILED),
+        #: ★★★★ **`unknown_effect` 只能去 `blocked`/`failed`** ——
+        #:   ★★ **连 `validating` 都不给**：因为「不知道该回读什么」⇒
+        #:     ★ 进 `validating` 会**假装有回读判据**。★ 比 `UNCERTAIN` **更严**的一档。
+        UNKNOWN_EFFECT: (BLOCKED, FAILED),
         VALIDATING: (COMPLETED, FAILED, UNCERTAIN),
         BLOCKED: (QUEUED, FAILED),
         COMPLETED: (),
@@ -72,7 +83,8 @@ class JobState:
     #: ★★ **终态**
     TERMINAL = (COMPLETED, FAILED)
     #: ★★★ **绝不从这些状态重试**（★ 承 EC00 的效果状态机）
-    NEVER_RETRY_FROM = (UNCERTAIN,)
+    #:   ★ `UNKNOWN_EFFECT` 与 `UNCERTAIN` **同族但更严**（★ 连回读都不给）
+    NEVER_RETRY_FROM = (UNCERTAIN, UNKNOWN_EFFECT)
 
 
 class JobError(Exception):
