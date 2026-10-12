@@ -628,6 +628,31 @@ def _run_report_freshness_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_review_ids_gate() -> dict[str, object]:
+    """@brief 跑评审稿编号门禁（`scripts/check_review_ids.py`）。
+
+    ★★ 为什么有这一道（2026-10-12 · 业主「那 60 条语料的标签给我打开」）：
+        `owner-review.md` §5「我明确不确定的 6 条」里 **6 条全引错了编号** ——
+        ★ 而**括号里的描述是对的**、**编号全错** ⇒ 业主照编号去翻，
+        翻到的会是**另一条**，于是他会以为自己看错了。
+        ★★ 这正是「看起来像 A，其实是 B」那一族。
+    ★ 本门禁**自己带负例自证**（`selftest()`）—— ★ 因为第一版就是假绿
+      （用「任一段是子串」判 ⇒ 概括性描述被误报 ⇒ 我差点把它调成永远放过）。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_review_ids.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "评审稿编号门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_python_syntax_gate() -> dict[str, object]:
     """@brief 跑 `.py` 语法门禁（`scripts/check_python_syntax.py`。
 
@@ -2110,6 +2135,19 @@ def run_release_check() -> dict[str, object]:
     if py_syntax.get("status") == "fail":
         raise AssertionError(
             ".py 语法门禁未通过（有文件不能 ast.parse）：\n" + str(py_syntax.get("output", "")))
+    # ⚑ **评审稿编号门禁**（硬门禁）：★ 评审稿里引用的 `L1-/L2-/L3-` 编号
+    #   必须**真的存在**，且**括号里的描述要对得上**。
+    #   ★ 触发它的是 2026-10-12（业主：「那 60 条语料的标签给我打开」）：
+    #   `owner-review.md` §5「我明确不确定的 6 条」里 **6 条全引错了编号** ——
+    #   而**括号里的描述是对的**、**编号全错** ⇒ 业主照编号去翻，
+    #   翻到的会是**另一条**，于是他会以为自己看错了。
+    #   ★ 而这道门禁**第一版自己就是假绿**（负例自证抓到）——
+    #   ⇒ ★ 它带 `selftest()`：拿修复前的错编号当负例，必须报出来。
+    rev_ids = _run_review_ids_gate()
+    if rev_ids.get("status") == "fail":
+        raise AssertionError(
+            "评审稿编号门禁未通过（引用了不存在的编号，或描述与编号对不上）：\n"
+            + str(rev_ids.get("output", "")))
     # ⚑ **未定义名门禁**（硬门禁）：★ 与语法门禁**互补** —— 语法只判"能不能 parse"，
     #   本道判"读到的名字有没有被绑定过"。★ 触发它的是轮 403 真机抓到的
     #   `out_i4` 漏导入（★ 语法合法、19 道门禁全绿、而一调用就 NameError）。
@@ -2313,6 +2351,12 @@ def run_release_check() -> dict[str, object]:
         #:   元门禁当场报了「`py_syntax` 的结果**没有进返回体** ⇒ 『它跳过了/它没跑』在外面**看不见**
         #:   （★ 静默跳过与没跑等价）」。★ **这条正是元门禁存在的意义**（轮 191 的定则）。
         "py_syntax": py_syntax,
+        #: ★ 2026-10-12（业主「那 60 条语料的标签给我打开」）：**评审稿编号门禁**
+        #:   也必须进返回体 —— ★ 元门禁当场报了同一条
+        #:   （「`rev_ids` 的结果**没有进返回体** ⇒ 静默跳过与没跑等价」）。
+        #:   ★★ 而这道门禁**是元门禁逼出来的第二道** ——
+        #:     我第一次只加了门禁与 fail 判据，忘了汇总。
+        "rev_ids": rev_ids,
         #: ★ 2026-10-03（轮 404）：**未定义名门禁**同样必须进返回体 ——
         #:   ⚠ 而这一条**正是元门禁当场抓到的**：我先前只加了门禁与它的 fail 判据，
         #:   却没把它汇总进 `_gate_results` ⇒ 元门禁报「`undef` 的结果**没有进返回体**

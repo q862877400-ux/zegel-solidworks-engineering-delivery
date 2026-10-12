@@ -468,6 +468,15 @@
    "environment": "offline-static",
    "owner": "executing-agent",
    "runs_in": "release_check"
+  },
+  {
+   "gate": "check_review_ids.py",
+   "runner": "_run_review_ids_gate",
+   "kind": "release_static",
+   "reason": "**硬门禁**：评审稿里引用的 L1-/L2-/L3- 编号必须真的存在，且**括号里的描述要对得上**。★ 触发它的是 2026-10-12（业主：「那 60 条语料的标签给我打开」）：owner-review.md §5「我明确不确定的 6 条」里 **6 条全引错了编号** —— 而**括号里的描述是对的**、**编号全错** ⇒ 业主照编号去翻，翻到的会是**另一条**，于是他会以为自己看错了。★ 这正是「看起来像 A，其实是 B」那一族。★ 本门禁**自带负例自证**（selftest() 拿修复前的错编号当负例）—— 因为它的第一版就是假绿（用「任一段是子串」判 ⇒ 概括性描述被误报）。⚠ **覆盖面**：只判**编号引用**；语料本身的标签对不对不在内（那是业主的判定）。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
   }
  ]
 }
