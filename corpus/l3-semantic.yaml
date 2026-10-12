@@ -108,8 +108,8 @@
   labels:
     function: 定位工件
     interface: 底面与侧面
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 L 形的**缺口位置与缺口大小**
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -157,6 +157,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 100×100×20 只给了外框 ⇒ ★ 缺口多大、在哪，**没说** ⇒ ★ 草图定不死（★ 业主批注 1 的原例）
+    _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
 - id: L3-004
   requirement: 给一块 80×60×10 的板做 2mm 抽壳
   category: solvable
@@ -164,8 +168,8 @@
   labels:
     function: 减重
     interface: 开口面
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **抽壳的开口面**（哪个面挖掉）
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -209,6 +213,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 80×60×10 + 壁厚 2 给了，但**没说从哪个面掏** ⇒ ★ 开口面不同 ⇒ 完全不同的零件
+    _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
 - id: L3-005
   requirement: 建一根阶梯轴：φ20 段 40mm + φ30 段 30mm
   category: solvable
@@ -272,8 +280,8 @@
   labels:
     function: 去锐边
     interface: 四周棱边
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 「**四周**」指哪几条边
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -317,6 +325,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 50×50×5 的板有 12 条棱边；「四周」可指 **4 条竖直棱**（四角）或**整圈上下棱** ⇒ ★ 两种做法出的零件不同
+    _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
 - id: L3-007
   requirement: 建一个 φ6×30 的定位销，两端倒角
   category: solvable
@@ -324,8 +336,8 @@
   labels:
     function: 定位
     interface: 两端
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **倒角的大小**（★ 可按标准选并声明依据）
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -368,6 +380,11 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 「两端倒角」没给尺寸 ⇒ ★ 工程惯例是 1×45°，★ 但**惯例 ≠ 需求** ⇒ ★ 应问，或按惯例做并**声明依据**。★★ 而 L3-002 就写全了（「倒 1×45° 角」）⇒ **同族两条口径不一致**
+    _by: ★ 执行者自审（2026-10-12）
+    _note: ★ 按 Q1 定则：**不自动采用所谓默认值** ⇒ 要么问、要么按标准选并声明依据
 - id: L3-008
   requirement: 在一块 120×80×15 的板上做一条半圆端槽（长 40，宽 10）
   category: solvable
@@ -375,8 +392,8 @@
   labels:
     function: 导向
     interface: 槽两端
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **槽的位置**（在板的哪里）
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -431,6 +448,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 长 40 宽 10 给了，但**没说槽放在哪** ⇒ ★ 这正是业主批注 4 问的「槽口位置是怎么定的」
+    _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
 - id: L3-009
   requirement: 建一个带中心孔的压板（80×30×8，中心 M8 孔）
   category: solvable
@@ -490,8 +511,8 @@
   labels:
     function: 连接
     interface: 分布圆
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **轴的直径与长度**
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -545,6 +566,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 「给一根轴做 6 等分圆周阵列的 φ5 孔（分布圆 φ30）」—— ★ 轴本身的 φ 与长**没说** ⇒ ★ 零件做不出来
+    _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
 - id: L3-011
   requirement: 建一个 φ20×60 的圆柱，一端切一个 6×3 的键槽
   category: solvable
@@ -552,8 +577,8 @@
   labels:
     function: 传递扭矩
     interface: 键槽
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **键槽的轴向位置**（★ 可按标准选并声明依据）
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -606,6 +631,11 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 6×3 给了，但槽**开在 60 长的哪一段**没说 ⇒ ★ 惯例是从端面起（GB/T 1095/1096 平键）⇒ ★ 仍应声明依据
+    _by: ★ 执行者自审（2026-10-12）
+    _note: ★ 按 Q1 定则：**不自动采用所谓默认值** ⇒ 要么问、要么按标准选并声明依据
 - id: L3-012
   requirement: 把一块 200×150×10 的板中心做 φ40 圆形凸台高 10
   category: solvable
@@ -759,8 +789,8 @@
   labels:
     function: 安装
     interface: 四角沉头孔
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **沉头孔的沉孔规格**（沉孔直径与深度）（★ 可按标准选并声明依据）
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -807,6 +837,11 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 「M8 沉头孔」只给了螺纹规格 ⇒ ★ 沉孔 φ 与深可按 GB/T 8191（内六角沉头螺钉）取 ⇒ ★ 应声明依据
+    _by: ★ 执行者自审（2026-10-12）
+    _note: ★ 按 Q1 定则：**不自动采用所谓默认值** ⇒ 要么问、要么按标准选并声明依据
 - id: L3-016
   requirement: 建一根 φ25×120 的轴，中间做一段 φ20×10 的退刀槽
   category: solvable
@@ -814,8 +849,8 @@
   labels:
     function: 让位
     interface: 退刀槽
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **退刀槽的位置与形状**（「中间」在哪）（★ 可按标准选并声明依据）
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -866,6 +901,11 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 「中间做一段」⇒ ★ 正中间？还是距某端面？★ 退刀槽形状可按 GB/T 3 取 ⇒ ★ 位置仍要问
+    _by: ★ 执行者自审（2026-10-12）
+    _note: ★ 按 Q1 定则：**不自动采用所谓默认值** ⇒ 要么问、要么按标准选并声明依据
 - id: L3-017
   requirement: 把两个零件（销 φ6×30 和块 40×40×20）装配起来，销穿过块的中心孔
   category: solvable
@@ -921,8 +961,8 @@
   labels:
     function: 容纳
     interface: 开口面
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **抽壳的开口面**
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -966,6 +1006,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 与 L3-004 **同一个缺口** ⇒ ★ 箱体从哪个面掏空没说
+    _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
 - id: L3-019
   requirement: 给一个已建好的零件出工程图，含前视图和俯视图
   category: solvable
@@ -1015,8 +1059,8 @@
   labels:
     function: 连接
     interface: 孔列
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **这排孔距边的位置**
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -1062,6 +1106,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 间距 30 给了，但**整排孔在 200×100 的哪里**没说 ⇒ ★ 居中？距边多少？
+    _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
 - id: L3-021
   requirement: 建一根两端带球头的连杆（长 80，球头 φ12）
   category: solvable
@@ -1069,8 +1117,8 @@
   labels:
     function: 传动
     interface: 两端球头
-    question: 无
-    result: READY_FOR_REVIEW
+    question: 缺 **杆的直径**
+    result: WAITING_INPUT
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
   steps_cn:
@@ -1116,6 +1164,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    reclassified_from: READY_FOR_REVIEW
+    reason: ★ 总长 80 + 球头 φ12 给了，★ **杆多粗没说** ⇒ ★ 杆径不同 ⇒ 完全不同的连杆
+    _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
 - id: L3-022
   requirement: 给一个装配体做干涉检查并报告结果
   category: solvable
@@ -1195,6 +1247,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    borderline: true
+    reason: ★ 「把**一根轴**放大 2 倍」—— ★ 哪根轴？★ 若会话里有上下文则能做；★ 无上下文则**说不清**
+    _by: ★ 执行者自审（2026-10-12）—— ★ 拿不准，请业主判
 - id: L3-024
   requirement: 给一个零件加一个全局方程：D2 = 2 * D1
   category: solvable
@@ -1238,6 +1294,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  audit:
+    borderline: true
+    reason: ★ 「给**一个零件**加全局方程 D2 = 2 * D1」—— ★ D1 是哪个尺寸？★ 依赖上下文
+    _by: ★ 执行者自审（2026-10-12）—— ★ 拿不准，请业主判
 - id: L3-025
   requirement: 给我设计一台台式平口钳
   category: missing_input
