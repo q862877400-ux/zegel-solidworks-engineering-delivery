@@ -121,6 +121,51 @@ class _LaunchGuard:
 # 覆盖:   后续同级定义 —— 本块涵盖这一段（`get_com_member` / `safe_get_com_member`）。
 # ─────────────────────────────────────────────────────────────────────
 
+#: ══ ★★ 阶段 1 · C6：COM 写调用计数器（★ SC-009 的唯一判据来源）══════════
+#: ★ 为什么在这里：`get_com_member` 是**全仓唯一的 COM 取/调入口**（471 个调用点）
+#:   ⇒ 它是**唯一**能在边界上数清「写了几次」的位置 ✓
+#: ★ 判据用**成员动词**（与 `scripts/engineering/effects.py` 同族口径）
+#:   ⇒ 只读路径（`Get*`/`Is*`/`Has*`）**不计数** ✓
+#: ⚠ **未 arm 时是空操作** ⇒ 对既有行为**零影响**（无性能与语义代价）。
+_WRITE_VERB = (
+    "Insert", "Create", "Add", "Set", "Delete", "Remove", "Modify", "Edit",
+    "Clear", "Save", "Close", "Open", "Export", "Import", "Rebuild", "Force",
+    "Update", "Replace", "Move", "Copy", "Scale", "Mirror", "Pattern",
+    "Extrude", "Revolve", "Fillet", "Chamfer", "Shell", "Draft", "Thicken",
+    "Sketch", "Select", "Unselect", "Activate", "Exit", "Run", "Load",
+    #: ★★ 实测补（2026-10-11）：`FeatureExtrusion3` / `FeatureCut4` /
+    #:   `FeatureRevolve2` / `FeatureCircularPattern4` 都是**建特征**的写调用，
+    #:   而它们以 **`Feature`** 开头 ⇒ 漏了它会把最核心的建模调用**记成只读**
+    #:   （★ 实测踩过：`_bump_if_write('FeatureExtrusion3')` 当时没记上）。
+    "Feature",
+)
+_READ_VERB = ("Get", "Is", "Has", "Read", "List", "Count", "Find", "Query",
+              "Collect", "Inspect", "Check", "Measure", "Evaluate", "Test", "Describe")
+
+
+def _bump_if_write(attr_name: str) -> None:
+    """★ 若成员名**像写**，给 `COUNTER` 记一笔（★ 只读不记）。
+
+    ⚠ 计数器从 `scripts/engineering/executor.py` 取（★ **不 import** ——
+      避免 `sw_connect` → `engineering` 的循环依赖；用**注册式**注入）。
+    """
+    fn = globals().get("_COM_WRITE_HOOK")
+    if fn is None:
+        return
+    if attr_name.startswith(_READ_VERB):
+        return
+    if attr_name.startswith(_WRITE_VERB):
+        try:
+            fn(attr_name)
+        except Exception:      # noqa: BLE001
+            pass               #: ★ 计数失败**不得**影响 COM 调用
+
+
+def set_com_write_hook(fn) -> None:
+    """★ 注入写调用钩子（★ 由 `scripts/engineering/executor.py` 调）。"""
+    globals()["_COM_WRITE_HOOK"] = fn
+
+
 def get_com_member(obj, attr_name, *args):
     """★ 「**取或调**」—— 这是本函数的**真实语义**，2026-10-01（轮 144）写明白。
 
@@ -180,6 +225,13 @@ def get_com_member(obj, attr_name, *args):
                 "★ 官方签名里该成员可能是存在的（`kind: method`）⇒ "
                 "★ 请查 `type(getattr(obj, %r))` 与 `callable(...)`，不要改参数重试。"
                 % (type(obj).__name__, attr_name, len(args), type(member).__name__, attr_name))
+        #: ★★ 阶段 1 · C6（2026-10-11）：**在 COM 边界上数写调用** ——
+        #:   ★ 这是 SC-009「负例的 COM 写调用数必须为 0」的**唯一判据来源**
+        #:   （★ 事实 8：返回值不可信 ⇒ 判「写没写」只能**在边界计数**）。
+        #:   ★ 判据用**成员动词**（与 `scripts/engineering/effects.py` 同族口径）
+        #:     ⇒ **只读路径不计数**（否则负例会因「读了一下」误报）。
+        #:   ⚠ 计数器**未 arm 时是空操作** ⇒ 对既有行为**零影响**。
+        _bump_if_write(attr_name)
         return member(*args)
     # ⚠⚠⚠ **2026-10-01（轮 143）发现本函数的一个危险设计**：
     #   下面那句"没有实参就先调一次" —— 对**有副作用**的 COM 成员，
@@ -207,6 +259,7 @@ def get_com_member(obj, attr_name, *args):
         raise
 
 
+#: dispatch-guard: covered-wrappers
 def call_com_member(obj, attr_name, *args):
     """★ 「**就是去调它**」—— 与 `get_com_member` **行为完全相同**，差别在**名字**。
 
@@ -477,6 +530,7 @@ def get_com_member_raw(obj, attr_name):
     """
     return getattr(obj, attr_name)
 
+#: dispatch-guard: covered-wrappers
 
 def safe_get_com_member(obj, attr_name, *args):
     """
@@ -1145,9 +1199,28 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
     return model
 
 
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（本机实测结论的固化）
+# 文件:   scripts/sw_connect.py —— 本函数
+# 定位:   ★★★ 2026-10-10（规格 284）**本机实测：`SaveAs3` **不能换**** —— ★ 待办原话是
+#         「`Extension.SaveAs` → `SaveAs3`（★ **改错会直接坏掉写盘**）」⇒ ★★ **实测正好证明确实会**：
+#         真机（SW **34.4.1**）逐 `Options`（★ `GetAdvancedSaveAsOptions(0/1/2/3)`）⇒ ★ `SaveAs3`
+#         **四个都返回 `True`、`errors=0`**，★★ **而文件**一个都没写出来**** ⇒ ★★★ **静默失败**
+#         （★ 比「报错」更危险 —— ★ 调用方会以为存成功了）。
+#         ★ **对照**：★ `SaveAs` ⇒ ★ **文件真的写出来**（48696 B）⇒ ★ **现状是好的**。
+#         ★★ **官方链**（★ 逐字）：★ `SaveAs` → `Obsolete. Superseded by SaveAs2` →
+#         `Obsolete. Superseded by SaveAs3`（★ 链终点）⇒ ★ 官方**确实要我们换**；
+#         ★★ **而本机不能换** ⇒ ★★★ **处置：★ 保持 `SaveAs` + 把这条实测登记在此**（★ 不照链硬换）。
+#         ★ 读数：`output/_probe284_saveas3.txt` · `output/_probe284_saveas3_opt.txt`。
+# 官方依据: `C:/swapi/types/IModelDocExtension/{SaveAs,SaveAs2,SaveAs3}.md` · `…/GetAdvancedSaveAsOptions.md`
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ────────────────────────────────────────────────────────────────────
 def save_document(model, file_path=None):
     """
     保存文档。
+
+    ⚠★ **不要换成 `SaveAs3`** —— ★ 真机实测它**静默失败**（★ 返回 True 却不落盘，★ 见上方来源块）。
 
     参数:
         model: IModelDoc2 对象

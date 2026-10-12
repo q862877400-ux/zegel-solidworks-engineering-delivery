@@ -231,6 +231,79 @@ def _run_marker_gate() -> dict[str, object]:
     }
 
 
+def _run_unit_conversion_count_gate() -> dict[str, object]:
+    """★ 跑「单位换算次数」门禁（`scripts/check_unit_conversion_count.py`）。
+
+    ── 来源 ─────────────────────────────────────────────────────────
+    仓库:   本项目自身（发布门禁的扩展）
+    文件:   scripts/check_unit_conversion_count.py（本门禁的实现）
+    定位:   新增 `_run_unit_conversion_count_gate`：把它并入 run_release_check
+            （字段名 `unit_conversion_count`）。
+    官方依据: ① 本仓事实 2「入参毫米 · COM 侧米」⇒ 换算必须**恰好一次**
+              ② 真机定案 `output/probe-unit-decisive/decisive.json`
+                 （同文档同会话单变量：草图 40×40 ✓ 而 `extrude_boss(20.0)` ⇒ Z=**20000 mm**）
+    许可:   本仓库 MIT。★ 无第三方代码引入。
+    覆盖:   后续同级定义
+    ─────────────────────────────────────────────────────────────────
+    """
+    import os
+    import subprocess
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_unit_conversion_count.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "reason": f"门禁**无法启动**（超时/OSError）: {exc}"}
+    return {
+        "status": "pass" if proc.returncode == 0 else "fail",
+        "output": (proc.stdout or "").strip()[-1500:],
+    }
+
+
+def _run_length_units_gate() -> dict[str, object]:
+    """跑单位纪律门禁（scripts/check_length_units_guard.py）。
+
+    ★★★ 触发原因（业主 2026-10-10 逐字点破）：
+      「**既然你明明知道了之前的错误，那为什么你还会把错误原封不动地再犯一次呢？**」
+    ★★ 根因**不是「不记得」**，而是 `scripts/audit_length_units.py` **没有牙齿**：
+      · 它**只打印清单**（`return 0` 恒真）⇒ ★ **不是门禁，是报告**；
+      · 它**不在本文件里** ⇒ ★ 发布前根本不跑；
+      · 它**只按形参名**判长度 ⇒ 形参叫 `spec`（dict/dataclass）时**整族跳过** ✗
+        ★★★ **齿轮族正是这样被跳过的** ✓
+    ⇒ 本门禁把那三件事一起解决（下界 + 接进发布检查 + 齿轮族在视野里的回归守卫）。
+
+    ── 来源 ─────────────────────────────────────────────────────────
+    仓库:   本项目自身（发布门禁的扩展）
+    文件:   scripts/check_length_units_guard.py（本门禁的实现）
+    定位:   新增 `_run_length_units_gate`：跑 check_length_units_guard.py
+            并把结果并入 run_release_check 的结果（字段名 `length_units`）。
+    官方依据: 本仓单位纪律（事实 2）：★ 入参毫米 · COM 侧米 ⇒ 进 COM 前必须换算 ✓
+    许可:   本仓库 MIT。无第三方代码引入。
+    覆盖:   后续同级定义
+    ─────────────────────────────────────────────────────────────────
+    """
+    import os
+    import subprocess
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_length_units_guard.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "reason": f"门禁**无法启动**（超时/OSError）: {exc}"}
+    return {
+        "status": "pass" if proc.returncode == 0 else "fail",
+        "output": (proc.stdout or "").strip()[-1500:],
+    }
+
+
 def _run_union_conventions_gate() -> dict[str, object]:
     """跑并入规范门禁（scripts/check_union_conventions.py）。
 
@@ -1231,6 +1304,342 @@ def _run_enum_values_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_arity_tables_vs_reflection.py`（本门禁的实现）
+# 定位:   新增 `_run_arity_tables_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 227）：
+#   224 / 225 / 226 让每张「自称有出处」的整数表**表态**，`not-enum arity` 是其中一档 ——
+#   ★ 但那一档**只验子类、不验值**：`*_ARITY` 表里的数字（如 `'AddMate5': 15`）
+#   **此前没有任何机器判据在守**，而它们正是运行期 `_checked()` 校核实参个数的依据
+#   ⇒ **表错 = 校核错**，且错得静默。
+# ⚠ **本门禁**：① 每张 `*_ARITY` 表必须在其起始行**正上方**声明
+#   `#: arity-reflect: byref=included|excluded`（未表态即红）；
+#   ② 按**各自声明的**约定与**出厂反射转储**（`_raw/**/iface_*.txt`）逐条比实参个数。
+#   ★ 约定**必须由人写死**：两种 by-ref 约定并存（实测「原样计数」不符 37 / 「剔除 by-ref」不符 15
+#     而真相是各自约定下 552/552 全对）⇒ 若门禁自己挑约定，**错值会被自动「解释」掉**。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_arity_tables_gate() -> dict[str, object]:
+    """@brief 跑 `*_ARITY` 表 × 出厂反射门禁（`scripts/check_arity_tables_vs_reflection.py`）。"""
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_arity_tables_vs_reflection.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "`*_ARITY` 反射门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_assembly_doc_call_shape.py`（本门禁的实现）
+# 定位:   新增 `_run_assembly_doc_call_shape_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 228）：
+#   `audit_byref_args.WRAPPERS` 只有 `{_safe_member, get_com_member, safe_get_com_member,
+#   call_com_member}` ⇒ ★ `call_assembly_doc(doc, "<成员>", …)` **不在里面** ——
+#   它把成员名当**第二实参**传，内部转发那句的成员名**是变量** ⇒ **静态审计看不见**
+#   ⇒ ★★ 这一族调用点的 **by-ref 占位从来没有任何判据在守**
+#   （而 `sw_connect.out_i4` 的**真机结论**是：by-ref 出参**必须给占位、不能省**，
+#     省略 ⇒ `DISP_E_PARAMNOTOPTIONAL`）。
+# ⚠ **本门禁**：① 复用 227 已立的 `#: arity-reflect: byref=included` 声明（未表态即红）；
+#   ② 每个字面量调用点：实参个数 == 表值；③ 形参以 `&` 结尾的位置必须是 by-ref 包装器
+#   （口径从 `audit_byref_args` **import，不重写**）；④ 检查量为 0 判失败（事实 46）。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_assembly_doc_call_shape_gate() -> dict[str, object]:
+    """@brief 跑 `call_assembly_doc` 调用形状门禁（`scripts/check_assembly_doc_call_shape.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable,
+             str(ROOT / "scripts" / "check_assembly_doc_call_shape.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "`call_assembly_doc` 调用形状门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_dispatch_entry_guard.py`（本门禁的实现）
+# 定位:   新增 `_run_dispatch_entry_guard_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 229）：spec 228 只修了 `call_assembly_doc`
+#   **一个**入口，并把教训写成一句通用话 ——「**加新分发口时必须问一句：它进审计白名单了吗**」。
+#   ★ 而「一句话」不是守卫。本轮先**量**清边界：真树 **1310** 个 COM 包装器调用点里，
+#   **91 个（7 %）的成员名不是字面量 ⇒ 静态审计一律看不见**；其中 **37 个**是
+#   **形参转发**（真「分发口」：`_checked(target, member, *args)` 这类）⇒ 逐个必须表态。
+# ⚠ **本门禁**：① 每个分发口的 `def` 正上方必须有 `#: dispatch-guard: …`（未表态即红）；
+#   ② 封闭词表 `covered <gate-id>` / `covered-wrappers` / `exempt {generated-api,
+#   internal-helper, module-local}`，**每一条都由门禁自证**（声明 ≠ 通过）；
+#   ③ `covered <gate-id>` 必须在该登记表里（**承重性**：登记表改名即红）；
+#   ④ 分发口数 / 不可见调用点数 / 可见字面量数**只增不减**（下界冻结）；
+#   ⑤ 检查量为 0 判失败（事实 46）。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_dispatch_entry_guard_gate() -> dict[str, object]:
+    """@brief 跑分发口守卫覆盖门禁（`scripts/check_dispatch_entry_guard.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable,
+             str(ROOT / "scripts" / "check_dispatch_entry_guard.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "分发口守卫覆盖门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_dispatch_byref_guard.py`（本门禁的实现）
+# 定位:   新增 `_run_dispatch_byref_guard_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 231）：`audit_byref_args.own_call_sites()` 只认
+#   「成员名是**字符串字面量**」的调用点 ⇒ 分发口（成员名以**形参**转发）的调用点
+#   **一律看不见**。spec 229 量出边界（91 个不可见），spec 230 把其中**可静态解析**的
+#   **18 个分发口 / 327 个调用点**分出来 —— ★ 但 230 **只分类、不判罪**
+#   （「可解析」只是**前置条件**，不是「已核」）。本门禁就是那个「接进判据」的动作：
+#   对这 327 个调用点施 `audit_byref_args` 的**同一套** by-ref 判据。
+# ⚠ **本门禁**：① 签名说 `&` 的**标量**位传的不是 by-ref 包装器 ⇒ 红；
+#   ② 可核分发口数 / 已核调用点数**只增不减**（下界冻结：减少 = 解析器或取点漏了）；
+#   ③ 检查量为 0 判失败（事实 46）；④ 缺反射转储 ⇒ `[SKIP]` + exit 0（缺数据源 ≠ 失败）。
+# ★ 口径**全部 import，不重写**：取点/绑定/一级转发来自 `check_dispatch_entry_guard`，
+#   by-ref 判据来自 `audit_byref_args`。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_dispatch_byref_guard_gate() -> dict[str, object]:
+    """@brief 跑分发口调用点的 by-ref 占位门禁（`scripts/check_dispatch_byref_guard.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable,
+             str(ROOT / "scripts" / "check_dispatch_byref_guard.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "分发口 by-ref 占位门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_dispatch_blindspot_guard.py`（本门禁的实现）
+# 定位:   新增 `_run_dispatch_blindspot_guard_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 232）：`check_dispatch_entry_guard._entry_sites()`
+#   只认三种调用形态（同文件裸名 / `from <stem> import <名>` 后裸名 / `模块.名`），
+#   另有 **5 种**它**看不见**：a 模块别名 `import m as x` 后 `x.f()` · b 名字别名
+#   `from m import f as g` 后 `g()` · c 点式基名 `pkg.m.f()` · d 同文件自限定
+#   `m.f()` 写在 `m.py` 里 · e `getattr(m, "f")()`。
+# ★★ **先量后封**：真树实测 **5 种形态全部 = 0**，而现有口径**已覆盖 362** 个调用点
+#   ⇒ 「扩解析器认别名」是**没有靶子的改动**（写完永远跑不到 = 事实 40 同族）。
+#   本门禁因此**不扩解析器，只封边界**：任一形态非 0 ⇒ 红，逼下一轮**先扩解析器再放行**。
+# ⚠ **本门禁**：① 5 种形态逐形态普查并打印；② **任一非 0 即红**（`[blindspot]`）；
+#   ③ `entries == 0` 或 `covered == 0` ⇒ `[zero-checked]` 红（事实 46）；
+#   ④ 已覆盖调用点数**只增不减**（下界 362；减少 = 取点漏了）。
+# ★ 口径**全部 import，不重写**：取点/entries/已覆盖口径来自 `check_dispatch_entry_guard`。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_dispatch_blindspot_guard_gate() -> dict[str, object]:
+    """@brief 跑分发口调用点的解析盲区门禁（`scripts/check_dispatch_blindspot_guard.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable,
+             str(ROOT / "scripts" / "check_dispatch_blindspot_guard.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "分发口解析盲区门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_dispatch_arg_guard.py`（本门禁的实现）
+# 定位:   新增 `_run_dispatch_arg_guard_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 234）：`local` 桶 —— 成员名由**局部变量**传入的
+#   COM 包装器调用点（真树 **46** 个，spec 233 去重后的读数）—— 从 spec 229 起一路
+#   **只被计数、没有任何判据**。本门禁给它两条可红的路：
+#   ① **候选集能静态枚举** ⇒ 每个候选值必须能在**官方两源**（出厂反射转储 ∪ `C:\swapi`
+#      官方文档镜像）里查到；查不到 = 要么拼错，要么是**试名探测**（fallback 列表），后者须表态；
+#   ② **枚举不出** ⇒ 必须显式表态 `#: dispatch-arg: dynamic <理由>`（未表态即红）。
+#   ★ 两个逃生门都**自带自证条件**（能枚举却声明 `dynamic` ⇒ 红；候选值全查得到却声明
+#     `probe` ⇒ 红；枚举不出却声明 `probe` ⇒ 红）—— 防止拿逃生门一键躺平。
+# ★ 与 `check_dispatch_entry_guard.scan()` 的 `buckets["local"]` **必须相等**
+#   （两个独立实现 + 一致性断言 ⇒ 防止本门禁另起一套口径，spec 233 的教训）。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_dispatch_arg_guard_gate() -> dict[str, object]:
+    """@brief 跑 `local` 桶调用点的候选集门禁（`scripts/check_dispatch_arg_guard.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable,
+             str(ROOT / "scripts" / "check_dispatch_arg_guard.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "local 桶候选集门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_dispatch_forward_arg_guard.py`（本门禁的实现）
+# 定位:   新增 `_run_dispatch_forward_arg_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 235）：37 个分发口的 **362 个调用点**里，
+#   有 **8 个**把成员名以**非字面量**传入（条件式 / 变量 / 下标）⇒ `audit_byref_args`
+#   一律看不见。spec 230 的 `resolution()` 只把入口**分类计数**（`partial 3 · unresolved 4 ·
+#   no-callers 12`），**没有任何判据落在调用点上**。本门禁给每个这样的点两条可红的路：
+#   ① **候选集能静态枚举** ⇒ 每个候选值必须能在**官方两源**里查到；查不到 = 要么拼错、
+#      要么是**试名探测**（须按 `probe` 表态）；
+#   ② **枚举不出** ⇒ 调用点上方必须表态 `dynamic` / `upstream`（二级转发）。
+#   ★ 三个 code 都**自带自证条件**（能枚举却声明 `dynamic`/`upstream` ⇒ 红；候选值全查得到
+#     却声明 `probe` ⇒ 红；枚举不出却声明 `probe` ⇒ 红；`upstream` 的 caller 名必须等于
+#     实际包围 `def`、实参必须是它的形参 ⇒ 否则红）—— 防止拿逃生门一键躺平。
+# ★ 与 `check_dispatch_entry_guard.resolution()` 的**口径不变量**：带非字面量调用点的入口
+#   必须被判 `partial` / `unresolved`（`resolved` = 全字面量）⇒ 不符即红。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_dispatch_forward_arg_gate() -> dict[str, object]:
+    """@brief 跑分发口**调用点**的非字面量实参门禁（`scripts/check_dispatch_forward_arg_guard.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable,
+             str(ROOT / "scripts" / "check_dispatch_forward_arg_guard.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "分发口调用点非字面量实参门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_dispatch_upstream_guard.py`（本门禁的实现）
+# 定位:   新增 `_run_dispatch_upstream_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 236）：spec 235 的 `upstream` 逃生门**只自证形态**
+#   （① 实参是包围 `def` 的形参；② 包围 `def` 名 == 声明的 `<caller-def 名>`）——
+#   ★★ **它从不检查那个 `<caller-def 名>` 的调用方到底传了什么** ⇒ 半开的逃生门：
+#   写 `upstream X` 只要 X 恰好是包围 `def`、恰好收一个成员名形参，就**永远绿**。
+#   本门禁要求声明**必须带一个上游桶**（`sites` / `tool-only` / `orphan`），且桶**必须与事实相符**：
+#     · `sites`     ⇒ 上游有 AST 调用点，且**每个**调用点传**字面量**（候选值须在官方两源查得到）；
+#     · `tool-only` ⇒ 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的 `function=`；
+#     · `orphan`    ⇒ 上游既无 AST 调用点、也无 ToolSpec 引用。
+#   ★★ `tool-only` 这一档是**必需**的：`set_study_option_report` 的 AST 调用点是 **0**，但它**不是**
+#   orphan（由工具层按名注册）⇒ ★ 「AST 调用点为 0」**不等于**「没人用」（spec 234 同族）。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_dispatch_upstream_gate() -> dict[str, object]:
+    """@brief 跑分发口 `upstream` 声明的上游覆盖门禁（`scripts/check_dispatch_upstream_guard.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable,
+             str(ROOT / "scripts" / "check_dispatch_upstream_guard.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "分发口 upstream 上游覆盖门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_create_definition_site_disposition.py`（本门禁的实现）
+# 定位:   新增 `_run_cd_site_disposition_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 237）：`check_interface_member_ownership.py`（**诊断**）
+#   末尾只报「检查过 5 个 `CreateDefinition` 站点；跳过 5」——
+#   ★★ **四种语义完全不同的处置被合成一个数**：`dynamic`（可能只是读取器太窄）/
+#   `unmapped`（该审却漏审）/ `empty-members`（数据源缺）/ `no-members-used`（确实无事可查）。
+#   合成之后，**一次把 `checked` 退化成 `unmapped` 的回归完全不可见**（读数仍是「跳过 5→6」）。
+#   ★★ 而本规格「先量」当场量出真缺陷：`module_consts()` 的正则要求常量行**以数字结尾**
+#   ⇒ `SW_FM_MATE_PROFILE_CENTER = 101  # swFmMateProfileCenter` **读不到**
+#   ⇒ `scripts/sw_weldment.py` 的常量表成 `{}` ⇒ 它唯一的站点被静默判成 `dynamic`
+#   （真处置是 `unmapped`）——「**窄读取器读出 0 也会骗人**」第七次。
+#   本门禁把每个站点**摊开并要求逐站点表态**，且四个 code 各自**自证**。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_cd_site_disposition_gate() -> dict[str, object]:
+    """@brief 跑 `CreateDefinition` 站点处置门禁（`scripts/check_create_definition_site_disposition.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable,
+             str(ROOT / "scripts" / "check_create_definition_site_disposition.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "CreateDefinition 站点处置门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（发布门禁的一个检查项）
+# 文件:   `scripts/check_cd_host_scope.py`（本门禁的实现）
+# 定位:   新增 `_run_cd_host_scope_gate`：**硬门禁**。
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 238）：`check_interface_member_ownership.py` 的
+#   `CONST → 接口` 映射表**只**从 `IFeatureManager\CreateDefinition.md` 造 ⇒ 隐含一个
+#   **从未被写出**的前提：「每个 `CreateDefinition` 调用的宿主都是 `IFeatureManager`」。
+#   ★★ 而官方有**两个**宿主页（`IFeatureManager` / `IMotionStudy`），各有**自己的** `Type` 常量域。
+#   合成之后，「这个常量属于别的宿主」与「官方根本不支持这个常量」**长得一模一样**
+#   （都是 `unmapped`）—— 与 237 的「四种处置合成一个数」同族。
+#   ★★ 本规格「先量」当场**推翻**上一轮交接单的待办（「给 3 个未映射常量补 `MANUAL_MAP`」）：
+#   这 3 个常量**一个都不属于** `IFeatureManager::CreateDefinition` ——
+#   `swFmAEMRotationalMotor` 属 `IMotionStudy`（官方**逐条点名** `ISimulationMotorFeatureData`）、
+#   `swFmDraft` 官方清单里没有（且本仓有真机证据 `CreateDefinition(3)` 返回 None）、
+#   `swFmMateProfileCenter` 只有枚举页收录。⇒ ★ 照字面补 `MANUAL_MAP` 会**污染一张本来正确的表**。
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
+# ─────────────────────────────────────────────────────────────────────
+def _run_cd_host_scope_gate() -> dict[str, object]:
+    """@brief 跑 `CreateDefinition` 站点宿主域门禁（`scripts/check_cd_host_scope.py`）。"""
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "check_cd_host_scope.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "CreateDefinition 宿主域门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把接口归属**诊断**接进发布前检查）
 # 文件:   `scripts/check_interface_member_ownership.py`（判「成员在**这个**接口上存在」）
 #         `C:\swapi\types\<接口>\<成员>.md`（官方类型表，**机器本地数据源**）
@@ -1323,7 +1732,14 @@ def run_release_check() -> dict[str, object]:
         "capabilities.yaml",
         "scripts/stability_regression.py",
         "scripts/release_check.py",
-        "scripts/dfm_review.py",
+        #: ★★★ 2026-10-10 **`scripts/dfm_review.py` 已从必检清单移除**（★ 业主架构指令）：
+        #:   ★ 业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+        #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+        #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+        #:   ★★ `dfm_review` 是**方法**（★ DFM 规则库）——
+        #:     ★ 判据：★「**规则错了，回读能不能查出来**」⇒ ★ **不能** ⇒ 方法 ✗
+        #:   ★ 已移出：★ `archive/inherited-methods/scripts/dfm_review.py` ✓
+        #:   ⚠ **其余两项保留**（★ `stability_regression` / `release_check` 都是工具/门禁）✓
         *REQUIRED_ABILITY_FILES,
     ]
     missing = [item for item in required if not (ROOT / item).is_file()]
@@ -1499,6 +1915,100 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "枚举值门禁未通过（代码里的官方枚举值与出厂反射对不上）：\n"
             + str(enum_values.get("output", "")))
+    # ⚑ **`*_ARITY` 表 × 出厂反射门禁**（硬门禁，2026-10-09 · spec 227）：
+    #   把 224/225/226 三次登记的「`not-enum arity` **不验值**」收口 ——
+    #   ★ 表里的数字是运行期 `_checked()` 的校核依据 ⇒ 表错 = 校核错，且**错得静默**。
+    #   ⚠ 约定（by-ref 含/不含）**必须显式声明**，门禁只负责「按你写的查」。
+    arity_tables = _run_arity_tables_gate()
+    if arity_tables.get("status") == "fail":
+        raise AssertionError(
+            "`*_ARITY` 表与出厂反射对不上（值不符或表未声明 by-ref 约定）：\n"
+            + str(arity_tables.get("output", "")))
+    # ⚑ **`call_assembly_doc` 调用形状门禁**（硬门禁，2026-10-09 · spec 228）：
+    #   227 让 `*_ARITY` 表的**数字**与反射对上了，但**调用方**那一侧仍无人守 ——
+    #   ★ `call_assembly_doc` **不在** `audit_byref_args.WRAPPERS` 里 ⇒ 它的调用点
+    #   **从来没有任何 by-ref 判据**（by-ref 出参必须给占位、不能省：`out_i4` 真机结论）。
+    assembly_doc_shape = _run_assembly_doc_call_shape_gate()
+    if assembly_doc_shape.get("status") == "fail":
+        raise AssertionError(
+            "`call_assembly_doc` 调用形状不符（arity 或 by-ref 占位）：\n"
+            + str(assembly_doc_shape.get("output", "")))
+    # ⚑ **分发口守卫覆盖门禁**（硬门禁，2026-10-09 · spec 229）：
+    #   228 只修了**一个**入口；★ 而「加新分发口要问一句」那句话**不是守卫** ——
+    #   本门禁把**全部 37 个分发口**逐个表态，且每条声明**都由门禁自证**。
+    dispatch_guard = _run_dispatch_entry_guard_gate()
+    if dispatch_guard.get("status") == "fail":
+        raise AssertionError(
+            "分发口（成员名以形参转发给 COM 包装器的函数）未表态或声明不成立：\n"
+            + str(dispatch_guard.get("output", "")))
+    # ⚑ **分发口 by-ref 占位门禁**（硬门禁，2026-10-09 · spec 231）：
+    #   230 **只分类、不判罪**（「可解析」≠「已核」）；本门禁把那 18 个分发口的
+    #   **327 个可解析调用点**喂进 `audit_byref_args` 的同一套判据。
+    #   ★ 缺反射转储时脚本自己 `[SKIP]` + exit 0（缺数据源 ≠ 检查失败）。
+    dispatch_byref = _run_dispatch_byref_guard_gate()
+    if dispatch_byref.get("status") == "fail":
+        raise AssertionError(
+            "分发口调用点的标量 by-ref 占位不符（或下界缩水 / 检查量为 0）：\n"
+            + str(dispatch_byref.get("output", "")))
+    # ⚑ **分发口解析盲区门禁**（硬门禁，2026-10-09 · spec 232）：
+    #   `_entry_sites()` 有 5 种看不见的调用形态（别名导入 / 点式基名 / 同文件自限定 /
+    #   `getattr` 动态）。★ 真树实测**全 0** ⇒ 不扩解析器，只把边界**封死**：
+    #   任一形态非 0 ⇒ 红，逼下一轮先扩解析器再放行。
+    dispatch_blind = _run_dispatch_blindspot_guard_gate()
+    if dispatch_blind.get("status") == "fail":
+        raise AssertionError(
+            "分发口调用点存在解析器**看不见**的调用形态（或下界缩水 / 检查量为 0）：\n"
+            + str(dispatch_blind.get("output", "")))
+    # ⚑ **`local` 桶候选集门禁**（硬门禁，2026-10-09 · spec 234）：
+    #   成员名由**局部变量**传入的调用点（46 个）从 229 起**只被计数、无判据**。
+    #   本门禁要求：候选集能枚举 ⇒ 每个值必须在官方两源里查得到（否则按 `probe` 表态）；
+    #   枚举不出 ⇒ 必须 `#: dispatch-arg: dynamic <理由>`。两个逃生门都自带自证条件。
+    dispatch_arg = _run_dispatch_arg_guard_gate()
+    if dispatch_arg.get("status") == "fail":
+        raise AssertionError(
+            "`local` 桶调用点的候选集未表态 / 声明不成立 / 候选值查不到：\n"
+            + str(dispatch_arg.get("output", "")))
+    # ⚑ **分发口调用点的非字面量实参门禁**（硬门禁，2026-10-09 · spec 235）：
+    #   37 个分发口的 362 个调用点里，8 个把成员名以**非字面量**传入 ⇒ `audit_byref_args`
+    #   看不见，而 `resolution()` 只把入口分类计数。本门禁要求：能枚举 ⇒ 每个候选值必须在
+    #   官方两源里查得到（否则按 `probe` 表态）；枚举不出 ⇒ 必须表态 `dynamic` / `upstream`。
+    #   三个 code 都自带自证条件（含 `upstream` 的 caller 名必须等于实际包围 `def`）。
+    dispatch_fwd = _run_dispatch_forward_arg_gate()
+    if dispatch_fwd.get("status") == "fail":
+        raise AssertionError(
+            "分发口调用点的非字面量实参未表态 / 声明不成立 / 候选值查不到：\n"
+            + str(dispatch_fwd.get("output", "")))
+    # ⚑ **分发口 `upstream` 声明的上游覆盖门禁**（硬门禁，2026-10-09 · spec 236）：
+    #   235 的 `upstream` 只自证**形态**（实参是包围 `def` 的形参 + 名字对得上），
+    #   **从不检查那个 `def` 的调用方传了什么** ⇒ 半开的逃生门。本门禁要求声明必须带
+    #   上游桶（`sites` / `tool-only` / `orphan`）且桶**必须与事实相符**：
+    #   `sites` 的每个调用点须传**字面量**且候选值在官方两源查得到；
+    #   `tool-only` 须 0 个 AST 调用点 + 有 ToolSpec `function=` 引用；
+    #   `orphan` 须两者皆无（★ 「AST 调用点为 0」≠「没人用」）。
+    dispatch_upstream = _run_dispatch_upstream_gate()
+    if dispatch_upstream.get("status") == "fail":
+        raise AssertionError(
+            "分发口 upstream 声明的上游桶未表态 / 与事实不符 / 上游调用点非字面量 / 候选值查不到：\n"
+            + str(dispatch_upstream.get("output", "")))
+    # ⚑ **`CreateDefinition` 站点处置门禁**（硬门禁）：非 `checked` 站点必须逐站点表态，
+    #   且四个 code（`unmapped` / `empty-members` / `no-members-used` / `dynamic`）各自自证。
+    #   立它的真因：原诊断把四种处置**合成一个「跳过 5」** ⇒ 一次把 `checked` 退化成
+    #   `unmapped` 的回归**完全不可见**；★ 而 `dynamic` 那条守卫当场量出
+    #   `module_consts` 的窄正则（带尾注释的常量行读不到）。
+    cd_site = _run_cd_site_disposition_gate()
+    if cd_site.get("status") == "fail":
+        raise AssertionError(
+            "`CreateDefinition` 站点处置未表态 / 与事实不符 / 读取器太窄 / 下界缩小：\n"
+            + str(cd_site.get("output", "")))
+    # ⚑ **`CreateDefinition` 宿主域门禁**（硬门禁）：常量必须落在**官方宿主页**的域内 ——
+    #   `unmapped` 的常量若出现在任一官方 `CreateDefinition` 页 ⇒ 必须补映射（不许逃避）；
+    #   官方**逐条点名**的接口不得被人工表/文本匹配覆盖；多宿主点名不一致 ⇒ 不猜。
+    #   立它的真因：映射表**只**认 `IFeatureManager` ⇒ 「属别的宿主」与「官方不支持」在读数上**同形**。
+    cd_host = _run_cd_host_scope_gate()
+    if cd_host.get("status") == "fail":
+        raise AssertionError(
+            "`CreateDefinition` 站点的常量不在官方宿主域内 / 与官方点名不一致：\n"
+            + str(cd_host.get("output", "")))
     # ⚑ **官方断言门禁**（硬门禁）：代码里「官方没有 X」的断言必须与官方页一致。
     #   立它的真因：`sw_curve_and_split.py` 谎称"官方没给 mark 表"，而官方 Remarks 里就有
     #   ⇒ 两轮真机失败被**归因错了**。★ 接上去当场又抓出 `InsertSplitLineSil` 同样的错。
@@ -1527,6 +2037,33 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "参数绑定门禁未通过（声明的参数既不在形参表、也不在 param_alias 里）：\n"
             + str(param_binding.get("output", "")))
+    # ⚑ **单位纪律门禁**（硬门禁 · ★ 2026-10-10 新增）：
+    #   有长度形参的工具，进 COM 前**必须**有换算痕迹（本仓纪律：入参毫米 · COM 侧米）。
+    #   ★★★ **为什么要接进来**（业主 2026-10-10 逐字点破）：
+    #     「**既然你明明知道了之前的错误，那为什么你还会把错误原封不动地再犯一次呢？**」
+    #   ★★ **根因**：`scripts/audit_length_units.py` **只打印清单**（`return 0` 恒真）
+    #     且**不在本文件里** ⇒ ★ **它从来没拦住过任何东西**；
+    #     且它**只按形参名**判长度 ⇒ ★ 形参叫 `spec`（dict/dataclass）时
+    #     ★★ **长度藏在字段里** ⇒ 判「无长度形参」⇒ **整族跳过** ✗
+    #     ★★★ **齿轮族正是这样被跳过的**（`solidworks_gear_create_spur` 的形参是 `spec`）✓
+    #   ⇒ ★ 本门禁：① 给审计器**下界**（只增不减）② **接进发布检查**（每次都跑）
+    #     ③ **单列一条**「齿轮族必须在视野里」（★ 防那处盲区复发）✓
+    length_units = _run_length_units_gate()
+    if length_units.get("status") == "fail":
+        raise AssertionError(
+            "单位纪律门禁未通过（有长度形参的工具进 COM 前必须有换算）：\n"
+            + str(length_units.get("output", "")))
+    # ⚑ **单位换算次数门禁**（硬门禁，2026-10-11 新增）：★ 上面那道只看**工具层**，
+    #   而 59 个工具的真因在**内部函数**那一层 ⇒ 扫描面与真因不在同一层 ⇒ **假绿**。
+    #   ★ 本门禁判据是**换算次数恰好 1**（0 次 ⇒ 放大 1000 倍；2 次 ⇒ 缩小 1000 倍），
+    #     并沿**同模块函数调用链**（传递闭包）找换算。
+    #   ★ 真机证据：`output/probe-unit-decisive/decisive.json`（同文档单变量：
+    #     草图 40×40 ✓ 而 `extrude_boss(20.0)` ⇒ Z = **20000 mm**）。
+    unit_count = _run_unit_conversion_count_gate()
+    if unit_count.get("status") == "fail":
+        raise AssertionError(
+            "单位换算次数门禁未通过（每个收长度形参的工具必须**恰好换算一次**）：\n"
+            + str(unit_count.get("output", "")))
     # ⚑ **环境坑门禁**（硬门禁）：查「subprocess 缺 encoding=」（事实 58）与
     #   「Path("<盘符>:") 当盘根」（事实 59）—— 两类都**已在真机上造成真实故障**。
     env_pitfalls = _run_env_pitfalls_gate()
@@ -1718,6 +2255,10 @@ def run_release_check() -> dict[str, object]:
         "workspace_shadowing": shadowing,
         "gate_wiring": wiring,
         "param_binding": param_binding,
+        #: ★ 2026-10-10（业主点破「知道了还再犯」）★ 单位纪律门禁 —— ★ 两处都必须加（元门禁在守）
+        "length_units": length_units,
+        #: ★ 2026-10-11（业主第三次点破同一病）★ 单位**换算次数**门禁 —— ★ 两处都必须加（元门禁在守）
+        "unit_conversion_count": unit_count,
         "union_conventions": union,
         "env_pitfalls": env_pitfalls,
         "relative_imports": rel_imports,
@@ -1729,6 +2270,40 @@ def run_release_check() -> dict[str, object]:
         "report_criteria_alignment": crit_align,
         "negative_input_selfproof": selfproof,
         "enum_values": enum_values,
+        #: ★ 2026-10-09（spec 227）：`*_ARITY` 表 × 出厂反射门禁 —— ★ 与其余硬门禁同处登记
+        #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
+        "arity_tables": arity_tables,
+        #: ★ 2026-10-09（spec 228）：`call_assembly_doc` 调用形状门禁 —— ★ 与其余硬门禁同处登记
+        #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
+        "assembly_doc_call_shape": assembly_doc_shape,
+        #: ★ 2026-10-09（spec 229）：分发口守卫覆盖门禁 —— ★ 与其余硬门禁同处登记
+        #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
+        "dispatch_entry_guard": dispatch_guard,
+        "dispatch_byref_guard": dispatch_byref,
+        #: ★ 2026-10-09（spec 232）：分发口**解析盲区**门禁 —— 5 种「解析器看不见」的
+        #:   调用形态任一非 0 即红（真树实测全 0 ⇒ 封边界，不扩解析器）✓
+        "dispatch_blindspot_guard": dispatch_blind,
+        #: ★ 2026-10-09（spec 234）：`local` 桶调用点的**候选集**门禁 —— 从 229 起这批点
+        #:   （46 个）**只被计数、无判据**；本门禁要求候选值在官方两源里查得到、
+        #:   否则必须表态（`dynamic` / `probe`，两个逃生门都自带自证条件）✓
+        "dispatch_arg_guard": dispatch_arg,
+        #: ★ 2026-10-09（spec 235）：分发口**调用点**的非字面量实参门禁 —— 362 个调用点里
+        #:   8 个把成员名以非字面量传入（`audit_byref_args` 看不见）；本门禁要求候选值在
+        #:   官方两源里查得到、否则表态（`dynamic` / `upstream` / `probe`，都自带自证条件）✓
+        "dispatch_forward_arg_guard": dispatch_fwd,
+        #: ★ 2026-10-09（spec 236）：分发口 `upstream` 声明的**上游覆盖**门禁 ——
+        #:   235 的 `upstream` 只自证形态，**从不检查上游 `def` 的调用方传了什么** ⇒
+        #:   半开的逃生门；本门禁要求声明带上游桶且桶与事实相符（`sites` / `tool-only` / `orphan`）✓
+        "dispatch_upstream_guard": dispatch_upstream,
+        #: ★ 2026-10-09（spec 237）：`CreateDefinition` 站点的**逐站点处置**门禁 ——
+        #:   原诊断把 `dynamic` / `unmapped` / `empty-members` / `no-members-used` **合成一个
+        #:   「跳过 N」**（静默降级）；本门禁要求非 `checked` 站点逐站点表态且自证 ✓
+        "cd_site_disposition": cd_site,
+        #: ★ 2026-10-09（spec 238）：`CreateDefinition` 站点的**宿主域**门禁 ——
+        #:   映射表**只**认 `IFeatureManager`（官方其实有 `IFeatureManager` / `IMotionStudy`
+        #:   两个宿主页）⇒ 「常量属别的宿主」与「官方根本不支持它」在读数上**同形**；
+        #:   本门禁要求常量落在官方宿主域内、且官方点名不得被覆盖 ✓
+        "cd_host_scope": cd_host,
         #: ★ 2026-10-03（接手轮）：**官方断言门禁**必须进返回体 ——
         #:   理由同 `py_syntax` 那条：★ 不进返回体，外面就**看不见它是跑了还是跳了**
         #:   （★ 静默跳过与没跑等价；★ 这条元门禁当场抓到过两次）。

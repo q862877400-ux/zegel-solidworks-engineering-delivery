@@ -116,6 +116,27 @@ def call(tool_name: str, *, inject_objects=None, **params):
             if obj is None:
                 return False, "★ 声明注入 %r 但没给对应对象" % inject
             kwargs[inject] = obj
+        #: ★★★★ 2026-10-12 **补 `pre_call`**（★ 阶段 1 真机验收抓到的真缺陷）：
+        #:   ★ 本仓有 **16 个**工具声明了 `pre_call=<fn>` —— 那是**声明式选择器**的解析钩子
+        #:     （例：`solidworks_chamfer` 的 `pre_call=_select_edge` ⇒ 把 `selection="index:0"`
+        #:      解析成真的把那条边选中，因为官方 API **不收边对象、只认当前选择**）。
+        #:   ★★ 而本函数**从来没跑过它**（`'pre_call' in 源码` = **False**）⇒
+        #:     ★ 真机后果：`chamfer` 收到 `selection="index:0"` 却**没有选中任何东西**
+        #:     ⇒ `InsertFeatureChamfer` 回 `None` ⇒ **倒角没建出来**（体积 120000 = W×H×D，零损耗）。
+        #:   ⇒ ★ 修法：**在注入宿主之后、调用目标函数之前**跑 `pre_call`；
+        #:     ★ 它抛异常 ⇒ **不静默**，如实带回（★ 前置没上就报错，不装作"建不出来"）。
+        pre = getattr(spec, "pre_call", None)
+        if callable(pre):
+            import types as _t2
+            try:
+                #: ★★ 实测（2026-10-12）：`pre_call` 的真实签名是 **`pre_call(params)`**，
+                #:   收一个**命名空间**（不是 kwargs）—— 例：
+                #:   `def _select_edge(params): return resolve_selection(_model(), params.selection, "EDGE")`
+                #:   ⇒ ★ 必须传 `SimpleNamespace(**vals)`（★ 与 `derived_args` 同一形状）。
+                pre(_t2.SimpleNamespace(**vals))
+            except Exception as exc:                                    # noqa: BLE001
+                return False, "★ pre_call（声明式选择器解析）抛 %s: %s" % (
+                    type(exc).__name__, str(exc)[:120])
         #: ★★ 声明里的形参**未必都被底层函数接受** —— ★ 真机实测：`solidworks_extrude_boss`
         #:   ★ 抛 `TypeError: extrude_boss() got an unexpected keyword argument '...'` ⇒
         #:   ★★ 说明**注册器另有一套映射**（`param_alias` / `derived_args` / `omitted_params`）✓
@@ -151,12 +172,21 @@ def call(tool_name: str, *, inject_objects=None, **params):
                     payload_ok = False
         except Exception:                                               # noqa: BLE001
             payload_ok = None
+        #: ★★★★ 2026-10-12 **修一个真缺陷**（★ 阶段 1 真机验收抓到的）：
+        #:   ★ 原实现 `return True, note`，而 `note = text[:160]` ——
+        #:   ⇒ ★★ **调用方永远拿不到完整返回体**（只拿到前 160 字符）！
+        #:   ★ 真机后果：`solidworks_part_mass_properties` 回的 dict 有 ~200 字符
+        #:     ⇒ 被截在 `'mass': 0.01600` 处 ⇒ `literal_eval` 报
+        #:     `SyntaxError: unterminated string literal` ⇒ **体积永远读不到**。
+        #:   ⇒ ★ 修法：**返回完整 `text`**；`note` 只用于**错误消息**（★ 那里截断是对的）。
+        #:   ⚠ 这是「**返回体被截断**」这一类，★ 与「返回值不可信」（事实 8）**不同**：
+        #:     那个说的是 bool 不可信，这个是**载荷被丢掉了**。
         note = text[:160]
         if dropped:
             note += "  ★（声明里有但底层不接的形参：%s）" % "、".join(dropped)
         if payload_ok is False:
             #: ★ 工具**跑完了但说自己没成** ⇒ ★ 这**不是**"这一类不可见"，★ 而是"没调成" ✓
             return False, "★ 工具返回体说失败：%s" % note[:140]
-        return True, note
+        return True, text
     except Exception as exc:                                            # noqa: BLE001
         return False, "★ 调用抛 %s: %s" % (type(exc).__name__, str(exc)[:120])

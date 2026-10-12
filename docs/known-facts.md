@@ -494,7 +494,7 @@
 
 | 148 | **挂柜台第五批（审查报告 1 个）：队列列 2 个，实测只挂 1 个；而 `list` 型参数**无先例**就不顺手引入** —— 2026-10-01（轮 208 / Spec Kit `127`）。  ★★ **本批的两处"不硬挂"，都有可重跑的核查命令**： ``` ① `sw_simulation_results.activate_plot(results, plot_name) -> bool`    ★ 首参是 **`results`（ICWResults）** —— 不在约定注入点里（`""` / `model` / `sw_app` / `study`）    ⇒ 与事实 144/147 那批的 `view` **同型**：要么加 `results` 注入器，要么写"study → Results → activate_plot"的包装层    ⇒ ★ **不硬挂**，记进队列 A10（先定"结果不存在时返回什么"） ② `build_review_report` 的 `views` / `expected_outputs` 是 **`list` 型**，而实测：    **`tool_specs_batch*.py` 里没有任何 `list` 型 `Param` 的先例**（核查命令已排除本批产物，事实 147）    ⇒ ★ **不顺手引入**：它们是**可选参数（默认 None）**，不暴露**不影响**主要用途    ⇒ 记进 A10：要暴露得先定"**list 怎么过 MCP 边界**"（逗号串？JSON 串？）**并留下先例** ``` ★ **可复用的判据**：**「有没有先例」要能一条命令答**（这次两条命令都是"期望空"，   ★ 且**都排除了本批产物** —— 事实 147 的定则**已在本批的 plan/tasks/checklist 三处落地**）。  ★★ **五处口径一致地动 1**（第五次同一模式）：被引用函数 105→**106** · 孤立能力 290→**289** · 首参可注入 39→**38** · 并集 436→**437** · 独家 87→**88** · 缺口 338 **不变** ⇒ 计数 53→**54** · 98→**99**。  ⚠ **限度**：本批**只做暴露**（真机排 B 组）· `views`/`expected_outputs` 的**类型细节未核** （不需暴露故非必需）· `build_review_report` 的**返回 dict 形状未核**（工具只透传）。  ★ **流程改进已落地**：本轮的记录用**三步法**（长文本先落 `_fact148.txt` / 游标块 → 最短脚本搬运 → **精确核对每一处**），**没有再出假提交**（对照事实 147 那轮的教训）。  **依据**：`mcp-server/tool_specs_batch15.py` · `mcp-server/register_capabilities.py` · `specs/127-review-report-batch/` · 事实 144 / 147
 
-| 149 | **挂柜台第六批（草图关系 + 镜像）：队列原定的人**碰规则 3**，而"干净"的那个**本来就坏** —— 按规则逐条分诊 14 个** —— 2026-10-01（轮 209 / Spec Kit `128`）。  ★★ **队列 A5 原写「`add_sketch_relation` / `add_dimension`」，实测两处都要改**： ``` ① `add_dimension` 的形参是 **`(model, x, y)`** —— **裸坐标** ⇒ ★ **碰规则 3** ⇒ **留批**（题队列 A8） ② `sw_part` 的 14 个可注入孤立能力，按规则 2/3 **精确分诊**（★ 不用关键词猜 —— 我先用关键词粗筛，    结果**既有假阳性也有漏**：`d1_x/d1_y/d1_z`、`cx/cy` 是坐标却漏了；`radius` 被当成角度）：    ```    ★ 干净（无坐标/长度/角度）：3 个 —— add_sketch_relation · **insert_composite_curve** · mirror_feature    ⚠ 碰规则 3（裸坐标）：6 个 —— add_dimension · hole_wizard · linear_pattern ·                                sketch_arc · sketch_centerline · sketch_polygon    ⚠ 碰规则 2（长度未 _mm）：5 个 —— circular_pattern · insert_dome · rib · shell · sketch_polygon    ⚠ 碰规则 2（角度 angle_rad）：2 个 —— circular_pattern · revolve_boss    ``` ③ ★★★ **而"干净"里的 `insert_composite_curve` 必须排除** —— 不是规则问题，是**它本来就坏**：    已知事实 121 / 124：`InsertCompositeCurve` **一直返回 False**（前置条件已可达，成因未知）    ⇒ ★ **挂它 = 把一个已知坏的入口摊给用户** ⇒ **不挂**，且**不假装它会好**。 ``` ⇒ 本批实际只挂 **2 个**：`add_sketch_relation` · `mirror_feature`。 `relation_type` 的 **12 个合法值引自该函数自己的 docstring**（不是猜）： `sgFIXED` · `sgHORIZONTAL` · `sgVERTICAL` · `sgCOLINEAR` · `sgPARALLEL` · `sgPERPENDICULAR` · `sgTANGENT` · `sgCONCENTRIC` · `sgEQUAL` · `sgSYMMETRIC` · `sgMIDPOINT` · `sgCOINCIDENT`。  ★★★ **可复用的定则**： > **"按规则分诊"必须**逐条套用规则**，不能用关键词粗筛** —— > 粗筛会**同时**产生假阳性（`radius` 被当角度）与漏（`d1_x` 是坐标却没抓）， > 而它**看起来很像已经分诊过了**（这正是本会话反复出现的那种"看着像证据"）。 ★ 并且：**"规则上干净" ≠ "可以挂"** —— `insert_composite_curve` 规则全过，   但它是**已知失败**的入口 ⇒ ★ **分诊要多一道"它现在工作吗"**，而那要看 `known-facts`，不是看签名。  ★★ **五处口径一致地动 2**（第六次同一模式）：被引用函数 106→**108** · 孤立能力 289→**287** · 首参可注入 38→**36** · 并集 437→**438** · 独家 88→**89** · ★ **缺口 338→337（本轮第一次动）** ⇒ 计数 54→**56** · 99→**101**。  ⚠ **限度**：本批**只做暴露**（真机排 B 组）· `relation_type` 的**逐值语义未核**（docstring 只列名字）· `mirror_plane_name` 在**中文 UI 下的确切写法未核** · `insert_composite_curve` 的**成因仍未查**。  **依据**：`mcp-server/tool_specs_batch16.py` · `specs/128-sketch-relation-mirror-batch/` · `D:/AI/SW/output/orphan-capabilities.json` · 事实 121 / 124 / 147
+| 149 | **挂柜台第六批（草图关系 + 镜像）：队列原定的人**碰规则 3**，而"干净"的那个**本来就坏** —— 按规则逐条分诊 14 个** —— 2026-10-01（轮 209 / Spec Kit `128`）。  ★★ **队列 A5 原写「`add_sketch_relation` / `add_dimension`」，实测两处都要改**： ``` ① `add_dimension` 的形参是 **`(model, x, y)`** —— **裸坐标** ⇒ ★ **碰规则 3** ⇒ **留批**（题队列 A8） ② `sw_part` 的 14 个可注入孤立能力，按规则 2/3 **精确分诊**（★ 不用关键词猜 —— 我先用关键词粗筛，    结果**既有假阳性也有漏**：`d1_x/d1_y/d1_z`、`cx/cy` 是坐标却漏了；`radius` 被当成角度）：    ```    ★ 干净（无坐标/长度/角度）：3 个 —— add_sketch_relation · **insert_composite_curve** · mirror_feature    ⚠ 碰规则 3（裸坐标）：6 个 —— add_dimension · hole_wizard · linear_pattern ·                                sketch_arc · sketch_centerline · sketch_polygon    ⚠ 碰规则 2（长度未 _mm）：5 个 —— circular_pattern · insert_dome · rib · shell · sketch_polygon    ⚠ 碰规则 2（角度 angle_rad）：2 个 —— circular_pattern · revolve_boss    ``` ③ ★★★ **而"干净"里的 `insert_composite_curve` 必须排除** —— 不是规则问题，是**它本来就坏**：    已知事实 121 / 124：`InsertCompositeCurve` **一直返回 False**（前置条件已可达，成因未知）    ⇒ ★ **挂它 = 把一个已知坏的入口摊给用户** ⇒ **不挂**，且**不假装它会好**。 ``` ⇒ 本批实际只挂 **2 个**：`add_sketch_relation` · `mirror_feature`。 `relation_type` 的 **12 个合法值引自该函数自己的 docstring**（不是猜）： `sgFIXED` · `sgHORIZONTAL` · `sgVERTICAL` · `sgCOLINEAR` · `sgPARALLEL` · `sgPERPENDICULAR` · `sgTANGENT` · `sgCONCENTRIC` · `sgEQUAL` · `sgSYMMETRIC` · `sgMIDPOINT` · `sgCOINCIDENT`。  ★★★ **2026-10-08 订正（spec 222）——上面那句里的两个名字是错的，不要再引用**： `sgEQUAL` 与 `sgMIDPOINT` **不在** `IModelDoc2::SketchAddConstraints` 的官方 Remarks 清单里（`C:/swapi/types/IModelDoc2/SketchAddConstraints.md` 逐项核对，两串均 0 命中）； 官方名分别是 **`sgSAMELENGTH`** 与 **`sgATMIDDLE`**。原句的错因是「照抄了函数自己的 docstring」—— 而**那个 docstring 本身就是错的** ⇒ ★ 可复用定则： > **"引自源码 docstring" 不是出处** —— 源码的 docstring 与被引的官方源是两回事， > 前者可能已经错了很多轮。引用必须回到官方源本身。 同轮还发现 `SKETCH_CONSTRAINT_TYPES`（`scripts/sketch_relations.py`）19 项里**只有 `angle` 一项**与官方一致， 其余 18 项全错（含 `EQUAL`/`MIDPOINT` 这类官方不存在的名字）。**判据**：`tests/test_relation_enum_alignment.py`（16 例）。  ★★★ **可复用的定则**： > **"按规则分诊"必须**逐条套用规则**，不能用关键词粗筛** —— > 粗筛会**同时**产生假阳性（`radius` 被当角度）与漏（`d1_x` 是坐标却没抓）， > 而它**看起来很像已经分诊过了**（这正是本会话反复出现的那种"看着像证据"）。 ★ 并且：**"规则上干净" ≠ "可以挂"** —— `insert_composite_curve` 规则全过，   但它是**已知失败**的入口 ⇒ ★ **分诊要多一道"它现在工作吗"**，而那要看 `known-facts`，不是看签名。  ★★ **五处口径一致地动 2**（第六次同一模式）：被引用函数 106→**108** · 孤立能力 289→**287** · 首参可注入 38→**36** · 并集 437→**438** · 独家 88→**89** · ★ **缺口 338→337（本轮第一次动）** ⇒ 计数 54→**56** · 99→**101**。  ⚠ **限度**：本批**只做暴露**（真机排 B 组）· `relation_type` 的**逐值语义未核**（docstring 只列名字）· `mirror_plane_name` 在**中文 UI 下的确切写法未核** · `insert_composite_curve` 的**成因仍未查**。  **依据**：`mcp-server/tool_specs_batch16.py` · `specs/128-sketch-relation-mirror-batch/` · `D:/AI/SW/output/orphan-capabilities.json` · 事实 121 / 124 / 147
 
 | 150 | **官方接口分类（`category`）已接进台账** —— 而实施中撞出三处真问题（两处是我的、一处是门禁缺口）** —— 2026-10-01（轮 210 / Spec Kit `129`）。  ★★ **起因**：一份外部只读审计（`D:\AI\SW-transfer\official-category-unused.md`）指出 「官方每个接口都带 `category`（96.5%、39 类），而本仓库没用它、近一半族的 `domain` 是没分出来的」。 ★ **复核结论**：它的数**全对**（我逐条复现：12,123 md / 11,703 有 category / 39 类）； ★ 但它有**两处读法要更正**、**一处表格笔误**（详见事实 151 那条更正）。  ★★★ **本特性做完的事实（可重跑）**： ``` · `family-coverage.json` 每行新增 `official_category`：**881/881 行有字段**，**477 行有非空值（54.1%）** · md 新增 `## 四`：4.1 覆盖 / 4.2 未认领 / 4.3 能救回多少 / 4.4 怎么用·怎么不用 · ★★ 「未认领」真实比例 **507 / 881 = 57.5%**（九个 `全量索引/*` 桶合计）      —— 审计只数了最大的那个桶（`sldworks` 385）⇒ 报成 **43.7%**，**低估** · ★★ 官方分类能救回 **340 / 507 = 67.1%** · ★ 该字段**只有一个来源**：`C:\swapi`（help 站点镜像）。    实测**两份出厂反射转储都没有 `category`**（`iface_sldworks.txt` 只有接口名；    `iface_cosworks.txt` 是 `<接口> :: <返回类型> <方法名>(…)`）    ⇒ ★ **无法按铁律 4 三源互证** ⇒ 只能当"单一来源的分类"用，**不能**用它推"该不该做工具"      （标签说的是接口**是什么**，不是我们**需不需要**）。 ```  ★★★ **实施中撞出的三处真问题**（都不是原计划）： ``` ① ★★★ **验收命令门禁抓到一处真缺陷**：`[outside-repo] D:\AI\SW\tools\gen_family_coverage.py`    ——「绝对路径且不在仓库根下 ⇒ 只在写它的那台机器上有」。    ★ 我先试了**两次"改写命令"**（`Set-Location` 形式）⇒ **都还是不过**（退化成 `[missing-in-repo]`）。    ★★ 于是**停下打补丁**，按门禁的**本意（可移植性）**做根修：**把生成器搬进代码仓库 `tools/`**。    ⇒ ★★★ **搬完不用改一行命令就过了** —— 这证明根修对、前两次都在绕。    ⚠ 而我**一开始拒绝搬**的理由是「ROADMAP / specs 107 / gen_harvest_digest 三处引用了工作区路径」；      重读后发现那三处写的是「⚠ 跨仓库**滞后风险**」⇒ ★ **那是"已知风险"，搬进去正是消除它**。    ⇒ 顺手改了 `tools/gen_harvest_digest.py` 的 2 处引用（**一个家**）。  ② ★ **A6 许可门禁抓到我的一处措辞**：我在来源块的 `许可:` 行写了「**无许可**」三字    （本意是描述 `C:\swapi` **输入源**的许可）⇒ 报 `[forbidden-license-claimed]`。    ⇒ 改法：**许可行只写本仓库 MIT**，输入源的警示**移到单独一行**。    ★ 门禁在这里**是对的**：来源块的许可行出现禁类词后，机器**无法区分"声明"与"描述"**。  ③ ★ **搬进去还要补来源块**：仓库的 A6 门禁要求每个工具带    「仓库 / 文件 / 定位 / 实测状态」四段 ⇒ 补上才过。 ```  ★★★ **可复用的定则（这一轮最值钱的）**： > **门禁报错时，先判断它要的是"措辞"还是"结构"** —— > 若同一处**改写两次仍不过**，那它要的**不是措辞**（本轮的 `outside-repo` → `missing-in-repo` 就是信号） > ⇒ **停下改写，去满足它的本意**（这里：让生成器与产物同仓）。 ★ 而**同一个信号**在事实 147 里出现过一次（"期望空"判据被自己的产物污染）：   **两次都表现为"看起来像措辞问题、实际是结构问题"**。  ⚠ **限度**：`category` **无法三源互证**（反射没有该字段）· 「手写域 vs 官方类」的**全量错位对照未做**· `category` 的**更新频率未核** · 另外 **5 个生成器仍在工作区**（同样的"产物在仓库、生成器不在"）⇒ **记成待办**。  **依据**：`D:\AI\SW\specs\129-official-category-column\` · `C:\swprojects\sw-skill-fork\tools\gen_family_coverage.py` · `docs/family-coverage.{md,json}` 的 §四 · `D:\AI\SW-transfer\official-category-unused.md`（外部审计）· 事实 147
 
@@ -792,20 +792,68 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 ## 一、★ 新增的两件
 ```
 ★ `scripts/sw_com_traps.py` 加 **`DEPRECATED_ENTRIES`**（★ 靶子表：`(接口, 废弃成员) -> 后继`）+ `deprecated_successor()`。
-   ★ 只放**已核过**的两族：保存族（`SaveAs`/`SaveAs2` ⇒ `SaveAs3`）·
-     包覆族（`InsertWrapFeature` ⇒ `InsertWrapFeature2`，★ 轮 329–331 **真机验过**）。
-★ `tests/test_deprecated_entry_interlock.py`（**4 个 test**）：
+   ★ 只放**已核过**的**三族**：保存族（`SaveAs`/`SaveAs2` ⇒ `SaveAs3`）·
+     包覆族（`InsertWrapFeature` ⇒ `InsertWrapFeature2`，★ 轮 329–331 **真机验过**）·
+     ★ **装配族**（`AddMate5` ⇒ `CreateMate`，★ 2026-10-09 spec 241 加 ——
+       ★ 官方 `AddMate5.md:12` 逐字 `Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]`，
+       ★ 后继页 `grep -c -i obsolete` = **0**，★ 且后继在仓库里真被调用 `sw_weldment.py:819`）。
+★ `tests/test_deprecated_entry_interlock.py`（**6 个 test**）：
    ① **不许新增**（★ 扫**全部** `scripts/sw_*.py`，★ 排除 `sw_api_*.py` 反射转存）·
+   ①b ★ **登记表不许有死条目**（★ 2026-10-09 spec 241 加 —— ★ 登记值 > 真树处数 ⇒ 红）·
    ② **正面**（★ 每个后继入口**要在仓库里真的被调用** —— ★ 否则互锁退化成「全都不许用」）·
    ③ **双假对象互锁**（★ 废弃入口**必炸**、后继**必通**，★ 而且**逐条**验）·
-   ④ 靶子表**形状**自检（★ 后继名不能 == 自己 —— 事实 271 的一类假阳性）。
+   ④ 靶子表**形状**自检（★ 后继名不能 == 自己 —— 事实 271 的一类假阳性）·
+   ④b ★ **点式形态不是盲区**（★ 2026-10-09 spec 241 加 —— ★ 三形态合成负例 + 边界冻结）。
+   ★★ **扫描器收两种形态**（spec 241）：★ 字面量 `get_com_member(obj,"Name",…)` **与**
+     **点式** `obj.Name(…)`；★★ 且认 `call_assembly_doc(doc, member, …)` 这个成员名载体。
+     ★★★ **为什么**：★ 原扫描只认字面量 ⇒ `sw_assembly.py:415` 的 `asm_model.AddMate5(...)`
+       **读成 0 处** ⇒ ★ 那是**空判据**（★ 与 spec 239「只看点式调用 = 空判据」**方向相反、同一个病**）。
 ```
+
+★★ **2026-10-09（spec 242）加的两件 —— 扩容的**前置条件**不是"多写几行表"**：
+   · `deprecated_successor(member, interface="")` —— ★ 给了接口按 `(接口, 成员)` **精确查**；
+     ★ 没给接口时，★ **只有该名在表里映射到唯一后继**才回它，★ **按名歧义 ⇒ 回 `None`（不猜）**。
+   · `ambiguous_deprecated_members(table=None)` —— ★ 把「同名 · 不同后继」**显式报出来**（★ 空 = 无歧义）。
+   ★★ 为什么必须先有它：★ 官方废弃索引 **1671 条 / 1455 个成员名**里，
+     ★ 按官方**字面后继**看有 **115** 个歧义名；★★ 按**链终点**（★ 沿 `Superseded by` 走到底）看
+     ★ **79** 个才是**真歧义**（★ `SaveAs` 是**假歧义** —— 两条链终点都是 `IModelDocExtension::SaveAs3`）；
+     ★ 真树在调的 **82** 个废弃名里有 **11** 个真歧义（`Select2` 一名 **6** 个不同终点）。
+     ★★ 而 `deprecated_successor` 是**公开 MCP 工具** ⇒ 收进歧义名会让它**静默给一个错的**后继。
+★ `tests/test_deprecated_table_admission.py`（**8 个 test**）—— ★ 靶子表**扩容准入**三关：
+   ★ 关 0 按名歧义 = 0 · 关 1 在官方索引里 · ★★ 关 2 **后继 = 官方链的终点**（★ 官方那句字面值
+   **可能自己也已废弃** —— `IModelDocExtension::SaveAs` ⇒ `SaveAs2` ⇒ `SaveAs3`）·
+   关 3 后继**在仓库里真的被调用**；★ 另有**边界冻结**：★「官方链终点跨接口不同」的名字
+   **未经表态不得进表**（★ 豁免名单 `_AMBIGUOUS_NAME_ALLOWLIST` 现为空）。
+
+★★ **2026-10-09（spec 243）加的三关 —— 242 的三关**不够**，会把"表达不了"的条目放行**：
+   ★★ **先量**（探针 `output/_probe243_admission.py`）：真树在调的 **82** 个废弃名按 242 口径分桶
+   `successor-same-name 34 · terminal-never-called 23 · admissible 15 · ambiguous-terminal 9 · chain-broken-all 1`。
+   · ★★★ **关 4 `successor-same-name`**：★ 官方那句 `Superseded by` 常常是**接口迁移**
+     （`IModelDoc2::FeatureCut4` → `IFeatureManager::FeatureCut4`）—— ★ 后继**成员名与被废弃的一模一样**，
+     ★ 而靶子表的值是**裸成员名**、互锁判据也**按名比** ⇒ ★ **表表达不了它**
+     （★ 收了会同时踩互锁测试的 `succ != member`）⇒ ★ **34/82 是这一类**，242 的三关**一个都不拦**。
+   · ★★★ **关 5 `multiple-official-successors`**：★ 官方常写「`Superseded by A and B`」，
+     而 `tools/build_obsolete_index.py` 用 `re.search` ⇒ **只留第一个**（**有损**）
+     ⇒ ★ 索引 1671 条里 **254 条**是多后继；★ 真案例 `IModelDoc2::SketchTrim.md:12` 逐字
+     「`Superseded by [[ISketchManager::SketchExtend]] and [[ISketchManager::SketchTrim]].`」
+     ⇒ ★ 索引只记 `SketchExtend` ⇒ ★ **错的**（`SketchTrim` 该换 `SketchTrim`）⇒ ★ 这类**必须人工表态**。
+   · ★★ **关 6 `successor-page-missing` / `successor-still-obsolete`**：★ `_chain_terminal` 把
+     「后继页**不在索引里**」当成**终点** —— ★ 而"不在索引里"有**两种**含义：① 页存在且不废弃 ✓
+     ② **页根本不存在** ✗ ⇒ ★ **同形**（静默降级）⇒ ★ 必须另判。
+     ★★ 判据用**页首行**（★ 口径同 `build_obsolete_index.py`），**不是**全文搜 `obsolete` ——
+       ★ `IModelDocExtension\SaveAs3.md` 正文里就有「the now obsolete [[…::SaveAs2]]」⇒ 全文搜会**假红**。
+★ `tests/test_deprecated_table_admission.py`（**8 → 12 个 test**）—— 新增 4 例：
+   ★ 关 4 合成负例 · ★ 普查五桶各自非空（**下界**，防"检查量为 0"）· ★ 关 5 真案例
+   （`SketchTrim`）+ 索引多后继规模下界 · ★ 关 6 两条合成负例 + `SaveAs3` 假阳性**边界冻结**。
+   ★★ 判据签名改为 `_admission_failures(table, imap, called, entries)`（★ 关 5/关 6 要原始索引条目）。
+   ★★ **结论：本轮不灌表** —— 15 个"过关"候选里 `SketchTrim` 已被证是**索引有损导致的错后继**
+     ⇒ ★ 先补严判据，扩容留给下一轮（★ 交接单待办 1）。
 
 ## 二、★★★ 负例自证（★ 事实 62：门禁有效的**唯一**证明）
 ```
 ★ 在 `sw_units.py` 里**临时插**一个 `get_com_member(model, "SaveAs", …)` ⇒
    ★★ `test_no_new_calls_to_deprecated_entries` **精确报出** `('sw_units.py', **59**, 'SaveAs')` ✓
-★ 恢复后 ⇒ **4 passed**。
+★ 恢复后 ⇒ **6 passed**（★ 2026-10-09 spec 241 后：★ 原记 4 passed，★ 新增两条判据 ⇒ **6**）。
 ```
 
 ## 三、★ 两条实践细节
@@ -817,6 +865,75 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 ```
 
 ★ **本轮无 SW 依赖**（★ SW 仍卡在轮 24 遗留的 `create_mesh`，已通知用户重启）。
+
+★★ **2026-10-09（spec 245）把 244 的「14」核到宿主级 —— 真树靶子 = 0，交接单待办 1 关闭**：
+   ★★ **244 的口径是裸成员名**（`真树被调成员名 ∩ 多后继条目的成员名 = 14`）⇒ ★ 而**同名成员横跨多个接口、
+     只有一部分废弃** ⇒ **一半是假命中**：
+     · `SketchTrim`：★ 真树调的是 **`ISketchManager::SketchTrim`**（★ **非废弃**，正是索引该给的那个）——
+       宿主 `get_com_member(model, "SketchManager")`（`sw_sketch_edit_ops.py:148`）
+       ⇒ ★★ **244 说它是「唯一落在错后继里的真靶子」是错的**。
+     · `GetArcs2` / `GetLines2` / `GetPolylines` / `GetSplines` / `GetEllipses3`：宿主是 **`ISketch`**（★ 非废弃），
+       ★ 不是被废弃的 `IView::*`。
+     · `GetMassProperties`：宿主是 **`IModelDocExtension`**（= 条目 `IModelDoc2::GetMassProperties` 的**后继本身**）。
+   ★★ **宿主级复核读数**（探针 `output/_probe245_hosts.py` + `output/_probe245_pages.py`）：
+     `命中名 14 · 调用点 65 · real-hit 6 · mixed 1 · false-hit 7`。
+     · 真命中（`DeleteRenderMaterial` / `FeatureLinearPattern5` / `FeatureLocalCurveDrivenPattern` /
+       `InsertFormToolFeature` / `KFactor` / `MaterialIdName` / `Name`）的**索引后继 7/7 正确**。
+     · ★ 机械信号：**11** 个名在 `C:/swapi/types/*/` 下有**非废弃的同名页**（★ `Name` 一个名就有 **22** 个）。
+   ★★★ **结论：244 的 6 条「索引取错」在真树上零影响** ⇒ ★ 交接单**待办 1（逐条复核 254 条多后继）关闭**；
+     ★ 修索引生成器**仍是独立工作**（无真树靶子，按需）。
+   ★ `tests/test_obsolete_multi_successor_impact.py`（**7 例**）· ★ **红基线**：变异检验 5 组全红
+     （`output/_probe245_redbaseline.py`）—— ★★ 其中「清空登记表」这一组**当场抓出判据 ④ 是空判据**
+     （表为空 ⇒ 「逐条比对」**一条都不比**）⇒ ★ 补**检查量下界**（表 ≥14 · 证据站点 ≥14）后转红 ✓
+     （★ 事实 46「检查量为 0 判失败」的又一实例）。
+
+★★ **2026-10-09（spec 246）`admissible` 候选的收表处置 —— 靶子表 4 → 9 条**：
+   ★ **先量**（`output/_probe246_candidates.py`）：242/243 口径分桶 `successor-same-name 34 ·
+     terminal-never-called 23 · **admissible 15** · ambiguous-terminal 9 · chain-broken-all 1`；
+     ★ 六关失败 `multiple-official-successors 4 · successor-page-missing 1`。
+   ★★★ **245 的教训对 `admissible` 同样成立**：分桶也**按裸成员名**算 ⇒ ★ 15 个里 **3** 个是**假命中**
+     （`Add2` 宿主 `mgr` = **IEquationMgr** · `GetModelDoc` 宿主 `view` = **IView** ·
+     `GetUserPreferenceIntegerValue` 宿主 `app` = **ISldWorks**）。
+   ★★ **处置读数**：`collected 5` · `already-in-table 2` · `reject-multi-successor 4` ·
+     `reject-successor-page-missing 1`（`GetActiveSketch2` 的终点页 `SketchManager::ActiveSketch` **不存在**）·
+     `reject-host-interface-mismatch 3`。
+   ★ **新收 5 条**（★ 每条**读了两边签名**，见 `output/_probe246_signatures.py`）：
+     `ISldWorks::ActivateDoc2 → ActivateDoc3` · `ISketch::AutoDimension2 → ISketchManager::FullyDefineSketch` ·
+     `IFeatureManager::FeatureCircularPattern4 → CreateFeature`（★ 字面后继 `FeatureCircularPattern5` **自己也废弃**
+     ⇒ 取**链终点**，★ 242 定则）· `IAssemblyDoc::GetExplodedViewCount → GetExplodedViewCount2` ·
+     `ISelectionMgr::ResumeSelectionList → ResumeSelectionList2`。
+     ★★ **五条都不是 drop-in**（参数都变了）⇒ ★ **只登记"它已废弃、后继是谁"**，★ **换路由必须真机验**。
+   ★ `tests/test_deprecated_admissible_disposition.py`（**8 例**）· ★ 互锁族回归 **49 passed** ·
+     ★ 生成器链已跑（★ 改了 `scripts/`）· ★ `release_check` @3.14.7 `EXIT 0 · missing []`。
+   ★★ **本轮踩的坑（已修）**：★ 新测试里写了「行首 `+` 的字符串拼接」⇒
+     `check_diff_markers` **当场红**（`+` 被当 patch 行首记号）⇒ ★ 修法：**把 `%` 格式化放同一行**，
+     别用行首 `+` 续行。★ **与事实 271 同族**（来源块别带 patch 记号）。
+   ★★ **变异检验再次有产出**：★ 把 `Add2` 判成 `collected` 时，判据③ 抛的是 **`KeyError`**
+     （★ 不是可读的失败）⇒ ★ 补「`collected` 必须在 `_COLLECTED_SUCCESSOR` 里」的断言 +
+     判据④ 补**反向一致性** ⇒ ★ **两处漂移当场红**。
+
+★★ **2026-10-09（spec 247）多后继的**机械化表态** —— 靶子表 9 → 11 条**：
+   ★★★ **243 的关 5 把「数据接口」也算成了后继** —— 官方常写「`See [[X]] and the Remarks in [[Y]]`」，
+     ★ 而 `Y`（`ILinearPatternFeatureData` 等）在 `C:/swapi/types/` 里**页根本不存在**
+     （★ 它只出现在 `Remarks` 引用里）⇒ ★ 243 只数「全部 `[[…]]` 链接」⇒ **假拒**。
+   ★ **先量**（`output/_probe247_multi.py`）：**254** 条多链接条目的措辞分布 =
+     `Superseded by A and B` **235** · `See X and the Remarks in/of Y` **14** · 其它 `See …` **5**；
+     ★ **真树在调的多链接条目 = 18**（`SUPERSEDED-BY 16` · `SEE+REMARKS 2` · `SEE(other) 0`）。
+   ★★ **三态（纯函数 `_official_successor_count`）**：
+     · `Superseded by A and B` ⇒ **2**（★ 两个都是后继 ⇒ 表表达不了「两个都要」⇒ **拒**）
+     · `See X and the Remarks in/of Y` ⇒ **1**（★ 只有 X）
+     · 其它 `See …` ⇒ ★ **`None`**（★ **判不出**：实测 `See [[IProjectionCurveFeatureData]] and
+       [[IFeatureManager::CreateDefinition]]` ⇒ ★ **数据接口在前、真后继在后** ⇒ 按位置取**必错**）
+   ★★ **收 2 条**（★ 读了两边签名）：`IFeatureManager::FeatureLinearPattern5 → CreateFeature` ·
+     `IFeatureManager::FeatureLocalCurveDrivenPattern → CreateFeature`（★ 都不是 drop-in：要先造 `I*PatternFeatureData`）。
+     ★ **拒 2 条**：`InsertFormToolFeature`（`Superseded by [[CreateDefinition]] and [[CreateFeature]]`
+     ⇒ **两个都是后继**）· `SketchTrim`（★ 关 4：真后继是同名的 `ISketchManager::SketchTrim`）。
+   ★ `tests/test_deprecated_multi_successor_adjudication.py`（**11 例**）· 相关族回归 **65 passed** ·
+     ★ 生成器链已跑 · ★ `release_check` @3.14.7 `EXIT 0 · missing []`。
+   ★★ **本轮踩的坑**：**`_chain_terminal` 对「起点不在索引里」也回 `None`** —— ★ 我第一版的
+     「官方那个链接必须在链上」检查写成 `o_term is None ⇒ 红` ⇒ ★ **把「链接自己就不废弃」这种正常情形
+     误判成红**（`CreateFeature` 不在索引里）。★ 修法：**先判 `(iface, member) not in imap ⇒ 它就是终点`**。
+     ★★ **定则：`None` 有两种含义（"断链"与"起点不在索引里"）** —— ★ 与 243 的关 6 教训**同族**。
 
 | 273 | **objective② 的判据升级：**先取描述、再判缺口** —— 抽取脚本 + 有依据判定（2026-10-01，轮 353）。
 
@@ -3882,6 +3999,43 @@ SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办�
 ★ 修法：★ 新增 `_document_length_unit_scale(model)`（★ 读 `GetUnits()`、★ 按 `swLengthUnit_e` 取倍数）✓
 ★★ **真机复核**：★ `before_mm.current` **`20000.0` → `20.0`** ✓
 ★ 依据：`tests/test_document_unit_scale.py`（★ 5 条）+ `docs/known-facts.md` 本条 ✓
+
+### 二·补 · ★★★★★ **2026-10-11 更正：本条的 §一② 是错的** —— `FeatureExtrusion3` 的 `D1` **吃米**
+
+**触发**：业主第三次点破「单位 ×1000」病（「你刚刚设计的俩测试零件都巨长无比」）。
+
+**★★ 新的决定性实验**（`output/probe-unit-decisive/decisive.json`，
+**同文档、同会话、单变量**，★ 只改「拉伸深度」一个数）：
+
+| ★ 臂 | ★ 操作 | ★ 回读尺寸（mm） |
+|---|---|---|
+| **A0** | 建草图 40×40（`sketch_corner_rectangle` 内部**有**换算） | `[40.0, 40.0, 0.0]` ⇒ ★ **草图是对的**（有正确基准） |
+| **A1** | `extrude_boss(model, "草图1", **20.0**)` **原样传** | `[40.0, 40.0, **20000.0**]` ⇒ ★★ **20 米** |
+
+**⇒ `FeatureExtrusion3` 的 `D1` 吃米，不是「随文档单位」。**
+
+**★★ 本条 §一② 为什么错**（★ 两个可能，★ 都已核）：
+
+1. **旧探针的试件本身是错的**（审计员 8 独立查明）：那次（2026-10-02）建板用的是
+   **当时还没有换算**的 `sketch_corner_rectangle` + `extrude_boss`
+   ⇒ 它以为的「100×60×20 **mm** 板」实际是 **100×60×20 米**。
+2. **它的判据是尺度不变的**：读数 `size = [100, 60, 20]` 里的「20」与「100/60」
+   **同比例** ⇒ 在「全部按米」下**逐位同样成立** ⇒ ★★ **结构上无法分辨毫米与米** ✓
+
+**⇒ 定则（可复用）**：**比值型的判据定不了单位** —— 要**绝对量**
+（如「草图 40×40 已核对正确」这样的**外部基准**）才定得了。
+
+**⚠ 而 §一① 的结论（`GetSystemValue3` 回文档单位）★ 仍成立、★ 未被推翻** ——
+那是**另一个 COM 成员**，且它的证据是 `GetUnits() = [0,…]` 与 `(20.0,)` 的**直接对照**，
+不是比值 ⇒ ★★ **本条的两个子结论一个被推翻、一个仍立** ✓
+
+**★ 已按此更正落地**：
+- 新门禁 `scripts/check_unit_conversion_count.py`（判据：换算**恰好一次**）
+- 修复 **59 个工具**（从 46/105 → **81/81 全部恰好一次**）
+- 真机复核：`fillet(5)` `[4.926,…]`→**`[40,40,10]`** · `dome(5)` `[5040,…]`→**`[48.889,…]`** ·
+  `chamfer(2)` 返回 `None`→**COMObject** · `shell(2)` `ok:False`→**`ok:True`**
+
+---
 
 ### 三 · ★★★★ 而扫全仓发现**同一假设可能还散在别处**（★ 待核，★ **未改**）
 ★ 新增 `tools/scan_mm_meter_conversions.py`（★ 只报不动）⇒ ★ **命中 81 处换算、★ 49 处"同行无单位依据"**；
