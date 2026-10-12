@@ -16,6 +16,18 @@
   - 退出草图，把矩形拉伸成 20 毫米厚的板
   - 用异型孔向导在四角各打一个 M6 通孔，孔心距两边各 10 毫米
   - 读回体积与孔数
+  sketch_definition:
+    sketch: 矩形草图（前视基准面）
+    origin: 矩形**左下角**与原点**重合**
+    dims:
+    - 100（水平边长）
+    - 60（竖直边长）
+    relations:
+    - 矩形工具自带：对边平行 · 邻边垂直 · 四角重合
+    - ★ 补：左下角↔原点 重合
+    tool_builtin: 矩形工具**自带**平行+垂直+重合 ⇒ ★ 只欠**位置**与**大小**
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -57,6 +69,16 @@
   - 退出草图，拉伸 100 毫米成圆柱轴
   - 用倒角工具选两端圆的两条边缘线，倒 1×45° 角
   - 读回体积
+  sketch_definition:
+    sketch: 圆草图（前视基准面）
+    origin: 圆心与原点**重合**
+    dims:
+    - φ20（直径）
+    relations:
+    - ★ 圆工具**不自带**任何关系 ⇒ 必须补：圆心↔原点 重合
+    tool_builtin: 圆工具**不自带** ⇒ ★ 位置要自己锚
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -96,6 +118,23 @@
   - 用尺寸工具把外框约束成 100×100、板厚方向留出 20
   - 退出草图，拉伸 20 毫米
   - 读回体积与包围盒
+  sketch_definition:
+    sketch: L 形轮廓草图（前视基准面）
+    origin: ★ **左下角**与原点**重合**
+    dims:
+    - 100（外框水平）
+    - 100（外框竖直）
+    - ★ 缺口位置与缺口大小 —— **需求没给 ⇒ 要问**
+    relations:
+    - ★ 直线工具**不自带**任何关系 ⇒ 逐条补：
+    - ① 重合 × 6（相邻边共端点）
+    - ② 垂直 × 6（L 形 6 个角全是直角）
+    - ③ 水平 × 3（上边 / 下边 / 缺口一边）
+    - ④ 竖直 × 3（左边 / 右边 / 缺口一边）
+    - ⑤ 左下角↔原点 重合（★ 位置定义）
+    tool_builtin: ★★ 直线工具**完全不自带** ⇒ ★ 这是业主批注 1 说的坑
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_line
@@ -136,6 +175,18 @@
   - 退出草图，拉伸 10 毫米
   - 用抽壳工具设壁厚 2 毫米，选顶面作为开口面
   - 读回体积（= 48000 − 内腔）
+  sketch_definition:
+    sketch: 矩形草图（前视基准面）
+    origin: 矩形**左下角**与原点**重合**
+    dims:
+    - 80（水平）
+    - 60（竖直）
+    relations:
+    - 矩形工具自带：对边平行 · 邻边垂直 · 四角重合
+    - ★ 补：左下角↔原点 重合
+    tool_builtin: 矩形工具自带 ⇒ 只欠位置与大小
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -176,6 +227,22 @@
   - 用尺寸工具把两段直径与长度都约束住
   - 退出草图，用旋转凸台绕中心线转 360°
   - 读回体积
+  sketch_definition:
+    sketch: 阶梯轴半剖面草图（前视基准面）
+    origin: ★ **中心线**过原点（★ 旋转轴必须是中心线）
+    dims:
+    - φ20 / 长 40（第一段）
+    - φ30 / 长 30（第二段）
+    relations:
+    - ① 中心线**竖直**（或水平）
+    - ② ★ **各外轮廓线与中心线平行**（业主批注 3 的原话）
+    - ③ ★ **端面线与中心线垂直**（业主批注 3 的原话）
+    - ④ 相邻段的**共线**（φ20 段与 φ30 段的轴线同轴）
+    - ⑤ 台阶面↔中心线 **垂直**
+    - ⑥ 中心线↔原点 重合
+    tool_builtin: ★ 直线工具不自带 ⇒ ★ 平行/垂直**全要手加**（★ 业主批注 3）
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_line
@@ -216,6 +283,18 @@
   - 退出草图，拉伸 5 毫米
   - 用圆角工具选四条竖直棱边，半径 R3
   - 读回体积（应小于 1250）
+  sketch_definition:
+    sketch: 矩形草图（前视基准面）
+    origin: 矩形**左下角**与原点**重合**
+    dims:
+    - 50（水平）
+    - 50（竖直）
+    relations:
+    - 矩形工具自带：对边平行 · 邻边垂直 · 四角重合
+    - ★ 补：左下角↔原点 重合
+    tool_builtin: 矩形工具自带
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -256,6 +335,16 @@
   - 退出草图，拉伸 30 毫米成圆柱销
   - 用倒角工具选两端圆的两条边缘线，倒角边长 1 毫米
   - 读回体积（≈ π×9×30 − 两端倒角）
+  sketch_definition:
+    sketch: 圆草图（前视基准面）
+    origin: 圆心与原点**重合**
+    dims:
+    - φ6（直径）
+    relations:
+    - ★ 圆工具不自带 ⇒ 补：圆心↔原点 重合
+    tool_builtin: 圆工具不自带
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -300,6 +389,22 @@
   - 用尺寸工具约束槽长 40、槽宽 10
   - 退出草图，用拉伸切除贯穿板厚
   - 读回体积（= 144000 − 槽体积）
+  sketch_definition:
+    sketch: ① 矩形草图 + ② 槽口草图（板的顶面）
+    origin: ① 矩形左下角↔原点 重合 · ② ★ 槽的**中心线↔矩形中心**（用**对称**关系，★ 不用 1/2 尺寸 —— 见协议 §5）
+    dims:
+    - ① 120 × 80
+    - ② **槽长 40** —— ★ 必须说清口径：**圆弧中心至圆弧中心**（官方 2026 SP1）
+    - ② **槽宽 10** = 标**圆弧半径 R5**（★ 两圆弧自带相等 ⇒ 标一个就够）
+    - ② ★ 槽的**定位**：用**对称**关系（不用 1/2 尺寸）⇒ 改槽宽时保持居中
+    relations:
+    - ① 矩形工具自带：平行 · 垂直 · 重合；补：左下角↔原点
+    - ② 槽口工具自带：两圆弧**相等** · 两直线**平行** · 直线与圆弧**相切**
+    - ★ 补 ②：槽中心线 **平行** 于矩形长边（★ 业主批注 4 要的方向关系）
+    - ★ 补 ②：槽中心线↔矩形水平中心线 **重合**（或对矩形加**对称**）
+    tool_builtin: 槽口工具自带相等/平行/相切 ⇒ ★ 欠**位置**与**方向**
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -344,6 +449,17 @@
   - 退出草图，拉伸 8 毫米成压板
   - 用异型孔向导在中心打一个 M8 通孔
   - 读回体积、孔数与孔径
+  sketch_definition:
+    sketch: ① 矩形草图 + ② 中心孔（异型孔向导，不需草图）
+    origin: ① 矩形左下角↔原点 重合
+    dims:
+    - ① 80 × 30
+    relations:
+    - ① 矩形自带：平行 · 垂直 · 重合；补：左下角↔原点
+    - ② 孔的位置由**孔向导的点**定 ⇒ ★ 那个点要锚到矩形中心
+    tool_builtin: 矩形自带；孔向导的点**不自带** ⇒ 要锚
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -389,6 +505,19 @@
   - 退出草图，用拉伸切除打穿
   - 用圆周阵列把这个孔绕轴心阵列 6 个（等间距 60°）
   - 读回孔数、孔径与分布圆直径
+  sketch_definition:
+    sketch: ① 圆草图（轴） + ② 端面圆草图（孔）
+    origin: ① 圆心↔原点 · ② ★ 孔的圆心要定在**分布圆 φ30** 上
+    dims:
+    - ① φ20（轴）
+    - ② φ5（孔）
+    - ② 分布圆 φ30（★ 定位尺寸）
+    relations:
+    - ① 圆不自带 ⇒ 圆心↔原点
+    - ② 孔圆心↔原点 **竖直**（或标 30 的定位尺寸）
+    tool_builtin: ★ 圆周阵列工具会生成 6 个实例 ⇒ ★ 只需定义**种子孔**
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -437,6 +566,20 @@
   - 用尺寸工具约束槽宽 6、深 3
   - 退出草图，用拉伸切除切出键槽
   - 读回体积（= 圆柱 − 键槽）
+  sketch_definition:
+    sketch: ① 圆草图 + ② 键槽矩形草图（圆柱端面）
+    origin: ① 圆心↔原点 · ② ★ 键槽一边要与圆柱**相切/共线**（定深度方向）
+    dims:
+    - ① φ20
+    - ② 槽宽 6 · 槽深 3
+    relations:
+    - ① 圆不自带 ⇒ 圆心↔原点
+    - ② ★ 矩形（键槽）**竖直边要竖直**、**水平边要水平**
+    - ② ★ 键槽**底边与圆柱外圆相切**（或共线于一条竖直中心线）
+    - ② 键槽竖直中心线↔原点 **重合**
+    tool_builtin: 矩形自带平行/垂直；★ 与圆的**相对关系**要手加
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -484,6 +627,18 @@
   - 用尺寸工具约束成 φ40 并与板中心对齐
   - 退出草图，拉伸 10 毫米成凸台（与板合并）
   - 读回体积（= 300000 + π×400×10）
+  sketch_definition:
+    sketch: ① 矩形草图 + ② 凸台圆草图（板的顶面）
+    origin: ① 矩形左下角↔原点 · ② ★ 圆心↔矩形中心（**对称**或重合）
+    dims:
+    - ① 200 × 150
+    - ② φ40（凸台）· 高 10（拉伸）
+    relations:
+    - ① 矩形自带 + 补原点
+    - ② ★ 圆心↔矩形**中心**（用**对称**关系，不是 1/2 尺寸）
+    tool_builtin: 矩形自带；★ 圆心与矩形的**相对位置**要手加
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -526,6 +681,17 @@
   - 用尺寸工具约束成 60×40
   - 退出草图，拉伸 8 毫米
   - 用导出工具另存为 STEP 文件
+  sketch_definition:
+    sketch: 矩形草图（前视基准面）
+    origin: 矩形左下角↔原点 重合
+    dims:
+    - 60（水平）
+    - 40（竖直）
+    relations:
+    - 矩形自带：平行 · 垂直 · 重合；补：左下角↔原点
+    tool_builtin: 矩形自带
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -561,6 +727,14 @@
   steps_cn:
   - 打开已建好的板零件
   - 用自定义属性工具写入三条：材料=45钢、重量=1.2kg、编号=P-001
+  sketch_definition:
+    sketch: （★ 无草图 —— 只写自定义属性）
+    origin: —
+    dims: []
+    relations: []
+    tool_builtin: ★ 本条不建几何 ⇒ 无草图定义问题
+    expected_status: null
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_config_set_custom_properties
     - solidworks_custom_property_list
@@ -596,6 +770,19 @@
   - 退出草图，拉伸 20 毫米成板
   - 用沉头孔工具在四角各做一个 M8 沉头孔，孔心距两边各 15 毫米
   - 读回沉头孔数、主孔径、沉头直径
+  sketch_definition:
+    sketch: ① 矩形草图 + ② 4 个沉头孔（孔向导的点）
+    origin: ① 矩形左下角↔原点 · ② ★ 4 个孔点用**对称**关系锚到矩形中心
+    dims:
+    - ① 150 × 100
+    - ② ★ 孔心距边 15 ⇒ 用**对称**（不是 4 个 15 的尺寸）
+    relations:
+    - ① 矩形自带 + 补原点
+    - ② ★ 4 个孔点两两**对称**于矩形的两条中心线
+    - ② ★ 或：孔点**水平/竖直**对齐（保证 4 点成矩形）
+    tool_builtin: ★ 孔向导的点**不自带任何关系** ⇒ ★ 全要手加
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -641,6 +828,19 @@
   - 用尺寸工具约束成 φ20，并约束它到轴中段（宽 10）
   - 退出草图，用旋转切除（或拉伸切除）切出退刀槽
   - 读回退刀槽直径
+  sketch_definition:
+    sketch: ① 圆草图（轴）+ ② 退刀槽圆草图（轴中段）
+    origin: ① 圆心↔原点 · ② ★ 退刀槽圆心↔原点（保证同轴）
+    dims:
+    - ① φ25 · 长 120
+    - ② φ20 · 槽宽 10
+    relations:
+    - ① 圆不自带 ⇒ 圆心↔原点
+    - ② ★ 圆心↔原点 **竖直**（同轴 —— ★ 用竖直关系，不是标 x=0）
+    - ② ★ 槽宽 10 的两条边**对称**于轴向中心
+    tool_builtin: ★ 圆不自带；★ 两圆的**同轴关系**要手加
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -683,6 +883,15 @@
   - 用同心配合把销的外圆与块的中心孔对齐
   - 用重合配合把销的轴向位置定住
   - 列出组件数与配合数，并跑一次干涉检查
+  sketch_definition:
+    sketch: （★ 装配体 —— 无草图；靠**配合**定义位置）
+    origin: ★ 第一个插入的零件**固定**（或与装配体原点对齐）
+    dims: []
+    relations:
+    - ★ 装配体的「完全定义」= **无自由度**：同心（定轴）+ 重合（定轴向位置）
+    tool_builtin: ★ 装配体用配合，不用草图关系
+    expected_status: null
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_new_document
     - solidworks_add_component
@@ -723,6 +932,17 @@
   - 退出草图，拉伸 30 毫米成箱体毛坯
   - 用抽壳工具设壁厚 8 毫米，选顶面作为开口面
   - 读回壁厚与体数
+  sketch_definition:
+    sketch: 矩形草图（前视基准面）
+    origin: 矩形左下角↔原点 重合
+    dims:
+    - 100（水平）
+    - 100（竖直）
+    relations:
+    - 矩形自带：平行 · 垂直 · 重合；补：左下角↔原点
+    tool_builtin: 矩形自带
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -761,6 +981,14 @@
   - 打开已建好的零件
   - 用三视图工具一次建出前视与俯视两个投影视图
   - 列出图纸上的视图，确认视图数 ≥ 2
+  sketch_definition:
+    sketch: （★ 工程图 —— 无草图）
+    origin: —
+    dims: []
+    relations: []
+    tool_builtin: ★ 工程图里的草图**不需完全定义**（官方逐字：「工程图中的草图……**不需完全定义**，因为它们不是特征的基础」）
+    expected_status: null
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_drawing_create_three_standard_views
     - solidworks_drawing_list_views
@@ -798,6 +1026,19 @@
   - 退出草图，拉伸 12 毫米成板
   - 在板上打一个 M6 通孔，然后按间距 30 毫米线性阵列成 3 个
   - 读回孔数、孔径与孔间距
+  sketch_definition:
+    sketch: ① 矩形草图 + ② 孔点草图（板的顶面）
+    origin: ① 矩形左下角↔原点 · ② ★ 首个孔点锚到矩形（对称或定位尺寸）
+    dims:
+    - ① 200 × 100
+    - ② 孔 φ6 · 间距 30
+    relations:
+    - ① 矩形自带 + 补原点
+    - ② ★ 3 个孔点**水平**（保证同一条线上）
+    - ② ★ 相邻孔点间距 30（线性阵列会自动生成，★ 只需定义种子）
+    tool_builtin: ★ 线性阵列会生成其余 2 个 ⇒ ★ 只需定义**种子孔**
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -838,6 +1079,21 @@
   - 用尺寸工具约束总长 80、球头直径 12
   - 退出草图，拉伸成连杆
   - 读回体积与包围盒
+  sketch_definition:
+    sketch: 连杆轮廓草图（前视基准面）
+    origin: ★ 杆身中心线↔原点（或左球头圆心↔原点）
+    dims:
+    - 总长 80
+    - 球头 φ12 × 2
+    relations:
+    - ① 两球头圆弧**相等**（★ 都是 φ12）
+    - ② 杆身两条边与中心线 **平行**
+    - ③ 杆身边与球头圆弧 **相切**
+    - ④ 两球头圆心↔中心线 **重合**（同轴）
+    - ⑤ 中心线↔原点
+    tool_builtin: ★ 直线+圆弧组合**不自带相切** ⇒ ★ 全要手加
+    expected_status: 3
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_arc
@@ -874,6 +1130,14 @@
   steps_cn:
   - 打开要检查的装配体
   - 跑一次干涉检查，读回干涉数与每一处的体积
+  sketch_definition:
+    sketch: （★ 装配体检查 —— 无草图）
+    origin: —
+    dims: []
+    relations: []
+    tool_builtin: ★ 不建几何 ⇒ 无草图定义问题
+    expected_status: null
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_assembly_check_interference
     - solidworks_assembly_list_components
@@ -905,6 +1169,14 @@
   steps_cn:
   - 对轴零件施加缩放特征，比例因子 2.0
   - 读回缩放前后的体积
+  sketch_definition:
+    sketch: （★ 对已有零件加缩放特征 —— 无新草图）
+    origin: —
+    dims: []
+    relations: []
+    tool_builtin: ★ 不建草图
+    expected_status: null
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_scale_feature
     - solidworks_part_mass_properties
@@ -938,6 +1210,14 @@
   - 打开零件，用全局方程工具加一条：D2 = 2 * D1
   - 列出方程确认条数为 1
   - 求解方程并读回 D2 的值
+  sketch_definition:
+    sketch: （★ 全局方程 —— 操作的是**已有尺寸名**）
+    origin: —
+    dims: []
+    relations: []
+    tool_builtin: ★ 不建草图；★ 但它**要求**草图尺寸**已具名且完全定义**（否则方程改不动）
+    expected_status: null
+    _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
   tools:
   - - solidworks_equation_add
     - solidworks_equation_list

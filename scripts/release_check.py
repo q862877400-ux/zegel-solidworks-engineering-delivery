@@ -628,6 +628,31 @@ def _run_report_freshness_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_sketch_definition_gate() -> dict[str, object]:
+    """@brief 跑草图完全定义门禁（scripts/check_sketch_definition.py）。
+
+    ★★ 为什么有这一道（2026-10-12 · 业主审 L3-001~008 的 4 处批注）：
+        我写的做法只到「把图画出来」，**没写怎么让它完全定义** ⇒
+        ★「肉眼看着没问题，一打开草图全是**蓝线**」⇒ 改一个尺寸就乱跑。
+        ★ 四条批注指向同一个根因：**位置 / 大小 / 形状关系**三要素缺了后两个。
+    ★ 官方逐字：「**尺寸和几何关系为两种类型的约束**」
+      「矩形本身**固定到原点**」「**蓝色**表示实体未固定」。
+    ★ 本门禁**自带负例自证**（selftest()）—— 拿业主批注的 3 种形态当负例。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_sketch_definition.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "草图完全定义门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_review_ids_gate() -> dict[str, object]:
     """@brief 跑评审稿编号门禁（`scripts/check_review_ids.py`）。
 
@@ -2148,6 +2173,18 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "评审稿编号门禁未通过（引用了不存在的编号，或描述与编号对不上）：\n"
             + str(rev_ids.get("output", "")))
+    # ⚑ **草图完全定义门禁**（硬门禁）：★ 有草图的语料条目必须写清
+    #   **位置 / 大小 / 形状关系**三要素。
+    #   ★ 触发它的是 2026-10-12（业主审 L3-001~008 的 4 处批注）：
+    #   我写的做法只到「把图画出来」，**没写怎么让它完全定义** ⇒
+    #   「肉眼看着没问题，一打开草图全是**蓝线**」⇒ 改一个尺寸就乱跑。
+    #   ★ 官方逐字：「**尺寸和几何关系为两种类型的约束**」
+    #     「矩形本身**固定到原点**」「**蓝色**表示实体未固定」。
+    sk_def = _run_sketch_definition_gate()
+    if sk_def.get("status") == "fail":
+        raise AssertionError(
+            "草图完全定义门禁未通过（有草图的条目没写清三要素）：\n"
+            + str(sk_def.get("output", "")))
     # ⚑ **未定义名门禁**（硬门禁）：★ 与语法门禁**互补** —— 语法只判"能不能 parse"，
     #   本道判"读到的名字有没有被绑定过"。★ 触发它的是轮 403 真机抓到的
     #   `out_i4` 漏导入（★ 语法合法、19 道门禁全绿、而一调用就 NameError）。
@@ -2357,6 +2394,9 @@ def run_release_check() -> dict[str, object]:
         #:   ★★ 而这道门禁**是元门禁逼出来的第二道** ——
         #:     我第一次只加了门禁与 fail 判据，忘了汇总。
         "rev_ids": rev_ids,
+        #: ★ 2026-10-12（业主批注）：**草图完全定义门禁**同样必须进返回体 ——
+        #:   ★ 元门禁会报「静默跳过与没跑等价」。
+        "sketch_definition": sk_def,
         #: ★ 2026-10-03（轮 404）：**未定义名门禁**同样必须进返回体 ——
         #:   ⚠ 而这一条**正是元门禁当场抓到的**：我先前只加了门禁与它的 fail 判据，
         #:   却没把它汇总进 `_gate_results` ⇒ 元门禁报「`undef` 的结果**没有进返回体**
