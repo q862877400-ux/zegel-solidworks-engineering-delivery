@@ -805,3 +805,60 @@ def exposure(cards: list, mode: str = MODE_COMPAT) -> dict:
             "hidden_count": len(cards) - len(names),
             "★": "★ 隐藏 ≠ 防旁路 —— ★ 权限检查在分发处（authorization.check_tool）",
             "dispatch_check_required": True}
+
+
+#: ══════════════════════════════════════════════════════════════════════
+# 九、MCP 工具入口（★ 规格 329 —— ★ Q6 L110「必须同时改 MCP 暴露面」）
+#: ══════════════════════════════════════════════════════════════════════
+# ★★ 实测（2026-10-12）：规格 323 产出了 `retrieve()` / `load_contract()` /
+#   `exposure()` 三个判定函数，而它们在 `AUTONOMOUS_ALLOW` 里**有名字、没注册**
+#   ⇒ ★ **agent 够不到检索层**。
+# ⇒ ★ 本节把它们包成**可注册的函数**（★ `mcp-server/tool_specs_catalog.py`
+#   用 `module="engineering.catalog"` 指向这里）。
+# ★ 判据：**纯 Python、只读、不碰 COM**。
+
+
+def catalog_retrieve(*, query: str = "", domain: str = "",
+                     doc_state: str = "", backend: str = "",
+                     capability: str = "", budget: int = TOKEN_BUDGET) -> dict:
+    """★★ **分面检索入口**（★ Q6 L102-107 五步）。"""
+    cards = build_catalog()
+    q = RetrievalQuery(text=query, domain=domain, doc_state=doc_state,
+                       backend=backend, capability=capability, budget=budget)
+    r = retrieve(q, cards, budget=budget)
+    return {
+        "cards": [c.to_dict() for c in r.cards],
+        "tokens": r.tokens,
+        "truncated": r.truncated,
+        "facets_used": r.facets_used,
+        "candidates_before_filter": r.candidates_before_filter,
+        "★": ("★ 分面过滤在召回之前；★ `module` **不参与**检索匹配"
+              "（★ 只作定位信息 —— Q4 L40 逐字）"),
+    }
+
+
+def catalog_contract(*, tool_name: str = "") -> dict:
+    """★★ **按需加载单个工具的完整契约**（★ Q6 L105）。"""
+    cards = {c.name: c for c in build_catalog()}
+    card = cards.get(tool_name)
+    if card is None:
+        return {"error": "★ 目录里没有 %s" % tool_name,
+                "hint": "先用 cadstudio_catalog_retrieve 找"}
+    return load_contract(card)
+
+
+def catalog_domains() -> dict:
+    """★★ **列出八个任务域与七个受控多标签**（★ Q4 L38）。"""
+    doms = load_domains()
+    facets = load_facets()
+    return {
+        "domains": [{"id": d.id, "name": d.name, "order": d.order}
+                    for d in sorted(doms.values(), key=lambda x: x.order)],
+        "facets": {k: sorted(v.values) for k, v in facets.items()},
+        "★": "★ Q4 L38 逐字：八个一级任务域 + 七个受控多标签",
+    }
+
+
+def catalog_exposure(*, mode: str = MODE_COMPAT) -> dict:
+    """★★ **看某个模式的 MCP 暴露面**（★ Q6 L110）。"""
+    return exposure(build_catalog(), mode)

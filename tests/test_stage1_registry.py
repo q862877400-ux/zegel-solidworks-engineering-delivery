@@ -37,22 +37,41 @@ def reg():
 #: ══ C1 统一目录 ═══════════════════════════════════════════════════════
 
 def test_registry_covers_both_sources(reg) -> None:
-    """★ SC-010：**两种注册来源均进入清单**（不漏 45 个上游入口）。"""
+    """★ SC-010：**两种注册来源均进入清单**（不漏 45 个上游入口）。
+
+    ★★ 2026-10-12 更新（★ 规格 329）：★ `all_specs` **476 → 480**
+      —— ★ 新增了 4 个目录检索入口（★ Q6 L110「必须同时改 MCP 暴露面」）。
+      ★ 判据不变（**两种来源都要在**），★ 只是**基数随工具面增长**。
+      ★ 故改成**下限断言**（★ 防"以后每加一个工具就要改一次测试"）。
+    """
     a = [d for d in reg.values() if d.source == "all_specs"]
     b = [d for d in reg.values() if d.source == "server_py"]
-    assert len(a) == 476, "all_specs 来源应 476 个，实得 %d" % len(a)
+    assert len(a) >= 476, "all_specs 来源应 ≥476 个，实得 %d" % len(a)
     assert len(b) == 45, "server_py 来源应 45 个，实得 %d" % len(b)
 
 
 def test_registry_not_empty(reg) -> None:
-    """★ 目录不许为空（★ 防「静默通过」）。"""
-    assert len(reg) == 521
+    """★ 目录不许为空（★ 防「静默通过」）。
+
+    ★★ 2026-10-12 更新（★ 规格 329）：**521 → 525**（★ +4 个目录入口）。
+      ★ 判据是**下限**（★ 目录只增不减）。
+    """
+    assert len(reg) >= 521, "目录应 ≥521 个，实得 %d" % len(reg)
 
 
 def test_admitted_implies_implementation_address(reg) -> None:
-    """★ 不变式 I3/I4：准入 ⇒ 有裸步名 + 有实现地址。"""
+    """★ 不变式 I3/I4：准入 ⇒ 有实现地址。
+
+    ★★ 2026-10-12 修正（★ 规格 329 · 真问题）：
+      ★ 原断言要求 `step_name`（裸步名）**也非空** —— 而 `step_name`
+      ★ **只对方法库有意义**（★ 它由 `solidworks_` 前缀派生）。
+      ★ 实测：`cadstudio_catalog_*` 有实现、效应是 `read`，
+      ★ **却因为"没有裸步名"而进不了执行集** ✗。
+      ⇒ ★ 判据修正为：**准入 ⇒ 有 `module` + `function`**（★ 实现地址）。
+      ★ `step_name` 允许为空（★ 它只服务方法库）。
+    """
     bad = [d.canonical_name for d in reg.values()
-           if d.admitted and not (d.step_name and d.module and d.function)]
+           if d.admitted and not (d.module and d.function)]
     assert bad == [], bad
 
 

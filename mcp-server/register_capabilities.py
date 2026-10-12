@@ -1119,6 +1119,32 @@ BATCH_MODULES = (
     #: ★ 规格 220 · 目标 145/145 —— PDM 相邻证据读侧（★ 真实现已在 sw_pdm.collect_pdm_evidence）✓
     #:   ★★ 等级如实：★ 尚未真机验证 ⇒ **不提 level**（红线⑥）
     "tool_specs_batch108",
+    #: ★★ EC00 **T017**（`specs/302-ec00-trustworthy-tool-base/`）—— 草图关系**正式注册**。
+    #:   ★★★ **实测缺口**（2026-10-10）：`scripts/sw_sketch_relations.py` **有实现但 0 个 ToolSpec**
+    #:     ⇒ ★ 它**不可被 MCP 调用**（★ 从「用户可发现、可调用」口径看**等于不存在**）。
+    #:   ★★ 官方依据已逐字核：`AddRelation( object Entities, int RelationType )`（**2 参**）+
+    #:     `## Remarks`「A sketch must be active …」+ `ISketchSegment::GetRelationsCount`（★ 回读判据）。
+    #:   ★★★ 等级如实：★ 实现由 `tests/test_sw_sketch_relations_safety.py`（**12 例**）在**假宿主**上验过
+    #:     ⇒ ★ **offline**；★★ **真机未在本特性内验证** ⇒ `runtime` = **`not_run`**（红线⑥ · 不升级）。
+    "tool_specs_batch113",
+    #: ★★★ **批 114 —— 弹窗三级分级器上工具面**（★ 业主 2026-10-10 点破的那一件）。
+    #:   ★★ 业主原话：「★ **把这个检测的，也注册成一个MCP工具什么的，加入你的工具列表，
+    #:     不然每次都不知道主动用**」✓
+    #:   ★★★ **实测缺口**：★ 工具面**已有 9 个** `solidworks_gui_*`，★ **但没有任何一个**
+    #:     暴露 `classify_dialog` —— ★ 而它才是那套机制的**大脑**（★ 判「能不能自动点」）。
+    #:   ★★ **后果（★ 我自己的实例）**：★ 本会话 EC09 我只用了 `--scan`/`--clear`
+    #:     ⇒ ★ 看到弹窗却**没读分级理由** ⇒ ★★ 把「求解**失败**（未定义载荷）」
+    #:     误读成「求解**很慢**」⇒ ★ **把根因判错了** ✗
+    #:   ★ 只做注册（★ 不改 `tools/sw_guard.py` —— ★ 三级分级已由
+    #:     `tests/test_sw_guard_dialog_tiers.py` 验过）；★ **纯离线**（`inject=""`）。
+    "tool_specs_batch114",
+    #: ★★ 规格 329（Q6 L110 逐字）：「**必须同时改 MCP 暴露面**：自主模式的
+    #:   `tools/list` **只返回规划入口与必要查询工具**」。
+    #:   ★ 实测（2026-10-12）：规格 323 的检索层**有名字、没注册**
+    #:     ⇒ ★ **agent 够不到检索层**（★ 判断层 MCP 工具面 0/521）。
+    #:   ⇒ ★ 这一批把 `cadstudio_catalog_{domains,retrieve,contract,exposure}`
+    #:     **真的接出去**（★ 四个都是**只读、纯 Python、不碰 COM**）。
+    "tool_specs_catalog",
 )
 
 def all_specs() -> list:
@@ -1126,8 +1152,16 @@ def all_specs() -> list:
     specs: list = []
     for mod_name in BATCH_MODULES:
         mod = __import__(mod_name)
-        batch = getattr(mod, "SPECS_%s" % mod_name.rsplit("batch", 1)[1].upper(), None) \
-            or next((getattr(mod, n) for n in dir(mod) if n.startswith("SPECS_")), None)
+        #: ⚠ 实测（2026-10-12，规格 329）：原名从模块名派生
+        #:   （`rsplit("batch", 1)[1].upper()`）⇒ ★ **不含 `batch` 的模块名
+        #:   直接 `IndexError`** ✗ —— ★ 而"派生失败"看起来像"模块坏了"。
+        #:   ⇒ ★ 判据：**先试派生、失败就退回扫描 `SPECS_*`**（★ 那条兜底本来就在）。
+        derived = None
+        if "batch" in mod_name:
+            derived = getattr(
+                mod, "SPECS_%s" % mod_name.rsplit("batch", 1)[1].upper(), None)
+        batch = derived or next(
+            (getattr(mod, n) for n in dir(mod) if n.startswith("SPECS_")), None)
         if batch is None:
             raise RuntimeError("模块 %s 里找不到任何 SPECS_* 列表" % mod_name)
         specs.extend(batch)

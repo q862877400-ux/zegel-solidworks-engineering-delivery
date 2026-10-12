@@ -123,17 +123,25 @@ def build_registry(*, include_server_py: bool = True) -> dict[str, ToolDescripto
         #: ★ I1：重复即拒绝加载
         if cn in reg:
             raise RegistryError("duplicate-canonical-name", cn)
-        #: ★ 唯一一条映射规则：去掉前缀
+        #: ★ 唯一一条映射规则：去掉前缀（★ 只对 `solidworks_*` 成立）
         step = cn[len(PREFIX):] if cn.startswith(PREFIX) else ""
         eff = _effect_of(s)
-        admitted = bool(step) and bool(getattr(s, "module", "")) \
+        #: ⚠ 实测（2026-10-12，规格 329）：原来要求 **`step` 非空**才准入
+        #:   ⇒ ★ **`cadstudio_*` 那 45 个（★ 含目录检索的 4 个）永远进不了执行集** ✗
+        #:     —— ★ 而"未准入"看起来像"它们有问题"，其实是**判据太窄**。
+        #:   ★★ 判据修正：**准入看「有没有实现 + 效应已知」**，
+        #:     ★ `step_name`（裸步名）只对**方法库**有意义（★ 空也不该挡准入）。
+        #:   ★ 依据：`admitted` 的用途是**「能不能被编译器选中执行」**
+        #:     （★ Q12 L221 逐字：「没有完成可执行适配的入口不得被编译器选中」），
+        #:     ★ 而 `cadstudio_catalog_*` **有实现、效应是 `read`** ⇒ **该准入**。
+        admitted = bool(getattr(s, "module", "")) \
             and bool(getattr(s, "function", None)) and eff != "unknown"
         reason = ""
         if not admitted:
-            if not step:
-                reason = "规范名不带 `solidworks_` 前缀 ⇒ 没有裸步名"
-            elif not getattr(s, "function", None):
+            if not getattr(s, "function", None):
                 reason = "没有实现函数地址"
+            elif not getattr(s, "module", ""):
+                reason = "没有实现模块"
             elif eff == "unknown":
                 reason = "★ 效应未知（I5：未知副作用不得自动执行）"
             else:

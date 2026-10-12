@@ -52,8 +52,13 @@ def test_domain_names_match_q4_verbatim() -> None:
 
 
 def test_every_tool_has_a_domain(cards) -> None:
-    """★★ FR-001 / SC-001：**每个工具恰好一个主域**（★ 521/521）。"""
-    assert len(cards) == 521, "★ 工具卡不是 521 张：%d" % len(cards)
+    """★★ FR-001 / SC-001：**每个工具恰好一个主域**。
+
+    ★★ 2026-10-12 更新（★ 规格 329）：**521 → 525**
+      （★ +4 个目录检索入口 —— ★ Q6 L110「必须同时改 MCP 暴露面」）。
+      ★ 判据是**下限 + 零非法**（★ 工具面只增不减）。
+    """
+    assert len(cards) >= 521, "★ 工具卡应 ≥521 张：%d" % len(cards)
     doms = set(C.load_domains())
     bad = [c.name for c in cards if c.domain not in doms]
     assert not bad, "★ 这些工具的主域不合法：%s" % bad[:5]
