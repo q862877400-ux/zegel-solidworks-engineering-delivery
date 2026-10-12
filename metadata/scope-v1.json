@@ -1,0 +1,40 @@
+{
+  "_": "★ Q9 的 v1 难度上界 + 不进入自主承诺的清单（规格 326 · S6/S7）。",
+  "__": "★ 依据：`output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q9（L176-199）逐字。",
+  "___": "★★ Q9 L187 逐字：「这些数量是**一期复杂度配额**，后续只能凭**新增证据**扩围。」",
+  "version": 1,
+  "frozen_at": "2026-10-12T00:00:00+08:00",
+  "limits": {
+    "max_self_made_parts": 10,
+    "max_assembly_instances": 30,
+    "max_assembly_levels": 2,
+    "max_driven_dof": 1,
+    "max_method_level_nodes": 100
+  },
+  "_limits_source": {
+    "max_self_made_parts": "Q9 L180 逐字「最多 10 种自制零件」",
+    "max_assembly_instances": "Q9 L180 逐字「30 个装配实例」",
+    "max_assembly_levels": "Q9 L180 逐字「2 级装配层次」",
+    "max_driven_dof": "Q9 L181 逐字「最多 1 个独立驱动自由度」",
+    "max_method_level_nodes": "Q9 L182 逐字「最多 100 个方法级执行节点；不按底层 API 次数衡量产品复杂度」"
+  },
+  "_closed_loop_note": "★ Q9 L181 逐字：「闭链先限于**已验证的单闭环平面连杆模型**」",
+  "_geometry_note": "★ Q9 L183 逐字：「几何与校核必须**全部落在已验证的方法、求解器和规则适用范围内**。**零件数少不构成可做证明**。」",
+  "not_promised": {
+    "freeform_surface": "自由曲面（★ Q9 L185 逐字）",
+    "compliant_mechanism": "柔顺机构（★ Q9 L185 逐字）",
+    "arbitrary_spatial_mechanism": "任意空间机构（★ Q9 L185 逐字）",
+    "multiphysics": "多物理场（★ Q9 L185 逐字）",
+    "unverified_contact_friction": "尚未验证的接触／摩擦动力学（★ Q9 L185 逐字）",
+    "full_gear_reducer": "完整二级齿轮减速器整机设计（★ Q9 L184 逐字：「最后一项**不是**完整二级齿轮减速器整机设计」）"
+  },
+  "delivery_family": ["台式平口钳", "受限可调连杆夹具", "减速器箱体"],
+  "_delivery_family_source": "Q9 L184 逐字「主交付族为台式平口钳、受限可调连杆夹具、减速器箱体」",
+  "states": {
+    "READY_FOR_REVIEW": "★ Q9 L197 逐字：「表示自动流程完成待审核」",
+    "DELIVERED": "★ Q9 L197 逐字：「**还需可信人工批准**」"
+  },
+  "_owner_action_required": {
+    "expand_scope": "★★ Q9 L187 逐字：一期配额「后续**只能凭新增证据扩围**」⇒ ★ 扩围要业主给证据，★ 本规格**不自行扩**。"
+  }
+}
