@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import pathlib
@@ -97,14 +96,11 @@ def build_plan(c: dict) -> R.ExecutablePlan:
     return R.ExecutablePlan(method_id="plate_holes", steps=tuple(steps))
 
 
-def _sha(p: pathlib.Path) -> str:
-    if not p.is_file():
-        return ""
-    h = hashlib.sha256()
-    with p.open("rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+#: ⚠ 2026-10-12 删掉了一个 `_sha()` 辅助函数 —— 它**从没被调用**
+#:   （摘要统一走 `scripts/engineering/drawing_obligations.digest_of`）
+#:   ★ 是 `tests/test_no_uncalled_helpers.py` 抓到的（★ 死代码门禁在尽职）。
+#:   ⇒ 教训：**"我写了它" ≠ "它被用上了"** —— 留着比删掉更坏
+#:     （读代码的人会以为它在用）。
 
 
 def run_case(reg, n: int, sw, *, revision: str = "rev-1") -> dict:
