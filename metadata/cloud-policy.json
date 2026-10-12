@@ -1,0 +1,107 @@
+{
+  "_": "★ Q7 的政策：规划上云、执行本地，离线保留确定性能力（规格 328 · U1~U7）。",
+  "__": "★ 依据：`output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q7（L114-161）逐字。",
+  "___": "★★ 业主三条拍板（★ 2026-10-12）：①「不考虑本地模型」②「不考虑预算」③「客户端认证这个也不管」—— 本文件**逐条遵守**。",
+  "version": 1,
+  "frozen_at": "2026-10-12T00:00:00+08:00",
+
+  "offline_commitment": {
+    "_source": "Q7 L120 逐字：「已批准计划的执行、恢复、规则计算、证据和交付管理必须离线可用；新需求的自主语义规划属于可关闭的联网增强功能。断网不声称仍能自主处理任意新需求。」",
+    "must_be_offline": [
+      "approved_plan_execution",
+      "recovery",
+      "rule_computation",
+      "evidence",
+      "delivery_management"
+    ],
+    "online_enhancement": ["new_requirement_semantic_planning"],
+    "online_can_be_disabled": true,
+    "offline_claim_narrowed": true,
+    "_narrowed_note": "★ Q7 L122 逐字：「这是**显式收窄离线承诺**，不是措辞上的例外掩盖。」",
+    "when_offline": {
+      "new_requirement": "manual_typed_requirement_or_wait",
+      "_source": "Q7 L134 逐字：「已批准计划继续本地执行；新需求改为人工提交类型化需求／计划，或等待恢复」",
+      "claim_autonomous_new_requirements": false,
+      "_claim_note": "★★ Q7 L120 逐字：「**断网不声称仍能自主处理任意新需求**」"
+    }
+  },
+
+  "cloud_whitelist": {
+    "_source": "Q7 L126-130 逐字",
+    "provider": "OpenAI 第一方 API",
+    "not_allowed_providers": ["未审计的代充／转售接口"],
+    "model_snapshot": "gpt-5.4-2026-03-05",
+    "follow_latest": false,
+    "_model_note": "★ Q7 L129 逐字：「固定快照，通过项目评测后才能启用生产；**不跟随 latest 自动升级**」",
+    "protocol": "文本／结构化输出"
+  },
+
+  "disabled_cloud_capabilities": {
+    "_source": "Q7 L130 逐字：「关闭云端执行、文件托管、向量库、远程 shell 和云端 CAD 控制」",
+    "cloud_execution": false,
+    "file_hosting": false,
+    "vector_store": false,
+    "remote_shell": false,
+    "cloud_cad_control": false,
+    "_count": 5
+  },
+
+  "budget": {
+    "_owner_decision": "★★ 业主 2026-10-12 原话：「月预算 300 元 / 单任务 10 元 是怎么定的?这个你别管了，**不考虑预算**」",
+    "engine_implemented": false,
+    "_note": "★ 本规格**不实现**预算引擎。★ 已有的 `design_ir.BudgetHold`（预算预占）**保留** —— ★ 它只做**结构**，★ 不算账。",
+    "existing_primitive": "scripts/engineering/design_ir.py::BudgetHold",
+    "_existing_note": "★ 保留（★ 阶段 4 建的），★ 但**不接任何真实账本**。"
+  },
+
+  "client_authentication": {
+    "_owner_decision": "★★ 业主 2026-10-12 原话：「『不认证未纳管客户端』这条怎么执行？**这个也不管**」",
+    "implemented": false,
+    "_note": "★ 本规格**不做**客户端认证。★ Q7 L140 那条（只认证经本地规划出口网关的客户端）**不实现**。"
+  },
+
+  "local_model": {
+    "_owner_decision": "★★ 业主 2026-10-12 原话：「为什么你们都在看什么本地模型，**不考虑本地模型**。断网了就断网了，等网来了再做」",
+    "production_service": false,
+    "_note": "★ 本规格**不建**本地模型生产服务。",
+    "experimental_candidate_recorded_only": {
+      "_source": "Q7 L146 逐字：「保留本地实验候选：官方 `Qwen/Qwen2.5-14B-Instruct`，Apache-2.0」",
+      "model": "Qwen/Qwen2.5-14B-Instruct",
+      "license": "Apache-2.0",
+      "is_reliability_promise": false,
+      "_note": "★ Q7 L146 逐字：「Q4 只是**实验量化方案，不是可靠性承诺**」⇒ ★ 本规格**只记录**，★ 不启用。"
+    },
+    "kv_cache_formula": {
+      "_source": "Q7 L148-155 逐字",
+      "formula": "KV = 2 * layers * kv_heads * head_dim * context_tokens * 2 bytes",
+      "layers": 48,
+      "kv_heads": 8,
+      "head_dim": 128,
+      "examples": {"8192": "1.5 GiB", "16384": "3.0 GiB", "56158": "约 10.28 GiB"},
+      "_note": "★ 只记录公式（★ Q7 L157 逐字：「不能据此断言长上下文质量和速度可用」）。"
+    }
+  },
+
+  "degradation_order": {
+    "_source": "Q7 L161 逐字：「降级顺序：减少当前候选与上下文 → 卸载可选模型 → 退回人工／确定性流程」",
+    "steps": [
+      "reduce_candidates_and_context",
+      "unload_optional_models",
+      "fall_back_to_manual_or_deterministic"
+    ],
+    "forbidden": {
+      "compete_with_solidworks_for_vram": false,
+      "_vram_note": "★ Q7 L161 逐字：「**不与 SolidWorks 抢显存**」",
+      "parallel_cold_start": false,
+      "_cold_note": "★ Q7 L161 逐字：「**不并行冷启动**」",
+      "silent_lower_quantization": false,
+      "_quant_note": "★ Q7 L161 逐字：「**不自动换成更低量化然后继续声称质量不变**」"
+    }
+  },
+
+  "not_modified": {
+    "_source": "Q7 L122 逐字：「当前**只记录这一决策，不修改 AGENTS.md 或现有配置**」",
+    "agents_md_modified": false,
+    "existing_config_modified": false
+  }
+}
