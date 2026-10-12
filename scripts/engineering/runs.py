@@ -43,7 +43,24 @@ import pathlib
 from dataclasses import dataclass, field
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+#: ★★ **运行目录的根**（★ 默认 `output/runs`）。
+#: ⚠ 实测（2026-10-12，全量 pytest）：测试**共用** `output/runs/_test-*` 这种
+#:   固定名 ⇒ ★ **同一进程里跑第二遍就撞**（`overwrite`）✗ ——
+#:   ★ 而单独跑那一份**全绿** ⇒ ★ 「顺序/状态泄漏」看起来像「偶发」。
+#: ⇒ ★ 判据：**根可注入**（★ `set_runs_root()`），★ 测试用 `tmp_path` 隔离。
 RUNS = ROOT / "output" / "runs"
+
+
+def set_runs_root(path: pathlib.Path | str) -> None:
+    """★★ **换运行目录的根**（★ 测试隔离用 —— ★ 见 `RUNS` 的实测记录）。"""
+    global RUNS                                                         # noqa: PLW0603
+    RUNS = pathlib.Path(path)
+
+
+def reset_runs_root() -> None:
+    """★ 恢复默认根。"""
+    global RUNS                                                         # noqa: PLW0603
+    RUNS = ROOT / "output" / "runs"
 
 #: ★★ Q14 L271-281 逐字给的**七个子目录**
 RUN_SUBDIRS = ("plans", "interfaces", "questions", "events", "attempts",

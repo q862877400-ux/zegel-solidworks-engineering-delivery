@@ -24,7 +24,19 @@ from scripts.engineering import release_manifest as RM                   # noqa:
 from scripts.engineering import rule_service as RS                       # noqa: E402
 from scripts.engineering import runs as RN                               # noqa: E402
 
+#: ⚠ 实测（2026-10-12，全量 pytest）：这一份用**固定名** _test-s327-run
+#:   写 output/runs/ ⇒ ★ **同一进程里跑第二遍就撞**（overwrite）✗ ——
+#:   而**单独跑全绿** ⇒ 「顺序/状态泄漏」看起来像「偶发」。
+#: ⇒ ★ 判据：**每个测试用 	mp_path 隔离 runs 根**（★ RN.set_runs_root）。
 TEST_RUN = "_test-s327-run"
+
+
+@pytest.fixture(autouse=True)
+def _isolate_runs(tmp_path, monkeypatch):
+    """★★ 每个测试**自己的** runs 根（★ 防跨测试污染）。"""
+    RN.set_runs_root(tmp_path / "runs")
+    yield
+    RN.reset_runs_root()
 
 
 def _req(**kw) -> RS.RuleRequest:
@@ -346,7 +358,14 @@ def test_referenced_artifact_is_complete() -> None:
 
 
 def test_commit_chain_is_the_authority() -> None:
-    """★ Q14 L283 逐字：「唯一权威是**完整的提交链**」。"""
+    """★ Q14 L283 逐字：「唯一权威是**完整的提交链**」。
+
+    ⚠ 实测（2026-10-12，全量 pytest）：第一版**依赖另一个测试先写提交** ✗
+      ⇒ ★ 单独跑绿、全量跑红（★ 测试**顺序依赖**）。
+    ⇒ ★ 判据：**本测试自己造数据**（★ 不靠别人）。
+    """
+    RN.init_run(TEST_RUN)
+    RN.commit(TEST_RUN, 1, ["plans/x.json"], note="own")
     chain = RN.load_commits(TEST_RUN)
     assert chain and chain[0]["sequence"] == 1
 
