@@ -1,0 +1,49 @@
+# ★ Q1/Q5 · 协议②：方案门槛（scheme_gate）
+#
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身
+# 文件:   metadata/protocols/scheme_gate.yaml
+# 定位:   规格 `specs/325-declarative-protocols-and-decisions` 的 R1 —— 四类协议之二。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q1（L28）逐字
+#           （四类协议 + 五要素）；Q5（L92）逐字要的必设检查里含
+#           「**禁止条件覆盖**」与「**输出与消费端兼容**」
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# -----------------------------------------------------------------------------
+protocol_id: scheme_gate
+version: 1
+
+entry_check: has_design_ir
+
+inputs_schema: SchemeInputs@1
+outputs_schema: PlanSet@1
+
+required_inputs:
+  - design_ir
+  - target_dof
+
+checks:
+  - hard_requirements_complete@1
+  - kinematic_model_supported@1
+  - forbidden_conditions_covered@1
+  - output_consumer_compatible@1
+
+#: ★★ Q5（L92）逐字要的必设检查里，「**禁止条件覆盖**」与
+#:   「**输出与消费端兼容**」是**方案门槛**这一层的核心。
+on_failure:
+  missing_critical_input: WAITING_INPUT
+  layout_conflict: REVISE_LAYOUT
+  unsupported_model: UNSUPPORTED_CAPABILITY
+  forbidden_condition_hit: REJECTED_OUT_OF_SCOPE
+
+outputs:
+  - plan_set
+  - variant_count
+
+#: ★ Q1 逐字：「**LLM 输出都是 `Proposal`，不能自行晋升为 `Validated`**」
+proposal_only: true
+
+source_refs:
+  - planner
+  - rule_verdicts

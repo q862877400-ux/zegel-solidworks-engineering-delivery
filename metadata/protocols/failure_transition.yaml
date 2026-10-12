@@ -1,0 +1,53 @@
+# ★ Q1/Q5 · 协议④：失败转移（failure_transition）
+#
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身
+# 文件:   metadata/protocols/failure_transition.yaml
+# 定位:   规格 `specs/325-declarative-protocols-and-decisions` 的 R1 —— 四类协议之四。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q1（L28）逐字
+#           （四类协议 + 五要素）；Q1（L32）逐字：
+#           「「**同错误两次停下**」转成**诊断触发**，
+#             **不转成「一定是方法选错」的根因判定**」
+#           + Q1（L33）逐字：「文中的**经验比例不进入执行决策**，
+#             除非有适用的统计依据」
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# -----------------------------------------------------------------------------
+protocol_id: failure_transition
+version: 1
+
+entry_check: has_failure_signal
+
+inputs_schema: FailureInputs@1
+outputs_schema: TransitionVerdict@1
+
+required_inputs:
+  - error_code
+  - attempt_index
+
+checks:
+  - same_error_twice_triggers_diagnosis@1
+  - unknown_effect_no_retry@1
+  - empirical_ratio_not_executable@1
+
+#: ★★ Q1（L32）逐字：「「**同错误两次停下**」转成**诊断触发**，
+#:   **不转成「一定是方法选错」的根因判定**」
+#:   ⇒ ★ 判据：**只触发诊断**，★ **输出里没有「根因」这个字段**
+on_failure:
+  repeated_error: DIAGNOSIS_REQUIRED
+  unknown_effect: UNKNOWN_EFFECT
+  unverified_retry: BLOCKED_VERIFICATION
+
+outputs:
+  - transition
+  - diagnosis_required
+  #: ★ 显式声明**不产出**根因（★ 让"不判根因"成为**结构性**的）
+  - NOT_root_cause
+
+#: ★★ Q1（L33）逐字：「文中的**经验比例不进入执行决策**」
+empirical_ratios_allowed: false
+
+source_refs:
+  - jobs
+  - recovery

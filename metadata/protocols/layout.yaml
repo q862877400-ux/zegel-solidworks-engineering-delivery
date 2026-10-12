@@ -1,0 +1,73 @@
+# ★ Q1/Q5 · 协议③：布局（layout）
+#
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身
+# 文件:   metadata/protocols/layout.yaml
+# 定位:   规格 `specs/325-declarative-protocols-and-decisions` 的 R1 —— 四类协议之三。
+#           ★★ 本份**逐字照 Q5（L63-86）给的 YAML 样例的形状**（那份样例的
+#           `protocol_id` 正是 `rigid_mechanism_layout`）。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q5（L63-86）逐字给的样例：
+#           ```
+#           protocol_id: rigid_mechanism_layout
+#           version: 1
+#           entry_check: requires_supported_rigid_body_motion
+#           inputs_schema: LayoutInputs@1
+#           outputs_schema: LayoutResult@1
+#           required_inputs:
+#             - target_motion
+#             - installation_envelope
+#             - load_cases
+#             - interface_constraints
+#           checks:
+#             - hard_requirements_complete@1
+#             - kinematic_model_supported@1
+#             - assembly_accessibility@1
+#             - motion_validation_coverage@1
+#           on_failure:
+#             missing_critical_input: WAITING_INPUT
+#             layout_conflict: REVISE_LAYOUT
+#             unsupported_model: UNSUPPORTED_CAPABILITY
+#           source_refs:
+#             - front_end_workflow
+#             - scheme_selection
+#           ```
+#           ⇒ ★ 本文件**逐字沿用**它（★ 只补五要素里 Q1 另外要的
+#             「**触发条件**」与「**输出**」两项）。
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# -----------------------------------------------------------------------------
+protocol_id: rigid_mechanism_layout
+version: 1
+
+#: ★ Q1 五要素之一：**触发条件**
+entry_check: requires_supported_rigid_body_motion
+
+inputs_schema: LayoutInputs@1
+outputs_schema: LayoutResult@1
+
+required_inputs:
+  - target_motion
+  - installation_envelope
+  - load_cases
+  - interface_constraints
+
+checks:
+  - hard_requirements_complete@1
+  - kinematic_model_supported@1
+  - assembly_accessibility@1
+  - motion_validation_coverage@1
+
+on_failure:
+  missing_critical_input: WAITING_INPUT
+  layout_conflict: REVISE_LAYOUT
+  unsupported_model: UNSUPPORTED_CAPABILITY
+
+#: ★ Q1 五要素之五：**输出**
+outputs:
+  - layout_result
+  - validation_coverage
+
+source_refs:
+  - front_end_workflow
+  - scheme_selection

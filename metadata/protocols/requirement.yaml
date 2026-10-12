@@ -1,0 +1,63 @@
+# ★ Q1/Q5 · 协议①：需求（requirement）
+#
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身
+# 文件:   metadata/protocols/requirement.yaml
+# 定位:   规格 `specs/325-declarative-protocols-and-decisions` 的 R1 —— Q1 逐字要的
+#           **四类协议**之一（「首先抽取**需求**、方案门槛、布局、失败转移四类协议」）。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q1（L28）逐字：
+#           「首先抽取**需求**、方案门槛、布局、失败转移四类协议，
+#             每条补齐**输入、输出、触发条件、检查函数和失败状态**」
+#           + Q5（L63-86）给的 YAML 形状（`protocol_id` / `version` /
+#             `entry_check` / `inputs_schema` / `required_inputs` / `checks` /
+#             `on_failure` / `source_refs`）
+#           + Q1（L31）逐字：「「缺需求先问」转成**字段门禁**；
+#             **不存在载荷上界时，不自动采用所谓最坏工况**」
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# -----------------------------------------------------------------------------
+protocol_id: requirement
+version: 1
+
+#: ★ 五要素之一：**触发条件**（★ Q1 逐字）
+entry_check: has_requirement_text
+
+inputs_schema: RequirementInputs@1
+outputs_schema: DesignIR@1
+
+#: ★ 五要素之二：**输入**（★ 必填项 —— ★ 缺 ⇒ `WAITING_INPUT`，★ 见 `on_failure`）
+required_inputs:
+  - requirement_text
+  - deliverable_kind
+
+#: ★ 五要素之三：**检查函数**（★ 每个 `check_ref` 必须**解析到已登记代码**）
+checks:
+  - non_empty_requirement@1
+  - supported_domain@1
+  - critical_inputs_present@1
+  - no_absurd_magnitude@1
+
+#: ★ 五要素之四：**失败状态**（★ 封闭码，★ 与 `design_ir.IR_CODES` 同族）
+on_failure:
+  empty_requirement: REJECTED_AMBIGUOUS
+  out_of_scope: REJECTED_OUT_OF_SCOPE
+  unsupported: REJECTED_UNSUPPORTED
+  #: ★★ Q1 逐字：「「缺需求先问」转成**字段门禁**」
+  missing_critical_input: WAITING_INPUT
+
+#: ★ 五要素之五：**输出**（★ 由 `outputs_schema` 定；此处列字段）
+outputs:
+  - design_ir
+  - open_questions
+
+#: ★★ Q1 逐字：「**不存在载荷上界时，不自动采用所谓最坏工况**」
+#:   ⇒ ★ 判据：**没有"最坏工况"这条回退路径**（★ 见 `forbidden_defaults`）
+forbidden_defaults:
+  - worst_case_load
+  - assumed_material
+  - assumed_tolerance
+
+source_refs:
+  - design_ir
+  - rule_verdicts
