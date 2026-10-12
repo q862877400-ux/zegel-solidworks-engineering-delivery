@@ -1,0 +1,35 @@
+{
+  "family": "ISpring",
+  "members_total": 26,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 2,
+  "properties_no_paren": 24,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetProfilePoints",
+      "signature": "System.object GetProfilePoints()",
+      "returns": "Array of points for creating the profile sketch"
+    },
+    {
+      "name": "GetSpringBody",
+      "signature": "Body2 GetSpringBody()",
+      "returns": "[[Body]]"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict 与 obsolete_loose 都是 0：本族 26 个页头里没有任何一个出现 Obsolete 字样（大小写不敏感全文未命中），因此「变体」一类在本族不存在，两者之差为 0 是实测而非未查。",
+    "pointer_returns 与 pointer_params_only 都是 0，且这一族结构性上不可能有 pointer_params_only：26 个页面里没有任何一个带 `## Parameters` 段（两个方法的括号内均为空，属性无形参表）。",
+    "★ 判读保留：GetProfilePoints 返回类型是 `System.object`、Returns 写「Array of points」，形态上正是本仓库里通常挂 `in-process, unmanaged C++` 指针注记的那一类，但这一页**确实没有**那句字面串 ⇒ 按字面判据记 0；不能反过来推断它「不是指针返回」。",
+    "zero_arg_methods 只有 2 个（GetProfilePoints / GetSpringBody），少于要求的最多 8 个 —— 不是漏数，是全族仅此两个方法（24 属性 + 2 方法 = 26）。",
+    "上一批把 E/F 合并导致「零参可读」虚增的坑在本族不存在且方向相反：24/26 是属性，E=2 才是方法零参数，两类互斥。",
+    "StartingPitch.md 的正文写「Gets the pitch of the starting section」，但签名是 `System.double StartingPitch {get; set;}` —— 官方摘要漏了 s，描述与签名不一致。",
+    "ProfileParameters.md 的 Returns 写「Array of three doubles」，但它自己的 Remarks 表里 Square 行只列 `[ height, width ]` 两个值（另两行 Circular/Trapezoid 才是三个）⇒ 页内自相矛盾，数量不可按 Returns 那句取。",
+    "Returns 里的目标链接写法不统一：BaseProfile / SectionProfile 的签名类型是 `Body2` 而 Returns 链到 `[[Body]]`；SectionProfileCenter 的 Returns 写 `[[Center point]]`，是一个在本仓库里无对应页面的自由词链接 ⇒ 按「Returns 最具体」排序时这两类都不可直接采信。",
+    "TaperOutward.md 的 Returns 有官方笔误：「false to tape inward」（tape 应为 taper）。",
+    "全部 26 页的 Returns 段都没有给单位标注（Height / Pitch / Revolution / EndingEndLength / Tolerance 等 double 属性的官方页都只给词不给单位）⇒ 本族长度量与角度量的单位口径按铁律 5 记为「官方未写」，不做推断。"
+  ]
+}

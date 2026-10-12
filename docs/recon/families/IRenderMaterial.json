@@ -1,0 +1,48 @@
+{
+  "family": "IRenderMaterial",
+  "members_total": 103,
+  "obsolete_strict": 9,
+  "obsolete_loose": 9,
+  "pointer_returns": 1,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 5,
+  "properties_no_paren": 82,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetEntitiesCount",
+      "signature": "System.int GetEntitiesCount()",
+      "returns": "Number of entities on which this appearance was applied"
+    },
+    {
+      "name": "GetEntities",
+      "signature": "System.object GetEntities()",
+      "returns": "Array of entities on which this appearance is applied"
+    },
+    {
+      "name": "GetLinkedDisplayStates",
+      "signature": "System.object GetLinkedDisplayStates()",
+      "returns": "Array of display state names"
+    },
+    {
+      "name": "GetDSPBRMaterial",
+      "signature": "System.object GetDSPBRMaterial()",
+      "returns": "[[IDSPBRMaterial]]"
+    },
+    {
+      "name": "RemoveAllEntities",
+      "signature": "void RemoveAllEntities()",
+      "returns": ""
+    }
+  ],
+  "anomalies": [
+    "All 103 pages carry the **Signature** line at line 14, so no_signature_pages=0; the header region is therefore exactly lines 1-13 in every file.",
+    "obsolete_loose - obsolete_strict = 0: all 9 superseded pages use the exact 'Obsolete. Superseded by ...' form, so no 'Obsolete for documents created in ...' variant appears in this family.",
+    "MaterialID is superseded but never uses the word 'Obsolete' - its header line 12 reads 'Not supported in SOLIDWORKS 2011 and later. Superseded by [[IRenderMaterial::GetMaterialIds]].' => it is invisible to BOTH criteria A and B, so both counts under-report real supersession by 1.",
+    "The pointer literal appears exactly once (IGetEntities, ## Returns) and never under ## Parameters => pointer_params_only=0 for this family.",
+    "GetEntities/GetLinkedDisplayStates/GetDSPBRMaterial all return System.object but are NOT marked with the in-process pointer literal; only the I-prefixed twin IGetEntities carries it.",
+    "E and F do not overlap and together do not exhaust the family: 16 of 103 signatures have parenthesised non-empty parameter lists (e.g. AddEntity, SetCenterPoint2, IGetEntities), which are neither zero-arg methods nor properties.",
+    "_overview.md front matter claims property_count=82 / method_count=21, but the 103 member pages split as 82 front-matter 'property' and 21 front-matter 'method'; by signature shape it is 21 with parens and 82 without. The overview's 82/21 split does not reconcile with either the front matter or the signature shapes.",
+    "Signature shape vs front-matter kind disagree for the get-only entries: MaterialID and HasDSPBRProperties are declared kind=property in the front matter but their signatures are {get;} with no parens; they are counted under F, not E."
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "family": "IMirrorComponentFeatureData",
+  "source_dir": "C:\\swapi\\types\\IMirrorComponentFeatureData\\",
+  "members_total": 25,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 1,
+  "properties_no_paren": 23,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "ReleaseSelectionAccess",
+      "kind": "method",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": "<NO ## Returns SECTION> -- 该页 Signature 之后直接是 ## Remarks, 官方未给 Returns 段; 返回类型只能从 Signature 读到 void"
+    }
+  ],
+  "anomalies": [
+    "ReleaseSelectionAccess 是全族唯一零参方法, 且它那一页**根本没有 ## Returns 段** ⇒ 「candidates 放 Returns 最具体的」这条在本族无从比较(只有 1 个候选), 返回类型只能从 Signature 读到 void, 判不出来处已如实留空而未推测。",
+    "本族 pointer_returns 与 pointer_params_only 双 0: 尽管 AccessSelections 带两个 System.object 形参(TopDoc / Component)、形似 IAccessSelections 那一族指针形状, 但全族 25 页里字面串 `in-process, unmanaged C++` 出现 0 次 ⇒ 判据 C 与 D 在本族同时为空, 两者无法互相交叉验证, 不能拿本族的 0 去说「这类接口没有指针标注」。",
+    "obsolete_strict 与 obsolete_loose 同时为 0 ⇒ 本族无任何 Obsolete 页头(含不带句点、不限大小写的变体), 两者之差为 0 ⇒ 本族无法用来验证「Obsolete for documents created in ...」「Obsolete and not superseded. ...」这类变体到底归到 A 还是 B。",
+    "本族正是上一批指出的「E 与 F 合并导致零参可读虚增」的形态: 拆开后 zero_arg_methods=1 / properties_no_paren=23, 若沿用上一批的合并口径会报成 24 个「零参可读」, 其中 23 个其实是纯属性, 真零参方法只有 1 个。",
+    "MirrorPlane.md 与 SyncFlexibleSubAssemblies.md 两页**没有 ## Remarks 段**(Signature → ## Returns → ## See Also 直连); 这不影响 A–G 任一判据, 但意味着「前置/语义都在 Remarks」这条通用读法在本族有 2/25 的例外。",
+    "多条 ## Returns 是自由散文而非可机读类型(如 `Array of [[IComponent2]]`、`Array of Boolean values; true to flip alignment directions, false to not`、`Array of [[swMirrorComponentOrientation2_e]] values`) ⇒ 若后续要按「Returns 具体度」自动排序, 本族无法机读, 只能人工比。",
+    "官方源自身笔误(照录未改, 不当作解析错误): NameModifier.md 第 22 行写作 `swMirrorComponentNameModifier_e.swMirrorComponentNameName_Suffix`(Name 重复); CreateDerivedConfigurations.md 第 52 行与 NameModifier.md 第 36 行把 original 拼成 orginal。",
+    "_overview.md 的 frontmatter 声明 property_count 23 / method_count 2 = 25, 与磁盘上 25 个成员页一一对应 ⇒ 无空壳页、无多余页、也无 _overview 里列了但盘上缺的成员。"
+  ],
+  "methodology": {
+    "read": "逐个真读 C:\\swapi\\types\\IMirrorComponentFeatureData\\ 下全部 25 个成员 .md (排除 _overview.md), 未按文件名推断。",
+    "A_obsolete_strict": "页头(**Signature** 行之前)出现行首 `Obsolete.`(带句点) —— 本族 0 页命中。",
+    "B_obsolete_loose": "页头出现 `Obsolete`(不限大小写/句点/行首) —— 本族 0 页命中。",
+    "C_pointer_returns": "## Returns 段内含字面串 `in-process, unmanaged C++` —— 本族 0 页命中。",
+    "D_pointer_params_only": "同一字面串出现在 ## Returns 之外的段落(如 ## Parameters 的 ref/out 形参) —— 本族 0 页命中。",
+    "E_zero_arg_methods": "签名形如 `X()` 括号内为空, 且非废弃、非指针 —— 命中 ReleaseSelectionAccess (`void ReleaseSelectionAccess()`)。",
+    "F_properties_no_paren": "签名无括号、形如 `T Name {get; set;}` —— 命中 23 个属性。",
+    "G_no_signature_pages": "整页无 **Signature** 行 —— 本族 0 页(25/25 均有)。",
+    "cross_check": "事后用 ripgrep 对全族做了机械复核: ^\\*\\*Signature\\*\\* 命中 25 行(=25 页)、`{get;` 命中 23 行、`\\(\\s*\\)\\s*$` 命中 1 行(与 E 一致)、(?i)obsolete 0 命中、`in-process, unmanaged C++` 0 命中 —— 与逐页真读结果一致。",
+    "E_plus_F": "1 + 23 = 24 = methods(2) + properties(23) 的关系为: 25 页 - 2 个方法 = 23 个属性; 2 个方法中 1 个带参(AccessSelections)、1 个零参(ReleaseSelectionAccess)。"
+  }
+}

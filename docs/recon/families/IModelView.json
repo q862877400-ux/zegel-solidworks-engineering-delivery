@@ -1,0 +1,67 @@
+{
+  "family": "IModelView",
+  "members_total": 75,
+  "obsolete_strict": 11,
+  "obsolete_loose": 15,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 21,
+  "properties_no_paren": 31,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetBkgdImageDisplayAreaAspectRatio",
+      "signature": "System.double GetBkgdImageDisplayAreaAspectRatio()",
+      "returns": "Aspect ratio (width/height) of the area of the window where the background image is displayed, or -1 if there is no background image or if the image covers the entire window"
+    },
+    {
+      "name": "GetVisibleBox",
+      "signature": "System.object GetVisibleBox()",
+      "returns": "Array of four longs (win_x_min, win-y_min, win_x_max, and win_y_max) in screen pixels indicating the boundaries of the visible model view window; any part of the model view window blocked by the  FeatureManager design tree is excluded"
+    },
+    {
+      "name": "GetEyePoint",
+      "signature": "System.object GetEyePoint()",
+      "returns": "Array of 3 doubles describing the eye position in screen space"
+    },
+    {
+      "name": "GetViewPlaneDistance",
+      "signature": "System.double GetViewPlaneDistance()",
+      "returns": "Distance from the eye point to the view plane"
+    },
+    {
+      "name": "GetNext",
+      "signature": "System.object GetNext()",
+      "returns": "Next [[model view]] or Nothing or null if no more model views exist"
+    },
+    {
+      "name": "IGetNext",
+      "signature": "ModelView IGetNext()",
+      "returns": "Next [[model view]] or NULLif no more model views exist"
+    },
+    {
+      "name": "HasPerspective",
+      "signature": "System.bool HasPerspective()",
+      "returns": "True if the view currently has perspective viewing turned on, false otherwise"
+    },
+    {
+      "name": "GetViewHWndx64",
+      "signature": "System.long GetViewHWndx64()",
+      "returns": "Microsoft window handle"
+    }
+  ],
+  "anomalies": [
+    "in-process, unmanaged C++ 字面串在本族 75 个 .md 里 0 命中（全目录 grep 确认）⇒ pointer_returns 与 pointer_params_only 双 0；本页没有返回裸指针/仅进程内指针的成员，IGet* 变体一律返回 System.object / 标量 / ref 数组，不是 I 前缀指针接口族。",
+    "obsolete_strict 与 obsolete_loose 相差 4：GetStereoSeparation / IGetStereoSeparation / ISetStereoSeparation / SetStereoSeparation 四页页头写的是「Obsolete and not superseded. Functionality no longer implemented.」，行首是 Obsolete 而非 Obsolete. ⇒ 不计入 A、计入 B。",
+    "全部 15 处 Obsolete 都出现在第 12 行（Signature 行之前），因此「页头」与「全文」在本族给出同一结果，不存在 Signature 之后出现 Obsolete 而被 A/B 口径漏掉的歧义。",
+    "IGetVisibleBox 的签名写 System.int IGetVisibleBox()，而同族非 I 变体 GetVisibleBox 写 System.object，两页 Returns 文案完全相同（都是「Array of four longs …」）⇒ I 变体的声明类型与它描述的返回值矛盾，按官方源照抄未作推测。",
+    "GetStereoSeparation 返回 System.object、IGetStereoSeparation 返回 System.double，两页 Returns 都描述「Array of 2 doubles」⇒ 又一处 I 变体签名与其自身 Returns 文案不一致。",
+    "Transform 页正文写「**NOTE:** This property is a get-only property. **Set is not implemented**.」但签名是 MathTransform Transform {get; set;} ⇒ 签名与页内 NOTE 互斥；已按签名归入 properties_no_paren 并记此冲突。",
+    "本族 I 前缀变体存在两种互不相同的约定：IGetNext/IGetVisibleBox 返回值型，IGetEyePoint/IGraphicsRedraw 是 void + ref 形参型 ⇒ 不能只按名字前缀判「I 变体是否需要前置选择/指针」。",
+    "9 个废弃页（IOrientation / IOrientation2 / ITranslation / ITranslation2 / Orientation / Orientation2 / Scale / Translation / Translation2）整页没有 ## Returns 段，只有 Signature 与 See Also ⇒ 判据 C 对它们无输入，不是「Returns 为空」。",
+    "零参方法共 25 个，其中 4 个被废弃（GetStereoSeparation / GetViewDIB / GetViewHWnd / IGetStereoSeparation）⇒ E 计 21；A/B 口径若不排除废弃会把 E 虚增到 25，正是本批要求拆开 E/F 的原因。",
+    "独立对账：_overview.md 声明 property_count: 31 / method_count: 44，合计 75；与 members_total=75、properties_no_paren=31 逐项吻合 ⇒ 本族无空壳页、无漏读页。",
+    "GetViewDIB / GetViewHWnd 两页的 Signature 落在第 20 行而非族内常见的第 14 行，因为页头多了一段 64 位不安全的警告正文；判「页头」时按 Signature 行定位仍正确。",
+    "TranslateBy 的参数说明写「in meters」而方法实际按屏幕像素平移视图（同页 Remarks 亦称 vector is in meters），与 GetEyePoint / GetViewPlaneDistance 的 Returns 明确写 in pixels 不一致 ⇒ 官方源本身单位口径冲突，未作判定。"
+  ]
+}

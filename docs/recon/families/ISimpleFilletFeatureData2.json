@@ -1,0 +1,65 @@
+{
+  "family": "ISimpleFilletFeatureData2",
+  "members_total": 70,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 7,
+  "pointer_params_only": 7,
+  "zero_arg_methods": 8,
+  "properties_no_paren": 23,
+  "no_signature_pages": 1,
+  "candidates": [
+    {
+      "name": "GetSetbackVertices",
+      "signature": "System.object GetSetbackVertices()",
+      "returns": "Array of setback [[vertices]]"
+    },
+    {
+      "name": "GetEdgeCount",
+      "signature": "System.int GetEdgeCount()",
+      "returns": "Number of edges"
+    },
+    {
+      "name": "GetFeatureCount",
+      "signature": "System.int GetFeatureCount()",
+      "returns": "Number of features"
+    },
+    {
+      "name": "GetHoldLineCount",
+      "signature": "System.int GetHoldLineCount()",
+      "returns": "Number of hold lines"
+    },
+    {
+      "name": "GetLoopCount",
+      "signature": "System.int GetLoopCount()",
+      "returns": "Number of loops"
+    },
+    {
+      "name": "GetSetbackVerticesCount",
+      "signature": "System.int GetSetbackVerticesCount()",
+      "returns": "Number of setback vertices"
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": ""
+    },
+    {
+      "name": "RepairMissingReferences",
+      "signature": "void RepairMissingReferences()",
+      "returns": ""
+    }
+  ],
+  "anomalies": [
+    "全族 70 页没有任何一处出现单词 Obsolete（大小写不敏感、全文、含页头与正文均为 0 命中）⇒ A=0 与 B=0，本族不存在「Obsolete for documents created in …」这类变体，本批要求拆开的两条判据在本族是空集，无法互相印证。",
+    "IGetFaces.md 的 ## Returns 首行原文是「in-process in-process, unmanaged C++: Pointer to an array of [[faces]] of size Count」——官方页把 in-process 写了两遍；它仍含字面串，故按字面判据计入 pointer_returns。",
+    "IGetSetbackVertexDistance.md 的字面串同时出现在 ## Parameters（形参 EdgeArr 的 out 说明）与 ## Returns 两处；按 D 的定义（「出现在别处但不在 ## Returns」）它只计 C，不计 D。",
+    "ISetSetbackVertexDistance.md 的字面串在 ## Parameters 里出现两次（EdgeArr 与 DistArr 两个 ref 形参各一次）而 ## Returns 是「True if the setback distance is set, false if not」不含该串 ⇒ D 只计 1 次，不按出现次数累加。",
+    "ReverseFaceNormal.md 是空壳页：YAML 头写 kind: property，但正文只有 H1 标题就没有了，既无描述也无 **Signature** 行也无 ## Returns ⇒ 计入 no_signature_pages=1，且因无签名可判而未计入 properties_no_paren（否则 F 会被虚增到 24）。",
+    "PropagateFeatureToParts.md 的 See Also 指向 AutoSelect / AutoSelectComponents / AssemblyFeatureScope 三个 Property，但这三个在本目录下没有对应 .md 页（悬空交叉引用）；同样 GetPartialEdgeFilletData / SetPartialEdgeFilletData 提到的 IPartialEdgeFilletData 也不在本族目录内。",
+    "GetSetbackDistanceCount.md 的签名写作裸的「System.int GetSetbackDistanceCount( Vertex Vtx )」，而同族的 GetSetbackVertexDistance 等同类页都写 System.object ——官方源里签名风格不一致；本项按「有形参即非零参方法」处理，两种读法结论一致。",
+    "8 个 zero_arg_methods 里有 2 个（ReleaseSelectionAccess、RepairMissingReferences）返回 void 且整页没有 ## Returns 段 ⇒ 「Returns 最具体」这一排序对它们无法成立，candidates 里以空串如实标出，并把它们排在最后。",
+    "GetHoldLineCount.md 的 ## Remarks 里链到 [[ISimpleFilletFeatureData::IGetHoldLines]]（v1 家族名、无尾部 2），而同族其它页都链 IGetHoldLines/ISetHoldLines ——官方页内部有一处指向上一代接口的链接。",
+    "IGetRadius.md 的 See Also 里出现「ISimpleFilletFeatureData2::IGetRadius Method」即该页链向自己；IGetConicRhoOrRadius.md 与 ISetConicRhoOrRadius.md 互相链、GetFilletItemAtIndex/IGetFilletItemAtIndex 的 See Also 也互含自己一方，链接表存在自指，不影响判据。"
+  ]
+}

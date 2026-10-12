@@ -1,0 +1,64 @@
+{
+  "family": "IPartDoc",
+  "members_total": 144,
+  "obsolete_strict": 52,
+  "obsolete_loose": 52,
+  "pointer_returns": 7,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 30,
+  "properties_no_paren": 4,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetTessTriStripEdges",
+      "signature": "System.object GetTessTriStripEdges()",
+      "returns": "Array of longs or integers (see Long vs. Integer) containing the list of edge IDs for this part document (see Remarks)"
+    },
+    {
+      "name": "GetTessTriStripSize",
+      "signature": "System.int GetTessTriStripSize()",
+      "returns": "Array of floats returned by [[IPartDoc::GetTessTriStrips]] and [[IPartDoc::IGetTessTriStrips]]"
+    },
+    {
+      "name": "GetTessTriStripTextures",
+      "signature": "System.object GetTessTriStripTextures()",
+      "returns": "Array containing the triangle strip texture coordinate components (see Remarks)"
+    },
+    {
+      "name": "GetTessTriStripNorms",
+      "signature": "System.object GetTessTriStripNorms()",
+      "returns": "Array containing the tri strip normals (see Remarks)"
+    },
+    {
+      "name": "IGetProcessedBody2",
+      "signature": "Body2 IGetProcessedBody2()",
+      "returns": "Processed [[body]], which is a copy of the body for this part"
+    },
+    {
+      "name": "IGetProcessedBodyWithSelFace2",
+      "signature": "Body2 IGetProcessedBodyWithSelFace2()",
+      "returns": "Processed [[body]], which is a copy of the body for this part"
+    },
+    {
+      "name": "ICreateSurfaceFeatureFromBody",
+      "signature": "Feature ICreateSurfaceFeatureFromBody()",
+      "returns": "Surface [[feature]] array"
+    },
+    {
+      "name": "GetMaterialVisualProperties",
+      "signature": "MaterialVisualPropertiesData GetMaterialVisualProperties()",
+      "returns": "[[Material visual properties data]]"
+    }
+  ],
+  "anomalies": [
+    "IExportToDWG2 writes the literal as capital-I 'In-process, unmanaged C++' inside its ## Parameters section (lines 22 and 32), while its ## Returns section (line 39) is a plain 'True if export is successful; false if not'; counted case-sensitively per the 'literal string' wording, so pointer_params_only=0 -- under case-insensitive matching it would be 1 (and pointer_returns would stay 7).",
+    "obsolete_loose minus obsolete_strict is exactly 0: all 52 obsolete pages use the identical line-start 'Obsolete. Superseded by ...' form, so this family contains none of the 'Obsolete for documents created in ...' / 'Obsolete and not superseded.' variants.",
+    "There is one further 'Obsolete' occurrence outside any page header -- SaveToFile3's Remarks says 'the now obsolete IPartDoc::SaveToFile2' -- which counts toward neither A nor B because both criteria are scoped to the header above the **Signature** line (whole-family raw occurrence count is 53, header-scoped is 52).",
+    "zero_arg_methods is derived as 48 raw empty-paren signatures minus 15 obsolete ones minus 3 in-process pointer ones = 30; the 15 obsolete zero-arg members are Body, EditRebuild, EditSuppress, EditUnsuppress, EditUnsuppressDependent, EnumRelatedBodies, ForceRebuild, GetProcessedBody, IBodyObject, IBodyObject2, ICreateNewBody, IGetProcessedBody, IGetProcessedBodyWithSelFace, MirrorPart, SaveToFile; the 3 pointer zero-arg members are IGetTessNorms, IGetTessTriStripEdges, IGetTessTriStripNorms.",
+    "Six members counted in zero_arg_methods have a completely empty ## Returns section (EditRollback, FeatureXpert, IFirstFeature, MakeSection, MirrorFeature, ResetPropertyExtension), so they are eligible for E but were not selectable as 'Returns most specific' candidates.",
+    "All four property pages carry a ## Returns section despite having no parentheses (IMaterialPropertyValues, MaterialIdName, MaterialPropertyValues, MaterialUserName); they were counted only under properties_no_paren and were not double-counted in zero_arg_methods.",
+    "Signature return types are inconsistently qualified in the source (e.g. 'System.object' and 'System.int' versus bare 'Body2', 'Feature', 'MaterialVisualPropertiesData', 'EnumBodies2'); this is a source-side artifact and does not affect the parenthesis-based classification.",
+    "Two self-audit corrections were applied before the final numbers were locked: an initial empty-parens regex rejected type names containing spaces (undercounting E as 0), and an unassigned field let 3 pointer zero-arg members through the 'non-pointer' filter (overcounting E as 33); both were caught by cross-checking against the 48-member raw empty-paren list and re-run to a consistent 30.",
+    "Independent cross-check: members_total 144 equals the _overview.md frontmatter totals (property_count 4 + method_count 140), and properties_no_paren 4 equals that same property_count."
+  ]
+}

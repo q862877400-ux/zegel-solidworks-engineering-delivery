@@ -1,0 +1,98 @@
+{
+  "family": "IEdgeFlangeFeatureData",
+  "source_dir": "C:\\swapi\\types\\IEdgeFlangeFeatureData\\",
+  "counted_rules": {
+    "A_obsolete_strict": "行首 'Obsolete.'（带句点）出现在 Signature 行之前的页头",
+    "B_obsolete_loose": "页头任意位置出现 'Obsolete'（忽略大小写、不要求句点/行首）",
+    "C_pointer_returns": "'## Returns' 段内出现字面串 'in-process, unmanaged C++'",
+    "D_pointer_params_only": "该字面串出现在页内其它位置（如 '## Parameters' 的 ref/out 形参下）但不在 '## Returns' 段",
+    "E_zero_arg_methods": "签名形如 X()（括号内空）、非废弃、Returns 无指针标记",
+    "F_properties_no_paren": "签名无括号、形如 T Name {get;}",
+    "G_no_signature_pages": "整页无 '**Signature**' 行"
+  },
+  "members_total": 42,
+  "obsolete_strict": 2,
+  "obsolete_loose": 2,
+  "pointer_returns": 1,
+  "pointer_params_only": 1,
+  "zero_arg_methods": 4,
+  "properties_no_paren": 30,
+  "no_signature_pages": 0,
+  "cross_check": {
+    "_overview_md": "property_count=30, method_count=12 -> 42，与逐页读出的 30 属性 + 12 方法一致",
+    "signature_forms": "30 个属性签名 + 12 个方法签名 = 42，无第三种形态"
+  },
+  "obsolete_members": [
+    {
+      "name": "Edge",
+      "header": "Obsolete. Superseded by [[IEdgeFlangeFeatureData::Edges]], [[IEdgeFlangeFeatureData::IGetEdges]], and [[IEdgeFlangeFeatureData::ISetEdges]].",
+      "signature": "System.object Edge {get; set;}",
+      "has_returns_section": false,
+      "counts_as": "F(properties_no_paren) + A/B(obsolete)"
+    },
+    {
+      "name": "IAccessSelections",
+      "header": "Obsolete. Superseded by [[IEdgeFlangeFeatureData::IAccessSelections2]].",
+      "signature": "System.bool IAccessSelections( ModelDoc TopDoc, Component Component )",
+      "has_returns_section": false,
+      "counts_as": "A/B(obsolete)；有形参故不入 E"
+    }
+  ],
+  "pointer_members": [
+    {
+      "name": "IGetEdges",
+      "signature": "System.object IGetEdges( System.int EdgeCount )",
+      "marker_location": "## Returns",
+      "returns": "- in-process, unmanaged C++: Pointer to an array of edges for this edge flange\n\n- VBA, VB.NET, C#, and C++/CLI: Not supported",
+      "counted_as": "C(pointer_returns)"
+    },
+    {
+      "name": "ISetEdges",
+      "signature": "void ISetEdges( System.int EdgeCount, ref System.object EdgeArray )",
+      "marker_location": "## Parameters -> EdgeArray（该页无 ## Returns 段）",
+      "returns": "",
+      "counted_as": "D(pointer_params_only)"
+    }
+  ],
+  "candidates": [
+    {
+      "name": "GetEdgeCount",
+      "signature": "System.int GetEdgeCount()",
+      "returns": "Number of edges for this edge flange",
+      "note": "Remarks 明确它是 IGetEdges 的前置（先取边数再定数组长度）"
+    },
+    {
+      "name": "GetPositionReferenceType",
+      "signature": "System.int GetPositionReferenceType()",
+      "returns": "Position reference type as defined in [[swSelectionReferenceTypes_e]]",
+      "note": "对应属性 PositionType / UsePositionTrimSideBends"
+    },
+    {
+      "name": "GetCustomBendAllowance",
+      "signature": "CustomBendAllowance GetCustomBendAllowance()",
+      "returns": "Pointer to the [[ICustomBendAllowance]] object",
+      "note": "Returns 语义是指针，但没有 'in-process, unmanaged C++' 字面标记 ⇒ 按字面判据计入 E 而非 C；仅当 UseDefaultBendAllowance 为 false 时有效"
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": "",
+      "note": "零参 void 且整页无 '## Returns' 段 ⇒ returns 取空串，仍计入 E"
+    }
+  ],
+  "anomalies": [
+    "GetCustomBendAllowance 的 '## Returns' 写的是 'Pointer to the [[ICustomBendAllowance]] object'——语义上是指针返回，但不含字面串 'in-process, unmanaged C++'，因此按 C 的字面判据计不到，只能落在 E（zero_arg_methods）；这是本族 C 计数偏低的唯一原因。",
+    "SetCustomBendAllowance 的 '## Parameters' 同样把 PBendData 描述为 'Pointer to the [[ICustomBendAllowance]] object'，同样缺字面标记 ⇒ C 与 D 都不计它；这是本族 D=1 而非 2 的原因。",
+    "ISetEdges 是 void 且整页没有 '## Returns' 段，'in-process, unmanaged C++' 只出现在 '## Parameters' 的 ref System.object EdgeArray 条目下 ⇒ 归 D；IGetEdges 同一标记出现在 Returns ⇒ 归 C，两者互为对照。",
+    "ReleaseSelectionAccess 签名 'void ReleaseSelectionAccess()' 是零参且整页无 '## Returns' 段，仍计入 E；E 的四条里只有它没有可读的 Returns 文本。",
+    "Edge 页虽已 Obsolete，仍带完整签名 'System.object Edge {get; set;}' 且无 '## Returns' 段——F 的判据里没有『非废弃』条件，故它被计入 properties_no_paren（30 里有它一条）。",
+    "本页族的两条废弃都是 'Obsolete. Superseded by …' 形式 ⇒ obsolete_strict == obsolete_loose == 2，不存在 'Obsolete for documents created in …' 这类变体，两者之差为 0。",
+    "Edges 页正文写 '****NOTE:** This property is a get-only property. Set is not implemented.**'，而签名仍是 'System.object Edges {get; set;}'——正文与签名自相矛盾（按签名口径计入 F）。",
+    "ISetEdges 的 See Also 把接口名误写成 'IEdgeFlangeFeaturData::'（少一个 e），共 3 条链接；属官方页笔误，不影响计数。",
+    "PositionOffsetDistance 的 Remarks 引用了不存在的成员 '[[IEdgeflangeFeatureData::PostionOffsetType]]'（拼写 PostionOffsetType 且接口名大小写错），本族真实成员名是 PositionOffsetType。",
+    "AngleReference 的 See Also 把属性链接写成 '[[IEdgeFlangeFeatureData::PerpendicularToFace Property ()]]'，属性链接里带了多余的空括号 '()'。",
+    "IAccessSelections（废弃）形参用旧类型 ModelDoc / Component，而其继任者 IAccessSelections2 用 ModelDoc2 / Component2；两页的 Returns 与 Remarks 文本几乎逐字相同。",
+    "IAccessSelections 与 Edge 两页都没有 '## Returns' 段（前者因废弃未写、后者因属性未写），而其余 40 页中除 ReleaseSelectionAccess 外都有 —— 空 Returns 段在本族是常态而非缺页（G 仍为 0，因为 '**Signature**' 行都在）。",
+    "计数口径已复核：机械扫描（正则 + 段切分）与逐页人工阅读两路结果完全一致，_overview.md 的 property_count=30 / method_count=12 是第三次独立佐证。"
+  ]
+}

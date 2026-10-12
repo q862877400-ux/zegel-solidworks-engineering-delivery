@@ -1,0 +1,54 @@
+{
+  "family": "ILoftFeatureData",
+  "members_total": 48,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 4,
+  "pointer_params_only": 3,
+  "zero_arg_methods": 7,
+  "properties_no_paren": 28,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetFeatureScopeBodiesCount",
+      "signature": "System.int GetFeatureScopeBodiesCount()",
+      "returns": "Number of solid bodies affected by the loft feature in a multibody part"
+    },
+    {
+      "name": "GetGuideCurvesCount",
+      "signature": "System.short GetGuideCurvesCount()",
+      "returns": "Number of guide curves"
+    },
+    {
+      "name": "GetGuideCurvesType",
+      "signature": "System.object GetGuideCurvesType()",
+      "returns": "Array of types of guide curves as defined in [[swSelectType_e]]"
+    },
+    {
+      "name": "GetProfileCount",
+      "signature": "System.short GetProfileCount()",
+      "returns": "Number of profiles"
+    },
+    {
+      "name": "IsBossFeature",
+      "signature": "System.bool IsBossFeature()",
+      "returns": "True if it is a boss feature, false if not"
+    },
+    {
+      "name": "IsThinFeature",
+      "signature": "System.bool IsThinFeature()",
+      "returns": "True if it is a thin feature, false if not"
+    }
+  ],
+  "anomalies": [
+    "本族 48 页正文中字符串 obsolete（含任意大小写、任意位置）出现 0 次 ⇒ A=0、B=0，两者之差为空；这一族完全没覆盖「Obsolete for documents created in …」「Obsolete and not superseded. …」这类变体，拿它无法验证 A 与 B 的判别力。",
+    "ReleaseSelectionAccess 是零参方法（void ReleaseSelectionAccess()），但整页没有 ## Returns 段 ⇒ 它计入 E 的 7 个，却拿不到任何 Returns 文本，所以 candidates 只能给到 6 个。",
+    "EndConstraintApplyToAll 与 StartConstraintApplyToAll 两页正文写着「**This property is a get-only property.** **Set is not implemented**」，而签名仍是 {get; set;} ⇒ 签名与页内 NOTE 自相矛盾，我按签名计入 F，未按 NOTE 改判。",
+    "GetGuideCurvesType 返回 System.object、Returns 写「Array of types of guide curves as defined in [[swSelectType_e]]」，但全页没有 in-process, unmanaged C++ 字面串 ⇒ 「返回数组」在本族不等于「指针返回」，判 D 不能只看是否返回数组。",
+    "三个 ISet* 的 ref 形参下带 in-process, unmanaged C++ 字面串，但它们的返回值是 void ⇒ 结构性上不可能在 ## Returns 段出现该串，本族 D=3 全部来自 ## Parameters 段。",
+    "Centerline / StartDirectionVector / EndDirectionVector / PickPoints / Profiles / GuideCurves / FeatureScopeBodies 都是 System.object 属性且 Returns 描述数组或向量，同样没有该字面串 ⇒ 官方只对 I 前缀的指针变体使用这句措辞。",
+    "IsBossFeature 与 IsThinFeature 的 front-matter kind 字段是 method、签名带空括号，名字读起来像属性 ⇒ 归入 E 而非 F，按名字判会错。",
+    "NumberOfSections 的签名类型是 System.double、Returns 只写「Number of sections」（一个计数量却是 double），官方页未作解释 ⇒ 口径不推测，原样记录。",
+    "front-matter 计数与签名形态计数互相印证：kind=property 28、kind=method 20，合计 48，与 F=28 一致；E 的 7 个加上带参方法 13 个正好等于 20。"
+  ]
+}

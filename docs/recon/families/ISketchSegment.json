@@ -1,0 +1,65 @@
+{
+  "family": "ISketchSegment",
+  "source_dir": "C:\\swapi\\types\\ISketchSegment\\",
+  "members_total": 37,
+  "obsolete_strict": 4,
+  "obsolete_loose": 4,
+  "pointer_returns": 3,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 18,
+  "properties_no_paren": 7,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetSketchSlot",
+      "signature": "SketchSlot GetSketchSlot()",
+      "returns": "[[Sketch slot]] if the sketch segment is associated with a sketch slot, or null if the sketch segment is not associated with a sketch slot"
+    },
+    {
+      "name": "GetID",
+      "signature": "System.object GetID()",
+      "returns": "Array with two longs or integers (see Long vs. Integer) identifying this sketch segment ID"
+    },
+    {
+      "name": "GetType",
+      "signature": "System.int GetType()",
+      "returns": "Type of sketch segment as defined in [[swSketchSegments_e]]"
+    },
+    {
+      "name": "IsBendLine",
+      "signature": "System.bool IsBendLine()",
+      "returns": "True if the sketch segment is a bendline, false if not"
+    },
+    {
+      "name": "GetRelationsCount",
+      "signature": "System.int GetRelationsCount()",
+      "returns": "Number of sketch relations for this sketch segment"
+    },
+    {
+      "name": "GetRelations",
+      "signature": "System.object GetRelations()",
+      "returns": "Array of [[sketch relations]] for this sketch segment"
+    },
+    {
+      "name": "GetSketchPaths",
+      "signature": "System.object GetSketchPaths()",
+      "returns": "Array of [[sketch paths]]"
+    },
+    {
+      "name": "GetConstraints",
+      "signature": "System.object GetConstraints()",
+      "returns": "Array of sketch segment constraints (see **Remarks**)"
+    }
+  ],
+  "anomalies": [
+    "IGetConstraints 是一个零参方法（`System.string IGetConstraints()`），但它的 `## Returns` 带 `in-process, unmanaged C++` 指针串 ⇒ 按 E 项「非指针」的限定被排除在 zero_arg_methods 之外；若不排除该限定则为 19（这是本族 19 个零参签名与 18 个零参可读成员的唯一差项）。",
+    "Status.md 页内自相矛盾：签名写 `System.int Status {get; set;}`（带 set），而正文 NOTE 逐字写 'This property is a get-only property. Set is not implemented.' ⇒ 仍按 F 项计入 properties_no_paren（7），但其 set 实际不可用。",
+    "IGetID.md 的签名是 `System.int IGetID()`（标 int），`## Returns` 却写 'Array with two longs or integers ... identifying this sketch segment ID' ⇒ 官方源里签名与 Returns 自相矛盾（与 GetID 的 Returns 文字逐字相同），无法判读真值，未计入任何其它类别。",
+    "四个废弃页（Select / Select2 / Select3 / SelectByMark）**完全没有 `## Returns` 段**（只有 ## Parameters）⇒ 它们既无 Returns 也无指针串；因此 A 与 B 同为 4、差值 0 —— 本族不存在 'Obsolete for documents created in …' / 'Obsolete and not superseded. …' 这类变体。",
+    "pointer_params_only = 0：全族字面串 `in-process, unmanaged C++` 仅出现 3 次（IGetConstraints / IGetRelations / IGetSketchPaths），且三次都在各自 `## Returns` 段内，没有任何一次落在 `## Parameters` 的 ref/out 形参下。",
+    "IGetConstraintsCount.md 的 `## See Also` 出现官方页笔误 `ISketdhSegment::GetConstraints Method` / `ISketdhSegment::IGetConstraints Method`（Sketdh 字母转置）⇒ 未按任何接口名解析，不影响计数。",
+    "GetSketchPaths.md 的 `## See Also` 指向 `ISketchSegment::GetSketchSegmentCount Method` 与 `ISketchSegment::IGetSketchSegments Method`，这两个成员在本族目录里**不存在**（悬空交叉链接）⇒ 未计入 members_total。",
+    "GetSketchPathCount.md 的描述行 'Gets the number of sketch paths for this sketch segment' 缺句末句点（同类页均有）⇒ 纯排版差异，不影响判据。",
+    "交叉核对：_overview.md 记 property_count=7 / method_count=30，合计 37，与本文件 members_total=37 一致；本族 7 个属性（F=7）与 overview 的 7 自洽。"
+  ]
+}

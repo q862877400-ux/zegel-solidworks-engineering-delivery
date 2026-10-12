@@ -1,0 +1,58 @@
+{
+  "family": "IBaseFlangeFeatureData",
+  "source_dir": "C:\\swapi\\types\\IBaseFlangeFeatureData",
+  "members_total": 53,
+  "obsolete_strict": 7,
+  "obsolete_loose": 7,
+  "pointer_returns": 2,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 6,
+  "properties_no_paren": 39,
+  "no_signature_pages": 0,
+  "read_method": "every member .md read individually with the read tool; _overview.md excluded from members_total but used as a cross-check",
+  "candidates": [
+    {
+      "name": "GetTableThicknessesCount",
+      "signature": "System.int GetTableThicknessesCount()",
+      "returns": "Number of names of the thicknesses"
+    },
+    {
+      "name": "GetD1OffsetReferenceType",
+      "signature": "System.int GetD1OffsetReferenceType()",
+      "returns": "Type of reference geometry as defined in [[swSelectionReferenceTypes_e]]"
+    },
+    {
+      "name": "GetD2OffsetReferenceType",
+      "signature": "System.int GetD2OffsetReferenceType()",
+      "returns": "Type of reference geometry as defined in [[swSelectionReferenceTypes_e]]"
+    },
+    {
+      "name": "GetTableThicknesses",
+      "signature": "System.object GetTableThicknesses()",
+      "returns": "Names of the thicknesses"
+    },
+    {
+      "name": "GetCustomBendAllowance",
+      "signature": "System.object GetCustomBendAllowance()",
+      "returns": "[[Custom bend allowance]]  (wiki link only, no prose description)"
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": null
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict 与 obsolete_loose 都是 7（差为 0）：本族没有「Obsolete for documents created in …」「Obsolete and not superseded. …」这类变体，7 条全部是行首 `Obsolete. Superseded by [[…]]。` 这一种形态。",
+    "pointer_params_only = 0：字面串 `in-process, unmanaged C++` 在全族只出现 2 次（grep 确认），且两次都在 `## Returns` 段内（IGetTableRadii 第 21 行、IGetTableThicknesses 第 20 行），`## Parameters` 段里一次也没有 —— 与「一族 17 个全在 params」的那一批相反。",
+    "D1OffsetReference / D2OffsetReference 的 `## Returns` 写的是「Pointer to the offset reference」：有 \"Pointer\" 字样但**不是**官方字面串 `in-process, unmanaged C++`，故未计入 C 也不计入 D；这两条在真机上是否返回指针，只读本次文档判不出来。",
+    "IAccessSelections / IAccessSelections2 的签名用未限定名 `ModelDoc` / `ModelDoc2` / `Component` / `Component2`，而全族其余 51 页一律写 `System.*` 全限定名 —— 官方源自身的不一致，不是转录错误。",
+    "整段没有 `## Returns` 的页共 3 张：IAccessSelections（同时是 Obsolete 页）、Initialize（9 参）、ReleaseSelectionAccess（零参、已计入 E）。⇒ E 那 6 条里只有 1 条完全没有 Returns 文本。",
+    "ReleaseSelectionAccess 与 Initialize 都是 `void` 返回且无 Returns 段；本族没有任何一页把零参方法标成指针族。",
+    "_overview.md 自报 property_count=39 / method_count=14（合计 53），与逐页数到的 39 属性 + 14 方法完全一致 —— 可作 members_total 的独立交叉校验（本批 members_total 未采用该值，53 是数出来的）。",
+    "GetCustomBendAllowance 的 Returns 只有一个 wiki 链接 `[[Custom bend allowance]]`、无任何文字说明 ⇒ 「Returns 最具体」这一排序在该页无法判读，只能如实记成链接本身。",
+    "官方源文本本身的小笔误（如 TableRadius 描述里的 \"if is not\"、D2ReverseOffset 的 \"True reverses the offset false does not\" 缺逗号、UseDefaultBendRelief 的 \"ratiois\" 连字）—— 均不影响上面任何计数。",
+    "同族命名不对称：D1ReverseOffset / D2ReverseOffset **没有**标 Obsolete，而它们的同代兄弟 D1OffsetDistance / D1OffsetReference / D1OffsetType / D2OffsetDistance / D2OffsetReference / D2OffsetType 全部标了 Obsolete；官方页没有解释这是有意保留还是遗漏，本次只读文档无法判证。",
+    "两条 IGet* 的 Returns 第二行都写「VBA, VB.NET, C#, and C++/CLI: Not supported」，并链到 In-process Methods 文档；本族没有任何一页使用「Obsolete」以外的后继标记（如 Obsolete and superseded by），因此 7 条 Obsolete 页的后继指向全部靠 `Superseded by` 那半句提供。"
+  ]
+}

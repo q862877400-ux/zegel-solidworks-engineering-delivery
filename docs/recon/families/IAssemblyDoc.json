@@ -1,0 +1,101 @@
+{
+  "family": "IAssemblyDoc",
+  "source_dir": "C:\\swapi\\types\\IAssemblyDoc",
+  "members_total": 196,
+  "obsolete_strict": 65,
+  "obsolete_loose": 65,
+  "pointer_returns": 6,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 44,
+  "properties_no_paren": 8,
+  "no_signature_pages": 0,
+  "candidate_ranking_basis": "zero_arg_methods 之中带 '## Returns' 段的 30 个成员，按 Returns 正文长度降序取前 8（长度即具体度代理指标：Returns 越完整越具体）；另 14 个零参成员是 void 且整页无 '## Returns' 段，无 Returns 值可展示，故未入选。",
+  "candidates": [
+    {
+      "name": "UseSpeedPak",
+      "signature": "System.bool UseSpeedPak()",
+      "returns": "True if the selected subassemblies whose active configuration is the parent configuration of the SpeedPak configuration switch to the SpeedPak configuration, false if not (see **Remarks**)"
+    },
+    {
+      "name": "SetSpeedPakToParent",
+      "signature": "System.bool SetSpeedPakToParent()",
+      "returns": "True if the selected subassemblies switch from the SpeedPak configuration to the parent configuration of the SpeedPak configuration, false if not"
+    },
+    {
+      "name": "UpdateSpeedPak",
+      "signature": "System.bool UpdateSpeedPak()",
+      "returns": "True if out-of-date SpeedPak configurations are updated for the selected subassemblies, false if not (see **Remarks**)"
+    },
+    {
+      "name": "UngroupComponents",
+      "signature": "System.bool UngroupComponents()",
+      "returns": "True if the grouped components in the selected folder in the FeatureManager design tree are ungrouped, false if not"
+    },
+    {
+      "name": "ExitIsolate",
+      "signature": "System.bool ExitIsolate()",
+      "returns": "True if isolating the selected component exits and the assembly returns to its original display state, false if not"
+    },
+    {
+      "name": "AddPipePenetration",
+      "signature": "System.int AddPipePenetration()",
+      "returns": "Indicates the success or failure of the operation as defined in [[swPipingPenetrationStatus_e]]"
+    },
+    {
+      "name": "ResolveAllLightweight",
+      "signature": "System.bool ResolveAllLightweight()",
+      "returns": "True if all lightweight child components of the selected components are resolved, false if not"
+    },
+    {
+      "name": "LightweightAllResolved",
+      "signature": "System.bool LightweightAllResolved()",
+      "returns": "True if all child components of the selected components are set to lightweight, false if not"
+    }
+  ],
+  "obsolete_members": [
+    "AddComponent", "AddComponent2", "AddComponent4", "AddComponents", "AddMate", "AddMate2",
+    "AddMate3", "AddMate4", "AddMate5", "AssemblyPartToggle", "CompConfigProperties",
+    "CompConfigProperties2", "CompConfigProperties3", "CompConfigProperties4",
+    "CompConfigProperties5", "ComponentReload", "CopyWithMates", "EditMate", "EditMate2",
+    "EditMate3", "EditMate4", "EditPart", "EditRebuild", "FeatureExtrusion", "ForceRebuild",
+    "ForceRebuild2", "ForceUpdateElectricalData", "GetExplodedViewCount", "GetExplodedViewNames",
+    "GetFirstMember", "GetPhysicalSimulationComponents", "GetSelectedMember", "GetSimulation",
+    "HideComponent", "IAddComponent2", "IAddComponent3", "IAddComponents", "IAddComponents2",
+    "IComponentReload2", "IComponentReload3", "IGetEditTarget", "IGetExplodedViewNames",
+    "IGetFirstMember", "IGetSelectedMember", "IMirrorComponents", "InsertCavity", "InsertCavity2",
+    "InsertCavity3", "InsertDerivedPattern", "InsertJoin", "InsertNewPart", "InsertWeld",
+    "InsertWeld2", "IToolsCheckInterference2", "IToolsCheckInterference3", "MirrorComponents",
+    "MirrorComponents2", "MirrorComponents3", "OpenCompFile", "ReplaceComponents", "ShowExploded",
+    "ToolsCheckInterference", "ViewFeatureManagerByDependencies", "ViewFeatureManagerByFeatures",
+    "ViewFeatureManagerFeatureDetail"
+  ],
+  "pointer_return_members": [
+    "IAddComponents2", "IAddComponents3", "IGetComponents", "IGetExplodedViewNames",
+    "IGetVisibleComponentsInView", "IMirrorComponents"
+  ],
+  "property_members": [
+    "ClearanceVerificationManager", "EnableAssemblyRebuild", "EnablePresentation",
+    "InterferenceDetectionManager", "IsSupportedMatesAvailable",
+    "LargeDesignReviewTransparencyLevel", "LargeDesignReviewTransparencyLevelDynamic",
+    "LargeDesignReviewTransparencyLevelEnabled"
+  ],
+  "zero_arg_methods_without_returns_section": [
+    "EditAssembly", "FileDeriveComponentPart", "FixComponent", "MakeLightWeight",
+    "RotateComponent", "RotateComponentAxis", "TemporaryFixGroup", "TemporaryFixGroupExit",
+    "TranslateComponent", "UnfixComponent", "UpdateBox", "UpdateFeatureScope",
+    "ViewCollapseAssembly", "ViewExplodeAssembly"
+  ],
+  "anomalies": [
+    "obsolete_strict 与 obsolete_loose 完全相等（65 = 65），差为 0：逐行枚举全族所有含 'obsolete' 的行后确认，65 个页头废弃标记**每一处**都是行首 'Obsolete.' 形态，本族不存在 'Obsolete for documents created in ...' 或 'Obsolete and not superseded. ...' 这类变体，因此本族无法用 strict/loose 之差暴露变体（上一批靠该差值抓到变体的情形在本族不成立）。",
+    "★ 字面串判据在本族会漏掉一页真实的指针返回：IGetBox 的 '## Returns' 写的是 'the format is a pointer to an array of 6 doubles'，用散文描述指针而**不含**字面串 'in-process, unmanaged C++'，故 C=6 而按语义应为 7 —— 本族指针返回页的真实数量是 7，字面串口径只认出 6，差额来自 IGetBox 一个。",
+    "pointer_params_only = 0：全族 6 次出现字面串 'in-process, unmanaged C++' 全部位于 '## Returns' 段内，没有一次出现在 '## Parameters' 段的 ref/out 形参下或正文其它位置 —— 与「一族 17 个全在 params-only」的情形正好相反；值得注意的是这 6 页恰恰都带 ref/out 或 Count 形参（如 IAddComponents2 的 ref int Count、IMirrorComponents 的 ref Component2），字面串却仍写在 Returns 侧，说明本族官方标注风格是「指针身份由返回值决定」，与形参类型无关。",
+    "'obsolete' 另有 3 处出现在页头之外（AddMate4 / AddMate5 的 Remarks 里比较说明、ToolsCheckInterference 的 **NOTE:** 里），按本批口径「页头 = Signature 行之前」它们**不计入** obsolete；若改用全文口径，obsolete 会被这三页的措辞误导（AddMate4/AddMate5 本身未废弃，是正文提到别人废弃）。",
+    "E 与 F 拆开后暴露的口径差：全族 frontmatter 为 kind: property 的 8 页签名全部无括号且全为 '{get;}' / '{get; set;}' 形态（8/8），无一被误计入 zero_arg_methods —— 上一批「一族 52/52 全是属性」的虚增在本族不发生；本族 8 个属性无一已废弃（8 个名字都不在 obsolete_members 里），故 F 无需像 ISketch 那样附加「含废弃项」的说明。",
+    "zero_arg_methods 的排除项全部来自废弃：全族签名空括号的页共 67 个，其中 23 个页头为 Obsolete（AssemblyPartToggle、ComponentReload、EditPart、EditRebuild、FeatureExtrusion、ForceRebuild、GetExplodedViewCount、GetExplodedViewNames、GetFirstMember、GetSelectedMember、GetSimulation、HideComponent、IGetEditTarget、IGetFirstMember、IGetSelectedMember、InsertCavity、InsertDerivedPattern、InsertJoin、InsertNewPart、OpenCompFile、ToolsCheckInterference、ViewFeatureManagerByDependencies、ViewFeatureManagerByFeatures），67 − 23 = 44；其中 1 个还同时是指针页（无），故 E 中无指针排除项。",
+    "44 个零参成员里 14 个是 void 且整页没有 '## Returns' 段（EditAssembly、FixComponent、UnfixComponent、UpdateBox、RotateComponent、TranslateComponent 等），它们计入 zero_arg_methods 却没有任何 Returns 值，因此 candidates 只能覆盖其余 30 个 —— 「零参可读」在本族实际可用面是 30 而非 44。",
+    "LightweightAllResolved 的 Returns 写 'True if all child components of the selected components are set to lightweight'，与成员名 'AllResolved'（已全部解析）语义相反、与同页 ResolveAllLightweight 的措辞也矛盾；按官方原文照录未做修正，此处记为官方文案疑似串页。",
+    "CreateMate 的页头写作 'Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]'，官方链接目标里多了一个句点（写成 CreateMate.），是本族唯一一处 wikilink 目标畸形；不影响任何计数，仅照录。",
+    "no_signature_pages = 0 且签名书写格式零异常：196 页全部含 '**Signature**' 行，且全部为 '**Signature**: `...`' 的反引号包裹形态（无反引号的异形 0 例），故本族不需要为空壳页或签名格式差异预留例外。",
+    "多页的 '## Parameters' 条目值为 'No description'（AddMate、CompConfigProperties 等废弃页普遍如此），且这些页往往只有 Signature + Parameters + See Also 三段，属官方页面本身信息稀薄，非解析遗漏。"
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "family": "IWizardHoleFeatureData2",
+  "source_dir": "C:\\swapi\\types\\IWizardHoleFeatureData2",
+  "category": "Feature Interfaces/Holes",
+  "assembly": "SolidWorks.Interop.sldworks",
+  "members_total": 75,
+  "obsolete_strict": 1,
+  "obsolete_loose": 1,
+  "pointer_returns": 1,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 5,
+  "properties_no_paren": 61,
+  "no_signature_pages": 0,
+  "kind_breakdown": {
+    "method": 14,
+    "property": 61,
+    "methods_with_parameters": 9
+  },
+  "counting_rules": {
+    "A_obsolete_strict": "header text (everything before the **Signature** line) contains a line-anchored `Obsolete.`; only FastenerType.md line 12 qualifies.",
+    "B_obsolete_loose": "header text contains `obsolete` case-insensitively, no period and no line-anchor required; identical to A in this family, so the loose-minus-strict delta (the 'Obsolete for documents created in ...' / 'Obsolete and not superseded' variants) is 0 here.",
+    "C_pointer_returns": "literal string `in-process, unmanaged C++` inside the `## Returns` section; only IGetFeatureScopeBodies.md.",
+    "D_pointer_params_only": "literal string present somewhere on the page but NOT inside `## Returns`; the literal occurs exactly once in the whole family and that one occurrence is inside `## Returns`, so D is 0.",
+    "E_zero_arg_methods": "signature literally `... Name()` with empty parens, page not obsolete and not a pointer page; 5 members, all kind=method.",
+    "F_properties_no_paren": "signature has no parentheses at all (`T Name {get; set;}` / `{get;}`); 61 members, all kind=property, counted separately from E as instructed.",
+    "G_no_signature_pages": "page has no `**Signature**` line; 0 - every one of the 75 pages carries one.",
+    "H_members_total": ".md files read, excluding _overview.md: 75 (76 .md files in the directory minus _overview.md)."
+  },
+  "obsolete_members": [
+    {
+      "name": "FastenerType",
+      "header_line": "Obsolete. Superseded by [[IWizardHoleFeatureData2::FastenerType2]].",
+      "strict": true,
+      "loose": true,
+      "signature": "System.string FastenerType {get; set;}",
+      "returns": null,
+      "note": "obsolete stub - has no `## Returns` section at all"
+    }
+  ],
+  "pointer_members": [
+    {
+      "name": "IGetFeatureScopeBodies",
+      "where": "## Returns",
+      "signature": "Body2 IGetFeatureScopeBodies( System.int Count )",
+      "returns_text": "- in-process, unmanaged C++: Pointer to an array of solid [[bodies]] of size Count\n- VBA, VB.NET, C#, and C++/CLI: Not supported"
+    }
+  ],
+  "zero_arg_members": [
+    {
+      "name": "GetFeatureScopeBodiesCount",
+      "signature": "System.int GetFeatureScopeBodiesCount()",
+      "returns": "Number of solid bodies affected",
+      "remarks_excerpt": "Call this method before calling [[IWizardHoleFeatureData2::IGetFeatureScopeBodies]]. If FeatureScope is false, the return value is 0."
+    },
+    {
+      "name": "GetSketchPointCount",
+      "signature": "System.int GetSketchPointCount()",
+      "returns": "Number of center-hole sketch points",
+      "remarks_excerpt": "Call this method before calling [[IWizardHoleFeatureData2::IGetSketchPoints]]."
+    },
+    {
+      "name": "GetSketchPoints",
+      "signature": "System.object GetSketchPoints()",
+      "returns": "Array of center-hole [[sketch points]]",
+      "remarks_excerpt": "To add or remove sketch points ... you must edit the sketch. After editing the sketch, update the Hole Wizard feature by calling [[IModelDoc2::ForceRebuild3]]."
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": "[no ## Returns section - void]",
+      "remarks_excerpt": "AccessSelections and IAccessSelections put the model into a rollback state; use this method to restore the rollback state if you did not modify the feature."
+    },
+    {
+      "name": "RestoreDefaultValues",
+      "signature": "void RestoreDefaultValues()",
+      "returns": "[no ## Returns section - void]",
+      "remarks_excerpt": "This method is not valid for legacy hole types."
+    }
+  ],
+  "candidates": [
+    {
+      "name": "GetFeatureScopeBodiesCount",
+      "signature": "System.int GetFeatureScopeBodiesCount()",
+      "returns": "Number of solid bodies affected"
+    },
+    {
+      "name": "GetSketchPointCount",
+      "signature": "System.int GetSketchPointCount()",
+      "returns": "Number of center-hole sketch points"
+    },
+    {
+      "name": "GetSketchPoints",
+      "signature": "System.object GetSketchPoints()",
+      "returns": "Array of center-hole [[sketch points]]"
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": "[no ## Returns section - void]"
+    },
+    {
+      "name": "RestoreDefaultValues",
+      "signature": "void RestoreDefaultValues()",
+      "returns": "[no ## Returns section - void]"
+    }
+  ],
+  "anomalies": [
+    "obsolete_loose - obsolete_strict = 0 in this family: the only Obsolete hit (FastenerType.md:12) is the canonical line-anchored 'Obsolete. Superseded by ...' form, so none of the 'Obsolete for documents created in ...' / 'Obsolete and not superseded' variants appear here.",
+    "FastenerType.md is an obsolete stub with no `## Returns` section at all; its signature still shows `{get; set;}` even though the NOTE above it says Set is not implemented.",
+    "IGetSketchPoints returns type `SketchPoint` (the in-process pointer style) but its `## Returns` reads only 'Array of center-hole [[sketch points]]' and carries NO literal 'in-process, unmanaged C++' string - by criterion C it is therefore NOT counted as a pointer member, even though by naming convention it is one. This is the one genuinely ambiguous call in the family.",
+    "ISetFeatureScopeBodies takes `ref Body2 BodyArr` (a ref array parameter) but the literal pointer string never appears on the page, so it contributes nothing to C or D; criterion D is defined by the literal string only and is 0 for the whole family.",
+    "Six pages have no `## Returns` section: FastenerType, InitializeHole, ISetFeatureScopeBodies, ReleaseSelectionAccess, RestoreDefaultValues, SetEndConditionReference - so of the 5 zero-arg methods, only 3 have any Returns text at all.",
+    "13 pages carry a 'get-only property. Set is not implemented' NOTE while the Signature line still shows `{get; set;}` (Face, FarSideCounterSink, FastenerSize, FastenerType, FastenerType2, HeadClearanceType, IFace, IVertex, NearSideCounterSink, Standard, Standard2, Type, Vertex) - signature shape alone does not tell you whether a set exists.",
+    "FarSideCounterSink.md says 'Gets whether the far side option is selected' and carries the get-only NOTE, yet its signature is `System.bool FarSideCounterSink {get; set;}` - no Remarks section explains the missing set, unlike NearSideCounterSink which does.",
+    "Six pages render the NOTE with four asterisks (`****NOTE:** ...`) instead of three - Face, FarSideCounterSink, IVertex, NearSideCounterSink, Type, Vertex. Cosmetic markup defect, does not affect any count.",
+    "Cross-reference links in CounterDrillAngle, CounterDrillDepth, CounterDrillDiameter and DrillAngle point at a misspelled interface `IWizardHoleFeaturData2` (missing 'e') - a source-side typo, not a member of this family.",
+    "MidCounterSinkDiameter.md uses single-colon wiki links (`[[IWizardHoleFeatureData2:CounterSinkAngle Property]]`) while every other page uses double colons (`::`).",
+    "IFace.md declares `Face2 IFace {get; set;}` but its `## Returns` text is just `[[Face]]` - the Returns prose is generic across Face/IFace/Vertex/IVertex and gives no discriminating information.",
+    "Not one of the 61 property pages states a unit for any double-valued quantity (Diameter, ThruHoleDepth, DrillAngle, CounterSinkAngle, ...). Any claim about metres vs millimetres for these must come from measurement or from another source, not from these pages.",
+    "InitializeHole.md's parameter is spelled `FastnerType` in the official source (missing 'e'); it is a void method with no `## Returns` section and 5 parameters, so it is in none of the counted buckets."
+  ]
+}

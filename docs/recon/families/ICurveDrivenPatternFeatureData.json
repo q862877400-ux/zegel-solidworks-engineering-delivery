@@ -1,0 +1,48 @@
+{
+  "family": "ICurveDrivenPatternFeatureData",
+  "members_total": 44,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 4,
+  "pointer_params_only": 4,
+  "zero_arg_methods": 5,
+  "properties_no_paren": 27,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetPatternBodyCount",
+      "signature": "System.int GetPatternBodyCount()",
+      "returns": "Number of seed bodies"
+    },
+    {
+      "name": "GetPatternFaceCount",
+      "signature": "System.int GetPatternFaceCount()",
+      "returns": "Number of faces"
+    },
+    {
+      "name": "GetPatternFeatureCount",
+      "signature": "System.int GetPatternFeatureCount()",
+      "returns": "Number of features"
+    },
+    {
+      "name": "GetSkippedItemCount",
+      "signature": "System.int GetSkippedItemCount()",
+      "returns": "Number of skipped items"
+    }
+  ],
+  "anomalies": [
+    "全族 44 页里 'Obsolete'（不分大小写、带不带句点、是否行首）一次都没出现 ⇒ obsolete_strict = obsolete_loose = 0，两者之差为 0，即本族没有 'Obsolete for documents created in ...' 这类变体；已用 grep 对整目录（含 _overview.md）复核，0 命中。",
+    "四个 IGet* 指针成员（IGetPatternBodyArray / IGetPatternFaceArray / IGetPatternFeatureArray / IGetSkippedItemArray）的字面串出现在 '## Returns' 段内（各页第 17 行），计 pointer_returns=4；但它们签名同样是零参 'X()'，只因被指针口径排除才没进 zero_arg_methods ⇒ 若不拆开口径，zero_arg_methods 会虚增 4 个。",
+    "四个 ISet* 指针成员（ISetPatternBodyArray / ISetPatternFaceArray / ISetPatternFeatureArray / ISetSkippedItemArray）的字面串只出现在 '## Parameters' 段的 **ArrayDataIn** 子条目下（各页第 19 行），而这四页**根本没有 '## Returns' 段**（返回 void）⇒ 计 pointer_params_only=4；C 与 D 严格二分后合计 8 页，与 grep 全目录 8 处命中一致。",
+    "ReleaseSelectionAccess() 是零参方法（计入 zero_arg_methods=5 之一），但整页**没有 '## Returns' 段**（void 返回）⇒ 它无可提取的 Returns 文本，未列入 candidates；candidates 只放 Returns 最具体的 4 个 Get*Count。",
+    "官方页自身把 '不可用' 与 '已废弃' 分开表达：八个 I*Array 成员都写着 'VBA, VB.NET, C#, and C++/CLI: Not supported'，但**没有一个**标 Obsolete ⇒ 本族后端不可达性来自 in-process 指针口径，而非废弃口径。",
+    "IGetPatternFeatureArray 的 '## See Also' 把自己写成 [[ICurveDrivenPatternFeatureData::IGetPatternFeatureArray Property]]，与该页前言 'kind: method' 矛盾 ⇒ 官方交叉引用把自己的种类标错。",
+    "IAccessSelections 页的 Remarks 引用 [[IFeature::ModifyDefintion]]，而同一族的 AccessSelections 页写的是正确的 ModifyDefinition ⇒ 官方页存在拼写错误 ModifyDefintion。",
+    "GetPatternFaceCount 页的正文摘要是 'Gets a list of pattern faces for this curve-driven pattern feature.'，与签名 (返回 int) 及 Returns ('Number of faces') 不符，该摘要实为 IGetPatternFaceArray 的复制 ⇒ 摘要不可作为成员语义依据。",
+    "四个 IGet* 的返回类型互不相同（Body2 / System.object / System.object / System.int），但官方文本一律标 'Not supported' ⇒ 判定可用性时不能按返回类型推断。",
+    "GetTransform 签名返回 MathTransform，而其 '## Returns' 写 [[Transform]]（小写 t）⇒ 官方链接写法与签名类型名不一致。",
+    "多个属性的 Returns 用非标准链接写法 'Array of [[bodies]]' / '[[faces]]' / '[[features]]'（小写复数，非接口名）⇒ 官方原文如此，不是本批改写。",
+    "口径自洽核对：44 = 27 properties_no_paren + 17 method；17 method = 5 零参非指针 + 4 零参指针(IGet*) + 4 带参非指针(AccessSelections/GetTransform/IAccessSelections/SetFeatureScope) + 4 带参指针(ISet*)；44 页各有且仅有一行 '**Signature**'（全部位于第 14 行）⇒ no_signature_pages = 0。",
+    "声明的判读边界：本批只对每页 '**Signature**' 之前的页头区域做 obsolete 判定；经逐页真读，全族页头（本批 44 页均为 YAML front matter + 一句摘要 + 一行 Signature）不含任何 Obsolete 标记。"
+  ]
+}

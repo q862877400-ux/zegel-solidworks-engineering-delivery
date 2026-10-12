@@ -1,7 +1,7 @@
 # 等级审计（union-level-audit）
 
 > ⚠ **本文件是生成物** —— 由 `python scripts/gen_level_audit.py` 产出；**不要手改**（改了会被下次生成覆盖）。
-> 生成日期：2026-10-08 ｜ 数据源：`capabilities.yaml`（`schema_version` = `2.0`）
+> 生成日期：2026-10-12 ｜ 数据源：`capabilities.yaml`（`schema_version` = `2.0`）
 > ⚑ 本文件是 `scripts/check_union_conventions.py` docstring 里 **R8** 承诺的那一份 —— 在 2026-10-01（轮 60）之前，**它只有承诺、没有生成器**（详见本脚本 docstring）。
 
 ## 一、总表（逐条可核）

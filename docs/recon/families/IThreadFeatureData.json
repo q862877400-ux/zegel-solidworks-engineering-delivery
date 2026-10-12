@@ -1,0 +1,56 @@
+{
+  "family": "IThreadFeatureData",
+  "source_dir": "C:\\swapi\\types\\IThreadFeatureData\\",
+  "members_total": 35,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 3,
+  "properties_no_paren": 30,
+  "no_signature_pages": 0,
+  "criteria": {
+    "A_obsolete_strict": "页头（**Signature** 行之前）出现行首 `Obsolete.`（带句点）—— 逐页真读确认 0 处",
+    "B_obsolete_loose": "页头出现 `Obsolete`（忽略大小写/句点/行首）—— 逐页真读确认 0 处；与 A 的差为 0，说明本族没有 `Obsolete for documents created in ...` 之类的变体",
+    "C_pointer_returns": "`## Returns` 段含字面串 `in-process, unmanaged C++` —— 0 处",
+    "D_pointer_params_only": "该字面串出现在 `## Returns` 之外的位置 —— 0 处",
+    "E_zero_arg_methods": "签名形如 `X()`、非废弃、非指针 —— GetEndConditionReference / InitializeThreadData / ReleaseSelectionAccess 共 3 个；另 2 个方法带形参（AccessSelections 两个、SetEndConditionReference 一个）",
+    "F_properties_no_paren": "签名无括号、形如 `T Name {get; set;}` —— 30 个，与 _overview.md 的 property_count=30 相符",
+    "G_no_signature_pages": "35 页每页恰有一行 `**Signature**`（全部在第 14 行）—— 0 个空壳页",
+    "H_members_total": "实读 .md 个数 35（目录内 36 个文件减去 _overview.md）"
+  },
+  "methods_all": [
+    { "name": "AccessSelections", "signature": "System.bool AccessSelections( ModelDoc TopDoc, Component Component )", "zero_arg": false },
+    { "name": "GetEndConditionReference", "signature": "System.object GetEndConditionReference()", "zero_arg": true },
+    { "name": "InitializeThreadData", "signature": "void InitializeThreadData()", "zero_arg": true },
+    { "name": "ReleaseSelectionAccess", "signature": "void ReleaseSelectionAccess()", "zero_arg": true },
+    { "name": "SetEndConditionReference", "signature": "void SetEndConditionReference( System.object Value )", "zero_arg": false }
+  ],
+  "candidates": [
+    {
+      "name": "GetEndConditionReference",
+      "signature": "System.object GetEndConditionReference()",
+      "returns": "[[Vertex]], [[edge]], [[plane]], or planar [[surface]]"
+    },
+    {
+      "name": "InitializeThreadData",
+      "signature": "void InitializeThreadData()",
+      "returns": ""
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": ""
+    }
+  ],
+  "candidates_note": "zero_arg_methods 全族只有 3 个，故 candidates 未凑满 8 个；只有 GetEndConditionReference 的 Returns 写明了实体类型，另两个返回 void 且整页没有 `## Returns` 段，returns 记为空串（未推测）。",
+  "anomalies": [
+    "InitializeThreadData 与 ReleaseSelectionAccess 是零参方法但整页没有 `## Returns` 段（两者签名返回 void），所以 zero_arg_methods 里只有 1 个的 Returns 可判读，candidates 只能给 3 个而非 8 个。",
+    "同一语义在两页用了两个不同枚举名：GetEndConditionReference/SetEndConditionReference 的 Remarks 写 `[[swEndConditions_e]].swEndCondUpToSelection`，而 EndCondition 属性页写 `[[swThreadEndCondition_e]].swThreadEndCondition_UpToSelection` —— 官方文档自身不一致，未做取舍只如实记录。",
+    "三个返回 COM 对象的成员（GetEndConditionReference 返回 System.object；StartEntity 与 ProfileLocation 是 System.object 属性）页面上都没有任何「in-process, unmanaged C++」字样，因此本族 C/D 结构性为 0，不代表它们在别的后端上就一定可达。",
+    "Edge 属性签名写作 `Edge Edge {get; set;}`，是全族唯一省略 `System.` 命名空间前缀的签名（其余 29 个属性均带前缀），按 E/F 口径仍算属性，未按方法计。",
+    "RotationAngle 与 ThreadStartAngle 的 Returns 写「2*pi radians」，是本族唯一自带角度单位的两页；其余长度类属性（BlindDepth/Diameter/Pitch/OffsetDistance/Revolutions）的 Returns 一律不写单位，无法从页面判定口径。",
+    "Size 与 Type 的 Returns 只写「(see **Remarks**)」，取值不在 Returns 段内，若按 Returns 具体程度排序会排在末位。",
+    "全族 0 个 Obsolete 标记 —— 与 _overview.md（property_count=30 / method_count=5，合计 35）逐项吻合，未发现文档计数与实读成员数不符的页面。"
+  ]
+}

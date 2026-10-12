@@ -1,0 +1,65 @@
+{
+  "family": "IFeature",
+  "members_total": 125,
+  "obsolete_strict": 24,
+  "obsolete_loose": 24,
+  "pointer_returns": 5,
+  "pointer_params_only": 3,
+  "zero_arg_methods": 42,
+  "properties_no_paren": 10,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetFirstDisplayDimension",
+      "signature": "System.object GetFirstDisplayDimension()",
+      "returns": "First [[IDisplayDimension]] object for this feature, or Nothing or null if there are no dimensions for this feature"
+    },
+    {
+      "name": "IGetDefinition",
+      "signature": "System.object IGetDefinition()",
+      "returns": "IUnknown interface to the feature data object; use QueryInterface to get the interface to the actual object (see **Remarks**)"
+    },
+    {
+      "name": "GetEditStatus",
+      "signature": "System.int GetEditStatus()",
+      "returns": "Editing status of feature as defined in [[swFeatureEditStatus_e]]"
+    },
+    {
+      "name": "GetOwnerFeature",
+      "signature": "Feature GetOwnerFeature()",
+      "returns": "Pointer to the [[feature]] that owns this feature"
+    },
+    {
+      "name": "IGetNextFeature",
+      "signature": "Feature IGetNextFeature()",
+      "returns": "Pointer to the next [[feature]]"
+    },
+    {
+      "name": "GetParents",
+      "signature": "System.object GetParents()",
+      "returns": "Array pointers to the parent [[features]]"
+    },
+    {
+      "name": "GetAffectedFaceCount",
+      "signature": "System.int GetAffectedFaceCount()",
+      "returns": "Number of faces modified by a feature"
+    },
+    {
+      "name": "EnumDisplayDimensions",
+      "signature": "EnumDisplayDimensions EnumDisplayDimensions()",
+      "returns": "Pointer to a [[display dimensions enumeration]] for this feature"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict and obsolete_loose are both 24, i.e. this family has zero variant forms: every header occurrence is the identical line-start 'Obsolete. Superseded by ...' string, and no 'Obsolete for documents created in ...' / 'Obsolete and not superseded. ...' style header exists.",
+    "GetTypeName.md and GetTypeName2.md each contain the bare word 'Obsolete' four times, but only as table-cell values inside the Remarks type list (rows Shape / BlockFolder / BlockDef / ViewBodyFeature), i.e. after the Signature line, so under the header-scoped A/B criteria they are not counted; a naive whole-file grep would have reported 26.",
+    "IListExternalFileReferences2.md contains one typo'd occurrence 'in-process, unmanaged C+:' (single plus) on the DataType parameter, which the literal 'in-process, unmanaged C++' does not match; that page is still counted once in D on its other six exact occurrences, because the criterion counts pages rather than occurrences.",
+    "The 'in-process' marker lands in ## Returns for five pages but in ## Parameters for three others, and the two sets are different logical members: C = IGetAffectedFaces, IGetChildren, IGetFaces2, IGetMaterialPropertyValues2, IGetParents; D = IListExternalFileReferences2, IRemoveMaterialProperty2, ISetMaterialPropertyValues2.",
+    "Six non-obsolete pages have no '## Returns' section at all (ListExternalFileReferences2, SetMaterialPropertyValues2, SetUIState, SetBodiesToKeep, UpdateExternalFileReferences, IIsSuppressed2), so C/D had to be decided by 'does the literal occur inside a Returns section' rather than by assuming the section exists; their sibling pages IIsSuppressed2 and ISetSuppression2 keep the literal out of both sections and are therefore counted in neither C nor D.",
+    "Eleven obsolete zero-arg pages (GetBody, GetErrorCode, GetMaterialPropertyValues, GetSpecificFeature, IGetBody, IGetBody2, IGetMaterialPropertyValues, IGetSpecificFeature, IsBase, IsSuppressed, RemoveMaterialProperty) also have no '## Returns' section, so they cannot be ranked by Returns specificity at all and are excluded from E purely by the obsolete rule.",
+    "ResetPropertyExtension is a zero-arg 'void' with no '## Returns' section and is counted in E purely on signature shape, even though it returns nothing readable; E is a syntactic count, not a 'returns something' count.",
+    "Biggest judgment risk in this family: EnumDisplayDimensions and GetOwnerFeature are declared as returning a named type ('EnumDisplayDimensions EnumDisplayDimensions()', 'Feature GetOwnerFeature()') and their Returns prose says 'Pointer to ...', so they are pointer returns in substance, but neither page carries the 'in-process, unmanaged C++' literal and both are therefore counted in E rather than excluded as pointer methods.",
+    "The same substantive split appears on the typed zero-arg returns IGetFirstSubFeature / IGetNextFeature / IGetNextSubFeature, which are typed 'Feature' returns with 'Pointer ...' prose but no in-process marker, hence also inside E.",
+    "Official prose typos were seen and left uncorrected: IGetFirstSubFeature and IGetNextSubFeature read 'Pointer the first/next sub-feature' (missing 'to'), and GetTypeName2.md glues a '**NOTE:**' paragraph directly onto the preceding table row with no blank line; none of these affect any count."
+  ]
+}

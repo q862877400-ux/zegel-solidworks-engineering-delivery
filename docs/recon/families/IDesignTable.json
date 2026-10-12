@@ -1,0 +1,64 @@
+{
+  "family": "IDesignTable",
+  "members_total": 40,
+  "obsolete_strict": 1,
+  "obsolete_loose": 1,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 17,
+  "properties_no_paren": 10,
+  "no_signature_pages": 2,
+  "candidates": [
+    {
+      "name": "Attach",
+      "signature": "System.bool Attach()",
+      "returns": "True if the design table is successfully activated, false if not"
+    },
+    {
+      "name": "IsActive",
+      "signature": "System.bool IsActive()",
+      "returns": "True If design table is currently being edited, false if not"
+    },
+    {
+      "name": "UpdateFeature",
+      "signature": "System.bool UpdateFeature()",
+      "returns": "True if the characteristics of the design table are updated, false if not"
+    },
+    {
+      "name": "GetColumnCount",
+      "signature": "System.int GetColumnCount()",
+      "returns": "Number of columns in the design table"
+    },
+    {
+      "name": "GetRowCount",
+      "signature": "System.int GetRowCount()",
+      "returns": "Number of rows currently visible in the model view"
+    },
+    {
+      "name": "GetStartColumnNumber",
+      "signature": "System.int GetStartColumnNumber()",
+      "returns": "Number of the first column in which a dimensions is displayed"
+    },
+    {
+      "name": "GetStartRowNumber",
+      "signature": "System.int GetStartRowNumber()",
+      "returns": "Number of the first row in which dimensions are displayed"
+    },
+    {
+      "name": "GetTitle",
+      "signature": "System.string GetTitle()",
+      "returns": "Design table title"
+    }
+  ],
+  "anomalies": [
+    "ColumnHidden.md 与 RowHidden.md 是空壳页：只有 8 行 frontmatter + `# IDesignTable.<Name>` 标题行，无描述句、无 **Signature**、无任何段（各 214 / 208 字节）；frontmatter 里 `kind: property` 是唯一的类型线索，签名本身读不到 ⇒ 二者只计入 G(2)，未计入 E 或 F。",
+    "B - A = 0：本族唯一的废弃页 EditTable.md 的页头是行首 `Obsolete. Superseded by [[IDesignTable::EditTable2]].`（第 12 行，Signature 行之前），同时满足 strict 与 loose 两种判据 ⇒ 本族不存在「Obsolete for documents created in …」「Obsolete and not superseded. …」这类变体。",
+    "全族 40 页里字面串 `in-process, unmanaged C++` 出现 0 次（grep 全目录零命中）⇒ C=0 且 D=0；这一族整体不是指针族。",
+    "`EditTable2` / `Worksheet` 返回 `System.object`，但官方 `## Returns` 只写「Microsoft Excel worksheet for this design table」，**没有**标注进程内指针限制 ⇒ 按给定的字面判据它们不算指针族，不做任何推测性扩权。",
+    "三个 void 零参方法 Detach / EditFeature（以及被废弃的 EditTable）整页没有 `## Returns` 段 ⇒ 它们计入 E(17)，但 Returns 为空，无法参与 candidates 的「Returns 最具体」筛选，故未入选。",
+    "`GetStartColumnNumber` 的 Returns 原文含官方笔误「in which a dimensions is displayed」（单数 a + dimensions），而同句式的 `GetStartRowNumber` 已写作「dimensions are displayed」；candidates 里保留原文未改字。",
+    "`GetColumnCount` 与 `GetVisibleColumnCount`、`GetRowCount` 与 `GetVisibleRowCount` 各自 Returns 文案近乎重复，但 Remarks 明确二者不同（前者按 IModelView 当前可见区域计数，后者数设计表内可见行列）—— 官方同页未给区分性数值说明，语义须以 Remarks 为准。",
+    "口径自洽校验：17 个存活零参方法 + 1 个废弃零参方法（EditTable）+ 10 个带形参方法 + 10 个无括号属性 = 38 个 **Signature** 行，与全目录 grep 出的 38 处一一对应（41 个 .md 中减去 _overview.md 与两个空壳页）。",
+    "`AddRow` 的唯一形参 `CellValues` 官方写作 `System.object`（描述为 Array of the cell values），但未写数组包装方式与元素类型 ⇒ 该族的 COM 调用需要在这一步做包装假设，本批未替它下结论。"
+  ]
+}

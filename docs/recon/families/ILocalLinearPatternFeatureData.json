@@ -1,0 +1,54 @@
+{
+  "family": "ILocalLinearPatternFeatureData",
+  "members_total": 54,
+  "obsolete_strict": 1,
+  "obsolete_loose": 1,
+  "pointer_returns": 2,
+  "pointer_params_only": 2,
+  "zero_arg_methods": 6,
+  "properties_no_paren": 38,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetD1AxisType",
+      "signature": "System.int GetD1AxisType()",
+      "returns": "Type of axis as defined in [[swPatternReferenceTypes_e]]"
+    },
+    {
+      "name": "GetD2AxisType",
+      "signature": "System.int GetD2AxisType()",
+      "returns": "Type of axis as defined in [[swPatternReferenceTypes_e]]"
+    },
+    {
+      "name": "GetSeedComponentCount",
+      "signature": "System.int GetSeedComponentCount()",
+      "returns": "Number of seed components"
+    },
+    {
+      "name": "GetSkippedItemCount",
+      "signature": "System.int GetSkippedItemCount()",
+      "returns": "Number of skipped items"
+    },
+    {
+      "name": "GetModifiedInstances",
+      "signature": "System.object GetModifiedInstances()",
+      "returns": "Array of modified pattern instance numbers"
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": ""
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict == obsolete_loose == 1: the single case (IAccessSelections.md, line 12) is the plain line-start 'Obsolete. Superseded by [[ILocalLinearPatternFeatureData::IAccessSelections2]].' form, so this family has none of the 'Obsolete for documents created in ...' / 'Obsolete and not superseded' variants -- the A/B difference is exactly 0 here.",
+    "E needs manual subtraction: the raw count of zero-argument signatures is 8, but the E criterion excludes pointer members, so IGetSeedComponentArray() and IGetSkippedItemArray() are removed, leaving 6. A mechanical 'X()' grep gives 8 and would over-report by 2.",
+    "IGetSkippedItemArray.md is self-contradictory: **Signature** reads 'System.int IGetSkippedItemArray()' while its ## Returns says 'in-process, unmanaged C++: Pointer to an array of skipped pattern instances' and its Remarks uses the name 'ArrayOut[0] = 3' -- i.e. an out array parameter appears to be missing from the signature. Counted as pointer_returns per the Returns literal; whether the signature is truncated cannot be decided from the page itself.",
+    "ReleaseSelectionAccess.md has no '## Returns' section at all (void return), so it qualifies for E by signature shape alone and its 'returns' in candidates is empty by construction, not by omission.",
+    "SkippedItemArray.md's See Also links to '[[ILocalLinearPatternFeatureData::IGetSkippedItemCount Method]]', but the actual member page is GetSkippedItemCount.md and no IGetSkippedItemCount.md exists in this directory -- a cross-reference error in the official source, while IGetSkippedItemArray.md does exist.",
+    "GetModifiedInstance.md declares 4 'out System.double' parameters yet has no '## Returns' section (void); its out params therefore never entered the pointer count -- the literal 'in-process, unmanaged C++' is absent from that page.",
+    "Several See Also entries carry a ' Property ()' / ' Method ()' artifact with empty parens (e.g. D1EndCondition.md -> 'RotateInstances Property ()', D1EndReference.md -> 'D1EndReferenceType Property ()'); this is a source-conversion artifact in the See Also lines only and never appears on a **Signature** line.",
+    "Cross-check: _overview.md front-matter declares property_count 38 / method_count 16, i.e. 54, exactly equal to the 54 member .md files read; and 8 zero-arg + 8 argument-taking = 16 methods, so the E/F split reconciles with the overview's method count.",
+    "Every page carried a '**Signature**' line, so no_signature_pages = 0; the four pointer-literal pages are the only ones carrying 'See [In-process Methods]' links, and that link text ('In-process') does not match the counted literal 'in-process, unmanaged C++'."
+  ]
+}

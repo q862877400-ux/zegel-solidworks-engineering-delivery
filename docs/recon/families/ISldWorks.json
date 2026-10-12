@@ -1,0 +1,92 @@
+{
+  "family": "ISldWorks",
+  "members_total": 333,
+  "obsolete_strict": 75,
+  "obsolete_loose": 77,
+  "pointer_returns": 7,
+  "pointer_params_only": 2,
+  "zero_arg_methods": 53,
+  "properties_no_paren": 20,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetLatestSupportedFileVersion",
+      "signature": "System.int GetLatestSupportedFileVersion()",
+      "returns": "File version number that this instance of SOLIDWORKS supports\n\n**SOLIDWORKS Release**\n\n**Version Number**\n\nSOLIDWORKS 95\n\n44\n\nSOLIDWORKS 96\n\n243\n\nSOLIDWORKS 97\n\n483\n\nSOLIDWORKS 97Plus\n\n629\n\nSOLIDWORKS 98\n\n822\n\nSOLIDWORKS 98Plus\n\n1008\n\nSOLIDWORKS 99\n\n1137\n\nSOLIDWORKS 2000\n\n1500\n\nSOLIDWORKS 2001\n\n1750\n\nSOLIDWORKS 2001Plus\n\n1950\n\nSOLIDWORKS 2003\n\n2200\n\nSOLIDWORKS 2004\n\n2500\n\nSOLIDWORKS 2005\n\n2800\n\nSOLIDWORKS 2006\n\n3100\n\nSOLIDWORKS 2007\n\n3400\n\n SOLIDWORKS 2008\n\n3800\n\n SOLIDWORKS 2009\n\n4100\n\n SOLIDWORKS 2010\n\n4400\n\n SOLIDWORKS 2011\n\n4700\n\n SOLIDWORKS 2012\n\n5000\n\n SOLIDWORKS 2013\n\n6000\n\n SOLIDWORKS 2014\n\n7000\n\n SOLIDWORKS 2015\n\n8000\n\n SOLIDWORKS 2016\n\n9000\n\n SOLIDWORKS 2017\n\n10000\n\n SOLIDWORKS 2018\n\n11000\n\n SOLIDWORKS 2019\n\n12000\n\n SOLIDWORKS 2020\n\n13000\n\n SOLIDWORKS 2021\n\n14000\n\n SOLIDWORKS 2022\n\n15000\n\n SOLIDWORKS 2023\n\n16000\n\n SOLIDWORKS 2024\n\n17000\n\n SOLIDWORKS 2025\n\n18000\n\n SOLIDWORKS 2026\n\n19000"
+    },
+    {
+      "name": "Get3DExperienceState",
+      "signature": "System.int Get3DExperienceState()",
+      "returns": "State of SOLIDWORKS Design connected to the 3DEXPERIENCE platform as defined by [[sw3DExperienceState_e]]"
+    },
+    {
+      "name": "GetSelectionFilters",
+      "signature": "System.object GetSelectionFilters()",
+      "returns": "Array of long values representing the [[swSelectType_e]] enumeration"
+    },
+    {
+      "name": "GetCurrentLicenseType",
+      "signature": "System.int GetCurrentLicenseType()",
+      "returns": "Type of SOLIDWORKS Design license as defined in [[swLicenseType_e]]"
+    },
+    {
+      "name": "GetDocuments",
+      "signature": "System.object GetDocuments()",
+      "returns": "Array of open [[documents]] in this SOLIDWORKS Design session"
+    },
+    {
+      "name": "GetActiveDisplayPane",
+      "signature": "System.int GetActiveDisplayPane()",
+      "returns": "Active display pane as defined by [[swDisplayPaneIndex_e]]"
+    },
+    {
+      "name": "GetMaterialDatabases",
+      "signature": "System.object GetMaterialDatabases()",
+      "returns": "Array of strings of the names of the material databases"
+    },
+    {
+      "name": "GetCurrentWorkingDirectory",
+      "signature": "System.string GetCurrentWorkingDirectory()",
+      "returns": "Current working directory with trailing backslash"
+    }
+  ],
+  "anomalies": [
+    "A/B 之差 = 2：EnableStereoDisplay.md 与 IEnableStereoDisplay.md 的页头写的是「Obsolete and not superseded. Functionality no longer implemented.」——行首是 Obsolete 但后面不是句点 ⇒ 只进 obsolete_loose(77)，不进 obsolete_strict(75)。本族没有「Obsolete for documents created in …」那种变体。",
+    "全族另有 2 处**正文**里的小写 obsolete：AddToolbar4.md:46 与 AddToolbar5.md:61，原文是「do not use the now obsolete ISldWorks::ShowToolbar2 method」——说的是别人（ShowToolbar2）而不是本页成员，且位置在 Signature 行之后 ⇒ 按「页头」口径 A、B 都不计。",
+    "IGetSelectionFilters 同时是零参方法与指针成员（它的 ## Returns 首行就是字面串）⇒ 它进 C(7) 但被排除出 E。若按「签名里有括号就算零参」而不剔指针，E 会虚增成 54。",
+    "E 的 53 个里有 8 个整页没有 ## Returns 段（ArrangeIcons / CreateNewWindow / ExitApp / HideBubbleTooltip / RefreshQuickTipWindow / RefreshTaskpaneContent / ResetPresetDrawingParameters / SolidWorksExplorer，全部返回 void）⇒ 它们仍计入 E，因为判据只要求「签名空括号 + 非废弃 + 非指针」，但没有 Returns 可写进 candidates。",
+    "剔除前本族签名括号为空的成员共 61 个 = 53(计入E) + 7(废弃：DateCode / EnumDocuments / IGetFirstDocument / INewAssembly / INewPart / NewAssembly / NewPart) + 1(指针：IGetSelectionFilters)。",
+    "313 个方法页里有 106 个**完全没有 ## Returns 段**（多数是 void，以及一批老旧废弃页）⇒ 「有没有 Returns」不能当作成员完整度的代理指标；这也解释了 D 类为何只有 2 个：D 的两页（ISetSelectionFilters / ISetUserTypeLibReferences）都把字面串写在 ## Parameters 的 ref 形参下，而它们的 Returns 根本不存在，只扫 Returns 段会漏成 7/9。",
+    "官方页面自身带拼写错误并被原样保留：IGetSelectionFilters 的 Returns 是「Ponter ot an array of long values…」，IGetMaterialDatabases 是「Pointer to the an array…」，IGetDocuments 是「Pointer ot an array…」——因为判据取的是字面串 in-process, unmanaged C++ 而不是散文措辞，所以这 3 处照样命中。",
+    "RemoveToolbar.md 的页头写「Superseded by [[ISldWorks::RemoveToobar2]]」——「Toobar」是官方笔误，实际后继页是 RemoveToolbar2.md（同族确实存在）；不影响任何计数。",
+    "obsolete_strict 若放宽成允许行首空白（^\\s*Obsolete\\.）结果仍是 75 ⇒ 本族不存在缩进变体，两种行首口径给出同一个数。",
+    "每一页的 **Signature** 出现次数都恰好 1 次且都在反引号内 ⇒ G=0、解析无歧义；解析时用 rindex(')') 取末括号也安全（没有任何签名的形参列表里还嵌套着括号）。",
+    "candidates 的「Returns 最具体」用 Returns 文本长度作代理排序，GetLatestSupportedFileVersion 的 Returns 有 908 字符但那是一张版本号对照表而不是描述性文字 ⇒ 长度只是代理，不等于可用性。",
+    "20 个属性页（无括号，形如 T Name {get;} / {get; set;}）与 53 个零参方法在本族是**互斥**的两类：F=20 与 E=53 加上其余 260 个带参方法正好 333，与 members_total 自洽（前一版把 E/F 合并成 73 会让「零参可读」虚增 27%）。"
+  ],
+  "_provenance": {
+    "source_dir": "C:\\swapi\\types\\ISldWorks",
+    "excluded": [
+      "_overview.md"
+    ],
+    "method": "逐页真读：C:\\swapi\\types\\ISldWorks 下每个成员 .md 的 front matter / 页头 / **Signature** 行 / ## Returns 段 / ## Parameters 段全部读入后按 A–H 口径分别计数；另用第二套独立脚本从原始文件重新推导一遍，两套结果逐字段一致（零分歧）。",
+    "criteria": {
+      "A_obsolete_strict": "页头（**Signature** 行之前）出现行首为「Obsolete.」的行；宽松到允许前导空白后结果不变",
+      "B_obsolete_loose": "同一页头区域里不分大小写、不要求句点、不要求行首地出现「obsolete」",
+      "C_pointer_returns": "## Returns 段内含字面串 in-process, unmanaged C++",
+      "D_pointer_params_only": "该字面串出现在全文他处（典型是 ## Parameters 段的 ref/out 形参下）但不在 ## Returns 段",
+      "E_zero_arg_methods": "**Signature** 反引号内签名括号为空 且 非废弃 且 非指针",
+      "F_properties_no_paren": "**Signature** 签名不含括号、含 {get;} / {get; set;}",
+      "G_no_signature_pages": "整页没有 **Signature** 行",
+      "H_members_total": "实际读的 .md 个数（不含 _overview.md）"
+    },
+    "shape_breakdown": {
+      "method": 313,
+      "property": 20,
+      "other": 0
+    },
+    "empty_paren_methods_before_exclusions": 61,
+    "methods_without_returns_section": 106,
+    "cross_check": "E + F + 带参方法 = 333 = members_total；两套独立实现逐字段一致"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "family": "IView",
+  "members_total": 461,
+  "obsolete_strict": 149,
+  "obsolete_loose": 149,
+  "pointer_returns": 45,
+  "pointer_params_only": 1,
+  "zero_arg_methods": 169,
+  "properties_no_paren": 33,
+  "no_signature_pages": 1,
+  "candidates": [
+    {
+      "name": "GetDesignTableExtent",
+      "signature": "System.object GetDesignTableExtent()",
+      "returns": "Array of 6 doubles; the lower left (x,y,z) and upper right (x,y,z) values indicating the design table extents; values are in meters and refer to drawing view space"
+    },
+    {
+      "name": "GetDimensionIds4",
+      "signature": "System.object GetDimensionIds4()",
+      "returns": "Array of strings; each string represents one dimension name from the current drawing sheet or current drawing view"
+    },
+    {
+      "name": "GetXform",
+      "signature": "System.object GetXform()",
+      "returns": "Array of 3 doubles that describe the location and scale of the drawing view (see **Remarks**)"
+    },
+    {
+      "name": "GetTemporaryAxes",
+      "signature": "System.object GetTemporaryAxes()",
+      "returns": "Array of double of the information about the temporary axes in this view (see **Remarks**)"
+    },
+    {
+      "name": "GetKeepLinkedToBOM",
+      "signature": "System.bool GetKeepLinkedToBOM()",
+      "returns": "True if this drawing view is linked to a BOM or weldment cut-list table, false if not"
+    },
+    {
+      "name": "GetUseParentDisplayMode",
+      "signature": "System.bool GetUseParentDisplayMode()",
+      "returns": "True if view is using its parent settings, false if using its own local settings"
+    },
+    {
+      "name": "IsExploded",
+      "signature": "System.bool IsExploded()",
+      "returns": "True if this drawing view is showing an exploded assembly view, false if collapsed"
+    },
+    {
+      "name": "GetDisplayEdgesInShadedMode",
+      "signature": "System.bool GetDisplayEdgesInShadedMode()",
+      "returns": "True if the edges are displayed when the view is in shaded mode, false if not"
+    }
+  ],
+  "anomalies": [
+    "obsolete_loose equals obsolete_strict (149 = 149, loose-only = 0): this family contains no header-level Obsolete variant at all — every deprecation notice is the clean line-start 'Obsolete.' form, and the 3 'Obsolete. Not superseded.' pages also start at column 0 with the period so they count as strict too.",
+    "12 pages do mention 'obsolete' in prose ('the now obsolete IView::GetVisibleEntities', 'This method obsoletes IView::GetFirstNote'), but every one of those sentences sits in the body AFTER the **Signature** line, not in the header, so they correctly do not raise obsolete_loose above obsolete_strict.",
+    "Two pages capitalise the pointer phrase as 'In-process, unmanaged C++' (IGetBreakOutSections.md, IGetVisibleEntities2.md); counted case-insensitively so they are included, but a strictly case-sensitive literal match of the exact string would give pointer_returns = 43 instead of 45.",
+    "IGetDesignTableExtent.md and IGetXform.md are 'I'-prefixed in-process variants with empty parens, yet their pages do NOT carry the 'in-process, unmanaged C++' marker that their IGet* siblings do, so they land in zero_arg_methods under the stated criterion even though they are almost certainly the same unreachable pointer family.",
+    "RootDrawingComponent2.md is a genuine empty shell page — YAML front-matter plus the '# IView.RootDrawingComponent2' title and nothing else, no **Signature** line at all; because it has no signature whatsoever, a naive 'contains no parentheses' test would misfile it as a property, so properties_no_paren excludes it and reads 33 rather than 34.",
+    "'Non-obsolete' in the zero_arg_methods filter was evaluated with the case-insensitive 'obsolete' test over the header (a superset of the strict test); in this family both yield the same 149, so the exclusion set is unambiguous.",
+    "The zero_arg_methods exclusions are fully disjoint in this family: 300 pages have empty parens, of which 119 are obsolete and 12 are pointer, with 0 pages both, giving 300 - 119 - 12 = 169.",
+    "8 of the 169 zero-arg methods have no '## Returns' section at all (GetFirstDisplayDimension6, GetFirstMultiJogLeader2, RemoveAlignment, ResetSketchVisibility, SetLightweightToResolved, SetResolvedToLightweight, UpdateViewDisplayGeometry, UseDefaultAlignment), so they carry no Returns text.",
+    "pointer_params_only = 1 is a single member, ISetBodies (void ISetBodies( System.int Count, ref Body2 BodyArray )); its pointer phrase appears only under '## Parameters' against the ref argument and the page has no '## Returns' section at all, so this family is the opposite extreme from the 17-all-in-params case.",
+    "One obsolete notice in this family misspells the interface as 'IVew::GetSMBoundaryBoxDisplayData2' (on GetSMBoundaryBoxDisplayData.md); the typo does not affect the count because the line still starts with 'Obsolete.'.",
+    "Every one of the 461 pages carries at most one header 'Obsolete.' line (per-page maximum = 1), so counting pages and counting qualifying lines give identical results for both A and B in this family.",
+    "All 461 signature lines are single-line and none contain nested parentheses, so the empty-parens test could be applied without parenthesis matching; this was verified rather than assumed."
+  ]
+}

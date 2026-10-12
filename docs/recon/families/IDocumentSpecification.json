@@ -1,0 +1,25 @@
+{
+  "family": "IDocumentSpecification",
+  "members_total": 26,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 0,
+  "properties_no_paren": 26,
+  "no_signature_pages": 0,
+  "candidates": [],
+  "anomalies": [
+    "本族是纯属性族：26 页全部是 `{get; set;}` / `{get;}` 属性，**没有任何一页的 `**Signature**` 行含圆括号** ⇒ E(zero_arg_methods) = 0、F(properties_no_paren) = 26。`_overview.md` 的 frontmatter `property_count: 26` / `method_count: 0` 与逐页读数完全一致，互为佐证。",
+    "★ 因为 E 类为空，`candidates` 只能是空数组 —— 判据要求「最多 8 个 zero_arg_methods 里 Returns 最具体的成员」，而本族一个都没有；没有把 F 类的属性硬塞进去凑数。",
+    "A/B 两口径在本族都无法拉开：26 页里字面串 `obsolete`（不分大小写）出现 **0 次**，不只是页头没有、整页都没有 ⇒ obsolete_strict = 0 且 obsolete_loose = 0，差值 0，「Obsolete for documents created in …」这类变体在本族不存在可比样本。",
+    "C/D 两口径同样拉不开：字面串 `in-process, unmanaged C++` 在 26 页里出现 **0 次**（不在 `## Returns`、也不在 `## Parameters` 或任何其它位置）⇒ pointer_returns = 0、pointer_params_only = 0。这是真数为零，不是漏判（用 Select-String 全目录扫过 `in-process` 零命中）。",
+    "G 判据为 0：26 页每一页都有 `**Signature**` 行，没有空壳页；且 26 页每一页都有 `## Returns` 段。",
+    "`PLMObjectSpecification` 是全族唯一的只读属性（`System.object PLMObjectSpecification {get;}`），其余 25 个都是 `{get; set;}` ⇒ 若下游按「可读」筛选，本族可读成员数 = 26（F 口径），可写成员数 = 25。",
+    "★ 源文本噪声（不计入任何口径，如实记录）：`Silent.md` 的 See Also 写作 `[[IDocumentSpecification::AutoRepair Property ()]]` 与 `[[IDocumentSpecification::CriticalDataRepair Property ()]]`，`ViewOnly.md` 写作 `[[IConfiguration::LargeDesignReviewMark Property ()]]` —— **属性交叉引用被渲染成了带空括号的方法形式**（`Property ()`），是生成器把 property 链接也套了方法模板所致；若照字面数括号会把这三处误判成方法。",
+    "`UseLightWeightDefault.md` 的 `## Returns` 写 `false to use [[IDocumentSpecification::Lightweight value]]` —— 交叉引用名的大小写与实际成员名 `LightWeight` 不一致，且链接标签是 `value` 而不是 `Property`（同族其它 See Also 用的是 `Property` / `Method` 两种标签）。属官方源的命名不一致，不影响任何计数。",
+    "7 个属性的 `## Remarks` 都重复同一条限制：「本属性对通过 SOLIDWORKS Design connected to the 3DEXPERIENCE platform 打开 3DEXPERIENCE 文件无效」，`_overview.md` 的 Remarks 也逐条列了同样 7 个成员，两处一致。",
+    "`AutoRepair.md` / `CriticalDataRepair.md` 的 Remarks 末尾各有一句「Use For C++ only, VARIANT_TRUE (-1) ...」而 `CriticalDataRepair.md` 的同句写成「For C++ only ...」（少了 Use）—— 两页措辞不一致的官方原文，不影响计数。",
+    "计数方法说明：26 个文件逐个真读（read 工具逐页读取全文），另用只读的 Select-String 全目录复扫 `obsolete` / `in-process` / `**Signature**` 三项做机械校验，两法结论一致；未使用文件名推断任何一条判据。"
+  ]
+}

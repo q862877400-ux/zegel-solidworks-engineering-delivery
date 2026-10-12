@@ -1,0 +1,68 @@
+{
+  "family": "ISw3DPrinter",
+  "members_total": 40,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 26,
+  "properties_no_paren": 0,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetDialogConfiguration",
+      "signature": "System.int GetDialogConfiguration()",
+      "returns": "Collection of bits that represent which controls SOLIDWORKS hides or changes in the Print dialog for a given print driver"
+    },
+    {
+      "name": "GetPrinterImageBitmap",
+      "signature": "System.string GetPrinterImageBitmap()",
+      "returns": "File name of a 24-bit color .bmp of dimensions 100x100 pixels"
+    },
+    {
+      "name": "GetCalculatedSurfaceArea",
+      "signature": "System.string GetCalculatedSurfaceArea()",
+      "returns": "Calculated surface area of the current document in current document units"
+    },
+    {
+      "name": "GetCalculatedVolume",
+      "signature": "System.string GetCalculatedVolume()",
+      "returns": "Calculated volume of the current document in current document units"
+    },
+    {
+      "name": "GetPrinterLocation",
+      "signature": "System.string GetPrinterLocation()",
+      "returns": "String that the user specified during installation to indicate where the printer is located"
+    },
+    {
+      "name": "GetCalculatedBuildTime",
+      "signature": "System.string GetCalculatedBuildTime()",
+      "returns": "Estimated build time in minutes"
+    },
+    {
+      "name": "GetCalculatedCost",
+      "signature": "System.string GetCalculatedCost()",
+      "returns": "Calculated cost in vendor-defined units"
+    },
+    {
+      "name": "GetCalculatedBoundingVolume",
+      "signature": "System.string GetCalculatedBoundingVolume()",
+      "returns": "Dimension of calculated bounding volume"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict == obsolete_loose == 0: the whole family carries no Obsolete marker at all, so the 'Obsolete for documents created in ...' / 'Obsolete and not superseded. ...' variant band that criterion B was meant to isolate does not exist in ISw3DPrinter (strict/loose difference is 0, not a positive number).",
+    "pointer_returns == pointer_params_only == 0: the literal string 'in-process, unmanaged C++' occurs nowhere in any of the 40 pages, neither inside '## Returns' nor under '## Parameters'. This family declares no in-process C++ pointer members at all, so this is the opposite of the 17-member params-only band the previous batch saw.",
+    "properties_no_paren == 0: all 40 pages carry 'kind: method' in the YAML frontmatter and every '**Signature**' line has parentheses; there is not a single '{get;}' / '{get; set;}' property form. This interface is a pure printer-driver callback contract with no properties, the inverse extreme of the previous batch's family where 52/52 members were properties.",
+    "GetPrinterType has a zero-arg signature 'System.string GetPrinterType()' but its page has NO '## Returns' section at all - it is counted in zero_arg_methods but has no Returns text to cite, so it was deliberately left out of the candidates list.",
+    "The three event handlers OnAdvancedSettings / OnCancel / OnOk are 'void X()' with no '## Returns' section either; they are counted as zero_arg_methods because the criterion keys on the empty signature parens, not on the presence of a Returns section.",
+    "GetBuildEnvelope / GetEnvelopeOrigin / GetScaleParametersForActiveDocument also have no '## Returns' section (all are void methods carrying only out parameters); they are excluded from zero_arg_methods because their parentheses are non-empty.",
+    "GetEnvelopeOrigin.md carries a MIDL name-mangling artifact in the official source: the third out parameter is literally spelled '__MIDL__ISw3DPrinter0000', and the casing of the three coordinate names is inconsistent (X uppercase, y lowercase, __MIDL__... ).",
+    "SetCurrentPrinterName declares its parameter as 'System.string Material' rather than a printer-name parameter, while its '## Parameters' description reads 'Name of current printer' - an official-source inconsistency that looks like a copy-paste from SetCurrentMaterial. Reported as-is, not corrected.",
+    "OnStartup names its parameter 'System.object ActiveModel' but its '## Parameters' description reads 'Printer that corresponds to user's selection' - name and semantics disagree in the official page. Reported as-is, not guessed.",
+    "GetAvailableMaterials is one of only four members with an out parameter that also has a Returns section; its '## Returns' text ('Array of strings that contains available material names') does not mention the 'in-process, unmanaged C++' pointer wording, so it is NOT counted in pointer_returns despite the System.object return type.",
+    "no_signature_pages == 0: every one of the 40 member pages has a '**Signature**' line, so there are no empty shell pages in this family.",
+    "26 of 40 members (65%) are zero-arg, consistent with ISw3DPrinter being an interface SOLIDWORKS calls out to a vendor driver; the remaining 14 take out/in parameters or a single value argument.",
+    "Reading method: all 40 .md files were opened and read individually (4 batches of 10); the eight counts were then cross-checked by an independent PowerShell tally over the same files, and both tallies agree exactly (26 zero-arg members, identical name list)."
+  ]
+}

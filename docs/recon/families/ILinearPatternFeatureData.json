@@ -1,0 +1,66 @@
+{
+  "family": "ILinearPatternFeatureData",
+  "members_total": 60,
+  "obsolete_strict": 1,
+  "obsolete_loose": 1,
+  "pointer_returns": 4,
+  "pointer_params_only": 4,
+  "zero_arg_methods": 9,
+  "properties_no_paren": 37,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetD1AxisType",
+      "signature": "System.int GetD1AxisType()",
+      "returns": "Geometry type used to create the linear pattern in Direction 1: - 0 = axis or ref axis / - 1 = edge / - 2 = dimension / - 3 = sketch segment"
+    },
+    {
+      "name": "GetD2AxisType",
+      "signature": "System.int GetD2AxisType()",
+      "returns": "Geometry type used to create the linear pattern in Direction 2: - 0 = axis or ref axis / - 1 = edge / - 2 = dimension / - 3 = sketch segment"
+    },
+    {
+      "name": "GetPatternBodyCount",
+      "signature": "System.int GetPatternBodyCount()",
+      "returns": "Number of seed bodies"
+    },
+    {
+      "name": "GetPatternFaceCount",
+      "signature": "System.int GetPatternFaceCount()",
+      "returns": "Number of seed faces"
+    },
+    {
+      "name": "GetPatternFeatureCount",
+      "signature": "System.int GetPatternFeatureCount()",
+      "returns": "Number of seed features"
+    },
+    {
+      "name": "GetSkippedItemCount",
+      "signature": "System.int GetSkippedItemCount()",
+      "returns": "Number of skipped instances"
+    },
+    {
+      "name": "IsDirection2Specified",
+      "signature": "System.bool IsDirection2Specified()",
+      "returns": "True if direction 2 is specified, false if not"
+    },
+    {
+      "name": "GetInstanceToVaryOptions",
+      "signature": "System.object GetInstanceToVaryOptions()",
+      "returns": "[[IInstanceToVaryOptions]]"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict == obsolete_loose == 1 => 本族没有 'Obsolete for documents created in …' / 'Obsolete and not superseded. …' 这类变体，唯一一处 IAccessSelections.md 是标准形 'Obsolete. Superseded by [[ILinearPatternFeatureData::IAccessSelections2]].' 且恰在行首、位于 Signature 行（第 12 行 vs 第 14 行）之前。",
+    "IAccessSelections.md 整页没有 '## Returns' 段（只有 Parameters + See Also），所以它既不计入 C 也不计入 D；它是 10 个带参方法之一。",
+    "4 个指针返回值成员（IGetPatternBodyArray / IGetPatternFaceArray / IGetPatternFeatureArray / IGetSkippedItemArray）的签名都是空括号 'X()'，若不剔除「指针」条件，E 会从 9 虚增到 13 —— 这正是 E 必须与 C 拆开计的原因。",
+    "4 个 ISet*Array 成员的指针串只出现在 '## Parameters' 段的 '**ArrayDataIn**' 形参下（形参类型均为 ref），这 4 页都没有 '## Returns' 段，故全部落入 D 而非 C。",
+    "IGetPatternBodyArray.md 的签名写成 'Body2 IGetPatternBodyArray()'（返回值是裸类型名、无 System. 前缀），而同族其余成员一律写 'System.object' —— 同族内返回类型写法不统一；不影响分类（其 Returns 段确有指针串）。",
+    "D1ReverseDirection.md 与 D2ReverseDirection.md 的正文写 'Gets whether to reverse…'（只提读）但签名是 '{get; set;}'，正文与签名不一致；本批一律以签名行为准，二者计入 F。",
+    "官方源在 See Also 里把属性写成 '…Property ()'（误加空括号），例如 D1Axis.md 的 'VarySketch Property ()'、PatternElement.md 的 'BodyPattern Property ()'、AutoSelect.md 与 FeatureScope.md 的 'SetFeatureScope' 引用 —— 本批只判签名行，See Also 不影响 E/F 判定。",
+    "ISetPatternFeatureArray.md 的 See Also 把 'GetPatternFeatureCount Method' 重复列了两次（第 32、33 行），属官方源重复，不影响任何计数。",
+    "VarySketch.md 的 Returns 段把 geometry 拼成 'geomtry'（官方拼写错误），已逐字保留未改。",
+    "ReleaseSelectionAccess 是第 9 个零参方法（'void ReleaseSelectionAccess()'），但该页没有 '## Returns' 段，故未入选 candidates 的 8 个名额。",
+    "本族 60 个成员 = 37 property + 23 method；E+F=46 会掩盖属性占多数的事实（37/60），所以这两项必须分别计数。"
+  ]
+}

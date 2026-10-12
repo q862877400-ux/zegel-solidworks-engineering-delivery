@@ -1,0 +1,66 @@
+{
+  "family": "IExtrudeFeatureData2",
+  "members_total": 67,
+  "obsolete_strict": 9,
+  "obsolete_loose": 9,
+  "pointer_returns": 2,
+  "pointer_params_only": 3,
+  "zero_arg_methods": 7,
+  "properties_no_paren": 20,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetAutoFilletRadius",
+      "signature": "System.double GetAutoFilletRadius()",
+      "returns": "Fillet radius, if feature has automatic corner fillets enabled (Remarks: applies only to thin feature extrusions; otherwise 0.0 and the COM version returns S_false in the status return value)"
+    },
+    {
+      "name": "GetAutoFilletCorners",
+      "signature": "System.bool GetAutoFilletCorners()",
+      "returns": "True if the corners are automatically filleted, false if not (Remarks: applies only to thin feature extrusions; otherwise false and the COM version returns S_false in the status return value)"
+    },
+    {
+      "name": "GetContoursCount",
+      "signature": "System.int GetContoursCount()",
+      "returns": "Number of selected contours (Remarks: total number of sketch contours and sketch regions used in the base sketch for this feature; call before IGetContours)"
+    },
+    {
+      "name": "GetFeatureScopeBodiesCount",
+      "signature": "System.int GetFeatureScopeBodiesCount()",
+      "returns": "Number of solid bodies affected (Remarks: call before IGetFeatureScopeBodies; if FeatureScope is false the count is 0)"
+    },
+    {
+      "name": "IsBossFeature",
+      "signature": "System.bool IsBossFeature()",
+      "returns": "True if this extrusion is a boss feature, false if not"
+    },
+    {
+      "name": "IsThinFeature",
+      "signature": "System.bool IsThinFeature()",
+      "returns": "True if this extrusion is a thin feature, false if not"
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": ""
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict == obsolete_loose == 9, so this family has zero 'Obsolete for documents created in ...' / 'Obsolete and not superseded' variants; all 9 headers are the identical line-initial 'Obsolete. Superseded by [[...]].' form.",
+    "The 9 obsolete members are GetFace, GetVertex, IGetFace, IGetVertex, IsBaseExtrude, ISetFace, ISetVertex, SetFace, SetVertex; the 8 are all superseded by GetEndConditionReference / SetEndConditionReference except IsBaseExtrude, which is superseded by IFeature::IsBase2.",
+    "Raw zero-arg signatures are 8, but IsBaseExtrude() is Obsolete, so zero_arg_methods = 7 after excluding it (E is defined as non-obsolete, non-pointer, empty parens).",
+    "ReleaseSelectionAccess() is zero-arg and non-obsolete but void with NO '## Returns' section at all, so its returns string is empty - it is the weakest of the 7 candidates and is listed last.",
+    "pointer_returns is only 2 (IGetContours, IGetFeatureScopeBodies); the other 3 pages carrying the literal 'in-process, unmanaged C++' (ISetChangeToConfigurations, ISetContours, ISetFeatureScopeBodies) put it under a ref parameter in '## Parameters' and are counted as pointer_params_only instead.",
+    "ISetContours and ISetFeatureScopeBodies are void and have no '## Returns' section at all, so for those two the pointer literal exists only in '## Parameters'; ISetChangeToConfigurations does have a '## Returns' section (True/false) but the literal is not in it.",
+    "no_signature_pages = 0: all 67 member pages carry a '**Signature**' line, including the 9 obsolete stubs which are otherwise near-empty (just a heading, one Obsolete line, Signature, Parameters 'No description', See Also).",
+    "GetFromEntity is declared 'void ...( out System.object, out System.int )' and has no '## Returns' section - it is an out-param getter, not a value getter, so it is not in the zero-arg bucket.",
+    "SetWallThickness.md documents its double parameter WallThickness as 'True for forward feature direction, false for reverse' - a copy-paste error from the Forward bool parameter.",
+    "SetReverseOffset.md's See Also links to 'IExtrudeFeatureData2::SGetReverseOffset', which does not exist in this family (the real member is GetReverseOffset).",
+    "SetDraftAngle.md, SetDraftOutward.md, SetDraftWhileExtruding.md cross-link to IExtrudedFeatureData2::GetDraftAngle / GetDraftOutward / GetDraftWhileExtruding / SetDraftOutward / SetDraftWhileExtruding - a different interface name than this family (IExtrudeFeatureData2), so those See Also links leave this family.",
+    "SetDirectionReference.md lists '[[IExtrudeFeatureData2::GetDirectionReference Method]]' twice in its See Also block (duplicate entry).",
+    "FromOffsetReverse.md's description sentence is split across the newline: line 12 ends with '...if [[IExtrudeFeatureData2::FromType]]' and line 13 continues 'is swExtrudeFrom_Offset.' - cosmetic wrapping only, the text is intact.",
+    "SetDirectionReference and GetDirectionReference both document 'Valid reference entities for Type1 and Type2' although SetDirectionReference's own signature has no Type1/Type2 out parameters (only Ref1/Ref2) - the Remarks block was copied from the getter.",
+    "The interface name is easy to confuse with a same-family sibling referenced throughout these pages as 'IExtrudedFeatureData2'; I did not open that other type's directory, so no claim is made about whether it is a separate interface or a doc typo.",
+    "Front-matter 'kind:' fields corroborate the split: 20 pages say kind: property and 47 say kind: method, and 20 + 47 = 67 matches members_total."
+  ]
+}

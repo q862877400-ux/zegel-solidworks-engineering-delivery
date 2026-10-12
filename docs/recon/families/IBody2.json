@@ -1,0 +1,77 @@
+{
+  "family": "IBody2",
+  "source_dir": "C:\\swapi\\types\\IBody2\\",
+  "members_total": 220,
+  "obsolete_strict": 43,
+  "obsolete_loose": 43,
+  "pointer_returns": 10,
+  "pointer_params_only": 4,
+  "zero_arg_methods": 50,
+  "properties_no_paren": 10,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetBodyBox",
+      "signature": "System.object GetBodyBox()",
+      "returns": "Array of 6 doubles representing the extents of the bounding box (see **Remarks**)"
+    },
+    {
+      "name": "CreateBodyFromSurfaces",
+      "signature": "System.bool CreateBodyFromSurfaces()",
+      "returns": "True if solid body is created / False if: - solid body is not created - or - surface body is created"
+    },
+    {
+      "name": "GetType",
+      "signature": "System.int GetType()",
+      "returns": "Body type as defined in [[swBodyType_e]]"
+    },
+    {
+      "name": "Diagnose",
+      "signature": "DiagnoseResult Diagnose()",
+      "returns": "Pointer to the [[IDiagnoseResult]] object"
+    },
+    {
+      "name": "GetSafeBody",
+      "signature": "Body2 GetSafeBody()",
+      "returns": "Pointer to the [[IBody2]] object (page also carries: **NOTE:** This method is not yet implemented; thus, it will currently always return NULL.)"
+    },
+    {
+      "name": "EnumFaces",
+      "signature": "EnumFaces2 EnumFaces()",
+      "returns": "Enumerated list of [[faces]] (see **Remarks**)"
+    },
+    {
+      "name": "GetProcessedBodyWithSelFace",
+      "signature": "System.object GetProcessedBodyWithSelFace()",
+      "returns": "Body, which is a copy of the body for this part"
+    },
+    {
+      "name": "GetSelectionId",
+      "signature": "System.string GetSelectionId()",
+      "returns": "Selection ID of the body"
+    }
+  ],
+  "candidates_selection_rule": "Drawn only from the zero_arg_methods class; picked the 8 whose ## Returns text names a concrete type, arity or documented branch rather than a bare noun.",
+  "tally_detail": {
+    "obsolete_strict_pages": ["AddPropertyExtension", "Check", "Check2", "Copy", "DeleteBlends", "DeleteBlends2", "DeleteFaces", "DeleteFaces2", "DeleteFaces3", "DeleteFaces4", "Display", "Display2", "DraftBody", "GetCoincidenceTransform", "GetIntersectionEdges", "GetMaterialIdName", "GetMaterialUserName", "GetProcessedBody", "GetPropertyExtension", "IDeleteBlends", "IDeleteBlends2", "IDeleteFaces2", "IDeleteFaces3", "IDisplay", "IDraftBody", "IGetIntersectionEdges", "IGetProcessedBody", "IMaterialPropertyValues", "IMatchedBoolean", "IMatchedBoolean2", "IMatchedBoolean3", "IOperations", "ISetXform", "MatchedBoolean", "MatchedBoolean2", "MatchedBoolean3", "MaterialPropertyValues", "Operations", "ResetPropertyExtension", "Select", "SetMaterialIdName", "SetMaterialUserName", "SetXform"],
+    "pointer_returns_pages": ["IDeleteFacesMakeSheetBodies", "IGetEdges", "IGetExcessBodyArray", "IGetFaces", "IGetFeatures", "IGetIntersectionEdges", "IGetMassProperties", "IGetSelectedFaces", "IGetVertices", "IMaterialPropertyValues2"],
+    "pointer_params_only_pages": ["IDeleteBlends2", "IDeleteBlends3", "IDeleteFacesMakeSheetBodiesCount", "IGetTrackingIDs"],
+    "properties_no_paren_pages": ["Check3", "DisableDisplay", "DisableHighlight", "IMaterialPropertyValues", "IMaterialPropertyValues2", "IsSafe", "MaterialPropertyValues", "MaterialPropertyValues2", "Name", "Visible"],
+    "zero_arg_methods_raw_total": 59,
+    "zero_arg_methods_excluded_obsolete": 8,
+    "zero_arg_methods_excluded_pointer": 1
+  },
+  "anomalies": [
+    "obsolete_loose - obsolete_strict = 0 in this family: a sweep for every line containing 'obsolete' that is not exactly the uniform 'Obsolete. Superseded by [[X]].' header returned 0 hits, so the 'Obsolete for documents created in ...' / 'Obsolete and not superseded.' variant class this task was guarding against is simply empty here, and criteria A and B cannot disagree on IBody2.",
+    "IGetExcessBodyArray is the only zero-arg member that is also an in-process pointer (its ## Returns carries the marker) => it is excluded from zero_arg_methods by the 'non-pointer' clause; counting it would give 51, not 50.",
+    "54 of the 220 pages carry no '## Returns' section at all (33 of them obsolete), so pointer_returns can only ever be evidenced on the 166 pages that have one - a member with a pointer return but no Returns section would be silently uncountable.",
+    "The two 'Not implemented.' pages (GetSafeBody, IsSafe) are NOT marked Obsolete, so they are counted as live members (one zero-arg method, one property) even though the page text says the body/IsSafe always returns NULL/false.",
+    "Check3 is `kind: property` with signature `FaultEntity Check3 {get;}` while its two obsolete predecessors Check/Check2 are zero-arg methods => the Check -> Check3 transition changed shape (method to property), not merely the name.",
+    "DeleteFaces3's obsolete header reads 'Superseded by [[IBody2::IDeleteFaces4]]' but no IDeleteFaces4 page exists in this directory (the page is DeleteFaces4) => broken cross-reference.",
+    "The two obsolete DeleteFaces3 generations disagree on return type: DeleteFaces3 returns System.bool while IDeleteFaces3 returns void, although both document the same heal-option semantics.",
+    "IMaterialPropertyValues and MaterialPropertyValues are obsolete properties with no ## Returns section, yet both are counted in properties_no_paren because criterion F carries no obsolete exclusion - whereas criterion E explicitly does. This asymmetry is deliberate per the task text but is easy to misread as inconsistent counting.",
+    "Broken or typo'd See Also links read in passing: `IModelDocExtenstion::SelectAll` (IGetEdges), `IGetPrcoessedBodyWithSelFace` (GetSelectedFaceCount), `[[GetFirstSelectedFace Method]]` and `[[IGetVertices Method]]` without the interface prefix, `[[IBody2:CreateTrimmedSurface]]` with a single colon, and `Body2::IGetIntersectionEdgeCount` mis-prefixed as Body2 instead of IBody2.",
+    "Pages such as ICreatePsplineSurfaceDLL carry `ref` array parameters whose descriptions say 'Pointer to an array' without the official in-process wording, so they fall outside both C and D; I counted the literal string only, never the word 'Pointer'.",
+    "IOperations2's Remarks tell the reader to re-call `IBody2::Operations2` after a non-manifold error, i.e. the in-process page cross-references its own dispatch sibling by the non-I name."
+  ]
+}

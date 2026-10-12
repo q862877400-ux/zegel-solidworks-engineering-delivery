@@ -1,0 +1,65 @@
+{
+  "family": "IDrawingDoc",
+  "members_total": 274,
+  "obsolete_strict": 110,
+  "obsolete_loose": 112,
+  "pointer_returns": 3,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 74,
+  "properties_no_paren": 5,
+  "no_signature_pages": 1,
+  "candidates": [
+    {
+      "name": "IGetPenInfo",
+      "signature": "System.int IGetPenInfo()",
+      "returns": "- in-porcess, unmanaged C++: Pointer to an array of longs (see **Remarks**)\n\n- VBA, VB.NET, C#, and C++/CLI: Not supported\n\nSee [In-process Methods](<../../docs/Programming with the SOLIDWORKS API/In-process Methods.md>) for details about this type of method."
+    },
+    {
+      "name": "GetViewCount",
+      "signature": "System.int GetViewCount()",
+      "returns": "Number of views, including the number of sheets, in this drawing document (see **Remarks**)"
+    },
+    {
+      "name": "GetPenInfo",
+      "signature": "System.object GetPenInfo()",
+      "returns": "Array containing an array of longs or integers (see Long vs. Integer and see **Remarks**)"
+    },
+    {
+      "name": "GetDrawingPaletteViewNames",
+      "signature": "System.object GetDrawingPaletteViewNames()",
+      "returns": "Array of the names of the drawing views in the View Palette for the active drawing sheet"
+    },
+    {
+      "name": "ResolveOutOfDateLightWeightComponents",
+      "signature": "System.bool ResolveOutOfDateLightWeightComponents()",
+      "returns": "True if out-of-date lightweight components are resolved, false if not"
+    },
+    {
+      "name": "GetSheetNames",
+      "signature": "System.object GetSheetNames()",
+      "returns": "Array containing the names of the drawing sheets in this drawing"
+    },
+    {
+      "name": "IGetFirstView",
+      "signature": "View IGetFirstView()",
+      "returns": "Pointer to the first drawing [[view]] in this drawing document"
+    },
+    {
+      "name": "GetEditSheet",
+      "signature": "System.bool GetEditSheet()",
+      "returns": "True for edit sheet mode, false for edit template mode"
+    }
+  ],
+  "anomalies": [
+    "官方页笔误：IGetPenInfo.md 的 ## Returns 写的是 'in-porcess, unmanaged C++'（少一个 s），因此按字面串判据数不到它 —— 本文件仍按字面口径记 pointer_returns=3；若把这处笔误也算命中，则 pointer_returns 应为 4、zero_arg_methods 应为 73（IGetPenInfo 会因属指针成员而被排除）。",
+    "obsolete_loose(112) − obsolete_strict(110) = 2，差的正好是「Obsolete for documents created in SOLIDWORKS 2016 and later.」这一变体（CreateCompoundNote.md、ICreateCompoundNote.md）—— 它们 Obsolete 起头但行首不是 'Obsolete.'。",
+    "A 用行首且区分大小写匹配 'Obsolete.'；另做了一次不分大小写的对照，两者结果相同（0 个只靠大小写才命中的页），故本族 strict 与大小写不敏感口径等价。",
+    "全族 274 页里有 162 页整页没有 '## Returns' 段（全是 void 成员）⇒ zero_arg_methods=74 实际混了 25 个有返回值的方法与 49 个 void 方法，后者的 Returns 文本为空。",
+    "Sheet.md 是唯一没有 '**Signature**' 行的页（空壳页：只有 frontmatter 与标题，kind 标为 property）⇒ 它落在 no_signature_pages=1 里，同时也是 6 个 kind=property 页之一，所以 properties_no_paren 只数到 5。",
+    "pointer_params_only=0：本族 'in-process, unmanaged C++' 全字面只出现 3 次且都在 '## Returns' 段，'## Parameters' 段的 ref/out 形参下一处也没有。",
+    "IGetInsertionPoint 是唯一「签名形如 X() 且确实是指针成员」的页（Returns 带该字面串）⇒ 按 E 的「非指针」要求被排除；连同 23 个已废弃的零参页，合计 24 页形如 X() 却未计入 zero_arg_methods（98 − 24 = 74）。",
+    "被排除的 23 个废弃零参页：AddHoleCallout、BreakLineSplineCut、BreakLineStraightCut、BreakLineZigZagCut、CenterMark、CreateDetailView、EditRebuild、EditSheet、ExplodeBlockInstance、ExplodeCustomSymbol、ForceRebuild、GetBlockDefinitionCount、GetBlockDefinitions、GetEditBlock、GetLineFontCount、IMakeCustomSymbol2、InsertCenterLine、InsertChainDim、InsertDatumTag、InsertMultiJogLeader、MakeCustomSymbol、MakeCustomSymbol2、ToggleGrid（均为 .md）。",
+    "官方页笔误（仅记录、未据此改判）：某个 Obsolete 页头的后继链接写成 '[[ISkethcManager::MakeSketchBlockFromFile]]'，ISkethcManager 是 ISketchManager 的拼写错误。",
+    "candidates 的「Returns 最具体」按 '## Returns' 正文长度排序取前 8（不是按成员字母序），因此带平台分支说明的 IGetPenInfo 排在首位。"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "family": "ISweepFeatureData",
+  "members_total": 53,
+  "obsolete_strict": 8,
+  "obsolete_loose": 8,
+  "pointer_returns": 3,
+  "pointer_params_only": 2,
+  "zero_arg_methods": 11,
+  "properties_no_paren": 29,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetD2TwistAngle",
+      "signature": "System.double GetD2TwistAngle()",
+      "returns": "Angle of twist in radians in Direction 2"
+    },
+    {
+      "name": "GetTwistAngle",
+      "signature": "System.double GetTwistAngle()",
+      "returns": "Angle of twist in radians"
+    },
+    {
+      "name": "GetFeatureScopeBodiesCount",
+      "signature": "System.int GetFeatureScopeBodiesCount()",
+      "returns": "Number of solid bodies affected, -1 if not valid"
+    },
+    {
+      "name": "GetGuideCurvesCount",
+      "signature": "System.short GetGuideCurvesCount()",
+      "returns": "Number of guide curves"
+    },
+    {
+      "name": "GetCutSweepOption",
+      "signature": "System.int GetCutSweepOption()",
+      "returns": "Cut sweep type as defined in [[swCutSweepOption_e]]"
+    },
+    {
+      "name": "GetPathType",
+      "signature": "System.int GetPathType()",
+      "returns": "Sweep path type as defined in [[swSelectType_e]]"
+    },
+    {
+      "name": "GetProfileType",
+      "signature": "System.int GetProfileType()",
+      "returns": "Sweep profile type as defined in [[swSelectType_e]]"
+    },
+    {
+      "name": "IsThinFeature",
+      "signature": "System.bool IsThinFeature()",
+      "returns": "True if a thin-walled sweep feature, false if not"
+    }
+  ],
+  "anomalies": [
+    "obsolete_loose 与 obsolete_strict 完全相等（都是 8，差 0）：本族没有「Obsolete for documents created in ...」「Obsolete and not superseded. ...」这类变体，8 个废弃页全部是行首 `Obsolete.`，两个口径在这一族上不产生分歧。",
+    "8 个废弃页的 Obsolete 标记全部落在同一位置（页头标题下的摘要行，Signature 行之前），写法统一为 `Obsolete. <动词短语>`，没有跨行续写。",
+    "ReleaseSelectionAccess 是零参方法（`void ReleaseSelectionAccess()`）但整页没有 `## Returns` 段 —— 它进了 zero_arg_methods，却没有任何 Returns 文本可挑，因此未列入 candidates。",
+    "ISetFeatureScopeBodies 与 ISetGuideCurves 整页也没有 `## Returns` 段；字面串 `in-process, unmanaged C++` 只出现在 `## Parameters` 段的 ref 形参（ref Body2 BodyArr / ref System.object PDisp）之下，故计入 pointer_params_only 而非 pointer_returns。",
+    "口径缺口：AccessSelections 与 IAccessSelections 的形参是 `System.object TopDoc, System.object Component`（IAccessSelections 更写作 `ModelDoc2 TopDoc, Component2 Component`），属官方 in-process 签名、pywin32 后端到不了，但两页都没有字面串 `in-process, unmanaged C++`，按字面口径它们既不进 pointer_returns 也不进 pointer_params_only。",
+    "口径缺口：GetPathAlignmentDirectionVector 有 `out System.int Type` 形参且返回几何对象（Plane/face/line/edge/cylinder/axis/vertices），但 Returns 段同样没有那句字面串，按字面口径不计入任何指针类。",
+    "官方页签名写法不统一：IAccessSelections 与 IGetFeatureScopeBodies 用裸类型（ModelDoc2 / Component2 / Body2），而同族其它成员一律写全限定名（System.bool / System.object / System.int），无法用前缀规则机械归类。",
+    "SweepType 是本族唯一的只读属性（`System.int SweepType {get;}`，无 set），其余 28 个属性都是 `{get; set;}` —— 按题面给定的两种形态（{get;} 与 {get; set;}）都算入 properties_no_paren。",
+    "分类三分账自洽：29 个属性 + 11 个非废弃零参方法 + 13 个带形参方法 = 53，与 members_total 一致；53 个页面全部带 `**Signature**` 行，no_signature_pages = 0。",
+    "与 AGENTS.md 已知事实 36 同族的坑在本族重现：同为 I 前缀的 IGetFeatureScopeBodies / IGetGuideCurves / ISetGuideCurves 三个「指针变体」与它们对应的非 I 前辈（FeatureScopeBodies / GuideCurves）返回语义完全不同 —— 前者是进程内裸指针（后者是 COM 变体数组），按名字成对推断会错。"
+  ]
+}

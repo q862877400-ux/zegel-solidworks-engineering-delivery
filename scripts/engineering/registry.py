@@ -260,6 +260,9 @@ class PlanStep:
     params: dict = field(default_factory=dict)
     derive: str = ""
     tool: str = ""            #: ★ 由 `resolve` 填，**不手写**（★ 不变式 I6）
+    #: ★★ 阶段 2 · D2（共享基准）：本步**引用**哪些具名基准。
+    #:   ★ 判据：改基准名 ⇒ **所有引用它的步骤都改**（★ 靠 `expand.datum_index` 查）。
+    datums: tuple = ()
 
 
 @dataclass(frozen=True)

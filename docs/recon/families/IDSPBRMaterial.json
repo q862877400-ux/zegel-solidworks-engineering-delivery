@@ -1,0 +1,23 @@
+{
+  "family": "IDSPBRMaterial",
+  "members_total": 52,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 0,
+  "properties_no_paren": 52,
+  "no_signature_pages": 0,
+  "candidates": [],
+  "anomalies": [
+    "candidates 为空数组是结论而非遗漏：本族 52 个成员清一色是 frontmatter `kind: property` 的 {get; set;} 属性，零个方法，因此 zero_arg_methods = 0，「Returns 最具体的成员」这一筛选条件在本族无可选对象。",
+    "全族 Obsolete 命中为 0：目录级 grep `Obsolete` 在 53 个 .md（含 _overview.md）里零命中，故 A/B 两条判据在本族都没有可分的变体，两数必然相等。",
+    "全族 `in-process, unmanaged C++` 命中为 0：该族是纯标量/字符串属性（System.double / System.int / System.string），没有任何 ref/out 或数组形参，因此 C 与 D 同时为 0。",
+    "官方 SubsurfaceAnisotropy 的 Returns 自相矛盾：正文写 `1.0 (backward scattering) <= 值 <= 1.0 (forward scattering)`（上下界同为 1.0，区间退化为空），而同一页 Remarks 又写「默认值为 0.0 的各向同性散射」；三者互斥，我按原样记录未作修正。",
+    "ThinFilmThickness 的 Returns 写 `0.0 <= Thin film layer thickness in microns <= 1.0; 0.4 is the default`，即上界 1.0 微米 —— 与「薄膜层厚度」的物理量级和它自己的默认值 0.4 都对不上，疑似官方笔误；照录未改。",
+    "AnisotropyRotation 的 Returns 用归一化区间表达角度：`0.0 (0 degrees) default <= 值 <= 1.0 (360 degrees)`，即该属性的取值口径是 0–1 的归一化旋转量而非度数；与同族其它以度数直述的属性口径不同，读数时不能当弧度/度数套用。",
+    "5 页完全没有 `## Remarks` 段（只有 Signature + Returns + See Also）：ClearcoatNormalStrength、EmissionColorTexture、MetallicTexture、NormalStrength、TransparencyTexture；这 5 页的 Returns 又是纯名称复述（如「Normal strength」），信息量最低，是本族文档质量最差的一批。",
+    "RoughnessTexture 的摘要句官方原文错字为「Sets or sets the surface roughness texture map」（疑为 Gets or sets）；不影响任何计数，但说明该族文本未逐字校对。",
+    "计数口径留痕：members_total = 52 已排除 _overview.md（该目录共 53 个 .md）；判 Signature 时用的是 `**Signature**:` 行本身，52 页全部有该行，故 no_signature_pages = 0；属性判定用签名无括号 + `{get; set;}` 形态（目录级 grep 签名行含 `(` 零命中）双条件互证，与 frontmatter 的 `kind:` 一致。"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "family": "IMacroFeatureData",
+  "members_total": 84,
+  "obsolete_strict": 7,
+  "obsolete_loose": 7,
+  "pointer_returns": 0,
+  "pointer_params_only": 17,
+  "zero_arg_methods": 17,
+  "properties_no_paren": 19,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetEditTargetTransform",
+      "signature": "MathTransform GetEditTargetTransform()",
+      "returns": "[[Math transform]] of the component where the macro feature resides if at least one selection in the macro feature belongs to a different component, or NULL if all of the selections in the macro feature belong to the component where the macro feature resides"
+    },
+    {
+      "name": "EmbedMacroFile",
+      "signature": "System.bool EmbedMacroFile()",
+      "returns": "True to embed the macro file in the model with the macro feature, false to not"
+    },
+    {
+      "name": "GetProgId",
+      "signature": "System.string GetProgId()",
+      "returns": "Name of the program ID for the component that implements the COM feature handler"
+    },
+    {
+      "name": "GetEditBodiesCount",
+      "signature": "System.int GetEditBodiesCount()",
+      "returns": "Number of bodies to be modified by this macro feature"
+    },
+    {
+      "name": "GetParentsCount",
+      "signature": "System.int GetParentsCount()",
+      "returns": "Number of parent features for this macro feature"
+    },
+    {
+      "name": "GetDisplayDimensions",
+      "signature": "System.object GetDisplayDimensions()",
+      "returns": "Array of [[display dimensions]]"
+    },
+    {
+      "name": "GetModuleNames",
+      "signature": "System.object GetModuleNames()",
+      "returns": "Array of strings of the module names"
+    },
+    {
+      "name": "IsCOMFeature",
+      "signature": "System.bool IsCOMFeature()",
+      "returns": "True if the feature is a COM feature, false if not"
+    }
+  ],
+  "anomalies": [
+    "obsolete_loose 与 obsolete_strict 完全相等（7 = 7）—— 本族每一处页头 Obsolete 都是行首『Obsolete. Superseded by …』的标准形式；没有『Obsolete for documents created in …』或『Obsolete and not superseded. …』这类变体，所以 A、B 两口径在本族给不出任何差异信息。",
+    "pointer_returns = 0：84 页里没有任何一页把字面串『in-process, unmanaged C++』放在 ## Returns 段内 —— 全部 25 次出现都在 ## Parameters 段的 out/ref 数组形参下 ⇒ 本族 100% 落在 D 类，正是任务里说的『17 个全在这一类』那一族。",
+    "D 按『页』计数为 17，但按『出现次数』计数为 25：IGetParameters / ISetParameters / ISetSelections2 各 3 次，IAddDisplayDimensions / IGetEntitiesNeedUserId 各 2 次，其余 12 页各 1 次。报 17 还是 25 取决于口径，本文件用页数 17。",
+    "ReleaseSelectionAccess 是 17 个零参签名里唯一整页没有 ## Returns 段的（void 且官方未给 Returns）—— 它仍按判据计入 zero_arg_methods，但它的『Returns 具体度』低于另外 16 个，故未进 candidates。",
+    "EditBody 是本族唯一的废弃**属性**（页头 Obsolete. 且签名 `Body2 EditBody {get; set;}`）—— 它既计入 obsolete_strict/loose，也计入 properties_no_paren；F 口径未排除废弃项，若按『非废弃』重算 F 会变成 18。",
+    "EmbedMacroFile 名字里没有 Get 前缀，但官方签名是方法形态 `System.bool EmbedMacroFile()`（front-matter 亦标 kind: method），而它自己的 Remarks 却反复写『this property is set to…』，配对属性另名为 MacroFileEmbedded —— E/F 只按签名行判，故计入 E 不计入 F，这页文案本身自相矛盾。",
+    "6 个废弃方法（GetSelections / GetSelections2 / IGetSelections / IGetSelections2 / ISetSelections / SetSelections）的 ## Parameters 每个形参描述一律是『No description』，且都没有 ## Returns 段 —— 官方对这批老成员基本没留语义。",
+    "悬空交叉引用：IGetPropertyManagerHandleModuleNames.md 的 Remarks 让人先调 [[IMacroFeatureData::IGetPropertyManagerHandleModuleCount]] 取数组长度，但该成员在本族目录里**没有对应 .md**（只有 IGetPropertyManagerHandleModuleNames 与 IGetPropertyManagerHandleProcedureNames 两个 IGet*）⇒ 按名索引会指向不存在的一页。",
+    "ReleaseSelectionAccess.md 第 19 行把后继成员写成 [[IFeature::IModifyDefintion2]]，少一个 i（应为 IModifyDefinition2）—— 官方页自身的拼写错误，跨页检索该拼写会漏。",
+    "部分 See Also 链接混用本族成员与同名外部接口（如 [[IModelDocExtension::GetWhatsWrong]]、[[SecurityHandleProcedureName Property]]），说明该族的 See Also 列表不是可机械解析的成员闭集，不能据此反推成员表。"
+  ]
+}

@@ -33,7 +33,7 @@
 | ★ `sw_assembly_doc.py:332` | ★ `AddMate5` | ★★ **记档保留** | ★ 后继 `CreateMate` 要 mate-data 对象；★ **by-ref** 那族 |
 | ★ `sw_assembly.py:415` | ★ `AddMate5` | ★★ **记档保留** | ★ 逐字「★ **`AddMate5` 当前仍可调**（★ 废弃 ≠ 不可达）」+ 官方页引用 |
 | ★ `sw_part.py:674` | ★ `CreateSpline2` | ★★ **记档保留** | ★ `output/createspline3-probe-evidence.json` |
-| ★ `sw_part.py:1261` | ★ `FeatureLinearPattern5` | ★★ **记档保留** | ★ `output/linear-pattern-baseline-evidence.json`（★ `5` **就是现行那代**）|
+| ★ `sw_part.py:1261` | ★ `FeatureLinearPattern5` | ★★ **记档保留** | ★ `output/linear-pattern-baseline-evidence.json` —— ★★ **⚠ 订正（★ spec 293 · 2026-10-10）**：★ 此处**原写**「★ `5` **就是现行那代**」⇒ ★★ **那句话会被读成「没有后继」**，★ **而官方给了后继** ✓ ★ **官方逐字**（`C:\swapi\types\IFeatureManager\FeatureLinearPattern5.md:12`）：「Obsolete. See `IFeatureManager::CreateFeature` and the Remarks in `ILinearPatternFeatureData` and `ILocalLinearPatternFeatureData`.」⇒ ★★ **后继是**跨族**的 `CreateFeature` + `I*FeatureData`**，★ 不是 `FeatureLinearPattern6`（★ 反射里没有 `6`）⇒ ★ **口径**：★ `5` 是**本族最高代**、★ **不是「没有后继」**（★ 详见 `scripts/sw_part.py:1457-1466` 的订正块）|
 | ★ `sw_render_material.py:339` | ★ `DeleteRenderMaterial` | ★★ **记档保留** | ★ `output/render-material-family-evidence.json` |
 | ★ `sw_render_material.py:400` | ★ `AdvancedGraphics` | ★★ **记档保留** | ★ 逐字「★ **官方明写**无后继****」+ 官方页引用 |
 

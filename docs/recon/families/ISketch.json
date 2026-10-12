@@ -1,0 +1,83 @@
+{
+  "family": "ISketch",
+  "source_dir": "C:\\swapi\\types\\ISketch",
+  "members_total": 104,
+  "obsolete_strict": 28,
+  "obsolete_loose": 28,
+  "pointer_returns": 17,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 43,
+  "properties_no_paren": 4,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "Is3D",
+      "signature": "System.bool Is3D()",
+      "returns": "True if this sketch is 3D, false if it is 2D"
+    },
+    {
+      "name": "IsBoundaryBoxSketch",
+      "signature": "System.bool IsBoundaryBoxSketch()",
+      "returns": "True if the sketch is a boundary box, false if not"
+    },
+    {
+      "name": "IsDerived",
+      "signature": "System.bool IsDerived()",
+      "returns": "True if the sketch is derived, false if not"
+    },
+    {
+      "name": "IsShared",
+      "signature": "System.bool IsShared()",
+      "returns": "True if this sketch is used by more than one feature, false if not"
+    },
+    {
+      "name": "IsSketchEditable",
+      "signature": "System.bool IsSketchEditable()",
+      "returns": "True if this sketch is editable, false if not"
+    },
+    {
+      "name": "GetAutomaticSolve",
+      "signature": "System.bool GetAutomaticSolve()",
+      "returns": "True if automatic solving is on, false if off"
+    },
+    {
+      "name": "GetDetachSegmentOnDrag",
+      "signature": "System.bool GetDetachSegmentOnDrag()",
+      "returns": "True if **Detach Segment on Drag** is selected, false if not"
+    },
+    {
+      "name": "GetConstrainedStatus",
+      "signature": "System.int GetConstrainedStatus()",
+      "returns": "Constrained status as defined in [[swConstrainedStatus_e]]"
+    }
+  ],
+  "obsolete_members": [
+    "AutoDimension", "AutoDimension2", "GetArcs", "GetEllipses", "GetEllipses2", "GetLineCount",
+    "GetLines", "GetParabolas", "GetSketchPoints", "GetSketchPointsCount", "GetSplineParams",
+    "GetSplineParams2", "GetSplineParams3", "GetSplineParams4", "GetSplineParamsCount",
+    "GetSplineParamsCount2", "GetUserPoints", "IGetArcs", "IGetEllipses", "IGetEllipses2",
+    "IGetLines", "IGetParabolas", "IGetSplineParams", "IGetSplineParams2", "IGetSplineParams3",
+    "IGetUserPoints", "IModelToSketchXform", "ModelToSketchXform"
+  ],
+  "pointer_return_members": [
+    "IGetArcs2", "IGetContourEdges", "IGetEllipses3", "IGetLines2", "IGetParabolas2",
+    "IGetSketchBlockInstances", "IGetSketchContours", "IGetSketchPaths", "IGetSketchPictures",
+    "IGetSketchPoints2", "IGetSketchRegions", "IGetSketchSlots", "IGetSplineParams2",
+    "IGetSplineParams3", "IGetSplines", "IGetSplinesInterpolate", "IGetUserPoints2"
+  ],
+  "property_members": [
+    "IModelToSketchXform", "ModelToSketchTransform", "ModelToSketchXform", "RelationManager"
+  ],
+  "anomalies": [
+    "obsolete_strict 与 obsolete_loose 完全相等（28 = 28），差为 0：本族每一处废弃页头都恰好是 'Obsolete. Superseded by [[...]].' 这一种形态，没有 'Obsolete for documents created in ...' 或 'Obsolete and not superseded. ...' 这类变体，因此本族无法用 strict/loose 之差暴露变体（上一批那类差异在本族不成立）。",
+    "pointer_params_only = 0：全族 17 次出现字面串 'in-process, unmanaged C++' 全部位于 '## Returns' 段内，没有一次出现在 '## Parameters' 段的 ref/out 形参下或正文其它位置 —— 与「一族 17 个全在 params-only」的情形正好相反，本族的 17 全部落在 Returns 侧。",
+    "GetPolylines 与 IGetPolylines 两页页头是 'Not implemented.'、签名是零参（System.object GetPolylines() / System.double IGetPolylines()），但整页没有 '## Returns' 段 —— 它们被计入 zero_arg_methods(43)，却无法提供任何 Returns 值，故未入选 candidates。",
+    "GetPolyLineCount 页头同为 'Not implemented.'，但签名带 ref 形参 'System.int GetPolyLineCount( ref System.int PointCount )'，因此不属于零参类 —— 与其同族无参的 GetPolylines 形成对照，不能按名字成对推断。",
+    "4 个无括号成员里 2 个已废弃（IModelToSketchXform、ModelToSketchXform）、2 个未废弃（ModelToSketchTransform、RelationManager）；判据 F 只按签名形态计数、不剔除废弃项，故 properties_no_paren=4 而非 2。",
+    "ModelToSketchTransform 的签名写作 'MathTransform ModelToSketchTransform {get; set;}'，但同页 NOTE 明写 'This property is a get-only property. Set is not implemented' —— 签名形态与实际可写性在此自相矛盾，按签名计数会把它算作可写属性。",
+    "废弃集与指针集有交集：IGetSplineParams2 与 IGetSplineParams3 两页同时是 Obsolete 且 Returns 含 'in-process, unmanaged C++'，二者同时计入 obsolete(28) 与 pointer_returns(17)，且因「废弃 + 指针」被正确排除在 zero_arg_methods 之外（其签名本为 IGetSplineParams2() 空括号）。",
+    "GetSplineParams2 虽同样废弃且零参，其 '## Returns' 只写 'Array of doubles (see **Remarks**)' 而不带指针字面串 —— 说明本族同一批 spline 成员里，老一代的指针标注并不一致，不能按 'Get*/IGet* 成对' 推断指针属性。",
+    "多页的 '## Parameters' 条目值为 'No description'（AutoDimension、GetPolyLineCount、GetSplineParamsCount 等），且这些废弃页普遍没有 '## Returns' 段，故其页体仅剩 Signature + See Also 两段。",
+    "IModelToSketchXform.md 的 frontmatter 标 'kind: property'、签名为 'System.double IModelToSketchXform {get;}'，但名称形态像 ModelToSketchXform 的进程内访问器，与另两个属性页（ModelToSketchTransform / ModelToSketchXform）语义重叠；该页究竟是废弃的独立属性还是同义访问器，官方页未写明，故按签名形态计入 F，未做合并。"
+  ]
+}

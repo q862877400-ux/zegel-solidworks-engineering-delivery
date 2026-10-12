@@ -1,0 +1,50 @@
+{
+  "family": "ICamera",
+  "members_total": 32,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 5,
+  "properties_no_paren": 19,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetPosition",
+      "signature": "MathPoint GetPosition()",
+      "returns": "Pointer to [[IMathPoint]] object"
+    },
+    {
+      "name": "GetViewVector",
+      "signature": "MathVector GetViewVector()",
+      "returns": "Pointer to [[IMathVector]] object"
+    },
+    {
+      "name": "GetUpVector",
+      "signature": "MathVector GetUpVector()",
+      "returns": "Point to [[IMathVector]] object"
+    },
+    {
+      "name": "GetFocalDistance",
+      "signature": "System.double GetFocalDistance()",
+      "returns": "Camera's focal distance"
+    },
+    {
+      "name": "GetPointOfInterestDistance",
+      "signature": "System.double GetPointOfInterestDistance()",
+      "returns": "Distance of the point of interest from the camera"
+    }
+  ],
+  "anomalies": [
+    "members_total=32 exactly matches _overview.md's declared 19 properties + 13 methods, so there are no ghost pages and no pages missing from the directory; all 32 pages carry a **Signature** line, hence no_signature_pages=0.",
+    "The literal string 'in-process, unmanaged C++' occurs zero times anywhere in this family, so pointer_returns=0 and pointer_params_only=0 are both vacuous counts rather than evidence that the family has no pointer members.",
+    "Despite that zero, five members return interface objects described only in prose (GetPosition/GetUpVector/GetViewVector say 'Pointer to ...'/'Point to ...', RotationRollEntity and TargetPointPosition return System.object/MathPoint), so this family expresses pointer-ness without the standard official marker.",
+    "Criterion E's 'non-pointer' qualifier had to be read as 'does not carry the official in-process marker', which gives zero_arg_methods=5; if pointer-interface return types (MathPoint/MathVector) were instead excluded, the count would be 2 (GetFocalDistance, GetPointOfInterestDistance) - the ambiguity is recorded rather than silently resolved.",
+    "SetPositionSpherical.md carries a '## Returns' section even though its signature returns void, and its Returns text 'Latitude about target' is verbatim the description of parameter A2, a documentation defect that makes Returns sections unreliable as evidence in this family.",
+    "Seven property pages assert 'This property is a get-only property. Set is not implemented' yet still print '{get; set;}' in their Signature (AspectRatio, DepthOfFieldEnabled, DepthOfFieldOffset, FieldOfViewAngle, FieldOfViewDepth, FieldOfViewHeight, Perspective); all seven are still counted in properties_no_paren because the criterion keys on the signature form only.",
+    "Six method pages have no '## Returns' section at all (GetPositionCartesian, GetPositionSpherical, SetPositionCartesian, SetPositionEntity, SetPositionSpherical, SetTargetPointEntity); all six are void-returning and therefore fall outside every counted criterion.",
+    "SetPositionSpherical.md's See Also contains a doubled prefix typo, '[[ICamera::ICamera::PositionType Property]]'.",
+    "Perspective.md's C# example link points at Insert_Cavity_Example_CSharp.md instead of Insert_Camera_Example_CSharp.md, while its VB.NET and VBA links correctly point at the camera example.",
+    "FieldOfViewAngle.md is the only member stating its unit (radians) in the Returns text; its siblings FieldOfViewDepth and FieldOfViewHeight give no unit, and that gap cannot be resolved from this corpus, so it was left un-inferred."
+  ]
+}

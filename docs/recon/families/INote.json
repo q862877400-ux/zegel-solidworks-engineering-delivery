@@ -1,0 +1,67 @@
+{
+  "family": "INote",
+  "members_total": 127,
+  "obsolete_strict": 13,
+  "obsolete_loose": 31,
+  "pointer_returns": 15,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 37,
+  "properties_no_paren": 17,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetTextJustification",
+      "signature": "System.int GetTextJustification()",
+      "returns": "Text justification as defined in [[swTextJustification_e]]"
+    },
+    {
+      "name": "GetTextVerticalJustification",
+      "signature": "System.int GetTextVerticalJustification()",
+      "returns": "Vertical justification as defined in [[swTextAlignmentVertical_e]]"
+    },
+    {
+      "name": "GetBalloonSize",
+      "signature": "System.int GetBalloonSize()",
+      "returns": "Balloon size or fit as defined in [[swBalloonFit_e]]"
+    },
+    {
+      "name": "GetBalloonStyle",
+      "signature": "System.int GetBalloonStyle()",
+      "returns": "Balloon style as defined in [[swBalloonStyle_e]]"
+    },
+    {
+      "name": "GetFontInfo",
+      "signature": "System.object GetFontInfo()",
+      "returns": "Array of doubles containing the font information (see **Remarks**) — Remarks then states the array currently carries only one element: a line type index per [[swLineTypes_e]]"
+    },
+    {
+      "name": "GetTextPoint2",
+      "signature": "System.object GetTextPoint2()",
+      "returns": "Array of 3 doubles — Remarks enumerates return value[0..2] as the x, y, z coordinate of the note's text reference point (upper-left corner of the bounding rectangle)"
+    },
+    {
+      "name": "GetBalloonInfo",
+      "signature": "System.object GetBalloonInfo()",
+      "returns": "Array of doubles (see **Remarks**) — Remarks fixes the layout at exactly 7 doubles: balloon centre x/y/z, balloon arc point x/y/z, then radius"
+    },
+    {
+      "name": "GetLeaderInfo",
+      "signature": "System.object GetLeaderInfo()",
+      "returns": "Array of doubles (see **Remarks**) — Remarks fixes the layout at up to 9 doubles (three leader points x/y/z) and states the point count implied by IsAttached() and HasExtraLeader()"
+    }
+  ],
+  "anomalies": [
+    "IGetTextPoint.md 的页头写的是「Obsolete. Superseded by [[INote::IGetTextPoint]]」—— 官方源把它的后继者指向了它自己。",
+    "SetTextFormat.md 与 SetTextJustificationAtIndex.md 都有 `## Returns` 标题，但其下的正文其实是 Remarks 散文且 `## Remarks` 标题缺失 —— 这两页的 Returns 段不含真实返回值描述。",
+    "SetTextFormat.md 的形参 `TextFormat` 的说明只有单个字母「v」，是官方源的错字（同族其余形参都有描述或写「No description」）。",
+    "本族 127 页里字面串 `in-process, unmanaged C++` 全部只出现在 `## Returns` 段内，`## Parameters` 段一处也没有 ⇒ pointer_params_only = 0（不是「漏数」，是该族真的为零）。",
+    "obsolete_loose(31) − obsolete_strict(13) = 18，恰好等于 18 页「Obsolete for documents created in SOLIDWORKS 2016 and later.」变体 —— 行首是 `Obsolete ` 且无句点，故只被 loose 口径捕获；这正是本批必须拆开两个口径的实证。",
+    "13 个 strict 页中 12 个句式是「Obsolete. Superseded by …」，只有 IsAttribute 是「Obsolete. Not superseded.」；两种句式都满足 strict 的「行首 Obsolete. 带句点」。",
+    "有 21 页有 `**Signature**` 但整页没有 `## Returns` 段（BeginSketchEdit / EndSketchEdit / GetTextFormat / GetTextFormatAtIndex / GetTextPoint / GetUseDocTextFormat / IGetTextFormat / IGetTextFormatAtIndex / IGetTextPoint / IsAttribute / ISetTextFormat / ISetTextFormatAtIndex / MakeStackedBalloon / SetHeight / SetHeightInPoints / SetTextFormat / SetTextFormatAtIndex / SetTextJustification / SetTextOffsetAtIndex / SetTextPoint / SetTextVerticalJustification）；`no_signature_pages` 仍为 0，因为该判据看的是 Signature 行而非 Returns 段。",
+    "GetBendLineValues 的 `out MathPoint StartPt / out MathPoint EndPt` 是引用型 out 形参，但该页并未使用 `in-process, unmanaged C++` 字面串 ⇒ 这类 out 形参在本族不会触发 pointer_params_only，不能按「有 out 指针就归 D 类」来判。",
+    "37 个 zero_arg_methods 里有 3 个 I 前缀成员（IGetAnnotation→Annotation、IGetNext→Note、IGetTextPoint2→MathPoint）返回强类型 COM 对象而非指针数组，按「非指针」口径计入 E；另有 6 个 I 前缀零参方法因 Returns 含指针字面串（IGetArrowHeadInfo / IGetAttachPos / IGetBalloonInfo / IGetExtent / IGetFontInfo / IGetUpperRight）被排除在 E 之外 —— E 与 C 在同族是互斥切分，不是包含关系。",
+    "IsBomBalloon.md 的 See Also 引用了 `[[INote::vGetBalloonOptions Method ()]]`，与实际成员名 GetBalloonOptions 不一致，是旧版 COM API 的遗留名。",
+    "GetTextCount.md 的 See Also 出现重复前缀笔误 `[[INote::INote::AddText Method]]`。",
+    "每页 YAML frontmatter 都带 `kind: property|method`，可作快速交叉核对（本族 17 个 property 与 F 口径的 17 个无括号签名完全一致），但 E/F 判据仍按 `**Signature**` 行的字面形态判定，未依赖 frontmatter。"
+  ]
+}

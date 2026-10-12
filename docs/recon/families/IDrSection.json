@@ -1,0 +1,67 @@
+{
+  "family": "IDrSection",
+  "source_dir": "C:\\swapi\\types\\IDrSection\\",
+  "members_total": 51,
+  "obsolete_strict": 2,
+  "obsolete_loose": 2,
+  "pointer_returns": 3,
+  "pointer_params_only": 2,
+  "zero_arg_methods": 22,
+  "properties_no_paren": 9,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetName",
+      "signature": "System.string GetName()",
+      "returns": "Name of the section line"
+    },
+    {
+      "name": "IGetLineSegmentCount",
+      "signature": "System.int IGetLineSegmentCount()",
+      "returns": "Number of line segments in this section line"
+    },
+    {
+      "name": "GetSectionView",
+      "signature": "System.object GetSectionView()",
+      "returns": "Section view of this section cut"
+    },
+    {
+      "name": "GetView",
+      "signature": "System.object GetView()",
+      "returns": "Drawing view where the section line appears"
+    },
+    {
+      "name": "GetTextFormat",
+      "signature": "System.object GetTextFormat()",
+      "returns": "Text format for this section line"
+    },
+    {
+      "name": "IGetSectionView",
+      "signature": "View IGetSectionView()",
+      "returns": "Pointer to the section [[view]] of this section cut"
+    },
+    {
+      "name": "IGetTextFormat",
+      "signature": "TextFormat IGetTextFormat()",
+      "returns": "Pointer to the [[ITextFormat]] object for this section line"
+    },
+    {
+      "name": "IGetView",
+      "signature": "View IGetView()",
+      "returns": "Pointer to the [[drawing view]] where the section line appears"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict(2) == obsolete_loose(2) ⇒ 差为 0：本族没有「Obsolete for documents created in …」「Obsolete and not superseded. …」这类不带句点或不位于行首的变体，两个废弃页都是行首 `Obsolete. Superseded by …`。",
+    "SetLabel.md 的页头写 `Superseded by [[IDrSection::ISetLabel2]]`，但本族目录里根本不存在 ISetLabel2.md（只有 SetLabel2.md）—— 官方页的交叉引用指向一个族内不存在的成员名。",
+    "EnumExcludedComponents.md 的页头写 `Superseded by [[IDrSection::EnumExcludedComponent2]]`（Component 少一个 s），而实际存在的成员文件是 EnumExcludedComponents2.md —— 第二处官方页交叉引用与实际成员名对不上。",
+    "IGetSectionView / IGetTextFormat / IGetView 三页的 `## Returns` 只写了「Pointer to …」而没有官方惯用的 `in-process, unmanaged C++` 字面串；按本批口径它们不算 pointer_returns，因此被计入 zero_arg_methods(22)。若改按 I 前缀命名惯例判断，会变成 3 个、这一类只剩 19。",
+    "ISetTextFormat 的 `## Parameters` 里 TextFormat 写的是「Pointer to the [[ITextFormat]] object」但同样没有 `in-process, unmanaged C++` 字面串，故未计入 pointer_params_only；GetDontCutAllInstances / SetDontCutAllInstances 的 IComponent2 形参也是同一形态。",
+    "GetLabel.md 与 SetDontCutAllInstances.md 整页没有 `## Returns` 段（GetLabel 返回 System.string，SetDontCutAllInstances 返回 System.bool）—— 这不是空壳页（有完整 `**Signature**` 行），只是官方页漏写了 Returns 段，故 no_signature_pages 仍为 0。",
+    "多处 `## See Also` 把链接渲染成 `Property ()` / `Method ()`（如 `[[IDrSection::CutSurfaceBodies Property ()]]`、`[[IDrSection::GetAutoHatch Method ()]]`）—— 这是官方页自身的排版噪声，括号是空的，若照字面套 E/F 的签名判据会误计。",
+    "RandomizeScale.md 的 `## Remarks` 写「valid only if [[IDrSectionView::GetAutoHatch]] is true」，引到的是 IDrSectionView 接口，而本族内实际成员是 IDrSection.GetAutoHatch。",
+    "SetLineInfo.md 的 `## See Also` 把 `[[IDrSection::IGetLineInfo Method]]` 重复列了两次（去重后应为 1 条）。",
+    "后继命名成对不对称：EnumExcludedComponents/EnumExcludedComponents2 与 SetLabel/SetLabel2 都是「+2 后继」，但本族没有 IGetLabel / ISetLabel；I 前缀成员只覆盖 ArrowInfo / LineInfo / LineSegmentCount / SectionView / TextFormat / TextInfo / View 共 7 个，其中 3 个带 `in-process, unmanaged C++` 字面串、4 个不带。",
+    "SetLabel2.md 的 `## Remarks` 里那张返回状态表已被官方排版打散成孤立行（`< 0` / `Failed` / `= 0` / `Succeeded` / `> 0` / `Succeeded. However:`），表格结构已丢失。"
+  ]
+}

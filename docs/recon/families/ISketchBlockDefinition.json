@@ -1,0 +1,99 @@
+{
+  "family": "ISketchBlockDefinition",
+  "source_dir": "C:\\swapi\\types\\ISketchBlockDefinition\\",
+  "members_total": 41,
+  "obsolete_strict": 2,
+  "obsolete_loose": 2,
+  "pointer_returns": 10,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 21,
+  "properties_no_paren": 3,
+  "no_signature_pages": 0,
+  "criteria": {
+    "obsolete_strict": "页头（Signature 行之前）出现行首 'Obsolete.'（带句点）的页数",
+    "obsolete_loose": "整页出现 'Obsolete'（忽略大小写、不要求句点、不要求行首）的页数",
+    "pointer_returns": "'## Returns' 段内含字面串 'in-process, unmanaged C++' 的页数",
+    "pointer_params_only": "该字面串出现在 '## Returns' 段之外的页数",
+    "zero_arg_methods": "签名为 'X()'（括号内为空）且非废弃且非指针成员的页数",
+    "properties_no_paren": "签名无括号、形如 'T Name {get;}' / '{get; set;}' 的页数",
+    "no_signature_pages": "整页无 '**Signature**' 行的页数",
+    "members_total": "实读的 .md 个数（不含 _overview.md）"
+  },
+  "partition_check": {
+    "properties_no_paren": ["FileName", "InsertionPoint", "LinkToFile"],
+    "zero_arg_methods_all_including_obsolete": [
+      "GetArcCount", "GetArcs", "GetDisplayDimensionCount", "GetDisplayDimensions",
+      "GetEllipseCount", "GetEllipses", "GetFeature", "GetInstanceCount",
+      "GetInstances", "GetLineCount", "GetLines", "GetNoteCount", "GetNotes",
+      "GetParabolaCount", "GetParabolas", "GetSketch", "GetSplineParams",
+      "GetSplines", "GetSplines2", "GetSplinesInterpolate", "GetUserPoints",
+      "GetUserPointsCount"
+    ],
+    "zero_arg_excluded_obsolete": ["GetSplines"],
+    "pointer_returns_members": [
+      "IGetArcs", "IGetDisplayDimensions", "IGetEllipses", "IGetInstances",
+      "IGetLines", "IGetNotes", "IGetParabolas", "IGetSplineParams",
+      "IGetSplines2", "IGetUserPoints"
+    ],
+    "methods_with_params_no_pointer_string": [
+      "GetSplineCount", "GetSplineInterpolateCount", "GetSplineParamsCount",
+      "Save", "IGetSplines", "IGetSplinesInterpolate"
+    ],
+    "sum": "3 + 22 + 10 + 6 = 41 == members_total"
+  },
+  "candidates": [
+    {
+      "name": "GetSplineParams",
+      "signature": "System.object GetSplineParams()",
+      "returns": "Array of doubles, containing spline parameters (see **Remarks**)"
+    },
+    {
+      "name": "GetArcs",
+      "signature": "System.object GetArcs()",
+      "returns": "Array containing an array of doubles (see **Remarks**)"
+    },
+    {
+      "name": "GetEllipses",
+      "signature": "System.object GetEllipses()",
+      "returns": "Array containing an array of doubles (see **Remarks**)"
+    },
+    {
+      "name": "GetUserPoints",
+      "signature": "System.object GetUserPoints()",
+      "returns": "Array of doubles (see **Remarks**)"
+    },
+    {
+      "name": "GetParabolas",
+      "signature": "System.object GetParabolas()",
+      "returns": "Array of doubles (see **Remarks**)"
+    },
+    {
+      "name": "GetLines",
+      "signature": "System.object GetLines()",
+      "returns": "Array of doubles (see **Remarks**)"
+    },
+    {
+      "name": "GetSplines2",
+      "signature": "System.object GetSplines2()",
+      "returns": "Array of doubles (see **Remarks**)"
+    },
+    {
+      "name": "GetSplinesInterpolate",
+      "signature": "System.object GetSplinesInterpolate()",
+      "returns": "Array of doubles (see **Remarks**)"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict == obsolete_loose == 2：本族没有 'Obsolete for documents created in ...' / 'Obsolete and not superseded. ...' 这类变体，两条废弃页都是干净的行首 'Obsolete. Superseded by ...'。",
+    "GetSplines 是唯一一条「签名为空括号 () 却被废弃」的成员，按 E 的「非废弃」条款被排除；若上一批把废弃项混进零参计数，E 会是 22 而不是 21。",
+    "IGetSplinesInterpolate 按 I 前缀约定应是进程内指针方法，但该页根本没有 '## Returns' 段（Parameters 直接接 Remarks）⇒ 它既不计入 C 也不计入 D，其指针性质在本页无官方文字支撑。",
+    "IGetSplines 既废弃又缺 '## Returns' 段，全页不含该字面串 ⇒ 同样不落入 C/D；本族 12 个 IGet 成员里只有 10 个带指针返回标注。",
+    "pointer_params_only = 0：本族该字面串的每一次出现都在 '## Returns' 段内（10 次全部落在各页第 20 行）；See Also 里的 'In-process Methods' 只是文档链接，不是该字面串，不应计入。",
+    "GetUserPoints / GetParabolas / GetLines / GetSplines2 / GetSplinesInterpolate 五个成员的 Returns 文本完全相同（'Array of doubles (see **Remarks**)'）⇒ 'Returns 最具体' 在本族有并列，candidates 里保留了 5 条同文本成员。",
+    "官方交叉引用把接口名拼错为 ISketchBlockDefintion（少一个 i，见 FileName / GetArcCount / GetSplineCount 页），且 GetNoteCount 的 See Also 指向 SketchBlockDefinition:: 而非 ISketchBlockDefinition:: —— 属官方源自身的笔误，不是判读分歧。",
+    "IGetDisplayDimensions / IGetInstances / IGetNotes 的签名返回 DisplayDimension / SketchBlockInstance / Note（单数类型），而 Returns 段却写 'Pointer to an array of ...' ⇒ I 前缀族的签名与返回描述天然不一致。",
+    "InsertionPoint 官方 Remarks 明写取值器恒返回 (0,0,0) ⇒ 这是一个取值被文档声明为常量的属性，属性计数 3 里它属'可读但无信息'那一类。",
+    "同族内 IGet* 页与对应 Get* 页的数组布局描述逐字重复（IGetArcs 抄自 GetArcs、IGetSplineParams 抄自 GetSplineParams 等）⇒ 按页计数不等于按不同签名计数。",
+    "目录共 42 个 .md，减去 _overview.md 后实读 41 个；_overview.md 按指令未读。"
+  ]
+}

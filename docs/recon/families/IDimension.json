@@ -1,0 +1,60 @@
+{
+  "family": "IDimension",
+  "members_total": 52,
+  "obsolete_strict": 20,
+  "obsolete_loose": 20,
+  "pointer_returns": 2,
+  "pointer_params_only": 1,
+  "zero_arg_methods": 7,
+  "properties_no_paren": 10,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetType",
+      "signature": "System.int GetType()",
+      "returns": "Type of dimension as defined by [[swDimensionParamType_e]]"
+    },
+    {
+      "name": "GetReferencePointsCount",
+      "signature": "System.int GetReferencePointsCount()",
+      "returns": "Number of dimension reference points"
+    },
+    {
+      "name": "IsAppliedToAllConfigurations",
+      "signature": "System.bool IsAppliedToAllConfigurations()",
+      "returns": "True if the dimension is applied to all configurations, false if the dimension is applied only to the current configuration"
+    },
+    {
+      "name": "IsReference",
+      "signature": "System.bool IsReference()",
+      "returns": "True if the dimension is a reference dimension, false if not"
+    },
+    {
+      "name": "IsDesignTableDimension",
+      "signature": "System.bool IsDesignTableDimension()",
+      "returns": "True if the dimension is driven by a design table, false if not"
+    },
+    {
+      "name": "GetNameForSelection",
+      "signature": "System.string GetNameForSelection()",
+      "returns": "Name of selected dimension"
+    },
+    {
+      "name": "GetFeatureOwner",
+      "signature": "Feature GetFeatureOwner()",
+      "returns": "Pointer to the [[IFeature]] object for this dimension"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict == obsolete_loose == 20：本族没有「Obsolete for documents created in …」「Obsolete and not superseded. …」这类变体，20 条全部是行首 `Obsolete.` 形态（18 条为 'Obsolete. Superseded by …'，2 条为 'Obsolete. See …'）。",
+    "IGetValue3 的字面串 `in-process, unmanaged C++` 同时出现在 ## Parameters（Config_names 的 ref 形参）与 ## Returns 两段；按 D 的定义「出现但不在 Returns 段」，它只计入 C 不计入 D。ISetValue3 只有 ## Parameters 有该串（WhichConfigurations 与 Config_names 两处）⇒ 才是唯一的 D。",
+    "13 个零参方法里有 6 个同时是 Obsolete（GetToleranceFitValues / GetToleranceFontInfo / GetToleranceType / GetToleranceValues / IGetToleranceFontInfo / IGetToleranceValues），按 E「非废弃」限定被排除 ⇒ E=7 而非 13。",
+    "SystemValue 与 Value 是**废弃**属性（`{get; set;}`）；F 的字面定义只判签名形状、未排除废弃，故计入 F=10；若沿用 E 的排除口径则为 8。",
+    "GetFeatureOwner / Tolerance / DimensionLineDirection / ExtensionLineDirection 的 ## Returns 只写散文「Pointer to the [[IFoo]] object」，**不含**字面串 `in-process, unmanaged C++` ⇒ 三类指针计数一个都不进。ISetReferencePoints 的 ## Parameters（RefPoints）同样是散文而非字面串。",
+    "E 的 7 个候选里只有 6 个带官方 Examples 段；GetNameForSelection 与 GetFeatureOwner 之外，本族有 8 个零参非废弃成员无一可作更具体的候选。",
+    "GetSystemValue2 / IGetUserValueIn / ISetUserValueIn / ISetUserValueIn2 / SetSystemValue2 / SetToleranceFitValues / SetToleranceFontInfo / SetToleranceType / SetToleranceValues / SetUserValueIn / SetValue2 / GetValue2 的 ## Parameters 全部写「No description」（官方占位文本）⇒ 本族有一批参数官方无说明。",
+    "IGetReferencePoints 的 ## Remarks 交叉引用写 `[[IDimension::IGetReferencePointsCount]]`，而本族目录里并不存在该页（真实页名是 GetReferencePointsCount）⇒ 官方页里的失效链接，未影响计数。",
+    "GetToleranceFitValues / GetToleranceFontInfo / GetToleranceValues / IGetToleranceFontInfo / IGetToleranceValues / SetToleranceFontInfo 等 6 页**完全没有 ## Returns 段**（返回类型只出现在 Signature 里）⇒ 判 C/D 时这些页按「无 Returns」处理。",
+    "全族 52 个 .md 全部含 **Signature** 行，无空壳页 ⇒ no_signature_pages=0。"
+  ]
+}

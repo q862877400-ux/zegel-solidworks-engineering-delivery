@@ -1,0 +1,32 @@
+{
+  "family": "IFillPatternFeatureData",
+  "source_dir": "C:\\swapi\\types\\IFillPatternFeatureData\\",
+  "members_total": 35,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 1,
+  "properties_no_paren": 33,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": "(no ## Returns section on this page — official signature is void; the page goes straight from **Signature** to ## Remarks)"
+    }
+  ],
+  "anomalies": [
+    "Directory exists. 36 .md files total; _overview.md excluded per instruction -> members_total = 35.",
+    "Cross-check: _overview.md front matter declares property_count 33 and method_count 2 (= 35). Independent read found exactly 33 property pages (AccessSelections and ReleaseSelectionAccess being the 2 method pages), so the counts agree.",
+    "obsolete_strict = obsolete_loose = 0 because a case-insensitive grep for 'obsolete' over the whole family returns zero hits. The A/B split therefore has no discriminating case in this family: there are no 'Obsolete.' lines and also no 'Obsolete for documents created in ...' / 'Obsolete and not superseded. ...' variants.",
+    "pointer_returns = pointer_params_only = 0 because the literal string 'in-process, unmanaged C++' does not occur ANYWHERE in the family (not in ## Returns, not in ## Parameters, not in ## Remarks). This family is a plain property bag plus two ordinary methods; it contributes nothing to either pointer class.",
+    "The only zero-arg method (ReleaseSelectionAccess) has NO '## Returns' section at all, so the 'most specific Returns' selection for candidates could not be performed: candidates holds 1 entry instead of up to 8. That entry's 'returns' field records the absence rather than inventing a value.",
+    "AccessSelections is the family's only other method and takes 2 parameters, so it is excluded from zero_arg_methods; its ## Returns is the plain sentence 'True if the selections are successfully accessed, false if not' — a bool, not a pointer.",
+    "Signature-format inconsistency inside the source: AccessSelections is written 'AccessSelections( System.object TopDoc, System.object Component )' with inner spaces, while ReleaseSelectionAccess is written 'ReleaseSelectionAccess()' with none. A literal-empty-parens match therefore catches only the latter, which is the intended reading of criterion E, but it means the two method pages are not formatted the same way.",
+    "Two of the 33 properties are get-only in the signature ('System.int PatternDirectionType {get;}' and 'System.int SeedFeatureCenterType {get;}') while the other 31 are '{get; set;}'; the prose on both get-only pages still says 'Gets or sets', which contradicts its own signature. This does not change any count (both are still property form, so both land in properties_no_paren), but it is a real page-level inconsistency.",
+    "This family is exactly the case criterion E and F were split to prevent: merging them would yield 34, of which 33 are properties and only 1 is a genuine zero-arg method — i.e. a merged number would overstate zero-arg readable members by ~33x.",
+    "no_signature_pages = 0 is a grep-confirmed count, not an inference: '**Signature**' occurs in exactly 35 files, one per member page, always on line 14.",
+    "Per the front-matter 'kind' field, 33 pages declare kind: property and 2 declare kind: method, consistent with the signature shapes used for the E/F split."
+  ]
+}

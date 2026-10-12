@@ -1,0 +1,65 @@
+{
+  "family": "IComponent2",
+  "members_total": 165,
+  "obsolete_strict": 32,
+  "obsolete_loose": 32,
+  "pointer_returns": 10,
+  "pointer_params_only": 2,
+  "zero_arg_methods": 48,
+  "properties_no_paren": 19,
+  "no_signature_pages": 1,
+  "candidates": [
+    {
+      "name": "GetSuppression2",
+      "signature": "System.int GetSuppression2()",
+      "returns": "Suppression state of this component or internal ID mismatch error code as defined in [[swComponentSuppressionState_e]]"
+    },
+    {
+      "name": "GetType",
+      "signature": "System.int GetType()",
+      "returns": "Type of document as defined by [[swDocumentTypes_e]]"
+    },
+    {
+      "name": "GetConstrainedStatus",
+      "signature": "System.int GetConstrainedStatus()",
+      "returns": "Constrained status as defined in [[swConstrainedStatus_e]]"
+    },
+    {
+      "name": "IsDisplayDataOutOfDate",
+      "signature": "System.int IsDisplayDataOutOfDate()",
+      "returns": "Rebuild state of the components as defined in [[swOutOfDateStatus_e]]"
+    },
+    {
+      "name": "GetImportedPath",
+      "signature": "System.string GetImportedPath()",
+      "returns": "Full path name of the model imported for this component; empty string if model is not imported"
+    },
+    {
+      "name": "GetRepresentationParent",
+      "signature": "System.string GetRepresentationParent()",
+      "returns": "Representation parent of this SOLIDWORKS Design connected to the 3DEXPERIENCE platform document"
+    },
+    {
+      "name": "GetPathName",
+      "signature": "System.string GetPathName()",
+      "returns": "Full path name for this component, including the filename"
+    },
+    {
+      "name": "IsFixed",
+      "signature": "System.bool IsFixed()",
+      "returns": "True if this component is fixed, false if it is floating"
+    }
+  ],
+  "anomalies": [
+    "A 与 B 完全相等（同为 32，差为 0）：本族没有「Obsolete for documents created in ...」「Obsolete and not superseded. ...」这类变体，32 个页头全是同一种行首 `Obsolete. Superseded by [[...]].` 形态，且全部落在第 12 行（紧跟 `# IComponent2.X` 标题之后、`**Signature**` 之前）。",
+    "全目录不分位置、不分大小写地 grep `obsolete` 命中 37 行、分布在 35 个文件，其中 5 处落在 **Signature 之后**的正文里（GetBodies3 / EnumBodies2 / GetBodies2 / GetSuppression2 / Transform2 的「the now obsolete ...」句）—— 这 5 处按题面「页头」口径一律不计入 A 与 B，它们正是「全目录 grep 数」与「页头数」的唯一差额来源。",
+    "E 的「非指针」在本族没有可套用的官方字面判据：`in-process, unmanaged C++` 这个串只标了「返回**数组**指针」的 in-process 变体；另有 3 个零参成员的 `## Returns` 文本直接写着 “Pointer to ...”（EnumRelatedBodies / FirstFeature / IGetBody）却**不带**该字面串。本文件按与 C、D 同一把尺子（整页是否带该字面串）计，得 48；若改按「Returns 文本含 Pointer to」再剔除，则为 **45**（被剔的正是 EnumRelatedBodies、FirstFeature、IGetBody）。两个数都已真数，未取推测值。",
+    "另有 6 个 I 前缀零参成员（IGetBody 返回 Body2、IGetChildrenCount、IGetTemporaryBodyID、IGetTessTriangleCount、IGetTessTriStripEdgeSize、IGetTessTriStripSize）按官方体例仍属 in-process 专用（VBA/.NET/C# 不可用），页面上却同样没有该字面串 —— 本文件未凭名字把它们剔除（题面禁止靠文件名猜），故保留在 48 内；若把「I 前缀」当进程内专用的判据一并剔除，E 降为 **42**。三个口径均已实测。",
+    "F=19 比 _overview.md 自报的 `property_count: 20` 少 1，差额恰好就是 G 那一页 `CustomPropertyManager.md`：它的 front matter 写 `kind: property`，但整页只有 YAML front matter 加一行标题、全文 10 行、没有任何 `**Signature**` 行 —— 既进不了 F（没有签名可判形状），又正是 G 唯一的那一页。19 + 1 = 20，与 overview 自报值闭合。",
+    "D 的两个成员（IListExternalFileReferences2 / ISetMaterialPropertyValues2）**整页没有 `## Returns` 段**（章节只有 Parameters / Remarks / See Also），字面串全部出现在 `## Parameters` 的 out 形参条目下 —— 属 C/D 二选一里明确落在 D 的一类，不是漏判。",
+    "`MakeVirtual.md` 的页头是官方源自身的笔误：`Obsolete. by Superseded by [[IComponent2::MakeVirtual2]].`（多一个 “by”）。它仍以行首 `Obsolete.` 计 strict 与 loose；该页签名 `System.bool MakeVirtual()` 是零参方法，但因废弃被 E 排除。",
+    "C=10 与 D=2 相加是 12 个「带字面串的文件」，但全目录 grep 该字面串命中 **17 行** —— 差额来自 IListExternalFileReferences2 单页 6 行（6 个 out 形参各一行）与 ISetMaterialPropertyValues2 单页 1 行。C/D 按题面是**按文件**计数，不是按行，故两者不可互换。",
+    "`IsDisplayDataOutOfDate.md` 的 `## Remarks` 正文是 “Tessellation information is available only when the component is loaded as lightweight.”，与 `IGetTessNorms.md` 的 Remarks 逐字相同，疑为官方源复制粘贴残留；不影响任何计数（该成员本身是本族 Returns 最具体的四条之一，已收进 candidates）。",
+    "计数口径（供复核）：签名形状三分 —— 方法带参 84 / 方法零参 61 / 无括号属性 19，另加 1 个无签名空壳页，合计 165，与 overview 的 method_count 145 + property_count 20 一致；E=48 是从「零参 61」里扣掉 9 个页头带 Obsolete 的（GetModelDoc、GetRenderMaterials、GetRenderMaterialsCount、GetSuppression、GetXform、IGetModelDoc、IGetXform、MakeVirtual、RemoveMaterialProperty）与 4 个带指针字面串的（IGetChildren、IGetTessNorms、IGetTessTriStripEdges、IGetTessTriStripNorms）得出。"
+  ]
+}

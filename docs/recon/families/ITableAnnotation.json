@@ -1,0 +1,56 @@
+{
+  "family": "ITableAnnotation",
+  "source_dir": "C:\\swapi\\types\\ITableAnnotation\\",
+  "members_total": 85,
+  "obsolete_strict": 10,
+  "obsolete_loose": 10,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 6,
+  "properties_no_paren": 18,
+  "no_signature_pages": 8,
+  "candidates": [
+    {
+      "name": "GetHeaderStyle",
+      "signature": "System.int GetHeaderStyle()",
+      "returns": "Style of table header as defined in [[swTableHeaderPosition_e]]"
+    },
+    {
+      "name": "GetHeaderCount",
+      "signature": "System.int GetHeaderCount()",
+      "returns": "Number of rows or columns in the header of this table"
+    },
+    {
+      "name": "GetUseDocTextFormat",
+      "signature": "System.bool GetUseDocTextFormat()",
+      "returns": "True if this table uses the document setting for the text format, false if not"
+    },
+    {
+      "name": "GetNext",
+      "signature": "TableAnnotation GetNext()",
+      "returns": "Next [[ITableAnnotation]] object"
+    },
+    {
+      "name": "GetAnnotation",
+      "signature": "Annotation GetAnnotation()",
+      "returns": "[[IAnnotation]] object"
+    },
+    {
+      "name": "GetTextFormat",
+      "signature": "TextFormat GetTextFormat()",
+      "returns": "[[ITextFormat]] object"
+    }
+  ],
+  "anomalies": [
+    "8 of the 85 pages are empty shells with only YAML front matter plus an H1 title and no **Signature** line at all (CellTextHorizontalJustification, CellTextVerticalJustification, ColumnHidden, DisplayedText, DisplayedText2, RowHidden, Text, Text2) — because they carry no signature they can be counted neither as zero-arg methods nor as properties, so E and F rest on signature evidence only and these 8 stay unjudgeable.",
+    "This family has zero pointer-family members: the literal string 'in-process, unmanaged C++' does not occur anywhere in any of the 85 files, so both pointer_returns and pointer_params_only are 0 rather than merely unmeasured.",
+    "All 10 obsolete headers use the identical wording 'Obsolete. Superseded by [[...]]', all at line 12 as a line-start token, so obsolete_loose equals obsolete_strict and this family contains no 'Obsolete for documents created in ...' or 'Obsolete and not superseded' style variants.",
+    "InsertColumn.md's obsolete line contains a typo in the official source itself: it points at [[ITableAnnnotation::InsertColumn2]] (three n's in 'Annnotation'), so that cross-reference does not resolve to the real member.",
+    "InsertRow.md declares `System.bool InsertRow(...)` but has no ## Returns section at all (Parameters is followed directly by Remarks), the only non-void member in the family missing its Returns block.",
+    "HorizontalAutoSplit declares return type System.object while its Returns text says 'Array of split [[ITableAnnotation]]s' — the declared type does not express the array, and the phrase 'Array of' here carries no machine-readable type.",
+    "GetColumnWidth, GetRowHeight, GetRowVerticalGap, SetColumnWidth, SetRowHeight and SetRowVerticalGap all describe their Returns only as 'in system units' / 'Gap in system units' without naming the unit, so no numeric unit can be read off these pages.",
+    "Six members declare non-namespaced return/property types (Annotation, TextFormat, TableAnnotation, GeneralTableFeature) while the rest of the family uses System.*, so a signature-driven scanner must not assume the System. prefix is universal.",
+    "GetColumnType.md's See Also block ends with [[ITableAnnotation::GetLockColumnWidth Method]] listed twice — a duplicate link present in the official source.",
+    "GetUseDocTextFormat.md writes four See Also links as [[ITableAnnotation:GetXxx Method]] with a single colon instead of the '::' used everywhere else, so those links are malformed by the source's own convention."
+  ]
+}

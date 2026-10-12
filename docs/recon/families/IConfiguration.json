@@ -1,0 +1,113 @@
+{
+  "family": "IConfiguration",
+  "source_dir": "C:\\swapi\\types\\IConfiguration\\",
+  "members_total": 82,
+  "obsolete_strict": 9,
+  "obsolete_loose": 9,
+  "pointer_returns": 2,
+  "pointer_params_only": 2,
+  "zero_arg_methods": 21,
+  "properties_no_paren": 19,
+  "no_signature_pages": 1,
+  "candidates": [
+    {
+      "name": "GetNumberOfExplodeSteps",
+      "signature": "System.int GetNumberOfExplodeSteps()",
+      "returns": "Number of explode steps on this configuration"
+    },
+    {
+      "name": "GetNumberOfPartExplodeSteps",
+      "signature": "System.int GetNumberOfPartExplodeSteps()",
+      "returns": "Number of explode steps"
+    },
+    {
+      "name": "GetChildrenCount",
+      "signature": "System.int GetChildrenCount()",
+      "returns": "Number of children in this configuration"
+    },
+    {
+      "name": "GetDisplayStatesCount",
+      "signature": "System.int GetDisplayStatesCount()",
+      "returns": "Number of display states for this configuration"
+    },
+    {
+      "name": "GetParameterCount",
+      "signature": "System.int GetParameterCount()",
+      "returns": "Number of parameters"
+    },
+    {
+      "name": "GetID",
+      "signature": "System.int GetID()",
+      "returns": "Configuration ID of this configuration"
+    },
+    {
+      "name": "IsDefeature",
+      "signature": "System.bool IsDefeature()",
+      "returns": "True if this configuration is a defeature configuration, false if not"
+    },
+    {
+      "name": "IsDerived",
+      "signature": "System.bool IsDerived()",
+      "returns": "True if this configuration is a derived configuration, false if not"
+    }
+  ],
+  "evidence": {
+    "obsolete_strict_members": [
+      "AddExplodeStep",
+      "GetCustomProperties",
+      "GetCustomPropertiesCount",
+      "GetRootComponent",
+      "IGetCustomProperties",
+      "IGetRootComponent",
+      "IGetRootComponent2",
+      "Select",
+      "ShowChildComponentsInBOM"
+    ],
+    "obsolete_loose_only_members": [],
+    "pointer_returns_members": [
+      "IGetChildren",
+      "IGetDisplayStates"
+    ],
+    "pointer_params_only_members": [
+      "IGetParameters",
+      "ISetParameters"
+    ],
+    "zero_arg_members_observed_before_filters": [
+      "Get3DExperienceType", "GetChildren", "GetChildrenCount", "GetCurrentPartExplodeViewName",
+      "GetCustomPropertiesCount", "GetCutListItems", "GetDisplayStates", "GetDisplayStatesCount",
+      "GetID", "GetNumberOfExplodeSteps", "GetNumberOfPartExplodeSteps", "GetParameterCount",
+      "GetParent", "GetRepresentationParent", "GetRootComponent", "GetScene", "GetStreamName",
+      "IGetRootComponent", "IGetRootComponent2", "IsDefeature", "IsDerived", "IsDirty",
+      "IsLoaded", "IsSpeedPak", "UpdateSpeedPak"
+    ],
+    "zero_arg_excluded_as_obsolete": [
+      "GetCustomPropertiesCount", "GetRootComponent", "IGetRootComponent", "IGetRootComponent2"
+    ],
+    "properties_no_paren_members": [
+      "AddRebuildSaveMark", "AlternateName", "BOMPartNoSource", "ChildComponentDisplayInBOM",
+      "Comment", "CustomPropertyManager", "Description", "HideNewComponentModels",
+      "LargeDesignReviewMark", "Lock", "Name", "NeedsRebuild", "RepresentationShared",
+      "ShowChildComponentsInBOM", "SuppressNewComponentModels", "SuppressNewFeatures",
+      "Type", "UseAlternateNameInBOM", "UseDescriptionInBOM"
+    ],
+    "no_signature_pages_members": [
+      "DimXpertManager"
+    ],
+    "pages_without_returns_section": [
+      "DimXpertManager", "GetCustomProperties", "GetCustomPropertiesCount", "GetParameters",
+      "IGetCustomProperties", "IGetParameters", "IGetRootComponent", "ISetParameters",
+      "Select", "SetExpanded", "SetParameters"
+    ]
+  },
+  "anomalies": [
+    "obsolete_loose 与 obsolete_strict 完全相等（都是 9），差为 0：本族 9 条全是行首「Obsolete. Superseded by ...」，没有「Obsolete for documents created in ...」这类变体。",
+    "全族正文（Remarks / See Also / Examples）里没有任何一处 'obsolete' 字样 —— 用整页命中数与页头命中数逐条比对，两者完全相等，所以 B 不存在「正文里另藏一处」被计进去的可能。",
+    "E（zero_arg_methods）的「非指针」口径有歧义：本文件按「不命中 C/D 的字面串 in-process, unmanaged C++」读，得 21；若改按「返回类型不是 System.object」读则为 18（要剔除 GetChildren / GetCutListItems / GetDisplayStates 这三个返回 System.object 数组的），两种读法都在此列出以便复核。",
+    "DimXpertManager.md 是空壳页：整页只有 YAML frontmatter（kind: property）和一行标题，既无 **Signature** 也无 ## Returns，因此只计入 no_signature_pages=1，不能计入 properties_no_paren —— 尽管 frontmatter 声明它是 property，靠元数据猜会多算 1。",
+    "有 11 页没有 ## Returns 段（见 evidence.pages_without_returns_section），其中 GetCustomProperties / IGetCustomProperties / Select 形参是 out/ref 且明显有返回语义却缺 Returns 段 ⇒ C 判据在这几页上结构上不可能命中，不能读成「不是指针页」。",
+    "ISetParameters 的 Parameters 段第二个形参原文写成「Pointe to an array」（官方源拼写笔误，少一个 r），不影响字面串命中与计数。",
+    "GetParent 页的 See Also 里写成 [[IConfigurationt::GetRootComponent3 Method]]（接口名多一个 t，官方源笔误），仅记录，不影响任何计数。",
+    "F = 19 而非 20：DimXpertManager 因无签名被排除后属性净剩 19 个；其中 ShowChildComponentsInBOM 是已废弃的属性，F 判据未要求「非废弃」故计入（若改为要求非废弃则为 18）。",
+    "上一批 E/F 合并造成虚增的现象在本族同样成立：E+F = 40，其中 19 个其实是属性，真正的零参方法只有 21 个 —— 合并报 40 会把「零参可读」虚增近一倍。"
+  ]
+}

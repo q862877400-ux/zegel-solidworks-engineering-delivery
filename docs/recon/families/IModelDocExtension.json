@@ -1,0 +1,64 @@
+{
+  "family": "IModelDocExtension",
+  "members_total": 342,
+  "obsolete_strict": 44,
+  "obsolete_loose": 44,
+  "pointer_returns": 10,
+  "pointer_params_only": 8,
+  "zero_arg_methods": 73,
+  "properties_no_paren": 18,
+  "no_signature_pages": 9,
+  "candidates": [
+    {
+      "name": "GetTemplateSheetMetal",
+      "signature": "System.object GetTemplateSheetMetal()",
+      "returns": "[[IFeature]]; Null if this model was created with SOLIDWORKS 2012 or earlier"
+    },
+    {
+      "name": "GetPackAndGo",
+      "signature": "PackAndGo GetPackAndGo()",
+      "returns": "[[IPackAndGo]] object"
+    },
+    {
+      "name": "Get3DViews",
+      "signature": "System.object Get3DViews()",
+      "returns": "Array of [[IView3D]]s"
+    },
+    {
+      "name": "GetMBDSTEP242Data",
+      "signature": "System.object GetMBDSTEP242Data()",
+      "returns": "[[IMBDSTEP242Data]]"
+    },
+    {
+      "name": "Get3DExperienceModelType",
+      "signature": "System.int Get3DExperienceModelType()",
+      "returns": "Type of **3D**EXPERIENCE owner as defined by [[sw3DExperienceModelType_e]]"
+    },
+    {
+      "name": "GetSphericalBoxDiameter",
+      "signature": "System.double GetSphericalBoxDiameter()",
+      "returns": "Diameter of the sphere that encloses this model's bounding box"
+    },
+    {
+      "name": "GetDraftingStandardNames",
+      "signature": "System.object GetDraftingStandardNames()",
+      "returns": "Array of strings of the names of all currently available drafting standard names"
+    },
+    {
+      "name": "GetLastFeatureAdded",
+      "signature": "Feature GetLastFeatureAdded()",
+      "returns": "[[Feature]]"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict == obsolete_loose == 44: every obsolete notice in this family is the strict line-start \"Obsolete.\" form at line 12, so the B-A difference is 0 here and this family has none of the \"Obsolete for documents created in ...\" / \"Obsolete and not superseded.\" variants.",
+    "9 pages are empty shells (frontmatter + H1 title only, no Signature/Parameters/Returns); all 9 are kind: property, and 18 property signatures + 9 shells = 27 which matches _overview.md property_count 27, and 315 methods + 27 properties = 342 = members_total (cross-check consistent).",
+    "13 zero-arg method pages have no \"## Returns\" section at all; 12 are void (expected) but GetCameraDefinition() returns Camera and the official page simply omits Returns - an official omission, not a parsing failure.",
+    "IGetAttachments and IGetMaterialPropertyValues carry the pointer literal inside \"## Returns\" AND elsewhere, so they are counted only under pointer_returns; pointer_returns(10) + pointer_params_only(8) = 18 counts over 17 distinct pages containing the literal.",
+    "IListExternalFileReferences repeats the literal 7 times and IGetSearchData 3 times - counting is per page, not per occurrence.",
+    "IPrintOut2 and IPrintOut3 are simultaneously obsolete and pointer-only; both take parameters so they do not affect zero_arg_methods.",
+    "NeedsRebuild is a property signature \"System.bool NeedsRebuild {get;}\" that also carries an \"Obsolete.\" header - it is counted in properties_no_paren because criterion F states no non-obsolete filter.",
+    "GetMassProperties2 is obsolete with successor [[IMassProperty2]] (an interface, not a *2 method), a wording variant that still matches the strict \"Obsolete.\" line-start form.",
+    "of the 79 pages with empty-paren signatures, 6 are obsolete (CreateMassProperty, GetRenderMaterials, GetRenderMaterialsCount, IsVirtualComponent, IsVirtualComponent2, RemoveTexture) and 0 are pointer, so zero_arg_methods = 79 - 6 - 0 = 73."
+  ]
+}

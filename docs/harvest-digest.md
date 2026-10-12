@@ -340,20 +340,31 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 五 门禁栈（**方法论沉淀**：把判定交给机器，而不是靠人记得）
 
-`scripts/check_*.py` 共 **34** 道；其中接进 `release_check.py`（发布前硬失败）的：
+`scripts/check_*.py` 共 **46** 道；其中接进 `release_check.py`（发布前硬失败）的：
 
 | 门禁 | 接进 `release_check`？ |
 |---|---|
+| `scripts/check_arity_tables_vs_reflection.py` | ✅ |
+| `scripts/check_assembly_doc_call_shape.py` | ✅ |
 | `scripts/check_backend_limited_completeness.py` | ✅ |
 | `scripts/check_backend_limited_evidence.py` | ✅ |
+| `scripts/check_cd_host_scope.py` | ✅ |
+| `scripts/check_create_definition_site_disposition.py` | ✅ |
 | `scripts/check_diff_markers.py` | ✅ |
 | `scripts/check_digest_freshness.py` | ✅ |
+| `scripts/check_dispatch_arg_guard.py` | ✅ |
+| `scripts/check_dispatch_blindspot_guard.py` | ✅ |
+| `scripts/check_dispatch_byref_guard.py` | ✅ |
+| `scripts/check_dispatch_entry_guard.py` | ✅ |
+| `scripts/check_dispatch_forward_arg_guard.py` | ✅ |
+| `scripts/check_dispatch_upstream_guard.py` | ✅ |
 | `scripts/check_enum_values_vs_reflection.py` | ✅ |
 | `scripts/check_env_pitfalls.py` | ✅ |
 | `scripts/check_fact_single_home.py` | ✅ |
 | `scripts/check_gate_wiring.py` | ✅ |
 | `scripts/check_interface_member_ownership.py` | ✅ |
 | `scripts/check_lean_first_line_caveat.py` | ✅ |
+| `scripts/check_length_units_guard.py` | ✅ |
 | `scripts/check_license_redlines.py` | ✅ |
 | `scripts/check_member_names.py` | ✅ |
 | `scripts/check_member_owner_interface.py` | — |
@@ -374,6 +385,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_spec_acceptance_paths.py` | ✅ |
 | `scripts/check_undefined_names.py` | ✅ |
 | `scripts/check_union_conventions.py` | ✅ |
+| `scripts/check_unit_conversion_count.py` | ✅ |
 | `scripts/check_unreachable_members.py` | ✅ |
 | `scripts/check_user_preference_writes.py` | ✅ |
 | `scripts/check_verified_evidence.py` | ✅ |

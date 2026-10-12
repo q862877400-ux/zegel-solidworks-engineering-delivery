@@ -1,0 +1,127 @@
+{
+  "family": "IGtol",
+  "source_dir": "C:\\swapi\\types\\IGtol\\",
+  "members_total": 121,
+  "obsolete_strict": 17,
+  "obsolete_loose": 17,
+  "pointer_returns": 21,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 35,
+  "properties_no_paren": 2,
+  "no_signature_pages": 0,
+  "criteria": {
+    "A_obsolete_strict": "页头（**Signature** 那一行之前）出现行首 'Obsolete.'（带句点）",
+    "B_obsolete_loose": "同一页头区域内出现 'Obsolete'（不看大小写、不要求句点、不要求行首）",
+    "C_pointer_returns": "## Returns 段内含字面串 'in-process, unmanaged C++'",
+    "D_pointer_params_only": "该字面串出现在页面其它位置（如 ## Parameters 下的 ref/out 形参）但不在 ## Returns 段",
+    "E_zero_arg_methods": "签名括号内为空 X()，且非废弃、且页内无 'in-process, unmanaged C++' 标记",
+    "F_properties_no_paren": "签名无括号，形如 T Name {get;} / {get; set;}",
+    "G_no_signature_pages": "整页无 **Signature** 行",
+    "H_members_total": "实际读的 .md 个数，不含 _overview.md"
+  },
+  "obsolete_members": [
+    "GetCompositeFrame",
+    "GetFrameSymbols",
+    "GetFrameSymbols2",
+    "GetLeaderAtIndex",
+    "GetPTZHeight",
+    "GetTextFormat",
+    "GetUseDocTextFormat",
+    "IGetFrameSymbols",
+    "IGetFrameSymbols2",
+    "IGetLeaderAtIndex",
+    "IGetTextFormat",
+    "ISetTextFormat",
+    "SetCompositeFrame",
+    "SetFrameSymbols",
+    "SetFrameValues",
+    "SetPTZHeight",
+    "SetTextFormat"
+  ],
+  "pointer_return_members": [
+    "IGetArcAtIndex",
+    "IGetArrowHeadAtIndex",
+    "IGetArrowHeadInfo",
+    "IGetAttachPos",
+    "IGetFontInfo",
+    "IGetFrameDiameterSymbols",
+    "IGetFrameSymbols2",
+    "IGetFrameValues",
+    "IGetLeaderAtIndex2",
+    "IGetLeaderInfo",
+    "IGetLineAtIndex",
+    "IGetSymArcs",
+    "IGetSymCircles",
+    "IGetSymEdgeCounts",
+    "IGetSymLines",
+    "IGetSymText",
+    "IGetSymTextPoints",
+    "IGetTextPoint",
+    "IGetTextPositionAtIndex",
+    "IGetTriangleAtIndex",
+    "IGetWitnessLine"
+  ],
+  "properties_no_paren_members": [
+    "Angle",
+    "SeparateRequirement"
+  ],
+  "candidates": [
+    {
+      "name": "ConvertFormat",
+      "signature": "System.int ConvertFormat()",
+      "returns": "0 if successfully converted, otherwise error code as defined by [[swGtolFormatConversionError_e]]"
+    },
+    {
+      "name": "GetFormat",
+      "signature": "System.int GetFormat()",
+      "returns": "Type of Gtol format as defined by [[swGtolFormatType_e]]"
+    },
+    {
+      "name": "GetLeaderSide",
+      "signature": "System.int GetLeaderSide()",
+      "returns": "Leader attachment information as defined in [[swLeaderSide_e]]"
+    },
+    {
+      "name": "GetWitnessLine",
+      "signature": "System.object GetWitnessLine()",
+      "returns": "An array of six doubles (see **Remarks**)"
+    },
+    {
+      "name": "GetTextPoint",
+      "signature": "System.object GetTextPoint()",
+      "returns": "Array  (see **Remarks**)"
+    },
+    {
+      "name": "GetAttachPos",
+      "signature": "System.object GetAttachPos()",
+      "returns": "Array (see **Remarks**)"
+    },
+    {
+      "name": "GetLeaderInfo",
+      "signature": "System.object GetLeaderInfo()",
+      "returns": "Array (see **Remarks**)"
+    },
+    {
+      "name": "GetFrameCount",
+      "signature": "System.short GetFrameCount()",
+      "returns": "Number of frames in this GTol symbol"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict 与 obsolete_loose 完全相等（都 17）⇒ 本族不存在「Obsolete for documents created in …」「Obsolete and not superseded. …」这类变体，17 个标记全是行首裸 'Obsolete.'，两口径在本族无法区分。",
+    "pointer_params_only = 0：21 个 'in-process, unmanaged C++' 字面串**全部**落在 ## Returns 段内；三个同时带 out 计数形参的 I 族成员（IGetLeaderAtIndex / IGetLeaderAtIndex2 / IGetLeaderInfo）在 ## Parameters 下都没有该字面串。",
+    "GetTextAtIndex.md 是全族**唯一一个非 void、非废弃却没有 ## Returns 段**的页（签名返回 System.string），⇒ 按 Returns 文本做的任何扫描都会漏掉它的返回类型。",
+    "E 的判定边界：IGetAnnotation()（签名返回 Annotation）与 IGetNextGTOL()（签名返回 Gtol）的 Returns 写的是「Pointer to the … object」但**不带** in-process 标记；本批按「无官方 in-process 标记即非指针」判它们为非指针，故计入 E（35 里含这两个）。若改判为指针，E 变 33。",
+    "I 族指针成员的签名把原始指针写成**元素类型**而不是指针类型：IGetFrameDiameterSymbols→System.bool、IGetSymEdgeCounts→System.short、IGetFrameSymbols2/IGetFrameValues/IGetSymText→System.string、其余多为 System.double ⇒ 只看签名文本**无法**识别这 21 个指针成员，必须读 Returns 段。",
+    "同一个接口内按 GTol 创建年代分裂：AddFrame / DeleteFrame / GetFrame 写「created in SOLIDWORKS 2022 or later」，而 GetFrameDiameterSymbols / GetFrameSymbols3 / GetFrameValues / GetPTZHeight2 / SetFrameSymbols2 / SetFrameValues2 写「created in a version of SOLIDWORKS earlier than 2022」⇒ 两组互斥，只有 GetFrame* 系列同时覆盖两代。",
+    "17 个废弃页里有 13 个**整页没有 ## Returns 段**（GetFrameSymbols / GetLeaderAtIndex / GetTextFormat / GetUseDocTextFormat / IGetFrameSymbols / IGetLeaderAtIndex / IGetTextFormat / ISetTextFormat / SetCompositeFrame / SetFrameSymbols / SetFrameValues / SetPTZHeight / SetTextFormat）⇒ 「靠 Returns 文本识别废弃」的判据在本族会漏掉 13/17。",
+    "35 个零参方法里有 8 个返回 System.object 数组（GetArrowHeadInfo / GetAttachPos / GetFontInfo / GetLeaderInfo / GetTextPoint / GetWitnessLine / GetAnnotation / GetNextGTOL），其 Returns 段只写「Array (see Remarks)」或「Pointer to the … object」⇒ 元素布局完全落在 Remarks 里，签名与 Returns 都不给类型，「零参可读」不等于「零参可解析」。",
+    "部分废弃页把形参说明整条替换成字面 'No description'（GetFrameSymbols / GetLeaderAtIndex / IGetFrameSymbols / IGetLeaderAtIndex / ISetTextFormat / SetFrameSymbols / SetTextFormat）⇒ 前置语义不可从页面判读。",
+    "GetLineCount 的摘要句有拼写错误：「Gets the number of linea in this GTol.」"
+  ],
+  "verification": {
+    "method": "先逐个真读 121 个 .md（分 9 批原文打印），再用 PowerShell 机械复算 A/B/C/D/G/E/F 六项，两法结果逐项一致。",
+    "reconciliation": "35 零参 + 2 属性 + 74 带形参方法 + 10 零参但被排除（5 废弃零参 + 5 指针零参）= 121 = members_total。",
+    "no_signature_pages": "0（121 页全部含 **Signature** 行）"
+  }
+}

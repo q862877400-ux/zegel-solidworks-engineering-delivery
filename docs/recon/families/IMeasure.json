@@ -1,0 +1,68 @@
+{
+  "family": "IMeasure",
+  "source_dir": "C:\\swapi\\types\\IMeasure\\",
+  "members_total": 32,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 0,
+  "properties_no_paren": 30,
+  "no_signature_pages": 0,
+  "candidates": [],
+  "methods_with_args": [
+    {
+      "name": "Calculate",
+      "signature": "System.bool Calculate( System.object Entities )",
+      "returns": "True if the specified or selected entities are valid types and combination , false if not"
+    },
+    {
+      "name": "SetProjectionEntity",
+      "signature": "System.bool SetProjectionEntity( System.object Entity )",
+      "returns": "True if Entity is set, false if not"
+    }
+  ],
+  "properties_no_paren_list": [
+    "Angle",
+    "AngleDecimalPlaces",
+    "ArcLength",
+    "ArcOption",
+    "Area",
+    "CenterDistance",
+    "ChordLength",
+    "DeltaX",
+    "DeltaY",
+    "DeltaZ",
+    "Diameter",
+    "Distance",
+    "IsConcentricSpheres",
+    "IsIntersect",
+    "IsParallel",
+    "IsPerpendicular",
+    "Length",
+    "LengthDecimalPlaces",
+    "Normal",
+    "NormalDistance",
+    "Perimeter",
+    "Projection",
+    "ProjectionOption",
+    "Radius",
+    "SpericalCenterDistance",
+    "TotalArea",
+    "TotalLength",
+    "X",
+    "Y",
+    "Z"
+  ],
+  "anomalies": [
+    "全族零 Obsolete：对 32 页做全文扫描（不只页头）命中数为 0，所以 obsolete_strict 与 obsolete_loose 同为 0、两者之差也是 0 —— 这一族不存在「Obsolete for documents created in …」这类变体。",
+    "全族零指针串：字面串 in-process / in-process, unmanaged C++ 全文命中数为 0，故 pointer_returns 与 pointer_params_only 同时为 0；不是「17 个全落在参数侧」那一类情形。",
+    "32 个成员里 30 个是无括号属性，只有 2 个方法（Calculate / SetProjectionEntity），且两个都各带一个参数 —— 因此 zero_arg_methods = 0，candidates 只能给空数组（规则要求取自 zero_arg_methods 那一类，而该类在本族不存在）。",
+    "这正是上一批 E/F 合并造成虚增的反例：若把属性与零参方法并成一个数，本族会报成 30 个「零参可读」，而真实的零参方法是 0 —— 30 全部来自 properties_no_paren。",
+    "全族 32 页里没有任何一页出现过空括号（连 Examples / See Also 里也没有），所以「签名形如 X()」在本族是空集，不是漏检。",
+    "官方成员名拼写异常：文件名与成员名都是 SpericalCenterDistance（少一个 h，应为 Spherical）—— 按字面采用，未改写，也未推测其正确拼写。",
+    "Radius.md 的 ## Returns 只写了一个词「Radius」，缺掉同族其它属性都有的「-1 if this property is invalid …」失效语义 ⇒ 若按 Returns 具体性排序，它是本族最不可读的属性。",
+    "Normal 与 NormalDistance 两页签名相同（System.double X {get;}）且描述几乎重复（前者说 face and plane，后者说 entity and plane），See Also 只单向互链，未说明两者区别。",
+    "页头（Signature 那一行之前）只有 YAML front matter 与一句描述，全族没有出现 Obsolete 标记位或任何弃用提示位 —— 所以 A/B 判据在本族没有可分歧之处。"
+  ]
+}

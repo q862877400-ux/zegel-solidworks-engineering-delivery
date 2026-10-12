@@ -1,0 +1,135 @@
+{
+  "family": "IAnnotation",
+  "source_dir": "C:\\swapi\\types\\IAnnotation",
+  "members_total": 101,
+  "obsolete_strict": 17,
+  "obsolete_loose": 17,
+  "pointer_returns": 4,
+  "pointer_params_only": 1,
+  "zero_arg_methods": 37,
+  "properties_no_paren": 18,
+  "no_signature_pages": 0,
+  "counting_rules": {
+    "obsolete_strict": "line-anchored `^Obsolete\\.` found in the page header, i.e. strictly before the `**Signature**` line; counted per member page, not per occurrence",
+    "obsolete_loose": "case-insensitive `Obsolete` anywhere in the same page-header region (before `**Signature**`); counted per member page",
+    "pointer_returns": "literal string `in-process, unmanaged C++` inside the `## Returns` section; counted per member page",
+    "pointer_params_only": "the same literal present somewhere on the page but NOT inside `## Returns` (e.g. under a `## Parameters` ref/out parameter); counted per member page",
+    "zero_arg_methods": "signature of the form `RetType Name()` with empty parentheses, excluding obsolete members and excluding members whose `## Returns` carries the pointer literal",
+    "properties_no_paren": "signature containing no parentheses at all, of the form `RetType Name {get;}` or `{get; set;}`; counted per member page",
+    "no_signature_pages": "pages with no `**Signature**` line anywhere (empty-shell pages)",
+    "members_total": "number of .md files actually read in the directory, excluding `_overview.md` (directory listing holds 102 .md files in total)"
+  },
+  "reconciliation": {
+    "signature_shapes": "50 empty-paren methods + 18 no-paren properties + 33 parameterized methods = 101",
+    "empty_paren_exclusions": "50 empty-paren signatures minus 37 counted = 13 excluded: 11 because obsolete (GetAttachedEntities, GetAttachedEntities2, GetAttachedEntityCount2, GetBentLeader, GetLeader, GetNext, GetNext2, IGetAttachedEntities, IGetAttachedEntityCount, IGetNext, IGetNext2) and 2 because the `## Returns` carries the pointer literal (IGetAttachedEntityTypes, IGetVisualProperties)",
+    "obsolete_with_parameters": "6 of the 17 obsolete pages have parameters, not empty parens: Select, Select2, SelectByMark, SetLeader, SetLeader2, SetPosition",
+    "loose_minus_strict": 0,
+    "properties_plus_zero_arg": "18 + 37 = 55 members are directly readable with no arguments"
+  },
+  "obsolete_members": [
+    "GetAttachedEntities",
+    "GetAttachedEntities2",
+    "GetAttachedEntityCount2",
+    "GetBentLeader",
+    "GetLeader",
+    "GetNext",
+    "GetNext2",
+    "IGetAttachedEntities",
+    "IGetAttachedEntityCount",
+    "IGetNext",
+    "IGetNext2",
+    "Select",
+    "Select2",
+    "SelectByMark",
+    "SetLeader",
+    "SetLeader2",
+    "SetPosition"
+  ],
+  "pointer_return_members": [
+    "IGetAttachedEntityTypes",
+    "IGetLeaderPointsAtIndex",
+    "IGetMultiJogLeaders",
+    "IGetVisualProperties"
+  ],
+  "pointer_param_only_members": [
+    "ISetAttachedEntities"
+  ],
+  "property_members": [
+    "AnnotationView",
+    "BentLeaderLength",
+    "Color",
+    "FrameLineStyle",
+    "FrameThickness",
+    "FrameThicknessCustom",
+    "Layer",
+    "LayerOverride",
+    "LeaderLineStyle",
+    "LeaderThickness",
+    "LeaderThicknessCustom",
+    "Owner",
+    "OwnerType",
+    "Style",
+    "UseDocDispFrame",
+    "UseDocDispLeader",
+    "Visible",
+    "Width"
+  ],
+  "candidates": [
+    {
+      "name": "GetPMIData",
+      "signature": "System.object GetPMIData()",
+      "returns": "[[IPMIDatumData]], [[IPMIDimensionData]], [[IPMIGtolData]]; null or Nothing if the model is a drawing or no PMI data is associated with this annotation (see **Remarks**)"
+    },
+    {
+      "name": "GetLeaderPerpendicular",
+      "signature": "System.bool GetLeaderPerpendicular()",
+      "returns": "True if this annotation has perpendicular bent leader display enabled, false if this annotation has perpendicular bent leader display disabled"
+    },
+    {
+      "name": "GetAttachedEntityTypes",
+      "signature": "System.object GetAttachedEntityTypes()",
+      "returns": "Array of longs or integers (see Long vs. Integer) that indicate the attached entity types as defined in [[swSelectType_e]]"
+    },
+    {
+      "name": "GetLeaderAllAround",
+      "signature": "System.bool GetLeaderAllAround()",
+      "returns": "True if this annotation has the all-around symbol enabled, false if this annotation has the all-around symbol disabled"
+    },
+    {
+      "name": "GetSmartArrowHeadStyle",
+      "signature": "System.bool GetSmartArrowHeadStyle()",
+      "returns": "True if the smart arrowhead style setting is enabled, false if the smart arrowhead style setting is disabled"
+    },
+    {
+      "name": "GetPlane",
+      "signature": "System.object GetPlane()",
+      "returns": "Array of 9 doubles of the rotation matrix of the annotation relative to the X-Y plane of the model"
+    },
+    {
+      "name": "CanShowInMultipleAnnotationViews",
+      "signature": "System.bool CanShowInMultipleAnnotationViews()",
+      "returns": "True if this annotation can be shown in multiple annotation views, false if not"
+    },
+    {
+      "name": "GetVisualProperties",
+      "signature": "System.object GetVisualProperties()",
+      "returns": "Array of five longs or five integers (see Long vs. Integer and see **Remarks**)"
+    }
+  ],
+  "anomalies": [
+    "The official text in IGetAttachedEntityTypes.md line 17 and IGetLeaderPointsAtIndex.md line 21 reads 'in-process, in-process, unmanaged C++' with a duplicated 'in-process,' — the judged literal is still a substring (the trailing 'in-process, unmanaged C++'), so both pages count, but the source carries a typo.",
+    "GetAttachedEntityCount2.md is headed 'Obsolete. Superseded by [[IAnnotation::GetAtatchedEntityCount3]]' — the official text misspells the successor as 'GetAtatched…' (missing 't'), and no such member page exists under that name (the real page is GetAttachedEntityCount3.md).",
+    "GetAttachedEntityCount2.md lists '- [[IAnnotation Interface]]' twice in its See Also block (lines 25 and 26).",
+    "obsolete_loose equals obsolete_strict (17 == 17): every single Obsolete occurrence in this family is exactly the line-anchored 'Obsolete. Superseded by …' form, so the loose-minus-strict delta the prompt anticipated ('Obsolete for documents created in …' / 'Obsolete and not superseded. …') is 0 here.",
+    "GetMultiJogLeaderCount is a zero-arg method whose page has NO '## Returns' section at all, so it is counted in zero_arg_methods but has no Returns text to quote — such pages cannot be chosen as candidates.",
+    "SaveStyle.md and SetArrowHeadSizeAtIndex.md likewise lack any '## Returns' section despite being methods (both take parameters, so neither enters zero_arg_methods).",
+    "Nine obsolete pages are shell pages with a Signature but no '## Returns' section at all (GetAttachedEntities, GetBentLeader, GetLeader, GetNext, GetNext2, IGetAttachedEntities, IGetAttachedEntityCount, IGetNext, IGetNext2); GetAttachedEntities2, GetAttachedEntityCount2 and SetPosition do carry Returns.",
+    "Owner.md and OwnerType.md each state '**NOTE:** **This property is a get-only property.** **Set is not implemented**.' while their Signature lines still read '{get; set;}' — the two official statements contradict each other, so these two were counted as settable properties.",
+    "IGetPosition, IGetSpecificAnnotation and IGetTextFormat describe their returns as 'Pointer to an array of doubles' / 'Pointer to the IUnknown interface' / 'Pointer to [[ITextFormat]]' WITHOUT the judged literal 'in-process, unmanaged C++', so they pass the pointer test as non-pointer and therefore land in zero_arg_methods even though they are semantically pointer returns — this is the main口径 hazard in this family.",
+    "IGetDisplayData returns '[[IDisplayData]]', a real interface rather than a pointer, and is correctly counted as an ordinary zero-arg method.",
+    "On the five obsolete pages whose parameters are undocumented (Select, Select2, SelectByMark, SetLeader, SetLeader2) every '## Parameters' entry literally reads 'No description'.",
+    "AddOrUpdateStyle.md and LoadStyle.md both spell the Returns opening as 'Ture if …' (missing 'r') — an official typo, not a judgement problem.",
+    "The directory holds 102 .md files in total; _overview.md was excluded from every count, so members_total is 101.",
+    "All 101 pages contain a '**Signature**' line, so no_signature_pages is 0 for this family — every member page is a non-empty shell with at least a signature."
+  ]
+}

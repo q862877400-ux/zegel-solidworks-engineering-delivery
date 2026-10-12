@@ -1,0 +1,134 @@
+{
+  "family": "IFace2",
+  "source_dir": "C:\\swapi\\types\\IFace2",
+  "members_total": 120,
+  "obsolete_strict": 6,
+  "obsolete_loose": 6,
+  "pointer_returns": 16,
+  "pointer_params_only": 3,
+  "zero_arg_methods": 48,
+  "properties_no_paren": 7,
+  "no_signature_pages": 0,
+  "criteria": {
+    "obsolete_strict": "页头（**Signature** 行之前）出现行首 `Obsolete.`（带句点）",
+    "obsolete_loose": "页头出现 `Obsolete`（不区分大小写、不要求句点、不要求行首）",
+    "pointer_returns": "`## Returns` 段内含字面串 `in-process, unmanaged C++`",
+    "pointer_params_only": "该字面串出现但不在 `## Returns` 段内",
+    "zero_arg_methods": "签名为 `X()`（括号内空）、非废弃、非指针的方法",
+    "properties_no_paren": "签名无括号，形如 `T Name {get;}` / `{get; set;}`",
+    "no_signature_pages": "整页无 `**Signature**` 行",
+    "members_total": "实际真读的 .md 个数，不含 _overview.md"
+  },
+  "obsolete_members": [
+    "GetSilhoutteEdges",
+    "GetTrimCurves",
+    "IGetFacetData",
+    "IGetTrimCurveSize",
+    "RemoveMaterialProperty",
+    "RemoveTexture"
+  ],
+  "pointer_returns_members": [
+    "IGetAllDecalProperties",
+    "IGetClosestPointOn",
+    "IGetEdges",
+    "IGetLoops",
+    "IGetMaterialPropertyValues2",
+    "IGetSilhoutteEdges",
+    "IGetTessNorms",
+    "IGetTessTextures",
+    "IGetTessTriangles",
+    "IGetTessTriStripEdges",
+    "IGetTessTriStripNorms",
+    "IGetTessTriStrips",
+    "IGetTrimCurveTopology",
+    "IGetTrimCurveTopologyTypes",
+    "IGetUVBounds",
+    "IReverseEvaluate"
+  ],
+  "pointer_params_only_members": [
+    "IGetDecalProperties",
+    "IGetTrackingIDs",
+    "ISetMaterialPropertyValues2"
+  ],
+  "properties_members": [
+    "Check",
+    "IMaterialPropertyValues",
+    "INormal",
+    "MaterialIdName",
+    "MaterialPropertyValues",
+    "MaterialUserName",
+    "Normal"
+  ],
+  "zero_arg_excluded": {
+    "pointer": [
+      "IGetEdges",
+      "IGetTessNorms",
+      "IGetTessTextures",
+      "IGetTessTriStripEdges",
+      "IGetTessTriStripNorms",
+      "IGetTrimCurveTopology",
+      "IGetTrimCurveTopologyTypes",
+      "IGetUVBounds"
+    ],
+    "obsolete": [
+      "RemoveMaterialProperty"
+    ]
+  },
+  "candidates": [
+    {
+      "name": "GetShellType",
+      "signature": "System.int GetShellType()",
+      "returns": "Shell type:\n\n- 0 = Open shell. For example, a face that belongs to a sheet (surface) body or reference surface.\n\n- 1 = Internal shell. For example, a face that belongs to a cavity. Face helps define an internal volume.\n\n- 2 = External shell. For example, a typical face on a solid body (helps \"hold in\" the body mass). This includes all external faces (faces belonging to bosses, pockets, holes, and so on)."
+    },
+    {
+      "name": "GetArea",
+      "signature": "System.double GetArea()",
+      "returns": "Face area in square meters (see **Remarks**)"
+    },
+    {
+      "name": "FaceInSurfaceSense",
+      "signature": "System.bool FaceInSurfaceSense()",
+      "returns": "True if face normal and surface normal are in the opposite direction, false if they are in same direction"
+    },
+    {
+      "name": "GetPatternSeedFeature",
+      "signature": "System.object GetPatternSeedFeature()",
+      "returns": "Seed feature of the current face; if the face does not belong to a pattern, this method returns NULL"
+    },
+    {
+      "name": "GetTrimCurveTopologyTypes",
+      "signature": "System.object GetTrimCurveTopologyTypes()",
+      "returns": "Array of longs or integers (see Long vs. Integer) indicating topology types as defined in [[swSelectType_e]]"
+    },
+    {
+      "name": "GetTessTriStripEdges",
+      "signature": "System.object GetTessTriStripEdges()",
+      "returns": "Array that contains the list of edge IDs for this face (see **Remarks**)"
+    },
+    {
+      "name": "GetTrimCurveTopology",
+      "signature": "System.object GetTrimCurveTopology()",
+      "returns": "Array of coedges, vertices, and NULLs (see **Remarks**)"
+    },
+    {
+      "name": "GetAllAssemblyDecalProperties",
+      "signature": "System.object GetAllAssemblyDecalProperties()",
+      "returns": "Array of [[IFaceDecalProperties]] objects"
+    }
+  ],
+  "anomalies": [
+    "obsolete_strict == obsolete_loose == 6：6 个废弃页全部是行首 `Obsolete. Superseded by …`，本族没有「Obsolete for documents created in …」「Obsolete and not superseded. …」这类变体 ⇒ 两口径之差为 0（正是把口径拆开的价值：别的族差值非 0，本族为 0）。",
+    "6 个废弃页中有 5 页（GetSilhoutteEdges / GetTrimCurves / IGetFacetData / IGetTrimCurveSize / RemoveMaterialProperty）整页没有 `## Returns` 段（Parameters 或 Signature 直接跳到 See Also），只有 RemoveTexture 有 Returns ⇒ 这 5 页对 C/D 两个指针判据无从判断。",
+    "GetTessTriangleCount.md 是非废弃零参方法（`System.int GetTessTriangleCount()`），进了 E 的分子，但整页没有 `## Returns` 段 ⇒ 拿不到 Returns 文本，无法进 candidates。",
+    "按字面串判「指针」会漏判：IGetBox / IGetBody / IGetFeature / IGetFirstLoop / IGetNextFace / IGetSurface / IRemoveInnerLoops / INormal / EnumLoops 的 Returns 散文写着「Pointer to …」，但不含官方字面串 `in-process, unmanaged C++` ⇒ 按 C/D 口径它们不算指针；E 里我对「非指针」沿用同一口径，故 IGetBox 与 EnumLoops 仍留在 E 中。若改按散文判指针，E 会从 48 掉到 46。",
+    "反向也有：IGetEdges、IGetTessNorms、IGetTessTextures、IGetTessTriStripEdges、IGetTessTriStripNorms、IGetTrimCurveTopology、IGetTrimCurveTopologyTypes、IGetUVBounds 这 8 个零参成员的**签名返回类型是标量**（Edge / System.float / System.int / System.object），Returns 才标了 in-process 指针 ⇒ 判据 C 只能看 Returns 段字面串，看签名会全判错。",
+    "缩进提供了结构性佐证：Returns 里的 16 处是顶格 `- in-process…`，Parameters 里的 3 处是缩进两格 `  - in-process…` ⇒ 全族 19 处字面串与 16/3 的拆分完全对上，无歧义。",
+    "Normal.md 与 INormal.md 页头都写着「**NOTE:** This property is a get-only property. **Set is not implemented**」，但签名仍写 `{get; set;}` ⇒ F 按签名字面计数，实际只有 get。",
+    "INormal.md 的 NOTE 行位于页头（Signature 行之前）却不是 Obsolete 行 ⇒ 顺带证明「页头」必须锚定在 **Signature** 行上，不能锚在正文首行，否则 NOTE 行会被误当判据。",
+    "IGetFacetData 的废弃页头里带 `[[IFace2::GetTessTextures]][[, IFace2::IGetTessTextures, …]]` 这样的嵌套双括号残留，且其中 `[[IFace::GetTessTriStripNorms]]` 指向 IFace 而非 IFace2 ⇒ 官方源侧该页排版有瑕疵。",
+    "IGetUVBounds.md 的 See Also 把 `IBody2::GetProcessedBody2` 列在 `IFace2::GetUVBounds` 之前，与 GetUVBounds.md 的顺序相反 ⇒ 官方 See Also 顺序不稳定，不能当分类依据。",
+    "GetTexture.md 的 `## Returns` 是 Markdown 两列表格（「**If texture is...**」/「**Then retval is...**」）而非单行文本，是全族唯一这种格式 ⇒ 排序「Returns 最具体」时它仍算具体，但解析不能按行取。",
+    "GetDecalsCount.md 的 See Also 写成 `IFae2::GetAllDecalProperties`（应为 IFace2），且 IIsCoincident.md 的参数说明把 FaceIn 标成 `[[Face]]`（应为 Face2）⇒ 官方源侧存在拼写/类型名瑕疵，不能凭 See Also 或 Parameters 反查本族成员。",
+    "目录内共 121 个 .md，其中 1 个是 _overview.md（按要求排除），故 members_total = 120；kind: method 113 + kind: property 7 = 120，与独立清点一致。"
+  ]
+}

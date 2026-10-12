@@ -1,0 +1,63 @@
+{
+  "family": "IModelDoc2",
+  "members_total": 721,
+  "obsolete_strict": 344,
+  "obsolete_loose": 344,
+  "pointer_returns": 8,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 177,
+  "properties_no_paren": 24,
+  "no_signature_pages": 7,
+  "candidates": [
+    {
+      "name": "GetPopupMenuMode",
+      "signature": "System.int GetPopupMenuMode()",
+      "returns": "Current pop-up menu mode:\n\n- 0 - Default shortcut mode. This presents end users with options to **Select Other**, manipulate the view, access the properties dialog of the selected item, and so on.\n\n- 1 - End users are presented with a limited set of choices including **Select Other** and **Clear Selection**. This mode is typically seen when a SOLIDWORKS dialog is active and the end user is restricted to entity selection."
+    },
+    {
+      "name": "IsEditingSelf",
+      "signature": "System.bool IsEditingSelf()",
+      "returns": "True if the model document is the active edit target, false if the model document is not the active edit target of this SOLIDWORKS Design session"
+    },
+    {
+      "name": "GetPathName",
+      "signature": "System.string GetPathName()",
+      "returns": "Full path name for this document including the file name; if the document has not yet been saved, then the string is empty"
+    },
+    {
+      "name": "EditRebuild3",
+      "signature": "System.bool EditRebuild3()",
+      "returns": "True if only those features that need to be rebuilt are rebuilt in the active configuration in the model, false if not"
+    },
+    {
+      "name": "EditSuppress2",
+      "signature": "System.bool EditSuppress2()",
+      "returns": "True if the selected feature, component, or owning feature of the selected face is suppressed, false if not"
+    },
+    {
+      "name": "EditUnsuppressDependent2",
+      "signature": "System.bool EditUnsuppressDependent2()",
+      "returns": "True if the selected feature or component and their dependents are unsuppressed, false if not"
+    },
+    {
+      "name": "GetConsiderLeadersAsLines",
+      "signature": "System.bool GetConsiderLeadersAsLines()",
+      "returns": "True if leaders are returned as line data, false if leaders are not returned as line data"
+    },
+    {
+      "name": "GetConfigurationNames",
+      "signature": "System.object GetConfigurationNames()",
+      "returns": "Array of the names of the configurations in the order they are created in this document"
+    }
+  ],
+  "anomalies": [
+    "签名形如 X() 但页头标 Obsolete，按判据 E「非废弃」剔除 56 个：AlignDimensions.md; AutoInferToggle.md; AutoSolveToggle.md; BreakAllExternalReferences.md; ChangeSketchPlane.md; ClearSelection.md; CreatePlaneThru3Points.md; CreatePlaneThru3Points2.md; EditClearAll.md; EditRollback.md; EditRollback2.md; EditSuppress.md; EditUnsuppress.md; EditUnsuppressDependent.md; FileReload.md; GetActiveConfiguration.md; GetActiveSketch.md; GetActiveSketch2.md; GetColorTable.md; GetCustomInfoCount.md; GetCustomInfoNames.md; GetDetailingDefaults.md; GetFirstAnnotation.md; GetInferenceMode.md; GetMassProperties.md; GetModelViewCount.md; GetSceneBkgDIB.md; GraphicsRedraw.md; GraphicsRedraw2.md; HideFeatureDimensions.md; ICreatePlaneThru3Points2.md; IGetActiveConfiguration.md; IGetActiveSketch.md; IGetColorTable.md; IGetCustomInfoNames.md; IGetDetailingDefaults.md; IGetFirstAnnotation.md; Insert3DSketch.md; InsertAxis.md; InsertBOMBalloon.md; InsertDeleteFace.md; InsertDeleteHole.md; InsertProjectedSketch.md; InsertSewRefSurface.md; InsertSketch.md; IsExploded.md; Lights.md; ListExternalFileReferencesCount2.md; LockFramePoint.md; Save.md; SaveSilent.md; ShowFeatureDimensions.md; SketchCircle.md; SketchUseEdge.md; UnlockFramePoint.md; UserPreferences.md",
+    "签名形如 X() 但整页含 'in-process, unmanaged C++'，按判据 E「非指针」剔除 6 个：IGetAngularUnits.md; IGetLines.md; IGetModelViewNames.md; IGetRayIntersectionsPoints.md; IGetRayIntersectionsTopology.md; IGetUnits.md",
+    "★ 口径陷阱：这 5 页正文里出现 'obsolete' 一词，但位置在 **Signature** 行之后且语义是「另一个成员已废弃」（如 EditSuppress2/EditUnsuppress2/EditUnsuppressDependent2/GetFirstAnnotation2/IGetFirstAnnotation2 在 Remarks 里说本方法与那个已废弃的版本等价），它们本身是后继成员、不带页头 Obsolete 标记 —— 若按整页 grep 'obsolete' 计数，A/B 会各多算 5 个、并把本该进 E 的这几个后继成员误剔。",
+    "7 个无 **Signature** 行的空壳页，frontmatter kind 分别为 {\"CustomInfo.md\": \"property\", \"CustomInfo2.md\": \"property\", \"ILightSourcePropertyValues.md\": \"property\", \"LightSourcePropertyValues.md\": \"property\", \"LightSourceUserName.md\": \"property\", \"PrintSetup.md\": \"property\", \"SummaryInfo.md\": \"property\"}；24 个有签名的属性页 + 这 7 个 = 31，与 _overview.md 的 property_count: 31 吻合。",
+    "★ 口径陷阱：E 若不剔除废弃会得 239（虚高 62），本族正确值 177；F=24 是 get/set 属性；E+F=201，若按上一批口径合并成「零参可读」会得 263（239+24），其中 62 个其实是废弃方法 —— 拆开正是本批要的效果。",
+    "obsolete_strict 与 obsolete_loose 在本族完全相等（均 344），即不存在「Obsolete for documents created in …」「Obsolete and not superseded. …」这类变体页头。",
+    "pointer_params_only 为 0：8 个含 'in-process, unmanaged C++' 的页全部落在 ## Returns 段内。",
+    "8 个指针返回页全部是 I 前缀的 I<Name> 变体（IGetAngularUnits/IGetConfigurationNames/IGetDependencies2/IGetLines/IGetModelViewNames/IGetRayIntersectionsPoints/IGetRayIntersectionsTopology/IGetUnits），与 pywin32 后端到不了的指针族一致。"
+  ]
+}

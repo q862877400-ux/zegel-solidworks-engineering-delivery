@@ -1,0 +1,70 @@
+{
+  "family": "IDisplayDimension",
+  "members_total": 141,
+  "obsolete_strict": 28,
+  "obsolete_loose": 28,
+  "pointer_returns": 0,
+  "pointer_params_only": 1,
+  "zero_arg_methods": 41,
+  "properties_no_paren": 37,
+  "no_signature_pages": 1,
+  "candidates": [
+    {
+      "name": "GetSupportsGenericText",
+      "signature": "System.bool GetSupportsGenericText()",
+      "returns": "True if the display dimension was created in SOLIDWORKS 2011 or later and is generic text, false if the display dimension was created in an earlier release of SOLIDWORKS and is dimension text"
+    },
+    {
+      "name": "GetUseDocDual",
+      "signature": "System.bool GetUseDocDual()",
+      "returns": "True if this display dimension uses its dual dimension's top, bottom, right, or left document setting, false if the display dimension uses a setting opposite of the dual dimension's top, bottom, right, or left document setting"
+    },
+    {
+      "name": "GetUseDocBentLeaderLength",
+      "signature": "System.bool GetUseDocBentLeaderLength()",
+      "returns": "True if using the document default setting for dimension bent leader length, false if not"
+    },
+    {
+      "name": "GetAutoArcLengthLeader",
+      "signature": "System.bool GetAutoArcLengthLeader()",
+      "returns": "True if the leader style is selected automatically , false if the leader style is selected by the user"
+    },
+    {
+      "name": "GetUnits",
+      "signature": "System.int GetUnits()",
+      "returns": "Units for this display dimension as defined in [[swLengthUnit_e]] or [[swAngleUnit_e]] (see **Remarks**)"
+    },
+    {
+      "name": "GetBentLeaderLength",
+      "signature": "System.double GetBentLeaderLength()",
+      "returns": "Length of the bent leader in system units"
+    },
+    {
+      "name": "GetFractionBase",
+      "signature": "System.int GetFractionBase()",
+      "returns": "Value indicating decimal or fractional display as defined in [[swFractionDisplay_e]]"
+    },
+    {
+      "name": "Unlink",
+      "signature": "System.int Unlink()",
+      "returns": "Error code as defined by [[swLinkDimensionError_e]]"
+    }
+  ],
+  "anomalies": [
+    "obsolete_loose == obsolete_strict == 28 —— 本族没有任何「Obsolete for documents created in ...」变体，28 页全部是行首「Obsolete.」的两段式写法，故 A/B 两种口径差为 0，本批的拆分在本族上没有区分力。",
+    "GetUseDocPrecision.md 页头是「Obsolete. Not superseded.」（本族唯一无 Superseded by 的废弃形态）；因仍以行首「Obsolete.」开头，已计入 obsolete_strict。",
+    "GetAlternateTolPrecision.md 页头写作「Obsolete. Superseded by [[IDisplayDimension::GetAlternateTolPrecision]]」——指向自己而非 GetAlternateTolPrecision2，官方页疑似自引用笔误；按原文计数未做修正。",
+    "pointer_returns = 0 —— 全族没有一页的「## Returns」段带字面串「in-process, unmanaged C++」；但有 4 页用散文描述了指针返回：GetDefinitionTransform「Pointer to the [[IMathTransform]] object」、GetNext5「Pointer to the next [[IDisplayDimension]] object」、IGetAnnotation「Pointer to the [[IAnnotation]]  object」、IGetDisplayData「Pointer to the [[IDisplayData]] object」。按字面串口径会漏计这 4 个指针返回。",
+    "pointer_params_only = 1，仅 IAddDisplayEnt 一页：该字面串出现在「## Parameters」的 **Data** 条目下（其 ## Returns 是「True if successful, false if not」）。",
+    "IAddDisplayText.md 的形参含 ref System.double Position 与 TextFormat Format（指针语义），但 Parameters 段没有该字面串、Returns 段也没有，故既不计入 pointer_params_only 也不计入 pointer_returns。",
+    "ChamferPrecision.md 是空壳页：YAML frontmatter 标 kind: property，但整页无 **Signature**、无「## Returns」、无描述，因此计入 no_signature_pages 而不计入 properties_no_paren。",
+    "properties_no_paren = 37，其中 ShowTolParenthesis 是唯一带「Obsolete.」页头的属性（非废弃属性为 36 个）；F 口径未规定排除废弃，故仍计入。",
+    "ExplementaryAngle 是官方拼写（非标准词，应为 supplementary），且未被标废弃，与 SupplementaryAngle、VerticallyOppositeAngle 三个角度翻转方法并存于同一族。",
+    "GetArcLengthLeader.md 的 Returns 段只写了一个词「Annotation」，与该方法实际返回的引线样式（swArcLengthLeaderType_e）不符；同页 See Also 里还有拼写错误「IDisplayDimensioin::GetArcLengthLeader」。",
+    "GetDefinitionTransform.md 的 Signature 写作「MathTransform GetDefinitionTransform()」，是本族唯一不带 System. 前缀的类型名，与其余 140 页的签名风格不一致。",
+    "SetJogParameters.md 返回类型是 System.bool 但整页没有「## Returns」段，与 GetWitnessLineGap 等同类 getter 写法不一致。",
+    "ISetTextFormat / SetTextFormat / SetArrowHeadStyle / SetPrecision 四页的参数描述一律写「No description」，是官方源的占位符，非本批漏读。",
+    "zero_arg_methods 的口径拆开很有必要：全族零参签名共 61 个，其中 20 个因页头 Obsolete 被排除（61 − 20 = 41）；那 20 个里 16 个连「## Returns」段都没有，只有 GetDimension / GetType / IGetDimension / IsDimXpert 四个还带 Returns。",
+    "SetBrokenLeader2.md 与 SetWitnessLineGap.md 的 See Also 列了自己（IDisplayDimension::SetBrokenLeader2 Method / SetWitnessLineGap Method）；不影响本批任何计数。"
+  ]
+}

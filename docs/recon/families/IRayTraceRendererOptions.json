@@ -1,0 +1,33 @@
+{
+  "family": "IRayTraceRendererOptions",
+  "source_dir": "C:\\swapi\\types\\IRayTraceRendererOptions",
+  "members_total": 36,
+  "obsolete_strict": 1,
+  "obsolete_loose": 1,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 1,
+  "properties_no_paren": 35,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "UpdateGraphics",
+      "kind": "method",
+      "signature": "void UpdateGraphics()",
+      "returns": "(no ## Returns section on the page - returns void; the page has only ## Remarks, ## Examples and ## See Also)",
+      "source": "C:\\swapi\\types\\IRayTraceRendererOptions\\UpdateGraphics.md"
+    }
+  ],
+  "anomalies": [
+    "The whole family is 35 properties + exactly 1 method: UpdateGraphics (`void UpdateGraphics()`). So the two categories E (zero_arg_methods) and F (properties_no_paren) had to be counted apart - E=1 and F=35 - and had they been merged into one 'zero-arg readable' number it would have reported 36, exactly the E/F trap flagged in the brief.",
+    "UpdateGraphics is the only member in the zero_arg_methods class and its page has NO `## Returns` section at all (void return), so the candidates list could not be filled up to 8 even though 8 were allowed; it holds 1 entry and I did not pad it with properties, which would have broken the 'candidates come from the zero_arg_methods class' contract.",
+    "ContourEnabled is simultaneously the only obsolete member (page header line 12: `Obsolete. Superseded by [[IRayTraceRendererOptions::ContourCartoonRenderingEnabled]].`, sitting BEFORE the **Signature** line 14) and a property (`System.bool ContourEnabled {get; set;}`). Under criterion F as literally written (no non-obsolete exclusion, unlike criterion E) it IS counted, hence F=35; if obsolete members were also excluded from F it would be 34. Flagging this so the two readings are not confused later.",
+    "obsolete_strict = obsolete_loose = 1, so there are ZERO 'loose-only' variants in this family (no 'Obsolete for documents created in ...' / 'Obsolete and not superseded. ...' wording) - the difference criterion B was designed to expose is empty here.",
+    "The literal string `in-process, unmanaged C++` appears NOWHERE in any of the 36 pages - not in any ## Returns section and not in any ## Parameters section. So pointer_returns=0 AND pointer_params_only=0; this family is the opposite extreme from the previous batch's 17-member family where every hit was in Parameters rather than Returns.",
+    "no_signature_pages = 0: all 36 pages carry a `**Signature**` line, so there are no empty-shell pages in this family.",
+    "All 35 property signatures are .NET-style `{get; set;}` accessors with no parentheses. No getter/setter method pages exist, so a naive scan that treated a property as 'zero-arg' (rather than as paren-less) would have reported 36 zero-arg members instead of the true 1.",
+    "HasCartoonEdges and HasCartoonShading have a comparison TABLE in ## Remarks that the source conversion flattened into bare lines ('Edges' / 'True' / 'False' / 'Shading' / ...). It is a rendering artifact, not model data; it affects neither signature nor criteria, but a text-matching parser could mistake those bare True/False lines for content.",
+    "Cross-reference link syntax is inconsistent across pages: some use `[[IRayTraceRendererOptions::X Property ()]]` (double colon, plus a spurious empty `()`), others `[[IRayTraceRendererOptions:X Property ()]]` (single colon) - e.g. OffloadedRendering is referenced both as `::OffloadedRendering` and `:OffloadedRendering`. This affects only the ## See Also blocks, never the **Signature** line.",
+    "_overview.md was excluded from all counts as instructed; the directory contains 37 .md files total and no non-.md files, so members_total=36 covers every member page that exists."
+  ]
+}

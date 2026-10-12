@@ -1,0 +1,45 @@
+{
+  "family": "IConvertSolidFeatureData",
+  "members_total": 27,
+  "obsolete_strict": 0,
+  "obsolete_loose": 0,
+  "pointer_returns": 0,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 4,
+  "properties_no_paren": 20,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetBendEdgesCount",
+      "signature": "System.int GetBendEdgesCount()",
+      "returns": "Number of bend edges"
+    },
+    {
+      "name": "GetCustomBendAllowance",
+      "signature": "System.object GetCustomBendAllowance()",
+      "returns": "[[Custom bend allowance]]"
+    },
+    {
+      "name": "GetFixedFace",
+      "signature": "System.object GetFixedFace()",
+      "returns": "[[IFace2]]"
+    },
+    {
+      "name": "ReleaseSelectionAccess",
+      "signature": "void ReleaseSelectionAccess()",
+      "returns": ""
+    }
+  ],
+  "anomalies": [
+    "整个族对 'Obsolete' 的命中数为 0（含任何大小写、任何位置），因此 A/B 两条口径在本族没有可分离的对象，差值为 0 属实测而非判读不到。",
+    "字面串 'in-process, unmanaged C++' 在全族 27 页中零命中，连单词 'pointer' 也零命中，故 C/D 均为 0；这不是'页面缺失该说明'，而是真的没写过。",
+    "ReleaseSelectionAccess 是零参方法但整页没有 '## Returns' 段（void），已计入 E 但没有 Returns 文本可用于'具体程度'排序，其 candidates 里的 returns 字段为空字符串。",
+    "同族的 Initialize 与 SetFixedFace 同样是 void 且无 '## Returns' 段，只因形参非空才未进入 E，此处一并记录以免后人对'无 Returns 段'数量对不上。",
+    "AccessSelections 签名为 'System.bool AccessSelections( System.object TopDoc, System.object Component )'，是 2 形参方法而非零参，官方页未把 Component 标为可选，故未计入 E。",
+    "BendEdges 与 RipSketches 两个属性、以及 GetCustomBendAllowance / GetFixedFace 两个零参方法都返回 System.object，官方只用 'Array of bend edges' / 'Array of rip sketches' 这类散文描述，Returns 段里没有指针限定语，因此无法从本页判断托管后端是否可安全取用 —— 按字面口径未计入 C/D，但这是本族唯一一处'可能相关却判不出'的地方。",
+    "SheetMetalProcess 是全族唯一的只读属性（{get;}），其余 19 个属性均为 {get; set;}；F 口径只判有无括号，故 20 个一律计入，不因可写性区分。",
+    "GaugeThickness 页的描述行是 'See [[ConvertSolidFeatureData::GaugeTableFile]]'，指向的类型名是 ConvertSolidFeatureData 而非本页所属的 IConvertSolidFeatureData，判为源文档里的残留链接，该页其余部分（签名 / Returns / Remarks）完整，故正常计入。",
+    "GetFixedFace 与 GetCustomBendAllowance 的 Returns 段是未渲染的 wiki 链接标记（'[[IFace2]]' / '[[Custom bend allowance]]'）而非散文，信息量低于 GetBendEdgesCount 的 'Number of bend edges'，但因该族零参方法只有 4 个，candidates 全部照录而非择优。",
+    "交叉校验：20 属性 + 7 方法 = 27 = members_total，且与 _overview.md 的 property_count: 20 / method_count: 7 完全一致，说明本族既无多余空壳页也无 overview 漏列的孤儿成员。"
+  ]
+}

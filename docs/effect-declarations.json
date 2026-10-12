@@ -8,9 +8,9 @@
  ],
  "_regenerate": "python tools/gen_effect_declarations.py",
  "counts": {
-  "has_writes": 140,
-  "pure_read": 49,
-  "unknown": 270
+  "has_writes": 145,
+  "pure_read": 53,
+  "unknown": 278
  },
  "errors": [],
  "state_classes": [
@@ -52,7 +52,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 0,
-   "needs": [],
+   "needs": [
+    "edit:sketch"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -129,6 +131,16 @@
    "source": "static",
    "writes": []
   },
+  "solidworks_assembly_component_pattern_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 4,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
   "solidworks_assembly_create_exploded_view": {
    "destructive": false,
    "doc_type": null,
@@ -143,11 +155,13 @@
    "destructive": false,
    "doc_type": null,
    "inject": "doc",
-   "members": 0,
+   "members": 3,
    "needs": [],
    "requires": "part",
-   "source": "unknown",
-   "writes": null
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_assembly_edit_explode_parameters": {
    "destructive": false,
@@ -211,6 +225,16 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_assembly_iter_feature_tree": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 4,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
   "solidworks_assembly_list_components": {
    "destructive": false,
    "doc_type": null,
@@ -233,6 +257,16 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_assembly_performance_analysis_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 6,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
   "solidworks_assembly_replace_component": {
    "destructive": false,
    "doc_type": null,
@@ -242,6 +276,18 @@
    "requires": "assembly",
    "source": "unknown",
    "writes": null
+  },
+  "solidworks_assembly_sequence_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 7,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
   },
   "solidworks_assembly_show_exploded": {
    "destructive": false,
@@ -399,6 +445,26 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_boundary_boss_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 0,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_boundary_surface_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 0,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
   "solidworks_build_review_report": {
    "destructive": false,
    "doc_type": null,
@@ -416,36 +482,6 @@
    "members": 0,
    "needs": [],
    "requires": "part",
-   "source": "unknown",
-   "writes": null
-  },
-  "solidworks_chamfer_circular_rim_volume": {
-   "destructive": false,
-   "doc_type": null,
-   "inject": "",
-   "members": 0,
-   "needs": [],
-   "requires": "none",
-   "source": "unknown",
-   "writes": null
-  },
-  "solidworks_chamfer_straight_edge_volume": {
-   "destructive": false,
-   "doc_type": null,
-   "inject": "",
-   "members": 0,
-   "needs": [],
-   "requires": "none",
-   "source": "unknown",
-   "writes": null
-  },
-  "solidworks_chamfer_volume_report": {
-   "destructive": false,
-   "doc_type": null,
-   "inject": "",
-   "members": 0,
-   "needs": [],
-   "requires": "none",
    "source": "unknown",
    "writes": null
   },
@@ -806,6 +842,16 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_count_sketch_relations": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 1,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": []
+  },
   "solidworks_create_revolved_surface": {
    "destructive": false,
    "doc_type": null,
@@ -905,6 +951,30 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_delete_all_sketch_relations": {
+   "destructive": true,
+   "doc_type": null,
+   "inject": "model",
+   "members": 1,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
+  },
+  "solidworks_delete_sketch_relation": {
+   "destructive": true,
+   "doc_type": null,
+   "inject": "model",
+   "members": 2,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
+  },
   "solidworks_delivery_bom_traceability": {
    "destructive": false,
    "doc_type": null,
@@ -981,7 +1051,7 @@
    "destructive": false,
    "doc_type": null,
    "inject": "model",
-   "members": 2,
+   "members": 3,
    "needs": [],
    "requires": "part",
    "source": "static",
@@ -1179,13 +1249,23 @@
    "destructive": false,
    "doc_type": "drawing",
    "inject": "model",
-   "members": 6,
+   "members": 5,
    "needs": [],
    "requires": "part",
    "source": "static",
    "writes": [
     "document"
    ]
+  },
+  "solidworks_drawing_list_views_report": {
+   "destructive": false,
+   "doc_type": "drawing",
+   "inject": "model",
+   "members": 0,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
   },
   "solidworks_drawing_set_sheet_format": {
    "destructive": false,
@@ -1251,7 +1331,7 @@
    "destructive": false,
    "doc_type": "drawing",
    "inject": "model",
-   "members": 12,
+   "members": 11,
    "needs": [],
    "requires": "part",
    "source": "static",
@@ -1629,26 +1709,6 @@
     "selection"
    ]
   },
-  "solidworks_gear_calculate_spur": {
-   "destructive": false,
-   "doc_type": null,
-   "inject": "",
-   "members": 0,
-   "needs": [],
-   "requires": "none",
-   "source": "unknown",
-   "writes": null
-  },
-  "solidworks_gear_create_spur": {
-   "destructive": false,
-   "doc_type": null,
-   "inject": "model",
-   "members": 0,
-   "needs": [],
-   "requires": "part",
-   "source": "unknown",
-   "writes": null
-  },
   "solidworks_get_active_view": {
    "destructive": false,
    "doc_type": null,
@@ -1706,6 +1766,16 @@
    "writes": null
   },
   "solidworks_gui_assert_no_modal": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "",
+   "members": 0,
+   "needs": [],
+   "requires": "none",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_gui_classify_dialog": {
    "destructive": false,
    "doc_type": null,
    "inject": "",
@@ -1993,6 +2063,18 @@
     "document"
    ]
   },
+  "solidworks_insert_mate_reference": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 2,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
+  },
   "solidworks_insert_offset_surface": {
    "destructive": false,
    "doc_type": null,
@@ -2034,7 +2116,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 2,
-   "needs": [],
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": [
@@ -2076,6 +2160,16 @@
    "writes": [
     "document"
    ]
+  },
+  "solidworks_linear_pattern_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 5,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
   },
   "solidworks_list_render_materials": {
    "destructive": false,
@@ -2198,6 +2292,16 @@
    "requires": "none",
    "source": "unknown",
    "writes": null
+  },
+  "solidworks_mass_property_object": {
+   "destructive": false,
+   "doc_type": "drawing",
+   "inject": "model",
+   "members": 2,
+   "needs": [],
+   "requires": "part",
+   "source": "static",
+   "writes": []
   },
   "solidworks_measure_selection": {
    "destructive": false,
@@ -2414,7 +2518,9 @@
    "doc_type": null,
    "inject": "model",
    "members": 3,
-   "needs": [],
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "unknown",
    "writes": null
@@ -2447,7 +2553,7 @@
    "destructive": false,
    "doc_type": null,
    "inject": "model",
-   "members": 1,
+   "members": 4,
    "needs": [],
    "requires": "part",
    "source": "static",
@@ -2546,6 +2652,16 @@
    "doc_type": null,
    "inject": "model",
    "members": 6,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_pdm_evidence_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 0,
    "needs": [],
    "requires": "part",
    "source": "unknown",
@@ -2765,6 +2881,16 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_rib_params": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 6,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
   "solidworks_scale_feature": {
    "destructive": false,
    "doc_type": null,
@@ -2777,12 +2903,28 @@
     "document"
    ]
   },
+  "solidworks_section_area_crosscheck": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 5,
+   "needs": [
+    "selection"
+   ],
+   "requires": "part",
+   "source": "static",
+   "writes": [
+    "document"
+   ]
+  },
   "solidworks_section_properties": {
    "destructive": false,
    "doc_type": null,
    "inject": "model",
    "members": 2,
-   "needs": [],
+   "needs": [
+    "selection"
+   ],
    "requires": "part",
    "source": "static",
    "writes": []
@@ -3043,7 +3185,7 @@
    "destructive": false,
    "doc_type": null,
    "inject": "model",
-   "members": 4,
+   "members": 2,
    "needs": [],
    "requires": "part",
    "source": "static",
@@ -3141,7 +3283,7 @@
    "destructive": false,
    "doc_type": null,
    "inject": "model",
-   "members": 12,
+   "members": 13,
    "needs": [],
    "requires": "part",
    "source": "unknown",
@@ -3170,6 +3312,16 @@
    "writes": [
     "document"
    ]
+  },
+  "solidworks_sheet_metal_iter_features": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 2,
+   "needs": [],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
   },
   "solidworks_shell_params": {
    "destructive": false,
@@ -3965,6 +4117,30 @@
     "document"
    ]
   },
+  "solidworks_sketch_apply_relations": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 0,
+   "needs": [
+    "edit:sketch"
+   ],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_sketch_by_name": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 2,
+   "needs": [
+    "edit:sketch"
+   ],
+   "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
   "solidworks_sketch_circular_pattern": {
    "destructive": false,
    "doc_type": null,
@@ -4462,12 +4638,24 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_topology_constraints_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "study",
+   "members": 1,
+   "needs": [],
+   "requires": "study",
+   "source": "static",
+   "writes": []
+  },
   "solidworks_topology_create_demold_control": {
    "destructive": false,
    "doc_type": null,
    "inject": "study",
    "members": 6,
-   "needs": [],
+   "needs": [
+    "selection"
+   ],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -4527,7 +4715,9 @@
    "doc_type": null,
    "inject": "study",
    "members": 6,
-   "needs": [],
+   "needs": [
+    "selection"
+   ],
    "requires": "study",
    "source": "unknown",
    "writes": null
@@ -4878,6 +5068,18 @@
    "source": "unknown",
    "writes": null
   },
+  "solidworks_weld_fillet_bead_report": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "model",
+   "members": 1,
+   "needs": [
+    "body"
+   ],
+   "requires": "part",
+   "source": "static",
+   "writes": []
+  },
   "solidworks_weldment_create_cut_list": {
    "destructive": false,
    "doc_type": null,
@@ -4894,13 +5096,11 @@
    "destructive": false,
    "doc_type": null,
    "inject": "model",
-   "members": 4,
+   "members": 0,
    "needs": [],
    "requires": "part",
-   "source": "static",
-   "writes": [
-    "document"
-   ]
+   "source": "unknown",
+   "writes": null
   },
   "solidworks_weldment_create_structural_member": {
    "destructive": false,

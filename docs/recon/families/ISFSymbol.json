@@ -1,0 +1,66 @@
+{
+  "family": "ISFSymbol",
+  "members_total": 51,
+  "obsolete_strict": 4,
+  "obsolete_loose": 4,
+  "pointer_returns": 7,
+  "pointer_params_only": 0,
+  "zero_arg_methods": 18,
+  "properties_no_paren": 7,
+  "no_signature_pages": 0,
+  "candidates": [
+    {
+      "name": "GetArrowHeadInfo",
+      "signature": "System.object GetArrowHeadInfo()",
+      "returns": "Array of doubles describing format (see **Remarks**)"
+    },
+    {
+      "name": "GetSymbol",
+      "signature": "System.int GetSymbol()",
+      "returns": "Type of symbol as defined in [[swSFSymType_e]] (see **Remarks**)"
+    },
+    {
+      "name": "GetSymbolSurfaceTexture",
+      "signature": "System.int GetSymbolSurfaceTexture()",
+      "returns": "Symbol surface texture type as defined in [[swSFSymType_e]] (see **Remarks**)"
+    },
+    {
+      "name": "GetDirectionOfLay",
+      "signature": "System.int GetDirectionOfLay()",
+      "returns": "Direction of lay as defined in [[swSFLaySym_e]]"
+    },
+    {
+      "name": "GetSymbolAllAround",
+      "signature": "System.bool GetSymbolAllAround()",
+      "returns": "True if All Around symbol, false if Local symbol"
+    },
+    {
+      "name": "IsAttached",
+      "signature": "System.bool IsAttached()",
+      "returns": "True if a leaderline is attached, false if not"
+    },
+    {
+      "name": "HasExtraLeader",
+      "signature": "System.bool HasExtraLeader()",
+      "returns": "True if extra leader line exists, false if not"
+    },
+    {
+      "name": "GetAnnotation",
+      "signature": "System.object GetAnnotation()",
+      "returns": "[[Annotation]]"
+    }
+  ],
+  "anomalies": [
+    "obsolete_loose - obsolete_strict = 0: the whole family has exactly four 'Obsolete' occurrences and all four are line-start 'Obsolete. Superseded by ...' at line 12, so the 'Obsolete for documents created in ...' / 'Obsolete and not superseded.' variant class is empty here.",
+    "The four obsolete pages (GetSymbolType, SetSymbolType, Grinding, Rotated) carry NO '## Returns' section at all, which is why they could not contribute to pointer_returns even though their signatures return values; their Returns text is genuinely absent, not merely unreported.",
+    "pointer_params_only = 0 even though IGetLeaderAtIndex does declare an 'out System.int PointCount' ref/out parameter in its '## Parameters' section - this family marks pointer-ness ONLY via the literal 'in-process, unmanaged C++' line inside '## Returns', so the ref/out-param variant that dominates some other families does not occur here.",
+    "Each of the 7 pointer pages also carries a second, different 'in-process' string - a 'See [In-process Methods](...)' documentation link on the line after the Returns block; it is capitalised and lacks the ', unmanaged C++' tail, so it is deliberately NOT counted as a pointer marker.",
+    "The 4 obsolete pages are the only pages where the '## Returns' section is missing while the member still has a value-returning signature (e.g. SetSymbolType returns System.bool), i.e. a page is not empty-shell (all 51 pages have a '**Signature**' line) yet still omits its return documentation.",
+    "No empty-shell pages: no_signature_pages = 0; every one of the 51 member .md files has a '**Signature**' line.",
+    "zero_arg_methods needed two exclusions from the raw 20 zero-paren signatures: GetSymbolType (obsolete) and IGetArrowHeadInfo (its '## Returns' is the in-process pointer line); the raw count before exclusion was 20.",
+    "The 7 properties (GOSTDefaultSymbol, GOSTNotation, Grinding, Orientation, ProfileAngle, ProfileDirection, Rotated) are counted in properties_no_paren = 7 without excluding the 2 obsolete ones (Grinding, Rotated), since criterion F imposes no exclusion - this is what makes F and E disjoint and independently countable.",
+    "_overview.md declares property_count: 7 and method_count: 44, which sums to exactly the 51 member pages actually present on disk - the directory, the overview's counts and the page set agree; no orphan or missing page was found.",
+    "Three members return an interface type without the 'System.' prefix in the signature - 'Annotation IGetAnnotation()' and 'SFSymbol IGetNext()' - so a naive 'return type must start with System.' rule would miscount them; they are still zero-arg methods and are counted as such.",
+    "Two sibling pairs are documented identically but are separate members and were counted separately: GetNext (returns System.object) vs IGetNext (returns SFSymbol), and GetAnnotation (System.object) vs IGetAnnotation (Annotation)."
+  ]
+}

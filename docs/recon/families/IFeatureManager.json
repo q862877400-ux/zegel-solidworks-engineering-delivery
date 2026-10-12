@@ -1,0 +1,66 @@
+{
+  "family": "IFeatureManager",
+  "source_dir": "C:\\swapi\\types\\IFeatureManager",
+  "members_total": 286,
+  "obsolete_strict": 116,
+  "obsolete_loose": 116,
+  "pointer_returns": 1,
+  "pointer_params_only": 4,
+  "zero_arg_methods": 28,
+  "properties_no_paren": 22,
+  "no_signature_pages": 1,
+  "candidates": [
+    {
+      "name": "InsertSaveOutBodies",
+      "signature": "System.bool InsertSaveOutBodies()",
+      "returns": "True if the selected surface bodies or solid bodies or sub-weldments are saved to a file, false if not"
+    },
+    {
+      "name": "AddCornerReliefCorner",
+      "signature": "System.int AddCornerReliefCorner()",
+      "returns": "Index of corner to which to apply the corner relief; used by [[IFeatureManager::AddCornerReliefType]]"
+    },
+    {
+      "name": "GetFreezeLocation",
+      "signature": "Feature GetFreezeLocation()",
+      "returns": "[[IFeature]]; Null, if the freeze bar is at the top of the FeatureManager design tree"
+    },
+    {
+      "name": "PreSplitBody2",
+      "signature": "System.object PreSplitBody2()",
+      "returns": "Array of [[bodies]] that result from splitting a part (see **Remarks**)"
+    },
+    {
+      "name": "InsertSubFolder",
+      "signature": "Feature InsertSubFolder()",
+      "returns": "Pointer to the [[IFeature]] object, the new subfolder"
+    },
+    {
+      "name": "CreateCustomBendAllowance",
+      "signature": "CustomBendAllowance CreateCustomBendAllowance()",
+      "returns": "Pointer to the [[ICustomBendAllowance]] object"
+    },
+    {
+      "name": "EndVariablePitchHelix",
+      "signature": "Feature EndVariablePitchHelix()",
+      "returns": "Pointer to the [[IFeature]] object"
+    },
+    {
+      "name": "InsertWeldmentFeature",
+      "signature": "Feature InsertWeldmentFeature()",
+      "returns": "Pointer to the [[IFeature]] object"
+    }
+  ],
+  "anomalies": [
+    "A == B == 116 exactly: this family has ZERO loose-only Obsolete variants - there is no 'Obsolete for documents created in ...' or 'Obsolete and not superseded. ...' form anywhere in its headers, so A minus B is 0 and the two criteria cannot disagree here.",
+    "IFeatureFillet2 writes the pointer marker with a CAPITAL I ('In-process, unmanaged C++', 5 hits) while the other four pages use lowercase ('in-process, unmanaged C++'); a strictly case-sensitive literal search scores IFeatureFillet2 as 0 and would report D=3. I counted it (D=4) with case-insensitive matching - the criterion was read as referring to the marker, not to its capitalization.",
+    "FeatureName is the only page with no **Signature** line (G=1): its frontmatter says kind: property but the whole body is just the H1 heading - no Returns, no See Also, no Examples. It is therefore the 23rd property page by frontmatter while F=22 is derived from actual no-parenthesis signatures; the two disagree by exactly this stub.",
+    "8 pages mention 'obsolete' only AFTER the **Signature** line, inside Remarks prose, and are counted by neither A nor B because both criteria are header-scoped: FeatureExtrusion3, FeatureFillet3, FeatureRevolve2, InsertCutSwept5, InsertProtrusionSwept4, InsertSweepSurface3, InsertWrapFeature2, PreSplitBody2. InsertProtrusionSwept4 / InsertCutSwept5 / InsertSweepSurface3 are NOT marked Obsolete in their own header ('SOLIDWORKS 2018 introduces a new sweep architecture, making this method obsolete'), so a reader who greps the whole file instead of the header would overcount.",
+    "Of the 28 zero-arg members, 3 (HideBodies, ShowBodies, UpdateFeatureTree) are void and have NO '## Returns' section at all, so ranking candidates by Returns text length necessarily pushes them to zero - they are real zero-arg methods with no Returns text, not missing pages.",
+    "The family contains 11 I-prefixed (in-process naming convention) members but only 5 carry the literal pointer marker: IInsertMacroFeature, IInsertMacroFeature2, IInsertMacroFeature3, IInsertReferencePoint, IInsertSheetMetalEdgeFlange2 and IInsertTableDrivenPattern have no marker anywhere in the page. The I prefix alone must therefore NOT be used as a pointer proxy - it would give 11 instead of 5.",
+    "E was derived as raw zero-parenthesis signatures (38) minus obsolete (10) minus pointer (0) = 28; the 10 excluded obsolete zero-arg members are AddSMNormalCut, CreateFormTool, FeatureAdvancedTableDrivenPattern, FinishSMNormalCut, GetFeatureTreeRootItem, InsertDeleteBody, InsertDerivedPattern, InsertDerivedPattern2, InsertFeatureTreeFolder and PreSplitBody.",
+    "No page has a signature containing parentheses AND {get, so splitting E from F purely on the presence of '(' is unambiguous; no signature failed to parse out of its backticks (0 unparsed of 285).",
+    "Arithmetic cross-check that ties the whole corpus together: 22 properties (no parens) + 38 zero-paren methods + 225 methods with parameters = 285 pages with a signature, plus the 1 stub page = 286 = members_total.",
+    "Checked for undercount of C: zero pages have a '## Returns' section mentioning 'Pointer to an array' while lacking the in-process marker, so no pointer member is being missed by keying on that literal string."
+  ]
+}
