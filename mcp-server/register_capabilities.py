@@ -1144,7 +1144,7 @@ BATCH_MODULES = (
     #:     ⇒ ★ **agent 够不到检索层**（★ 判断层 MCP 工具面 0/521）。
     #:   ⇒ ★ 这一批把 `cadstudio_catalog_{domains,retrieve,contract,exposure}`
     #:     **真的接出去**（★ 四个都是**只读、纯 Python、不碰 COM**）。
-    "tool_specs_catalog",
+    "tool_specs_batch115",
 )
 
 def all_specs() -> list:

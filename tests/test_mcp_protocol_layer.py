@@ -261,7 +261,38 @@ def test_protocol_tool_count_matches_the_two_paths_sum():
         `UnicodeEncodeError`、★ 而外层异常处理里那句 print **又抛一次** ⇒ ★ **真因被盖住** ✗
         （**事实 58** 那一族）⇒ ★ 已按 `check_relative_imports.py` 的同型修法补上 ✓
     """
+    #: ★★★★★ 2026-10-10（规格 297 · **② 段清空后的收口轮**）：**504 → 524** —— ★ **+20 条**
+    #:   ★★ 与 `tests/test_server_wiring.py` 的 **459 → 479** **同批、同源**（★ 两条判据互锁：
+    #:     `test_shell_params_capability.test_negative_case_the_two_count_guards_match_reality`
+    #:     逐字核「`test_server_wiring` 的钉死数**跟上了没有**」）✓
+    #:   ★★★ **读数经两条独立通路对账**（★ 不是"我觉得是 524"）：
+    #:     ① ★ 本测试自己的两个计数器 ⇒ `_declared_in_server()` **45** + `_declared_in_batches()` **479**
+    #:        = **524** ✓
+    #:     ② ★ **真 JSON-RPC 握手**（`tools/probe_mcp_stdio_handshake.py` · `tools/list`）
+    #:        ⇒ ★★ **524** 个工具（★ 按前缀：`solidworks_` **511** · `cadstudio_` **13**）✓
+    #:   ★★ **为什么现在才对齐**：★ 规格 275 已判「+20 的成因是**未提交改动**、★ 权属**未定**」
+    #:     ⇒ 那时**不许动**（★ 硬红线）。★★★ **2026-10-10 业主全权授权**（`GOAL.md` §三 E）⇒
+    #:     ★ 本轮**定权属并收口** ✓
     n = len(_declared_in_server()) + len(_declared_in_batches())
-    assert n == 504, (
-        "两条路径合计 %d 条，而本测试上次实测 **504** 条 ⇒ 数字变了就说明有人加了东西"
+    #: ★★★ 2026-10-10 **524 → 521**（★ 业主架构指令 —— ★ 正当减少）：
+    #:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ **减少了 3 个**（★ 都是**由方法模块支撑**的声明式工具）：
+    #:     · ★ `solidworks_gear_calculate_spur` / `solidworks_gear_create_spur`（★ 渐开线齿形公式）
+    #:     · ★ `solidworks_chamfer_volume_report`（★ 倒角体积公式）
+    #:   ★★★ **判据**：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+    #:   ★★ **为什么只减 3 而不是 5**：★ 另 2 个倒角工具（★ `straight_edge_volume` /
+    #:     `circular_rim_volume`）**不在**本测试统计的两条路径里（★ 它们只在
+    #:     `test_server_wiring` 的 `all_specs()` 口径里）⇒ ★ 各口径**独立计数** ✓
+    #:   ★ 原件在 `archive/inherited-methods/`（★ **只搬不删**）✓
+    #: ★★ 2026-10-12（规格 329 · Q6 L110「**必须同时改 MCP 暴露面**」）：
+    #:   **521 → 525** —— ★ 新增 `tool_specs_batch115.py` 的 **4 个目录检索入口**
+    #:   （`solidworks_catalog_{domains,retrieve,contract,exposure}`）。
+    #:   ★★ 为什么加它们：规格 323 的检索层**有名字、没注册** ⇒
+    #:     ★ **agent 够不到检索层**（★ 判断层 MCP 工具面 0/521）。
+    #:   ★ 命名走 `solidworks_` 家族（★ 规则 1「两者不混用」）⇒
+    #:     ★ 去掉前缀的裸步名正是 `catalog_*` ⇒ 与 `AUTONOMOUS_ALLOW` 对上 ✓
+    assert n == 525, (
+        "两条路径合计 %d 条，而本测试上次实测 **525** 条 ⇒ 数字变了就说明有人加了东西"
         "（**本测试是「钉死数量」的守卫，加了就要同时改这里**）" % n)

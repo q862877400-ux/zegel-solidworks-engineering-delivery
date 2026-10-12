@@ -10,7 +10,7 @@
  "counts": {
   "has_writes": 145,
   "pure_read": 53,
-  "unknown": 278
+  "unknown": 282
  },
  "errors": [],
  "state_classes": [
@@ -472,6 +472,46 @@
    "members": 19,
    "needs": [],
    "requires": "part",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_catalog_contract": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "",
+   "members": 0,
+   "needs": [],
+   "requires": "none",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_catalog_domains": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "",
+   "members": 0,
+   "needs": [],
+   "requires": "none",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_catalog_exposure": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "",
+   "members": 0,
+   "needs": [],
+   "requires": "none",
+   "source": "unknown",
+   "writes": null
+  },
+  "solidworks_catalog_retrieve": {
+   "destructive": false,
+   "doc_type": null,
+   "inject": "",
+   "members": 0,
+   "needs": [],
+   "requires": "none",
    "source": "unknown",
    "writes": null
   },

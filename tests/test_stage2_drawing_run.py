@@ -147,7 +147,9 @@ def test_tool_caller_sees_server_py_tools() -> None:
     """
     import tool_caller
     sp = tool_caller._specs()
-    assert len(sp) == 521, "★ 执行器只认得 %d 个工具（应为 521）" % len(sp)
+    #: ★★ 2026-10-12（规格 329）：**521 → 525**（★ +4 个目录检索入口）。
+    #:   ★ 判据是**下限 + 关键工具都在**（★ 工具面只增不减）。
+    assert len(sp) >= 521, "★ 执行器只认得 %d 个工具（应 ≥521）" % len(sp)
     for n in ("solidworks_generate_drawing", "solidworks_new_document",
               "solidworks_save_document", "solidworks_export_active"):
         assert n in sp, "★ 执行器不认得 %s" % n

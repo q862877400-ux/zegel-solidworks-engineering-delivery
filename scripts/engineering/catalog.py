@@ -761,9 +761,10 @@ MODES = (MODE_AUTONOMOUS, MODE_COMPAT)
 #:   ★ 自主模式暴露 **0 个** ✗（★ 而"0 个"看起来像"没有规划入口"，
 #:   不像"名字写错了"）。⇒ ★ 判据：**名字按规范名逐字写**（★ 见 `registry.PREFIX`）。
 AUTONOMOUS_ALLOW = (
-    #: ── 规划入口（★ 阶段 4 的规划出口 + 目录检索）
-    "catalog_retrieve", "catalog_contract", "catalog_domains",
-    "plan_from_requirement",
+    #: ── 规划入口（★ 规格 329 接进 MCP 的 4 个目录检索 —— Q6 L110）
+    #:   ★ 它们去掉前缀后的**裸步名**正是 `catalog_*` ⇒ ★ 与唯一映射规则自然对上。
+    "solidworks_catalog_domains", "solidworks_catalog_retrieve",
+    "solidworks_catalog_contract", "solidworks_catalog_exposure",
     #: ── 必要查询工具（★ 只读、无副作用）
     "solidworks_part_mass_properties", "solidworks_part_bounding_box",
     "solidworks_feature_list_names", "solidworks_entities_on_body",
