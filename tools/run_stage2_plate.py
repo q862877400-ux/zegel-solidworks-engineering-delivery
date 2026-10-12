@@ -254,8 +254,15 @@ def run_drawing(c: dict, n: int, *, revision: str = "rev-1") -> dict:
     ★★ 判据（★ SC-004 / SC-005）：
       · 工程图文件（`.slddrw`）**存在且非空**
       · PDF **存在且非空**
-      · 审视报告 `status` 不是 blocked
-      · 关键尺寸与技术要求**覆盖率 100%**（★ 由 spec 的 `requiredDimensions` 数出来）
+      · `generation.status` 是 **pass**（★ 不是顶层 status —— 那个含审视发现）
+      · 关键尺寸与技术要求**覆盖率**（★ 从真机回读证据数，★ 见 acceptance §5）
+
+    ★★ 为什么要**在出图前把模型文档关掉**：
+      ⚠ 实测（2026-10-12）：`solidworks_generate_drawing` 内部要 `OpenDoc6`
+        **同一个文件**，而它若还开着 ⇒ 报「打开失败, 错误码: 65536」。
+      ⚠ 另有一层：护栏把**沙盒外的输入复制进沙盒**再用副本 ⇒ 若模型**开着**，
+        复制出来的副本与已打开的文档冲突 ⇒ 同样报 65536。
+      ⇒ ★ 本函数**先关掉所有 `stage2` 下的文档**（★ 只关我方的），再出图。
     """
     from scripts.engineering import drawing_run as DR
 
@@ -265,6 +272,22 @@ def run_drawing(c: dict, n: int, *, revision: str = "rev-1") -> dict:
         out["drawing_error"] = "★ 源模型不存在：%s" % src
         out["drawing_ok"] = False
         return out
+
+    #: ★ 出图前先把我方文档全关掉（★ 见 docstring 的两条实测原因）
+    try:
+        import sw_connect as _sc
+        _sw = _sc.connect_solidworks(wait_seconds=5)[0]
+        for d in list(_sw.GetDocuments or []):
+            pth = _sc.safe_get_com_member(d, "GetPathName")
+            pth = pth() if callable(pth) else pth
+            t = _sc.safe_get_com_member(d, "GetTitle")
+            t = t() if callable(t) else t
+            if pth and "stage2" in str(pth).replace("\\", "/"):
+                _sw.CloseDoc(str(t))
+            elif not pth and str(t).startswith("板"):
+                _sw.CloseDoc(str(t))
+    except Exception:                                                      # noqa: BLE001
+        pass
 
     ddir = OUT / ("drawing_%s_%s" % (c["name"], revision))
     ddir.mkdir(parents=True, exist_ok=True)
@@ -405,12 +428,166 @@ def run_negatives(reg) -> dict:
             "finished": time.strftime("%H:%M:%S")}
 
 
+def run_change(reg, n: int, sw, *, revision: str = "rev-2") -> dict:
+    """★ 真机变更传播（★ D5 / SC-010）：改尺寸 → 重建 → 出图 → 校验。
+
+    ★★ 判据（★ 三条都要，★ 见 `change_run.verify_propagation`）：
+      ① 每个受影响产物**都变了**（sha256 不同）
+      ② 版本**一致**（model/drawing/report 同一 revision）
+      ③ 有受影响步骤就**必须传播**
+    ★ 另加：**改后的几何要回读**（★ 改不动与改了没生效长得一样）。
+    """
+    from scripts import sw_connect
+    from scripts.engineering import change_run as CR
+    from scripts.engineering import drawing_obligations as DO
+
+    c = dict(CASES[n])
+    #: ★ 变更：板加宽 20 mm、孔位右移 10 mm（★ 深度不变 —— 保板厚判据）
+    c2 = dict(c)
+    c2["w"] = c["w"] + 20.0
+    c2["holes"] = [(x + 10.0, y) for (x, y) in c["holes"]]
+
+    out: dict = {"case": n, "kind": "change", "revision": revision,
+                 "old_w": c["w"], "new_w": c2["w"],
+                 "started": time.strftime("%H:%M:%S")}
+
+    #: ① 变更前产物摘要（rev-1）
+    before = CR.digest_set(
+        OUT / ("%s_rev-1.sldprt" % c["name"]),
+        OUT / ("drawing_%s_rev-1" % c["name"]) / ("%s_rev-1.slddrw" % c["name"]),
+        OUT / ("drawing_%s_rev-1" % c["name"]) / ("%s_rev-1_review_report.json" % c["name"]),
+        revision="rev-1")
+    out["before_digests"] = [{"kind": d.kind, "sha256": d.sha256[:16]}
+                             for d in before]
+
+    #: ② 建新模型（★ 走**同一套**编译 + 授权 + 执行 —— ★ 不绕过）
+    doc = sw_connect.new_document(sw, "part")
+    owned = AUTH.OwnedDocuments()
+    owned.register(doc)
+    out["doc"] = owned.title_of(doc)
+    plan = EXP.expand_plan(build_plan(c2), reg)
+    v = AUTH.authorize_plan(plan, reg, owned=owned, doc=doc)
+    out["authorized"] = v.ok
+    if not v.ok:
+        out["auth_code"] = v.code
+        sw.CloseDoc(out["doc"])
+        return out
+    X.COUNTER.reset()
+    res = X.execute_plan(plan, reg, host={"model": doc, "sw_app": sw},
+                         owned=owned, doc=doc, log_dir=OUT)
+    out["execute_ok"] = res["ok"]
+    out["step_errors"] = [r["error"] for r in X.records_to_dicts(res["records"])
+                          if r["error"]]
+
+    #: ③ 回读新几何（★ 改后尺寸必须真的变）
+    try:
+        pd = list(sw_connect.safe_get_com_member(doc, "GetPartBox", False))
+        out["bbox_mm"] = [round(float(pd[3]) - float(pd[0]), 3),
+                          round(float(pd[4]) - float(pd[1]), 3),
+                          round(float(pd[5]) - float(pd[2]), 3)]
+    except Exception as exc:                                               # noqa: BLE001
+        out["bbox_error"] = str(exc)[:120]
+    try:
+        bodies = sw_connect.safe_get_com_member(doc, "GetBodies2", 0, False)
+        b = list(bodies)[0] if bodies else None
+        faces = list(sw_connect.safe_get_com_member(b, "GetFaces") or []) if b else []
+        n_cyl = 0
+        for f in faces:
+            try:
+                surf = sw_connect.safe_get_com_member(f, "GetSurface")
+                if sw_connect.safe_get_com_member(surf, "IsCylinder"):
+                    n_cyl += 1
+            except Exception:                                              # noqa: BLE001
+                pass
+        out["cylinder_faces"] = n_cyl
+    except Exception:                                                      # noqa: BLE001
+        pass
+
+    #: ④ 保存新模型
+    p = OUT / ("%s_%s.sldprt" % (c["name"], revision))
+    try:
+        sw_connect.save_document(doc, str(p))
+        out["saved"] = p.is_file()
+    except Exception as exc:                                               # noqa: BLE001
+        out["save_error"] = str(exc)[:120]
+
+    #: ④b ★★ **先关掉新模型再出图** ——
+    #:   ⚠ 实测（2026-10-12）：`solidworks_generate_drawing` 内部要 `OpenDoc6`
+    #:     **同一个文件**，而它**还开着** ⇒ 报「打开失败, 错误码: 65536」
+    #:     （★ 与「文件不存在」表现不同：文件明明在、单独打开也成功）。
+    #:   ★ 这不影响 `run_case`（那条路出图时模型是**新建未存盘**的另一份）。
+    try:
+        sw.CloseDoc(str(out["doc"]))
+        out["model_closed_before_drawing"] = True
+    except Exception as exc:                                               # noqa: BLE001
+        out["close_error"] = str(exc)[:100]
+
+    #: ⑤ 出**新版本**工程图（★ 不复用旧图 —— ★ 那正是 N2 突变）
+    out.update(run_drawing(c2, n, revision=revision))
+
+    #: ⑥ 关掉本用例的文档（★ 防残留挡住下一轮）
+    try:
+        for d in list(sw.GetDocuments or []):
+            pth = sw_connect.safe_get_com_member(d, "GetPathName")
+            pth = pth() if callable(pth) else pth
+            t = sw_connect.safe_get_com_member(d, "GetTitle")
+            t = t() if callable(t) else t
+            if pth and "stage2" in str(pth).replace("\\", "/"):
+                sw.CloseDoc(str(t))
+    except Exception:                                                      # noqa: BLE001
+        pass
+
+    #: ⑦ 变更后产物摘要（rev-2）+ 总判据
+    after = CR.digest_set(
+        p,
+        OUT / ("drawing_%s_%s" % (c["name"], revision)) / ("%s_%s.slddrw" % (c["name"], revision)),
+        OUT / ("drawing_%s_%s" % (c["name"], revision)) / ("%s_%s_review_report.json" % (c["name"], revision)),
+        revision=revision)
+    out["after_digests"] = [{"kind": d.kind, "sha256": d.sha256[:16]}
+                            for d in after]
+    #: ★★ 变更记录用**步骤里真的承载它的参数名**（★ 不是用例的 `w`）——
+    #:   ⚠ 实测（2026-10-12）：第一版拿 `"w"` 当变更名 ⇒ `affected_steps` 回 **0 个**
+    #:     ⇒ 而 `propagation_report` 对「影响面 0」**回 ok=True** ⇒ ★★ **假通过**！
+    #:   ★ 真因：板宽在步骤里由 `x2_mm` 承载、孔位由 `center_x_mm` 承载；
+    #:     `derive` 文本里写的是「板 %g×%g mm」，也匹配不到 `w`。
+    #:   ⇒ ★ 这正是一条**判据不匹配组织单元**的教训（本仓事实 51 同族）：
+    #:     判据要落在**代码里真的存在的名字**上。
+    changes = [
+        DO.ChangeRecord(name="x2_mm", old=c["w"], new=c2["w"],
+                        propagated=True),
+        DO.ChangeRecord(name="center_x_mm",
+                        old=[h[0] for h in c["holes"]],
+                        new=[h[0] for h in c2["holes"]],
+                        propagated=True),
+    ]
+    out["changes"] = [{"name": ch.name, "old": str(ch.old)[:60],
+                       "new": str(ch.new)[:60]} for ch in changes]
+    out["affected_by"] = {ch.name: list(DO.affected_steps(plan.steps, ch.name))
+                          for ch in changes}
+    out["verify"] = CR.verify_propagation(before, after, changes, plan.steps)
+
+    #: ⑧ 判据
+    out["expected_bbox"] = [c2["w"], c2["h"], c2["d"]]
+    out["expected_holes"] = len(c2["holes"])
+    if out.get("bbox_mm"):
+        out["bbox_ok"] = all(abs(a - b) <= 0.01
+                             for a, b in zip(out["bbox_mm"], out["expected_bbox"]))
+    out["holes_ok"] = out.get("cylinder_faces") == out["expected_holes"]
+    out["finished"] = time.strftime("%H:%M:%S")
+    out["pass"] = bool(out.get("execute_ok") and out.get("bbox_ok")
+                       and out.get("holes_ok") and out.get("saved")
+                       and out.get("drawing_ok") and out["verify"]["ok"])
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--case", type=int, choices=(1, 2, 3), default=0)
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--negatives", action="store_true")
     ap.add_argument("--plan-only", action="store_true")
+    ap.add_argument("--change", type=int, choices=(1, 2, 3), default=0,
+                    help="★ 真机变更传播（★ D5 / SC-010）")
     ap.add_argument("--revision", default="rev-1")
     args = ap.parse_args()
 
@@ -449,6 +626,22 @@ def main() -> int:
     ns = [args.case] if args.case else [1, 2, 3]
     recs = []
     try:
+        if args.change:
+            rec = run_change(reg, args.change, sw)
+            recs.append(rec)
+            print("   变更用例 %d：板宽 %s→%s · bbox=%s（期望 %s）孔=%s/%s 图=%s 传播=%s pass=%s"
+                  % (args.change, rec.get("old_w"), rec.get("new_w"),
+                     rec.get("bbox_mm"), rec.get("expected_bbox"),
+                     rec.get("cylinder_faces"), rec.get("expected_holes"),
+                     rec.get("drawing_ok"), (rec.get("verify") or {}).get("ok"),
+                     rec.get("pass")))
+            if rec.get("step_errors"):
+                print("      ✗ 步骤错：%s" % rec["step_errors"][:2])
+            p = OUT / ("change%d.json" % args.change)
+            p.write_text(json.dumps(recs, ensure_ascii=False, indent=1),
+                         encoding="utf-8")
+            print("★ 证据 → %s" % p)
+            return 0 if rec.get("pass") else 1
         for n in ns:
             rec = run_case(reg, n, sw, revision=args.revision)
             recs.append(rec)

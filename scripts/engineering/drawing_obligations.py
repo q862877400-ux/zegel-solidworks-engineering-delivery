@@ -173,17 +173,29 @@ def affected_steps(steps, param_name: str) -> tuple:
 
 
 def propagation_report(steps, changes: list[ChangeRecord]) -> dict:
-    """★ 变更传播报告（★ SC-010：受影响产物**全部刷新**）。"""
+    """★ 变更传播报告（★ SC-010：受影响产物**全部刷新**）。
+
+    ★★ 2026-10-12 补一条**假通过**的堵漏：
+      ⚠ 原实现只查 `if r["count"] and not r["propagated"]` ⇒ ★ **`count == 0` 时
+        直接算过** ⇒ 而「变更名根本不在任何步骤里」正是 count==0 的**常见原因**
+        （★ 实测踩过：用例的参数叫 `w`，而步骤里承载它的是 `x2_mm`
+          ⇒ 影响面 0 ⇒ 报告回 `ok=True` ⇒ **假通过**）。
+      ⇒ ★ 现在：**`count == 0` 也算不过**，并给专属码 ——
+        ★ 「这个变更名没有落在任何步骤上」是一条**必须看见**的事实。
+    """
     rows = []
     for c in changes:
         idx = affected_steps(steps, c.name)
-        rows.append({"name": c.name, "old": c.old, "new": c.new,
+        rows.append({"name": c.name, "old": str(c.old)[:60], "new": str(c.new)[:60],
                      "affected": list(idx), "count": len(idx),
                      "propagated": c.propagated})
     unpropagated = [r["name"] for r in rows if r["count"] and not r["propagated"]]
+    #: ★ 影响面 0 ⇒ 变更名没落在任何步骤上（★ 不是"没有影响"，★ 是"判据没对上"）
+    unmatched = [r["name"] for r in rows if not r["count"]]
     return {
         "changes": rows,
         "unpropagated": unpropagated,
-        "ok": not unpropagated,
-        "★": "★ 有受影响步骤却没传播的 ⇒ 不算通过",
+        "unmatched": unmatched,
+        "ok": not unpropagated and not unmatched,
+        "★": "★ 有受影响步骤却没传播的、或变更名没落在任何步骤上的 ⇒ 都不算通过",
     }
