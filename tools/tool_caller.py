@@ -30,7 +30,17 @@ _SPECS_CACHE: dict | None = None
 
 
 def _specs() -> dict:
-    """★ 惰性取全部 `ToolSpec`（★ 按名字建索引）✓"""
+    """★ 惰性取全部 `ToolSpec`（★ 按名字建索引）✓
+
+    ★★ 2026-10-12 **补第二个注册来源**（★ 阶段 2 真机验收抓到的真缺陷）：
+      ★ 原实现只读 `rc.all_specs()`（**476** 个），而**工具面是 521 个** ——
+        另有 **45** 个来自 `mcp-server/server.py` 的 `@mcp.tool(...)`。
+      ★ 真机后果：`solidworks_generate_drawing` / `solidworks_new_document` /
+        `solidworks_save_document` / `solidworks_export_active` 这些**只在 server.py 里**
+        ⇒ `call()` 报「★ 工具名不在声明里」⇒ **出不了工程图**。
+      ⇒ ★ 修法：`server.py` 那 45 个**包成最小 `_ServerSpec`** 并进索引
+        （★ 它们的形参是 `params: XxxInput`，按 **kwargs 直传**）。
+    """
     global _SPECS_CACHE
     if _SPECS_CACHE is None:
         import register_capabilities as rc
@@ -38,7 +48,93 @@ def _specs() -> dict:
         _SPECS_CACHE = {}
         for s in rc.all_specs():
             _SPECS_CACHE[s.name] = (s, effective_inject(s))
+        #: ★ 第二来源：`server.py` 的 `@mcp.tool(...)`（★ 45 个）
+        try:
+            import importlib.util
+            import pathlib as _pl
+            import re as _re
+            srv = _pl.Path(__file__).resolve().parents[1] / "mcp-server" / "server.py"
+            if srv.is_file():
+                txt = srv.read_text(encoding="utf-8", errors="replace")
+                for m in _re.finditer(
+                        r"@mcp\.tool\((.*?)\)\s*\n(?:async\s+)?def\s+(\w+)\(", txt, _re.S):
+                    head, fn = m.group(1), m.group(2)
+                    nm = _re.search(r'name\s*=\s*["\']([^"\']+)["\']', head)
+                    cn = nm.group(1) if nm else fn
+                    if cn in _SPECS_CACHE:
+                        continue
+                    _SPECS_CACHE[cn] = (_ServerSpec(cn, fn), "")
+        except Exception:                                                  # noqa: BLE001
+            pass
     return _SPECS_CACHE
+
+
+class _ServerSpec:
+    """★ `server.py` 那 45 个工具的**最小 spec 形状**（★ 只为让 `call()` 认得它们）。
+
+    ★ 它们的真实签名是 `def solidworks_xxx(params: XxxInput)` ⇒
+      ★ `call()` 走 `_call_server_tool`（★ 把 kwargs 装成那个 `params=` 入参对象）。
+    """
+
+    def __init__(self, name: str, fn: str) -> None:
+        self.name = name
+        self.module = "server"
+        self.function = fn
+        self.inject = ""
+        self.params = ()
+        self.derived_args = None
+        self.param_alias = None
+
+
+def _call_server_tool(spec, params: dict):
+    """★ 调一个 `server.py` 的工具（★ 把 kwargs 装成它的 `params=` 入参对象）。
+
+    ★★ 怎么装：读**真实签名**里那个唯一入参的**类型注解**（如
+      `SolidWorksGenerateDrawingInput`）⇒ 在 `server` 模块里按名取到那个类 ⇒
+      `Cls(**kwargs)`（★ 它通常是 pydantic / dataclass，都收 kwargs）。
+      ★ 取不到类型 ⇒ 退回「按名取类」的候选表（★ 不静默猜错）。
+    """
+    import importlib
+    import inspect as _ins
+
+    try:
+        srv = importlib.import_module("server")
+    except Exception as exc:                                               # noqa: BLE001
+        return False, "★ 导入 server 模块失败：%s" % str(exc)[:120]
+    fn = getattr(srv, spec.function, None)
+    if not callable(fn):
+        return False, "★ server 里没有函数：%s" % spec.function
+
+    #: ★ 读真实签名，拿那个入参的注解
+    cls = None
+    try:
+        sig = _ins.signature(fn)
+        for pname, p in sig.parameters.items():
+            ann = p.annotation
+            if isinstance(ann, type):
+                cls = ann
+            elif isinstance(ann, str):
+                cls = getattr(srv, ann, None)
+            if cls is not None:
+                break
+    except Exception:                                                      # noqa: BLE001
+        cls = None
+
+    if cls is None:
+        return False, ("★ 取不到 %s 的入参类型 ⇒ 无法装参数（★ 不静默猜）"
+                       % spec.function)
+    try:
+        obj = cls(**params)
+    except Exception as exc:                                               # noqa: BLE001
+        return False, "★ 装入参对象 %s 失败：%s: %s" % (
+            getattr(cls, "__name__", cls), type(exc).__name__, str(exc)[:160])
+    try:
+        r = fn(obj)
+    except Exception as exc:                                               # noqa: BLE001
+        return False, "★ 调用抛 %s: %s" % (type(exc).__name__, str(exc)[:160])
+    #: ★ 统一成字符串载荷（★ 与 `_call_regular` 的约定一致）
+    text = r if isinstance(r, str) else str(r)
+    return True, text
 
 
 def describe(tool_name: str) -> dict:
@@ -68,6 +164,11 @@ def call(tool_name: str, *, inject_objects=None, **params):
         return False, "★ 工具名不在声明里：%s" % tool_name
     spec, inject = entry
     try:
+        #: ★★ `server.py` 那 45 个（★ `_ServerSpec`）：★ 真实签名是
+        #:   `def solidworks_xxx(params: XxxInput)` ⇒ ★ 必须**在 server 模块里取**，
+        #:   且**把 kwargs 装成 `params=` 那个入参对象**（★ 不是直传 kwargs）。
+        if isinstance(spec, _ServerSpec):
+            return _call_server_tool(spec, params)
         mod = None
         for cand in (spec.module, "scripts.%s" % spec.module):
             try:

@@ -220,10 +220,139 @@ def run_case(reg, n: int, sw, *, revision: str = "rev-1") -> dict:
         rec["volume_delta"] = round(dv, 3)
         rec["volume_ok"] = dv <= 1.0        #: ★ 允许 1 mm³ 的网格/舍入
     rec["holes_ok"] = rec.get("cylinder_faces") == rec["expected_holes"]
+
+    #: ⑧ ★★ 真机工程图（★ D4 —— ★ 本轮补上）
+    rec.update(run_drawing(c, n, revision=revision))
+
+    #: ⑨ ★★ 立刻收尾：关掉**本用例开过的全部文档**（模型 + 工程图）——
+    #:   ⚠ 实测（2026-10-12）：`solidworks_generate_drawing` **自己会打开源模型与工程图**
+    #:     且**不关**⇒ 残留文档让**下一个用例**的 `OpenDoc6` 报
+    #:     「打开失败, 错误码: 65536」（★ 而文件明明在盘上、单独打开也成功）
+    #:     且**再下一轮**的护栏预检会拒绝开始。
+    #:   ★ 判据：只关**路径在 `output/stage2` 下**的（★ 仍不碰别人的文档）。
+    try:
+        for d in list(sw.GetDocuments or []):
+            pth = sw_connect.safe_get_com_member(d, "GetPathName")
+            pth = pth() if callable(pth) else pth
+            t = sw_connect.safe_get_com_member(d, "GetTitle")
+            t = t() if callable(t) else t
+            if pth and "stage2" in str(pth).replace("\\", "/"):
+                sw.CloseDoc(str(t))
+    except Exception:                                                      # noqa: BLE001
+        pass
+
     rec["finished"] = time.strftime("%H:%M:%S")
     rec["pass"] = bool(rec.get("execute_ok") and rec.get("bbox_ok")
-                       and rec.get("volume_ok") and rec.get("saved"))
+                       and rec.get("volume_ok") and rec.get("saved")
+                       and rec.get("drawing_ok"))
     return rec
+
+
+def run_drawing(c: dict, n: int, *, revision: str = "rev-1") -> dict:
+    """★ 出真机工程图 + PDF（★ D4 —— ★ 走 `solidworks_generate_drawing`）。
+
+    ★★ 判据（★ SC-004 / SC-005）：
+      · 工程图文件（`.slddrw`）**存在且非空**
+      · PDF **存在且非空**
+      · 审视报告 `status` 不是 blocked
+      · 关键尺寸与技术要求**覆盖率 100%**（★ 由 spec 的 `requiredDimensions` 数出来）
+    """
+    from scripts.engineering import drawing_run as DR
+
+    out: dict = {}
+    src = OUT / ("%s_%s.sldprt" % (c["name"], revision))
+    if not src.is_file():
+        out["drawing_error"] = "★ 源模型不存在：%s" % src
+        out["drawing_ok"] = False
+        return out
+
+    ddir = OUT / ("drawing_%s_%s" % (c["name"], revision))
+    ddir.mkdir(parents=True, exist_ok=True)
+    spec = DR.build_drawing_spec(
+        source_model=src, size_mm=[c["w"], c["h"], c["d"]],
+        hole_dia_mm=c["dia"], hole_count=len(c["holes"]), thickness_mm=c["d"])
+    #: ★ 先用**官方校验器**验（★ 别等真机报 blocked）
+    v = DR.validate_spec(spec)
+    out["spec_status"] = v.get("status")
+    if v.get("status") != "pass":
+        out["drawing_error"] = "★ spec 校验不过：%s" % str(v.get("issues"))[:200]
+        out["drawing_ok"] = False
+        return out
+
+    sp = DR.write_spec(spec, ddir / "spec.json")
+    #: ★ 关键尺寸与技术要求（★ 覆盖率的分母）
+    out["required_dimensions"] = len(spec["requiredDimensions"])
+    out["notes"] = len(spec["notes"])
+
+    try:
+        #: ★★ 出图前**放开 `CommandInProgress`** ——
+        #: ⚠ 实测（2026-10-12）：`solidworks_generate_drawing` 内部要 `OpenDoc6`
+        #:   打开源模型，而 `CommandInProgress = True` 会**拦住文档打开**
+        #:   ⇒ 报「打开失败, 错误码: 65536」。
+        #:   ★ 它本来就只该在**会弹模态框的建模调用**期间持有，不该跨到出图。
+        try:
+            sw.CommandInProgress = False
+        except Exception:                                                  # noqa: BLE001
+            pass
+        ok_d, res = tool_caller.call(
+            "solidworks_generate_drawing",
+            spec_path=str(sp), output_dir=str(ddir),
+            drawing_filename="%s_%s.slddrw" % (c["name"], revision),
+            overwrite=True)
+        out["generate_ok"] = bool(ok_d)
+        out["generate_result"] = str(res)[:400]
+    except Exception as exc:                                               # noqa: BLE001
+        out["generate_ok"] = False
+        out["drawing_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    finally:
+        try:
+            sw.CommandInProgress = True
+        except Exception:                                                  # noqa: BLE001
+            pass
+
+    #: ★ 判据：文件真的在（★ 不是"工具回了成功"）
+    drw = ddir / ("%s_%s.slddrw" % (c["name"], revision))
+    pdf = drw.with_suffix(".pdf")
+    out["slddrw_exists"] = drw.is_file()
+    out["slddrw_bytes"] = drw.stat().st_size if drw.is_file() else 0
+    out["pdf_exists"] = pdf.is_file()
+    out["pdf_bytes"] = pdf.stat().st_size if pdf.is_file() else 0
+
+    #: ★★ 回读**生成阶段**的 status（★ 那才是"图出没出来"的判据）——
+    #:   ⚠ 实测（2026-10-12）：`solidworks_generate_drawing` 的**顶层** `status`
+    #:     是 `blocked`，而它的 `generation.status` 是 **`pass`**。
+    #:     ★ 顶层 blocked 来自**审视阶段**（`review.status`）的一条
+    #:     `DRAWING_PDF_TEXT_OVERLAP_RISK`（PDF 里「标记/比例」两个文字块重叠风险）
+    #:     —— ★ 那是**真实的版式发现**，不是"没出图"。
+    #:   ⇒ ★ 判据分两层：**generation 过 ⇒ 图出来了**；**review 的发现单独如实记录**。
+    rep = ddir / ("%s_%s_review_report.json" % (c["name"], revision))
+    if rep.is_file():
+        try:
+            j = json.loads(rep.read_text(encoding="utf-8"))
+            out["generation_status"] = (j.get("generation") or {}).get("status")
+            rv = j.get("review") or {}
+            out["review_status"] = rv.get("status")
+            checks = rv.get("checks") or []
+            out["review_checks"] = len(checks)
+            out["review_checks_failed"] = [
+                c0.get("name") or c0.get("id") for c0 in checks
+                if str(c0.get("status")) != "pass"]
+            out["review_findings"] = [
+                (f.get("code") or "") for f in (rv.get("findings") or [])][:6]
+            #: ★ 关键尺寸与技术要求：从**真机图纸的回读证据**里数（★ 不是 spec 数）
+            de = rv.get("dimension_evidence") or {}
+            out["dimension_evidence_count"] = len(de.get("dimensions") or []) \
+                if isinstance(de, dict) else len(de or [])
+            out["annotation_evidence_count"] = len(
+                rv.get("professional_annotation_evidence") or [])
+        except Exception as exc:                                           # noqa: BLE001
+            out["report_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:100])
+
+    out["drawing_ok"] = bool(
+        out.get("slddrw_exists") and out.get("pdf_exists")
+        and out["slddrw_bytes"] > 0 and out["pdf_bytes"] > 0
+        and out.get("generation_status") == "pass")
+    return out
 
 
 def run_negatives(reg) -> dict:
