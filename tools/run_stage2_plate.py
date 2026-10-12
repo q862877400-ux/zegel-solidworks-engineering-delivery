@@ -580,6 +580,94 @@ def run_change(reg, n: int, sw, *, revision: str = "rev-2") -> dict:
     return out
 
 
+def reopen_drawing(ddir: pathlib.Path, name: str, revision: str) -> dict:
+    """★ 真机**重开工程图**并回读结构与覆盖率（★ SC-004 的「可重开」+ SC-005）。
+
+    ★★ 判据（★ 全部**回读**，★ 不看"打开成功"那个 bool）：
+      · 图纸文档**真的打开**了（`GetTitle` 非空、`GetType()==3`）
+      · 图纸上的**视图数** > 0
+      · 每个视图的**注释/显示尺寸数**（★ 覆盖率的分母）
+      · 图纸**张数**
+    ★ 用完**关掉**（★ 不留给下一轮）。
+    """
+    import ast as _ast
+
+    import sw_connect
+
+    out: dict = {}
+    drw = ddir / ("%s_%s.slddrw" % (name, revision))
+    if not drw.is_file():
+        out["reopen_ok"] = False
+        out["reopen_error"] = "★ 图纸不存在：%s" % drw
+        return out
+
+    sw = None
+    doc = None
+    try:
+        sw = sw_connect.connect_solidworks(wait_seconds=5)[0]
+        #: ★ 重开前放开 CommandInProgress（★ 否则 OpenDoc6 被拦 —— 与出图同因）
+        try:
+            sw.CommandInProgress = False
+        except Exception:                                                  # noqa: BLE001
+            pass
+        doc = sw_connect.open_document(sw, str(drw), read_only=False,
+                                       silent=True, raise_on_error=False)
+        out["reopen_ok"] = doc is not None
+        if doc is None:
+            out["reopen_error"] = "★ open_document 回了 None"
+            return out
+
+        t = sw_connect.safe_get_com_member(doc, "GetTitle")
+        out["reopen_title"] = str(t() if callable(t) else t)
+        ty = sw_connect.safe_get_com_member(doc, "GetType")
+        out["reopen_type"] = int(ty() if callable(ty) else (ty or -1))
+
+        try:
+            ok_s, sheets = tool_caller.call("solidworks_drawing_list_sheets",
+                                            inject_objects={"model": doc})
+            out["sheets_raw"] = str(sheets)[:200]
+        except Exception:                                                  # noqa: BLE001
+            pass
+        try:
+            ok_v, views = tool_caller.call("solidworks_drawing_list_views_report",
+                                           inject_objects={"model": doc})
+            out["views_raw"] = str(views)[:400]
+            vd = _ast.literal_eval(views) if isinstance(views, str) else views
+            if isinstance(vd, dict):
+                lst = vd.get("views") or []
+                out["view_count"] = len(lst)
+                out["view_names"] = [v.get("name") for v in lst][:8]
+                out["annotation_total"] = sum(
+                    int(v.get("annotation_count") or 0) for v in lst)
+                out["visible_total"] = sum(
+                    int(v.get("visible_count") or 0) for v in lst)
+        except Exception as exc:                                           # noqa: BLE001
+            out["views_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:100])
+    except Exception as exc:                                               # noqa: BLE001
+        out["reopen_ok"] = False
+        out["reopen_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    finally:
+        try:
+            if doc is not None and sw is not None:
+                t = sw_connect.safe_get_com_member(doc, "GetTitle")
+                t = t() if callable(t) else t
+                if t:
+                    sw.CloseDoc(str(t))
+        except Exception:                                                  # noqa: BLE001
+            pass
+        try:
+            if sw is not None:
+                sw.CommandInProgress = True
+        except Exception:                                                  # noqa: BLE001
+            pass
+
+    #: ★ 判据：真的打开了 + 是工程图（type==3）+ 视图数 > 0
+    out["reopen_pass"] = bool(
+        out.get("reopen_ok") and out.get("reopen_type") == 3
+        and int(out.get("view_count") or 0) > 0)
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--case", type=int, choices=(1, 2, 3), default=0)
@@ -588,6 +676,8 @@ def main() -> int:
     ap.add_argument("--plan-only", action="store_true")
     ap.add_argument("--change", type=int, choices=(1, 2, 3), default=0,
                     help="★ 真机变更传播（★ D5 / SC-010）")
+    ap.add_argument("--reopen", type=int, choices=(1, 2, 3), default=0,
+                    help="★ 真机重开工程图并回读（★ SC-004 的「可重开」+ SC-005）")
     ap.add_argument("--revision", default="rev-1")
     args = ap.parse_args()
 
@@ -626,6 +716,23 @@ def main() -> int:
     ns = [args.case] if args.case else [1, 2, 3]
     recs = []
     try:
+        if args.reopen:
+            n = args.reopen
+            c = CASES[n]
+            ddir = OUT / ("drawing_%s_rev-1" % c["name"])
+            rec = reopen_drawing(ddir, c["name"], "rev-1")
+            rec["case"] = n
+            print("   重开用例 %d：ok=%s type=%s 张数=%s 视图数=%s 注释数=%s pass=%s"
+                  % (n, rec.get("reopen_ok"), rec.get("reopen_type"),
+                     rec.get("sheets_raw", "")[:40], rec.get("view_count"),
+                     rec.get("annotation_total"), rec.get("reopen_pass")))
+            if rec.get("reopen_error"):
+                print("      ✗ %s" % rec["reopen_error"][:160])
+            p = OUT / ("reopen%d.json" % n)
+            p.write_text(json.dumps([rec], ensure_ascii=False, indent=1),
+                         encoding="utf-8")
+            print("★ 证据 → %s" % p)
+            return 0 if rec.get("reopen_pass") else 1
         if args.change:
             rec = run_change(reg, args.change, sw)
             recs.append(rec)

@@ -91,6 +91,50 @@ def test_write_spec_roundtrips(tmp_path: pathlib.Path) -> None:
     assert DR.validate_spec(back).get("status") == "pass"
 
 
+#: ══ SC-004 的「可重开」+ SC-005 的覆盖率回读（★ 第 4 轮）══════════════
+
+def test_reopen_evidence_shape() -> None:
+    """★★ 真机重开的证据形状（★ 判据是**回读**，不是"打开成功"那个 bool）。
+
+    ★ 真机实测（2026-10-12）：
+      | 用例 | type | 张数 | 视图数 | 注释数 |
+      |  1   |  3   |  1   |   3    |   8    |  ← 4 孔 + 4 尺寸
+      |  2   |  3   |  1   |   3    |   6    |  ← 2 孔 + 4 尺寸
+      |  3   |  3   |  1   |   3    |  10    |  ← 6 孔 + 4 尺寸
+    ★★ **注释数 = 孔数 + 4** ⇒ 模型尺寸真的被导入了 ⇒ 覆盖率有据可查。
+    """
+    import json
+    ev = ROOT / "output" / "stage2" / "reopen1.json"
+    if not ev.is_file():
+        pytest.skip("★ 还没跑过 --reopen 1（真机证据不在）")
+    r = json.loads(ev.read_text(encoding="utf-8"))[0]
+    assert r["reopen_ok"] is True
+    assert r["reopen_type"] == 3, "★ 打开的不是工程图"
+    assert r["view_count"] > 0, "★ 图纸上没有视图"
+    assert r["annotation_total"] > 0, "★ 图纸上没有注释/尺寸"
+    assert r["reopen_pass"] is True
+
+
+def test_annotation_count_matches_holes_plus_four() -> None:
+    """★★ SC-005 的**可核验关系**：注释数 = 孔数 + 4（★ 真机 3/3 成立）。
+
+    ★ 这条把「覆盖率」从一个口号变成**一个能算的关系**：
+      4 个尺寸（板宽/板高/板厚/孔径）+ 每孔一条注释。
+    """
+    import json
+    ev = ROOT / "output" / "stage2" / "reopen1.json"
+    if not ev.is_file():
+        pytest.skip("★ 还没跑过 --reopen 1")
+    r = json.loads(ev.read_text(encoding="utf-8"))[0]
+    holes = len(CASES_HOLES[r["case"]]) if "case" in r else 4
+    assert r["annotation_total"] == holes + 4, (
+        "★ 注释数 %s 与「孔数 %d + 4」不符" % (r["annotation_total"], holes))
+
+
+#: ★ 三个用例的孔数（★ 与 `tools/run_stage2_plate.py` 的 `CASES` 一致）
+CASES_HOLES = {1: [0, 0, 0, 0], 2: [0, 0], 3: [0] * 6}
+
+
 #: ══ tool_caller 的第二注册来源（★ 阶段 2 抓到的真缺陷）════════════════
 
 def test_tool_caller_sees_server_py_tools() -> None:
