@@ -1,0 +1,30 @@
+{
+  "_": "★ Q4/Q6 的冻结阈值（★ 规格 323 · N8）。★★ 纪律（Q4 L55 逐字）：",
+  "__": "「这些阈值必须在首次正式评测前冻结，不能看过结果后下调。」",
+  "___": "⇒ ★ 本文件在**任何评测之前**写入；★ `frozen_at` 与 `digest` 用于事后核验。",
+  "version": 1,
+  "frozen_at": "2026-10-12T00:00:00+08:00",
+  "frozen_by": "spec-323-authoring",
+  "_frozen_note": "★ 冻结时点 = 规格 323 写就之时，★ 彼时尚未跑过任何一次 recall 评测。",
+  "thresholds": {
+    "avg_recall": 0.95,
+    "chain_hit": 0.90,
+    "domain_span_3_ratio": 0.90,
+    "candidate_token_budget": 4096
+  },
+  "_sources": {
+    "avg_recall": "Q4 L53 逐字「平均 recall ≥95%」",
+    "chain_hit": "Q4 L53 逐字「完整链命中题数 ≥90%」",
+    "domain_span_3_ratio": "Q4 L53 逐字「至少 90% 的局部任务可在不超过 3 个任务域内找齐一条正确链」",
+    "candidate_token_budget": "Q4 L53 + Q6 L98 逐字「候选定义不超过 4096 个目标模型 token」"
+  },
+  "_exclusions": {
+    "complex_whole_machine": "Q4 L55 逐字「复杂整机需求不参加『≤3 个域』这一局部检索指标」",
+    "semantic_set_separate": "Q4 L55 逐字「此语料是检索集，不与 Q10 的语义集混称一组已有数据」"
+  },
+  "_owner_action_required": {
+    "corpus": "★★ Q4 L44 逐字「先由**业主**从拟交付的板件、轴件、夹具、平口钳、连杆、箱体中编写 60 条局部任务」⇒ ★ 语料由业主编，本规格只建**指标与评测机**。",
+    "min_tool_chain": "Q4 L44 逐字「由实际能力目录标出每题可接受的最小工具链，包含回读操作」",
+    "multiple_chains_ok": "Q4 L44 逐字「同一任务允许多个正确工具链，不要求召回所有替代工具的并集」"
+  }
+}

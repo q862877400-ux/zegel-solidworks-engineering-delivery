@@ -1,0 +1,139 @@
+# ★ Q4 · 受控多标签（★ 7 个 —— 取值**全部受控**，不是自由文本）
+#
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身
+# 文件:   metadata/facets.yaml
+# 定位:   规格 `specs/323-task-domains-and-faceted-retrieval` 的 N2 —— Q4 逐字给的
+#           七个受控多标签。★ 与 `domains.yaml` 同属**外挂单一源**（Q12）。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q4（L36-57）逐字：
+#           「另有受控多标签：`object_kind / operation / result_kind /
+#             precondition / effect / backend / availability`」
+#           + Q12（L223）逐字：「效应按文档几何、文档属性、选择状态、界面状态、
+#             文件系统、网络分别描述」
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# -----------------------------------------------------------------------------
+version: 1
+
+facets:
+  #: ★★ 效应**按 Q12 逐字的六类分**（★ 不是笼统的 read/write）
+  effect:
+    - id: doc_geometry
+      label: 文档几何
+      desc: 改模型的几何/拓扑（★ 最重的一类）
+    - id: doc_property
+      label: 文档属性
+      desc: 改自定义属性/配置/材料
+    - id: selection
+      label: 选择状态
+      desc: 改当前选区（★ 也会让后续步骤走偏）
+    - id: ui_state
+      label: 界面状态
+      desc: 改视图/显示模式/窗口
+    - id: filesystem
+      label: 文件系统
+      desc: 写/删磁盘文件
+    - id: network
+      label: 网络
+      desc: 发外部请求
+    - id: none
+      label: 无副作用
+      desc: 纯读
+
+  object_kind:
+    - id: part
+      label: 零件
+    - id: assembly
+      label: 装配体
+    - id: drawing
+      label: 工程图
+    - id: sketch
+      label: 草图
+    - id: feature
+      label: 特征
+    - id: body
+      label: 实体
+    - id: face_edge
+      label: 面/边
+    - id: document
+      label: 文档（不分类型）
+    - id: application
+      label: 应用（不碰文档）
+
+  operation:
+    - id: create
+      label: 新建
+    - id: modify
+      label: 修改
+    - id: delete
+      label: 删除
+    - id: read
+      label: 读取
+    - id: select
+      label: 选择
+    - id: export
+      label: 导出
+    - id: compute
+      label: 计算
+    - id: orchestrate
+      label: 编排/治理
+
+  result_kind:
+    - id: geometry
+      label: 几何
+    - id: value
+      label: 数值
+    - id: file
+      label: 文件
+    - id: report
+      label: 报告/证据
+    - id: state
+      label: 状态
+    - id: none
+      label: 无产物
+
+  precondition:
+    - id: needs_model
+      label: 需已打开文档
+    - id: needs_selection
+      label: 需已有选区
+    - id: needs_assembly
+      label: 需装配体
+    - id: needs_drawing
+      label: 需工程图
+    - id: needs_saved_file
+      label: 需已存盘
+    - id: needs_addin
+      label: 需加载项
+    - id: none
+      label: 无前置
+
+  backend:
+    - id: com_pywin32
+      label: COM（pywin32）
+    - id: file_io
+      label: 文件 I/O
+    - id: pure_python
+      label: 纯 Python
+    - id: external_solver
+      label: 外部求解器
+    - id: none
+      label: 无后端
+
+  #: ★★ Q4 逐字要 `availability` —— ★ 它直接决定「能不能进自主执行集合」
+  availability:
+    - id: autonomous
+      label: 可自主
+      desc: ★ 已准入 + 已验证 ⇒ 能进自主执行集合
+    - id: supervised
+      label: 需值守
+      desc: ★ 能跑但要人看着
+    - id: catalog_only
+      label: 仅目录
+      desc: ★ 登记在案但不进自主集合（★ Q12 逐字：「没有完成可执行适配的入口
+            不得被编译器选中」）
+    - id: backend_blocked
+      label: 后端不可达
+      desc: ★ Q16 逐字：「标 `backend_blocked`，从自主候选中排除，
+            保留管理目录和原因」

@@ -1,0 +1,88 @@
+# ★ Q4 · 八个一级任务域（★ 封闭值 —— 每个工具**恰好一个**主域）
+#
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身
+# 文件:   metadata/domains.yaml
+# 定位:   规格 `specs/323-task-domains-and-faceted-retrieval` 的 N1 —— Q4 逐字给的
+#           八个一级任务域。★★ 这是**外挂单一源**（Q12）：域只在这里定义一次，
+#           注册阶段合成进 `ToolDescriptor`，★ 不在 75 个模块里各写一份。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q4（L36-57）逐字：
+#           「确定八个一级任务域：需求与计算、草图与基准、实体成形与修改、
+#             孔系与连接接口、装配与机构、工程图与标注、分析与检验、文档与交付。」
+#           + Q12（L214-231）逐字：「选择独立版本化元数据目录」
+# 许可:   本仓库 MIT。★ 无第三方代码引入。
+# 覆盖:   全文件
+# -----------------------------------------------------------------------------
+version: 1
+
+#: ★★ **顺序即语义** —— 它决定检索时域的展示顺序（★ 不是优先级）
+#: ⚠ 实测（2026-10-12）：`cues` **必须中英都有** ——
+#:   本仓 521 个工具的名字**绝大多数是英文**（`solidworks_extrude_boss`）⇒
+#:   只写中文 cue ⇒ ★ **357/521 落回退域** ✗（★ 而"分布失衡"看起来像
+#:   "cues 写得不好"，不像"少了英文"）。
+domains:
+  - id: requirements_computation
+    name: 需求与计算
+    order: 1
+    #: ★ 该域的**触发词**（★ 检索用；★ 中英都有）
+    cues: [需求, 载荷, 计算, 强度, 刚度, 选型, 校核, 公式, 公差链,
+           requirement, load, compute, calculate, strength, stiffness,
+           tolerance, safety_factor]
+
+  - id: sketch_and_datum
+    name: 草图与基准
+    order: 2
+    cues: [草图, 基准, 基准面, 中心线, 约束, 尺寸标注, 参考几何, 坐标系, 点, 轴,
+           sketch, plane, datum, centerline, relation, coordinate, axis,
+           reference_point, dimension]
+
+  - id: solid_forming
+    name: 实体成形与修改
+    order: 3
+    cues: [拉伸, 旋转, 扫描, 放样, 切除, 圆角, 倒角, 抽壳, 圆顶, 筋, 阵列, 镜像, 缩放,
+           extrude, revolve, sweep, loft, cut, fillet, chamfer, shell, dome,
+           rib, pattern, mirror, scale, boss, thicken, knit, trim, extend,
+           draft, boundary, wrap, intersect, move_copy]
+
+  - id: hole_and_interface
+    name: 孔系与连接接口
+    order: 4
+    cues: [孔, 螺纹, 沉头, 异型孔, 孔系, 配合面, 键槽, 花键, 中心距,
+           hole, thread, counterbore, countersink, wizard, keyway, spline,
+           fastener, bore]
+
+  - id: assembly_and_mechanism
+    name: 装配与机构
+    order: 5
+    cues: [装配, 配合, 自由度, 干涉, 机构, 连杆, 运动, 爆炸, 组件,
+           assembly, mate, dof, interference, mechanism, linkage, motion,
+           explode, component, motor]
+
+  - id: drawing_and_annotation
+    name: 工程图与标注
+    order: 6
+    cues: [工程图, 视图, 剖视, 局部, 标注, 气泡, 孔表, 修订表, 图纸, 图框,
+           drawing, view, section, detail, note, balloon, hole_table,
+           revision, sheet, gtol, datum_tag, surface_finish, center_line,
+           center_mark]
+
+  - id: analysis_and_inspection
+    name: 分析与检验
+    order: 7
+    cues: [仿真, 有限元, 网格, 应力, 模态, 拓扑, 测量, 质量属性, 干涉检查, 检查,
+           simulation, mesh, stress, modal, frequency, topology, measure,
+           mass_property, inspect, check, review, fea, buckling, thermal,
+           sensor, cost]
+
+  - id: document_and_delivery
+    name: 文档与交付
+    order: 8
+    cues: [属性, 配置, 方程, 导出, 保存, 交付, 元数据, 成本,
+           property, configuration, equation, export, save, deliver,
+           metadata, costing, step, stl, pdf, dxf, iges, parasolid, image,
+           bmp, macro, job, lease, gate, authoriz, health, install, preflight]
+
+#: ★★ **回退域**（★ Q4 要求「每个工具一个主域」——
+#:   ★ 那些**既不属于任何域也判不出来**的，进这里；★ 但**必须被计数**）
+fallback_domain: document_and_delivery
