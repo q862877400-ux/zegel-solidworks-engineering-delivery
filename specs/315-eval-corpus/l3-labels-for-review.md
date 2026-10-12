@@ -12,8 +12,10 @@
 | **期望结果**（`labels.result`） | **你** | 该做 / 该问 / 该拒 |
 | ~~功能 / 接口~~ | ❌ **不该你判** | ★ **那是我标的注解** —— 代码是我写的、语义是我定的 |
 
-> ★★ 2026-10-12 更正：上一版把「功能 / 接口」摆到主表里请你判 —— ★ **那是我的错**（我把该我干的活派给你了）。
-> 现在它们**只作脚注**，★ 你**不必看**。
+> ★★ 2026-10-12 更正（第二次）：上一版把「做法」印成**一串工具名** —— ★ 业主：「**我又不知道你这个工具具体是干嘛的，代码是你写的呀**，你只能把这些工具名**再翻译成它干的事情**，然后我才能判呀。」
+> ⇒ ★ 现在**主文写人话**（「新建一个文档」「在原点画一个 φ6 的圆」「拉伸 30 毫米」「给两端倒 1 毫米角」），★ 工具名只作**小字脚注**（便于我核对，★ 你不必看）。
+>
+> ★★ 第一次更正：上一版把「功能 / 接口」摆到主表里请你判 —— ★ **那是我的错**（我把该我干的活派给你了）。现在它们只作脚注。
 
 **怎么用**：在「你的判定」列填 `✓` / `✗`；`✗` 就在「改成」列写一句。
 
@@ -41,12 +43,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_hole_wizard`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 100×60 的矩形（左下角在原点）
+3. 用尺寸工具把两条边约束成 100 和 60
+4. 退出草图，把矩形拉伸成 20 毫米厚的板
+5. 用异型孔向导在四角各打一个 M6 通孔，孔心距两边各 10 毫米
+6. 读回体积与孔数
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_hole_wizard` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -68,12 +72,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_circle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_chamfer`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 在原点画一个 φ20 的圆
+3. 用尺寸工具把圆约束成 φ20
+4. 退出草图，拉伸 100 毫米成圆柱轴
+5. 用倒角工具选两端圆的两条边缘线，倒 1×45° 角
+6. 读回体积
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_circle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_chamfer` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -94,11 +100,13 @@
 
 **做法**（5 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_line`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用直线工具画一个 L 形轮廓（外框 100×100，切掉一角）
+3. 用尺寸工具把外框约束成 100×100、板厚方向留出 20
+4. 退出草图，拉伸 20 毫米
+5. 读回体积与包围盒
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_line` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -120,12 +128,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_part_shell`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 80×60 的矩形
+3. 用尺寸工具约束成 80×60
+4. 退出草图，拉伸 10 毫米
+5. 用抽壳工具设壁厚 2 毫米，选顶面作为开口面
+6. 读回体积（= 48000 − 内腔）
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_part_shell` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -146,12 +156,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_line`
-3. `solidworks_sketch_add_centerline`
-4. `solidworks_sketch_end`
-5. `solidworks_revolve_boss`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用中心线工具在原点画一条竖直中心线（当旋转轴）
+3. 用直线工具画阶梯轴的半剖面：φ20 段长 40、φ30 段长 30
+4. 用尺寸工具把两段直径与长度都约束住
+5. 退出草图，用旋转凸台绕中心线转 360°
+6. 读回体积
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_line` → `solidworks_sketch_add_centerline` → `solidworks_sketch_end` → `solidworks_revolve_boss` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -172,12 +184,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_fillet`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 50×50 的矩形
+3. 用尺寸工具约束成 50×50
+4. 退出草图，拉伸 5 毫米
+5. 用圆角工具选四条竖直棱边，半径 R3
+6. 读回体积（应小于 1250）
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_fillet` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -198,12 +212,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_circle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_chamfer`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 在原点画一个 φ6 的圆
+3. 用尺寸工具把圆约束成 φ6
+4. 退出草图，拉伸 30 毫米成圆柱销
+5. 用倒角工具选两端圆的两条边缘线，倒角边长 1 毫米
+6. 读回体积（≈ π×9×30 − 两端倒角）
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_circle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_chamfer` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -225,15 +241,17 @@
 
 **做法**（9 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_sketch_start`
-6. `solidworks_sketch_add_slot`
-7. `solidworks_sketch_end`
-8. `solidworks_extrude_cut`
-9. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 120×80 的矩形
+3. 用尺寸工具约束成 120×80
+4. 退出草图，拉伸 15 毫米成板
+5. 在板的顶面新建草图
+6. 用槽口工具画一条半圆端槽，长 40、宽 10
+7. 用尺寸工具约束槽长 40、槽宽 10
+8. 退出草图，用拉伸切除贯穿板厚
+9. 读回体积（= 144000 − 槽体积）
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_sketch_start` → `solidworks_sketch_add_slot` → `solidworks_sketch_end` → `solidworks_extrude_cut` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -255,12 +273,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_hole_wizard`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 80×30 的矩形
+3. 用尺寸工具约束成 80×30
+4. 退出草图，拉伸 8 毫米成压板
+5. 用异型孔向导在中心打一个 M8 通孔
+6. 读回体积、孔数与孔径
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_hole_wizard` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -282,16 +302,18 @@
 
 **做法**（10 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_circle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_sketch_start`
-6. `solidworks_sketch_add_circle`
-7. `solidworks_sketch_end`
-8. `solidworks_extrude_cut`
-9. `solidworks_circular_pattern`
-10. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 在原点画一个 φ20 的圆
+3. 用尺寸工具约束成 φ20
+4. 退出草图，拉伸成轴（长度按需）
+5. 在轴的端面新建草图
+6. 在分布圆 φ30 上画一个 φ5 的圆
+7. 用尺寸工具约束孔 φ5、分布圆 φ30
+8. 退出草图，用拉伸切除打穿
+9. 用圆周阵列把这个孔绕轴心阵列 6 个（等间距 60°）
+10. 读回孔数、孔径与分布圆直径
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_circle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_sketch_start` → `solidworks_sketch_add_circle` → `solidworks_sketch_end` → `solidworks_extrude_cut` → `solidworks_circular_pattern` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -313,15 +335,17 @@
 
 **做法**（9 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_circle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_sketch_start`
-6. `solidworks_sketch_add_rectangle`
-7. `solidworks_sketch_end`
-8. `solidworks_extrude_cut`
-9. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 在原点画一个 φ20 的圆
+3. 用尺寸工具约束成 φ20
+4. 退出草图，拉伸 60 毫米成圆柱
+5. 在圆柱端面新建草图
+6. 用矩形工具画一个 6×3 的键槽轮廓（一端与圆周重合）
+7. 用尺寸工具约束槽宽 6、深 3
+8. 退出草图，用拉伸切除切出键槽
+9. 读回体积（= 圆柱 − 键槽）
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_circle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_cut` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -343,15 +367,17 @@
 
 **做法**（9 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_sketch_start`
-6. `solidworks_sketch_add_circle`
-7. `solidworks_sketch_end`
-8. `solidworks_extrude_boss`
-9. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 200×150 的矩形
+3. 用尺寸工具约束成 200×150
+4. 退出草图，拉伸 10 毫米成板
+5. 在板的顶面新建草图
+6. 在中心画一个 φ40 的圆
+7. 用尺寸工具约束成 φ40 并与板中心对齐
+8. 退出草图，拉伸 10 毫米成凸台（与板合并）
+9. 读回体积（= 300000 + π×400×10）
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_sketch_start` → `solidworks_sketch_add_circle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -372,11 +398,13 @@
 
 **做法**（5 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_export_step`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 60×40 的矩形
+3. 用尺寸工具约束成 60×40
+4. 退出草图，拉伸 8 毫米
+5. 用导出工具另存为 STEP 文件
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_export_step`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -397,8 +425,10 @@
 
 **做法**（2 步）：
 
-1. `solidworks_config_set_custom_properties`
-2. `solidworks_custom_property_list`
+1. 打开已建好的板零件
+2. 用自定义属性工具写入三条：材料=45钢、重量=1.2kg、编号=P-001
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_config_set_custom_properties` → `solidworks_custom_property_list`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -418,12 +448,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_hole_counterbore_by_selection`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 150×100 的矩形
+3. 用尺寸工具约束成 150×100
+4. 退出草图，拉伸 20 毫米成板
+5. 用沉头孔工具在四角各做一个 M8 沉头孔，孔心距两边各 15 毫米
+6. 读回沉头孔数、主孔径、沉头直径
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_hole_counterbore_by_selection` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -446,15 +478,17 @@
 
 **做法**（9 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_circle`
-3. `solidworks_sketch_end`
-4. `solidworks_revolve_boss`
-5. `solidworks_sketch_start`
-6. `solidworks_sketch_add_circle`
-7. `solidworks_sketch_end`
-8. `solidworks_revolve_cut`
-9. `solidworks_revolve_params`
+1. 在前视基准面开始画草图
+2. 在原点画一个 φ25 的圆
+3. 用尺寸工具约束成 φ25
+4. 退出草图，拉伸 120 毫米成轴
+5. 在轴的中段基准面新建草图
+6. 在原点画一个 φ20 的圆
+7. 用尺寸工具约束成 φ20，并约束它到轴中段（宽 10）
+8. 退出草图，用旋转切除（或拉伸切除）切出退刀槽
+9. 读回退刀槽直径
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_circle` → `solidworks_sketch_end` → `solidworks_revolve_boss` → `solidworks_sketch_start` → `solidworks_sketch_add_circle` → `solidworks_sketch_end` → `solidworks_revolve_cut` → `solidworks_revolve_params`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -475,11 +509,13 @@
 
 **做法**（5 步）：
 
-1. `solidworks_new_document`
-2. `solidworks_add_component`
-3. `solidworks_add_concentric_mate`
-4. `solidworks_assembly_list_components`
-5. `solidworks_assembly_list_mates`
+1. 新建一个装配体文档
+2. 插入销 φ6×30 与块 40×40×20 两个零件
+3. 用同心配合把销的外圆与块的中心孔对齐
+4. 用重合配合把销的轴向位置定住
+5. 列出组件数与配合数，并跑一次干涉检查
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_new_document` → `solidworks_add_component` → `solidworks_add_concentric_mate` → `solidworks_assembly_list_components` → `solidworks_assembly_list_mates`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -501,12 +537,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_part_shell`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 100×100 的矩形
+3. 用尺寸工具约束成 100×100
+4. 退出草图，拉伸 30 毫米成箱体毛坯
+5. 用抽壳工具设壁厚 8 毫米，选顶面作为开口面
+6. 读回壁厚与体数
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_part_shell` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -528,9 +566,11 @@
 
 **做法**（3 步）：
 
-1. `solidworks_drawing_create_three_standard_views`
-2. `solidworks_drawing_list_views`
-3. `solidworks_drawing_current_sheet_info`
+1. 打开已建好的零件
+2. 用三视图工具一次建出前视与俯视两个投影视图
+3. 列出图纸上的视图，确认视图数 ≥ 2
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_drawing_create_three_standard_views` → `solidworks_drawing_list_views` → `solidworks_drawing_current_sheet_info`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -551,12 +591,14 @@
 
 **做法**（6 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_rectangle`
-3. `solidworks_sketch_end`
-4. `solidworks_extrude_boss`
-5. `solidworks_hole_wizard`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用矩形工具画一个 200×100 的矩形
+3. 用尺寸工具约束成 200×100
+4. 退出草图，拉伸 12 毫米成板
+5. 在板上打一个 M6 通孔，然后按间距 30 毫米线性阵列成 3 个
+6. 读回孔数、孔径与孔间距
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_rectangle` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_hole_wizard` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -576,14 +618,15 @@
 |---|---|
 | 无 | **READY_FOR_REVIEW**（能做（自动做完待审）） |
 
-**做法**（6 步）：
+**做法**（5 步）：
 
-1. `solidworks_sketch_start`
-2. `solidworks_sketch_add_arc`
-3. `solidworks_sketch_add_line`
-4. `solidworks_sketch_end`
-5. `solidworks_extrude_boss`
-6. `solidworks_part_mass_properties`
+1. 在前视基准面开始画草图
+2. 用直线工具画杆身（长 80），两端各用圆弧工具画一个 φ12 的球头轮廓
+3. 用尺寸工具约束总长 80、球头直径 12
+4. 退出草图，拉伸成连杆
+5. 读回体积与包围盒
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_sketch_start` → `solidworks_sketch_add_arc` → `solidworks_sketch_add_line` → `solidworks_sketch_end` → `solidworks_extrude_boss` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -604,8 +647,10 @@
 
 **做法**（2 步）：
 
-1. `solidworks_assembly_check_interference`
-2. `solidworks_assembly_list_components`
+1. 打开要检查的装配体
+2. 跑一次干涉检查，读回干涉数与每一处的体积
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_assembly_check_interference` → `solidworks_assembly_list_components`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -625,8 +670,10 @@
 
 **做法**（2 步）：
 
-1. `solidworks_scale_feature`
-2. `solidworks_part_mass_properties`
+1. 对轴零件施加缩放特征，比例因子 2.0
+2. 读回缩放前后的体积
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_scale_feature` → `solidworks_part_mass_properties`</sub>
 
 **判据**（怎么算做对了）：
 
@@ -647,9 +694,11 @@
 
 **做法**（3 步）：
 
-1. `solidworks_equation_add`
-2. `solidworks_equation_list`
-3. `solidworks_equation_evaluate`
+1. 打开零件，用全局方程工具加一条：D2 = 2 * D1
+2. 列出方程确认条数为 1
+3. 求解方程并读回 D2 的值
+
+<sub>★ 对应的工具（**我核对用，你不必看**）：`solidworks_equation_add` → `solidworks_equation_list` → `solidworks_equation_evaluate`</sub>
 
 **判据**（怎么算做对了）：
 

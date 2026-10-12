@@ -9,6 +9,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 100×60 的矩形（左下角在原点）
+  - 用尺寸工具把两条边约束成 100 和 60
+  - 退出草图，把矩形拉伸成 20 毫米厚的板
+  - 用异型孔向导在四角各打一个 M6 通孔，孔心距两边各 10 毫米
+  - 读回体积与孔数
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -43,6 +50,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 在原点画一个 φ20 的圆
+  - 用尺寸工具把圆约束成 φ20
+  - 退出草图，拉伸 100 毫米成圆柱轴
+  - 用倒角工具选两端圆的两条边缘线，倒 1×45° 角
+  - 读回体积
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -76,6 +90,12 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用直线工具画一个 L 形轮廓（外框 100×100，切掉一角）
+  - 用尺寸工具把外框约束成 100×100、板厚方向留出 20
+  - 退出草图，拉伸 20 毫米
+  - 读回体积与包围盒
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_line
@@ -109,6 +129,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 80×60 的矩形
+  - 用尺寸工具约束成 80×60
+  - 退出草图，拉伸 10 毫米
+  - 用抽壳工具设壁厚 2 毫米，选顶面作为开口面
+  - 读回体积（= 48000 − 内腔）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -142,6 +169,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用中心线工具在原点画一条竖直中心线（当旋转轴）
+  - 用直线工具画阶梯轴的半剖面：φ20 段长 40、φ30 段长 30
+  - 用尺寸工具把两段直径与长度都约束住
+  - 退出草图，用旋转凸台绕中心线转 360°
+  - 读回体积
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_line
@@ -175,6 +209,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 50×50 的矩形
+  - 用尺寸工具约束成 50×50
+  - 退出草图，拉伸 5 毫米
+  - 用圆角工具选四条竖直棱边，半径 R3
+  - 读回体积（应小于 1250）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -208,6 +249,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 在原点画一个 φ6 的圆
+  - 用尺寸工具把圆约束成 φ6
+  - 退出草图，拉伸 30 毫米成圆柱销
+  - 用倒角工具选两端圆的两条边缘线，倒角边长 1 毫米
+  - 读回体积（≈ π×9×30 − 两端倒角）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -242,6 +290,16 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 120×80 的矩形
+  - 用尺寸工具约束成 120×80
+  - 退出草图，拉伸 15 毫米成板
+  - 在板的顶面新建草图
+  - 用槽口工具画一条半圆端槽，长 40、宽 10
+  - 用尺寸工具约束槽长 40、槽宽 10
+  - 退出草图，用拉伸切除贯穿板厚
+  - 读回体积（= 144000 − 槽体积）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -279,6 +337,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 80×30 的矩形
+  - 用尺寸工具约束成 80×30
+  - 退出草图，拉伸 8 毫米成压板
+  - 用异型孔向导在中心打一个 M8 通孔
+  - 读回体积、孔数与孔径
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -313,6 +378,17 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 在原点画一个 φ20 的圆
+  - 用尺寸工具约束成 φ20
+  - 退出草图，拉伸成轴（长度按需）
+  - 在轴的端面新建草图
+  - 在分布圆 φ30 上画一个 φ5 的圆
+  - 用尺寸工具约束孔 φ5、分布圆 φ30
+  - 退出草图，用拉伸切除打穿
+  - 用圆周阵列把这个孔绕轴心阵列 6 个（等间距 60°）
+  - 读回孔数、孔径与分布圆直径
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -351,6 +427,16 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 在原点画一个 φ20 的圆
+  - 用尺寸工具约束成 φ20
+  - 退出草图，拉伸 60 毫米成圆柱
+  - 在圆柱端面新建草图
+  - 用矩形工具画一个 6×3 的键槽轮廓（一端与圆周重合）
+  - 用尺寸工具约束槽宽 6、深 3
+  - 退出草图，用拉伸切除切出键槽
+  - 读回体积（= 圆柱 − 键槽）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -388,6 +474,16 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 200×150 的矩形
+  - 用尺寸工具约束成 200×150
+  - 退出草图，拉伸 10 毫米成板
+  - 在板的顶面新建草图
+  - 在中心画一个 φ40 的圆
+  - 用尺寸工具约束成 φ40 并与板中心对齐
+  - 退出草图，拉伸 10 毫米成凸台（与板合并）
+  - 读回体积（= 300000 + π×400×10）
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -424,6 +520,12 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 60×40 的矩形
+  - 用尺寸工具约束成 60×40
+  - 退出草图，拉伸 8 毫米
+  - 用导出工具另存为 STEP 文件
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -456,6 +558,9 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 打开已建好的板零件
+  - 用自定义属性工具写入三条：材料=45钢、重量=1.2kg、编号=P-001
   tools:
   - - solidworks_config_set_custom_properties
     - solidworks_custom_property_list
@@ -484,6 +589,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 150×100 的矩形
+  - 用尺寸工具约束成 150×100
+  - 退出草图，拉伸 20 毫米成板
+  - 用沉头孔工具在四角各做一个 M8 沉头孔，孔心距两边各 15 毫米
+  - 读回沉头孔数、主孔径、沉头直径
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -519,6 +631,16 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 在原点画一个 φ25 的圆
+  - 用尺寸工具约束成 φ25
+  - 退出草图，拉伸 120 毫米成轴
+  - 在轴的中段基准面新建草图
+  - 在原点画一个 φ20 的圆
+  - 用尺寸工具约束成 φ20，并约束它到轴中段（宽 10）
+  - 退出草图，用旋转切除（或拉伸切除）切出退刀槽
+  - 读回退刀槽直径
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_circle
@@ -555,6 +677,12 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 新建一个装配体文档
+  - 插入销 φ6×30 与块 40×40×20 两个零件
+  - 用同心配合把销的外圆与块的中心孔对齐
+  - 用重合配合把销的轴向位置定住
+  - 列出组件数与配合数，并跑一次干涉检查
   tools:
   - - solidworks_new_document
     - solidworks_add_component
@@ -588,6 +716,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 100×100 的矩形
+  - 用尺寸工具约束成 100×100
+  - 退出草图，拉伸 30 毫米成箱体毛坯
+  - 用抽壳工具设壁厚 8 毫米，选顶面作为开口面
+  - 读回壁厚与体数
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -622,6 +757,10 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 打开已建好的零件
+  - 用三视图工具一次建出前视与俯视两个投影视图
+  - 列出图纸上的视图，确认视图数 ≥ 2
   tools:
   - - solidworks_drawing_create_three_standard_views
     - solidworks_drawing_list_views
@@ -652,6 +791,13 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用矩形工具画一个 200×100 的矩形
+  - 用尺寸工具约束成 200×100
+  - 退出草图，拉伸 12 毫米成板
+  - 在板上打一个 M6 通孔，然后按间距 30 毫米线性阵列成 3 个
+  - 读回孔数、孔径与孔间距
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_rectangle
@@ -686,6 +832,12 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 在前视基准面开始画草图
+  - 用直线工具画杆身（长 80），两端各用圆弧工具画一个 φ12 的球头轮廓
+  - 用尺寸工具约束总长 80、球头直径 12
+  - 退出草图，拉伸成连杆
+  - 读回体积与包围盒
   tools:
   - - solidworks_sketch_start
     - solidworks_sketch_add_arc
@@ -719,6 +871,9 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 打开要检查的装配体
+  - 跑一次干涉检查，读回干涉数与每一处的体积
   tools:
   - - solidworks_assembly_check_interference
     - solidworks_assembly_list_components
@@ -747,6 +902,9 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 对轴零件施加缩放特征，比例因子 2.0
+  - 读回缩放前后的体积
   tools:
   - - solidworks_scale_feature
     - solidworks_part_mass_properties
@@ -776,6 +934,10 @@
     result: READY_FOR_REVIEW
   needs_owner_judgment: true
   notes: 标签是 AI 起草，需业主确认
+  steps_cn:
+  - 打开零件，用全局方程工具加一条：D2 = 2 * D1
+  - 列出方程确认条数为 1
+  - 求解方程并读回 D2 的值
   tools:
   - - solidworks_equation_add
     - solidworks_equation_list
