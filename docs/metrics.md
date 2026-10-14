@@ -33,7 +33,7 @@
 | 25 |   其中 not_implemented | 没做 | **3** | `同上` |
 | 26 | 门禁 | scripts/check_*.py 的自动检查程序 | **50** | `scripts/check_*.py` |
 | 27 | 已知事实条数 | docs/known-facts.md 里编号的条目 | **568** | `known-facts.md 里 ^| N | 的行数` |
-| 28 | Spec Kit 特性 | specs/<NNN>-* 目录数 | **279** | `D:\AI\SW\specs 下形如 NNN- 的目录数` |
+| 28 | Spec Kit 特性 | specs/<NNN>-* 目录数 | **280** | `D:\AI\SW\specs 下形如 NNN- 的目录数` |
 | 29 | 覆盖口径 ①「名字出现过」（宽） | 台账 hit / 成员位次。★★ **无判别力** —— 我们的全量索引把 774 族的名字都抄了，所以它必然接近 100%，**不能用来说「覆盖广」** | **100.0%（15466 / 15466）** | `family-coverage.json 各行 hit 相加 ÷ members 相加` |
 | 30 | 覆盖口径 ②「真的被调用」（中） | 台账 used / 成员位次 —— 代码里真的有调用，不只是抄了名字 | **17.1%（2652 / 15466）** | `family-coverage.json 各行 used 相加 ÷ members 相加` |
 | 31 | ★ 覆盖口径 ③「真机碰过」（窄） | 证据/探针脚本里出现过的**官方成员名**（下界；★ 这个才是「真能用」的证据） | **0.27%（22 / 8238 个不重复成员名）** | `python tools/gen_metrics.py（扫 capture_*.py + 工作区 probe*.py）` |
