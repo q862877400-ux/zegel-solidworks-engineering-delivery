@@ -31,6 +31,7 @@
     - PERPENDICULAR × 4
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
+    - ★★ **贯穿底孔必须用 `FeatureCut4(..., T1=1, ...)`** —— 不能用「厚度 + 1mm」的盲孔（★ 视觉上穿透，但**特征语义与工程图识别都不对**）
     tool_builtin: 矩形工具**自带**平行+垂直+重合 ⇒ ★ 只欠**位置**与**大小**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -47,6 +48,7 @@
   - 孔数 = 4
   - 孔径 = 6mm
   - 体积 = 120000 − 4×π×9×20 mm³
+  - ★★ 特征树里是 **`ThroughAll`**（不是 `Blind`）
   procedure_source: L1-002
   owner_judgment_scope:
     executor_annotates:
@@ -59,6 +61,11 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_note: ★★ A 阶段发现（`threaded-hole-lessons.md` 逐字）：「贯穿底孔必须用 `FeatureCut4(..., T1=1, ...)`。使用『厚度 + 1 mm』的盲孔虽然视觉上穿透，但**特征语义、后续修改和工程图识别都不正确**」
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-002
   requirement: 建一根 φ20×100 的圆柱轴，两端倒 1×45° 角
   category: solvable
@@ -84,6 +91,7 @@
     - φ20（直径）
     relations:
     - ★ 圆工具**不自带**任何关系 ⇒ 必须补：圆心↔原点 重合
+    - ★★ **倒角放在孔槽之前**（★ 既有规则：`outer_fillet_and_chamfer` 在 `through_holes` 之前 —— 否则复杂拓扑求解很久）
     tool_builtin: 圆工具**不自带** ⇒ ★ 位置要自己锚
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -98,6 +106,8 @@
   readback:
   - 体积 ≈ π×100×100 = 31415.9 mm³（倒角前）
   - 倒角特征数 = 1
+  - ★★ **返回非空 ≠ 持久化** —— 必须 `ForceRebuild3(False)` 后**按特征名从树中回读**；★ 返回非空但重建后消失 ⇒ **停止，不要继续叠加**
+  - ★★ 倒角**失败可降级**（★ `strict` 失败即停 / `progressive` 试 100%/75%/50%，下限 0.1mm）—— ★ 且必须记录 `requested/actual/degraded`，**对外用实际尺寸**
   procedure_source: L1-016
   owner_judgment_scope:
     executor_annotates:
@@ -110,6 +120,11 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_note: ★★ A 阶段发现（`cnc-fillet-chamfer-lessons.md`）：「特征 API 返回非空后**仍需 `ForceRebuild3(False)`**，并用特征名从树中回读」
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-003
   requirement: 建一个 100×100×20 的 L 形定位块
   category: solvable
@@ -175,6 +190,10 @@
     reclassified_from: READY_FOR_REVIEW
     reason: ★ 100×100×20 只给了外框 ⇒ ★ 缺口多大、在哪，**没说** ⇒ ★ 草图定不死（★ 业主批注 1 的原例）
     _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-004
   requirement: 给一块 80×60×10 的板做 2mm 抽壳
   category: solvable
@@ -239,6 +258,10 @@
     reclassified_from: READY_FOR_REVIEW
     reason: ★ 80×60×10 + 壁厚 2 给了，但**没说从哪个面掏** ⇒ ★ 开口面不同 ⇒ 完全不同的零件
     _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-005
   requirement: 建一根阶梯轴：φ20 段 40mm + φ30 段 30mm
   category: solvable
@@ -296,6 +319,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-006
   requirement: 把一块 50×50×5 的板四周做 R3 圆角
   category: solvable
@@ -329,6 +356,7 @@
     - PERPENDICULAR × 4
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
+    - ★★ **外轮廓圆角放在孔槽之前**（★ 既有特征顺序）
     tool_builtin: 矩形工具自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -344,6 +372,8 @@
   readback:
   - 圆角特征数 = 1
   - 体积 < 1250 mm³（圆角去掉四个角）
+  - ★★ `ForceRebuild3` 后**按名回读**；★ 重建后消失 ⇒ 停止
+  - ★★ 失败可降级（★ 但**关键圆角不得自动跳过**）
   procedure_source: L1-006
   owner_judgment_scope:
     executor_annotates:
@@ -360,6 +390,11 @@
     reclassified_from: READY_FOR_REVIEW
     reason: ★ 50×50×5 的板有 12 条棱边；「四周」可指 **4 条竖直棱**（四角）或**整圈上下棱** ⇒ ★ 两种做法出的零件不同
     _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
+  harvest_note: ★ 同 `L3-002`
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-007
   requirement: 建一个 φ6×30 的定位销，两端倒角
   category: solvable
@@ -385,6 +420,7 @@
     - φ6（直径）
     relations:
     - ★ 圆工具不自带 ⇒ 补：圆心↔原点 重合
+    - ★★ 倒角**在孔槽之前**（★ 本条无孔，★ 但顺序原则一致）
     tool_builtin: 圆工具不自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -400,6 +436,8 @@
   - 直径 = 6mm · 长度 = 30mm
   - 倒角特征数 = 1 · 倒角边 = 1mm
   - 体积 = π×9×30 − 两端倒角 ≈ 848.2 mm³
+  - ★★ `ForceRebuild3` 后按名回读；★ **重建后消失 ⇒ 停止**
+  - ★★ 倒角失败 ⇒ **降级为保留直边 + 标注「外观倒角未应用」**，★ 不算整体失败
   procedure_source: ★ 业主 2026-10-12 给的 5 步样式
   owner_judgment_scope:
     executor_annotates:
@@ -417,6 +455,11 @@
     reason: ★ 「两端倒角」没给尺寸 ⇒ ★ 工程惯例是 1×45°，★ 但**惯例 ≠ 需求** ⇒ ★ 应问，或按惯例做并**声明依据**。★★ 而 L3-002 就写全了（「倒 1×45° 角」）⇒ **同族两条口径不一致**
     _by: ★ 执行者自审（2026-10-12）
     _note: ★ 按 Q1 定则：**不自动采用所谓默认值** ⇒ 要么问、要么按标准选并声明依据
+  harvest_note: ★ 同 `L3-002`
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-008
   requirement: 在一块 120×80×15 的板上做一条半圆端槽（长 40，宽 10）
   category: solvable
@@ -451,6 +494,8 @@
     - ② 槽口工具自带：两圆弧**相等** · 两直线**平行** · 直线与圆弧**相切**
     - ★ 补 ②：槽中心线 **平行** 于矩形长边（★ 业主批注 4 要的方向关系）
     - ★ 补 ②：槽中心线↔矩形水平中心线 **重合**（或对矩形加**对称**）
+    - ★★ 槽口有**四种类型**（`ISketchManager.CreateSketchSlot` · 14 参）—— 本条的「半圆端槽」= **`arc`(2)** 或 **`line`(0)**（★ 要选一种）
+    - ★★ 槽长有**两种口径**：`CenterCenter`(0) = 圆弧中心之间 · `FullLength`(1) = 全长 ⇒ ★ **本条需求写「长 40」⇒ 必须问是哪一种**
     tool_builtin: 槽口工具自带相等/平行/相切 ⇒ ★ 欠**位置**与**方向**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -469,6 +514,7 @@
   - 槽长 = 40mm · 槽宽 = 10mm
   - 切除特征数 = 1
   - 体积 = 144000 − 槽体积 mm³
+  - ★★ 草图段数 **0 → 5**（★ 真机：四种 type 均如此 —— 事实 432）
   procedure_source: ★ 新写（半圆端槽）
   owner_judgment_scope:
     executor_annotates:
@@ -485,6 +531,11 @@
     reclassified_from: READY_FOR_REVIEW
     reason: ★ 长 40 宽 10 给了，但**没说槽放在哪** ⇒ ★ 这正是业主批注 4 问的「槽口位置是怎么定的」
     _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
+  harvest_note: ★★ A 阶段发现（`docs/known-facts.md` 事实 432）：「槽口四种 = **一条方法 + 一个枚举**」—— ★ 而我只写了「用槽口工具画」，**没说哪一种**
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-009
   requirement: 建一个带中心孔的压板（80×30×8，中心 M8 孔）
   category: solvable
@@ -538,6 +589,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-010
   requirement: 给一根轴做 6 等分圆周阵列的 φ5 孔（分布圆 φ30）
   category: solvable
@@ -605,6 +660,10 @@
     reclassified_from: READY_FOR_REVIEW
     reason: ★ 「给一根轴做 6 等分圆周阵列的 φ5 孔（分布圆 φ30）」—— ★ 轴本身的 φ 与长**没说** ⇒ ★ 零件做不出来
     _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-011
   requirement: 建一个 φ20×60 的圆柱，一端切一个 6×3 的键槽
   category: solvable
@@ -672,6 +731,10 @@
     reason: ★ 6×3 给了，但槽**开在 60 长的哪一段**没说 ⇒ ★ 惯例是从端面起（GB/T 1095/1096 平键）⇒ ★ 仍应声明依据
     _by: ★ 执行者自审（2026-10-12）
     _note: ★ 按 Q1 定则：**不自动采用所谓默认值** ⇒ 要么问、要么按标准选并声明依据
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-012
   requirement: 把一块 200×150×10 的板中心做 φ40 圆形凸台高 10
   category: solvable
@@ -731,6 +794,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-013
   requirement: 建一个 60×40×8 的板并导出 STEP
   category: solvable
@@ -789,6 +856,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-014
   requirement: 给一个已建好的板加 3 个自定义属性：材料=45钢、重量=1.2kg、编号=P-001
   category: solvable
@@ -829,6 +900,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-015
   requirement: 在一块 150×100×20 的板上做 4 个 M8 沉头孔，孔心距边 15mm
   category: solvable
@@ -857,6 +932,7 @@
     - ① 矩形自带 + 补原点
     - ② ★ 4 个孔点两两**对称**于矩形的两条中心线
     - ② ★ 或：孔点**水平/竖直**对齐（保证 4 点成矩形）
+    - ★★ **参数验证底线**（COM 调用前必须拒绝）：① 底孔直径 **≥ 公称直径** ② 沉孔深度 ≤ 板厚 ③ 孔中心越出基体 ④ 没为螺纹大径与孔口倒角保留边界
     tool_builtin: ★ 孔向导的点**不自带任何关系** ⇒ ★ 全要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -873,6 +949,7 @@
   - 主孔径 = 9mm（M8 通孔）
   - 沉头直径 = 15mm
   - 孔心距边 = 15mm
+  - ★★ 沉孔规格**不能由光孔直径推断** —— 必须来自专用孔标注证据
   procedure_source: ★ 新写（沉头孔 —— ★ 与 L1-002 的 M6 通孔不同型）
   owner_judgment_scope:
     executor_annotates:
@@ -890,6 +967,11 @@
     reason: ★ 「M8 沉头孔」只给了螺纹规格 ⇒ ★ 沉孔 φ 与深可按 GB/T 8191（内六角沉头螺钉）取 ⇒ ★ 应声明依据
     _by: ★ 执行者自审（2026-10-12）
     _note: ★ 按 Q1 定则：**不自动采用所谓默认值** ⇒ 要么问、要么按标准选并声明依据
+  harvest_note: ★★ A 阶段发现（`threaded-hole-lessons.md`）：「底孔直径 ≥ 公称直径」是**必须拒绝**的输入
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-016
   requirement: 建一根 φ25×120 的轴，中间做一段 φ20×10 的退刀槽
   category: solvable
@@ -955,6 +1037,10 @@
     reason: ★ 「中间做一段」⇒ ★ 正中间？还是距某端面？★ 退刀槽形状可按 GB/T 3 取 ⇒ ★ 位置仍要问
     _by: ★ 执行者自审（2026-10-12）
     _note: ★ 按 Q1 定则：**不自动采用所谓默认值** ⇒ 要么问、要么按标准选并声明依据
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-017
   requirement: 把两个零件（销 φ6×30 和块 40×40×20）装配起来，销穿过块的中心孔
   category: solvable
@@ -1004,6 +1090,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-018
   requirement: 建一个 100×100×30 的箱体毛坯，壁厚 8mm 抽壳
   category: solvable
@@ -1069,6 +1159,10 @@
     reclassified_from: READY_FOR_REVIEW
     reason: ★ 与 L3-004 **同一个缺口** ⇒ ★ 箱体从哪个面掏空没说
     _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-019
   requirement: 给一个已建好的零件出工程图，含前视图和俯视图
   category: solvable
@@ -1112,6 +1206,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-020
   requirement: 在一块 200×100×12 的板上做一排 3 个 M6 通孔，间距 30mm
   category: solvable
@@ -1140,6 +1238,7 @@
     - ① 矩形自带 + 补原点
     - ② ★ 3 个孔点**水平**（保证同一条线上）
     - ② ★ 相邻孔点间距 30（线性阵列会自动生成，★ 只需定义种子）
+    - ★★ 通孔用 **`FeatureCut4(..., T1=1)`**（贯穿），★ 不是「厚度+1mm」的盲孔
     tool_builtin: ★ 线性阵列会生成其余 2 个 ⇒ ★ 只需定义**种子孔**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1155,6 +1254,7 @@
   - 孔数 = 3
   - 孔径 = 6mm
   - 孔间距 = 30mm
+  - ★★ 特征树里是 `ThroughAll`
   procedure_source: L1-002（同型：多孔）
   owner_judgment_scope:
     executor_annotates:
@@ -1171,6 +1271,11 @@
     reclassified_from: READY_FOR_REVIEW
     reason: ★ 间距 30 给了，但**整排孔在 200×100 的哪里**没说 ⇒ ★ 居中？距边多少？
     _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
+  harvest_note: ★ 同 `L3-001`（★ 通孔一律用 `ThroughAll`）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-021
   requirement: 建一根两端带球头的连杆（长 80，球头 φ12）
   category: solvable
@@ -1230,6 +1335,10 @@
     reclassified_from: READY_FOR_REVIEW
     reason: ★ 总长 80 + 球头 φ12 给了，★ **杆多粗没说** ⇒ ★ 杆径不同 ⇒ 完全不同的连杆
     _by: ★ 执行者自审（2026-10-12）—— ★ 与业主 4 处批注同一类
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-022
   requirement: 给一个装配体做干涉检查并报告结果
   category: solvable
@@ -1270,6 +1379,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-023
   requirement: 把一根轴放大 2 倍并读回体积
   category: solvable
@@ -1315,6 +1428,10 @@
     borderline: true
     reason: ★ 「把**一根轴**放大 2 倍」—— ★ 哪根轴？★ 若会话里有上下文则能做；★ 无上下文则**说不清**
     _by: ★ 执行者自审（2026-10-12）—— ★ 拿不准，请业主判
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-024
   requirement: 给一个零件加一个全局方程：D2 = 2 * D1
   category: solvable
@@ -1363,6 +1480,10 @@
     borderline: true
     reason: ★ 「给**一个零件**加全局方程 D2 = 2 * D1」—— ★ D1 是哪个尺寸？★ 依赖上下文
     _by: ★ 执行者自审（2026-10-12）—— ★ 拿不准，请业主判
+  harvest_global:
+  - ★★ **不确定的参数可以用保守默认值，但必须写入 `assumptions`**（★ `solidworks_parametric_planner.md` 逐字）
+  - ★★ **禁止把「外观成功」当成「几何成功」**（★ 同上逐字）
+  - ★★ **判据不许只看返回值**：`CosmeticThread` 是孔/切除的**子特征** —— ★ 只遍历顶层会**把已经持久化的它误判为丢失** ⇒ 必须**递归 `GetFirstSubFeature/GetNextSubFeature`**
 - id: L3-025
   requirement: 给我设计一台台式平口钳
   category: missing_input
@@ -1847,6 +1968,10 @@
     - tools
     - readback
     _owner_note: ★ 业主判的是：**该问什么 / 期望结果**（labels）与**做法 + 判据对不对**（tools/readback）
+  readback:
+  - ★★ 判据看 `thread_status`：`real-thread-verified` / `cosmetic-thread-verified` / `visible-helix-verified`；★ **只剩自定义属性 ⇒ 阻断交付**
+  - ★★ **螺纹规格不能由光孔直径推断**（★ `review.md` 逐字）
+  harvest_note: ★★ A 阶段发现（`threaded-hole-lessons.md` + `engineering-drawing/references/review.md`）
 - id: L3-047
   requirement: 对任意特征做线性阵列
   category: capability_boundary
