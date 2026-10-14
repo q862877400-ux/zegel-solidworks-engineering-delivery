@@ -495,6 +495,15 @@
    "environment": "offline-static",
    "owner": "executing-agent",
    "runs_in": "release_check"
+  },
+  {
+   "gate": "check_corpus_shape.py",
+   "runner": "_run_corpus_shape_gate",
+   "kind": "release_static",
+   "reason": "**硬门禁**：语料的**列表字段不许嵌套**。⚠ 实测 2026-10-14：我用 `x[\"readback\"] += extra`（extra 是列表的列表）⇒ **87 处嵌套**。★★ 而**后果不是报错** —— YAML 合法、门禁也过，**只是读起来变成 `[[...]]`** ⇒ **人读不了**。★ 本门禁**自带负例自证**。⚠ 实测教训：我第一版把 `tools` 也列进来 ⇒ **误报 60 条** ✗ —— 真因是 L1/L2 的 `tools` 是**「工具链的列表」**（`check_corpus.py` 里变量名就叫 `chains`）⇒ **嵌套是有意的** ⇒ 判据改成「只列元素语义上就是一句话的字段」。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
   }
  ]
 }

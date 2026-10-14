@@ -628,6 +628,28 @@ def _run_report_freshness_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_corpus_shape_gate() -> dict[str, object]:
+    """@brief 跑语料**数据形状门禁**（规格 332）。
+
+    ⚠ 实测（2026-10-14）：我在批次⑯里用 `x["readback"] += extra`
+      （★ `extra` 是**列表的列表**）⇒ ★ **87 处嵌套** ✗
+    ★★ 而**后果不是「报错」** —— ★ YAML 合法、门禁也过，
+      ★ **只是读起来变成 `[['...']]`** ⇒ ★ **人读不了**。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_corpus_shape.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "语料形状门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_known_facts_triage_gate() -> dict[str, object]:
     """@brief 跑 known-facts.md 逐条处置门禁（规格 332）。
 
@@ -2205,6 +2227,12 @@ def run_release_check() -> dict[str, object]:
     #     「矩形本身**固定到原点**」「**蓝色**表示实体未固定」。
     # ⚑ **known-facts 逐条处置门禁**（硬门禁）：★ 557 条事实**逐条**要有处置。
     #   ★★ 业主 2026-10-14：「known-facts 560 条逐条有处置（吸收/放过+理由）」。
+    # ⚑ **语料数据形状门禁**（硬门禁）：★ 列表字段不许嵌套（★ 人读得了）。
+    shape = _run_corpus_shape_gate()
+    if shape.get("status") == "fail":
+        raise AssertionError(
+            "语料形状门禁未通过（列表字段里有嵌套）：\n"
+            + str(shape.get("output", "")))
     kf = _run_known_facts_triage_gate()
     if kf.get("status") == "fail":
         raise AssertionError(
@@ -2429,6 +2457,8 @@ def run_release_check() -> dict[str, object]:
         "sketch_definition": sk_def,
         #: ★ 2026-10-14（业主收口判据）：**known-facts 逐条处置**同样必须进返回体。
         "known_facts_triage": kf,
+        #: ★ 2026-10-14：**语料形状**也必须进返回体（★ 元门禁要求）。
+        "corpus_shape": shape,
         #: ★ 2026-10-03（轮 404）：**未定义名门禁**同样必须进返回体 ——
         #:   ⚠ 而这一条**正是元门禁当场抓到的**：我先前只加了门禁与它的 fail 判据，
         #:   却没把它汇总进 `_gate_results` ⇒ 元门禁报「`undef` 的结果**没有进返回体**
