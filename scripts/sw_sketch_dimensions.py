@@ -27,9 +27,14 @@
 #     `GetRelations` / `GetRelationsCount` / `DeleteRelation` / `DeleteAllRelations`** ✓
 #     而关系管理器从**草图**上取：`ISketch.RelationManager`（★ 仓里 `sw_sketch.get_relation_manager` 已有）✓
 #   ⚠ **单位**：长度**毫米**；尺寸的 `X/Y/Z` 是**尺寸文字的放置点**（官方口径），本模块收毫米 ✓
-#   ⚠ **未核实（铁律 5）**：`FullyDefineSketch` 的 `HorizontalDimScheme` / `RelationsToApply` /
-#     `*DimPlacement` 的**取值表在 `C:\\swapi` 里没查到** ⇒ 本模块默认全 0 / 空 Dispatch，
-#     ★ 并在 docstring 里标注**未核实**，不假装知道 ✓
+#   ★★ 2026-10-12（业主定「先做 A」的第 ② 步）：**`RelationsToApply` 的取值表找到了** ——
+#     ★ 官方 `swSketchFullyDefineRelationType_e`（**Bitmask**，★ 逐字）：
+#       `Equal=1  Horizontal=2  Vertical=4  Tangent=8  Perpendicular=16`
+#       `Colinear=32  Concentric=64  Parallel=128  Midpoint=256  Coincident=512`
+#     ★ 来源：`SWhelp/swconst/…swSketchFullyDefineRelationType_e.html`
+#   ⚠ **仍未核实（铁律 5）**：`HorizontalDimScheme` / `VerticalDimScheme` /
+#     `*DimPlacement` 的**取值表仍没查到** ⇒ 本模块默认全 0 / 空 Dispatch，
+#     ★ 并如实标注**未核实**，不假装知道 ✓
 # 官方依据: 见上（`C:\\swapi\\types\\` 的 4 个接口 / 10 个成员）。
 # 许可:   本仓库 MIT。无第三方代码引入（★ 全部按官方签名自建）。
 # 覆盖:   全文件
