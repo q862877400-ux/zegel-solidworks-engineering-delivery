@@ -40,12 +40,12 @@
     relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
     relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_hole_wizard
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_hole_wizard
+  - solidworks_part_mass_properties
   readback:
   - 孔数 = 4
   - 孔径 = 6mm
@@ -105,6 +105,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-002
   owner_judgment_scope:
     executor_annotates:
@@ -184,12 +198,12 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_circle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_chamfer
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_circle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_chamfer
+  - solidworks_part_mass_properties
   readback:
   - 体积 ≈ π×100×100 = 31415.9 mm³（倒角前）
   - 倒角特征数 = 1
@@ -245,6 +259,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-016
   owner_judgment_scope:
     executor_annotates:
@@ -331,11 +359,11 @@
     relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
     relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;horizontal:4;vertical:5;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,4;coincident:4,5;coincident:5,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;parallel:0,4;perpendicular:0,5;perpendicular:1,2;parallel:1,3;perpendicular:1,4;parallel:1,5;perpendicular:2,3;parallel:2,4;perpendicular:2,5;perpendicular:3,4;parallel:3,5;perpendicular:4,5
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_line
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_line
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_part_mass_properties
   readback:
   - L 形：体积 = (100×100 − 缺口面积)×20 mm³
   - 体数 = 1
@@ -372,6 +400,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: ★ 新写（L1 无 L 形件）
   owner_judgment_scope:
     executor_annotates:
@@ -460,12 +502,12 @@
     relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
     relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_part_shell
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_part_shell
+  - solidworks_part_mass_properties
   readback:
   - 体积 = 48000 − 内腔体积 mm³
   - 抽壳特征存在
@@ -508,6 +550,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-004
   owner_judgment_scope:
     executor_annotates:
@@ -593,12 +649,12 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_line
-    - solidworks_sketch_add_centerline
-    - solidworks_sketch_end
-    - solidworks_revolve_boss
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_line
+  - solidworks_sketch_add_centerline
+  - solidworks_sketch_end
+  - solidworks_revolve_boss
+  - solidworks_part_mass_properties
   readback:
   - 体积 = π×10²×40 + π×15²×30 = 12566.4 + 21205.8 mm³
   - 回转体数 = 1
@@ -636,6 +692,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-033（回转体）
   owner_judgment_scope:
     executor_annotates:
@@ -721,12 +791,12 @@
     relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
     relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_fillet
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_fillet
+  - solidworks_part_mass_properties
   readback:
   - 圆角特征数 = 1
   - 体积 < 1250 mm³（圆角去掉四个角）
@@ -776,6 +846,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-006
   owner_judgment_scope:
     executor_annotates:
@@ -857,12 +941,12 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_circle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_chamfer
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_circle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_chamfer
+  - solidworks_part_mass_properties
   readback:
   - 直径 = 6mm · 长度 = 30mm
   - 倒角特征数 = 1 · 倒角边 = 1mm
@@ -913,6 +997,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: ★ 业主 2026-10-12 给的 5 步样式
   owner_judgment_scope:
     executor_annotates:
@@ -1005,15 +1103,15 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_sketch_start
-    - solidworks_sketch_add_slot
-    - solidworks_sketch_end
-    - solidworks_extrude_cut
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_sketch_start
+  - solidworks_sketch_add_slot
+  - solidworks_sketch_end
+  - solidworks_extrude_cut
+  - solidworks_part_mass_properties
   readback:
   - 槽长 = 40mm · 槽宽 = 10mm
   - 切除特征数 = 1
@@ -1055,6 +1153,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: ★ 新写（半圆端槽）
   owner_judgment_scope:
     executor_annotates:
@@ -1137,12 +1249,12 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_hole_wizard
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_hole_wizard
+  - solidworks_part_mass_properties
   readback:
   - 孔数 = 1
   - 孔径 = 8mm（M8 通孔）
@@ -1200,6 +1312,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-009
   owner_judgment_scope:
     executor_annotates:
@@ -1283,16 +1409,16 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_circle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_sketch_start
-    - solidworks_sketch_add_circle
-    - solidworks_sketch_end
-    - solidworks_extrude_cut
-    - solidworks_circular_pattern
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_circle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_sketch_start
+  - solidworks_sketch_add_circle
+  - solidworks_sketch_end
+  - solidworks_extrude_cut
+  - solidworks_circular_pattern
+  - solidworks_part_mass_properties
   readback:
   - 孔数 = 6
   - 孔径 = 5mm
@@ -1353,6 +1479,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: ★ 新写（圆周阵列孔）
   owner_judgment_scope:
     executor_annotates:
@@ -1440,15 +1580,15 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_circle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_cut
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_circle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_cut
+  - solidworks_part_mass_properties
   readback:
   - 切除特征数 = 1
   - 键槽宽 = 6mm · 深 = 3mm
@@ -1491,6 +1631,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-013
   owner_judgment_scope:
     executor_annotates:
@@ -1577,15 +1731,15 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_sketch_start
-    - solidworks_sketch_add_circle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_sketch_start
+  - solidworks_sketch_add_circle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_part_mass_properties
   readback:
   - 凸台直径 = 40mm · 高 = 10mm
   - 体积 = 300000 + π×400×10 mm³
@@ -1621,6 +1775,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: ★ 新写（板上凸台）
   owner_judgment_scope:
     executor_annotates:
@@ -1704,11 +1872,11 @@
     relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
     relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_export_step
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_export_step
   readback:
   - STEP 文件存在且 > 0 字节
   - 体积 = 19200 mm³
@@ -1747,6 +1915,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-049
   owner_judgment_scope:
     executor_annotates:
@@ -1816,8 +1998,8 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_config_set_custom_properties
-    - solidworks_custom_property_list
+  - solidworks_config_set_custom_properties
+  - solidworks_custom_property_list
   readback:
   - 3 个属性可读回：材料=45钢 · 重量=1.2kg · 编号=P-001
   - ★★ **圆/弧不好定位 ⇒ 优先标注直线段**（★ 逐字承 `mech-design/知识库/尺寸标注.md:47`）
@@ -1845,6 +2027,12 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
   procedure_source: L1-009
   owner_judgment_scope:
     executor_annotates:
@@ -1924,12 +2112,12 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_hole_counterbore_by_selection
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_hole_counterbore_by_selection
+  - solidworks_part_mass_properties
   readback:
   - 沉头孔数 = 4
   - 主孔径 = 9mm（M8 通孔）
@@ -1989,6 +2177,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: ★ 新写（沉头孔 —— ★ 与 L1-002 的 M6 通孔不同型）
   owner_judgment_scope:
     executor_annotates:
@@ -2077,15 +2279,15 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_circle
-    - solidworks_sketch_end
-    - solidworks_revolve_boss
-    - solidworks_sketch_start
-    - solidworks_sketch_add_circle
-    - solidworks_sketch_end
-    - solidworks_revolve_cut
-    - solidworks_revolve_params
+  - solidworks_sketch_start
+  - solidworks_sketch_add_circle
+  - solidworks_sketch_end
+  - solidworks_revolve_boss
+  - solidworks_sketch_start
+  - solidworks_sketch_add_circle
+  - solidworks_sketch_end
+  - solidworks_revolve_cut
+  - solidworks_revolve_params
   readback:
   - 切除特征存在
   - 退刀槽段直径 = 20mm
@@ -2135,6 +2337,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-015
   owner_judgment_scope:
     executor_annotates:
@@ -2214,11 +2430,11 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_new_document
-    - solidworks_add_component
-    - solidworks_add_concentric_mate
-    - solidworks_assembly_list_components
-    - solidworks_assembly_list_mates
+  - solidworks_new_document
+  - solidworks_add_component
+  - solidworks_add_concentric_mate
+  - solidworks_assembly_list_components
+  - solidworks_assembly_list_mates
   readback:
   - 组件数 = 2
   - 配合数 ≥ 1（同心）
@@ -2274,6 +2490,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★ **`AddComponent5` 的 x/y/z 是零件【中心】不是原点**（★ 官方原文「X coordinate of the **component center**」）⇒ ★ 想让原点落在 `want`，**自己加 `center_offset`**（★ 与 `AI建模操作手册` §10.1 **互证**）
+  - ★★ **`AddComponent5` 要求零件已预加载**，★ 且**预加载后必须 `activate_document` 切回装配体**，★ 否则 `WRONG_DOCUMENT_TYPE`；★ 即使两步都做**仍会间歇性返回 null**
   procedure_source: ★ 新写（★ 用 `solidworks_add_component` —— 它在 `server.py` 那 45 个里）
   owner_judgment_scope:
     executor_annotates:
@@ -2363,12 +2593,12 @@
     relation_source: ★★ **生成器**（`scripts/engineering/sketch_relations_gen.py`）—— ★ 输入只有顶点坐标 ⇒ ★ 换形状**不用改代码**
     relation_string: horizontal:0;vertical:1;horizontal:2;vertical:3;coincident:0,1;coincident:1,2;coincident:2,3;coincident:3,0;perpendicular:0,1;parallel:0,2;perpendicular:0,3;perpendicular:1,2;parallel:1,3;perpendicular:2,3
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_part_shell
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_part_shell
+  - solidworks_part_mass_properties
   readback:
   - 体数 = 1
   - 壁厚 = 8mm
@@ -2412,6 +2642,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-051 + L1-052
   owner_judgment_scope:
     executor_annotates:
@@ -2486,9 +2730,9 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_drawing_create_three_standard_views
-    - solidworks_drawing_list_views
-    - solidworks_drawing_current_sheet_info
+  - solidworks_drawing_create_three_standard_views
+  - solidworks_drawing_list_views
+  - solidworks_drawing_current_sheet_info
   readback:
   - 视图数 ≥ 2（前视 + 俯视）
   - 图纸存在且 > 0 字节
@@ -2516,6 +2760,12 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
   procedure_source: ★ 新写（★ 用 `create_three_standard_views`）
   owner_judgment_scope:
     executor_annotates:
@@ -2595,12 +2845,12 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_rectangle
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_hole_wizard
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_rectangle
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_hole_wizard
+  - solidworks_part_mass_properties
   readback:
   - 孔数 = 3
   - 孔径 = 6mm
@@ -2661,6 +2911,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: L1-002（同型：多孔）
   owner_judgment_scope:
     executor_annotates:
@@ -2746,12 +3010,12 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_sketch_start
-    - solidworks_sketch_add_arc
-    - solidworks_sketch_add_line
-    - solidworks_sketch_end
-    - solidworks_extrude_boss
-    - solidworks_part_mass_properties
+  - solidworks_sketch_start
+  - solidworks_sketch_add_arc
+  - solidworks_sketch_add_line
+  - solidworks_sketch_end
+  - solidworks_extrude_boss
+  - solidworks_part_mass_properties
   readback:
   - 总长 = 80mm · 球头直径 = 12mm
   - 体积 = 杆 + 两球头 mm³
@@ -2787,6 +3051,20 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: ★ 新写（两端球头）
   owner_judgment_scope:
     executor_annotates:
@@ -2860,8 +3138,8 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_assembly_check_interference
-    - solidworks_assembly_list_components
+  - solidworks_assembly_check_interference
+  - solidworks_assembly_list_components
   readback:
   - 干涉数 = 0（或列出每一处的体积与组件数）
   - ★★ **圆/弧不好定位 ⇒ 优先标注直线段**（★ 逐字承 `mech-design/知识库/尺寸标注.md:47`）
@@ -2891,6 +3169,14 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★ **`AddComponent5` 的 x/y/z 是零件【中心】不是原点**（★ 官方原文「X coordinate of the **component center**」）⇒ ★ 想让原点落在 `want`，**自己加 `center_offset`**（★ 与 `AI建模操作手册` §10.1 **互证**）
+  - ★★ **`AddComponent5` 要求零件已预加载**，★ 且**预加载后必须 `activate_document` 切回装配体**，★ 否则 `WRONG_DOCUMENT_TYPE`；★ 即使两步都做**仍会间歇性返回 null**
   procedure_source: ★ 新写（★ 该工具真机已验过）
   owner_judgment_scope:
     executor_annotates:
@@ -2961,8 +3247,8 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_scale_feature
-    - solidworks_part_mass_properties
+  - solidworks_scale_feature
+  - solidworks_part_mass_properties
   readback:
   - 体积比 = 8.0（放大 2 倍 ⇒ 体积 ×2³）
   - 缩放特征存在
@@ -2997,6 +3283,18 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
+  - ★★★★★ **回转轴必须按【端点】精确匹配，不能坐标拾取**（★ 逐字承 `AI Solidworks/手册/新会话提示词_SolidWorks改造.md` §六-1）：★ 原实现按**中点坐标**选 ⇒ **选中相邻的轮廓边** ⇒ ★ 代码把 `axisSeg.ConstructionGeometry = true` ⇒ ★★★ **把一条轮廓边改成了构造线，轮廓残缺，静默产出体积差 5
+    倍的错误零件，不报任何错**。★★ 修法：★ **遍历 `GetSketchSegments()` 比端点**（★ **1µm 容差、正反向都试**）—— ★ 改动后误差 **0.001%**
+  - ★★★★★ **回转前不要给轮廓加尺寸**（★ 逐字承同上 §六-2）：★ **求解器会把轮廓重解歪**（★ **实测偏 8 倍**）⇒ ★★ **顺序：先回转建形 → 再回去补尺寸**—— ★ 这与「一般草图要先加 H/V 再加尺寸」**看似矛盾、实则互补**：★ 回转的轮廓**要被旋转求解器消费** ⇒ ★ 加尺寸会**触发重解** ⇒ ★ **轮廓先变形、再回转** ⇒ ★ 结果偏 8
+    倍
+  - ★★★★ **三个基准面的局部坐标系和直觉不一样**（★ 逐字承同上 §六-3）：**Front** xdir=(1,0,0) ydir=(0,1,0) 法向 +Z · **Top** xdir=(1,0,0) ydir=**(0,0,−1)** 法向 +Y ⇒ ★ **局部 y = −Z** · **Right** xdir=**(0,0,−1)** ydir=(0,1,0) 法向 +X ⇒
+    ★ **局部 x = −Z**⇒ ★★ **画回转体时「Top 面要把 y 取负」**（★ 作者在这上面**错了两次**）· ★ 查法：`analyze_model(sketch)` 的 `plane.frame`
   procedure_source: ★ 规格 210 的 scale 真机读数（volume_ratio=27 那次同法）
   owner_judgment_scope:
     executor_annotates:
@@ -3068,9 +3366,9 @@
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
     relation_source: ★ 手写（★ **待迁移到生成器** —— ★ 见 `sketch_relations_gen`）
   tools:
-  - - solidworks_equation_add
-    - solidworks_equation_list
-    - solidworks_equation_evaluate
+  - solidworks_equation_add
+  - solidworks_equation_list
+  - solidworks_equation_evaluate
   readback:
   - 方程数 = 1
   - 方程文本 = 'D2@Sketch1' = 2 * 'D1@Sketch1'
@@ -3100,6 +3398,12 @@
   - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
   - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
   - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
+  - ★★★★★ **验证闭环铁律**（★ 逐字承同上 §六-9）：「**每个特征后算质量属性，体积与手算对不上就当场停。** ★★ **尺寸对了不代表几何对了，反之亦然。**」★ 有效实例：碟簧 `3.14523e-6` vs 理论 `3.1452e-6`；刀柄 `9.80321e-5` vs `9.80330e-5`。★★★★★ 而**反例更值钱**：「★ **某次把「理论值」自己算错（把分段求和当并集），差点误判好零件为坏零件**」⇒
+    ★★ **「判据错了」与「零件坏了」长得一模一样**
+  - ★★ **数组形状会踩坑**（★ 逐字承同上 §六-10/11）：① ★ PowerShell **变量名不区分大小写** —— `$P` 和 `$p` 是同一个 ⇒ ★ 循环里覆盖了路径变量 ⇒ **后面所有路径错位**；② ★ **`@()` 里的嵌套数组会被展平** —— `@(@(1,2) @(3,4))` 得 **4** 个元素⇒ ★ 传点集用**扁平数组 + 步进 2**★★ 本仓同类坑：★
+    我在语料里踩了 **135 处嵌套** ⇒ ★ 已加门禁 `check_corpus_shape.py`
+  - ★★★★ **缓存的 RCW 会报误导性错误码**（★ 逐字承同上 §六-6）：★ SolidWorks 进程一重启，启动时缓存的 `_solidWorks` 就失效 ⇒ `IActiveDoc2` 返回 null ⇒ ★★ **报成极具误导性的 `NO_ACTIVE_DOCUMENT`**（★ **实际是「有文档但引用断了」**）⇒ ★ 修法：`Marshal.GetActiveObject("SldWorks.Application")`
+    从 **ROT 重新获取**⇒ ★★ 与「**成功码不止 0 / 错误码不止一个**」同族
   procedure_source: ★ 新写（全局方程）
   owner_judgment_scope:
     executor_annotates:
