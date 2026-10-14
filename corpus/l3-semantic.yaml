@@ -70,6 +70,18 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: &id001
+  - ★ **孔槽必须真实几何切除** —— 不能只画线、不能只做外观标记（★ 逐字承 `App.tsx` 强制规则）
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-002
   requirement: 建一根 φ20×100 的圆柱轴，两端倒 1×45° 角
   category: solvable
@@ -133,6 +145,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-003
   requirement: 建一个 100×100×20 的 L 形定位块
   category: solvable
@@ -205,6 +227,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-004
   requirement: 给一块 80×60×10 的板做 2mm 抽壳
   category: solvable
@@ -276,6 +308,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-005
   requirement: 建一根阶梯轴：φ20 段 40mm + φ30 段 30mm
   category: solvable
@@ -340,6 +382,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-006
   requirement: 把一块 50×50×5 的板四周做 R3 圆角
   category: solvable
@@ -416,6 +468,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-007
   requirement: 建一个 φ6×30 的定位销，两端倒角
   category: solvable
@@ -485,6 +547,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-008
   requirement: 在一块 120×80×15 的板上做一条半圆端槽（长 40，宽 10）
   category: solvable
@@ -564,6 +636,17 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: *id001
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-009
   requirement: 建一个带中心孔的压板（80×30×8，中心 M8 孔）
   category: solvable
@@ -624,6 +707,17 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: *id001
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-010
   requirement: 给一根轴做 6 等分圆周阵列的 φ5 孔（分布圆 φ30）
   category: solvable
@@ -698,6 +792,17 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: *id001
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-011
   requirement: 建一个 φ20×60 的圆柱，一端切一个 6×3 的键槽
   category: solvable
@@ -773,6 +878,17 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: *id001
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-012
   requirement: 把一块 200×150×10 的板中心做 φ40 圆形凸台高 10
   category: solvable
@@ -839,6 +955,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-013
   requirement: 建一个 60×40×8 的板并导出 STEP
   category: solvable
@@ -904,6 +1030,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-014
   requirement: 给一个已建好的板加 3 个自定义属性：材料=45钢、重量=1.2kg、编号=P-001
   category: solvable
@@ -951,6 +1087,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-015
   requirement: 在一块 150×100×20 的板上做 4 个 M8 沉头孔，孔心距边 15mm
   category: solvable
@@ -1022,6 +1168,17 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: *id001
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-016
   requirement: 建一根 φ25×120 的轴，中间做一段 φ20×10 的退刀槽
   category: solvable
@@ -1094,6 +1251,17 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: *id001
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-017
   requirement: 把两个零件（销 φ6×30 和块 40×40×20）装配起来，销穿过块的中心孔
   category: solvable
@@ -1150,6 +1318,17 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: *id001
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-018
   requirement: 建一个 100×100×30 的箱体毛坯，壁厚 8mm 抽壳
   category: solvable
@@ -1222,6 +1401,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-019
   requirement: 给一个已建好的零件出工程图，含前视图和俯视图
   category: solvable
@@ -1272,6 +1461,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-020
   requirement: 在一块 200×100×12 的板上做一排 3 个 M6 通孔，间距 30mm
   category: solvable
@@ -1342,6 +1541,17 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  real_cut_rule: *id001
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-021
   requirement: 建一根两端带球头的连杆（长 80，球头 φ12）
   category: solvable
@@ -1408,6 +1618,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-022
   requirement: 给一个装配体做干涉检查并报告结果
   category: solvable
@@ -1455,6 +1675,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-023
   requirement: 把一根轴放大 2 倍并读回体积
   category: solvable
@@ -1507,6 +1737,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-024
   requirement: 给一个零件加一个全局方程：D2 = 2 * D1
   category: solvable
@@ -1562,6 +1802,16 @@
   known_facts_absorbed:
   - ★★★ **FeatureData 接口的官方 Remarks 是「编号步骤」，必须逐步走完** —— ★ 跳过任何一步，`CreateFeature` 就回 `None`（★ 事实 44）
   - ★★★ **「同一启发式连续修补 ≥3 次还没稳定」⇒ 停下回退**（★ 事实 53 · 本仓铁律）
+  decision_tiers:
+  - ★★★ **第三档：概念方案不可制造**（★ 逐字承 `apps/workbench-ui/src/App.tsx`）—— 「**不得自动猜测装配接口、关键尺寸、公差、载荷和安全相关材料；缺失时必须询问，或明确标为「概念方案不可制造」**」⇒ ★ 即：**可以给方案，但必须明确标注「不能制造」**
+  auto_decision_rules:
+  - ★★ **自动选择后必须在 summary 或 verification 中解释为什么这么选**
+  - ★★ **若信息不足以可靠决策，先采用行业常用保守方案，并标记残余风险**
+  delivery_gates:
+  - ★★ **Reviewer Gate 为 `warning` ⇒ 写 `review_required`，不能显示「完成」**；★ 只有门禁为 `pass` 才写 `passed`
+  - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
+  - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
+  evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
 - id: L3-025
   requirement: 给我设计一台台式平口钳
   category: missing_input
