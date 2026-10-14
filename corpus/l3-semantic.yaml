@@ -32,6 +32,7 @@
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     - ★★ **贯穿底孔必须用 `FeatureCut4(..., T1=1, ...)`** —— 不能用「厚度 + 1mm」的盲孔（★ 视觉上穿透，但**特征语义与工程图识别都不对**）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 矩形工具**自带**平行+垂直+重合 ⇒ ★ 只欠**位置**与**大小**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -50,6 +51,9 @@
   - 体积 = 120000 − 4×π×9×20 mm³
   - ★★ 特征树里是 **`ThroughAll`**（不是 `Blind`）
   - ★★ **贯穿切除用 `swEndCondThroughAll(1)` + 占位深度 0.01**，**不是把深度设 0**（★ 事实 10）
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: L1-002
   owner_judgment_scope:
     executor_annotates:
@@ -82,6 +86,9 @@
   real_cut_rule: &id001
   - ★ **孔槽必须真实几何切除** —— 不能只画线、不能只做外观标记（★ 逐字承 `App.tsx` 强制规则）
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-002
   requirement: 建一根 φ20×100 的圆柱轴，两端倒 1×45° 角
   category: solvable
@@ -108,6 +115,7 @@
     relations:
     - ★ 圆工具**不自带**任何关系 ⇒ 必须补：圆心↔原点 重合
     - ★★ **倒角放在孔槽之前**（★ 既有规则：`outer_fillet_and_chamfer` 在 `through_holes` 之前 —— 否则复杂拓扑求解很久）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 圆工具**不自带** ⇒ ★ 位置要自己锚
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -155,6 +163,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-003
   requirement: 建一个 100×100×20 的 L 形定位块
   category: solvable
@@ -189,6 +200,7 @@
     - PERPENDICULAR × 9
     - VERTICAL × 3
     - ★ 独立约束 rank = 18（★ 数值求秩，去掉了推出来的冗余）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★★ 直线工具**完全不自带** ⇒ ★ 这是业主批注 1 说的坑
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -237,6 +249,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-004
   requirement: 给一块 80×60×10 的板做 2mm 抽壳
   category: solvable
@@ -270,6 +285,7 @@
     - PERPENDICULAR × 4
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 矩形工具自带 ⇒ 只欠位置与大小
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -318,6 +334,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-005
   requirement: 建一根阶梯轴：φ20 段 40mm + φ30 段 30mm
   category: solvable
@@ -349,6 +368,7 @@
     - ④ 相邻段的**共线**（φ20 段与 φ30 段的轴线同轴）
     - ⑤ 台阶面↔中心线 **垂直**
     - ⑥ 中心线↔原点 重合
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 直线工具不自带 ⇒ ★ 平行/垂直**全要手加**（★ 业主批注 3）
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -392,6 +412,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-006
   requirement: 把一块 50×50×5 的板四周做 R3 圆角
   category: solvable
@@ -426,6 +449,7 @@
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     - ★★ **外轮廓圆角放在孔槽之前**（★ 既有特征顺序）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 矩形工具自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -478,6 +502,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-007
   requirement: 建一个 φ6×30 的定位销，两端倒角
   category: solvable
@@ -504,6 +531,7 @@
     relations:
     - ★ 圆工具不自带 ⇒ 补：圆心↔原点 重合
     - ★★ 倒角**在孔槽之前**（★ 本条无孔，★ 但顺序原则一致）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 圆工具不自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -557,6 +585,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-008
   requirement: 在一块 120×80×15 的板上做一条半圆端槽（长 40，宽 10）
   category: solvable
@@ -593,6 +624,7 @@
     - ★ 补 ②：槽中心线↔矩形水平中心线 **重合**（或对矩形加**对称**）
     - ★★ 槽口有**四种类型**（`ISketchManager.CreateSketchSlot` · 14 参）—— 本条的「半圆端槽」= **`arc`(2)** 或 **`line`(0)**（★ 要选一种）
     - ★★ 槽长有**两种口径**：`CenterCenter`(0) = 圆弧中心之间 · `FullLength`(1) = 全长 ⇒ ★ **本条需求写「长 40」⇒ 必须问是哪一种**
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 槽口工具自带相等/平行/相切 ⇒ ★ 欠**位置**与**方向**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -612,6 +644,9 @@
   - 切除特征数 = 1
   - 体积 = 144000 − 槽体积 mm³
   - ★★ 草图段数 **0 → 5**（★ 真机：四种 type 均如此 —— 事实 432）
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: ★ 新写（半圆端槽）
   owner_judgment_scope:
     executor_annotates:
@@ -647,6 +682,9 @@
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   real_cut_rule: *id001
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-009
   requirement: 建一个带中心孔的压板（80×30×8，中心 M8 孔）
   category: solvable
@@ -673,6 +711,7 @@
     relations:
     - ① 矩形自带：平行 · 垂直 · 重合；补：左下角↔原点
     - ② 孔的位置由**孔向导的点**定 ⇒ ★ 那个点要锚到矩形中心
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 矩形自带；孔向导的点**不自带** ⇒ 要锚
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -688,6 +727,9 @@
   - 孔数 = 1
   - 孔径 = 8mm（M8 通孔）
   - 体数 = 1
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: L1-009
   owner_judgment_scope:
     executor_annotates:
@@ -718,6 +760,9 @@
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   real_cut_rule: *id001
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-010
   requirement: 给一根轴做 6 等分圆周阵列的 φ5 孔（分布圆 φ30）
   category: solvable
@@ -750,6 +795,7 @@
     relations:
     - ① 圆不自带 ⇒ 圆心↔原点
     - ② 孔圆心↔原点 **竖直**（或标 30 的定位尺寸）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 圆周阵列工具会生成 6 个实例 ⇒ ★ 只需定义**种子孔**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -769,6 +815,9 @@
   - 孔数 = 6
   - 孔径 = 5mm
   - 分布圆 = φ30mm
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: ★ 新写（圆周阵列孔）
   owner_judgment_scope:
     executor_annotates:
@@ -803,6 +852,9 @@
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   real_cut_rule: *id001
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-011
   requirement: 建一个 φ20×60 的圆柱，一端切一个 6×3 的键槽
   category: solvable
@@ -835,6 +887,7 @@
     - ② ★ 矩形（键槽）**竖直边要竖直**、**水平边要水平**
     - ② ★ 键槽**底边与圆柱外圆相切**（或共线于一条竖直中心线）
     - ② 键槽竖直中心线↔原点 **重合**
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 矩形自带平行/垂直；★ 与圆的**相对关系**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -854,6 +907,9 @@
   - 键槽宽 = 6mm · 深 = 3mm
   - 体积 = 圆柱 − 键槽 mm³
   - ★★ **切除入口是 `FeatureCut4`**（27 参）—— 不是 `FeatureExtrusion3(Flip=true)`（★ 后者建出来是「凸台-拉伸」、体积不变）
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: L1-013
   owner_judgment_scope:
     executor_annotates:
@@ -889,6 +945,9 @@
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   real_cut_rule: *id001
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-012
   requirement: 把一块 200×150×10 的板中心做 φ40 圆形凸台高 10
   category: solvable
@@ -919,6 +978,7 @@
     relations:
     - ① 矩形自带 + 补原点
     - ② ★ 圆心↔矩形**中心**（用**对称**关系，不是 1/2 尺寸）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 矩形自带；★ 圆心与矩形的**相对位置**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -965,6 +1025,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-013
   requirement: 建一个 60×40×8 的板并导出 STEP
   category: solvable
@@ -997,6 +1060,7 @@
     - PERPENDICULAR × 4
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 矩形自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1040,6 +1104,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-014
   requirement: 给一个已建好的板加 3 个自定义属性：材料=45钢、重量=1.2kg、编号=P-001
   category: solvable
@@ -1058,7 +1125,8 @@
     sketch: （★ 无草图 —— 只写自定义属性）
     origin: —
     dims: []
-    relations: []
+    relations:
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 本条不建几何 ⇒ 无草图定义问题
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1097,6 +1165,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-015
   requirement: 在一块 150×100×20 的板上做 4 个 M8 沉头孔，孔心距边 15mm
   category: solvable
@@ -1126,6 +1197,7 @@
     - ② ★ 4 个孔点两两**对称**于矩形的两条中心线
     - ② ★ 或：孔点**水平/竖直**对齐（保证 4 点成矩形）
     - ★★ **参数验证底线**（COM 调用前必须拒绝）：① 底孔直径 **≥ 公称直径** ② 沉孔深度 ≤ 板厚 ③ 孔中心越出基体 ④ 没为螺纹大径与孔口倒角保留边界
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 孔向导的点**不自带任何关系** ⇒ ★ 全要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1143,6 +1215,9 @@
   - 沉头直径 = 15mm
   - 孔心距边 = 15mm
   - ★★ 沉孔规格**不能由光孔直径推断** —— 必须来自专用孔标注证据
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: ★ 新写（沉头孔 —— ★ 与 L1-002 的 M6 通孔不同型）
   owner_judgment_scope:
     executor_annotates:
@@ -1179,6 +1254,9 @@
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   real_cut_rule: *id001
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-016
   requirement: 建一根 φ25×120 的轴，中间做一段 φ20×10 的退刀槽
   category: solvable
@@ -1210,6 +1288,7 @@
     - ① 圆不自带 ⇒ 圆心↔原点
     - ② ★ 圆心↔原点 **竖直**（同轴 —— ★ 用竖直关系，不是标 x=0）
     - ② ★ 槽宽 10 的两条边**对称**于轴向中心
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 圆不自带；★ 两圆的**同轴关系**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1227,6 +1306,9 @@
   readback:
   - 切除特征存在
   - 退刀槽段直径 = 20mm
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: L1-015
   owner_judgment_scope:
     executor_annotates:
@@ -1262,6 +1344,9 @@
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   real_cut_rule: *id001
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-017
   requirement: 把两个零件（销 φ6×30 和块 40×40×20）装配起来，销穿过块的中心孔
   category: solvable
@@ -1285,6 +1370,7 @@
     dims: []
     relations:
     - ★ 装配体的「完全定义」= **无自由度**：同心（定轴）+ 重合（定轴向位置）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 装配体用配合，不用草图关系
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1299,6 +1385,9 @@
   - 组件数 = 2
   - 配合数 ≥ 1（同心）
   - 干涉检查 = 0 处
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: ★ 新写（★ 用 `solidworks_add_component` —— 它在 `server.py` 那 45 个里）
   owner_judgment_scope:
     executor_annotates:
@@ -1329,6 +1418,13 @@
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   real_cut_rule: *id001
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  assembly_rules:
+  - ★★ **固定件**可以用三基准面重合或距离 Mate **锁死**；★ **旋转件不要用三基准面完全锁死**
+  - ★★ **上盖铰链**可用**同心 Mate 加一个平面重合/距离 Mate** 表达**一条旋转自由度**；★ 需要 Motion 分析时**优先在 GUI 中用官方 Hinge Mate**
+  - ★ **拖不动时优先检查**：零件是否固定 · **同心 Mate 是否勾了 Lock Rotation** · 是否额外用平面 Mate 把旋转件锁死 · Mate 是否报错或过定义
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-018
   requirement: 建一个 100×100×30 的箱体毛坯，壁厚 8mm 抽壳
   category: solvable
@@ -1362,6 +1458,7 @@
     - PERPENDICULAR × 4
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: 矩形自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1411,6 +1508,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-019
   requirement: 给一个已建好的零件出工程图，含前视图和俯视图
   category: solvable
@@ -1430,7 +1530,8 @@
     sketch: （★ 工程图 —— 无草图）
     origin: —
     dims: []
-    relations: []
+    relations:
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 工程图里的草图**不需完全定义**（官方逐字：「工程图中的草图……**不需完全定义**，因为它们不是特征的基础」）
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1471,6 +1572,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-020
   requirement: 在一块 200×100×12 的板上做一排 3 个 M6 通孔，间距 30mm
   category: solvable
@@ -1500,6 +1604,7 @@
     - ② ★ 3 个孔点**水平**（保证同一条线上）
     - ② ★ 相邻孔点间距 30（线性阵列会自动生成，★ 只需定义种子）
     - ★★ 通孔用 **`FeatureCut4(..., T1=1)`**（贯穿），★ 不是「厚度+1mm」的盲孔
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 线性阵列会生成其余 2 个 ⇒ ★ 只需定义**种子孔**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1517,6 +1622,9 @@
   - 孔间距 = 30mm
   - ★★ 特征树里是 `ThroughAll`
   - ★★ 同 `L3-001`：贯穿用 `swEndCondThroughAll(1)` + 占位深度 0.01
+  - ★★ **每个孔至少记录八个字段**（★ 逐字承 `references/complex-hole-features.md`）：**孔型 · 规格 · 数量 · 基准边定位 · 中心距 · 深度/贯穿状态 · 尺寸公差 · 证据来源**
+  - ★★ **B-Rep 单独不能可靠区分盲孔和通孔** ⇒ 必须与**创建参数或特征定义回读**交叉验证
+  - ★ **锥形沉头**用**通孔入口圆边的角度/距离倒角**；★ 入口边按**圆心、半径和基准面位置**筛选，**不依赖临时边线名称**；★ **倒角后仍必须查看剖视图确认入口方向**
   procedure_source: L1-002（同型：多孔）
   owner_judgment_scope:
     executor_annotates:
@@ -1552,6 +1660,9 @@
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   real_cut_rule: *id001
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-021
   requirement: 建一根两端带球头的连杆（长 80，球头 φ12）
   category: solvable
@@ -1581,6 +1692,7 @@
     - ③ 杆身边与球头圆弧 **相切**
     - ④ 两球头圆心↔中心线 **重合**（同轴）
     - ⑤ 中心线↔原点
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 直线+圆弧组合**不自带相切** ⇒ ★ 全要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1628,6 +1740,9 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  after_cut_rule:
+  - ★★ **每次切除后检查返回特征对象；失败时不要继续保存交付文件**（★ 逐字承 `references/troubleshooting.md`）
+  - ★ **对子装配 `.SLDASM` 递归检查**内部组件，**不要只看顶层组件数**
 - id: L3-022
   requirement: 给一个装配体做干涉检查并报告结果
   category: solvable
@@ -1646,7 +1761,8 @@
     sketch: （★ 装配体检查 —— 无草图）
     origin: —
     dims: []
-    relations: []
+    relations:
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 不建几何 ⇒ 无草图定义问题
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1685,6 +1801,10 @@
   - ★★ **写 `passed` 前必须完成文件存在性检查** —— 不能把**占位文件 / AI JSON 回执 / 旧文件**标为可制造交付
   - ★★ **`passed` / `failed` / `cancelled` 是终态**；`review_required` **必须由用户明确「通过复核」或「驳回」**
   evidence_rule: ★★ **期望值优先用「几何推出的公式」**（★ 如倒角体积 0.5·w²·L），**不用「看着像对」**（★ 逐字承 docs/evidence-first.md:15）
+  assembly_rules:
+  - ★★ **固定件**可以用三基准面重合或距离 Mate **锁死**；★ **旋转件不要用三基准面完全锁死**
+  - ★★ **上盖铰链**可用**同心 Mate 加一个平面重合/距离 Mate** 表达**一条旋转自由度**；★ 需要 Motion 分析时**优先在 GUI 中用官方 Hinge Mate**
+  - ★ **拖不动时优先检查**：零件是否固定 · **同心 Mate 是否勾了 Lock Rotation** · 是否额外用平面 Mate 把旋转件锁死 · Mate 是否报错或过定义
 - id: L3-023
   requirement: 把一根轴放大 2 倍并读回体积
   category: solvable
@@ -1703,7 +1823,8 @@
     sketch: （★ 对已有零件加缩放特征 —— 无新草图）
     origin: —
     dims: []
-    relations: []
+    relations:
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 不建草图
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1766,7 +1887,8 @@
     sketch: （★ 全局方程 —— 操作的是**已有尺寸名**）
     origin: —
     dims: []
-    relations: []
+    relations:
+    - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
     tool_builtin: ★ 不建草图；★ 但它**要求**草图尺寸**已具名且完全定义**（否则方程改不动）
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
