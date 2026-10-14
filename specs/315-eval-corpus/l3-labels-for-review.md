@@ -182,6 +182,13 @@
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **孔族正确的 FeatureData 接口**（★ 逐字承 `mech-design/知识库/10-零件建模/特征数据接口名对照表.md`，★ 来源 AngelSix SolidDna 136 个类，MIT）：**孔向导 `IWizardHoleFeatureData2`** · **高级孔向导 `IAdvancedHoleFeatureData`** · **简单孔 `ISimpleHoleFeatureData2`**
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -279,6 +286,13 @@
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **loft/sweep 的接口**：`ILoftFeatureData` · `ISweepFeatureData` · `IRibFeatureData2` · `IShellFeatureData`
 - ★★★ **圆角/倒角**：`ISimpleFilletFeatureData` · ★ **可变圆角 `IVariableFilletFeatureData2`** · `IChamferFeatureData2`
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -345,6 +359,13 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -432,6 +453,13 @@
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **loft/sweep 的接口**：`ILoftFeatureData` · `ISweepFeatureData` · `IRibFeatureData2` · `IShellFeatureData`
 - ★★★ **圆角/倒角**：`ISimpleFilletFeatureData` · ★ **可变圆角 `IVariableFilletFeatureData2`** · `IChamferFeatureData2`
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -517,6 +545,11 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -600,6 +633,13 @@
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **loft/sweep 的接口**：`ILoftFeatureData` · `ISweepFeatureData` · `IRibFeatureData2` · `IShellFeatureData`
 - ★★★ **圆角/倒角**：`ISimpleFilletFeatureData` · ★ **可变圆角 `IVariableFilletFeatureData2`** · `IChamferFeatureData2`
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -696,6 +736,13 @@
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **loft/sweep 的接口**：`ILoftFeatureData` · `ISweepFeatureData` · `IRibFeatureData2` · `IShellFeatureData`
 - ★★★ **圆角/倒角**：`ISimpleFilletFeatureData` · ★ **可变圆角 `IVariableFilletFeatureData2`** · `IChamferFeatureData2`
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -774,6 +821,13 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -868,6 +922,13 @@
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **孔族正确的 FeatureData 接口**（★ 逐字承 `mech-design/知识库/10-零件建模/特征数据接口名对照表.md`，★ 来源 AngelSix SolidDna 136 个类，MIT）：**孔向导 `IWizardHoleFeatureData2`** · **高级孔向导 `IAdvancedHoleFeatureData`** · **简单孔 `ISimpleHoleFeatureData2`**
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -961,6 +1022,13 @@
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **孔族正确的 FeatureData 接口**（★ 逐字承 `mech-design/知识库/10-零件建模/特征数据接口名对照表.md`，★ 来源 AngelSix SolidDna 136 个类，MIT）：**孔向导 `IWizardHoleFeatureData2`** · **高级孔向导 `IAdvancedHoleFeatureData`** · **简单孔 `ISimpleHoleFeatureData2`**
 - ★★★ **任何「圆周均布 N 个」的需求，首选「一草图多圆」**（★ **不用轴、不用阵列**）—— ★ 逐字承 `mech-design/知识库/10-零件建模/阵列pattern.md`（★ 实测：**9 个圆一次画 + 一次拉伸成功**）
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1040,6 +1108,13 @@
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **任何「圆周均布 N 个」的需求，首选「一草图多圆」**（★ **不用轴、不用阵列**）—— ★ 逐字承 `mech-design/知识库/10-零件建模/阵列pattern.md`（★ 实测：**9 个圆一次画 + 一次拉伸成功**）
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1114,6 +1189,13 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1181,6 +1263,13 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1251,6 +1340,9 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1337,6 +1429,13 @@
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **孔族正确的 FeatureData 接口**（★ 逐字承 `mech-design/知识库/10-零件建模/特征数据接口名对照表.md`，★ 来源 AngelSix SolidDna 136 个类，MIT）：**孔向导 `IWizardHoleFeatureData2`** · **高级孔向导 `IAdvancedHoleFeatureData`** · **简单孔 `ISimpleHoleFeatureData2`**
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1425,6 +1524,13 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1518,6 +1624,10 @@
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **孔族正确的 FeatureData 接口**（★ 逐字承 `mech-design/知识库/10-零件建模/特征数据接口名对照表.md`，★ 来源 AngelSix SolidDna 136 个类，MIT）：**孔向导 `IWizardHoleFeatureData2`** · **高级孔向导 `IAdvancedHoleFeatureData`** · **简单孔 `ISimpleHoleFeatureData2`**
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★ **`AddComponent5` 的 `x/y/z` 是「零件中心」，不是原点**（★ 逐字承该手册 §10.1）
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1590,6 +1700,13 @@
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **loft/sweep 的接口**：`ILoftFeatureData` · `ISweepFeatureData` · `IRibFeatureData2` · `IShellFeatureData`
 - ★★★ **圆角/倒角**：`ISimpleFilletFeatureData` · ★ **可变圆角 `IVariableFilletFeatureData2`** · `IChamferFeatureData2`
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1665,6 +1782,9 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1752,6 +1872,13 @@
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
 - ★★★ **孔族正确的 FeatureData 接口**（★ 逐字承 `mech-design/知识库/10-零件建模/特征数据接口名对照表.md`，★ 来源 AngelSix SolidDna 136 个类，MIT）：**孔向导 `IWizardHoleFeatureData2`** · **高级孔向导 `IAdvancedHoleFeatureData`** · **简单孔 `ISimpleHoleFeatureData2`**
 - ★★★ **任何「圆周均布 N 个」的需求，首选「一草图多圆」**（★ **不用轴、不用阵列**）—— ★ 逐字承 `mech-design/知识库/10-零件建模/阵列pattern.md`（★ 实测：**9 个圆一次画 + 一次拉伸成功**）
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1822,6 +1949,13 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★★★ **`swEndConditions_e` 完整枚举**（★ 逐字承该手册 §4.1）：`Blind=0` · **`ThroughAll=1`**（★ 单向通孔）· `ThroughNext=2` · ⚠️ `UpToVertex=3`（★ **官方标「Do not use」**）· ⚠️ `UpToSurface=4`（★ **官方标「Do not use」**）· `OffsetFromSurface=5` · **`MidPlane=6`**（★ **D1 是总宽，不是单边**）· `UpToBody=7` · **`ThroughAllBoth=9`** · **`UpToSelection=10`**（★ **官方推荐**）· `UpToNext=11`
+- ★★★ **表达「切到哪里」的正确做法**（★ 逐字）：切穿 ⇒ `T1=ThroughAll(1)` + `D1` 给**非零值**（★ **官方示例给 0.01**）· 切到某个面 ⇒ `T1=UpToSelection(10)` + 选面 · 中面对称拉伸 ⇒ `T1=MidPlane(6)`，`D1` = **总宽**
+- ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH` 是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
+- ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1889,6 +2023,10 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+- ★★ **`AddComponent5` 的 `x/y/z` 是「零件中心」，不是原点**（★ 逐字承该手册 §10.1）
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -1953,6 +2091,9 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
@@ -2015,6 +2156,9 @@
 - ★ 找替代方法两条路：① 搜社区 `"<方法名>" null` / `not working` · ② 看 interop 里**同一功能的其它方法**（`GetMethods() | ? Name -like "*DrawView*"`）
 - ★★ **L3 · 环境不对（★ 占 20%）—— 按序五查**：① **窗口可见性**（`MainWindowHandle≠0`）· ② **CLSID 是否注册**（`HKCR\CLSID\*\InprocServer32`，★ 419 个）· ③ ★★ **产品运行时**（★ **「有 interop ≠ 装了产品」**，如 DimXpert/Costing）· ④ **安装位置**（`Get-Process SLDWORKS` 的 `Path`）· ⑤ **弹窗阻塞**（有 `#32770` 模态窗 ⇒ **所有 COM 调用全卡**）
 - ★★★ **L4 · 版本/许可（★ 占 20%）—— 记为边界、绕道**：★ 写进知识库：`置信: 失败` + **错误码** + **已排除什么** + **下一步**。★★★ ★ 逐字：「**不要写成「环境不支持」就完事 —— 要写清「排除了 L1/L2/L3 什么」**」
+- ★★★★★ **草图「完全定义」= 自由度恰好为 0**（★ 逐字承 `AI Solidworks/手册/AI建模操作手册.md` §3）：★ **一条线 4 个自由度**（两端的 x/y）· ★ **一个圆 3 个**（cx, cy, r）。★ 矩形 16 DoF ⇒ ① 端点重合扣 8 ② 2 水平 + 2 竖直扣 4 ③ 宽高尺寸扣 2 ④ 一角点重合到 `Point1@Origin` 扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
+- ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
+- ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
 
 **草图怎么完全定义**（★ 官方：「尺寸和几何关系为两种类型的约束」）：
 
