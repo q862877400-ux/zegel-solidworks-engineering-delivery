@@ -33,6 +33,7 @@
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     - ★★ **贯穿底孔必须用 `FeatureCut4(..., T1=1, ...)`** —— 不能用「厚度 + 1mm」的盲孔（★ 视觉上穿透，但**特征语义与工程图识别都不对**）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 矩形工具**自带**平行+垂直+重合 ⇒ ★ 只欠**位置**与**大小**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -101,6 +102,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-002
   owner_judgment_scope:
     executor_annotates:
@@ -174,6 +178,7 @@
     - ★ 圆工具**不自带**任何关系 ⇒ 必须补：圆心↔原点 重合
     - ★★ **倒角放在孔槽之前**（★ 既有规则：`outer_fillet_and_chamfer` 在 `through_holes` 之前 —— 否则复杂拓扑求解很久）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 圆工具**不自带** ⇒ ★ 位置要自己锚
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -237,6 +242,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-016
   owner_judgment_scope:
     executor_annotates:
@@ -316,6 +324,7 @@
     - VERTICAL × 3
     - ★ 独立约束 rank = 18（★ 数值求秩，去掉了推出来的冗余）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★★ 直线工具**完全不自带** ⇒ ★ 这是业主批注 1 说的坑
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -360,6 +369,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（L1 无 L 形件）
   owner_judgment_scope:
     executor_annotates:
@@ -441,6 +453,7 @@
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 矩形工具自带 ⇒ 只欠位置与大小
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -492,6 +505,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-004
   owner_judgment_scope:
     executor_annotates:
@@ -571,6 +587,7 @@
     - ⑤ 台阶面↔中心线 **垂直**
     - ⑥ 中心线↔原点 重合
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 直线工具不自带 ⇒ ★ 平行/垂直**全要手加**（★ 业主批注 3）
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -616,6 +633,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-033（回转体）
   owner_judgment_scope:
     executor_annotates:
@@ -694,6 +714,7 @@
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     - ★★ **外轮廓圆角放在孔槽之前**（★ 既有特征顺序）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 矩形工具自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -752,6 +773,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-006
   owner_judgment_scope:
     executor_annotates:
@@ -827,6 +851,7 @@
     - ★ 圆工具不自带 ⇒ 补：圆心↔原点 重合
     - ★★ 倒角**在孔槽之前**（★ 本条无孔，★ 但顺序原则一致）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 圆工具不自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -885,6 +910,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 业主 2026-10-12 给的 5 步样式
   owner_judgment_scope:
     executor_annotates:
@@ -971,6 +999,7 @@
     - ★★ 槽口有**四种类型**（`ISketchManager.CreateSketchSlot` · 14 参）—— 本条的「半圆端槽」= **`arc`(2)** 或 **`line`(0)**（★ 要选一种）
     - ★★ 槽长有**两种口径**：`CenterCenter`(0) = 圆弧中心之间 · `FullLength`(1) = 全长 ⇒ ★ **本条需求写「长 40」⇒ 必须问是哪一种**
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 槽口工具自带相等/平行/相切 ⇒ ★ 欠**位置**与**方向**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1023,6 +1052,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（半圆端槽）
   owner_judgment_scope:
     executor_annotates:
@@ -1099,6 +1131,7 @@
     - ① 矩形自带：平行 · 垂直 · 重合；补：左下角↔原点
     - ② 孔的位置由**孔向导的点**定 ⇒ ★ 那个点要锚到矩形中心
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 矩形自带；孔向导的点**不自带** ⇒ 要锚
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1164,6 +1197,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-009
   owner_judgment_scope:
     executor_annotates:
@@ -1241,6 +1277,7 @@
     - ① 圆不自带 ⇒ 圆心↔原点
     - ② 孔圆心↔原点 **竖直**（或标 30 的定位尺寸）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 圆周阵列工具会生成 6 个实例 ⇒ ★ 只需定义**种子孔**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1313,6 +1350,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（圆周阵列孔）
   owner_judgment_scope:
     executor_annotates:
@@ -1394,6 +1434,7 @@
     - ② ★ 键槽**底边与圆柱外圆相切**（或共线于一条竖直中心线）
     - ② 键槽竖直中心线↔原点 **重合**
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 矩形自带平行/垂直；★ 与圆的**相对关系**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1447,6 +1488,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-013
   owner_judgment_scope:
     executor_annotates:
@@ -1527,6 +1571,7 @@
     - ① 矩形自带 + 补原点
     - ② ★ 圆心↔矩形**中心**（用**对称**关系，不是 1/2 尺寸）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 矩形自带；★ 圆心与矩形的**相对位置**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1573,6 +1618,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（板上凸台）
   owner_judgment_scope:
     executor_annotates:
@@ -1649,6 +1697,7 @@
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 矩形自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1695,6 +1744,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-049
   owner_judgment_scope:
     executor_annotates:
@@ -1758,6 +1810,7 @@
     dims: []
     relations:
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 本条不建几何 ⇒ 无草图定义问题
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1789,6 +1842,9 @@
     扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
   - ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
   - ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-009
   owner_judgment_scope:
     executor_annotates:
@@ -1862,6 +1918,7 @@
     - ② ★ 或：孔点**水平/竖直**对齐（保证 4 点成矩形）
     - ★★ **参数验证底线**（COM 调用前必须拒绝）：① 底孔直径 **≥ 公称直径** ② 沉孔深度 ≤ 板厚 ③ 孔中心越出基体 ④ 没为螺纹大径与孔口倒角保留边界
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 孔向导的点**不自带任何关系** ⇒ ★ 全要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -1929,6 +1986,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（沉头孔 —— ★ 与 L1-002 的 M6 通孔不同型）
   owner_judgment_scope:
     executor_annotates:
@@ -2011,6 +2071,7 @@
     - ② ★ 圆心↔原点 **竖直**（同轴 —— ★ 用竖直关系，不是标 x=0）
     - ② ★ 槽宽 10 的两条边**对称**于轴向中心
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 圆不自带；★ 两圆的**同轴关系**要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -2071,6 +2132,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-015
   owner_judgment_scope:
     executor_annotates:
@@ -2144,6 +2208,7 @@
     relations:
     - ★ 装配体的「完全定义」= **无自由度**：同心（定轴）+ 重合（定轴向位置）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 装配体用配合，不用草图关系
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -2206,6 +2271,9 @@
   - ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
   - ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
   - ★★ **`AddComponent5` 的 `x/y/z` 是「零件中心」，不是原点**（★ 逐字承该手册 §10.1）
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（★ 用 `solidworks_add_component` —— 它在 `server.py` 那 45 个里）
   owner_judgment_scope:
     executor_annotates:
@@ -2288,6 +2356,7 @@
     - VERTICAL × 2
     - ★ 独立约束 rank = 12（★ 数值求秩，去掉了推出来的冗余）
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: 矩形自带
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -2340,6 +2409,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-051 + L1-052
   owner_judgment_scope:
     executor_annotates:
@@ -2408,6 +2480,7 @@
     dims: []
     relations:
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 工程图里的草图**不需完全定义**（官方逐字：「工程图中的草图……**不需完全定义**，因为它们不是特征的基础」）
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -2440,6 +2513,9 @@
     扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
   - ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
   - ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（★ 用 `create_three_standard_views`）
   owner_judgment_scope:
     executor_annotates:
@@ -2513,6 +2589,7 @@
     - ② ★ 相邻孔点间距 30（线性阵列会自动生成，★ 只需定义种子）
     - ★★ 通孔用 **`FeatureCut4(..., T1=1)`**（贯穿），★ 不是「厚度+1mm」的盲孔
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 线性阵列会生成其余 2 个 ⇒ ★ 只需定义**种子孔**
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -2581,6 +2658,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: L1-002（同型：多孔）
   owner_judgment_scope:
     executor_annotates:
@@ -2660,6 +2740,7 @@
     - ④ 两球头圆心↔中心线 **重合**（同轴）
     - ⑤ 中心线↔原点
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 直线+圆弧组合**不自带相切** ⇒ ★ 全要手加
     expected_status: 3
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -2703,6 +2784,9 @@
   - ★★★ **约束名核实**（★ 本批对 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 实测）：★ 官方**同时有** `sgHORIZONTAL` **与** `sgHORIZONTAL2D`（★ 同理 `VERTICAL`）⇒ ★ 手册写的 `sgHORIZONTAL2D` **是对的** ✓；★★★ **而手册写的 `sgSAMECURVELENGTH`
     是错的** ✗ —— ★ 官方页里**只有 `sgSAMELENGTH`**（★ 本批实测：全页 grep 无 `sgSAMECURVELENGTH`）
   - ★★★ **选择类型的头号坑**（★ 逐字）：★ 选关系目标用的类型是 `swSketchRelationEntityType_Point`（**=2**），**不是字符串 `"SKETCHPOINT"`** ⇒ ★ `SelectByID2` 收**字符串**、`SketchRelationManager.AddRelation` 收**枚举** ⇒ ★ **混淆这两者是「关系加不上」的头号原因**
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（两端球头）
   owner_judgment_scope:
     executor_annotates:
@@ -2770,6 +2854,7 @@
     dims: []
     relations:
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 不建几何 ⇒ 无草图定义问题
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -2803,6 +2888,9 @@
   - ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
   - ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
   - ★★ **`AddComponent5` 的 `x/y/z` 是「零件中心」，不是原点**（★ 逐字承该手册 §10.1）
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（★ 该工具真机已验过）
   owner_judgment_scope:
     executor_annotates:
@@ -2867,6 +2955,7 @@
     dims: []
     relations:
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 不建草图
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -2905,6 +2994,9 @@
     扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
   - ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
   - ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 规格 210 的 scale 真机读数（volume_ratio=27 那次同法）
   owner_judgment_scope:
     executor_annotates:
@@ -2970,6 +3062,7 @@
     dims: []
     relations:
     - ★★★ **优先稳定基准、全约束草图和命名特征**；**禁止依赖 `Edge1`、屏幕坐标或偶然选择顺序**（★ 逐字承 `references/complex-mechanical-routing.md`）
+    - ★★★★★ **落地顺序：建一条线 → 立刻加 H/V → 再建下一条** （★ 逐字承两份手册 · 实测 **6 水平只成 3、6 垂直 0 全错**）—— ★ 原因 = 约束工具靠「离 (px,py) 最近的线段」选目标 ⇒ ★ **一条一条加**时草图里只有那一条线，**天然无歧义**
     tool_builtin: ★ 不建草图；★ 但它**要求**草图尺寸**已具名且完全定义**（否则方程改不动）
     expected_status: null
     _status_note: ★ 判据：`solidworks_sketch_fully_defined_status` 回 3 = 完全定义（★ 本仓真机读数：2=欠定义 · 3=完全定义）
@@ -3004,6 +3097,9 @@
     扣 2 ⇒ **0** ✅。★★★ ★ 判据（★ 逐字）：「**状态栏必须显示「草图已完全定义」，欠定义数字哪怕只有 1 个就是没做完**」
   - ★★★★★ **官方有现成方法 ⇒ 优先用它，而不是手写一长串关系**（★ 逐字承该手册 §3.1）：`ISketchManager.FullyDefineSketch` —— ★ 先按 mark **2/4 或起来**选 `Point1@Origin`，再调它 ⇒ ★★ 「**它会自己补齐缺的、去掉冗余的**」
   - ★★★★★ **建线顺序：建一条线 → 立刻给它加 H/V → 再建下一条**（★ 逐字承该手册 §3.2，★ 标注为「**AI 特有坑**」）：★ 原因 = 关系工具靠「**离 (px,py) 最近的图元**」选目标 ⇒ ★ 先批量画 12 条再回头批量加关系，在密集轮廓上**会选错线**（★ **实测：6 条水平只成 3 条、6 条垂直 0 条全错**，★ 相邻台阶径向只差 1 mm）
+  - ★★★★★ **为什么必须完全定义**（★ 逐字承 AI Solidworks/手册/DSH-操作手册.md 规则四）：① ★★★ **无尺寸驱动的图元不跟随全局改型缩放** —— 缩放后**停在原坐标** ⇒ ★ 这正是「**改个尺寸它就乱动**」的真相；② ★★★ modify_dimension **只能驱动被尺寸引用的几何** ⇒ **没尺寸的边永远改不动**；③ ★★ 复核时**无法把几何对应回设计意图，只能靠猜**
+  - ★★★★ **没有 H/V 的后果**（★ 逐字实测）：后续加直径尺寸时 SW **必须重解几何来满足尺寸** ⇒ **轮廓被推歪** ⇒ ★ 12 段回转轮廓的肩部被**推到 z=0.126 又折回 0.119** ⇒ **轮廓自交、revolve 直接失败**，★ 而且**失败得很安静**（★ 只报 EXTRUSION_FAILED，**不告诉你哪错了**）
+  - ★★ **尺寸要命名且名字可读**（★ 逐字）：每个尺寸给 D1 D2 …，★ 后面 modify_dimension 靠名字驱动变型 ⇒ ★ 别留 D17 这种；★★ 且**先关掉「自动加尺寸」**，否则**一堆重复尺寸把几何锁死**
   procedure_source: ★ 新写（全局方程）
   owner_judgment_scope:
     executor_annotates:
