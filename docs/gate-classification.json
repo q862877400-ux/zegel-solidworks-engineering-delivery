@@ -486,6 +486,15 @@
    "environment": "offline-static",
    "owner": "executing-agent",
    "runs_in": "release_check"
+  },
+  {
+   "gate": "check_known_facts_triage.py",
+   "runner": "_run_known_facts_triage_gate",
+   "kind": "release_static",
+   "reason": "**硬门禁**：docs/known-facts.md 的 **557 条事实逐条要有处置**（吸收/放过+理由）。★ 触发它的是 2026-10-14 业主的收口判据：「known-facts 560 条逐条有处置」。★★ 判据：**不允许出现「未判定」** —— 那正是「扫过但没判断」。★ 本门禁**自带负例自证**：造一条「含建模词但不在人工表」的事实 ⇒ 必须报出来。⚠ 实测教训：我第一版拿「不含任何关键词的假事实」当负例 ⇒ 而那种事实**本来就该判放过** ⇒ **负例自己就是错的**，证明不了门禁有效。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
   }
  ]
 }

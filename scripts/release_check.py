@@ -628,6 +628,29 @@ def _run_report_freshness_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_known_facts_triage_gate() -> dict[str, object]:
+    """@brief 跑 known-facts.md 逐条处置门禁（规格 332）。
+
+    ★★ 业主 2026-10-14 的收口判据：「known-facts 560 条**逐条**有处置
+      （吸收 / 放过 + 理由）」。
+    ★ 判据：**每一条**都能分类成「吸收」或「放过」，
+      ★★ **不允许出现「未判定」**（★ 那正是「扫过但没判断」）。
+    ★ 本门禁**自带负例自证**。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_known_facts_triage.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "known-facts 处置门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_sketch_definition_gate() -> dict[str, object]:
     """@brief 跑草图完全定义门禁（scripts/check_sketch_definition.py）。
 
@@ -2180,6 +2203,13 @@ def run_release_check() -> dict[str, object]:
     #   「肉眼看着没问题，一打开草图全是**蓝线**」⇒ 改一个尺寸就乱跑。
     #   ★ 官方逐字：「**尺寸和几何关系为两种类型的约束**」
     #     「矩形本身**固定到原点**」「**蓝色**表示实体未固定」。
+    # ⚑ **known-facts 逐条处置门禁**（硬门禁）：★ 557 条事实**逐条**要有处置。
+    #   ★★ 业主 2026-10-14：「known-facts 560 条逐条有处置（吸收/放过+理由）」。
+    kf = _run_known_facts_triage_gate()
+    if kf.get("status") == "fail":
+        raise AssertionError(
+            "known-facts 逐条处置门禁未通过（有事实没被判定）：\n"
+            + str(kf.get("output", "")))
     sk_def = _run_sketch_definition_gate()
     if sk_def.get("status") == "fail":
         raise AssertionError(
@@ -2397,6 +2427,8 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-12（业主批注）：**草图完全定义门禁**同样必须进返回体 ——
         #:   ★ 元门禁会报「静默跳过与没跑等价」。
         "sketch_definition": sk_def,
+        #: ★ 2026-10-14（业主收口判据）：**known-facts 逐条处置**同样必须进返回体。
+        "known_facts_triage": kf,
         #: ★ 2026-10-03（轮 404）：**未定义名门禁**同样必须进返回体 ——
         #:   ⚠ 而这一条**正是元门禁当场抓到的**：我先前只加了门禁与它的 fail 判据，
         #:   却没把它汇总进 `_gate_results` ⇒ 元门禁报「`undef` 的结果**没有进返回体**
